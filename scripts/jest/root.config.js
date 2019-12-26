@@ -24,35 +24,15 @@ module.exports = {
             functions: 70,
             lines: 70,
         },
-        'packages/@salesforce-lds/compiler/src': {
-            branches: 70,
-            functions: 90,
-            lines: 90,
-        },
-        'packages/@salesforce-lds/engine/src': {
-            branches: 0,
-            functions: 0,
-            lines: 0,
-        },
-        'packages/@salesforce-lds/lwc-lds/src': {
-            branches: 5,
-            functions: 10,
-            lines: 20,
-        },
-        'packages/@salesforce-lds-api/uiapi-records/src': {
+        'packages/uiapi-records/src': {
             branches: 15,
             functions: 10,
             lines: 20,
         },
-        'packages/@salesforce-lds-api/apex/src': {
+        'packages/apex/src': {
             branches: 15,
             functions: 10,
             lines: 20,
-        },
-        'packages/core-build/src': {
-            branches: 70,
-            functions: 85,
-            lines: 45,
         },
     },
 

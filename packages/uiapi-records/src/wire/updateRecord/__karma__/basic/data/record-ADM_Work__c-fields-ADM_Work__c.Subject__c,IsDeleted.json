@@ -1,0 +1,28 @@
+{
+    "apiName": "ADM_Work__c",
+    "childRelationships": {},
+    "eTag": "0000",
+    "fields": {
+        "IsDeleted": {
+            "displayValue": null,
+            "value": false
+        },
+        "Subject__c": {
+            "displayValue": null,
+            "value": "Imperative adapter methods"
+        }
+    },
+    "id": "a07B0000007BIVQIA4",
+    "lastModifiedById": "005B00000029o0qIAA",
+    "lastModifiedDate": "2019-08-07T18:14:35.000Z",
+    "recordTypeId": "0129000000006ByAAI",
+    "recordTypeInfo": {
+        "available": true,
+        "defaultRecordTypeMapping": false,
+        "master": false,
+        "name": "ToDo",
+        "recordTypeId": "0129000000006ByAAI"
+    },
+    "systemModstamp": "2019-08-07T18:14:35.000Z",
+    "weakEtag": 2
+}

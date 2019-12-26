@@ -1,0 +1,454 @@
+{
+    "count": 3,
+    "currentPageToken": "3",
+    "currentPageUrl": "/services/data/v49.0/ui-api/mru-list-records/Opportunity?pageSize=3&pageToken=3&sortBy=Account.Name",
+    "fields": [],
+    "listInfoETag": "fbc9e346c0862211ba4ac755eb64e232",
+    "listReference": {
+        "id": null,
+        "listViewApiName": "Recent",
+        "objectApiName": "Opportunity",
+        "type": "listView"
+    },
+    "nextPageToken": "6",
+    "nextPageUrl": "/services/data/v49.0/ui-api/mru-list-records/Opportunity?pageSize=3&pageToken=6&sortBy=Account.Name",
+    "optionalFields": [],
+    "pageSize": 3,
+    "previousPageToken": "0",
+    "previousPageUrl": "/services/data/v49.0/ui-api/mru-list-records/Opportunity?pageSize=3&pageToken=0&sortBy=Account.Name",
+    "records": [
+        {
+            "apiName": "Opportunity",
+            "childRelationships": {},
+            "eTag": "296a89e438efb425be39df1cd29d7f0d",
+            "fields": {
+                "Account": {
+                    "displayValue": "Edge Communications",
+                    "value": {
+                        "apiName": "Account",
+                        "childRelationships": {},
+                        "eTag": "3c6f41138ea8d07ef93aefe51e7c8360",
+                        "fields": {
+                            "CreatedDate": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Id": {
+                                "displayValue": null,
+                                "value": "001T1000002GKr4IAG"
+                            },
+                            "LastModifiedById": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedDate": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Name": {
+                                "displayValue": null,
+                                "value": "Edge Communications"
+                            },
+                            "Site": {
+                                "displayValue": null,
+                                "value": null
+                            },
+                            "SystemModstamp": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            }
+                        },
+                        "id": "001T1000002GKr4IAG",
+                        "lastModifiedById": "005T1000000HnsLIAS",
+                        "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                        "recordTypeId": "012000000000000AAA",
+                        "recordTypeInfo": null,
+                        "systemModstamp": "2019-11-19T14:55:27.000Z",
+                        "weakEtag": 1574175327000
+                    }
+                },
+                "AccountId": {
+                    "displayValue": null,
+                    "value": "001T1000002GKr4IAG"
+                },
+                "CloseDate": {
+                    "displayValue": "10/29/2017",
+                    "value": "2017-10-29"
+                },
+                "CreatedDate": {
+                    "displayValue": "11/19/2019, 6:55 AM",
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Id": {
+                    "displayValue": null,
+                    "value": "006T10000023G3ZIAU"
+                },
+                "LastModifiedById": {
+                    "displayValue": null,
+                    "value": "005T1000000HnsLIAS"
+                },
+                "LastModifiedDate": {
+                    "displayValue": "11/19/2019, 6:55 AM",
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Edge Emergency Generator"
+                },
+                "Owner": {
+                    "displayValue": "User User",
+                    "value": {
+                        "apiName": "User",
+                        "childRelationships": {},
+                        "eTag": "65516cf498d682ddcb93f7eb4ca34c50",
+                        "fields": {
+                            "Alias": {
+                                "displayValue": null,
+                                "value": "UUser"
+                            },
+                            "CreatedDate": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Id": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedById": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedDate": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Name": {
+                                "displayValue": null,
+                                "value": "User User"
+                            },
+                            "SystemModstamp": {
+                                "displayValue": "12/13/2019, 2:05 PM",
+                                "value": "2019-12-13T22:05:50.000Z"
+                            }
+                        },
+                        "id": "005T1000000HnsLIAS",
+                        "lastModifiedById": "005T1000000HnsLIAS",
+                        "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                        "recordTypeId": null,
+                        "recordTypeInfo": null,
+                        "systemModstamp": "2019-12-13T22:05:50.000Z",
+                        "weakEtag": 1576274750000
+                    }
+                },
+                "OwnerId": {
+                    "displayValue": null,
+                    "value": "005T1000000HnsLIAS"
+                },
+                "StageName": {
+                    "displayValue": "Closed Won",
+                    "value": "Closed Won"
+                },
+                "SystemModstamp": {
+                    "displayValue": "11/19/2019, 6:55 AM",
+                    "value": "2019-11-19T14:55:27.000Z"
+                }
+            },
+            "id": "006T10000023G3ZIAU",
+            "lastModifiedById": "005T1000000HnsLIAS",
+            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-11-19T14:55:27.000Z",
+            "weakEtag": 1574175327000
+        },
+        {
+            "apiName": "Opportunity",
+            "childRelationships": {},
+            "eTag": "839b822445a837e0cfd9310d638423d4",
+            "fields": {
+                "Account": {
+                    "displayValue": "Edge Communications",
+                    "value": {
+                        "apiName": "Account",
+                        "childRelationships": {},
+                        "eTag": "3c6f41138ea8d07ef93aefe51e7c8360",
+                        "fields": {
+                            "CreatedDate": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Id": {
+                                "displayValue": null,
+                                "value": "001T1000002GKr4IAG"
+                            },
+                            "LastModifiedById": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedDate": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Name": {
+                                "displayValue": null,
+                                "value": "Edge Communications"
+                            },
+                            "Site": {
+                                "displayValue": null,
+                                "value": null
+                            },
+                            "SystemModstamp": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            }
+                        },
+                        "id": "001T1000002GKr4IAG",
+                        "lastModifiedById": "005T1000000HnsLIAS",
+                        "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                        "recordTypeId": "012000000000000AAA",
+                        "recordTypeInfo": null,
+                        "systemModstamp": "2019-11-19T14:55:27.000Z",
+                        "weakEtag": 1574175327000
+                    }
+                },
+                "AccountId": {
+                    "displayValue": null,
+                    "value": "001T1000002GKr4IAG"
+                },
+                "CloseDate": {
+                    "displayValue": "10/29/2017",
+                    "value": "2017-10-29"
+                },
+                "CreatedDate": {
+                    "displayValue": "11/19/2019, 6:55 AM",
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Id": {
+                    "displayValue": null,
+                    "value": "006T10000023G3aIAE"
+                },
+                "LastModifiedById": {
+                    "displayValue": null,
+                    "value": "005T1000000HnsLIAS"
+                },
+                "LastModifiedDate": {
+                    "displayValue": "11/19/2019, 6:55 AM",
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Edge Emergency Generator"
+                },
+                "Owner": {
+                    "displayValue": "User User",
+                    "value": {
+                        "apiName": "User",
+                        "childRelationships": {},
+                        "eTag": "65516cf498d682ddcb93f7eb4ca34c50",
+                        "fields": {
+                            "Alias": {
+                                "displayValue": null,
+                                "value": "UUser"
+                            },
+                            "CreatedDate": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Id": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedById": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedDate": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Name": {
+                                "displayValue": null,
+                                "value": "User User"
+                            },
+                            "SystemModstamp": {
+                                "displayValue": "12/13/2019, 2:05 PM",
+                                "value": "2019-12-13T22:05:50.000Z"
+                            }
+                        },
+                        "id": "005T1000000HnsLIAS",
+                        "lastModifiedById": "005T1000000HnsLIAS",
+                        "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                        "recordTypeId": null,
+                        "recordTypeInfo": null,
+                        "systemModstamp": "2019-12-13T22:05:50.000Z",
+                        "weakEtag": 1576274750000
+                    }
+                },
+                "OwnerId": {
+                    "displayValue": null,
+                    "value": "005T1000000HnsLIAS"
+                },
+                "StageName": {
+                    "displayValue": "Id. Decision Makers",
+                    "value": "Id. Decision Makers"
+                },
+                "SystemModstamp": {
+                    "displayValue": "11/19/2019, 6:55 AM",
+                    "value": "2019-11-19T14:55:27.000Z"
+                }
+            },
+            "id": "006T10000023G3aIAE",
+            "lastModifiedById": "005T1000000HnsLIAS",
+            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-11-19T14:55:27.000Z",
+            "weakEtag": 1574175327000
+        },
+        {
+            "apiName": "Opportunity",
+            "childRelationships": {},
+            "eTag": "58b635fb2347eea62dda18dad65f97d7",
+            "fields": {
+                "Account": {
+                    "displayValue": "Edge Communications",
+                    "value": {
+                        "apiName": "Account",
+                        "childRelationships": {},
+                        "eTag": "3c6f41138ea8d07ef93aefe51e7c8360",
+                        "fields": {
+                            "CreatedDate": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Id": {
+                                "displayValue": null,
+                                "value": "001T1000002GKr4IAG"
+                            },
+                            "LastModifiedById": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedDate": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Name": {
+                                "displayValue": null,
+                                "value": "Edge Communications"
+                            },
+                            "Site": {
+                                "displayValue": null,
+                                "value": null
+                            },
+                            "SystemModstamp": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            }
+                        },
+                        "id": "001T1000002GKr4IAG",
+                        "lastModifiedById": "005T1000000HnsLIAS",
+                        "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                        "recordTypeId": "012000000000000AAA",
+                        "recordTypeInfo": null,
+                        "systemModstamp": "2019-11-19T14:55:27.000Z",
+                        "weakEtag": 1574175327000
+                    }
+                },
+                "AccountId": {
+                    "displayValue": null,
+                    "value": "001T1000002GKr4IAG"
+                },
+                "CloseDate": {
+                    "displayValue": "10/29/2017",
+                    "value": "2017-10-29"
+                },
+                "CreatedDate": {
+                    "displayValue": "11/19/2019, 6:55 AM",
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Id": {
+                    "displayValue": null,
+                    "value": "006T10000023G3bIAE"
+                },
+                "LastModifiedById": {
+                    "displayValue": null,
+                    "value": "005T1000000HnsLIAS"
+                },
+                "LastModifiedDate": {
+                    "displayValue": "11/19/2019, 6:55 AM",
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Edge Installation"
+                },
+                "Owner": {
+                    "displayValue": "User User",
+                    "value": {
+                        "apiName": "User",
+                        "childRelationships": {},
+                        "eTag": "65516cf498d682ddcb93f7eb4ca34c50",
+                        "fields": {
+                            "Alias": {
+                                "displayValue": null,
+                                "value": "UUser"
+                            },
+                            "CreatedDate": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Id": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedById": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedDate": {
+                                "displayValue": "11/19/2019, 6:55 AM",
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Name": {
+                                "displayValue": null,
+                                "value": "User User"
+                            },
+                            "SystemModstamp": {
+                                "displayValue": "12/13/2019, 2:05 PM",
+                                "value": "2019-12-13T22:05:50.000Z"
+                            }
+                        },
+                        "id": "005T1000000HnsLIAS",
+                        "lastModifiedById": "005T1000000HnsLIAS",
+                        "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                        "recordTypeId": null,
+                        "recordTypeInfo": null,
+                        "systemModstamp": "2019-12-13T22:05:50.000Z",
+                        "weakEtag": 1576274750000
+                    }
+                },
+                "OwnerId": {
+                    "displayValue": null,
+                    "value": "005T1000000HnsLIAS"
+                },
+                "StageName": {
+                    "displayValue": "Closed Won",
+                    "value": "Closed Won"
+                },
+                "SystemModstamp": {
+                    "displayValue": "11/19/2019, 6:55 AM",
+                    "value": "2019-11-19T14:55:27.000Z"
+                }
+            },
+            "id": "006T10000023G3bIAE",
+            "lastModifiedById": "005T1000000HnsLIAS",
+            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-11-19T14:55:27.000Z",
+            "weakEtag": 1574175327000
+        }
+    ],
+    "sortBy": "Account.Name"
+}

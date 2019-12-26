@@ -1,0 +1,18 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "b69f38676348f5e25391eb998b8e467d",
+    "fields": {
+        "FiscalYear": {
+            "displayValue": null,
+            "value": 2020
+        }
+    },
+    "id": "006xx000001a4aiAAA",
+    "lastModifiedById": "005xx000001X8JhAAK",
+    "lastModifiedDate": "2019-12-10T00:02:48.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2019-12-10T00:02:48.000Z",
+    "weakEtag": 1575936168000
+}

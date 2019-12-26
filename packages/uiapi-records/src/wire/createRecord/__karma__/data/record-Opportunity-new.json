@@ -1,0 +1,210 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "e5dc3d499972d4f307da26cf461e175c",
+    "fields": {
+        "Account": {
+            "displayValue": "Seahawks",
+            "value": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "c5c612004f5639ce27f043e61fcdc336",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "001xx000003GZJnAAO"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Seahawks"
+                    }
+                },
+                "id": "001xx000003GZJnAAO",
+                "lastModifiedById": "005xx000001X8JhAAK",
+                "lastModifiedDate": "2019-12-10T00:02:47.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-12-10T00:02:47.000Z",
+                "weakEtag": 1575936167000
+            }
+        },
+        "AccountId": {
+            "displayValue": null,
+            "value": "001xx000003GZJnAAO"
+        },
+        "Amount": {
+            "displayValue": null,
+            "value": null
+        },
+        "Campaign": {
+            "displayValue": null,
+            "value": null
+        },
+        "CampaignId": {
+            "displayValue": null,
+            "value": null
+        },
+        "CloseDate": {
+            "displayValue": "1/1/2020",
+            "value": "2020-01-01"
+        },
+        "CreatedBy": {
+            "displayValue": "User User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "4a46e67db55d0845ab0921909cecdb27",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005xx000001X8JhAAK"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "User User"
+                    }
+                },
+                "id": "005xx000001X8JhAAK",
+                "lastModifiedById": "005xx000001X8JhAAK",
+                "lastModifiedDate": "2019-12-09T21:41:49.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-12-09T21:41:49.000Z",
+                "weakEtag": 1575927709000
+            }
+        },
+        "CreatedById": {
+            "displayValue": null,
+            "value": "005xx000001X8JhAAK"
+        },
+        "CreatedDate": {
+            "displayValue": "12/9/2019, 4:02 PM",
+            "value": "2019-12-10T00:02:48.000Z"
+        },
+        "CurrentGenerators__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "DeliveryInstallationStatus__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Description": {
+            "displayValue": null,
+            "value": null
+        },
+        "ExpectedRevenue": {
+            "displayValue": null,
+            "value": null
+        },
+        "IsPrivate": {
+            "displayValue": null,
+            "value": false
+        },
+        "LastModifiedBy": {
+            "displayValue": "User User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "4a46e67db55d0845ab0921909cecdb27",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005xx000001X8JhAAK"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "User User"
+                    }
+                },
+                "id": "005xx000001X8JhAAK",
+                "lastModifiedById": "005xx000001X8JhAAK",
+                "lastModifiedDate": "2019-12-09T21:41:49.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-12-09T21:41:49.000Z",
+                "weakEtag": 1575927709000
+            }
+        },
+        "LastModifiedById": {
+            "displayValue": null,
+            "value": "005xx000001X8JhAAK"
+        },
+        "LastModifiedDate": {
+            "displayValue": "12/9/2019, 4:02 PM",
+            "value": "2019-12-10T00:02:48.000Z"
+        },
+        "LeadSource": {
+            "displayValue": null,
+            "value": null
+        },
+        "MainCompetitors__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "Foo"
+        },
+        "NextStep": {
+            "displayValue": null,
+            "value": null
+        },
+        "OrderNumber__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Owner": {
+            "displayValue": "User User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "4a46e67db55d0845ab0921909cecdb27",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005xx000001X8JhAAK"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "User User"
+                    }
+                },
+                "id": "005xx000001X8JhAAK",
+                "lastModifiedById": "005xx000001X8JhAAK",
+                "lastModifiedDate": "2019-12-09T21:41:49.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-12-09T21:41:49.000Z",
+                "weakEtag": 1575927709000
+            }
+        },
+        "OwnerId": {
+            "displayValue": null,
+            "value": "005xx000001X8JhAAK"
+        },
+        "Probability": {
+            "displayValue": null,
+            "value": 0
+        },
+        "StageName": {
+            "displayValue": "Stage",
+            "value": "Stage"
+        },
+        "TrackingNumber__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Type": {
+            "displayValue": null,
+            "value": null
+        }
+    },
+    "id": "006xx000001a4aiAAA",
+    "lastModifiedById": "005xx000001X8JhAAK",
+    "lastModifiedDate": "2019-12-10T00:02:48.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2019-12-10T00:02:48.000Z",
+    "weakEtag": 1575936168000
+}

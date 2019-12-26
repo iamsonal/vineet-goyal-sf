@@ -1,0 +1,28 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "0002",
+    "fields": {
+        "AccountId": {
+            "displayValue": null,
+            "value": "00100000000nEblAAE"
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "Unum - Supplier Management #FY20MADMP - Version 2"
+        }
+    },
+    "id": "0060M000012SLJCQA4",
+    "lastModifiedById": "00530000008xr40AAA",
+    "lastModifiedDate": "2019-10-04T11:00:11.000Z",
+    "recordTypeId": "01230000000010LAAQ",
+    "recordTypeInfo": {
+        "available": false,
+        "defaultRecordTypeMapping": false,
+        "master": false,
+        "name": "New Business / Add-On",
+        "recordTypeId": "01230000000010LAAQ"
+    },
+    "systemModstamp": "2019-10-04T11:00:11.000Z",
+    "weakEtag": 2
+}

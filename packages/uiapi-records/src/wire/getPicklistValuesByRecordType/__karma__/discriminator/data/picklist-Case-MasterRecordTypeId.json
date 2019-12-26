@@ -1,0 +1,304 @@
+{
+    "eTag": "c1143d0ba325a8a7a8fe0bbf47af54cf",
+    "picklistFieldValues": {
+        "Origin": {
+            "controllerValues": {},
+            "defaultValue": null,
+            "eTag": "516c79484e50ed761975932f284e7073",
+            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Origin",
+            "values": [
+                {
+                    "attributes": null,
+                    "label": "Phone",
+                    "validFor": [],
+                    "value": "Phone"
+                },
+                {
+                    "attributes": null,
+                    "label": "Email",
+                    "validFor": [],
+                    "value": "Email"
+                },
+                {
+                    "attributes": null,
+                    "label": "Web",
+                    "validFor": [],
+                    "value": "Web"
+                }
+            ]
+        },
+        "PotentialLiability__c": {
+            "controllerValues": {},
+            "defaultValue": null,
+            "eTag": "5114eda1a059d33126e0e1c6f27d7c79",
+            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/PotentialLiability__c",
+            "values": [
+                {
+                    "attributes": null,
+                    "label": "No",
+                    "validFor": [],
+                    "value": "No"
+                },
+                {
+                    "attributes": null,
+                    "label": "Yes",
+                    "validFor": [],
+                    "value": "Yes"
+                }
+            ]
+        },
+        "Priority": {
+            "controllerValues": {},
+            "defaultValue": {
+                "attributes": null,
+                "label": "Medium",
+                "validFor": [],
+                "value": "Medium"
+            },
+            "eTag": "6a1d5f21c366ed931b5397d10b9d55fc",
+            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Priority",
+            "values": [
+                {
+                    "attributes": null,
+                    "label": "High",
+                    "validFor": [],
+                    "value": "High"
+                },
+                {
+                    "attributes": null,
+                    "label": "Medium",
+                    "validFor": [],
+                    "value": "Medium"
+                },
+                {
+                    "attributes": null,
+                    "label": "Low",
+                    "validFor": [],
+                    "value": "Low"
+                }
+            ]
+        },
+        "Product__c": {
+            "controllerValues": {},
+            "defaultValue": null,
+            "eTag": "ac687bc44e125ad3266ee81f6328855a",
+            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Product__c",
+            "values": [
+                {
+                    "attributes": null,
+                    "label": "GC1040",
+                    "validFor": [],
+                    "value": "GC1040"
+                },
+                {
+                    "attributes": null,
+                    "label": "GC1060",
+                    "validFor": [],
+                    "value": "GC1060"
+                },
+                {
+                    "attributes": null,
+                    "label": "GC3020",
+                    "validFor": [],
+                    "value": "GC3020"
+                },
+                {
+                    "attributes": null,
+                    "label": "GC3040",
+                    "validFor": [],
+                    "value": "GC3040"
+                },
+                {
+                    "attributes": null,
+                    "label": "GC3060",
+                    "validFor": [],
+                    "value": "GC3060"
+                },
+                {
+                    "attributes": null,
+                    "label": "GC5020",
+                    "validFor": [],
+                    "value": "GC5020"
+                },
+                {
+                    "attributes": null,
+                    "label": "GC5040",
+                    "validFor": [],
+                    "value": "GC5040"
+                },
+                {
+                    "attributes": null,
+                    "label": "GC5060",
+                    "validFor": [],
+                    "value": "GC5060"
+                },
+                {
+                    "attributes": null,
+                    "label": "GC1020",
+                    "validFor": [],
+                    "value": "GC1020"
+                }
+            ]
+        },
+        "Reason": {
+            "controllerValues": {},
+            "defaultValue": null,
+            "eTag": "8ed9ccb9093cb0b73af9d930a2af7041",
+            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Reason",
+            "values": [
+                {
+                    "attributes": null,
+                    "label": "Installation",
+                    "validFor": [],
+                    "value": "Installation"
+                },
+                {
+                    "attributes": null,
+                    "label": "Equipment Complexity",
+                    "validFor": [],
+                    "value": "Equipment Complexity"
+                },
+                {
+                    "attributes": null,
+                    "label": "Performance",
+                    "validFor": [],
+                    "value": "Performance"
+                },
+                {
+                    "attributes": null,
+                    "label": "Breakdown",
+                    "validFor": [],
+                    "value": "Breakdown"
+                },
+                {
+                    "attributes": null,
+                    "label": "Equipment Design",
+                    "validFor": [],
+                    "value": "Equipment Design"
+                },
+                {
+                    "attributes": null,
+                    "label": "Feedback",
+                    "validFor": [],
+                    "value": "Feedback"
+                },
+                {
+                    "attributes": null,
+                    "label": "Other",
+                    "validFor": [],
+                    "value": "Other"
+                }
+            ]
+        },
+        "SLAViolation__c": {
+            "controllerValues": {},
+            "defaultValue": null,
+            "eTag": "5114eda1a059d33126e0e1c6f27d7c79",
+            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/SLAViolation__c",
+            "values": [
+                {
+                    "attributes": null,
+                    "label": "No",
+                    "validFor": [],
+                    "value": "No"
+                },
+                {
+                    "attributes": null,
+                    "label": "Yes",
+                    "validFor": [],
+                    "value": "Yes"
+                }
+            ]
+        },
+        "Status": {
+            "controllerValues": {},
+            "defaultValue": {
+                "attributes": {
+                    "closed": false,
+                    "picklistAtrributesValueType": "CaseStatus"
+                },
+                "label": "New",
+                "validFor": [],
+                "value": "New"
+            },
+            "eTag": "ffca9e9446bd3e36ecef36b85abb82e9",
+            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Status",
+            "values": [
+                {
+                    "attributes": {
+                        "closed": false,
+                        "picklistAtrributesValueType": "CaseStatus"
+                    },
+                    "label": "New",
+                    "validFor": [],
+                    "value": "New"
+                },
+                {
+                    "attributes": {
+                        "closed": false,
+                        "picklistAtrributesValueType": "CaseStatus"
+                    },
+                    "label": "Working",
+                    "validFor": [],
+                    "value": "Working"
+                },
+                {
+                    "attributes": {
+                        "closed": false,
+                        "picklistAtrributesValueType": "CaseStatus"
+                    },
+                    "label": "Escalated",
+                    "validFor": [],
+                    "value": "Escalated"
+                },
+                {
+                    "attributes": {
+                        "closed": true,
+                        "picklistAtrributesValueType": "CaseStatus"
+                    },
+                    "label": "Closed",
+                    "validFor": [],
+                    "value": "Closed"
+                }
+            ]
+        },
+        "Type": {
+            "controllerValues": {},
+            "defaultValue": null,
+            "eTag": "2951043f50f2ee49eff4a684dcbd706f",
+            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Type",
+            "values": [
+                {
+                    "attributes": null,
+                    "label": "Mechanical",
+                    "validFor": [],
+                    "value": "Mechanical"
+                },
+                {
+                    "attributes": null,
+                    "label": "Electrical",
+                    "validFor": [],
+                    "value": "Electrical"
+                },
+                {
+                    "attributes": null,
+                    "label": "Electronic",
+                    "validFor": [],
+                    "value": "Electronic"
+                },
+                {
+                    "attributes": null,
+                    "label": "Structural",
+                    "validFor": [],
+                    "value": "Structural"
+                },
+                {
+                    "attributes": null,
+                    "label": "Other",
+                    "validFor": [],
+                    "value": "Other"
+                }
+            ]
+        }
+    }
+}

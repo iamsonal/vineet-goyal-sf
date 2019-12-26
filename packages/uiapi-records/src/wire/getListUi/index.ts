@@ -1,0 +1,570 @@
+import {
+    Adapter,
+    AdapterFactory,
+    Fragment,
+    LDS,
+    ResourceRequest,
+    Snapshot,
+    FetchResponse,
+} from '@salesforce-lds/engine';
+import { refreshable, untrustedIsObject } from '../../generated/adapters/adapter-utils';
+import {
+    GetListUiByApiNameConfig,
+    getListUiByApiNameNativeAdapterFactory,
+    getListUiByApiName_ConfigPropertyNames,
+    validateAdapterConfig as getListUiByApiName_validateAdapterConfig,
+} from '../../generated/adapters/getListUiByApiName';
+import {
+    GetListUiByListViewIdConfig,
+    getListUiByListViewIdNativeAdapterFactory,
+    getListUiByListViewId_ConfigPropertyNames,
+    validateAdapterConfig as getListUiByListViewId_validateAdapterConfig,
+} from '../../generated/adapters/getListUiByListViewId';
+import {
+    GetListViewSummaryCollectionConfig,
+    getListViewSummaryCollectionNativeAdapterFactory,
+} from '../../generated/adapters/getListViewSummaryCollection';
+import {
+    GetMruListUiConfig,
+    getMruListUiNativeAdapterFactory,
+} from '../../generated/adapters/getMruListUi';
+import getUiApiListRecordsByListViewId from '../../generated/resources/getUiApiListRecordsByListViewId';
+import getUiApiListRecordsByObjectApiNameAndListViewApiName from '../../generated/resources/getUiApiListRecordsByObjectApiNameAndListViewApiName';
+import getUiApiListUiByListViewId from '../../generated/resources/getUiApiListUiByListViewId';
+import getUiApiListUiByObjectApiNameAndListViewApiName from '../../generated/resources/getUiApiListUiByObjectApiNameAndListViewApiName';
+import { ListInfoRepresentation } from '../../generated/types/ListInfoRepresentation';
+import {
+    keyBuilder as ListRecordCollectionRepresentation_keyBuilder,
+    ListRecordCollectionRepresentation,
+    paginationKeyBuilder as ListRecordCollection_paginationKeyBuilder,
+} from '../../generated/types/ListRecordCollectionRepresentation';
+import {
+    keyBuilder as listUiRepresentation_keyBuilder,
+    ListUiRepresentation,
+} from '../../generated/types/ListUiRepresentation';
+import { ListViewSummaryCollectionRepresentation } from '../../generated/types/ListViewSummaryCollectionRepresentation';
+import { buildSelectionFromFields } from '../../selectors/record';
+import {
+    addListReference,
+    getListInfo,
+    getListReference,
+    LIST_INFO_SELECTIONS,
+    listFields,
+    ListFields,
+} from '../../util/lists';
+import {
+    minimizeRequest,
+    pathSelectionsFor,
+    staticValuePathSelection,
+} from '../../util/pagination';
+import { isFulfilledSnapshot, isErrorSnapshot } from '../../util/snapshot';
+import { getListViewSummaryCollectionAdapterFactory } from '../getListViewSummaryCollection';
+import { getMruListUiAdapterFactory } from '../getMruListUi';
+import { select as ListReferenceRepresentation_select } from '../../generated/types/ListReferenceRepresentation';
+
+const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select().selections;
+
+// TODO RAML - this more properly goes in the generated resource files
+const DEFAULT_PAGE_SIZE = 50;
+
+type GetListUiConfig = GetListUiByApiNameConfig | GetListUiByListViewIdConfig;
+
+// make local copies of the adapter configs so we can have them ignore each other's config parameters
+// to match lds222 behavior
+const getListUiByApiName_ConfigPropertyNames_augmented = {
+    ...getListUiByApiName_ConfigPropertyNames,
+    parameters: {
+        ...getListUiByApiName_ConfigPropertyNames.parameters,
+        optional: [...getListUiByApiName_ConfigPropertyNames.parameters.optional, 'listViewId'],
+    },
+};
+
+const getListUiByListViewId_ConfigPropertyNames_augmented = {
+    ...getListUiByListViewId_ConfigPropertyNames,
+    parameters: {
+        ...getListUiByListViewId_ConfigPropertyNames.parameters,
+        optional: [
+            ...getListUiByListViewId_ConfigPropertyNames.parameters.optional,
+            'listViewApiName',
+            'objectApiName',
+        ],
+    },
+};
+
+function buildListUiFragment(
+    config: GetListUiConfig,
+    listInfo: ListInfoRepresentation,
+    fields: ListFields
+): Fragment {
+    return {
+        kind: 'Fragment',
+        selections: [
+            {
+                kind: 'Link',
+                name: 'info',
+                selections: LIST_INFO_SELECTIONS,
+            },
+            {
+                kind: 'Link',
+                name: 'records',
+                selections: [
+                    ...pathSelectionsFor({
+                        name: 'records',
+                        pageSize: config.pageSize || DEFAULT_PAGE_SIZE,
+                        pageToken: config.pageToken,
+                        selections: buildSelectionFromFields(
+                            ...fields.getRecordSelectionFieldSets()
+                        ),
+                        tokenDataKey: ListRecordCollection_paginationKeyBuilder({
+                            listViewId: listInfo.eTag,
+                            sortBy: config.sortBy === undefined ? null : config.sortBy,
+                        }),
+                    }),
+                    {
+                        kind: 'Scalar',
+                        name: 'fields',
+                        plural: true,
+                    },
+                    {
+                        kind: 'Scalar',
+                        name: 'listInfoETag',
+                    },
+                    {
+                        kind: 'Link',
+                        name: 'listReference',
+                        selections: LIST_REFERENCE_SELECTIONS,
+                    },
+                    {
+                        kind: 'Scalar',
+                        name: 'optionalFields',
+                        plural: true,
+                    },
+                    staticValuePathSelection({
+                        name: 'pageSize',
+                        value: config.pageSize === undefined ? DEFAULT_PAGE_SIZE : config.pageSize,
+                    }),
+                    {
+                        // TODO - check type; re-verify after sortBy added to key
+                        kind: 'Scalar',
+                        name: 'sortBy',
+                    },
+                ],
+            },
+        ],
+    };
+}
+
+function buildInMemorySnapshot(
+    lds: LDS,
+    config: GetListUiConfig,
+    listInfo: ListInfoRepresentation,
+    fields?: ListFields
+): Snapshot<ListUiRepresentation> {
+    const listUiKey = listUiRepresentation_keyBuilder({
+        ...listInfo.listReference,
+        sortBy: config.sortBy === undefined ? null : config.sortBy,
+    });
+    const listFields_ = fields || listFields(lds, config, listInfo);
+
+    const selector = {
+        recordId: listUiKey,
+        node: buildListUiFragment(config, listInfo, listFields_),
+        variables: {},
+    };
+
+    return lds.storeLookup<ListUiRepresentation>(selector);
+}
+
+/**
+ * Builds, sends, and processes the result of a list-ui request, ignoring any cached
+ * data for the list view.
+ *
+ * @param lds LDS engine
+ * @param config wire config
+ */
+function buildNetworkSnapshot_getListUi(
+    lds: LDS,
+    config: GetListUiConfig
+): Promise<Snapshot<ListUiRepresentation>> {
+    const { fields, optionalFields, pageSize, pageToken, sortBy } = config;
+    const queryParams = {
+        fields,
+        optionalFields,
+        pageSize,
+        pageToken,
+        sortBy,
+    };
+
+    let request: ResourceRequest;
+    if (isGetListUiByApiNameConfig(config)) {
+        request = getUiApiListUiByObjectApiNameAndListViewApiName({
+            urlParams: {
+                listViewApiName: config.listViewApiName,
+                objectApiName: config.objectApiName,
+            },
+            queryParams,
+        });
+    } else if (isGetListUiByListViewIdConfig(config)) {
+        request = getUiApiListUiByListViewId({
+            urlParams: { listViewId: config.listViewId },
+            queryParams,
+        });
+    } else {
+        throw new Error('unrecognized config');
+    }
+
+    return lds.dispatchResourceRequest<ListUiRepresentation>(request).then(
+        response => {
+            const { body } = response,
+                listInfo = body.info,
+                { listReference } = listInfo;
+
+            // TODO: server botches records.listReference but gets info.listReference correct,
+            // see W-6933698
+            body.records.listReference = listReference;
+
+            // TODO: server should inject default pageSize when none was specified, see
+            // W-6935308
+            if (body.records.pageSize === null) {
+                body.records.pageSize = DEFAULT_PAGE_SIZE;
+            }
+
+            // TODO: server should inject default sortBy when none was specified, see
+            // W-6935308
+            if (body.records.sortBy === null) {
+                // default sortBy is a pain to calculate, wait for real fix
+            }
+
+            // server returns sortBy in csv format
+            if (body.records.sortBy) {
+                body.records.sortBy = ((body.records.sortBy as unknown) as string).split(',');
+            }
+
+            const listUiKey = listUiRepresentation_keyBuilder({
+                ...listReference,
+                sortBy: body.records.sortBy,
+            });
+
+            // grab relevant bits before ingest destroys the structure
+            const fields = listFields(lds, config, listInfo);
+            fields.processRecords(body.records.records);
+
+            // build the selector while the list info is still easily accessible
+            const fragment = buildListUiFragment(config, listInfo, fields);
+
+            // remember the id/name of this list
+            addListReference(listReference);
+
+            lds.storeIngest(listUiKey, request, body);
+            lds.storeBroadcast();
+
+            return lds.storeLookup<ListUiRepresentation>({
+                recordId: listUiKey,
+                node: fragment,
+                variables: {},
+            });
+        },
+        (err: unknown) => {
+            return lds.errorSnapshot(err);
+        }
+    );
+}
+
+function buildNetworkSnapshot_getListRecords(
+    lds: LDS,
+    config: GetListUiConfig,
+    listInfo: ListInfoRepresentation,
+    snapshot?: Snapshot<ListUiRepresentation>
+): Promise<Snapshot<ListUiRepresentation>> {
+    const { fields, optionalFields, pageSize, pageToken, sortBy } = config;
+    const queryParams = {
+        fields,
+        optionalFields,
+        pageSize,
+        pageToken,
+        sortBy,
+    };
+
+    let request: ResourceRequest;
+    if (isGetListUiByApiNameConfig(config)) {
+        request = getUiApiListRecordsByObjectApiNameAndListViewApiName({
+            urlParams: {
+                listViewApiName: config.listViewApiName,
+                objectApiName: config.objectApiName,
+            },
+            queryParams,
+        });
+    } else if (isGetListUiByListViewIdConfig(config)) {
+        request = getUiApiListRecordsByListViewId({
+            urlParams: { listViewId: config.listViewId },
+            queryParams,
+        });
+    } else {
+        throw new Error('how did MRU config get here?');
+    }
+
+    if (snapshot) {
+        // compute the minimum number of records we need to request
+        const { pageSize, pageToken } = minimizeRequest({
+            data: snapshot.data ? snapshot.data.records : null,
+            name: 'records',
+            pageSize: config.pageSize || DEFAULT_PAGE_SIZE,
+            pageToken: config.pageToken,
+            pagination: lds.pagination(
+                ListRecordCollection_paginationKeyBuilder({
+                    listViewId: listInfo.eTag,
+                    sortBy: config.sortBy === undefined ? null : config.sortBy,
+                })
+            ),
+        });
+
+        // update request, but don't harden default values unless they were already present
+        if (pageSize !== DEFAULT_PAGE_SIZE || request.queryParams.pageSize !== undefined) {
+            request.queryParams.pageSize = pageSize;
+        }
+        if (pageToken || request.queryParams.pageToken !== undefined) {
+            request.queryParams.pageToken = pageToken;
+        }
+    }
+
+    return lds.dispatchResourceRequest<ListRecordCollectionRepresentation>(request).then(
+        response => {
+            const { body } = response;
+            const { listInfoETag } = body;
+
+            // fall back to list-ui if list view has changed
+            if (listInfoETag !== listInfo.eTag) {
+                return buildNetworkSnapshot_getListUi(lds, config);
+            }
+
+            // TODO: server botches records.listReference but gets info.listReference correct,
+            // see W-6933698
+            body.listReference = listInfo.listReference;
+
+            // TODO: server should inject default pageSize when none was specified, see
+            // W-6935308
+            if (body.pageSize === null) {
+                body.pageSize = DEFAULT_PAGE_SIZE;
+            }
+
+            // TODO: server should inject default sortBy when none was specified, see
+            // W-6935308
+            if (body.sortBy === null) {
+                // default sortBy is a pain to calculate, wait for real fix
+            }
+
+            // server returns sortBy in csv format
+            if (body.sortBy) {
+                body.sortBy = ((body.sortBy as unknown) as string).split(',');
+            }
+
+            const fields = listFields(lds, config, listInfo).processRecords(body.records);
+
+            lds.storeIngest(
+                ListRecordCollectionRepresentation_keyBuilder({
+                    listViewId: listInfoETag,
+                    sortBy: body.sortBy,
+                }),
+                request,
+                body
+            );
+            lds.storeBroadcast();
+
+            return buildInMemorySnapshot(lds, config, listInfo, fields);
+        },
+        (err: FetchResponse<unknown>) => {
+            lds.storeIngestFetchResponse(
+                listUiRepresentation_keyBuilder({
+                    ...listInfo.listReference,
+                    sortBy: config.sortBy === undefined ? null : config.sortBy,
+                }),
+                err
+            );
+            lds.storeBroadcast();
+            return lds.errorSnapshot(err);
+        }
+    );
+}
+
+// functions to discern config variations
+
+function isGetListUiByApiNameConfig(config: GetListUiConfig): config is GetListUiByApiNameConfig {
+    return (config as GetListUiByApiNameConfig).listViewApiName !== undefined;
+}
+
+function looksLikeGetListUiByApiNameConfig(untrustedConfig: unknown) {
+    return (
+        untrustedIsObject<GetListUiByApiNameConfig>(untrustedConfig) &&
+        untrustedConfig.objectApiName &&
+        untrustedConfig.listViewApiName
+    );
+}
+
+function isGetListUiByListViewIdConfig(
+    config: GetListUiConfig
+): config is GetListUiByListViewIdConfig {
+    return !!(config as GetListUiByListViewIdConfig).listViewId;
+}
+
+function looksLikeGetListUiByListViewIdConfig(untrustedConfig: unknown) {
+    return (
+        untrustedIsObject<GetListUiByListViewIdConfig>(untrustedConfig) &&
+        untrustedConfig.listViewId
+    );
+}
+
+function looksLikeGetListViewSummaryCollectionConfig(untrustedConfig: unknown) {
+    return (
+        untrustedIsObject<GetListViewSummaryCollectionConfig>(untrustedConfig) &&
+        untrustedConfig.objectApiName &&
+        !(untrustedConfig as GetListUiByListViewIdConfig).listViewId &&
+        !(untrustedConfig as GetListUiByApiNameConfig).listViewApiName
+    );
+}
+
+function looksLikeGetMruListUiConfig(
+    untrustedConfig: unknown
+): untrustedConfig is { listViewApiName: typeof MRU } {
+    // the MRU symbol is a carryover hack from 222 and doesn't show up in any
+    // of the generated config types, so we cast to any in order to check for it
+    return untrustedIsObject(untrustedConfig) && (untrustedConfig as any).listViewApiName === MRU;
+}
+
+function validateGetListUiConfig(untrustedConfig: unknown): GetListUiConfig | null {
+    return looksLikeGetListUiByApiNameConfig(untrustedConfig)
+        ? getListUiByApiName_validateAdapterConfig(
+              untrustedConfig,
+              getListUiByApiName_ConfigPropertyNames_augmented
+          )
+        : looksLikeGetListUiByListViewIdConfig(untrustedConfig)
+        ? getListUiByListViewId_validateAdapterConfig(
+              untrustedConfig,
+              getListUiByListViewId_ConfigPropertyNames_augmented
+          )
+        : null;
+}
+
+// the listViewApiName value to pass to getListUi() to request the MRU list
+export const MRU = Symbol.for('MRU');
+
+export const factory: AdapterFactory<
+    | GetListViewSummaryCollectionConfig
+    | GetListUiByApiNameConfig
+    | GetListUiByListViewIdConfig
+    | GetMruListUiConfig,
+    ListUiRepresentation | ListViewSummaryCollectionRepresentation
+> = (lds: LDS) => {
+    // adapter implementation for getListUiBy*
+    const listUiAdapter = refreshable(
+        (untrustedConfig: unknown) => {
+            const config = validateGetListUiConfig(untrustedConfig);
+
+            if (config === null) {
+                return null;
+            }
+
+            // try to get a list reference and a list info for the list; this should come back
+            // non-null if we have the list info cached
+            const listRef = getListReference(config, lds);
+            const listInfo = listRef && getListInfo(listRef, lds);
+
+            // no list info means it's not in the cache - make a full list-ui request
+            if (!listInfo) {
+                return buildNetworkSnapshot_getListUi(lds, config);
+            }
+
+            // with the list info we can construct the full selector and try to get the
+            // list ui from the store
+            const snapshot = buildInMemorySnapshot(lds, config, listInfo);
+
+            if (isFulfilledSnapshot(snapshot)) {
+                // cache hit :partyparrot:
+                return snapshot;
+            }
+
+            // if there was an error or if the list ui was not found in the store then
+            // make a full list-ui request
+            else if (isErrorSnapshot(snapshot) || !snapshot.data) {
+                return buildNetworkSnapshot_getListUi(lds, config);
+            }
+
+            // we *should* only be missing records and/or tokens at this point; send a list-records
+            // request to fill them in
+            return buildNetworkSnapshot_getListRecords(lds, config, listInfo, snapshot);
+        },
+        (untrustedConfig: unknown) => {
+            const config = validateGetListUiConfig(untrustedConfig);
+
+            // This should never happen
+            if (config === null) {
+                throw new Error('Invalid config passed to "getListUi" refresh function');
+            }
+
+            return buildNetworkSnapshot_getListUi(lds, config);
+        }
+    );
+
+    let listViewSummaryCollectionAdapter: Adapter<any, any> | null = null;
+    let mruAdapter: Adapter<any, any> | null = null;
+
+    // delegate to various other adapter based on what config looks like; note that the adapters
+    // we delegate to are responsible for returning refreshable results
+    return function(untrustedConfig: unknown) {
+        // if the MRU symbol is there then just return the getMruListUi adapter
+        if (looksLikeGetMruListUiConfig(untrustedConfig)) {
+            if (mruAdapter === null) {
+                mruAdapter = getMruListUiAdapterFactory(lds);
+            }
+
+            // the symbol in the listViewApiName is just a hack so we can recognize the request as MRU
+            const mruConfig: any = { ...untrustedConfig };
+            delete mruConfig.listViewApiName;
+
+            return mruAdapter(mruConfig);
+        }
+
+        // if config has objectApiName but no listViewId or listViewApiName then hand off
+        // to listViewSummaryCollectionAdapter
+        if (looksLikeGetListViewSummaryCollectionConfig(untrustedConfig)) {
+            if (listViewSummaryCollectionAdapter === null) {
+                listViewSummaryCollectionAdapter = getListViewSummaryCollectionAdapterFactory(lds);
+            }
+
+            return listViewSummaryCollectionAdapter(untrustedConfig);
+        }
+
+        // see if config looks like a listViewId or listViewApiName request
+        if (
+            looksLikeGetListUiByApiNameConfig(untrustedConfig) ||
+            looksLikeGetListUiByListViewIdConfig(untrustedConfig)
+        ) {
+            return listUiAdapter(untrustedConfig);
+        }
+
+        return null;
+    };
+};
+
+export function getListUiNativeAdapterFactory(untrustedConfig: unknown) {
+    if (looksLikeGetMruListUiConfig(untrustedConfig)) {
+        const mruConfig = { ...untrustedConfig };
+        // the symbol in the listViewApiName is just there so getListUi can recognize
+        // the request as MRU, should be removed before passing to MRU adapter
+        delete mruConfig.listViewApiName;
+        return getMruListUiNativeAdapterFactory(mruConfig);
+    }
+
+    if (looksLikeGetListUiByListViewIdConfig(untrustedConfig)) {
+        return getListUiByListViewIdNativeAdapterFactory(untrustedConfig);
+    }
+
+    if (looksLikeGetListUiByApiNameConfig(untrustedConfig)) {
+        return getListUiByApiNameNativeAdapterFactory(untrustedConfig);
+    }
+
+    if (looksLikeGetListViewSummaryCollectionConfig(untrustedConfig)) {
+        return getListViewSummaryCollectionNativeAdapterFactory(untrustedConfig);
+    }
+
+    return null;
+}

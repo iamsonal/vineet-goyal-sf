@@ -1,0 +1,41 @@
+{
+    "count": 1,
+    "currentPageToken": null,
+    "currentPageUrl": "/services/data/v49.0/ui-api/lookups/Opportunity/AccountId/Account?searchType=Recent&page=1&pageSize=25",
+    "nextPageToken": null,
+    "nextPageUrl": null,
+    "previousPageToken": null,
+    "previousPageUrl": null,
+    "records": [
+        {
+            "apiName": "Account",
+            "childRelationships": {},
+            "eTag": "4088466ff15e500457481aed0885cbb2",
+            "fields": {
+                "DisambiguationField": {
+                    "displayValue": null,
+                    "value": null
+                },
+                "Id": {
+                    "displayValue": null,
+                    "value": "001xx000003GYvcAAG"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Burlington Textiles Corp of America"
+                },
+                "Site": {
+                    "displayValue": null,
+                    "value": null
+                }
+            },
+            "id": "001xx000003GYvcAAG",
+            "lastModifiedById": null,
+            "lastModifiedDate": null,
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": null,
+            "weakEtag": 0
+        }
+    ]
+}

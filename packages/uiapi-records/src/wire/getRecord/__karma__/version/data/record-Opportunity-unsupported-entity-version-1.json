@@ -1,0 +1,45 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "0002",
+    "fields": {
+        "Unsupported": {
+            "displayValue": "SFDX Account",
+            "value": {
+                "apiName": "Unsupported",
+                "childRelationships": {},
+                "eTag": "0002",
+                "fields": {
+                    "Name": {
+                        "displayValue": null,
+                        "value": "SFDX Account - Version 1"
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HkSeIAK"
+                    }
+                },
+                "id": "001T1000001nFt5IAE",
+                "lastModifiedById": "005T1000000HkSeIAK",
+                "lastModifiedDate": "2019-08-30T00:38:02.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-08-30T00:38:02.000Z",
+                "weakEtag": 1
+            }
+        }
+    },
+    "id": "0060M000012SLJCQA4",
+    "lastModifiedById": "00530000008xr40AAA",
+    "lastModifiedDate": "2019-10-04T11:00:11.000Z",
+    "recordTypeId": "01230000000010LAAQ",
+    "recordTypeInfo": {
+        "available": false,
+        "defaultRecordTypeMapping": false,
+        "master": false,
+        "name": "New Business / Add-On",
+        "recordTypeId": "01230000000010LAAQ"
+    },
+    "systemModstamp": "2019-10-04T11:00:11.000Z",
+    "weakEtag": 0
+}

@@ -1,0 +1,15 @@
+{
+    "hasErrors": false,
+    "results": [
+        {
+            "result": {
+                "eTag": "abasdfasdf",
+                "backgroundColor": "448DE1",
+                "iconUrl": "http://oldlocal.localhost.internal.salesforce.com:9000/img/icon/t4v35/standard/account_120.png",
+                "recordId": "001xx0000000005AAA",
+                "type": "Theme"
+            },
+            "statusCode": 200
+        }
+    ]
+}

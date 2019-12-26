@@ -1,0 +1,41 @@
+{
+    "count": 1,
+    "currentPageToken": null,
+    "currentPageUrl": "/services/data/v49.0/ui-api/lookups/Opportunity/AccountId/Account?q=Bur&searchType=TypeAhead&page=1&pageSize=10",
+    "nextPageToken": null,
+    "nextPageUrl": null,
+    "previousPageToken": null,
+    "previousPageUrl": null,
+    "records": [
+        {
+            "apiName": "Account",
+            "childRelationships": {},
+            "eTag": "e391d02a8ce961b3c2e5655a534b6f5c",
+            "fields": {
+                "DisambiguationField": {
+                    "displayValue": null,
+                    "value": null
+                },
+                "Id": {
+                    "displayValue": null,
+                    "value": "001xx000003GYTgAAO"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Burlington Textiles Corp of America"
+                },
+                "Site": {
+                    "displayValue": null,
+                    "value": null
+                }
+            },
+            "id": "001xx000003GYTgAAO",
+            "lastModifiedById": null,
+            "lastModifiedDate": null,
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": null,
+            "weakEtag": 0
+        }
+    ]
+}

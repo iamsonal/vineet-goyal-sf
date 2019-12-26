@@ -1,0 +1,4769 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '49.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v49.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  AbstractFormSubitemRepresentation:
+    description: Form Subitem
+    discriminator: ''
+    type: object
+    properties:
+      subitemType:
+        description: Subitem type.
+        type: string
+        enum:
+          - EmptySpace
+          - Field
+  AbstractPicklistValueAttributesRepresentation:
+    description: Additional picklist value attributes.
+    discriminator: picklistAtrributesValueType # TODO: Hand Rolled
+    type: object
+    properties:
+      picklistAtrributesValueType:
+        description: Indicates the type of picklist attribute value.
+        type: string
+        enum:
+          - CaseStatus
+          - LeadStatus
+          - OpportunityStage
+          - Standard
+  AbstractRecordAvatarRepresentation:
+    description: Represents an avatar associated to a record.
+    discriminator: type # TODO: Hand Rolled
+    type: object
+    properties:
+      recordId:
+        description: The ID of the record that this avatar is associated to.
+        type: string
+      type:
+        description: Indicates the type of record avatar.
+        type: string
+        enum:
+          - Photo
+          - Theme
+  AbstractRecordLayoutComponentRepresentation:
+    description: Record layout component.
+    discriminator: ''
+    type: object
+    properties:
+      apiName:
+        description: The API name of the field powering this component, if there is one. The API name of the field if the componentType is Field. The API name of the canvas app if the componentType is Canvas.
+        type: string | nil # TODO: "nil" union hand rolled
+      componentType:
+        description: Component type.
+        type: string
+        enum:
+          - Canvas
+          - CustomLink
+          - EmptySpace
+          - Field
+          - ReportChart
+          - VisualforcePage
+  ActionRepresentation:
+    description: Actions.
+    discriminator: ''
+    type: object
+    properties:
+      actions:
+        description: Record data with some metatdata.
+        type: object
+        properties:
+          //:
+            type: EntityActionRepresentation
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      url:
+        description: the url of the current request
+        type: string
+  AggregateInputRepresentation:
+    description: The operations that are to be executed within aggregate
+    type: object
+    properties:
+      compositeRequest:
+        description: The list of operations to be executed
+        type: array
+        items:
+          type: object
+  AggregateRepresentation:
+    description: The result of all operations
+    discriminator: ''
+    type: object
+    properties:
+      compositeResponse:
+        description: The responses from the execution
+        type: array
+        items:
+          type: OperationResponseRepresentation
+  AggregateUiRepresentation:
+    description: Aggregate UI.
+    discriminator: ''
+    type: object
+    properties:
+      forms:
+        description: Map of Form API Name -> Form.
+        type: object
+        properties:
+          //:
+            type: FormRepresentation
+      layoutUserStates:
+        description: Map of layout ID -> user state.
+        type: object
+        properties:
+          //:
+            type: RecordLayoutUserStateRepresentation
+      layouts:
+        description: Record layouts.
+        type: object
+        properties:
+          //:
+            type: object
+            properties:
+              //:
+                type: object
+                properties:
+                  //:
+                    type: object
+                    properties:
+                      //:
+                        type: RecordLayoutRepresentation
+      objectInfos:
+        description: Object metadata.
+        type: object
+        properties:
+          //:
+            type: ObjectInfoRepresentation
+      records:
+        description: Record data.
+        type: object
+        properties:
+          //:
+            type: RecordRepresentation
+  AppRepresentation:
+    description: Metadata for an app
+    discriminator: ''
+    type: object
+    properties:
+      appId:
+        description: Reference to App Definition
+        type: string
+      description:
+        description: Description for the app
+        type: string
+      developerName:
+        description: Unique developer name of the app
+        type: string
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      formFactors:
+        description: Device form factors in which this app is supported
+        type: array
+        items:
+          type: string
+      headerColor:
+        description: 'Primary color selected by admin for this app. Ex: #0070D2'
+        type: string
+      iconUrl:
+        description: Icon URL of the App
+        type: string
+      isNavAutoTempTabsDisabled:
+        description: Nav automatically create temporary tabs setting
+        type: boolean
+      isNavPersonalizationDisabled:
+        description: Nav personalization setting
+        type: boolean
+      label:
+        description: Label of the app
+        type: string
+      logoUrl:
+        description: URL of the logo uploaded by Admin for this app
+        type: string
+      mobileStartUrl:
+        description: Mobile specific launch url for this app
+        type: string | nil # TODO: "nil" union hand rolled
+      navItems:
+        description: tabs/nav items for the app
+        type: array
+        items:
+          type: NavItemRepresentation
+      selected:
+        description: Flag to specify if this app is the default app for the user
+        type: boolean
+      startUrl:
+        description: Launch URL for this app
+        type: string
+      type:
+        description: Type of the app - Classic/Lightning/Community/Connected
+        type: string
+      userNavItems:
+        description: User's nav items for the app, if applicable and requested.
+        type: array
+        items:
+          type: NavItemRepresentation
+  AppsRepresentation:
+    description: A list of apps accessible for current user.
+    discriminator: ''
+    type: object
+    properties:
+      apps:
+        description: apps list
+        type: array
+        items:
+          type: AppRepresentation
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+  AvatarAssociationInputRepresentation:
+    description: Description of a Avatar Association input.
+    type: object
+    properties:
+      actionType:
+        description: Association action type
+        type: string
+        enum:
+          - AssociateAvatar
+          - DisassociateAvatar
+          - RemoveLogo
+          - ReportLogo
+      blueMasterId:
+        description: The BlueMaster Id
+        type: string
+        required: false # TODO: hand rolled
+      externalId:
+        description: The External Id
+        type: string
+        required: false # TODO: hand rolled
+      photoUrl:
+        description: The Photo url.
+        type: string
+        required: false # TODO: hand rolled
+      profileName:
+        description: The Profile Name
+        type: string
+        required: false # TODO: hand rolled
+  CanvasLayoutComponentRepresentation:
+    description: Canvas record layout component.
+    discriminator: ''
+    type: AbstractRecordLayoutComponentRepresentation
+    properties:
+      displayLocation:
+        description: Display location
+        type: string
+      height:
+        description: Height
+        type: string
+      referenceId:
+        description: Reference ID
+        type: string
+      showScroll:
+        description: Show scroll
+        type: boolean
+      width:
+        description: Width
+        type: string
+  CaseStatusPicklistValueAttributesRepresentation:
+    description: Additional picklist value attributes for case statuses.
+    discriminatorValue: CaseStatus # TODO: Hand Rolled
+    type: AbstractPicklistValueAttributesRepresentation
+    properties:
+      closed:
+        description: True if this status is a closed status, otherwise false. For more info, see the doc for the CaseStatus standard object.
+        type: boolean
+  ChildRelationshipRepresentation:
+    description: Child Relationship.
+    discriminator: ''
+    type: object
+    properties:
+      childObjectApiName:
+        description: The token of the child Object on which there is a foreign key back to the parent Object.
+        type: string
+      fieldName:
+        description: The token of the field that has a foreign key back to the parent Object.
+        type: string
+      junctionIdListNames:
+        description: If this relationship uses a junction ID list, this contains a list of potentially polymorphic types to which the IDs in this relationship's junction ID list can resolve.
+        type: array
+        items:
+          type: string
+      junctionReferenceTo:
+        description: A list of zero or more query-able junction ID list names this relationship may use. These names can be queried like field.
+        type: array
+        items:
+          type: string
+      relationshipName:
+        description: The name of the relationship.
+        type: string
+  CustomLinkLayoutComponentRepresentation:
+    description: Custom link record layout component.
+    discriminator: ''
+    type: AbstractRecordLayoutComponentRepresentation
+    properties:
+      behavior:
+        description: Custom Link behavior
+        type: string
+        enum:
+          - NewWindow
+          - NoSidebar
+          - OnClickJavaScript
+          - Replace
+          - Sidebar
+      customLinkUrl:
+        description: Custom link URL
+        type: string
+      label:
+        description: Label
+        type: string
+  DuplicateRecordErrorRepresentation:
+    description: Duplicate record error.
+    discriminator: ''
+    type: object
+    properties:
+      matchResults:
+        description: Duplicate rule match results.
+        type: array
+        items:
+          type: MatchResultRepresentation
+  DuplicateResultInfoRepresentation:
+    description: Duplicate Result Info
+    discriminator: ''
+    type: object
+    properties:
+      allowSave:
+        description: Indicates whether duplicates are allowed to be saved.
+        type: boolean
+      matchResultInfo:
+        description: Match resut info.
+        type: MatchResultInfoRepresentation
+      rule:
+        description: Name of Duplicate rule.
+        type: string
+  DuplicateRuleFilterItemRepresentation:
+    description: 'Duplicate Rule filter item '
+    discriminator: ''
+    type: object
+    properties:
+      field:
+        description: The field name on which filter is set.
+        type: string
+      operation:
+        description: Operation to be used.
+        type: string
+      sortOrder:
+        description: The order in which filter item was added to the filter.
+        type: integer
+      value:
+        description: The value of field to evaluate operation.
+        type: string
+  DuplicateRuleFilterRepresentation:
+    description: 'Duplicate Rule filter '
+    discriminator: ''
+    type: object
+    properties:
+      booleanFilter:
+        description: The custom filter logic expressed as a boolean expression.
+        type: string
+      filterItems:
+        description: List of filter items.
+        type: array
+        items:
+          type: DuplicateRuleFilterItemRepresentation
+      ruleCritera:
+        description: Rule Criteria.
+        type: string
+  DuplicateRuleRepresentation:
+    description: Duplicate Rule for dedupe configuration
+    discriminator: ''
+    type: object
+    properties:
+      actionOnInsert:
+        description: Action on insert, Block or Allow for dedupe rule
+        type: string
+        enum:
+          - Allow
+          - Block
+      actionOnUpdate:
+        description: Action on update, Block or Allow for dedupe rule.
+        type: string
+        enum:
+          - Allow
+          - Block
+      active:
+        description: Determine whether dedupe rule is active.
+        type: boolean
+      duplicateRuleFilters:
+        description: Duplicate filters.
+        type: array
+        items:
+          type: DuplicateRuleFilterRepresentation
+      matchRules:
+        description: MatchRules for the current DuplicateRule.
+        type: array
+        items:
+          type: MatchRuleRepresentation
+      name:
+        description: Name of Duplicate rule.
+        type: string
+      operationsOnInsert:
+        description: Operations on insert, either or both of alert and report for dedupe rule.
+        type: array
+        items:
+          type: string
+          enum:
+            - Alert
+            - Report
+      operationsOnUpdate:
+        description: Operations on update, either or both of alert and report for dedupe rule.
+        type: array
+        items:
+          type: string
+          enum:
+            - Alert
+            - Report
+  DuplicatesConfigurationRepresentation:
+    description: 'Duplicate Configuration for an object API. '
+    discriminator: ''
+    type: object
+    properties:
+      dedupeEnabled:
+        description: Determine dedupe is enabled/disabled
+        type: boolean
+      dedupeFields:
+        description: Dedupe fields used in config.
+        type: array
+        items:
+          type: string
+      duplicateRules:
+        description: Duplicate rules used in dedupe config.
+        type: array
+        items:
+          type: DuplicateRuleRepresentation
+      predupeEnabled:
+        description: Determine predupe is enabled/disabled.
+        type: boolean
+  DuplicatesRepresentation:
+    description: 'Duplicates '
+    discriminator: ''
+    type: object
+    properties:
+      allowSave:
+        description: Determince whether duplicates are allowed to be saved
+        type: boolean
+      duplicateError:
+        description: Determine if there  exists duplicates.
+        type: boolean
+      duplicateRules:
+        description: Duplicate rules used for match.
+        type: array
+        items:
+          type: string
+      matches:
+        description: A list of potential matches.
+        type: array
+        items:
+          type: MatchRepresentation
+  EmptySpaceFormSubitemRepresentation:
+    description: Empty Space Subitem.
+    discriminator: ''
+    type: AbstractFormSubitemRepresentation
+    properties: {}
+  EntityActionRepresentation:
+    description: Entity's Actions.
+    discriminator: ''
+    type: object
+    properties:
+      actions:
+        description: Record data.
+        type: array
+        items:
+          type: PlatformActionRepresentation
+      links:
+        description: subconext's api url of the current current entity request
+        type: array
+        items:
+          type: string
+      url:
+        description: the url of the current entity request
+        type: string
+  FavoriteBatchCollectionInputRepresentation:
+    description: Represents all favorites when updating favorites in batch.
+    type: object
+    properties:
+      favorites:
+        description: The list of favorites to keep and update.
+        type: array
+        items:
+          type: object
+  FavoriteBatchInputRepresentation:
+    description: Represents a single favorite when updating favorites in batch.
+    type: object
+    properties:
+      id:
+        description: ID of the favorite.
+        type: string
+      name:
+        description: The name of the favorite.
+        type: string
+  FavoriteCollectionRepresentation:
+    description: A list of favorites.
+    discriminator: ''
+    type: object
+    properties:
+      favorites:
+        description: The list of favorites.
+        type: array
+        items:
+          type: FavoriteRepresentation
+  FavoriteInputRepresentation:
+    description: Create or update a favorite.
+    type: object
+    properties:
+      name:
+        description: The name of the favorite.
+        type: string
+      sortOrder:
+        description: The sort order of the favorite, from 1 to N.
+        type: integer
+      target:
+        description: The record, API name, or content being favorited.
+        type: string
+      targetType:
+        description: The type of favorite.
+        type: string
+        enum:
+          - ListView
+          - ObjectHome
+          - Record
+          - Tab
+  FavoriteRepresentation:
+    description: A representation of a single favorite.
+    discriminator: ''
+    type: object
+    properties:
+      accessCount:
+        description: The number of times this favorite has been used.
+        type: integer
+      iconColor:
+        description: The color of the icon for this favorite, usually the related entity's color.
+        type: string
+      iconUrl:
+        description: The URL of the icon for the favorite, usually the related entity's icon.
+        type: string
+      id:
+        description: ID of the favorite.
+        type: string
+      lastAccessDate:
+        description: The last time this favorite was used.
+        type: string
+      name:
+        description: The name of the favorite.
+        type: string
+      objectType:
+        description: The developer name of the entity associated with this favorite, if any.
+        type: string
+      sortOrder:
+        description: The sort order of the favorite, from 1 to N.
+        type: integer
+      subtitle:
+        description: Subtitle of the favorite, usually the entity's label. Provides additional information about the type of record or content being favorited.
+        type: string
+      target:
+        description: The record, API name, or content being favorited.
+        type: string
+      targetType:
+        description: The type of record or content being favorited.
+        type: string
+        enum:
+          - ListView
+          - ObjectHome
+          - Record
+          - Tab
+  FieldFormSubitemRepresentation:
+    description: Field form subitem.
+    discriminator: ''
+    type: AbstractFormSubitemRepresentation
+    properties:
+      apiName:
+        description: 'The API name of the field powering this component '
+        type: string
+  FieldLayoutComponentRepresentation:
+    description: Field record layout component.
+    discriminator: ''
+    type: AbstractRecordLayoutComponentRepresentation
+    properties:
+      label:
+        description: Label
+        type: string
+  FieldRepresentation:
+    description: Field metadata.
+    discriminator: ''
+    type: object
+    properties:
+      apiName:
+        description: The API name for this field.
+        type: string
+      calculated:
+        description: Indicates whether the field is a custom formula field (?).
+        type: boolean
+      compound:
+        description: Indicates whether the field is a top level compound field (or in the case of switchable_personname, might be a compound field). This is calculated based on whether other accessible fields in the object refer to this field as their compoundFieldName. This value will typically be false for LOCATION, because of the odd way locations are handled in describes.
+        type: boolean
+      compoundComponentName:
+        description: When this field is a component of a compound field, this is the normalized component name otherwise this will be null. For example, this will return "Street" if the field represents "BillingStreet" of an Address compound field.
+        type: string | nil # TODO: "nil" union hand rolled
+      compoundFieldName:
+        description: When this field is an individual component field of a compound field, this indicates which field is the top level compound field. This will be null when the field does not represent a component field of a compound field.
+        type: string | nil # TODO: "nil" union hand rolled
+      controllerName:
+        description: The name of the field that controls the values of this picklist.
+        type: string | nil # TODO: "nil" union hand rolled
+      controllingFields:
+        description: 'A list of fields that the current field depends on. '
+        type: array
+        items:
+          type: string
+      createable:
+        description: Indicates whether the field can be created.
+        type: boolean
+      custom:
+        description: Indicates whether the field is custom.
+        type: boolean
+      dataType:
+        description: Field data type.
+        type: string
+        enum:
+          - Address
+          - Anytype
+          - Base64
+          - Boolean
+          - ComboBox
+          - ComplexValue
+          - Currency
+          - Date
+          - DateTime
+          - Double
+          - Email
+          - EncryptedString
+          - Int
+          - Location
+          - Long
+          - MultiPicklist
+          - Percent
+          - Phone
+          - Picklist
+          - Reference
+          - String
+          - TextArea
+          - Time
+          - Url
+      extraTypeInfo:
+        description: Additional data type information.
+        type: string | nil # TODO: "nil" union hand rolled
+        enum:
+          - ExternalLookup
+          - ImageUrl
+          - IndirectLookup
+          - PersonName
+          - PlainTextArea
+          - RichTextArea
+          - SwitchablePersonName
+      filterable:
+        description: Indicates whether the field is filterable. If true, then this field can be specified in the WHERE clause of a SOQL statement.
+        type: boolean
+      filteredLookupInfo:
+        description: If the field is a reference field type with a lookup filter, this contains the lookup information.
+        type: FilteredLookupInfoRepresentation | nil # TODO: "nil" union hand rolled
+      highScaleNumber:
+        description: Indicates whether the field stores numbers to 8 decimal places regardless of what's specified in the field details.
+        type: boolean
+      htmlFormatted:
+        description: Indicates whether the field has been formatted for HTML and should be encoded for display in HTML. Also indicates whether a field is a custom formula field that has an IMAGE text function.
+        type: boolean
+      inlineHelpText:
+        description: The text that displays in the field-level help hover text for this field.
+        type: string | nil # TODO: "nil" union hand rolled
+      label:
+        description: Text label that is displayed next to the field in the Salesforce user interface. This label may be localized.
+        type: string
+      length:
+        description: For string fields, the maximum size of the field in number of Unicode characters (not bytes).
+        type: integer
+      nameField:
+        description: Indicates whether the field is a name field.
+        type: boolean
+      polymorphicForeignKey:
+        description: Indicates whether the field is a foreign key over a domain of multiple entities.
+        type: boolean
+      precision:
+        description: For double fields, indicates the maximum number of digits that can be stored, on both sides of the decimal point.
+        type: integer
+      reference:
+        description: Indicates whether the field is a foreign key reference to another record.
+        type: boolean
+      referenceTargetField:
+        description: For indirect lookup relationships on external objects, the target custom field of the referenced object.
+        type: string | nil # TODO: "nil" union hand rolled
+      referenceToInfos:
+        description: For fields that refer to other objects, this list includes information about the object types and name fields of the referenced objects.
+        type: array
+        items:
+          type: ReferenceToInfoRepresentation
+      relationshipName:
+        description: The name of the relationship, if this is a master-detail relationship field.
+        type: string | nil # TODO: "nil" union hand rolled
+      required:
+        description: Indicates whether the field is required on create or update.
+        type: boolean
+      scale:
+        description: For double fields, indicates the number of digits to the right of the decimal point.
+        type: integer
+      searchPrefilterable:
+        description: Indicates whether a foreign key can be included in prefiltering (true) or not (false) when used in a SOSL WHERE clause. Prefiltering means to filter by a specific field value before executing the full search query.
+        type: boolean
+      sortable:
+        description: Indicates whether a query can sort on this field.
+        type: boolean
+      unique:
+        description: Determines if a field is unique or not.
+        type: boolean
+      updateable:
+        description: Indicates whether the field can be updated.
+        type: boolean
+  FieldValueRepresentation:
+    description: Contains both the raw and displayable field values for a field in a Record.
+    discriminator: ''
+    type: object
+    properties:
+      displayValue:
+        description: The displayable value for a field. For a date, this will be a value familiar to users rather than an ISO 8601 formatted date value, which is what the raw value would be. Similarly, currency values will also have a formatted display value. For data that can be localized to the context user's language using the toLabel() function, that value will also be displayed here.
+        type: string | nil # TODO: "nil" union hand rolled
+      value:
+        description: The value of a field in its raw data form.
+        type: nil | string | integer | boolean | RecordRepresentation # TODO: union hand rolled
+  FilteredLookupInfoRepresentation:
+    description: Filtered lookup info.
+    discriminator: ''
+    type: object
+    properties:
+      controllingFields:
+        description: Controlling fields when the lookup filter is dependent on the source object.
+        type: array
+        items:
+          type: string
+      dependent:
+        description: Indicates whether the lookup filter is dependent on the source object.
+        type: boolean
+      optionalFilter:
+        description: Indicates whether the lookup filter is optional.
+        type: boolean
+  FormItemRepresentation:
+    description: Form item
+    discriminator: ''
+    type: object
+    properties:
+      formSubitems:
+        description: Subitems that make up the item.
+        type: array
+        items:
+          type: AbstractFormSubitemRepresentation
+      label:
+        description: Text label for the item.
+        type: string
+  FormRepresentation:
+    description: Form.
+    discriminator: ''
+    type: object
+    properties:
+      apiName:
+        description: Form developer name.
+        type: string
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      label:
+        description: Form label.
+        type: string
+      sections:
+        description: Form sections.
+        type: array
+        items:
+          type: FormSectionRepresentation
+  FormRowRepresentation:
+    description: Form row.
+    discriminator: ''
+    type: object
+    properties:
+      formItems:
+        description: The items in this row, from left to right. Might not extend to the last column.
+        type: array
+        items:
+          type: FormItemRepresentation
+  FormSectionRepresentation:
+    description: Form section.
+    discriminator: ''
+    type: object
+    properties:
+      apiName:
+        description: Form section developer name.
+        type: string
+      columns:
+        description: Number of columns in the section.
+        type: integer
+      formSectionRows:
+        description: The rows in the section.
+        type: array
+        items:
+          type: FormRowRepresentation
+      label:
+        description: Form section label.
+        type: string
+  LeadStatusPicklistValueAttributesRepresentation:
+    description: Additional picklist value attributes for lead statuses.
+    discriminatorValue: LeadStatus # TODO: Hand Rolled
+    type: AbstractPicklistValueAttributesRepresentation
+    properties:
+      converted:
+        description: True if this status indicates the lead has been converted, otherwise false. For more info, see the doc for the LeadStatus standard object.
+        type: boolean
+  ListColumnRepresentation:
+    description: ListColumnRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      fieldApiName:
+        description: API name for the field.
+        type: string
+      label:
+        description: Label of the field.
+        type: string
+      sortable:
+        description: Whether the list column is sortable.
+        type: boolean
+  ListFilterByInfoRepresentation:
+    description: ListFilterByInfoRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      fieldApiName:
+        description: API name for the field used to filter.
+        type: string
+      label:
+        description: Label for the field used to filter.
+        type: string
+      operandLabels:
+        description: The values (or label if there is one) to filter by.
+        type: array
+        items:
+          type: string
+      operator:
+        description: Operator such as equals, starts with.
+        type: string
+        enum:
+          - Contains
+          - Equals
+          - Excludes
+          - GreaterOrEqual
+          - GreaterThan
+          - Includes
+          - LessOrEqual
+          - LessThan
+          - NotContain
+          - NotEqual
+          - StartsWith
+          - Within
+  ListInfoInputRepresentation:
+    description: Representation of a List Info input.
+    type: object
+    properties:
+      orderedByInfo:
+        description: Input representation for orderBy.
+        type: array
+        items:
+          type: object
+      userPreferences:
+        description: Input representation for user preferences.
+        type: object
+  ListInfoRepresentation:
+    description: ListInfoRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      cloneable:
+        description: Indicates whether the listview can be cloned.
+        type: boolean
+      createable:
+        description: Indicates whether a new listview for this listview's SObject can be created.
+        type: boolean
+      deletable:
+        description: Indicates whether the listview can be deleted.
+        type: boolean
+      displayColumns:
+        description: All display columns for this list view.
+        type: array
+        items:
+          type: ListColumnRepresentation
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      filterLogicString:
+        description: This is the filter logic such as "(1 OR 2) and 3".  Indexes are 1-based.
+        type: string | nil # TODO: "nil" union hand rolled
+      filteredByInfo:
+        description: Describes how the list view is filtered.
+        type: array
+        items:
+          type: ListFilterByInfoRepresentation
+      label:
+        description: The list view's display label.  E.g. "All Accounts".
+        type: string
+      listReference:
+        description: An object representing the identity of the list.
+        type: ListReferenceRepresentation
+      orderedByInfo:
+        description: Describes how records are ordered in this list view.
+        type: array
+        items:
+          type: ListOrderByInfoRepresentation
+      updateable:
+        description: Indicates whether the listview can be updated.
+        type: boolean
+      userPreferences:
+        description: All user preferences for this list view.
+        type: ListUserPreferenceRepresentation
+      visibility:
+        description: The list view's visibility.
+        type: string
+        enum:
+          - Private
+          - Public
+          - Shared
+      visibilityEditable:
+        description: Indicates whether the visibility of the listview can be edited.
+        type: boolean
+  ListOrderByInfoRepresentation:
+    description: ListOrderByInfoRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      fieldApiName:
+        description: API name for the field.
+        type: string
+      isAscending:
+        description: Whether the list column is ascending or descending.
+        type: boolean
+      label:
+        description: Localized label of the field.
+        type: string
+  ListOrderedByInfoInputRepresentation:
+    description: Representation of a orderedBy Info input.
+    type: object
+    properties:
+      fieldApiName:
+        description: Field API name for orderedByInfo.
+        type: string
+      isAscending:
+        description: Boolean describing if the orderBy should be ascending.
+        type: boolean
+  ListRecordCollectionRepresentation:
+    description: ListRecordCollectionRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      count:
+        description: The total count of records returned.
+        type: integer
+      currentPageToken:
+        description: The token for the current page of records.
+        type: string
+      currentPageUrl:
+        description: The URL of the current page of records.
+        type: string
+      fields:
+        description: The list of fields requested when these records were fetched.
+        type: array
+        items:
+          type: string
+      listInfoETag:
+        description: ListInfo ETag.
+        type: string
+      listReference:
+        description: The reference to the list that contains these records.
+        type: ListReferenceRepresentation
+      nextPageToken:
+        description: The token for the next page of records.
+        type: string | nil # TODO: "nil" union hand rolled
+      nextPageUrl:
+        description: The URL of the next page of records
+        type: string | nil # TODO: "nil" union hand rolled
+      optionalFields:
+        description: The list of optional fields requested when these records were fetched.
+        type: array
+        items:
+          type: string
+      pageSize:
+        description: The page size requested when these records were fetched.
+        type: integer
+      previousPageToken:
+        description: The token for the previous page of records.
+        type: string | nil # TODO: "nil" union hand rolled
+      previousPageUrl:
+        description: The URL of the previous page of records.
+        type: string | nil # TODO: "nil" union hand rolled
+      records:
+        description: List data.
+        type: array
+        items:
+          type: RecordRepresentation
+      sortBy:
+        description: The sortBy field requested when these records were fetched.
+        type: string[] | nil # TODO: hand rolled
+        (oas-collectionFormat): csv # TODO: hand-rolled
+  ListRecordCollectionRepresentation212:
+    description: ListRecordCollectionRepresentation212
+    discriminator: ''
+    type: object
+    properties: {}
+  ListReferenceRepresentation:
+    description: ListReferenceRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      id:
+        description: List view id.
+        type: string | nil # TODO: "nil" union hand rolled
+      listViewApiName:
+        description: The list view's api name.  E.g. "AllAccounts".
+        type: string | nil # TODO: "nil" union hand rolled
+      objectApiName:
+        description: Entity API name for list view.
+        type: string
+      type:
+        description: Type of the list view.
+        type: string
+  ListUiRepresentation:
+    description: ListUiRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      info:
+        description: List info.
+        type: ListInfoRepresentation
+      records:
+        description: List data.
+        type: ListRecordCollectionRepresentation
+  ListUiRepresentation212:
+    description: ListUiRepresentation212
+    discriminator: ''
+    type: object
+    properties:
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+  ListUserPreferenceInputRepresentation:
+    description: Representation of user preferences info for a List.
+    type: object
+    properties:
+      columnWidths:
+        description: Column width preferences.  -1 indicates default width.
+        type: object
+        properties:
+          //:
+            type: integer
+      columnWrap:
+        description: Column wrapping preferences.  True indicates text wrapping is enabled.
+        type: object
+        properties:
+          //:
+            type: boolean
+  ListUserPreferenceRepresentation:
+    description: ListUserPreferenceRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      columnWidths:
+        description: Column width preferences for the list view.
+        type: object
+        properties:
+          //:
+            type: integer
+      columnWrap:
+        description: Column wrapping preferences for the list view.
+        type: object
+        properties:
+          //:
+            type: boolean
+  ListViewSummaryCollectionRepresentation:
+    description: ListView Summary Collection Representation
+    discriminator: ''
+    type: object
+    properties:
+      count:
+        description: The total count of list views returned.
+        type: integer
+      currentPageToken:
+        description: The pageToken of the current page of list views.
+        type: string
+      currentPageUrl:
+        description: The URL of the current page of list views.
+        type: string
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      lists:
+        description: Collection  of ListViewSummaryRepresentations
+        type: array
+        items:
+          type: ListViewSummaryRepresentation
+      nextPageToken:
+        description: The pageToken of the next page of list views.
+        type: string | nil # TODO: "nil" union hand rolled
+      nextPageUrl:
+        description: The URL of the next page of list views
+        type: string | nil # TODO: "nil" union hand rolled
+      objectApiName:
+        description: The objectApiName given in the URL.
+        type: string
+      pageSize:
+        description: The pageSize given in the query parameter.  If no pageSize is provided, this contains the default value used.
+        type: integer
+      previousPageToken:
+        description: The pageToken of the previous page of list views.
+        type: string | nil # TODO: "nil" union hand rolled
+      previousPageUrl:
+        description: The URL of the previous page of list views.
+        type: string | nil # TODO: "nil" union hand rolled
+      queryString:
+        description: The queryString given in the query parameter.  If no queryString is provided, this returns null.
+        type: string | nil # TODO: "nil" union hand rolled
+      recentListsOnly:
+        description: The recentListsOnly value from the query parameter.  If recentListsOnly is not provided, this returns the default value used (false).
+        type: boolean
+  ListViewSummaryRepresentation:
+    description: List View Summary Representation
+    discriminator: ''
+    type: object
+    properties:
+      apiName:
+        description: The list view's object API name.
+        type: string
+      id:
+        description: Id of the list view.
+        type: string
+      label:
+        description: List view's label.
+        type: string
+      listUiUrl:
+        description: List view ui url.
+        type: string
+  LocationFieldRepresentation:
+    description: Represents a record field's complex location value.
+    discriminator: ''
+    type: object
+    properties:
+      latitude:
+        description: Gets the latitude of the location. This value maybe null if both latitude and longitude are null.
+        type: number
+        format: double
+      longitude:
+        description: Gets the longitude of the location. This value maybe null if both latitude and longitude are null.
+        type: number
+        format: double
+  LookupValuesRepresentation:
+    description: Search results for a given lookup field, organized by type.
+    discriminator: ''
+    type: object
+    properties:
+      lookupResults:
+        description: Search results for a given lookup field, organized by type.
+        type: object
+        properties:
+          //:
+            type: RecordCollectionRepresentation
+  MatchRepresentation:
+    description: 'Representation of group of possible matches '
+    discriminator: ''
+    type: object
+    properties:
+      duplicateResultInfos:
+        description: Map of duplicate rule name to DuplicateResultInfo.
+        type: object
+        properties:
+          //:
+            type: DuplicateResultInfoRepresentation
+      objectApiName:
+        description: The object's API name.
+        type: string
+      recordIds:
+        description: List of RecordId's with matching rule.
+        type: array
+        items:
+          type: string
+  MatchResultInfoRepresentation:
+    description: Match Result Info
+    discriminator: ''
+    type: object
+    properties:
+      recordIds:
+        description: List of recordIds matched.
+        type: array
+        items:
+          type: string
+      rule:
+        description: Name of Match rule.
+        type: string
+  MatchResultRepresentation:
+    description: Duplicate rule match.
+    discriminator: ''
+    type: object
+    properties:
+      apiName:
+        description: Object API name.
+        type: string
+      isAllowSave:
+        description: Indicates whether the duplicate rule will allow a duplicate to be saved.
+        type: boolean
+      matchRecordIds:
+        description: IDs of the matching records.
+        type: array
+        items:
+          type: string
+      matchRule:
+        description: The developer name of the matching duplicate rule.
+        type: string
+      objectLabel:
+        description: Object label.
+        type: string
+      objectLabelPlural:
+        description: Object plural label.
+        type: string
+      themeInfo:
+        description: Theme info.
+        type: ThemeInfoRepresentation
+  MatchRuleRepresentation:
+    description: 'Match Rule for dedupe configuration '
+    discriminator: ''
+    type: object
+    properties:
+      matchEngine:
+        description: Name of Matching Engine.
+        type: string
+      matchFields:
+        description: Fields used for current MatchRule.
+        type: array
+        items:
+          type: string
+      name:
+        description: Name of the current MatchRule.
+        type: string
+      objectApiName:
+        description: Entity Type of Match Rule.
+        type: string
+  NavItemInputRepresentation:
+    description: A navigation item.
+    type: object
+    properties:
+      id:
+        description: The nav item's id.
+        type: string
+      label:
+        description: The nav item's label.
+        type: string
+      pageReference:
+        description: The nav item's page reference.
+        type: object
+  NavItemRepresentation:
+    description: Metadata for a navitem (tab)
+    discriminator: ''
+    type: object
+    properties:
+      availableInClassic:
+        description: Is this tab available for salesforce classic
+        type: boolean
+      availableInLightning:
+        description: Is this tab available for lightning
+        type: boolean
+      color:
+        description: Tab color of the tab
+        type: string
+      content:
+        description: Launch url for this tab
+        type: string | nil # TODO: "nil" union hand rolled
+      custom:
+        description: Boolean specifying if this tab is a custom tab
+        type: boolean
+      developerName:
+        description: Developer name of the tab
+        type: string
+      iconUrl:
+        description: URL for the tab icon
+        type: string
+      id:
+        description: ID of the nav item
+        type: string | nil # TODO: "nil" union hand rolled
+      itemType:
+        description: Nav menu item type
+        type: string
+      label:
+        description: Label of the tab
+        type: string
+      objectApiName:
+        description: Api name of the object corresponding to this tab
+        type: string
+      objectLabel:
+        description: The label of the associated object, if applicable.
+        type: string | nil # TODO: "nil" union hand rolled
+      objectLabelPlural:
+        description: The plural label of the associated object, if applicable.
+        type: string | nil # TODO: "nil" union hand rolled
+      pageReference:
+        description: Corresponding page reference for the nav item
+        type: PageReferenceRepresentation
+      standardType:
+        description: Standard type
+        type: string | nil # TODO: "nil" union hand rolled
+  NavItemsInputRepresentation:
+    description: An ordered list of nav items
+    type: object
+    properties:
+      navItems:
+        description: An ordered list of nav items
+        type: array
+        items:
+          type: object
+  NavItemsRepresentation:
+    description: An ordered lists of nav items.
+    discriminator: ''
+    type: object
+    properties:
+      currentPageUrl:
+        description: URL to the current page of nav items.
+        type: string
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      navItems:
+        description: An ordered list of nav items.
+        type: array
+        items:
+          type: NavItemRepresentation
+      nextPageUrl:
+        description: URL to the next page of of nav items.
+        type: string
+  ObjectInfoDirectoryEntryRepresentation:
+    description: Entry for an object info within the directory of objects.
+    discriminator: ''
+    type: object
+    properties:
+      apiName:
+        description: The API name of the object info corresponding to this entry.
+        type: string
+      keyPrefix:
+        description: The key prefix for IDs of this object.
+        type: string
+      label:
+        description: The label of the object info corresponding to this entry.
+        type: string
+      labelPlural:
+        description: The plural label of the object info corresponding to this entry.
+        type: string
+      nameFields:
+        description: List of the API names of the fields used to identify the name field for standard and custom objects. Typically there is one name field per object, except where FirstName and LastName fields are used.
+        type: array
+        items:
+          type: string
+      objectInfoUrl:
+        description: The URL to retrieve the full object info corresponding to this entry.
+        type: string
+  ObjectInfoDirectoryRepresentation:
+    description: Directory of objects that can be used within UI API end-points.
+    discriminator: ''
+    type: object
+    properties:
+      objects:
+        description: The object info entries corresponding to the objects that can be used within UI API.
+        type: object
+        properties:
+          //:
+            type: ObjectInfoDirectoryEntryRepresentation
+  ObjectInfoRepresentation:
+    description: Object metadata.
+    discriminator: ''
+    type: object
+    properties:
+      apiName:
+        description: The object API name.
+        type: string
+      childRelationships:
+        description: Child relationships for the object.
+        type: array
+        items:
+          type: ChildRelationshipRepresentation
+      createable:
+        description: Indicates whether the object can be created.
+        type: boolean
+      custom:
+        description: Indicates whether the object is custom.
+        type: boolean
+      defaultRecordTypeId:
+        description: The ID for the default record type for this object, if any. Null if there is none, or only a master type.
+        type: string | nil # TODO: "nil" union hand rolled
+      deletable:
+        description: Indicates whether the object can be deleted.
+        type: boolean
+      dependentFields:
+        description: This is a nested map of field and its dependents. Fields that neither have any controllers nor dependents are not a part of this map
+        type: object
+        properties:
+          //:
+            type: object
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      feedEnabled:
+        description: Indicates whether the object may have feeds.
+        type: boolean
+      fields:
+        description: A map of field API name to information about the field. This map only contains fields relevant to the requested layout and mode.
+        type: object
+        properties:
+          //:
+            type: FieldRepresentation
+      keyPrefix:
+        description: The key prefix for IDs of this object.
+        type: string | nil # TODO: "nil" union hand rolled
+      label:
+        description: The object display label.
+        type: string
+      labelPlural:
+        description: The plural form of the object display label.
+        type: string
+      layoutable:
+        description: Indicates whether the object can have a layout.
+        type: boolean
+      mruEnabled:
+        description: Indicates whether the object may appear in Most Recently Used lists.
+        type: boolean
+      nameFields:
+        description: List of the API names of the fields used to identify the name field for standard and custom objects. Typically there is one name field per object, except where FirstName and LastName fields are used.
+        type: array
+        items:
+          type: string
+      queryable:
+        description: Indicates whether the object can be queried by the context user.
+        type: boolean
+      recordTypeInfos:
+        description: A map of record type IDs to information about the record type. The user need not have access to all the returned record types to see them here.
+        type: object
+        properties:
+          //:
+            type: RecordTypeInfoRepresentation
+      searchable:
+        description: Indicates whether the object can be searched.
+        type: boolean
+      themeInfo:
+        description: Theme information for the object.
+        type: ThemeInfoRepresentation | nil # TODO: "nil" union hand rolled
+      updateable:
+        description: Indicates whether the object can be updated.
+        type: boolean
+  OperationInputRepresentation:
+    description: An operation that can to be executed within aggregate
+    type: object
+    properties:
+      httpHeaders:
+        description: The HTTP headers of the operation to be executed
+        type: object
+        properties:
+          //:
+            type: string
+      referenceId:
+        description: The ID of the operation that can be used in references
+        type: string
+      url:
+        description: The URL of the operation to executed
+        type: string
+  OperationResponseRepresentation:
+    description: The output of an operation execution within aggregate.
+    discriminator: ''
+    type: object
+    properties:
+      body:
+        description: The body of the operation
+        type: object
+      httpHeaders:
+        description: The HTTP headers of the operation
+        type: object
+        properties:
+          //:
+            type: string
+      httpStatusCode:
+        description: The HTTP status code of the operation
+        type: integer
+      referenceId:
+        description: The ID that was given for the operation
+        type: string
+      url:
+        description: The url for the operation
+        type: string
+  OpportunityStagePicklistValueAttributesRepresentation:
+    description: Additional picklist value attributes for opportunity stages.
+    discriminator: ''
+    discriminatorValue: OpportunityStage #TODO: hand rolled
+    type: AbstractPicklistValueAttributesRepresentation
+    properties:
+      closed:
+        description: Indicates whether this opportunity stage value represents a closed opportunity. Multiple opportunity stage values can represent a closed opportunity. For more info, see the doc for the OpportunityStage standard object.
+        type: boolean
+      defaultProbability:
+        description: The default percentage estimate of the confidence in closing a specific opportunity for this opportunity stage value. May be null if forecasting is not enabled for the org. For more info, see the doc for the OpportunityStage standard object.
+        type: number
+        format: double
+      forecastCategoryName:
+        description: The default forecast category value for this opportunity stage value. May be null if forecasting is not enabled for the org. For more info, see the doc for the OpportunityStage standard object.
+        type: string
+      won:
+        description: Indicates whether this opportunity stage value represents a won opportunity. Multiple opportunity stage values can represent a won opportunity. For more info, see the doc for the OpportunityStage standard object.
+        type: boolean
+  PageReferenceInputRepresentation:
+    description: A page reference.
+    type: object
+    properties:
+      attributes:
+        description: The page reference's attributes.
+        type: object
+        properties:
+          //:
+            type: object
+      state:
+        description: The page reference's state.
+        type: object
+        properties:
+          //:
+            type: object
+      type:
+        description: The page reference's type.
+        type: string
+  PageReferenceRepresentation:
+    description: A page reference.
+    discriminator: ''
+    type: object
+    properties:
+      attributes:
+        description: Values for each attribute specified by the PageDefinition.
+        type: object
+        properties:
+          //:
+            type: any # TODO: "any" hand rolled
+      state:
+        description: Optional additional parameters that are not integral to the resolution of the reference.
+        type: object
+        properties:
+          //:
+            type: object
+      type:
+        description: API name of the corresponding PageDefinition.
+        type: string
+  PhotoMetadataRepresentation:
+    description: Represents an metadata of an avatar associated to a record.
+    discriminator: ''
+    type: object
+    properties:
+      companyBluemasterId:
+        description: The ID of the response that this avatar is associated to.
+        type: string | nil # TODO: "nil" union hand rolled
+      responseId:
+        description: The ID of the bluemasterID that this avatar is associated to.
+        type: string | nil # TODO: "nil" union hand rolled
+  PhotoRecordAvatarRepresentation:
+    description: Represents an avatar associated to a Record
+    discriminator: ''
+    discriminatorValue: Photo # TODO Hand rolled
+    type: AbstractRecordAvatarRepresentation
+    properties:
+      backgroundColor:
+        description: Retrieve the background color for the photo, if known, otherwise this will be null.
+        type: string | nil # TODO: "nil" union hand rolled
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      height:
+        description: Retrieve the height of the photo in pixels, if known, otherwise this will be null.
+        type: string | nil # TODO: hand rolled. Generated RAML defined as integer with format int64
+      photoMetadata:
+        description: The photo metadata for the image
+        type: PhotoMetadataRepresentation
+      photoUrl:
+        description: Retrieve the URL location of the photo.
+        type: string
+      provider:
+        description: The provider of the image
+        type: string | nil # TODO: "nil" union hand rolled
+      width:
+        description: Retrieve the width of the photo in pixels, if known, otherwise this will be null.
+        type: string | nil # TODO: hand rolled. Generated RAML defined as integer with format int64
+  PicklistValueRepresentation:
+    description: A single picklist value.
+    discriminator: ''
+    type: object
+    properties:
+      attributes:
+        description: For picklist values representing the status of a lead or an opportunity's stage, this value will contain additional attributes to help consumers understand the meaning of the value. Depending on the PicklistValueType this could be populated with information about a LeadStatus or an OpportunityStage. For any other PicklistValueType this property will be null.
+        type: AbstractPicklistValueAttributesRepresentation | nil # TODO: "nil" union hand rolled
+      label:
+        description: The displayable value of the picklist to use in a UI.
+        type: string
+      validFor:
+        description: If this picklist is a dependent picklist, this will be the controlling value indexes for which this value is valid. If this is an independent picklist, this list will be empty.
+        type: array
+        items:
+          type: integer
+      value:
+        description: The value of the picklist to use in the API.
+        type: string
+  PicklistValuesCollectionRepresentation:
+    description: Picklist values for multiple picklist fields and scoped to a record type.
+    discriminator: ''
+    type: object
+    properties:
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      picklistFieldValues:
+        description: This contains a map of fieldName to PicklistValuesRepresentation for all picklist fields. There would be no entry for non picklistFields in this map
+        type: object
+        properties:
+          //:
+            type: PicklistValuesRepresentation
+  PicklistValuesRepresentation:
+    description: Picklist values for a field and scoped to a record type.
+    discriminator: ''
+    type: object
+    properties:
+      controllerValues:
+        description: |-
+          If a picklist is an independent picklist, this map will be empty. If it is a dependent picklist, then this map will contain the following:
+          Controlling field is a picklist:
+          Picklist value -> value index
+          Controlling field is a boolean:
+          If the controlling field is a boolean, then 0 will indicate false and 1 will indicate true. Values in the map will be:
+          "false": 0
+          "true": 1.
+        type: object
+        properties:
+          //:
+            type: integer
+      defaultValue:
+        description: The default value for the picklist, or null if there isn't one.
+        type: PicklistValueRepresentation | nil # TODO: "nil" union hand rolled
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      url:
+        description: A self-reference URL back to the API that can be used to retrieve this payload.
+        type: string
+      values:
+        description: A list of the applicable values for this object-record-type-field combination.
+        type: array
+        items:
+          type: PicklistValueRepresentation
+  PlatformActionRepresentation:
+    description: Record.
+    discriminator: ''
+    type: object
+    properties:
+      actionListContext:
+        description: PlatformActionContextEnum
+        type: string
+      actionTarget:
+        description: The URL to invoke or describe the action when the action is invoked. If the action is a standard button overridden by a Visualforce page, the ActionTarget returns the URL of the Visualforce page, such as /apex/pagename.
+        type: string | nil # TODO: "nil" union hand rolled
+      actionTargetType:
+        description: The type of the target when this action is triggered. Valid values are:Describe -- applies to actions with a user interface, such as quick actionsInvoke -- applies to actions with no user interface, such as action links or invocable actionsVisualforce -- applies to standard buttons overridden by a Visualforce page
+        type: string | nil # TODO: "nil" union hand rolled
+      apiName:
+        description: The action's object API name.
+        type: string
+      externalId:
+        description: 'The external Id contains the action assoicated info. For Quick
+          Action, the format is: OrgId:SourceObject::Context:deviceFormat::QuickActionDefinitionId,
+          i.e.:00Dxx0000001gGh:x01xx0000000007AAA::Record:Phone:09Dxx00000000B6For
+          Standard Action,OrgId:SourceObject::Context:deviceFormat::StandardButton:ApiName'
+        type: string
+      iconUrl:
+        description: The URL of the action’s icon image.
+        type: string | nil # TODO: "nil" union hand rolled
+      id:
+        description: The ID of this Platform Action Record.
+        type: string
+      isMassAction:
+        description: Whether the action is massAction.
+        type: string
+      label:
+        description: The label of the action.
+        type: string
+      primaryColor:
+        description: Hex Color Code, such as 7F8DE1
+        type: string | nil # TODO: "nil" union hand rolled
+      relatedListRecordId:
+        description: Represents the ID of a record in an object’s related list.
+        type: string | nil # TODO: "nil" union hand rolled
+      relatedSourceObject:
+        description: When the ActionListContext is RelatedList or RelatedListRecord, this field represents the API name of the related list to which the action belongs.
+        type: string | nil # TODO: "nil" union hand rolled
+      section:
+        description: 'Which section the action appears in a page. The value can be:
+          Page, ActivityComposer, CollaborateComposer, SingleActionLinks'
+        type: string | nil # TODO: "nil" union hand rolled
+      sourceObject:
+        description: The object the action belongs to, either EntityApiName or recordId depending on the endpoints.
+        type: string
+      subtype:
+        description: The subtype of the action. For quick actions, the subtype is QuickActionType Enum value. For custom buttons, the subtype is WebLinkTypeEnum. For action links, subtypes are Api, ApiAsync, Download, and Ui. Standard buttons and productivity actions have no subtype.
+        type: string | nil # TODO: "nil" union hand rolled
+      targetObject:
+        description: Target Object for the action
+        type: string | nil # TODO: "nil" union hand rolled
+      targetUrl:
+        description: Target URL for Custom Button Actions
+        type: string | nil # TODO: "nil" union hand rolled
+      type:
+        description: The type of the action defined in PlatformActionTypeEnum
+        type: string
+  PrimingComponentsRepresentation:
+    description: Priming Components Representation.
+    discriminator: ''
+    type: object
+    properties:
+      componentDefs:
+        description: server generated component definitions
+        type: array
+        items:
+          type: string
+      componentDescs:
+        description: 'component descriptor : uid map'
+        type: object
+        properties:
+          //:
+            type: string
+      gvpValues:
+        description: GVP values (Global and Label)
+        type: object
+        properties:
+          //:
+            type: object
+      moduleDefs:
+        description: server generated module definitions
+        type: array
+        items:
+          type: string
+      wireData:
+        description: wire data.
+        type: array
+        items:
+          type: WireDataRepresentation
+  PrimingGeneratedModuleRepresentation:
+    description: Priming generated module information.
+    discriminator: ''
+    type: object
+    properties:
+      adg:
+        description: Abstract dependency graph for the generated module.
+        type: string
+      descriptor:
+        description: Generated module descriptor.
+        type: string
+  PrimingRecordCollectionRepresentation:
+    description: Priming Record Collection Representation.
+    discriminator: ''
+    type: object
+    properties:
+      primingRecords:
+        description: Collection of PrimingRecordRepresentations. Keyed on objectApiName and then record type ID.
+        type: object
+        properties:
+          //:
+            type: object
+            properties:
+              //:
+                type: array
+                items:
+                  type: PrimingRecordRepresentation
+  PrimingRecordRepresentation:
+    description: Priming record information.
+    discriminator: ''
+    type: object
+    properties:
+      id:
+        description: The ID of this record.
+        type: string
+      systemModstamp:
+        description: The systemModstamp of the record.
+        type: string
+  PrimingRoutesCollectionRepresentation:
+    description: Priming Routes Collection Representation.
+    discriminator: ''
+    type: object
+    properties:
+      flexipageRoutes:
+        description: Collection of Routes. Keyed on objectApiName and then record type ID.
+        type: object
+        properties:
+          //:
+            type: object
+            properties:
+              //:
+                type: string
+  RecordCollectionRepresentation:
+    description: Record Collection Representation.
+    discriminator: ''
+    type: object
+    properties:
+      count:
+        description: The total count of records returned.
+        type: integer
+      currentPageToken:
+        description: The token of the current page of records.
+        type: string | nil # TODO: "nil" union hand rolled
+      currentPageUrl:
+        description: The URL of the current page of records.
+        type: string
+      nextPageToken:
+        description: The token of the next page of records.
+        type: string | nil # TODO: "nil" union hand rolled
+      nextPageUrl:
+        description: The URL of the next page of records
+        type: string | nil # TODO: "nil" union hand rolled
+      previousPageToken:
+        description: The token of the previous page of records.
+        type: string | nil # TODO: "nil" union hand rolled
+      previousPageUrl:
+        description: The URL of the previous page of records.
+        type: string | nil # TODO: "nil" union hand rolled
+      records:
+        description: Collection  of RecordRepresentations which the relation resolves to
+        type: array
+        items:
+          type: RecordRepresentation
+  RecordDefaultsRepresentation:
+    description: Record defaults.
+    discriminator: ''
+    type: object
+    properties:
+      layout:
+        description: Record layout.
+        type: RecordLayoutRepresentation | nil # TODO: "nil" union hand rolled
+      objectInfos:
+        description: Object metadata.
+        type: object
+        properties:
+          //:
+            type: ObjectInfoRepresentation
+      record:
+        description: Pre-populated record data.
+        type: RecordCreateDefaultRecordRepresentation # TODO: hand rolled
+  RecordExceptionErrorRepresentation:
+    description: Record exception error.
+    discriminator: ''
+    type: object
+    properties:
+      constituentField:
+        description: Constituent field API name. May be null if no field applies. Usually matches field name but for compound fields will be the constituent field name.
+        type: string
+      duplicateRecordError:
+        description: Information about possible duplicate records. May be populated when the status code is DUPLICATES_DETECTED.
+        type: DuplicateRecordErrorRepresentation
+      errorCode:
+        description: Error status code.
+        type: string
+      field:
+        description: Field API name. May be null if no field applies.
+        type: string
+      fieldLabel:
+        description: Field label. May be null if no field applies.
+        type: string
+      message:
+        description: Error message.
+        type: string
+  RecordExceptionRepresentation:
+    description: Record exception.
+    discriminator: ''
+    type: object
+    properties:
+      errors:
+        description: General errors.
+        type: array
+        items:
+          type: RecordExceptionErrorRepresentation
+      fieldErrors:
+        description: Field-specific errors.
+        type: object
+        properties:
+          //:
+            type: array
+            items:
+              type: RecordExceptionErrorRepresentation
+  RecordInputRepresentation:
+    description: Description of a record input.
+    type: object
+    properties:
+      allowSaveOnDuplicate:
+        description: Set allowSaveOnDuplicate param
+        type: boolean
+        # This property is actually optional.
+        required: false
+      apiName:
+        description: Object API name.
+        type: string
+        # Inline edit takes advantage of the fact that the UI API doesn't check if the apiName
+        # is set properly.
+        # https://codesearch.data.sfdc.net/source/xref/app_main_core/app/main/core/ui-force-components/modules/force/recordUiUtils/recordDraft.class.js#136
+        required: false
+      fields:
+        description: Field values. When this representation is deserialized from JSON, the values will be typed as JsonNode, delaying full deserialization until the resource executes, which knows the expected data types. In the case of invocation through CiJ directly, the field values should be typed as the expected data types.
+        type: object
+        properties:
+          //:
+            type: string | integer | nil | boolean # TODO: hand rolled
+  RecordLayoutComponentRepresentation:
+    description: Concrete record layout component.
+    discriminator: ''
+    type: AbstractRecordLayoutComponentRepresentation
+    properties: {}
+  RecordLayoutItemRepresentation:
+    description: Record layout item.
+    discriminator: ''
+    type: object
+    properties:
+      editableForNew:
+        description: Indicates whether the item may be edited on create.
+        type: boolean
+      editableForUpdate:
+        description: Indicates whether the item may be edited on update.
+        type: boolean
+      label:
+        description: Text label for the item.
+        type: string
+      layoutComponents:
+        description: Components that make up the item.
+        type: array
+        items:
+          type: AbstractRecordLayoutComponentRepresentation
+      lookupIdApiName:
+        description: TODO
+        type: string | nil # TODO: "nil" union hand rolled
+      required:
+        description: Indicates whether field is required in Layout
+        type: boolean
+      sortable:
+        description: Indicates whether the item is sortable.
+        type: boolean
+  RecordLayoutRepresentation:
+    description: Record layout.
+    discriminator: ''
+    type: object
+    properties:
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      id:
+        description: Layout ID.
+        type: string | nil # TODO: "nil" union hand rolled
+      apiName: # TODO: Hand rolled and delete me after layout endpoint is fixed
+        type: string
+      recordTypeId: # TODO: Hand rolled and delete me after layout endpoint is fixed
+        type: string
+      layoutType:
+        description: Layout type.
+        type: string
+        enum:
+          - Compact
+          - Full
+          - Mdp
+      mode:
+        description: Mode.
+        type: string
+        enum:
+          - Create
+          - Edit
+          - View
+      sections:
+        description: Layout sections.
+        type: array
+        items:
+          type: RecordLayoutSectionRepresentation
+  RecordLayoutRowRepresentation:
+    description: Record layout row.
+    discriminator: ''
+    type: object
+    properties:
+      layoutItems:
+        description: The items in this row, from left to right. Might not extend to the last column.
+        type: array
+        items:
+          type: RecordLayoutItemRepresentation
+  RecordLayoutSectionRepresentation:
+    description: Record layout section.
+    discriminator: ''
+    type: object
+    properties:
+      collapsible:
+        description: Indicates whether the section may be collapsed.
+        type: boolean
+      columns:
+        description: Number of columns in the section.
+        type: integer
+      heading:
+        description: Heading text for the section.
+        type: string | nil # TODO: "nil" union hand rolled
+      id:
+        description: Section ID.
+        type: string | nil # TODO: "nil" union hand rolled
+      layoutRows:
+        description: The rows in the section.
+        type: array
+        items:
+          type: RecordLayoutRowRepresentation
+      rows:
+        description: Number of rows in the section.
+        type: integer
+      useHeading:
+        description: Indicates whether the heading text is expected to be displayed.
+        type: boolean
+  RecordLayoutSectionUserStateInputRepresentation:
+    description: Represents the user state for a record layout section.
+    type: object
+    properties:
+      collapsed:
+        description: Indicates whether the section is collapsed.
+        type: boolean
+  RecordLayoutSectionUserStateRepresentation:
+    description: Record layout section user state.
+    discriminator: ''
+    type: object
+    properties:
+      collapsed:
+        description: Indicates whether the section should initially be displayed as collapsed.
+        type: boolean
+      id:
+        description: Section ID.
+        type: string
+  RecordLayoutUserStateInputRepresentation:
+    description: Represents the user state for a record layout.
+    type: object
+    properties:
+      sectionUserStates:
+        description: Indicates section user states to set. Keyed by section ID.
+        type: object
+        properties:
+          //:
+            type: object # TODO: update to RecordLayoutSectionUserStateInputRepresentation when raml compiler is fixed.
+  RecordLayoutUserStateRepresentation:
+    description: Record layout user state.
+    discriminator: ''
+    type: object
+    properties:
+      id:
+        description: Layout ID.
+        type: string
+      sectionUserStates:
+        description: Section user states, keyed on section ID.
+        type: object
+        properties:
+          //:
+            type: RecordLayoutSectionUserStateRepresentation
+      apiName: # TODO: Hand rolled and delete me after layout endpoint is fixed
+        type: string
+      recordTypeId: # TODO: Hand rolled and delete me after layout endpoint is fixed
+        type: string
+      layoutType: # TODO: Hand rolled and delete me after layout endpoint is fixed
+        description: Layout type.
+        type: string
+      mode: # TODO: Hand rolled and delete me after layout endpoint is fixed
+        description: Mode.
+        type: string
+  RecordRepresentation:
+    description: Record.
+    discriminator: ''
+    type: object
+    properties:
+      apiName:
+        description: The record's object API name.
+        type: string
+      childRelationships:
+        description: The child relationship data for this record
+        type: object
+        properties:
+          //:
+            type: RecordCollectionRepresentation
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      fields:
+        description: The field data for this record, matching the requested layout and mode.
+        type: object
+        properties:
+          //:
+            type: FieldValueRepresentation
+      id:
+        description: The ID of this record.
+        type: string
+      lastModifiedById:
+        description: The lastModifiedById of the record.
+        type: string | nil # TODO: "nil" union hand rolled
+      lastModifiedDate:
+        description: The lastModifiedDate of the record.
+        type: string | nil # TODO: "nil" union hand rolled
+      recordTypeId:
+        description: The RecordTypeId of the record.
+        type: string | nil # TODO: "nil" union hand rolled
+      recordTypeInfo:
+        description: The record type info for this record, if any.
+        type: RecordTypeInfoRepresentation | nil # TODO: "nil" union hand rolled
+      systemModstamp:
+        description: The systemModstamp of the record.
+        type: string | nil # TODO: "nil" union hand rolled
+      weakEtag:
+        description: Record Version like field, readOnly, handy while caching and comparing versions of records.
+        type: integer
+        (oas-readOnly): true
+  RecordTypeInfoRepresentation:
+    description: Record type.
+    discriminator: ''
+    type: object
+    properties:
+      available:
+        description: Indicates whether this record type is available to the context user when creating a new record.
+        type: boolean
+      defaultRecordTypeMapping:
+        description: Indicates whether this is the default record type mapping for the associated object.
+        type: boolean
+      master:
+        description: Whether this is the master record type. The master record type is the default record type that’s used when a record has no custom record type associated with it.
+        type: boolean
+      name:
+        description: The record's object API name.
+        type: string
+      recordTypeId:
+        description: The ID of this record type.
+        type: string
+  RecordUiRepresentation:
+    description: Record ui.
+    discriminator: ''
+    type: object
+    properties:
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      layoutUserStates:
+        description: Map of layout ID -> user state.
+        type: object
+        properties:
+          //:
+            type: RecordLayoutUserStateRepresentation
+      layouts:
+        description: Record layout.
+        type: object
+        properties:
+          //:
+            type: object
+            properties:
+              //:
+                type: object
+                properties:
+                  //:
+                    type: object
+                    properties:
+                      //:
+                        type: RecordLayoutRepresentation
+      objectInfos:
+        description: Object metadata.
+        type: object
+        properties:
+          //:
+            type: ObjectInfoRepresentation
+      records:
+        description: Record data.
+        type: object
+        properties:
+          //:
+            type: RecordRepresentation
+  ReferenceToInfoRepresentation:
+    description: Information about a reference field's referenced types and the name field names of those types.
+    discriminator: ''
+    type: object
+    properties:
+      apiName:
+        description: The object API name of a type being referenced in a relationship.
+        type: string
+      nameFields:
+        description: The names of the name fields for this object type. Combined with the relationship name, you can determine how to query this type's name fields, e.g. Parent.Name. Typically there is one name field per object, except where FirstName and LastName fields are used.
+        type: array
+        items:
+          type: string
+  RelatedListColumnRepresentation:
+    description: RelatedListColumnRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      fieldApiName:
+        description: API name for the field.
+        type: string
+      label:
+        description: Label of the field.
+        type: string
+      lookupId:
+        description: The lookupId for the column when the field is a reference, otherwise null.
+        type: string | nil # TODO: "nil" union hand rolled
+      sortable:
+        description: Whether the list column is sortable.
+        type: boolean
+  RelatedListInfoRepresentation:
+    description: RelatedListInfoRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      cloneable:
+        description: Indicates whether the listview can be cloned.
+        type: boolean
+      createable:
+        description: Indicates whether a new listview for this listview's SObject can be created.
+        type: boolean
+      deletable:
+        description: Indicates whether the listview can be deleted.
+        type: boolean
+      displayColumns:
+        description: All display columns for this list view.
+        type: array
+        items:
+          type: RelatedListColumnRepresentation
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      filterLogicString:
+        description: This is the filter logic such as "(1 OR 2) and 3".  Indexes are 1-based.
+        type: string
+      filteredByInfo:
+        description: Describes how the list view is filtered.
+        type: array
+        items:
+          type: ListFilterByInfoRepresentation
+      label:
+        description: The list view's display label.  E.g. "All Accounts".
+        type: string
+      listReference:
+        description: An object representing the identity of the list.
+        type: RelatedListReferenceRepresentation
+      orderedByInfo:
+        description: Describes how records are ordered in this list view.
+        type: array
+        items:
+          type: ListOrderByInfoRepresentation
+      updateable:
+        description: Indicates whether the listview can be updated.
+        type: boolean
+      userPreferences:
+        description: All user preferences for this list view.
+        type: ListUserPreferenceRepresentation
+      visibility:
+        description: The list view's visibility.
+        type: string
+        enum:
+          - Private
+          - Public
+          - Shared
+      visibilityEditable:
+        description: Indicates whether the visibility of the listview can be edited.
+        type: boolean
+  RelatedListRecordCollectionRepresentation:
+    description: RelatedListRecordCollectionRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      count:
+        description: The total count of records returned.
+        type: integer
+      currentPageToken:
+        description: The token for the current page of records.
+        type: string
+      currentPageUrl:
+        description: The URL of the current page of records.
+        type: string | nil # TODO: "nil" union hand rolled
+      fields:
+        description: The list of fields requested when these records were fetched.
+        type: array
+        items:
+          type: string
+      listInfoETag:
+        description: RelatedListInfo ETag.
+        type: string | nil # TODO: "nil" union hand rolled
+      listReference:
+        description: The reference to the related list that contains these records.
+        type: RelatedListReferenceRepresentation
+      nextPageToken:
+        description: The token for the next page of records.
+        type: string | nil # TODO: "nil" union hand rolled
+      nextPageUrl:
+        description: The URL of the next page of records
+        type: string | nil # TODO: "nil" union hand rolled
+      optionalFields:
+        description: The list of optional fields requested when these records were fetched.
+        type: array
+        items:
+          type: string
+      pageSize:
+        description: The page size requested when these records were fetched.
+        type: integer | nil # TODO: "nil" union hand rolled
+      previousPageToken:
+        description: The token for the previous page of records.
+        type: string | nil # TODO: "nil" union hand rolled
+      previousPageUrl:
+        description: The URL of the previous page of records.
+        type: string | nil # TODO: "nil" union hand rolled
+      records:
+        description: Related list data.
+        type: array
+        items:
+          type: RecordRepresentation
+      sortBy:
+        description: The sortBy field requested when these records were fetched.
+        type: array
+        items:
+          type: string
+  RelatedListReferenceRepresentation:
+    description: RelatedListReferenceRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      id:
+        description: List view id.
+        type: string | nil # TODO: "nil" union hand rolled
+      inContextOfRecordId:
+        description: The parent record for a related list.
+        type: string | nil # TODO: "nil" union hand rolled
+      listViewApiName:
+        description: The list view or related list api name.  E.g. "AllAccounts" for a listview or "Contacts" for a related list.
+        type: string | nil # TODO: "nil" union hand rolled
+      objectApiName:
+        description: Entity API name for list view.
+        type: string | nil # TODO: "nil" union hand rolled
+      parentObjectApiName:
+        description: The object API name for the parent of a related list.
+        type: string
+      recordTypeId:
+        description: The record type id for the parent of a related list.
+        type: string | nil # TODO: "nil" union hand rolled
+      relatedListId:
+        description: The id of the related list.
+        type: string
+      type:
+        description: Type of the list view.
+        type: string
+  RelatedListSummaryInfoCollectionRepresentation:
+    description: Information about a collection of related lists that all have the same parent type.
+    discriminator: ''
+    type: object
+    properties:
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      parentObjectApiName:
+        description: The API name of the parent object.
+        type: string
+      parentRecordTypeId:
+        description: The record type id of the parent.
+        type: string
+      relatedLists:
+        description: Summary information about the related lists.
+        type: array
+        items:
+          type: RelatedListSummaryInfoRepresentation
+  RelatedListSummaryInfoRepresentation:
+    description: RelatedListSummaryInfoRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      entityLabel:
+        description: The label for this related list's entity.
+        type: string
+      entityPluralLabel:
+        description: The plural label for this related list's entity.
+        type: string
+      fieldApiName:
+        description: The API name of the field in the child entity that links to the parent entity.
+        type: string
+      parentFieldApiName:
+        description: Points to the parent’s field name that provides the id.
+        type: string
+      relatedListId:
+        description: The id of the related list.
+        type: string
+      relatedListInfoUrl:
+        description: The URL to fetch the metadata for the related list.
+        type: string | nil # TODO: "nil" union hand rolled
+      themeInfo:
+        description: The theme info for this related list's entity.
+        type: ThemeInfoRepresentation
+  ReportLayoutComponentRepresentation:
+    description: Report record layout component.
+    discriminator: ''
+    type: AbstractRecordLayoutComponentRepresentation
+    properties:
+      cacheData:
+        description: Cache data
+        type: boolean
+      error:
+        description: Error
+        type: string
+      filter:
+        description: Filter
+        type: string
+      hideOnError:
+        description: Hide on error
+        type: boolean
+      placeholder:
+        description: Placeholder
+        type: string
+      reportId:
+        description: Report ID
+        type: string
+      showTitle:
+        description: Show title
+        type: boolean
+      size:
+        description: Size
+        type: string
+  ResourceReferenceRepresentation:
+    description: Resource reference.
+    discriminator: ''
+    type: object
+    properties:
+      categoryType:
+        description: Resource reference category type.
+        type: string
+        enum:
+          - Global
+          - Template
+          - Transform
+          - UiApi
+      config:
+        description: Config.
+        type: object
+        properties:
+          //:
+            type: object
+      groupId:
+        description: Group ID.
+        type: string
+      name:
+        description: Name.
+        type: string
+  ThemeBannerRepresentation:
+    description: A representation of a theme banner image.
+    discriminator: ''
+    type: object
+    properties:
+      fullSizeUrl:
+        description: The url of the banner image
+        type: string
+  ThemeImageRepresentation:
+    description: A representation of a theme image.
+    discriminator: ''
+    type: object
+    properties:
+      largeUrl:
+        description: The url of the large image.
+        type: string
+      mediumUrl:
+        description: The url of the medium image.
+        type: string
+      smallUrl:
+        description: The url of the small image.
+        type: string
+  ThemeInfoRepresentation:
+    description: Theme info.
+    discriminator: ''
+    type: object
+    properties:
+      color:
+        description: Color.
+        type: string
+      iconUrl:
+        description: Icon URL.
+        type: string | nil # TODO: "nil" union hand rolled
+  ThemeRecordAvatarRepresentation:
+    description: Represents an avatar associated to a Record
+    discriminator: ''
+    discriminatorValue: Theme # TODO Hand rolled
+    type: AbstractRecordAvatarRepresentation
+    properties:
+      backgroundColor:
+        description: Retrieve the background color for the theme as a six-letter hexidecimal value.
+        type: string | nil # TODO: "nil" union hand rolled
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      iconUrl:
+        description: The URL of the image for the icon.
+        type: string | nil # TODO: "nil" union hand rolled
+  ThemeRepresentation:
+    description: A representation of a theme.
+    discriminator: ''
+    type: object
+    properties:
+      brandColor:
+        description: Brand color of the theme.
+        type: string
+      brandImage:
+        description: Brand image of the theme.
+        type: ThemeImageRepresentation
+      defaultGroupBanner:
+        description: Default group banner of the theme.
+        type: ThemeBannerRepresentation
+      defaultGroupImage:
+        description: Default group image of the theme.
+        type: ThemeImageRepresentation
+      defaultPageBanner:
+        description: Default page banner of the theme.
+        type: ThemeBannerRepresentation
+      defaultUserBanner:
+        description: Default user banner of the theme.
+        type: ThemeBannerRepresentation
+      defaultUserImage:
+        description: Default user image of the theme.
+        type: ThemeImageRepresentation
+      density:
+        description: Current Density settings
+        type: string
+        enum:
+          - ViewOne
+          - ViewTwo
+      headerColor:
+        description: Header color of the theme.
+        type: string
+      linkColor:
+        description: Link color of the theme.
+        type: string
+      pageColor:
+        description: Page color of the theme.
+        type: string
+  ValidationRuleRepresentation:
+    description: Validation rule metadata.
+    discriminator: ''
+    type: object
+    properties:
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      errorDisplayField:
+        description: Field in which error message needs to be displayed
+        type: string
+      errorMessage:
+        description: Message to be displayed when this validation rule fails
+        type: string
+      formulaJavascript:
+        description: Javascript equivalent of the validation rule formula
+        type: string
+      formulaReferences:
+        description: List of api names of reference fields
+        type: array
+        items:
+          type: string
+      id:
+        description: Id of the validation rule
+        type: string
+      name:
+        description: Unique name of the rule
+        type: string
+  ValidationRulesRepresentation:
+    description: Validation rules metadata.
+    discriminator: ''
+    type: object
+    properties:
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      rules:
+        description: List of validation rules for an entity
+        type: array
+        items:
+          type: ValidationRuleRepresentation
+  VisualforceLayoutComponentRepresentation:
+    description: Visualforce record layout component.
+    discriminator: ''
+    type: AbstractRecordLayoutComponentRepresentation
+    properties:
+      height:
+        description: Height
+        type: string
+      showLabel:
+        description: Indicates whether to show the section label with this VF component.
+        type: boolean
+      showScroll:
+        description: Show scroll
+        type: boolean
+      visualforceUrl:
+        description: Visualforce URL.
+        type: string
+      width:
+        description: Width
+        type: string
+  WireDataRepresentation:
+    description: wire data representation for priming LDS
+    discriminator: ''
+    type: object
+    properties:
+      operationResponseRepresentation:
+        description: wire data.
+        type: OperationResponseRepresentation
+      resourceReference:
+        description: inputs to the wire.
+        type: ResourceReferenceRepresentation
+      valueType:
+        description: wire data value type.
+        type: string
+  BatchRepresentation:
+    description: 'added by hand, was intended to be hidden and internal, connect-gen modeling is ignoring that and referencing it in two places above. both appear to be referencing abstract datatypes as the Batch Type, could be it.?'
+    type: object
+    properties:
+      valueType:
+        description: wire data value type.
+        type: string
+
+  # These types are not generated. Why?
+  ErrorSingleRecordAvatarRepresentation:
+    type: AbstractRecordAvatarRepresentation
+    discriminatorValue: MissingSingle
+    properties:
+      errorCode:
+        type: string
+      message:
+        type: string
+  RecordAvatarRepresentation:
+    type: object
+    properties:
+      result:
+        type: AbstractRecordAvatarRepresentation
+      statusCode:
+        type: number
+  RecordAvatarBulkRepresentation:
+    type: object
+    properties:
+      //:
+        type: RecordAvatarRepresentation
+
+  # TODO: These RecordRepresentationTypes are hand rolled for "getRecordCreateDefaults"
+  # The RecordRepresentation returned there should not be normalized and will not appear
+  # anywhere else
+
+  RecordCreateDefaultRecordRepresentation:
+    type: object
+    properties:
+      apiName:
+        description: The record's object API name.
+        type: string
+      childRelationships:
+        description: The child relationship data for this record
+        type: object
+        properties:
+          //:
+            type: RecordCollectionRepresentation
+      fields:
+        description: 'The field data for this record, matching the requested layout and mode.'
+        type: object
+        properties:
+          //:
+            type: FieldValueRepresentation
+      id:
+        description: The ID of this record.
+        type: nil
+      lastModifiedById:
+        description: The lastModifiedById of the record.
+        type: string | nil
+      lastModifiedDate:
+        description: The lastModifiedDate of the record.
+        type: string | nil
+      recordTypeInfo:
+        description: 'The record type info for this record, if any.'
+        type: RecordTypeInfoRepresentation | nil
+      systemModstamp:
+        description: The systemModstamp of the record.
+        type: string | nil
+      eTag:
+        description: eTag
+        type: string
+      weakEtag:
+        description: Record Version like field, readOnly, handy while caching and comparing versions of records.
+        type: integer
+        (oas-readOnly): true
+/ui-api:
+  /actions:
+    /flexipage/{flexipageNames}:
+      get:
+        description: Retrieve presentation-ready action data about specific flexipageNames.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ActionRepresentation
+        queryParameters:
+          actionTypes:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActionLink
+                - CustomButton
+                - InvocableAction
+                - ProductivityAction
+                - QuickAction
+                - StandardButton
+              (oas-collectionFormat): csv
+          formFactor:
+            type: string
+            required: false
+          sections:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActivityComposer
+                - CollaborateComposer
+                - Page
+                - SingleActionLinks
+              (oas-collectionFormat): csv
+      uriParameters:
+        flexipageNames:
+          type: array
+          required: true
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    /global:
+      get:
+        description: Retrieve presentation-ready action data for Global contetx.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ActionRepresentation
+        queryParameters:
+          actionTypes:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActionLink
+                - CustomButton
+                - InvocableAction
+                - ProductivityAction
+                - QuickAction
+                - StandardButton
+              (oas-collectionFormat): csv
+          formFactor:
+            type: string
+            required: false
+          sections:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActivityComposer
+                - CollaborateComposer
+                - Page
+                - SingleActionLinks
+              (oas-collectionFormat): csv
+    /layout/{actionApiName}:
+      get:
+        description: Retrieve a Quick Action layout.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RecordLayoutRepresentation
+      uriParameters:
+        actionApiName:
+          type: string
+          required: true
+    /list-view-chart/{objectApiNames}:
+      get:
+        description: Retrieve presentation-ready action data about specific list-view-chart objectApiNames.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ActionRepresentation
+        queryParameters:
+          actionTypes:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActionLink
+                - CustomButton
+                - InvocableAction
+                - ProductivityAction
+                - QuickAction
+                - StandardButton
+              (oas-collectionFormat): csv
+          formFactor:
+            type: string
+            required: false
+          sections:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActivityComposer
+                - CollaborateComposer
+                - Page
+                - SingleActionLinks
+              (oas-collectionFormat): csv
+      uriParameters:
+        objectApiNames:
+          type: array
+          required: true
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    /list-view-record/{recordIds}:
+      get:
+        description: Retrieve presentation-ready action data about specific recordIds.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ActionRepresentation
+        queryParameters:
+          actionTypes:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActionLink
+                - CustomButton
+                - InvocableAction
+                - ProductivityAction
+                - QuickAction
+                - StandardButton
+              (oas-collectionFormat): csv
+          formFactor:
+            type: string
+            required: false
+          sections:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActivityComposer
+                - CollaborateComposer
+                - Page
+                - SingleActionLinks
+              (oas-collectionFormat): csv
+      uriParameters:
+        recordIds:
+          type: array
+          required: true
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    /list-view/{listViewIds}:
+      get:
+        description: Retrieve presentation-ready action data about specific list-view listViewIds.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ActionRepresentation
+        queryParameters:
+          actionTypes:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActionLink
+                - CustomButton
+                - InvocableAction
+                - ProductivityAction
+                - QuickAction
+                - StandardButton
+              (oas-collectionFormat): csv
+          formFactor:
+            type: string
+            required: false
+          sections:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActivityComposer
+                - CollaborateComposer
+                - Page
+                - SingleActionLinks
+              (oas-collectionFormat): csv
+      uriParameters:
+        listViewIds:
+          type: array
+          required: true
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    /lookup/{objectApiNames}:
+      get:
+        description: Retrieve presentation-ready action data about specific lookup objectApiNames.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ActionRepresentation
+        queryParameters:
+          actionTypes:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActionLink
+                - CustomButton
+                - InvocableAction
+                - ProductivityAction
+                - QuickAction
+                - StandardButton
+              (oas-collectionFormat): csv
+          formFactor:
+            type: string
+            required: false
+          sections:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActivityComposer
+                - CollaborateComposer
+                - Page
+                - SingleActionLinks
+              (oas-collectionFormat): csv
+      uriParameters:
+        objectApiNames:
+          type: array
+          required: true
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    /mru-list/{objectApiNames}:
+      get:
+        description: Retrieve presentation-ready action data about specific mru-list objectApiNames.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ActionRepresentation
+        queryParameters:
+          actionTypes:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActionLink
+                - CustomButton
+                - InvocableAction
+                - ProductivityAction
+                - QuickAction
+                - StandardButton
+              (oas-collectionFormat): csv
+          formFactor:
+            type: string
+            required: false
+          sections:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActivityComposer
+                - CollaborateComposer
+                - Page
+                - SingleActionLinks
+              (oas-collectionFormat): csv
+      uriParameters:
+        objectApiNames:
+          type: array
+          required: true
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    /photo/{recordIds}:
+      get:
+        description: Retrieve presentation-ready action data for photo of recorIds.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ActionRepresentation
+        queryParameters:
+          actionTypes:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActionLink
+                - CustomButton
+                - InvocableAction
+                - ProductivityAction
+                - QuickAction
+                - StandardButton
+              (oas-collectionFormat): csv
+          formFactor:
+            type: string
+            required: false
+          sections:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActivityComposer
+                - CollaborateComposer
+                - Page
+                - SingleActionLinks
+              (oas-collectionFormat): csv
+      uriParameters:
+        recordIds:
+          type: array
+          required: true
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    /record/{recordId}:
+      get:
+        description: Retrieve presentation-ready action data about specific recordIds.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ActionRepresentation
+        queryParameters:
+          actionTypes:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActionLink
+                - CustomButton
+                - InvocableAction
+                - ProductivityAction
+                - QuickAction
+                - StandardButton
+              (oas-collectionFormat): csv
+          apiNames:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          formFactor:
+            type: string
+            required: false
+          retrievalMode:
+            type: string
+            required: false
+            enum:
+              - All
+              - PageLayout
+          sections:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActivityComposer
+                - CollaborateComposer
+                - Page
+                - SingleActionLinks
+              (oas-collectionFormat): csv
+      uriParameters:
+        recordId:
+          type: array
+          required: true
+          items:
+            type: string
+            (oas-collectionFormat): csv
+      /record-edit:
+        get:
+          description: Retrieve presentation-ready action data about specific recordId under the RecordEdit subcontext.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ActionRepresentation
+          queryParameters:
+            actionTypes:
+              type: array
+              required: false
+              items:
+                type: string
+                enum:
+                  - ActionLink
+                  - CustomButton
+                  - InvocableAction
+                  - ProductivityAction
+                  - QuickAction
+                  - StandardButton
+                (oas-collectionFormat): csv
+            formFactor:
+              type: string
+              required: false
+            sections:
+              type: array
+              required: false
+              items:
+                type: string
+                enum:
+                  - ActivityComposer
+                  - CollaborateComposer
+                  - Page
+                  - SingleActionLinks
+                (oas-collectionFormat): csv
+        uriParameters:
+          recordId:
+            type: array
+            required: true
+            items:
+              type: string
+              (oas-collectionFormat): csv
+      /related-list:
+        get:
+          description: Retrieve presentation-ready action data about specific recordId for the RelatedList subcontexts relatedListIds.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ActionRepresentation
+          queryParameters:
+            actionTypes:
+              type: array
+              required: false
+              items:
+                type: string
+                enum:
+                  - ActionLink
+                  - CustomButton
+                  - InvocableAction
+                  - ProductivityAction
+                  - QuickAction
+                  - StandardButton
+                (oas-collectionFormat): csv
+            formFactor:
+              type: string
+              required: false
+            sections:
+              type: array
+              required: false
+              items:
+                type: string
+                enum:
+                  - ActivityComposer
+                  - CollaborateComposer
+                  - Page
+                  - SingleActionLinks
+                (oas-collectionFormat): csv
+        uriParameters:
+          recordId:
+            type: array
+            required: true
+            items:
+              type: string
+              (oas-collectionFormat): csv
+      /related-list/{relatedListIds}:
+        get:
+          description: Retrieve presentation-ready action data about specific recordId for the RelatedList subcontexts relatedListIds.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ActionRepresentation
+          queryParameters:
+            actionTypes:
+              type: array
+              required: false
+              items:
+                type: string
+                enum:
+                  - ActionLink
+                  - CustomButton
+                  - InvocableAction
+                  - ProductivityAction
+                  - QuickAction
+                  - StandardButton
+                (oas-collectionFormat): csv
+            formFactor:
+              type: string
+              required: false
+            sections:
+              type: array
+              required: false
+              items:
+                type: string
+                enum:
+                  - ActivityComposer
+                  - CollaborateComposer
+                  - Page
+                  - SingleActionLinks
+                (oas-collectionFormat): csv
+        uriParameters:
+          recordId:
+            type: array
+            required: true
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          relatedListIds:
+            type: array
+            required: true
+            items:
+              type: string
+              (oas-collectionFormat): csv
+      /related-list-record/{relatedListRecordIds}:
+        get:
+          description: Retrieve presentation-ready action data about specific recordId under the related-list-record relatedListRecordIds.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ActionRepresentation
+          queryParameters:
+            actionTypes:
+              type: array
+              required: false
+              items:
+                type: string
+                enum:
+                  - ActionLink
+                  - CustomButton
+                  - InvocableAction
+                  - ProductivityAction
+                  - QuickAction
+                  - StandardButton
+                (oas-collectionFormat): csv
+            formFactor:
+              type: string
+              required: false
+            sections:
+              type: array
+              required: false
+              items:
+                type: string
+                enum:
+                  - ActivityComposer
+                  - CollaborateComposer
+                  - Page
+                  - SingleActionLinks
+                (oas-collectionFormat): csv
+        uriParameters:
+          recordId:
+            type: array
+            required: true
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          relatedListRecordIds:
+            type: array
+            required: true
+            items:
+              type: string
+              (oas-collectionFormat): csv
+  /aggregate-ui:
+    get:
+      description: Retrieve presentation-ready metadata and data.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: AggregateUiRepresentation
+      queryParameters:
+        formFactor:
+          type: string
+          required: false
+        query:
+          type: string
+          required: false
+    post:
+      description: Executes multiple requests within a single request
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: AggregateRepresentation
+      body:
+        application/json:
+          type: AggregateInputRepresentation
+          required: false
+          (oas-body-name): input
+  /apps:
+    get:
+      description: Retrieves the list of apps accessible for current user
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: AppsRepresentation
+      queryParameters:
+        formFactor:
+          type: string
+          required: false
+        userCustomizations:
+          type: boolean
+          required: false
+    /selected:
+      get:
+        description: Retrieves an app current user last selected or should see by default
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: AppRepresentation
+        queryParameters:
+          formFactor:
+            type: string
+            required: false
+          userCustomizations:
+            type: boolean
+            required: false
+    /{appId}:
+      get:
+        description: Retrieves an app for the given app ID
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: AppRepresentation
+        queryParameters:
+          formFactor:
+            type: string
+            required: false
+          userCustomizations:
+            type: boolean
+            required: false
+      patch:
+        description: Returns the app metadata for the given App id and also saves this app as Last accessed app for the user
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: AppRepresentation
+        queryParameters:
+          formFactor:
+            type: string
+            required: false
+          userCustomizations:
+            type: boolean
+            required: false
+      uriParameters:
+        appId:
+          type: string
+          required: true
+    /{appId}/user-nav-items:
+      get:
+        description: Retrieves the user's personalized nav items.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: NavItemsRepresentation
+        queryParameters:
+          formFactor:
+            type: string
+            required: false
+      put:
+        description: Updates all the user's personalized nav items.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: NavItemsRepresentation
+        body:
+          application/json:
+            type: NavItemsInputRepresentation
+            required: false
+            (oas-body-name): navItems
+      uriParameters:
+        appId:
+          type: string
+          required: true
+  /duplicates/{objectApiName}:
+    get:
+      description: Get duplicate management configuration for a specific entity object
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DuplicatesConfigurationRepresentation
+    uriParameters:
+      objectApiName:
+        type: string
+        required: true
+  /favorites:
+    get:
+      description: Gets a collection of favorites.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: FavoriteCollectionRepresentation
+    post:
+      description: Creates a single favorite.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: FavoriteRepresentation
+      queryParameters:
+        name:
+          type: string
+          required: false
+        sortOrder:
+          type: integer
+          required: false
+        target:
+          type: string
+          required: false
+        targetType:
+          type: string
+          required: false
+          enum:
+            - ListView
+            - ObjectHome
+            - Record
+            - Tab
+      body:
+        application/json:
+          type: FavoriteInputRepresentation
+          required: false
+          (oas-body-name): favorite
+    /batch:
+      put:
+        description: Updates all favorites at once. Sort order is updated to the given relative ordering and any favorites missing from the input payload are deleted.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: FavoriteCollectionRepresentation
+        body:
+          application/json:
+            type: FavoriteBatchCollectionInputRepresentation
+            required: false
+            (oas-body-name): favorites
+    /{favoriteId}:
+      delete:
+        description: Deletes a single favorite by ID.
+        responses:
+          '200':
+            description: Success
+      get:
+        description: Retrieve a single favorite by ID.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: FavoriteRepresentation
+      patch:
+        description: Updates a single favorite by ID.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: FavoriteRepresentation
+        queryParameters:
+          name:
+            type: string
+            required: false
+          sortOrder:
+            type: integer
+            required: false
+        body:
+          application/json:
+            type: FavoriteInputRepresentation
+            required: false
+            (oas-body-name): favorite
+      uriParameters:
+        favoriteId:
+          type: string
+          required: true
+    /{favoriteId}/usage:
+      patch:
+        description: Increments the accessCount and sets the lastAccessDate to the current system time.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: FavoriteRepresentation
+      uriParameters:
+        favoriteId:
+          type: string
+          required: true
+  /forms/{apiName}:
+    get:
+      description: Retrieve a specific form by name.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: FormRepresentation
+    uriParameters:
+      apiName:
+        type: string
+        required: true
+  /layout/{objectApiName}:
+    get:
+      description: Retrieve a specific layout.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: RecordLayoutRepresentation
+      queryParameters:
+        formFactor:
+          type: string
+          required: false
+        layoutType:
+          type: string
+          required: false
+          enum:
+            - Compact
+            - Full
+            - Mdp
+        mode:
+          type: string
+          required: false
+          enum:
+            - Create
+            - Edit
+            - View
+        recordTypeId:
+          type: string
+          required: false
+    uriParameters:
+      objectApiName:
+        type: string
+        required: true
+  /layout/{objectApiName}/user-state:
+    get:
+      description: Retrieve a specific layout's user state.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: RecordLayoutUserStateRepresentation
+      queryParameters:
+        formFactor:
+          type: string
+          required: false
+        layoutType:
+          type: string
+          required: false
+          enum:
+            - Compact
+            - Full
+            - Mdp
+        mode:
+          type: string
+          required: false
+          enum:
+            - Create
+            - Edit
+            - View
+        recordTypeId:
+          type: string
+          required: false
+    patch:
+      description: Update a specific layout's user state.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: RecordLayoutUserStateRepresentation
+      queryParameters:
+        formFactor:
+          type: string
+          required: false
+        layoutType:
+          type: string
+          required: false
+          enum:
+            - Compact
+            - Full
+            - Mdp
+        mode:
+          type: string
+          required: false
+          enum:
+            - Create
+            - Edit
+            - View
+        recordTypeId:
+          type: string
+          required: false
+      body:
+        application/json:
+          type: RecordLayoutUserStateInputRepresentation
+          required: false
+          (oas-body-name): userState
+    uriParameters:
+      objectApiName:
+        type: string
+        required: true
+  /list-info:
+    /{listViewId}:
+      get:
+        description: Retrieve list info.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ListInfoRepresentation
+      uriParameters:
+        listViewId:
+          type: string
+          required: true
+    /{objectApiName}/{listViewApiName}:
+      get:
+        description: Retrieve list info.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ListInfoRepresentation
+      uriParameters: # TODO: Order changed from original RAML to generate correct resource files
+        objectApiName:
+          type: string
+          required: true
+        listViewApiName:
+          type: string
+          required: true
+  /list-records:
+    /{listViewId}:
+      get:
+        description: Returns record data to populate a list.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ListRecordCollectionRepresentation
+        queryParameters:
+          fields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          optionalFields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          pageSize:
+            type: integer
+            required: false
+          pageToken:
+            type: string
+            required: false
+          sortBy:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+      uriParameters:
+        listViewId:
+          type: string
+          required: true
+    /{objectApiName}/{listViewApiName}:
+      get:
+        description: Returns record data to populate a list.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ListRecordCollectionRepresentation
+        queryParameters:
+          fields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          optionalFields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          pageSize:
+            type: integer
+            required: false
+          pageToken:
+            type: string
+            required: false
+          sortBy:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+      uriParameters: # TODO: Order changed from original RAML to generate correct resource files
+        objectApiName:
+          type: string
+          required: true
+        listViewApiName:
+          type: string
+          required: true
+  /list-ui:
+    /{listViewId}:
+      get:
+        description: Retrieve list data and info.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ListUiRepresentation
+        queryParameters:
+          fields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          optionalFields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          pageSize:
+            type: integer
+            required: false
+          pageToken:
+            type: string
+            required: false
+          sortBy:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+      uriParameters:
+        listViewId:
+          type: string
+          required: true
+    /{objectApiName}:
+      get:
+        description: Retrieve lists for a given objectApiName.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ListViewSummaryCollectionRepresentation
+        queryParameters:
+          pageSize:
+            type: integer
+            required: false
+          pageToken:
+            type: string
+            required: false
+          q:
+            type: string
+            required: false
+          recentListsOnly:
+            type: boolean
+            required: false
+      uriParameters:
+        objectApiName:
+          type: string
+          required: true
+    /{objectApiName}/{listViewApiName}:
+      get:
+        description: Retrieve list data and info.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ListUiRepresentation
+        queryParameters:
+          fields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          optionalFields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          pageSize:
+            type: integer
+            required: false
+          pageToken:
+            type: string
+            required: false
+          sortBy:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+      uriParameters: # TODO: Order changed from original RAML to generate correct resource files
+        objectApiName:
+          type: string
+          required: true
+        listViewApiName:
+          type: string
+          required: true
+  /lookups/{objectApiName}/{fieldApiName}:
+    get:
+      description: Returns record search results for the given lookup field.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: LookupValuesRepresentation
+      queryParameters:
+        dependentFieldBindings:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        page:
+          type: integer
+          required: false
+        pageSize:
+          type: integer
+          required: false
+        q:
+          type: string
+          required: false
+        searchType:
+          type: string
+          required: false
+          enum:
+            - Recent
+            - Search
+            - TypeAhead
+    uriParameters: # TODO: Order changed from original RAML to generate correct resource files
+      objectApiName:
+        type: string
+        required: true
+      fieldApiName:
+        type: string
+        required: true
+  /lookups/{objectApiName}/{fieldApiName}/{targetApiName}:
+    get:
+      description: Returns record search results for the given lookup field.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: RecordCollectionRepresentation
+      queryParameters:
+        dependentFieldBindings:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        page:
+          type: integer
+          required: false
+        pageSize:
+          type: integer
+          required: false
+        q:
+          type: string
+          required: false
+        searchType:
+          type: string
+          required: false
+          enum:
+            - Recent
+            - Search
+            - TypeAhead
+    uriParameters: # TODO: Order changed from original RAML to generate correct resource files
+      objectApiName:
+        type: string
+        required: true
+      fieldApiName:
+        type: string
+        required: true
+      targetApiName:
+        type: string
+        required: true
+  /mru-list-info/{objectApiName}:
+    get:
+      description: Retrieve MRU list info.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ListInfoRepresentation
+    uriParameters:
+      objectApiName:
+        type: string
+        required: true
+  /mru-list-records/{objectApiName}:
+    get:
+      description: Returns record data to populate an MRU list.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ListRecordCollectionRepresentation
+      queryParameters:
+        fields:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        optionalFields:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        pageSize:
+          type: integer
+          required: false
+        pageToken:
+          type: string
+          required: false
+        sortBy:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    uriParameters:
+      objectApiName:
+        type: string
+        required: true
+  /mru-list-ui/{objectApiName}:
+    get:
+      description: Retrieve MRU list data and info.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ListUiRepresentation
+      queryParameters:
+        fields:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        optionalFields:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        pageSize:
+          type: integer
+          required: false
+        pageToken:
+          type: string
+          required: false
+        sortBy:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    uriParameters:
+      objectApiName:
+        type: string
+        required: true
+  /nav-items:
+    get:
+      description: Fetch all the nav items
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: NavItemsRepresentation
+      queryParameters:
+        formFactor:
+          type: string
+          required: false
+        page:
+          type: integer
+          required: false
+        pageSize:
+          type: integer
+          required: false
+  /object-info:
+    get:
+      description: Retrieve the object info directory.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ObjectInfoDirectoryRepresentation
+  /object-info/{objectApiName}:
+    get:
+      description: Retrieve metadata about a specific object.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ObjectInfoRepresentation
+    uriParameters:
+      objectApiName:
+        type: string
+        required: true
+    /picklist-values/{recordTypeId}:
+      get:
+        description: Returns the values for all picklist fields for a recordType
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: PicklistValuesCollectionRepresentation
+      uriParameters:
+        objectApiName:
+          type: string
+          required: true
+        recordTypeId:
+          type: string
+          required: true
+    /picklist-values/{recordTypeId}/{fieldApiName}:
+      get:
+        description: Returns the values for a specific picklist.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: PicklistValuesRepresentation
+      uriParameters: # TODO: Order changed from original RAML to generate correct resource files
+        objectApiName:
+          type: string
+          required: true
+        recordTypeId:
+          type: string
+          required: true
+        fieldApiName:
+          type: string
+          required: true
+    /validation-rules-info:
+      get:
+        description: Retrieve metadata of validation rules for the given object
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ValidationRulesRepresentation
+      uriParameters:
+        objectApiName:
+          type: string
+          required: true
+  /predupe:
+    post:
+      description: Performs a predupe check on given a record.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DuplicatesRepresentation
+      body:
+        application/json:
+          type: RecordInputRepresentation
+          required: false
+          (oas-body-name): recordInput
+  /priming-components:
+    get:
+      description: Retrieve dynamic components, wire data, dependent component list, and labels for priming flexipages.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: PrimingComponentsRepresentation
+      queryParameters:
+        adg:
+          description: Indicates whether ADG should be returned (true), or pre-evaluated wires (false, default)
+          type: boolean
+          required: false
+        pageDescs:
+          description: list of PageDevName,ObjectApiName,RecordTypeId,RecordId,RecordId:...
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+  /priming-records:
+    get:
+      description: Retrieve list of records to prime for the context user.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: PrimingRecordCollectionRepresentation
+      queryParameters:
+        customAppId:
+          type: string
+          required: false
+        objectApiNames:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+  /priming-routes:
+    get:
+      description: Retrieve list of flexipage routes to prime for the context user.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: PrimingRoutesCollectionRepresentation
+      queryParameters:
+        customAppId:
+          type: string
+          required: false
+        objectApiNames:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+  /record-avatars:
+    /batch/{recordIds}:
+      get:
+        description: Retrieve avatar information about specific records.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RecordAvatarBulkRepresentation #TODO: hand rolled
+        queryParameters:
+          formFactor:
+            type: string
+            required: false
+      uriParameters:
+        recordIds:
+          type: array # TODO: generated RAML document has this as a string, not string[]
+          items:
+            type: string
+          required: true
+    /{recordId}:
+      get:
+        description: Retrieve avatar information about specific records.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: AbstractRecordAvatarRepresentation
+        queryParameters:
+          formFactor:
+            type: string
+            required: false
+      uriParameters:
+        recordId:
+          type: string
+          required: true
+    /{recordId}/association:
+      post:
+        description: Stores avatar association for specific records.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: AbstractRecordAvatarRepresentation
+        body:
+          application/json:
+            type: AvatarAssociationInputRepresentation
+            required: false
+            (oas-body-name): input
+      uriParameters:
+        recordId:
+          type: string
+          required: true
+  /record-defaults:
+    /clone/{recordId}:
+      get:
+        description: Retrieve default values for fields for cloning a record with optional record type.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RecordDefaultsRepresentation
+        queryParameters:
+          formFactor:
+            type: string
+            required: false
+          optionalFields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          recordTypeId:
+            type: string
+            required: false
+      uriParameters:
+        recordId:
+          type: string
+          required: true
+    /create/{objectApiName}:
+      get:
+        description: Retrieve default values for fields for a new record of a particular object and optional record type.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RecordDefaultsRepresentation
+        queryParameters:
+          formFactor:
+            type: string
+            required: false
+          optionalFields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          recordTypeId:
+            type: string
+            required: false
+      uriParameters:
+        objectApiName:
+          type: string
+          required: true
+  /record-ui/{recordIds}:
+    get:
+      description: Retrieve presentation-ready metadata and data about specific records.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: RecordUiRepresentation
+      queryParameters:
+        childRelationships:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        formFactor:
+          type: string
+          required: false
+        layoutTypes:
+          type: array
+          required: false
+          items:
+            type: string
+            enum:
+              - Compact
+              - Full
+              - Mdp
+            (oas-collectionFormat): csv
+        modes:
+          type: array
+          required: false
+          items:
+            type: string
+            enum:
+              - Create
+              - Edit
+              - View
+            (oas-collectionFormat): csv
+        optionalFields:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        pageSize:
+          type: integer
+          required: false
+        updateMru:
+          type: boolean
+          required: false
+    uriParameters:
+      recordIds:
+        type: array # TODO manually changed to string[]. relies on Array.toString() to generate CSV
+        required: true
+        items:
+          type: string
+          (oas-collectionFormat): csv
+  /records:
+    post:
+      description: Create a new record.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: RecordRepresentation
+      # TODO: hand rolled - manually commented out name collision. https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAorh3L
+      #queryParameters:
+      #  allowSaveOnDuplicate:
+      #    type: boolean
+      #    required: false
+      body:
+        application/json:
+          type: RecordInputRepresentation
+          required: false
+          (oas-body-name): recordInput
+        multipart/form-data:
+          properties:
+            binaryInputList:
+              type: file
+              required: false
+    /batch/{recordIds}:
+      get:
+        description: Retrieve record data for a list of recordIds.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: BatchRepresentation
+        queryParameters:
+          childRelationships:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          fields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          layoutTypes:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - Compact
+                - Full
+                - Mdp
+              (oas-collectionFormat): csv
+          modes:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - Create
+                - Edit
+                - View
+              (oas-collectionFormat): csv
+          optionalFields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          pageSize:
+            type: integer
+            required: false
+          updateMru:
+            type: boolean
+            required: false
+      uriParameters:
+        recordIds:
+          type: string
+          required: true
+    /{recordId}:
+      delete:
+        description: Delete record.
+        responses:
+          '200':
+            description: Success
+      get:
+        description: Retrieve record data.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RecordRepresentation
+        queryParameters:
+          childRelationships:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          fields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          forms:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          layoutTypes:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - Compact
+                - Full
+                - Mdp
+              (oas-collectionFormat): csv
+          modes:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - Create
+                - Edit
+                - View
+              (oas-collectionFormat): csv
+          optionalFields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          pageSize:
+            type: integer
+            required: false
+          updateMru:
+            type: boolean
+            required: false
+      patch:
+        description: Update an existing record.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RecordRepresentation
+        # TODO: hand rolled - manually commented out name collision. https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAorh3L
+        #queryParameters:
+        #  allowSaveOnDuplicate:
+        #    type: boolean
+        #    required: false
+        body:
+          application/json:
+            type: RecordInputRepresentation
+            required: false
+            (oas-body-name): recordInput
+          multipart/form-data:
+            properties:
+              binaryInputList:
+                type: file
+                required: false
+        headers:
+          # TODO manually changed, needs follow up with UIAPI
+          'If-Unmodified-Since':
+            description: If Unmodified Since header
+            required: false
+      uriParameters:
+        recordId:
+          type: string
+          required: true
+    /{recordId}/child-relationships/{relationshipName}:
+      get:
+        description: Retrieve child relationship data on a parent record.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RecordCollectionRepresentation
+        queryParameters:
+          fields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          optionalFields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+          pageToken:
+            type: string
+            required: false
+      uriParameters:
+        recordId:
+          type: string
+          required: true
+        relationshipName:
+          type: string
+          required: true
+  /related-list-info:
+    /{parentObjectApiName}/{recordTypeId}:
+      get:
+        description: Retrieve collection of related list summaries.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RelatedListSummaryInfoCollectionRepresentation
+      uriParameters:
+        parentObjectApiName:
+          type: string
+          required: true
+        recordTypeId:
+          type: string
+          required: true
+    /{parentObjectApiName}/{recordTypeId}/{relatedListId}:
+      get:
+        description: Retrieve related info.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RelatedListInfoRepresentation
+      patch:
+        description: Update user preferences on an existing related list.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RelatedListInfoRepresentation
+        body:
+          application/json:
+            type: ListInfoInputRepresentation
+            required: false
+            (oas-body-name): relatedListInfoInput
+      uriParameters:
+        parentObjectApiName:
+          type: string
+          required: true
+        recordTypeId:
+          type: string
+          required: true
+        relatedListId:
+          type: string
+          required: true
+    /{parentRecordId}/{relatedListId}:
+      get:
+        description: Retrieve related info.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RelatedListInfoRepresentation
+      patch:
+        description: Update user preferences on an existing related list.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RelatedListInfoRepresentation
+        body:
+          application/json:
+            type: ListInfoInputRepresentation
+            required: false
+            (oas-body-name): relatedListInfoInput
+      uriParameters:
+        parentRecordId:
+          type: string
+          required: true
+        relatedListId:
+          type: string
+          required: true
+  /related-list-records/{parentRecordId}/{relatedListId}:
+    get:
+      description: Returns record data to populate a related list.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: RelatedListRecordCollectionRepresentation
+      queryParameters:
+        fields:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        optionalFields:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        pageSize:
+          type: integer
+          required: false
+        pageToken:
+          type: string
+          required: false
+        sortBy:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    uriParameters:
+      parentRecordId:
+        type: string
+        required: true
+      relatedListId:
+        type: string
+        required: true
+  /themes/active:
+    get:
+      description: Retrieve the active theme.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ThemeRepresentation

@@ -1,0 +1,74 @@
+{
+    "apiName": "Account",
+    "childRelationships": {},
+    "eTag": "81921ed292cad1b6f9bc8f202857e8cf",
+    "fields": {
+        "OperatingHours": {
+            "displayValue": null,
+            "value": {
+                "apiName": "OperatingHours",
+                "childRelationships": {},
+                "eTag": "af2b1944417ae7ee9de4d6bcd06bd800",
+                "fields": {
+                    "CreatedBy": {
+                        "displayValue": "Admin User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "879d4793412693066cdf5ab780504b65",
+                            "fields": {
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005RM000001stMBYAY"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "Admin User"
+                                }
+                            },
+                            "id": "005RM000001stMBYAY",
+                            "lastModifiedById": "005RM000001stMBYAY",
+                            "lastModifiedDate": "2019-06-04T19:07:01.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-10-24T18:51:38.000Z",
+                            "weakEtag": 1571943098000
+                        }
+                    },
+                    "CreatedById": {
+                        "displayValue": null,
+                        "value": "005RM000001stMBYAY"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "0OHRM0000000D014AE"
+                    }
+                },
+                "id": "0OHRM0000000D014AE",
+                "lastModifiedById": "005RM000001stMBYAY",
+                "lastModifiedDate": "2019-10-24T18:57:03.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-10-24T18:57:03.000Z",
+                "weakEtag": 1571943423000
+            }
+        },
+        "OperatingHoursId": {
+            "displayValue": null,
+            "value": "0OHRM0000000D014AE"
+        }
+    },
+    "id": "001RM000004XMZ5YAO",
+    "lastModifiedById": "005RM000001stMBYAY",
+    "lastModifiedDate": "2019-10-24T18:59:40.000Z",
+    "recordTypeId": "012RM000000DBJDYA4",
+    "recordTypeInfo": {
+        "available": true,
+        "defaultRecordTypeMapping": true,
+        "master": false,
+        "name": "y",
+        "recordTypeId": "012RM000000DBJDYA4"
+    },
+    "systemModstamp": "2019-10-24T18:59:41.000Z",
+    "weakEtag": 1571943581000
+}

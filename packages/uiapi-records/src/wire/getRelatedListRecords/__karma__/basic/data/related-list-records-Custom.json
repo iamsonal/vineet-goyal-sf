@@ -1,0 +1,92 @@
+{
+    "count": 3,
+    "currentPageToken": "0",
+    "currentPageUrl": null,
+    "fields": ["Id", "Name"],
+    "listInfoETag": null,
+    "listReference": {
+        "id": null,
+        "inContextOfRecordId": "a00T1000000iZLtIAM",
+        "listViewApiName": null,
+        "objectApiName": null,
+        "parentObjectApiName": "CObjParent__c",
+        "recordTypeId": null,
+        "relatedListId": "CObjChilds__r",
+        "type": "relatedList"
+    },
+    "nextPageToken": null,
+    "nextPageUrl": null,
+    "optionalFields": [],
+    "pageSize": null,
+    "previousPageToken": null,
+    "previousPageUrl": null,
+    "records": [
+        {
+            "apiName": "CObjChild__c",
+            "childRelationships": {},
+            "eTag": "0000",
+            "fields": {
+                "Id": {
+                    "displayValue": null,
+                    "value": "a01T1000000BsrvIAC"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Dummy Child 1"
+                }
+            },
+            "id": "a01T1000000BsrvIAC",
+            "lastModifiedById": "005T1000000HnT6IAK",
+            "lastModifiedDate": "2019-09-18T18:16:59.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-09-18T18:16:59.000Z",
+            "weakEtag": 0
+        },
+        {
+            "apiName": "CObjChild__c",
+            "childRelationships": {},
+            "eTag": "0000",
+            "fields": {
+                "Id": {
+                    "displayValue": null,
+                    "value": "a01T1000000BsrwIAC"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Dummy Child 2"
+                }
+            },
+            "id": "a01T1000000BsrwIAC",
+            "lastModifiedById": "005T1000000HnT6IAK",
+            "lastModifiedDate": "2019-09-18T18:17:06.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-09-18T18:17:06.000Z",
+            "weakEtag": 0
+        },
+        {
+            "apiName": "CObjChild__c",
+            "childRelationships": {},
+            "eTag": "0000",
+            "fields": {
+                "Id": {
+                    "displayValue": null,
+                    "value": "a01T1000000Bss6IAC"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Okay Child 1"
+                }
+            },
+            "id": "a01T1000000Bss6IAC",
+            "lastModifiedById": "005T1000000HnT6IAK",
+            "lastModifiedDate": "2019-09-18T19:32:59.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-09-18T19:32:59.000Z",
+            "weakEtag": 0
+        }
+    ],
+    "sortBy": []
+}

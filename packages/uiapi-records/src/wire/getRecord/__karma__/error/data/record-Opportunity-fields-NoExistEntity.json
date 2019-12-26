@@ -1,0 +1,6 @@
+[
+    {
+        "errorCode": "ILLEGAL_QUERY_PARAMETER_VALUE",
+        "message": "Expected '.' in all qualified names: NoExistEntity is invalid"
+    }
+]

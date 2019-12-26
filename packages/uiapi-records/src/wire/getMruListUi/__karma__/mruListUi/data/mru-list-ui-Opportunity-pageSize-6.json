@@ -1,0 +1,958 @@
+{
+    "eTag": "c8895b98c13d51f10e66a9ff94a4b398",
+    "info": {
+        "cloneable": false,
+        "createable": true,
+        "deletable": false,
+        "displayColumns": [
+            {
+                "fieldApiName": "Name",
+                "label": "Opportunity Name",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Account.Name",
+                "label": "Account Name",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Account.Site",
+                "label": "Account Site",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "StageName",
+                "label": "Stage",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "CloseDate",
+                "label": "Close Date",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Owner.Alias",
+                "label": "Opportunity Owner Alias",
+                "sortable": true
+            }
+        ],
+        "eTag": "fbc9e346c0862211ba4ac755eb64e232",
+        "filterLogicString": null,
+        "filteredByInfo": [],
+        "label": "Recently Viewed",
+        "listReference": {
+            "id": null,
+            "listViewApiName": null,
+            "objectApiName": "Opportunity",
+            "type": "mru"
+        },
+        "orderedByInfo": [],
+        "updateable": false,
+        "userPreferences": {
+            "columnWidths": {
+                "Owner.Alias": -1,
+                "StageName": -1,
+                "Account.Name": -1,
+                "CloseDate": -1,
+                "Account.Site": -1,
+                "Name": -1
+            },
+            "columnWrap": {
+                "Owner.Alias": false,
+                "StageName": false,
+                "Account.Name": false,
+                "CloseDate": false,
+                "Account.Site": false,
+                "Name": false
+            }
+        },
+        "visibility": "Public",
+        "visibilityEditable": false
+    },
+    "records": {
+        "count": 6,
+        "currentPageToken": "0",
+        "currentPageUrl": "/services/data/v49.0/ui-api/mru-list-records/Opportunity?pageSize=6&pageToken=0",
+        "fields": [],
+        "listInfoETag": "fbc9e346c0862211ba4ac755eb64e232",
+        "listReference": {
+            "id": null,
+            "listViewApiName": "Recent",
+            "objectApiName": "Opportunity",
+            "type": "listView"
+        },
+        "nextPageToken": "6",
+        "nextPageUrl": "/services/data/v49.0/ui-api/mru-list-records/Opportunity?pageSize=6&pageToken=6",
+        "optionalFields": [],
+        "pageSize": 6,
+        "previousPageToken": null,
+        "previousPageUrl": null,
+        "records": [
+            {
+                "apiName": "Opportunity",
+                "childRelationships": {},
+                "eTag": "3df84dc88557ea09e626537989bb460e",
+                "fields": {
+                    "Account": {
+                        "displayValue": "Grand Hotels &amp; Resorts Ltd",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "bbfa77b59fdef8987a2c4b35af87276e",
+                            "fields": {
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001T1000002GKr8IAG"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "Grand Hotels &amp; Resorts Ltd"
+                                },
+                                "Site": {
+                                    "displayValue": null,
+                                    "value": null
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                }
+                            },
+                            "id": "001T1000002GKr8IAG",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": "012000000000000AAA",
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-11-19T14:55:27.000Z",
+                            "weakEtag": 1574175327000
+                        }
+                    },
+                    "AccountId": {
+                        "displayValue": null,
+                        "value": "001T1000002GKr8IAG"
+                    },
+                    "CloseDate": {
+                        "displayValue": "10/29/2017",
+                        "value": "2017-10-29"
+                    },
+                    "CreatedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "006T10000023G3gIAE"
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Grand Hotels Guest Portable Generators"
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "65516cf498d682ddcb93f7eb4ca34c50",
+                            "fields": {
+                                "Alias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                },
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "User User"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "12/13/2019, 2:05 PM",
+                                    "value": "2019-12-13T22:05:50.000Z"
+                                }
+                            },
+                            "id": "005T1000000HnsLIAS",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-12-13T22:05:50.000Z",
+                            "weakEtag": 1576274750000
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "StageName": {
+                        "displayValue": "Value Proposition",
+                        "value": "Value Proposition"
+                    },
+                    "SystemModstamp": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    }
+                },
+                "id": "006T10000023G3gIAE",
+                "lastModifiedById": "005T1000000HnsLIAS",
+                "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-19T14:55:27.000Z",
+                "weakEtag": 1574175327000
+            },
+            {
+                "apiName": "Opportunity",
+                "childRelationships": {},
+                "eTag": "e4c4a63de1029083c801ce78604074b7",
+                "fields": {
+                    "Account": {
+                        "displayValue": "Grand Hotels &amp; Resorts Ltd",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "bbfa77b59fdef8987a2c4b35af87276e",
+                            "fields": {
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001T1000002GKr8IAG"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "Grand Hotels &amp; Resorts Ltd"
+                                },
+                                "Site": {
+                                    "displayValue": null,
+                                    "value": null
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                }
+                            },
+                            "id": "001T1000002GKr8IAG",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": "012000000000000AAA",
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-11-19T14:55:27.000Z",
+                            "weakEtag": 1574175327000
+                        }
+                    },
+                    "AccountId": {
+                        "displayValue": null,
+                        "value": "001T1000002GKr8IAG"
+                    },
+                    "CloseDate": {
+                        "displayValue": "10/29/2017",
+                        "value": "2017-10-29"
+                    },
+                    "CreatedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "006T10000023G3fIAE"
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Grand Hotels Generator Installations"
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "65516cf498d682ddcb93f7eb4ca34c50",
+                            "fields": {
+                                "Alias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                },
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "User User"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "12/13/2019, 2:05 PM",
+                                    "value": "2019-12-13T22:05:50.000Z"
+                                }
+                            },
+                            "id": "005T1000000HnsLIAS",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-12-13T22:05:50.000Z",
+                            "weakEtag": 1576274750000
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "StageName": {
+                        "displayValue": "Closed Won",
+                        "value": "Closed Won"
+                    },
+                    "SystemModstamp": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    }
+                },
+                "id": "006T10000023G3fIAE",
+                "lastModifiedById": "005T1000000HnsLIAS",
+                "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-19T14:55:27.000Z",
+                "weakEtag": 1574175327000
+            },
+            {
+                "apiName": "Opportunity",
+                "childRelationships": {},
+                "eTag": "1716cd8f841bc14fe506d47f2d4f0faa",
+                "fields": {
+                    "Account": {
+                        "displayValue": "Grand Hotels &amp; Resorts Ltd",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "bbfa77b59fdef8987a2c4b35af87276e",
+                            "fields": {
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001T1000002GKr8IAG"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "Grand Hotels &amp; Resorts Ltd"
+                                },
+                                "Site": {
+                                    "displayValue": null,
+                                    "value": null
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                }
+                            },
+                            "id": "001T1000002GKr8IAG",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": "012000000000000AAA",
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-11-19T14:55:27.000Z",
+                            "weakEtag": 1574175327000
+                        }
+                    },
+                    "AccountId": {
+                        "displayValue": null,
+                        "value": "001T1000002GKr8IAG"
+                    },
+                    "CloseDate": {
+                        "displayValue": "10/29/2017",
+                        "value": "2017-10-29"
+                    },
+                    "CreatedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "006T10000023G3eIAE"
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Grand Hotels Emergency Generators"
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "65516cf498d682ddcb93f7eb4ca34c50",
+                            "fields": {
+                                "Alias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                },
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "User User"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "12/13/2019, 2:05 PM",
+                                    "value": "2019-12-13T22:05:50.000Z"
+                                }
+                            },
+                            "id": "005T1000000HnsLIAS",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-12-13T22:05:50.000Z",
+                            "weakEtag": 1576274750000
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "StageName": {
+                        "displayValue": "Closed Won",
+                        "value": "Closed Won"
+                    },
+                    "SystemModstamp": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    }
+                },
+                "id": "006T10000023G3eIAE",
+                "lastModifiedById": "005T1000000HnsLIAS",
+                "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-19T14:55:27.000Z",
+                "weakEtag": 1574175327000
+            },
+            {
+                "apiName": "Opportunity",
+                "childRelationships": {},
+                "eTag": "d97aa30b6aac528738b91e34662d63ab",
+                "fields": {
+                    "Account": {
+                        "displayValue": "Dickenson plc",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "c302c9a31569efcf25b961874a9b3950",
+                            "fields": {
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001T1000002GKr7IAG"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "Dickenson plc"
+                                },
+                                "Site": {
+                                    "displayValue": null,
+                                    "value": null
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                }
+                            },
+                            "id": "001T1000002GKr7IAG",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": "012000000000000AAA",
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-11-19T14:55:27.000Z",
+                            "weakEtag": 1574175327000
+                        }
+                    },
+                    "AccountId": {
+                        "displayValue": null,
+                        "value": "001T1000002GKr7IAG"
+                    },
+                    "CloseDate": {
+                        "displayValue": "10/29/2017",
+                        "value": "2017-10-29"
+                    },
+                    "CreatedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "006T10000023G3dIAE"
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Dickenson Mobile Generators"
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "65516cf498d682ddcb93f7eb4ca34c50",
+                            "fields": {
+                                "Alias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                },
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "User User"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "12/13/2019, 2:05 PM",
+                                    "value": "2019-12-13T22:05:50.000Z"
+                                }
+                            },
+                            "id": "005T1000000HnsLIAS",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-12-13T22:05:50.000Z",
+                            "weakEtag": 1576274750000
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "StageName": {
+                        "displayValue": "Qualification",
+                        "value": "Qualification"
+                    },
+                    "SystemModstamp": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    }
+                },
+                "id": "006T10000023G3dIAE",
+                "lastModifiedById": "005T1000000HnsLIAS",
+                "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-19T14:55:27.000Z",
+                "weakEtag": 1574175327000
+            },
+            {
+                "apiName": "Opportunity",
+                "childRelationships": {},
+                "eTag": "0e254d7a49a2369f34a636b72d379f15",
+                "fields": {
+                    "Account": {
+                        "displayValue": "Pyramid Construction Inc.",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "60cf2b82acc2fb931e89297ad6a60d51",
+                            "fields": {
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001T1000002GKr6IAG"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "Pyramid Construction Inc."
+                                },
+                                "Site": {
+                                    "displayValue": null,
+                                    "value": null
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                }
+                            },
+                            "id": "001T1000002GKr6IAG",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": "012000000000000AAA",
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-11-19T14:55:27.000Z",
+                            "weakEtag": 1574175327000
+                        }
+                    },
+                    "AccountId": {
+                        "displayValue": null,
+                        "value": "001T1000002GKr6IAG"
+                    },
+                    "CloseDate": {
+                        "displayValue": "10/29/2017",
+                        "value": "2017-10-29"
+                    },
+                    "CreatedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "006T10000023G3cIAE"
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Pyramid Emergency Generators"
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "65516cf498d682ddcb93f7eb4ca34c50",
+                            "fields": {
+                                "Alias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                },
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "User User"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "12/13/2019, 2:05 PM",
+                                    "value": "2019-12-13T22:05:50.000Z"
+                                }
+                            },
+                            "id": "005T1000000HnsLIAS",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-12-13T22:05:50.000Z",
+                            "weakEtag": 1576274750000
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "StageName": {
+                        "displayValue": "Prospecting",
+                        "value": "Prospecting"
+                    },
+                    "SystemModstamp": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    }
+                },
+                "id": "006T10000023G3cIAE",
+                "lastModifiedById": "005T1000000HnsLIAS",
+                "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-19T14:55:27.000Z",
+                "weakEtag": 1574175327000
+            },
+            {
+                "apiName": "Opportunity",
+                "childRelationships": {},
+                "eTag": "58b635fb2347eea62dda18dad65f97d7",
+                "fields": {
+                    "Account": {
+                        "displayValue": "Edge Communications",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "3c6f41138ea8d07ef93aefe51e7c8360",
+                            "fields": {
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001T1000002GKr4IAG"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "Edge Communications"
+                                },
+                                "Site": {
+                                    "displayValue": null,
+                                    "value": null
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                }
+                            },
+                            "id": "001T1000002GKr4IAG",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": "012000000000000AAA",
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-11-19T14:55:27.000Z",
+                            "weakEtag": 1574175327000
+                        }
+                    },
+                    "AccountId": {
+                        "displayValue": null,
+                        "value": "001T1000002GKr4IAG"
+                    },
+                    "CloseDate": {
+                        "displayValue": "10/29/2017",
+                        "value": "2017-10-29"
+                    },
+                    "CreatedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "006T10000023G3bIAE"
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Edge Installation"
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "65516cf498d682ddcb93f7eb4ca34c50",
+                            "fields": {
+                                "Alias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                },
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "User User"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "12/13/2019, 2:05 PM",
+                                    "value": "2019-12-13T22:05:50.000Z"
+                                }
+                            },
+                            "id": "005T1000000HnsLIAS",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-12-13T22:05:50.000Z",
+                            "weakEtag": 1576274750000
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "StageName": {
+                        "displayValue": "Closed Won",
+                        "value": "Closed Won"
+                    },
+                    "SystemModstamp": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    }
+                },
+                "id": "006T10000023G3bIAE",
+                "lastModifiedById": "005T1000000HnsLIAS",
+                "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-19T14:55:27.000Z",
+                "weakEtag": 1574175327000
+            }
+        ],
+        "sortBy": null
+    }
+}

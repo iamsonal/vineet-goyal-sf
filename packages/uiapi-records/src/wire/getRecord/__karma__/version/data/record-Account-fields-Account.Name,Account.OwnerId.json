@@ -1,0 +1,28 @@
+{
+    "apiName": "Account",
+    "childRelationships": {},
+    "eTag": "63cf5e9ef050fe11bc6ceaf8fa4bbe3c",
+    "fields": {
+        "Name": {
+            "displayValue": null,
+            "value": "Unum Group"
+        },
+        "OwnerId": {
+            "displayValue": null,
+            "value": "0050M00000DKNAzQAP"
+        }
+    },
+    "id": "00100000000nEblAAE",
+    "lastModifiedById": "00530000000bt3yAAA",
+    "lastModifiedDate": "2019-10-20T10:19:21.000Z",
+    "recordTypeId": "01230000000010LAAQ",
+    "recordTypeInfo": {
+        "available": true,
+        "defaultRecordTypeMapping": true,
+        "master": false,
+        "name": "Sales",
+        "recordTypeId": "0123000000009GvAAI"
+    },
+    "systemModstamp": "2019-10-21T14:29:11.000Z",
+    "weakEtag": 1
+}

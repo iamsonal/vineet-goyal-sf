@@ -1,0 +1,24 @@
+{
+    "apiName": "Case",
+    "childRelationships": {},
+    "eTag": "0000",
+    "fields": {
+        "Contact": {
+            "displayValue": null,
+            "value": null
+        }
+    },
+    "id": "5000M00000oyZvnQAE",
+    "lastModifiedById": "0050M00000DJlbmQAD",
+    "lastModifiedDate": "2019-10-09T16:11:44.000Z",
+    "recordTypeId": "01230000001SKukAAG",
+    "recordTypeInfo": {
+        "available": false,
+        "defaultRecordTypeMapping": false,
+        "master": false,
+        "name": "Accounts Receivable",
+        "recordTypeId": "01230000001SKukAAG"
+    },
+    "systemModstamp": "2019-10-09T16:11:44.000Z",
+    "weakEtag": 0
+}

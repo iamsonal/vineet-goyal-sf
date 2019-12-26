@@ -1,0 +1,25 @@
+{
+    "count": 0,
+    "currentPageToken": "0",
+    "currentPageUrl": null,
+    "fields": ["Id"],
+    "listInfoETag": null,
+    "listReference": {
+        "id": null,
+        "inContextOfRecordId": "a00T1000000iZLyIAM",
+        "listViewApiName": null,
+        "objectApiName": null,
+        "parentObjectApiName": "CObjParent__c",
+        "recordTypeId": null,
+        "relatedListId": "CObjChilds__r",
+        "type": "relatedList"
+    },
+    "nextPageToken": null,
+    "nextPageUrl": null,
+    "optionalFields": [],
+    "pageSize": null,
+    "previousPageToken": null,
+    "previousPageUrl": null,
+    "records": [],
+    "sortBy": []
+}

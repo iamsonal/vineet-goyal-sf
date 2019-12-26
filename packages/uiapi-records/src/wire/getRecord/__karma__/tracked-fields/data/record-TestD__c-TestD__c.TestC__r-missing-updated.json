@@ -1,0 +1,113 @@
+{
+    "apiName": "TestD__c",
+    "childRelationships": {},
+    "eTag": "ae0b54577f59d5c7b88ec9e7de131d38",
+    "fields": {
+        "CreatedBy": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "69a1b04d458757e47b7236257a80ca47",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005RM000001stMBYAY"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Admin User"
+                    }
+                },
+                "id": "005RM000001stMBYAY",
+                "lastModifiedById": "005RM000001stMBYAY",
+                "lastModifiedDate": "2019-06-04T19:07:01.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-08T17:06:50.000Z",
+                "weakEtag": 1573232810000
+            }
+        },
+        "CreatedById": {
+            "displayValue": null,
+            "value": "005RM000001stMBYAY"
+        },
+        "CreatedDate": {
+            "displayValue": "10/24/2019, 2:45 PM",
+            "value": "2019-10-24T21:45:31.000Z"
+        },
+        "LastModifiedBy": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "69a1b04d458757e47b7236257a80ca47",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005RM000001stMBYAY"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Admin User"
+                    }
+                },
+                "id": "005RM000001stMBYAY",
+                "lastModifiedById": "005RM000001stMBYAY",
+                "lastModifiedDate": "2019-06-04T19:07:01.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-08T17:06:50.000Z",
+                "weakEtag": 1573232810000
+            }
+        },
+        "LastModifiedById": {
+            "displayValue": null,
+            "value": "005RM000001stMBYAY"
+        },
+        "LastModifiedDate": {
+            "displayValue": "11/13/2019, 3:35 PM",
+            "value": "2019-11-13T23:35:25.000Z"
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "Name Updated"
+        },
+        "Owner": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "Name",
+                "childRelationships": {},
+                "eTag": "2f0de07f7ae196bfbcb204f29affc605",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005RM000001stMBYAY"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Admin User"
+                    }
+                },
+                "id": "005RM000001stMBYAY",
+                "lastModifiedById": null,
+                "lastModifiedDate": null,
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": null,
+                "weakEtag": 0
+            }
+        },
+        "OwnerId": {
+            "displayValue": null,
+            "value": "005RM000001stMBYAY"
+        }
+    },
+    "id": "a03RM0000004t2LYAQ",
+    "lastModifiedById": "005RM000001stMBYAY",
+    "lastModifiedDate": "2019-11-13T23:35:25.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2019-11-13T23:35:25.000Z",
+    "weakEtag": 1573688125000
+}

@@ -1,0 +1,191 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "e9db454ff8d2e0ff930461a65337f739",
+    "fields": {
+        "AccountId": {
+            "displayValue": null,
+            "value": null
+        },
+        "Amount": {
+            "displayValue": null,
+            "value": null
+        },
+        "CampaignId": {
+            "displayValue": null,
+            "value": null
+        },
+        "CloseDate": {
+            "displayValue": "10/18/2020",
+            "value": "2020-10-18"
+        },
+        "CreatedBy": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "b6bb035b7e7f00a2c42c262d58f384a4",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005RM000001stMBYAY"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Admin User"
+                    }
+                },
+                "id": "005RM000001stMBYAY",
+                "lastModifiedById": "005RM000001stMBYAY",
+                "lastModifiedDate": "2019-06-04T19:07:01.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-10-18T19:28:08.000Z",
+                "weakEtag": 1571426888000
+            }
+        },
+        "CreatedById": {
+            "displayValue": null,
+            "value": "005RM000001stMBYAY"
+        },
+        "CreatedDate": {
+            "displayValue": "10/21/2019, 3:13 PM",
+            "value": "2019-10-21T22:13:37.000Z"
+        },
+        "CurrentGenerators__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "DeliveryInstallationStatus__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Description": {
+            "displayValue": null,
+            "value": null
+        },
+        "ExpectedRevenue": {
+            "displayValue": null,
+            "value": null
+        },
+        "IsPrivate": {
+            "displayValue": null,
+            "value": false
+        },
+        "LastModifiedBy": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "b6bb035b7e7f00a2c42c262d58f384a4",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005RM000001stMBYAY"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Admin User"
+                    }
+                },
+                "id": "005RM000001stMBYAY",
+                "lastModifiedById": "005RM000001stMBYAY",
+                "lastModifiedDate": "2019-06-04T19:07:01.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-10-18T19:28:08.000Z",
+                "weakEtag": 1571426888000
+            }
+        },
+        "LastModifiedById": {
+            "displayValue": null,
+            "value": "005RM000001stMBYAY"
+        },
+        "LastModifiedDate": {
+            "displayValue": "10/21/2019, 3:16 PM",
+            "value": "2019-10-21T22:16:02.000Z"
+        },
+        "LeadSource": {
+            "displayValue": null,
+            "value": null
+        },
+        "MainCompetitors__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "One"
+        },
+        "NextStep": {
+            "displayValue": null,
+            "value": null
+        },
+        "OrderNumber__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Owner": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "b6bb035b7e7f00a2c42c262d58f384a4",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005RM000001stMBYAY"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Admin User"
+                    }
+                },
+                "id": "005RM000001stMBYAY",
+                "lastModifiedById": "005RM000001stMBYAY",
+                "lastModifiedDate": "2019-06-04T19:07:01.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-10-18T19:28:08.000Z",
+                "weakEtag": 1571426888000
+            }
+        },
+        "OwnerId": {
+            "displayValue": null,
+            "value": "005RM000001stMBYAY"
+        },
+        "Probability": {
+            "displayValue": null,
+            "value": 0.0
+        },
+        "StageName": {
+            "displayValue": "New",
+            "value": "New"
+        },
+        "SystemModstamp": {
+            "displayValue": "10/21/2019, 3:16 PM",
+            "value": "2019-10-21T22:16:03.000Z"
+        },
+        "TrackingNumber__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Type": {
+            "displayValue": null,
+            "value": null
+        }
+    },
+    "id": "006RM000003IvA2YAK",
+    "lastModifiedById": "005RM000001stMBYAY",
+    "lastModifiedDate": "2019-10-21T22:16:02.000Z",
+    "recordTypeId": "012RM000000DBJIYA4",
+    "recordTypeInfo": {
+        "available": true,
+        "defaultRecordTypeMapping": true,
+        "master": false,
+        "name": "A",
+        "recordTypeId": "012RM000000DBJIYA4"
+    },
+    "systemModstamp": "2019-10-21T22:16:03.000Z",
+    "weakEtag": 1571696163000
+}

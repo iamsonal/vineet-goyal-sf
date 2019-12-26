@@ -1,0 +1,448 @@
+{
+    "apiName": "ADM_Work__c",
+    "childRelationships": {},
+    "eTag": "68173825516734c7bc95a0b3846bfa16",
+    "fields": {
+        "Age_With_Scrum_Team__c": {
+            "displayValue": null,
+            "value": 2.0
+        },
+        "Assignee__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Assignee__r": {
+            "displayValue": null,
+            "value": null
+        },
+        "Badge__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Badge__r": {
+            "displayValue": null,
+            "value": null
+        },
+        "CreatedBy": {
+            "displayValue": "LWC BOT",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "5e2106c46aae627360fa557e79a2ffa1",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005B0000004er9LIAQ"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "LWC BOT"
+                    }
+                },
+                "id": "005B0000004er9LIAQ",
+                "lastModifiedById": "005B0000000GPnxIAG",
+                "lastModifiedDate": "2019-08-29T14:48:12.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-08-29T14:48:12.000Z",
+                "weakEtag": 1
+            }
+        },
+        "CreatedById": {
+            "displayValue": null,
+            "value": "005B0000004er9LIAQ"
+        },
+        "CreatedDate": {
+            "displayValue": "11/12/2019, 10:14 AM",
+            "value": "2019-11-12T18:14:50.000Z"
+        },
+        "Customer__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Details_and_Steps_to_Reproduce__c": {
+            "displayValue": null,
+            "value": "In `packages/@salesforce-lds-api/uiapi-records/src/helpers/RecordRepresentation/merge.ts` we do several casts to `any` because `RecordRepresentationNormalized[&amp;#39;fields&amp;#39;]` doesn&amp;#39;t have the necessary fields.  That&amp;#39;s bad, we should not cast, instead we should fix our types."
+        },
+        "Due_Date__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Epic_Rank__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Epic__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Epic__r": {
+            "displayValue": null,
+            "value": null
+        },
+        "Found_in_Build__c": {
+            "displayValue": null,
+            "value": "a06B0000001UiONIA0"
+        },
+        "Found_in_Build__r": {
+            "displayValue": "224",
+            "value": {
+                "apiName": "ADM_Build__c",
+                "childRelationships": {},
+                "eTag": "6af85c9481de2de64385bdd1887132ce",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "a06B0000001UiONIA0"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "224"
+                    }
+                },
+                "id": "a06B0000001UiONIA0",
+                "lastModifiedById": "005B0000005MJ8MIAW",
+                "lastModifiedDate": "2019-10-30T19:24:02.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-10-30T19:24:02.000Z",
+                "weakEtag": 1
+            }
+        },
+        "Frequency__c": {
+            "displayValue": null,
+            "value": "a0L9000000000utEAA"
+        },
+        "Frequency__r": {
+            "displayValue": "Often",
+            "value": {
+                "apiName": "ADM_Frequency__c",
+                "childRelationships": {},
+                "eTag": "8d52744e96c6173aed9e9af35cb08565",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "a0L9000000000utEAA"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Often"
+                    }
+                },
+                "id": "a0L9000000000utEAA",
+                "lastModifiedById": "005B0000000goYhIAI",
+                "lastModifiedDate": "2018-01-30T17:06:07.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2018-02-23T11:46:21.000Z",
+                "weakEtag": 1
+            }
+        },
+        "Gack_First_Seen__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Gack_Occurrences__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Help_Status__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Impact__c": {
+            "displayValue": null,
+            "value": "a0O900000004EF2EAM"
+        },
+        "Impact__r": {
+            "displayValue": "Malfunctioning",
+            "value": {
+                "apiName": "ADM_Impact__c",
+                "childRelationships": {},
+                "eTag": "7efe97ba26012d9a9964f5df347e7c67",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "a0O900000004EF2EAM"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Malfunctioning"
+                    }
+                },
+                "id": "a0O900000004EF2EAM",
+                "lastModifiedById": "005T0000000n6bdIAA",
+                "lastModifiedDate": "2009-09-08T12:44:03.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2018-02-23T11:46:27.000Z",
+                "weakEtag": 1
+            }
+        },
+        "Known_Issue_Link__c": {
+            "displayValue": null,
+            "value": "No Known Issue"
+        },
+        "LastModifiedBy": {
+            "displayValue": "David Turissini",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "f48b7e6b90eea40c26672ec4a31463c8",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005B00000029o0qIAA"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "David Turissini"
+                    }
+                },
+                "id": "005B00000029o0qIAA",
+                "lastModifiedById": "005B0000000HDdbIAG",
+                "lastModifiedDate": "2019-11-07T15:26:25.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-14T07:14:49.000Z",
+                "weakEtag": 1
+            }
+        },
+        "LastModifiedById": {
+            "displayValue": null,
+            "value": "005B00000029o0qIAA"
+        },
+        "LastModifiedDate": {
+            "displayValue": "11/14/2019, 4:13 PM",
+            "value": "2019-11-15T00:13:37.000Z"
+        },
+        "Number_of_Cases__c": {
+            "displayValue": null,
+            "value": 0.0
+        },
+        "Occurrences_Past_30_Days__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Originated_From__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Perforce_Status__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Priority_Rank__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Priority__c": {
+            "displayValue": "P1",
+            "value": "P1"
+        },
+        "Product_Legal_Request__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Product_Legal_Request__r": {
+            "displayValue": null,
+            "value": null
+        },
+        "Product_Owner__c": {
+            "displayValue": null,
+            "value": "005B0000005NVJpIAO"
+        },
+        "Product_Owner__r": {
+            "displayValue": "Kiril Seksenov",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "229bd1bfd9574f4479baba59be67029c",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005B0000005NVJpIAO"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Kiril Seksenov"
+                    }
+                },
+                "id": "005B0000005NVJpIAO",
+                "lastModifiedById": "005B0000005NVJpIAO",
+                "lastModifiedDate": "2019-11-13T23:39:35.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-14T07:15:42.000Z",
+                "weakEtag": 1
+            }
+        },
+        "Product_Tag__c": {
+            "displayValue": null,
+            "value": "a1aB0000000kIHXIA2"
+        },
+        "Product_Tag__r": {
+            "displayValue": "lds224",
+            "value": {
+                "apiName": "ADM_Product_Tag__c",
+                "childRelationships": {},
+                "eTag": "b7e680c4b767dd1cef19a6fedd51b94c",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "a1aB0000000kIHXIA2"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "lds224"
+                    }
+                },
+                "id": "a1aB0000000kIHXIA2",
+                "lastModifiedById": "005B0000000GFqkIAG",
+                "lastModifiedDate": "2019-04-23T22:37:57.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-04-23T22:37:57.000Z",
+                "weakEtag": 1
+            }
+        },
+        "QA_Engineer__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "QA_Engineer__r": {
+            "displayValue": null,
+            "value": null
+        },
+        "Readme_Notes__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Regressed__c": {
+            "displayValue": null,
+            "value": false
+        },
+        "Resolution__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Scheduled_Build__c": {
+            "displayValue": null,
+            "value": "a06B0000001UiOSIA0"
+        },
+        "Scheduled_Build__r": {
+            "displayValue": "226",
+            "value": {
+                "apiName": "ADM_Build__c",
+                "childRelationships": {},
+                "eTag": "25a802df16e865dd2809067023945624",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "a06B0000001UiOSIA0"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "226"
+                    }
+                },
+                "id": "a06B0000001UiOSIA0",
+                "lastModifiedById": "005B0000004cJSFIA2",
+                "lastModifiedDate": "2019-08-15T23:13:05.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-08-15T23:13:05.000Z",
+                "weakEtag": 1
+            }
+        },
+        "Sprint__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Sprint__r": {
+            "displayValue": null,
+            "value": null
+        },
+        "Stack_Trace_Link__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Status__c": {
+            "displayValue": "New",
+            "value": "New"
+        },
+        "Story_Points__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Subject__c": {
+            "displayValue": null,
+            "value": "Name Updated"
+        },
+        "System_Test_Engineer__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "System_Test_Engineer__r": {
+            "displayValue": null,
+            "value": null
+        },
+        "Tech_Writer__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Tech_Writer__r": {
+            "displayValue": null,
+            "value": null
+        },
+        "Test_Failure_Status__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Trail__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Trail__r": {
+            "displayValue": null,
+            "value": null
+        },
+        "Type__c": {
+            "displayValue": "Bug",
+            "value": "Bug"
+        },
+        "UE_Engineer__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "UE_Engineer__r": {
+            "displayValue": null,
+            "value": null
+        },
+        "UI_Text_Status__c": {
+            "displayValue": "Not Identified",
+            "value": "Not Identified"
+        },
+        "ftest__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "visual_link_num_of_Test_Failures__c": {
+            "displayValue": null,
+            "value": "&lt;a href=&quot;https://portal.prod.ci.sfdc.net/testfailures/bughandlerreport?bugNumber=W-6900046&quot; target=&quot;new&quot;&gt;0&lt;/a&gt;"
+        }
+    },
+    "id": "a07B0000007dPsCIAU",
+    "lastModifiedById": "005B00000029o0qIAA",
+    "lastModifiedDate": "2019-11-15T00:13:37.000Z",
+    "recordTypeId": "012T00000004MUHIA2",
+    "recordTypeInfo": {
+        "available": true,
+        "defaultRecordTypeMapping": true,
+        "master": false,
+        "name": "Bug",
+        "recordTypeId": "012T00000004MUHIA2"
+    },
+    "systemModstamp": "2019-11-15T00:13:37.000Z",
+    "weakEtag": 2
+}

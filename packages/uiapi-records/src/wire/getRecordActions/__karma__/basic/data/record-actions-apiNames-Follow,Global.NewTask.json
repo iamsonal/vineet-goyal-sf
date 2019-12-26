@@ -1,0 +1,56 @@
+{
+    "actions": {
+        "001RM000004Mx5NYAS": {
+            "actions": [
+                {
+                    "actionListContext": "Chatter",
+                    "actionTarget": null,
+                    "actionTargetType": "Invoke",
+                    "apiName": "Follow",
+                    "externalId": "00DRM000000EtmH:001RM000004Mx5NYAS::Chatter:Desktop:StandardButton:Follow",
+                    "iconUrl": "https://na44.stmfa.stm.salesforce.com/img/icon/t4v35/action/follow_120.png",
+                    "id": "0JVRM00000000024AA",
+                    "isMassAction": "false",
+                    "label": "Follow",
+                    "primaryColor": "31B9F8",
+                    "relatedListRecordId": null,
+                    "relatedSourceObject": null,
+                    "section": "SingleActionLinks",
+                    "sourceObject": "001RM000004Mx5NYAS",
+                    "subtype": null,
+                    "targetObject": "Account",
+                    "targetUrl": null,
+                    "type": "StandardButton"
+                },
+                {
+                    "actionListContext": "Record",
+                    "actionTarget": "/services/data/v49.0/quickActions/NewTask/describe",
+                    "actionTargetType": "Describe",
+                    "apiName": "Global.NewTask",
+                    "externalId": "00DRM000000EtmH:001RM000004Mx5NYAS::Record:Desktop:09DRM000000j4Xm",
+                    "iconUrl": "https://na44.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_task_120.png",
+                    "id": "0JVRM00000000054AA",
+                    "isMassAction": "false",
+                    "label": "New Task",
+                    "primaryColor": "4BC076",
+                    "relatedListRecordId": null,
+                    "relatedSourceObject": null,
+                    "section": "ActivityComposer",
+                    "sourceObject": "001RM000004Mx5NYAS",
+                    "subtype": "Create",
+                    "targetObject": "Task",
+                    "targetUrl": null,
+                    "type": "QuickAction"
+                }
+            ],
+            "links": [
+                "/services/data/v49.0/ui-api/actions/record/001RM000004Mx5NYAS/record-edit",
+                "/services/data/v49.0/ui-api/actions/record/001RM000004Mx5NYAS/related-list",
+                "/services/data/v49.0/ui-api/actions/record/001RM000004Mx5NYAS/related-list-record/${relatedRecordId}"
+            ],
+            "url": "/services/data/v49.0/ui-api/actions/record/001RM000004Mx5NYAS?apiNames=Follow,Global.NewTask"
+        }
+    },
+    "eTag": "4085010b56e4f23e910016372c54b63d",
+    "url": "/services/data/v49.0/ui-api/actions/record/001RM000004Mx5NYAS?apiNames=Follow,Global.NewTask"
+}

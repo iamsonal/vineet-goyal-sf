@@ -1,0 +1,45 @@
+{
+    "hasErrors": false,
+    "results": [
+        {
+            "result": {
+                "backgroundColor": null,
+                "eTag": "9c2821e30b2eea91408ee3d049c6f272",
+                "height": null,
+                "photoMetadata": {
+                    "companyBluemasterId": null,
+                    "responseId": null
+                },
+                "photoUrl": "https://salesforce.com/profile_images/1166251981490544640/7ThdfwrO_bigger.jpg",
+                "provider": null,
+                "recordId": "001xx000003GYSZAA4",
+                "type": "Photo",
+                "weakEtag": 0,
+                "width": null
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "backgroundColor": "A094ED",
+                "eTag": "f0760f82d62a81228b3b143824297735",
+                "iconUrl": "http://salesforce.com/img/icon/t4v35/standard/contact_120.png",
+                "recordId": "003xx000004WhEiAAK",
+                "type": "Theme",
+                "weakEtag": 0
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "backgroundColor": "65CAE4",
+                "eTag": "92c4fce89059305e374c7d837a6979bf",
+                "iconUrl": "http://salesforce.com/img/icon/t4v35/standard/user_120.png",
+                "recordId": "005xx000001X7c9AAC",
+                "type": "Theme",
+                "weakEtag": 0
+            },
+            "statusCode": 200
+        }
+    ]
+}

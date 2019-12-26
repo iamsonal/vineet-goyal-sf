@@ -1,0 +1,420 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+annotationTypes: !include lds://annotations.raml
+
+(keyPrefix): 'UiApi::'
+
+types:
+  ActionRepresentation:
+    (ttl): 300000
+    (private):
+      - eTag
+      - url
+  EntityActionRepresentation:
+    (key):
+      url: url
+    (private):
+      - links
+      - url
+  ListInfoRepresentation:
+    (key):
+      listViewApiName: listReference.listViewApiName
+      objectApiName: listReference.objectApiName
+      type: listReference.type
+    (integrity):
+      - eTag
+    (private):
+      - eTag
+  ListReferenceRepresentation:
+    (key):
+      id: id
+  ListRecordCollectionRepresentation:
+    # TODO: This is a complete complete hack, UISDK needs to add the list view id on the list record
+    # collection. Using the list info etag for now as a work around for now to get the identity of
+    # the list.
+    (key):
+      listViewId: listInfoETag
+      sortBy: sortBy
+    (paginated): records
+  ListViewSummaryCollectionRepresentation:
+    (key):
+      objectApiName: objectApiName
+      queryString: queryString
+      recentListsOnly: recentListsOnly
+    (paginated): lists
+  RelatedListRecordCollectionRepresentation:
+    (key):
+      sortBy: sortBy
+      parentRecordId: listReference.inContextOfRecordId
+      relatedListId: listReference.relatedListId
+    (paginated): records
+  FieldValueRepresentation:
+    (merge): ../helpers/FieldValueRepresentation/merge
+  RecordCollectionRepresentation:
+    (ttl): 120000
+  PhotoRecordAvatarRepresentation:
+    (private):
+      - eTag
+  ThemeRecordAvatarRepresentation:
+    (private):
+      - eTag
+  ListUiRepresentation:
+    (key):
+      listViewApiName: info.listReference.listViewApiName
+      objectApiName: info.listReference.objectApiName
+      type: info.listReference.type
+      sortBy: records.sortBy
+  RelatedListSummaryInfoCollectionRepresentation:
+    (key):
+      parentObjectApiName: parentObjectApiName
+      recordTypeId: parentRecordTypeId
+    (integrity):
+      - eTag
+  ObjectInfoDirectoryEntryRepresentation:
+    (key):
+      objectInfoUrl: objectInfoUrl
+  ObjectInfoRepresentation:
+    (ttl): 900000
+    (key):
+      apiName: apiName
+    (opaque): true
+    (integrity):
+      - eTag
+    (private):
+      - eTag
+  PageReferenceRepresentation:
+    (opaque): true
+  RecordAvatarBulkRepresentation:
+    (merge): ../helpers/RecordAvatarBulkRepresentation/merge
+    (ttl): 300000
+  RecordLayoutRepresentation:
+    (integrity):
+      - eTag
+    (ttl): 900000
+    (key):
+      recordTypeId: recordTypeId
+      apiName: apiName
+      layoutType: layoutType
+      mode: mode
+    (opaque): true
+    (private):
+      - eTag
+      - apiName
+      - recordTypeId
+  RecordLayoutUserStateRepresentation:
+    (opaque): true
+    (ttl): 900000
+    (key):
+      recordTypeId: recordTypeId
+      apiName: apiName
+      layoutType: layoutType
+      mode: mode
+    (private):
+      - apiName
+      - recordTypeId
+      - layoutType
+      - mode
+  RecordRepresentation:
+    (ttl): 30000
+    (merge): ../helpers/RecordRepresentation/merge
+    (polymorph): ../helpers/RecordRepresentation/polymorph
+    (key):
+      recordId: id
+  RecordAvatarRepresentation:
+    (ttl): 300000
+  AbstractRecordAvatarRepresentation:
+    (key):
+      recordId: recordId
+  RecordUiRepresentation:
+    (ttl): 900000
+  RelatedListInfoRepresentation:
+    (key):
+      parentObjectApiName: listReference.parentObjectApiName
+      recordTypeId: listReference.recordTypeId
+      relatedListId: listReference.relatedListId
+    (ttl): 900000
+    (opaque): true
+    (private):
+      - eTag
+  PicklistValuesRepresentation:
+    (ttl): 300000
+    (integrity):
+      - eTag
+    (key):
+      id: url
+    (private):
+      - eTag
+  PicklistValuesCollectionRepresentation:
+    (ttl): 300000
+  RecordCreateDefaultRecordRepresentation:
+    (key):
+      apiName: apiName
+  RecordDefaultsRepresentation:
+    (ttl): 900000
+  SalesforceObjectId:
+    (coerceFunction): ../primitives/ObjectId/coerce
+  SalesforceObjectIdArray:
+    (coerceFunction): ../primitives/ObjectIdArray/coerce
+  SalesforceFieldId:
+    (coerceFunction): ../primitives/FieldId/coerce
+  SortedStringArray:
+    (coerceFunction): ../primitives/SortedStringArray/coerce
+  SalesforceFieldIdArray:
+    (coerceFunction): ../primitives/FieldIdArray/coerce
+  SalesforceRecordId18:
+    (coerceFunction): ../primitives/RecordId18/coerce
+  SalesforceRecordId18Array:
+    (coerceFunction): ../primitives/RecordId18Array/coerce
+  SalesforceLayoutType:
+    (coerceFunction): ../primitives/LayoutType/coerce
+  SalesforceLayoutTypeArray:
+    (coerceFunction): ../primitives/LayoutTypeArray/coerce
+  SalesforceLayoutMode:
+    (coerceFunction): ../primitives/LayoutMode/coerce
+  SalesforceLayoutModeArray:
+    (coerceFunction): ../primitives/LayoutModeArray/coerce
+  SalesforceFormFactor:
+    (coerceFunction): ../primitives/FormFactor/coerce
+
+/ui-api:
+  /actions:
+    '/lookup/{objectApiNames}':
+      get:
+        (adapter):
+          name: getLookupActions
+          coercedParams:
+            objectApiNames: SalesforceObjectIdArray
+            actionTypes: SortedStringArray
+            formFactor: SalesforceFormFactor
+            sections: SortedStringArray
+    '/record/{recordId}':
+      get:
+        (adapter):
+          name: getRecordActions
+          coercedParams:
+            apiNames: SortedStringArray
+            recordId: SalesforceRecordId18Array
+            formFactor: SalesforceFormFactor
+            sections: SortedStringArray
+          oneOfParams:
+            - sections
+            - apiNames
+      /record-edit:
+        get:
+          (adapter):
+            name: getRecordEditActions
+      /related-list/{relatedListIds}:
+        get:
+          (adapter):
+            name: getRelatedListActions
+            coercedParams:
+              recordId: SalesforceRecordId18Array
+              relatedListIds: SortedStringArray
+              formFactor: SalesforceFormFactor
+              sections: SortedStringArray
+      '/related-list-record/{relatedListRecordIds}':
+        get:
+          (adapter):
+            name: getRelatedListRecordActions
+            coercedParams:
+              recordId: SalesforceRecordId18Array
+              relatedListRecordIds: SalesforceRecordId18Array
+              actionTypes: SortedStringArray
+              formFactor: SalesforceFormFactor
+              sections: SortedStringArray
+  /apps:
+    get:
+      (adapter):
+        name: getApps
+    /selected:
+      get:
+        (adapter):
+          name: getSelectedApp
+  /layout/{objectApiName}:
+    get:
+      (adapter):
+        name: getLayout
+        coercedParams:
+          objectApiName: SalesforceObjectId
+          layoutType: SalesforceLayoutType
+          mode: SalesforceLayoutMode
+          recordTypeId: SalesforceRecordId18
+  /layout/{objectApiName}/user-state:
+    get:
+      (adapter):
+        name: getLayoutUserState
+        coercedParams:
+          objectApiName: SalesforceObjectId
+          layoutType: SalesforceLayoutType
+          mode: SalesforceLayoutMode
+          recordTypeId: SalesforceRecordId18
+  /list-info:
+    '/{listViewId}':
+      get:
+        (key):
+          listViewId: urlParams.listViewId
+  /list-records:
+    '/{listViewId}':
+      get:
+        (key):
+          listViewId: urlParams.listViewId
+          sortBy: queryParams.sortBy || null
+  /list-ui:
+    '/{objectApiName}':
+      get:
+        (adapter):
+          name: getListViewSummaryCollection
+          coercedParams:
+            objectApiName: SalesforceObjectId
+        (key):
+          objectApiName: urlParams.objectApiName
+          queryString: queryParams.q || null
+          recentListsOnly: queryParams.recentListsOnly || false
+    '/{objectApiName}/{listViewApiName}':
+      get:
+        (adapter):
+          name: getListUiByApiName
+          coercedParams:
+            objectApiName: SalesforceObjectId
+            fields: SalesforceFieldIdArray
+            optionalFields: SalesforceFieldIdArray
+        (key):
+          listViewApiName: urlParams.listViewApiName
+          objectApiName: urlParams.objectApiName
+          type: '"listView"'
+          sortBy: queryParams.sortBy || null
+    '/{listViewId}':
+      # NOTE: we aren't setting key for the '/{listViewId}' Resource because
+      # we have to use custom code to construct that key from the cached
+      # ListReferenceRepresentation records
+      get:
+        (adapter):
+          name: getListUiByListViewId
+          coercedParams:
+            fields: SalesforceFieldIdArray
+            optionalFields: SalesforceFieldIdArray
+  '/lookups/{objectApiName}/{fieldApiName}/{targetApiName}':
+    get:
+      (adapter):
+        name: getLookupRecords
+        coercedParams:
+          fieldApiName: SalesforceFieldId
+          targetApiName: SalesforceObjectId
+  /record-avatars:
+    '/batch/{recordIds}':
+      get:
+        (adapter):
+          name: getRecordAvatars
+          coercedParams:
+            recordIds: SalesforceRecordId18Array
+            formFactor: SalesforceFormFactor
+    '/{recordId}/association':
+      post:
+        (adapter):
+          name: updateRecordAvatar
+        (key):
+          recordId: urlParams.recordId
+  /records:
+    post:
+      (adapter):
+        name: createRecord
+    '/{recordId}':
+      get:
+        (adapter):
+          name: getRecord
+          coercedParams:
+            recordId: SalesforceRecordId18
+            layoutTypes: SortedStringArray
+            modes: SortedStringArray
+            fields: SalesforceFieldIdArray
+            optionalFields: SalesforceFieldIdArray
+          oneOfParams:
+            - layoutTypes
+            - fields
+            - optionalFields
+        (key):
+          recordId: urlParams.recordId
+        (fulfill): ../helpers/resources/getRecordFulfill
+      patch:
+        (adapter):
+          name: updateRecord
+          coercedParams:
+            recordId: SalesforceRecordId18
+  '/record-ui/{recordIds}':
+    get:
+      (adapter):
+        name: getRecordUi
+        coercedParams:
+          recordIds: SalesforceRecordId18Array
+          layoutTypes: SortedStringArray
+          modes: SortedStringArray
+          optionalFields: SalesforceFieldIdArray
+  /object-info:
+    get:
+      (adapter):
+        name: getObjectInfoDirectory
+  '/object-info/{objectApiName}':
+    get:
+      (adapter):
+        name: getObjectInfo
+        coercedParams:
+          objectApiName: SalesforceObjectId
+      (key):
+        apiName: urlParams.objectApiName
+    '/picklist-values/{recordTypeId}':
+      get:
+        (adapter):
+          name: getPicklistValuesByRecordType
+          coercedParams:
+            objectApiName: SalesforceObjectId
+            recordTypeId: SalesforceRecordId18
+    '/picklist-values/{recordTypeId}/{fieldApiName}':
+      get:
+        (adapter):
+          name: getPicklistValues
+          coercedParams:
+            recordTypeId: SalesforceRecordId18
+            fieldApiName: SalesforceFieldId
+  '/mru-list-ui/{objectApiName}':
+    get:
+      (adapter):
+        name: getMruListUi
+        coercedParams:
+          objectApiName: SalesforceObjectId
+          fields: SalesforceFieldIdArray
+          optionalFields: SalesforceFieldIdArray
+      (key):
+        listViewApiName: 'null'
+        objectApiName: urlParams.objectApiName
+        type: '"mru"'
+        sortBy: queryParams.sortBy || null
+  '/record-defaults':
+    '/create/{objectApiName}':
+      get:
+        (adapter):
+          name: getRecordCreateDefaults
+          coercedParams:
+            objectApiName: SalesforceObjectId
+            optionalFields: SalesforceFieldIdArray
+            recordTypeId: SalesforceRecordId18
+            formFactor: SalesforceFormFactor
+  '/related-list-info':
+    '/{parentObjectApiName}/{recordTypeId}':
+      get:
+        (adapter):
+          name: getRelatedListInfos
+        (key):
+          parentObjectApiName: urlParams.parentObjectApiName
+          recordTypeId: urlParams.recordTypeId
+    '/{parentObjectApiName}/{recordTypeId}/{relatedListId}':
+      get:
+        (adapter):
+          name: getRelatedListInfo
+        (key):
+          parentObjectApiName: urlParams.parentObjectApiName
+          recordTypeId: urlParams.recordTypeId
+          relatedListId: urlParams.relatedListId
+  '/related-list-records/{parentRecordId}/{relatedListId}':
+    get:
+      (adapter):
+        name: getRelatedListRecords

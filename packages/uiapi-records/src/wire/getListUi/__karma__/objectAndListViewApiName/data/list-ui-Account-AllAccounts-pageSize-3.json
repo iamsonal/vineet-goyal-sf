@@ -1,0 +1,409 @@
+{
+    "eTag": "fe0d04d2c3497219e2d69c6c96af177d",
+    "info": {
+        "cloneable": true,
+        "createable": true,
+        "deletable": true,
+        "displayColumns": [
+            {
+                "fieldApiName": "Name",
+                "label": "Account Name",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Site",
+                "label": "Account Site",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "BillingState",
+                "label": "Billing State/Province",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Phone",
+                "label": "Phone",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Type",
+                "label": "Type",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Owner.Alias",
+                "label": "Account Owner Alias",
+                "sortable": true
+            }
+        ],
+        "eTag": "23b98260ab1fb2b6230b206cb5e8a267",
+        "filterLogicString": null,
+        "filteredByInfo": [],
+        "label": "All Accounts",
+        "listReference": {
+            "id": "00BT1000000NUuWMAW",
+            "listViewApiName": "AllAccounts",
+            "objectApiName": "Account",
+            "type": "listView"
+        },
+        "orderedByInfo": [
+            {
+                "fieldApiName": "Name",
+                "isAscending": true,
+                "label": "Account Name"
+            }
+        ],
+        "updateable": true,
+        "userPreferences": {
+            "columnWidths": {
+                "Site": -1,
+                "Type": -1,
+                "Owner.Alias": -1,
+                "Phone": -1,
+                "BillingState": -1,
+                "Name": -1
+            },
+            "columnWrap": {
+                "Site": false,
+                "Type": false,
+                "Owner.Alias": false,
+                "Phone": false,
+                "BillingState": false,
+                "Name": false
+            }
+        },
+        "visibility": "Public",
+        "visibilityEditable": true
+    },
+    "records": {
+        "count": 3,
+        "currentPageToken": "0",
+        "currentPageUrl": "/services/data/v49.0/ui-api/list-records/Account/AllAccounts?pageSize=3&pageToken=0",
+        "fields": [],
+        "listInfoETag": "23b98260ab1fb2b6230b206cb5e8a267",
+        "listReference": {
+            "id": null,
+            "listViewApiName": "AllAccounts",
+            "objectApiName": "Account",
+            "type": "listView"
+        },
+        "nextPageToken": "3",
+        "nextPageUrl": "/services/data/v49.0/ui-api/list-records/Account/AllAccounts?pageSize=3&pageToken=3",
+        "optionalFields": [],
+        "pageSize": 3,
+        "previousPageToken": null,
+        "previousPageUrl": null,
+        "records": [
+            {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "0e49a98f142ca51c21b63b82131c1148",
+                "fields": {
+                    "BillingState": {
+                        "displayValue": null,
+                        "value": "NC"
+                    },
+                    "CreatedDate": {
+                        "displayValue": null,
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "001T1000002GKr5IAG"
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": null,
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Burlington Textiles Corp of America"
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "6b03ae133a6a5631270b26dda7cbe117",
+                            "fields": {
+                                "Alias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                },
+                                "CreatedDate": {
+                                    "displayValue": null,
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": null,
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "User User"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": null,
+                                    "value": "2019-12-13T22:05:50.000Z"
+                                }
+                            },
+                            "id": "005T1000000HnsLIAS",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-12-13T22:05:50.000Z",
+                            "weakEtag": 1576274750000
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "Phone": {
+                        "displayValue": null,
+                        "value": "(336) 222-7000"
+                    },
+                    "Site": {
+                        "displayValue": null,
+                        "value": null
+                    },
+                    "SystemModstamp": {
+                        "displayValue": null,
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Type": {
+                        "displayValue": "Customer - Direct",
+                        "value": "Customer - Direct"
+                    }
+                },
+                "id": "001T1000002GKr5IAG",
+                "lastModifiedById": "005T1000000HnsLIAS",
+                "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-19T14:55:27.000Z",
+                "weakEtag": 1574175327000
+            },
+            {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "f8d95d549830592249fb80dd018222b2",
+                "fields": {
+                    "BillingState": {
+                        "displayValue": null,
+                        "value": "KS"
+                    },
+                    "CreatedDate": {
+                        "displayValue": null,
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "001T1000002GKr7IAG"
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": null,
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Dickenson plc"
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "6b03ae133a6a5631270b26dda7cbe117",
+                            "fields": {
+                                "Alias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                },
+                                "CreatedDate": {
+                                    "displayValue": null,
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": null,
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "User User"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": null,
+                                    "value": "2019-12-13T22:05:50.000Z"
+                                }
+                            },
+                            "id": "005T1000000HnsLIAS",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-12-13T22:05:50.000Z",
+                            "weakEtag": 1576274750000
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "Phone": {
+                        "displayValue": null,
+                        "value": "(785) 241-6200"
+                    },
+                    "Site": {
+                        "displayValue": null,
+                        "value": null
+                    },
+                    "SystemModstamp": {
+                        "displayValue": null,
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Type": {
+                        "displayValue": "Customer - Channel",
+                        "value": "Customer - Channel"
+                    }
+                },
+                "id": "001T1000002GKr7IAG",
+                "lastModifiedById": "005T1000000HnsLIAS",
+                "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-19T14:55:27.000Z",
+                "weakEtag": 1574175327000
+            },
+            {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "1699884dbf1e0daf1604772703b9f520",
+                "fields": {
+                    "BillingState": {
+                        "displayValue": null,
+                        "value": "TX"
+                    },
+                    "CreatedDate": {
+                        "displayValue": null,
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "001T1000002GKr4IAG"
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": null,
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Edge Communications"
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "6b03ae133a6a5631270b26dda7cbe117",
+                            "fields": {
+                                "Alias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                },
+                                "CreatedDate": {
+                                    "displayValue": null,
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": null,
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "User User"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": null,
+                                    "value": "2019-12-13T22:05:50.000Z"
+                                }
+                            },
+                            "id": "005T1000000HnsLIAS",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-12-13T22:05:50.000Z",
+                            "weakEtag": 1576274750000
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "Phone": {
+                        "displayValue": null,
+                        "value": "(512) 757-6000"
+                    },
+                    "Site": {
+                        "displayValue": null,
+                        "value": null
+                    },
+                    "SystemModstamp": {
+                        "displayValue": null,
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Type": {
+                        "displayValue": "Customer - Direct",
+                        "value": "Customer - Direct"
+                    }
+                },
+                "id": "001T1000002GKr4IAG",
+                "lastModifiedById": "005T1000000HnsLIAS",
+                "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-19T14:55:27.000Z",
+                "weakEtag": 1574175327000
+            }
+        ],
+        "sortBy": null
+    }
+}

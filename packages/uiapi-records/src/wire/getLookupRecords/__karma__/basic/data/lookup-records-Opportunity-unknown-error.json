@@ -1,0 +1,6 @@
+[
+    {
+        "errorCode": "UNKNOWN_EXCEPTION",
+        "message": "Offset must not be negative or greater than the maximum value allowed in SOQL statements."
+    }
+]

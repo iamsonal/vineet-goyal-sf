@@ -1,0 +1,80 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "f747c662019b6f39dc07555e862a3cd5",
+    "fields": {
+        "Account": {
+            "displayValue": "Burlington Textiles Corp of America",
+            "value": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "a1014fb07dd34366fd2c44e8951c7af7",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "001xx000003GYvcAAG"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Burlington Textiles Corp of America"
+                    }
+                },
+                "id": "001xx000003GYvcAAG",
+                "lastModifiedById": "005xx000001X8JhAAK",
+                "lastModifiedDate": "2019-12-05T22:20:21.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-12-05T22:20:21.000Z",
+                "weakEtag": 1575584421000
+            }
+        },
+        "AccountId": {
+            "displayValue": null,
+            "value": "001xx000003GYvcAAG"
+        },
+        "Id": {
+            "displayValue": null,
+            "value": "006xx000001a4CkAAI"
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "Burlington Textiles Weaving Plant Generator"
+        },
+        "Owner": {
+            "displayValue": null,
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "2c9a7c752ddd9b1ad70d2ac1eb586809",
+                "fields": {
+                    "City": {
+                        "displayValue": null,
+                        "value": "Atlanta"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005xx000001X8JhAAK"
+                    }
+                },
+                "id": "005xx000001X8JhAAK",
+                "lastModifiedById": "005xx000001X8JhAAK",
+                "lastModifiedDate": "2019-12-05T22:29:27.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-12-05T22:29:27.000Z",
+                "weakEtag": 1575584967000
+            }
+        },
+        "OwnerId": {
+            "displayValue": null,
+            "value": "005xx000001X8JhAAK"
+        }
+    },
+    "id": "006xx000001a4CkAAI",
+    "lastModifiedById": "005xx000001X8JhAAK",
+    "lastModifiedDate": "2019-12-05T22:20:21.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2019-12-05T22:20:21.000Z",
+    "weakEtag": 1575584421000
+}

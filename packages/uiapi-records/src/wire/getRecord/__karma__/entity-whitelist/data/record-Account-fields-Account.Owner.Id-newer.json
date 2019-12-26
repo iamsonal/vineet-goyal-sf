@@ -1,0 +1,39 @@
+{
+    "apiName": "Account",
+    "childRelationships": {},
+    "eTag": "1a04cd5cdb09b0bcea5a1eb8106731ed",
+    "fields": {
+        "Owner": {
+            "displayValue": null,
+            "value": {
+                "apiName": "Unsupported",
+                "childRelationships": {},
+                "eTag": "9bc1f433cdc61ef2f1a65863b363dde1",
+                "fields": {
+                    "City": {
+                        "displayValue": null,
+                        "value": "Atlanta"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "changed"
+                    }
+                },
+                "id": "005T1000000HnbUIAS",
+                "lastModifiedById": "005T1000000HnbUIAS",
+                "lastModifiedDate": "2019-10-14T21:21:36.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-10-14T21:21:36.000Z",
+                "weakEtag": 9999088096000
+            }
+        }
+    },
+    "id": "001T1000001nGQ0IAM",
+    "lastModifiedById": "005T1000000HnbUIAS",
+    "lastModifiedDate": "2019-10-14T21:21:37.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2019-10-14T21:21:37.000Z",
+    "weakEtag": 1571088097000
+}

@@ -1,0 +1,31 @@
+{
+    "eTag": "0000",
+    "parentObjectApiName": "CObjParent__c",
+    "parentRecordTypeId": "012000000000000AAA",
+    "relatedLists": [
+        {
+            "eTag": "0000",
+            "entityLabel": "CObjChild",
+            "entityPluralLabel": "CObjChilds",
+            "parentFieldApiName": "CObjParent__c",
+            "relatedListId": "CObjChilds__r",
+            "relatedListInfoUrl": "/services/data/v49.0/ui-api/related-list-info/CObjParent__c/012000000000000AAA/CObjChilds__r",
+            "themeInfo": {
+                "color": "618fd8",
+                "iconUrl": "https://power-inspiration-8955-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/custom/custom64_120.png"
+            }
+        },
+        {
+            "eTag": "0000",
+            "entityLabel": "CObjChild",
+            "entityPluralLabel": "CObjChilds",
+            "parentFieldApiName": "CObjParent2__c",
+            "relatedListId": "CObjChilds2__r",
+            "relatedListInfoUrl": "/services/data/v49.0/ui-api/related-list-info/CObjParent__c/012000000000000AAA/CObjChilds2__r",
+            "themeInfo": {
+                "color": "618fd8",
+                "iconUrl": "https://power-inspiration-8955-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/custom/custom64_120.png"
+            }
+        }
+    ]
+}

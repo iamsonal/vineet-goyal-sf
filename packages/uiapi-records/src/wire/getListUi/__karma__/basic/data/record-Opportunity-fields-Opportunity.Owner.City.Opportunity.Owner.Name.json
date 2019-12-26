@@ -1,0 +1,47 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "3674227a6ac57cffd3e3e863421c8010",
+    "fields": {
+        "Owner": {
+            "displayValue": "User User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "0f2237f44e47dbd43b6459ba27ae3985",
+                "fields": {
+                    "City": {
+                        "displayValue": null,
+                        "value": "Atlanta"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005xx000001X8JhAAK"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "User User"
+                    }
+                },
+                "id": "005xx000001X8JhAAK",
+                "lastModifiedById": "005xx000001X8JhAAK",
+                "lastModifiedDate": "2019-12-05T22:27:32.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-12-05T22:27:32.000Z",
+                "weakEtag": 1575584852000
+            }
+        },
+        "OwnerId": {
+            "displayValue": null,
+            "value": "005xx000001X8JhAAK"
+        }
+    },
+    "id": "006xx000001a4CkAAI",
+    "lastModifiedById": "005xx000001X8JhAAK",
+    "lastModifiedDate": "2019-12-05T22:20:21.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2019-12-05T22:20:21.000Z",
+    "weakEtag": 1575584421000
+}

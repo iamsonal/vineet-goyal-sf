@@ -1,0 +1,95 @@
+{
+    "name": "core-build",
+    "private": true,
+    "version": "0.1.0",
+    "description": "Core build script",
+    "repository": {
+        "type": "git",
+        "url": "https://git.soma.salesforce.com/vince-chen/lds-core-build"
+    },
+    "license": "MIT",
+    "scripts": {
+        "prepare": "yarn build",
+        "build": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist",
+        "format:check": "prettier --check '**/*.{js,ts,json,md,yml,raml}'",
+        "format:fix": "prettier --write '**/*.{js,ts,json,md,yml,raml}'",
+        "lint": "eslint src/ --ext=js,ts",
+        "test": "jest --coverage",
+        "test:debug": "node --inspect-brk node_modules/jest/bin/jest.js --runInBand",
+        "test:size": "bundlesize",
+        "release": "./scripts/release/core.js"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.6.4",
+        "@babel/plugin-proposal-class-properties": "^7.5.5",
+        "@babel/preset-env": "^7.6.3",
+        "@babel/preset-typescript": "^7.6.0",
+        "@best/cli": "^4.0.0-alpha9",
+        "@best/runner-headless": "4.0.0-alpha9",
+        "@best/runner-hub": "4.0.0-alpha9",
+        "@best/store-aws": "4.0.0-alpha9",
+        "@lwc/rollup-plugin": "~1.1.8",
+        "@salesforce-lds/engine": "0.1.0",
+        "@salesforce-lds/lwc-lds": "0.1.0",
+        "@salesforce-lds-api/apex": "0.1.0",
+        "@salesforce-lds-api/uiapi-records": "0.1.0",
+        "@types/jest": "^24.0.19",
+        "@types/node": "^12.11.2",
+        "@typescript-eslint/eslint-plugin": "^2.5.0",
+        "@typescript-eslint/parser": "^2.5.0",
+        "bundlesize": "^0.18.0",
+        "chokidar": "^3.2.2",
+        "es5-proxy-compat": "^0.22.0",
+        "eslint": "^6.5.1",
+        "eslint-plugin-jest": "^23.0.2",
+        "glob": "^7.1.5",
+        "husky": "^3.0.9",
+        "jest": "^24.9.0",
+        "lint-staged": "^9.4.2",
+        "lwc": "~1.1.8",
+        "prettier": "^1.17.0",
+        "pretty-bytes": "^5.3.0",
+        "rimraf": "^3.0.0",
+        "rollup": "^1.25.1",
+        "rollup-plugin-babel": "^4.3.3",
+        "rollup-plugin-commonjs": "^10.1.0",
+        "rollup-plugin-compat": "^0.22.0",
+        "rollup-plugin-node-resolve": "^5.2.0",
+        "rollup-plugin-replace": "^2.2.0",
+        "rollup-plugin-terser": "^5.1.2",
+        "rollup-plugin-typescript2": "^0.24.3",
+        "sinon": "^7.5.0",
+        "timekeeper": "^2.2.0",
+        "ts-node": "^8.4.1",
+        "typescript": "^3.6.4",
+        "yargs": "^14.2.0"
+    },
+    "dependencies": {},
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.{js,ts,json,md,yml,raml}": [
+            "prettier --write",
+            "git add"
+        ],
+        "packages/**/*.{js,ts}": [
+            "eslint"
+        ]
+    },
+    "bundlesize": [
+        {
+            "path": "./dist/lds.min.js",
+            "maxSize": "75 kB",
+            "compression": "brotli"
+        },
+        {
+            "path": "./dist/ldsNativeProxy.min.js",
+            "maxSize": "25 kB",
+            "compression": "brotli"
+        }
+    ]
+}

@@ -37,7 +37,7 @@ const browser = {
         'force/shared',
         'instrumentation/service',
         'logger',
-        'lwc',
+        '@lwc/engine',
         'wire-service',
     ],
 

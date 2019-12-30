@@ -18,8 +18,7 @@
         "test:unit": "jest --config ./scripts/jest/root.config.js",
         "test:integration": "lerna run --stream --scope @salesforce-lds-api/* --concurrency=1 test",
         "test:integration:compat": "lerna run --stream --scope @salesforce-lds-api/* --concurrency=1 test:compat",
-        "test:memory": "rollup -c ./scripts/memory/rollup.config.js && node --expose-gc ./scripts/memory/build/test.js",
-        "release": "./scripts/release/core.js"
+        "test:memory": "rollup -c ./scripts/memory/rollup.config.js && node --expose-gc ./scripts/memory/build/test.js"
     },
     "devDependencies": {
         "@babel/core": "^7.6.4",

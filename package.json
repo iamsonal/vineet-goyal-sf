@@ -31,7 +31,7 @@
         "@best/store-aws": "4.0.0-alpha9",
         "@lwc/rollup-plugin": "~1.1.8",
         "@salesforce-lds/engine": "0.1.0",
-        "@salesforce-lds/lwc-lds": "0.1.0",
+        "@salesforce-lds/lwc-lds": "0.1.0-20191231",
         "@salesforce-lds-api/apex": "0.1.0",
         "@salesforce-lds-api/uiapi-records": "0.1.0",
         "@types/jest": "^24.0.19",

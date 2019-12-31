@@ -1754,10 +1754,10 @@
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds/engine/-/engine-0.1.0.tgz#402affec4bfddf2d758c64f80180551cdd42b82e"
   integrity sha512-168gCS/35pYUiNfMd78NfR6NTZv/D2G7vn7CcVrf8PAyDPi19KKzlKSaQgx4vhWM+vr3SwEvwu62JxudjDezDQ==
 
-"@salesforce-lds/lwc-lds@0.1.0":
-  version "0.1.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds/lwc-lds/-/lwc-lds-0.1.0.tgz#b9b1b08a4634b4bffdafaedb8fcfe52626cc20fc"
-  integrity sha512-+3swLlb3FQjw2PPz2VLe1AEcEguS+G/vJ1mLmaoZHKaRKlJxFAfSd0TDGns1tHMIuMnq5v4xpSjAgHCWdV00Ig==
+"@salesforce-lds/lwc-lds@0.1.0-20191231":
+  version "0.1.0-20191231"
+  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds/lwc-lds/-/lwc-lds-0.1.0-20191231.tgz#0cd0a24b3f56a0bdfce8c64b98262a72269c8e5c"
+  integrity sha512-x7mdHz3ZtYTci20RAhiEwL9rLCPg8X7o/a5PArojKKDhIspFwtq45MiITp5SaVKhvBLnbAUVn897Zr714N5z6w==
 
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"

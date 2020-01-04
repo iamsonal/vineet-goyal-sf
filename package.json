@@ -15,7 +15,7 @@
         "format:check": "prettier --check '**/*.{js,ts,json,md,yml,raml}'",
         "format:fix": "prettier --write '**/*.{js,ts,json,md,yml,raml}'",
         "lint": "eslint src/ --ext=js,ts",
-        "test": "jest --coverage",
+        "test": "jest",
         "test:debug": "node --inspect-brk node_modules/jest/bin/jest.js --runInBand",
         "test:size": "bundlesize",
         "release": "./scripts/release/core.js"

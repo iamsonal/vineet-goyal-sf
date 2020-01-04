@@ -42,4 +42,9 @@ executePipeline(envDef) {
         // https://jestjs.io/docs/en/troubleshooting#tests-are-extremely-slow-on-docker-and-or-continuous-integration-ci-server        
         sh 'yarn test --runInBand --ci --coverage'
     }
+
+    stage('BUNDLE SIZE CHECK') {
+        echo 'Run bundle size check'
+        sh 'yarn test:size'
+    }
 }

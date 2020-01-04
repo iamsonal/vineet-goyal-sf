@@ -65,4 +65,9 @@ executePipeline(envDef) {
     //     // stop_sauce_connect
     //     sh 'kill -9 `cat /tmp/sc_client-${SAUCE_TUNNEL_ID}.pid`'
     // }
+
+    stage('TEST - MEMORY') {
+        echo 'Run memory perf test'
+        sh 'yarn test:memory'
+    }
 }

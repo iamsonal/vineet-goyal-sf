@@ -30,10 +30,10 @@
         "@best/runner-hub": "4.0.0-alpha9",
         "@best/store-aws": "4.0.0-alpha9",
         "@lwc/rollup-plugin": "~1.1.8",
-        "@salesforce-lds/cli": "0.1.0",
-        "@salesforce-lds/compiler": "0.1.0",
+        "@salesforce-lds/cli": "0.1.0-20200103-1",
+        "@salesforce-lds/compiler": "0.1.0-20200103",
         "@salesforce-lds/engine": "0.1.0",
-        "@salesforce-lds/lwc-lds": "0.1.0",
+        "@salesforce-lds/lwc-lds": "0.1.0-20191231",
         "@types/jest": "^24.0.19",
         "@types/node": "^12.11.2",
         "@typescript-eslint/eslint-plugin": "^2.5.0",
@@ -90,17 +90,5 @@
         "packages/**/*.{js,ts}": [
             "eslint"
         ]
-    },
-    "bundlesize": [
-        {
-            "path": "./packages/core-build/dist/lds.min.js",
-            "maxSize": "75 kB",
-            "compression": "brotli"
-        },
-        {
-            "path": "./packages/core-build/dist/ldsNativeProxy.min.js",
-            "maxSize": "25 kB",
-            "compression": "brotli"
-        }
-    ]
+    }
 }

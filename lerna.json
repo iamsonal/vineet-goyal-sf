@@ -1,5 +1,6 @@
 {
     "version": "0.1.0",
     "npmClient": "yarn",
-    "packages": ["packages/@salesforce-lds-api/*", "packages/*"]
+    "packages": ["packages/*"],
+    "registry": "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/"
 }

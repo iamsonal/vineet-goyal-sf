@@ -58,20 +58,17 @@
         "lwc": "~1.1.8",
         "prettier": "^1.17.0",
         "pretty-bytes": "^5.3.0",
-        "rimraf": "^3.0.0",
         "rollup": "^1.25.1",
         "rollup-plugin-babel": "^4.3.3",
         "rollup-plugin-commonjs": "^10.1.0",
         "rollup-plugin-compat": "^0.22.0",
         "rollup-plugin-node-resolve": "^5.2.0",
         "rollup-plugin-replace": "^2.2.0",
-        "rollup-plugin-terser": "^5.1.2",
         "rollup-plugin-typescript2": "^0.24.3",
         "sinon": "^7.5.0",
         "timekeeper": "^2.2.0",
         "ts-node": "^8.4.1",
-        "typescript": "^3.6.4",
-        "yargs": "^14.2.0"
+        "typescript": "^3.6.4"
     },
     "dependencies": {},
     "workspaces": [

@@ -256,3 +256,27 @@ describe('data emit', () => {
         expect(wireA.getWiredData()).toEqualActionsSnapshot(mockData);
     });
 });
+
+describe('refresh', () => {
+    it('refreshes with up-to-date data', async () => {
+        const mockData = getMock('record-actions');
+        const recordIds = Object.keys(mockData.actions);
+
+        const refreshMockData = getMock('record-actions');
+        refreshMockData.actions[recordIds[0]].actions.shift();
+
+        const config = {
+            recordId: recordIds,
+            sections: ['PAGE'],
+        };
+        mockGetRecordActionsNetwork(config, [mockData, refreshMockData]);
+
+        const element = await setupElement(config, RecordActions);
+        expect(element.getWiredData()).toEqualActionsSnapshot(mockData);
+
+        await element.refresh();
+
+        expect(element.pushCount()).toBe(2);
+        expect(element.getWiredData()).toEqualActionsSnapshot(refreshMockData);
+    });
+});

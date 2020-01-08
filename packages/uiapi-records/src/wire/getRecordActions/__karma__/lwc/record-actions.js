@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getRecordActions } from 'lds';
+import { getRecordActions, refresh } from 'lds';
 
 export default class RecordActions extends LightningElement {
     @api recordId;
@@ -29,5 +29,9 @@ export default class RecordActions extends LightningElement {
 
     @api pushCount() {
         return this.wirePushCount;
+    }
+
+    @api refresh() {
+        return refresh(this.action);
     }
 }

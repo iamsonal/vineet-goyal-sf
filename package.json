@@ -74,7 +74,7 @@
     "bundlesize": [
         {
             "path": "./dist/lds.min.js",
-            "maxSize": "75 kB",
+            "maxSize": "50 kB",
             "compression": "brotli"
         },
         {

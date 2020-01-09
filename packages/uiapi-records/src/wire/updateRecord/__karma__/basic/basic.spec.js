@@ -419,4 +419,42 @@ describe('update record', () => {
 
         expect(elm.pushCount()).toBe(2);
     });
+
+    it('should send correct XHR when updating a numeric field with float value', async () => {
+        const mockResponse = getMock(
+            'record-Opportunity-fields-Opportunity.Name,Opportunity.SystemModstamp'
+        );
+
+        const updateParams = {
+            fields: {
+                Id: mockResponse.id,
+                Float_Field__c: 12.3,
+            },
+            allowSaveOnDuplicate: false,
+        };
+
+        mockUpdateRecordNetwork(mockResponse.id, updateParams, mockResponse);
+
+        const response = await updateRecord(updateParams);
+        expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
+    });
+
+    it('should send correct XHR when updating a numeric field with integer value', async () => {
+        const mockResponse = getMock(
+            'record-Opportunity-fields-Opportunity.Name,Opportunity.SystemModstamp'
+        );
+
+        const updateParams = {
+            fields: {
+                Id: mockResponse.id,
+                Float_Field__c: 12,
+            },
+            allowSaveOnDuplicate: false,
+        };
+
+        mockUpdateRecordNetwork(mockResponse.id, updateParams, mockResponse);
+
+        const response = await updateRecord(updateParams);
+        expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
+    });
 });

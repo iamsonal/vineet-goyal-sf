@@ -6,6 +6,7 @@ import {
     resetTime,
     stripEtags,
     verifyImmutable,
+    verifyMutable,
 } from 'test-util';
 
 beforeAll(() => {
@@ -25,6 +26,17 @@ beforeEach(() => {
                 },
             };
         },
+
+        toBeMutable: () => {
+            return {
+                compare: actual => {
+                    verifyMutable(actual, '$');
+
+                    return { pass: true };
+                },
+            };
+        },
+
         toEqualSnapshotWithoutEtags: () => {
             return {
                 compare: (actual, expected) => {

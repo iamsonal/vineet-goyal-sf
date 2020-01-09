@@ -253,6 +253,12 @@ function verifyImmutable(value, path) {
     });
 }
 
+function verifyMutable(value, path) {
+    return !verifyMutationThrows(() => {
+        verifyImmutable(value, path);
+    });
+}
+
 function removeElement(element) {
     const oldChild = document.body.removeChild(element);
     return flushPromises().then(() => {
@@ -290,4 +296,5 @@ export {
     resetTime,
     removeElement,
     verifyImmutable,
+    verifyMutable,
 };

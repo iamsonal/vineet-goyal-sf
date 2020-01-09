@@ -1,4 +1,12 @@
-import { LDS, Adapter, Snapshot, IngestPath, ResourceIngest } from '@salesforce-lds/engine';
+import {
+    Adapter,
+    FulfilledSnapshot,
+    IngestPath,
+    LDS,
+    ResourceIngest,
+    Selector,
+    Snapshot,
+} from '@salesforce-lds/engine';
 import { stableJSONStringify } from '../../util/utils';
 import { default as getApexRequest } from '../../generated/resources/postApex';
 import { refreshable, untrustedIsObject } from '../../generated/adapters/adapter-utils';
@@ -120,6 +128,11 @@ function network(
     cacheable: boolean
 ): Promise<Snapshot<any>> {
     const recordId = getApexId(namespace, classname, method, isContinuation, config);
+    const select: Selector<any> = {
+        recordId,
+        node: { kind: 'Fragment', opaque: true },
+        variables: {},
+    };
     const body = {
         namespace,
         classname,
@@ -137,15 +150,24 @@ function network(
 
     return lds.dispatchResourceRequest<any>(request).then(
         resp => {
-            lds.storePublish(recordId + '_cacheable', resp.headers);
-            lds.storeIngest(recordId, request, resp.body);
-            lds.storeBroadcast();
+            const { cacheable } = resp.headers;
+            if (((cacheable as unknown) as boolean) === true) {
+                lds.storePublish(recordId + '_cacheable', resp.headers);
+                lds.storeIngest(recordId, request, resp.body);
+                lds.storeBroadcast();
 
-            return lds.storeLookup<any>({
+                return lds.storeLookup<any>(select);
+            }
+
+            // if cacheable is not set or set to false, return a synthetic snapshot
+            return {
                 recordId,
-                node: { kind: 'Fragment', opaque: true },
                 variables: {},
-            });
+                seenRecords: {},
+                select,
+                state: 'Fulfilled',
+                data: resp.body,
+            } as FulfilledSnapshot<any, any>;
         },
         (err: unknown) => {
             return lds.errorSnapshot(err);

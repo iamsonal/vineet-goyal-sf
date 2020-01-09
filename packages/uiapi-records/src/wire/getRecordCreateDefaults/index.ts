@@ -12,7 +12,6 @@ import { select as recordLayoutRepresentationSelect } from '../../generated/type
 import { select as objectInfoRepresentationSelect } from '../../generated/types/ObjectInfoRepresentation';
 import { FormFactor } from '../../primitives/FormFactor';
 import { buildSelectionFromRecord } from '../../selectors/record';
-import { ObjectKeys } from '../../util/language';
 import { MASTER_RECORD_TYPE_ID } from '../../util/layout';
 import {
     GetRecordCreateDefaultsConfig,
@@ -25,7 +24,6 @@ const layoutSelections = recordLayoutRepresentationSelect();
 const objectInfoSelections = objectInfoRepresentationSelect();
 
 function buildSelector(resp: RecordDefaultsRepresentation): PathSelection[] {
-    const objectInfoKeys = ObjectKeys(resp.objectInfos);
     const recordSelections = buildSelectionFromRecord(resp.record);
 
     return [
@@ -36,17 +34,10 @@ function buildSelector(resp: RecordDefaultsRepresentation): PathSelection[] {
             selections: layoutSelections.selections,
         },
         {
-            kind: 'Object',
+            kind: 'Link',
             name: 'objectInfos',
-            selections: objectInfoKeys.map(
-                (key): PathSelection => {
-                    return {
-                        kind: 'Link',
-                        name: key,
-                        selections: objectInfoSelections.selections,
-                    };
-                }
-            ),
+            map: true,
+            selections: objectInfoSelections.selections,
         },
         {
             kind: 'Link',

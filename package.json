@@ -18,7 +18,8 @@
         "test": "jest",
         "test:debug": "node --inspect-brk node_modules/jest/bin/jest.js --runInBand",
         "test:size": "bundlesize",
-        "release": "./scripts/release/core.js"
+        "release": "./scripts/release/core.js",
+        "release:local": "./scripts/release/core.js --skip-git-check"
     },
     "devDependencies": {
         "@babel/core": "^7.6.4",

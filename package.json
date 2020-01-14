@@ -4,7 +4,7 @@
     "description": "Lightning Data Service",
     "repository": {
         "type": "git",
-        "url": "https://github.com/salesforce/lds.git"
+        "url": "https://github.com/salesforce/lds-adapters.git"
     },
     "scripts": {
         "prepare": "yarn build",

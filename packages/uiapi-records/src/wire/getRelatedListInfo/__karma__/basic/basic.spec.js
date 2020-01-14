@@ -26,8 +26,7 @@ function mockNetwork(config, mockData) {
 }
 
 describe('basic', () => {
-    // TODO: update mock data to be compatible with v49
-    xit('gets data with valid parentObjectApiName and relatedListId', async () => {
+    it('gets data with valid parentObjectApiName and relatedListId', async () => {
         const mockData = getMock('related-list-info-Custom');
         const resourceConfig = {
             parentObjectApiName: mockData.listReference.parentObjectApiName,

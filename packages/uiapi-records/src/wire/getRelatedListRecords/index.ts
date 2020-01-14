@@ -4,6 +4,7 @@ import {
     validateAdapterConfig,
     getRelatedListRecords_ConfigPropertyNames as relatedListRecordsConfigProperties,
 } from '../../generated/adapters/getRelatedListRecords';
+import { refreshable } from '../../generated/adapters/adapter-utils';
 import getUiApiRelatedListRecordsByParentRecordIdAndRelatedListId from '../../generated/resources/getUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
 import {
     RelatedListRecordCollectionRepresentation,
@@ -16,22 +17,18 @@ export const factory: AdapterFactory<
     GetRelatedListRecordsConfig,
     RelatedListRecordCollectionRepresentation
 > = (lds: LDS) => {
-    return function(untrustedConfig: unknown) {
-        const config = validateAdapterConfig(untrustedConfig, relatedListRecordsConfigProperties);
-        if (config === null || config.fields === undefined) {
-            return null;
-        }
+    return refreshable(
+        (untrustedConfig: unknown) => {
+            const config = validateAdapterConfig(
+                untrustedConfig,
+                relatedListRecordsConfigProperties
+            );
 
-        const cacheKey = RelatedListRecordCollectionRepresentation_keyBuilder({
-            sortBy: config.sortBy || [],
-            parentRecordId: config.parentRecordId,
-            relatedListId: config.relatedListId,
-        });
+            if (config === null) {
+                return null;
+            }
 
-        // Right now we have a problem where we cant lookup cached records without a list of fields
-        // The uiapi will go fetch the correct fields but requesting with empty
-        // fields is always a cache miss. We have filed W-6657626 to revisit this
-        if (config.fields !== undefined) {
+            const cacheKey = buildCacheKeyFromConfig(config);
             const recordCollectionSelector = buildRelatedListRecordCollectionSelector(
                 cacheKey,
                 config
@@ -45,11 +42,24 @@ export const factory: AdapterFactory<
                 // cache hit :partyparrot:
                 return lookupResult;
             }
-        }
 
-        // Cache miss, go fetch data
-        return getRelatedListRecords(config, lds, cacheKey);
-    };
+            // Cache miss, go fetch data
+            return getRelatedListRecords(config, lds, cacheKey);
+        },
+        (untrustedConfig: unknown) => {
+            const config = validateAdapterConfig(
+                untrustedConfig,
+                relatedListRecordsConfigProperties
+            );
+            if (config === null) {
+                throw new Error(
+                    'Invalid config passed to "getRelatedListRecords" refresh function'
+                );
+            }
+
+            return getRelatedListRecords(config, lds, buildCacheKeyFromConfig(config));
+        }
+    );
 };
 
 function getRelatedListRecords(
@@ -108,4 +118,12 @@ function getRelatedListRecords(
             return lds.errorSnapshot(err);
         }
     );
+}
+
+function buildCacheKeyFromConfig(config: GetRelatedListRecordsConfig) {
+    return RelatedListRecordCollectionRepresentation_keyBuilder({
+        sortBy: config.sortBy || [],
+        parentRecordId: config.parentRecordId,
+        relatedListId: config.relatedListId,
+    });
 }

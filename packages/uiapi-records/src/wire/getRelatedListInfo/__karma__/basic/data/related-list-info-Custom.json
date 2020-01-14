@@ -6,10 +6,11 @@
         {
             "fieldApiName": "Name",
             "label": "CObjChild Name",
+            "lookupId": "Id",
             "sortable": true
         }
     ],
-    "eTag": "0000",
+    "eTag": "7a2a41f1b70a77f9b0e2068c429502ea",
     "filterLogicString": "",
     "filteredByInfo": [],
     "label": "CObjChilds",

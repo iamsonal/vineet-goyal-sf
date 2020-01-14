@@ -5,7 +5,7 @@
  */
 
 import { LightningElement, wire, api } from 'lwc';
-import { getRelatedListRecords } from 'lds';
+import { getRelatedListRecords, refresh } from 'lds';
 
 export default class Basic extends LightningElement {
     @api parentRecordId;
@@ -32,5 +32,15 @@ export default class Basic extends LightningElement {
     @api
     getError() {
         return this.relatedListRecordsData.error;
+    }
+
+    @api
+    pushCount() {
+        return this.wirePushCount;
+    }
+
+    @api
+    async refresh() {
+        return refresh(this.relatedListRecordsData);
     }
 }

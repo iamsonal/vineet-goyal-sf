@@ -1,4 +1,5 @@
-const baseConfig = require('./base');
+const browserConfig = require('./browser');
+const browserCompatConfig = require('./browser-compat');
 
 const SAUCE_BROWSERS = {
     sl_chrome_latest: {
@@ -32,8 +33,13 @@ const SAUCE_COMPAT_BROWSERS = {
 };
 
 module.exports = function(config) {
-    // Apply the base config first with common configurations.
-    baseConfig(config);
+    const compat = Boolean(config.compat);
+
+    if (compat) {
+        browserCompatConfig(config);
+    } else {
+        browserConfig(config);
+    }
 
     const username = process.env.SAUCE_USERNAME;
     if (!username) {
@@ -63,7 +69,7 @@ module.exports = function(config) {
         };
     }
 
-    const browsers = config.compat ? SAUCE_COMPAT_BROWSERS : SAUCE_BROWSERS;
+    const browsers = compat ? SAUCE_COMPAT_BROWSERS : SAUCE_BROWSERS;
 
     config.set({
         sauceLabs: sauceLabs,

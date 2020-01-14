@@ -3,9 +3,9 @@ import { mockNetworkOnce, getMock as globalGetMock, setupElement } from 'test-ut
 import { URL_BASE } from 'uiapi-test-util';
 import sinon from 'sinon';
 
-import RelatedListInfos from '../lwc/related-list-infos';
+import RelatedListInfos from '../lwc/related-lists-info';
 
-const MOCK_PREFIX = 'wire/getRelatedListInfos/__karma__/basic/data/';
+const MOCK_PREFIX = 'wire/getRelatedListsInfo/__karma__/basic/data/';
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
@@ -27,7 +27,7 @@ function mockNetwork(config, mockData) {
 
 describe('basic', () => {
     it('gets data with valid parentObjectApiName and recordTypeId', async () => {
-        const mockData = getMock('related-list-infos-Custom');
+        const mockData = getMock('related-lists-info-Custom');
         const resourceConfig = {
             parentObjectApiName: mockData.parentObjectApiName,
             recordTypeId: mockData.parentRecordTypeId,

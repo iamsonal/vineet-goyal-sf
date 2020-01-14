@@ -1,6 +1,6 @@
 import { setupElement } from 'test-util';
 import { MASTER_RECORD_TYPE_ID } from 'uiapi-test-util';
-import RelatedListInfos from '../lwc/related-list-infos';
+import RelatedListsInfo from '../lwc/related-lists-info';
 
 describe('validation', () => {
     ['parentObjectApiName', 'recordTypeId'].forEach(param => {
@@ -11,7 +11,7 @@ describe('validation', () => {
             };
             config[param] = undefined;
 
-            const elm = await setupElement(config, RelatedListInfos);
+            const elm = await setupElement(config, RelatedListsInfo);
             expect(elm.pushCount()).toBe(0);
         });
     });
@@ -22,7 +22,7 @@ describe('validation', () => {
             recordTypeId: null,
         };
 
-        const elm = await setupElement(config, RelatedListInfos);
+        const elm = await setupElement(config, RelatedListsInfo);
         expect(elm.pushCount()).toBe(0);
     });
 });

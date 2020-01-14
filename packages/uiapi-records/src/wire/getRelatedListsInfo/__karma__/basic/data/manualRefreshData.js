@@ -15,5 +15,5 @@ const MASTER_RECORD_TYPE_ID = '012000000000000AAA';
 
 await helpers.requestGetAndSave(
     `/ui-api/related-list-info/${PARENT_ENTITY_API_NAME}/${MASTER_RECORD_TYPE_ID}`,
-    path.join(rootDir, 'related-list-infos-Custom.json')
+    path.join(rootDir, 'related-lists-info-Custom.json')
 );

@@ -5,7 +5,7 @@
     "description": "Core build script",
     "repository": {
         "type": "git",
-        "url": "https://git.soma.salesforce.com/vince-chen/lds-core-build"
+        "url": "https://git.soma.salesforce.com/lds/lds-core-build"
     },
     "license": "MIT",
     "scripts": {

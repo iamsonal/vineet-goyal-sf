@@ -33,6 +33,7 @@ import {
     UpdateLayoutUserState,
     UpdateRecord,
     UpdateRecordAvatar,
+    UpdateRelatedListInfo,
 } from '@salesforce-lds-api/uiapi-records';
 
 const createRecord = CreateRecord(lds);
@@ -63,6 +64,7 @@ const getRelatedListRecordActions = register(lds, wireService, GetRelatedListRec
 const updateRecord = UpdateRecord(lds);
 const updateRecordAvatar = UpdateRecordAvatar(lds);
 const updateLayoutUserState = UpdateLayoutUserState(lds);
+const updateRelatedListInfo = UpdateRelatedListInfo(lds);
 
 export {
     // adapters
@@ -91,6 +93,7 @@ export {
     MRU,
     updateRecord,
     updateLayoutUserState,
+    updateRelatedListInfo,
     // lds
     refresh,
     karmaNetworkAdapter,

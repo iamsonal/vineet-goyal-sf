@@ -414,6 +414,13 @@ types:
           parentObjectApiName: urlParams.parentObjectApiName
           recordTypeId: urlParams.recordTypeId
           relatedListId: urlParams.relatedListId
+      patch:
+        (adapter):
+          name: updateRelatedListInfo
+        (key):
+          parentObjectApiName: urlParams.parentObjectApiName
+          recordTypeId: urlParams.recordTypeId
+          relatedListId: urlParams.relatedListId
   '/related-list-records/{parentRecordId}/{relatedListId}':
     get:
       (adapter):

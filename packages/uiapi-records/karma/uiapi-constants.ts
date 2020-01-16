@@ -25,3 +25,5 @@ export { TTL as OBJECT_INFO_TTL } from '../src/generated/types/ObjectInfoReprese
 export { TTL as PICKLIST_VALUES_TTL } from '../src/generated/types/PicklistValuesRepresentation';
 
 export { TTL as PICKLIST_VALUES_COLLECTION_TTL } from '../src/generated/types/PicklistValuesCollectionRepresentation';
+
+export { TTL as RELATED_LIST_INFO_TTL } from '../src/generated/types/RelatedListInfoRepresentation';

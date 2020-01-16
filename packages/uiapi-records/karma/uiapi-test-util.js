@@ -20,6 +20,7 @@ import {
     OBJECT_INFO_TTL,
     PICKLIST_VALUES_TTL,
     PICKLIST_VALUES_COLLECTION_TTL,
+    RELATED_LIST_INFO_TTL,
 } from './dist/uiapi-constants';
 
 const API_VERSION = 'v49.0';
@@ -317,6 +318,14 @@ function expireRecordUi() {
 }
 
 /**
+ * Force a cache expiration for related-list-info by fast-forwarding time past the
+ * standard related-list-info TTL.
+ */
+function expireRelatedListInfo() {
+    timekeeper.travel(Date.now() + RELATED_LIST_INFO_TTL + 1);
+}
+
+/**
  * Force a cache expiration for list-ui by fast-forwarding time past the
  * standard list TTL.
  */
@@ -461,6 +470,7 @@ export {
     expireRecordUi,
     expireRecordAvatar,
     expireRecordDefaultsRepresentation,
+    expireRelatedListInfo,
     expireObjectInfo,
     // network mock utils
     mockCreateRecordNetwork,

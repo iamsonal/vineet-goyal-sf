@@ -133,6 +133,34 @@ async function requestPost(url, body) {
     return result;
 }
 
+async function requestPatch(url, body) {
+    const fullUrl = URL_BASE + url;
+    // eslint-disable-next-line no-console
+    console.log(`Making PATCH request to ${fullUrl}`);
+
+    let result;
+
+    try {
+        // eslint-disable-next-line no-undef
+        result = await $conn.requestPatch(fullUrl, body);
+    } catch (e) {
+        // some requests are expecting an error response
+        result = [
+            {
+                errorCode: e.errorCode,
+                message: e.message,
+            },
+        ];
+    }
+
+    return result;
+}
+
+async function requestPatchAndSave(url, body, filename) {
+    const result = await requestPatch(url, body);
+    return fs.writeFileSync(filename, JSON.stringify(result, null, 4));
+}
+
 async function requestDelete(url) {
     const fullUrl = URL_BASE + url;
     // eslint-disable-next-line no-console
@@ -207,4 +235,6 @@ module.exports = {
     requestGetAndSave,
     createContactWithOwner,
     requestPost,
+    requestPatch,
+    requestPatchAndSave,
 };

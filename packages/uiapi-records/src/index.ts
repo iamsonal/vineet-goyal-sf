@@ -90,6 +90,10 @@ export {
     UpdateRecordConfig,
 } from './generated/adapters/updateRecord';
 export { updateRecordAvatarNativeAdapterFactory as UpdateRecordAvatar_Native } from './generated/adapters/updateRecordAvatar';
+export {
+    updateRelatedListInfoAdapterFactory as UpdateRelatedListInfo,
+    updateRelatedListInfoNativeAdapterFactory as UpdateRelatedListInfo_Native,
+} from './generated/adapters/updateRelatedListInfo';
 
 // Validation Utils
 export { untrustedIsObject } from './generated/adapters/adapter-utils';

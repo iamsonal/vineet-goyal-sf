@@ -17,7 +17,7 @@
     "nextPageToken": null,
     "nextPageUrl": null,
     "optionalFields": [],
-    "pageSize": null,
+    "pageSize": 50,
     "previousPageToken": null,
     "previousPageUrl": null,
     "records": [

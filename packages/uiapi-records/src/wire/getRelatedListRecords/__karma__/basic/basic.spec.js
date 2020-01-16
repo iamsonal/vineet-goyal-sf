@@ -11,14 +11,6 @@ import { URL_BASE, mockDeleteRecordNetwork } from 'uiapi-test-util';
 import RelatedListBasic from '../lwc/related-list-basic';
 
 const MOCK_PREFIX = 'wire/getRelatedListRecords/__karma__/basic/data/';
-const NON_AT_WIRE_PROPERTIES = [
-    'currentPageUrl',
-    'listReference',
-    'fields',
-    'optionalFields',
-    'pageSize',
-    'sortBy',
-];
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
@@ -42,14 +34,10 @@ function mockNetwork(config, mockData) {
     }
 }
 
-function stripNonAtWireProperties(mockData) {
-    return Object.keys(mockData).reduce((result, key) => {
-        if (!NON_AT_WIRE_PROPERTIES.includes(key)) {
-            result[key] = mockData[key];
-        }
-
-        return result;
-    }, {});
+// TODO W-6741077 Add currentPageUrl back to selectors once it is returned in the uiapi
+function stripCurrentPageUrl(mockData) {
+    delete mockData.currentPageUrl;
+    return mockData;
 }
 
 describe('basic', () => {
@@ -69,9 +57,7 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripNonAtWireProperties(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripCurrentPageUrl(mockData));
     });
 
     it('gets data with no records', async () => {
@@ -90,9 +76,7 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripNonAtWireProperties(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripCurrentPageUrl(mockData));
     });
 
     it('refreshes related list records', async () => {
@@ -118,15 +102,13 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripNonAtWireProperties(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripCurrentPageUrl(mockData));
         expect(element.pushCount()).toBe(1);
 
         await element.refresh();
 
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripNonAtWireProperties(refreshedMockData)
+            stripCurrentPageUrl(refreshedMockData)
         );
         expect(element.pushCount()).toBe(2);
     });
@@ -152,9 +134,7 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripNonAtWireProperties(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripCurrentPageUrl(mockData));
         expect(element.pushCount()).toBe(1);
 
         // Delete the record from lds, our component should refresh automatically
@@ -162,7 +142,7 @@ describe('basic', () => {
         await deleteRecord(recordId);
 
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripNonAtWireProperties(refreshedMockData)
+            stripCurrentPageUrl(refreshedMockData)
         );
         expect(element.pushCount()).toBe(2);
     });
@@ -187,15 +167,13 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripNonAtWireProperties(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripCurrentPageUrl(mockData));
         expect(element.pushCount()).toBe(1);
 
         await element.refresh();
 
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripNonAtWireProperties(refreshedMockData)
+            stripCurrentPageUrl(refreshedMockData)
         );
         expect(element.pushCount()).toBe(2);
     });

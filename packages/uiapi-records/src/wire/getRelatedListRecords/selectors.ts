@@ -12,9 +12,12 @@ import {
     RelatedListRecordCollectionRepresentation,
 } from '../../generated/types/RelatedListRecordCollectionRepresentation';
 import { GetRelatedListRecordsConfig } from '../../generated/adapters/getRelatedListRecords';
+import { staticValuePathSelection } from '../../util/pagination';
+import { select as RelatedListReferenceRepresentation_select } from '../../generated/types/RelatedListReferenceRepresentation';
 
 // Constants
 const DEFAULT_PAGE_SIZE = 50;
+const RELATED_LIST_REFERENCE_SELECTIONS = RelatedListReferenceRepresentation_select().selections;
 
 export function buildRelatedListRecordCollectionSelector(
     cacheKey: string,
@@ -69,6 +72,11 @@ function buildSelections(
             reader: ListRecordCollectionRepresentation_reader_records,
         },
         {
+            kind: 'Object',
+            name: 'listReference',
+            selections: RELATED_LIST_REFERENCE_SELECTIONS,
+        },
+        {
             kind: 'Custom',
             name: 'count',
             reader: ListRecordCollectionRepresentation_reader_variables,
@@ -77,6 +85,16 @@ function buildSelections(
             kind: 'Custom',
             name: 'currentPageToken',
             reader: ListRecordCollectionRepresentation_reader_variables,
+        },
+        {
+            kind: 'Scalar',
+            name: 'fields',
+            plural: true,
+        },
+        {
+            kind: 'Scalar',
+            name: 'optionalFields',
+            plural: true,
         },
         {
             kind: 'Scalar',
@@ -101,6 +119,15 @@ function buildSelections(
             kind: 'Custom',
             name: 'previousPageUrl',
             reader: ListRecordCollectionRepresentation_reader_url,
+        },
+        staticValuePathSelection({
+            name: 'pageSize',
+            value: config.pageSize === undefined ? DEFAULT_PAGE_SIZE : config.pageSize,
+        }),
+        {
+            kind: 'Scalar',
+            name: 'sortBy',
+            plural: true,
         },
     ];
 }

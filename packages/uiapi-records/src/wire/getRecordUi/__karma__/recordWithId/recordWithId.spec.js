@@ -806,6 +806,7 @@ describe('recordTypeId update', () => {
         const updatedRecordUi = clone(baseRecordUi);
         const recordId = getRecordIdFromMock(baseRecordUi);
 
+        // Records - record change causes recordTypeId change
         const updatedRecordData = updatedRecordUi.records[recordId];
         const recordTypeId = updatedRecordData.recordTypeId;
 
@@ -816,10 +817,14 @@ describe('recordTypeId update', () => {
         updatedRecordData.recordTypeId = newRecordTypeId;
         updatedRecordData.weakEtag = updatedRecordData.weakEtag + 1;
 
+        // Layouts - recordTypeId change causes layout change
         updatedRecordUi.layouts.Opportunity[newRecordTypeId] = {
             ...updatedRecordUi.layouts.Opportunity[recordTypeId],
         };
         delete updatedRecordUi.layouts.Opportunity[recordTypeId];
+
+        // ObjectInfos - recordTypeId change causes ObjectInfo change
+        delete updatedRecordUi.objectInfos.Campaign;
 
         return updatedRecordUi;
     }

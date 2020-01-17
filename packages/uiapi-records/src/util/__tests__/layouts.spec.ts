@@ -90,4 +90,42 @@ describe('getQualifiedFieldApiNamesFromLayout', () => {
             'ADM_Work__c.LastModifiedDate',
         ]);
     });
+
+    it('works with field reference true but relationshipName null', () => {
+        const layout = {
+            sections: [
+                {
+                    layoutRows: [
+                        {
+                            layoutItems: [
+                                {
+                                    layoutComponents: [
+                                        {
+                                            apiName: 'CloneSourceId',
+                                            componentType: 'Field',
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const objectInfo = {
+            apiName: 'Lead',
+            fields: {
+                CloneSourceId: {
+                    apiName: 'CloneSourceId',
+                    reference: true,
+                    relationshipName: null,
+                },
+            },
+        };
+
+        expect(getQualifiedFieldApiNamesFromLayout(layout, objectInfo)).toEqual([
+            'Lead.CloneSourceId',
+        ]);
+    });
 });

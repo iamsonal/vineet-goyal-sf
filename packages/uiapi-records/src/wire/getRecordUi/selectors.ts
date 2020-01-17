@@ -21,9 +21,7 @@ export interface RecordDef {
 export function buildRecordUiSelector(
     recordDefs: RecordDef[],
     layoutTypes: string[],
-    modes: string[],
-    layoutUserStateIds: string[],
-    objectInfoApiNames: string[]
+    modes: string[]
 ): Selector<any>['node'] {
     const layoutTypeSelections: PathSelection[] = [];
 
@@ -51,8 +49,6 @@ export function buildRecordUiSelector(
 
     const recordLayoutSelections: PathSelection[] = [];
     const recordSelections: PathSelection[] = [];
-    const recordLayoutUserStateSelections: PathSelection[] = [];
-    const objectInfoSelections: PathSelection[] = [];
 
     for (let i = 0, len = recordDefs.length; i < len; i += 1) {
         const { recordId, recordData } = recordDefs[i];
@@ -71,32 +67,14 @@ export function buildRecordUiSelector(
         });
     }
 
-    for (let i = 0, len = layoutUserStateIds.length; i < len; i += 1) {
-        const layoutUserStateId = layoutUserStateIds[i];
-        ArrayPrototypePush.call(recordLayoutUserStateSelections, {
-            kind: 'Link',
-            required: false,
-            name: layoutUserStateId,
-            selections: layoutUserStatePathSelector,
-        });
-    }
-
-    for (let i = 0, len = objectInfoApiNames.length; i < len; i += 1) {
-        const apiName = objectInfoApiNames[i];
-        ArrayPrototypePush.call(objectInfoSelections, {
-            kind: 'Link',
-            name: apiName,
-            selections: objectInfoPathSelection,
-        });
-    }
-
     return {
         kind: 'Fragment',
         selections: [
             {
-                kind: 'Object',
+                kind: 'Link',
                 name: 'layoutUserStates',
-                selections: recordLayoutUserStateSelections,
+                map: true,
+                selections: layoutUserStatePathSelector,
             },
             {
                 kind: 'Object',
@@ -104,9 +82,10 @@ export function buildRecordUiSelector(
                 selections: recordLayoutSelections,
             },
             {
-                kind: 'Object',
+                kind: 'Link',
                 name: 'objectInfos',
-                selections: objectInfoSelections,
+                map: true,
+                selections: objectInfoPathSelection,
             },
             {
                 name: 'records',

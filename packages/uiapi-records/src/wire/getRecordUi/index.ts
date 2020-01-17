@@ -260,9 +260,7 @@ export function network(lds: LDS, config: GetRecordUiConfigWithDefaults) {
             const selPath = buildRecordUiSelector(
                 collectRecordDefs(body, recordIds),
                 layoutTypes,
-                modes,
-                ObjectKeys(body.layoutUserStates),
-                ObjectKeys(body.objectInfos)
+                modes
             );
 
             const sel = {

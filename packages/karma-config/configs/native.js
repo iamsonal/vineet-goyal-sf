@@ -1,5 +1,6 @@
 const base = require('./base');
 
+const path = require('path');
 const lwcDistribution = require('lwc');
 
 const LWC_ENGINE = lwcDistribution.getModulePath('engine', 'umd', 'es2017', 'prod_debug');
@@ -38,5 +39,15 @@ module.exports = function(config) {
     config.set({
         // order matters, load base deps then impl deps then test specs
         files: [...config.files, ...getFiles(), ...base.getTestSpecs(true)],
+
+        plugins: [...config.plugins, 'karma-android-hybrid-app-launcher'],
+
+        browsers: ['AndroidHybridApp'],
+
+        androidHybridApp: {
+            packageId: 'com.salesforce.ldsandroidhybridtestapp',
+            // NOTE: the source code for the checked in APK is at https://github.com/salesforce/lds-android-hybrid-test-app
+            apkPath: path.join(__dirname, '../native/lds-android-hybrid-test-app.apk'),
+        },
     });
 };

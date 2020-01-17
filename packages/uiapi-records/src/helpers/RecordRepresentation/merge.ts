@@ -4,7 +4,12 @@ import {
     RecordRepresentation,
 } from '../../generated/types/RecordRepresentation';
 import { network as getRecordFieldsNetwork } from '../../wire/getRecord/GetRecordFields';
-import { extractTrackedFields, isSuperset, isSupportedEntity } from '../../util/records';
+import {
+    extractTrackedFields,
+    isGraphNode,
+    isSuperset,
+    isSupportedEntity,
+} from '../../util/records';
 import { ObjectKeys } from '../../util/language';
 
 // This function sets fields that we are refreshing to pending
@@ -172,6 +177,22 @@ export default function merge(
         return incoming;
     }
 
+    // recordTypeId may get changed based on record state.
+    // Evicts all dependencies from store.
+    if (incoming.recordTypeId !== existing.recordTypeId) {
+        const recordDepKey = depenpendencyKeyBuilder({ recordId: existing.id });
+        const node = lds.getNode<{ [key: string]: true }, any>(recordDepKey);
+        if (isGraphNode(node)) {
+            const dependencies = node.retrieve();
+            if (dependencies !== null) {
+                const depKeys = ObjectKeys(dependencies);
+                for (let i = 0, len = depKeys.length; i < len; i++) {
+                    lds.storeEvict(depKeys[i]);
+                }
+            }
+        }
+    }
+
     // TODO - handle merging of records that change apiName
     // if (existing.apiName !== incoming.apiName) {
     //     if (process.env.NODE_ENV === 'production') {
@@ -192,4 +213,11 @@ export default function merge(
     }
 
     return mergeRecordFields(incoming, existing);
+}
+
+export function depenpendencyKeyBuilder(config: {
+    /** The ID of this record. */
+    recordId: string;
+}) {
+    return `UiApi::RecordRepresentationDependency:${config.recordId}`;
 }

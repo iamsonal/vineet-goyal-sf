@@ -1,4 +1,4 @@
-const { freeze, keys } = Object;
+const { assign, create, freeze, keys } = Object;
 const { hasOwnProperty } = Object.prototype;
 
 const { split, endsWith } = String.prototype;
@@ -10,6 +10,8 @@ const { parse, stringify } = JSON;
 
 export {
     // Object
+    assign as ObjectAssign,
+    create as ObjectCreate,
     freeze as ObjectFreeze,
     keys as ObjectKeys,
     // Object.prototype

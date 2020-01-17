@@ -192,6 +192,11 @@ function setupElement(props, elementType) {
     });
 }
 
+function updateElement(element, props) {
+    Object.assign(element, props);
+    return flushPromises();
+}
+
 function verifyMutationThrows(predicate) {
     try {
         predicate();
@@ -295,6 +300,7 @@ export {
     resetNetworkStub,
     resetTime,
     removeElement,
+    updateElement,
     verifyImmutable,
     verifyMutable,
 };

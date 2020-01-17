@@ -16,7 +16,14 @@ import {
     RecordRepresentation,
     RecordRepresentationNormalized,
 } from '../../generated/types/RecordRepresentation';
-import { ArrayPrototypePush, JSONStringify, ObjectKeys } from '../../util/language';
+import { depenpendencyKeyBuilder as recordRepresentationDependencyKeyBuilder } from '../../helpers/RecordRepresentation/merge';
+import {
+    ArrayPrototypePush,
+    JSONStringify,
+    ObjectAssign,
+    ObjectCreate,
+    ObjectKeys,
+} from '../../util/language';
 import { getTrackedFields, markMissingOptionalFields, isGraphNode } from '../../util/records';
 import { dedupe } from '../../validation/utils';
 import { buildRecordUiSelector, RecordDef } from './selectors';
@@ -168,18 +175,17 @@ function cache(
     return null;
 }
 
-function markRecordUiOptionalFields(lds: LDS, config: GetRecordUiConfigWithDefaults) {
-    const { recordIds } = config;
-    if (config.optionalFields.length > 0) {
-        for (let i = 0, len = recordIds.length; i < len; i += 1) {
-            const recordKey = recordRepresentationKeyBuilder({ recordId: recordIds[i] });
-            const node = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(
-                recordKey
-            )!;
-            if (isGraphNode(node)) {
-                markMissingOptionalFields(node, config.optionalFields);
-            }
-        }
+function markRecordUiOptionalFields(
+    lds: LDS,
+    optionalFields: string[],
+    recordNodes: GraphNode<RecordRepresentationNormalized, RecordRepresentation>[]
+) {
+    if (optionalFields.length === 0) {
+        return;
+    }
+
+    for (let i = 0, len = recordNodes.length; i < len; i++) {
+        markMissingOptionalFields(recordNodes[i], optionalFields);
     }
 }
 
@@ -268,17 +274,38 @@ export function network(lds: LDS, config: GetRecordUiConfigWithDefaults) {
             lds.storePublish(cachedSelectorKey, sel);
             lds.storeIngest(key, resourceRequest, body);
 
-            if (config.optionalFields.length > 0) {
-                markRecordUiOptionalFields(lds, config);
+            // During ingestion, only valid records are stored.
+            const recordNodes = [];
+            const validRecordIds = [];
+            for (let i = 0, len = recordIds.length; i < len; i += 1) {
+                const recordId = recordIds[i];
+                const recordKey = recordRepresentationKeyBuilder({ recordId });
+                const node = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(
+                    recordKey
+                );
+                if (isGraphNode(node)) {
+                    recordNodes.push(node);
+                    validRecordIds.push(recordId);
+                }
+            }
+
+            const { optionalFields } = config;
+            if (optionalFields.length > 0) {
+                markRecordUiOptionalFields(lds, optionalFields, recordNodes);
             }
 
             lds.storeBroadcast();
 
             const selectorNode = getSelectorNode(lds, configKey);
             if (selectorNode !== null) {
-                return lds.storeLookupMemoize<RecordUiRepresentation>(selectorNode);
+                const snapshot = lds.storeLookupMemoize<RecordUiRepresentation>(selectorNode);
+                if (isFulfilledSnapshot(snapshot)) {
+                    publishDependencies(lds, validRecordIds, [key, cachedSelectorKey]);
+                    return snapshot;
+                }
             }
             lds.storePublish(configKey, sel);
+            publishDependencies(lds, validRecordIds, [key, cachedSelectorKey, configKey]);
 
             return lds.storeLookupMemoize<RecordUiRepresentation>(sel);
         },
@@ -288,6 +315,25 @@ export function network(lds: LDS, config: GetRecordUiConfigWithDefaults) {
             return lds.errorSnapshot(err);
         }
     );
+}
+
+function publishDependencies(lds: LDS, recordIds: string[], depKeys: string[]) {
+    for (let i = 0, len = recordIds.length; i < len; i += 1) {
+        const recordDepKey = recordRepresentationDependencyKeyBuilder({ recordId: recordIds[i] });
+
+        const dependencies = ObjectCreate(null);
+        for (let j = 0, len = depKeys.length; j < len; j++) {
+            dependencies[depKeys[j]] = true;
+        }
+
+        const node = lds.getNode<{ [key: string]: true }, any>(recordDepKey);
+        if (isGraphNode(node)) {
+            const recordDeps = (node as GraphNode<{ [key: string]: true }, any>).retrieve();
+            ObjectAssign(dependencies, recordDeps);
+        }
+
+        lds.storePublish(recordDepKey, dependencies);
+    }
 }
 
 export function coerceConfigWithDefaults(

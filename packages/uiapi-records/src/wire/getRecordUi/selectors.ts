@@ -55,19 +55,14 @@ export function buildRecordUiSelector(
     const objectInfoSelections: PathSelection[] = [];
 
     for (let i = 0, len = recordDefs.length; i < len; i += 1) {
-        const { recordId, recordData, recordTypeId } = recordDefs[i];
+        const { recordId, recordData } = recordDefs[i];
 
         ArrayPrototypePush.call(recordLayoutSelections, {
             kind: 'Object',
             name: recordData.apiName,
             required: false,
-            selections: [
-                {
-                    kind: 'Object',
-                    name: recordTypeId,
-                    selections: layoutTypeSelections,
-                },
-            ],
+            map: true,
+            selections: layoutTypeSelections,
         });
         ArrayPrototypePush.call(recordSelections, {
             kind: 'Link',

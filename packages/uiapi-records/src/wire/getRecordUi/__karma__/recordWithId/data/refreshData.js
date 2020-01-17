@@ -14,6 +14,14 @@ const opportunityId = await helpers.getOpportunityByName(OPPORTUNITY_NAME);
 // Opportunity record-ui data
 [
     {
+        filename: 'single-record-Opportunity-layouttypes-Full-modes-View',
+        queryString: '?layoutTypes=Full&modes=View',
+    },
+    {
+        filename: 'single-record-Opportunity-layouttypes-Full-modes-Edit',
+        queryString: '?layoutTypes=Full&modes=Edit',
+    },
+    {
         filename:
             'single-record-Opportunity-layouttypes-Compact-modes-View-optionalFields-IsDeleted',
         queryString: '?layoutTypes=Compact&modes=View&optionalFields=Opportunity.IsDeleted',

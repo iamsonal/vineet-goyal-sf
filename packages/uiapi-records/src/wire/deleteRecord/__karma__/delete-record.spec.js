@@ -1,4 +1,4 @@
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import { getMock as globalGetMock, setupElement, flushPromises } from 'test-util';
 import { URL_BASE, mockDeleteRecordNetwork, mockGetRecordNetwork } from 'uiapi-test-util';
 import { deleteRecord, karmaNetworkAdapter } from 'lds';
 
@@ -48,6 +48,8 @@ describe('deleteRecord - basic', () => {
         const element = await setupElement(config, RecordFields);
 
         await deleteRecord(recordId);
+        // the existing wire will be refreshed
+        await flushPromises();
 
         expect(element.pushCount()).toBe(2);
         expect(element.getWiredError()).toEqual({
@@ -83,6 +85,8 @@ describe('deleteRecord - basic', () => {
         const element = await setupElement(config, RecordFields);
 
         await deleteRecord(recordId);
+        // the existing wire will be refreshed
+        await flushPromises();
 
         // hit network
         expect(element.getWiredError()).toEqual({

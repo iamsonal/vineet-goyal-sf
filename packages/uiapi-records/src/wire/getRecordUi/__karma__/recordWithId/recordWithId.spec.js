@@ -1,4 +1,10 @@
-import { getMock as globalGetMock, setupElement, flushPromises } from 'test-util';
+import {
+    getMock as globalGetMock,
+    clone,
+    setupElement,
+    updateElement,
+    flushPromises,
+} from 'test-util';
 import {
     MASTER_RECORD_TYPE_ID,
     expireRecords,
@@ -7,8 +13,9 @@ import {
     mockDeleteRecordNetwork,
     mockGetRecordNetwork,
     mockGetRecordUiNetwork,
+    mockUpdateRecordNetwork,
 } from 'uiapi-test-util';
-import { karmaNetworkAdapter } from 'lds';
+import { karmaNetworkAdapter, updateRecord } from 'lds';
 
 import RecordFields from '../../../getRecord/__karma__/lwc/record-fields';
 import RecordUi from '../lwc/record-ui';
@@ -787,5 +794,388 @@ describe('single recordId - multiple layouts', () => {
 
         // Expected record has no fields because the optional field isn't resolvable
         expect(elm.getWiredData()).toEqualSnapshotWithoutEtags(expected);
+    });
+});
+
+describe('recordTypeId update', () => {
+    const newStageName = 'Open - This is Changed';
+    const newRecordTypeId = '0129000000006ByAAI';
+
+    // TODO: generated updated data with refreshData script
+    function createUpdatedOpportunityRecordUi(baseRecordUi) {
+        const updatedRecordUi = clone(baseRecordUi);
+        const recordId = getRecordIdFromMock(baseRecordUi);
+
+        const updatedRecordData = updatedRecordUi.records[recordId];
+        const recordTypeId = updatedRecordData.recordTypeId;
+
+        updatedRecordData.fields.StageName = {
+            displayValue: newStageName,
+            value: newStageName,
+        };
+        updatedRecordData.recordTypeId = newRecordTypeId;
+        updatedRecordData.weakEtag = updatedRecordData.weakEtag + 1;
+
+        updatedRecordUi.layouts.Opportunity[newRecordTypeId] = {
+            ...updatedRecordUi.layouts.Opportunity[recordTypeId],
+        };
+        delete updatedRecordUi.layouts.Opportunity[recordTypeId];
+
+        return updatedRecordUi;
+    }
+
+    it('emits updated recordUi data when recordTypeId gets changed', async () => {
+        const mockRecordUiData = getMock('single-record-Opportunity-layouttypes-Full-modes-View');
+        const recordId = getRecordIdFromMock(mockRecordUiData);
+
+        const config = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+        mockGetRecordUiNetwork(config, mockRecordUiData);
+
+        const updatedRecordUiData = createUpdatedOpportunityRecordUi(mockRecordUiData);
+        const updatedRecordData = updatedRecordUiData.records[recordId];
+
+        const updatedRecordUiNetworkConfig = {
+            ...config,
+            optionalFields: extractRecordFields(updatedRecordData).sort(),
+        };
+        mockGetRecordUiNetwork(updatedRecordUiNetworkConfig, updatedRecordUiData);
+
+        // 1. fetch recordUi data from network
+        const wireA = await setupElement(config, RecordUi);
+
+        // 2. fetch updated recordUi with recordTypeId from network
+        expireRecordUi();
+        const wireB = await setupElement(config, RecordUi);
+
+        expect(wireA.pushCount()).toBe(2);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedRecordUiData);
+        expect(wireB.pushCount()).toBe(1);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(updatedRecordUiData);
+    });
+
+    it('emits updated recordUi data when a new recordTypeId from recordUi with different mode', async () => {
+        const editRecordUiData = getMock('single-record-Opportunity-layouttypes-Full-modes-Edit');
+        const recordId = getRecordIdFromMock(editRecordUiData);
+        const recordData = editRecordUiData.records[recordId];
+
+        const updatedEditRecordUiData = createUpdatedOpportunityRecordUi(editRecordUiData);
+
+        const editConfig = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['Edit'],
+        };
+        mockGetRecordUiNetwork(editConfig, editRecordUiData);
+
+        const editNetworkConfig = {
+            ...editConfig,
+            optionalFields: extractRecordFields(recordData),
+        };
+        mockGetRecordUiNetwork(editNetworkConfig, updatedEditRecordUiData);
+
+        const viewRecordUiData = getMock('single-record-Opportunity-layouttypes-Full-modes-View');
+        const updatedViewRecordUiData = createUpdatedOpportunityRecordUi(viewRecordUiData);
+
+        const viewConfig = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+        const viewNetworkConfig = {
+            ...viewConfig,
+            optionalFields: extractRecordFields(recordData),
+        };
+        mockGetRecordUiNetwork(viewNetworkConfig, updatedViewRecordUiData);
+
+        // 1. Fetch recordUi data from network
+        const wireA = await setupElement(editConfig, RecordUi);
+
+        // 2. Record and recordTypeId get updated on the server.
+        // Updated recordUi data with view is fetched from network.
+        const wireB = await setupElement(viewConfig, RecordUi);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(updatedViewRecordUiData);
+
+        expect(wireA.pushCount()).toBe(2);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedEditRecordUiData);
+    });
+
+    it('refreshes recordUi snapshot when updateRecord receives a new recordTypeId', async () => {
+        const mockRecordUiData = getMock('single-record-Opportunity-layouttypes-Full-modes-View');
+        const recordId = getRecordIdFromMock(mockRecordUiData);
+
+        const config = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+        mockGetRecordUiNetwork(config, mockRecordUiData);
+
+        const updatedRecordUiData = createUpdatedOpportunityRecordUi(mockRecordUiData);
+        const updatedRecordData = updatedRecordUiData.records[recordId];
+
+        const updateParams = {
+            fields: {
+                Id: recordId,
+                StageName: newStageName,
+                RecordTypeId: newRecordTypeId,
+            },
+            allowSaveOnDuplicate: false,
+        };
+        mockUpdateRecordNetwork(recordId, updateParams, updatedRecordData);
+
+        const updatedRecordUiNetworkConfig = {
+            ...config,
+            optionalFields: extractRecordFields(updatedRecordData).sort(),
+        };
+        mockGetRecordUiNetwork(updatedRecordUiNetworkConfig, updatedRecordUiData);
+
+        // 1. fetch recordUi data from network
+        const wireA = await setupElement(config, RecordUi);
+
+        // 2. updated recordTypeId with updateRecord.
+        // This will trigger the existing snapshots refresh.
+        await updateRecord(updateParams);
+        await flushPromises();
+
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedRecordUiData);
+    });
+
+    it('emits cached data which is updated by refresh', async () => {
+        const mockRecordUiData = getMock('single-record-Opportunity-layouttypes-Full-modes-View');
+        const recordId = getRecordIdFromMock(mockRecordUiData);
+
+        const config = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+        mockGetRecordUiNetwork(config, mockRecordUiData);
+
+        const updatedRecordUiData = createUpdatedOpportunityRecordUi(mockRecordUiData);
+        const updatedRecordData = updatedRecordUiData.records[recordId];
+
+        const updateParams = {
+            fields: {
+                Id: recordId,
+                StageName: newStageName,
+                RecordTypeId: newRecordTypeId,
+            },
+            allowSaveOnDuplicate: false,
+        };
+        mockUpdateRecordNetwork(recordId, updateParams, updatedRecordData);
+
+        const updatedRecordUiNetworkConfig = {
+            ...config,
+            optionalFields: extractRecordFields(updatedRecordData).sort(),
+        };
+        mockGetRecordUiNetwork(updatedRecordUiNetworkConfig, updatedRecordUiData);
+
+        // 1. fetch recordUi data from
+        await setupElement(config, RecordUi);
+
+        // 2. updated recordTypeId with updateRecord.
+        // This will trigger the existing snapshots refresh.
+        await updateRecord(updateParams);
+        await flushPromises();
+
+        // 3. set up a new wire with same config. It should hit cache.
+        const wireB = await setupElement(config, RecordUi);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(updatedRecordUiData);
+    });
+
+    it('emits updated data when record expires after recordTypeId updated', async () => {
+        const mockRecordUiData = getMock('single-record-Opportunity-layouttypes-Full-modes-View');
+        const recordId = getRecordIdFromMock(mockRecordUiData);
+
+        const config = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+        mockGetRecordUiNetwork(config, mockRecordUiData);
+
+        const updatedRecordUiData = createUpdatedOpportunityRecordUi(mockRecordUiData);
+        const updatedRecordData = updatedRecordUiData.records[recordId];
+
+        const updateParams = {
+            fields: {
+                Id: recordId,
+                StageName: newStageName,
+                RecordTypeId: newRecordTypeId,
+            },
+            allowSaveOnDuplicate: false,
+        };
+        mockUpdateRecordNetwork(recordId, updateParams, updatedRecordData);
+
+        const updatedRecordUiNetworkConfig = {
+            ...config,
+            optionalFields: extractRecordFields(updatedRecordData).sort(),
+        };
+        mockGetRecordUiNetwork(updatedRecordUiNetworkConfig, [
+            updatedRecordUiData,
+            updatedRecordUiData,
+        ]);
+
+        // 1. fetch recordUi data from network.
+        const wireA = await setupElement(config, RecordUi);
+
+        // 2. updated recordTypeId with updateRecord.
+        await updateRecord(updateParams);
+
+        // 3. set up a new wire with same config. Fetch data from network, since record is expired.
+        expireRecords();
+        const wireB = await setupElement(config, RecordUi);
+
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(updatedRecordUiData);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedRecordUiData);
+    });
+
+    it('emits updated data when providing a config which has been used before recordTypeId change', async () => {
+        const mockRecordUiData = getMock('single-record-Opportunity-layouttypes-Full-modes-View');
+        const recordId = getRecordIdFromMock(mockRecordUiData);
+
+        const config = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+        mockGetRecordUiNetwork(config, mockRecordUiData);
+
+        const optionalFieldsConfig = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+            optionalFields: ['Opportunity.CloseDate'],
+        };
+
+        const updatedRecordUiData = createUpdatedOpportunityRecordUi(mockRecordUiData);
+        const updatedRecordData = updatedRecordUiData.records[recordId];
+
+        const updateParams = {
+            fields: {
+                Id: recordId,
+                StageName: newStageName,
+                RecordTypeId: newRecordTypeId,
+            },
+            allowSaveOnDuplicate: false,
+        };
+        mockUpdateRecordNetwork(recordId, updateParams, updatedRecordData);
+
+        const updatedRecordUiNetworkConfig = {
+            ...config,
+            optionalFields: extractRecordFields(updatedRecordData).sort(),
+        };
+        mockGetRecordUiNetwork(updatedRecordUiNetworkConfig, [
+            mockRecordUiData,
+            updatedRecordUiData,
+            updatedRecordUiData,
+        ]);
+
+        // 1. fetch recordUi data from network
+        const wireA = await setupElement(config, RecordUi);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mockRecordUiData);
+
+        // 2. fetch recordUi data from network with a new config
+        await updateElement(wireA, optionalFieldsConfig);
+
+        // 3. updated recordTypeId with updateRecord.
+        await updateRecord(updateParams);
+
+        // 4. fetch recordUi data from network, since record is expired
+        expireRecords();
+        await updateElement(wireA, config);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedRecordUiData);
+    });
+
+    it('refreshes snapshot with additional optional field when recordTypeId gets changed', async () => {
+        const mockRecordUiData = getMock('single-record-Opportunity-layouttypes-Full-modes-View');
+        const recordId = getRecordIdFromMock(mockRecordUiData);
+
+        const config = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+        mockGetRecordUiNetwork(config, mockRecordUiData);
+
+        const updatedRecordUiData = createUpdatedOpportunityRecordUi(mockRecordUiData);
+        const updatedRecordData = updatedRecordUiData.records[recordId];
+
+        const updatedRecordUiNetworkConfig = {
+            ...config,
+            optionalFields: extractRecordFields(updatedRecordData),
+        };
+        mockGetRecordUiNetwork(updatedRecordUiNetworkConfig, updatedRecordUiData);
+
+        const recordUiWithExtraFieldsData = getMock(
+            'single-record-Opportunity-layouttypes-Full-modes-View-optionalFields-CloneSourceId'
+        );
+        const updatedRecordUiWithExtraFieldsData = createUpdatedOpportunityRecordUi(
+            recordUiWithExtraFieldsData
+        );
+        const updatedRecordWithExtraFieldsData =
+            updatedRecordUiWithExtraFieldsData.records[recordId];
+
+        const optionalFieldsConfig = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+            optionalFields: ['Opportunity.CloneSourceId'],
+        };
+        const optionalFieldsNetworkConfig = {
+            ...optionalFieldsConfig,
+            optionalFields: extractRecordFields(updatedRecordWithExtraFieldsData).sort(),
+        };
+        mockGetRecordUiNetwork(optionalFieldsNetworkConfig, [
+            recordUiWithExtraFieldsData,
+            updatedRecordUiWithExtraFieldsData,
+        ]); //updatedOptionalFieldData
+
+        const updateParams = {
+            fields: {
+                Id: recordId,
+                StageName: newStageName,
+                RecordTypeId: newRecordTypeId,
+            },
+            allowSaveOnDuplicate: false,
+        };
+        mockUpdateRecordNetwork(recordId, updateParams, updatedRecordData);
+
+        // request for record merge conflict
+        const recordNetworkConfig = {
+            recordId,
+            optionalFields: extractRecordFields(updatedRecordWithExtraFieldsData).sort(),
+        };
+        mockGetRecordNetwork(recordNetworkConfig, updatedRecordData);
+
+        // 1. fetch recordUi from network
+        const wireA = await setupElement(config, RecordUi);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mockRecordUiData);
+
+        // 2. getRecordUi - request with additional optional fields, fetch from network
+        const wireB = await setupElement(optionalFieldsConfig, RecordUi);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(recordUiWithExtraFieldsData);
+
+        // 3. updated recordTypeId with updateRecord.
+        // This will triggers
+        //   1) existing recordUi snapshots refresh (wireA and wireB)
+        //   2) a getRecord network call for fetching all updated fields
+        await updateRecord(updateParams);
+        await flushPromises();
+
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedRecordUiData);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(
+            updatedRecordUiWithExtraFieldsData
+        );
+
+        // 4. getRecordUi with same config as #2, cache hit
+        const wireC = await setupElement(optionalFieldsConfig, RecordUi);
+        expect(wireC.getWiredData()).toEqualSnapshotWithoutEtags(
+            updatedRecordUiWithExtraFieldsData
+        );
     });
 });

@@ -17,10 +17,10 @@ function getMock(filename) {
 }
 
 function mockNetwork(config, mockData) {
-    const { recordId, relatedListRecordIds, ...queryParams } = config;
+    const { recordIds, relatedListRecordIds, ...queryParams } = config;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/actions/record/${recordId
+        path: `${URL_BASE}/actions/record/${recordIds
             .sort()
             .join(',')}/related-list-record/${relatedListRecordIds.sort().join(',')}`,
         queryParams,
@@ -39,7 +39,7 @@ describe('basic', () => {
         const recordIds = Object.keys(mockData.actions);
         const relatedListRecordId = mockData.actions[recordIds[0]].actions[0].relatedListRecordId;
         const resourceConfig = {
-            recordId: recordIds,
+            recordIds: recordIds,
             relatedListRecordIds: [relatedListRecordId],
         };
         mockNetwork(resourceConfig, mockData);
@@ -57,13 +57,13 @@ describe('config', () => {
         const relatedListRecordId = mockData.actions[singleRecordId].actions[0].relatedListRecordId;
 
         const props = {
-            recordId: [singleRecordId],
+            recordIds: [singleRecordId],
             relatedListRecordIds: [relatedListRecordId],
         };
         mockNetwork(props, mockData);
 
         const config = {
-            recordId: singleRecordId,
+            recordIds: singleRecordId,
             relatedListRecordIds: relatedListRecordId,
         };
         const element = await setupElement(config, RelatedListRecordActions);
@@ -78,7 +78,7 @@ describe('caching', () => {
         const recordIds = Object.keys(mockData.actions);
         const relatedListRecordId = mockData.actions[recordIds[0]].actions[0].relatedListRecordId;
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             relatedListRecordIds: [relatedListRecordId],
         };
         mockNetwork(config, mockData);
@@ -101,7 +101,7 @@ describe('caching', () => {
         updatedData.actions[recordIds[0]].actions.shift();
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             relatedListRecordIds: [relatedListRecordId],
         };
         mockNetwork(config, [mockData, updatedData]);
@@ -129,7 +129,7 @@ describe('data emit', () => {
         updatedData.actions[recordIds[0]].actions.shift();
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             relatedListRecordIds: [relatedListRecordId],
         };
         mockNetwork(config, [mockData, updatedData]);
@@ -150,7 +150,7 @@ describe('data emit', () => {
         const relatedListRecordId = mockData.actions[recordIds[0]].actions[0].relatedListRecordId;
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             relatedListRecordIds: [relatedListRecordId],
         };
         mockNetwork(config, [mockData, mockData]);
@@ -170,7 +170,7 @@ describe('data emit', () => {
         const relatedListRecordId = mockData.actions[recordIds[0]].actions[0].relatedListRecordId;
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             relatedListRecordIds: [relatedListRecordId],
         };
         mockNetwork(config, mockData);
@@ -199,7 +199,7 @@ describe('data emit', () => {
         const relatedListRecordId = mockData.actions[recordIds[0]].actions[0].relatedListRecordId;
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             relatedListRecordIds: [relatedListRecordId],
         };
         mockNetwork(config, mockData);
@@ -228,7 +228,7 @@ describe('data emit', () => {
         const relatedListRecordId = mockData.actions[recordIds[0]].actions[0].relatedListRecordId;
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             relatedListRecordIds: [relatedListRecordId],
         };
         mockNetwork(config, mockData);

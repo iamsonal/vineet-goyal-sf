@@ -187,13 +187,13 @@ types:
             actionTypes: SortedStringArray
             formFactor: SalesforceFormFactor
             sections: SortedStringArray
-    '/record/{recordId}':
+    '/record/{recordIds}':
       get:
         (adapter):
           name: getRecordActions
           coercedParams:
             apiNames: SortedStringArray
-            recordId: SalesforceRecordId18Array
+            recordIds: SalesforceRecordId18Array
             formFactor: SalesforceFormFactor
             sections: SortedStringArray
           oneOfParams:
@@ -208,7 +208,7 @@ types:
           (adapter):
             name: getRelatedListActions
             coercedParams:
-              recordId: SalesforceRecordId18Array
+              recordIds: SalesforceRecordId18Array
               relatedListIds: SortedStringArray
               formFactor: SalesforceFormFactor
               sections: SortedStringArray
@@ -217,7 +217,7 @@ types:
           (adapter):
             name: getRelatedListRecordActions
             coercedParams:
-              recordId: SalesforceRecordId18Array
+              recordIds: SalesforceRecordId18Array
               relatedListRecordIds: SalesforceRecordId18Array
               actionTypes: SortedStringArray
               formFactor: SalesforceFormFactor

@@ -15,7 +15,7 @@ describe('basic', () => {
         const relatedListId = mockData.actions[recordIds[0]].actions[0].relatedSourceObject;
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             relatedListIds: [relatedListId],
         };
         mockGetRelatedListActionsNetwork(config, mockData);
@@ -32,7 +32,7 @@ describe('caching', () => {
         const recordIds = Object.keys(mockData.actions);
         const relatedListId = mockData.actions[recordIds[0]].actions[0].relatedSourceObject;
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             relatedListIds: [relatedListId],
         };
         mockGetRelatedListActionsNetwork(config, mockData);
@@ -54,7 +54,7 @@ describe('caching', () => {
         updatedData.actions[recordIds[0]].actions.shift();
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             relatedListIds: [relatedListId],
         };
         mockGetRelatedListActionsNetwork(config, [mockData, updatedData]);
@@ -81,7 +81,7 @@ describe('data emit', () => {
         updatedData.actions[recordIds[0]].actions.shift();
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             relatedListIds: [relatedListId],
         };
         mockGetRelatedListActionsNetwork(config, [mockData, updatedData]);
@@ -102,7 +102,7 @@ describe('data emit', () => {
         const relatedListId = mockData.actions[recordIds[0]].actions[0].relatedSourceObject;
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             relatedListIds: [relatedListId],
         };
         mockGetRelatedListActionsNetwork(config, [mockData, mockData]);

@@ -2,7 +2,7 @@ import { LightningElement, wire, api } from 'lwc';
 import { getRelatedListRecordActions } from 'lds';
 
 export default class RelatedListRecordActions extends LightningElement {
-    @api recordId;
+    @api recordIds;
     @api relatedListRecordIds;
     @api actionTypes;
     @api formFactor;
@@ -10,7 +10,7 @@ export default class RelatedListRecordActions extends LightningElement {
     wirePushCount = -1;
 
     @wire(getRelatedListRecordActions, {
-        recordId: '$recordId',
+        recordIds: '$recordIds',
         relatedListRecordIds: '$relatedListRecordIds',
         actionTypes: '$actionTypes',
         formFactor: '$formFactor',

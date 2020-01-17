@@ -2,11 +2,11 @@ import { LightningElement, wire, api } from 'lwc';
 import { getRecordEditActions } from 'lds';
 
 export default class Basic extends LightningElement {
-    @api recordId;
+    @api recordIds;
     wirePushCount = -1;
 
     @wire(getRecordEditActions, {
-        recordId: '$recordId',
+        recordIds: '$recordIds',
     })
     onGetRecordEditActionss(result) {
         this.action = result;

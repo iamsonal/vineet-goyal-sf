@@ -14,7 +14,7 @@ describe('basic', () => {
         const mockData = getMock('record-actions');
         const recordIds = Object.keys(mockData.actions);
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             sections: ['PAGE'],
         };
         mockGetRecordActionsNetwork(config, mockData);
@@ -30,7 +30,7 @@ describe('caching', () => {
         const mockData = getMock('record-actions');
         const recordIds = Object.keys(mockData.actions);
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             sections: ['PAGE'],
         };
         mockGetRecordActionsNetwork(config, mockData);
@@ -51,7 +51,7 @@ describe('caching', () => {
         updatedData.actions[recordIds[0]].actions.shift();
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             sections: ['PAGE'],
         };
         mockGetRecordActionsNetwork(config, [mockData, updatedData]);
@@ -77,7 +77,7 @@ describe('data emit', () => {
         updatedData.actions[recordIds[0]].actions.shift();
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             sections: ['PAGE'],
         };
         mockGetRecordActionsNetwork(config, [mockData, updatedData]);
@@ -97,7 +97,7 @@ describe('data emit', () => {
         const recordIds = Object.keys(mockData.actions);
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             sections: ['PAGE'],
         };
         mockGetRecordActionsNetwork(config, [mockData, mockData]);
@@ -117,14 +117,14 @@ describe('data emit', () => {
         const recordIds = Object.keys(mockData.actions);
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             sections: ['PAGE'],
         };
         mockGetRecordActionsNetwork(config, mockData);
 
         const apiNamesMockData = getMock('record-actions-apiNames-Follow,Global.NewTask');
         const apiNamesConfig = {
-            recordId: recordIds,
+            recordIds: recordIds,
             apiNames: ['Follow', 'Global.NewTask'],
         };
         mockGetRecordActionsNetwork(apiNamesConfig, apiNamesMockData);
@@ -144,14 +144,14 @@ describe('data emit', () => {
         const recordIds = Object.keys(mockData.actions);
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             sections: ['PAGE'],
         };
         mockGetRecordActionsNetwork(config, mockData);
 
         const retrievalModeMockData = getMock('record-actions-retrievalMode-All');
         const retrievalModeConfig = {
-            recordId: recordIds,
+            recordIds: recordIds,
             sections: ['PAGE'],
             retrievalMode: 'All',
         };
@@ -173,14 +173,14 @@ describe('data emit', () => {
         const recordIds = Object.keys(mockData.actions);
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             sections: ['PAGE'],
         };
         mockGetRecordActionsNetwork(config, mockData);
 
         const actionTypesMockData = getMock('record-actions-actionTypes-StandardButton');
         const actionTypesConfig = {
-            recordId: recordIds,
+            recordIds: recordIds,
             sections: ['PAGE'],
             actionTypes: ['StandardButton'],
         };
@@ -202,7 +202,7 @@ describe('data emit', () => {
         const recordIds = Object.keys(mockData.actions);
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             apiNames: ['Follow', 'Global.NewTask'],
         };
         mockGetRecordActionsNetwork(config, mockData);
@@ -211,7 +211,7 @@ describe('data emit', () => {
             'record-actions-apiNames-Follow,Global.NewTask-formFactor-Small'
         );
         const formFactorConfig = {
-            recordId: recordIds,
+            recordIds: recordIds,
             apiNames: ['Follow', 'Global.NewTask'],
             formFactor: 'Small',
         };
@@ -233,14 +233,14 @@ describe('data emit', () => {
         const recordIds = Object.keys(mockData.actions);
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             sections: ['PAGE'],
         };
         mockGetRecordActionsNetwork(config, mockData);
 
         const sectionsMockData = getMock('record-actions-sections-SingleActionLinks');
         const sectionsConfig = {
-            recordId: recordIds,
+            recordIds: recordIds,
             sections: ['SingleActionLinks'],
         };
         mockGetRecordActionsNetwork(sectionsConfig, sectionsMockData);
@@ -266,7 +266,7 @@ describe('refresh', () => {
         refreshMockData.actions[recordIds[0]].actions.shift();
 
         const config = {
-            recordId: recordIds,
+            recordIds: recordIds,
             sections: ['PAGE'],
         };
         mockGetRecordActionsNetwork(config, [mockData, refreshMockData]);

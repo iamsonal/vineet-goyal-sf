@@ -19,7 +19,7 @@ function getMock(filename) {
 function mockNetwork(config, mockData) {
     const { urlParams, queryParams } = config;
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/actions/record/${urlParams.recordId.sort().join(',')}/record-edit`,
+        path: `${URL_BASE}/actions/record/${urlParams.recordIds.sort().join(',')}/record-edit`,
         urlParams,
         queryParams,
     });
@@ -37,7 +37,7 @@ describe('basic', () => {
         const mockDataActionsKeys = Object.keys(mockData.actions);
         const resourceConfig = {
             urlParams: {
-                recordId: mockDataActionsKeys,
+                recordIds: mockDataActionsKeys,
             },
             queryParams: {
                 actionTypes: undefined,
@@ -47,7 +47,7 @@ describe('basic', () => {
         };
         mockNetwork(resourceConfig, mockData);
 
-        const props = { recordId: mockDataActionsKeys };
+        const props = { recordIds: mockDataActionsKeys };
         const element = await setupElement(props, Basic);
 
         expect(element.getWiredData()).toEqualActionsSnapshot(mockData);
@@ -60,7 +60,7 @@ describe('caching', () => {
         const mockDataActionsKeys = Object.keys(mockData.actions);
         const resourceConfig = {
             urlParams: {
-                recordId: mockDataActionsKeys,
+                recordIds: mockDataActionsKeys,
             },
             queryParams: {
                 actionTypes: undefined,
@@ -71,7 +71,7 @@ describe('caching', () => {
         mockNetwork(resourceConfig, mockData);
 
         // populate cache
-        const props = { recordId: mockDataActionsKeys };
+        const props = { recordIds: mockDataActionsKeys };
         await setupElement(props, Basic);
 
         // second component should have the cached data without hitting network
@@ -89,7 +89,7 @@ describe('caching', () => {
         });
         const resourceConfig = {
             urlParams: {
-                recordId: mockDataActionsKeys,
+                recordIds: mockDataActionsKeys,
             },
             queryParams: {
                 actionTypes: undefined,
@@ -100,7 +100,7 @@ describe('caching', () => {
         mockNetwork(resourceConfig, [mockData, updatedData]);
 
         // populate cache
-        const props = { recordId: mockDataActionsKeys };
+        const props = { recordIds: mockDataActionsKeys };
         await setupElement(props, Basic);
 
         // expire cache

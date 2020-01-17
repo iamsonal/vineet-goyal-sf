@@ -121,8 +121,8 @@ function mockGetRecordNetwork(config, mockData) {
 }
 
 function mockGetRecordActionsNetwork(config, mockData) {
-    const { recordId, ...queryParams } = config;
-    const path = `${URL_BASE}/actions/record/${recordId.sort().join(',')}`;
+    const { recordIds, ...queryParams } = config;
+    const path = `${URL_BASE}/actions/record/${recordIds.sort().join(',')}`;
     const paramMatch = sinon.match({
         path,
         queryParams,
@@ -136,8 +136,8 @@ function mockGetRecordActionsNetwork(config, mockData) {
 }
 
 function mockGetRelatedListActionsNetwork(config, mockData) {
-    const { recordId, relatedListIds, ...queryParams } = config;
-    const path = `${URL_BASE}/actions/record/${recordId
+    const { recordIds, relatedListIds, ...queryParams } = config;
+    const path = `${URL_BASE}/actions/record/${recordIds
         .sort()
         .join(',')}/related-list/${relatedListIds.sort().join(',')}`;
     const paramMatch = sinon.match({
@@ -153,9 +153,9 @@ function mockGetRelatedListActionsNetwork(config, mockData) {
 }
 
 function mockGetRecordEditActionsNetwork(config, mockData) {
-    const { recordId, ...queryParams } = config;
+    const { recordIds, ...queryParams } = config;
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/actions/record/${recordId.sort().join(',')}/record-edit`,
+        path: `${URL_BASE}/actions/record/${recordIds.sort().join(',')}/record-edit`,
         queryParams,
     });
 
@@ -228,10 +228,10 @@ function mockUpdateLayoutUserStateNetwork(config, body, mockData) {
 }
 
 function mockGetRelatedListRecordNetwork(config, mockData) {
-    const { recordId, relatedListRecordIds, ...queryParams } = config;
+    const { recordIds, relatedListRecordIds, ...queryParams } = config;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/actions/record/${recordId
+        path: `${URL_BASE}/actions/record/${recordIds
             .sort()
             .join(',')}/related-list-record/${relatedListRecordIds.sort().join(',')}`,
         queryParams,

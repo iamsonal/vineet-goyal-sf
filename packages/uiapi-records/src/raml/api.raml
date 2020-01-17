@@ -3105,7 +3105,7 @@ types:
           items:
             type: string
             (oas-collectionFormat): csv
-    /record/{recordId}:
+    /record/{recordIds}:
       get:
         description: Retrieve presentation-ready action data about specific recordIds.
         responses:
@@ -3155,7 +3155,7 @@ types:
                 - SingleActionLinks
               (oas-collectionFormat): csv
       uriParameters:
-        recordId:
+        recordIds:
           type: array
           required: true
           items:
@@ -3199,7 +3199,7 @@ types:
                   - SingleActionLinks
                 (oas-collectionFormat): csv
         uriParameters:
-          recordId:
+          recordIds:
             type: array
             required: true
             items:
@@ -3243,7 +3243,7 @@ types:
                   - SingleActionLinks
                 (oas-collectionFormat): csv
         uriParameters:
-          recordId:
+          recordIds:
             type: array
             required: true
             items:
@@ -3287,7 +3287,7 @@ types:
                   - SingleActionLinks
                 (oas-collectionFormat): csv
         uriParameters:
-          recordId:
+          recordIds:
             type: array
             required: true
             items:
@@ -3337,7 +3337,7 @@ types:
                   - SingleActionLinks
                 (oas-collectionFormat): csv
         uriParameters:
-          recordId:
+          recordIds:
             type: array
             required: true
             items:

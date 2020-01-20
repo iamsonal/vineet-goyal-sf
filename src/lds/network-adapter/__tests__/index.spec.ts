@@ -427,7 +427,10 @@ describe('get /record-avatars/batch/{recordIds}', () => {
         },
         {
             hasErrors: false,
-            fields: [{ statusCode: 200, result: {} }, { statusCode: 200, result: {} }],
+            fields: [
+                { statusCode: 200, result: {} },
+                { statusCode: 200, result: {} },
+            ],
         }
     );
 });

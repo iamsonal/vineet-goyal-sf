@@ -20,13 +20,16 @@ describe('FetchResponse', () => {
     });
 
     describe('statusText getter', () => {
-        [[200, 'OK'], [304, 'Not Modified'], [404, 'Not Found'], [400, 'Bad Request']].forEach(
-            ([statusCode, statusText]) => {
-                it(`returns "${statusText}" for ${statusCode} responses`, () => {
-                    const response = new AuraFetchResponse(statusCode as number, {});
-                    expect(response.statusText).toBe(statusText);
-                });
-            }
-        );
+        [
+            [200, 'OK'],
+            [304, 'Not Modified'],
+            [404, 'Not Found'],
+            [400, 'Bad Request'],
+        ].forEach(([statusCode, statusText]) => {
+            it(`returns "${statusText}" for ${statusCode} responses`, () => {
+                const response = new AuraFetchResponse(statusCode as number, {});
+                expect(response.statusText).toBe(statusText);
+            });
+        });
     });
 });

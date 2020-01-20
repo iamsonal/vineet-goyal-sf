@@ -169,10 +169,14 @@ export function instrumentAdapter<C, D>(name: string, adapter: Adapter<C, D>): A
         //  - total cache hit ratio:
         //      ([in-memory cache hit count] + [store cache hit count]) / ([in-memory cache hit count] + [in-memory cache miss count])
         //
-        if (result !== null && result !== undefined && 'then' in result) {
-            stats.logMisses();
-        } else {
-            stats.logHits();
+
+        // if result === null then config is insufficient/invalid so do not log
+        if (result !== null) {
+            if ('then' in result) {
+                stats.logMisses();
+            } else {
+                stats.logHits();
+            }
         }
 
         return result;

@@ -1,13 +1,15 @@
 jest.mock('@salesforce-lds-api/uiapi-records', () => {
+    const mockAdapterFactory = () => () => null;
+
     const spies = {
-        getRecordFactorySpy: jest.fn(),
-        getRecordActionsFactorySpy: jest.fn(),
-        getLayoutFactorySpy: jest.fn(),
-        getObjectInfoFactorySpy: jest.fn(),
-        updateLayoutUserStateSpy: jest.fn(),
-        createRecordSpy: jest.fn(),
-        updateRecordSpy: jest.fn(),
-        updateRecordAvatarSpy: jest.fn(),
+        getRecordFactorySpy: jest.fn(mockAdapterFactory),
+        getRecordActionsFactorySpy: jest.fn(mockAdapterFactory),
+        getLayoutFactorySpy: jest.fn(mockAdapterFactory),
+        getObjectInfoFactorySpy: jest.fn(mockAdapterFactory),
+        updateLayoutUserStateSpy: jest.fn(mockAdapterFactory),
+        createRecordSpy: jest.fn(mockAdapterFactory),
+        updateRecordSpy: jest.fn(mockAdapterFactory),
+        updateRecordAvatarSpy: jest.fn(mockAdapterFactory),
     };
 
     return {

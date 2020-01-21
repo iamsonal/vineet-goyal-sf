@@ -1376,22 +1376,22 @@
     "@nodelib/fs.scandir" "2.1.3"
     fastq "^1.6.0"
 
-"@salesforce-lds-api/apex@^0.1.0":
-  version "0.1.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds-api/apex/-/apex-0.1.0.tgz#c0f1f68f40edd761829b4d9236832ec020b31310"
-  integrity sha512-VcoU6JH9g869rVA/kfvORlbTWhscQJRA5Ax5eQWHVt93VhZVzYsUXs3DOHoctai3UJJhEuz64IFLezasseQqcQ==
+"@salesforce-lds-api/apex@0.1.2":
+  version "0.1.2"
+  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds-api/apex/-/apex-0.1.2.tgz#2c6d3e8daf14af3aa219f984f65fc80040a5199b"
+  integrity sha512-gSZ7gbA/z98b5wL1Qjo6jxl85G1WZ+vM8EpJsc7Hp1IdLlj5/Q1IeL1Yn4qsPij5iHdaamb32NYkqhvSDvxbdw==
 
-"@salesforce-lds-api/uiapi-records@^0.1.0":
-  version "0.1.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds-api/uiapi-records/-/uiapi-records-0.1.0.tgz#2694da1a57bd336cb273300368da3b730b70b831"
-  integrity sha512-bOst9UPnijBDgytvIkeYs1afMl4ThwLZJHMqMY729S3bbSjVVegawDu79GJdGlLwMfomt4OWkiWcMJLGskREwQ==
+"@salesforce-lds-api/uiapi-records@0.1.2":
+  version "0.1.2"
+  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds-api/uiapi-records/-/uiapi-records-0.1.2.tgz#ae39112f50fd6acc1aa389491b0f32c56b86dd67"
+  integrity sha512-plb2Ud/Vu/nsRwbvSXx+Jqd34WG2Bsqusnz31SlzlzhFfrkjYz4OfW9cSQG0xq1UrgTQvuBaoe5K3OPM7PPi+w==
 
-"@salesforce-lds/engine@^0.1.0":
+"@salesforce-lds/engine@0.1.1", "@salesforce-lds/engine@^0.1.0":
   version "0.1.1"
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds/engine/-/engine-0.1.1.tgz#03178dde0691723f3f69e0f0aa9ad9852f80b25b"
   integrity sha512-ex0Okc6kvUyFN1nbJ9ttUZhuUyk0XIoYFu5pNUF2sAkilMceE5YPdZTpQusVhxkNful54kyDOkNUBlZjE0cVOQ==
 
-"@salesforce-lds/lwc-lds@^0.1.0":
+"@salesforce-lds/lwc-lds@0.1.1":
   version "0.1.1"
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds/lwc-lds/-/lwc-lds-0.1.1.tgz#252d850adfbab6f4d523106e561256025da94b41"
   integrity sha512-a6egc/pV9TAesY7USTJBjycJN2YHP8Kk2YnL5zFQyq7TlkBZY2tMdEXpgNlXVlGd22EM1b6rhxAX+kUwPkeQ1w==

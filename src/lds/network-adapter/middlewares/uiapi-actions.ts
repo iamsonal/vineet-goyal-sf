@@ -28,20 +28,20 @@ export function getLookupActions(resourceRequest: ResourceRequest): Promise<any>
 
 export function getRecordActions(resourceRequest: ResourceRequest): Promise<any> {
     const {
-        urlParams: { recordId },
+        urlParams: { recordIds },
         queryParams,
     } = resourceRequest;
-    const parameters = buildUiApiParams({ recordId, ...queryParams }, resourceRequest);
+    const parameters = buildUiApiParams({ recordId: recordIds, ...queryParams }, resourceRequest);
 
     return dispatchAction(UiApiActionsController.GetRecordActions, parameters);
 }
 
 export function getRecordEditActions(resourceRequest: ResourceRequest): Promise<any> {
     const {
-        urlParams: { recordId },
+        urlParams: { recordIds },
         queryParams,
     } = resourceRequest;
-    const parameters = buildUiApiParams({ recordId, ...queryParams }, resourceRequest);
+    const parameters = buildUiApiParams({ recordId: recordIds, ...queryParams }, resourceRequest);
 
     return dispatchAction(UiApiActionsController.GetRecordEditActions, parameters);
 }

@@ -1109,7 +1109,7 @@ describe('get /actions/record/${recordId}', () => {
                 method: 'get',
                 path: '/actions/record/1234,5678/record-edit',
                 urlParams: {
-                    recordId: ['1234', '5678'],
+                    recordIds: ['1234', '5678'],
                 },
             },
             ['ActionsController.getRecordEditActions', { recordId: ['1234', '5678'] }, undefined]
@@ -1119,7 +1119,7 @@ describe('get /actions/record/${recordId}', () => {
             method: 'get',
             path: '/actions/record/1234,5678/record-edit',
             urlParams: {
-                recordId: ['1234', '5678'],
+                recordIds: ['1234', '5678'],
             },
         });
 
@@ -1128,7 +1128,7 @@ describe('get /actions/record/${recordId}', () => {
                 method: 'get',
                 path: '/actions/record/1234,5678/record-edit',
                 urlParams: {
-                    recordId: ['1234', '5678'],
+                    recordIds: ['1234', '5678'],
                 },
             },
             {
@@ -1242,7 +1242,7 @@ describe('get /actions/record/${recordId}', () => {
             method: 'get',
             path: '/actions/record/1234,5678',
             urlParams: {
-                recordId: ['1234', '5678'],
+                recordIds: ['1234', '5678'],
             },
         },
         ['ActionsController.getRecordActions', { recordId: ['1234', '5678'] }, undefined]
@@ -1252,7 +1252,7 @@ describe('get /actions/record/${recordId}', () => {
         method: 'get',
         path: '/actions/record/1234,5678',
         urlParams: {
-            recordId: ['1234', '5678'],
+            recordIds: ['1234', '5678'],
         },
     });
 
@@ -1261,7 +1261,7 @@ describe('get /actions/record/${recordId}', () => {
             method: 'get',
             path: '/actions/record/1234,5678',
             urlParams: {
-                recordId: ['1234', '5678'],
+                recordIds: ['1234', '5678'],
             },
         },
         {

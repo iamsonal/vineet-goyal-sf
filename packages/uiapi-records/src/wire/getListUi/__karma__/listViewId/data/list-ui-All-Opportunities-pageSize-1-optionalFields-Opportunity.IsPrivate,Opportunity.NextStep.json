@@ -1,5 +1,5 @@
 {
-    "eTag": "81ef43234e03300c4ecd2a3ae07bd46d",
+    "eTag": "c7e2bd982537e451571cbcef75731a2b",
     "info": {
         "cloneable": true,
         "createable": true,
@@ -83,7 +83,7 @@
         "listInfoETag": "73b840a5c161ea3bd428f33fbdca5771",
         "listReference": {
             "id": "00BT1000000NUunMAG",
-            "listViewApiName": null,
+            "listViewApiName": "AllOpportunities",
             "objectApiName": "Opportunity",
             "type": "listView"
         },
@@ -97,7 +97,7 @@
             {
                 "apiName": "Opportunity",
                 "childRelationships": {},
-                "eTag": "033e863b17d18b777ed42b8167a625fc",
+                "eTag": "70aeec919bd82e9ed36d56b0ed479f8b",
                 "fields": {
                     "Account": {
                         "displayValue": "Burlington Textiles Corp of America",
@@ -185,7 +185,7 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "6b03ae133a6a5631270b26dda7cbe117",
+                            "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
@@ -213,7 +213,7 @@
                                 },
                                 "SystemModstamp": {
                                     "displayValue": null,
-                                    "value": "2019-12-13T22:05:50.000Z"
+                                    "value": "2020-01-20T04:57:12.000Z"
                                 }
                             },
                             "id": "005T1000000HnsLIAS",
@@ -221,8 +221,8 @@
                             "lastModifiedDate": "2019-11-19T14:55:27.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2019-12-13T22:05:50.000Z",
-                            "weakEtag": 1576274750000
+                            "systemModstamp": "2020-01-20T04:57:12.000Z",
+                            "weakEtag": 1579496232000
                         }
                     },
                     "OwnerId": {
@@ -247,6 +247,6 @@
                 "weakEtag": 1574175327000
             }
         ],
-        "sortBy": null
+        "sortBy": "Name,Id"
     }
 }

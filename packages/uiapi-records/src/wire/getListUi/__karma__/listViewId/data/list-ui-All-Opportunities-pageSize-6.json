@@ -1,5 +1,5 @@
 {
-    "eTag": "661b0f3ef018de65e0e0805b080febd8",
+    "eTag": "138d394b2a8e14d6a9738579d6803825",
     "info": {
         "cloneable": true,
         "createable": true,
@@ -83,7 +83,7 @@
         "listInfoETag": "73b840a5c161ea3bd428f33fbdca5771",
         "listReference": {
             "id": "00BT1000000NUunMAG",
-            "listViewApiName": null,
+            "listViewApiName": "AllOpportunities",
             "objectApiName": "Opportunity",
             "type": "listView"
         },
@@ -97,7 +97,7 @@
             {
                 "apiName": "Opportunity",
                 "childRelationships": {},
-                "eTag": "e4e6d1c5ebe555750eda23ada0af6ab9",
+                "eTag": "f3eb25cbbc3112c1250e513a4c557a68",
                 "fields": {
                     "Account": {
                         "displayValue": "Burlington Textiles Corp of America",
@@ -177,7 +177,7 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "6b03ae133a6a5631270b26dda7cbe117",
+                            "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
@@ -205,7 +205,7 @@
                                 },
                                 "SystemModstamp": {
                                     "displayValue": null,
-                                    "value": "2019-12-13T22:05:50.000Z"
+                                    "value": "2020-01-20T04:57:12.000Z"
                                 }
                             },
                             "id": "005T1000000HnsLIAS",
@@ -213,8 +213,8 @@
                             "lastModifiedDate": "2019-11-19T14:55:27.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2019-12-13T22:05:50.000Z",
-                            "weakEtag": 1576274750000
+                            "systemModstamp": "2020-01-20T04:57:12.000Z",
+                            "weakEtag": 1579496232000
                         }
                     },
                     "OwnerId": {
@@ -241,7 +241,7 @@
             {
                 "apiName": "Opportunity",
                 "childRelationships": {},
-                "eTag": "3e8ae7a865e052bb1d5a8e8fa46f8a4e",
+                "eTag": "163815eb57644600240235f15683479c",
                 "fields": {
                     "Account": {
                         "displayValue": "Dickenson plc",
@@ -321,7 +321,7 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "6b03ae133a6a5631270b26dda7cbe117",
+                            "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
@@ -349,7 +349,7 @@
                                 },
                                 "SystemModstamp": {
                                     "displayValue": null,
-                                    "value": "2019-12-13T22:05:50.000Z"
+                                    "value": "2020-01-20T04:57:12.000Z"
                                 }
                             },
                             "id": "005T1000000HnsLIAS",
@@ -357,8 +357,8 @@
                             "lastModifiedDate": "2019-11-19T14:55:27.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2019-12-13T22:05:50.000Z",
-                            "weakEtag": 1576274750000
+                            "systemModstamp": "2020-01-20T04:57:12.000Z",
+                            "weakEtag": 1579496232000
                         }
                     },
                     "OwnerId": {
@@ -385,7 +385,7 @@
             {
                 "apiName": "Opportunity",
                 "childRelationships": {},
-                "eTag": "569475d40ff7d0b53de784f80f78e7b2",
+                "eTag": "2d9203862a7b6f7b932bde5ce1b3e848",
                 "fields": {
                     "Account": {
                         "displayValue": "Edge Communications",
@@ -465,7 +465,7 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "6b03ae133a6a5631270b26dda7cbe117",
+                            "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
@@ -493,7 +493,7 @@
                                 },
                                 "SystemModstamp": {
                                     "displayValue": null,
-                                    "value": "2019-12-13T22:05:50.000Z"
+                                    "value": "2020-01-20T04:57:12.000Z"
                                 }
                             },
                             "id": "005T1000000HnsLIAS",
@@ -501,8 +501,8 @@
                             "lastModifiedDate": "2019-11-19T14:55:27.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2019-12-13T22:05:50.000Z",
-                            "weakEtag": 1576274750000
+                            "systemModstamp": "2020-01-20T04:57:12.000Z",
+                            "weakEtag": 1579496232000
                         }
                     },
                     "OwnerId": {
@@ -529,7 +529,7 @@
             {
                 "apiName": "Opportunity",
                 "childRelationships": {},
-                "eTag": "efe34da3d09ade63943058f88ac4a4fe",
+                "eTag": "b5e26defdf9468335762e989ffff2993",
                 "fields": {
                     "Account": {
                         "displayValue": "Edge Communications",
@@ -609,7 +609,7 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "6b03ae133a6a5631270b26dda7cbe117",
+                            "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
@@ -637,7 +637,7 @@
                                 },
                                 "SystemModstamp": {
                                     "displayValue": null,
-                                    "value": "2019-12-13T22:05:50.000Z"
+                                    "value": "2020-01-20T04:57:12.000Z"
                                 }
                             },
                             "id": "005T1000000HnsLIAS",
@@ -645,8 +645,8 @@
                             "lastModifiedDate": "2019-11-19T14:55:27.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2019-12-13T22:05:50.000Z",
-                            "weakEtag": 1576274750000
+                            "systemModstamp": "2020-01-20T04:57:12.000Z",
+                            "weakEtag": 1579496232000
                         }
                     },
                     "OwnerId": {
@@ -673,7 +673,7 @@
             {
                 "apiName": "Opportunity",
                 "childRelationships": {},
-                "eTag": "e7d48bc685cec1dffa574c0da181d4bb",
+                "eTag": "70c6d0ce652ef293ae624e0ea799ea77",
                 "fields": {
                     "Account": {
                         "displayValue": "Edge Communications",
@@ -753,7 +753,7 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "6b03ae133a6a5631270b26dda7cbe117",
+                            "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
@@ -781,7 +781,7 @@
                                 },
                                 "SystemModstamp": {
                                     "displayValue": null,
-                                    "value": "2019-12-13T22:05:50.000Z"
+                                    "value": "2020-01-20T04:57:12.000Z"
                                 }
                             },
                             "id": "005T1000000HnsLIAS",
@@ -789,8 +789,8 @@
                             "lastModifiedDate": "2019-11-19T14:55:27.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2019-12-13T22:05:50.000Z",
-                            "weakEtag": 1576274750000
+                            "systemModstamp": "2020-01-20T04:57:12.000Z",
+                            "weakEtag": 1579496232000
                         }
                     },
                     "OwnerId": {
@@ -817,7 +817,7 @@
             {
                 "apiName": "Opportunity",
                 "childRelationships": {},
-                "eTag": "a0f8c27bda3ac6cbd4761009b0cc822e",
+                "eTag": "ada45642efc8d2621d34ed741cb3a6c4",
                 "fields": {
                     "Account": {
                         "displayValue": "Edge Communications",
@@ -897,7 +897,7 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "6b03ae133a6a5631270b26dda7cbe117",
+                            "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
@@ -925,7 +925,7 @@
                                 },
                                 "SystemModstamp": {
                                     "displayValue": null,
-                                    "value": "2019-12-13T22:05:50.000Z"
+                                    "value": "2020-01-20T04:57:12.000Z"
                                 }
                             },
                             "id": "005T1000000HnsLIAS",
@@ -933,8 +933,8 @@
                             "lastModifiedDate": "2019-11-19T14:55:27.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2019-12-13T22:05:50.000Z",
-                            "weakEtag": 1576274750000
+                            "systemModstamp": "2020-01-20T04:57:12.000Z",
+                            "weakEtag": 1579496232000
                         }
                     },
                     "OwnerId": {
@@ -959,6 +959,6 @@
                 "weakEtag": 1574175327000
             }
         ],
-        "sortBy": null
+        "sortBy": "Name,Id"
     }
 }

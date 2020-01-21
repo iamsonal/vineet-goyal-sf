@@ -1,5 +1,5 @@
 {
-    "eTag": "ac4eda86fb97240556031aa994672347",
+    "eTag": "a828f2ec5a17616db90d663bd860aec2",
     "info": {
         "cloneable": true,
         "createable": true,
@@ -82,7 +82,7 @@
         "fields": ["Account.Rating", "Account.Website"],
         "listInfoETag": "23b98260ab1fb2b6230b206cb5e8a267",
         "listReference": {
-            "id": null,
+            "id": "00BT1000000NUuWMAW",
             "listViewApiName": "AllAccounts",
             "objectApiName": "Account",
             "type": "listView"
@@ -97,7 +97,7 @@
             {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "68145b11595ee70612468467f7f64ae2",
+                "eTag": "ec0854090bfef4e9420e9d38b9b85b02",
                 "fields": {
                     "BillingState": {
                         "displayValue": null,
@@ -128,7 +128,7 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "6b03ae133a6a5631270b26dda7cbe117",
+                            "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
@@ -156,7 +156,7 @@
                                 },
                                 "SystemModstamp": {
                                     "displayValue": null,
-                                    "value": "2019-12-13T22:05:50.000Z"
+                                    "value": "2020-01-20T04:57:12.000Z"
                                 }
                             },
                             "id": "005T1000000HnsLIAS",
@@ -164,8 +164,8 @@
                             "lastModifiedDate": "2019-11-19T14:55:27.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2019-12-13T22:05:50.000Z",
-                            "weakEtag": 1576274750000
+                            "systemModstamp": "2020-01-20T04:57:12.000Z",
+                            "weakEtag": 1579496232000
                         }
                     },
                     "OwnerId": {
@@ -206,6 +206,6 @@
                 "weakEtag": 1574175327000
             }
         ],
-        "sortBy": null
+        "sortBy": "Name,Id"
     }
 }

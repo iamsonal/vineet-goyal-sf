@@ -1,5 +1,5 @@
 {
-    "eTag": "fe0d04d2c3497219e2d69c6c96af177d",
+    "eTag": "dc392c7e3c2db667c28eff929430f47e",
     "info": {
         "cloneable": true,
         "createable": true,
@@ -82,7 +82,7 @@
         "fields": [],
         "listInfoETag": "23b98260ab1fb2b6230b206cb5e8a267",
         "listReference": {
-            "id": null,
+            "id": "00BT1000000NUuWMAW",
             "listViewApiName": "AllAccounts",
             "objectApiName": "Account",
             "type": "listView"
@@ -97,7 +97,7 @@
             {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "0e49a98f142ca51c21b63b82131c1148",
+                "eTag": "9c4b2974c3b182b5a6f9e20a1ae3cb70",
                 "fields": {
                     "BillingState": {
                         "displayValue": null,
@@ -128,7 +128,7 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "6b03ae133a6a5631270b26dda7cbe117",
+                            "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
@@ -156,7 +156,7 @@
                                 },
                                 "SystemModstamp": {
                                     "displayValue": null,
-                                    "value": "2019-12-13T22:05:50.000Z"
+                                    "value": "2020-01-20T04:57:12.000Z"
                                 }
                             },
                             "id": "005T1000000HnsLIAS",
@@ -164,8 +164,8 @@
                             "lastModifiedDate": "2019-11-19T14:55:27.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2019-12-13T22:05:50.000Z",
-                            "weakEtag": 1576274750000
+                            "systemModstamp": "2020-01-20T04:57:12.000Z",
+                            "weakEtag": 1579496232000
                         }
                     },
                     "OwnerId": {
@@ -200,7 +200,7 @@
             {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "f8d95d549830592249fb80dd018222b2",
+                "eTag": "28690fb7d6c4084f406eeb7366263f00",
                 "fields": {
                     "BillingState": {
                         "displayValue": null,
@@ -231,7 +231,7 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "6b03ae133a6a5631270b26dda7cbe117",
+                            "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
@@ -259,7 +259,7 @@
                                 },
                                 "SystemModstamp": {
                                     "displayValue": null,
-                                    "value": "2019-12-13T22:05:50.000Z"
+                                    "value": "2020-01-20T04:57:12.000Z"
                                 }
                             },
                             "id": "005T1000000HnsLIAS",
@@ -267,8 +267,8 @@
                             "lastModifiedDate": "2019-11-19T14:55:27.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2019-12-13T22:05:50.000Z",
-                            "weakEtag": 1576274750000
+                            "systemModstamp": "2020-01-20T04:57:12.000Z",
+                            "weakEtag": 1579496232000
                         }
                     },
                     "OwnerId": {
@@ -303,7 +303,7 @@
             {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "1699884dbf1e0daf1604772703b9f520",
+                "eTag": "7e02fdb65298f6b2d74bf1c18b88964b",
                 "fields": {
                     "BillingState": {
                         "displayValue": null,
@@ -334,7 +334,7 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "6b03ae133a6a5631270b26dda7cbe117",
+                            "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
@@ -362,7 +362,7 @@
                                 },
                                 "SystemModstamp": {
                                     "displayValue": null,
-                                    "value": "2019-12-13T22:05:50.000Z"
+                                    "value": "2020-01-20T04:57:12.000Z"
                                 }
                             },
                             "id": "005T1000000HnsLIAS",
@@ -370,8 +370,8 @@
                             "lastModifiedDate": "2019-11-19T14:55:27.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2019-12-13T22:05:50.000Z",
-                            "weakEtag": 1576274750000
+                            "systemModstamp": "2020-01-20T04:57:12.000Z",
+                            "weakEtag": 1579496232000
                         }
                     },
                     "OwnerId": {
@@ -404,6 +404,6 @@
                 "weakEtag": 1574175327000
             }
         ],
-        "sortBy": null
+        "sortBy": "Name,Id"
     }
 }

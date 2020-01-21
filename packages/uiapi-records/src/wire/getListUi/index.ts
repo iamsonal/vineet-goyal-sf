@@ -1,11 +1,11 @@
 import {
     Adapter,
     AdapterFactory,
+    FetchResponse,
     Fragment,
     LDS,
     ResourceRequest,
     Snapshot,
-    FetchResponse,
 } from '@salesforce-lds/engine';
 import { refreshable, untrustedIsObject } from '../../generated/adapters/adapter-utils';
 import {
@@ -38,6 +38,7 @@ import {
     ListRecordCollectionRepresentation,
     paginationKeyBuilder as ListRecordCollection_paginationKeyBuilder,
 } from '../../generated/types/ListRecordCollectionRepresentation';
+import { select as ListReferenceRepresentation_select } from '../../generated/types/ListReferenceRepresentation';
 import {
     keyBuilder as listUiRepresentation_keyBuilder,
     ListUiRepresentation,
@@ -46,21 +47,22 @@ import { ListViewSummaryCollectionRepresentation } from '../../generated/types/L
 import { buildSelectionFromFields } from '../../selectors/record';
 import {
     addListReference,
+    addServerDefaults,
     getListInfo,
     getListReference,
-    LIST_INFO_SELECTIONS,
+    getServerDefaults,
     listFields,
     ListFields,
+    LIST_INFO_SELECTIONS,
 } from '../../util/lists';
 import {
     minimizeRequest,
     pathSelectionsFor,
     staticValuePathSelection,
 } from '../../util/pagination';
-import { isFulfilledSnapshot, isErrorSnapshot } from '../../util/snapshot';
+import { isErrorSnapshot, isFulfilledSnapshot } from '../../util/snapshot';
 import { getListViewSummaryCollectionAdapterFactory } from '../getListViewSummaryCollection';
 import { getMruListUiAdapterFactory } from '../getMruListUi';
-import { select as ListReferenceRepresentation_select } from '../../generated/types/ListReferenceRepresentation';
 
 const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select().selections;
 
@@ -91,11 +93,27 @@ const getListUiByListViewId_ConfigPropertyNames_augmented = {
     },
 };
 
+function getSortBy(config: GetListUiConfig): string[] | null {
+    if (config.sortBy !== undefined) {
+        return config.sortBy;
+    }
+
+    const defaults = getServerDefaults(config);
+
+    if (defaults.sortBy !== undefined) {
+        return defaults.sortBy;
+    }
+
+    return null;
+}
+
 function buildListUiFragment(
     config: GetListUiConfig,
     listInfo: ListInfoRepresentation,
     fields: ListFields
 ): Fragment {
+    const defaultedConfig = { ...getServerDefaults(config), ...config };
+
     return {
         kind: 'Fragment',
         selections: [
@@ -110,14 +128,17 @@ function buildListUiFragment(
                 selections: [
                     ...pathSelectionsFor({
                         name: 'records',
-                        pageSize: config.pageSize || DEFAULT_PAGE_SIZE,
-                        pageToken: config.pageToken,
+                        pageSize: defaultedConfig.pageSize || DEFAULT_PAGE_SIZE,
+                        pageToken: defaultedConfig.pageToken,
                         selections: buildSelectionFromFields(
                             ...fields.getRecordSelectionFieldSets()
                         ),
                         tokenDataKey: ListRecordCollection_paginationKeyBuilder({
                             listViewId: listInfo.eTag,
-                            sortBy: config.sortBy === undefined ? null : config.sortBy,
+                            sortBy:
+                                defaultedConfig.sortBy === undefined
+                                    ? null
+                                    : defaultedConfig.sortBy,
                         }),
                     }),
                     {
@@ -141,12 +162,15 @@ function buildListUiFragment(
                     },
                     staticValuePathSelection({
                         name: 'pageSize',
-                        value: config.pageSize === undefined ? DEFAULT_PAGE_SIZE : config.pageSize,
+                        value:
+                            defaultedConfig.pageSize === undefined
+                                ? DEFAULT_PAGE_SIZE
+                                : defaultedConfig.pageSize,
                     }),
                     {
-                        // TODO - check type; re-verify after sortBy added to key
                         kind: 'Scalar',
                         name: 'sortBy',
+                        plural: true,
                     },
                 ],
             },
@@ -162,7 +186,7 @@ function buildInMemorySnapshot(
 ): Snapshot<ListUiRepresentation> {
     const listUiKey = listUiRepresentation_keyBuilder({
         ...listInfo.listReference,
-        sortBy: config.sortBy === undefined ? null : config.sortBy,
+        sortBy: getSortBy(config),
     });
     const listFields_ = fields || listFields(lds, config, listInfo);
 
@@ -249,11 +273,14 @@ function buildNetworkSnapshot_getListUi(
             const fields = listFields(lds, config, listInfo);
             fields.processRecords(body.records.records);
 
-            // build the selector while the list info is still easily accessible
-            const fragment = buildListUiFragment(config, listInfo, fields);
-
             // remember the id/name of this list
             addListReference(listReference);
+
+            // remember any default values that the server filled in
+            addServerDefaults(config, body);
+
+            // build the selector while the list info is still easily accessible
+            const fragment = buildListUiFragment(config, listInfo, fields);
 
             lds.storeIngest(listUiKey, request, body);
             lds.storeBroadcast();
@@ -313,7 +340,7 @@ function buildNetworkSnapshot_getListRecords(
             pagination: lds.pagination(
                 ListRecordCollection_paginationKeyBuilder({
                     listViewId: listInfo.eTag,
-                    sortBy: config.sortBy === undefined ? null : config.sortBy,
+                    sortBy: getSortBy(config),
                 })
             ),
         });
@@ -376,7 +403,7 @@ function buildNetworkSnapshot_getListRecords(
             lds.storeIngestFetchResponse(
                 listUiRepresentation_keyBuilder({
                     ...listInfo.listReference,
-                    sortBy: config.sortBy === undefined ? null : config.sortBy,
+                    sortBy: getSortBy(config),
                 }),
                 err
             );
@@ -465,7 +492,7 @@ export const factory: AdapterFactory<
 
             // try to get a list reference and a list info for the list; this should come back
             // non-null if we have the list info cached
-            const listRef = getListReference(config, lds);
+            const listRef = getListReference(config);
             const listInfo = listRef && getListInfo(listRef, lds);
 
             // no list info means it's not in the cache - make a full list-ui request

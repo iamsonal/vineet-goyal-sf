@@ -5,15 +5,12 @@ import {
     select as ListInfoRepresentation_select,
 } from '../generated/types/ListInfoRepresentation';
 import { keyBuilder as ListRecordCollection_keyBuilder } from '../generated/types/ListRecordCollectionRepresentation';
-import {
-    keyBuilder as ListReferenceRepresentation_keyBuilder,
-    ListReferenceRepresentation,
-} from '../generated/types/ListReferenceRepresentation';
-import { select as ListReferenceRepresentation_select } from '../generated/types/ListReferenceRepresentation';
-import { isFulfilledSnapshot } from './snapshot';
+import { ListReferenceRepresentation } from '../generated/types/ListReferenceRepresentation';
+import { ListUiRepresentation } from '../generated/types/ListUiRepresentation';
+import { RecordRepresentation } from '../generated/types/RecordRepresentation';
 import { ObjectKeys } from './language';
 import { isGraphNode } from './records';
-import { RecordRepresentation } from '../generated/types/RecordRepresentation';
+import { isFulfilledSnapshot } from './snapshot';
 
 export interface ListReferenceQuery {
     listViewId?: string;
@@ -23,8 +20,8 @@ export interface ListReferenceQuery {
 
 // TODO - these really should be in the store
 interface ListReferences {
-    byId: { [key: string]: string };
-    byApiNames: { [key: string]: string };
+    byId: { [key: string]: ListReferenceRepresentation };
+    byApiNames: { [key: string]: ListReferenceRepresentation };
 }
 
 const listReferences: ListReferences = {
@@ -38,18 +35,11 @@ const listReferences: ListReferences = {
  * @param listRef list refenence
  */
 export function addListReference(listRef: ListReferenceRepresentation): void {
-    const listRefKey = ListReferenceRepresentation_keyBuilder({ id: listRef.id });
-
     if (listRef.id) {
-        listReferences.byId[listRef.id] = listRefKey;
+        listReferences.byId[listRef.id] = listRef;
     }
-    listReferences.byApiNames[`${listRef.objectApiName}:${listRef.listViewApiName}`] = listRefKey;
+    listReferences.byApiNames[`${listRef.objectApiName}:${listRef.listViewApiName}`] = listRef;
 }
-
-/**
- * Reader selections to copy a list reference
- */
-const LIST_REFERENCE_SELECTIONS: PathSelection[] = ListReferenceRepresentation_select().selections;
 
 /**
  * Returns a list reference from the store if it's present.
@@ -58,24 +48,11 @@ const LIST_REFERENCE_SELECTIONS: PathSelection[] = ListReferenceRepresentation_s
  * @param lds LDS
  */
 export function getListReference(
-    query: ListReferenceQuery,
-    lds: LDS
+    query: ListReferenceQuery
 ): ListReferenceRepresentation | undefined {
-    const key = query.listViewId
+    return query.listViewId
         ? listReferences.byId[query.listViewId]
         : listReferences.byApiNames[`${query.objectApiName}:${query.listViewApiName}`];
-
-    if (key) {
-        const lookupResult = lds.storeLookup<ListReferenceRepresentation>({
-            recordId: key,
-            node: { kind: 'Fragment', selections: LIST_REFERENCE_SELECTIONS },
-            variables: {},
-        });
-
-        if (isFulfilledSnapshot(lookupResult)) {
-            return lookupResult.data;
-        }
-    }
 }
 
 /**
@@ -108,6 +85,60 @@ export function getListInfo(
     if (isFulfilledSnapshot(lookupResult)) {
         return lookupResult.data;
     }
+}
+
+// The server assumes defaults for certain config fields, which makes caching
+// requests that rely on those defaults challenging. The following logic keeps
+// track of default values that we've seen the server supply for past
+// requests so that we can guess what those values will be on future requests.
+
+// TODO - look at generalizing this so we can declaratively tell LDS to remember
+// default values from the server.
+
+// TODO - these really should be in the store
+
+export interface ServerDefaultable {
+    sortBy?: string[];
+}
+
+export interface ServerDefaults {
+    sortBy?: string[];
+}
+
+const serverDefaults: { [key: string]: ServerDefaults } = {};
+
+/**
+ * Update the default values based on a server response.
+ *
+ * @param config getListUi config
+ * @param serverResponse ListUiRepresentation from the server
+ */
+export function addServerDefaults(
+    config: ListReferenceQuery & ServerDefaultable,
+    serverResponse: ListUiRepresentation
+): void {
+    const key = `${serverResponse.info.listReference.objectApiName}:${serverResponse.info.listReference.listViewApiName}`;
+    let defaults = serverDefaults[key] || (serverDefaults[key] = {});
+
+    if (config.sortBy === undefined && serverResponse.records.sortBy !== null) {
+        defaults.sortBy = serverResponse.records.sortBy;
+    }
+}
+
+/**
+ * Returns default values observed on previous requests for a list.
+ *
+ * @param config getListUi config
+ * @returns defaults from previous requests for this list, or {} if no defaults are known
+ */
+export function getServerDefaults(config: ListReferenceQuery): ServerDefaults {
+    const listRef = getListReference(config);
+    if (listRef === undefined) {
+        return {};
+    }
+
+    const key = `${listRef.objectApiName}:${listRef.listViewApiName}`;
+    return serverDefaults[key] || {};
 }
 
 // Logic to deal with fields on the list view. This would be reasonably straightforward

@@ -273,6 +273,6 @@
                 "weakEtag": 1
             }
         ],
-        "sortBy": null
+        "sortBy": "Name,Id"
     }
 }

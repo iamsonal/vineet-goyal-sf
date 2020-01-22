@@ -30,7 +30,6 @@ import {
     GetRelatedListRecordActions,
     GetRelatedListRecords,
     MRU,
-    RecordRepresentation,
     UpdateRecord,
     UpdateRecordAvatar,
     UpdateLayoutUserState,
@@ -68,58 +67,51 @@ const setupWireAdapter = <C, D>(name: string, factory: AdapterFactory<C, D>): Ad
  */
 
 /* TODO W-6568533 - replace this temporary imperative invocation with wire reform */
-const getObjectInfoLdsAdapter = createLdsAdapter('getObjectInfo', GetObjectInfo);
-export const _getObjectInfo = (config: any): void => {
-    getObjectInfoLdsAdapter(config);
+const createImperativeFunction = <C, D>(adapter: Adapter<C, D>) => {
+    return (config: C): Promise<D> => {
+        const result = adapter(config);
+        if (result === null) {
+            return Promise.reject(new Error('Insufficient config'));
+        } else if ('then' in result) {
+            return result.then(snapshot => {
+                if (snapshot.state === 'Error') {
+                    throw snapshot.error;
+                }
+                return snapshot.data;
+            }) as Promise<D>;
+        } else if (result.state === 'Fulfilled') {
+            return Promise.resolve(result.data);
+        }
+        return Promise.reject(new Error('isMissingData=true'));
+    };
 };
+
+const getObjectInfoLdsAdapter = createLdsAdapter('getObjectInfo', GetObjectInfo);
+export const _getObjectInfo = createImperativeFunction(getObjectInfoLdsAdapter);
 
 const getLayoutLdsAdapter = createLdsAdapter('getLayout', GetLayout);
-export const _getLayout = (config: any): void => {
-    getLayoutLdsAdapter(config);
-};
+export const _getLayout = createImperativeFunction(getLayoutLdsAdapter);
 
 const getRecordLdsAdapter = createLdsAdapter('getRecord', GetRecord);
-export const _getRecord = (config: any): Promise<RecordRepresentation> => {
-    const result = getRecordLdsAdapter(config);
-    if (result === null) {
-        return Promise.reject(new Error('Insufficient config'));
-    } else if ('then' in result) {
-        return result.then(snapshot => {
-            if (snapshot.state === 'Error') {
-                throw snapshot.error;
-            }
-            return snapshot.data;
-        }) as Promise<RecordRepresentation>;
-    } else if (result.state === 'Fulfilled') {
-        return Promise.resolve(result.data);
-    }
-    return Promise.reject(new Error('isMissingData=true'));
-};
+export const _getRecord = createImperativeFunction(getRecordLdsAdapter);
 
 const getRecordActionsLdsAdapter = GetRecordActions(lds);
-export const _getRecordActions = (config: any): void => {
-    getRecordActionsLdsAdapter(config);
-};
+export const _getRecordActions = createImperativeFunction(getRecordActionsLdsAdapter);
 
 const getRecordAvatarsLdsAdapter = createLdsAdapter('getRecordAvatars', GetRecordAvatars);
-export const _getRecordAvatars = (config: any): void => {
-    getRecordAvatarsLdsAdapter(config);
-};
+export const _getRecordAvatars = createImperativeFunction(getRecordAvatarsLdsAdapter);
 
 const getRecordUiLdsAdapter = createLdsAdapter('getRecordUi', GetRecordUi);
-export const _getRecordUi = (config: any): void => {
-    getRecordUiLdsAdapter(config);
-};
+export const _getRecordUi = createImperativeFunction(getRecordUiLdsAdapter);
 
 export const getLayoutUserStateLdsAdapter = createLdsAdapter(
     'getLayoutUserState',
     GetLayoutUserState
 );
-export const _getLayoutUserState = (config: any): void => {
-    getLayoutUserStateLdsAdapter(config);
-};
+export const _getLayoutUserState = createImperativeFunction(getLayoutUserStateLdsAdapter);
 
 export const getRelatedListInfo = setupWireAdapter('getRelatedListInfo', GetRelatedListInfo);
+export const _getRelatedListInfo = createImperativeFunction(getRelatedListInfo);
 
 const baseCreateRecord = CreateRecord(lds);
 export const createRecord = (...config: Parameters<ReturnType<typeof CreateRecord>>) => {
@@ -150,15 +142,22 @@ export const getRelatedListActions = setupWireAdapter(
     'getRelatedListActions',
     GetRelatedListActions
 );
+export const _getRelatedListActions = createImperativeFunction(getRelatedListActions);
+
 export const getRelatedListInfos = setupWireAdapter('getRelatedListInfos', GetRelatedListInfos);
+export const _getRelatedListInfos = createImperativeFunction(getRelatedListInfos);
+
 export const getRelatedListRecords = setupWireAdapter(
     'getRelatedListRecords',
     GetRelatedListRecords
 );
+export const _getRelatedListRecords = createImperativeFunction(getRelatedListRecords);
+
 export const getRelatedListRecordActions = setupWireAdapter(
     'getRelatedListRecordActions',
     GetRelatedListRecordActions
 );
+export const _getRelatedListRecordActions = createImperativeFunction(getRelatedListRecordActions);
 
 const baseUpdateRecord = UpdateRecord(lds);
 export const updateRecord = (...config: Parameters<ReturnType<typeof UpdateRecord>>) => {

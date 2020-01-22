@@ -71,6 +71,11 @@ export const _getRecord = getRecord;
 export const _getRecordActions = getRecordActions;
 export const _getRecordAvatars = getRecordAvatars;
 export const _getRecordUi = getRecordUi;
+export const _getRelatedListInfo = getRelatedListInfo;
+export const _getRelatedListActions = getRelatedListActions;
+export const _getRelatedListInfos = getRelatedListInfos;
+export const _getRelatedListRecords = getRelatedListRecords;
+export const _getRelatedListRecordActions = getRelatedListRecordActions;
 
 export { MRU };
 

@@ -62,6 +62,11 @@ const whiteList = [
     '_getRecordActions',
     '_getRecordAvatars',
     '_getRecordUi',
+    '_getRelatedListInfo',
+    '_getRelatedListActions',
+    '_getRelatedListInfos',
+    '_getRelatedListRecords',
+    '_getRelatedListRecordActions',
 ].sort();
 
 describe('items exported to core', () => {

@@ -1102,7 +1102,7 @@ describe('get /lookups/{objectApiName}/{fieldApiName}/{targetApiName}', () => {
     );
 });
 
-describe('get /actions/record/${recordId}', () => {
+describe('get /actions/record/${recordIds}', () => {
     describe('/record-edit', () => {
         testControllerInput(
             {
@@ -1112,7 +1112,7 @@ describe('get /actions/record/${recordId}', () => {
                     recordIds: ['1234', '5678'],
                 },
             },
-            ['ActionsController.getRecordEditActions', { recordId: ['1234', '5678'] }, undefined]
+            ['ActionsController.getRecordEditActions', { recordIds: ['1234', '5678'] }, undefined]
         );
 
         testRejectFetchResponse({
@@ -1150,13 +1150,13 @@ describe('get /actions/record/${recordId}', () => {
                 method: 'get',
                 path: '/actions/record/1234,5678/related-list-record/1111,2222',
                 urlParams: {
-                    recordId: ['1234', '5678'],
+                    recordIds: ['1234', '5678'],
                     relatedListRecordIds: ['1111', '2222'],
                 },
             },
             [
                 'ActionsController.getRelatedListRecordActions',
-                { recordId: ['1234', '5678'], relatedListRecordIds: ['1111', '2222'] },
+                { recordIds: ['1234', '5678'], relatedListRecordIds: ['1111', '2222'] },
                 undefined,
             ]
         );
@@ -1165,7 +1165,7 @@ describe('get /actions/record/${recordId}', () => {
             method: 'get',
             path: '/actions/record/1234,5678/related-list-record/1111,2222',
             urlParams: {
-                recordId: ['1234', '5678'],
+                recordIds: ['1234', '5678'],
                 relatedListRecordIds: ['1111', '2222'],
             },
         });
@@ -1175,7 +1175,7 @@ describe('get /actions/record/${recordId}', () => {
                 method: 'get',
                 path: '/actions/record/1234,5678/related-list-record/1111,2222',
                 urlParams: {
-                    recordId: ['1234', '5678'],
+                    recordIds: ['1234', '5678'],
                     relatedListRecordIds: ['1111', '2222'],
                 },
             },
@@ -1198,13 +1198,13 @@ describe('get /actions/record/${recordId}', () => {
                 method: 'get',
                 path: '/actions/record/1234/related-list/1111',
                 urlParams: {
-                    recordId: '1234',
+                    recordIds: ['1234'],
                     relatedListIds: ['1111'],
                 },
             },
             [
                 'ActionsController.getRelatedListActions',
-                { recordId: '1234', relatedListIds: ['1111'] },
+                { recordIds: ['1234'], relatedListIds: ['1111'] },
                 undefined,
             ]
         );
@@ -1213,7 +1213,7 @@ describe('get /actions/record/${recordId}', () => {
             method: 'get',
             path: '/actions/record/1234/related-list/1111',
             urlParams: {
-                recordId: '1234',
+                recordIds: ['1234'],
                 relatedListIds: ['1111'],
             },
         });
@@ -1223,7 +1223,7 @@ describe('get /actions/record/${recordId}', () => {
                 method: 'get',
                 path: '/actions/record/1234,5678/related-list/1111',
                 urlParams: {
-                    recordId: '1234',
+                    recordIds: ['1234'],
                     relatedListIds: ['1111'],
                 },
             },
@@ -1245,7 +1245,7 @@ describe('get /actions/record/${recordId}', () => {
                 recordIds: ['1234', '5678'],
             },
         },
-        ['ActionsController.getRecordActions', { recordId: ['1234', '5678'] }, undefined]
+        ['ActionsController.getRecordActions', { recordIds: ['1234', '5678'] }, undefined]
     );
 
     testRejectFetchResponse({

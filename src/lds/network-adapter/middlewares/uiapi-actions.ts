@@ -31,7 +31,7 @@ export function getRecordActions(resourceRequest: ResourceRequest): Promise<any>
         urlParams: { recordIds },
         queryParams,
     } = resourceRequest;
-    const parameters = buildUiApiParams({ recordId: recordIds, ...queryParams }, resourceRequest);
+    const parameters = buildUiApiParams({ recordIds, ...queryParams }, resourceRequest);
 
     return dispatchAction(UiApiActionsController.GetRecordActions, parameters);
 }
@@ -41,18 +41,18 @@ export function getRecordEditActions(resourceRequest: ResourceRequest): Promise<
         urlParams: { recordIds },
         queryParams,
     } = resourceRequest;
-    const parameters = buildUiApiParams({ recordId: recordIds, ...queryParams }, resourceRequest);
+    const parameters = buildUiApiParams({ recordIds, ...queryParams }, resourceRequest);
 
     return dispatchAction(UiApiActionsController.GetRecordEditActions, parameters);
 }
 
 export function getRelatedListActions(resourceRequest: ResourceRequest): Promise<any> {
     const {
-        urlParams: { recordId, relatedListIds },
+        urlParams: { recordIds, relatedListIds },
         queryParams,
     } = resourceRequest;
     const parameters = buildUiApiParams(
-        { recordId, relatedListIds, ...queryParams },
+        { recordIds, relatedListIds, ...queryParams },
         resourceRequest
     );
 
@@ -61,11 +61,11 @@ export function getRelatedListActions(resourceRequest: ResourceRequest): Promise
 
 export function getRelatedListRecordActions(resourceRequest: ResourceRequest): Promise<any> {
     const {
-        urlParams: { recordId, relatedListRecordIds },
+        urlParams: { recordIds, relatedListRecordIds },
         queryParams,
     } = resourceRequest;
     const parameters = buildUiApiParams(
-        { recordId, relatedListRecordIds, ...queryParams },
+        { recordIds, relatedListRecordIds, ...queryParams },
         resourceRequest
     );
 

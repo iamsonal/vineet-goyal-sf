@@ -80,8 +80,9 @@ function isGraphNode<T, U>(node: ProxyGraphNode<T, U>): node is GraphNode<T, U> 
 }
 
 /**
- * Return a shallow copy of a record with it's field values if it is a scalar and a reference and a
+ * Returns a shallow copy of a record with its field values if it is a scalar and a reference and a
  * a RecordRepresentation with no field if the value if a spanning record.
+ * It returns null if the record contains any pending field.
  */
 function getShallowRecord(lds: LDS, storeRecordId: string): RecordRepresentation | null {
     const recordNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(
@@ -110,6 +111,9 @@ function getShallowRecord(lds: LDS, storeRecordId: string): RecordRepresentation
             FieldValueRepresentationNormalized,
             FieldValueRepresentation
         >(fieldName);
+        if (fieldLink.isPending() === true) {
+            return null;
+        }
 
         const fieldNode = fieldLink.follow();
         if (!isGraphNode(fieldNode)) {
@@ -127,6 +131,9 @@ function getShallowRecord(lds: LDS, storeRecordId: string): RecordRepresentation
                 RecordRepresentationNormalized,
                 RecordRepresentation
             >('value');
+            if (spanningRecordLink.isPending() === true) {
+                return null;
+            }
 
             const spanningRecordNode = spanningRecordLink.follow();
             if (!isGraphNode(spanningRecordNode)) {

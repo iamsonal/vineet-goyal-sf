@@ -457,7 +457,7 @@ describe('AdsBridge', () => {
             );
         });
 
-        it('emits stripped down spanning records when spanning record value is pending', () => {
+        it('does not emit data when spanning record value is pending', () => {
             const { bridge, lds, store } = createBridge();
 
             addRecord(
@@ -507,23 +507,49 @@ describe('AdsBridge', () => {
                 })
             );
 
-            expect(fn).toHaveBeenCalledWith(
-                {
-                    '123': {
-                        Opportunity: {
-                            isPrimary: true,
-                            record: expect.objectContaining({
-                                id: '123',
-                                apiName: 'Opportunity',
-                                fields: {
-                                    Id: { displayValue: null, value: '123' },
-                                },
-                            }),
+            expect(fn).not.toHaveBeenCalled();
+        });
+
+        it('does not emit data when record has a pending field', () => {
+            const { bridge, lds, store } = createBridge();
+
+            addRecord(
+                lds,
+                createRecord({
+                    id: '123',
+                    apiName: 'Opportunity',
+                    fields: {
+                        Id: {
+                            displayValue: null,
+                            value: '123',
                         },
                     },
-                },
-                expect.any(Object)
+                })
             );
+
+            // Mark the Id field of the ingested record in the store as pending.
+            const recordKey = keyBuilderRecord({ recordId: '123' });
+            store.records[recordKey].fields.Id = {
+                __ref: undefined,
+                pending: true,
+            };
+
+            const fn = jest.fn();
+            bridge.receiveFromLdsCallback = fn;
+
+            // add a new record to trigger the bridge emit flow
+            addRecord(
+                lds,
+                createRecord({
+                    id: '123',
+                    apiName: 'Opportunity',
+                    fields: {
+                        Name: { displayValue: null, value: 'abc' },
+                    },
+                })
+            );
+
+            expect(fn).not.toHaveBeenCalled();
         });
 
         it('emits stripped down spanning records when spanning record value is isMissing', () => {

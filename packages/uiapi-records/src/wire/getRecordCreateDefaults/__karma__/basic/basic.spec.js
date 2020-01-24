@@ -145,6 +145,31 @@ describe('getRecordCreateDefaults', () => {
         expect(elm.pushCount()).toBe(1);
         expect(elm.getWiredData()).toEqualSnapshotWithoutEtags(mock);
     });
+
+    it('should make correct HTTP requests for multiple requests on same entity with different optionalFields', async () => {
+        const mockA = getMock('record-defaults-create-Account-optionalFields-Account.YearStarted');
+        const mockB = getMock('record-defaults-create-Account-optionalFields-Account.Test');
+        const configA = {
+            objectApiName: 'Account',
+            optionalFields: ['Account.YearStarted'],
+        };
+        const configB = {
+            objectApiName: 'Account',
+            optionalFields: ['Account.Test'],
+        };
+
+        mockGetRecordCreateDefaultsNetwork(configA, mockA);
+        mockGetRecordCreateDefaultsNetwork(configB, mockB);
+
+        const elmA = await setupElement(configA, GetRecordCreateDefaults);
+        const elmB = await setupElement(configB, GetRecordCreateDefaults);
+
+        // Without the fix added in W-7081913, this test would fail because the network mocks would be hit more than once.
+        expect(elmA.pushCount()).toBe(1);
+        expect(elmA.getWiredData()).toEqualSnapshotWithoutEtags(mockA);
+        expect(elmB.pushCount()).toBe(1);
+        expect(elmB.getWiredData()).toEqualSnapshotWithoutEtags(mockB);
+    });
 });
 
 describe('getRecordCreateDefaults refreshes', () => {
@@ -217,6 +242,22 @@ describe('related wire', () => {
         await setupElement(config, GetRecordCreateDefaults);
 
         expect(wireObjectInfo.pushCount()).toBe(1);
+    });
+
+    it('does not refresh when getRecordCreateDefaults requests invalid optional field', async () => {
+        const mockRecordCreateDefaults = getMock('record-defaults-create-Account');
+
+        const config = {
+            objectApiName: 'Account',
+            optionalFields: ['Account.InvalidField'],
+        };
+        mockGetRecordCreateDefaultsNetwork(config, mockRecordCreateDefaults);
+
+        const wireGetRecordCreateDefaults = await setupElement(config, GetRecordCreateDefaults);
+        expect(wireGetRecordCreateDefaults.pushCount()).toBe(1);
+        const wireGetRecordCreateDefaults2 = await setupElement(config, GetRecordCreateDefaults);
+        expect(wireGetRecordCreateDefaults.pushCount()).toBe(1);
+        expect(wireGetRecordCreateDefaults2.pushCount()).toBe(1);
     });
 
     it('refreshes when getRecordCreateDefaults brings back an updated object info', async () => {

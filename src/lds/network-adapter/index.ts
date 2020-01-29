@@ -190,8 +190,8 @@ function controllerInvokerFactory(resourceRequest: ResourceRequest): ControllerI
             }
 
             if (path.startsWith(UIAPI_RELATED_LIST_INFO_PATH)) {
-                // related-list-info/API_NAME/RECORD_TYPE_ID/RELATED_LIST_ID
-                if (/related-list-info\/[a-zA-Z_\d]+\/[a-zA-Z_\d]+\/[a-zA-Z_\d]+/.test(path)) {
+                // related-list-info/API_NAME/RELATED_LIST_ID
+                if (/related-list-info\/[a-zA-Z_\d]+\/[a-zA-Z_\d]+/.test(path)) {
                     return getRelatedListInfo;
                 }
                 return getRelatedListInfos;

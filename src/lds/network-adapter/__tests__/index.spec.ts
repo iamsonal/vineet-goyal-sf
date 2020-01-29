@@ -1278,15 +1278,17 @@ describe('get /actions/record/${recordIds}', () => {
 });
 
 describe('get /related-list-info', () => {
-    describe('/{parentObjectApiName}/{recordTypeId}/{relatedListId}', () => {
+    describe('/{parentObjectApiName}/{relatedListId}', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: '/related-list-info/Opportunity/012T00000004MUHIA2/Contact__r',
+                path: '/related-list-info/Opportunity/Contact__r',
                 urlParams: {
                     parentObjectApiName: 'Opportunity',
-                    recordTypeId: '012T00000004MUHIA2',
                     relatedListId: 'Contact__r',
+                },
+                queryParams: {
+                    recordTypeId: '012T00000004MUHIA2',
                 },
             },
             [
@@ -1302,22 +1304,26 @@ describe('get /related-list-info', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: '/related-list-info/Opportunity/012T00000004MUHIA2/Contact__r',
+            path: '/related-list-info/Opportunity/Contact__r',
             urlParams: {
                 parentObjectApiName: 'Opportunity',
-                recordTypeId: '012T00000004MUHIA2',
                 relatedListId: 'Contact__r',
+            },
+            queryParams: {
+                recordTypeId: '012T00000004MUHIA2',
             },
         });
     });
 
-    describe('{parentObjectApiName}/{recordTypeId}', () => {
+    describe('{parentObjectApiName}', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: '/related-list-info/Opportunity/012T00000004MUHIA2',
+                path: '/related-list-info/Opportunity',
                 urlParams: {
                     parentObjectApiName: 'Opportunity',
+                },
+                queryParams: {
                     recordTypeId: '012T00000004MUHIA2',
                 },
             },
@@ -1333,24 +1339,28 @@ describe('get /related-list-info', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: '/related-list-info/Opportunity/012T00000004MUHIA2',
+            path: '/related-list-info/Opportunity',
             urlParams: {
                 parentObjectApiName: 'Opportunity',
+            },
+            queryParams: {
                 recordTypeId: '012T00000004MUHIA2',
             },
         });
     });
 });
 
-describe('get /related-list-info/{parentObjectApiName}/{recordTypeId}/{relatedListId}', () => {
+describe('get /related-list-info/{parentObjectApiName}/{relatedListId}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/related-list-info/Opportunity/012T00000004MUHIA2/Contact__r',
+            path: '/related-list-info/Opportunity/Contact__r',
             urlParams: {
                 parentObjectApiName: 'Opportunity',
-                recordTypeId: '012T00000004MUHIA2',
                 relatedListId: 'Contact__r',
+            },
+            queryParams: {
+                recordTypeId: '012T00000004MUHIA2',
             },
         },
         [
@@ -1366,11 +1376,13 @@ describe('get /related-list-info/{parentObjectApiName}/{recordTypeId}/{relatedLi
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/related-list-info/Opportunity/012T00000004MUHIA2/Contact__r',
+        path: '/related-list-info/Opportunity/Contact__r',
         urlParams: {
             parentObjectApiName: 'Opportunity',
-            recordTypeId: '012T00000004MUHIA2',
             relatedListId: 'Contact__r',
+        },
+        queryParams: {
+            recordTypeId: '012T00000004MUHIA2',
         },
     });
 });

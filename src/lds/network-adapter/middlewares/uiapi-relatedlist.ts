@@ -12,13 +12,13 @@ export const UIAPI_RELATED_LIST_INFO_PATH = `${UI_API_BASE_URI}/related-list-inf
 export const UIAPI_RELATED_LIST_RECORDS_PATH = `${UI_API_BASE_URI}/related-list-records`;
 
 export function getRelatedListInfo(resourceRequest: ResourceRequest): Promise<any> {
-    const { urlParams } = resourceRequest;
+    const { urlParams, queryParams } = resourceRequest;
 
     const params = buildUiApiParams(
         {
             parentObjectApiName: urlParams.parentObjectApiName,
-            recordTypeId: urlParams.recordTypeId,
             relatedListId: urlParams.relatedListId,
+            recordTypeId: queryParams.recordTypeId,
         },
         resourceRequest
     );
@@ -27,12 +27,12 @@ export function getRelatedListInfo(resourceRequest: ResourceRequest): Promise<an
 }
 
 export function getRelatedListInfos(resourceRequest: ResourceRequest): Promise<any> {
-    const { urlParams } = resourceRequest;
+    const { urlParams, queryParams } = resourceRequest;
 
     const params = buildUiApiParams(
         {
             parentObjectApiName: urlParams.parentObjectApiName,
-            recordTypeId: urlParams.recordTypeId,
+            recordTypeId: queryParams.recordTypeId,
         },
         resourceRequest
     );

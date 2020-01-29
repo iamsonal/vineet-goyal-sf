@@ -400,28 +400,28 @@ types:
             recordTypeId: SalesforceRecordId18
             formFactor: SalesforceFormFactor
   '/related-list-info':
-    '/{parentObjectApiName}/{recordTypeId}':
+    '/{parentObjectApiName}':
       get:
         (adapter):
           name: getRelatedListsInfo
         (key):
           parentObjectApiName: urlParams.parentObjectApiName
-          recordTypeId: urlParams.recordTypeId
-    '/{parentObjectApiName}/{recordTypeId}/{relatedListId}':
+          recordTypeId: queryParams.recordTypeId || null
+    '/{parentObjectApiName}/{relatedListId}':
       get:
         (adapter):
           name: getRelatedListInfo
         (key):
           parentObjectApiName: urlParams.parentObjectApiName
-          recordTypeId: urlParams.recordTypeId
           relatedListId: urlParams.relatedListId
+          recordTypeId: queryParams.recordTypeId || null
       patch:
         (adapter):
           name: updateRelatedListInfo
         (key):
           parentObjectApiName: urlParams.parentObjectApiName
-          recordTypeId: urlParams.recordTypeId
           relatedListId: urlParams.relatedListId
+          recordTypeId: queryParams.recordTypeId || null
   '/related-list-records/{parentRecordId}/{relatedListId}':
     get:
       (adapter):

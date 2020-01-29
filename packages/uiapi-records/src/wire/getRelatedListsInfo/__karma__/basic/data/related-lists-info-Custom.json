@@ -10,11 +10,13 @@
             "fieldApiName": "CObjParent__c",
             "parentFieldApiName": "Id",
             "relatedListId": "CObjChilds__r",
-            "relatedListInfoUrl": "/services/data/v49.0/ui-api/related-list-info/CObjParent__c/012000000000000AAA/CObjChilds__r",
+            "relatedListInfoUrl": "/services/data/v49.0/ui-api/related-list-info/CObjParent__c/CObjChilds__r",
             "themeInfo": {
                 "color": "747E96",
                 "iconUrl": "/img/icon/t4v35/standard/custom_120.png"
-            }
+            },
+            "objectApiName": "CObjChilds__c",
+            "keyPrefix": "a00"
         }
     ]
 }

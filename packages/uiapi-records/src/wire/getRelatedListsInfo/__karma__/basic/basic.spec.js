@@ -13,13 +13,11 @@ function getMock(filename) {
 
 function mockNetwork(config, mockData) {
     const parentObjectApiName = config.parentObjectApiName;
-    const recordTypeId = config.recordTypeId;
     const queryParams = { ...config };
     delete queryParams.parentObjectApiName;
-    delete queryParams.recordTypeId;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/related-list-info/${parentObjectApiName}/${recordTypeId}`,
+        path: `${URL_BASE}/related-list-info/${parentObjectApiName}`,
         queryParams,
     });
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);

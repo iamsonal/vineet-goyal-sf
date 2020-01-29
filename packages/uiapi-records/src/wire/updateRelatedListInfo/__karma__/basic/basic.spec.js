@@ -13,11 +13,15 @@ function getMock(filename) {
 }
 
 function mockUpdateNetwork(keys, params, mockData) {
-    const { parentObjectApiName, recordTypeId, relatedListId } = keys;
+    const { parentObjectApiName, relatedListId } = keys;
     const updateParams = { ...params };
+    const queryParams = { ...keys };
+    delete queryParams.parentObjectApiName;
+    delete queryParams.relatedListId;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/related-list-info/${parentObjectApiName}/${recordTypeId}/${relatedListId}`,
+        path: `${URL_BASE}/related-list-info/${parentObjectApiName}/${relatedListId}`,
+        queryParams,
         method: 'patch',
         body: updateParams,
     });
@@ -25,14 +29,13 @@ function mockUpdateNetwork(keys, params, mockData) {
 }
 
 function mockGetNetwork(keys, mockData) {
-    const { parentObjectApiName, recordTypeId, relatedListId } = keys;
+    const { parentObjectApiName, relatedListId } = keys;
     const queryParams = { ...keys };
     delete queryParams.parentObjectApiName;
-    delete queryParams.recordTypeId;
     delete queryParams.relatedListId;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/related-list-info/${parentObjectApiName}/${recordTypeId}/${relatedListId}`,
+        path: `${URL_BASE}/related-list-info/${parentObjectApiName}/${relatedListId}`,
         method: 'get',
         queryParams,
     });
@@ -40,7 +43,6 @@ function mockGetNetwork(keys, mockData) {
 }
 
 describe('update record', () => {
-    // TODO: update mock data to be compatible with v49
     it('passes all parameters to HTTP request, and sends the correct response', async () => {
         const mockData = getMock(
             'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r'

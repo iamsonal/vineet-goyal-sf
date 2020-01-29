@@ -11,10 +11,9 @@ const helpers = require(helpersPath);
 // When this comment is removed the file should be renamed back to refreshData.js
 
 const PARENT_ENTITY_API_NAME = 'CObjParent__c';
-const MASTER_RECORD_TYPE_ID = '012000000000000AAA';
 const RELATED_LIST_NAME = 'CObjChilds__r';
 
 await helpers.requestGetAndSave(
-    `/ui-api/related-list-info/${PARENT_ENTITY_API_NAME}/${MASTER_RECORD_TYPE_ID}/${RELATED_LIST_NAME}`,
+    `/ui-api/related-list-info/${PARENT_ENTITY_API_NAME}/${RELATED_LIST_NAME}`,
     path.join(rootDir, 'related-list-info-Custom.json')
 );

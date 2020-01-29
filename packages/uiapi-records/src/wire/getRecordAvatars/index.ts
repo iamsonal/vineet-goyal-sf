@@ -15,7 +15,7 @@ import {
     getRecordAvatars_ConfigPropertyNames,
     GetRecordAvatarsConfig,
 } from '../../generated/adapters/getRecordAvatars';
-import { refreshable } from '../../generated/adapters/adapter-utils';
+import { refreshable, keyPrefix } from '../../generated/adapters/adapter-utils';
 import {
     select as photoRecordAvatarRepresentationSelect,
     PhotoRecordAvatarRepresentation,
@@ -78,7 +78,7 @@ function selectAvatars(recordIds: string[]): PathSelection[] {
 
 // All of the avatars are ingested into
 // the same top level object
-const KEY = 'RecordAvatarsBulk';
+const KEY = `${keyPrefix}RecordAvatarsBulk`;
 
 function cache(lds: LDS, config: GetRecordAvatarsConfig) {
     const sel = selectAvatars(config.recordIds);

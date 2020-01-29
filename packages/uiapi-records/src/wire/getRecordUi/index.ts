@@ -6,7 +6,11 @@ import {
     FetchResponse,
     GraphNode,
 } from '@salesforce-lds/engine';
-import { AdapterValidationConfig, refreshable } from '../../generated/adapters/adapter-utils';
+import {
+    AdapterValidationConfig,
+    refreshable,
+    keyPrefix,
+} from '../../generated/adapters/adapter-utils';
 import { GetRecordUiConfig, validateAdapterConfig } from '../../generated/adapters/getRecordUi';
 import getUiApiRecordUiByRecordIds from '../../generated/resources/getUiApiRecordUiByRecordIds';
 import { RecordLayoutRepresentation } from '../../generated/types/RecordLayoutRepresentation';
@@ -115,7 +119,7 @@ function keyBuilder(
     const joinedOptionalFields = optionalFields.sort().join(',');
     const joinedLayoutTypes = layoutTypes.sort().join(',');
     const joinedModes = modes.sort().join(',');
-    return `UiApi::RecordUiRepresentation:${joinedRecordIds}:${joinedLayoutTypes}:${joinedModes}:${joinedOptionalFields}`;
+    return `${keyPrefix}RecordUiRepresentation:${joinedRecordIds}:${joinedLayoutTypes}:${joinedModes}:${joinedOptionalFields}`;
 }
 
 function cache(

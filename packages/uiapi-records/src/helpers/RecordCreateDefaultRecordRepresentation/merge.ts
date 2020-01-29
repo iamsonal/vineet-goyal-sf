@@ -13,7 +13,7 @@ export default function merge(
 
     // Merge RecordCreateDefaultRecordRepresentationNormalized record field values together
     return {
-        ...existing,
+        ...incoming,
         fields: {
             ...existing.fields,
             ...incoming.fields,

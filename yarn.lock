@@ -1376,15 +1376,15 @@
     "@nodelib/fs.scandir" "2.1.3"
     fastq "^1.6.0"
 
-"@salesforce-lds-api/apex@0.1.2":
-  version "0.1.2"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds-api/apex/-/apex-0.1.2.tgz#2c6d3e8daf14af3aa219f984f65fc80040a5199b"
-  integrity sha512-gSZ7gbA/z98b5wL1Qjo6jxl85G1WZ+vM8EpJsc7Hp1IdLlj5/Q1IeL1Yn4qsPij5iHdaamb32NYkqhvSDvxbdw==
+"@salesforce-lds-api/apex@0.1.3":
+  version "0.1.3"
+  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds-api/apex/-/apex-0.1.3.tgz#0ba734f9555c3c3f6ab244a175767312e60584e7"
+  integrity sha512-qvpmMsDnYaLXqnJKdA6q8EXxuIQLwukAjoIo4j7u96lItzcv+HQiq3JGwl6lm0CUNRxugV8ZVhWdKaOQu0XzKg==
 
-"@salesforce-lds-api/uiapi-records@0.1.2":
-  version "0.1.2"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds-api/uiapi-records/-/uiapi-records-0.1.2.tgz#ae39112f50fd6acc1aa389491b0f32c56b86dd67"
-  integrity sha512-plb2Ud/Vu/nsRwbvSXx+Jqd34WG2Bsqusnz31SlzlzhFfrkjYz4OfW9cSQG0xq1UrgTQvuBaoe5K3OPM7PPi+w==
+"@salesforce-lds-api/uiapi-records@0.1.3":
+  version "0.1.3"
+  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds-api/uiapi-records/-/uiapi-records-0.1.3.tgz#489820770e91bc293f35f45fceaf18b31304844e"
+  integrity sha512-1LleV/8Wp2qo9Z3qych89nVquji2IsmMiiTKvLaDWk4JKn1ui32fVyHhQ4+B1B7y3x8fDEZ6qjIFmO1eQH7dMg==
 
 "@salesforce-lds/engine@0.1.1", "@salesforce-lds/engine@^0.1.0":
   version "0.1.1"

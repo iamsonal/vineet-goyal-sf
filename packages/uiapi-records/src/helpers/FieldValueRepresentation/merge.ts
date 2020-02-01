@@ -12,6 +12,12 @@ export default function merge(
         return incoming;
     }
 
+    // TODO: (W-) add the work item # once the UISDK creates a WI for long term fix.
+    // Temporary fix for the issue that non-null displayValue gets replaced by null.
+    if (incoming.displayValue === null && existing.displayValue !== null) {
+        incoming.displayValue = existing.displayValue;
+    }
+
     const { value } = incoming;
     if (value === null || (value as any).__ref === undefined) {
         // Parent will never be null this field only exists in the context of a RecordRep.

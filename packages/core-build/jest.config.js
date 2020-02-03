@@ -8,7 +8,7 @@ module.exports = {
     // https://jestjs.io/docs/en/configuration#testmatch-array-string
     testMatch: ['<rootDir>/**/__tests__/*.spec.(js|ts)'],
 
-    displayName: 'lds-lightning-platform',
+    displayName: 'core-build',
     roots: ['<rootDir>/src'],
 
     /**

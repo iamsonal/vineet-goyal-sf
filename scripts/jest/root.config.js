@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
     rootDir: path.resolve(__dirname, '../..'),
 
-    projects: ['<rootDir>/packages/**/jest.config.js', '<rootDir>/jest.config.js'],
+    projects: ['<rootDir>/packages/**/jest.config.js'],
 
     /**
      * There are a couple caveats with how Jest handles the code coverage thresholds here:

@@ -10,6 +10,6 @@
 
         "target": "es2018"
     },
-    "include": ["src", "typings"],
+    "include": ["packages/core-build/src", "typings"],
     "exclude": ["**/__tests__"]
 }

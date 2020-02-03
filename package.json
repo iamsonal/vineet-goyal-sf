@@ -14,7 +14,7 @@
         "format:check": "prettier --check '**/*.{js,ts,json,md,yml,raml}'",
         "format:fix": "prettier --write '**/*.{js,ts,json,md,yml,raml}'",
         "generate-mock-data": "node ./scripts/mockDataGeneration/generateMockData.js",
-        "lint": "eslint packages/ src/ --ext=js,ts",
+        "lint": "eslint packages/ --ext=js,ts",
         "test:perf": "best",
         "test:unit": "jest --config ./scripts/jest/root.config.js",
         "test:debug": "node --inspect-brk node_modules/jest/bin/jest.js --config ./scripts/jest/root.config.js --runInBand",

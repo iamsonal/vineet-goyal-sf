@@ -7,3 +7,6 @@ __benchmarks_results__
 dist
 build
 .rpt2_cache
+
+# RAML Generated code
+generated

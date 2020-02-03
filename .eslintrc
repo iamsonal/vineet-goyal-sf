@@ -48,6 +48,23 @@
 
     "overrides": [
         {
+            "files": [
+                "packages/**/karma/**",
+                "packages/**/__karma__/**",
+                "packages/karma-config/**/lds.js",
+                "packages/karma-config/**/test-util.js",
+                "packages/karma-config/**/global-setup.js"
+            ],
+
+            "env": {
+                "jasmine": true
+            },
+
+            "globals": {
+                "__mockData__": true
+            }
+        },
+        {
             "files": ["**/*.benchmark.js"],
 
             "globals": {
@@ -56,6 +73,13 @@
                 "run": true,
                 "before": true,
                 "describe": true
+            }
+        },
+        {
+            "files": ["**/refreshData.js"],
+
+            "globals": {
+                "$conn": true
             }
         }
     ]

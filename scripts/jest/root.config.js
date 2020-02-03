@@ -1,15 +1,9 @@
+const path = require('path');
+
 module.exports = {
-    // Override the default "jsdom" test environment in favor of "node" in order to improve tests
-    // startup time.
-    // https://jestjs.io/docs/en/configuration#testenvironment-string
-    testEnvironment: 'node',
+    rootDir: path.resolve(__dirname, '../..'),
 
-    // Narrow down testMatch to only match against jest unit test files.
-    // https://jestjs.io/docs/en/configuration#testmatch-array-string
-    testMatch: ['<rootDir>/**/__tests__/*.spec.(js|ts)'],
-
-    displayName: 'lds-lightning-platform',
-    roots: ['<rootDir>/src'],
+    projects: ['<rootDir>/packages/**/jest.config.js', '<rootDir>/jest.config.js'],
 
     /**
      * There are a couple caveats with how Jest handles the code coverage thresholds here:
@@ -27,10 +21,28 @@ module.exports = {
     coverageThreshold: {
         global: {
             branches: 70,
-            functions: 75,
-            lines: 45,
+            functions: 70,
+            lines: 70,
+        },
+        'packages/uiapi-records/src': {
+            branches: 15,
+            functions: 10,
+            lines: 20,
+        },
+        'packages/apex/src': {
+            branches: 15,
+            functions: 10,
+            lines: 20,
         },
     },
 
-    collectCoverageFrom: ['**/*.{js,ts}', '!**/node_modules/**', '!**/__tests__/**'],
+    collectCoverageFrom: [
+        '**/*.{js,ts}',
+        '!**/node_modules/**',
+        '!**/__karma__/**',
+        '!**/__tests__/**',
+        '!**/__benchmarks__/**',
+        '!**/fixtures/**',
+        '!**/generated/**',
+    ],
 };

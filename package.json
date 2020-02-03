@@ -39,8 +39,6 @@
         "@ldsjs/compiler": "^0.1.10",
         "@ldsjs/engine": "^0.1.10",
         "@ldsjs/lwc-lds": "^0.1.10",
-        "@salesforce-lds-api/apex": "0.1.3",
-        "@salesforce-lds-api/uiapi-records": "0.1.3",
         "@types/jest": "^24.0.19",
         "@types/node": "^12.11.2",
         "@typescript-eslint/eslint-plugin": "^2.5.0",
@@ -99,12 +97,12 @@
     },
     "bundlesize": [
         {
-            "path": "./dist/lds.min.js",
+            "path": "./packages/core-build/dist/lds.min.js",
             "maxSize": "50 kB",
             "compression": "brotli"
         },
         {
-            "path": "./dist/ldsNativeProxy.min.js",
+            "path": "./packages/core-build/dist/ldsNativeProxy.min.js",
             "maxSize": "25 kB",
             "compression": "brotli"
         }

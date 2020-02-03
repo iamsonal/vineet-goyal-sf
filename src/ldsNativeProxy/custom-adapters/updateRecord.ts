@@ -1,4 +1,4 @@
-import { LDSNative } from '@salesforce-lds/engine';
+import { LDSNative } from '@ldsjs/engine';
 import {
     UpdateRecord_Native,
     untrustedIsObject,

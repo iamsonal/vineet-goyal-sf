@@ -1,4 +1,4 @@
-import { ResourceRequest } from '@salesforce-lds/engine';
+import { ResourceRequest } from '@ldsjs/engine';
 import { UI_API_BASE_URI } from './uiapi-base';
 import { buildUiApiParams, dispatchAction } from './utils';
 

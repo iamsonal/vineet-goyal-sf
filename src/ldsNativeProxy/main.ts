@@ -1,6 +1,6 @@
 import * as wireService from 'wire-service';
 
-import { LDSNative } from '@salesforce-lds/engine';
+import { LDSNative } from '@ldsjs/engine';
 import {
     CreateRecord_Native,
     DeleteRecord_Native,

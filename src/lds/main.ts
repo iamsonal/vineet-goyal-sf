@@ -1,5 +1,5 @@
-import { LDS, Store, AdapterFactory, Adapter } from '@salesforce-lds/engine';
-import { register, bindWireRefresh } from '@salesforce-lds/lwc-lds';
+import { LDS, Store, AdapterFactory, Adapter } from '@ldsjs/engine';
+import { register, bindWireRefresh } from '@ldsjs/lwc-lds';
 import * as wireService from 'wire-service';
 
 import {

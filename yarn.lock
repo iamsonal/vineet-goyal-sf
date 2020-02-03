@@ -1256,6 +1256,18 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
+"@ldsjs/engine@0.1.10", "@ldsjs/engine@^0.1.10":
+  version "0.1.10"
+  resolved "https://ash-nexus-proxy.internal.salesforce.com/nexus/content/groups/npm-all/@ldsjs/engine/-/eabbae00dfdf23c40a0775c3c43199b6066d4d68.tgz#eabbae00dfdf23c40a0775c3c43199b6066d4d68"
+  integrity sha512-I7lsOBeb9CYefFcs/bb+HSMchzSNa32IstktjsyLhAXZZyq21+M2kMzBU4EvRTsoNfT3MRFxw3nElJZhA9L1cQ==
+
+"@ldsjs/lwc-lds@0.1.10":
+  version "0.1.10"
+  resolved "https://ash-nexus-proxy.internal.salesforce.com/nexus/content/groups/npm-all/@ldsjs/lwc-lds/-/181544ec5fecbe9dbb5b5b6d0be49850c5087320.tgz#181544ec5fecbe9dbb5b5b6d0be49850c5087320"
+  integrity sha512-UoF7xnld0ZUd6dKith0DKcd+JnXMa0qAnv1Dw3ilMDkZeKZai5phUP2N1hzr/b4li2lWN52HU/72g0+fPi8vyg==
+  dependencies:
+    "@ldsjs/engine" "^0.1.10"
+
 "@lwc/babel-plugin-component@1.1.16":
   version "1.1.16"
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lwc/babel-plugin-component/-/babel-plugin-component-1.1.16.tgz#fe6f903041a12db32930c204f883af2418201751"
@@ -1385,18 +1397,6 @@
   version "0.1.3"
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds-api/uiapi-records/-/uiapi-records-0.1.3.tgz#489820770e91bc293f35f45fceaf18b31304844e"
   integrity sha512-1LleV/8Wp2qo9Z3qych89nVquji2IsmMiiTKvLaDWk4JKn1ui32fVyHhQ4+B1B7y3x8fDEZ6qjIFmO1eQH7dMg==
-
-"@salesforce-lds/engine@0.1.1", "@salesforce-lds/engine@^0.1.0":
-  version "0.1.1"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds/engine/-/engine-0.1.1.tgz#03178dde0691723f3f69e0f0aa9ad9852f80b25b"
-  integrity sha512-ex0Okc6kvUyFN1nbJ9ttUZhuUyk0XIoYFu5pNUF2sAkilMceE5YPdZTpQusVhxkNful54kyDOkNUBlZjE0cVOQ==
-
-"@salesforce-lds/lwc-lds@0.1.1":
-  version "0.1.1"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@salesforce-lds/lwc-lds/-/lwc-lds-0.1.1.tgz#252d850adfbab6f4d523106e561256025da94b41"
-  integrity sha512-a6egc/pV9TAesY7USTJBjycJN2YHP8Kk2YnL5zFQyq7TlkBZY2tMdEXpgNlXVlGd22EM1b6rhxAX+kUwPkeQ1w==
-  dependencies:
-    "@salesforce-lds/engine" "^0.1.0"
 
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"

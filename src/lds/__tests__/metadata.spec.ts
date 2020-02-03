@@ -1,4 +1,4 @@
-import { Store, LDS } from '@salesforce-lds/engine';
+import { Store, LDS } from '@ldsjs/engine';
 
 import { createStorage } from '../storage';
 import { setupMetadataWatcher } from '../metadata';

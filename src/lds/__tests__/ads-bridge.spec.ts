@@ -1,4 +1,4 @@
-import { LDS, Store } from '@salesforce-lds/engine';
+import { LDS, Store } from '@ldsjs/engine';
 import { keyBuilderRecord } from '@salesforce-lds-api/uiapi-records';
 
 import AdsBridge from '../ads-bridge';

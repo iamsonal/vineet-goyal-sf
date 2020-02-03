@@ -1,6 +1,6 @@
 // TODO: pull in interface as devDependency from lds-native-nimbus plugin on npm
 // instead of having it in the engine package
-import { LdsProxyAdapter } from '@salesforce-lds/engine';
+import { LdsProxyAdapter } from '@ldsjs/engine';
 
 export function getLdsNativeProxyPlugin(): LdsProxyAdapter {
     // The native container that uses the lds-proxy nimbus plugin will

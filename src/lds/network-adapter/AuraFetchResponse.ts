@@ -1,4 +1,4 @@
-import { FetchResponse, Headers, HttpStatusCode } from '@salesforce-lds/engine';
+import { FetchResponse, Headers, HttpStatusCode } from '@ldsjs/engine';
 
 export class AuraFetchResponse<T> implements FetchResponse<T> {
     status: HttpStatusCode;

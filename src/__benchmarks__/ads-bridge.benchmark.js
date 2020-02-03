@@ -1,4 +1,4 @@
-import { LDS, Store } from '@salesforce-lds/engine';
+import { LDS, Store } from '@ldsjs/engine';
 import AdsBridge from '../../dist/ads-bridge';
 import { ingestRecord, ingestObjectInfo } from '@salesforce-lds-api/uiapi-records';
 

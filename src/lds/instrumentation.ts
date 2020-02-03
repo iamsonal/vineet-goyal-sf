@@ -1,4 +1,4 @@
-import { LDS, Store, Adapter } from '@salesforce-lds/engine';
+import { LDS, Store, Adapter } from '@ldsjs/engine';
 import {
     time,
     mark as instrumentationServiceMark,

@@ -1,4 +1,4 @@
-import { LDS } from '@salesforce-lds/engine';
+import { LDS } from '@ldsjs/engine';
 
 import { mark } from './instrumentation';
 import { clearStorages } from './storage';

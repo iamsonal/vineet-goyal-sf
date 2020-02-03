@@ -1,4 +1,4 @@
-import { ResourceRequest } from '@salesforce-lds/engine';
+import { ResourceRequest } from '@ldsjs/engine';
 
 import { ArrayPrototypePush, JSONParse, JSONStringify, ObjectEntries } from '../../utils/language';
 

@@ -1,6 +1,6 @@
 import * as aura from 'aura';
 import auraStorage from 'aura-storage';
-import { ResourceRequest } from '@salesforce-lds/engine';
+import { ResourceRequest } from '@ldsjs/engine';
 
 import { AuraFetchResponse } from '../AuraFetchResponse';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';

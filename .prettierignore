@@ -8,6 +8,3 @@ build
 .rpt2_cache
 generated
 lib
-
-# Copy-pasted code
-packages/core-build/src/lds222

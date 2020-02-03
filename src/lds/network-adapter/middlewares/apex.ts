@@ -1,4 +1,4 @@
-import { HttpStatusCode, ResourceRequest } from '@salesforce-lds/engine';
+import { HttpStatusCode, ResourceRequest } from '@ldsjs/engine';
 import { ActionConfig, executeGlobalController } from 'aura';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 

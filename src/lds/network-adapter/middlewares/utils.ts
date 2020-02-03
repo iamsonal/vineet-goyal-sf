@@ -2,7 +2,7 @@ import { executeGlobalController, ActionConfig } from 'aura';
 import { AuraStorage } from 'aura-storage';
 import { CacheStatsLogger } from 'instrumentation/service';
 
-import { HttpStatusCode, ResourceRequest } from '@salesforce-lds/engine';
+import { HttpStatusCode, ResourceRequest } from '@ldsjs/engine';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 
 export type ControllerInvoker = (

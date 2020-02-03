@@ -1,4 +1,4 @@
-import { ResourceRequest } from '@salesforce-lds/engine';
+import { ResourceRequest } from '@ldsjs/engine';
 
 import { registerLdsCacheStats } from '../../instrumentation';
 import { createStorage } from '../../storage';

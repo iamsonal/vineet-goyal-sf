@@ -26,13 +26,13 @@ jest.mock('@salesforce-lds-api/uiapi-records', () => {
     };
 });
 
-jest.mock('@salesforce-lds/lwc-lds', () => {
+jest.mock('@ldsjs/lwc-lds', () => {
     const spies = {
         bindWireRefreshSpy: jest.fn(),
     };
 
     return {
-        ...jest.requireActual('@salesforce-lds/lwc-lds'),
+        ...jest.requireActual('@ldsjs/lwc-lds'),
         bindWireRefresh: () => spies.bindWireRefreshSpy,
         __spies: spies,
     };
@@ -51,7 +51,7 @@ import {
 } from '../main';
 
 import { __spies as uiApiRecordsSpies } from '@salesforce-lds-api/uiapi-records';
-import { __spies as lwcLdsSpies } from '@salesforce-lds/lwc-lds';
+import { __spies as lwcLdsSpies } from '@ldsjs/lwc-lds';
 
 describe('lds224 main', () => {
     describe('updateRecord', () => {

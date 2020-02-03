@@ -1,4 +1,4 @@
-import { LDS, ResourceRequest, ProxyGraphNode, GraphNode } from '@salesforce-lds/engine';
+import { LDS, ResourceRequest, ProxyGraphNode, GraphNode } from '@ldsjs/engine';
 import {
     ingestRecord,
     keyBuilderRecord,

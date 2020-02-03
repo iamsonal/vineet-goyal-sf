@@ -1,0 +1,171 @@
+{
+    "apiName": "ADM_Work__c",
+    "childRelationships": {},
+    "eTag": "0000",
+    "fields": {
+        "Assignee__c": {
+            "displayValue": null,
+            "value": "005B00000029o0qIAA"
+        },
+        "Assignee__r": {
+            "displayValue": "David Turissini",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "0000",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005B00000029o0qIAA"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "David Turissini"
+                    }
+                },
+                "id": "005B00000029o0qIAA",
+                "lastModifiedById": "005B0000000HDdbIAG",
+                "lastModifiedDate": "2019-07-08T15:40:40.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-08-07T06:52:20.000Z",
+                "weakEtag": 0
+            }
+        },
+        "CreatedBy": {
+            "displayValue": "David Turissini",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "0000",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005B00000029o0qIAA"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "David Turissini"
+                    }
+                },
+                "id": "005B00000029o0qIAA",
+                "lastModifiedById": "005B0000000HDdbIAG",
+                "lastModifiedDate": "2019-07-08T15:40:40.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-08-07T06:52:20.000Z",
+                "weakEtag": 0
+            }
+        },
+        "CreatedById": {
+            "displayValue": null,
+            "value": "005B00000029o0qIAA"
+        },
+        "CreatedDate": {
+            "displayValue": "7/26/2019 3:41 PM",
+            "value": "2019-07-26T22:41:37.000Z"
+        },
+        "Description__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "IsDeleted": {
+            "displayValue": null,
+            "value": false
+        },
+        "LastModifiedBy": {
+            "displayValue": "David Turissini",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "0000",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005B00000029o0qIAA"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "David Turissini"
+                    }
+                },
+                "id": "005B00000029o0qIAA",
+                "lastModifiedById": "005B0000000HDdbIAG",
+                "lastModifiedDate": "2019-07-08T15:40:40.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-08-07T06:52:20.000Z",
+                "weakEtag": 0
+            }
+        },
+        "LastModifiedById": {
+            "displayValue": null,
+            "value": "005B00000029o0qIAA"
+        },
+        "LastModifiedDate": {
+            "displayValue": "8/7/2019 11:14 AM",
+            "value": "2019-08-07T18:14:35.000Z"
+        },
+        "Previous_Comments__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Priority_Rank__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Priority__c": {
+            "displayValue": "P3",
+            "value": "P3"
+        },
+        "Scheduled_Build__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Scheduled_Build__r": {
+            "displayValue": null,
+            "value": null
+        },
+        "Scrum_Team__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Scrum_Team__r": {
+            "displayValue": null,
+            "value": null
+        },
+        "Sprint__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Sprint__r": {
+            "displayValue": null,
+            "value": null
+        },
+        "Status__c": {
+            "displayValue": "New",
+            "value": "New"
+        },
+        "Story_Points__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Subject__c": {
+            "displayValue": null,
+            "value": "Imperative adapter methods"
+        }
+    },
+    "id": "a07B0000007BIVQIA4",
+    "lastModifiedById": "005B00000029o0qIAA",
+    "lastModifiedDate": "2019-08-07T00:00:00.000Z",
+    "recordTypeId": "0129000000006ByAAI",
+    "recordTypeInfo": {
+        "available": true,
+        "defaultRecordTypeMapping": false,
+        "master": false,
+        "name": "ToDo",
+        "recordTypeId": "0129000000006ByAAI"
+    },
+    "systemModstamp": "2019-08-07T00:00:00.000Z",
+    "weakEtag": 2
+}

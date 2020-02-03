@@ -1,0 +1,22 @@
+{
+    "apiName": "Account",
+    "childRelationships": {},
+    "eTag": "a1014fb07dd34366fd2c44e8951c7af7",
+    "fields": {
+        "Fax": {
+            "displayValue": null,
+            "value": "(336) 222-8000"
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "Burlington Textiles Corp of America"
+        }
+    },
+    "id": "001xx000003GYvcAAG",
+    "lastModifiedById": "005xx000001X8JhAAK",
+    "lastModifiedDate": "2019-12-05T22:20:21.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2019-12-05T22:20:21.000Z",
+    "weakEtag": 1575584421000
+}

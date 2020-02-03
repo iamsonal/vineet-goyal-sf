@@ -1,0 +1,526 @@
+{
+    "eTag": "d100137bc50ca8410bffadbbfa188590",
+    "info": {
+        "cloneable": false,
+        "createable": true,
+        "deletable": false,
+        "displayColumns": [
+            {
+                "fieldApiName": "Name",
+                "label": "Opportunity Name",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Account.Name",
+                "label": "Account Name",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Account.Site",
+                "label": "Account Site",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "StageName",
+                "label": "Stage",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "CloseDate",
+                "label": "Close Date",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Owner.Alias",
+                "label": "Opportunity Owner Alias",
+                "sortable": true
+            }
+        ],
+        "eTag": "fbc9e346c0862211ba4ac755eb64e232",
+        "filterLogicString": null,
+        "filteredByInfo": [],
+        "label": "Recently Viewed",
+        "listReference": {
+            "id": null,
+            "listViewApiName": null,
+            "objectApiName": "Opportunity",
+            "type": "mru"
+        },
+        "orderedByInfo": [],
+        "updateable": false,
+        "userPreferences": {
+            "columnWidths": {
+                "Owner.Alias": -1,
+                "StageName": -1,
+                "Account.Name": -1,
+                "CloseDate": -1,
+                "Account.Site": -1,
+                "Name": -1
+            },
+            "columnWrap": {
+                "Owner.Alias": false,
+                "StageName": false,
+                "Account.Name": false,
+                "CloseDate": false,
+                "Account.Site": false,
+                "Name": false
+            }
+        },
+        "visibility": "Public",
+        "visibilityEditable": false
+    },
+    "records": {
+        "count": 3,
+        "currentPageToken": "0",
+        "currentPageUrl": "/services/data/v49.0/ui-api/mru-list-records/Opportunity?pageSize=3&pageToken=0&sortBy=-Account.Name",
+        "fields": [],
+        "listInfoETag": "fbc9e346c0862211ba4ac755eb64e232",
+        "listReference": {
+            "id": null,
+            "listViewApiName": "Recent",
+            "objectApiName": "Opportunity",
+            "type": "listView"
+        },
+        "nextPageToken": "3",
+        "nextPageUrl": "/services/data/v49.0/ui-api/mru-list-records/Opportunity?pageSize=3&pageToken=3&sortBy=-Account.Name",
+        "optionalFields": [],
+        "pageSize": 3,
+        "previousPageToken": null,
+        "previousPageUrl": null,
+        "records": [
+            {
+                "apiName": "Opportunity",
+                "childRelationships": {},
+                "eTag": "4f6e67e1c9cfa02660328fcf0554d8bf",
+                "fields": {
+                    "Account": {
+                        "displayValue": "University of Arizona",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "17d3d5744a90b9bc0d7713fa7be89cab",
+                            "fields": {
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001T1000002GKrBIAW"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "University of Arizona"
+                                },
+                                "Site": {
+                                    "displayValue": null,
+                                    "value": null
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                }
+                            },
+                            "id": "001T1000002GKrBIAW",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": "012000000000000AAA",
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-11-19T14:55:27.000Z",
+                            "weakEtag": 1574175327000
+                        }
+                    },
+                    "AccountId": {
+                        "displayValue": null,
+                        "value": "001T1000002GKrBIAW"
+                    },
+                    "CloseDate": {
+                        "displayValue": "10/29/2017",
+                        "value": "2017-10-29"
+                    },
+                    "CreatedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "006T10000023G3KIAU"
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "University of AZ SLA"
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "65516cf498d682ddcb93f7eb4ca34c50",
+                            "fields": {
+                                "Alias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                },
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "User User"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "12/13/2019, 2:05 PM",
+                                    "value": "2019-12-13T22:05:50.000Z"
+                                }
+                            },
+                            "id": "005T1000000HnsLIAS",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-12-13T22:05:50.000Z",
+                            "weakEtag": 1576274750000
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "StageName": {
+                        "displayValue": "Closed Won",
+                        "value": "Closed Won"
+                    },
+                    "SystemModstamp": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    }
+                },
+                "id": "006T10000023G3KIAU",
+                "lastModifiedById": "005T1000000HnsLIAS",
+                "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-19T14:55:27.000Z",
+                "weakEtag": 1574175327000
+            },
+            {
+                "apiName": "Opportunity",
+                "childRelationships": {},
+                "eTag": "736267d78b0db70af38069b176922504",
+                "fields": {
+                    "Account": {
+                        "displayValue": "University of Arizona",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "17d3d5744a90b9bc0d7713fa7be89cab",
+                            "fields": {
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001T1000002GKrBIAW"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "University of Arizona"
+                                },
+                                "Site": {
+                                    "displayValue": null,
+                                    "value": null
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                }
+                            },
+                            "id": "001T1000002GKrBIAW",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": "012000000000000AAA",
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-11-19T14:55:27.000Z",
+                            "weakEtag": 1574175327000
+                        }
+                    },
+                    "AccountId": {
+                        "displayValue": null,
+                        "value": "001T1000002GKrBIAW"
+                    },
+                    "CloseDate": {
+                        "displayValue": "10/29/2017",
+                        "value": "2017-10-29"
+                    },
+                    "CreatedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "006T10000023G3JIAU"
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "University of AZ Portable Generators"
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "65516cf498d682ddcb93f7eb4ca34c50",
+                            "fields": {
+                                "Alias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                },
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "User User"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "12/13/2019, 2:05 PM",
+                                    "value": "2019-12-13T22:05:50.000Z"
+                                }
+                            },
+                            "id": "005T1000000HnsLIAS",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-12-13T22:05:50.000Z",
+                            "weakEtag": 1576274750000
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "StageName": {
+                        "displayValue": "Closed Won",
+                        "value": "Closed Won"
+                    },
+                    "SystemModstamp": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    }
+                },
+                "id": "006T10000023G3JIAU",
+                "lastModifiedById": "005T1000000HnsLIAS",
+                "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-19T14:55:27.000Z",
+                "weakEtag": 1574175327000
+            },
+            {
+                "apiName": "Opportunity",
+                "childRelationships": {},
+                "eTag": "952c678c125728ba4d39cb4b0588818e",
+                "fields": {
+                    "Account": {
+                        "displayValue": "University of Arizona",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "17d3d5744a90b9bc0d7713fa7be89cab",
+                            "fields": {
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001T1000002GKrBIAW"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "University of Arizona"
+                                },
+                                "Site": {
+                                    "displayValue": null,
+                                    "value": null
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                }
+                            },
+                            "id": "001T1000002GKrBIAW",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": "012000000000000AAA",
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-11-19T14:55:27.000Z",
+                            "weakEtag": 1574175327000
+                        }
+                    },
+                    "AccountId": {
+                        "displayValue": null,
+                        "value": "001T1000002GKrBIAW"
+                    },
+                    "CloseDate": {
+                        "displayValue": "10/29/2017",
+                        "value": "2017-10-29"
+                    },
+                    "CreatedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "006T10000023G3IIAU"
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "University of AZ Installations"
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "65516cf498d682ddcb93f7eb4ca34c50",
+                            "fields": {
+                                "Alias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                },
+                                "CreatedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "11/19/2019, 6:55 AM",
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "User User"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "12/13/2019, 2:05 PM",
+                                    "value": "2019-12-13T22:05:50.000Z"
+                                }
+                            },
+                            "id": "005T1000000HnsLIAS",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-12-13T22:05:50.000Z",
+                            "weakEtag": 1576274750000
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "StageName": {
+                        "displayValue": "Proposal/Price Quote",
+                        "value": "Proposal/Price Quote"
+                    },
+                    "SystemModstamp": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    }
+                },
+                "id": "006T10000023G3IIAU",
+                "lastModifiedById": "005T1000000HnsLIAS",
+                "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-19T14:55:27.000Z",
+                "weakEtag": 1574175327000
+            }
+        ],
+        "sortBy": "-Account.Name"
+    }
+}

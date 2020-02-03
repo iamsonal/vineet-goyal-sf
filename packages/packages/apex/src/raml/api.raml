@@ -1,0 +1,40 @@
+#%RAML 1.0
+title: Apex Adapter API
+
+types:
+  ApexActionRequestRepresentation:
+    description: Apex action input parameters
+    type: object
+    properties:
+      namespace:
+        description: 'The namespace of the Apex controller.'
+        type: string | nil
+      classname:
+        description: 'The class name of the Apex controller.'
+        type: string
+      method:
+        description: 'The method of the Apex controller.'
+        type: string
+      isContinuation:
+        description: 'Whether the Apex method returns a continuation.'
+        type: boolean
+      params:
+        description: 'The parameters of the apex action for which a value is being fetched.'
+        type: any
+      cacheable:
+        description: 'Whether or not it is from a wire adapter call.'
+        type: boolean
+
+/apex:
+  post:
+    responses:
+      '200':
+        description: Success
+        headers:
+          cachable:
+            description: 'whether or not it is cachable.'
+            type: boolean
+        # empty body because the body type is any
+    body:
+      application/json:
+        type: ApexActionRequestRepresentation

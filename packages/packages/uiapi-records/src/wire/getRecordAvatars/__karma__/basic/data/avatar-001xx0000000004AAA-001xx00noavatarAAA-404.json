@@ -1,0 +1,22 @@
+{
+    "hasErrors": true,
+    "results": [
+        {
+            "result": {
+                "backgroundColor": "7F8DE1",
+                "iconUrl": "http://sahil.localhost.internal.salesforce.com:8080/img/icon/t4v35/standard/account_120.png",
+                "recordId": "001xx0000000004AAA",
+                "eTag": "168d78330b419e4638cee5989acd5266",
+                "type": "Theme"
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "errorCode": "NOT_FOUND",
+                "message": "Unable to find record avatar with 012xx00000000C9AAI"
+            },
+            "statusCode": 404
+        }
+    ]
+}

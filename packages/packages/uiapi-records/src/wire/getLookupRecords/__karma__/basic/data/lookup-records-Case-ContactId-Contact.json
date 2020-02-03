@@ -1,0 +1,74 @@
+{
+    "count": 1,
+    "currentPageToken": null,
+    "currentPageUrl": "/services/data/v49.0/ui-api/lookups/Case/ContactId/Contact?q=jak&searchType=TypeAhead&page=1&pageSize=10",
+    "nextPageToken": null,
+    "nextPageUrl": null,
+    "previousPageToken": null,
+    "previousPageUrl": null,
+    "records": [
+        {
+            "apiName": "Contact",
+            "childRelationships": {},
+            "eTag": "152a071891855bccb47ddee039efc4cd",
+            "fields": {
+                "Account": {
+                    "displayValue": "sForce",
+                    "value": {
+                        "apiName": "Account",
+                        "childRelationships": {},
+                        "eTag": "05ddd52cc05ea22955ed9650e9960b4c",
+                        "fields": {
+                            "Id": {
+                                "displayValue": null,
+                                "value": "001xx000003GYTqAAO"
+                            },
+                            "Name": {
+                                "displayValue": null,
+                                "value": "sForce"
+                            }
+                        },
+                        "id": "001xx000003GYTqAAO",
+                        "lastModifiedById": null,
+                        "lastModifiedDate": null,
+                        "recordTypeId": "012000000000000AAA",
+                        "recordTypeInfo": null,
+                        "systemModstamp": null,
+                        "weakEtag": 0
+                    }
+                },
+                "AccountId": {
+                    "displayValue": null,
+                    "value": "001xx000003GYTqAAO"
+                },
+                "DisambiguationField": {
+                    "displayValue": null,
+                    "value": "sForce"
+                },
+                "FirstName": {
+                    "displayValue": null,
+                    "value": "Jake"
+                },
+                "Id": {
+                    "displayValue": null,
+                    "value": "003xx000004WhCtAAK"
+                },
+                "LastName": {
+                    "displayValue": null,
+                    "value": "Llorrac"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Jake Llorrac"
+                }
+            },
+            "id": "003xx000004WhCtAAK",
+            "lastModifiedById": null,
+            "lastModifiedDate": null,
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": null,
+            "weakEtag": 0
+        }
+    ]
+}

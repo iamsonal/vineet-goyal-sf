@@ -1,0 +1,18 @@
+{
+    "apiName": "User",
+    "childRelationships": {},
+    "eTag": "ce0b38ab2a44018d2fa979823b47aaa5",
+    "fields": {
+        "Name": {
+            "displayValue": null,
+            "value": "User User"
+        }
+    },
+    "id": "005xx000001X8JhAAK",
+    "lastModifiedById": "005xx000001X8JhAAK",
+    "lastModifiedDate": "2019-12-05T22:29:27.000Z",
+    "recordTypeId": null,
+    "recordTypeInfo": null,
+    "systemModstamp": "2019-12-05T22:29:27.000Z",
+    "weakEtag": 1575584967000
+}

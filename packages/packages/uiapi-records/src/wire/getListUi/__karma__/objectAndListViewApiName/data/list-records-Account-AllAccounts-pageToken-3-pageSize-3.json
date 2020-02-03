@@ -1,0 +1,331 @@
+{
+    "count": 3,
+    "currentPageToken": "3",
+    "currentPageUrl": "/services/data/v49.0/ui-api/list-records/Account/AllAccounts?pageSize=3&pageToken=3",
+    "fields": [],
+    "listInfoETag": "23b98260ab1fb2b6230b206cb5e8a267",
+    "listReference": {
+        "id": "00BT1000000NUuWMAW",
+        "listViewApiName": "AllAccounts",
+        "objectApiName": "Account",
+        "type": "listView"
+    },
+    "nextPageToken": "6",
+    "nextPageUrl": "/services/data/v49.0/ui-api/list-records/Account/AllAccounts?pageSize=3&pageToken=6",
+    "optionalFields": [],
+    "pageSize": 3,
+    "previousPageToken": "0",
+    "previousPageUrl": "/services/data/v49.0/ui-api/list-records/Account/AllAccounts?pageSize=3&pageToken=0",
+    "records": [
+        {
+            "apiName": "Account",
+            "childRelationships": {},
+            "eTag": "d13987de01949eb55d60d9375188707d",
+            "fields": {
+                "BillingState": {
+                    "displayValue": null,
+                    "value": "OR"
+                },
+                "CreatedDate": {
+                    "displayValue": null,
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Id": {
+                    "displayValue": null,
+                    "value": "001T1000002GKrAIAW"
+                },
+                "LastModifiedById": {
+                    "displayValue": null,
+                    "value": "005T1000000HnsLIAS"
+                },
+                "LastModifiedDate": {
+                    "displayValue": null,
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Express Logistics and Transport"
+                },
+                "Owner": {
+                    "displayValue": "User User",
+                    "value": {
+                        "apiName": "User",
+                        "childRelationships": {},
+                        "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
+                        "fields": {
+                            "Alias": {
+                                "displayValue": null,
+                                "value": "UUser"
+                            },
+                            "CreatedDate": {
+                                "displayValue": null,
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Id": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedById": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedDate": {
+                                "displayValue": null,
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Name": {
+                                "displayValue": null,
+                                "value": "User User"
+                            },
+                            "SystemModstamp": {
+                                "displayValue": null,
+                                "value": "2020-01-20T04:57:12.000Z"
+                            }
+                        },
+                        "id": "005T1000000HnsLIAS",
+                        "lastModifiedById": "005T1000000HnsLIAS",
+                        "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                        "recordTypeId": null,
+                        "recordTypeInfo": null,
+                        "systemModstamp": "2020-01-20T04:57:12.000Z",
+                        "weakEtag": 1579496232000
+                    }
+                },
+                "OwnerId": {
+                    "displayValue": null,
+                    "value": "005T1000000HnsLIAS"
+                },
+                "Phone": {
+                    "displayValue": null,
+                    "value": "(503) 421-7800"
+                },
+                "Site": {
+                    "displayValue": null,
+                    "value": null
+                },
+                "SystemModstamp": {
+                    "displayValue": null,
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Type": {
+                    "displayValue": "Customer - Channel",
+                    "value": "Customer - Channel"
+                }
+            },
+            "id": "001T1000002GKrAIAW",
+            "lastModifiedById": "005T1000000HnsLIAS",
+            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-11-19T14:55:27.000Z",
+            "weakEtag": 1574175327000
+        },
+        {
+            "apiName": "Account",
+            "childRelationships": {},
+            "eTag": "5dc34edb4f5de91d72efb6eacb149e25",
+            "fields": {
+                "BillingState": {
+                    "displayValue": null,
+                    "value": "CA"
+                },
+                "CreatedDate": {
+                    "displayValue": null,
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Id": {
+                    "displayValue": null,
+                    "value": "001T1000002GKrEIAW"
+                },
+                "LastModifiedById": {
+                    "displayValue": null,
+                    "value": "005T1000000HnsLIAS"
+                },
+                "LastModifiedDate": {
+                    "displayValue": null,
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "GenePoint"
+                },
+                "Owner": {
+                    "displayValue": "User User",
+                    "value": {
+                        "apiName": "User",
+                        "childRelationships": {},
+                        "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
+                        "fields": {
+                            "Alias": {
+                                "displayValue": null,
+                                "value": "UUser"
+                            },
+                            "CreatedDate": {
+                                "displayValue": null,
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Id": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedById": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedDate": {
+                                "displayValue": null,
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Name": {
+                                "displayValue": null,
+                                "value": "User User"
+                            },
+                            "SystemModstamp": {
+                                "displayValue": null,
+                                "value": "2020-01-20T04:57:12.000Z"
+                            }
+                        },
+                        "id": "005T1000000HnsLIAS",
+                        "lastModifiedById": "005T1000000HnsLIAS",
+                        "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                        "recordTypeId": null,
+                        "recordTypeInfo": null,
+                        "systemModstamp": "2020-01-20T04:57:12.000Z",
+                        "weakEtag": 1579496232000
+                    }
+                },
+                "OwnerId": {
+                    "displayValue": null,
+                    "value": "005T1000000HnsLIAS"
+                },
+                "Phone": {
+                    "displayValue": null,
+                    "value": "(650) 867-3450"
+                },
+                "Site": {
+                    "displayValue": null,
+                    "value": null
+                },
+                "SystemModstamp": {
+                    "displayValue": null,
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Type": {
+                    "displayValue": "Customer - Channel",
+                    "value": "Customer - Channel"
+                }
+            },
+            "id": "001T1000002GKrEIAW",
+            "lastModifiedById": "005T1000000HnsLIAS",
+            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-11-19T14:55:27.000Z",
+            "weakEtag": 1574175327000
+        },
+        {
+            "apiName": "Account",
+            "childRelationships": {},
+            "eTag": "12f104cd276f935378febaa4def21ec5",
+            "fields": {
+                "BillingState": {
+                    "displayValue": null,
+                    "value": "IL"
+                },
+                "CreatedDate": {
+                    "displayValue": null,
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Id": {
+                    "displayValue": null,
+                    "value": "001T1000002GKr8IAG"
+                },
+                "LastModifiedById": {
+                    "displayValue": null,
+                    "value": "005T1000000HnsLIAS"
+                },
+                "LastModifiedDate": {
+                    "displayValue": null,
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Grand Hotels &amp; Resorts Ltd"
+                },
+                "Owner": {
+                    "displayValue": "User User",
+                    "value": {
+                        "apiName": "User",
+                        "childRelationships": {},
+                        "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
+                        "fields": {
+                            "Alias": {
+                                "displayValue": null,
+                                "value": "UUser"
+                            },
+                            "CreatedDate": {
+                                "displayValue": null,
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Id": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedById": {
+                                "displayValue": null,
+                                "value": "005T1000000HnsLIAS"
+                            },
+                            "LastModifiedDate": {
+                                "displayValue": null,
+                                "value": "2019-11-19T14:55:27.000Z"
+                            },
+                            "Name": {
+                                "displayValue": null,
+                                "value": "User User"
+                            },
+                            "SystemModstamp": {
+                                "displayValue": null,
+                                "value": "2020-01-20T04:57:12.000Z"
+                            }
+                        },
+                        "id": "005T1000000HnsLIAS",
+                        "lastModifiedById": "005T1000000HnsLIAS",
+                        "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                        "recordTypeId": null,
+                        "recordTypeInfo": null,
+                        "systemModstamp": "2020-01-20T04:57:12.000Z",
+                        "weakEtag": 1579496232000
+                    }
+                },
+                "OwnerId": {
+                    "displayValue": null,
+                    "value": "005T1000000HnsLIAS"
+                },
+                "Phone": {
+                    "displayValue": null,
+                    "value": "(312) 596-1000"
+                },
+                "Site": {
+                    "displayValue": null,
+                    "value": null
+                },
+                "SystemModstamp": {
+                    "displayValue": null,
+                    "value": "2019-11-19T14:55:27.000Z"
+                },
+                "Type": {
+                    "displayValue": "Customer - Direct",
+                    "value": "Customer - Direct"
+                }
+            },
+            "id": "001T1000002GKr8IAG",
+            "lastModifiedById": "005T1000000HnsLIAS",
+            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-11-19T14:55:27.000Z",
+            "weakEtag": 1574175327000
+        }
+    ],
+    "sortBy": "Name,Id"
+}

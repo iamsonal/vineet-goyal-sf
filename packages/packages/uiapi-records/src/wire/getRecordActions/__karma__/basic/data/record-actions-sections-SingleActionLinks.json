@@ -1,0 +1,56 @@
+{
+    "actions": {
+        "001xx000003GYvcAAG": {
+            "actions": [
+                {
+                    "actionListContext": "Chatter",
+                    "actionTarget": null,
+                    "actionTargetType": "Invoke",
+                    "apiName": "Follow",
+                    "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::Chatter:Desktop:StandardButton:Follow",
+                    "iconUrl": "http://broth-virgo-4719-dev-ed.localhost.internal.salesforce.com:6109/img/icon/t4v35/action/follow_120.png",
+                    "id": "0JVxx0000000374GAA",
+                    "isMassAction": "false",
+                    "label": "Follow",
+                    "primaryColor": "31B9F8",
+                    "relatedListRecordId": null,
+                    "relatedSourceObject": null,
+                    "section": "SingleActionLinks",
+                    "sourceObject": "001xx000003GYvcAAG",
+                    "subtype": null,
+                    "targetObject": "Account",
+                    "targetUrl": null,
+                    "type": "StandardButton"
+                },
+                {
+                    "actionListContext": "Chatter",
+                    "actionTarget": null,
+                    "actionTargetType": null,
+                    "apiName": "FollowInStream",
+                    "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::Chatter:Desktop:StandardButton:FollowInStream",
+                    "iconUrl": "http://broth-virgo-4719-dev-ed.localhost.internal.salesforce.com:6109/img/icon/t4v35/action/follow_120.png",
+                    "id": "0JVxx0000000377GAA",
+                    "isMassAction": "false",
+                    "label": "Follow in Stream",
+                    "primaryColor": "31B9F8",
+                    "relatedListRecordId": null,
+                    "relatedSourceObject": null,
+                    "section": "SingleActionLinks",
+                    "sourceObject": "001xx000003GYvcAAG",
+                    "subtype": null,
+                    "targetObject": "Account",
+                    "targetUrl": null,
+                    "type": "StandardButton"
+                }
+            ],
+            "links": [
+                "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG/record-edit",
+                "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG/related-list",
+                "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG/related-list-record/${relatedRecordId}"
+            ],
+            "url": "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG?sections=SingleActionLinks"
+        }
+    },
+    "eTag": "af0d1e2d9008fdcafcf8281c38cfbb09",
+    "url": "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG?sections=SingleActionLinks"
+}

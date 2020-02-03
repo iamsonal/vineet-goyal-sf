@@ -1,0 +1,39 @@
+{
+    "cloneable": false,
+    "createable": false,
+    "deletable": false,
+    "displayColumns": [
+        {
+            "fieldApiName": "Name",
+            "label": "CObjChild Name",
+            "lookupId": "Id",
+            "sortable": true
+        }
+    ],
+    "eTag": "7a2a41f1b70a77f9b0e2068c429502ea",
+    "filterLogicString": "",
+    "filteredByInfo": [],
+    "label": "CObjChilds",
+    "listReference": {
+        "id": null,
+        "inContextOfRecordId": null,
+        "listViewApiName": null,
+        "objectApiName": null,
+        "parentObjectApiName": "CObjParent__c",
+        "recordTypeId": "012000000000000AAA",
+        "relatedListId": "CObjChilds__r",
+        "type": "relatedList"
+    },
+    "orderedByInfo": [],
+    "updateable": false,
+    "userPreferences": {
+        "columnWidths": {
+            "Name": -1
+        },
+        "columnWrap": {
+            "Name": false
+        }
+    },
+    "visibility": "Public",
+    "visibilityEditable": false
+}

@@ -1,0 +1,24 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "b8a64d36038117455fac4c83d09c0831",
+    "fields": {
+        "FiscalYear": {
+            "displayValue": null,
+            "value": 2020
+        }
+    },
+    "id": "0060M000012SLJCQA4",
+    "lastModifiedById": "0053000000ARVxVAAX",
+    "lastModifiedDate": "2019-10-12T10:00:19.000Z",
+    "recordTypeId": "01230000000010LAAQ",
+    "recordTypeInfo": {
+        "available": false,
+        "defaultRecordTypeMapping": false,
+        "master": false,
+        "name": "New Business / Add-On",
+        "recordTypeId": "01230000000010LAAQ"
+    },
+    "systemModstamp": "2019-10-12T10:00:19.000Z",
+    "weakEtag": 0
+}

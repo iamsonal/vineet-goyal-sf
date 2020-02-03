@@ -1,0 +1,18 @@
+{
+    "apiName": "TestD__c",
+    "childRelationships": {},
+    "eTag": "14f7574ef30208ad97e607191ac38f06",
+    "fields": {
+        "TestC__r": {
+            "displayValue": null,
+            "value": null
+        }
+    },
+    "id": "a03RM0000004t2LYAQ",
+    "lastModifiedById": "005RM000001stMBYAY",
+    "lastModifiedDate": "2019-11-13T23:15:38.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2019-11-13T23:15:38.000Z",
+    "weakEtag": 1573686938000
+}

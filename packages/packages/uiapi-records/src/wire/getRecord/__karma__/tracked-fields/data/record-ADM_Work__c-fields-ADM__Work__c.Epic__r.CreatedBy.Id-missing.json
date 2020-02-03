@@ -1,0 +1,28 @@
+{
+    "apiName": "ADM_Work__c",
+    "childRelationships": {},
+    "eTag": "3ac0e74d87df375924a11920f0daf8c9",
+    "fields": {
+        "Epic__r": {
+            "displayValue": null,
+            "value": null
+        },
+        "Subject__c": {
+            "displayValue": null,
+            "value": "fix any casting in record&#39;s merge.ts"
+        }
+    },
+    "id": "a07B0000007dPsCIAU",
+    "lastModifiedById": "005B00000029o0qIAA",
+    "lastModifiedDate": "2019-11-15T00:13:37.000Z",
+    "recordTypeId": "012T00000004MUHIA2",
+    "recordTypeInfo": {
+        "available": true,
+        "defaultRecordTypeMapping": true,
+        "master": false,
+        "name": "Bug",
+        "recordTypeId": "012T00000004MUHIA2"
+    },
+    "systemModstamp": "2019-11-15T00:13:37.000Z",
+    "weakEtag": 1
+}

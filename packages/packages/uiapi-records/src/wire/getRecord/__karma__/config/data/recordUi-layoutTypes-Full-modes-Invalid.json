@@ -1,0 +1,6 @@
+[
+    {
+        "errorCode": "ILLEGAL_QUERY_PARAMETER_VALUE",
+        "message": "Illegal value for query parameter 'modes': Invalid"
+    }
+]

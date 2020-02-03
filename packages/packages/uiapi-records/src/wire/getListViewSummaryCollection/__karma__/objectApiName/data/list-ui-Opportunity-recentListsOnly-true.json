@@ -1,0 +1,46 @@
+{
+    "count": 5,
+    "currentPageToken": "0",
+    "currentPageUrl": "/services/data/v49.0/ui-api/list-ui/Opportunity?pageSize=20&pageToken=0&recentListsOnly=true",
+    "eTag": "1335e3eb7139775f21be171588062c2e",
+    "lists": [
+        {
+            "apiName": "Default_Opportunity_Pipeline",
+            "id": "00Bxx0000029YoJEAU",
+            "label": "Opportunity Pipeline",
+            "listUiUrl": "/services/data/v49.0/ui-api/list-ui/Opportunity/Default_Opportunity_Pipeline"
+        },
+        {
+            "apiName": "MyOpportunities",
+            "id": "00Bxx0000029YiaEAE",
+            "label": "My Opportunities",
+            "listUiUrl": "/services/data/v49.0/ui-api/list-ui/Opportunity/MyOpportunities"
+        },
+        {
+            "apiName": "NewThisWeek",
+            "id": "00Bxx0000029YiSEAU",
+            "label": "New This Week",
+            "listUiUrl": "/services/data/v49.0/ui-api/list-ui/Opportunity/NewThisWeek"
+        },
+        {
+            "apiName": "AllOpportunities",
+            "id": "00Bxx0000029YiDEAU",
+            "label": "All Opportunities",
+            "listUiUrl": "/services/data/v49.0/ui-api/list-ui/Opportunity/AllOpportunities"
+        },
+        {
+            "apiName": "NewLastWeek",
+            "id": "00Bxx0000029Yi3EAE",
+            "label": "New Last Week",
+            "listUiUrl": "/services/data/v49.0/ui-api/list-ui/Opportunity/NewLastWeek"
+        }
+    ],
+    "nextPageToken": null,
+    "nextPageUrl": null,
+    "objectApiName": "Opportunity",
+    "pageSize": 20,
+    "previousPageToken": null,
+    "previousPageUrl": null,
+    "queryString": null,
+    "recentListsOnly": true
+}

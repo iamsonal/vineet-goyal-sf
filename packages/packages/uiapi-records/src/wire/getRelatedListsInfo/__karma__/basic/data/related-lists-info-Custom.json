@@ -1,0 +1,22 @@
+{
+    "eTag": "95d48aed106deb2829280a709be0dcad",
+    "parentObjectApiName": "CObjParent__c",
+    "parentRecordTypeId": "012000000000000AAA",
+    "relatedLists": [
+        {
+            "eTag": "d18fefb0f493dbb2ac327f3cfe8fde91",
+            "entityLabel": "CObjChild",
+            "entityPluralLabel": "CObjChilds",
+            "fieldApiName": "CObjParent__c",
+            "parentFieldApiName": "Id",
+            "relatedListId": "CObjChilds__r",
+            "relatedListInfoUrl": "/services/data/v49.0/ui-api/related-list-info/CObjParent__c/CObjChilds__r",
+            "themeInfo": {
+                "color": "747E96",
+                "iconUrl": "/img/icon/t4v35/standard/custom_120.png"
+            },
+            "objectApiName": "CObjChilds__c",
+            "keyPrefix": "a00"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "9bcdfcc41666b405079fa2b874475bf2",
+    "fields": {
+        "OwnerId": {
+            "displayValue": null,
+            "value": "005xx000001X8JhAAK"
+        }
+    },
+    "id": "006xx000001a4FkAAI",
+    "lastModifiedById": "005xx000001X8JhAAK",
+    "lastModifiedDate": "2019-12-05T22:29:27.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2019-12-05T22:29:27.000Z",
+    "weakEtag": 1575584967000
+}

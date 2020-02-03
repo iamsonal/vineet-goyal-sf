@@ -1,0 +1,23 @@
+{
+    "apiName": "ADM_Work__c",
+    "childRelationships": {},
+    "eTag": "0000",
+    "fields": {
+        "CycleTime__c": {
+            "displayValue": null,
+            "value": null
+        }
+    },
+    "id": "a07B0000002MTICIA4",
+    "lastModifiedById": "005B0000003g6BCIAY",
+    "lastModifiedDate": "2018-12-18T23:34:02.000Z",
+    "recordTypeId": "012T00000004MUHIA2",
+    "recordTypeInfo": {
+        "available": true,
+        "defaultRecordTypeMapping": true,
+        "master": false,
+        "name": "Bug",
+        "recordTypeId": "012T00000004MUHIA2"
+    },
+    "systemModstamp": "2019-05-29T15:46:22.000Z"
+}

@@ -1,0 +1,46 @@
+[
+    {
+        "endpoint": "lookups/Opportunity/AccountId/Account",
+        "filename": "lookup-records-Account-No-Records",
+        "params": {
+            "q": "nc",
+            "searchType": "Recent",
+            "page": 1,
+            "pageSize": 25
+        }
+    },
+    {
+        "endpoint": "lookups/Case/ContactId/Contact",
+        "filename": "lookup-records-Case-ContactId-Contact",
+        "params": {
+            "q": "jak",
+            "searchType": "TypeAhead",
+            "page": 1,
+            "pageSize": 10
+        }
+    },
+    {
+        "endpoint": "lookups/Opportunity/AccountId/Account",
+        "filename": "lookup-records-Opportunity-AccountId-Account-pageSize-1-q-bu",
+        "params": {
+            "q": "Bur",
+            "searchType": "TypeAhead",
+            "page": 1,
+            "pageSize": 10
+        }
+    },
+    {
+        "endpoint": "lookups/Opportunity/Id/Contact",
+        "filename": "lookup-records-fieldApiName-invalid"
+    },
+    {
+        "endpoint": "lookups/Opportunity/ContactId/Contact",
+        "filename": "lookup-records-Opportunity-unknown-error",
+        "params": {
+            "q": "Bu",
+            "searchType": "Recent",
+            "page": 123456,
+            "pageSize": 10
+        }
+    }
+]

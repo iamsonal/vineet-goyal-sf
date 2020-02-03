@@ -1,0 +1,158 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "65d01ac0536fcdfc4fdc40799fd3e09c",
+    "fields": {
+        "CloseDate": {
+            "displayValue": "12/31/2019",
+            "value": "2019-12-31"
+        },
+        "CreatedDate": {
+            "displayValue": "3/10/2019 6:11 PM",
+            "value": "2019-03-11T01:11:45.000Z"
+        },
+        "CurrencyIsoCode": {
+            "displayValue": "USD - U.S. Dollar",
+            "value": "USD"
+        },
+        "CurrentSystem__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "FiscalYear": {
+            "displayValue": null,
+            "value": 2021
+        },
+        "ForecastCategoryName": {
+            "displayValue": "Omitted",
+            "value": "Omitted"
+        },
+        "Id": {
+            "displayValue": null,
+            "value": "0060M000012SLJCQA4"
+        },
+        "LastModifiedById": {
+            "displayValue": null,
+            "value": "0053000000ARVxVAAX"
+        },
+        "LastModifiedDate": {
+            "displayValue": "10/12/2019 3:00 AM",
+            "value": "2019-10-12T10:00:19.000Z"
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "Unum - Supplier Management #FY20MADMP"
+        },
+        "OpportunityScore": {
+            "displayValue": null,
+            "value": {
+                "apiName": "OpportunityScore",
+                "childRelationships": {},
+                "eTag": "1f8b13b1475ef5cf8abacee21c680c3b",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "0Gq0M000002RN0NSAW"
+                    },
+                    "Score": {
+                        "displayValue": null,
+                        "value": 2
+                    }
+                },
+                "id": "0Gq0M000002RN0NSAW",
+                "lastModifiedById": null,
+                "lastModifiedDate": null,
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": null,
+                "weakEtag": 0
+            }
+        },
+        "OpportunityScoreId": {
+            "displayValue": null,
+            "value": "0Gq0M000002RN0NSAW"
+        },
+        "Owner": {
+            "displayValue": "Michele Romanello",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "7bac4baab876b2a4e32d8e8690135f9d",
+                "fields": {
+                    "CreatedDate": {
+                        "displayValue": "9/23/2014 2:28 AM",
+                        "value": "2014-09-23T09:28:23.000Z"
+                    },
+                    "CurrencyIsoCode": {
+                        "displayValue": "EUR - Euro",
+                        "value": "EUR"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "0053000000ARgbaAAD"
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "00530000004tNS4AAM"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": "10/16/2019 4:52 AM",
+                        "value": "2019-10-16T11:52:48.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Michele Romanello"
+                    },
+                    "SystemModstamp": {
+                        "displayValue": "10/21/2019 7:52 AM",
+                        "value": "2019-10-21T14:52:51.000Z"
+                    }
+                },
+                "id": "0053000000ARgbaAAD",
+                "lastModifiedById": "00530000004tNS4AAM",
+                "lastModifiedDate": "2019-10-16T11:52:48.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-10-21T14:52:51.000Z",
+                "weakEtag": 0
+            }
+        },
+        "OwnerId": {
+            "displayValue": null,
+            "value": "0053000000ARgbaAAD"
+        },
+        "RecordTypeId": {
+            "displayValue": null,
+            "value": "01230000000010LAAQ"
+        },
+        "SE_Engagement__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "StageName": {
+            "displayValue": "01 - Identifying an Opportunity",
+            "value": "01 - Identifying an Opportunity"
+        },
+        "SystemModstamp": {
+            "displayValue": "10/12/2019 3:00 AM",
+            "value": "2019-10-12T10:00:19.000Z"
+        },
+        "Tech_Exec__c": {
+            "displayValue": null,
+            "value": null
+        }
+    },
+    "id": "0060M000012SLJCQA4",
+    "lastModifiedById": "0053000000ARVxVAAX",
+    "lastModifiedDate": "2019-10-12T10:00:19.000Z",
+    "recordTypeId": "01230000000010LAAQ",
+    "recordTypeInfo": {
+        "available": false,
+        "defaultRecordTypeMapping": false,
+        "master": false,
+        "name": "New Business / Add-On",
+        "recordTypeId": "01230000000010LAAQ"
+    },
+    "systemModstamp": "2019-10-12T10:00:19.000Z",
+    "weakEtag": 0
+}

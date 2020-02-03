@@ -1,0 +1,120 @@
+{
+    "apiName": "User",
+    "childRelationships": {},
+    "eTag": "e0fc405bbb4983d8049b9c4a4ab33b6e",
+    "fields": {
+        "CreatedBy": {
+            "displayValue": "User User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "d49312ec06e2d9f2210668a6a369bc0d",
+                "fields": {
+                    "CreatedBy": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "d49312ec06e2d9f2210668a6a369bc0d",
+                            "fields": {},
+                            "id": "005000000000000005",
+                            "lastModifiedById": "005000000000000005",
+                            "lastModifiedDate": "2019-10-18T02:49:12.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-10-18T02:49:12.000Z",
+                            "weakEtag": 1571366952000
+                        }
+                    },
+                    "CreatedById": {
+                        "displayValue": null,
+                        "value": "005000000000000005"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005xx000001XP3tAAG"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "User User"
+                    }
+                },
+                "id": "005xx000001XP3tAAG",
+                "lastModifiedById": "005xx000001XP3tAAG",
+                "lastModifiedDate": "2019-10-18T02:49:12.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-10-18T02:49:12.000Z",
+                "weakEtag": 1571366952000
+            }
+        },
+        "CreatedById": {
+            "displayValue": null,
+            "value": "005xx000001XP3tAAG"
+        },
+        "Email": {
+            "displayValue": null,
+            "value": "kvenkiteswaran@salesforce.com"
+        },
+        "LastModifiedBy": {
+            "displayValue": "User User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "d49312ec06e2d9f2210668a6a369bc0d",
+                "fields": {
+                    "CreatedBy": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "d49312ec06e2d9f2210668a6a369bc0d",
+                            "fields": {},
+                            "id": "005000000000000005",
+                            "lastModifiedById": "005000000000000005",
+                            "lastModifiedDate": "2019-10-18T02:49:12.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-10-18T02:49:12.000Z",
+                            "weakEtag": 1571366952000
+                        }
+                    },
+                    "CreatedById": {
+                        "displayValue": null,
+                        "value": "005000000000000005"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005xx000001XP3tAAG"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "User User"
+                    }
+                },
+                "id": "005xx000001XP3tAAG",
+                "lastModifiedById": "005xx000001XP3tAAG",
+                "lastModifiedDate": "2019-10-18T02:49:12.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-10-18T02:49:12.000Z",
+                "weakEtag": 1571366952000
+            }
+        },
+        "LastModifiedById": {
+            "displayValue": null,
+            "value": "005xx000001XP3tAAG"
+        },
+        "Id": {
+            "displayValue": null,
+            "value": "005000000000000005"
+        }
+    },
+    "id": "005000000000000005",
+    "lastModifiedById": "005000000000000005",
+    "lastModifiedDate": "2019-10-18T02:49:12.000Z",
+    "recordTypeId": null,
+    "recordTypeInfo": null,
+    "systemModstamp": "2019-10-18T02:49:12.000Z",
+    "weakEtag": 1571366952000
+}

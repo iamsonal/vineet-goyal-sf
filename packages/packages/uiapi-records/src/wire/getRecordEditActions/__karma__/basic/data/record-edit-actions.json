@@ -1,0 +1,72 @@
+{
+    "actions": {
+        "001xx000003GYvcAAG": {
+            "actions": [
+                {
+                    "actionListContext": "RecordEdit",
+                    "actionTarget": null,
+                    "actionTargetType": "Invoke",
+                    "apiName": "SaveEdit",
+                    "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::RecordEdit:Desktop:StandardButton:SaveEdit",
+                    "iconUrl": "http://vincechen-ltm.internal.salesforce.com:6109/img/icon/t4v35/action/new_custom19_120.png",
+                    "id": "0JVxx0000000464GAA",
+                    "isMassAction": "false",
+                    "label": "Save",
+                    "primaryColor": null,
+                    "relatedListRecordId": null,
+                    "relatedSourceObject": null,
+                    "section": "Page",
+                    "sourceObject": "001xx000003GYvcAAG",
+                    "subtype": null,
+                    "targetObject": "Account",
+                    "targetUrl": null,
+                    "type": "StandardButton"
+                },
+                {
+                    "actionListContext": "RecordEdit",
+                    "actionTarget": null,
+                    "actionTargetType": "Invoke",
+                    "apiName": "SaveAndNew",
+                    "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::RecordEdit:Desktop:StandardButton:SaveAndNew",
+                    "iconUrl": "http://vincechen-ltm.internal.salesforce.com:6109/img/icon/t4v35/action/new_custom19_120.png",
+                    "id": "0JVxx0000000465GAA",
+                    "isMassAction": "false",
+                    "label": "Save &amp; New",
+                    "primaryColor": null,
+                    "relatedListRecordId": null,
+                    "relatedSourceObject": null,
+                    "section": "Page",
+                    "sourceObject": "001xx000003GYvcAAG",
+                    "subtype": null,
+                    "targetObject": "Account",
+                    "targetUrl": null,
+                    "type": "StandardButton"
+                },
+                {
+                    "actionListContext": "RecordEdit",
+                    "actionTarget": null,
+                    "actionTargetType": "Invoke",
+                    "apiName": "CancelEdit",
+                    "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::RecordEdit:Desktop:StandardButton:CancelEdit",
+                    "iconUrl": "http://vincechen-ltm.internal.salesforce.com:6109/img/icon/t4v35/action/new_custom19_120.png",
+                    "id": "0JVxx0000000466GAA",
+                    "isMassAction": "false",
+                    "label": "Cancel",
+                    "primaryColor": null,
+                    "relatedListRecordId": null,
+                    "relatedSourceObject": null,
+                    "section": "Page",
+                    "sourceObject": "001xx000003GYvcAAG",
+                    "subtype": null,
+                    "targetObject": "Account",
+                    "targetUrl": null,
+                    "type": "StandardButton"
+                }
+            ],
+            "links": [],
+            "url": "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG/record-edit"
+        }
+    },
+    "eTag": "314927adaad05a72b33ebb45db742493",
+    "url": "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG/record-edit"
+}

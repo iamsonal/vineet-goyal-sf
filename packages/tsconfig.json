@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "strict": true,
+
+        "declaration": true,
+        "sourceMap": true,
+
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+
+        "target": "es2018"
+    },
+    "exclude": ["**/__tests__"]
+}

@@ -1,0 +1,51 @@
+{
+    "apiName": "Account",
+    "childRelationships": {},
+    "eTag": "4a87e707cb90a638b78ef18afff91c71",
+    "fields": {
+        "Id": {
+            "displayValue": null,
+            "value": "001xx000003GYvcAAG"
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "Burlington Textiles Corp of America"
+        },
+        "Owner": {
+            "displayValue": null,
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "2c9a7c752ddd9b1ad70d2ac1eb586809",
+                "fields": {
+                    "City": {
+                        "displayValue": null,
+                        "value": "Atlanta"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005xx000001X8JhAAK"
+                    }
+                },
+                "id": "005xx000001X8JhAAK",
+                "lastModifiedById": "005xx000001X8JhAAK",
+                "lastModifiedDate": "2019-12-05T22:29:27.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-12-05T22:29:27.000Z",
+                "weakEtag": 1575584967000
+            }
+        },
+        "OwnerId": {
+            "displayValue": null,
+            "value": "005xx000001X8JhAAK"
+        }
+    },
+    "id": "001xx000003GYvcAAG",
+    "lastModifiedById": "005xx000001X8JhAAK",
+    "lastModifiedDate": "2019-12-05T22:20:21.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2019-12-05T22:20:21.000Z",
+    "weakEtag": 1575584421000
+}

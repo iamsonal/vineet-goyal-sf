@@ -1,0 +1,12 @@
+{
+    "error": {
+        "status": 400,
+        "body": {
+            "message": "Parameter required: recordId",
+            "statusCode": 400,
+            "errorCode": "MISSING_ARGUMENT"
+        },
+        "headers": {}
+    },
+    "state": "Error"
+}

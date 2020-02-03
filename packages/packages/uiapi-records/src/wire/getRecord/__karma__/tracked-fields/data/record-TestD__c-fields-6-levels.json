@@ -1,0 +1,147 @@
+{
+    "apiName": "TestD__c",
+    "childRelationships": {},
+    "eTag": "fc10211ac086de5ad26a66287c68563d",
+    "fields": {
+        "TestC__c": {
+            "displayValue": null,
+            "value": "a02RM00000081S9YAI"
+        },
+        "TestC__r": {
+            "displayValue": null,
+            "value": {
+                "apiName": "TestC__c",
+                "childRelationships": {},
+                "eTag": "a0c588367e7fd8b8985efd97b6392af2",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "a02RM00000081S9YAI"
+                    },
+                    "TestA__c": {
+                        "displayValue": null,
+                        "value": "a00RM0000008EhHYAU"
+                    },
+                    "TestA__r": {
+                        "displayValue": null,
+                        "value": {
+                            "apiName": "TestA__c",
+                            "childRelationships": {},
+                            "eTag": "d2d438b5557d3a4deba2fb112f23707b",
+                            "fields": {
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "a00RM0000008EhHYAU"
+                                },
+                                "Opportunity__c": {
+                                    "displayValue": null,
+                                    "value": "006RM000003JZMkYAO"
+                                },
+                                "Opportunity__r": {
+                                    "displayValue": null,
+                                    "value": {
+                                        "apiName": "Opportunity",
+                                        "childRelationships": {},
+                                        "eTag": "2e79cbe00dc0fe13d8ce7b10937416c1",
+                                        "fields": {
+                                            "Account": {
+                                                "displayValue": "foo",
+                                                "value": {
+                                                    "apiName": "Account",
+                                                    "childRelationships": {},
+                                                    "eTag": "7f8b2b60e8d0c1ae63039b4c78de9a96",
+                                                    "fields": {
+                                                        "Id": {
+                                                            "displayValue": null,
+                                                            "value": "001RM000004XMZ5YAO"
+                                                        },
+                                                        "Name": {
+                                                            "displayValue": null,
+                                                            "value": "foo"
+                                                        },
+                                                        "OperatingHours": {
+                                                            "displayValue": null,
+                                                            "value": {
+                                                                "apiName": "OperatingHours",
+                                                                "childRelationships": {},
+                                                                "eTag": "5c4542a2ee6bc42a42d4498c1ff0e0a9",
+                                                                "fields": {
+                                                                    "CreatedById": {
+                                                                        "displayValue": null,
+                                                                        "value": "005RM000001stMBYAY"
+                                                                    },
+                                                                    "Id": {
+                                                                        "displayValue": null,
+                                                                        "value": "0OHRM0000000D014AE"
+                                                                    }
+                                                                },
+                                                                "id": "0OHRM0000000D014AE",
+                                                                "lastModifiedById": null,
+                                                                "lastModifiedDate": null,
+                                                                "recordTypeId": null,
+                                                                "recordTypeInfo": null,
+                                                                "systemModstamp": null,
+                                                                "weakEtag": 0
+                                                            }
+                                                        },
+                                                        "OperatingHoursId": {
+                                                            "displayValue": null,
+                                                            "value": "0OHRM0000000D014AE"
+                                                        }
+                                                    },
+                                                    "id": "001RM000004XMZ5YAO",
+                                                    "lastModifiedById": null,
+                                                    "lastModifiedDate": null,
+                                                    "recordTypeId": "012RM000000DBJDYA4",
+                                                    "recordTypeInfo": null,
+                                                    "systemModstamp": null,
+                                                    "weakEtag": 0
+                                                }
+                                            },
+                                            "AccountId": {
+                                                "displayValue": null,
+                                                "value": "001RM000004XMZ5YAO"
+                                            },
+                                            "Id": {
+                                                "displayValue": null,
+                                                "value": "006RM000003JZMkYAO"
+                                            }
+                                        },
+                                        "id": "006RM000003JZMkYAO",
+                                        "lastModifiedById": null,
+                                        "lastModifiedDate": null,
+                                        "recordTypeId": "012RM000000DBJIYA4",
+                                        "recordTypeInfo": null,
+                                        "systemModstamp": null,
+                                        "weakEtag": 0
+                                    }
+                                }
+                            },
+                            "id": "a00RM0000008EhHYAU",
+                            "lastModifiedById": null,
+                            "lastModifiedDate": null,
+                            "recordTypeId": "012RM000000DBJ3YAO",
+                            "recordTypeInfo": null,
+                            "systemModstamp": null,
+                            "weakEtag": 0
+                        }
+                    }
+                },
+                "id": "a02RM00000081S9YAI",
+                "lastModifiedById": "005RM000001stMBYAY",
+                "lastModifiedDate": "2019-10-24T20:20:31.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-10-24T20:20:31.000Z",
+                "weakEtag": 1571948431000
+            }
+        }
+    },
+    "id": "a03RM0000004t2LYAQ",
+    "lastModifiedById": "005RM000001stMBYAY",
+    "lastModifiedDate": "2019-10-24T21:45:31.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2019-10-24T21:45:31.000Z",
+    "weakEtag": 1571953531000
+}

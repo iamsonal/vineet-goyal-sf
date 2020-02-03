@@ -1,0 +1,12 @@
+# Tools artifacts
+node_modules
+coverage
+__benchmarks_results__
+
+# Project artifacts
+dist
+build
+.rpt2_cache
+
+# RAML Generated code
+generated

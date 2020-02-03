@@ -1,0 +1,252 @@
+{
+    "eTag": "c7e2bd982537e451571cbcef75731a2b",
+    "info": {
+        "cloneable": true,
+        "createable": true,
+        "deletable": true,
+        "displayColumns": [
+            {
+                "fieldApiName": "Name",
+                "label": "Opportunity Name",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Account.Name",
+                "label": "Account Name",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Amount",
+                "label": "Amount",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "CloseDate",
+                "label": "Close Date",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "StageName",
+                "label": "Stage",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Owner.Alias",
+                "label": "Opportunity Owner Alias",
+                "sortable": true
+            }
+        ],
+        "eTag": "73b840a5c161ea3bd428f33fbdca5771",
+        "filterLogicString": null,
+        "filteredByInfo": [],
+        "label": "All Opportunities",
+        "listReference": {
+            "id": "00BT1000000NUunMAG",
+            "listViewApiName": "AllOpportunities",
+            "objectApiName": "Opportunity",
+            "type": "listView"
+        },
+        "orderedByInfo": [
+            {
+                "fieldApiName": "Name",
+                "isAscending": true,
+                "label": "Opportunity Name"
+            }
+        ],
+        "updateable": true,
+        "userPreferences": {
+            "columnWidths": {
+                "Owner.Alias": -1,
+                "StageName": -1,
+                "Amount": -1,
+                "Account.Name": -1,
+                "CloseDate": -1,
+                "Name": -1
+            },
+            "columnWrap": {
+                "Owner.Alias": false,
+                "StageName": false,
+                "Amount": false,
+                "Account.Name": false,
+                "CloseDate": false,
+                "Name": false
+            }
+        },
+        "visibility": "Public",
+        "visibilityEditable": true
+    },
+    "records": {
+        "count": 1,
+        "currentPageToken": "0",
+        "currentPageUrl": "/services/data/v49.0/ui-api/list-records/00BT1000000NUunMAG?fields=Opportunity.IsPrivate%2COpportunity.NextStep&pageSize=1&pageToken=0",
+        "fields": ["Opportunity.IsPrivate", "Opportunity.NextStep"],
+        "listInfoETag": "73b840a5c161ea3bd428f33fbdca5771",
+        "listReference": {
+            "id": "00BT1000000NUunMAG",
+            "listViewApiName": "AllOpportunities",
+            "objectApiName": "Opportunity",
+            "type": "listView"
+        },
+        "nextPageToken": "1",
+        "nextPageUrl": "/services/data/v49.0/ui-api/list-records/00BT1000000NUunMAG?fields=Opportunity.IsPrivate%2COpportunity.NextStep&pageSize=1&pageToken=1",
+        "optionalFields": [],
+        "pageSize": 1,
+        "previousPageToken": null,
+        "previousPageUrl": null,
+        "records": [
+            {
+                "apiName": "Opportunity",
+                "childRelationships": {},
+                "eTag": "70aeec919bd82e9ed36d56b0ed479f8b",
+                "fields": {
+                    "Account": {
+                        "displayValue": "Burlington Textiles Corp of America",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "a4ff33a783ef52e671e543e8ee333fa6",
+                            "fields": {
+                                "CreatedDate": {
+                                    "displayValue": null,
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001T1000002GKr5IAG"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": null,
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "Burlington Textiles Corp of America"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": null,
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                }
+                            },
+                            "id": "001T1000002GKr5IAG",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": "012000000000000AAA",
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2019-11-19T14:55:27.000Z",
+                            "weakEtag": 1574175327000
+                        }
+                    },
+                    "AccountId": {
+                        "displayValue": null,
+                        "value": "001T1000002GKr5IAG"
+                    },
+                    "Amount": {
+                        "displayValue": "$235,000.00",
+                        "value": 235000
+                    },
+                    "CloseDate": {
+                        "displayValue": "10/29/2017",
+                        "value": "2017-10-29"
+                    },
+                    "CreatedDate": {
+                        "displayValue": null,
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "006T10000023G3QIAU"
+                    },
+                    "IsPrivate": {
+                        "displayValue": null,
+                        "value": false
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": null,
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Burlington Textiles Weaving Plant Generator"
+                    },
+                    "NextStep": {
+                        "displayValue": null,
+                        "value": null
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "194efe11b1b82b5dfcef2fc692ce09d6",
+                            "fields": {
+                                "Alias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                },
+                                "CreatedDate": {
+                                    "displayValue": null,
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": null,
+                                    "value": "2019-11-19T14:55:27.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "User User"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": null,
+                                    "value": "2020-01-20T04:57:12.000Z"
+                                }
+                            },
+                            "id": "005T1000000HnsLIAS",
+                            "lastModifiedById": "005T1000000HnsLIAS",
+                            "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2020-01-20T04:57:12.000Z",
+                            "weakEtag": 1579496232000
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "StageName": {
+                        "displayValue": "Closed Won",
+                        "value": "Closed Won"
+                    },
+                    "SystemModstamp": {
+                        "displayValue": null,
+                        "value": "2019-11-19T14:55:27.000Z"
+                    }
+                },
+                "id": "006T10000023G3QIAU",
+                "lastModifiedById": "005T1000000HnsLIAS",
+                "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-19T14:55:27.000Z",
+                "weakEtag": 1574175327000
+            }
+        ],
+        "sortBy": "Name,Id"
+    }
+}

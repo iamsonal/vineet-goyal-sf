@@ -1,0 +1,3 @@
+{
+    "message": "Apex methods that are to be cached must be marked as @AuraEnabled(cacheable=true)"
+}

@@ -1,0 +1,15 @@
+{
+    "hasErrors": false,
+    "results": [
+        {
+            "result": {
+                "backgroundColor": "41c8a0",
+                "eTag": "b679f9992bddba517b62bdc004bcd6ef",
+                "iconUrl": "https://org62.my.salesforce.com/img/icon/t4v35/custom/custom74_120.png",
+                "recordId": "aDO0M000000GmaJWAS",
+                "type": "Theme"
+            },
+            "statusCode": 200
+        }
+    ]
+}

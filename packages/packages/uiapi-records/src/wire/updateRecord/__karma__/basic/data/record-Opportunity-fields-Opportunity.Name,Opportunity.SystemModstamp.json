@@ -1,0 +1,28 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "9c96a04a8ec3dd27c70b5724dc378cd8",
+    "fields": {
+        "Name": {
+            "displayValue": null,
+            "value": "foo"
+        },
+        "SystemModstamp": {
+            "displayValue": "10/21/2019, 3:13 PM",
+            "value": "2019-10-21T22:13:37.000Z"
+        }
+    },
+    "id": "006RM000003IvA2YAK",
+    "lastModifiedById": "005RM000001stMBYAY",
+    "lastModifiedDate": "2019-10-21T22:13:37.000Z",
+    "recordTypeId": "012RM000000DBJIYA4",
+    "recordTypeInfo": {
+        "available": true,
+        "defaultRecordTypeMapping": true,
+        "master": false,
+        "name": "A",
+        "recordTypeId": "012RM000000DBJIYA4"
+    },
+    "systemModstamp": "2019-10-21T22:13:37.000Z",
+    "weakEtag": 1571696017000
+}

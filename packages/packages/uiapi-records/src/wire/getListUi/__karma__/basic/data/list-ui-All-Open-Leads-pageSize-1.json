@@ -1,0 +1,208 @@
+{
+    "eTag": "4323a7469954c97a2d0bbab5615e671c",
+    "info": {
+        "cloneable": true,
+        "createable": true,
+        "deletable": true,
+        "displayColumns": [
+            {
+                "fieldApiName": "Name",
+                "label": "Name",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Company",
+                "label": "Company",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "State",
+                "label": "State/Province",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Email",
+                "label": "Email",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Status",
+                "label": "Lead Status",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "CreatedDate",
+                "label": "Created Date",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Owner.NameOrAlias",
+                "label": "Owner Alias",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "IsUnreadByOwner",
+                "label": "Unread By Owner",
+                "sortable": true
+            }
+        ],
+        "eTag": "0c400a945140f97c41e6e916449499e4",
+        "filterLogicString": null,
+        "filteredByInfo": [
+            {
+                "fieldApiName": "Status",
+                "label": "Lead Status",
+                "operandLabels": ["closed"],
+                "operator": "NotContain"
+            }
+        ],
+        "label": "All Open Leads",
+        "listReference": {
+            "id": "00BT1000000NUvCMAW",
+            "listViewApiName": "AllOpenLeads",
+            "objectApiName": "Lead",
+            "type": "listView"
+        },
+        "orderedByInfo": [
+            {
+                "fieldApiName": "Name",
+                "isAscending": true,
+                "label": "Name"
+            }
+        ],
+        "updateable": true,
+        "userPreferences": {
+            "columnWidths": {
+                "Status": -1,
+                "Company": -1,
+                "Email": -1,
+                "State": -1,
+                "IsUnreadByOwner": -1,
+                "CreatedDate": -1,
+                "Owner.NameOrAlias": -1,
+                "Name": -1
+            },
+            "columnWrap": {
+                "Status": false,
+                "Company": false,
+                "Email": false,
+                "State": false,
+                "IsUnreadByOwner": false,
+                "CreatedDate": false,
+                "Owner.NameOrAlias": false,
+                "Name": false
+            }
+        },
+        "visibility": "Public",
+        "visibilityEditable": true
+    },
+    "records": {
+        "count": 1,
+        "currentPageToken": "0",
+        "currentPageUrl": "/services/data/v49.0/ui-api/list-records/00BT1000000NUvCMAW?pageSize=1&pageToken=0",
+        "fields": [],
+        "listInfoETag": "0c400a945140f97c41e6e916449499e4",
+        "listReference": {
+            "id": "00BT1000000NUvCMAW",
+            "listViewApiName": "AllOpenLeads",
+            "objectApiName": "Lead",
+            "type": "listView"
+        },
+        "nextPageToken": "1",
+        "nextPageUrl": "/services/data/v49.0/ui-api/list-records/00BT1000000NUvCMAW?pageSize=1&pageToken=1",
+        "optionalFields": [],
+        "pageSize": 1,
+        "previousPageToken": null,
+        "previousPageUrl": null,
+        "records": [
+            {
+                "apiName": "Lead",
+                "childRelationships": {},
+                "eTag": "c6835c0aeb87df0b78d29a8080792773",
+                "fields": {
+                    "Company": {
+                        "displayValue": null,
+                        "value": "Farmers Coop. of Florida"
+                    },
+                    "CreatedDate": {
+                        "displayValue": "11/19/2019, 6:55 AM",
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Email": {
+                        "displayValue": null,
+                        "value": "bertha@fcof.net"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "00QT10000018eMkMAI"
+                    },
+                    "IsUnreadByOwner": {
+                        "displayValue": null,
+                        "value": true
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": null,
+                        "value": "2019-11-19T14:55:27.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Bertha Boxer"
+                    },
+                    "Owner": {
+                        "displayValue": null,
+                        "value": {
+                            "apiName": "Name",
+                            "childRelationships": {},
+                            "eTag": "796e07c07f1b71097ba4221b9e2cce73",
+                            "fields": {
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000HnsLIAS"
+                                },
+                                "NameOrAlias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                }
+                            },
+                            "id": "005T1000000HnsLIAS",
+                            "lastModifiedById": null,
+                            "lastModifiedDate": null,
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": null,
+                            "weakEtag": 0
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000HnsLIAS"
+                    },
+                    "State": {
+                        "displayValue": null,
+                        "value": "FL"
+                    },
+                    "Status": {
+                        "displayValue": "Working - Contacted",
+                        "value": "Working - Contacted"
+                    },
+                    "SystemModstamp": {
+                        "displayValue": null,
+                        "value": "2019-11-19T15:00:22.000Z"
+                    }
+                },
+                "id": "00QT10000018eMkMAI",
+                "lastModifiedById": "005T1000000HnsLIAS",
+                "lastModifiedDate": "2019-11-19T14:55:27.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-11-19T15:00:22.000Z",
+                "weakEtag": 1574175622000
+            }
+        ],
+        "sortBy": "Name,Id"
+    }
+}

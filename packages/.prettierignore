@@ -1,0 +1,13 @@
+# Tools artifacts
+coverage
+__benchmarks_results__
+
+# Project artifacts
+dist
+build
+.rpt2_cache
+generated
+lib
+
+# Copy-pasted code
+packages/core-build/src/lds222

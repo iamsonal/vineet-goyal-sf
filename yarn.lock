@@ -2071,34 +2071,34 @@
     "@babel/runtime" "^7.7.2"
     core-js "^3.4.1"
 
-"@ldsjs/cli@^0.1.10":
-  version "0.1.11"
-  resolved "http://npm.lwcjs.org/@ldsjs/cli/-/@ldsjs/cli-0.1.11/2dae96fd952ebddcd167be06f69abb01c491eeb8.tgz#2dae96fd952ebddcd167be06f69abb01c491eeb8"
-  integrity sha512-kzl3bb+f8oV5MYyICUasNNOoBQEuVrqy7lvRWrX9X81etXJRXiHL9Uwx4vy+6JnkpRbYpoSnHiAv7m0obkbBPg==
+"@ldsjs/cli@^0.2.0":
+  version "0.2.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/cli/-/@ldsjs/cli-0.2.0/a4c2ccff366252276444757fa0c92609776dd17e.tgz#a4c2ccff366252276444757fa0c92609776dd17e"
+  integrity sha512-Ylgv/c1JL9KviQqKGulUGzbrC9ogGLkrsKilI9csxg6wBsvrYIcYeUYnQ8No1rG4XFfAiicsIpze9FMmhXcqjg==
   dependencies:
-    "@ldsjs/compiler" "0.1.11"
+    "@ldsjs/compiler" "0.2.0"
     "@oclif/command" "^1.5.19"
     "@oclif/config" "^1.13.3"
     "@oclif/plugin-help" "^2.2.1"
 
-"@ldsjs/compiler@0.1.11", "@ldsjs/compiler@^0.1.10":
-  version "0.1.11"
-  resolved "http://npm.lwcjs.org/@ldsjs/compiler/-/@ldsjs/compiler-0.1.11/b14a78b0db90e27db80619d4cc92cfb33ae1ac07.tgz#b14a78b0db90e27db80619d4cc92cfb33ae1ac07"
-  integrity sha512-jfTYp/2JUYVCtNCG3Ff/cM4K2yRoBRCa8Pn8MbPqstIyycE+CXEEl3yazZyHRiuRoPWNTwMj2vtJHGjyO1CLpQ==
+"@ldsjs/compiler@0.2.0", "@ldsjs/compiler@^0.2.0":
+  version "0.2.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/compiler/-/@ldsjs/compiler-0.2.0/64140a9a7181d63a634761f37119e2e7d49d411c.tgz#64140a9a7181d63a634761f37119e2e7d49d411c"
+  integrity sha512-+kOfU+xGYQgNNk+Zqo7+AyYnv1aESZ49lDpX5QQt+eqNctnKoXWE7dWQyh8CLsW4n5c5V6hlV35m9cK+Rz6dhA==
   dependencies:
     amf-client-js "3.2.2"
 
-"@ldsjs/engine@0.1.11", "@ldsjs/engine@^0.1.10":
-  version "0.1.11"
-  resolved "http://npm.lwcjs.org/@ldsjs/engine/-/@ldsjs/engine-0.1.11/a4c3347b78347c3c1753e1194e5475664214ed13.tgz#a4c3347b78347c3c1753e1194e5475664214ed13"
-  integrity sha512-vnTIbh4Zf5UkwM2EobHqey+qJX3KeRK5KVM4GEJLSoQM1Ew8sOkqmMMqdzW7UwJNg9z9beCzyWksJRIX5XBUqw==
+"@ldsjs/engine@0.2.0", "@ldsjs/engine@^0.2.0":
+  version "0.2.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/engine/-/@ldsjs/engine-0.2.0/087ff31d055a9fdcb41c62081ca363422fdc863f.tgz#087ff31d055a9fdcb41c62081ca363422fdc863f"
+  integrity sha512-fs75C2WBFC1HEYgRJtAhMYL5C8dNkx2ObQ9laNRGE19ILoTOdBQm0bEU3QvxZ4/am/rq0rja8Hp9eJX0tNEVeA==
 
-"@ldsjs/lwc-lds@^0.1.10":
-  version "0.1.11"
-  resolved "http://npm.lwcjs.org/@ldsjs/lwc-lds/-/@ldsjs/lwc-lds-0.1.11/8061553f666b5f45b6ec7b5ccf3a734dfb8c8abe.tgz#8061553f666b5f45b6ec7b5ccf3a734dfb8c8abe"
-  integrity sha512-guJE8zUfgH52m8B4wkk93Ro6+KEDnAYo9DS5VGugkzUQ0t/0J+UC4AHpFJmTWdz3gXoWSnGTmFZ6YJMB0cjXOA==
+"@ldsjs/lwc-lds@^0.2.0":
+  version "0.2.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/lwc-lds/-/@ldsjs/lwc-lds-0.2.0/1aee5005a6f9dfe95da2dd8d27e1ec8c41e2a8ce.tgz#1aee5005a6f9dfe95da2dd8d27e1ec8c41e2a8ce"
+  integrity sha512-fCtjakIx0g1pivzloGv7IfXpAyTvJMCYwmTZwhM5QZbCaY6Bc9WGoMD5PwsLRl8wPvszOGu36p776FAUP3I0ZQ==
   dependencies:
-    "@ldsjs/engine" "0.1.11"
+    "@ldsjs/engine" "0.2.0"
 
 "@lerna/add@3.20.0":
   version "3.20.0"
@@ -10626,22 +10626,6 @@ node-notifier@^5.4.2:
     shellwords "^0.1.1"
     which "^1.3.0"
 
-node-pre-gyp@*:
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.14.0.tgz#9a0596533b877289bcad4e143982ca3d904ddc83"
-  integrity sha512-+CvDC7ZttU/sSt9rFjix/P05iS43qHCOOGzcr3Ry99bXG7VX953+vFyEuph/tfqoYu8dttBkE86JSKBO2OzcxA==
-  dependencies:
-    detect-libc "^1.0.2"
-    mkdirp "^0.5.1"
-    needle "^2.2.1"
-    nopt "^4.0.1"
-    npm-packlist "^1.1.6"
-    npmlog "^4.0.2"
-    rc "^1.2.7"
-    rimraf "^2.6.1"
-    semver "^5.3.0"
-    tar "^4.4.2"
-
 node-pre-gyp@^0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.11.0.tgz#db1f33215272f692cd38f03238e3e9b47c5dd054"
@@ -13873,7 +13857,7 @@ tar-stream@^2.0.0, tar-stream@^2.1.0:
     inherits "^2.0.3"
     readable-stream "^3.1.1"
 
-tar@^4, tar@^4.4.10, tar@^4.4.12, tar@^4.4.2, tar@^4.4.8, tar@~4.4.10:
+tar@^4, tar@^4.4.10, tar@^4.4.12, tar@^4.4.8, tar@~4.4.10:
   version "4.4.13"
   resolved "https://registry.yarnpkg.com/tar/-/tar-4.4.13.tgz#43b364bc52888d555298637b10d60790254ab525"
   integrity sha512-w2VwSrBoHa5BsSyH+KxEqeQBAllHhccyMFVHtGtdMpF4W7IRWfZjFiQceJPChOeTsSDVUpER2T8FA93pr0L+QA==

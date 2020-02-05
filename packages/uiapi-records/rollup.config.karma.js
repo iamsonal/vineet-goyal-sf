@@ -110,6 +110,34 @@ function ldsConfig(config) {
     };
 }
 
+function ldsNativeProxyConfig() {
+    return {
+        input: path.join(__dirname, 'karma', 'ldsNativeProxy.js'),
+        plugins: [resolve()],
+        output: {
+            file: getTargetPath('ldsNativeProxy.js', false),
+            format: 'umd',
+            name: 'lds', // use same name as browser so it gets swapped in properly
+            globals: {
+                sinon: 'sinon',
+                lwc: 'LWC',
+                'wire-service': 'WireService',
+                '@salesforce-lds/engine': 'ldsEngine',
+                '@salesforce-lds/lwc-lds': 'lwcLds',
+                '@salesforce-lds-api/uiapi-records': 'uiapiRecordsService',
+            },
+        },
+        external: [
+            'sinon',
+            'lwc',
+            'wire-service',
+            '@salesforce-lds/engine',
+            '@salesforce-lds/lwc-lds',
+            '@salesforce-lds-api/uiapi-records',
+        ],
+    };
+}
+
 module.exports = [
     // uiApiConstants needs to be built prior to uiApiTestUtil
     uiApiConstantsConfig(),
@@ -119,4 +147,5 @@ module.exports = [
     uiApiTestSetupConfig({ compat: true }),
     ldsConfig({ compat: false }),
     ldsConfig({ compat: true }),
+    ldsNativeProxyConfig(),
 ];

@@ -9365,10 +9365,10 @@ jws@^3.1.4:
     jwa "^1.4.1"
     safe-buffer "^5.0.1"
 
-karma-android-hybrid-app-launcher@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/karma-android-hybrid-app-launcher/-/karma-android-hybrid-app-launcher-0.0.1.tgz#ed913fad37fa643e9d5bebc4c3063237c4846c18"
-  integrity sha512-bfXVqMJeFezWpyWhEtivDA7ZSXiHKqt9lRjfS5uvzqBhC5LryADDJBy8AN5HqDsk5eZqGb9sUJr/ttZRDgUYFQ==
+karma-android-hybrid-app-launcher@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/karma-android-hybrid-app-launcher/-/karma-android-hybrid-app-launcher-0.0.2.tgz#b788886596d96f9997d9323714edba789eac9f4e"
+  integrity sha512-D4pAK/HrRJzq0/k3+MGk0nM+bYtsOZ6FheHYzWOvVTQS/G0QZTf6V46gKIYt/Uah9OCexJ05Xjwe6ysDuOiFWQ==
   dependencies:
     appium "^1.16.0"
     ez-spawn "^2.1.6"

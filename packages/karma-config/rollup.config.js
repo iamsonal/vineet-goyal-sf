@@ -1,6 +1,8 @@
 import path from 'path';
 import babel from 'rollup-plugin-babel';
 
+const implementationTestUtilsName = 'implTestUtils';
+
 const compatBabelPlugin = babel({
     presets: [
         [
@@ -26,6 +28,38 @@ function getTargetPath(filename, compat) {
     return path.join(targetDir, filename);
 }
 
+function browserTestUtilsConfig(config) {
+    const { compat } = config;
+    return {
+        input: path.join(__dirname, 'utils', 'browser', 'browser-test-utils.js'),
+        plugins: [!!compat && compatBabelPlugin],
+        output: {
+            file: getTargetPath('browser-test-utils.js', compat),
+            format: 'umd',
+            name: implementationTestUtilsName,
+            globals: {
+                lds: 'lds',
+            },
+        },
+        external: ['lds'],
+    };
+}
+
+function nativeTestUtilsConfig() {
+    return {
+        input: path.join(__dirname, 'utils', 'native', 'native-test-utils.js'),
+        output: {
+            file: getTargetPath('native-test-utils.js', false),
+            format: 'umd',
+            name: implementationTestUtilsName,
+            globals: {
+                lds: 'lds',
+            },
+        },
+        external: ['lds'],
+    };
+}
+
 function testUtilConfig(config) {
     const { compat } = config;
     return {
@@ -39,9 +73,10 @@ function testUtilConfig(config) {
                 lwc: 'LWC',
                 timekeeper: 'timekeeper',
                 lds: 'lds',
+                'impl-test-utils': implementationTestUtilsName,
             },
         },
-        external: ['lwc', 'timekeeper', 'lds'],
+        external: ['lwc', 'timekeeper', 'lds', 'impl-test-utils'],
     };
 }
 
@@ -80,6 +115,11 @@ function getLwcLds(config) {
 }
 
 module.exports = [
+    browserTestUtilsConfig({ compat: false }),
+    browserTestUtilsConfig({ compat: true }),
+
+    nativeTestUtilsConfig(),
+
     getLwcLds({ compat: false }),
     getLwcLds({ compat: true }),
 

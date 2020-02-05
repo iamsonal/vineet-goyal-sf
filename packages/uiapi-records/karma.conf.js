@@ -2,6 +2,7 @@ const baseConfig = require('@salesforce-lds-api/karma-config');
 
 const LDS = require.resolve('./karma/dist/lds.js');
 const LDS_COMPAT = require.resolve('./karma/dist/compat/lds.js');
+const LDS_NATIVE = require.resolve('./karma/dist/ldsNativeProxy.js');
 
 const UIAPI_RECORD_SERVICE = require.resolve('./dist/umd/es2018/uiapi-records-service.js');
 const UIAPI_RECORD_SERVICE_COMPAT = require.resolve('./dist/umd/es5/uiapi-records-service.js');
@@ -16,6 +17,7 @@ module.exports = config => {
     baseConfig(config);
 
     const compat = Boolean(config.compat);
+    const native = Boolean(config.native);
     const files = [];
 
     config.files.forEach(file => {
@@ -29,7 +31,7 @@ module.exports = config => {
                 files.push(compat ? UIAPI_TEST_SETUP_COMPAT : UIAPI_TEST_SETUP);
             } else if (file.endsWith('/lwclds.js')) {
                 files.push(compat ? UIAPI_RECORD_SERVICE_COMPAT : UIAPI_RECORD_SERVICE);
-                files.push(compat ? LDS_COMPAT : LDS);
+                files.push(compat ? LDS_COMPAT : native ? LDS_NATIVE : LDS);
             }
         }
     });

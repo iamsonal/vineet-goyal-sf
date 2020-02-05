@@ -1,6 +1,7 @@
 'use strict';
 
-import { karmaNetworkAdapter, store } from 'lds';
+import { karmaNetworkAdapter, countNetworkCalls } from 'lds';
+import { clearCache, flushPromises, skipPromiseForNetworkResponse } from 'impl-test-utils';
 import { createElement } from 'lwc';
 import timekeeper from 'timekeeper';
 
@@ -100,21 +101,33 @@ function mockNetworkSequence(adapter, args, responses, headers = []) {
 
                 const header = headers[index] ? clone(headers[index]) : null;
                 if (response.reject) {
-                    return Promise.reject({
+                    const rejectResult = {
                         ...FETCH_RESPONSE_ERROR,
                         status: response.status || FETCH_RESPONSE_ERROR.status,
                         statusText: response.statusText || FETCH_RESPONSE_ERROR.statusText,
                         ok: response.ok !== undefined ? response.ok : FETCH_RESPONSE_ERROR.ok,
                         body: clone(response.data),
                         ...(header && { headers: header }),
-                    });
+                    };
+
+                    // TODO - remove this once https://github.com/salesforce/nimbus/issues/98
+                    // is fixed and just have it return a promise
+                    return skipPromiseForNetworkResponse === true
+                        ? rejectResult
+                        : Promise.reject(rejectResult);
                 }
 
-                return Promise.resolve({
+                const resolveResponse = {
                     ...FETCH_RESPONSE_OK,
                     body: clone(response),
                     ...(header && { headers: header }),
-                });
+                };
+
+                // TODO - remove this once https://github.com/salesforce/nimbus/issues/98
+                // is fixed and just have it return a promise
+                return skipPromiseForNetworkResponse === true
+                    ? resolveResponse
+                    : Promise.resolve(resolveResponse);
             });
     });
 
@@ -156,21 +169,19 @@ function mockNetworkOnce(adapter, args, response, headers) {
  * during the test. Fails the test if there is a mismatch.
  */
 function assertNetworkCallCount() {
-    if (MOCK_NETWORK_COUNT !== MOCK_NETWORK_CALLS) {
-        fail(
-            `Unexpected number of network calls. Expected ${MOCK_NETWORK_COUNT}, got ${MOCK_NETWORK_CALLS}.`
-        );
+    // TODO - W-7095524 - tests will get broken out into shared functional tests
+    // (that don't test implementation details like network calls) and implementation
+    // specific tests (that count network calls), so this "countNetworkCalls" flag
+    // will get reworked then.
+    if (countNetworkCalls) {
+        if (MOCK_NETWORK_COUNT !== MOCK_NETWORK_CALLS) {
+            fail(
+                `Unexpected number of network calls. Expected ${MOCK_NETWORK_COUNT}, got ${MOCK_NETWORK_CALLS}.`
+            );
+        }
+
+        MOCK_NETWORK_COUNT = MOCK_NETWORK_CALLS = 0;
     }
-
-    MOCK_NETWORK_COUNT = MOCK_NETWORK_CALLS = 0;
-}
-
-/**
- * Wait for the microtask queue to clear. This is helpful when LWC needs to
- * finish rerendering after a state change.
- */
-function flushPromises() {
-    return new Promise(resolve => setTimeout(resolve));
 }
 
 /**
@@ -269,10 +280,6 @@ function removeElement(element) {
     return flushPromises().then(() => {
         return oldChild;
     });
-}
-
-function clearCache() {
-    store.reset();
 }
 
 function resetNetworkStub() {

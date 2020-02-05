@@ -21,6 +21,7 @@ const SHADOW_POLYFILL_COMPAT = lwcDistribution.getModulePath(
     'es5',
     'prod_debug'
 );
+const BROWSER_TEST_UTILS_COMPAT = require.resolve('../utils/dist/compat/browser-test-utils.js');
 const TEST_UTIL_COMPAT = require.resolve('../utils/dist/compat/test-util.js');
 const GLOBAL_SETUP_COMPAT = require.resolve('../utils/dist/compat/global-setup.js');
 
@@ -35,6 +36,7 @@ function getFiles() {
     files.push(LDS_ENGINE_COMPAT);
     files.push(LWC_LDS_COMPAT);
 
+    files.push(BROWSER_TEST_UTILS_COMPAT);
     files.push(TEST_UTIL_COMPAT);
     // The files order matters. global-setup has dependency with test-util.
     files.push(GLOBAL_SETUP_COMPAT);

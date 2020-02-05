@@ -11,6 +11,7 @@ const LWC_WIRE_SERVICE = lwcDistribution.getModulePath(
 );
 const LDS_ENGINE = require.resolve('@ldsjs/engine/dist/umd/es2018/engine.js');
 const LWC_LDS = require.resolve('../utils/dist/lwclds.js');
+const BROWSER_TEST_UTILS = require.resolve('../utils/dist/browser-test-utils.js');
 const TEST_UTIL = require.resolve('../utils/dist/test-util.js');
 const GLOBAL_SETUP = require.resolve('../utils/dist/global-setup.js');
 
@@ -22,6 +23,7 @@ function getFiles() {
     files.push(LDS_ENGINE);
     files.push(LWC_LDS);
 
+    files.push(BROWSER_TEST_UTILS);
     files.push(TEST_UTIL);
     // The files order matters. global-setup has dependency with test-util.
     files.push(GLOBAL_SETUP);

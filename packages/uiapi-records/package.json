@@ -13,6 +13,7 @@
         "build:services": "rollup --config rollup.config.js",
         "build:karma-utils": "rollup --config rollup.config.karma.js",
         "start": "karma start",
+        "start:native": "karma start --native",
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat",
         "test:native": "karma start --single-run --native"

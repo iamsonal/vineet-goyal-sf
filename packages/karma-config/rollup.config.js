@@ -61,7 +61,28 @@ function globalSetupConfig(config) {
     };
 }
 
+function getLwcLds(config) {
+    const { compat } = config;
+    return {
+        input: require.resolve('@ldsjs/lwc-lds/dist/es/es2018/lwclds.js'),
+        plugins: [!!compat && compatBabelPlugin],
+        output: {
+            file: getTargetPath('lwclds.js', compat),
+            format: 'umd',
+            name: 'lwcLds',
+            globals: {
+                lwc: 'LWC',
+                '@ldsjs/engine': 'ldsEngine',
+            },
+        },
+        external: ['lwc', '@ldsjs/engine'],
+    };
+}
+
 module.exports = [
+    getLwcLds({ compat: false }),
+    getLwcLds({ compat: true }),
+
     testUtilConfig({ compat: false }),
     testUtilConfig({ compat: true }),
 

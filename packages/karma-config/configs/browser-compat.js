@@ -13,7 +13,7 @@ const LWC_WIRE_SERVICE_COMPAT = lwcDistribution.getModulePath(
     'prod_debug'
 );
 const LDS_ENGINE_COMPAT = require.resolve('@ldsjs/engine/dist/umd/es5/engine.js');
-const LWC_LDS_COMPAT = require.resolve('@ldsjs/lwc-lds/dist/umd/es5/lwclds.js');
+const LWC_LDS_COMPAT = require.resolve('../utils/dist/compat/lwclds.js');
 const POLYFILL_COMPAT = require.resolve('es5-proxy-compat/polyfills.js');
 const SHADOW_POLYFILL_COMPAT = lwcDistribution.getModulePath(
     'synthetic-shadow',

@@ -10,7 +10,7 @@ const LWC_WIRE_SERVICE = lwcDistribution.getModulePath(
     'prod_debug'
 );
 const LDS_ENGINE = require.resolve('@ldsjs/engine/dist/umd/es2018/engine.js');
-const LWC_LDS = require.resolve('@ldsjs/lwc-lds/dist/umd/es2018/lwclds.js');
+const LWC_LDS = require.resolve('../utils/dist/lwclds.js');
 const TEST_UTIL = require.resolve('../utils/dist/test-util.js');
 const GLOBAL_SETUP = require.resolve('../utils/dist/global-setup.js');
 

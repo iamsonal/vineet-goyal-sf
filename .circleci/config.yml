@@ -2,14 +2,14 @@
 # =========================
 
 env_default: &env_default
-  working_directory: ~/lds
+  working_directory: ~/lds-lp
   docker:
     - image: circleci/node:10-browsers
 
 env_perf: &env_perf
   <<: *env_default
   environment:
-    - GIT_APP_CERT_PATH: ~/lds/git_app.pem
+    - GIT_APP_CERT_PATH: ~/lds-lp/git_app.pem
 
 env_test: &env_test
   <<: *env_default
@@ -40,7 +40,7 @@ save_workspace: &save_workspace
 
 load_workspace: &load_workspace
   attach_workspace:
-    at: ~/lds
+    at: ~/lds-lp
 
 # Build
 install: &install
@@ -120,7 +120,7 @@ setup_best_environment: &setup_best_environment
       export TARGET_COMMIT=${CIRCLE_SHA1}
       export BASE_COMMIT=`git rev-parse origin/master`' >> $BASH_ENV
 
-      echo -e "$GIT_APP_CERT" | base64 -d >> ~/lds/git_app.pem
+      echo -e "$GIT_APP_CERT" | base64 -d >> ~/lds-lp/git_app.pem
 
 run_best: &run_best
   run:
@@ -130,11 +130,11 @@ run_best: &run_best
 compare_best_results: &compare_best_results
   run:
     name: Comparing perf examples
-    command: yarn test:perf --projects best.config.js --compareStats ebdc4c7bde10e7f81996a4f797f554d53ff504ae ${TARGET_COMMIT} --externalStorage=@best/store-aws --gitIntegration
+    command: yarn test:perf --projects best.config.js --compareStats ${BASE_COMMIT} ${TARGET_COMMIT} --externalStorage=@best/store-aws --gitIntegration
 
 store_best_artifacts: &store_best_artifacts
   store_artifacts:
-    path: ~/lds/__benchmark_results__/
+    path: ~/lds-lp/__benchmark_results__/
     destination: benchmarks
 
 test_size: &test_size
@@ -193,7 +193,8 @@ jobs:
 
       - *setup_best_environment
       - *run_best
-      - *compare_best_results
+      # temporary disabled
+      #      - *compare_best_results
       - *store_best_artifacts
 
 # Workflows definition

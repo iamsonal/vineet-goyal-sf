@@ -7,10 +7,11 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const REPO_ROOT = path.resolve(__dirname, '../../');
-const REPO_LDS_PATH = path.resolve(REPO_ROOT, 'packages/core-build/dist/lds.js');
-const REPO_LDS_NATIVE_PROXY_PATH = path.resolve(
+const REPO_LDS_PATH = path.resolve(REPO_ROOT, 'dist/lds.js');
+const REPO_LDS_NATIVE_PROXY_PATH = path.resolve(REPO_ROOT, 'dist/ldsNativeProxy.js');
+const REPO_LDS_STATIC_FUNCTIONS_PATH = path.resolve(
     REPO_ROOT,
-    'packages/core-build/dist/ldsNativeProxy.js'
+    'packages/core-build/dist/lds-static-functions.js'
 );
 
 // The BLT_HOME environment variable is set when sourcing the "env.sh" script contained in the blt
@@ -47,6 +48,13 @@ const CORE_LDS_NATIVE_PROXY_PATH = path.resolve(
     'app',
     CORE_BRANCH,
     'core/ui-bridge-components/modules/native/ldsNativeProxy/ldsNativeProxy.js'
+);
+
+const CORE_LDS_STATIC_FUNCTIONS_PATH = path.resolve(
+    BLT_HOME,
+    'app',
+    CORE_BRANCH,
+    'core/ui-force-components/modules/force/lds/lds-static-functions.js'
 );
 
 const RELEASABLE_BRANCHES = ['master'];
@@ -153,10 +161,12 @@ function copyArtifacts(repoPath, corePath) {
 
     if (argv.target === 'lds') {
         checkCore(CORE_LDS_PATH);
+        checkCore(CORE_LDS_STATIC_FUNCTIONS_PATH);
     } else if (argv.target === 'native') {
         checkCore(CORE_LDS_NATIVE_PROXY_PATH);
     } else {
         checkCore(CORE_LDS_PATH);
+        checkCore(CORE_LDS_STATIC_FUNCTIONS_PATH);
         checkCore(CORE_LDS_NATIVE_PROXY_PATH);
     }
 
@@ -177,10 +187,12 @@ function copyArtifacts(repoPath, corePath) {
 
     if (argv.target === 'lds') {
         copyArtifacts(REPO_LDS_PATH, CORE_LDS_PATH);
+        copyArtifacts(REPO_LDS_STATIC_FUNCTIONS_PATH, CORE_LDS_STATIC_FUNCTIONS_PATH);
     } else if (argv.target === 'native') {
         copyArtifacts(REPO_LDS_NATIVE_PROXY_PATH, CORE_LDS_NATIVE_PROXY_PATH);
     } else {
         copyArtifacts(REPO_LDS_PATH, CORE_LDS_PATH);
+        copyArtifacts(REPO_LDS_STATIC_FUNCTIONS_PATH, CORE_LDS_STATIC_FUNCTIONS_PATH);
         copyArtifacts(REPO_LDS_NATIVE_PROXY_PATH, CORE_LDS_NATIVE_PROXY_PATH);
     }
 })();

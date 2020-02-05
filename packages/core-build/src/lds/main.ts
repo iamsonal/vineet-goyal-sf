@@ -227,7 +227,7 @@ export {
     getFieldDisplayValue,
     getFieldValue,
     getRecordInput,
-} from '@salesforce-lds-api/uiapi-records';
+} from 'lds-static-functions';
 
 /**
  * Misc.

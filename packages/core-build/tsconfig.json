@@ -1,0 +1,9 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "lds-static-functions": ["src/lds/lds-static-functions.ts"]
+        }
+    }
+}

@@ -6,7 +6,8 @@ import replace from 'rollup-plugin-replace';
 
 import * as packageJson from './package.json';
 
-const banner = [
+const PROXY_COMPAT_DISABLE = '/* proxy-compat-disable */';
+const generatedFileBanner = [
     '/*  *******************************************************************************************',
     ' *  ATTENTION!',
     ' *  THIS IS A GENERATED FILE FROM https://github.com/salesforce/lds',
@@ -14,8 +15,9 @@ const banner = [
     ' *  Any changes made to this file in p4 will be automatically overwritten.',
     ' *  *******************************************************************************************',
     ' */',
-    '/* proxy-compat-disable */',
-].join('\n');
+];
+
+const banner = generatedFileBanner.concat([PROXY_COMPAT_DISABLE]).join('\n');
 
 let hash;
 try {
@@ -35,6 +37,7 @@ const browser = {
         'aura-storage',
         'aura',
         'force/shared',
+        'lds-static-functions',
         'instrumentation/service',
         'logger',
         'lwc',
@@ -46,6 +49,9 @@ const browser = {
         format: 'esm',
         banner,
         footer,
+        paths: {
+            'lds-static-functions': './lds-static-functions',
+        },
     },
 
     plugins: [
@@ -55,6 +61,22 @@ const browser = {
         }),
         replace({
             'process.env.VERSION': JSON.stringify(hash),
+        }),
+    ],
+};
+
+const ldsStaticFunctionsBrowser = {
+    input: './src/lds/lds-static-functions.ts',
+    output: {
+        file: 'dist/lds-static-functions.js',
+        format: 'esm',
+        banner: generatedFileBanner.join('\n'),
+    },
+
+    plugins: [
+        resolve(),
+        typescript({
+            clean: true,
         }),
     ],
 };
@@ -122,4 +144,4 @@ const absBridge = {
     ],
 };
 
-export default [browser, min, nativeProxy, nativeProxyMin, absBridge];
+export default [browser, min, nativeProxy, nativeProxyMin, absBridge, ldsStaticFunctionsBrowser];

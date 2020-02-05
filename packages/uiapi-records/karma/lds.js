@@ -27,6 +27,8 @@ import {
     GetRelatedListActions,
     GetRelatedListInfo,
     GetRelatedListsInfo,
+    GetRelatedListCount,
+    GetRelatedListsCount,
     GetRelatedListRecordActions,
     GetRelatedListRecords,
     MRU,
@@ -59,6 +61,8 @@ const getRecordUi = register(lds, wireService, GetRecordUi(lds));
 const getRelatedListActions = register(lds, wireService, GetRelatedListActions(lds));
 const getRelatedListInfo = register(lds, wireService, GetRelatedListInfo(lds));
 const getRelatedListsInfo = register(lds, wireService, GetRelatedListsInfo(lds));
+const getRelatedListCount = register(lds, wireService, GetRelatedListCount(lds));
+const getRelatedListsCount = register(lds, wireService, GetRelatedListsCount(lds));
 const getRelatedListRecords = register(lds, wireService, GetRelatedListRecords(lds));
 const getRelatedListRecordActions = register(lds, wireService, GetRelatedListRecordActions(lds));
 const updateRecord = UpdateRecord(lds);
@@ -86,6 +90,8 @@ export {
     getRelatedListActions,
     getRelatedListInfo,
     getRelatedListsInfo,
+    getRelatedListCount,
+    getRelatedListsCount,
     getRelatedListRecords,
     getRelatedListRecordActions,
     getObjectInfo,

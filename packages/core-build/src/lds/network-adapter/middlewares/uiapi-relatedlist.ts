@@ -6,10 +6,13 @@ enum UiApiRecordController {
     GetRelatedListInfo = 'RelatedListUiController.getRelatedListInfoByApiName',
     GetRelatedListInfos = 'RelatedListUiController.getRelatedListInfoCollection',
     GetRelatedListRecords = 'RelatedListUiController.getRelatedListRecords',
+    GetRelatedListCount = 'RelatedListUiController.getRelatedListRecordCount',
+    GetRelatedListCounts = 'RelatedListUiController.getRelatedListsRecordCount',
 }
 
 export const UIAPI_RELATED_LIST_INFO_PATH = `${UI_API_BASE_URI}/related-list-info`;
 export const UIAPI_RELATED_LIST_RECORDS_PATH = `${UI_API_BASE_URI}/related-list-records`;
+export const UIAPI_RELATED_LIST_COUNT_PATH = `${UI_API_BASE_URI}/related-list-count`;
 
 export function getRelatedListInfo(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams, queryParams } = resourceRequest;
@@ -60,4 +63,32 @@ export function getRelatedListRecords(resourceRequest: ResourceRequest): Promise
     );
 
     return dispatchAction(UiApiRecordController.GetRelatedListRecords, params);
+}
+
+export function getRelatedListCount(resourceRequest: ResourceRequest): Promise<any> {
+    const { urlParams } = resourceRequest;
+
+    const params = buildUiApiParams(
+        {
+            parentRecordId: urlParams.parentRecordId,
+            relatedListName: urlParams.relatedListName,
+        },
+        resourceRequest
+    );
+
+    return dispatchAction(UiApiRecordController.GetRelatedListCount, params);
+}
+
+export function getRelatedListsCount(resourceRequest: ResourceRequest): Promise<any> {
+    const { urlParams } = resourceRequest;
+
+    const params = buildUiApiParams(
+        {
+            parentRecordId: urlParams.parentRecordId,
+            relatedListNames: urlParams.relatedListNames,
+        },
+        resourceRequest
+    );
+
+    return dispatchAction(UiApiRecordController.GetRelatedListCounts, params);
 }

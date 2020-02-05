@@ -1,0 +1,14 @@
+{
+    "count": 7,
+    "eTag": "2d7320765e4745b63a0ea6e7580f11d8",
+    "listReference": {
+        "id": null,
+        "inContextOfRecordId": "a00RM0000004aVwYAI",
+        "listViewApiName": null,
+        "objectApiName": null,
+        "parentObjectApiName": "CwcCustom00__c",
+        "recordTypeId": "CwcCustom01__c",
+        "relatedListId": "CwcCustom01s__r",
+        "type": "relatedList"
+    }
+}

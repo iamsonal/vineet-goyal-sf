@@ -27,6 +27,8 @@ export const getRecordEditActions = lds.getRecordEditActions;
 export const getRelatedListActions = lds.getRelatedListActions;
 export const getRelatedListInfos = lds.getRelatedListInfos;
 export const getRelatedListRecordActions = lds.getRelatedListRecordActions;
+export const getRelatedListCount = lds.getRelatedListCount;
+export const getRelatedListsCount = lds.getRelatedListsCount;
 
 /** Apex exports */
 export const getApexInvoker = lds.getApexInvoker;

@@ -29,6 +29,8 @@ import {
     GetRelatedListInfos,
     GetRelatedListRecordActions,
     GetRelatedListRecords,
+    GetRelatedListCount,
+    GetRelatedListsCount,
     MRU,
     UpdateRecord,
     UpdateRecordAvatar,
@@ -158,6 +160,11 @@ export const getRelatedListRecordActions = setupWireAdapter(
     GetRelatedListRecordActions
 );
 export const _getRelatedListRecordActions = createImperativeFunction(getRelatedListRecordActions);
+
+export const getRelatedListCount = setupWireAdapter('getRelatedListCount', GetRelatedListCount);
+export const _getRelatedListCount = createImperativeFunction(getRelatedListCount);
+export const getRelatedListsCount = setupWireAdapter('getRelatedListsCount', GetRelatedListsCount);
+export const _getRelatedListsCount = createImperativeFunction(getRelatedListsCount);
 
 const baseUpdateRecord = UpdateRecord(lds);
 export const updateRecord = (...config: Parameters<ReturnType<typeof UpdateRecord>>) => {

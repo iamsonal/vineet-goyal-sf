@@ -38,6 +38,8 @@ const whiteList = [
     'getRelatedListInfos',
     'getRelatedListRecords',
     'getRelatedListRecordActions',
+    'getRelatedListCount',
+    'getRelatedListsCount',
 
     /** Apex exports */
     'getApexInvoker',

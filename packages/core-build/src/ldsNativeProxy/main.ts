@@ -23,6 +23,8 @@ import {
     GetRelatedListInfos_Native,
     GetRelatedListRecordActions_Native,
     GetRelatedListRecords_Native,
+    GetRelatedListCount_Native,
+    GetRelatedListsCount_Native,
     MRU,
     UpdateRecordAvatar_Native,
 } from '@salesforce-lds-api/uiapi-records';
@@ -58,6 +60,8 @@ export const getRelatedListInfo = ldsNative.register(GetRelatedListInfo_Native);
 export const getRelatedListInfos = ldsNative.register(GetRelatedListInfos_Native);
 export const getRelatedListRecordActions = ldsNative.register(GetRelatedListRecordActions_Native);
 export const getRelatedListRecords = ldsNative.register(GetRelatedListRecords_Native);
+export const getRelatedListCount = ldsNative.register(GetRelatedListCount_Native);
+export const getRelatedListsCount = ldsNative.register(GetRelatedListsCount_Native);
 export const updateRecordAvatar = ldsNative.register(UpdateRecordAvatar_Native);
 
 // adapters requiring some custom js-side logic for core

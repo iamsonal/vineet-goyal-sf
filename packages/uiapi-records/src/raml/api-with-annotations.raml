@@ -136,6 +136,12 @@ types:
     (opaque): true
     (private):
       - eTag
+  RelatedListRecordCountRepresentation:
+    (private):
+      - eTag
+    (key):
+      parentRecordId: listReference.inContextOfRecordId
+      relatedListName: listReference.relatedListId
   PicklistValuesRepresentation:
     (ttl): 300000
     (integrity):
@@ -399,6 +405,21 @@ types:
             optionalFields: SalesforceFieldIdArray
             recordTypeId: SalesforceRecordId18
             formFactor: SalesforceFormFactor
+  '/related-list-count':
+    '/batch/{parentRecordId}/{relatedListNames}':
+      get:
+        (adapter):
+          name: getRelatedListsCount
+        (key):
+          parentRecordId: urlParams.parentRecordId
+          relatedListNames: urlParams.relatedListNames
+    '/{parentRecordId}/{relatedListName}':
+      get:
+        (adapter):
+          name: getRelatedListCount
+        (key):
+          parentRecordId: urlParams.parentRecordId
+          relatedListName: urlParams.relatedListName
   '/related-list-info':
     '/{parentObjectApiName}':
       get:

@@ -64,6 +64,14 @@ export {
     getRelatedListsInfoNativeAdapterFactory as GetRelatedListsInfo_Native,
 } from './generated/adapters/getRelatedListsInfo';
 export {
+    getRelatedListCountAdapterFactory as GetRelatedListCount,
+    getRelatedListCountNativeAdapterFactory as GetRelatedListCount_Native,
+} from './generated/adapters/getRelatedListCount';
+export {
+    getRelatedListsCountAdapterFactory as GetRelatedListsCount,
+    getRelatedListsCountNativeAdapterFactory as GetRelatedListsCount_Native,
+} from './generated/adapters/getRelatedListsCount';
+export {
     getRelatedListRecordActionsAdapterFactory as GetRelatedListRecordActions,
     getRelatedListRecordActionsNativeAdapterFactory as GetRelatedListRecordActions_Native,
 } from './generated/adapters/getRelatedListRecordActions';

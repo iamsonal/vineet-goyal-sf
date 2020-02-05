@@ -2371,6 +2371,43 @@ types:
         type: array
         items:
           type: string
+  BatchRelatedListCountRepresentation: #TODO: Handrolled
+    description: BatchRelatedListCountRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      hasErrors: string | nil
+      results:
+        description: Collection of batch result items. One for each request input.
+        type: array
+        items:
+          type: RelatedListRecordCountResultRepresentation
+  RelatedListRecordCountResultRepresentation: #TODO: Handrolled
+    description: RelatedListRecordCountResultRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      result:
+        description: object wrapper around inner representation
+        type: RelatedListRecordCountRepresentation
+      statusCode:
+        description: An HTTP status code indicating the status of this individual request in the batch.
+        type: integer
+  RelatedListRecordCountRepresentation:
+    description: RelatedListRecordCountRepresentation
+    discriminator: ''
+    type: object
+    properties:
+      count:
+        description: How many items are in the given list.
+        type: integer | nil # TODO: "nil" union hand rolled
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      listReference:
+        description: An object representing the identity of the list.
+        type: RelatedListReferenceRepresentation
   RelatedListReferenceRepresentation:
     description: RelatedListReferenceRepresentation
     discriminator: ''
@@ -4643,6 +4680,39 @@ types:
           type: string
           required: true
         relationshipName:
+          type: string
+          required: true
+  /related-list-count:
+    /batch/{parentRecordId}/{relatedListNames}:
+      get:
+        description: Retrieve a batch of record counts.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: BatchRelatedListCountRepresentation #TODO: Handrolled
+      uriParameters:
+        parentRecordId:
+          type: string
+          required: true
+        relatedListNames:
+          type: string #TODO: Hand rolled
+          required: true
+    /{parentRecordId}/{relatedListName}:
+      get:
+        description: Retrieve record counts.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RelatedListRecordCountRepresentation
+      uriParameters:
+        parentRecordId:
+          type: string
+          required: true
+        relatedListName:
           type: string
           required: true
   /related-list-info:

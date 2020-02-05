@@ -29,6 +29,8 @@ describe('Main exports', () => {
         'getRelatedListInfo',
         'getRelatedListInfos',
         'getRelatedListRecords',
+        'getRelatedListCount',
+        'getRelatedListsCount',
         'getApexInvoker',
         'getSObjectValue',
     ].forEach(moduleName => {

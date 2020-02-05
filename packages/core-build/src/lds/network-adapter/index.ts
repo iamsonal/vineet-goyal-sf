@@ -61,8 +61,11 @@ import {
     getRelatedListInfo,
     getRelatedListInfos,
     getRelatedListRecords,
+    getRelatedListCount,
+    getRelatedListsCount,
     UIAPI_RELATED_LIST_INFO_PATH,
     UIAPI_RELATED_LIST_RECORDS_PATH,
+    UIAPI_RELATED_LIST_COUNT_PATH,
 } from './middlewares/uiapi-relatedlist';
 
 interface RequestHandlers {
@@ -199,6 +202,15 @@ function controllerInvokerFactory(resourceRequest: ResourceRequest): ControllerI
 
             if (path.startsWith(UIAPI_RELATED_LIST_RECORDS_PATH)) {
                 return getRelatedListRecords;
+            }
+
+            if (path.startsWith(UIAPI_RELATED_LIST_COUNT_PATH)) {
+                // related-list-count/batch/parentRecordId/relatedListNames
+                if (path.startsWith(UIAPI_RELATED_LIST_COUNT_PATH + '/batch')) {
+                    return getRelatedListsCount;
+                }
+                // related-list-count/parentRecordId/relatedListName
+                return getRelatedListCount;
             }
 
             break;

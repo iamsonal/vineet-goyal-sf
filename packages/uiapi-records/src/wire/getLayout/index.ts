@@ -29,7 +29,7 @@ const getLayout_ConfigPropertyNames: AdapterValidationConfig = {
     },
 };
 
-function requestLayout(
+export function buildNetworkSnapshot(
     lds: LDS,
     config: GetLayoutConfigWithDefaults,
     requestOverride?: ResourceRequestOverride
@@ -78,7 +78,7 @@ function requestLayout(
     );
 }
 
-function cache(lds: LDS, config: GetLayoutConfigWithDefaults) {
+export function buildInMemorySnapshot(lds: LDS, config: GetLayoutConfigWithDefaults) {
     const { recordTypeId, layoutType, mode } = config;
     const key = recordLayoutRepresentationKeyBuilder({
         apiName: config.objectApiName,
@@ -128,14 +128,14 @@ export const factory: AdapterFactory<GetLayoutConfig, RecordLayoutRepresentation
                 return null;
             }
 
-            const snapshot = cache(lds, config);
+            const snapshot = buildInMemorySnapshot(lds, config);
 
             // Cache hit
             if (isFulfilledSnapshot(snapshot)) {
                 return snapshot;
             }
 
-            return requestLayout(lds, config);
+            return buildNetworkSnapshot(lds, config);
         },
         (untrusted: unknown) => {
             const config = coerceConfigWithDefaults(untrusted);
@@ -143,7 +143,7 @@ export const factory: AdapterFactory<GetLayoutConfig, RecordLayoutRepresentation
                 throw new Error('Refresh should not be called with partial configuration');
             }
 
-            return requestLayout(lds, config, {
+            return buildNetworkSnapshot(lds, config, {
                 headers: {
                     'Cache-Control': 'no-cache',
                 },

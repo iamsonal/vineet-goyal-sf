@@ -80,7 +80,7 @@ function selectAvatars(recordIds: string[]): PathSelection[] {
 // the same top level object
 const KEY = `${keyPrefix}RecordAvatarsBulk`;
 
-function cache(lds: LDS, config: GetRecordAvatarsConfig) {
+export function buildInMemorySnapshot(lds: LDS, config: GetRecordAvatarsConfig) {
     const sel = selectAvatars(config.recordIds);
     return lds.storeLookup<RecordAvatarBulkRepresentation>({
         recordId: KEY,
@@ -99,7 +99,11 @@ function cache(lds: LDS, config: GetRecordAvatarsConfig) {
  * This list will be a subset of the recordIds that are on the adapter config.
  *
  */
-function network(lds: LDS, config: GetRecordAvatarsConfig, recordIds: string[]) {
+export function buildNetworkSnapshot(
+    lds: LDS,
+    config: GetRecordAvatarsConfig,
+    recordIds: string[]
+) {
     const resourceRequest = getUiApiRecordAvatarsBatchByRecordIds({
         urlParams: {
             recordIds,
@@ -127,7 +131,7 @@ function network(lds: LDS, config: GetRecordAvatarsConfig, recordIds: string[]) 
 
             lds.storeIngest<RecordAvatarBulkRepresentation>(KEY, resourceRequest, formatted);
             lds.storeBroadcast();
-            return cache(lds, config);
+            return buildInMemorySnapshot(lds, config);
         },
         (err: FetchResponse<unknown>) => {
             lds.storeIngestFetchResponse(KEY, err);
@@ -163,7 +167,7 @@ export const factory: AdapterFactory<GetRecordAvatarsConfig, RecordAvatarBulkRep
             if (config === null) {
                 return null;
             }
-            const cacheLookup = cache(lds, config);
+            const cacheLookup = buildInMemorySnapshot(lds, config);
 
             // CACHE HIT
             if (isFulfilledSnapshot(cacheLookup)) {
@@ -174,7 +178,7 @@ export const factory: AdapterFactory<GetRecordAvatarsConfig, RecordAvatarBulkRep
             // Only fetch avatars that are missing
             const recordIds = getRecordIds(config, cacheLookup);
 
-            return network(lds, config, recordIds);
+            return buildNetworkSnapshot(lds, config, recordIds);
         },
         (untrusted: unknown) => {
             const config = validateAdapterConfig(untrusted, getRecordAvatars_ConfigPropertyNames);
@@ -182,7 +186,7 @@ export const factory: AdapterFactory<GetRecordAvatarsConfig, RecordAvatarBulkRep
                 throw new Error('Refresh should not be called with partial configuration');
             }
 
-            return network(lds, config, config.recordIds);
+            return buildNetworkSnapshot(lds, config, config.recordIds);
         }
     );
 };

@@ -2,7 +2,10 @@ import { AdapterFactory, LDS, Snapshot } from '@ldsjs/engine';
 import { AdapterValidationConfig, refreshable } from '../../generated/adapters/adapter-utils';
 import { GetRecordConfig, validateAdapterConfig } from '../../generated/adapters/getRecord';
 import { RecordRepresentation } from '../../generated/types/RecordRepresentation';
-import { getRecordByFields, network as getRecordByFieldsNetwork } from './GetRecordFields';
+import {
+    getRecordByFields,
+    buildNetworkSnapshot as getRecordByFieldsNetwork,
+} from './GetRecordFields';
 import {
     getRecordLayoutType,
     GetRecordLayoutTypeConfig,

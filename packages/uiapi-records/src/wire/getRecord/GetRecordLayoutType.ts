@@ -18,8 +18,14 @@ import { RecordLayoutFragment, getRecordTypeId } from '../../util/records';
 import { getQualifiedFieldApiNamesFromLayout } from '../../util/layouts';
 import { isErrorSnapshot, isFulfilledSnapshot, isUnfulfilledSnapshot } from '../../util/snapshot';
 import { dedupe } from '../../validation/utils';
-import { factory as getRecordUiFactory, network as getRecordUiNetwork } from '../getRecordUi';
-import { cache as getRecordByFieldsCache, getRecordByFields } from './GetRecordFields';
+import {
+    factory as getRecordUiFactory,
+    buildNetworkSnapshot as getRecordUiNetwork,
+} from '../getRecordUi';
+import {
+    buildInMemorySnapshot as getRecordByFieldsCache,
+    getRecordByFields,
+} from './GetRecordFields';
 
 const DEFAULT_MODE = LayoutMode.View;
 

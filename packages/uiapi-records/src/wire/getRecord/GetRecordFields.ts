@@ -31,7 +31,7 @@ function buildRecordSelector(
     };
 }
 
-export function network(lds: LDS, config: GetRecordConfig) {
+export function buildNetworkSnapshot(lds: LDS, config: GetRecordConfig) {
     const { recordId, fields } = config;
 
     // Should this go into the coersion logic?
@@ -76,7 +76,7 @@ export function network(lds: LDS, config: GetRecordConfig) {
 }
 
 // used by getRecordLayoutType#refresh
-export function cache(lds: LDS, config: GetRecordConfig) {
+export function buildInMemorySnapshot(lds: LDS, config: GetRecordConfig) {
     const fields = config.fields === undefined ? [] : config.fields;
     const optionalFields = config.optionalFields === undefined ? [] : config.optionalFields;
 
@@ -88,10 +88,10 @@ export function getRecordByFields(
     lds: LDS,
     config: GetRecordConfig
 ): Snapshot<RecordRepresentation> | Promise<Snapshot<RecordRepresentation>> {
-    const snapshot = cache(lds, config);
+    const snapshot = buildInMemorySnapshot(lds, config);
     if (isFulfilledSnapshot(snapshot) || isErrorSnapshot(snapshot)) {
         return snapshot;
     }
 
-    return network(lds, config);
+    return buildNetworkSnapshot(lds, config);
 }

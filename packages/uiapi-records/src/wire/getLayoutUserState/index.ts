@@ -68,7 +68,7 @@ export function coerceConfigWithDefaults(
     };
 }
 
-export function cache(lds: LDS, config: GetLayoutUserStateConfigWithDefaults) {
+export function buildInMemorySnapshot(lds: LDS, config: GetLayoutUserStateConfigWithDefaults) {
     const { objectApiName, recordTypeId, layoutType, mode } = config;
     const key = keyBuilder({
         apiName: objectApiName,
@@ -84,7 +84,7 @@ export function cache(lds: LDS, config: GetLayoutUserStateConfigWithDefaults) {
     });
 }
 
-export function network(lds: LDS, config: GetLayoutUserStateConfigWithDefaults) {
+export function buildNetworkSnapshot(lds: LDS, config: GetLayoutUserStateConfigWithDefaults) {
     const { recordTypeId, layoutType, mode, objectApiName } = config;
     const key = keyBuilder({
         apiName: objectApiName,
@@ -112,7 +112,7 @@ export function network(lds: LDS, config: GetLayoutUserStateConfigWithDefaults) 
             body.mode = mode;
             lds.storeIngest<RecordLayoutUserStateRepresentation>(key, request, body);
             lds.storeBroadcast();
-            return cache(lds, config);
+            return buildInMemorySnapshot(lds, config);
         },
         (error: FetchResponse<unknown>) => {
             lds.storeIngestFetchResponse(key, error);
@@ -133,20 +133,20 @@ export const factory: AdapterFactory<
                 return null;
             }
 
-            const cacheSnapshot = cache(lds, config);
+            const cacheSnapshot = buildInMemorySnapshot(lds, config);
             // Cache Hit
             if (isFulfilledSnapshot(cacheSnapshot)) {
                 return cacheSnapshot;
             }
 
-            return network(lds, config);
+            return buildNetworkSnapshot(lds, config);
         },
         (untrustedConfig: unknown) => {
             const config = coerceConfigWithDefaults(untrustedConfig);
             if (config === null) {
                 throw new Error('Refresh should not be called with partial configuration');
             }
-            return network(lds, config);
+            return buildNetworkSnapshot(lds, config);
         }
     );
 };

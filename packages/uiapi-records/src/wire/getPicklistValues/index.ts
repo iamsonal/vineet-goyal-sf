@@ -21,7 +21,7 @@ export interface GetPicklistValuesConfig {
 
 export const path = picklistValuesRepresentationSelect().selections;
 
-function network(lds: LDS, config: GetPicklistValuesConfig) {
+export function buildNetworkSnapshot(lds: LDS, config: GetPicklistValuesConfig) {
     const { recordTypeId, fieldApiName } = config;
     const fieldNames = getFieldId(fieldApiName);
     const request = getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName({
@@ -39,7 +39,7 @@ function network(lds: LDS, config: GetPicklistValuesConfig) {
 
             lds.storeIngest(key, request, body);
             lds.storeBroadcast();
-            return cache(lds, config);
+            return buildInMemorySnapshot(lds, config);
         },
         (err: FetchResponse<unknown>) => {
             lds.storeIngestFetchResponse(key, err);
@@ -49,7 +49,7 @@ function network(lds: LDS, config: GetPicklistValuesConfig) {
     );
 }
 
-function cache(lds: LDS, config: GetPicklistValuesConfig) {
+export function buildInMemorySnapshot(lds: LDS, config: GetPicklistValuesConfig) {
     const fieldNames = getFieldId(config.fieldApiName);
     const request = getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName({
         urlParams: {
@@ -88,12 +88,12 @@ export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepr
                 return null;
             }
 
-            const snapshot = cache(lds, config);
+            const snapshot = buildInMemorySnapshot(lds, config);
             if (isFulfilledSnapshot(snapshot)) {
                 return snapshot;
             }
 
-            return network(lds, config);
+            return buildNetworkSnapshot(lds, config);
         },
         (untrusted: unknown) => {
             const config = validateAdapterConfig(untrusted, picklistValuesConfigPropertyNames);
@@ -101,7 +101,7 @@ export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepr
                 throw new Error('Refresh should not be called with partial configuration');
             }
 
-            return network(lds, config);
+            return buildNetworkSnapshot(lds, config);
         }
     );
 };

@@ -86,7 +86,7 @@ export function buildInMemorySnapshot(
     return lds.storeLookup<ListViewSummaryCollectionRepresentation>(selector);
 }
 
-function buildNetworkSnapshot(
+export function buildNetworkSnapshot(
     lds: LDS,
     config: GetListViewSummaryCollectionConfig,
     snapshot?: Snapshot<ListViewSummaryCollectionRepresentation>

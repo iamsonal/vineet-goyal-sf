@@ -138,7 +138,7 @@ function coerceConfigWithDefaults(untrusted: unknown): GetLookupRecordsConfig | 
     };
 }
 
-function network(lds: LDS, config: GetLookupRecordsConfig) {
+export function buildNetworkSnapshot(lds: LDS, config: GetLookupRecordsConfig) {
     const { objectApiName, fieldApiName, targetApiName } = config;
     const request = getLookupRecordsResourceRequest({
         urlParams: {
@@ -184,7 +184,7 @@ function network(lds: LDS, config: GetLookupRecordsConfig) {
     );
 }
 
-function cache(lds: LDS, config: GetLookupRecordsConfig) {
+export function buildInMemorySnapshot(lds: LDS, config: GetLookupRecordsConfig) {
     const request = getLookupRecordsResourceRequest({
         urlParams: {
             objectApiName: config.objectApiName,
@@ -231,19 +231,19 @@ export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRep
             if (config === null) {
                 return null;
             }
-            const cacheSnapshot = cache(lds, config);
+            const cacheSnapshot = buildInMemorySnapshot(lds, config);
             if (cacheSnapshot !== null) {
                 return cacheSnapshot;
             }
 
-            return network(lds, config);
+            return buildNetworkSnapshot(lds, config);
         },
         (untrusted: unknown) => {
             const config = coerceConfigWithDefaults(untrusted);
             if (config === null) {
                 throw new Error('Refresh should not be called with partial configuration');
             }
-            return network(lds, config);
+            return buildNetworkSnapshot(lds, config);
         }
     );
 };

@@ -115,7 +115,7 @@ function keyBuilder(
     return `${keyPrefix}RecordUiRepresentation:${joinedRecordIds}:${joinedLayoutTypes}:${joinedModes}:${joinedOptionalFields}`;
 }
 
-function cache(
+export function buildInMemorySnapshot(
     lds: LDS,
     config: GetRecordUiConfigWithDefaults
 ): Snapshot<RecordUiRepresentation> | null {
@@ -195,7 +195,7 @@ function getSelectorNode(lds: LDS, key: string): null | Selector {
     return null;
 }
 
-export function network(lds: LDS, config: GetRecordUiConfigWithDefaults) {
+export function buildNetworkSnapshot(lds: LDS, config: GetRecordUiConfigWithDefaults) {
     const { recordIds, layoutTypes, modes, optionalFields } = config;
 
     // TODO: a better hash function for config -> configKey
@@ -364,12 +364,12 @@ export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> 
                 return null;
             }
 
-            const cacheSnapshot = cache(lds, config);
+            const cacheSnapshot = buildInMemorySnapshot(lds, config);
             if (cacheSnapshot !== null && isFulfilledSnapshot(cacheSnapshot)) {
                 return cacheSnapshot;
             }
 
-            return network(lds, config);
+            return buildNetworkSnapshot(lds, config);
         },
         (untrustedConfig: unknown) => {
             const config = coerceConfigWithDefaults(untrustedConfig);
@@ -377,7 +377,7 @@ export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> 
                 throw new Error('Refresh should not be called with partial configuration');
             }
 
-            return network(lds, config);
+            return buildNetworkSnapshot(lds, config);
         }
     );
 };

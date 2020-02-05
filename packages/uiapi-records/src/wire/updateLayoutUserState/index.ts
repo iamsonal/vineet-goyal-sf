@@ -2,7 +2,7 @@ import { deepFreeze } from '../../util/deep-freeze';
 import { Snapshot, LDS, FetchResponse, ResourceRequest } from '@ldsjs/engine';
 import { RecordLayoutUserStateInputRepresentation } from '../../generated/types/RecordLayoutUserStateInputRepresentation';
 import {
-    cache as cacheLookupGetLayoutUserState,
+    buildInMemorySnapshot as cacheLookupGetLayoutUserState,
     GetLayoutUserStateConfigWithDefaults,
     coerceConfigWithDefaults as coerceGetLayoutUserStateConfigWithDefaults,
 } from '../getLayoutUserState';

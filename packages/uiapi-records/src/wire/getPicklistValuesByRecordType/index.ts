@@ -35,7 +35,7 @@ function select(picklistNames: string[]): PathSelection[] {
     ];
 }
 
-function network(lds: LDS, config: GetPicklistValuesConfig) {
+export function buildNetworkSnapshot(lds: LDS, config: GetPicklistValuesConfig) {
     const { objectApiName, recordTypeId } = config;
     const request = getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeId({
         urlParams: {
@@ -74,7 +74,7 @@ function network(lds: LDS, config: GetPicklistValuesConfig) {
     );
 }
 
-function cache(lds: LDS, config: GetPicklistValuesConfig) {
+export function buildInMemorySnapshot(lds: LDS, config: GetPicklistValuesConfig) {
     const request = getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeId({
         urlParams: {
             objectApiName: config.objectApiName,
@@ -121,12 +121,12 @@ export const factory: AdapterFactory<
                 return null;
             }
 
-            const snapshot = cache(lds, config);
+            const snapshot = buildInMemorySnapshot(lds, config);
             if (snapshot !== null) {
                 return snapshot;
             }
 
-            return network(lds, config);
+            return buildNetworkSnapshot(lds, config);
         },
         (untrusted: unknown) => {
             const config = validateAdapterConfig(
@@ -137,7 +137,7 @@ export const factory: AdapterFactory<
                 throw new Error('Refresh should not be called with partial configuration');
             }
 
-            return network(lds, config);
+            return buildNetworkSnapshot(lds, config);
         }
     );
 };

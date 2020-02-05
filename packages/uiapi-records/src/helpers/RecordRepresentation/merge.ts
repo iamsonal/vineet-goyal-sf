@@ -3,7 +3,7 @@ import {
     RecordRepresentationNormalized,
     RecordRepresentation,
 } from '../../generated/types/RecordRepresentation';
-import { network as getRecordFieldsNetwork } from '../../wire/getRecord/GetRecordFields';
+import { buildNetworkSnapshot as getRecordFieldsNetwork } from '../../wire/getRecord/GetRecordFields';
 import {
     extractTrackedFields,
     isGraphNode,

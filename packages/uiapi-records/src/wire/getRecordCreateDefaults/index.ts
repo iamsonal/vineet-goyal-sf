@@ -43,7 +43,7 @@ function buildSelector(resp: RecordDefaultsRepresentation): PathSelection[] {
 
 type GetRecordCreateDefaultsConfigWithDefaults = Required<GetRecordCreateDefaultsConfig>;
 
-function network(lds: LDS, config: GetRecordCreateDefaultsConfigWithDefaults) {
+export function buildNetworkSnapshot(lds: LDS, config: GetRecordCreateDefaultsConfigWithDefaults) {
     const { formFactor, optionalFields, recordTypeId } = config;
     const request = getUiApiRecordDefaultsCreateByObjectApiName({
         urlParams: {
@@ -121,7 +121,7 @@ function coerceConfigWithDefaults(
     };
 }
 
-function cache(lds: LDS, config: GetRecordCreateDefaultsConfigWithDefaults) {
+export function buildInMemorySnapshot(lds: LDS, config: GetRecordCreateDefaultsConfigWithDefaults) {
     const { formFactor, optionalFields, recordTypeId } = config;
     const request = getUiApiRecordDefaultsCreateByObjectApiName({
         urlParams: {
@@ -181,11 +181,11 @@ export const factory: AdapterFactory<
                 return null;
             }
 
-            const snapshot = cache(lds, config);
+            const snapshot = buildInMemorySnapshot(lds, config);
             if (snapshot !== null) {
                 return snapshot;
             }
-            return network(lds, config);
+            return buildNetworkSnapshot(lds, config);
         },
         (untrusted: unknown) => {
             const config = coerceConfigWithDefaults(untrusted);
@@ -193,7 +193,7 @@ export const factory: AdapterFactory<
                 throw new Error('Refresh should not be called with partial configuration');
             }
 
-            return network(lds, config);
+            return buildNetworkSnapshot(lds, config);
         }
     );
 };

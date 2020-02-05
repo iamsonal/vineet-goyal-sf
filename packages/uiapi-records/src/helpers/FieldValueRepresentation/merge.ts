@@ -12,7 +12,7 @@ export default function merge(
         return incoming;
     }
 
-    // TODO: (W-) add the work item # once the UISDK creates a WI for long term fix.
+    // TODO: (W-7164913) remove once UISDK is done with a long term fix.
     // Temporary fix for the issue that non-null displayValue gets replaced by null.
     if (incoming.displayValue === null && existing.displayValue !== null) {
         incoming.displayValue = existing.displayValue;

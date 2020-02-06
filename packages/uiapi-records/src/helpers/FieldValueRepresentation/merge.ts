@@ -14,7 +14,12 @@ export default function merge(
 
     // TODO: (W-7164913) remove once UISDK is done with a long term fix.
     // Temporary fix for the issue that non-null displayValue gets replaced by null.
-    if (incoming.displayValue === null && existing.displayValue !== null) {
+    // If displayValue and value are both null, it means the field is empty.
+    if (
+        incoming.displayValue === null &&
+        incoming.value !== null &&
+        existing.displayValue !== null
+    ) {
         incoming.displayValue = existing.displayValue;
     }
 

@@ -1,9 +1,10 @@
 import {
+    clone,
     getMock as globalGetMock,
     mockNetworkOnce as globalMockNetworkOnce,
     setupElement,
 } from 'test-util';
-import { mockGetRecordNetwork } from 'uiapi-test-util';
+import { expireRecords, mockGetRecordNetwork } from 'uiapi-test-util';
 
 import { karmaNetworkAdapter } from 'lds';
 import sinon from 'sinon';
@@ -57,5 +58,42 @@ describe('merge fields', () => {
         await setupElement(listConfig, GetListUi);
         // verify that the displayValue is not replaced by null.
         expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(expectedRecordData);
+    });
+
+    it('should replace with null displayValue if the field is changed to empty', async () => {
+        const ownerNameRecordData = getMock('record-Case-fields-Case.CaseNumber,Case.Owner.Name');
+        const recordId = ownerNameRecordData.id;
+        const ownerNameRecordConfig = {
+            recordId,
+            fields: ['Case.CaseNumber', 'Case.Owner.Name'],
+        };
+        mockGetRecordNetwork(ownerNameRecordConfig, ownerNameRecordData);
+
+        const updatedRecordData = getMock('record-Case-fields-Case.CaseNumber,Case.Owner.Name');
+        updatedRecordData.fields.Owner = {
+            displayValue: null,
+            value: null,
+        };
+
+        const networkParams = {
+            ...ownerNameRecordConfig,
+            optionalFields: ['Case.Owner.Id', 'Case.OwnerId'],
+        };
+        mockGetRecordNetwork(networkParams, updatedRecordData);
+
+        // remove fields for which the wire doesn't ask
+        const expectedRecordData = getMock('record-Case-fields-Case.CaseNumber,Case.Owner.Name');
+        delete expectedRecordData.fields.OwnerId;
+        delete expectedRecordData.fields.Owner.value.fields.Id;
+
+        const wireA = await setupElement(ownerNameRecordConfig, RecordFields);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(expectedRecordData);
+
+        const expectedUpdatedData = clone(updatedRecordData);
+        delete expectedUpdatedData.fields.OwnerId;
+
+        expireRecords();
+        await setupElement(ownerNameRecordConfig, RecordFields);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(expectedUpdatedData);
     });
 });

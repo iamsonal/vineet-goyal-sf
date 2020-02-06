@@ -11,12 +11,6 @@ env_perf: &env_perf
   environment:
     - GIT_APP_CERT_PATH: ~/lds-lp/git_app.pem
 
-env_test: &env_test
-  <<: *env_default
-  environment:
-    - SAUCE_USERNAME: lwc_ci
-    - SAUCE_KEY: ca71d9ad-af28-4c2b-abf7-1ddaa87fed36
-
 # Commands definitions
 # ====================
 
@@ -170,7 +164,7 @@ jobs:
       - *store_unit_tests_coverage
 
   test_integration:
-    <<: *env_test
+    <<: *env_default
     steps:
       - *load_workspace
 

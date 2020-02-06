@@ -7,8 +7,11 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const REPO_ROOT = path.resolve(__dirname, '../../');
-const REPO_LDS_PATH = path.resolve(REPO_ROOT, 'dist/lds.js');
-const REPO_LDS_NATIVE_PROXY_PATH = path.resolve(REPO_ROOT, 'dist/ldsNativeProxy.js');
+const REPO_LDS_PATH = path.resolve(REPO_ROOT, 'packages/core-build/dist/lds.js');
+const REPO_LDS_NATIVE_PROXY_PATH = path.resolve(
+    REPO_ROOT,
+    'packages/core-build/dist/ldsNativeProxy.js'
+);
 const REPO_LDS_STATIC_FUNCTIONS_PATH = path.resolve(
     REPO_ROOT,
     'packages/core-build/dist/lds-static-functions.js'

@@ -36,6 +36,7 @@ const whiteList = [
     'updateRecordAvatar',
     'getRecordEditActions',
     'getRelatedListInfos',
+    'getRelatedListsInfo',
     'getRelatedListRecords',
     'getRelatedListRecordActions',
     'getRelatedListCount',

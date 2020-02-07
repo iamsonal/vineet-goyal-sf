@@ -59,7 +59,7 @@ import {
 } from './middlewares/uiapi-records';
 import {
     getRelatedListInfo,
-    getRelatedListInfos,
+    getRelatedListsInfo,
     getRelatedListRecords,
     getRelatedListCount,
     getRelatedListsCount,
@@ -197,7 +197,7 @@ function controllerInvokerFactory(resourceRequest: ResourceRequest): ControllerI
                 if (/related-list-info\/[a-zA-Z_\d]+\/[a-zA-Z_\d]+/.test(path)) {
                     return getRelatedListInfo;
                 }
-                return getRelatedListInfos;
+                return getRelatedListsInfo;
             }
 
             if (path.startsWith(UIAPI_RELATED_LIST_RECORDS_PATH)) {

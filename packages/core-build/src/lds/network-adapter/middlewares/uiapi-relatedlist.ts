@@ -4,7 +4,7 @@ import { buildUiApiParams, dispatchAction } from './utils';
 
 enum UiApiRecordController {
     GetRelatedListInfo = 'RelatedListUiController.getRelatedListInfoByApiName',
-    GetRelatedListInfos = 'RelatedListUiController.getRelatedListInfoCollection',
+    GetRelatedListsInfo = 'RelatedListUiController.getRelatedListInfoCollection',
     GetRelatedListRecords = 'RelatedListUiController.getRelatedListRecords',
     GetRelatedListCount = 'RelatedListUiController.getRelatedListRecordCount',
     GetRelatedListCounts = 'RelatedListUiController.getRelatedListsRecordCount',
@@ -29,7 +29,7 @@ export function getRelatedListInfo(resourceRequest: ResourceRequest): Promise<an
     return dispatchAction(UiApiRecordController.GetRelatedListInfo, params);
 }
 
-export function getRelatedListInfos(resourceRequest: ResourceRequest): Promise<any> {
+export function getRelatedListsInfo(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams, queryParams } = resourceRequest;
 
     const params = buildUiApiParams(
@@ -40,7 +40,7 @@ export function getRelatedListInfos(resourceRequest: ResourceRequest): Promise<a
         resourceRequest
     );
 
-    return dispatchAction(UiApiRecordController.GetRelatedListInfos, params);
+    return dispatchAction(UiApiRecordController.GetRelatedListsInfo, params);
 }
 
 export function getRelatedListRecords(resourceRequest: ResourceRequest): Promise<any> {

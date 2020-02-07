@@ -21,6 +21,7 @@ import {
     GetRelatedListActions_Native,
     GetRelatedListInfo_Native,
     GetRelatedListInfos_Native,
+    GetRelatedListsInfo_Native,
     GetRelatedListRecordActions_Native,
     GetRelatedListRecords_Native,
     GetRelatedListCount_Native,
@@ -58,6 +59,7 @@ export const getRecordUi = ldsNative.register(GetRecordUi_Native);
 export const getRelatedListActions = ldsNative.register(GetRelatedListActions_Native);
 export const getRelatedListInfo = ldsNative.register(GetRelatedListInfo_Native);
 export const getRelatedListInfos = ldsNative.register(GetRelatedListInfos_Native);
+export const getRelatedListsInfo = ldsNative.register(GetRelatedListsInfo_Native);
 export const getRelatedListRecordActions = ldsNative.register(GetRelatedListRecordActions_Native);
 export const getRelatedListRecords = ldsNative.register(GetRelatedListRecords_Native);
 export const getRelatedListCount = ldsNative.register(GetRelatedListCount_Native);

@@ -26,6 +26,7 @@ export const getRelatedListRecords = lds.getRelatedListRecords;
 export const getRecordEditActions = lds.getRecordEditActions;
 export const getRelatedListActions = lds.getRelatedListActions;
 export const getRelatedListInfos = lds.getRelatedListInfos;
+export const getRelatedListsInfo = lds.getRelatedListsInfo;
 export const getRelatedListRecordActions = lds.getRelatedListRecordActions;
 export const getRelatedListCount = lds.getRelatedListCount;
 export const getRelatedListsCount = lds.getRelatedListsCount;

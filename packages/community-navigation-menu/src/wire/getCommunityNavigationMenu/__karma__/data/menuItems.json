@@ -1,0 +1,12 @@
+{
+    "menuItems": [
+        {
+            "imageUrl": "something",
+            "label": "Something",
+            "subMenu": [],
+            "target": "CurrentWindow",
+            "url": "/blah",
+            "urlType": "ExternalLink"
+        }
+    ]
+}

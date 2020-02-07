@@ -1,0 +1,105 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '49.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v49.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  NavigationMenuItemCollectionRepresentation:
+    description: Navigation Menu Item Collection
+    type: object
+    properties:
+      menuItems:
+        description: Returns list of Navigation menu Items
+        type: array
+        items:
+          type: NavigationMenuItemRepresentation
+  NavigationMenuItemRepresentation:
+    description: Navigation Menu Item Representation
+    type: object
+    properties:
+      imageUrl:
+        description: Returns the image url for Navigation Menu item
+        type: string
+      label:
+        description: Returns the label for Navigation Menu item
+        type: string
+      subMenu:
+        description: Returns the sub-menu for Navigation Menu Item
+        type: array
+        items:
+          type: NavigationMenuItemRepresentation
+      target:
+        description: Returns the target SameWindow/NewWindow for Navigation Menu item
+        type: string
+        enum:
+          - CurrentWindow
+          - NewWindow
+      url:
+        description: Returns the route url for Navigation Menu item
+        type: string
+      urlType:
+        description: Returns the url type of Navigation Menu Item
+        type: string
+        enum:
+          - ExternalLink
+          - InternalLink
+/connect/communities/{communityId}/navigation-menu/navigation-menu-items:
+  get:
+    description: Get all the navigation menu items
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: NavigationMenuItemCollectionRepresentation
+    queryParameters:
+      addHomeMenuItem:
+        type: boolean
+        required: false
+      includeImageUrl:
+        type: boolean
+        required: false
+      menuItemTypesToSkip:
+        type: array
+        required: false
+        items:
+          type: string
+          enum:
+            - ExternalLink
+            - GlobalAction
+            - InternalLink
+            - MenuLabel
+            - NavigationalTopic
+            - SalesforceObject
+          (oas-collectionFormat): csv
+      navigationLinkSetId:
+        type: string
+        required: false
+      publishStatus:
+        type: string
+        required: false
+  uriParameters:
+    communityId:
+      type: string
+      required: true

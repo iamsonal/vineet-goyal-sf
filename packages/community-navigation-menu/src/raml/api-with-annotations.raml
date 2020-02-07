@@ -1,0 +1,14 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+annotationTypes: !include lds://annotations.raml
+
+(keyPrefix): 'CommunityNavigation::'
+
+types:
+  NavigationMenuItemCollectionRepresentation:
+    (opaque): true
+
+/connect/communities/{communityId}/navigation-menu/navigation-menu-items:
+  get:
+    (adapter):
+      name: getCommunityNavigationMenu

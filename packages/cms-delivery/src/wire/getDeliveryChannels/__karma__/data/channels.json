@@ -1,0 +1,20 @@
+{
+    "channels": [
+        {
+            "channelId": "1",
+            "channelName": "foo",
+            "channelType": "Community",
+            "isChannelSearchable": true
+        },
+        {
+            "channelId": "1",
+            "channelName": "foo",
+            "channelType": "CloudToCloud",
+            "isChannelSearchable": true
+        }
+    ],
+    "currentPageUrl": "blah",
+    "nextPageUrl": "/blah2",
+    "previousPageUrl": "/foo",
+    "totalChannels": 2
+}

@@ -1,0 +1,1191 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '49.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v49.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  ManagedContentAssociationsInputRep:
+    description: "Input Representation for associations for managed content. Describes\
+      \ how \n * a ManagedContent is organized. Examples are the list of topics that\
+      \ are \n * assigned to a ManagedContent and the folders in which the ManagedContent\
+      \ is placed. "
+    type: object
+    properties:
+      topics:
+        description: The names of topics to associate the Managed Content with. Set to empty to remove all topic associations from the Managed Content.
+        type: array
+        items:
+          type: string
+  ManagedContentAssociationsRepresentation:
+    description: The Managed Content Associations, e.g. topic associations, describing how this Managed Content is organized and discoverable
+    discriminator: ''
+    type: object
+    properties:
+      topics:
+        description: A collection of topics associated with this Managed Content.
+        type: array
+        items:
+          type: TopicSummaryRepresentation
+  ManagedContentBodyInputRep:
+    description: Input representation for the body of a managed content.
+    type: object
+    properties:
+      nodeMap:
+        description: The body of the managed content version.
+        type: object
+        properties:
+          //:
+            type: object
+  ManagedContentChannelCollectionRepresentation:
+    description: Collection of Managed Content Channels
+    discriminator: ''
+    type: object
+    properties:
+      channels:
+        description: Manage Content Channel records corresponding to the current page
+        type: array
+        items:
+          type: ManagedContentChannelRepresentation
+      currentPageUrl:
+        description: URL to the current page of Manage Content Channels. The default is 25 managed content channels per page.
+        type: string
+      nextPageUrl:
+        description: URL to the next page of Manage Content Channels. The default is 25 managed content channels per page.
+        type: string
+      previousPageUrl:
+        description: URL to the previous page of Managed Content Channel records. The default is 25 channels per page.
+        type: string
+      totalChannels:
+        description: Total count of Manage Content Channel records returned for the current request
+        type: integer
+  ManagedContentChannelInputRepresentation:
+    description: The input representation for a Managed Content Channel
+    type: object
+    properties:
+      channelName:
+        description: Name of the Managed Content Channel
+        type: string
+      channelTarget:
+        description: Target of the Managed Content Channel
+        type: string
+      channelType:
+        description: Type of the Managed Content Channel
+        type: string
+        enum:
+          - CloudToCloud
+          - Community
+          - ConnectedApp
+      isChannelSearchable:
+        description: Enablement of Text Search of Channel's Contents
+        type: boolean
+  ManagedContentChannelRepresentation:
+    description: Details of a Managed Content Channel
+    discriminator: ''
+    type: object
+    properties:
+      channelId:
+        description: Id of the Managed Content Channel
+        type: string
+      channelName:
+        description: Name of the Managed Content Channel
+        type: string
+      channelType:
+        description: Type of Managed Content Channel
+        type: string
+        enum:
+          - CloudToCloud
+          - Community
+          - ConnectedApp
+      isChannelSearchable:
+        description: Enablement of Text Search of Channel's Contents
+        type: boolean
+  ManagedContentDateAndTimeNodeValueRepresentation:
+    description: Information about a managed content node of datetime type.
+    discriminator: ''
+    type: ManagedContentNodeValueRepresentation
+    properties:
+      dateTimeValue:
+        description: The DateTime value in UTC of the managed content node.
+        type: string
+      timeZone:
+        description: The TimeZone in which DateTime is authored of the managed content node.
+        type: string
+  ManagedContentDateNodeValueRepresentation:
+    description: Information about a managed content node of type date.
+    discriminator: ''
+    type: ManagedContentNodeValueRepresentation
+    properties:
+      value:
+        description: The date value of the managed content node.
+        type: string
+  ManagedContentInputRep:
+    description: Input representation for a managed content
+    type: object
+    properties:
+      publishedVersionId:
+        description: The published version id of the managed content.
+        type: string
+  ManagedContentMediaNodeValueRepresentation:
+    description: Information about a managed content node of media type.
+    discriminator: ''
+    type: ManagedContentNodeValueRepresentation
+    properties:
+      altText:
+        description: The alternate text for the managed content node.
+        type: string
+      altUrl:
+        description: The alternate url of the managed content node.
+        type: string
+      mediaType:
+        description: The media type of the managed content node like Image, Video or Document
+        type: string
+        enum:
+          - Document
+          - Image
+          - Video
+      mimeType:
+        description: The mime type of the managed content node.
+        type: string
+      resourceUrl:
+        description: The resource url of the managed content node.
+        type: string
+      title:
+        description: The title of the managed content node.
+        type: string
+      unauthenticatedUrl:
+        description: The unauthenticated url of the managed content node.
+        type: string
+      url:
+        description: The url of the managed content node.
+        type: string
+  ManagedContentNodeTypeRepresentation:
+    description: Information about a managed content node type.
+    discriminator: ''
+    type: object
+    properties:
+      label:
+        description: The label of the managed content node type.
+        type: string
+      name:
+        description: The developer name of the managed content node type.
+        type: string
+      nodeType:
+        description: The type of the managed content node.
+        type: string
+        enum:
+          - Date
+          - DateTime
+          - Media
+          - MultilineText
+          - NameField
+          - RichText
+          - Text
+          - Url
+  ManagedContentNodeValueRepresentation:
+    description: Information about a managed content node.
+    discriminator: ''
+    type: object
+    properties:
+      nodeType:
+        description: The type of the managed content node.
+        type: string
+        enum:
+          - Date
+          - DateTime
+          - Media
+          - MultilineText
+          - NameField
+          - RichText
+          - Text
+          - Url
+  ManagedContentRepresentation:
+    description: Information about a managed content.
+    discriminator: ''
+    type: object
+    properties:
+      id:
+        description: Response record Id
+        type: string
+      publishedVersionId:
+        description: Id of the published managed content version, or null if there isn't one
+        type: string
+  ManagedContentSearchResultCollectionRepresentation:
+    description: A container of paginated cms keyword-based search result items plus a short search result summary
+    discriminator: ''
+    type: object
+    properties:
+      count:
+        description: total search result item count
+        type: integer
+      currentPageUri:
+        description: search result URI
+        type: string
+      items:
+        description: an array of search result items
+        type: array
+        items:
+          type: ManagedContentSearchResultRepresentation
+      nextPageUri:
+        description: next search result URI
+        type: string
+  ManagedContentSearchResultContentTypeRepresentation:
+    description: A keyword-based search result item's content type
+    discriminator: ''
+    type: object
+    properties:
+      developerName:
+        description: managed content type developer name
+        type: string
+      label:
+        description: managed content type label
+        type: string
+  ManagedContentSearchResultRepresentation:
+    description: A keyword-based search result item
+    discriminator: ''
+    type: object
+    properties:
+      contentType:
+        description: managed content content type
+        type: ManagedContentSearchResultContentTypeRepresentation
+      id:
+        description: managed content id
+        type: string
+      publishDate:
+        description: managed content published date
+        type: string
+      title:
+        description: managed content title
+        type: string
+      urlName:
+        description: managed content (version) url name
+        type: string
+  ManagedContentSpaceMemberCollectionRepresentation:
+    description: Collection representation of the members in a content space
+    discriminator: ''
+    type: object
+    properties:
+      members:
+        description: List of the members in the content space
+        type: array
+        items:
+          type: ManagedContentSpaceMemberRepresentation
+  ManagedContentSpaceMemberInputRepresentation:
+    description: Input representation of a content space member
+    type: object
+    properties:
+      memberId:
+        description: The ID of the user/group to assign the role in the content space
+        type: string
+      roleId:
+        description: The ID of the role to assign the user as, in the content space
+        type: string
+  ManagedContentSpaceMemberPermissionsRepresentation:
+    description: Representation of permissions of a member in a content space
+    discriminator: ''
+    type: object
+    properties:
+      permissions:
+        description: A map of permissions for a member grouped by different scopes and consequently spaceContentTypes
+        type: object
+        properties:
+          //:
+            type: object
+            properties:
+              //:
+                type: ManagedContentSpacePermissionRepresentation
+  ManagedContentSpaceMemberRepresentation:
+    description: Representation of a ManagedContentSpaceMember
+    discriminator: ''
+    type: object
+    properties:
+      id:
+        description: The id of managedContentSpaceMember entity object
+        type: string
+      memberId:
+        description: The user / group id
+        type: string
+      role:
+        description: The role associated with the member
+        type: ManagedContentSpaceRoleRepresentation
+  ManagedContentSpacePermissionRepresentation:
+    description: Representation of a permission bit vector based on a scopeType or contentTypeIdOrEnum
+    discriminator: ''
+    type: object
+    properties:
+      canCreate:
+        description: Does the member have create access for the scopeType and spaceContentType
+        type: boolean
+      canDelete:
+        description: Does the member have delete access for the scopeType and spaceContentType
+        type: boolean
+      canManage:
+        description: Does the member have manage access for the scopeType and spaceContentType
+        type: boolean
+      canPublish:
+        description: Does the member have publish/unpublish access for the scopeType and spaceContentType
+        type: boolean
+      canRead:
+        description: Does the member have read access for the scopeType and spaceContentType
+        type: boolean
+      canTranslate:
+        description: Does the member have translate access for the scopeType and spaceContentType
+        type: boolean
+      canUpdate:
+        description: Does the member have update access for the scopeType and spaceContentType
+        type: boolean
+  ManagedContentSpaceRoleCollectionRepresentation:
+    description: Collection representation of the roles in a content space
+    discriminator: ''
+    type: object
+    properties:
+      roles:
+        description: List of the roles in the content space
+        type: array
+        items:
+          type: ManagedContentSpaceRoleRepresentation
+  ManagedContentSpaceRoleRepresentation:
+    description: Representation of a ManagedContentSpaceRole
+    discriminator: ''
+    type: object
+    properties:
+      description:
+        description: The role description
+        type: string
+      id:
+        description: The role ID
+        type: string
+      name:
+        description: The role name
+        type: string
+  ManagedContentTextNodeValueRepresentation:
+    description: Information about a managed content node of type text.
+    discriminator: ''
+    type: ManagedContentNodeValueRepresentation
+    properties:
+      value:
+        description: The text value of the managed content node.
+        type: string
+  ManagedContentTranslationRepresentation:
+    description: Information about a managed content translation job
+    discriminator: ''
+    type: object
+    properties:
+      createdBy:
+        description: The user id who created the managed content translation job
+        type: string
+      createdDate:
+        description: The created date of the managed content translation job
+        type: string
+      errorBodyUrl:
+        description: The URL to get the error content body of a managed content translation job
+        type: string
+      id:
+        description: The id of a managed content translation job
+        type: string
+      inputBodyUrl:
+        description: The URL to get the input content body of a managed content translation job
+        type: string
+      jobType:
+        description: The type of a managed content translation job
+        type: string
+        enum:
+          - Export
+          - Import
+      lastModifiedBy:
+        description: The last user id who has modified the managed content translation job
+        type: string
+      lastModifiedDate:
+        description: The last time the managed content translation job has been modified
+        type: string
+      lastStatusUpdateDate:
+        description: The last status update date of a managed content translation job
+        type: string
+      name:
+        description: The name of a managed content translation job
+        type: string
+      outputBodyUrl:
+        description: The URL to get the output content body of a managed content translation job
+        type: string
+      startDate:
+        description: The start date of a managed content translation job
+        type: string
+      status:
+        description: The status of a managed content translation job
+        type: string
+        enum:
+          - Completed
+          - Created
+          - Failed
+          - Pending
+          - Processing
+  ManagedContentTranslationRequestInputRep:
+    description: Input representation of a translation request
+    type: object
+    properties:
+      contentBodyId:
+        description: Indicates the content body id of the translation
+        type: string
+      managedContentSpaceId:
+        description: Managed Content Space Id
+        type: string
+      name:
+        description: Indicates the name of the translation
+        type: string
+      type:
+        description: Indicates the type of the translation
+        type: string
+        enum:
+          - Export
+          - Import
+  ManagedContentTypeRepresentation:
+    description: Information about a managed content type.
+    discriminator: ''
+    type: object
+    properties:
+      label:
+        description: The label of the managed content type..
+        type: string
+      name:
+        description: The developer name of the  managed content type.
+        type: string
+      nodeTypes:
+        description: The collection of node types in this managed content type..
+        type: object
+        properties:
+          //:
+            type: ManagedContentNodeTypeRepresentation
+  ManagedContentTypeSearchBlackListCollectionRepresentation:
+    description: Collection of Content Type Search Status
+    discriminator: ''
+    type: object
+    properties:
+      currentPageUrl:
+        description: URL to the current page of Manage Content Type Search Status records. The default is 25 managed content channels per page.
+        type: string
+      managedContentTypes:
+        description: Manage Content Type Searchable records corresponding to the current page
+        type: array
+        items:
+          type: ManagedContentTypeSearchBlackListRepresentation
+      nextPageUrl:
+        description: URL to the next page of Manage Content Type Search Status records. The default is 25 managed content channels per page.
+        type: string
+      totalItem:
+        description: Total count of Manage Content Type Search Status records across all pages
+        type: integer
+  ManagedContentTypeSearchBlackListInputRepresentation:
+    description: The input representation for a content type search status
+    type: object
+    properties:
+      isSearchable:
+        description: Searchable status of the Content Type
+        type: boolean
+      managedContentTypeName:
+        description: Name of the Content Type
+        type: string
+  ManagedContentTypeSearchBlackListRepresentation:
+    description: Details of a Managed Content Type Search Blacklist
+    discriminator: ''
+    type: object
+    properties:
+      isSearchable:
+        description: Is the contentType searchable
+        type: boolean
+      managedContentTypeId:
+        description: Id of the Managed Content Type
+        type: string
+      managedContentTypeMasterLabel:
+        description: Master label of the Managed Content Type
+        type: string
+      managedContentTypeName:
+        description: Developer Name of the Managed Content Type
+        type: string
+  ManagedContentVersionCollectionRepresentation:
+    description: Collection of managed content versions.
+    discriminator: ''
+    type: object
+    properties:
+      currentPageUrl:
+        description: URL to the current page of managed content versions. The default is 25 managed content versions per page.
+        type: string
+      items:
+        description: Managed content versions for this page.
+        type: array
+        items:
+          type: ManagedContentVersionRepresentation
+      # managedContentTypes:
+      #   description: Managed content types for this page.
+      #   type: object
+      #   properties:
+      #     //:
+      #       type: ManagedContentTypeRepresentation
+      # nextPageUrl:
+      #   description: URL to the next page of managed content versions, The default is 25 managed content versions per page.
+      #   type: string
+      total:
+        description: Total number of versions across all pages.
+        type: integer
+      # totalTypes:
+      #   description: Total number of content types across all pages.
+      #   type: integer
+  ManagedContentVersionInputRep:
+    description: Input representation for a managed content
+    type: object
+    properties:
+      associations:
+        description: 'Input Representation for associations for managed content. Describes
+          how a ManagedContent is organized. Examples are the list of topics that
+          are assigned to a ManagedContent and the folders in which the ManagedContent
+          is placed. '
+        type: object
+      body:
+        description: The body of the managed content version.
+        type: object
+        properties:
+          //:
+            type: object
+      managedContentId:
+        description: 'Id of a managed content id. This is only required when creating
+          a new version of an already existing managed content. If this is specified
+          the operation will mean “create a new version of the managed content with
+          id”. '
+        type: string
+      title:
+        description: The title of the managed content version.
+        type: string
+      type:
+        description: The type of the managed content, represents a category of content such as News, Blog or Story. The ManagedContentType.DeveloperName of the active ManagedContentTypeVersion of the ManagedContentVersion. This is always required.
+        type: string
+      urlName:
+        description: A string that uniquely identifies the content within the org, could be used in e.g. URLs.
+        type: string
+  ManagedContentVersionInternalCollectionRepresentation:
+    description: Collection of managed content versions.
+    discriminator: ''
+    type: object
+    properties:
+      items:
+        description: Managed content versions for this page.
+        type: array
+        items:
+          type: ManagedContentVersionInternalRepresentation
+      total:
+        description: Total number of versions accros all pages.
+        type: integer
+  ManagedContentVersionInternalRepresentation:
+    description: Information about a managed content version.
+    discriminator: ''
+    type: object
+    properties:
+      associations:
+        description: The Managed Content Associations, e.g. topic associations, describing how this Managed Content is organized and discoverable
+        type: ManagedContentAssociationsRepresentation
+      authoredManagedContentId:
+        description: The unique identifer of the managed content in the authoring space.
+        type: string
+      body:
+        description: Get the body
+        type: object
+        properties:
+          //:
+            type: object
+      createdDate:
+        description: Get the date when the managed content version was created.
+        type: string
+      id:
+        description: Response record Id
+        type: string
+      managedContentId:
+        description: Id of the managed content that this is a version of
+        type: string
+      masterLanguage:
+        description: Master Language of the managed content in the authoring space.
+        type: string
+      publishDate:
+        description: Get the date when managed content version was published.
+        type: string
+      status:
+        description: The status of the managed content version.
+        type: string
+      title:
+        description: Get the title of the managed content version.
+        type: string
+      type:
+        description: The type of the managed content version.
+        type: string
+      typeLabel:
+        description: The type label of the managed content version.
+        type: string
+      updatedDate:
+        description: Get the date when the managed content version was updated.
+        type: string
+      urlName:
+        description: The url of the managed content version
+        type: string
+  ManagedContentVersionRepresentation:
+    description: Information about a managed content version.
+    discriminator: ''
+    type: object
+    properties:
+      # Need to be able to set required: false
+      # associations:
+      #   description: The Managed Content Associations, e.g. topic associations, describing how this Managed Content is organized and discoverable
+      #   type: ManagedContentAssociationsRepresentation
+      contentNodes:
+        description: Get the content nodes
+        type: object
+        properties:
+          //:
+            type: ManagedContentNodeValueRepresentation
+      contentUrlName:
+        description: The content url name of the managed content version.
+        type: string
+      language:
+        description: The language of the managed content version.
+        type: string
+      managedContentId:
+        description: The unique identifier of the managed content in the authoring space.
+        type: string
+      publishedDate:
+        description: Get the date when the managed content version was last published.
+        type: string
+      title:
+        description: Get the title of the managed content version.
+        type: string
+      type:
+        description: The type of the managed content version.
+        type: string
+      typeLabel:
+        description: The type label of the managed content type.
+        type: string
+  TopicSummaryRepresentation:
+    description: A summary of a topic
+    discriminator: ''
+    type: object
+    properties:
+      id:
+        description: The ID of the topic
+        type: string
+      name:
+        description: The name of the topic
+        type: string
+/connect:
+  /cms:
+    /channels/{channelId}/search/searchable-content-types:
+      get:
+        description: Get searchable status of managed content types in a channel.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentTypeSearchBlackListCollectionRepresentation
+        queryParameters:
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+      patch:
+        description: Update searchable status of a managed content type
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentTypeSearchBlackListRepresentation
+        body:
+          application/json:
+            type: ManagedContentTypeSearchBlackListInputRepresentation
+            required: false
+            (oas-body-name): contentTypeSearchInput
+      uriParameters:
+        channelId:
+          type: string
+          required: true
+    /delivery/channels:
+      get:
+        description: Get a collection of Managed Content Channels available for the current user
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentChannelCollectionRepresentation
+        queryParameters:
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+    /delivery/channels/{channelId}/contents:
+      /query:
+        get:
+          description: Get list of managed content versions.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentVersionCollectionRepresentation
+          queryParameters:
+            endDate:
+              type: string
+              required: false
+            includeMetadata:
+              type: boolean
+              required: false
+            language:
+              type: string
+              required: false
+            managedContentIds:
+              type: array
+              required: false
+              items:
+                type: string
+                (oas-collectionFormat): csv
+            managedContentType:
+              type: string
+              # this property is actually required by the API
+              # but it's being generated as false, setting it to true doesn't work
+              required: false
+            page:
+              type: integer
+              required: false
+            pageSize:
+              type: integer
+              required: false
+            startDate:
+              type: string
+              required: false
+        uriParameters:
+          channelId:
+            type: string
+            required: true
+      /search:
+        get:
+          description: Get the contents related to search terms
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentSearchResultCollectionRepresentation
+          queryParameters:
+            page:
+              type: integer
+              required: false
+            pageSize:
+              type: integer
+              required: false
+            queryTerm:
+              type: string
+              required: false
+            scope:
+              type: string
+              required: false
+              enum:
+                - All
+                - TitleOnly
+        uriParameters:
+          channelId:
+            type: string
+            required: true
+    /management/channels:
+      get:
+        description: Get a collection of all Managed Content Channel records
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentChannelCollectionRepresentation
+        queryParameters:
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+      post:
+        description: Create a Managed Content Channel
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentChannelRepresentation
+        body:
+          application/json:
+            type: ManagedContentChannelInputRepresentation
+            required: false
+            (oas-body-name): ManagedContentChannelInput
+    /management/channels/{channelId}:
+      get:
+        description: Get a specific ManagedContentChannel (CMS Channel) record
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentChannelRepresentation
+      patch:
+        description: Update the name of a specific ManagedContentChannel
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentChannelRepresentation
+        body:
+          application/json:
+            type: ManagedContentChannelInputRepresentation
+            required: false
+            (oas-body-name): ManagedContentChannelInput
+      uriParameters:
+        channelId:
+          type: string
+          required: true
+  /communities/{communityId}/managed-content/delivery:
+    get:
+      description: Get list of managed content versions.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ManagedContentVersionCollectionRepresentation
+      queryParameters:
+        language:
+          type: string
+          required: false
+        managedContentIds:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        managedContentType:
+          type: string
+          required: false
+        page:
+          type: integer
+          required: false
+        pageSize:
+          type: integer
+          required: false
+        topics:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    uriParameters:
+      communityId:
+        type: string
+        required: true
+  /communities/{communityId}/managed-content/delivery/contents:
+    get:
+      description: Get list of managed content versions.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ManagedContentVersionInternalCollectionRepresentation
+      queryParameters:
+        collectionName:
+          type: string
+          required: false
+        language:
+          type: string
+          required: false
+        managedContentIds:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        page:
+          type: integer
+          required: false
+        pageSize:
+          type: integer
+          required: false
+        topics:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        urlNameInList:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    uriParameters:
+      communityId:
+        type: string
+        required: true
+    /search:
+      get:
+        description: Get the contents related to search terms
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentSearchResultCollectionRepresentation
+        queryParameters:
+          page:
+            type: integer
+            required: false
+          pageSize:
+            type: integer
+            required: false
+          queryTerm:
+            type: string
+            required: false
+          scope:
+            type: string
+            required: false
+            enum:
+              - All
+              - TitleOnly
+      uriParameters:
+        communityId:
+          type: string
+          required: true
+    /{managedContentId}:
+      get:
+        description: Get the published version of the managed content.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentVersionInternalRepresentation
+      uriParameters:
+        communityId:
+          type: string
+          required: true
+        managedContentId:
+          type: string
+          required: true
+  /managed-content:
+    /content-spaces/{contentSpaceId}:
+      /content-versions:
+        post:
+          description: Create a manage content version
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentVersionInternalRepresentation
+          body:
+            application/json:
+              type: ManagedContentVersionInputRep
+              required: false
+              (oas-body-name): contentVersion
+        uriParameters:
+          contentSpaceId:
+            type: string
+            required: true
+      /content-versions/{managedContentVersionId}:
+        get:
+          description: Get a single managed content version
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentVersionInternalRepresentation
+          queryParameters:
+            language:
+              type: string
+              required: false
+        patch:
+          description: Update a managed content version
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentVersionInternalRepresentation
+          body:
+            application/json:
+              type: ManagedContentVersionInputRep
+              required: false
+              (oas-body-name): contentVersion
+        uriParameters:
+          contentSpaceId:
+            type: string
+            required: true
+          managedContentVersionId:
+            type: string
+            required: true
+      /contents/{managedContentId}:
+        delete:
+          description: Delete a nonpublished managed content given its Id
+          responses:
+            '200':
+              description: Success
+        patch:
+          description: Update a managed content
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentRepresentation
+          body:
+            application/json:
+              type: ManagedContentInputRep
+              required: false
+              (oas-body-name): contentVersion
+        uriParameters:
+          contentSpaceId:
+            type: string
+            required: true
+          managedContentId:
+            type: string
+            required: true
+      /members:
+        get:
+          description: Get the members of a content space
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentSpaceMemberCollectionRepresentation
+        post:
+          description: Add a member with a role to a content space
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentSpaceMemberRepresentation
+          body:
+            application/json:
+              type: ManagedContentSpaceMemberInputRepresentation
+              required: false
+              (oas-body-name): member
+        uriParameters:
+          contentSpaceId:
+            type: string
+            required: true
+      /members/{memberIdOrMe}:
+        delete:
+          description: Delete the membership in a content space for a member
+          responses:
+            '200':
+              description: Success
+        patch:
+          description: Update the membership in a content space for a member with a new role
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentSpaceMemberRepresentation
+          body:
+            application/json:
+              type: ManagedContentSpaceMemberInputRepresentation
+              required: false
+              (oas-body-name): member
+        uriParameters:
+          contentSpaceId:
+            type: string
+            required: true
+          memberIdOrMe:
+            type: string
+            required: true
+      /members/{memberIdOrMe}/permissions:
+        get:
+          description: Get the permissions for a member in a content space
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentSpaceMemberPermissionsRepresentation
+        uriParameters:
+          contentSpaceId:
+            type: string
+            required: true
+          memberIdOrMe:
+            type: string
+            required: true
+    /delivery/contents/{managedContentId}:
+      get:
+        description: Get the published version of the managed content.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentVersionInternalRepresentation
+      uriParameters:
+        managedContentId:
+          type: string
+          required: true
+    /roles:
+      get:
+        description: Get the roles available in a content space
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentSpaceRoleCollectionRepresentation
+        queryParameters:
+          contentSpaceId:
+            type: string
+            required: false
+          roleQueryScope:
+            type: string
+            required: false
+            enum:
+              - AuthoringRole
+              - SiteRole
+    /translation:
+      post:
+        description: Create a translation job
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentTranslationRepresentation
+        body:
+          application/json:
+            type: ManagedContentTranslationRequestInputRep
+            required: false
+            (oas-body-name): translationRequest

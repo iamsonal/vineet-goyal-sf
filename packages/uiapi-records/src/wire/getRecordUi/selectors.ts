@@ -1,7 +1,7 @@
 import { Selector, PathSelection } from '@ldsjs/engine';
 
 import { ArrayPrototypePush } from '../../util/language';
-import { buildSelectionFromRecord } from '../../selectors/record';
+import { extractRecordFields, buildSelectionFromFields } from '../../selectors/record';
 
 import { RecordRepresentation } from '../../generated/types/RecordRepresentation';
 import { select as objectInfoSelect } from '../../generated/types/ObjectInfoRepresentation';
@@ -21,7 +21,8 @@ export interface RecordDef {
 export function buildRecordUiSelector(
     recordDefs: RecordDef[],
     layoutTypes: string[],
-    modes: string[]
+    modes: string[],
+    recordOptionalFields: { [key: string]: string[] }
 ): Selector<any>['node'] {
     const layoutTypeSelections: PathSelection[] = [];
 
@@ -60,10 +61,12 @@ export function buildRecordUiSelector(
             map: true,
             selections: layoutTypeSelections,
         });
+        const optionalFields = recordOptionalFields[recordId];
+        const fields = extractRecordFields(recordData);
         ArrayPrototypePush.call(recordSelections, {
             kind: 'Link',
             name: recordId,
-            selections: buildSelectionFromRecord(recordData),
+            selections: buildSelectionFromFields(fields, optionalFields),
         });
     }
 

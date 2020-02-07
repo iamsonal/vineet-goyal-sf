@@ -1,0 +1,222 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "4d62bd2c24284c0762b7a996c1758f91",
+    "fields": {
+        "Account": {
+            "displayValue": "foo",
+            "value": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "4c0eea338cc16c8d8877473da6b6dd21",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "001RM000004XMZ5YAO"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "foo"
+                    }
+                },
+                "id": "001RM000004XMZ5YAO",
+                "lastModifiedById": "005RM000001stMBYAY",
+                "lastModifiedDate": "2019-10-24T18:59:40.000Z",
+                "recordTypeId": "012RM000000DBJDYA4",
+                "recordTypeInfo": {
+                    "available": true,
+                    "defaultRecordTypeMapping": true,
+                    "master": false,
+                    "name": "y",
+                    "recordTypeId": "012RM000000DBJDYA4"
+                },
+                "systemModstamp": "2019-10-24T18:59:41.000Z",
+                "weakEtag": 1571943581000
+            }
+        },
+        "AccountId": {
+            "displayValue": null,
+            "value": "001RM000004XMZ5YAO"
+        },
+        "Amount": {
+            "displayValue": null,
+            "value": null
+        },
+        "Campaign": {
+            "displayValue": null,
+            "value": null
+        },
+        "CampaignId": {
+            "displayValue": null,
+            "value": null
+        },
+        "CloseDate": {
+            "displayValue": "10/18/2020",
+            "value": "2020-10-18"
+        },
+        "CreatedBy": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "e2af71cf4ae5dc1af6c3c8b3fdc60c92",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005RM000001stMBYAY"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Admin User"
+                    }
+                },
+                "id": "005RM000001stMBYAY",
+                "lastModifiedById": "005RM000001stMBYAY",
+                "lastModifiedDate": "2019-06-04T19:07:01.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-02-03T21:03:58.000Z",
+                "weakEtag": 1580763838000
+            }
+        },
+        "CreatedById": {
+            "displayValue": null,
+            "value": "005RM000001stMBYAY"
+        },
+        "CreatedDate": {
+            "displayValue": "10/21/2019, 3:13 PM",
+            "value": "2019-10-21T22:13:37.000Z"
+        },
+        "CurrentGenerators__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "DeliveryInstallationStatus__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Description": {
+            "displayValue": null,
+            "value": null
+        },
+        "ExpectedRevenue": {
+            "displayValue": null,
+            "value": null
+        },
+        "IsPrivate": {
+            "displayValue": null,
+            "value": false
+        },
+        "LastModifiedBy": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "e2af71cf4ae5dc1af6c3c8b3fdc60c92",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005RM000001stMBYAY"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Admin User"
+                    }
+                },
+                "id": "005RM000001stMBYAY",
+                "lastModifiedById": "005RM000001stMBYAY",
+                "lastModifiedDate": "2019-06-04T19:07:01.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-02-03T21:03:58.000Z",
+                "weakEtag": 1580763838000
+            }
+        },
+        "LastModifiedById": {
+            "displayValue": null,
+            "value": "005RM000001stMBYAY"
+        },
+        "LastModifiedDate": {
+            "displayValue": "2/3/2020, 1:05 PM",
+            "value": "2020-02-03T21:05:15.000Z"
+        },
+        "LeadSource": {
+            "displayValue": null,
+            "value": null
+        },
+        "MainCompetitors__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "One"
+        },
+        "NextStep": {
+            "displayValue": null,
+            "value": null
+        },
+        "OrderNumber__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Owner": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "e2af71cf4ae5dc1af6c3c8b3fdc60c92",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005RM000001stMBYAY"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Admin User"
+                    }
+                },
+                "id": "005RM000001stMBYAY",
+                "lastModifiedById": "005RM000001stMBYAY",
+                "lastModifiedDate": "2019-06-04T19:07:01.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-02-03T21:03:58.000Z",
+                "weakEtag": 1580763838000
+            }
+        },
+        "OwnerId": {
+            "displayValue": null,
+            "value": "005RM000001stMBYAY"
+        },
+        "Probability": {
+            "displayValue": null,
+            "value": 0.0
+        },
+        "StageName": {
+            "displayValue": "New",
+            "value": "New"
+        },
+        "TrackingNumber__c": {
+            "displayValue": null,
+            "value": null
+        },
+        "Type": {
+            "displayValue": null,
+            "value": null
+        }
+    },
+    "id": "006RM000003IvA2YAK",
+    "lastModifiedById": "005RM000001stMBYAY",
+    "lastModifiedDate": "2020-02-03T21:05:15.000Z",
+    "recordTypeId": "012RM000000DBJIYA4",
+    "recordTypeInfo": {
+        "available": true,
+        "defaultRecordTypeMapping": true,
+        "master": false,
+        "name": "A",
+        "recordTypeId": "012RM000000DBJIYA4"
+    },
+    "systemModstamp": "2020-02-03T21:05:16.000Z",
+    "weakEtag": 1580763916000
+}

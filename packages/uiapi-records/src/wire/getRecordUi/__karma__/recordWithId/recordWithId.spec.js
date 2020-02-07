@@ -797,6 +797,95 @@ describe('single recordId - multiple layouts', () => {
     });
 });
 
+describe('populating null nested record', () => {
+    it('should handle when null spanning record becomes populated', async () => {
+        const mock = getMock('record-ui-Opportunity-null-Account');
+        const recordMock = getMock('record-ui-Opportunity-null-Account-populated');
+        const recordId = getRecordIdFromMock(mock);
+        const recordUiConfig = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+
+        mockGetRecordUiNetwork(recordUiConfig, mock);
+
+        const recordConfig = {
+            recordId,
+            fields: ['Opportunity.Account.Name'],
+        };
+
+        mockGetRecordNetwork(
+            {
+                recordId,
+                fields: ['Opportunity.Account.Name'],
+                optionalFields: [
+                    'Opportunity.Account',
+                    'Opportunity.AccountId',
+                    'Opportunity.Amount',
+                    'Opportunity.Campaign',
+                    'Opportunity.CampaignId',
+                    'Opportunity.CloseDate',
+                    'Opportunity.CreatedBy.Id',
+                    'Opportunity.CreatedBy.Name',
+                    'Opportunity.CreatedById',
+                    'Opportunity.CreatedDate',
+                    'Opportunity.CurrentGenerators__c',
+                    'Opportunity.DeliveryInstallationStatus__c',
+                    'Opportunity.Description',
+                    'Opportunity.ExpectedRevenue',
+                    'Opportunity.IsPrivate',
+                    'Opportunity.LastModifiedBy.Id',
+                    'Opportunity.LastModifiedBy.Name',
+                    'Opportunity.LastModifiedById',
+                    'Opportunity.LastModifiedDate',
+                    'Opportunity.LeadSource',
+                    'Opportunity.MainCompetitors__c',
+                    'Opportunity.Name',
+                    'Opportunity.NextStep',
+                    'Opportunity.OrderNumber__c',
+                    'Opportunity.Owner.Id',
+                    'Opportunity.Owner.Name',
+                    'Opportunity.OwnerId',
+                    'Opportunity.Probability',
+                    'Opportunity.StageName',
+                    'Opportunity.TrackingNumber__c',
+                    'Opportunity.Type',
+                ],
+            },
+            recordMock
+        );
+
+        // Load record-ui without Account field present
+        const recordUiWire = await setupElement(recordUiConfig, RecordUi);
+        expireRecords();
+
+        // Load record with spanning fields populated
+        await setupElement(recordConfig, RecordFields);
+        expect(recordUiWire.pushCount()).toBe(2);
+        expect(recordUiWire.getWiredData()).toEqualSnapshotWithoutEtags({
+            ...mock,
+            records: {
+                [recordId]: {
+                    ...recordMock,
+                    fields: {
+                        ...mock.records[recordId].fields,
+                        Account: {
+                            ...recordMock.fields.Account,
+                        },
+                        AccountId: {
+                            ...recordMock.fields.AccountId,
+                        },
+                        LastModifiedDate: {
+                            ...recordMock.fields.LastModifiedDate,
+                        },
+                    },
+                },
+            },
+        });
+    });
+});
+
 describe('recordTypeId update', () => {
     const newStageName = 'Open - This is Changed';
     const newRecordTypeId = '0129000000006ByAAI';

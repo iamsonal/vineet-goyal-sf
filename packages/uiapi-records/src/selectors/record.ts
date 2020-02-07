@@ -110,6 +110,9 @@ function insertFieldsIntoTrie(root: RecordFieldTrie, fields: string[], optional:
                 // however we still denormalize fields at MAX_RECORD_DEPTH + 1, only if they are
                 // scalar fields.
                 if (j <= MAX_RECORD_DEPTH || scalar === true) {
+                    // We now know that there are children fields, so we can mark the parent
+                    // as not a scalar
+                    current.scalar = false;
                     next = {
                         name: fieldName,
                         scalar,

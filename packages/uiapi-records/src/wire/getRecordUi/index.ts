@@ -28,6 +28,7 @@ import { getRecordTypeId } from '../../util/records';
 import { isFulfilledSnapshot } from '../../util/snapshot';
 import { LayoutType } from '../../primitives/LayoutType';
 import { LayoutMode } from '../../primitives/LayoutMode';
+import { getRecordUiMissingRecordLookupFields } from '../../util/record-ui';
 
 type GetRecordUiConfigWithDefaults = Omit<
     Required<GetRecordUiConfig>,
@@ -254,10 +255,12 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordUiConfigWithDefa
             );
 
             const cachedSelectorKey = `${key}__selector`;
+            const recordLookupFields = getRecordUiMissingRecordLookupFields(body);
             const selPath = buildRecordUiSelector(
                 collectRecordDefs(body, recordIds),
                 layoutTypes,
-                modes
+                modes,
+                recordLookupFields
             );
 
             const sel = {

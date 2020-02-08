@@ -76,11 +76,23 @@ run_integration_tests_compat: &run_integration_tests_compat
     name: Run integration tests (compat)
     command: yarn test:integration:compat
 
+run_native_tests: &run_native_tests
+  run:
+    name: Run LDS Native integration tests
+    command: yarn test:native
+
 # Sauce Labs
 setup_sauce_env_variables: &setup_sauce_env_variables
   run:
     name: Setup sauce connect environnement variables
     command: echo 'export SAUCE_TUNNEL_ID="lds-${CIRCLE_BUILD_NUM}"' >> $BASH_ENV
+
+setup_native_sauce_env_variables: &setup_native_sauce_env_variables
+  run:
+    name: Setup sauce environnement variables for native
+    command: echo '
+      export SAUCE_USERNAME=${SAUCE_USERNAME_NATIVE}
+      export SAUCE_KEY=${SAUCE_KEY_NATIVE}' >> $BASH_ENV
 
 start_sauce_connect: &start_sauce_connect
   run:
@@ -92,7 +104,7 @@ start_sauce_connect: &start_sauce_connect
       curl https://saucelabs.com/downloads/sc-4.5.1-linux.tar.gz -o saucelabs.tar.gz
       tar -xzf saucelabs.tar.gz
       cd sc-*
-      bin/sc -u ${SAUCE_USERNAME} -k ${SAUCE_KEY} -i ${SAUCE_TUNNEL_ID}
+      bin/sc -u ${SAUCE_USERNAME} -k ${SAUCE_KEY} -i ${SAUCE_TUNNEL_ID} --tunnel-domains tunnelhost
 
 wait_for_sauce_connect: &wait_for_sauce_connect
   run:
@@ -103,6 +115,17 @@ stop_sauce_connect: &stop_sauce_connect
   run:
     name: Stop sauce connect
     command: kill -9 `cat /tmp/sc_client-${SAUCE_TUNNEL_ID}.pid`
+
+add_tunnelhost_hosts_entry: &add_tunnelhost_hosts_entry
+  run:
+    name: add tunnelhost entry to hosts file
+    command: echo 127.0.0.1 tunnelhost | sudo tee -a /etc/hosts
+
+upload_test_native_apps_to_sauce: &upload_test_native_apps_to_sauce
+  run:
+    name: Upload LDS Android hybrid test app
+    command: |
+      curl -v -u ${SAUCE_USERNAME}:${SAUCE_KEY} POST https://saucelabs.com/rest/v1/storage/${SAUCE_USERNAME}/lds-android-hybrid-test-app.apk?overwrite=true -H 'Content-Type: application/octet-stream' --data-binary @packages/karma-config/utils/native/lds-android-hybrid-test-app.apk
 
 # Best
 setup_best_environment: &setup_best_environment
@@ -177,6 +200,24 @@ jobs:
 
       - *stop_sauce_connect
 
+  test_native:
+    <<: *env_default
+    steps:
+      - *load_workspace
+
+      - *add_tunnelhost_hosts_entry
+
+      - *setup_sauce_env_variables
+      - *setup_native_sauce_env_variables
+      - *start_sauce_connect
+      - *wait_for_sauce_connect
+
+      - *upload_test_native_apps_to_sauce
+
+      - *run_native_tests
+
+      - *stop_sauce_connect
+
   perf_and_compare:
     <<: *env_perf
     steps:
@@ -200,6 +241,9 @@ workflows:
     jobs:
       - build_and_test
       - test_integration:
+          requires:
+            - build_and_test
+      - test_native:
           requires:
             - build_and_test
       - perf_and_compare:

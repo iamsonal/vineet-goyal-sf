@@ -1,5 +1,6 @@
 const browserConfig = require('./browser');
 const browserCompatConfig = require('./browser-compat');
+const nativeConfig = require('./native');
 
 const SAUCE_BROWSERS = {
     sl_chrome_latest: {
@@ -32,10 +33,27 @@ const SAUCE_COMPAT_BROWSERS = {
     },
 };
 
+const SAUCE_NATIVE_DEVICES = {
+    sl_android: {
+        base: 'SauceLabs',
+        deviceName: 'Android GoogleAPI Emulator',
+        deviceOrientation: 'portrait',
+        browserName: '',
+        platformVersion: '9.0',
+        platformName: 'Android',
+        app: `sauce-storage:lds-android-hybrid-test-app.apk`,
+        automationName: 'UiAutomator2',
+        newCommandTimeout: 0,
+    },
+};
+
 module.exports = function(config) {
+    const native = Boolean(config.native);
     const compat = Boolean(config.compat);
 
-    if (compat) {
+    if (native) {
+        nativeConfig(config);
+    } else if (compat) {
         browserCompatConfig(config);
     } else {
         browserConfig(config);
@@ -69,7 +87,11 @@ module.exports = function(config) {
         };
     }
 
-    const browsers = compat ? SAUCE_COMPAT_BROWSERS : SAUCE_BROWSERS;
+    const browsers = native
+        ? SAUCE_NATIVE_DEVICES
+        : compat
+        ? SAUCE_COMPAT_BROWSERS
+        : SAUCE_BROWSERS;
 
     config.set({
         sauceLabs: sauceLabs,

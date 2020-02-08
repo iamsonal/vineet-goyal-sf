@@ -7,12 +7,12 @@ module.exports = function(config) {
     const native = Boolean(config.native);
     const compat = Boolean(config.compat);
 
-    if (native) {
-        return nativeConfig(config);
-    }
-
     if (process.env.CI !== undefined) {
         return sauceConfig(config);
+    }
+
+    if (native) {
+        return nativeConfig(config);
     }
 
     return compat ? browserCompatConfig(config) : browserConfig(config);

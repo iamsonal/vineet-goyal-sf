@@ -149,7 +149,7 @@ export const _getRelatedListActions = createImperativeFunction(getRelatedListAct
 
 export const getRelatedListInfos = setupWireAdapter('getRelatedListInfos', GetRelatedListInfos);
 export const _getRelatedListInfos = createImperativeFunction(getRelatedListInfos);
-export const getRelatedListsInfo = setupWireAdapter('getRelatedListInfos', GetRelatedListsInfo);
+export const getRelatedListsInfo = setupWireAdapter('getRelatedListsInfo', GetRelatedListsInfo);
 export const _getRelatedListsInfo = createImperativeFunction(getRelatedListsInfo);
 
 export const getRelatedListRecords = setupWireAdapter(

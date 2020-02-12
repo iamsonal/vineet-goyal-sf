@@ -91,6 +91,7 @@ setup_native_sauce_env_variables: &setup_native_sauce_env_variables
   run:
     name: Setup sauce environnement variables for native
     command: echo '
+      export ANDROID_TEST_APK_NAME="lds-android-hybrid-test-app-$(echo $CIRCLE_BRANCH | sed -e 's/[^A-Za-z0-9._-]/_/g').apk"
       export SAUCE_USERNAME=${SAUCE_USERNAME_NATIVE}
       export SAUCE_KEY=${SAUCE_KEY_NATIVE}' >> $BASH_ENV
 
@@ -121,9 +122,9 @@ add_tunnelhost_hosts_entry: &add_tunnelhost_hosts_entry
 
 upload_test_native_apps_to_sauce: &upload_test_native_apps_to_sauce
   run:
-    name: Upload LDS Android hybrid test app
+    name: Upload LDS Android hybrid test app to sauce files
     command: |
-      curl -v -u ${SAUCE_USERNAME}:${SAUCE_KEY} POST https://saucelabs.com/rest/v1/storage/${SAUCE_USERNAME}/lds-android-hybrid-test-app.apk?overwrite=true -H 'Content-Type: application/octet-stream' --data-binary @packages/karma-config/utils/native/lds-android-hybrid-test-app.apk
+      curl -v -u ${SAUCE_USERNAME}:${SAUCE_KEY} POST https://saucelabs.com/rest/v1/storage/${SAUCE_USERNAME}/${ANDROID_TEST_APK_NAME}?overwrite=true -H 'Content-Type: application/octet-stream' --data-binary @packages/karma-config/utils/native/lds-android-hybrid-test-app.apk
 
 # Best
 setup_best_environment: &setup_best_environment

@@ -41,7 +41,7 @@ const SAUCE_NATIVE_DEVICES = {
         browserName: '',
         platformVersion: '9.0',
         platformName: 'Android',
-        app: `sauce-storage:lds-android-hybrid-test-app.apk`,
+        app: `sauce-storage:${process.env.ANDROID_TEST_APK_NAME}`,
         automationName: 'UiAutomator2',
         newCommandTimeout: 0,
     },

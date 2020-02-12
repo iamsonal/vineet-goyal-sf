@@ -4697,8 +4697,11 @@ types:
           type: string
           required: true
         relatedListNames:
-          type: string #TODO: Hand rolled
+          type: array
           required: true
+          items:
+            type: string
+            (oas-collectionFormat): csv
     /{parentRecordId}/{relatedListName}:
       get:
         description: Retrieve record counts.

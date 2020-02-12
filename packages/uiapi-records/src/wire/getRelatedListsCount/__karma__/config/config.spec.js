@@ -6,7 +6,7 @@ describe('validation', () => {
         it(`should not make an HTTP request if required param '${param}' is undefined`, async () => {
             const config = {
                 parentRecordId: 'a00RM0000004aVwYAI',
-                relatedListNames: 'CwcCustom01s__r',
+                relatedListNames: ['CwcCustom01s__r'],
             };
             config[param] = undefined;
 

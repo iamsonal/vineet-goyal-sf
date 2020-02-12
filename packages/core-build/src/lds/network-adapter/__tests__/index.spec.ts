@@ -1237,6 +1237,103 @@ describe('get /actions/record/${recordIds}', () => {
         );
     });
 
+    describe('/related-list-count', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                path: '/related-list-count/1234/1111',
+                urlParams: {
+                    parentRecordId: '1234',
+                    relatedListName: '1111',
+                },
+            },
+            [
+                'RelatedListUiController.getRelatedListRecordCount',
+                { parentRecordId: '1234', relatedListName: '1111' },
+                undefined,
+            ]
+        );
+        testRejectFetchResponse({
+            method: 'get',
+            path: '/related-list-count/1234/1111',
+            urlParams: {
+                parentRecordId: '1234',
+                relatedListName: '1111',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                path: '/related-list-count/1234/1111',
+                urlParams: {
+                    parentRecordId: '1234',
+                    relatedListName: '1111',
+                },
+            },
+            null
+        );
+    });
+
+    describe('/related-list-count/batch', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                path: '/related-list-count/batch/1234/1111,2222',
+                urlParams: {
+                    parentRecordId: '1234',
+                    relatedListNames: ['1111', '2222'],
+                },
+            },
+            [
+                'RelatedListUiController.getRelatedListsRecordCount',
+                { parentRecordId: '1234', relatedListNames: ['1111', '2222'] },
+                undefined,
+            ]
+        );
+        testRejectFetchResponse({
+            method: 'get',
+            path: '/related-list-count/batch/1234/1111,2222',
+            urlParams: {
+                parentRecordId: '1234',
+                relatedListNames: ['1111', '2222'],
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                path: '/related-list-count/batch/1234/1111,2222',
+                urlParams: {
+                    parentRecordId: '1234',
+                    relatedListNames: ['1111', '2222'],
+                },
+            },
+            {
+                hasErrors: null,
+                results: [
+                    {
+                        result: {
+                            count: 7,
+                            eTag: '2d7320765e4745b63a0ea6e7580f11d8',
+                            listReference: {
+                                id: null,
+                                inContextOfRecordId: 'a00RM0000004aVwYAI',
+                                listViewApiName: null,
+                                objectApiName: null,
+                                parentObjectApiName: 'CwcCustom00__c',
+                                recordTypeId: 'CwcCustom01__c',
+                                relatedListId: 'CwcCustom01s__r',
+                                type: 'relatedList',
+                            },
+                        },
+                        statusCode: 200,
+                    },
+                ],
+            }
+        );
+    });
+
     testControllerInput(
         {
             method: 'get',

@@ -98,6 +98,11 @@ module.exports = function(config) {
 
         browsers: Object.keys(browsers),
         customLaunchers: browsers,
+        concurrency: Infinity,
+
+        // Sometimes Saucelabs gets stuck.  Retry when it does, so we can get better results without
+        // manual resets
+        browserDisconnectTolerance: 3,
 
         reporters: [...config.reporters, 'saucelabs'],
 

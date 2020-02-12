@@ -22,6 +22,7 @@ interface LdsStatsReport {
 const NAMESPACE = 'lds';
 const STORE_STATS_MARK_NAME = 'store-stats';
 const RUNTIME_PERF_MARK_NAME = 'runtime-perf';
+const NETWORK_MARK_NAME = 'network';
 
 /**
  * Aura Metrics Service plugin in charge of aggregating all the LDS performance marks before they
@@ -138,6 +139,16 @@ export function setupInstrumentation(lds: LDS, store: Store): void {
         const storeStats = getStoreStats(store);
         instrumentationServiceMark(NAMESPACE, STORE_STATS_MARK_NAME, storeStats);
     });
+}
+
+/**
+ * Add a network mark to the metrics service.
+ *
+ * @param context The mark context.
+ */
+
+export function instrumentNetwork(context: unknown): void {
+    mark(NETWORK_MARK_NAME, context);
 }
 
 /**

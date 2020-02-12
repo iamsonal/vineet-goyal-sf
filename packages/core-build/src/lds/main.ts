@@ -41,10 +41,10 @@ import {
 import AdsBridge from './ads-bridge';
 import networkAdapter from './network-adapter';
 import { setupMetadataWatcher } from './metadata';
-import { setupInstrumentation, instrumentAdapter } from './instrumentation';
+import { setupInstrumentation, instrumentAdapter, instrumentNetwork } from './instrumentation';
 
 const store = new Store();
-const lds = new LDS(store, networkAdapter);
+const lds = new LDS(store, networkAdapter, { instrument: instrumentNetwork });
 
 setupInstrumentation(lds, store);
 setupMetadataWatcher(lds);

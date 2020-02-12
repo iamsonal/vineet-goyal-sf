@@ -12,6 +12,9 @@ import {
 } from '../../util/records';
 import { ObjectKeys } from '../../util/language';
 
+const INCOMING_WEAKETAG_0_KEY = 'incoming-weaketag-0';
+const EXISTING_WEAKETAG_0_KEY = 'existing-weaketag-0';
+
 // This function sets fields that we are refreshing to pending
 // These values will go into the store
 function mergePendingFields(
@@ -202,13 +205,23 @@ export default function merge(
     //     }
     // }
 
+    const incomingWeakEtag = incoming.weakEtag;
+    const existingWeakEtag = existing.weakEtag;
+
+    if (incomingWeakEtag === 0 || existingWeakEtag === 0) {
+        const paramsBuilder = () => {
+            return {
+                [INCOMING_WEAKETAG_0_KEY]: incomingWeakEtag === 0,
+                [EXISTING_WEAKETAG_0_KEY]: existingWeakEtag === 0,
+            };
+        };
+
+        lds.instrument(paramsBuilder);
+    }
+
     // TODO W-6900085 - UIAPI returns weakEtag=0 when the record is >2 levels nested. For now
     // we treat the record as mergeable.
-    if (
-        incoming.weakEtag !== 0 &&
-        existing.weakEtag !== 0 &&
-        incoming.weakEtag !== existing.weakEtag
-    ) {
+    if (incomingWeakEtag !== 0 && existingWeakEtag !== 0 && incomingWeakEtag !== existingWeakEtag) {
         return mergeRecordConflict(lds, incoming, existing);
     }
 

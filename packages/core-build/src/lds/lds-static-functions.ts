@@ -11,4 +11,4 @@ export {
     getFieldDisplayValue,
     getRecordInput,
     getFieldValue,
-} from '@salesforce-lds-api/uiapi-records';
+} from '@salesforce/lds-adapters-uiapi';

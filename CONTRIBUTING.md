@@ -27,7 +27,7 @@ The BLT installation path can be overridden via the `BLT_HOME` environment varia
 
 ### Update the RAML definitions from core
 
-In order to write wire adapters for newly exposed UI APIs in core, LDS first needs to be made aware of these by adding the corresponding RAML definitions. Every core server exposes a `connectSchema.jsp` download RAML definitions, for instance: `https://na44.stmfa.stm.salesforce.com/qa/connectSchema.jsp`. Download the correct version from this line `uisdk-connect-api-RAML1`. Once downloaded merge the changes in the raml definition file `/packages/@salesforce-lds-api/uiapi-records/src/raml/api.raml`.
+In order to write wire adapters for newly exposed UI APIs in core, LDS first needs to be made aware of these by adding the corresponding RAML definitions. Every core server exposes a `connectSchema.jsp` download RAML definitions, for instance: `https://na44.stmfa.stm.salesforce.com/qa/connectSchema.jsp`. Download the correct version from this line `uisdk-connect-api-RAML1`. Once downloaded merge the changes in the raml definition file `/packages/@salesforce/lds-adapters-uiapi/src/raml/api.raml`.
 
 For the time being, the following changes have to be retained in the `api.raml`:
 

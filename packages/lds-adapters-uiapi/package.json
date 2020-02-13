@@ -1,0 +1,24 @@
+{
+    "name": "@salesforce/lds-adapters-uiapi",
+    "version": "0.1.3",
+    "description": "Wire adapters for record related UI API endpoints",
+    "license": "MIT",
+    "main": "dist/umd/es2018/uiapi-records-service.js",
+    "module": "dist/es/es2018/uiapi-records-service.js",
+    "types": "dist/es/es2018/index.d.ts",
+    "scripts": {
+        "clean": "rm -rf dist src/generated karma/dist",
+        "build": "yarn build:raml && yarn build:services && yarn build:karma-utils",
+        "build:raml": "lds generate src/raml/lds.raml src/generated",
+        "build:services": "rollup --config rollup.config.js",
+        "build:karma-utils": "rollup --config rollup.config.karma.js",
+        "start": "karma start",
+        "start:native": "karma start --native",
+        "test": "karma start --single-run",
+        "test:compat": "karma start --single-run --compat",
+        "test:native": "karma start --single-run --native"
+    },
+    "devDependencies": {
+        "@salesforce/lds-karma-config": "0.1.3"
+    }
+}

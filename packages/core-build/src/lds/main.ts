@@ -6,7 +6,7 @@ import {
     GenerateGetApexWireAdapter,
     GetApexInvoker,
     getSObjectValue,
-} from '@salesforce-lds-api/apex';
+} from '@salesforce/lds-adapters-apex';
 import {
     CreateRecord,
     DeleteRecord,
@@ -36,7 +36,7 @@ import {
     UpdateRecord,
     UpdateRecordAvatar,
     UpdateLayoutUserState,
-} from '@salesforce-lds-api/uiapi-records';
+} from '@salesforce/lds-adapters-uiapi';
 
 import AdsBridge from './ads-bridge';
 import networkAdapter from './network-adapter';

@@ -1,6 +1,6 @@
 import { LDS, Store } from '@ldsjs/engine';
 import AdsBridge from '../../dist/ads-bridge';
-import { ingestRecord, ingestObjectInfo } from '@salesforce-lds-api/uiapi-records';
+import { ingestRecord, ingestObjectInfo } from '@salesforce/lds-adapters-uiapi';
 
 import mockObjectInfo from './mocks/custom-proto-medium-object-info';
 import mockRecord from './mocks/custom-proto-medium-record';

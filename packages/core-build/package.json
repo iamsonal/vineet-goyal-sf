@@ -8,7 +8,7 @@
         "clean": "rm -rf dist"
     },
     "devDependencies": {
-        "@salesforce-lds-api/apex": "0.1.3",
-        "@salesforce-lds-api/uiapi-records": "0.1.3"
+        "@salesforce/lds-adapters-apex": "0.1.3",
+        "@salesforce/lds-adapters-uiapi": "0.1.3"
     }
 }

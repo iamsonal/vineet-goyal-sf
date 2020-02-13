@@ -28,7 +28,7 @@ import {
     GetRelatedListsCount_Native,
     MRU,
     UpdateRecordAvatar_Native,
-} from '@salesforce-lds-api/uiapi-records';
+} from '@salesforce/lds-adapters-uiapi';
 
 import { coreCompliantUpdateRecordFactory } from './custom-adapters/updateRecord';
 import { getLdsNativeProxyPlugin } from './ldsNativeProxyPlugin';
@@ -93,7 +93,7 @@ export {
     getFieldDisplayValue,
     getFieldValue,
     getRecordInput,
-} from '@salesforce-lds-api/uiapi-records';
+} from '@salesforce/lds-adapters-uiapi';
 
 // TODO W-6863065 - need to figure out how to build updateLayoutUserState adapter
 export const updateLayoutUserState = {};

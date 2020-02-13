@@ -1,4 +1,4 @@
-jest.mock('@salesforce-lds-api/uiapi-records', () => {
+jest.mock('@salesforce/lds-adapters-uiapi', () => {
     const mockAdapterFactory = () => () => null;
 
     const spies = {
@@ -13,7 +13,7 @@ jest.mock('@salesforce-lds-api/uiapi-records', () => {
     };
 
     return {
-        ...jest.requireActual('@salesforce-lds-api/uiapi-records'),
+        ...jest.requireActual('@salesforce/lds-adapters-uiapi'),
         GetRecord: () => spies.getRecordFactorySpy,
         GetRecordActions: () => spies.getRecordActionsFactorySpy,
         GetLayout: () => spies.getLayoutFactorySpy,
@@ -50,7 +50,7 @@ import {
     updateLayoutUserState,
 } from '../main';
 
-import { __spies as uiApiRecordsSpies } from '@salesforce-lds-api/uiapi-records';
+import { __spies as uiApiRecordsSpies } from '@salesforce/lds-adapters-uiapi';
 import { __spies as lwcLdsSpies } from '@ldsjs/lwc-lds';
 
 describe('lds224 main', () => {

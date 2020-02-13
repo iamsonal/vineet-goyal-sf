@@ -8,7 +8,7 @@ import {
     ObjectInfoRepresentation,
     FieldValueRepresentation,
     FieldValueRepresentationNormalized,
-} from '@salesforce-lds-api/uiapi-records';
+} from '@salesforce/lds-adapters-uiapi';
 
 import {
     ArrayPrototypePush,

@@ -1,5 +1,5 @@
 import { LDS, Store } from '@ldsjs/engine';
-import { keyBuilderRecord } from '@salesforce-lds-api/uiapi-records';
+import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 
 import AdsBridge from '../ads-bridge';
 import { addObjectInfo, addRecord, createObjectInfo, createRecord } from './test-utils';

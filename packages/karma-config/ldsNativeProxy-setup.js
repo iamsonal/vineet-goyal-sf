@@ -6,7 +6,7 @@ import sinon from 'sinon';
 
 import { register as registerLwc } from 'lwc';
 import * as wireService from 'wire-service';
-import { LDSNative } from '@salesforce-lds/engine';
+import { LDSNative } from '@ldsjs/engine';
 
 const karmaNetworkAdapter = sinon.stub().rejects();
 const pendingNativeCalls = new Set();

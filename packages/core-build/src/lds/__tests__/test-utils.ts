@@ -1,5 +1,5 @@
 import { LDS } from '@ldsjs/engine';
-import { ingestRecord, ingestObjectInfo } from '@salesforce-lds-api/uiapi-records';
+import { ingestRecord, ingestObjectInfo } from '@salesforce/lds-adapters-uiapi';
 
 export function createRecord(config: any = {}) {
     return {

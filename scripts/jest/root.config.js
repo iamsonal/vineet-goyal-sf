@@ -24,12 +24,12 @@ module.exports = {
             functions: 70,
             lines: 70,
         },
-        'packages/uiapi-records/src': {
+        'packages/lds-adapters-uiapi/src': {
             branches: 15,
             functions: 10,
             lines: 20,
         },
-        'packages/apex/src': {
+        'packages/lds-adapters-apex/src': {
             branches: 15,
             functions: 10,
             lines: 20,

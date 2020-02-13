@@ -1,6 +1,6 @@
 import { LDS, Store } from '@ldsjs/engine';
-import { ingestRecord } from '@salesforce-lds-api/uiapi-records';
-import mockRecord from '@salesforce-lds-api/uiapi-records/src/__benchmarks__/mocks/custom-proto-medium-record';
+import { ingestRecord } from '@salesforce/lds-adapters-uiapi';
+import mockRecord from '@salesforce/lds-adapters-uiapi/src/__benchmarks__/mocks/custom-proto-medium-record';
 
 const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
 

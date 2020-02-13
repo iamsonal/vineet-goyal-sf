@@ -5,7 +5,7 @@ import {
     UpdateRecordConfig,
     UpdateRecordClientOptions,
     RecordRepresentation,
-} from '@salesforce-lds-api/uiapi-records';
+} from '@salesforce/lds-adapters-uiapi';
 
 // Adapter factories are ideally generated from RAML, but some exports need to support
 // their pre-224 behavior on the platform, so this function captures that for the

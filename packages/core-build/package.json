@@ -2,6 +2,7 @@
     "name": "core-build",
     "version": "0.1.10",
     "description": "Core build and Lightning Platform specific code for Lightning Data Service",
+    "private": true,
     "scripts": {
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",

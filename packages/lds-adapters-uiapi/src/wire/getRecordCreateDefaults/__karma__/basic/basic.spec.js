@@ -33,6 +33,7 @@ describe('getRecordCreateDefaults', () => {
         expect(elm.pushCount()).toBe(1);
         expect(elm.getWiredData()).toEqualSnapshotWithoutEtags(mock);
     });
+
     it('should make correct HTTP request for string objectApiName and formFactor', async () => {
         const mock = getMock('record-defaults-create-Account');
 

@@ -216,6 +216,7 @@ function mockUpdateLayoutUserStateNetwork(config, body, mockData) {
     if (typeof objectApiName !== 'string') {
         objectApiName = objectApiName.objectApiName;
     }
+
     const paramMatch = sinon.match({
         method: 'patch',
         path: `${URL_BASE}/layout/${objectApiName}/user-state`,

@@ -132,6 +132,46 @@ describe('Update layoutUserState', () => {
         expect(elm.pushCount()).toBe(2);
         expect(elm.getWiredData()).toEqualSnapshotWithoutEtags(updatedMock);
     });
+
+    it('throws 500 with invalid input and server error', async () => {
+        const mock = getMock('layoutUserState-Account-Full-View');
+        const firstSectionUserStateId = Object.keys(mock.sectionUserStates)[0];
+        const updatedMock = getMock('layoutUserState-Account-Full-View');
+
+        const sectionUserStateInput = {
+            sectionUserStates: {
+                [firstSectionUserStateId]: {
+                    collapsed: updatedMock.sectionUserStates[firstSectionUserStateId].collapsed,
+                },
+            },
+        };
+
+        const config = Object.assign({}, DEFAULT_CONFIG, {
+            objectApiName: 'Invalid',
+        });
+
+        mockUpdateLayoutUserStateNetwork(config, sectionUserStateInput, { reject: true, data: {} });
+
+        try {
+            await updateLayoutUserState(
+                config.objectApiName,
+                config.recordTypeId,
+                config.layoutType,
+                config.mode,
+                sectionUserStateInput
+            );
+
+            fail('failed to throw with server error');
+        } catch (e) {
+            expect(e).toEqual(
+                jasmine.objectContaining({
+                    status: 500,
+                    ok: false,
+                })
+            );
+            expect(e.statusText.toLowerCase()).toContain('server error');
+        }
+    });
 });
 
 describe('coercion', () => {

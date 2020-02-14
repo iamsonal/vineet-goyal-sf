@@ -27,4 +27,17 @@ describe('validation', () => {
             } as any);
         }).toThrow('Invalid recordInput');
     });
+
+    it('calls dispatchResourceRequest on valid input', async () => {
+        const mockLds = {
+            dispatchResourceRequest: jest.fn().mockReturnValue({ then: () => {} }),
+        };
+        await updateRecord(mockLds as any)({
+            fields: {
+                Name: 'Name',
+                Id: '123456789012345678',
+            },
+        } as any);
+        expect(mockLds.dispatchResourceRequest.mock.calls.length).toBe(1);
+    });
 });

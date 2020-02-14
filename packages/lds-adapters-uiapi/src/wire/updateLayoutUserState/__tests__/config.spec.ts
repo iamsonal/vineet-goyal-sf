@@ -37,4 +37,28 @@ describe('validation', () => {
             updateLayoutUserState({} as any)('Account', MASTER_RECORD_TYPE_ID, 'Full', mode, {});
         }).toThrow('@wire(updateLayoutUserState) invalid configuration');
     });
+
+    it('calls dispatchResourceRequest on valid input', async () => {
+        const mockData = {
+            sectionUserStates: {
+                '01Bxx000002C2sTEAS': {
+                    collapsed: true,
+                },
+            },
+        };
+        const mockLds = {
+            dispatchResourceRequest: jest.fn().mockReturnValue({ then: () => {} }),
+            storeLookup: jest.fn().mockReturnValue({ state: 'Fulfilled', data: mockData }),
+            storeIngest: jest.fn(),
+            storeBroadcast: jest.fn(),
+        };
+        await updateLayoutUserState(mockLds as any)(
+            'Opportunity',
+            MASTER_RECORD_TYPE_ID,
+            'Full',
+            'View',
+            mockData
+        );
+        expect(mockLds.dispatchResourceRequest.mock.calls.length).toBe(1);
+    });
 });

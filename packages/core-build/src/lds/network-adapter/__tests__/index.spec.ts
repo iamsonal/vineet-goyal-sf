@@ -170,6 +170,67 @@ describe('get /object-info/{apiName}', () => {
     });
 });
 
+describe('get /object-info/batch/{apiNames}', () => {
+    testControllerInput(
+        {
+            method: 'get',
+            path: '/object-info/batch/Test1_c,Test2_c',
+            urlParams: {
+                objectApiNames: ['Test1_c', 'Test2_c'],
+            },
+        },
+        [
+            'RecordUiController.getObjectInfos',
+            { objectApiNames: ['Test1_c', 'Test2_c'] },
+            { background: false, hotspot: true, longRunning: false },
+        ]
+    );
+
+    testRejectFetchResponse({
+        method: 'get',
+        path: '/object-info/batch/Test1_c,Test2_c',
+        urlParams: {
+            objectApiNames: ['Test1_c', 'Test2_c'],
+        },
+    });
+
+    testResolveResponse(
+        {
+            method: 'get',
+            path: '/object-info/batch/Test1_c,Test2_c',
+            urlParams: {
+                objectApiNames: ['Test1_c', 'Test2_c'],
+            },
+        },
+        {
+            results: [
+                {
+                    result: {
+                        apiName: 'Test1_c',
+                        fields: {},
+                    },
+                    statusCode: 200,
+                },
+                {
+                    result: {
+                        apiName: 'Test2_c',
+                        fields: {},
+                    },
+                    statusCode: 200,
+                },
+            ],
+        }
+    );
+
+    testStorage('ldsObjectInfo', {
+        method: 'get',
+        path: '/object-info/Test_c',
+        urlParams: {
+            objectApiName: 'Test_c',
+        },
+    });
+});
+
 describe('post /records', () => {
     testControllerInput(
         {

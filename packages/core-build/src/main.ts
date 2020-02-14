@@ -9,6 +9,7 @@ export const getListUi = lds.getListUi;
 export const getLookupActions = lds.getLookupActions;
 export const getLookupRecords = lds.getLookupRecords;
 export const getObjectInfo = lds.getObjectInfo;
+export const getObjectInfos = lds.getObjectInfos;
 export const getPicklistValues = lds.getPicklistValues;
 export const getPicklistValuesByRecordType = lds.getPicklistValuesByRecordType;
 export const getRecord = lds.getRecord;

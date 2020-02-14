@@ -20,6 +20,7 @@ const whiteList = [
     'getLookupActions',
     'getLookupRecords',
     'getObjectInfo',
+    'getObjectInfos',
     'getPicklistValues',
     'getPicklistValuesByRecordType',
     'getRecord',

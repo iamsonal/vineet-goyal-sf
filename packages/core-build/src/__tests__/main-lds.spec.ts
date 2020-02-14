@@ -11,6 +11,7 @@ describe('Main exports', () => {
         'getLookupActions',
         'getLookupRecords',
         'getObjectInfo',
+        'getObjectInfos',
         'getPicklistValues',
         'getPicklistValuesByRecordType',
         'getRecord',

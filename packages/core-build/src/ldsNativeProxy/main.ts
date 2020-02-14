@@ -10,6 +10,7 @@ import {
     GetLookupActions_Native,
     GetLookupRecords_Native,
     GetObjectInfo_Native,
+    GetObjectInfos_Native,
     GetPicklistValues_Native,
     GetPicklistValuesByRecordType_Native,
     GetRecord_Native,
@@ -46,6 +47,7 @@ export const getListUi = ldsNative.register(GetListUi_Native);
 export const getLookupActions = ldsNative.register(GetLookupActions_Native);
 export const getLookupRecords = ldsNative.register(GetLookupRecords_Native);
 export const getObjectInfo = ldsNative.register(GetObjectInfo_Native);
+export const getObjectInfos = ldsNative.register(GetObjectInfos_Native);
 export const getPicklistValues = ldsNative.register(GetPicklistValues_Native);
 export const getPicklistValuesByRecordType = ldsNative.register(
     GetPicklistValuesByRecordType_Native

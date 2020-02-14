@@ -38,6 +38,7 @@ import {
     getLayout,
     getLayoutUserState,
     getObjectInfo,
+    getObjectInfos,
     getPicklistValues,
     getPicklistValuesByRecordType,
     getRecord,
@@ -47,6 +48,7 @@ import {
     UIAPI_GET_LAYOUT,
     UIAPI_GET_LAYOUT_USER_STATE,
     UIAPI_OBJECT_INFO_PATH,
+    UIAPI_OBJECT_INFO_BATCH_PATH,
     UIAPI_RECORDS_PATH,
     UIAPI_RECORD_AVATARS_BASE,
     UIAPI_RECORD_AVATARS_BATCH_PATH,
@@ -154,11 +156,14 @@ function controllerInvokerFactory(resourceRequest: ResourceRequest): ControllerI
             }
 
             if (path.startsWith(UIAPI_OBJECT_INFO_PATH)) {
-                // object-info/API_NAME/picklist-values/RECORD_TYPE_ID/FIELD_API_NAME
-                if (/picklist-values\/[a-zA-Z\d]+\/[a-zA-Z\d]+/.test(path)) {
+                if (path.startsWith(UIAPI_OBJECT_INFO_BATCH_PATH)) {
+                    // object-info/batch/
+                    return getObjectInfos;
+                } else if (/picklist-values\/[a-zA-Z\d]+\/[a-zA-Z\d]+/.test(path)) {
+                    // object-info/API_NAME/picklist-values/RECORD_TYPE_ID/FIELD_API_NAME
                     return getPicklistValues;
-                    // object-info/API_NAME/picklist-values/RECORD_TYPE_ID
                 } else if (/picklist-values\/[a-zA-Z\d]+/.test(path)) {
+                    // object-info/API_NAME/picklist-values/RECORD_TYPE_ID
                     return getPicklistValuesByRecordType;
                 }
 

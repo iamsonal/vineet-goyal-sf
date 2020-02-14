@@ -23,6 +23,7 @@ enum UiApiRecordController {
     GetRecordWithFields = 'RecordUiController.getRecordWithFields',
     GetRecordWithLayouts = 'RecordUiController.getRecordWithLayouts',
     GetObjectInfo = 'RecordUiController.getObjectInfo',
+    GetObjectInfos = 'RecordUiController.getObjectInfos',
     GetPicklistValues = 'RecordUiController.getPicklistValues',
     GetPicklistValuesByRecordType = 'RecordUiController.getPicklistValuesByRecordType',
     UpdateRecord = 'RecordUiController.updateRecord',
@@ -39,6 +40,7 @@ export const UIAPI_RECORD_CREATE_DEFAULTS_PATH = `${UI_API_BASE_URI}/record-defa
 export const UIAPI_RECORD_UI_PATH = `${UI_API_BASE_URI}/record-ui/`;
 export const UIAPI_GET_LAYOUT_USER_STATE = '/user-state';
 export const UIAPI_OBJECT_INFO_PATH = `${UI_API_BASE_URI}/object-info/`;
+export const UIAPI_OBJECT_INFO_BATCH_PATH = `${UI_API_BASE_URI}/object-info/batch/`;
 
 const objectInfoStorage = createStorage({
     name: 'ldsObjectInfo',
@@ -78,6 +80,28 @@ export function getObjectInfo(resourceRequest: ResourceRequest, cacheKey: string
     }
 
     return dispatchAction(UiApiRecordController.GetObjectInfo, params, config);
+}
+
+export function getObjectInfos(resourceRequest: ResourceRequest, cacheKey: string): Promise<any> {
+    const params = buildUiApiParams(
+        {
+            objectApiNames: resourceRequest.urlParams.objectApiNames,
+        },
+        resourceRequest
+    );
+
+    const config: DispatchActionConfig = { ...actionConfig };
+
+    if (objectInfoStorage !== null) {
+        config.cache = {
+            storage: objectInfoStorage,
+            key: cacheKey,
+            statsLogger: objectInfoStorageStatsLogger,
+            forceRefresh: shouldForceRefresh(resourceRequest),
+        };
+    }
+
+    return dispatchAction(UiApiRecordController.GetObjectInfos, params, config);
 }
 
 export function getRecord(resourceRequest: ResourceRequest): Promise<any> {

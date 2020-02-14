@@ -16,6 +16,7 @@ import {
     GetLookupActions,
     GetLookupRecords,
     GetObjectInfo,
+    GetObjectInfos,
     GetPicklistValues,
     GetPicklistValuesByRecordType,
     GetRecord,
@@ -92,6 +93,8 @@ const createImperativeFunction = <C, D>(adapter: Adapter<C, D>) => {
 const getObjectInfoLdsAdapter = createLdsAdapter('getObjectInfo', GetObjectInfo);
 export const _getObjectInfo = createImperativeFunction(getObjectInfoLdsAdapter);
 
+const getObjectInfosLdsAdapter = createLdsAdapter('getObjectInfos', GetObjectInfos);
+
 const getLayoutLdsAdapter = createLdsAdapter('getLayout', GetLayout);
 export const _getLayout = createImperativeFunction(getLayoutLdsAdapter);
 
@@ -127,6 +130,7 @@ export const getListUi = setupWireAdapter('getListUi', GetListUi);
 export const getLookupActions = setupWireAdapter('getLookupActions', GetLookupActions);
 export const getLookupRecords = setupWireAdapter('getLookupRecords', GetLookupRecords);
 export const getObjectInfo = registerWireAdapter(getObjectInfoLdsAdapter);
+export const getObjectInfos = registerWireAdapter(getObjectInfosLdsAdapter);
 export const getPicklistValues = setupWireAdapter('getPicklistValues', GetPicklistValues);
 export const getPicklistValuesByRecordType = setupWireAdapter(
     'getPicklistValuesByRecordType',

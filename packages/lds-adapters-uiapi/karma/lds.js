@@ -16,6 +16,7 @@ import {
     GetLookupActions,
     GetLookupRecords,
     GetObjectInfo,
+    GetObjectInfos,
     GetPicklistValues,
     GetPicklistValuesByRecordType,
     GetRecord,
@@ -46,6 +47,7 @@ const getListUi = register(lds, wireService, GetListUi(lds));
 const getLookupActions = register(lds, wireService, GetLookupActions(lds));
 const getLookupRecords = register(lds, wireService, GetLookupRecords(lds));
 const getObjectInfo = register(lds, wireService, GetObjectInfo(lds));
+const getObjectInfos = register(lds, wireService, GetObjectInfos(lds));
 const getPicklistValues = register(lds, wireService, GetPicklistValues(lds));
 const getPicklistValuesByRecordType = register(
     lds,
@@ -95,6 +97,7 @@ export {
     getRelatedListRecords,
     getRelatedListRecordActions,
     getObjectInfo,
+    getObjectInfos,
     updateRecordAvatar,
     MRU,
     updateRecord,

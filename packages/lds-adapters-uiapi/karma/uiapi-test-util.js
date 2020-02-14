@@ -263,6 +263,21 @@ function mockGetObjectInfoNetwork(config, mockData) {
     }
 }
 
+function mockGetObjectInfosNetwork(config, mockData) {
+    let { objectApiNames, ...queryParams } = config;
+
+    const paramMatch = sinon.match({
+        path: `${URL_BASE}/object-info/batch/${objectApiNames}`,
+        queryParams,
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
 function mockGetPicklistValuesNetwork(config, mockData) {
     let { objectApiName, fieldApiName, recordTypeId } = config;
 
@@ -479,6 +494,7 @@ export {
     mockGetLayoutNetwork,
     mockGetLayoutUserStateNetwork,
     mockGetObjectInfoNetwork,
+    mockGetObjectInfosNetwork,
     mockGetPicklistValuesNetwork,
     mockGetRecordNetwork,
     mockGetRecordActionsNetwork,

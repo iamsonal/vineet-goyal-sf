@@ -81,6 +81,10 @@ export {
     getObjectInfoNativeAdapterFactory as GetObjectInfo_Native,
 } from './generated/adapters/getObjectInfo';
 export {
+    getObjectInfosAdapterFactory as GetObjectInfos,
+    getObjectInfosNativeAdapterFactory as GetObjectInfos_Native,
+} from './generated/adapters/getObjectInfos';
+export {
     getObjectInfoDirectoryAdapterFactory as GetObjectInfoDirectory,
     getObjectInfoDirectoryNativeAdapterFactory as GetObjectInfoDirectory_Native,
 } from './generated/adapters/getObjectInfoDirectory';

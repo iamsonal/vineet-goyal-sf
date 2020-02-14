@@ -6,7 +6,8 @@
     "scripts": {
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",
-        "clean": "rm -rf dist"
+        "clean": "rm -rf dist",
+        "test": "jest"
     },
     "devDependencies": {
         "@salesforce/lds-adapters-apex": "0.1.3",

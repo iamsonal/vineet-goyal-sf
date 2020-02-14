@@ -2547,6 +2547,28 @@ types:
       name:
         description: Name.
         type: string
+  SimplifiedBatchRepresentation:
+    description: Result of an entire batch request operation. Results are ordered in the same order in which the requests were given. Results may either be a successful result with a response body, a successful result without a response body, or an error result without a response body. Success and error are determined by the status code in each result.
+    discriminator: ''
+    type: object
+    properties:
+      results:
+        description: Collection of batch result items. One for each request input.
+        type: array # TODO: hand-rolled
+        items:
+          type: SimplifiedBatchResultRepresentation
+  AbstractSimplifiedBatchResultRepresentation: #TODO: hand-rolled
+    discriminator: statusCode
+    type: object
+    properties:
+      statusCode:
+        type: number
+  SimplifiedBatchResultRepresentation: # TODO: hand-rolled
+    discriminatorValue: 200
+    type: AbstractSimplifiedBatchResultRepresentation
+    properties:
+      result:
+        type: ObjectInfoRepresentation
   ThemeBannerRepresentation:
     description: A representation of a theme banner image.
     discriminator: ''
@@ -4165,67 +4187,83 @@ types:
           body:
             application/json:
               type: ObjectInfoDirectoryRepresentation
-  /object-info/{objectApiName}:
-    get:
-      description: Retrieve metadata about a specific object.
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: ObjectInfoRepresentation
-    uriParameters:
-      objectApiName:
-        type: string
-        required: true
-    /picklist-values/{recordTypeId}:
+    /batch/{objectApiNames}:
       get:
-        description: Returns the values for all picklist fields for a recordType
+        description: Retrieve metadata about a list of objects.
         responses:
           '200':
             description: Success
             body:
               application/json:
-                type: PicklistValuesCollectionRepresentation
+                type: SimplifiedBatchRepresentation
+      uriParameters:
+        objectApiNames:
+          type: array
+          required: true
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    /{objectApiName}:
+      get:
+        description: Retrieve metadata about a specific object.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ObjectInfoRepresentation
       uriParameters:
         objectApiName:
           type: string
           required: true
-        recordTypeId:
-          type: string
-          required: true
-    /picklist-values/{recordTypeId}/{fieldApiName}:
-      get:
-        description: Returns the values for a specific picklist.
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: PicklistValuesRepresentation
-      uriParameters: # TODO: Order changed from original RAML to generate correct resource files
-        objectApiName:
-          type: string
-          required: true
-        recordTypeId:
-          type: string
-          required: true
-        fieldApiName:
-          type: string
-          required: true
-    /validation-rules-info:
-      get:
-        description: Retrieve metadata of validation rules for the given object
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: ValidationRulesRepresentation
-      uriParameters:
-        objectApiName:
-          type: string
-          required: true
+      /picklist-values/{recordTypeId}:
+        get:
+          description: Returns the values for all picklist fields for a recordType
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: PicklistValuesCollectionRepresentation
+        uriParameters:
+          objectApiName:
+            type: string
+            required: true
+          recordTypeId:
+            type: string
+            required: true
+      /picklist-values/{recordTypeId}/{fieldApiName}:
+        get:
+          description: Returns the values for a specific picklist.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: PicklistValuesRepresentation
+        uriParameters: # TODO: Order changed from original RAML to generate correct resource files
+          objectApiName:
+            type: string
+            required: true
+          recordTypeId:
+            type: string
+            required: true
+          fieldApiName:
+            type: string
+            required: true
+      /validation-rules-info:
+        get:
+          description: Retrieve metadata of validation rules for the given object
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ValidationRulesRepresentation
+        uriParameters:
+          objectApiName:
+            type: string
+            required: true
   /predupe:
     post:
       description: Performs a predupe check on given a record.

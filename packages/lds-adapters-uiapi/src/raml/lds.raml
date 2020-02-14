@@ -360,28 +360,34 @@ types:
     get:
       (adapter):
         name: getObjectInfoDirectory
-  '/object-info/{objectApiName}':
-    get:
-      (adapter):
-        name: getObjectInfo
-        coercedParams:
-          objectApiName: SalesforceObjectId
-      (key):
-        apiName: urlParams.objectApiName
-    '/picklist-values/{recordTypeId}':
+    '/batch/{objectApiNames}':
       get:
         (adapter):
-          name: getPicklistValuesByRecordType
+          name: getObjectInfos
+          coercedParams:
+            objectApiNames: SalesforceObjectIdArray
+    '/{objectApiName}':
+      get:
+        (adapter):
+          name: getObjectInfo
           coercedParams:
             objectApiName: SalesforceObjectId
-            recordTypeId: SalesforceRecordId18
-    '/picklist-values/{recordTypeId}/{fieldApiName}':
-      get:
-        (adapter):
-          name: getPicklistValues
-          coercedParams:
-            recordTypeId: SalesforceRecordId18
-            fieldApiName: SalesforceFieldId
+        (key):
+          apiName: urlParams.objectApiName
+      '/picklist-values/{recordTypeId}':
+        get:
+          (adapter):
+            name: getPicklistValuesByRecordType
+            coercedParams:
+              objectApiName: SalesforceObjectId
+              recordTypeId: SalesforceRecordId18
+      '/picklist-values/{recordTypeId}/{fieldApiName}':
+        get:
+          (adapter):
+            name: getPicklistValues
+            coercedParams:
+              recordTypeId: SalesforceRecordId18
+              fieldApiName: SalesforceFieldId
   '/mru-list-ui/{objectApiName}':
     get:
       (adapter):

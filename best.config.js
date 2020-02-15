@@ -4,23 +4,19 @@ module.exports = {
         'rollup-plugin-node-resolve',
         ['rollup-plugin-replace', { 'process.env.NODE_ENV': JSON.stringify('production') }],
     ],
+    specs: { name: 'chrome.headless', version: 80 },
+    metrics: ['aggregate', 'script', 'system', 'idle'],
     runners: [
         {
             alias: 'default',
             runner: '@best/runner-headless',
         },
         {
+            runner: '@best/runner-remote',
             alias: 'remote',
-            runner: '@best/runner-hub',
             config: {
-                host: process.env.BEST_HUB_HOSTNAME,
-                options: {
-                    query: { token: process.env.BEST_HUB_CLIENT_TOKEN },
-                },
-                spec: {
-                    browser: 'chrome',
-                    version: '76',
-                },
+                uri: process.env.BEST_HUB_HOSTNAME,
+                options: { authToken: process.env.BEST_HUB_CLIENT_TOKEN },
             },
         },
     ],

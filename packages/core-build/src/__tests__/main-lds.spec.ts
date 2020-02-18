@@ -28,6 +28,7 @@ describe('Main exports', () => {
         'getRecordCreateDefaults',
         'getLayoutUserState',
         'getRelatedListInfo',
+        'updateRelatedListInfo',
         'getRelatedListInfos',
         'getRelatedListsInfo',
         'getRelatedListRecords',

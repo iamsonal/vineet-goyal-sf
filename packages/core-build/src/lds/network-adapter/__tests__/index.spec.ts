@@ -1543,6 +1543,91 @@ describe('get /related-list-info/{parentObjectApiName}/{relatedListId}', () => {
             recordTypeId: '012T00000004MUHIA2',
         },
     });
+
+    testResolveResponse(
+        {
+            method: 'get',
+            path: '/related-list-info/Opportunity/Contact__r',
+            urlParams: {
+                parentObjectApiName: 'Opportunity',
+                relatedListId: 'Contact__r',
+            },
+        },
+        null
+    );
+});
+
+describe('patch /related-list-info/{parentObjectApiName}/{relatedListId}', () => {
+    testControllerInput(
+        {
+            method: 'patch',
+            path: '/related-list-info/Opportunity/Contact__r',
+            urlParams: {
+                parentObjectApiName: 'Opportunity',
+                relatedListId: 'Contact__r',
+            },
+            queryParams: {
+                recordTypeId: '012T00000004MUHIA2',
+            },
+            body: {
+                orderedByInfo: [],
+                userPreferences: {
+                    columnWidths: {
+                        Name: -1,
+                    },
+                    columnWrap: {
+                        Name: true,
+                    },
+                },
+            },
+        },
+        [
+            'RelatedListUiController.updateRelatedListInfoByApiName',
+            {
+                parentObjectApiName: 'Opportunity',
+                recordTypeId: '012T00000004MUHIA2',
+                relatedListId: 'Contact__r',
+                orderedByInfo: [],
+                userPreferences: {
+                    columnWidths: {
+                        Name: -1,
+                    },
+                    columnWrap: {
+                        Name: true,
+                    },
+                },
+            },
+            undefined,
+        ]
+    );
+
+    testRejectFetchResponse({
+        method: 'patch',
+        path: '/related-list-info/Opportunity/Contact__r',
+    });
+
+    testResolveResponse(
+        {
+            method: 'patch',
+            path: '/related-list-info/Opportunity/Contact__r',
+            urlParams: {
+                parentObjectApiName: 'Opportunity',
+                relatedListId: 'Contact__r',
+            },
+            body: {
+                orderedByInfo: [],
+                userPreferences: {
+                    columnWidths: {
+                        Name: -1,
+                    },
+                    columnWrap: {
+                        Name: true,
+                    },
+                },
+            },
+        },
+        null
+    );
 });
 
 describe('get /related-list-records/{parentRecordId}/{relatedListId}', () => {

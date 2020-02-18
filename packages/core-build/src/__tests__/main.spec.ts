@@ -38,6 +38,7 @@ const whiteList = [
     'getRecordEditActions',
     'getRelatedListInfos',
     'getRelatedListsInfo',
+    'updateRelatedListInfo',
     'getRelatedListRecords',
     'getRelatedListRecordActions',
     'getRelatedListCount',

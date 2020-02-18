@@ -61,6 +61,7 @@ import {
 } from './middlewares/uiapi-records';
 import {
     getRelatedListInfo,
+    updateRelatedListInfo,
     getRelatedListsInfo,
     getRelatedListRecords,
     getRelatedListCount,
@@ -105,6 +106,9 @@ function controllerInvokerFactory(resourceRequest: ResourceRequest): ControllerI
                 if (path.endsWith(UIAPI_GET_LAYOUT_USER_STATE)) {
                     return updateLayoutUserState;
                 }
+            }
+            if (path.startsWith(UIAPI_RELATED_LIST_INFO_PATH)) {
+                return updateRelatedListInfo;
             }
             break;
         case 'get':

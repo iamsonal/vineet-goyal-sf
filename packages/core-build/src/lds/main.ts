@@ -37,6 +37,7 @@ import {
     UpdateRecord,
     UpdateRecordAvatar,
     UpdateLayoutUserState,
+    UpdateRelatedListInfo,
 } from '@salesforce/lds-adapters-uiapi';
 
 import AdsBridge from './ads-bridge';
@@ -155,6 +156,11 @@ export const getRelatedListInfos = setupWireAdapter('getRelatedListInfos', GetRe
 export const _getRelatedListInfos = createImperativeFunction(getRelatedListInfos);
 export const getRelatedListsInfo = setupWireAdapter('getRelatedListsInfo', GetRelatedListsInfo);
 export const _getRelatedListsInfo = createImperativeFunction(getRelatedListsInfo);
+
+export const updateRelatedListInfo = setupWireAdapter(
+    'updateRelatedListInfo',
+    UpdateRelatedListInfo
+);
 
 export const getRelatedListRecords = setupWireAdapter(
     'getRelatedListRecords',

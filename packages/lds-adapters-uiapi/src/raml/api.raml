@@ -2746,25 +2746,53 @@ types:
 
   # These types are not generated. Why?
   ErrorSingleRecordAvatarRepresentation:
-    type: AbstractRecordAvatarRepresentation
-    discriminatorValue: MissingSingle
+    type: object
     properties:
       errorCode:
         type: string
       message:
         type: string
-  RecordAvatarRepresentation:
-    type: object
+  ErrorRecordAvatarBatchRepresentation:
+    discriminatorValue: 404
+    type: AbstractRecordAvatarBatchRepresentation
+    properties:
+      result:
+        type: array
+        items: ErrorSingleRecordAvatarRepresentation
+  ErrorBadRequestRecordAvatarBatchRepresentation:
+    discriminatorValue: 400
+    type: AbstractRecordAvatarBatchRepresentation
+    properties:
+      result:
+        type: array
+        items: ErrorSingleRecordAvatarRepresentation
+  RecordAvatarBatchRepresentation:
+    discriminatorValue: 200
+    type: AbstractRecordAvatarBatchRepresentation
     properties:
       result:
         type: AbstractRecordAvatarRepresentation
+  AbstractRecordAvatarBatchRepresentation:
+    discriminator: statusCode
+    type: object
+    properties:
       statusCode:
         type: number
   RecordAvatarBulkRepresentation:
     type: object
     properties:
+      hasErrors:
+        type: boolean
+      results:
+        description: Collection of batch result items. One for each request input.
+        type: array
+        items:
+          type: AbstractRecordAvatarBatchRepresentation
+  RecordAvatarBulkMapRepresentation:
+    type: object
+    properties:
       //:
-        type: RecordAvatarRepresentation
+        type: AbstractRecordAvatarBatchRepresentation
 
   # TODO: These RecordRepresentationTypes are hand rolled for "getRecordCreateDefaults"
   # The RecordRepresentation returned there should not be normalized and will not appear
@@ -4346,7 +4374,7 @@ types:
             description: Success
             body:
               application/json:
-                type: RecordAvatarBulkRepresentation #TODO: hand rolled
+                type: RecordAvatarBulkMapRepresentation #TODO: hand rolled
         queryParameters:
           formFactor:
             type: string

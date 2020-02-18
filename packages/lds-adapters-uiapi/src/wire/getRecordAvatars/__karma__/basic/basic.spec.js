@@ -238,6 +238,51 @@ describe('Error', () => {
         expect(elm.pushCount()).toBe(1);
         expect(elm.getWiredData()).toEqualRecordAvatarsSnapshot(config.recordIds, mock);
     });
+
+    it('should ingest partial 404 responses exposed as an array', async () => {
+        const mock = getMock('avatar-001xx0000000004AAA-001xx00noavatarAAA-404-array');
+
+        const config = {
+            recordIds: ['001xx0000000004AAA', '001xx00noavatarAAA'],
+        };
+
+        mockGetAvatarsNetwork(config, mock);
+
+        const elm = await setupElement(config, GetRecordAvatars);
+
+        expect(elm.pushCount()).toBe(1);
+        expect(elm.getWiredData()).toEqualRecordAvatarsSnapshot(config.recordIds, mock);
+    });
+
+    it('should ingest single 404 responses exposed as an array', async () => {
+        const mock = getMock('avatar-005B00000029o0qIAB-404');
+
+        const config = {
+            recordIds: ['005B00000029o0qIAB'],
+        };
+
+        mockGetAvatarsNetwork(config, mock);
+
+        const elm = await setupElement(config, GetRecordAvatars);
+
+        expect(elm.pushCount()).toBe(1);
+        expect(elm.getWiredData()).toEqualRecordAvatarsSnapshot(config.recordIds, mock);
+    });
+
+    it('should ingest single 400 responses exposed as an array', async () => {
+        const mock = getMock('avatar-400');
+
+        const config = {
+            recordIds: ['005B00000029o0qIAB'],
+        };
+
+        mockGetAvatarsNetwork(config, mock);
+
+        const elm = await setupElement(config, GetRecordAvatars);
+
+        expect(elm.pushCount()).toBe(1);
+        expect(elm.getWiredData()).toEqualRecordAvatarsSnapshot(config.recordIds, mock);
+    });
 });
 
 describe('config', () => {

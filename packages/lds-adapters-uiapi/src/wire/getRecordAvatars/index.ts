@@ -16,63 +16,14 @@ import {
     GetRecordAvatarsConfig,
 } from '../../generated/adapters/getRecordAvatars';
 import { refreshable, keyPrefix } from '../../generated/adapters/adapter-utils';
-import {
-    select as photoRecordAvatarRepresentationSelect,
-    PhotoRecordAvatarRepresentation,
-} from '../../generated/types/PhotoRecordAvatarRepresentation';
-import {
-    select as themeRecordAvatarRepresentationSelect,
-    ThemeRecordAvatarRepresentation,
-} from '../../generated/types/ThemeRecordAvatarRepresentation';
-import { ErrorSingleRecordAvatarRepresentation } from '../../generated/types/ErrorSingleRecordAvatarRepresentation';
-
-interface RecordAvatarBulkServerRepresentation {
-    hasErrors: boolean;
-    results: Array<{
-        result:
-            | PhotoRecordAvatarRepresentation
-            | ThemeRecordAvatarRepresentation
-            | ErrorSingleRecordAvatarRepresentation;
-        statusCode: number;
-    }>;
-}
-
-const recordAvatarSelections: PathSelection[] = [
-    {
-        kind: 'Link',
-        name: 'result',
-        union: true,
-        discriminator: 'type',
-        unionSelections: {
-            Photo: photoRecordAvatarRepresentationSelect().selections,
-            Theme: themeRecordAvatarRepresentationSelect().selections,
-
-            // Hand rolled, we don't want to emit the properties from AbstractAvatarRepresentation
-            MissingSingle: [
-                {
-                    name: 'errorCode',
-                    kind: 'Scalar',
-                },
-                {
-                    name: 'message',
-                    kind: 'Scalar',
-                },
-            ],
-        },
-    },
-    {
-        kind: 'Scalar',
-        name: 'statusCode',
-    },
-];
+import { RecordAvatarBulkMapRepresentation } from '../../generated/types/RecordAvatarBulkMapRepresentation';
+import { selectChildren as selectChildrenAbstractRecordAvatarBatchRepresentation } from '../../generated/types/AbstractRecordAvatarBatchRepresentation';
 
 function selectAvatars(recordIds: string[]): PathSelection[] {
     return recordIds.map((recordId: string) => {
-        return {
-            kind: 'Link',
-            name: recordId,
-            selections: recordAvatarSelections,
-        };
+        return selectChildrenAbstractRecordAvatarBatchRepresentation({
+            propertyName: recordId,
+        });
     });
 }
 
@@ -111,25 +62,18 @@ export function buildNetworkSnapshot(
         queryParams: {},
     });
 
-    return lds.dispatchResourceRequest<RecordAvatarBulkServerRepresentation>(resourceRequest).then(
+    return lds.dispatchResourceRequest<RecordAvatarBulkRepresentation>(resourceRequest).then(
         response => {
-            const formatted: RecordAvatarBulkRepresentation = response.body.results.reduce(
+            const formatted: RecordAvatarBulkMapRepresentation = response.body.results.reduce(
                 (seed, avatar, index) => {
                     const recordId = recordIds[index];
-                    // error responses
-                    // Fill in the missing discriminators
-                    if (avatar.statusCode !== 200) {
-                        avatar.result.recordId = recordId;
-                        avatar.result.type = 'MissingSingle';
-                    }
-
                     seed[recordId] = avatar;
                     return seed;
                 },
-                {} as RecordAvatarBulkRepresentation
+                {} as RecordAvatarBulkMapRepresentation
             );
 
-            lds.storeIngest<RecordAvatarBulkRepresentation>(KEY, resourceRequest, formatted);
+            lds.storeIngest<RecordAvatarBulkMapRepresentation>(KEY, resourceRequest, formatted);
             lds.storeBroadcast();
             return buildInMemorySnapshot(lds, config);
         },

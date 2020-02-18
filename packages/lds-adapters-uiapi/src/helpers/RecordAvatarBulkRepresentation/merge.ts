@@ -1,12 +1,12 @@
-import { RecordAvatarBulkRepresentationNormalized } from '../../generated/types/RecordAvatarBulkRepresentation';
+import { RecordAvatarBulkMapRepresentationNormalized } from '../../generated/types/RecordAvatarBulkMapRepresentation';
 import { LDS, IngestPath } from '@ldsjs/engine';
 
 export default function merge(
-    existing: RecordAvatarBulkRepresentationNormalized | undefined,
-    incoming: RecordAvatarBulkRepresentationNormalized,
+    existing: RecordAvatarBulkMapRepresentationNormalized | undefined,
+    incoming: RecordAvatarBulkMapRepresentationNormalized,
     _lds: LDS,
     _path: IngestPath
-): RecordAvatarBulkRepresentationNormalized {
+): RecordAvatarBulkMapRepresentationNormalized {
     if (existing === undefined) {
         return incoming;
     }

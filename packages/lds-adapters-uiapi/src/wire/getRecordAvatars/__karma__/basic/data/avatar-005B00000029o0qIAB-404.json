@@ -1,0 +1,14 @@
+{
+    "hasErrors": true,
+    "results": [
+        {
+            "result": [
+                {
+                    "errorCode": "NOT_FOUND",
+                    "message": "Unable to find record avatar with 005B00000029o0qIAB"
+                }
+            ],
+            "statusCode": 404
+        }
+    ]
+}

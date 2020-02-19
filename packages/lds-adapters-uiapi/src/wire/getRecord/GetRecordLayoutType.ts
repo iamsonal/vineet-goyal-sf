@@ -26,6 +26,7 @@ import {
     buildInMemorySnapshot as getRecordByFieldsCache,
     getRecordByFields,
 } from './GetRecordFields';
+import { ObjectKeys } from '../../util/language';
 
 const DEFAULT_MODE = LayoutMode.View;
 
@@ -54,16 +55,20 @@ export function refresh(lds: LDS, config: GetRecordLayoutTypeConfig) {
         optionalFields,
     };
 
-    return getRecordUiNetwork(lds, recordUiConfig).then(response => {
-        if (isErrorSnapshot(response)) {
-            return lds.errorSnapshot(response.error);
+    return getRecordUiNetwork(lds, recordUiConfig).then(snapshot => {
+        if (isErrorSnapshot(snapshot)) {
+            return lds.errorSnapshot(snapshot.error);
         }
 
-        if (isUnfulfilledSnapshot(response)) {
-            throw new Error('RecordUi adapter resolved with a snapshot with missing data');
+        if (isUnfulfilledSnapshot(snapshot)) {
+            throw new Error(
+                `RecordUi adapter resolved with a snapshot with missing data, missingPaths: ${ObjectKeys(
+                    snapshot.missingPaths
+                )}`
+            );
         }
 
-        const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, response.data);
+        const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, snapshot.data);
         const fields = getFieldsFromLayoutMap(layoutMap, objectInfo);
         return getRecordByFieldsCache(lds, {
             recordId,
@@ -129,7 +134,11 @@ function processRecordUiRepresentation(
         return lds.errorSnapshot(snapshot.error);
     }
     if (isUnfulfilledSnapshot(snapshot)) {
-        throw new Error('RecordUi adapter resolved with a snapshot with missing data');
+        throw new Error(
+            `RecordUi adapter resolved with a snapshot with missing data, missingPaths: ${ObjectKeys(
+                snapshot.missingPaths
+            )}`
+        );
     }
     const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, snapshot.data);
     return getRecord(lds, recordId, layoutMap, objectInfo);

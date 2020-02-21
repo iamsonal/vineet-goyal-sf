@@ -17,6 +17,21 @@
             },
             "objectApiName": "CObjChilds__c",
             "keyPrefix": "a00"
+        },
+        {
+            "eTag": "0b6a46e035c6be4433b3fea4c5d6ebf8",
+            "entityLabel": "Note, Attachment, Google Doc And File",
+            "entityPluralLabel": "Notes, Attachments, Google Docs And Files",
+            "fieldApiName": "ParentId",
+            "keyPrefix": null,
+            "objectApiName": "CombinedAttachment",
+            "parentFieldApiName": "Id",
+            "relatedListId": "CombinedAttachments",
+            "relatedListInfoUrl": null,
+            "themeInfo": {
+                "color": "b19f7e",
+                "iconUrl": "/img/icon/t4v35/standard/file_120.png"
+            }
         }
     ]
 }

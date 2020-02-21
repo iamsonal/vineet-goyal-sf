@@ -2477,7 +2477,7 @@ types:
         type: string
       keyPrefix:
         description: The key prefix for IDs of this object.
-        type: string
+        type: string | nil # TODO: "nil" union hand rolled
       objectApiName:
         description: The API name of the this object.
         type: string

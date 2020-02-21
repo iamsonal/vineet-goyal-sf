@@ -12,3 +12,5 @@ export {
     getRecordInput,
     getFieldValue,
 } from '@salesforce/lds-adapters-uiapi';
+
+export { getSObjectValue } from '@salesforce/lds-adapters-apex';

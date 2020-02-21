@@ -2,11 +2,7 @@ import { LDS, Store, AdapterFactory, Adapter } from '@ldsjs/engine';
 import { register, bindWireRefresh } from '@ldsjs/lwc-lds';
 import * as wireService from 'wire-service';
 
-import {
-    GenerateGetApexWireAdapter,
-    GetApexInvoker,
-    getSObjectValue,
-} from '@salesforce/lds-adapters-apex';
+import { GenerateGetApexWireAdapter, GetApexInvoker } from '@salesforce/lds-adapters-apex';
 import {
     CreateRecord,
     DeleteRecord,
@@ -207,7 +203,7 @@ export const updateLayoutUserState = (
 };
 
 export { MRU };
-export { getApexInvoker, getSObjectValue };
+export { getApexInvoker };
 
 /**
  * Apex
@@ -237,6 +233,7 @@ export {
     getFieldDisplayValue,
     getFieldValue,
     getRecordInput,
+    getSObjectValue,
 } from 'lds-static-functions';
 
 /**

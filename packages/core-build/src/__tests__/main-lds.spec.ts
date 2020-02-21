@@ -34,7 +34,6 @@ describe('Main exports', () => {
         'getRelatedListCount',
         'getRelatedListsCount',
         'getApexInvoker',
-        'getSObjectValue',
     ].forEach(moduleName => {
         it(`should export ${moduleName} from lds`, () => {
             expect((mainExports as any)[moduleName]).toBe((ldsExports as any)[moduleName]);
@@ -49,6 +48,7 @@ describe('Main exports', () => {
         'getFieldDisplayValue',
         'getFieldValue',
         'getRecordInput',
+        'getSObjectValue',
     ].forEach(moduleName => {
         it(`should export ${moduleName} from lds`, () => {
             expect((mainExports as any)[moduleName]).toBe((ldsExports as any)[moduleName]);

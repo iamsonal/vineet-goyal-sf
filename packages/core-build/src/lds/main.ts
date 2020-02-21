@@ -27,7 +27,6 @@ import {
     GetRecordUi,
     GetRelatedListActions,
     GetRelatedListInfo,
-    GetRelatedListInfos,
     GetRelatedListsInfo,
     GetRelatedListRecordActions,
     GetRelatedListRecords,
@@ -152,8 +151,6 @@ export const getRelatedListActions = setupWireAdapter(
 );
 export const _getRelatedListActions = createImperativeFunction(getRelatedListActions);
 
-export const getRelatedListInfos = setupWireAdapter('getRelatedListInfos', GetRelatedListInfos);
-export const _getRelatedListInfos = createImperativeFunction(getRelatedListInfos);
 export const getRelatedListsInfo = setupWireAdapter('getRelatedListsInfo', GetRelatedListsInfo);
 export const _getRelatedListsInfo = createImperativeFunction(getRelatedListsInfo);
 

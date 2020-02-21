@@ -29,7 +29,6 @@ describe('Main exports', () => {
         'getLayoutUserState',
         'getRelatedListInfo',
         'updateRelatedListInfo',
-        'getRelatedListInfos',
         'getRelatedListsInfo',
         'getRelatedListRecords',
         'getRelatedListCount',

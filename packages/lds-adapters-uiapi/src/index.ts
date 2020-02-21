@@ -55,11 +55,6 @@ export {
 } from './generated/adapters/getRecordEditActions';
 export { getRecordUiNativeAdapterFactory as GetRecordUi_Native } from './generated/adapters/getRecordUi';
 export {
-    // TODO: Remove this export after the code is updated to use the new name getRelatedListsInfo
-    getRelatedListsInfoAdapterFactory as GetRelatedListInfos,
-    getRelatedListsInfoNativeAdapterFactory as GetRelatedListInfos_Native,
-} from './generated/adapters/getRelatedListsInfo';
-export {
     getRelatedListsInfoAdapterFactory as GetRelatedListsInfo,
     getRelatedListsInfoNativeAdapterFactory as GetRelatedListsInfo_Native,
 } from './generated/adapters/getRelatedListsInfo';

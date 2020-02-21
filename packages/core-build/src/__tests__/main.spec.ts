@@ -36,7 +36,6 @@ const whiteList = [
     'updateRecord',
     'updateRecordAvatar',
     'getRecordEditActions',
-    'getRelatedListInfos',
     'getRelatedListsInfo',
     'updateRelatedListInfo',
     'getRelatedListRecords',
@@ -69,7 +68,6 @@ const whiteList = [
     '_getRecordUi',
     '_getRelatedListInfo',
     '_getRelatedListActions',
-    '_getRelatedListInfos',
     '_getRelatedListRecords',
     '_getRelatedListRecordActions',
 ].sort();

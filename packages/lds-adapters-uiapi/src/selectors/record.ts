@@ -87,7 +87,7 @@ const SCALAR_VALUE_SELECTION: PathSelection = {
     name: 'value',
 };
 
-function isSpanningRecord(
+export function isSpanningRecord(
     fieldValue: null | string | number | boolean | RecordRepresentation
 ): fieldValue is RecordRepresentation {
     return fieldValue !== null && typeof fieldValue === 'object';

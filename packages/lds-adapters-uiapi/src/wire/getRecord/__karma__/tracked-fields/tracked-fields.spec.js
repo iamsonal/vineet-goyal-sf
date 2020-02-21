@@ -10,7 +10,7 @@ import {
 } from 'uiapi-test-util';
 
 import RecordFields from '../lwc/record-fields';
-import LookupRecords from '../../../getLookupRecords/__karma__/lwc/get-lookup-records';
+import ListUi from '../../../getListUi/__karma__/lwc/basic';
 
 const MOCK_PREFIX = 'wire/getRecord/__karma__/tracked-fields/data/';
 
@@ -18,34 +18,21 @@ function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
 }
 
-function getLookupRecordsSinonParamsMatch(config) {
-    let objectApiName;
-    let fieldApiName;
-    let targetApiName;
-    if (typeof config.fieldApiName === 'string') {
-        const split = config.fieldApiName.split('.');
-        objectApiName = split[0];
-        fieldApiName = split[1];
-    } else {
-        objectApiName = config.fieldApiName.objectApiName;
-        fieldApiName = config.fieldApiName.fieldApiName;
-    }
+function getListUiSinonParamsMatch(config) {
+    const listViewId = config.listViewId;
+    const queryParams = {
+        pageSize: config.pageSize,
+    };
+    delete queryParams.listViewId;
 
-    if (typeof config.targetApiName === 'string') {
-        targetApiName = config.targetApiName;
-    } else {
-        targetApiName = config.targetApiName.objectApiName;
-    }
-
-    const queryParams = Object.assign({}, config.requestParams || {});
     return sinon.match({
-        path: `${URL_BASE}/lookups/${objectApiName}/${fieldApiName}/${targetApiName}`,
+        path: `${URL_BASE}/list-ui/${listViewId}`,
         queryParams,
     });
 }
 
-function mockLookupNetwork(config, mockData) {
-    mockNetworkOnce(karmaNetworkAdapter, getLookupRecordsSinonParamsMatch(config), mockData);
+function mockListUiNetwork(config, mockData) {
+    mockNetworkOnce(karmaNetworkAdapter, getListUiSinonParamsMatch(config), mockData);
 }
 
 describe('tracked fields', () => {
@@ -95,40 +82,34 @@ describe('tracked fields', () => {
     });
 
     it('should fetch record with all tracked fields collected from arbitrary wires', async () => {
-        const lookupRecordsMock = getMock(
-            'lookup-records-Opportunity-Opportunity.AccountId-Account'
-        );
-        const accountMock = getMock(
-            'record-Account-fields-Account.Fax-optionalFields-Account.DisambiguationField,Account.FirstName,Account.LastName,Account.Name,Account.NameLocal'
-        );
+        const listMock = getMock('list-ui-accounts-page-size-6');
+        const accountMock = getMock('account-fields-Account.Website-optionalFields');
 
-        const lookupConfig = {
-            fieldApiName: 'Opportunity.AccountId',
-            targetApiName: 'Account',
+        const listConfig = {
+            listViewId: listMock.info.listReference.id,
+            pageSize: 6,
         };
 
         const accountConfig = {
             recordId: accountMock.id,
-            fields: ['Account.Fax'],
+            fields: ['Account.Website'],
         };
 
-        mockLookupNetwork(lookupConfig, lookupRecordsMock);
+        mockListUiNetwork(listConfig, listMock);
 
-        const expectedOptionalFields = extractRecordFields(lookupRecordsMock.records[0]);
+        const expectedOptionalFields = extractRecordFields(listMock.records.records[0]);
         const networkParams = {
             ...accountConfig,
             optionalFields: expectedOptionalFields,
         };
         mockGetRecordNetwork(networkParams, accountMock);
-        // Load lookup records
-        await setupElement(lookupConfig, LookupRecords);
+        // Load list-ui
+        await setupElement(listConfig, ListUi);
 
         // Load Account with Id
         const elm = await setupElement(accountConfig, RecordFields);
 
-        const expected = getMock(
-            'record-Account-fields-Account.Fax-optionalFields-Account.DisambiguationField,Account.FirstName,Account.LastName,Account.Name,Account.NameLocal'
-        );
+        const expected = getMock('record-Account-fields-Account.Website');
         // Only keep the fields which get requested by config
         expectedOptionalFields.forEach(fieldName => {
             const split = fieldName.split('.');

@@ -42,5 +42,23 @@
             "page": 123456,
             "pageSize": 10
         }
+    },
+    {
+        "endpoint": "lookups/Case/AccountId/Account",
+        "filename": "lookup-records-Case-Account-DisambiguationField-NotOnFirstRecord",
+        "params": {
+            "searchType": "TypeAhead",
+            "page": 1,
+            "pageSize": 25
+        }
+    },
+    {
+        "endpoint": "lookups/Case/AccountId/Account",
+        "filename": "lookup-records-Case-Account-DisambiguationField-OnFirstRecord",
+        "params": {
+            "searchType": "Recent",
+            "page": 1,
+            "pageSize": 25
+        }
     }
 ]

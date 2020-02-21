@@ -1,4 +1,4 @@
-import { AdapterFactory, LDS, PathSelection, Selector, FetchResponse } from '@ldsjs/engine';
+import { AdapterFactory, LDS, FetchResponse, FulfilledSnapshot } from '@ldsjs/engine';
 
 import { RecordCollectionRepresentation } from '../../generated/types/RecordCollectionRepresentation';
 import {
@@ -11,10 +11,11 @@ import {
     GetLookupRecordsConfig,
 } from '../../generated/adapters/getLookupRecords';
 import { getFieldId, FieldId } from '../../primitives/FieldId';
+import { isSpanningRecord } from '../../selectors/record';
 import { ObjectId } from '../../primitives/ObjectId';
 import getLookupRecordsResourceRequest from '../../generated/resources/getUiApiLookupsByObjectApiNameAndFieldApiNameAndTargetApiName';
-import { buildSelectionFromRecord } from '../../selectors/record';
-import { isFulfilledSnapshot } from '../../util/snapshot';
+import { deepFreeze } from '../../util/deep-freeze';
+import { RecordRepresentation } from '../../generated/types/RecordRepresentation';
 
 interface GetLookupRecordsConfigRequestParams {
     q?: string;
@@ -37,55 +38,6 @@ const paramNames: AdapterValidationConfig = {
         optional: ['requestParams'],
     },
 };
-
-function getDataPaths(resp: RecordCollectionRepresentation): PathSelection[] {
-    const record = resp.records[0];
-    let recordSelections: PathSelection[] = [];
-    if (record !== undefined) {
-        recordSelections = buildSelectionFromRecord(record);
-    }
-
-    return [
-        {
-            kind: 'Scalar',
-            name: 'count',
-        },
-        {
-            kind: 'Scalar',
-            name: 'currentPageToken',
-        },
-        {
-            kind: 'Scalar',
-            name: 'currentPageUrl',
-        },
-        {
-            kind: 'Scalar',
-            name: 'nextPageToken',
-        },
-        {
-            kind: 'Scalar',
-            name: 'nextPageUrl',
-        },
-        {
-            kind: 'Scalar',
-            name: 'previousPageToken',
-        },
-        {
-            kind: 'Scalar',
-            name: 'previousPageUrl',
-        },
-        {
-            kind: 'Link',
-            name: 'records',
-            plural: true,
-            selections: recordSelections,
-        },
-    ];
-}
-
-function getSelectorKey(lookupRecordsKey: string) {
-    return `${lookupRecordsKey}__selector`;
-}
 
 function coerceRequestParams(untrusted: unknown): GetLookupRecordsConfigRequestParams {
     if (!untrustedIsObject<GetLookupRecordsAdapterConfig>(untrusted)) {
@@ -138,6 +90,20 @@ function coerceConfigWithDefaults(untrusted: unknown): GetLookupRecordsConfig | 
     };
 }
 
+function removeEtags(recordRep: RecordRepresentation) {
+    const { fields } = recordRep;
+
+    delete recordRep.eTag;
+    delete recordRep.weakEtag;
+
+    Object.keys(fields).forEach(fieldName => {
+        const { value: nestedValue } = fields[fieldName];
+        if (isSpanningRecord(nestedValue)) {
+            removeEtags(nestedValue);
+        }
+    });
+}
+
 export function buildNetworkSnapshot(lds: LDS, config: GetLookupRecordsConfig) {
     const { objectApiName, fieldApiName, targetApiName } = config;
     const request = getLookupRecordsResourceRequest({
@@ -154,72 +120,36 @@ export function buildNetworkSnapshot(lds: LDS, config: GetLookupRecordsConfig) {
             dependentFieldBindings: config.dependentFieldBindings,
         },
     });
-    const cachedSelectorKey = getSelectorKey(request.key);
 
     return lds.dispatchResourceRequest<RecordCollectionRepresentation>(request).then(
         response => {
+            // TODO W-7235112 - remove this hack to never ingest lookup responses that
+            // avoids issues caused by them not being real RecordRepresentations
             const { body } = response;
-
-            const paths = getDataPaths(body);
-            const sel: Selector = {
+            const { records } = body;
+            for (let i = 0, len = records.length; i < len; i += 1) {
+                removeEtags(records[i]);
+            }
+            deepFreeze(body);
+            return {
+                state: 'Fulfilled',
                 recordId: request.key,
-                node: {
-                    kind: 'Fragment',
-                    selections: paths,
-                },
                 variables: {},
-            };
-
-            lds.storePublish(cachedSelectorKey, sel);
-            lds.storeIngest(request.key, request, body);
-            lds.storeBroadcast();
-
-            return lds.storeLookup<RecordCollectionRepresentation>(sel);
+                seenRecords: {},
+                select: {
+                    recordId: request.key,
+                    node: {
+                        kind: 'Fragment',
+                    },
+                    variables: {},
+                },
+                data: body,
+            } as FulfilledSnapshot<RecordCollectionRepresentation, {}>;
         },
         (err: FetchResponse<unknown>) => {
-            lds.storeIngestFetchResponse(request.key, err);
-            lds.storeBroadcast();
             return lds.errorSnapshot(err);
         }
     );
-}
-
-export function buildInMemorySnapshot(lds: LDS, config: GetLookupRecordsConfig) {
-    const request = getLookupRecordsResourceRequest({
-        urlParams: {
-            objectApiName: config.objectApiName,
-            fieldApiName: config.fieldApiName,
-            targetApiName: config.targetApiName,
-        },
-        queryParams: {
-            page: config.page,
-            pageSize: config.pageSize,
-            q: config.q,
-            searchType: config.searchType,
-            dependentFieldBindings: config.dependentFieldBindings,
-        },
-    });
-
-    const cachedSelectorKey = getSelectorKey(request.key);
-    const cacheSel = lds.storeLookup<Selector>({
-        recordId: cachedSelectorKey,
-        node: {
-            kind: 'Fragment',
-            opaque: true,
-        },
-        variables: {},
-    });
-
-    if (isFulfilledSnapshot(cacheSel)) {
-        const cacheData = lds.storeLookup<RecordCollectionRepresentation>(cacheSel.data);
-
-        // CACHE HIT
-        if (isFulfilledSnapshot(cacheData)) {
-            return cacheData;
-        }
-    }
-
-    return null;
 }
 
 export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRepresentation> = (
@@ -231,11 +161,6 @@ export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRep
             if (config === null) {
                 return null;
             }
-            const cacheSnapshot = buildInMemorySnapshot(lds, config);
-            if (cacheSnapshot !== null) {
-                return cacheSnapshot;
-            }
-
             return buildNetworkSnapshot(lds, config);
         },
         (untrusted: unknown) => {

@@ -38,13 +38,15 @@ export function updateRelatedListInfo(resourceRequest: ResourceRequest): Promise
             parentObjectApiName: urlParams.parentObjectApiName,
             relatedListId: urlParams.relatedListId,
             recordTypeId: queryParams.recordTypeId,
-            orderedByInfo: body.orderedByInfo,
-            userPreferences: body.userPreferences,
+            relatedListInfoInput: {
+                orderedByInfo: body.orderedByInfo,
+                userPreferences: body.userPreferences,
+            },
         },
         resourceRequest
     );
 
-    return dispatchAction(UiApiRecordController.UpdateRelatedListInfo, params, body);
+    return dispatchAction(UiApiRecordController.UpdateRelatedListInfo, params);
 }
 
 export function getRelatedListsInfo(resourceRequest: ResourceRequest): Promise<any> {

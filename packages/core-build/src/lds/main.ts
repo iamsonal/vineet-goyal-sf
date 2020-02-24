@@ -152,10 +152,25 @@ export const _getRelatedListActions = createImperativeFunction(getRelatedListAct
 export const getRelatedListsInfo = setupWireAdapter('getRelatedListsInfo', GetRelatedListsInfo);
 export const _getRelatedListsInfo = createImperativeFunction(getRelatedListsInfo);
 
-export const updateRelatedListInfo = setupWireAdapter(
-    'updateRelatedListInfo',
-    UpdateRelatedListInfo
-);
+const baseUpdateRelatedListInfo = UpdateRelatedListInfo(lds);
+// In order to export the imperative wire correctly, we need to add some safety checks
+// to ensure the config passed is correct
+export const updateRelatedListInfo = (
+    config: Parameters<ReturnType<typeof UpdateRelatedListInfo>>[0]
+) => {
+    const value = baseUpdateRelatedListInfo(config);
+    if (value === null) {
+        throw new Error('Invalid config for updateRelatedListInfo');
+    }
+    if ('then' in value) {
+        return value.then(snapshot => snapshot.data);
+    }
+    if (value.state === 'Error') {
+        return Promise.reject(value.error);
+    }
+
+    return Promise.resolve(value.data);
+};
 
 export const getRelatedListRecords = setupWireAdapter(
     'getRelatedListRecords',

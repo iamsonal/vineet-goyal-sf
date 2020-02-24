@@ -1587,13 +1587,15 @@ describe('patch /related-list-info/{parentObjectApiName}/{relatedListId}', () =>
                 parentObjectApiName: 'Opportunity',
                 recordTypeId: '012T00000004MUHIA2',
                 relatedListId: 'Contact__r',
-                orderedByInfo: [],
-                userPreferences: {
-                    columnWidths: {
-                        Name: -1,
-                    },
-                    columnWrap: {
-                        Name: true,
+                relatedListInfoInput: {
+                    orderedByInfo: [],
+                    userPreferences: {
+                        columnWidths: {
+                            Name: -1,
+                        },
+                        columnWrap: {
+                            Name: true,
+                        },
                     },
                 },
             },

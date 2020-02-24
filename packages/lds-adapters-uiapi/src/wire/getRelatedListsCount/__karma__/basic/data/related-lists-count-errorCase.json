@@ -1,0 +1,11 @@
+{
+    "results": [
+        {
+            "result": {
+                "errorCode": "ITEM_NOT_FOUND",
+                "message": "Related list not found: relatedListThatDoesntExist"
+            },
+            "statusCode": 400
+        }
+    ]
+}

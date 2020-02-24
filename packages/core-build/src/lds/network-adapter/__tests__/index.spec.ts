@@ -1371,19 +1371,19 @@ describe('get /actions/record/${recordIds}', () => {
                 },
             },
             {
-                hasErrors: null,
                 results: [
                     {
                         result: {
                             count: 7,
-                            eTag: '2d7320765e4745b63a0ea6e7580f11d8',
+                            eTag: '26a72a4546a02b7e0507e386f9fae374',
+                            hasMore: false,
                             listReference: {
                                 id: null,
                                 inContextOfRecordId: 'a00RM0000004aVwYAI',
                                 listViewApiName: null,
                                 objectApiName: null,
                                 parentObjectApiName: 'CwcCustom00__c',
-                                recordTypeId: 'CwcCustom01__c',
+                                recordTypeId: null,
                                 relatedListId: 'CwcCustom01s__r',
                                 type: 'relatedList',
                             },

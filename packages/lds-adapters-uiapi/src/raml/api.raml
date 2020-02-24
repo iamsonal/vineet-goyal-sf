@@ -2376,23 +2376,26 @@ types:
     discriminator: ''
     type: object
     properties:
-      hasErrors: string | nil
       results:
         description: Collection of batch result items. One for each request input.
         type: array
         items:
-          type: RelatedListRecordCountResultRepresentation
-  RelatedListRecordCountResultRepresentation: #TODO: Handrolled
+          type: SimpleRelatedListCountBatchRepresentation
+  AbstractRelatedListRecordCountResultRepresentation: #TODO: Handrolled
     description: RelatedListRecordCountResultRepresentation
-    discriminator: ''
+    discriminator: statusCode
     type: object
+    properties:
+      statusCode:
+        description: An HTTP status code indicating the status of this individual request in the batch.
+        type: number
+  SimpleRelatedListCountBatchRepresentation: #TODO: Handrolled
+    type: AbstractRelatedListRecordCountResultRepresentation
+    discriminatorValue: 200
     properties:
       result:
         description: object wrapper around inner representation
         type: RelatedListRecordCountRepresentation
-      statusCode:
-        description: An HTTP status code indicating the status of this individual request in the batch.
-        type: integer
   RelatedListRecordCountRepresentation:
     description: RelatedListRecordCountRepresentation
     discriminator: ''
@@ -2400,11 +2403,14 @@ types:
     properties:
       count:
         description: How many items are in the given list.
-        type: integer | nil # TODO: "nil" union hand rolled
+        type: integer
       eTag:
         description: ETag like field, readOnly, handy while caching.
         type: string
         (oas-readOnly): true
+      hasMore:
+        description: Are there more items than the provided count in the given list.
+        type: boolean
       listReference:
         description: An object representing the identity of the list.
         type: RelatedListReferenceRepresentation

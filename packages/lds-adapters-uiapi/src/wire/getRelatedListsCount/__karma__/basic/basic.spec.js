@@ -33,7 +33,27 @@ describe('basic', () => {
         const relatedListNames = mockData.results.map(
             result => result.result.listReference.relatedListId
         );
+        const resourceConfig = {
+            parentRecordId: parentRecordId,
+            relatedListNames: relatedListNames.join(','),
+        };
+        mockNetwork(resourceConfig, mockData);
 
+        const props = {
+            parentRecordId: parentRecordId,
+            relatedListNames: relatedListNames,
+        };
+        const element = await setupElement(props, RelatedListsCount);
+
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toBeImmutable();
+    });
+
+    xit('parses error message with valid parentRecordId and invalid relatedListNames', async () => {
+        const mockData = getMock('related-lists-count-errorCase');
+
+        const parentRecordId = 'a00RM0000004aVwYAI';
+        const relatedListNames = ['relatedListThatDoesntExist'];
         const resourceConfig = {
             parentRecordId: parentRecordId,
             relatedListNames: relatedListNames.join(','),

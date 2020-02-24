@@ -47,6 +47,9 @@ const whiteList = [
     'getApexInvoker',
     'getSObjectValue',
 
+    /** Connect exports */
+    'getCommunityNavigationMenu',
+
     /** Misc exports */
     'adsBridge',
 

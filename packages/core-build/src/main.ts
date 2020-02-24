@@ -36,6 +36,9 @@ export const updateRelatedListInfo = lds.updateRelatedListInfo;
 export const getApexInvoker = lds.getApexInvoker;
 export const getSObjectValue = lds.getSObjectValue;
 
+/** Connect exports */
+export const getCommunityNavigationMenu = lds.getCommunityNavigationMenu;
+
 /** Record Util Pure Functions */
 export const createRecordInputFilteredByEditedFields = lds.createRecordInputFilteredByEditedFields;
 export const generateRecordInputForCreate = lds.generateRecordInputForCreate;

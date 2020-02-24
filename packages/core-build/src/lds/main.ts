@@ -35,6 +35,8 @@ import {
     UpdateRelatedListInfo,
 } from '@salesforce/lds-adapters-uiapi';
 
+import { GetCommunityNavigationMenu } from '@salesforce/lds-adapters-community-navigation-menu';
+
 import AdsBridge from './ads-bridge';
 import networkAdapter from './network-adapter';
 import { setupMetadataWatcher } from './metadata';
@@ -204,6 +206,16 @@ export const updateLayoutUserState = (
 
 export { MRU };
 export { getApexInvoker };
+
+/**
+ * Connect
+ */
+
+const getCommunityNavigationMenuAdapter = createLdsAdapter(
+    'getCommunityNavigationMenu',
+    GetCommunityNavigationMenu
+);
+export const getCommunityNavigationMenu = registerWireAdapter(getCommunityNavigationMenuAdapter);
 
 /**
  * Apex

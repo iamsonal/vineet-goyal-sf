@@ -7,7 +7,7 @@ import {
     wireService,
 } from '@salesforce/lds-karma-config/lds-setup';
 
-import { getCommunityNavigationMenu as GetCommunityNavigationMenu } from '@salesforce/lds-adapters-community-navigation-menu';
+import { GetCommunityNavigationMenu } from '@salesforce/lds-adapters-community-navigation-menu';
 
 const getCommunityNavigationMenu = register(lds, wireService, GetCommunityNavigationMenu(lds));
 

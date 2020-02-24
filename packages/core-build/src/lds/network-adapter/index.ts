@@ -71,6 +71,11 @@ import {
     UIAPI_RELATED_LIST_COUNT_PATH,
 } from './middlewares/uiapi-relatedlist';
 
+import { CONNECT_BASE_URI } from './middlewares/connect-base';
+
+import { COMMUNITIES_NAVIGATION_MENU_PATH } from './middlewares/connect';
+import { getCommunityNavigationMenu } from './middlewares/connect';
+
 interface RequestHandlers {
     resolve: (response: any) => void;
     reject: (error: Error) => void;
@@ -220,6 +225,13 @@ function controllerInvokerFactory(resourceRequest: ResourceRequest): ControllerI
                 }
                 // related-list-count/parentRecordId/relatedListName
                 return getRelatedListCount;
+            }
+
+            // All connecct APIs
+            if (path.startsWith(CONNECT_BASE_URI)) {
+                if (COMMUNITIES_NAVIGATION_MENU_PATH.test(path)) {
+                    return getCommunityNavigationMenu;
+                }
             }
 
             break;

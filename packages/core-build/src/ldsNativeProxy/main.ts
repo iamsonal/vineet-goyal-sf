@@ -31,6 +31,8 @@ import {
     UpdateRecordAvatar_Native,
 } from '@salesforce/lds-adapters-uiapi';
 
+import { GetCommunityNavigationMenu_Native } from '@salesforce/lds-adapters-community-navigation-menu';
+
 import { coreCompliantUpdateRecordFactory } from './custom-adapters/updateRecord';
 import { getLdsNativeProxyPlugin } from './ldsNativeProxyPlugin';
 
@@ -85,6 +87,9 @@ export const _getRelatedListRecords = getRelatedListRecords;
 export const _getRelatedListRecordActions = getRelatedListRecordActions;
 
 export { MRU };
+
+/** Connect Adapters */
+export const getCommunityNavigationMenu = ldsNative.register(GetCommunityNavigationMenu_Native);
 
 /** Record Util Pure Functions */
 export {

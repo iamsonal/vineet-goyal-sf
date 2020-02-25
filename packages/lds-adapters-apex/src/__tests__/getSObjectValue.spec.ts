@@ -74,4 +74,12 @@ describe('getSObjectValue', () => {
         };
         expect(getSObjectValue(sobject, field)).toBeUndefined();
     });
+
+    it('returns undefined if sObject is not an object', () => {
+        const fieldId = { fieldApiName: 'Name', objectApiName: 'Account' };
+        expect(getSObjectValue(undefined, fieldId)).toBeUndefined();
+        expect(getSObjectValue(null, fieldId)).toBeUndefined();
+        expect(getSObjectValue([], fieldId)).toBeUndefined();
+        expect(getSObjectValue('', fieldId)).toBeUndefined();
+    });
 });

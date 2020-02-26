@@ -1,5 +1,5 @@
 import { LightningElement, api, wire } from 'lwc';
-import { getRecord, refresh } from 'lds';
+import { getRecord, getRecordNotifyChange, refresh } from 'lds';
 
 export default class RecordFields extends LightningElement {
     @api recordId;
@@ -33,5 +33,9 @@ export default class RecordFields extends LightningElement {
 
     @api refresh() {
         return refresh(this.record);
+    }
+
+    @api notifyChange(recordIds) {
+        getRecordNotifyChange(recordIds);
     }
 }

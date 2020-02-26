@@ -24,6 +24,7 @@ import {
     GetRecordAvatars,
     GetRecordCreateDefaults,
     GetRecordEditActions,
+    GetRecordNotifyChange,
     GetRecordUi,
     GetRelatedListActions,
     GetRelatedListInfo,
@@ -59,6 +60,7 @@ const getRecordActions = register(lds, wireService, GetRecordActions(lds));
 const getRecordAvatars = register(lds, wireService, GetRecordAvatars(lds));
 const getRecordCreateDefaults = register(lds, wireService, GetRecordCreateDefaults(lds));
 const getRecordEditActions = register(lds, wireService, GetRecordEditActions(lds));
+const getRecordNotifyChange = GetRecordNotifyChange(lds);
 const getRecordUi = register(lds, wireService, GetRecordUi(lds));
 const getRelatedListActions = register(lds, wireService, GetRelatedListActions(lds));
 const getRelatedListInfo = register(lds, wireService, GetRelatedListInfo(lds));
@@ -103,6 +105,8 @@ export {
     updateRecord,
     updateLayoutUserState,
     updateRelatedListInfo,
+    // notify change functions
+    getRecordNotifyChange,
     // lds
     refresh,
     karmaNetworkAdapter,

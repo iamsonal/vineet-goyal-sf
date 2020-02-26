@@ -11,7 +11,10 @@ export {
     MRU,
 } from './wire/getListUi';
 export { factory as GetLookupRecords } from './wire/getLookupRecords';
-export { factory as GetRecord } from './wire/getRecord';
+export {
+    factory as GetRecord,
+    notifyChangeFactory as GetRecordNotifyChange,
+} from './wire/getRecord';
 export { factory as GetRecordAvatars } from './wire/getRecordAvatars';
 export { factory as GetRecordUi } from './wire/getRecordUi';
 export { factory as GetPicklistValues } from './wire/getPicklistValues';
@@ -112,6 +115,7 @@ export {
     RecordRepresentationNormalized,
     ingest as ingestRecord,
     keyBuilder as keyBuilderRecord,
+    KeyParams as KeyParamsRecord,
 } from './generated/types/RecordRepresentation';
 export {
     ObjectInfoRepresentation,

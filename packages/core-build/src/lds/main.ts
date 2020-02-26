@@ -20,6 +20,7 @@ import {
     GetRecordAvatars,
     GetRecordCreateDefaults,
     GetRecordEditActions,
+    GetRecordNotifyChange,
     GetRecordUi,
     GetRelatedListActions,
     GetRelatedListInfo,
@@ -269,3 +270,5 @@ export {
 export const refresh = bindWireRefresh(lds);
 
 export const adsBridge = new AdsBridge(lds);
+
+export const getRecordNotifyChange = GetRecordNotifyChange(lds);

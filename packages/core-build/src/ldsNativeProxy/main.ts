@@ -113,3 +113,6 @@ export const getSObjectValue = {};
 
 // TODO - W-6536698 - replace with native ads bridge
 export const adsBridge = {};
+
+// TODO - W-7265771 - replace with native getRecordNotifyChange
+export const getRecordNotifyChange = {};

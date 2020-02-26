@@ -18,6 +18,7 @@ describe('Main exports', () => {
         'getRecordActions',
         'getRecordAvatars',
         'getRecordEditActions',
+        'getRecordNotifyChange',
         'getRecordUi',
         'getRelatedListRecordActions',
         'refresh',

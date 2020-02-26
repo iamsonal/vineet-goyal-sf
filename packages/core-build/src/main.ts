@@ -49,6 +49,7 @@ export const getRecordInput = lds.getRecordInput;
 
 /** Misc exports */
 export const adsBridge = lds.adsBridge;
+export const getRecordNotifyChange = lds.getRecordNotifyChange;
 
 // TODO W-6568533 - replace this temporary imperative invocation with wire reform
 export const _getLayout = lds._getLayout;

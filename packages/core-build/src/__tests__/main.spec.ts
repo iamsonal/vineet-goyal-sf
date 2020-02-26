@@ -52,6 +52,7 @@ const whiteList = [
 
     /** Misc exports */
     'adsBridge',
+    'getRecordNotifyChange',
 
     /** Utility functions (all pure) */
     'createRecordInputFilteredByEditedFields',

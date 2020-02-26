@@ -26,42 +26,6 @@ describe('deleteRecord - basic', () => {
         expect(karmaNetworkAdapter.firstCall.args[0]).toEqual(jasmine.objectContaining(expected));
     });
 
-    it('emit error to existing wires', async () => {
-        const mockRecord = getMock('record-Opportunity-fields-Opportunity.FiscalYear');
-        const mockError = getMock('delete-record-not-exist');
-        const recordId = mockRecord.id;
-
-        const config = {
-            recordId,
-            fields: ['FiscalYear'],
-        };
-        mockGetRecordNetwork(config, [
-            mockRecord,
-            {
-                reject: true,
-                status: 404,
-                data: mockError,
-            },
-        ]);
-        mockDeleteRecordNetwork(recordId);
-
-        const element = await setupElement(config, RecordFields);
-
-        await deleteRecord(recordId);
-        // the existing wire will be refreshed
-        await flushPromises();
-
-        expect(element.pushCount()).toBe(2);
-        expect(element.getWiredError()).toEqual({
-            status: 404,
-            statusText: 'Server Error',
-            ok: false,
-            body: mockError,
-        });
-
-        expect(element.getWiredError()).toBeImmutable();
-    });
-
     it('evicts record from cache', async () => {
         const mockRecord = getMock('record-Opportunity-fields-Opportunity.FiscalYear');
         const mockError = getMock('delete-record-not-exist');
@@ -89,6 +53,7 @@ describe('deleteRecord - basic', () => {
         await flushPromises();
 
         // hit network
+        expect(element.pushCount()).toBe(2);
         expect(element.getWiredError()).toEqual({
             status: 404,
             statusText: 'Server Error',

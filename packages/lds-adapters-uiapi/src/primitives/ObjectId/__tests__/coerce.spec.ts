@@ -11,5 +11,8 @@ describe('getObjectApiName', () => {
         expect(coerce(undefined)).toBeUndefined();
         expect(coerce({})).toBeUndefined();
         expect(coerce('')).toBeUndefined();
+        expect(coerce({ objectApiName: undefined })).toBeUndefined();
+        expect(coerce({ objectApiName: null })).toBeUndefined();
+        expect(coerce({ objectApiName: {} })).toBeUndefined();
     });
 });

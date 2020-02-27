@@ -1,3 +1,5 @@
+import { isString } from '../../validation/utils';
+
 export interface ObjectId {
     objectApiName: string;
 }
@@ -7,5 +9,5 @@ export function isObjectId(unknown: unknown): unknown is ObjectId {
         return false;
     }
 
-    return 'objectApiName' in unknown;
+    return isString((unknown as any).objectApiName);
 }

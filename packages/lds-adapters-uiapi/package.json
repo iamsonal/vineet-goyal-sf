@@ -16,7 +16,8 @@
         "start:native": "karma start --native",
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat",
-        "test:native": "karma start --single-run --native"
+        "test:native": "karma start --single-run --native",
+        "test:unit": "jest"
     },
     "devDependencies": {
         "@salesforce/lds-karma-config": "0.1.3"

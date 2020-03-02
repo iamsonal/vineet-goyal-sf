@@ -1,12 +1,17 @@
+import { isString } from '../../validation/utils';
+
 export interface FieldId {
     objectApiName: string;
     fieldApiName: string;
 }
 
-export function isFieldId(value: any): value is FieldId {
-    return (
-        value && typeof value.objectApiName === 'string' && typeof value.fieldApiName === 'string'
-    );
+export function isFieldId(unknown: unknown): unknown is FieldId {
+    if (typeof unknown !== 'object' || unknown === null) {
+        return false;
+    }
+
+    const value = unknown as any;
+    return isString(value.objectApiName) && isString(value.fieldApiName);
 }
 
 function stringToFieldId(fieldApiName: string): FieldId {

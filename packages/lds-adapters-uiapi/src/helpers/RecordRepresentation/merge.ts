@@ -213,6 +213,7 @@ export default function merge(
             return {
                 [INCOMING_WEAKETAG_0_KEY]: incomingWeakEtag === 0,
                 [EXISTING_WEAKETAG_0_KEY]: existingWeakEtag === 0,
+                apiName: incoming.apiName,
             };
         };
 

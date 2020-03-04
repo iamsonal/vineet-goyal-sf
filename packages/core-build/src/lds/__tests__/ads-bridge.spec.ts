@@ -12,6 +12,21 @@ function createBridge() {
     return { store, lds, bridge };
 }
 
+jest.mock('instrumentation/service', () => {
+    const spies = {
+        timerAddDurationSpy: jest.fn(),
+    };
+
+    return {
+        timer: () => ({
+            addDuration: spies.timerAddDurationSpy,
+        }),
+        __spies: spies,
+    };
+});
+
+import { __spies as instrumentationSpies } from 'instrumentation/service';
+
 function queryRecord(lds: LDS, { recordId }: { recordId: string }): any {
     return lds.storeLookup({
         recordId: keyBuilderRecord({ recordId }),
@@ -21,6 +36,10 @@ function queryRecord(lds: LDS, { recordId }: { recordId: string }): any {
         variables: {},
     });
 }
+
+beforeEach(() => {
+    instrumentationSpies.timerAddDurationSpy.mockClear();
+});
 
 describe('AdsBridge', () => {
     describe('addRecords', () => {
@@ -42,6 +61,7 @@ describe('AdsBridge', () => {
             expect(publicRecord.id).toBe('123');
             const { data: secretRecord } = queryRecord(lds, { recordId: '456' });
             expect(secretRecord.id).toBe('456');
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('ingests the records unless they are explicitly not whitelisted', () => {
@@ -67,6 +87,7 @@ describe('AdsBridge', () => {
             expect(publicRecord.id).toBe('123');
             const { data: secretRecord } = queryRecord(lds, { recordId: '456' });
             expect(secretRecord).toBe(undefined);
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it("doesn't emit ingested records via the bridge", () => {
@@ -87,6 +108,7 @@ describe('AdsBridge', () => {
             ]);
 
             expect(fn).toHaveBeenCalledTimes(0);
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('keeps the original record intact', () => {
@@ -108,6 +130,7 @@ describe('AdsBridge', () => {
             bridge.addRecords([record]);
 
             expect(record).toEqual(recordCopy);
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -125,6 +148,7 @@ describe('AdsBridge', () => {
             expect(queryRecord(lds, { recordId: '123' })).toMatchObject({ state: 'Fulfilled' });
             await bridge.evict('123');
             expect(queryRecord(lds, { recordId: '123' })).toMatchObject({ state: 'Unfulfilled' });
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('should not emit when a record has been deleted via the bridge', async () => {
@@ -143,6 +167,7 @@ describe('AdsBridge', () => {
             await bridge.evict('123');
 
             expect(fn).not.toHaveBeenCalled();
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -164,6 +189,7 @@ describe('AdsBridge', () => {
 
             const fields = await bridge.getTrackedFieldsForRecord('123');
             expect(fields).toEqual(['Test__c.Id', 'Test__c.Name', 'Test__c.Amount']);
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it("doesn't return the spanning records fields", async () => {
@@ -192,6 +218,7 @@ describe('AdsBridge', () => {
 
             const fields = await bridge.getTrackedFieldsForRecord('123');
             expect(fields).toEqual(['Test__c.Id', 'Test__c.Child']);
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -231,6 +258,7 @@ describe('AdsBridge', () => {
                 },
                 expect.any(Object)
             );
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('emits a new field ingested into an existed record', () => {
@@ -280,6 +308,7 @@ describe('AdsBridge', () => {
                 },
                 expect.any(Object)
             );
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('emits all the ingested records', () => {
@@ -345,6 +374,7 @@ describe('AdsBridge', () => {
                 },
                 expect.any(Object)
             );
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('emits records with circular dependencies stripped out', () => {
@@ -397,6 +427,7 @@ describe('AdsBridge', () => {
                 },
                 expect.any(Object)
             );
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('emits stripped down spanning records when spanning record value is not present', () => {
@@ -455,6 +486,7 @@ describe('AdsBridge', () => {
                 },
                 expect.any(Object)
             );
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('does not emit data when spanning record value is pending', () => {
@@ -508,6 +540,7 @@ describe('AdsBridge', () => {
             );
 
             expect(fn).not.toHaveBeenCalled();
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('does not emit data when record has a pending field', () => {
@@ -550,6 +583,7 @@ describe('AdsBridge', () => {
             );
 
             expect(fn).not.toHaveBeenCalled();
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('emits stripped down spanning records when spanning record value is isMissing', () => {
@@ -619,6 +653,7 @@ describe('AdsBridge', () => {
                 },
                 expect.any(Object)
             );
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('extracts the object metadata from the record if the object info is missing', () => {
@@ -643,6 +678,7 @@ describe('AdsBridge', () => {
                     _nameField: 'Name',
                 },
             });
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('passes null keyPrefix from the record if the object info keyPrefix is null', () => {
@@ -677,6 +713,7 @@ describe('AdsBridge', () => {
                     _nameField: 'Name',
                 },
             });
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('extracts the object metadata from the object info if present', () => {
@@ -711,6 +748,7 @@ describe('AdsBridge', () => {
                     _nameField: 'Name',
                 },
             });
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('extracts the first field name if multiple are provided', () => {
@@ -745,6 +783,7 @@ describe('AdsBridge', () => {
                     _nameField: 'First_Name',
                 },
             });
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('stops emitting if the function is replaced with undefined', () => {
@@ -766,6 +805,7 @@ describe('AdsBridge', () => {
             );
 
             expect(fn).not.toHaveBeenCalled();
+            expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(0);
         });
     });
 });

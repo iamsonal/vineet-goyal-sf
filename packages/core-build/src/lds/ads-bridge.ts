@@ -17,6 +17,13 @@ import {
     ObjectPrototypeHasOwnProperty,
 } from '../utils/language';
 
+import { timer } from 'instrumentation/service';
+import {
+    ADS_BRIDGE_ADD_RECORDS_DURATION,
+    ADS_BRIDGE_EMIT_RECORD_CHANGED_DURATION,
+    ADS_BRIDGE_EVICT_DURATION,
+} from './metric-keys';
+
 // No need to pass the actual record key `lds.ingestStore`. The `RecordRepresentation.ts#ingest`
 // function extracts the appropriate record id from the ingested record.
 const INGEST_KEY = '';
@@ -195,6 +202,9 @@ function getObjectMetadata(lds: LDS, record: RecordRepresentation): ObjectMetada
 export default class AdsBridge {
     private isRecordEmitLocked: boolean = false;
     private watchUnsubscribe: Unsubscribe | undefined;
+    private addRecordsTimerMetric = timer(ADS_BRIDGE_ADD_RECORDS_DURATION);
+    private evictTimerMetric = timer(ADS_BRIDGE_EVICT_DURATION);
+    private emitRecordChangedTimerMetric = timer(ADS_BRIDGE_EMIT_RECORD_CHANGED_DURATION);
 
     constructor(private lds: LDS) {}
 
@@ -232,9 +242,9 @@ export default class AdsBridge {
             [name: string]: 'false' | undefined;
         }
     ): void {
+        const startTime = Date.now();
         const { lds } = this;
         let didIngestRecord = false;
-
         return this.lockLdsRecordEmit(() => {
             for (let i = 0; i < records.length; i++) {
                 const record = records[i];
@@ -257,6 +267,7 @@ export default class AdsBridge {
             if (didIngestRecord === true) {
                 lds.storeBroadcast();
             }
+            this.addRecordsTimerMetric.addDuration(Date.now() - startTime);
         });
     }
 
@@ -264,13 +275,13 @@ export default class AdsBridge {
      * This method is invoked whenever a record has been evicted from ADS.
      */
     public evict(recordId: string): Promise<void> {
+        const startTime = Date.now();
         const { lds } = this;
         const key = keyBuilderRecord({ recordId });
-
         return this.lockLdsRecordEmit(() => {
             lds.storeEvict(key);
             lds.storeBroadcast();
-
+            this.evictTimerMetric.addDuration(Date.now() - startTime);
             return Promise.resolve();
         });
     }
@@ -329,8 +340,8 @@ export default class AdsBridge {
         updatedEntries: { id: string }[],
         callback: LdsRecordChangedCallback
     ): void {
+        const startTime = Date.now();
         const { lds } = this;
-
         let shouldEmit = false;
 
         const adsRecordMap: AdsRecordMap = {};
@@ -370,5 +381,6 @@ export default class AdsBridge {
         if (shouldEmit === true) {
             callback(adsRecordMap, adsObjectMap);
         }
+        this.emitRecordChangedTimerMetric.addDuration(Date.now() - startTime);
     }
 }

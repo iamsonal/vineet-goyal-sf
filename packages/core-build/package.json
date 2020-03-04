@@ -7,7 +7,8 @@
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",
         "clean": "rm -rf dist",
-        "test": "jest"
+        "test": "jest",
+        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     },
     "devDependencies": {
         "@salesforce/lds-adapters-apex": "0.1.3",

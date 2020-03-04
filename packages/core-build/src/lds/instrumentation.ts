@@ -1,29 +1,50 @@
 import { LDS, Store, Adapter } from '@ldsjs/engine';
 import {
-    time,
+    CacheStatsLogger,
+    counter,
     mark as instrumentationServiceMark,
-    markStart,
     markEnd,
-    registerCacheStats,
-    registerPlugin,
-    registerPeriodicLogger,
+    markStart,
+    MetricsKey,
     MetricsServiceMark,
     MetricsServicePlugin,
-    CacheStatsLogger,
+    percentileHistogram,
+    registerCacheStats,
+    registerPeriodicLogger,
+    registerPlugin,
+    time,
+    timer,
 } from 'instrumentation/service';
+
+import {
+    CACHE_HIT_COUNT,
+    CACHE_MISS_COUNT,
+    STORE_BROADCAST_DURATION,
+    STORE_INGEST_DURATION,
+    STORE_LOOKUP_DURATION,
+    STORE_SIZE_COUNT,
+    STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT,
+    STORE_WATCH_SUBSCRIPTIONS_COUNT,
+} from './metric-keys';
 
 import { ObjectKeys } from '../utils/language';
 
 interface LdsStatsReport {
     recordCount: number;
     subscriptionCount: number;
+    snapshotSubscriptionCount: number;
+    watchSubscriptionCount: number;
 }
 
 const NAMESPACE = 'lds';
 const STORE_STATS_MARK_NAME = 'store-stats';
 const RUNTIME_PERF_MARK_NAME = 'runtime-perf';
 const NETWORK_MARK_NAME = 'network';
-
+const cacheHitMetric = counter(CACHE_HIT_COUNT);
+const cacheMissMetric = counter(CACHE_MISS_COUNT);
+const storeSizeMetric = percentileHistogram(STORE_SIZE_COUNT);
+const storeWatchSubscriptionsMetric = percentileHistogram(STORE_WATCH_SUBSCRIPTIONS_COUNT);
+const storeSnapshotSubscriptionsMetric = percentileHistogram(STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT);
 /**
  * Aura Metrics Service plugin in charge of aggregating all the LDS performance marks before they
  * get sent to the server. All the marks are summed by operation type and the aggregated result
@@ -74,14 +95,21 @@ const markAggregatorPlugin: MetricsServicePlugin = {
     },
 };
 
-function instrumentMethod(obj: any, methodNames: string[]): void {
-    for (let i = 0, len = methodNames.length; i < len; i++) {
-        const methodName = methodNames[i];
+function instrumentMethod(
+    obj: any,
+    methods: { methodName: string; metricKey: MetricsKey }[]
+): void {
+    for (let i = 0, len = methods.length; i < len; i++) {
+        const method = methods[i];
+        const methodName = method.methodName;
         const originalMethod = obj[methodName];
+        const methodTimer = timer(method.metricKey);
 
         obj[methodName] = function(...args: any[]): any {
             markStart(NAMESPACE, methodName);
+            const startTime = Date.now();
             const res = originalMethod.call(this, ...args);
+            methodTimer.addDuration(Date.now() - startTime);
             markEnd(NAMESPACE, methodName);
 
             return res;
@@ -89,16 +117,31 @@ function instrumentMethod(obj: any, methodNames: string[]): void {
     }
 }
 
+function createMetricsKey(owner: string, name: string, unit?: string): MetricsKey {
+    let metricName = name;
+    if (unit) {
+        metricName = metricName + '.' + unit;
+    }
+    return {
+        get() {
+            return { owner: owner, name: metricName };
+        },
+    };
+}
+
 function getStoreStats(store: Store): LdsStatsReport {
     const { records, snapshotSubscriptions, watchSubscriptions } = store;
 
     const recordCount = ObjectKeys(records).length;
-    const subscriptionCount =
-        ObjectKeys(snapshotSubscriptions).length + ObjectKeys(watchSubscriptions).length;
+    const snapshotSubscriptionCount = ObjectKeys(snapshotSubscriptions).length;
+    const watchSubscriptionCount = ObjectKeys(watchSubscriptions).length;
+    const subscriptionCount = snapshotSubscriptionCount + watchSubscriptionCount;
 
     return {
         recordCount,
         subscriptionCount,
+        snapshotSubscriptionCount,
+        watchSubscriptionCount,
     };
 }
 
@@ -133,11 +176,18 @@ export function setupInstrumentation(lds: LDS, store: Store): void {
         plugin: markAggregatorPlugin,
     });
 
-    instrumentMethod(lds, ['storeLookup', 'storeIngest', 'storeBroadcast']);
+    instrumentMethod(lds, [
+        { methodName: 'storeBroadcast', metricKey: STORE_BROADCAST_DURATION },
+        { methodName: 'storeIngest', metricKey: STORE_INGEST_DURATION },
+        { methodName: 'storeLookup', metricKey: STORE_LOOKUP_DURATION },
+    ]);
 
     registerPeriodicLogger(NAMESPACE, () => {
         const storeStats = getStoreStats(store);
         instrumentationServiceMark(NAMESPACE, STORE_STATS_MARK_NAME, storeStats);
+        storeSizeMetric.update(storeStats.recordCount);
+        storeSnapshotSubscriptionsMetric.update(storeStats.snapshotSubscriptionCount);
+        storeWatchSubscriptionsMetric.update(storeStats.watchSubscriptionCount);
     });
 }
 
@@ -160,6 +210,8 @@ export function instrumentNetwork(context: unknown): void {
  */
 export function instrumentAdapter<C, D>(name: string, adapter: Adapter<C, D>): Adapter<C, D> {
     const stats = registerLdsCacheStats(name);
+    const cacheMissByAdapterMetric = counter(createMetricsKey(NAMESPACE, 'cache-miss-count', name));
+    const cacheHitByAdapterMetric = counter(createMetricsKey(NAMESPACE, 'cache-hit-count', name));
 
     return (config: C) => {
         const result = adapter(config);
@@ -171,10 +223,10 @@ export function instrumentAdapter<C, D>(name: string, adapter: Adapter<C, D>): A
         // originate from another javascript realm (for example: in jest test). Instead we use a
         // duck-typing approach by checking is the result has a then property.
         //
-        // For adapters without persistant store:
+        // For adapters without persistent store:
         //  - total cache hit ratio:
         //      [in-memory cache hit count] / ([in-memory cache hit count] + [in-memory cache miss count])
-        // For adapters with persistant store:
+        // For adapters with persistent store:
         //  - in-memory cache hit ratio:
         //      [in-memory cache hit count] / ([in-memory cache hit count] + [in-memory cache miss count])
         //  - total cache hit ratio:
@@ -185,8 +237,12 @@ export function instrumentAdapter<C, D>(name: string, adapter: Adapter<C, D>): A
         if (result !== null) {
             if ('then' in result) {
                 stats.logMisses();
+                cacheMissMetric.increment(1);
+                cacheMissByAdapterMetric.increment(1);
             } else {
                 stats.logHits();
+                cacheHitMetric.increment(1);
+                cacheHitByAdapterMetric.increment(1);
             }
         }
 

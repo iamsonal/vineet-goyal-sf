@@ -38,6 +38,35 @@ jest.mock('@ldsjs/lwc-lds', () => {
     };
 });
 
+jest.mock('instrumentation/service', () => {
+    const spies = {
+        cacheStatsLogHitsSpy: jest.fn(),
+        cacheStatsLogMissesSpy: jest.fn(),
+        counterIncrementSpy: jest.fn(),
+        percentileUpdateSpy: jest.fn(),
+        timerAddDurationSpy: jest.fn(),
+    };
+
+    return {
+        counter: () => ({
+            increment: spies.counterIncrementSpy,
+        }),
+        percentileHistogram: () => ({
+            update: spies.percentileUpdateSpy,
+        }),
+        registerCacheStats: () => ({
+            logHits: spies.cacheStatsLogHitsSpy,
+            logMisses: spies.cacheStatsLogMissesSpy,
+        }),
+        registerPeriodicLogger: jest.fn(),
+        registerPlugin: jest.fn(),
+        timer: () => ({
+            addDuration: spies.timerAddDurationSpy,
+        }),
+        __spies: spies,
+    };
+});
+
 import {
     _getRecord,
     _getRecordActions,
@@ -52,6 +81,15 @@ import {
 
 import { __spies as uiApiRecordsSpies } from '@salesforce/lds-adapters-uiapi';
 import { __spies as lwcLdsSpies } from '@ldsjs/lwc-lds';
+import { __spies as instrumentationSpies } from 'instrumentation/service';
+
+beforeEach(() => {
+    instrumentationSpies.cacheStatsLogHitsSpy.mockClear();
+    instrumentationSpies.cacheStatsLogMissesSpy.mockClear();
+    instrumentationSpies.counterIncrementSpy.mockClear();
+    instrumentationSpies.percentileUpdateSpy.mockClear();
+    instrumentationSpies.timerAddDurationSpy.mockClear();
+});
 
 describe('lds224 main', () => {
     describe('updateRecord', () => {
@@ -145,34 +183,39 @@ describe('lds224 main', () => {
             });
         });
 
-        it('should resolve with snapshot data when adapter returns promise', () => {
+        it('should resolve with snapshot data when adapter returns promise', async () => {
             const expected = {};
             uiApiRecordsSpies.getRecordFactorySpy.mockResolvedValueOnce({
                 data: expected,
                 state: 'Fulfilled',
             });
 
-            return expect(
+            await expect(
                 _getRecord({
                     recordId: '00x000000000000017',
                     fields: ['Opportunity.Account.Name'],
                 })
             ).resolves.toBe(expected);
+            expect(instrumentationSpies.cacheStatsLogHitsSpy).toHaveBeenCalledTimes(0);
+            expect(instrumentationSpies.cacheStatsLogMissesSpy).toHaveBeenCalledTimes(1);
+            expect(instrumentationSpies.counterIncrementSpy).toHaveBeenCalledTimes(2);
         });
 
-        it('should resolve with snapshot data when adapter fulfilled snapshot', () => {
+        it('should resolve with snapshot data when adapter fulfilled snapshot', async () => {
             const expected = {};
             uiApiRecordsSpies.getRecordFactorySpy.mockReturnValue({
                 data: expected,
                 state: 'Fulfilled',
             });
-
-            return expect(
+            await expect(
                 _getRecord({
                     recordId: '00x000000000000017',
                     fields: ['Opportunity.Account.Name'],
                 })
             ).resolves.toBe(expected);
+            expect(instrumentationSpies.cacheStatsLogHitsSpy).toHaveBeenCalledTimes(1);
+            expect(instrumentationSpies.cacheStatsLogMissesSpy).toHaveBeenCalledTimes(0);
+            expect(instrumentationSpies.counterIncrementSpy).toHaveBeenCalledTimes(2);
         });
 
         it('should throw when returned snapshot is unfulfilled', () => {

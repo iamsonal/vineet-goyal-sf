@@ -71,10 +71,20 @@ import {
     UIAPI_RELATED_LIST_COUNT_PATH,
 } from './middlewares/uiapi-relatedlist';
 
-import { CONNECT_BASE_URI } from './middlewares/connect-base';
+import { CONNECT_BASE_URI, COMMERCE_BASE_URI } from './middlewares/connect-base';
 
-import { COMMUNITIES_NAVIGATION_MENU_PATH } from './middlewares/connect';
-import { getCommunityNavigationMenu } from './middlewares/connect';
+import {
+    COMMUNITIES_NAVIGATION_MENU_PATH,
+    GET_PRODUCT_CATEGORY_PATH_PATH,
+    GET_PRODUCT_PATH,
+    PRODUCT_SEARCH_PATH,
+    GET_PRODUCT_PRICE_PATH,
+    getCommunityNavigationMenu,
+    getProductCategoryPath,
+    getProduct,
+    productSearch,
+    getProductPrice,
+} from './middlewares/connect';
 
 interface RequestHandlers {
     resolve: (response: any) => void;
@@ -100,6 +110,11 @@ function controllerInvokerFactory(resourceRequest: ResourceRequest): ControllerI
             if (path.startsWith(UIAPI_RECORD_AVATARS_BASE)) {
                 if (path.endsWith(UIAPI_RECORD_AVATAR_UPDATE)) {
                     return updateRecordAvatar;
+                }
+            }
+            if (path.startsWith(COMMERCE_BASE_URI)) {
+                if (PRODUCT_SEARCH_PATH.test(path)) {
+                    return productSearch;
                 }
             }
             break;
@@ -227,10 +242,29 @@ function controllerInvokerFactory(resourceRequest: ResourceRequest): ControllerI
                 return getRelatedListCount;
             }
 
-            // All connecct APIs
+            // All connect APIs
             if (path.startsWith(CONNECT_BASE_URI)) {
                 if (COMMUNITIES_NAVIGATION_MENU_PATH.test(path)) {
                     return getCommunityNavigationMenu;
+                }
+            }
+
+            // All commerce APIs
+            if (path.startsWith(COMMERCE_BASE_URI)) {
+                if (GET_PRODUCT_PATH.test(path)) {
+                    return getProduct;
+                }
+
+                if (GET_PRODUCT_CATEGORY_PATH_PATH.test(path)) {
+                    return getProductCategoryPath;
+                }
+
+                if (GET_PRODUCT_CATEGORY_PATH_PATH.test(path)) {
+                    return getProductCategoryPath;
+                }
+
+                if (GET_PRODUCT_PRICE_PATH.test(path)) {
+                    return getProductPrice;
                 }
             }
 

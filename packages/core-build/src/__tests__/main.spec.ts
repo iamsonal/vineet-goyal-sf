@@ -50,6 +50,12 @@ const whiteList = [
     /** Connect exports */
     'getCommunityNavigationMenu',
 
+    /** Commerce exports */
+    'getProduct',
+    'getProductCategoryPath',
+    'getProductPrice',
+    'productSearch',
+
     /** Misc exports */
     'adsBridge',
     'getRecordNotifyChange',

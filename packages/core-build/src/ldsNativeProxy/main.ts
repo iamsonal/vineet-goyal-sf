@@ -33,6 +33,13 @@ import {
 
 import { GetCommunityNavigationMenu_Native } from '@salesforce/lds-adapters-community-navigation-menu';
 
+import {
+    GetProduct_Native,
+    GetProductCategoryPath_Native,
+} from '@salesforce/lds-adapters-commerce-catalog';
+import { ProductSearch_Native } from '@salesforce/lds-adapters-commerce-search';
+import { GetProductPrice_Native } from '@salesforce/lds-adapters-commerce-store-pricing';
+
 import { coreCompliantUpdateRecordFactory } from './custom-adapters/updateRecord';
 import { getLdsNativeProxyPlugin } from './ldsNativeProxyPlugin';
 
@@ -90,6 +97,12 @@ export { MRU };
 
 /** Connect Adapters */
 export const getCommunityNavigationMenu = ldsNative.register(GetCommunityNavigationMenu_Native);
+
+/** Commerce Adapters */
+export const getProduct = ldsNative.register(GetProduct_Native);
+export const getProductCategoryPath = ldsNative.register(GetProductCategoryPath_Native);
+export const productSearch = ldsNative.register(ProductSearch_Native);
+export const getProductPrice = ldsNative.register(GetProductPrice_Native);
 
 /** Record Util Pure Functions */
 export {

@@ -1,0 +1,634 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '49.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v49.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  CommerceSearchIndexCollectionOutputRepresentation:
+    description: Index collection information of a webstore
+    discriminator: ''
+    type: object
+    properties:
+      indexes:
+        description: Get live index(es) and/or processing index for a given webstore
+        type: array
+        items:
+          type: CommerceSearchIndexOutputRepresentation
+  CommerceSearchIndexOutputRepresentation:
+    description: Index information of a webstore
+    discriminator: ''
+    type: object
+    properties:
+      completionDate:
+        description: Competion date of the index
+        type: string
+      createdDate:
+        description: Index date of creation
+        type: string
+      creationType:
+        description: Creation type of the index
+        type: string
+        enum:
+          - Manual
+          - Scheduled
+      id:
+        description: Id of the index
+        type: string
+      indexStatus:
+        description: Status of the index
+        type: string
+        enum:
+          - Completed
+          - Failed
+          - InProgress
+      indexUsage:
+        description: Usage of the index
+        type: string
+        enum:
+          - Live
+          - OutOfUse
+      message:
+        description: Detail message for index status
+        type: string
+  DistinctFacetValueRepresentation:
+    description: Representation of distinct facet value.
+    discriminator: ''
+    type: FacetValueRepresentation
+    properties:
+      displayName:
+        description: Display Name of the facet value.
+        type: string
+      nameOrId:
+        description: ID or internal name of the facet value.
+        type: string
+      productCount:
+        description: Number of products in search result that match the facet value.
+        type: integer
+        # format: int64
+  DistinctValueSearchFacetRepresentation:
+    description: Summary representation of a Facet with distinct values in product search results.
+    discriminator: ''
+    type: SearchFacetRepresentation
+    properties:
+      values:
+        description: Values of the facet found in the search result. Sorted by displayName in alphabetical order.
+        type: array
+        items:
+          type: DistinctFacetValueRepresentation
+  FacetValueRepresentation:
+    description: Abstract superclass of all facet value representations.
+    discriminator: ''
+    type: object
+    properties:
+      type:
+        description: Type of the facet value.
+        type: string
+        enum:
+          - DistinctValue
+  FacetableAttributeInputRepresentation:
+    description: Representation of facet settings for a search attribute
+    type: object
+    properties:
+      displayRank:
+        description: Facet display rank
+        type: integer
+      displayType:
+        description: Facet display type
+        type: string
+        enum:
+          - CategoryTree
+          - DatePicker
+          - MultiSelect
+          - SingleSelect
+      nameOrId:
+        description: Name or id of attribute
+        type: string
+      type:
+        description: Type of attribute
+        type: string
+        enum:
+          - Custom
+          - ProductCategory
+          - Standard
+  FacetableAttributeOutputRepresentation:
+    description: Facetable attribute in a webstore
+    discriminator: ''
+    type: object
+    properties:
+      displayRank:
+        description: Display rank for the facet
+        type: integer
+      displayType:
+        description: Display type for the facet
+        type: string
+        enum:
+          - CategoryTree
+          - DatePicker
+          - MultiSelect
+          - SingleSelect
+      label:
+        description: Localized label of the attribute
+        type: string
+      nameOrId:
+        description: Name or id of the attribute
+        type: string
+      type:
+        description: Type of the attribute
+        type: string
+        enum:
+          - Custom
+          - ProductCategory
+          - Standard
+  FacetableAttributesCollectionInputRepresentation:
+    description: Representation of facet settings for search attributes
+    type: object
+    properties:
+      facetableAttributeSettings:
+        description: facetable settings for attributes
+        type: array
+        items:
+          type: object
+  FacetableAttributesCollectionOutputRepresentation:
+    description: Facetable attributes in a webstore
+    discriminator: ''
+    type: object
+    properties:
+      facetableAttributeSettings:
+        description: Get list of facetable attributes in a webstore
+        type: array
+        items:
+          type: FacetableAttributeOutputRepresentation
+
+  ProductSearchInputRepresentation:
+    description: Input representation for a product search.
+    type: object
+    properties:
+      categoryId:
+        description: Category ID. Only return search results for products that belong to this category or its subcategories.
+        type: string
+      fields:
+        description: Product fields to return in search results. If unspecified, all fields that exist and are accessible will be returned.
+        type: array
+        items:
+          type: string
+      page:
+        description: Page number of search results to view.  First page is returned if not specified.
+        type: integer
+      pageSize:
+        description: Page size specifies the number of products to be returned in a page of search results.
+        type: integer
+      refinements:
+        description: Refinements to filter search results on.
+        type: array
+        items:
+          type: object
+      searchTerm:
+        description: One or more search keywords.
+        type: string
+      sortOrderId:
+        description: ID of a sort order defined in the webstore.  Used to specify the order of products in search results.
+        type: string
+  ProductSearchResultsRepresentation:
+    description: Representation for Product Search Results.
+    discriminator: ''
+    type: object
+    properties:
+      categories:
+        description: Categories from the search results.
+        type: SearchCategoryRepresentation
+      facets:
+        description: Facets from the search results.
+        type: array
+        items:
+          type: SearchFacetRepresentation
+      locale:
+        description: Locale of the search results.
+        type: string
+      productsPage:
+        description: Page of products from the search results.
+        type: ProductSummaryCollectionRepresentation
+  ProductSearchSuggestionsResultsRepresentation:
+    description: Representation for Product Search Suggestions Results.
+    discriminator: ''
+    type: object
+    properties:
+      completions:
+        description: Term completion proposals.
+        type: array
+        items:
+          type: SuggestedCompletionRepresentation
+      locale:
+        description: Locale of the search results.
+        type: string
+  ProductSummaryCollectionRepresentation:
+    description: Collection of Product Summary representations in product search results.
+    discriminator: ''
+    type: object
+    properties:
+      currencyIsoCode:
+        description: Currency of all product prices in the search result.
+        type: string
+      pageSize:
+        description: Number of products per page in search result
+        type: integer
+        # TODO: this should be returned
+        required: false
+      products:
+        description: Collection of product summaries.
+        type: array
+        items:
+          type: ProductSummaryRepresentation
+      total:
+        description: Total number of products in the search result across all pages.
+        type: integer
+  ProductSummaryRepresentation:
+    description: Summary representation of a Product in product search results.
+    discriminator: ''
+    type: object
+    properties:
+      # ProductMediaRepresentation did not get created
+      #   defaultImage:
+      #     description: Media representation of the product's default image.
+      #     type: ProductMediaRepresentation
+      fields:
+        description: Map of fields belonging to the product.
+        type: object
+        properties:
+          //:
+            type: string | nil
+      id:
+        description: ID of the product.
+        type: string
+      name:
+        description: Name of the product.
+        type: string
+    # ProductPricingResponseRepresentation did not get created
+    #   prices:
+    #     description: Representation of the product's prices.
+    #     type: ProductPricingResponseRepresentation
+  RefinementInputRepresentation:
+    description: Input representation of an attribute-based refinement for product search
+    type: object
+    properties:
+      nameOrId:
+        description: ID or internal name of the attribute to refine search on.
+        type: string
+      values:
+        description: Internal names of attribute values to refine search on.
+        type: array
+        items:
+          type: string
+  SearchCategoryRepresentation:
+    description: Search Category representation in product search results.
+    discriminator: ''
+    type: object
+    properties:
+      # ProductCategoryRepresentation did not get created
+      #  category:
+      #    description: Information about the category.
+      #    type: ProductCategoryRepresentation
+      children:
+        description: 'The first-level child categories with non-empty search results.  Note:
+          Only populated for the current category being searched (i.e. its first-level
+          child categories will not have children populated).'
+        type: array
+        items:
+          type: SearchCategoryRepresentation
+      productCount:
+        description: Number of products in search result that belong to the category.
+        type: integer
+        # format: int64
+  SearchFacetRepresentation:
+    description: Abstract superclass of all Search Facet representations.
+    discriminator: ''
+    type: object
+    properties:
+      attributeType:
+        description: Type of the search attribute underlying the facet.
+        type: string
+        enum:
+          - Custom
+          - ProductCategory
+          - Standard
+        # TODO: this should be optional
+        required: false
+      displayName:
+        description: Display name of the facet.
+        type: string
+      displayRank:
+        description: Display rank for the facet.
+        type: integer
+      displayType:
+        description: Display type for the facet.
+        type: string
+        enum:
+          - CategoryTree
+          - DatePicker
+          - MultiSelect
+          - SingleSelect
+      facetType:
+        description: Type of the facet.
+        type: string
+        enum:
+          - DistinctValue
+        # TODO: this shouldl be optional
+        required: false
+      nameOrId:
+        description: ID or internal name of the facet.
+        type: string
+  SearchProductSettingCollectionInputRepresentation:
+    description: The representation of multiple search product settings.
+    type: object
+    properties:
+      searchProductSettings:
+        description: set a collection of search product settings
+        type: array
+        items:
+          type: object
+  SearchProductSettingCollectionOutputRepresentation:
+    description: The representation of multiple search product settings.
+    discriminator: ''
+    type: object
+    properties:
+      searchProductSettings:
+        description: a collection of search product settings
+        type: array
+        items:
+          type: SearchProductSettingOutputRepresentation
+  SearchProductSettingInputRepresentation:
+    description: The representation of a single search product setting.
+    type: object
+    properties:
+      id:
+        description: product id
+        type: string
+      searchable:
+        description: product searchability
+        type: boolean
+  SearchProductSettingOutputRepresentation:
+    description: The representation of a single search product setting.
+    discriminator: ''
+    type: object
+    properties:
+      id:
+        description: product id
+        type: string
+      searchable:
+        description: isSearchable
+        type: boolean
+  SearchableAttributeInputRepresentation:
+    description: Representation of searchability settings for a search attribute
+    type: object
+    properties:
+      isSearchable:
+        description: True if attribute is searchable
+        type: boolean
+      nameOrId:
+        description: Name or id of attribute
+        type: string
+      type:
+        description: Type of attribute
+        type: string
+        enum:
+          - Custom
+          - ProductCategory
+          - Standard
+  SearchableAttributeOutputRepresentation:
+    description: Searchable attribute in a webstore
+    discriminator: ''
+    type: object
+    properties:
+      label:
+        description: Localized label of the attribute
+        type: string
+      nameOrId:
+        description: Name or id of the attribute
+        type: string
+      type:
+        description: Type of the attribute
+        type: string
+        enum:
+          - Custom
+          - ProductCategory
+          - Standard
+  SearchableAttributesCollectionInputRepresentation:
+    description: Representation of searchability settings for search attributes
+    type: object
+    properties:
+      searchableAttributeSettings:
+        description: Searchability settings for attributes
+        type: array
+        items:
+          type: object
+  SearchableAttributesCollectionOutputRepresentation:
+    description: Searchable attributes in a webstore
+    discriminator: ''
+    type: object
+    properties:
+      searchableAttributeSettings:
+        description: Get list of searchable attributes in a webstore
+        type: array
+        items:
+          type: SearchableAttributeOutputRepresentation
+  SuggestedCompletionRepresentation:
+    description: Representation for Product Search suggestions endpoint's Completion Proposals.
+    discriminator: ''
+    type: object
+    properties:
+      simpleString:
+        description: Term completion proposal.
+        type: string
+/commerce:
+  /management/webstores/{webstoreId}/search:
+    /attribute-settings:
+      /facetable-fields:
+        get:
+          description: Get facetable search attributes in a webstore
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: FacetableAttributesCollectionOutputRepresentation
+        put:
+          description: Modify searchability on attributes in a webstore
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: FacetableAttributesCollectionOutputRepresentation
+          body:
+            application/json:
+              type: FacetableAttributesCollectionInputRepresentation
+              required: false
+              (oas-body-name): facetableAttributeSettings
+        uriParameters:
+          webstoreId:
+            type: string
+            required: true
+      /searchable-fields:
+        get:
+          description: Get searchable attributes in a webstore
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: SearchableAttributesCollectionOutputRepresentation
+        patch:
+          description: Modify searchability on attributes in a webstore
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: SearchableAttributesCollectionOutputRepresentation
+          body:
+            application/json:
+              type: SearchableAttributesCollectionInputRepresentation
+              required: false
+              (oas-body-name): searchableAttributeSettings
+        uriParameters:
+          webstoreId:
+            type: string
+            required: true
+    /indexes:
+      get:
+        description: Get indexes information for a webstore
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: CommerceSearchIndexCollectionOutputRepresentation
+      post:
+        description: Post new product catalog for index creation and return output representation
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: CommerceSearchIndexOutputRepresentation
+      uriParameters:
+        webstoreId:
+          type: string
+          required: true
+    /indexes/{indexId}:
+      delete:
+        description: Delete search index for a webstore
+        responses:
+          '200':
+            description: Success
+      get:
+        description: Get search index for a webstore by Id
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: CommerceSearchIndexOutputRepresentation
+      uriParameters:
+        indexId:
+          type: string
+          required: true
+        webstoreId:
+          type: string
+          required: true
+    /product-settings:
+      get:
+        description: This retrieves search product settings selected by query product ids.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SearchProductSettingCollectionOutputRepresentation
+        queryParameters:
+          ids:
+            type: string
+            required: false
+      patch:
+        description: This updates search product settings according to a request payload.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SearchProductSettingCollectionOutputRepresentation
+        body:
+          application/json:
+            type: SearchProductSettingCollectionInputRepresentation
+            required: false
+            (oas-body-name): searchProductSettings
+      uriParameters:
+        webstoreId:
+          type: string
+          required: true
+  /webstores/{webstoreId}/search:
+    /product-search:
+      post:
+        description: Search for products in a webstore.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ProductSearchResultsRepresentation
+        queryParameters:
+          effectiveAccountId:
+            type: string
+            required: false
+        body:
+          application/json:
+            type: ProductSearchInputRepresentation
+            required: false
+            (oas-body-name): productSearchInput
+      uriParameters:
+        webstoreId:
+          type: string
+          required: true
+    /suggestions:
+      get:
+        description: Get search suggestions in response to user's typing.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ProductSearchSuggestionsResultsRepresentation
+        queryParameters:
+          effectiveAccountId:
+            type: string
+            required: false
+          limit:
+            type: integer
+            required: false
+          searchTerm:
+            type: string
+            required: false
+      uriParameters:
+        webstoreId:
+          type: string
+          required: true

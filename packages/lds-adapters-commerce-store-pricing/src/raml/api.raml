@@ -1,0 +1,188 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '49.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v49.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  PriceAdjustmentScheduleRepresentation:
+    description: Representation for the details of a single price adjustment schedule
+    discriminator: ''
+    type: object
+    properties:
+      id:
+        description: Represents the ID of the price adjustment schedule
+        type: string
+      priceAdjustmentTiers:
+        description: Represents the list of price adjustment tiers
+        type: array
+        items:
+          type: PriceAdjustmentTierRepresentation
+  PriceAdjustmentTierRepresentation:
+    description: Representation for the details of a single price adjustment tier
+    discriminator: ''
+    type: object
+    properties:
+      adjustmentType:
+        description: Represents the price adjustment type
+        type: string
+        enum:
+          - AmountBasedAdjustment
+          - PercentageBasedAdjustment
+      adjustmentValue:
+        description: Represents the adjustment value
+        type: string
+      id:
+        description: Represents the ID of the price adjustment tier
+        type: string
+      lowerBound:
+        description: Represents the lower bound of the tier
+        type: string
+      tierUnitPrice:
+        description: Represents the unit price of the tier
+        type: string
+      upperBound:
+        description: Represents the upper bound of the tier
+        type: string
+  PricingInputLineItemRepresentation:
+    description: Representation of the Line Item portion the request for multiple products pricing
+    type: object
+    properties:
+      productId:
+        description: The product ID to be priced in the request
+        type: string
+  PricingInputRepresentation:
+    description: Representation of the request for multiple products pricing
+    type: object
+    properties:
+      pricingLineItems:
+        description: The Line Items the pricing request is for
+        type: array
+        items:
+          type: object
+  PricingResultLineItemRepresentation:
+    description: Representation of the Line Item portion of the response for multiple products pricing
+    discriminator: ''
+    type: object
+    properties:
+      # Error Response representation did not get created
+      #   error:
+      #     description: Error code and error message
+      #     type: ErrorResponseRepresentation
+      listPrice:
+        description: Represents the list price for the product
+        type: string
+      pricebookEntryId:
+        description: Represents the ID of the pricebook entry
+        type: string
+      productId:
+        description: Represents the product ID to be priced in the response
+        type: string
+      success:
+        description: Represents whether execution was successful
+        type: boolean
+      unitPrice:
+        description: Represents the unit price for the product
+        type: string
+  PricingResultRepresentation:
+    description: Representation for the response for multiple products pricing
+    discriminator: ''
+    type: object
+    properties:
+      currencyIsoCode:
+        description: Represents the currency used in the Multi Products Pricing API
+        type: string
+      # Error response representation did not get created
+      #   error:
+      #     description: Error code and error message
+      #     type: ErrorResponseRepresentation
+      pricingLineItemResults:
+        description: Represents the Line Items of the response
+        type: array
+        items:
+          type: PricingResultLineItemRepresentation
+      success:
+        description: Represents whether execution was successful
+        type: boolean
+  ProductPriceRepresentation:
+    description: Representation for the details of a single product price
+    discriminator: ''
+    type: object
+    properties:
+      currencyIsoCode:
+        description: Represents the currency used in this price calculations
+        type: string
+      listPrice:
+        description: Represents the list price for the product
+        type: string
+      priceAdjustment:
+        description: Represents the price adjustment schedule
+        type: PriceAdjustmentScheduleRepresentation | nil # TODO "nil" union type hand rolled
+      pricebookEntryId:
+        description: Represents the ID of the pricebook entry
+        type: string
+      unitPrice:
+        description: Represents the unit price for the product
+        type: string
+/commerce/webstores/{webstoreId}/pricing/products:
+  post:
+    description: Resource to calculate the price
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: PricingResultRepresentation
+    queryParameters:
+      effectiveAccountId:
+        type: string
+        required: false
+    body:
+      application/json:
+        type: PricingInputRepresentation
+        required: false
+        (oas-body-name): pricingInput
+  uriParameters:
+    webstoreId:
+      type: string
+      required: true
+/commerce/webstores/{webstoreId}/pricing/products/{productId}:
+  get:
+    description: Get the list price and buyer price for a product in the context of a Web Store for the given account and currency
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: ProductPriceRepresentation
+    queryParameters:
+      effectiveAccountId:
+        type: string
+        required: true
+  uriParameters:
+    productId:
+      type: string
+      required: true
+    webstoreId:
+      type: string
+      required: true

@@ -1,0 +1,349 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '49.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v49.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  ProductCategoryDetailRepresentation:
+    description: Wrapper containing the detail for a category.
+    discriminator: ''
+    type: object
+    properties:
+      bannerImage:
+        description: Representation of the banner image of the product category
+        type: ProductCategoryMediaRepresentation
+      fields:
+        description: List of fields belonging to the product category
+        type: object
+        properties:
+          //:
+            type: string
+      id:
+        description: ID of the product category
+        type: string
+      mediaGroups:
+        description: List of media groups of the product category
+        type: array
+        items:
+          type: ProductCategoryMediaGroupRepresentation
+      tileImage:
+        description: Representation of the tile image of the product category
+        type: ProductCategoryMediaRepresentation
+  ProductCategoryMediaGroupRepresentation:
+    description: Representation of a media group associated with a product category
+    discriminator: ''
+    type: object
+    properties:
+      developerName:
+        description: API name of the product category media group
+        type: string
+      id:
+        description: ID of the product category media group
+        type: string
+      mediaItems:
+        description: List of media objects inside a product category media group
+        type: array
+        items:
+          type: ProductCategoryMediaRepresentation
+      name:
+        description: Name of the product category media group
+        type: string
+      usageType:
+        description: Usage type of media items inside a product category media group
+        type: string
+        enum:
+          - Attachment
+          - Banner
+          - Listing
+          - Standard
+          - Thumbnail
+          - Tile
+  ProductCategoryMediaRepresentation:
+    description: Representation of a media associated with a product category
+    discriminator: ''
+    type: object
+    properties:
+      alternateText:
+        description: Alternative text for the product category media
+        type: string
+      contentVersionId:
+        description: Content document that represents the product category media
+        type: string | nil # TODO: "nil" union hand rolled
+      id:
+        description: ID of the product category image
+        type: string
+      mediaType:
+        description: Type of the product category media
+        type: string
+        enum:
+          - Document
+          - Image
+          - Video
+      sortOrder:
+        description: Sort oder of a media item inside a media group
+        type: integer
+      title:
+        description: Title of the product category media
+        type: string
+      url:
+        description: URL of the product category media
+        type: string
+  ProductCategoryPathRepresentation:
+    description: Wrapper containing the path for a category.
+    discriminator: ''
+    type: object
+    properties:
+      path:
+        description: List of categories.
+        type: array
+        items:
+          type: ProductCategoryRepresentation
+  ProductCategoryRepresentation:
+    description: Representation for basic category data.
+    discriminator: ''
+    type: object
+    properties:
+      description:
+        description: Description of the category
+        type: string | nil # TODO "nil" union type hand rolled
+      id:
+        description: ID of the category
+        type: string
+      name:
+        description: Name of the category
+        type: string
+  ProductDetailRepresentation:
+    description: Representation for the details of a single product
+    discriminator: ''
+    type: object
+    properties:
+      defaultImage:
+        description: Representation of the default image of the product
+        type: ProductMediaRepresentation
+      entitlement:
+        description: Entitlement info for the product
+        type: ProductEntitlementRepresentation
+      fields:
+        description: List of fields belonging to the product
+        type: object
+        properties:
+          //:
+            type: string | nil # TODO: hand rolled nil union
+      id:
+        description: ID of the product
+        type: string
+      mediaGroups:
+        description: List of media groups of the product
+        type: array
+        items:
+          type: ProductMediaGroupRepresentation
+      primaryProductCategoryPath:
+        description: Primary category path of the product
+        type: ProductCategoryPathRepresentation
+  ProductEntitlementRepresentation:
+    description: Representation of a media group associated with a product
+    discriminator: ''
+    type: object
+    properties:
+      canViewPrice:
+        description: true if the product's price can be viewed, false otherwise
+        type: boolean | nil # TODO hand rolled nil union
+  ProductMediaContentDocumentRepresentation:
+    description: Representation of a product media as content document
+    discriminator: ''
+    type: object
+    properties:
+      id:
+        description: ID of the ContentDocument as media
+        type: string
+      largeUrl:
+        description: URL of the large size product image
+        type: string
+      mediumUrl:
+        description: URL of the medium size product image
+        type: string
+      originalUrl:
+        description: URL of the original size product image as uploaded
+        type: string
+      smallUrl:
+        description: URL of the small size product image
+        type: string
+  ProductMediaGroupRepresentation:
+    description: Representation of a media group associated with a product
+    discriminator: ''
+    type: object
+    properties:
+      developerName:
+        description: API name of the produc media group
+        type: string
+      id:
+        description: ID of the product media group
+        type: string
+      mediaItems:
+        description: List of media objects inside a product media group
+        type: array
+        items:
+          type: ProductMediaRepresentation
+      name:
+        description: Name of the produc media group
+        type: string
+      usageType:
+        description: Usage type of media items inside a product media group
+        type: string
+        enum:
+          - Attachment
+          - Banner
+          - Listing
+          - Standard
+          - Thumbnail
+          - Tile
+  ProductMediaRepresentation:
+    description: Representation of a media associated with a product
+    discriminator: ''
+    type: object
+    properties:
+      alternateText:
+        description: Alternative text for the product media
+        type: string
+      contentVersionId:
+        description: The ContentVersionId of the latest published ContentVersion if the media is stored as a ContentDocument.  If the image is a customer-provided external URL, the value will be null.
+        type: string | nil # TODO: "nil" union hand rolled
+      id:
+        description: ID of the product image
+        type: string | nil # TODO: "nil" union hand rolled
+      mediaType:
+        description: Type of the product media
+        type: string
+        enum:
+          - Document
+          - Image
+          - Video
+      sortOrder:
+        description: Sort order of a media item inside a media group
+        type: integer
+      title:
+        description: Title of the product media
+        type: string
+      url:
+        description: URL of the product media
+        type: string
+/commerce/webstores/{webstoreId}:
+  /product-categories/{productCategoryId}:
+    get:
+      description: Fetch standard field data, custom field data, and enrichment data for a single category.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ProductCategoryDetailRepresentation
+      queryParameters:
+        effectiveAccountId:
+          type: string
+          required: false
+        excludeFields:
+          type: boolean
+          required: false
+        excludeMedia:
+          type: boolean
+          required: false
+        fields:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        mediaGroups:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    uriParameters:
+      productCategoryId:
+        type: string
+        required: true
+      webstoreId:
+        type: string
+        required: true
+  /product-category-path/product-categories/{productCategoryId}:
+    get:
+      description: Fetch standard field data, custom field data, and enrichment data for a single Product
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ProductCategoryPathRepresentation
+    uriParameters:
+      productCategoryId:
+        type: string
+        required: true
+      webstoreId:
+        type: string
+        required: true
+  /products/{productId}:
+    get:
+      description: Fetch standard field data, custom field data, and enrichment data for a single Product
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ProductDetailRepresentation
+      queryParameters:
+        effectiveAccountId:
+          type: string
+          required: false
+        excludeEntitlement:
+          type: boolean
+          required: false
+        excludeFields:
+          type: boolean
+          required: false
+        excludeMedia:
+          type: boolean
+          required: false
+        excludePrimaryProductCategory:
+          type: boolean
+          required: false
+        fields:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+        mediaGroups:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    uriParameters:
+      productId:
+        type: string
+        required: true
+      webstoreId:
+        type: string
+        required: true

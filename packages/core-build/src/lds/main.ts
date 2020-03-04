@@ -38,6 +38,10 @@ import {
 
 import { GetCommunityNavigationMenu } from '@salesforce/lds-adapters-community-navigation-menu';
 
+import { GetProduct, GetProductCategoryPath } from '@salesforce/lds-adapters-commerce-catalog';
+import { GetProductPrice } from '@salesforce/lds-adapters-commerce-store-pricing';
+import { ProductSearch } from '@salesforce/lds-adapters-commerce-search';
+
 import AdsBridge from './ads-bridge';
 import networkAdapter from './network-adapter';
 import { setupMetadataWatcher } from './metadata';
@@ -232,6 +236,25 @@ const getCommunityNavigationMenuAdapter = createLdsAdapter(
     GetCommunityNavigationMenu
 );
 export const getCommunityNavigationMenu = registerWireAdapter(getCommunityNavigationMenuAdapter);
+
+/**
+ * Commerce
+ */
+
+const getProductAdapter = createLdsAdapter('getProduct', GetProduct);
+export const getProduct = registerWireAdapter(getProductAdapter);
+
+const getProductCategoryPathAdapter = createLdsAdapter(
+    'getProductCategoryPath',
+    GetProductCategoryPath
+);
+export const getProductCategoryPath = registerWireAdapter(getProductCategoryPathAdapter);
+
+const getProductPriceAdapter = createLdsAdapter('getProductPrice', GetProductPrice);
+export const getProductPrice = registerWireAdapter(getProductPriceAdapter);
+
+const productSearchAdapter = createLdsAdapter('productSearch', ProductSearch);
+export const productSearch = registerWireAdapter(productSearchAdapter);
 
 /**
  * Apex

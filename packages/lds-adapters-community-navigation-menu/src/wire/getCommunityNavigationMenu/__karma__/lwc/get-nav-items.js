@@ -8,22 +8,23 @@ export default class GetNavItems extends LightningElement {
 
     @wire(getCommunityNavigationMenu, { communityId: '$communityId' })
     onGetWiredNavItems(results) {
-        this.navItems = results;
+        this.navItems = results.data;
+        this.error = results.error;
         this.wirePushCount += 1;
     }
 
     @api
     getWiredNavItems() {
-        return this.navItems.data;
-    }
-
-    @api
-    getWiredError() {
-        return this.navItems.error;
+        return this.navItems;
     }
 
     @api
     pushCount() {
         return this.wirePushCount;
+    }
+
+    @api
+    getError() {
+        return this.error.body;
     }
 }

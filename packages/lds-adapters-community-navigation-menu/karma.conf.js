@@ -2,6 +2,7 @@ const baseConfig = require('@salesforce/lds-karma-config');
 
 const LDS = require.resolve('./karma/dist/lds.js');
 const LDS_COMPAT = require.resolve('./karma/dist/compat/lds.js');
+const LDS_NATIVE = require.resolve('./karma/dist/ldsNativeProxy.js');
 
 const COMMUNITY_NAVIGATION_MENU = require.resolve('./dist/umd/es2018/community-navigation-menu.js');
 const COMMUNITY_NAVIGATION_MENU_COMPAT = require.resolve(
@@ -19,6 +20,7 @@ module.exports = config => {
     baseConfig(config);
 
     const compat = Boolean(config.compat);
+    const native = Boolean(config.native);
     const files = [];
 
     config.files.forEach(file => {
@@ -32,11 +34,9 @@ module.exports = config => {
                         ? COMMUNITY_NAVIGATION_MENU_TEST_UTIL_COMPAT
                         : COMMUNITY_NAVIGATION_MENU_TEST_UTIL
                 );
-            } else if (file.endsWith('/global-setup.js')) {
-                //files.push(compat ? UIAPI_TEST_SETUP_COMPAT : UIAPI_TEST_SETUP);
             } else if (file.endsWith('/lwclds.js')) {
                 files.push(compat ? COMMUNITY_NAVIGATION_MENU_COMPAT : COMMUNITY_NAVIGATION_MENU);
-                files.push(compat ? LDS_COMPAT : LDS);
+                files.push(compat ? LDS_COMPAT : native ? LDS_NATIVE : LDS);
             }
         }
     });

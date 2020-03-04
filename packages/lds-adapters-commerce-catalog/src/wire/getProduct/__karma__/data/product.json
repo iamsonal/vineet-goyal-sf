@@ -1,0 +1,99 @@
+{
+    "defaultImage": {
+        "alternateText": "Alternate Text",
+        "contentVersionId": null,
+        "id": "2pmxx0000000001AAA",
+        "mediaType": "Image",
+        "sortOrder": 0,
+        "title": "Image Title",
+        "url": "https://placekitten.com/200/200"
+    },
+    "entitlement": {
+        "canViewPrice": null
+    },
+    "fields": {
+        "LastModifiedDate": "2020-02-17T12:16:53Z",
+        "DisplayUrl": null,
+        "IsDeleted": "false",
+        "Description": "Description of Kitten One",
+        "ProductCode": null,
+        "IsActive": "true",
+        "ExternalId": null,
+        "LastViewedDate": "2020-02-17T12:36:45Z",
+        "LastReferencedDate": "2020-02-17T12:36:45Z",
+        "StockKeepingUnit": "K001-b2clite-1581941813-0",
+        "CurrencyIsoCode": "USD",
+        "ExternalDataSourceId": null,
+        "Name": "Kitten One",
+        "SystemModstamp": "2020-02-17T12:17:10Z",
+        "IsArchived": "false",
+        "CreatedById": "005xx000001X7Oj",
+        "QuantityUnitOfMeasure": null,
+        "CreatedDate": "2020-02-17T12:16:53Z",
+        "Family": null,
+        "LastModifiedById": "005xx000001X7Oj"
+    },
+    "id": "01txx0000006i2SAAQ",
+    "mediaGroups": [
+        {
+            "developerName": "StandardMediaGroup",
+            "id": "2mgxx0000000001AAA",
+            "mediaItems": [
+                {
+                    "alternateText": "Alternate Text",
+                    "contentVersionId": null,
+                    "id": "2pmxx0000000001AAA",
+                    "mediaType": "Image",
+                    "sortOrder": 0,
+                    "title": "Image Title",
+                    "url": "https://placekitten.com/200/200"
+                }
+            ],
+            "name": "Standard Media Group",
+            "usageType": "Standard"
+        },
+        {
+            "developerName": "ThumbnailMediaGroup",
+            "id": "2mgxx0000000002AAA",
+            "mediaItems": [
+                {
+                    "alternateText": "image",
+                    "contentVersionId": null,
+                    "id": null,
+                    "mediaType": "Image",
+                    "sortOrder": 0,
+                    "title": "image",
+                    "url": "/img/b2b/default-product-image.svg"
+                }
+            ],
+            "name": "Thumbnail Media Group",
+            "usageType": "Thumbnail"
+        },
+        {
+            "developerName": "ListingMediaGroup",
+            "id": "2mgxx0000000003AAA",
+            "mediaItems": [
+                {
+                    "alternateText": "image",
+                    "contentVersionId": null,
+                    "id": null,
+                    "mediaType": "Image",
+                    "sortOrder": 0,
+                    "title": "image",
+                    "url": "/img/b2b/default-product-image.svg"
+                }
+            ],
+            "name": "Listing Media Group",
+            "usageType": "Listing"
+        }
+    ],
+    "primaryProductCategoryPath": {
+        "path": [
+            {
+                "description": null,
+                "id": "0ZGxx0000000001GAA",
+                "name": "Kitten"
+            }
+        ]
+    }
+}

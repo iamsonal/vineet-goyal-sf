@@ -64,9 +64,38 @@ function communityNavigationMenuTestUtilConfig(config) {
     };
 }
 
+function ldsNativeProxyConfig() {
+    return {
+        input: path.join(__dirname, 'karma', 'ldsNativeProxy.js'),
+        plugins: [resolve()],
+        output: {
+            file: getTargetPath('ldsNativeProxy.js', false),
+            format: 'umd',
+            name: 'lds', // use same name as browser so it gets swapped in properly
+            globals: {
+                sinon: 'sinon',
+                lwc: 'LWC',
+                'wire-service': 'WireService',
+                '@ldsjs/engine': 'ldsEngine',
+                '@ldsjs/lwc-lds': 'lwcLds',
+                '@salesforce/lds-adapters-community-navigation-menu': 'communityNavigationService',
+            },
+        },
+        external: [
+            'sinon',
+            'lwc',
+            'wire-service',
+            '@ldsjs/engine',
+            '@ldsjs/lwc-lds',
+            '@salesforce/lds-adapters-community-navigation-menu',
+        ],
+    };
+}
+
 module.exports = [
     ldsConfig({ compat: false }),
     ldsConfig({ compat: true }),
     communityNavigationMenuTestUtilConfig({ compat: false }),
     communityNavigationMenuTestUtilConfig({ compat: true }),
+    ldsNativeProxyConfig(),
 ];

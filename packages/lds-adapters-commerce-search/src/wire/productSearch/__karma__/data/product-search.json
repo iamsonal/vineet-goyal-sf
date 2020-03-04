@@ -1,0 +1,118 @@
+{
+    "categories": {
+        "category": {
+            "description": "All Categories",
+            "id": null,
+            "name": "All Categories"
+        },
+        "children": [
+            {
+                "category": {
+                    "description": null,
+                    "id": "0ZGRM0000004DZU4A2",
+                    "name": "Car Wheels"
+                },
+                "children": [],
+                "productCount": 17
+            },
+            {
+                "category": {
+                    "description": null,
+                    "id": "0ZGRM0000004Dn04AE",
+                    "name": "Bikes"
+                },
+                "children": [],
+                "productCount": 1
+            }
+        ],
+        "productCount": 17
+    },
+    "facets": [
+        {
+            "displayName": "Product Family",
+            "displayRank": 2,
+            "displayType": "MultiSelect",
+            "nameOrId": "Family",
+            "type": "Standard",
+            "values": [
+                {
+                    "displayName": "ANDROS",
+                    "nameOrId": "ANDROS",
+                    "productCount": 1
+                },
+                {
+                    "displayName": "BBS",
+                    "nameOrId": "BBS",
+                    "productCount": 2
+                },
+                {
+                    "displayName": "O.Z. RACING",
+                    "nameOrId": "O.Z. RACING",
+                    "productCount": 10
+                },
+                {
+                    "displayName": "RADIUS WHEELS",
+                    "nameOrId": "RADIUS WHEELS",
+                    "productCount": 1
+                },
+                {
+                    "displayName": "SPORT TUNING",
+                    "nameOrId": "SPORT TUNING",
+                    "productCount": 3
+                }
+            ]
+        }
+    ],
+    "locale": "en_US",
+    "productsPage": {
+        "currencyIsoCode": "USD",
+        "products": [
+            {
+                "defaultImage": {
+                    "alternateText": "A car wheel",
+                    "contentVersionId": "068RM0000000QVhYAM",
+                    "id": "2pmRM0000004COQYA2",
+                    "mediaType": "Image",
+                    "sortOrder": 0,
+                    "title": "Wheel",
+                    "url": "/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068RM0000000QVhYAM&operationContext=CONTENT&contentId=069RM0000000P4E&page=0"
+                },
+                "fields": {
+                    "LastModifiedDate": "2019-12-11T14:02:59Z",
+                    "DisplayUrl": null,
+                    "IsDeleted": "false",
+                    "Description": "Hand milled in Italy to car enthusiast exacting standards.",
+                    "ProductCode": "AR10-Machined-Black",
+                    "IsActive": "true",
+                    "ExternalId": null,
+                    "LastViewedDate": "2019-12-11T17:35:59Z",
+                    "LastReferencedDate": "2019-12-11T17:35:59Z",
+                    "StockKeepingUnit": null,
+                    "weight__c": null,
+                    "ExternalDataSourceId": null,
+                    "Name": "Andros Machined w/Black Accent Wheel",
+                    "SystemModstamp": "2019-12-11T14:02:59Z",
+                    "IsArchived": "false",
+                    "CreatedById": "005RM000001zb1n",
+                    "CloneSourceId": null,
+                    "QuantityUnitOfMeasure": null,
+                    "CreatedDate": "2019-12-10T21:24:27Z",
+                    "Family": "ANDROS",
+                    "LastModifiedById": "005RM000001zb1n"
+                },
+                "id": "01tRM0000003GXIYA2",
+                "name": "Andros Machined w/Black Accent Wheel",
+                "prices": {
+                    "errorCode": null,
+                    "errorMessage": null,
+                    "isSuccess": true,
+                    "listPrice": "200",
+                    "negotiatedPricebookEntryId": "01uRM0000006MHgYAM",
+                    "productId": "01tRM0000003GXIYA2",
+                    "unitPrice": "189"
+                }
+            }
+        ],
+        "total": 17
+    }
+}

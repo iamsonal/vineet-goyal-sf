@@ -39,6 +39,12 @@ export const getSObjectValue = lds.getSObjectValue;
 /** Connect exports */
 export const getCommunityNavigationMenu = lds.getCommunityNavigationMenu;
 
+/** Commere exports */
+export const getProduct = lds.getProduct;
+export const getProductCategoryPath = lds.getProductCategoryPath;
+export const getProductPrice = lds.getProductPrice;
+export const productSearch = lds.productSearch;
+
 /** Record Util Pure Functions */
 export const createRecordInputFilteredByEditedFields = lds.createRecordInputFilteredByEditedFields;
 export const generateRecordInputForCreate = lds.generateRecordInputForCreate;

@@ -1,0 +1,24 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "96340c9b4001d066bd7b08695d574ed9",
+    "fields": {
+        "Amount": {
+            "displayValue": "$23.30",
+            "value": 23.3
+        }
+    },
+    "id": "006RM000003KcuvYAC",
+    "lastModifiedById": "005RM000001stMBYAY",
+    "lastModifiedDate": "2020-03-04T17:27:56.000Z",
+    "recordTypeId": "012RM000000DBJIYA4",
+    "recordTypeInfo": {
+        "available": true,
+        "defaultRecordTypeMapping": true,
+        "master": false,
+        "name": "A",
+        "recordTypeId": "012RM000000DBJIYA4"
+    },
+    "systemModstamp": "2020-03-04T17:27:57.000Z",
+    "weakEtag": 1583342877000
+}

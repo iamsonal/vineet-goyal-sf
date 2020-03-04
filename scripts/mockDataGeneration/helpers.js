@@ -33,6 +33,18 @@ async function createContactWithOwner(ownerId, firstName = 'SFDX', lastName = 'U
     }
 }
 
+async function createTempRecord(apiName, fields) {
+    const fieldsList = Object.keys(fields).join(', ');
+    console.log(`Creating "${apiName}" with fields "${fieldsList}"`);
+    let results = await $conn.create(apiName, fields);
+    if (results.success) {
+        toDelete.push({ type: apiName, id: results.id });
+        return results.id;
+    } else {
+        throw new Error(`Error creating ${apiName} with fields "${fieldsList}": ${results.errors}`);
+    }
+}
+
 async function createAccountWithOwner(ownerId, accountName = 'SFDX Account') {
     // eslint-disable-next-line no-undef
     console.log(`Creating Account with Owner ${ownerId}`);
@@ -224,6 +236,7 @@ module.exports = {
     cleanup,
     createAccountWithOwner,
     createOpportunityWithAccount,
+    createTempRecord,
     getAccountByName,
     getCaseByNumber,
     getListViewByName,

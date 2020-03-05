@@ -591,16 +591,6 @@ describe('single recordId - record caching', () => {
         };
         mockGetRecordUiNetwork(config, [mockData, mockData]);
 
-        // TODO: In 222, only record gets requested if only record is expired
-        // In 224, the entire recordUi gets re-fetched
-        // // second network call - for record
-        // const mockRecordData = getMock('record-Opportunity-fields-Opportunity.CloneSourceId');
-        // const recordConfig = {
-        //     recordIds: recordId,
-        //     optionalFields: extractRecordFields(mockData.records[recordId]),
-        // };
-        // mockGetRecordNetwork(recordConfig, mockRecordData);
-
         // populate cache
         await setupElement(config, RecordUi);
 

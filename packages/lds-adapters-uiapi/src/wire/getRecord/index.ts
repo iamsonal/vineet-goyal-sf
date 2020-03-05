@@ -9,6 +9,7 @@ import {
     RecordRepresentationNormalized,
     TTL as RecordRepresentationTTL,
 } from '../../generated/types/RecordRepresentation';
+import coerceRecordId18 from '../../primitives/RecordId18/coerce';
 import { getTrackedFields, markMissingOptionalFields } from '../../util/records';
 import {
     buildNetworkSnapshot as getRecordByFieldsNetwork,
@@ -57,11 +58,24 @@ function createResourceRequestFromRepresentation(
     return getUiApiRecordsByRecordId(config);
 }
 
+// TODO: this should probably be code generated in RecordRepresentation
+function coerceKeyParams(config: KeyParams): KeyParams {
+    const coercedConfig = {} as KeyParams;
+
+    const recordId = coerceRecordId18(config.recordId);
+    if (recordId !== undefined) {
+        coercedConfig.recordId = recordId;
+    }
+
+    return coercedConfig;
+}
+
 export const notifyChangeFactory = (lds: LDS) => {
     return function getUiApiRecordsByRecordIdNotifyChange(configs: KeyParams[]): void {
         for (let i = 0, len = configs.length; i < len; i++) {
             // build key from input
-            const key = keyBuilder(configs[i]);
+            const coercedConfig = coerceKeyParams(configs[i]);
+            const key = keyBuilder(coercedConfig);
             // lookup GraphNode from store
             const node = lds.getNode<RecordRepresentation, RecordRepresentation>(key);
             if (node === null || node.type === 'Error') {

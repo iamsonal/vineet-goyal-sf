@@ -171,4 +171,71 @@ describe('notify change', () => {
 
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(expected);
     });
+
+    it('transforms recordId from 15 char format to 18 char format', async () => {
+        const mockDataOpportunityName = getMock('record-Opportunity-fields-Opportunity.Name');
+        const refreshMockData = getMock('record-Opportunity-fields-Opportunity.Name');
+        refreshMockData.lastModifiedDate = new Date(
+            new Date(refreshMockData.lastModifiedDate).getTime() + 60 * 1000
+        ).toISOString();
+        refreshMockData.weakEtag = refreshMockData.weakEtag + 999;
+
+        const recordId18 = mockDataOpportunityName.id;
+        const recordId15 = recordId18.slice(0, 15);
+
+        const config = {
+            recordId: recordId18,
+            fields: ['Opportunity.Name'],
+        };
+
+        const refreshConfig = {
+            recordId: recordId18,
+            optionalFields: ['Opportunity.Name'],
+        };
+
+        mockGetRecordNetwork(config, mockDataOpportunityName);
+        mockGetRecordNetwork(refreshConfig, refreshMockData);
+
+        const element = await setupElement(config, RecordFields);
+
+        expect(element.pushCount()).toBe(1);
+
+        const representation = element.getWiredData();
+        expect(representation).toEqualSnapshotWithoutEtags(mockDataOpportunityName);
+
+        await element.notifyChange([{ recordId: recordId15 }]);
+
+        expect(element.pushCount()).toBe(2);
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(refreshMockData);
+    });
+
+    it('does not refresh when called with invalid recordId', async () => {
+        const mockDataOpportunityName = getMock('record-Opportunity-fields-Opportunity.Name');
+        const refreshMockData = getMock('record-Opportunity-fields-Opportunity.Name');
+        refreshMockData.lastModifiedDate = new Date(
+            new Date(refreshMockData.lastModifiedDate).getTime() + 60 * 1000
+        ).toISOString();
+        refreshMockData.weakEtag = refreshMockData.weakEtag + 999;
+
+        const validRecordId = mockDataOpportunityName.id;
+        const invalidRecordId = 'foobar';
+
+        const config = {
+            recordId: validRecordId,
+            fields: ['Opportunity.Name'],
+        };
+
+        mockGetRecordNetwork(config, mockDataOpportunityName);
+
+        const element = await setupElement(config, RecordFields);
+
+        expect(element.pushCount()).toBe(1);
+
+        const representation = element.getWiredData();
+        expect(representation).toEqualSnapshotWithoutEtags(mockDataOpportunityName);
+
+        await element.notifyChange([{ recordId: invalidRecordId }]);
+
+        expect(element.pushCount()).toBe(1);
+    });
 });

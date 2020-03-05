@@ -1,4 +1,12 @@
-import { AdapterFactory, LDS, Snapshot, Selector, FetchResponse, GraphNode } from '@ldsjs/engine';
+import {
+    AdapterFactory,
+    LDS,
+    Snapshot,
+    Selector,
+    FetchResponse,
+    GraphNode,
+    ErrorSnapshot,
+} from '@ldsjs/engine';
 import {
     AdapterValidationConfig,
     refreshable,
@@ -7,7 +15,10 @@ import {
 import { GetRecordUiConfig, validateAdapterConfig } from '../../generated/adapters/getRecordUi';
 import getUiApiRecordUiByRecordIds from '../../generated/resources/getUiApiRecordUiByRecordIds';
 import { RecordLayoutRepresentation } from '../../generated/types/RecordLayoutRepresentation';
-import { RecordUiRepresentation } from '../../generated/types/RecordUiRepresentation';
+import {
+    RecordUiRepresentation,
+    TTL as RecordUiRepresentationTTL,
+} from '../../generated/types/RecordUiRepresentation';
 import {
     keyBuilder as recordRepresentationKeyBuilder,
     RecordRepresentation,
@@ -25,7 +36,7 @@ import { getTrackedFields, markMissingOptionalFields, isGraphNode } from '../../
 import { dedupe } from '../../validation/utils';
 import { buildRecordUiSelector, RecordDef } from './selectors';
 import { getRecordTypeId } from '../../util/records';
-import { isFulfilledSnapshot } from '../../util/snapshot';
+import { isErrorSnapshot, isFulfilledSnapshot } from '../../util/snapshot';
 import { LayoutType } from '../../primitives/LayoutType';
 import { LayoutMode } from '../../primitives/LayoutMode';
 import { getRecordUiMissingRecordLookupFields } from '../../util/record-ui';
@@ -133,7 +144,7 @@ export function buildInMemorySnapshot(
         const cacheData = lds.storeLookupMemoize<RecordUiRepresentation>(selectorNode);
 
         // CACHE HIT
-        if (isFulfilledSnapshot(cacheData)) {
+        if (isFulfilledSnapshot(cacheData) || isErrorSnapshot(cacheData)) {
             return cacheData;
         }
     }
@@ -293,23 +304,29 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordUiConfigWithDefa
             }
 
             lds.storeBroadcast();
-
-            const selectorNode = getSelectorNode(lds, configKey);
-            if (selectorNode !== null) {
-                const snapshot = lds.storeLookupMemoize<RecordUiRepresentation>(selectorNode);
-                if (isFulfilledSnapshot(snapshot)) {
-                    publishDependencies(lds, validRecordIds, [key, cachedSelectorKey]);
-                    return snapshot;
-                }
-            }
             lds.storePublish(configKey, sel);
             publishDependencies(lds, validRecordIds, [key, cachedSelectorKey, configKey]);
 
             return lds.storeLookupMemoize<RecordUiRepresentation>(sel);
         },
         (err: FetchResponse<unknown>) => {
-            lds.storeIngestFetchResponse(key, err);
+            lds.storeIngestFetchResponse(key, err, RecordUiRepresentationTTL);
             lds.storeBroadcast();
+
+            const { status } = err;
+            if (status === 404) {
+                const sel: Selector = {
+                    recordId: key,
+                    node: {
+                        kind: 'Fragment',
+                        opaque: true,
+                    },
+                    variables: {},
+                };
+                lds.storePublish(configKey, sel);
+                return lds.storeLookupMemoize<RecordUiRepresentation>(sel) as ErrorSnapshot;
+            }
+
             return lds.errorSnapshot(err);
         }
     );
@@ -368,7 +385,10 @@ export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> 
             }
 
             const cacheSnapshot = buildInMemorySnapshot(lds, config);
-            if (cacheSnapshot !== null && isFulfilledSnapshot(cacheSnapshot)) {
+            if (
+                cacheSnapshot !== null &&
+                (isFulfilledSnapshot(cacheSnapshot) || isErrorSnapshot(cacheSnapshot))
+            ) {
                 return cacheSnapshot;
             }
 

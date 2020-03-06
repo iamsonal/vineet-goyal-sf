@@ -9,7 +9,14 @@ function getTestSpecs(sharedOnly) {
     const files = [];
 
     files.push('**/__karma__/matchers.js');
-    files.push(sharedOnly ? '**/__karma__/**/*.shared.spec.js' : '**/__karma__/**/*.spec.js');
+
+    const { SUITE: SUITE_ENV } = process.env;
+    if (SUITE_ENV) {
+        files.push(`**/__karma__/**/${SUITE_ENV}.spec.js`);
+    } else {
+        files.push(sharedOnly ? '**/__karma__/**/*.shared.spec.js' : '**/__karma__/**/*.spec.js');
+    }
+
     files.push('**/__karma__/**/data/**/*.json');
 
     return files;

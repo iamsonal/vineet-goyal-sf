@@ -874,6 +874,65 @@ describe('populating null nested record', () => {
             },
         });
     });
+
+    it('should handle when populated spanning record becomes null', async () => {
+        const mockData = getMock('single-record-Opportunity-layouttypes-Full-modes-View');
+        const recordId = getRecordIdFromMock(mockData);
+
+        const recordMock = clone(mockData.records[recordId]);
+        const optionalFields = extractRecordFields(recordMock, {
+            omit: ['Opportunity.Account.Name'],
+        }).sort();
+        recordMock.fields.Account = {
+            displayValue: null,
+            value: null,
+        };
+        recordMock.fields.AccountId = {
+            displayValue: null,
+            value: null,
+        };
+
+        const recordUiConfig = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+
+        const recordConfig = {
+            recordId,
+            fields: ['Opportunity.Account.Name'],
+        };
+
+        mockGetRecordUiNetwork(recordUiConfig, mockData);
+        mockGetRecordNetwork({ ...recordConfig, optionalFields }, recordMock);
+
+        // Load record-ui with Account field present
+        const recordUiWire = await setupElement(recordUiConfig, RecordUi);
+
+        expireRecords();
+
+        // Load record with null spanning fields
+        await setupElement(recordConfig, RecordFields);
+
+        expect(recordUiWire.pushCount()).toBe(2);
+        expect(recordUiWire.getWiredData()).toEqualSnapshotWithoutEtags({
+            ...mockData,
+            records: {
+                [recordId]: {
+                    ...recordMock,
+                    fields: {
+                        ...mockData.records[recordId].fields,
+                        Account: {
+                            ...recordMock.fields.Account,
+                        },
+                        AccountId: {
+                            ...recordMock.fields.AccountId,
+                        },
+                    },
+                },
+            },
+        });
+    });
 });
 
 describe('recordTypeId update', () => {

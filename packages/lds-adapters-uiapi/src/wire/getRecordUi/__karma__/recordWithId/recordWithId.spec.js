@@ -7,6 +7,9 @@ import {
 } from 'test-util';
 import {
     MASTER_RECORD_TYPE_ID,
+    expireLayout,
+    expireLayoutUserState,
+    expireObjectInfo,
     expireRecords,
     expireRecordUi,
     extractRecordFields,
@@ -17,7 +20,9 @@ import {
 } from 'uiapi-test-util';
 import { karmaNetworkAdapter, updateRecord } from 'lds';
 
+import GetLayout from '../../../getLayout/__karma__/lwc/get-layout';
 import RecordFields from '../../../getRecord/__karma__/lwc/record-fields';
+import ObjectInfo from '../../../getObjectInfo/__karma__/lwc/object-basic';
 import RecordUi from '../lwc/record-ui';
 
 const MOCK_PREFIX = 'wire/getRecordUi/__karma__/recordWithId/data/';
@@ -157,111 +162,6 @@ describe('single recordId - basic', () => {
         );
     });
 
-    it('should NOT emit new value when getRecord requests field that is not returned by getRecordUi request', async () => {
-        const mockRecordData = getMock('record-Opportunity-fields-Opportunity.CloneSourceId');
-        const recordId = mockRecordData.id;
-
-        const recordConfig = {
-            recordId: recordId,
-            fields: ['Opportunity.CloneSourceId'],
-        };
-        mockGetRecordNetwork(recordConfig, mockRecordData);
-
-        const mockRecordUiData = getMock(
-            'single-record-Opportunity-layouttypes-Full-modes-View-optionalFields-IsDeleted'
-        );
-        const recordUiConfig = {
-            recordIds: recordId,
-            layoutTypes: ['Full'],
-            modes: ['View'],
-        };
-        mockGetRecordUiNetwork(recordUiConfig, mockRecordUiData);
-
-        const wireA = await setupElement(recordUiConfig, RecordUi);
-        await setupElement(recordConfig, RecordFields);
-
-        // Verify records endpoint was called
-        expect(karmaNetworkAdapter.secondCall.args[0].queryParams.fields).toEqual([
-            'Opportunity.CloneSourceId',
-        ]);
-
-        // Verify that wireA did not receive new emit
-        expect(wireA.pushCount()).toBe(1);
-    });
-
-    it('should make http request for compact layout type following request for full layout type', async () => {
-        const mockDataCompact = getMock(
-            'single-record-Opportunity-layouttypes-Compact-modes-View-optionalFields-IsDeleted'
-        );
-        const recordId = getRecordIdFromMock(mockDataCompact);
-        const compactConfig = {
-            recordIds: recordId,
-            layoutTypes: ['Compact'],
-            modes: ['View'],
-            optionalFields: ['Opportunity.IsDeleted'],
-        };
-
-        const mockDataFull = getMock(
-            'single-record-Opportunity-layouttypes-Full-modes-View-optionalFields-IsDeleted'
-        );
-
-        const expectedOptionalFields = extractRecordFields(mockDataFull.records[recordId]);
-
-        mockGetRecordUiNetwork(
-            {
-                ...compactConfig,
-                optionalFields: expectedOptionalFields,
-            },
-            mockDataCompact
-        );
-        const fullConfig = {
-            recordIds: recordId,
-            layoutTypes: ['Full'],
-            modes: ['View'],
-            optionalFields: ['Opportunity.IsDeleted'],
-        };
-        mockGetRecordUiNetwork(fullConfig, mockDataFull);
-
-        await setupElement(fullConfig, RecordUi);
-        const wireB = await setupElement(compactConfig, RecordUi);
-
-        // Verify the correct data was emitted to wireB
-        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mockDataCompact);
-    });
-
-    it('should make http request for full layout type following request for compact layout type', async () => {
-        const mockDataCompact = getMock(
-            'single-record-Opportunity-layouttypes-Compact-modes-View-optionalFields-IsDeleted'
-        );
-        const recordId = getRecordIdFromMock(mockDataCompact);
-        const compactConfig = {
-            recordIds: recordId,
-            layoutTypes: ['Compact'],
-            modes: ['View'],
-            optionalFields: ['Opportunity.IsDeleted'],
-        };
-        mockGetRecordUiNetwork(compactConfig, mockDataCompact);
-
-        const mockDataFull = getMock(
-            'single-record-Opportunity-layouttypes-Full-modes-View-optionalFields-IsDeleted'
-        );
-
-        const expectedOptionalFields = extractRecordFields(mockDataCompact.records[recordId]);
-        const fullConfig = {
-            recordIds: recordId,
-            layoutTypes: ['Full'],
-            modes: ['View'],
-            optionalFields: expectedOptionalFields,
-        };
-        mockGetRecordUiNetwork(fullConfig, mockDataFull);
-
-        await setupElement(compactConfig, RecordUi);
-        const wireB = await setupElement(fullConfig, RecordUi);
-
-        // Verify the correct data was emitted to wireB
-        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mockDataFull);
-    });
-
     it('dedupes optionalFields before making http request', async () => {
         const mockData = getMock(
             'single-record-Opportunity-layouttypes-Full-modes-View-optionalFields-IsDeleted'
@@ -326,89 +226,7 @@ describe('single recordId - basic', () => {
         expect(elm.getWiredData()).toBeUndefined();
     });
 
-    it('observable for record ui emits on dependent object info change', async () => {
-        const mockData = getMock(
-            'single-record-Opportunity-layouttypes-Compact-modes-View-optionalFields-IsDeleted'
-        );
-        const config = {
-            recordIds: getRecordIdFromMock(mockData),
-            layoutTypes: ['Compact'],
-            modes: ['View'],
-        };
-
-        const updatedMockData = getMock(
-            'single-record-Opportunity-layouttypes-Compact-modes-View-optionalFields-IsDeleted'
-        );
-        // eTag is a integrity field of ObjectInfo
-        updatedMockData.objectInfos.Account.eTag = '12345678123456781234567812345678';
-
-        mockGetRecordUiNetwork(config, [mockData, updatedMockData]);
-
-        const wireA = await setupElement(config, RecordUi);
-        expireRecordUi();
-        await setupElement(config, RecordUi);
-
-        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
-        expect(wireA.pushCount()).toBe(2);
-    });
-
-    it('observable for record ui emits on dependent record type change', async () => {
-        const mockData = getMock(
-            'single-record-Opportunity-layouttypes-Compact-modes-View-optionalFields-IsDeleted'
-        );
-        const recordId = getRecordIdFromMock(mockData);
-        const config = {
-            recordIds: recordId,
-            layoutTypes: ['Compact'],
-            modes: ['View'],
-        };
-
-        const updatedMockData = getMock(
-            'single-record-Opportunity-layouttypes-Compact-modes-View-optionalFields-IsDeleted'
-        );
-        updatedMockData.records[recordId].recordTypeInfo = {
-            available: true,
-            defaultRecordTypeMapping: true,
-            master: true,
-            name: 'Master',
-            recordTypeId: MASTER_RECORD_TYPE_ID,
-        };
-
-        mockGetRecordUiNetwork(config, [mockData, updatedMockData]);
-
-        const wireA = await setupElement(config, RecordUi);
-        expireRecordUi();
-        await setupElement(config, RecordUi);
-
-        expect(wireA.pushCount()).toBe(2);
-        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
-    });
-
-    it('update section user state and verify that existing record ui observables reemit the fresh value with the layout user state updated', async () => {
-        const mockData = getMock('single-record-Account-layouttypes-Full-modes-View');
-        const recordId = getRecordIdFromMock(mockData);
-        const config = {
-            recordIds: recordId,
-            layoutTypes: ['Full'],
-            modes: ['View'],
-        };
-
-        const updatedMockData = getMock('single-record-Account-layouttypes-Full-modes-View');
-        const sectionUserStates = Object.entries(updatedMockData.layoutUserStates)[0][1]
-            .sectionUserStates;
-        Object.entries(sectionUserStates)[0][1].collapsed = true;
-
-        mockGetRecordUiNetwork(config, [mockData, updatedMockData]);
-
-        const wireA = await setupElement(config, RecordUi);
-        expireRecordUi();
-        await setupElement(config, RecordUi);
-
-        expect(wireA.pushCount()).toBe(2);
-        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
-    });
-
-    it('verify recordUi observer is not notified if record is refreshed (after TTL) and record is unchanged', async () => {
+    it('should not emit data if the data from network is not changed', async () => {
         const mockRecordUiData = getMock(
             'single-record-Opportunity-layouttypes-Compact-modes-View-optionalFields-IsDeleted'
         );
@@ -434,6 +252,39 @@ describe('single recordId - basic', () => {
 
         expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mockRecordUiData);
         expect(wireA.pushCount()).toBe(1);
+    });
+
+    it('does not re-request optional field when server does not return optional field on first request', async () => {
+        const mockData = getMock('single-record-Account-layouttypes-Full-modes-View');
+        const recordId = getRecordIdFromMock(mockData);
+        const config = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+            optionalFields: ['Account.Foo'],
+        };
+        mockGetRecordUiNetwork(config, mockData);
+
+        const wireA = await setupElement(config, RecordUi);
+
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+
+        const elm = await setupElement(
+            {
+                recordId,
+                optionalFields: ['Account.Foo'],
+            },
+            RecordFields
+        );
+
+        const record = mockData.records[recordId];
+        const expected = {
+            ...record,
+            fields: {},
+        };
+
+        // Expected record has no fields because the optional field isn't resolvable
+        expect(elm.getWiredData()).toEqualSnapshotWithoutEtags(expected);
     });
 });
 
@@ -510,8 +361,8 @@ describe('single recordId - caching', () => {
     });
 });
 
-describe('single recordId - record caching', () => {
-    it('caches record data in record cache', async () => {
+describe('single recordId - record', () => {
+    it('caches record data', async () => {
         const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockRecordUiData);
         const recordUiConfig = {
@@ -527,7 +378,7 @@ describe('single recordId - record caching', () => {
             fields: extractRecordFields(mockRecordData),
         };
 
-        // populate cache
+        // populate record-ui cache
         const wireA = await setupElement(recordUiConfig, RecordUi);
         // the data should be emitted from cache
         const wireB = await setupElement(recordConfig, RecordFields);
@@ -536,7 +387,31 @@ describe('single recordId - record caching', () => {
         expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mockRecordData);
     });
 
-    it('emits updated data when changed record is fetched', async () => {
+    it('fetches data from network when cached record is expired', async () => {
+        const mockData = getMock(
+            'single-record-Opportunity-layouttypes-Full-modes-View-optionalFields-IsDeleted'
+        );
+        const recordId = getRecordIdFromMock(mockData);
+        const config = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+        mockGetRecordUiNetwork(config, [mockData, mockData]);
+
+        // populate record-ui cache
+        const wireA = await setupElement(config, RecordUi);
+
+        // expire record
+        expireRecords();
+        const wireB = await setupElement(config, RecordUi);
+
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        // same record-ui data returns from network, no push to wireA
+        expect(wireA.pushCount()).toBe(1);
+    });
+
+    it('emits updated record-ui data when changed record is fetched', async () => {
         const mockData = getMock(
             'single-record-Opportunity-layouttypes-Full-modes-View-optionalFields-CloneSourceId'
         );
@@ -566,7 +441,7 @@ describe('single recordId - record caching', () => {
         };
         mockGetRecordNetwork(recordConfig, mockRecordData);
 
-        // populate cache
+        // populate record-ui cache
         const wireA = await setupElement(config, RecordUi);
 
         // only expire record
@@ -578,27 +453,361 @@ describe('single recordId - record caching', () => {
         expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mockRecordData);
     });
 
-    it('verify recordUi Cache Hit but when record is expired, the record is fetched', async () => {
-        // first network call - for record ui
-        const mockData = getMock(
+    it('should not emit data when getRecord requests field that is not returned by getRecordUi request', async () => {
+        const mockRecordData = getMock('record-Opportunity-fields-Opportunity.CloneSourceId');
+        const recordId = mockRecordData.id;
+
+        const mockRecordUiData = getMock(
             'single-record-Opportunity-layouttypes-Full-modes-View-optionalFields-IsDeleted'
         );
+        const recordUiConfig = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+        mockGetRecordUiNetwork(recordUiConfig, mockRecordUiData);
+
+        const recordConfig = {
+            recordId: recordId,
+            fields: ['Opportunity.CloneSourceId'],
+        };
+        mockGetRecordNetwork(recordConfig, mockRecordData);
+
+        const wireA = await setupElement(recordUiConfig, RecordUi);
+        const wireB = await setupElement(recordConfig, RecordFields);
+
+        expect(wireA.pushCount()).toBe(1);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mockRecordData);
+    });
+});
+
+describe('single recordId - object info', () => {
+    it('caches object info data', async () => {
+        const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
+        const recordId = getRecordIdFromMock(mockRecordUiData);
+        const recordUiConfig = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+        mockGetRecordUiNetwork(recordUiConfig, mockRecordUiData);
+
+        const mockObjectInfoData = mockRecordUiData.objectInfos.Account;
+        const objectInfoConfig = { objectApiName: 'Account' };
+
+        // populate record-ui cache
+        const wireA = await setupElement(recordUiConfig, RecordUi);
+        // the data should be emitted from cache
+        const wireB = await setupElement(objectInfoConfig, ObjectInfo);
+
+        expect(wireA.pushCount()).toBe(1);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mockObjectInfoData);
+    });
+
+    it('fetches record-ui data from network when object info is expired', async () => {
+        const mockData = getMock(
+            'single-record-Opportunity-layouttypes-Compact-modes-View-optionalFields-IsDeleted'
+        );
+        const config = {
+            recordIds: getRecordIdFromMock(mockData),
+            layoutTypes: ['Compact'],
+            modes: ['View'],
+        };
+
+        const updatedMockData = getMock(
+            'single-record-Opportunity-layouttypes-Compact-modes-View-optionalFields-IsDeleted'
+        );
+        // eTag is a integrity field of ObjectInfo
+        updatedMockData.objectInfos.Account.eTag = '12345678123456781234567812345678';
+
+        mockGetRecordUiNetwork(config, [mockData, updatedMockData]);
+
+        const wireA = await setupElement(config, RecordUi);
+        expireObjectInfo();
+        const wireB = await setupElement(config, RecordUi);
+
+        expect(wireA.pushCount()).toBe(2);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
+    });
+
+    it('emits updated record-ui data when object info gets changed', async () => {
+        const mockData = getMock(
+            'single-record-Opportunity-layouttypes-Compact-modes-View-optionalFields-IsDeleted'
+        );
+        const config = {
+            recordIds: getRecordIdFromMock(mockData),
+            layoutTypes: ['Compact'],
+            modes: ['View'],
+        };
+
+        const updatedMockData = getMock(
+            'single-record-Opportunity-layouttypes-Compact-modes-View-optionalFields-IsDeleted'
+        );
+        // eTag is a integrity field of ObjectInfo
+        updatedMockData.objectInfos.Account.eTag = '12345678123456781234567812345678';
+
+        mockGetRecordUiNetwork(config, [mockData, updatedMockData]);
+
+        const wireA = await setupElement(config, RecordUi);
+        expireRecordUi();
+        const wireB = await setupElement(config, RecordUi);
+
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
+        expect(wireA.pushCount()).toBe(2);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
+    });
+});
+
+describe('single recordId - layouts', () => {
+    it('caches layouts data', async () => {
+        const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
+        const recordId = getRecordIdFromMock(mockRecordUiData);
+        const recordUiConfig = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+        mockGetRecordUiNetwork(recordUiConfig, mockRecordUiData);
+
+        const objectApiName = 'Account';
+        const layoutType = 'Full';
+        const mode = 'View';
+        const mockLayoutData =
+            mockRecordUiData.layouts[objectApiName][MASTER_RECORD_TYPE_ID][layoutType][mode];
+        const layoutConfig = {
+            objectApiName,
+            layoutType,
+            mode,
+            recordTypeId: MASTER_RECORD_TYPE_ID,
+        };
+
+        // populate record-ui cache
+        const wireA = await setupElement(recordUiConfig, RecordUi);
+        // the data should be emitted from cache
+        const wireB = await setupElement(layoutConfig, GetLayout);
+
+        expect(wireA.pushCount()).toBe(1);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mockLayoutData);
+    });
+
+    it('fetches record-ui data from network when layout is expired', async () => {
+        const mockData = getMock('single-record-Account-layouttypes-Full-modes-View');
+        const config = {
+            recordIds: getRecordIdFromMock(mockData),
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+
+        const updatedMockData = getMock('single-record-Account-layouttypes-Full-modes-View');
+        // eTag is a integrity field of layout
+        updatedMockData.layouts.Account[MASTER_RECORD_TYPE_ID].Full.View.eTag =
+            '12345678123456781234567812345678';
+
+        mockGetRecordUiNetwork(config, [mockData, updatedMockData]);
+
+        const wireA = await setupElement(config, RecordUi);
+        expireLayout();
+        const wireB = await setupElement(config, RecordUi);
+
+        expect(wireA.pushCount()).toBe(2);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
+    });
+
+    it('emits updated record-ui data when layout is changed', async () => {
+        const mockData = getMock('single-record-Account-layouttypes-Full-modes-View');
+        const config = {
+            recordIds: getRecordIdFromMock(mockData),
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+
+        const updatedMockData = getMock('single-record-Account-layouttypes-Full-modes-View');
+        // eTag is a integrity field of ObjectInfo
+        updatedMockData.objectInfos.Account.eTag = '12345678123456781234567812345678';
+
+        mockGetRecordUiNetwork(config, [mockData, updatedMockData]);
+
+        const wireA = await setupElement(config, RecordUi);
+        expireRecordUi();
+        const wireB = await setupElement(config, RecordUi);
+
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
+        expect(wireA.pushCount()).toBe(2);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
+    });
+});
+
+describe('single recordId - layout user state', () => {
+    it('fetches data from network when cached layout user state is expired', async () => {
+        const mockData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockData);
         const config = {
             recordIds: recordId,
             layoutTypes: ['Full'],
             modes: ['View'],
         };
-        mockGetRecordUiNetwork(config, [mockData, mockData]);
 
-        // populate cache
-        await setupElement(config, RecordUi);
+        const updatedMockData = getMock('single-record-Account-layouttypes-Full-modes-View');
+        const sectionUserStates = Object.entries(updatedMockData.layoutUserStates)[0][1]
+            .sectionUserStates;
+        Object.entries(sectionUserStates)[0][1].collapsed = true;
 
-        // only expire record
-        expireRecords();
+        mockGetRecordUiNetwork(config, [mockData, updatedMockData]);
+
+        const wireA = await setupElement(config, RecordUi);
+        expireLayoutUserState();
+        const wireB = await setupElement(config, RecordUi);
+
+        expect(wireA.pushCount()).toBe(2);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
+    });
+
+    it('emits updated record-ui data when layout user state gets changed', async () => {
+        const mockData = getMock('single-record-Account-layouttypes-Full-modes-View');
+        const recordId = getRecordIdFromMock(mockData);
+        const config = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+
+        const updatedMockData = getMock('single-record-Account-layouttypes-Full-modes-View');
+        const sectionUserStates = Object.entries(updatedMockData.layoutUserStates)[0][1]
+            .sectionUserStates;
+        Object.entries(sectionUserStates)[0][1].collapsed = true;
+
+        mockGetRecordUiNetwork(config, [mockData, updatedMockData]);
+
+        const wireA = await setupElement(config, RecordUi);
+        expireRecordUi();
+        const wireB = await setupElement(config, RecordUi);
+
+        expect(wireA.pushCount()).toBe(2);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(updatedMockData);
+    });
+});
+
+describe('single recordId - layout types', () => {
+    it('should make http request for compact layout type following request for full layout type', async () => {
+        const mockDataCompact = getMock(
+            'single-record-Opportunity-layouttypes-Compact-modes-View-optionalFields-IsDeleted'
+        );
+        const recordId = getRecordIdFromMock(mockDataCompact);
+        const compactConfig = {
+            recordIds: recordId,
+            layoutTypes: ['Compact'],
+            modes: ['View'],
+            optionalFields: ['Opportunity.IsDeleted'],
+        };
+
+        const mockDataFull = getMock(
+            'single-record-Opportunity-layouttypes-Full-modes-View-optionalFields-IsDeleted'
+        );
+
+        const expectedOptionalFields = extractRecordFields(mockDataFull.records[recordId]);
+
+        mockGetRecordUiNetwork(
+            {
+                ...compactConfig,
+                optionalFields: expectedOptionalFields,
+            },
+            mockDataCompact
+        );
+        const fullConfig = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+            optionalFields: ['Opportunity.IsDeleted'],
+        };
+        mockGetRecordUiNetwork(fullConfig, mockDataFull);
+
+        await setupElement(fullConfig, RecordUi);
+        const wireB = await setupElement(compactConfig, RecordUi);
+
+        // Verify the correct data was emitted to wireB
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mockDataCompact);
+    });
+
+    it('should make http request for full layout type following request for compact layout type', async () => {
+        const mockDataCompact = getMock(
+            'single-record-Opportunity-layouttypes-Compact-modes-View-optionalFields-IsDeleted'
+        );
+        const recordId = getRecordIdFromMock(mockDataCompact);
+        const compactConfig = {
+            recordIds: recordId,
+            layoutTypes: ['Compact'],
+            modes: ['View'],
+            optionalFields: ['Opportunity.IsDeleted'],
+        };
+        mockGetRecordUiNetwork(compactConfig, mockDataCompact);
+
+        const mockDataFull = getMock(
+            'single-record-Opportunity-layouttypes-Full-modes-View-optionalFields-IsDeleted'
+        );
+
+        const expectedOptionalFields = extractRecordFields(mockDataCompact.records[recordId]);
+        const fullConfig = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+            optionalFields: expectedOptionalFields,
+        };
+        mockGetRecordUiNetwork(fullConfig, mockDataFull);
+
+        await setupElement(compactConfig, RecordUi);
+        const wireB = await setupElement(fullConfig, RecordUi);
+
+        // Verify the correct data was emitted to wireB
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mockDataFull);
+    });
+
+    it('should make correct HTTP request when single recordId is present', async () => {
+        const mockData = getMock(
+            'single-record-Account-layouttypes-Full-Compact-modes-Create,Edit,View'
+        );
+        const config = {
+            recordIds: getRecordIdFromMock(mockData),
+            layoutTypes: ['Compact', 'Full'],
+            modes: ['Create', 'Edit', 'View'],
+        };
+        mockGetRecordUiNetwork(config, mockData);
+
         const wireA = await setupElement(config, RecordUi);
 
         expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+    });
+
+    it('should be a cache miss when Compact layout is requested after Full and Compat', async () => {
+        const mockData = getMock(
+            'single-record-Account-layouttypes-Full-Compact-modes-Create,Edit,View'
+        );
+        const config = {
+            recordIds: getRecordIdFromMock(mockData),
+            layoutTypes: ['Compact', 'Full'],
+            modes: ['Create', 'Edit', 'View'],
+        };
+        mockGetRecordUiNetwork(config, mockData);
+
+        const compactMock = getMock(
+            'single-record-Account-layouttypes-Compact-modes-Create,Edit,View'
+        );
+        const compatConfig = {
+            ...config,
+            layoutTypes: ['Compact'],
+        };
+        mockGetRecordUiNetwork(compatConfig, compactMock);
+
+        const wireA = await setupElement(config, RecordUi);
+
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+
+        const wireB = await setupElement(compatConfig, RecordUi);
+        expect(wireB.pushCount()).toBe(1);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(compactMock);
     });
 });
 
@@ -704,86 +913,6 @@ describe('single recordId - multiple modes', () => {
         const wireB = await setupElement(createModeConfig, RecordUi);
         expect(wireB.pushCount()).toBe(1);
         expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(createModeMockData);
-    });
-});
-
-describe('single recordId - multiple layouts', () => {
-    it('should make correct HTTP request when single recordId is present', async () => {
-        const mockData = getMock(
-            'single-record-Account-layouttypes-Full-Compact-modes-Create,Edit,View'
-        );
-        const config = {
-            recordIds: getRecordIdFromMock(mockData),
-            layoutTypes: ['Compact', 'Full'],
-            modes: ['Create', 'Edit', 'View'],
-        };
-        mockGetRecordUiNetwork(config, mockData);
-
-        const wireA = await setupElement(config, RecordUi);
-
-        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
-    });
-
-    it('should be a cache miss when Compact layout is requested after Full and Compat', async () => {
-        const mockData = getMock(
-            'single-record-Account-layouttypes-Full-Compact-modes-Create,Edit,View'
-        );
-        const config = {
-            recordIds: getRecordIdFromMock(mockData),
-            layoutTypes: ['Compact', 'Full'],
-            modes: ['Create', 'Edit', 'View'],
-        };
-        mockGetRecordUiNetwork(config, mockData);
-
-        const compactMock = getMock(
-            'single-record-Account-layouttypes-Compact-modes-Create,Edit,View'
-        );
-        const compatConfig = {
-            ...config,
-            layoutTypes: ['Compact'],
-        };
-        mockGetRecordUiNetwork(compatConfig, compactMock);
-
-        const wireA = await setupElement(config, RecordUi);
-
-        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
-
-        const wireB = await setupElement(compatConfig, RecordUi);
-        expect(wireB.pushCount()).toBe(1);
-        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(compactMock);
-    });
-
-    it('does not re-request optional field when server does not return optional field on first request', async () => {
-        const mockData = getMock('single-record-Account-layouttypes-Full-modes-View');
-        const recordId = getRecordIdFromMock(mockData);
-        const config = {
-            recordIds: recordId,
-            layoutTypes: ['Full'],
-            modes: ['View'],
-            optionalFields: ['Account.Foo'],
-        };
-        mockGetRecordUiNetwork(config, mockData);
-
-        const wireA = await setupElement(config, RecordUi);
-
-        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
-
-        const elm = await setupElement(
-            {
-                recordId,
-                optionalFields: ['Account.Foo'],
-            },
-            RecordFields
-        );
-
-        const record = mockData.records[recordId];
-        const expected = {
-            ...record,
-            fields: {},
-        };
-
-        // Expected record has no fields because the optional field isn't resolvable
-        expect(elm.getWiredData()).toEqualSnapshotWithoutEtags(expected);
     });
 });
 

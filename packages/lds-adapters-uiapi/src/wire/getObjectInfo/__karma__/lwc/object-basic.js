@@ -1,7 +1,7 @@
 import { LightningElement, api, track, wire } from 'lwc';
 import { getObjectInfo, refresh } from 'lds';
 
-export default class Basic extends LightningElement {
+export default class ObjectInfo extends LightningElement {
     @api objectApiName;
     @track trackObjectInfo;
     wirePushCount = -1;

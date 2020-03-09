@@ -1062,6 +1062,67 @@ describe('populating null nested record', () => {
             },
         });
     });
+
+    it('should handle when two record ids, one is a spanning record nested inside the other, one becomes null', async () => {
+        const mockOpportunityAndAccountRecordUi = getMock(
+            'record-ui-Opportunity-Account-layouttypes-Full-modes-View'
+        );
+        let mockOpportunityRecord, mockAccountRecord;
+        Object.keys(mockOpportunityAndAccountRecordUi.records).forEach(recordId => {
+            const record = mockOpportunityAndAccountRecordUi.records[recordId];
+            if (record.apiName === 'Opportunity') {
+                mockOpportunityRecord = clone(record);
+            }
+
+            if (record.apiName === 'Account') {
+                mockAccountRecord = clone(record);
+            }
+        });
+
+        const mockOpportunityRecordId = mockOpportunityRecord.id;
+        const mockAccountRecordId = mockAccountRecord.id;
+        const refreshMock = clone(mockOpportunityAndAccountRecordUi);
+        refreshMock.records = {
+            [mockOpportunityRecordId]: {
+                ...mockOpportunityRecord,
+                fields: {
+                    ...mockOpportunityRecord.fields,
+                    Account: {
+                        displayValue: null,
+                        value: null,
+                    },
+                    AccountId: {
+                        displayValue: null,
+                        value: null,
+                    },
+                },
+            },
+            [mockAccountRecordId]: {
+                ...mockAccountRecord,
+            },
+        };
+
+        const recordUiConfig = {
+            recordIds: [mockOpportunityRecordId, mockAccountRecordId].sort(),
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+
+        mockGetRecordUiNetwork(recordUiConfig, [mockOpportunityAndAccountRecordUi, refreshMock]);
+
+        // Load record-ui with Account field present
+        const recordUiWire = await setupElement(recordUiConfig, RecordUi);
+
+        expireRecordUi();
+
+        // Load record-ui with null spanning fields
+        await setupElement(recordUiConfig, RecordUi);
+
+        expect(recordUiWire.pushCount()).toBe(2);
+        expect(recordUiWire.getWiredData().records).toEqualSnapshotWithoutEtags(
+            refreshMock.records
+        );
+    });
 });
 
 describe('recordTypeId update', () => {

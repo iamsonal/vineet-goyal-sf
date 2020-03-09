@@ -90,3 +90,9 @@ await helpers.requestGetAndSave(
     `/ui-api/records/${opportunityId}?fields=Opportunity.CloneSourceId`,
     path.join(rootDir, 'record-Opportunity-fields-Opportunity.CloneSourceId.json')
 );
+
+// Opportunity + Account record-ui data
+await helpers.requestGetAndSave(
+    `/ui-api/record-ui/${opportunityId},${accountId}?layoutTypes=Full&modes=View`,
+    path.join(rootDir, 'record-ui-Opportunity-Account-layouttypes-Full-modes-View.json')
+);

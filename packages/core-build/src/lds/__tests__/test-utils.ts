@@ -44,11 +44,14 @@ export function createObjectInfo(config: any = {}) {
     };
 }
 
-export function addRecord(lds: LDS, data: any) {
-    const resourceRequest = {
+export function getRecordResourceRequest() {
+    return {
         ingest: ingestRecord,
     } as any;
+}
 
+export function addRecord(lds: LDS, data: any) {
+    const resourceRequest = getRecordResourceRequest();
     lds.storeIngest('', resourceRequest, data);
     lds.storeBroadcast();
 }

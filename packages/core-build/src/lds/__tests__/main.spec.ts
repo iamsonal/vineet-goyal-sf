@@ -91,7 +91,7 @@ beforeEach(() => {
     instrumentationSpies.timerAddDurationSpy.mockClear();
 });
 
-describe('lds224 main', () => {
+describe('lds main', () => {
     describe('updateRecord', () => {
         it('should filter emit snapshot data from resolved promise', () => {
             const snapshotData = {};

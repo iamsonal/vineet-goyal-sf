@@ -2,7 +2,13 @@ import { LDS, Store } from '@ldsjs/engine';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 
 import AdsBridge from '../ads-bridge';
-import { addObjectInfo, addRecord, createObjectInfo, createRecord } from './test-utils';
+import {
+    addObjectInfo,
+    addRecord,
+    createObjectInfo,
+    createRecord,
+    getRecordResourceRequest,
+} from './test-utils';
 
 function createBridge() {
     const store = new Store();
@@ -259,6 +265,53 @@ describe('AdsBridge', () => {
                 expect.any(Object)
             );
             expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
+        });
+
+        it('does not emit when a record is evicted from lds', () => {
+            const { bridge, lds } = createBridge();
+
+            const fn = jest.fn();
+            bridge.receiveFromLdsCallback = fn;
+            const mockRecordId = '123456';
+            addRecord(
+                lds,
+                createRecord({
+                    id: mockRecordId,
+                    apiName: 'Test__c',
+                    fields: {
+                        Id: { displayValue: null, value: '123456' },
+                    },
+                })
+            );
+
+            lds.storeEvict(keyBuilderRecord({ recordId: mockRecordId }));
+            lds.storeBroadcast();
+
+            // verify mocked callback only called once for addRecord
+            expect(fn).toHaveBeenCalledTimes(1);
+        });
+
+        it('does not emit when a record is ingested then evicted prior to broadcast', () => {
+            const { bridge, lds } = createBridge();
+
+            const fn = jest.fn();
+            bridge.receiveFromLdsCallback = fn;
+            const mockRecordId = '123456';
+            const mockRecord = createRecord({
+                id: mockRecordId,
+                apiName: 'Test__c',
+                fields: {
+                    Id: { displayValue: null, value: '123456' },
+                },
+            });
+
+            const resourceRequest = getRecordResourceRequest();
+
+            lds.storeIngest('', resourceRequest, mockRecord);
+            lds.storeEvict(keyBuilderRecord({ recordId: mockRecordId }));
+            lds.storeBroadcast();
+
+            expect(fn).toHaveBeenCalledTimes(0);
         });
 
         it('emits a new field ingested into an existed record', () => {

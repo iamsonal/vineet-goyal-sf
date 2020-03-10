@@ -1,0 +1,41 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "43635422f8f50b3635f833d178d7e5d0",
+    "fields": {
+        "Account": {
+            "displayValue": "Unum Group",
+            "value": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "60e579dc3fed63c02ce9befc135ce93a",
+                "fields": {
+                    "Phone": {
+                        "displayValue": null,
+                        "value": "111-222-3333"
+                    }
+                },
+                "id": "00100000000nEblAAE",
+                "lastModifiedById": "00530000000bt3yAAA",
+                "lastModifiedDate": "2019-10-20T10:19:21.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2019-10-21T14:29:11.000Z",
+                "weakEtag": 2
+            }
+        }
+    },
+    "id": "0060M000012SLJCQA4",
+    "lastModifiedById": "0053000000ARVxVAAX",
+    "lastModifiedDate": "2019-10-12T10:00:19.000Z",
+    "recordTypeId": "01230000000010LAAQ",
+    "recordTypeInfo": {
+        "available": false,
+        "defaultRecordTypeMapping": false,
+        "master": false,
+        "name": "New Business / Add-On",
+        "recordTypeId": "01230000000010LAAQ"
+    },
+    "systemModstamp": "2019-10-12T10:00:19.000Z",
+    "weakEtag": 0
+}

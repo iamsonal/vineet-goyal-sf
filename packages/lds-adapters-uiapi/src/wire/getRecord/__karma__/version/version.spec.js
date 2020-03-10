@@ -456,7 +456,7 @@ describe('Incoming record has lower version', () => {
         // Send XHR for version 1
         const version1Elm = await setupElement(version1Config, RecordFields);
 
-        // Load version 2
+        // Send XHR for version 2
         const version2Elm = await setupElement(version2Config, RecordFields);
 
         expect(version2Elm.pushCount()).toBe(1);
@@ -466,6 +466,138 @@ describe('Incoming record has lower version', () => {
         expect(version1Elm.pushCount()).toBe(1);
         expect(version1Elm.getWiredData()).toEqualSnapshotWithoutEtags(version2Mock);
         expect(version2Elm.pushCount()).toBe(1);
+    });
+
+    it('should correctly merge spanning records when weakEtag is lower than existing spanning record', async () => {
+        const version1MockName = getMock(
+            'record-Opportunity-fields-Opportunity.Account.Name-version-0001'
+        );
+        const version2MockPhone = getMock(
+            'record-Opportunity-fields-Opportunity.Account.Phone-version-0002'
+        );
+        const version2MockAccountRefresh = getMock(
+            'record-Account.Name,Account.Phone-version-0002'
+        );
+
+        const version1Config = {
+            recordId: version1MockName.id,
+            fields: ['Opportunity.Account.Name'],
+        };
+
+        const version2Config = {
+            recordId: version2MockPhone.id,
+            fields: ['Opportunity.Account.Phone'],
+        };
+
+        const version2ConfigSpanningRecordRefresh = {
+            recordId: version2MockAccountRefresh.id,
+            optionalFields: ['Account.Name', 'Account.Phone'],
+        };
+
+        const version2ConfigAllFields = {
+            recordId: version2MockPhone.id,
+            fields: ['Opportunity.Account.Name', 'Opportunity.Account.Phone'],
+        };
+
+        const resolveVersion1 = mockNetworkOnceDefer(version1Config, version1MockName);
+        mockGetRecordNetwork(version2Config, version2MockPhone);
+        const resolveRefresh = mockNetworkOnceDefer(
+            version2ConfigSpanningRecordRefresh,
+            version2MockAccountRefresh
+        );
+
+        // Send XHR for version 1
+        const version1Elm = await setupElement(version1Config, RecordFields);
+        // Send XHR for version 2
+        const version2Elm = await setupElement(version2Config, RecordFields);
+
+        expect(version2Elm.pushCount()).toBe(1);
+        expect(version2Elm.getWiredData()).toEqualSnapshotWithoutEtags(version2MockPhone);
+
+        await resolveVersion1();
+        await resolveRefresh();
+
+        expect(version1Elm.pushCount()).toBe(1);
+        expect(version1Elm.getWiredData()).toEqualSnapshotWithoutEtags(version1MockName);
+        expect(version2Elm.pushCount()).toBe(1);
+
+        // Should be cache hit with no network request made.
+        const version3Elm = await setupElement(version2ConfigAllFields, RecordFields);
+        expect(version1Elm.pushCount()).toBe(1);
+        expect(version2Elm.pushCount()).toBe(1);
+        expect(version3Elm.pushCount()).toBe(1);
+
+        version2MockPhone.fields.Account.value = version2MockAccountRefresh;
+        expect(version3Elm.getWiredData()).toEqualSnapshotWithoutEtags(version2MockPhone);
+    });
+
+    it('should correctly merge spanning records when weakEtag is lower than existing spanning record and record has changed', async () => {
+        const version1MockName = getMock(
+            'record-Opportunity-fields-Opportunity.Account.Name-version-0001'
+        );
+        const version2MockPhone = getMock(
+            'record-Opportunity-fields-Opportunity.Account.Phone-version-0002'
+        );
+        const version3MockAccountRefresh = getMock(
+            'record-Account.Name,Account.Phone-version-0002'
+        );
+        const updatedAccountPhoneValue = version3MockAccountRefresh.fields.Phone.value + '000';
+        version3MockAccountRefresh.fields.Phone.value = updatedAccountPhoneValue;
+        version3MockAccountRefresh.weakEtag = 3;
+
+        const version1Config = {
+            recordId: version1MockName.id,
+            fields: ['Opportunity.Account.Name'],
+        };
+
+        const version2Config = {
+            recordId: version2MockPhone.id,
+            fields: ['Opportunity.Account.Phone'],
+        };
+
+        const version2ConfigSpanningRecordRefresh = {
+            recordId: version3MockAccountRefresh.id,
+            optionalFields: ['Account.Name', 'Account.Phone'],
+        };
+
+        const version2ConfigAllFields = {
+            recordId: version2MockPhone.id,
+            fields: ['Opportunity.Account.Name', 'Opportunity.Account.Phone'],
+        };
+
+        const resolveVersion1 = mockNetworkOnceDefer(version1Config, version1MockName);
+        mockGetRecordNetwork(version2Config, version2MockPhone);
+        const resolveRefresh = mockNetworkOnceDefer(
+            version2ConfigSpanningRecordRefresh,
+            version3MockAccountRefresh
+        );
+
+        // Send XHR for version 1
+        const version1Elm = await setupElement(version1Config, RecordFields);
+        // Send XHR for version 2
+        const version2Elm = await setupElement(version2Config, RecordFields);
+
+        expect(version2Elm.pushCount()).toBe(1);
+        expect(version2Elm.getWiredData()).toEqualSnapshotWithoutEtags(version2MockPhone);
+
+        await resolveVersion1();
+        await resolveRefresh();
+
+        version2MockPhone.fields.Account.value.fields.Phone.value = updatedAccountPhoneValue;
+
+        expect(version1Elm.pushCount()).toBe(1);
+        expect(version1Elm.getWiredData()).toEqualSnapshotWithoutEtags(version1MockName);
+        expect(version2Elm.pushCount()).toBe(2);
+        expect(version2Elm.getWiredData()).toEqualSnapshotWithoutEtags(version2MockPhone);
+
+        // Should be cache hit with no network request made.
+        const version3Elm = await setupElement(version2ConfigAllFields, RecordFields);
+        expect(version1Elm.pushCount()).toBe(1);
+        expect(version2Elm.pushCount()).toBe(2);
+        expect(version3Elm.pushCount()).toBe(1);
+
+        version2MockPhone.fields.Account.value = version3MockAccountRefresh;
+        expect(version3Elm.getWiredData()).toEqualSnapshotWithoutEtags(version2MockPhone);
     });
 });
 

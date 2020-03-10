@@ -1,0 +1,22 @@
+{
+    "apiName": "Account",
+    "childRelationships": {},
+    "eTag": "60e579dc3fed63c02ce9befc135ce93a",
+    "fields": {
+        "Name": {
+            "displayValue": null,
+            "value": "Unum Group"
+        },
+        "Phone": {
+            "displayValue": null,
+            "value": "111-222-3333"
+        }
+    },
+    "id": "00100000000nEblAAE",
+    "lastModifiedById": "00530000000bt3yAAA",
+    "lastModifiedDate": "2019-10-20T10:19:21.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2019-10-21T14:29:11.000Z",
+    "weakEtag": 2
+}

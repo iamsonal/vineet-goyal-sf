@@ -1,23 +1,27 @@
 jest.mock('@salesforce/lds-adapters-uiapi', () => {
-    const mockAdapterFactory = () => () => null;
+    const mockAdapter = () => {
+        return {
+            then: () => null,
+        };
+    };
 
     const spies = {
-        getRecordFactorySpy: jest.fn(mockAdapterFactory),
-        getRecordActionsFactorySpy: jest.fn(mockAdapterFactory),
-        getLayoutFactorySpy: jest.fn(mockAdapterFactory),
-        getObjectInfoFactorySpy: jest.fn(mockAdapterFactory),
-        updateLayoutUserStateSpy: jest.fn(mockAdapterFactory),
-        createRecordSpy: jest.fn(mockAdapterFactory),
-        updateRecordSpy: jest.fn(mockAdapterFactory),
-        updateRecordAvatarSpy: jest.fn(mockAdapterFactory),
+        getRecordSpy: jest.fn(mockAdapter),
+        getRecordActionsSpy: jest.fn(mockAdapter),
+        getLayoutSpy: jest.fn(mockAdapter),
+        getObjectInfoSpy: jest.fn(mockAdapter),
+        updateLayoutUserStateSpy: jest.fn(mockAdapter),
+        createRecordSpy: jest.fn(mockAdapter),
+        updateRecordSpy: jest.fn(mockAdapter),
+        updateRecordAvatarSpy: jest.fn(mockAdapter),
     };
 
     return {
         ...jest.requireActual('@salesforce/lds-adapters-uiapi'),
-        GetRecord: () => spies.getRecordFactorySpy,
-        GetRecordActions: () => spies.getRecordActionsFactorySpy,
-        GetLayout: () => spies.getLayoutFactorySpy,
-        GetObjectInfo: () => spies.getObjectInfoFactorySpy,
+        GetRecord: () => spies.getRecordSpy,
+        GetRecordActions: () => spies.getRecordActionsSpy,
+        GetLayout: () => spies.getLayoutSpy,
+        GetObjectInfo: () => spies.getObjectInfoSpy,
         UpdateLayoutUserState: () => spies.updateLayoutUserStateSpy,
         CreateRecord: () => spies.createRecordSpy,
         UpdateRecord: () => spies.updateRecordSpy,
@@ -151,32 +155,32 @@ describe('lds main', () => {
     });
 
     describe('refresh', () => {
-        it('should call function returned by bindWireRefresh', () => {
+        it('should call function returned by bindWireRefresh', async () => {
             const data = {};
-            refresh(data);
+            await refresh(data);
             expect(lwcLdsSpies.bindWireRefreshSpy).toHaveBeenCalledWith(data);
         });
     });
 
     describe('_getObjectInfo', () => {
-        it('should call adapter returned by GetObjectInfo', () => {
+        it('should call adapter returned by GetObjectInfo', async () => {
             const config = {};
-            _getObjectInfo(config);
-            expect(uiApiRecordsSpies.getObjectInfoFactorySpy).toHaveBeenCalledWith(config);
+            await _getObjectInfo(config as any);
+            expect(uiApiRecordsSpies.getObjectInfoSpy).toHaveBeenCalledWith(config);
         });
     });
 
     describe('_getLayout', () => {
-        it('should call adapter returned by GetLayout', () => {
+        it('should call adapter returned by GetLayout', async () => {
             const config = {};
-            _getLayout(config);
-            expect(uiApiRecordsSpies.getLayoutFactorySpy).toHaveBeenCalledWith(config);
+            await _getLayout(config as any);
+            expect(uiApiRecordsSpies.getLayoutSpy).toHaveBeenCalledWith(config);
         });
     });
 
     describe('_getRecord', () => {
         it('should reject when config is invalid', () => {
-            uiApiRecordsSpies.getRecordFactorySpy.mockReturnValueOnce(null);
+            uiApiRecordsSpies.getRecordSpy.mockReturnValueOnce(null);
 
             return expect(_getRecord({ recordId: 'null' })).rejects.toMatchObject({
                 message: 'Insufficient config',
@@ -185,7 +189,7 @@ describe('lds main', () => {
 
         it('should resolve with snapshot data when adapter returns promise', async () => {
             const expected = {};
-            uiApiRecordsSpies.getRecordFactorySpy.mockResolvedValueOnce({
+            uiApiRecordsSpies.getRecordSpy.mockResolvedValueOnce({
                 data: expected,
                 state: 'Fulfilled',
             });
@@ -203,7 +207,7 @@ describe('lds main', () => {
 
         it('should resolve with snapshot data when adapter fulfilled snapshot', async () => {
             const expected = {};
-            uiApiRecordsSpies.getRecordFactorySpy.mockReturnValue({
+            uiApiRecordsSpies.getRecordSpy.mockReturnValue({
                 data: expected,
                 state: 'Fulfilled',
             });
@@ -219,7 +223,7 @@ describe('lds main', () => {
         });
 
         it('should throw when returned snapshot is unfulfilled', () => {
-            uiApiRecordsSpies.getRecordFactorySpy.mockReturnValue({
+            uiApiRecordsSpies.getRecordSpy.mockReturnValue({
                 data: {},
                 state: 'Unfulfilled',
             });
@@ -236,10 +240,10 @@ describe('lds main', () => {
     });
 
     describe('_getRecordActions', () => {
-        it('should call adapter returned by GetRecordActions', () => {
+        it('should call adapter returned by GetRecordActions', async () => {
             const config = {};
-            _getRecordActions(config);
-            expect(uiApiRecordsSpies.getRecordActionsFactorySpy).toHaveBeenCalledWith(config);
+            await _getRecordActions(config as any);
+            expect(uiApiRecordsSpies.getRecordActionsSpy).toHaveBeenCalledWith(config);
         });
     });
 });

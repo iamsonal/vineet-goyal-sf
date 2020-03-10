@@ -59,6 +59,10 @@ const opportunityId = await helpers.getOpportunityByName(OPPORTUNITY_NAME);
         queryString: '?layoutTypes=Full&modes=Edit',
     },
     {
+        filename: 'single-record-Account-layouttypes-Full-modes-Edit-optionalFields-IsDeleted',
+        queryString: '?layoutTypes=Full&modes=Edit&optionalFields=Account.IsDeleted',
+    },
+    {
         filename: 'single-record-Account-layouttypes-Full-modes-Create',
         queryString: '?layoutTypes=Full&modes=Create',
     },

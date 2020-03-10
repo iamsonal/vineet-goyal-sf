@@ -812,7 +812,7 @@ describe('single recordId - layout types', () => {
 });
 
 describe('single recordId - multiple modes', () => {
-    it('should make extra HTTP request when getRecordUi requests mode View and then mode View and Create', async () => {
+    it('should be a cache miss when View and Create modes are requested after View', async () => {
         const mockViewData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockViewData);
         const viewConfig = {
@@ -913,6 +913,43 @@ describe('single recordId - multiple modes', () => {
         const wireB = await setupElement(createModeConfig, RecordUi);
         expect(wireB.pushCount()).toBe(1);
         expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(createModeMockData);
+    });
+
+    it('should be a cache miss when recordUi is requested with Edit mode and optionalFields after Create, Edit, View', async () => {
+        const mockData = getMock('single-record-Account-layouttypes-Full-modes-Create,Edit,View');
+        const recordId = getRecordIdFromMock(mockData);
+        const config = {
+            recordIds: [recordId],
+            layoutTypes: ['Full'],
+            modes: ['Create', 'Edit', 'View'],
+        };
+        mockGetRecordUiNetwork(config, mockData);
+
+        const editModeMock = getMock(
+            'single-record-Account-layouttypes-Full-modes-Edit-optionalFields-IsDeleted'
+        );
+        const editModeConfig = {
+            recordIds: [recordId],
+            layoutTypes: ['Full'],
+            modes: ['Edit'],
+            optionalFields: ['Account.IsDeleted'],
+        };
+
+        const editModeNetworkParams = {
+            ...editModeConfig,
+            optionalFields: [
+                'Account.IsDeleted',
+                ...extractRecordFields(mockData.records[recordId]),
+            ].sort(),
+        };
+        mockGetRecordUiNetwork(editModeNetworkParams, editModeMock);
+
+        const wireA = await setupElement(config, RecordUi);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+
+        const wireB = await setupElement(editModeConfig, RecordUi);
+        expect(wireB.pushCount()).toBe(1);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(editModeMock);
     });
 });
 

@@ -27,6 +27,7 @@ annotationTypes:
 types:
   NavigationMenuItemCollectionRepresentation:
     description: Navigation Menu Item Collection
+    discriminator: ''
     type: object
     properties:
       menuItems:
@@ -36,8 +37,19 @@ types:
           type: NavigationMenuItemRepresentation
   NavigationMenuItemRepresentation:
     description: Navigation Menu Item Representation
+    discriminator: ''
     type: object
     properties:
+      actionType:
+        description: Returns the url type or Event of Navigation Menu Item
+        type: string
+        enum:
+          - Event
+          - ExternalLink
+          - InternalLink
+      actionValue:
+        description: Returns the route url or event fqn for Navigation Menu item
+        type: string
       imageUrl:
         description: Returns the image url for Navigation Menu item
         type: string
@@ -55,15 +67,6 @@ types:
         enum:
           - CurrentWindow
           - NewWindow
-      url:
-        description: Returns the route url for Navigation Menu item
-        type: string
-      urlType:
-        description: Returns the url type of Navigation Menu Item
-        type: string
-        enum:
-          - ExternalLink
-          - InternalLink
 /connect/communities/{communityId}/navigation-menu/navigation-menu-items:
   get:
     description: Get all the navigation menu items
@@ -93,6 +96,9 @@ types:
             - NavigationalTopic
             - SalesforceObject
           (oas-collectionFormat): csv
+      navigationLinkSetDeveloperName:
+        type: string
+        required: false
       navigationLinkSetId:
         type: string
         required: false

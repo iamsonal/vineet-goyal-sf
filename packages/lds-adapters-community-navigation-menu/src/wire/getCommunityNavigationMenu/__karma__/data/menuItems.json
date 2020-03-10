@@ -6,7 +6,9 @@
             "subMenu": [],
             "target": "CurrentWindow",
             "url": "/blah",
-            "urlType": "ExternalLink"
+            "urlType": "ExternalLink",
+            "actionType": "Event",
+            "actionValue": "foo"
         }
     ]
 }

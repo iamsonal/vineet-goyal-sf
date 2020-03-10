@@ -5,8 +5,12 @@ export default class GetNavItems extends LightningElement {
     wirePushCount = -1;
 
     @api communityId;
+    @api navigationLinkSetId;
 
-    @wire(getCommunityNavigationMenu, { communityId: '$communityId' })
+    @wire(getCommunityNavigationMenu, {
+        communityId: '$communityId',
+        navigationLinkSetId: '$navigationLinkSetId',
+    })
     onGetWiredNavItems(results) {
         this.navItems = results.data;
         this.error = results.error;

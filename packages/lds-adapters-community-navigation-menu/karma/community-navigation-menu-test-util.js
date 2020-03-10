@@ -16,14 +16,17 @@ function mockGetNavItemsNetworkErrorOnce(config, mockData) {
 }
 
 function getMatcher(config) {
-    let { communityId } = config;
+    let { communityId, navigationLinkSetDeveloperName, navigationLinkSetId } = config;
 
     return sinon.match({
         body: null,
         headers: {},
         method: 'get',
         path: `${URL_BASE}/communities/${communityId}/navigation-menu/navigation-menu-items`,
-        queryParams: {},
+        queryParams: {
+            navigationLinkSetId,
+            navigationLinkSetDeveloperName,
+        },
     });
 }
 

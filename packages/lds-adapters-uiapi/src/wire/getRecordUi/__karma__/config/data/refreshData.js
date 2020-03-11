@@ -27,3 +27,9 @@ const id = await helpers.getAccountByName(ACCOUNT_NAME);
         path.join(rootDir, `${filename}.json`)
     );
 });
+
+// invalid recordId with 18-char length
+await helpers.requestGetAndSave(
+    `/ui-api/record-ui/${'x'.repeat(18)}`,
+    path.join(rootDir, 'recordUi-Invalid-recordIds.json')
+);

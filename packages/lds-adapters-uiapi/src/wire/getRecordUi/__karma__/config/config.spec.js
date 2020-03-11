@@ -61,6 +61,21 @@ describe('layoutTypes', () => {
             expect(element.getWiredError()).toContainErrorResponse(mockError);
         });
     });
+
+    it('requests with both values when layoutTypes is an array with invalid and valid value', async () => {
+        const mockError = getMock('recordUi-layoutTypes-Invalid-modes-View');
+        const recordId = '00hRM000002vUcGYAU';
+        const config = {
+            recordIds: [recordId],
+            modes: ['View'],
+            layoutTypes: ['Full', 'invalid'],
+        };
+        mockGetRecordUiNetwork(config, { reject: true, data: mockError });
+
+        const element = await setupElement(config, RecordUi);
+
+        expect(element.getWiredError()).toContainErrorResponse(mockError);
+    });
 });
 
 describe('modes', () => {
@@ -105,17 +120,37 @@ describe('modes', () => {
             expect(element.getWiredError()).toContainErrorResponse(mockError);
         });
     });
+
+    it('requests with invalid value when modes is an array with invalid and valid value', async () => {
+        const mockError = getMock('recordUi-layoutTypes-Full-modes-Invalid');
+        const recordId = '00hRM000002vUcGYAU';
+        const config = {
+            recordIds: [recordId],
+            layoutTypes: ['Full'],
+            modes: ['View', 'invalid'],
+        };
+        mockGetRecordUiNetwork(config, { reject: true, data: mockError });
+
+        const element = await setupElement(config, RecordUi);
+
+        expect(element.getWiredError()).toContainErrorResponse(mockError);
+    });
 });
 
-describe('validation', () => {
-    ['recordIds'].forEach(param => {
-        it(`gets no data or error when required param ${param} is undefined`, async () => {
+describe('recordIds', () => {
+    [
+        { type: 'undefined', recordIds: undefined },
+        { type: 'null', recordIds: null },
+        { type: 'an empty string', recordIds: '' },
+        { type: 'a non 15 or 18 length string', recordIds: 'invalid' },
+        { type: 'an empty array', recordIds: [] },
+    ].forEach(({ type, recordIds }) => {
+        it(`treats as incomplete config when recordIds is ${type}`, async () => {
             const config = {
-                recordIds: '123456789012345678',
-                layoutTypes: 'Full',
-                modes: 'View',
+                recordIds: recordIds,
+                layoutTypes: ['Full'],
+                modes: ['View'],
             };
-            config[param] = undefined;
 
             const element = await setupElement(config, RecordUi);
 
@@ -123,33 +158,25 @@ describe('validation', () => {
         });
     });
 
-    ['recordIds'].forEach(param => {
-        it(`gets no data or error when required param ${param} is null`, async () => {
+    [
+        { type: '18 length invalid string', recordIds: Array(19).join('x') },
+        {
+            type: 'array with valid and 18 length invalid string',
+            recordIds: ['00hRM000002vUcGYAU', Array(19).join('x')],
+        },
+    ].forEach(({ type, recordIds }) => {
+        it(`treats as incomplete config when recordIds is ${type}`, async () => {
+            const mockError = getMock('recordUi-Invalid-recordIds');
             const config = {
-                recordIds: '123456789012345678',
-                layoutTypes: 'Full',
-                modes: 'View',
+                recordIds: recordIds,
+                layoutTypes: ['Full'],
+                modes: ['View'],
             };
-            config[param] = null;
 
+            mockGetRecordUiNetwork(config, { reject: true, data: mockError });
             const element = await setupElement(config, RecordUi);
 
-            expect(element.pushCount()).toBe(0);
-        });
-    });
-
-    ['recordIds'].forEach(param => {
-        it(`gets no data or error when required param ${param} is invalid`, async () => {
-            const config = {
-                recordIds: '123456789012345678',
-                layoutTypes: 'Full',
-                modes: 'View',
-            };
-            config[param] = 'InvalidStr';
-
-            const element = await setupElement(config, RecordUi);
-
-            expect(element.pushCount()).toBe(0);
+            expect(element.getWiredError()).toContainErrorResponse(mockError);
         });
     });
 });
@@ -288,6 +315,25 @@ describe('coercion', () => {
         const config = {
             ...networkParams,
             optionalFields: ['Account.Industry', 'Account.Fax', 'Account.Industry'],
+        };
+        const element = await setupElement(config, RecordUi);
+
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+    });
+
+    it('deduplicate recordIds between 15-char and 18-char length', async () => {
+        const mockData = getMock('single-record-Account-layouttypes-Full-modes-View');
+        const recordId = getRecordIdFromMock(mockData);
+        const networkParams = {
+            recordIds: [recordId],
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+        mockGetRecordUiNetwork(networkParams, mockData);
+
+        const config = {
+            ...networkParams,
+            recordIds: [recordId, recordId.slice(0, 15)],
         };
         const element = await setupElement(config, RecordUi);
 

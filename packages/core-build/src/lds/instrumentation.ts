@@ -14,6 +14,7 @@ import {
     registerPlugin,
     time,
     timer,
+    Timer,
 } from 'instrumentation/service';
 
 import {
@@ -109,7 +110,7 @@ function instrumentMethod(
             markStart(NAMESPACE, methodName);
             const startTime = Date.now();
             const res = originalMethod.call(this, ...args);
-            methodTimer.addDuration(Date.now() - startTime);
+            timerMetricAddDuration(methodTimer, Date.now() - startTime);
             markEnd(NAMESPACE, methodName);
 
             return res;
@@ -127,6 +128,13 @@ function createMetricsKey(owner: string, name: string, unit?: string): MetricsKe
             return { owner: owner, name: metricName };
         },
     };
+}
+
+export function timerMetricAddDuration(timer: Timer, duration: number): void {
+    // Guard against negative values since it causes error to be thrown by MetricsService
+    if (duration >= 0) {
+        timer.addDuration(duration);
+    }
 }
 
 function getStoreStats(store: Store): LdsStatsReport {

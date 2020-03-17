@@ -18,6 +18,7 @@ import {
 } from '../utils/language';
 
 import { timer } from 'instrumentation/service';
+import { timerMetricAddDuration } from './instrumentation';
 import {
     ADS_BRIDGE_ADD_RECORDS_DURATION,
     ADS_BRIDGE_EMIT_RECORD_CHANGED_DURATION,
@@ -267,7 +268,7 @@ export default class AdsBridge {
             if (didIngestRecord === true) {
                 lds.storeBroadcast();
             }
-            this.addRecordsTimerMetric.addDuration(Date.now() - startTime);
+            timerMetricAddDuration(this.addRecordsTimerMetric, Date.now() - startTime);
         });
     }
 
@@ -281,7 +282,7 @@ export default class AdsBridge {
         return this.lockLdsRecordEmit(() => {
             lds.storeEvict(key);
             lds.storeBroadcast();
-            this.evictTimerMetric.addDuration(Date.now() - startTime);
+            timerMetricAddDuration(this.evictTimerMetric, Date.now() - startTime);
             return Promise.resolve();
         });
     }
@@ -381,6 +382,6 @@ export default class AdsBridge {
         if (shouldEmit === true) {
             callback(adsRecordMap, adsObjectMap);
         }
-        this.emitRecordChangedTimerMetric.addDuration(Date.now() - startTime);
+        timerMetricAddDuration(this.emitRecordChangedTimerMetric, Date.now() - startTime);
     }
 }

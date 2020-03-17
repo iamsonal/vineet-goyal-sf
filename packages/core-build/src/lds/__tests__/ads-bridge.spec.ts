@@ -21,9 +21,17 @@ function createBridge() {
 jest.mock('instrumentation/service', () => {
     const spies = {
         timerAddDurationSpy: jest.fn(),
+        counterIncrementSpy: jest.fn(),
+        percentileHistogramUpdateSpy: jest.fn(),
     };
 
     return {
+        counter: () => ({
+            increment: spies.counterIncrementSpy,
+        }),
+        percentileHistogram: () => ({
+            update: spies.percentileHistogramUpdateSpy,
+        }),
         timer: () => ({
             addDuration: spies.timerAddDurationSpy,
         }),

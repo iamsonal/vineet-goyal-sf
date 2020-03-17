@@ -2007,10 +2007,6 @@ types:
       id:
         description: Layout ID.
         type: string | nil # TODO: "nil" union hand rolled
-      apiName: # TODO: Hand rolled and delete me after layout endpoint is fixed
-        type: string
-      recordTypeId: # TODO: Hand rolled and delete me after layout endpoint is fixed
-        type: string
       layoutType:
         description: Layout type.
         type: string
@@ -2025,6 +2021,12 @@ types:
           - Create
           - Edit
           - View
+      objectApiName:
+        description: Object API name.
+        type: string
+      recordTypeId:
+        description: Record type ID.
+        type: string
       sections:
         description: Layout sections.
         type: array

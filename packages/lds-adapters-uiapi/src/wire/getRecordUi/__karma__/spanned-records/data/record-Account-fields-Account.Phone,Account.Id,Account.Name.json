@@ -1,11 +1,11 @@
 {
     "apiName": "Account",
     "childRelationships": {},
-    "eTag": "026ae23978f67f6caeb69797eb1f45b1",
+    "eTag": "ca57511f641c75f86b7e33c8e997cf7c",
     "fields": {
         "Id": {
             "displayValue": null,
-            "value": "001xx000003GYvcAAG"
+            "value": "001T1000002GMKSIA4"
         },
         "Name": {
             "displayValue": null,
@@ -16,11 +16,11 @@
             "value": "(336) 222-7000"
         }
     },
-    "id": "001xx000003GYvcAAG",
-    "lastModifiedById": "005xx000001X8JhAAK",
-    "lastModifiedDate": "2019-12-05T22:20:21.000Z",
+    "id": "001T1000002GMKSIA4",
+    "lastModifiedById": "005T1000000HocOIAS",
+    "lastModifiedDate": "2020-03-13T19:10:27.000Z",
     "recordTypeId": "012000000000000AAA",
     "recordTypeInfo": null,
-    "systemModstamp": "2019-12-05T22:20:21.000Z",
-    "weakEtag": 1575584421000
+    "systemModstamp": "2020-03-13T19:10:27.000Z",
+    "weakEtag": 1584126627000
 }

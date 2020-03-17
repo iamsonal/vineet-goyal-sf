@@ -16,6 +16,10 @@ const entries = [
         filename: 'record-defaults-create-Account-optionalFields-Account.YearStarted',
     },
     {
+        endpoint: 'record-defaults/create/Account?optionalFields=Account.Test',
+        filename: 'record-defaults-create-Account-optionalFields-Account.Test',
+    },
+    {
         endpoint: 'object-info/Account',
         filename: 'object-info-Account',
     },

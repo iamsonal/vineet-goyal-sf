@@ -62,14 +62,6 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordCreateDefaultsCo
     return lds.dispatchResourceRequest<RecordDefaultsRepresentation>(request).then(
         response => {
             const { body } = response;
-
-            // TODO W-6399239 - fix API so we don't have to augment the response with request details in order
-            // to support refresh. these are never emitted out per (private).
-            if (body.layout !== null) {
-                body.layout.apiName = config.objectApiName;
-                body.layout.recordTypeId = recordTypeId;
-            }
-
             const cacheSelector: Selector = {
                 recordId: key,
                 node: {

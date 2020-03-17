@@ -1,23 +1,23 @@
 {
-    "eTag": "cd12d3db26958fd0ac6bd3d486161894",
-    "id": "00hT1000000FWg1IAG",
+    "eTag": "83c4e4d5cbab1cae8416c882f96e6113",
+    "id": "00hRM000002qNK7YAM",
     "layoutType": "Full",
     "mode": "View",
-    "objectApiName": "Account",
+    "objectApiName": "Opportunity",
     "recordTypeId": "012000000000000AAA",
     "sections": [
         {
             "collapsible": false,
             "columns": 2,
-            "heading": "Account Information",
-            "id": "01BT1000000RglZMAS",
+            "heading": "Opportunity Information",
+            "id": "01BRM00000A2Rzq2AF",
             "layoutRows": [
                 {
                     "layoutItems": [
                         {
                             "editableForNew": false,
                             "editableForUpdate": false,
-                            "label": "Account Owner",
+                            "label": "Opportunity Owner",
                             "layoutComponents": [
                                 {
                                     "apiName": "OwnerId",
@@ -32,16 +32,84 @@
                         {
                             "editableForNew": true,
                             "editableForUpdate": true,
-                            "label": "Rating",
+                            "label": "Amount",
                             "layoutComponents": [
                                 {
-                                    "apiName": "Rating",
+                                    "apiName": "Amount",
                                     "componentType": "Field",
-                                    "label": "Account Rating"
+                                    "label": "Amount"
                                 }
                             ],
                             "lookupIdApiName": null,
                             "required": false,
+                            "sortable": false
+                        }
+                    ]
+                },
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Private",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "IsPrivate",
+                                    "componentType": "Field",
+                                    "label": "Private"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": false,
+                            "editableForUpdate": false,
+                            "label": "Expected Revenue",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "ExpectedRevenue",
+                                    "componentType": "Field",
+                                    "label": "Expected Amount"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        }
+                    ]
+                },
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Opportunity Name",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "Name",
+                                    "componentType": "Field",
+                                    "label": "Name"
+                                }
+                            ],
+                            "lookupIdApiName": "Id",
+                            "required": true,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Close Date",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "CloseDate",
+                                    "componentType": "Field",
+                                    "label": "Close Date"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": true,
                             "sortable": false
                         }
                     ]
@@ -54,126 +122,24 @@
                             "label": "Account Name",
                             "layoutComponents": [
                                 {
-                                    "apiName": "Name",
+                                    "apiName": "AccountId",
                                     "componentType": "Field",
-                                    "label": "Account Name"
+                                    "label": "Account ID"
                                 }
                             ],
-                            "lookupIdApiName": "Id",
-                            "required": true,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Phone",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "Phone",
-                                    "componentType": "Field",
-                                    "label": "Account Phone"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                },
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Parent Account",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "ParentId",
-                                    "componentType": "Field",
-                                    "label": "Parent Account ID"
-                                }
-                            ],
-                            "lookupIdApiName": "ParentId",
+                            "lookupIdApiName": "AccountId",
                             "required": false,
                             "sortable": false
                         },
                         {
                             "editableForNew": true,
                             "editableForUpdate": true,
-                            "label": "Fax",
+                            "label": "Next Step",
                             "layoutComponents": [
                                 {
-                                    "apiName": "Fax",
+                                    "apiName": "NextStep",
                                     "componentType": "Field",
-                                    "label": "Account Fax"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                },
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Account Number",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "AccountNumber",
-                                    "componentType": "Field",
-                                    "label": "Account Number"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Website",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "Website",
-                                    "componentType": "Field",
-                                    "label": "Website"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                },
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Account Site",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "Site",
-                                    "componentType": "Field",
-                                    "label": "Account Site"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Ticker Symbol",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "TickerSymbol",
-                                    "componentType": "Field",
-                                    "label": "Ticker Symbol"
+                                    "label": "Next Step"
                                 }
                             ],
                             "lookupIdApiName": null,
@@ -192,7 +158,7 @@
                                 {
                                     "apiName": "Type",
                                     "componentType": "Field",
-                                    "label": "Account Type"
+                                    "label": "Opportunity Type"
                                 }
                             ],
                             "lookupIdApiName": null,
@@ -202,12 +168,46 @@
                         {
                             "editableForNew": true,
                             "editableForUpdate": true,
-                            "label": "Ownership",
+                            "label": "Stage",
                             "layoutComponents": [
                                 {
-                                    "apiName": "Ownership",
+                                    "apiName": "StageName",
                                     "componentType": "Field",
-                                    "label": "Ownership"
+                                    "label": "Stage"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": true,
+                            "sortable": false
+                        }
+                    ]
+                },
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Lead Source",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "LeadSource",
+                                    "componentType": "Field",
+                                    "label": "Lead Source"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Probability (%)",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "Probability",
+                                    "componentType": "Field",
+                                    "label": "Probability (%)"
                                 }
                             ],
                             "lookupIdApiName": null,
@@ -219,14 +219,13 @@
                 {
                     "layoutItems": [
                         {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Industry",
+                            "editableForNew": false,
+                            "editableForUpdate": false,
+                            "label": "",
                             "layoutComponents": [
                                 {
-                                    "apiName": "Industry",
-                                    "componentType": "Field",
-                                    "label": "Industry"
+                                    "apiName": null,
+                                    "componentType": "EmptySpace"
                                 }
                             ],
                             "lookupIdApiName": null,
@@ -236,159 +235,41 @@
                         {
                             "editableForNew": true,
                             "editableForUpdate": true,
-                            "label": "Employees",
+                            "label": "Primary Campaign Source",
                             "layoutComponents": [
                                 {
-                                    "apiName": "NumberOfEmployees",
+                                    "apiName": "CampaignId",
                                     "componentType": "Field",
-                                    "label": "Employees"
+                                    "label": "Campaign ID"
                                 }
                             ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                },
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Annual Revenue",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "AnnualRevenue",
-                                    "componentType": "Field",
-                                    "label": "Annual Revenue"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "SIC Code",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "Sic",
-                                    "componentType": "Field",
-                                    "label": "SIC Code"
-                                }
-                            ],
-                            "lookupIdApiName": null,
+                            "lookupIdApiName": "CampaignId",
                             "required": false,
                             "sortable": false
                         }
                     ]
                 }
             ],
-            "rows": 8,
-            "useHeading": false
-        },
-        {
-            "collapsible": false,
-            "columns": 2,
-            "heading": "Address Information",
-            "id": "01BT1000000RgldMAC",
-            "layoutRows": [
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Billing Address",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "BillingStreet",
-                                    "componentType": "Field",
-                                    "label": "Billing Street"
-                                },
-                                {
-                                    "apiName": "BillingCity",
-                                    "componentType": "Field",
-                                    "label": "Billing City"
-                                },
-                                {
-                                    "apiName": "BillingState",
-                                    "componentType": "Field",
-                                    "label": "Billing State/Province"
-                                },
-                                {
-                                    "apiName": "BillingPostalCode",
-                                    "componentType": "Field",
-                                    "label": "Billing Zip/Postal Code"
-                                },
-                                {
-                                    "apiName": "BillingCountry",
-                                    "componentType": "Field",
-                                    "label": "Billing Country"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Shipping Address",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "ShippingStreet",
-                                    "componentType": "Field",
-                                    "label": "Shipping Street"
-                                },
-                                {
-                                    "apiName": "ShippingCity",
-                                    "componentType": "Field",
-                                    "label": "Shipping City"
-                                },
-                                {
-                                    "apiName": "ShippingState",
-                                    "componentType": "Field",
-                                    "label": "Shipping State/Province"
-                                },
-                                {
-                                    "apiName": "ShippingPostalCode",
-                                    "componentType": "Field",
-                                    "label": "Shipping Zip/Postal Code"
-                                },
-                                {
-                                    "apiName": "ShippingCountry",
-                                    "componentType": "Field",
-                                    "label": "Shipping Country"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                }
-            ],
-            "rows": 1,
+            "rows": 7,
             "useHeading": false
         },
         {
             "collapsible": false,
             "columns": 2,
             "heading": "Additional Information",
-            "id": "01BT1000000RglaMAC",
+            "id": "01BRM00000A2Rzs2AF",
             "layoutRows": [
                 {
                     "layoutItems": [
                         {
                             "editableForNew": true,
                             "editableForUpdate": true,
-                            "label": "Customer Priority",
+                            "label": "Order Number",
                             "layoutComponents": [
                                 {
-                                    "apiName": "CustomerPriority__c",
+                                    "apiName": "OrderNumber__c",
                                     "componentType": "Field",
-                                    "label": "Customer Priority"
+                                    "label": "Order Number"
                                 }
                             ],
                             "lookupIdApiName": null,
@@ -398,12 +279,12 @@
                         {
                             "editableForNew": true,
                             "editableForUpdate": true,
-                            "label": "SLA",
+                            "label": "Main Competitor(s)",
                             "layoutComponents": [
                                 {
-                                    "apiName": "SLA__c",
+                                    "apiName": "MainCompetitors__c",
                                     "componentType": "Field",
-                                    "label": "SLA"
+                                    "label": "Main Competitor(s)"
                                 }
                             ],
                             "lookupIdApiName": null,
@@ -417,12 +298,12 @@
                         {
                             "editableForNew": true,
                             "editableForUpdate": true,
-                            "label": "SLA Expiration Date",
+                            "label": "Current Generator(s)",
                             "layoutComponents": [
                                 {
-                                    "apiName": "SLAExpirationDate__c",
+                                    "apiName": "CurrentGenerators__c",
                                     "componentType": "Field",
-                                    "label": "SLA Expiration Date"
+                                    "label": "Current Generator(s)"
                                 }
                             ],
                             "lookupIdApiName": null,
@@ -432,12 +313,12 @@
                         {
                             "editableForNew": true,
                             "editableForUpdate": true,
-                            "label": "SLA Serial Number",
+                            "label": "Delivery/Installation Status",
                             "layoutComponents": [
                                 {
-                                    "apiName": "SLASerialNumber__c",
+                                    "apiName": "DeliveryInstallationStatus__c",
                                     "componentType": "Field",
-                                    "label": "SLA Serial Number"
+                                    "label": "Delivery/Installation Status"
                                 }
                             ],
                             "lookupIdApiName": null,
@@ -451,46 +332,12 @@
                         {
                             "editableForNew": true,
                             "editableForUpdate": true,
-                            "label": "Number of Locations",
+                            "label": "Tracking Number",
                             "layoutComponents": [
                                 {
-                                    "apiName": "NumberofLocations__c",
+                                    "apiName": "TrackingNumber__c",
                                     "componentType": "Field",
-                                    "label": "Number of Locations"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        },
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Upsell Opportunity",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "UpsellOpportunity__c",
-                                    "componentType": "Field",
-                                    "label": "Upsell Opportunity"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                },
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": true,
-                            "editableForUpdate": true,
-                            "label": "Active",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "Active__c",
-                                    "componentType": "Field",
-                                    "label": "Active"
+                                    "label": "Tracking Number"
                                 }
                             ],
                             "lookupIdApiName": null,
@@ -514,14 +361,14 @@
                     ]
                 }
             ],
-            "rows": 4,
+            "rows": 3,
             "useHeading": false
         },
         {
             "collapsible": false,
             "columns": 2,
             "heading": "System Information",
-            "id": "01BT1000000RglcMAC",
+            "id": "01BRM00000A2Rzv2AF",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -575,7 +422,7 @@
             "collapsible": false,
             "columns": 1,
             "heading": "Description Information",
-            "id": "01BT1000000RgleMAC",
+            "id": "01BRM00000A2Rzu2AF",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -587,7 +434,7 @@
                                 {
                                     "apiName": "Description",
                                     "componentType": "Field",
-                                    "label": "Account Description"
+                                    "label": "Description"
                                 }
                             ],
                             "lookupIdApiName": null,
@@ -604,7 +451,7 @@
             "collapsible": false,
             "columns": 3,
             "heading": "Custom Links",
-            "id": "01BT1000000RglYMAS",
+            "id": "01BRM00000A2Rzt2AF",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -614,11 +461,11 @@
                             "label": "",
                             "layoutComponents": [
                                 {
-                                    "apiName": "Billing",
+                                    "apiName": "DeliveryStatus",
                                     "behavior": "NewWindow",
                                     "componentType": "CustomLink",
-                                    "customLinkUrl": "/servlet/servlet.Integration?lid=00bT1000000QOju&eid=ENTITY_ID&ic=1",
-                                    "label": "Billing"
+                                    "customLinkUrl": "/servlet/servlet.Integration?lid=00bRM000000tCBT&eid=ENTITY_ID&ic=1",
+                                    "label": "Delivery Status"
                                 }
                             ],
                             "lookupIdApiName": null,

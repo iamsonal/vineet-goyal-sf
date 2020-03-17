@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 
 const helpersPath = process.argv[process.argv.length - 1];
 const rootDir = path.dirname(process.argv[3]);
@@ -36,3 +37,29 @@ entries.forEach(async function(entry) {
         path.join(rootDir, `${entry.filename}.json`)
     );
 });
+
+const getRecordCreateDefaults = [
+    {
+        endpoint: 'record-defaults/create/Account',
+        filename: 'record-defaults-create-Account',
+    },
+];
+
+getRecordCreateDefaults.forEach(async function({ endpoint, filename }) {
+    await helpers.requestGetAndSave(`/ui-api/${endpoint}`, path.join(rootDir, `${filename}.json`));
+});
+
+// Refresh Record Defaults Create "Owner" field as top level
+const recordDefaultsAccount = JSON.parse(
+    fs.readFileSync(path.join(rootDir, `record-defaults-create-Account.json`)).toString()
+);
+const userId = recordDefaultsAccount.record.fields.Owner.value.id;
+
+const userRefresh = {
+    endpoint: `records/${userId}?fields=User.Name`,
+    filename: 'record-User-fields-User.Name',
+};
+await helpers.requestGetAndSave(
+    `/ui-api/${userRefresh.endpoint}`,
+    path.join(rootDir, `${userRefresh.filename}.json`)
+);

@@ -1,15 +1,17 @@
 {
     "layout": {
-        "eTag": "8a35084f0c0f787b78def2193a7472f9",
-        "id": "00hxx0000019T7vAAE",
+        "eTag": "481cd870e6e8dfa438e525ceb9373277",
+        "id": "00hT1000000FWg1IAG",
         "layoutType": "Full",
         "mode": "Create",
+        "objectApiName": "Account",
+        "recordTypeId": "012000000000000AAA",
         "sections": [
             {
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Account Information",
-                "id": "01Bxx000002C2o3EAC",
+                "id": "01BT1000000RglZMAS",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -291,7 +293,7 @@
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Address Information",
-                "id": "01Bxx000002C2o7EAC",
+                "id": "01BT1000000RgldMAC",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -375,7 +377,7 @@
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Additional Information",
-                "id": "01Bxx000002C2o4EAC",
+                "id": "01BT1000000RglaMAC",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -520,7 +522,7 @@
                 "collapsible": false,
                 "columns": 1,
                 "heading": "Description Information",
-                "id": "01Bxx000002C2o8EAC",
+                "id": "01BT1000000RgleMAC",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -664,6 +666,13 @@
                     "relationshipName": "AuthorizationFormConsents"
                 },
                 {
+                    "childObjectApiName": "AuthorizationFormConsent",
+                    "fieldName": "RelatedRecordId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "RelatedAuthorizationFormConsents"
+                },
+                {
                     "childObjectApiName": "Case",
                     "fieldName": "AccountId",
                     "junctionIdListNames": [],
@@ -704,6 +713,13 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "Contacts"
+                },
+                {
+                    "childObjectApiName": "ContactPointAddress",
+                    "fieldName": "ParentId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "ContactPointAddresses"
                 },
                 {
                     "childObjectApiName": "ContactPointEmail",
@@ -767,6 +783,13 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "Events"
+                },
+                {
+                    "childObjectApiName": "Expense",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "Expenses"
                 },
                 {
                     "childObjectApiName": "MaintenancePlan",
@@ -949,7 +972,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "7b546247b1844664bd9dc0fb4071981a",
+            "eTag": "03ae5aee9c39de6982cc1f02f88f3698",
             "feedEnabled": true,
             "fields": {
                 "AccountNumber": {
@@ -1003,7 +1026,7 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "Account Source",
-                    "length": 40,
+                    "length": 255,
                     "nameField": false,
                     "polymorphicForeignKey": false,
                     "precision": 0,
@@ -1584,7 +1607,7 @@
                     "relationshipName": "DandbCompany",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -1739,7 +1762,7 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "Industry",
-                    "length": 40,
+                    "length": 255,
                     "nameField": false,
                     "polymorphicForeignKey": false,
                     "precision": 0,
@@ -2259,7 +2282,7 @@
                     "relationshipName": "OperatingHours",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2320,7 +2343,7 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "Ownership",
-                    "length": 40,
+                    "length": 255,
                     "nameField": false,
                     "polymorphicForeignKey": false,
                     "precision": 0,
@@ -2368,7 +2391,7 @@
                     "relationshipName": "Parent",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2457,7 +2480,7 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "Account Rating",
-                    "length": 40,
+                    "length": 255,
                     "nameField": false,
                     "polymorphicForeignKey": false,
                     "precision": 0,
@@ -3084,7 +3107,7 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "Account Type",
-                    "length": 40,
+                    "length": 255,
                     "nameField": false,
                     "polymorphicForeignKey": false,
                     "precision": 0,
@@ -3218,7 +3241,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "http://broth-virgo-4719-dev-ed.localhost.internal.salesforce.com:6109/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://virgo-gemini-1495-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
@@ -3553,7 +3576,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "4ef612f010e62488de5839a5ce92cac6",
+            "eTag": "d5592e025f2a1a9d073a13f3200f8a56",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -3622,7 +3645,7 @@
                     "relationshipName": "Account",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": false
@@ -3967,7 +3990,7 @@
                     "relationshipName": "Contact",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -4745,7 +4768,7 @@
                     "relationshipName": "Individual",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -5283,7 +5306,7 @@
                     "relationshipName": "Manager",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -5651,7 +5674,7 @@
                     "relationshipName": "Profile",
                     "required": true,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -7740,72 +7763,6 @@
                     "unique": false,
                     "updateable": true
                 },
-                "UserPreferencesHideCalendarAvailabilityViewPopover": {
-                    "apiName": "UserPreferencesHideCalendarAvailabilityViewPopover",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": false,
-                    "dataType": "Boolean",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "HideCalendarAvailabilityViewPopover",
-                    "length": 0,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": true,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": false,
-                    "unique": false,
-                    "updateable": true
-                },
-                "UserPreferencesHideCalendarListViewsPopover": {
-                    "apiName": "UserPreferencesHideCalendarListViewsPopover",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": false,
-                    "dataType": "Boolean",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "HideCalendarListViewsPopover",
-                    "length": 0,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": true,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": false,
-                    "unique": false,
-                    "updateable": true
-                },
                 "UserPreferencesHideChatterOnboardingSplash": {
                     "apiName": "UserPreferencesHideChatterOnboardingSplash",
                     "calculated": false,
@@ -7938,6 +7895,39 @@
                     "unique": false,
                     "updateable": true
                 },
+                "UserPreferencesHideLegacyRetirementModal": {
+                    "apiName": "UserPreferencesHideLegacyRetirementModal",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HideLegacyRetirementModal",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
                 "UserPreferencesHideLightningMigrationModal": {
                     "apiName": "UserPreferencesHideLightningMigrationModal",
                     "calculated": false,
@@ -7956,6 +7946,39 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "HideLightningMigrationModal",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
+                "UserPreferencesHideMailAppEAPUserGuidance": {
+                    "apiName": "UserPreferencesHideMailAppEAPUserGuidance",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HideMailAppEAPUserGuidance",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -9918,7 +9941,7 @@
                     "relationshipName": "UserRole",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -10001,7 +10024,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "http://broth-virgo-4719-dev-ed.localhost.internal.salesforce.com:6109/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://virgo-gemini-1495-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         }
@@ -10009,7 +10032,7 @@
     "record": {
         "apiName": "Account",
         "childRelationships": {},
-        "eTag": "35e3cc95f6f6208f500317819d56a260",
+        "eTag": "60b56952571cc24798107ee45663e3fe",
         "fields": {
             "AccountNumber": {
                 "displayValue": null,
@@ -10084,18 +10107,18 @@
                 "value": {
                     "apiName": "User",
                     "childRelationships": {},
-                    "eTag": "21c490deddbca5032dda8d0aac6de73b",
+                    "eTag": "1224db231132e101dcd7406acc92c6d3",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "005xx000001X8JhAAK"
+                            "value": "005T1000000HocOIAS"
                         },
                         "Name": {
                             "displayValue": null,
                             "value": "User User"
                         }
                     },
-                    "id": "005xx000001X8JhAAK",
+                    "id": "005T1000000HocOIAS",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -10106,7 +10129,7 @@
             },
             "OwnerId": {
                 "displayValue": null,
-                "value": "005xx000001X8JhAAK"
+                "value": "005T1000000HocOIAS"
             },
             "Ownership": {
                 "displayValue": null,
@@ -10181,10 +10204,6 @@
                 "value": null
             },
             "Website": {
-                "displayValue": null,
-                "value": null
-            },
-            "Test": {
                 "displayValue": null,
                 "value": null
             }

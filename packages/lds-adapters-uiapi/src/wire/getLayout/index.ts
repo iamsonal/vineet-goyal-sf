@@ -47,7 +47,7 @@ export function buildNetworkSnapshot(
     });
 
     const key = recordLayoutRepresentationKeyBuilder({
-        apiName: config.objectApiName,
+        objectApiName: config.objectApiName,
         recordTypeId,
         layoutType: config.layoutType,
         mode: config.mode,
@@ -56,11 +56,6 @@ export function buildNetworkSnapshot(
     return lds.dispatchResourceRequest<RecordLayoutRepresentation>(request, requestOverride).then(
         response => {
             const { body } = response;
-
-            // TODO W-6399239 - fix API so we don't have to augment the response with request details in order
-            // to support refresh. these are never emitted out per (private).
-            body.apiName = config.objectApiName;
-            body.recordTypeId = recordTypeId;
 
             lds.storeIngest<RecordLayoutRepresentation>(key, request, body);
             lds.storeBroadcast();
@@ -81,7 +76,7 @@ export function buildNetworkSnapshot(
 export function buildInMemorySnapshot(lds: LDS, config: GetLayoutConfigWithDefaults) {
     const { recordTypeId, layoutType, mode } = config;
     const key = recordLayoutRepresentationKeyBuilder({
-        apiName: config.objectApiName,
+        objectApiName: config.objectApiName,
         recordTypeId,
         layoutType,
         mode,

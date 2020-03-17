@@ -1,8 +1,10 @@
 {
-    "eTag": "35757feec5fb41e436d160f3d0b986d5",
-    "id": "0AHB0000000QyeCOAS",
+    "eTag": "134e302367481cd2e6f62e291ce9e6ba",
+    "id": null,
     "layoutType": "Compact",
     "mode": "Edit",
+    "objectApiName": "Opportunity",
+    "recordTypeId": "012000000000000AAA",
     "sections": [
         {
             "collapsible": false,
@@ -15,31 +17,12 @@
                         {
                             "editableForNew": true,
                             "editableForUpdate": true,
-                            "label": "Subject",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "Subject__c",
-                                    "componentType": "Field",
-                                    "label": "Subject"
-                                }
-                            ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                },
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": false,
-                            "editableForUpdate": false,
-                            "label": "Work ID",
+                            "label": "Opportunity Name",
                             "layoutComponents": [
                                 {
                                     "apiName": "Name",
                                     "componentType": "Field",
-                                    "label": "Work ID"
+                                    "label": "Name"
                                 }
                             ],
                             "lookupIdApiName": "Id",
@@ -53,34 +36,15 @@
                         {
                             "editableForNew": true,
                             "editableForUpdate": true,
-                            "label": "Status",
+                            "label": "Account Name",
                             "layoutComponents": [
                                 {
-                                    "apiName": "Status__c",
+                                    "apiName": "AccountId",
                                     "componentType": "Field",
-                                    "label": "Status"
+                                    "label": "Account ID"
                                 }
                             ],
-                            "lookupIdApiName": null,
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                },
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": false,
-                            "editableForUpdate": false,
-                            "label": "Record Type",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "RecordTypeId",
-                                    "componentType": "Field",
-                                    "label": "Record Type ID"
-                                }
-                            ],
-                            "lookupIdApiName": "RecordTypeId",
+                            "lookupIdApiName": "AccountId",
                             "required": false,
                             "sortable": false
                         }
@@ -91,31 +55,12 @@
                         {
                             "editableForNew": true,
                             "editableForUpdate": true,
-                            "label": "Team",
+                            "label": "Close Date",
                             "layoutComponents": [
                                 {
-                                    "apiName": "Scrum_Team__c",
+                                    "apiName": "CloseDate",
                                     "componentType": "Field",
-                                    "label": "Team"
-                                }
-                            ],
-                            "lookupIdApiName": "Id",
-                            "required": false,
-                            "sortable": false
-                        }
-                    ]
-                },
-                {
-                    "layoutItems": [
-                        {
-                            "editableForNew": false,
-                            "editableForUpdate": false,
-                            "label": "Test Failures",
-                            "layoutComponents": [
-                                {
-                                    "apiName": "visual_link_num_of_Test_Failures__c",
-                                    "componentType": "Field",
-                                    "label": "Test Failures"
+                                    "label": "Close Date"
                                 }
                             ],
                             "lookupIdApiName": null,
@@ -129,22 +74,41 @@
                         {
                             "editableForNew": true,
                             "editableForUpdate": true,
-                            "label": "Sprint",
+                            "label": "Amount",
                             "layoutComponents": [
                                 {
-                                    "apiName": "Sprint__c",
+                                    "apiName": "Amount",
                                     "componentType": "Field",
-                                    "label": "Sprint"
+                                    "label": "Amount"
                                 }
                             ],
-                            "lookupIdApiName": "Id",
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        }
+                    ]
+                },
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": false,
+                            "editableForUpdate": false,
+                            "label": "Opportunity Owner",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "OwnerId",
+                                    "componentType": "Field",
+                                    "label": "Owner ID"
+                                }
+                            ],
+                            "lookupIdApiName": "OwnerId",
                             "required": false,
                             "sortable": false
                         }
                     ]
                 }
             ],
-            "rows": 7,
+            "rows": 5,
             "useHeading": false
         }
     ]

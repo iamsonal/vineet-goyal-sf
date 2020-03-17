@@ -247,8 +247,6 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordUiConfigWithDefa
             eachLayout(
                 body,
                 (apiName: string, recordTypeId: string, layout: RecordLayoutRepresentation) => {
-                    layout.apiName = apiName;
-                    layout.recordTypeId = recordTypeId;
                     if (layout.id === null) {
                         return;
                     }

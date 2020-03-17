@@ -3,6 +3,8 @@
     "id": "0AHB0000000QyeDOAT",
     "layoutType": "Compact",
     "mode": "View",
+    "objectApiName": "Test__c",
+    "recordTypeId": "012000000000000AAA",
     "sections": [
         {
             "collapsible": false,

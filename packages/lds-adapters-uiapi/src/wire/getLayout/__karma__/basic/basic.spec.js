@@ -11,11 +11,11 @@ function getMock(filename) {
 
 describe('getLayout', () => {
     it('should correctly make HTTP request for objectApiName, layoutType and mode', async () => {
-        const recordMock = getMock('record-ADM_Work__c');
-        const mock = getMock('layout-ADM_Work__c-Compact-Edit');
+        const recordMock = getMock('record-Opportunity');
+        const mock = getMock('layout-Opportunity-Compact-Edit');
 
         const config = {
-            objectApiName: 'ADM_Work__c',
+            objectApiName: 'Opportunity',
             layoutType: 'Compact',
             mode: 'Edit',
             recordTypeId: recordMock.recordTypeId,
@@ -29,11 +29,11 @@ describe('getLayout', () => {
     });
 
     it('should not hit network if layout is available locally', async () => {
-        const recordMock = getMock('record-ADM_Work__c');
-        const mock = getMock('layout-ADM_Work__c-Full');
+        const recordMock = getMock('record-Opportunity');
+        const mock = getMock('layout-Opportunity-Full');
 
         const config = {
-            objectApiName: 'ADM_Work__c',
+            objectApiName: 'Opportunity',
             layoutType: 'Full',
             mode: 'View',
             recordTypeId: recordMock.recordTypeId,
@@ -56,11 +56,11 @@ describe('getLayout', () => {
     });
 
     it('should hit network if layout is available but expired', async () => {
-        const recordMock = getMock('record-ADM_Work__c');
-        const mock = getMock('layout-ADM_Work__c-Full');
+        const recordMock = getMock('record-Opportunity');
+        const mock = getMock('layout-Opportunity-Full');
 
         const config = {
-            objectApiName: 'ADM_Work__c',
+            objectApiName: 'Opportunity',
             layoutType: 'Full',
             mode: 'View',
             recordTypeId: recordMock.recordTypeId,
@@ -85,14 +85,14 @@ describe('getLayout', () => {
     });
 
     it('should emit new value when eTag changes', async () => {
-        const recordMock = getMock('record-ADM_Work__c');
-        const mock = getMock('layout-ADM_Work__c-Full');
-        const changed = getMock('layout-ADM_Work__c-Full');
+        const recordMock = getMock('record-Opportunity');
+        const mock = getMock('layout-Opportunity-Full');
+        const changed = getMock('layout-Opportunity-Full');
         changed.eTag = 'changed';
         changed.sections[0].collapsible = true;
 
         const config = {
-            objectApiName: 'ADM_Work__c',
+            objectApiName: 'Opportunity',
             layoutType: 'Full',
             mode: 'View',
             recordTypeId: recordMock.recordTypeId,
@@ -118,13 +118,13 @@ describe('getLayout', () => {
     });
 
     it('should not emit new value when eTag is not changed', async () => {
-        const recordMock = getMock('record-ADM_Work__c');
-        const mock = getMock('layout-ADM_Work__c-Full');
-        const changed = getMock('layout-ADM_Work__c-Full');
+        const recordMock = getMock('record-Opportunity');
+        const mock = getMock('layout-Opportunity-Full');
+        const changed = getMock('layout-Opportunity-Full');
         changed.sections[0].collapsible = true;
 
         const config = {
-            objectApiName: 'ADM_Work__c',
+            objectApiName: 'Opportunity',
             layoutType: 'Full',
             mode: 'View',
             recordTypeId: recordMock.recordTypeId,
@@ -149,13 +149,13 @@ describe('getLayout', () => {
     });
 
     it('should be a cache miss if two components request same objectApiName, recordTypeId and mode with different layoutType', async () => {
-        const recordMock = getMock('record-ADM_Work__c');
-        const compactMock = getMock('layout-ADM_Work__c-Compact');
-        const fullMock = getMock('layout-ADM_Work__c-Full');
+        const recordMock = getMock('record-Opportunity');
+        const compactMock = getMock('layout-Opportunity-Compact');
+        const fullMock = getMock('layout-Opportunity-Full');
 
         const compactConfig = {
             objectApiName: {
-                objectApiName: 'ADM_Work__c',
+                objectApiName: 'Opportunity',
             },
             layoutType: 'Compact',
             mode: 'View',
@@ -182,13 +182,13 @@ describe('getLayout', () => {
     });
 
     it('should be a cache miss if two components request same objectApiName, recordTypeId and layoutType with different mode', async () => {
-        const recordMock = getMock('record-ADM_Work__c');
-        const compactViewMock = getMock('layout-ADM_Work__c-Compact');
-        const compactEditMock = getMock('layout-ADM_Work__c-Compact-Edit');
+        const recordMock = getMock('record-Opportunity');
+        const compactViewMock = getMock('layout-Opportunity-Compact');
+        const compactEditMock = getMock('layout-Opportunity-Compact-Edit');
 
         const compactViewConfig = {
             objectApiName: {
-                objectApiName: 'ADM_Work__c',
+                objectApiName: 'Opportunity',
             },
             layoutType: 'Compact',
             mode: 'View',
@@ -215,13 +215,13 @@ describe('getLayout', () => {
     });
 
     it('should be a cache miss if two components request same recordTypeId, layoutType, mode with different objectApiName', async () => {
-        const recordMock = getMock('record-ADM_Work__c');
-        const ADM_WorkMock = getMock('layout-ADM_Work__c-Compact');
+        const recordMock = getMock('record-Opportunity');
+        const ADM_WorkMock = getMock('layout-Opportunity-Compact');
         const TestMock = getMock('layout-Test__c-Compact');
 
         const ADM_WorkConfig = {
             objectApiName: {
-                objectApiName: 'ADM_Work__c',
+                objectApiName: 'Opportunity',
             },
             layoutType: 'Compact',
             mode: 'View',
@@ -248,14 +248,14 @@ describe('getLayout', () => {
     });
 
     it('refresh should refresh layout', async () => {
-        const recordMock = getMock('record-ADM_Work__c');
-        const mock = getMock('layout-ADM_Work__c-Full');
-        const refreshed = getMock('layout-ADM_Work__c-Full');
+        const recordMock = getMock('record-Opportunity');
+        const mock = getMock('layout-Opportunity-Full');
+        const refreshed = getMock('layout-Opportunity-Full');
         refreshed.eTag = 'changed';
         refreshed.sections[0].collapsible = !refreshed.sections[0].collapsible;
 
         const config = {
-            objectApiName: 'ADM_Work__c',
+            objectApiName: 'Opportunity',
             layoutType: 'Full',
             mode: 'View',
             recordTypeId: recordMock.recordTypeId,

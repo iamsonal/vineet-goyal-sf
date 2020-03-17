@@ -114,6 +114,13 @@
             "relationshipName": "AuthorizationFormConsents"
         },
         {
+            "childObjectApiName": "AuthorizationFormConsent",
+            "fieldName": "RelatedRecordId",
+            "junctionIdListNames": [],
+            "junctionReferenceTo": [],
+            "relationshipName": "RelatedAuthorizationFormConsents"
+        },
+        {
             "childObjectApiName": "Case",
             "fieldName": "AccountId",
             "junctionIdListNames": [],
@@ -154,6 +161,13 @@
             "junctionIdListNames": [],
             "junctionReferenceTo": [],
             "relationshipName": "Contacts"
+        },
+        {
+            "childObjectApiName": "ContactPointAddress",
+            "fieldName": "ParentId",
+            "junctionIdListNames": [],
+            "junctionReferenceTo": [],
+            "relationshipName": "ContactPointAddresses"
         },
         {
             "childObjectApiName": "ContactPointEmail",
@@ -217,6 +231,13 @@
             "junctionIdListNames": [],
             "junctionReferenceTo": [],
             "relationshipName": "Events"
+        },
+        {
+            "childObjectApiName": "Expense",
+            "fieldName": "AccountId",
+            "junctionIdListNames": [],
+            "junctionReferenceTo": [],
+            "relationshipName": "Expenses"
         },
         {
             "childObjectApiName": "MaintenancePlan",
@@ -399,7 +420,7 @@
     "defaultRecordTypeId": "012000000000000AAA",
     "deletable": true,
     "dependentFields": {},
-    "eTag": "7b546247b1844664bd9dc0fb4071981a",
+    "eTag": "03ae5aee9c39de6982cc1f02f88f3698",
     "feedEnabled": true,
     "fields": {
         "AccountNumber": {
@@ -453,7 +474,7 @@
             "htmlFormatted": false,
             "inlineHelpText": null,
             "label": "Account Source",
-            "length": 40,
+            "length": 255,
             "nameField": false,
             "polymorphicForeignKey": false,
             "precision": 0,
@@ -1034,7 +1055,7 @@
             "relationshipName": "DandbCompany",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": false,
+            "searchPrefilterable": true,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -1189,7 +1210,7 @@
             "htmlFormatted": false,
             "inlineHelpText": null,
             "label": "Industry",
-            "length": 40,
+            "length": 255,
             "nameField": false,
             "polymorphicForeignKey": false,
             "precision": 0,
@@ -1709,7 +1730,7 @@
             "relationshipName": "OperatingHours",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": false,
+            "searchPrefilterable": true,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -1770,7 +1791,7 @@
             "htmlFormatted": false,
             "inlineHelpText": null,
             "label": "Ownership",
-            "length": 40,
+            "length": 255,
             "nameField": false,
             "polymorphicForeignKey": false,
             "precision": 0,
@@ -1818,7 +1839,7 @@
             "relationshipName": "Parent",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": false,
+            "searchPrefilterable": true,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -1907,7 +1928,7 @@
             "htmlFormatted": false,
             "inlineHelpText": null,
             "label": "Account Rating",
-            "length": 40,
+            "length": 255,
             "nameField": false,
             "polymorphicForeignKey": false,
             "precision": 0,
@@ -2534,7 +2555,7 @@
             "htmlFormatted": false,
             "inlineHelpText": null,
             "label": "Account Type",
-            "length": 40,
+            "length": 255,
             "nameField": false,
             "polymorphicForeignKey": false,
             "precision": 0,
@@ -2668,7 +2689,7 @@
     "searchable": true,
     "themeInfo": {
         "color": "7F8DE1",
-        "iconUrl": "http://broth-virgo-4719-dev-ed.localhost.internal.salesforce.com:6109/img/icon/t4v35/standard/account_120.png"
+        "iconUrl": "https://virgo-gemini-1495-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
     },
     "updateable": true
 }

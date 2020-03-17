@@ -180,7 +180,7 @@ function lookupLayouts(
             const mode = modes[m];
 
             const key = recordLayoutRepresentationKeyBuilder({
-                apiName,
+                objectApiName: apiName,
                 recordTypeId,
                 layoutType,
                 mode,

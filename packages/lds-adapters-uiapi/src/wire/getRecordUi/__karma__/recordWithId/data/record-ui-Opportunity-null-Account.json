@@ -36,6 +36,8 @@
                         "id": "00hRM000002qNK7YAM",
                         "layoutType": "Full",
                         "mode": "View",
+                        "objectApiName": "Opportunity",
+                        "recordTypeId": "012RM000000DBJIYA4",
                         "sections": [
                             {
                                 "collapsible": false,

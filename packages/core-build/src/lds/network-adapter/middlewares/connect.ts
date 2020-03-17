@@ -12,27 +12,27 @@ enum ConnectController {
 
 export const COMMUNITIES_NAVIGATION_MENU_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/navigation-menu`,
-    'gi'
+    'i'
 );
 
 export const GET_PRODUCT_PATH = new RegExp(
     `${COMMERCE_BASE_URI}/webstores/([A-Z0-9]){15,18}/products/([A-Z0-9]){15,18}`,
-    'gi'
+    'i'
 );
 
 export const GET_PRODUCT_CATEGORY_PATH_PATH = new RegExp(
     `${COMMERCE_BASE_URI}/webstores/([A-Z0-9]){15,18}/product-category-path/product-categories/([A-Z0-9]){15,18}`,
-    'gi'
+    'i'
 );
 
 export const PRODUCT_SEARCH_PATH = new RegExp(
     `${COMMERCE_BASE_URI}/webstores/([A-Z0-9]){15,18}/search/product-search`,
-    'gi'
+    'i'
 );
 
 export const GET_PRODUCT_PRICE_PATH = new RegExp(
     `${COMMERCE_BASE_URI}/webstores/([A-Z0-9]){15,18}/pricing/products/([A-Z0-9]){15,18}`,
-    'gi'
+    'i'
 );
 
 export function getCommunityNavigationMenu(resourceRequest: ResourceRequest): Promise<any> {

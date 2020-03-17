@@ -4,12 +4,14 @@ import { ResourceRequest } from '@ldsjs/engine';
 
 import { AuraFetchResponse } from '../AuraFetchResponse';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
+import { CONNECT_BASE_URI } from '../middlewares/connect-base';
+
 import networkAdapter from '../index';
 
 function buildResourceRequest(resourceRequest: Partial<ResourceRequest>): ResourceRequest {
     return {
         method: resourceRequest.method || 'get',
-        path: UI_API_BASE_URI + (resourceRequest.path || '/test'),
+        path: resourceRequest.path || '/test',
         body: resourceRequest.body || {},
         queryParams: resourceRequest.queryParams || {},
         urlParams: resourceRequest.urlParams || {},
@@ -127,7 +129,7 @@ describe('get /object-info/{apiName}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/object-info/Test_c',
+            path: `${UI_API_BASE_URI}/object-info/Test_c`,
             urlParams: {
                 objectApiName: 'Test_c',
             },
@@ -141,7 +143,7 @@ describe('get /object-info/{apiName}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/object-info/Test_c',
+        path: `${UI_API_BASE_URI}/object-info/Test_c`,
         urlParams: {
             objectApiName: 'Test_c',
         },
@@ -150,7 +152,7 @@ describe('get /object-info/{apiName}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/object-info/Test_c',
+            path: `${UI_API_BASE_URI}/object-info/Test_c`,
             urlParams: {
                 objectApiName: 'Test_c',
             },
@@ -163,7 +165,7 @@ describe('get /object-info/{apiName}', () => {
 
     testStorage('ldsObjectInfo', {
         method: 'get',
-        path: '/object-info/Test_c',
+        path: `${UI_API_BASE_URI}/object-info/Test_c`,
         urlParams: {
             objectApiName: 'Test_c',
         },
@@ -174,7 +176,7 @@ describe('get /object-info/batch/{apiNames}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/object-info/batch/Test1_c,Test2_c',
+            path: `${UI_API_BASE_URI}/object-info/batch/Test1_c,Test2_c`,
             urlParams: {
                 objectApiNames: ['Test1_c', 'Test2_c'],
             },
@@ -188,7 +190,7 @@ describe('get /object-info/batch/{apiNames}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/object-info/batch/Test1_c,Test2_c',
+        path: `${UI_API_BASE_URI}/object-info/batch/Test1_c,Test2_c`,
         urlParams: {
             objectApiNames: ['Test1_c', 'Test2_c'],
         },
@@ -197,7 +199,7 @@ describe('get /object-info/batch/{apiNames}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/object-info/batch/Test1_c,Test2_c',
+            path: `${UI_API_BASE_URI}/object-info/batch/Test1_c,Test2_c`,
             urlParams: {
                 objectApiNames: ['Test1_c', 'Test2_c'],
             },
@@ -224,7 +226,7 @@ describe('get /object-info/batch/{apiNames}', () => {
 
     testStorage('ldsObjectInfo', {
         method: 'get',
-        path: '/object-info/Test_c',
+        path: `${UI_API_BASE_URI}/object-info/Test_c`,
         urlParams: {
             objectApiName: 'Test_c',
         },
@@ -235,7 +237,7 @@ describe('post /records', () => {
     testControllerInput(
         {
             method: 'post',
-            path: '/records',
+            path: `${UI_API_BASE_URI}/records`,
             body: {
                 apiName: 'Test__c',
                 fields: [],
@@ -255,13 +257,13 @@ describe('post /records', () => {
 
     testRejectFetchResponse({
         method: 'post',
-        path: '/records',
+        path: `${UI_API_BASE_URI}/records`,
     });
 
     testResolveResponse(
         {
             method: 'post',
-            path: '/records',
+            path: `${UI_API_BASE_URI}/records`,
             body: {
                 apiName: 'Test__c',
                 fields: [],
@@ -278,7 +280,7 @@ describe('post /records', () => {
 describe('get /records/{recordId}', () => {
     testRejectFetchResponse({
         method: 'get',
-        path: '/records/1234',
+        path: `${UI_API_BASE_URI}/records/1234`,
         urlParams: {
             recordId: '1234',
         },
@@ -287,7 +289,7 @@ describe('get /records/{recordId}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/records/1234',
+            path: `${UI_API_BASE_URI}/records/1234`,
             urlParams: {
                 recordId: '1234',
             },
@@ -309,7 +311,7 @@ describe('get /records/{recordId}', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: '/records/1234',
+                path: `${UI_API_BASE_URI}/records/1234`,
                 urlParams: {
                     recordId: '1234',
                 },
@@ -334,7 +336,7 @@ describe('get /records/{recordId}', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: '/records/1234',
+                path: `${UI_API_BASE_URI}/records/1234`,
                 urlParams: {
                     recordId: '1234',
                 },
@@ -362,7 +364,7 @@ describe('patch /records/{recordId}', () => {
     testControllerInput(
         {
             method: 'patch',
-            path: '/records/1234',
+            path: `${UI_API_BASE_URI}/records/1234`,
             urlParams: {
                 recordId: '1234',
             },
@@ -390,13 +392,13 @@ describe('patch /records/{recordId}', () => {
 
     testRejectFetchResponse({
         method: 'patch',
-        path: '/records/1234',
+        path: `${UI_API_BASE_URI}/records/1234`,
     });
 
     testResolveResponse(
         {
             method: 'patch',
-            path: '/records/1234',
+            path: `${UI_API_BASE_URI}/records/1234`,
             urlParams: {
                 recordId: '1234',
             },
@@ -417,7 +419,7 @@ describe('delete /records/{recordId}', () => {
     testControllerInput(
         {
             method: 'delete',
-            path: '/records/1234',
+            path: `${UI_API_BASE_URI}/records/1234`,
             urlParams: {
                 recordId: '1234',
             },
@@ -434,13 +436,13 @@ describe('delete /records/{recordId}', () => {
 
     testRejectFetchResponse({
         method: 'delete',
-        path: '/records/1234',
+        path: `${UI_API_BASE_URI}/records/1234`,
     });
 
     testResolveResponse(
         {
             method: 'delete',
-            path: '/records/1234',
+            path: `${UI_API_BASE_URI}/records/1234`,
             urlParams: {
                 recordId: '1234',
             },
@@ -458,7 +460,7 @@ describe('get /record-avatars/batch/{recordIds}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/record-avatars/batch/1234,5678',
+            path: `${UI_API_BASE_URI}/record-avatars/batch/1234,5678`,
             urlParams: {
                 recordIds: ['1234', '5678'],
             },
@@ -472,7 +474,7 @@ describe('get /record-avatars/batch/{recordIds}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/record-avatars/batch/1234,5678',
+        path: `${UI_API_BASE_URI}/record-avatars/batch/1234,5678`,
         urlParams: {
             recordIds: ['1234', '5678'],
         },
@@ -481,7 +483,7 @@ describe('get /record-avatars/batch/{recordIds}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/record-avatars/batch/1234,5678',
+            path: `${UI_API_BASE_URI}/record-avatars/batch/1234,5678`,
             urlParams: {
                 recordIds: ['1234', '5678'],
             },
@@ -500,7 +502,7 @@ describe('post /record-avatars/{recordIds}/assocation', () => {
     testControllerInput(
         {
             method: 'post',
-            path: '/record-avatars/1234/association',
+            path: `${UI_API_BASE_URI}/record-avatars/1234/association`,
             urlParams: {
                 recordId: '1234',
             },
@@ -530,7 +532,7 @@ describe('post /record-avatars/{recordIds}/assocation', () => {
 
     testRejectFetchResponse({
         method: 'post',
-        path: '/record-avatars/1234/association',
+        path: `${UI_API_BASE_URI}/record-avatars/1234/association`,
         urlParams: {
             recordId: '1234',
         },
@@ -546,7 +548,7 @@ describe('post /record-avatars/{recordIds}/assocation', () => {
     testResolveResponse(
         {
             method: 'post',
-            path: '/record-avatars/1234/association',
+            path: `${UI_API_BASE_URI}/record-avatars/1234/association`,
             urlParams: {
                 recordId: '1234',
             },
@@ -572,7 +574,7 @@ describe('get /record-ui/{recordIds}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/record-ui/1234,5678',
+            path: `${UI_API_BASE_URI}/record-ui/1234,5678`,
             urlParams: {
                 recordIds: '1234,5678',
             },
@@ -591,7 +593,7 @@ describe('get /record-ui/{recordIds}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/record-ui/1234,5678',
+        path: `${UI_API_BASE_URI}/record-ui/1234,5678`,
         urlParams: {
             recordIds: '1234,5678',
         },
@@ -600,7 +602,7 @@ describe('get /record-ui/{recordIds}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/record-ui/1234,5678',
+            path: `${UI_API_BASE_URI}/record-ui/1234,5678`,
             urlParams: {
                 recordIds: '1234,5678',
             },
@@ -618,7 +620,7 @@ describe('get /layout/{objectApiName}/user-state', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/layout/Opportunity/user-state',
+            path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
             urlParams: {
                 objectApiName: 'Opportunity',
             },
@@ -642,7 +644,7 @@ describe('get /layout/{objectApiName}/user-state', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/layout/Opportunity/user-state',
+        path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
         urlParams: {
             objectApiName: 'Opportunity',
         },
@@ -656,7 +658,7 @@ describe('get /layout/{objectApiName}/user-state', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/layout/Opportunity/user-state',
+            path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
             urlParams: {
                 objectApiName: 'Opportunity',
             },
@@ -674,7 +676,7 @@ describe('get /layout/{objectApiName}/user-state', () => {
 
     testStorage('ldsLayoutUserState', {
         method: 'get',
-        path: '/layout/Opportunity/user-state',
+        path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
         urlParams: {
             objectApiName: 'Opportunity',
         },
@@ -690,7 +692,7 @@ describe('patch /layout/{objectApiName}/user-state', () => {
     testControllerInput(
         {
             method: 'patch',
-            path: '/layout/Opportunity/user-state',
+            path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
             urlParams: {
                 objectApiName: 'Opportunity',
             },
@@ -719,7 +721,7 @@ describe('patch /layout/{objectApiName}/user-state', () => {
 
     testRejectFetchResponse({
         method: 'patch',
-        path: '/layout/Opportunity/user-state',
+        path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
         urlParams: {
             objectApiName: 'Opportunity',
         },
@@ -733,7 +735,7 @@ describe('patch /layout/{objectApiName}/user-state', () => {
     testResolveResponse(
         {
             method: 'patch',
-            path: '/layout/Opportunity/user-state',
+            path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
             urlParams: {
                 objectApiName: 'Opportunity',
             },
@@ -760,7 +762,7 @@ describe('patch /layout/{objectApiName}/user-state', () => {
         await networkAdapter(
             buildResourceRequest({
                 method: 'patch',
-                path: '/layout/Opportunity/user-state',
+                path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
                 urlParams: {
                     objectApiName: 'Opportunity',
                 },
@@ -781,7 +783,7 @@ describe('get /layout/{recordIds}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/layout/Opportunity',
+            path: `${UI_API_BASE_URI}/layout/Opportunity`,
             urlParams: {
                 objectApiName: 'Opportunity',
             },
@@ -811,7 +813,7 @@ describe('get /layout/{recordIds}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/layout/Opportunity',
+        path: `${UI_API_BASE_URI}/layout/Opportunity`,
         urlParams: {
             objectApiName: 'Opportunity',
         },
@@ -828,7 +830,7 @@ describe('get /layout/{recordIds}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/layout/Opportunity',
+            path: `${UI_API_BASE_URI}/layout/Opportunity`,
             urlParams: {
                 objectApiName: 'Opportunity',
             },
@@ -852,7 +854,7 @@ describe('get /layout/{recordIds}', () => {
 
     testStorage('ldsLayout', {
         method: 'get',
-        path: '/layout/Opportunity',
+        path: `${UI_API_BASE_URI}/layout/Opportunity`,
         urlParams: {
             objectApiName: 'Opportunity',
         },
@@ -937,7 +939,7 @@ describe('get /actions/lookup/{apiNames}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/actions/lookup/Test_a,Test_c',
+            path: `${UI_API_BASE_URI}/actions/lookup/Test_a,Test_c`,
             urlParams: {
                 objectApiNames: ['Test_a', 'Test_c'],
             },
@@ -947,7 +949,7 @@ describe('get /actions/lookup/{apiNames}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/actions/lookup/Test_a,Test_c',
+        path: `${UI_API_BASE_URI}/actions/lookup/Test_a,Test_c`,
         urlParams: {
             objectApiNames: ['Test_a', 'Test_c'],
         },
@@ -956,7 +958,7 @@ describe('get /actions/lookup/{apiNames}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/actions/lookup/Test_a,Test_c',
+            path: `${UI_API_BASE_URI}/actions/lookup/Test_a,Test_c`,
             urlParams: {
                 objectApiNames: ['Test_a', 'Test_c'],
             },
@@ -978,7 +980,7 @@ describe('get /object-info/{objectApiName}/picklist-values/{recordTypeId}/{field
     testControllerInput(
         {
             method: 'get',
-            path: '/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User',
+            path: `${UI_API_BASE_URI}/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User`,
             urlParams: {
                 objectApiName: 'Opportunity',
                 recordTypeId: '012T00000004MUHIA2',
@@ -1002,7 +1004,7 @@ describe('get /object-info/{objectApiName}/picklist-values/{recordTypeId}/{field
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User',
+        path: `${UI_API_BASE_URI}/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User`,
         urlParams: {
             objectApiName: 'Opportunity',
             recordTypeId: '012T00000004MUHIA2',
@@ -1013,7 +1015,7 @@ describe('get /object-info/{objectApiName}/picklist-values/{recordTypeId}/{field
     testResolveResponse(
         {
             method: 'get',
-            path: '/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User',
+            path: `${UI_API_BASE_URI}/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User`,
             urlParams: {
                 objectApiName: 'Opportunity',
                 recordTypeId: '012T00000004MUHIA2',
@@ -1048,7 +1050,7 @@ describe('get /object-info/{objectApiName}/picklist-values/{recordTypeId}', () =
     testControllerInput(
         {
             method: 'get',
-            path: '/object-info/Opportunity/picklist-values/012T00000004MUHIA2',
+            path: `${UI_API_BASE_URI}/object-info/Opportunity/picklist-values/012T00000004MUHIA2`,
             urlParams: {
                 objectApiName: 'Opportunity',
                 recordTypeId: '012T00000004MUHIA2',
@@ -1066,7 +1068,7 @@ describe('get /object-info/{objectApiName}/picklist-values/{recordTypeId}', () =
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/object-info/Opportunity/picklist-values/012T00000004MUHIA2',
+        path: `${UI_API_BASE_URI}/object-info/Opportunity/picklist-values/012T00000004MUHIA2`,
         urlParams: {
             objectApiName: 'Opportunity',
             recordTypeId: '012T00000004MUHIA2',
@@ -1076,7 +1078,7 @@ describe('get /object-info/{objectApiName}/picklist-values/{recordTypeId}', () =
     testResolveResponse(
         {
             method: 'get',
-            path: '/object-info/Opportunity/picklist-values/012T00000004MUHIA2',
+            path: `${UI_API_BASE_URI}/object-info/Opportunity/picklist-values/012T00000004MUHIA2`,
             urlParams: {
                 objectApiName: 'Opportunity',
                 recordTypeId: '012T00000004MUHIA2',
@@ -1093,7 +1095,7 @@ describe('get /lookups/{objectApiName}/{fieldApiName}/{targetApiName}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/lookups/Opportunity/Owner/User',
+            path: `${UI_API_BASE_URI}/lookups/Opportunity/Owner/User`,
             urlParams: {
                 objectApiName: 'Opportunity',
                 fieldApiName: 'Owner',
@@ -1113,7 +1115,7 @@ describe('get /lookups/{objectApiName}/{fieldApiName}/{targetApiName}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/lookups/Opportunity/Owner/User',
+        path: `${UI_API_BASE_URI}/lookups/Opportunity/Owner/User`,
         urlParams: {
             objectApiName: 'Opportunity',
             fieldApiName: 'Owner',
@@ -1130,7 +1132,7 @@ describe('get /lookups/{objectApiName}/{fieldApiName}/{targetApiName}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/lookups/Opportunity/Owner/User',
+            path: `${UI_API_BASE_URI}/lookups/Opportunity/Owner/User`,
             urlParams: {
                 objectApiName: 'Opportunity',
                 fieldApiName: 'Owner',
@@ -1168,7 +1170,7 @@ describe('get /actions/record/${recordIds}', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: '/actions/record/1234,5678/record-edit',
+                path: `${UI_API_BASE_URI}/actions/record/1234,5678/record-edit`,
                 urlParams: {
                     recordIds: ['1234', '5678'],
                 },
@@ -1178,7 +1180,7 @@ describe('get /actions/record/${recordIds}', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: '/actions/record/1234,5678/record-edit',
+            path: `${UI_API_BASE_URI}/actions/record/1234,5678/record-edit`,
             urlParams: {
                 recordIds: ['1234', '5678'],
             },
@@ -1187,7 +1189,7 @@ describe('get /actions/record/${recordIds}', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: '/actions/record/1234,5678/record-edit',
+                path: `${UI_API_BASE_URI}/actions/record/1234,5678/record-edit`,
                 urlParams: {
                     recordIds: ['1234', '5678'],
                 },
@@ -1209,7 +1211,7 @@ describe('get /actions/record/${recordIds}', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: '/actions/record/1234,5678/related-list-record/1111,2222',
+                path: `${UI_API_BASE_URI}/actions/record/1234,5678/related-list-record/1111,2222`,
                 urlParams: {
                     recordIds: ['1234', '5678'],
                     relatedListRecordIds: ['1111', '2222'],
@@ -1224,7 +1226,7 @@ describe('get /actions/record/${recordIds}', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: '/actions/record/1234,5678/related-list-record/1111,2222',
+            path: `${UI_API_BASE_URI}/actions/record/1234,5678/related-list-record/1111,2222`,
             urlParams: {
                 recordIds: ['1234', '5678'],
                 relatedListRecordIds: ['1111', '2222'],
@@ -1234,7 +1236,7 @@ describe('get /actions/record/${recordIds}', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: '/actions/record/1234,5678/related-list-record/1111,2222',
+                path: `${UI_API_BASE_URI}/actions/record/1234,5678/related-list-record/1111,2222`,
                 urlParams: {
                     recordIds: ['1234', '5678'],
                     relatedListRecordIds: ['1111', '2222'],
@@ -1257,7 +1259,7 @@ describe('get /actions/record/${recordIds}', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: '/actions/record/1234/related-list/1111',
+                path: `${UI_API_BASE_URI}/actions/record/1234/related-list/1111`,
                 urlParams: {
                     recordIds: ['1234'],
                     relatedListIds: ['1111'],
@@ -1272,7 +1274,7 @@ describe('get /actions/record/${recordIds}', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: '/actions/record/1234/related-list/1111',
+            path: `${UI_API_BASE_URI}/actions/record/1234/related-list/1111`,
             urlParams: {
                 recordIds: ['1234'],
                 relatedListIds: ['1111'],
@@ -1282,7 +1284,7 @@ describe('get /actions/record/${recordIds}', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: '/actions/record/1234,5678/related-list/1111',
+                path: `${UI_API_BASE_URI}/actions/record/1234,5678/related-list/1111`,
                 urlParams: {
                     recordIds: ['1234'],
                     relatedListIds: ['1111'],
@@ -1302,7 +1304,7 @@ describe('get /actions/record/${recordIds}', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: '/related-list-count/1234/1111',
+                path: `${UI_API_BASE_URI}/related-list-count/1234/1111`,
                 urlParams: {
                     parentRecordId: '1234',
                     relatedListName: '1111',
@@ -1316,7 +1318,7 @@ describe('get /actions/record/${recordIds}', () => {
         );
         testRejectFetchResponse({
             method: 'get',
-            path: '/related-list-count/1234/1111',
+            path: `${UI_API_BASE_URI}/related-list-count/1234/1111`,
             urlParams: {
                 parentRecordId: '1234',
                 relatedListName: '1111',
@@ -1326,7 +1328,7 @@ describe('get /actions/record/${recordIds}', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: '/related-list-count/1234/1111',
+                path: `${UI_API_BASE_URI}/related-list-count/1234/1111`,
                 urlParams: {
                     parentRecordId: '1234',
                     relatedListName: '1111',
@@ -1340,7 +1342,7 @@ describe('get /actions/record/${recordIds}', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: '/related-list-count/batch/1234/1111,2222',
+                path: `${UI_API_BASE_URI}/related-list-count/batch/1234/1111,2222`,
                 urlParams: {
                     parentRecordId: '1234',
                     relatedListNames: ['1111', '2222'],
@@ -1354,7 +1356,7 @@ describe('get /actions/record/${recordIds}', () => {
         );
         testRejectFetchResponse({
             method: 'get',
-            path: '/related-list-count/batch/1234/1111,2222',
+            path: `${UI_API_BASE_URI}/related-list-count/batch/1234/1111,2222`,
             urlParams: {
                 parentRecordId: '1234',
                 relatedListNames: ['1111', '2222'],
@@ -1364,7 +1366,7 @@ describe('get /actions/record/${recordIds}', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: '/related-list-count/batch/1234/1111,2222',
+                path: `${UI_API_BASE_URI}/related-list-count/batch/1234/1111,2222`,
                 urlParams: {
                     parentRecordId: '1234',
                     relatedListNames: ['1111', '2222'],
@@ -1398,7 +1400,7 @@ describe('get /actions/record/${recordIds}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/actions/record/1234,5678',
+            path: `${UI_API_BASE_URI}/actions/record/1234,5678`,
             urlParams: {
                 recordIds: ['1234', '5678'],
             },
@@ -1408,7 +1410,7 @@ describe('get /actions/record/${recordIds}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/actions/record/1234,5678',
+        path: `${UI_API_BASE_URI}/actions/record/1234,5678`,
         urlParams: {
             recordIds: ['1234', '5678'],
         },
@@ -1417,7 +1419,7 @@ describe('get /actions/record/${recordIds}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/actions/record/1234,5678',
+            path: `${UI_API_BASE_URI}/actions/record/1234,5678`,
             urlParams: {
                 recordIds: ['1234', '5678'],
             },
@@ -1440,7 +1442,7 @@ describe('get /related-list-info', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: '/related-list-info/Opportunity/Contact__r',
+                path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
                 urlParams: {
                     parentObjectApiName: 'Opportunity',
                     relatedListId: 'Contact__r',
@@ -1462,7 +1464,7 @@ describe('get /related-list-info', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: '/related-list-info/Opportunity/Contact__r',
+            path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
             urlParams: {
                 parentObjectApiName: 'Opportunity',
                 relatedListId: 'Contact__r',
@@ -1477,7 +1479,7 @@ describe('get /related-list-info', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: '/related-list-info/Opportunity',
+                path: `${UI_API_BASE_URI}/related-list-info/Opportunity`,
                 urlParams: {
                     parentObjectApiName: 'Opportunity',
                 },
@@ -1497,7 +1499,7 @@ describe('get /related-list-info', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: '/related-list-info/Opportunity',
+            path: `${UI_API_BASE_URI}/related-list-info/Opportunity`,
             urlParams: {
                 parentObjectApiName: 'Opportunity',
             },
@@ -1512,7 +1514,7 @@ describe('get /related-list-info/{parentObjectApiName}/{relatedListId}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/related-list-info/Opportunity/Contact__r',
+            path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
             urlParams: {
                 parentObjectApiName: 'Opportunity',
                 relatedListId: 'Contact__r',
@@ -1534,7 +1536,7 @@ describe('get /related-list-info/{parentObjectApiName}/{relatedListId}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/related-list-info/Opportunity/Contact__r',
+        path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
         urlParams: {
             parentObjectApiName: 'Opportunity',
             relatedListId: 'Contact__r',
@@ -1547,7 +1549,7 @@ describe('get /related-list-info/{parentObjectApiName}/{relatedListId}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/related-list-info/Opportunity/Contact__r',
+            path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
             urlParams: {
                 parentObjectApiName: 'Opportunity',
                 relatedListId: 'Contact__r',
@@ -1561,7 +1563,7 @@ describe('patch /related-list-info/{parentObjectApiName}/{relatedListId}', () =>
     testControllerInput(
         {
             method: 'patch',
-            path: '/related-list-info/Opportunity/Contact__r',
+            path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
             urlParams: {
                 parentObjectApiName: 'Opportunity',
                 relatedListId: 'Contact__r',
@@ -1605,13 +1607,13 @@ describe('patch /related-list-info/{parentObjectApiName}/{relatedListId}', () =>
 
     testRejectFetchResponse({
         method: 'patch',
-        path: '/related-list-info/Opportunity/Contact__r',
+        path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
     });
 
     testResolveResponse(
         {
             method: 'patch',
-            path: '/related-list-info/Opportunity/Contact__r',
+            path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
             urlParams: {
                 parentObjectApiName: 'Opportunity',
                 relatedListId: 'Contact__r',
@@ -1636,7 +1638,7 @@ describe('get /related-list-records/{parentRecordId}/{relatedListId}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/related-list-records/{parentRecordId}/{relatedListId}',
+            path: `${UI_API_BASE_URI}/related-list-records/{parentRecordId}/{relatedListId}`,
             urlParams: {
                 parentRecordId: '012T00000004MUHIA2',
                 relatedListId: 'Contact__r',
@@ -1666,7 +1668,7 @@ describe('get /related-list-records/{parentRecordId}/{relatedListId}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/related-list-records/{parentRecordId}/{relatedListId}',
+        path: `${UI_API_BASE_URI}/related-list-records/{parentRecordId}/{relatedListId}`,
         urlParams: {
             parentObjectId: '012T00000004MUHIA2',
             relatedListId: 'Contact__r',
@@ -1678,7 +1680,7 @@ describe('get /list-records/{objectApiName}/{listViewApiName}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/list-records/Account/AllAccounts',
+            path: `${UI_API_BASE_URI}/list-records/Account/AllAccounts`,
             urlParams: {
                 objectApiName: 'Account',
                 listViewApiName: 'AllAccounts',
@@ -1708,7 +1710,7 @@ describe('get /list-records/{objectApiName}/{listViewApiName}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/list-records/Account/AllAccounts',
+        path: `${UI_API_BASE_URI}/list-records/Account/AllAccounts`,
         urlParams: {
             objectApiName: 'Account',
             listViewApiName: 'AllAccounts',
@@ -1722,7 +1724,7 @@ describe('get /list-records/{objectApiName}/{listViewApiName}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/list-records/Account/AllAccounts',
+            path: `${UI_API_BASE_URI}/list-records/Account/AllAccounts`,
             urlParams: {
                 objectApiName: 'Account',
                 listViewApiName: 'AllAccounts',
@@ -1757,7 +1759,7 @@ describe('get /list-records/{listViewId}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/list-records/00B123456789012AAA',
+            path: `${UI_API_BASE_URI}/list-records/00B123456789012AAA`,
             urlParams: {
                 listViewId: '00B123456789012AAA',
             },
@@ -1785,7 +1787,7 @@ describe('get /list-records/{listViewId}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/list-records/00B123456789012AAA',
+        path: `${UI_API_BASE_URI}/list-records/00B123456789012AAA`,
         urlParams: {
             listViewId: '00B123456789012AAA',
         },
@@ -1794,7 +1796,7 @@ describe('get /list-records/{listViewId}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/list-records/00B123456789012AAA',
+            path: `${UI_API_BASE_URI}/list-records/00B123456789012AAA`,
             urlParams: {
                 listViewId: '00B123456789012AAA',
             },
@@ -1824,7 +1826,7 @@ describe('get /list-ui/{objectApiName}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/list-ui/Account',
+            path: `${UI_API_BASE_URI}/list-ui/Account`,
             urlParams: {
                 objectApiName: 'Account',
             },
@@ -1850,7 +1852,7 @@ describe('get /list-ui/{objectApiName}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/list-ui/Account',
+        path: `${UI_API_BASE_URI}/list-ui/Account`,
         urlParams: {
             objectApiName: 'Account',
         },
@@ -1859,7 +1861,7 @@ describe('get /list-ui/{objectApiName}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/list-ui/Account',
+            path: `${UI_API_BASE_URI}/list-ui/Account`,
             urlParams: {
                 objectApiName: 'Account',
             },
@@ -1888,7 +1890,7 @@ describe('get /list-ui/{objectApiName}/{listViewApiName}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/list-ui/Account/AllAccounts',
+            path: `${UI_API_BASE_URI}/list-ui/Account/AllAccounts`,
             urlParams: {
                 objectApiName: 'Account',
                 listViewApiName: 'AllAccounts',
@@ -1918,7 +1920,7 @@ describe('get /list-ui/{objectApiName}/{listViewApiName}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/list-ui/Account/AllAccounts',
+        path: `${UI_API_BASE_URI}/list-ui/Account/AllAccounts`,
         urlParams: {
             objectApiName: 'Account',
             listViewApiName: 'AllAccounts',
@@ -1932,7 +1934,7 @@ describe('get /list-ui/{objectApiName}/{listViewApiName}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/list-ui/Account/AllAccounts',
+            path: `${UI_API_BASE_URI}/list-ui/Account/AllAccounts`,
             urlParams: {
                 objectApiName: 'Account',
                 listViewApiName: 'AllAccounts',
@@ -1992,7 +1994,7 @@ describe('get /list-ui/{listViewId}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/list-ui/00B123456789012AAA',
+            path: `${UI_API_BASE_URI}/list-ui/00B123456789012AAA`,
             urlParams: {
                 listViewId: '00B123456789012AAA',
             },
@@ -2020,7 +2022,7 @@ describe('get /list-ui/{listViewId}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/list-ui/00B123456789012AAA',
+        path: `${UI_API_BASE_URI}/list-ui/00B123456789012AAA`,
         urlParams: {
             listViewId: '00B123456789012AAA',
         },
@@ -2029,7 +2031,7 @@ describe('get /list-ui/{listViewId}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/list-ui/00B123456789012AAA',
+            path: `${UI_API_BASE_URI}/list-ui/00B123456789012AAA`,
             urlParams: {
                 listViewId: '00B123456789012AAA',
             },
@@ -2087,7 +2089,7 @@ describe('get /mru-list-records/{objectApiName}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/mru-list-records/Account',
+            path: `${UI_API_BASE_URI}/mru-list-records/Account`,
             urlParams: {
                 objectApiName: 'Account',
             },
@@ -2115,7 +2117,7 @@ describe('get /mru-list-records/{objectApiName}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/mru-list-records/Account',
+        path: `${UI_API_BASE_URI}/mru-list-records/Account`,
         urlParams: {
             listViewId: 'Account',
         },
@@ -2124,7 +2126,7 @@ describe('get /mru-list-records/{objectApiName}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/mru-list-records/Account',
+            path: `${UI_API_BASE_URI}/mru-list-records/Account`,
             urlParams: {
                 objectApiName: 'Account',
             },
@@ -2154,7 +2156,7 @@ describe('get /mru-list-ui/{objectApiName}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/mru-list-ui/Account',
+            path: `${UI_API_BASE_URI}/mru-list-ui/Account`,
             urlParams: {
                 objectApiName: 'Account',
             },
@@ -2182,7 +2184,7 @@ describe('get /mru-list-ui/{objectApiName}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/mru-list-ui/Account',
+        path: `${UI_API_BASE_URI}/mru-list-ui/Account`,
         urlParams: {
             objectApiName: 'Account',
         },
@@ -2191,7 +2193,7 @@ describe('get /mru-list-ui/{objectApiName}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/mru-list-ui/Account',
+            path: `${UI_API_BASE_URI}/mru-list-ui/Account`,
             urlParams: {
                 objectApiName: 'Account',
             },
@@ -2249,7 +2251,7 @@ describe('get /record-defaults/create/{objectApiName}', () => {
     testControllerInput(
         {
             method: 'get',
-            path: '/record-defaults/create/Account',
+            path: `${UI_API_BASE_URI}/record-defaults/create/Account`,
             urlParams: {
                 objectApiName: 'Account',
             },
@@ -2273,7 +2275,7 @@ describe('get /record-defaults/create/{objectApiName}', () => {
 
     testRejectFetchResponse({
         method: 'get',
-        path: '/record-defaults/create/Account',
+        path: `${UI_API_BASE_URI}/record-defaults/create/Account`,
         urlParams: {
             objectApiName: 'Account',
         },
@@ -2287,7 +2289,7 @@ describe('get /record-defaults/create/{objectApiName}', () => {
     testResolveResponse(
         {
             method: 'get',
-            path: '/record-defaults/create/Account',
+            path: `${UI_API_BASE_URI}/record-defaults/create/Account`,
             urlParams: {
                 objectApiName: 'Account',
             },
@@ -2302,5 +2304,29 @@ describe('get /record-defaults/create/{objectApiName}', () => {
             objectInfos: {},
             record: {},
         }
+    );
+});
+
+describe('get /connect/communities/{communityId}/navigation-menu/navigation-menu-items', () => {
+    testControllerInput(
+        {
+            path: `${CONNECT_BASE_URI}/communities/1234567890ABCDE/navigation-menu/navigation-menu-items`,
+        },
+        [
+            'NavigationMenuController.getCommunityNavigationMenu',
+            {},
+            { background: false, hotspot: true, longRunning: false },
+        ]
+    );
+
+    testRejectFetchResponse({
+        path: `${CONNECT_BASE_URI}/communities/1234567890ABCDE/navigation-menu/navigation-menu-items`,
+    });
+
+    testResolveResponse(
+        {
+            path: `${CONNECT_BASE_URI}/communities/1234567890ABCDE/navigation-menu/navigation-menu-items`,
+        },
+        {}
     );
 });

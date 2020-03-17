@@ -18,7 +18,6 @@ export {
 export { factory as GetRecordAvatars } from './wire/getRecordAvatars';
 export { factory as GetRecordUi } from './wire/getRecordUi';
 export { factory as GetPicklistValues } from './wire/getPicklistValues';
-export { factory as GetPicklistValuesByRecordType } from './wire/getPicklistValuesByRecordType';
 export {
     factory as UpdateRecord,
     ClientOptions as UpdateRecordClientOptions,
@@ -31,7 +30,10 @@ export { createRecordNativeAdapterFactory as CreateRecord_Native } from './gener
 export { getLayoutNativeAdapterFactory as GetLayout_Native } from './generated/adapters/getLayout';
 export { getLookupRecordsNativeAdapterFactory as GetLookupRecords_Native } from './generated/adapters/getLookupRecords';
 export { getPicklistValuesNativeAdapterFactory as GetPicklistValues_Native } from './generated/adapters/getPicklistValues';
-export { getPicklistValuesByRecordTypeNativeAdapterFactory as GetPicklistValuesByRecordType_Native } from './generated/adapters/getPicklistValuesByRecordType';
+export {
+    getPicklistValuesByRecordTypeAdapterFactory as GetPicklistValuesByRecordType,
+    getPicklistValuesByRecordTypeNativeAdapterFactory as GetPicklistValuesByRecordType_Native,
+} from './generated/adapters/getPicklistValuesByRecordType';
 export {
     getRelatedListInfoAdapterFactory as GetRelatedListInfo,
     getRelatedListInfoNativeAdapterFactory as GetRelatedListInfo_Native,

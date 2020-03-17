@@ -19,7 +19,7 @@ export interface GetPicklistValuesConfig {
     fieldApiName: string;
 }
 
-export const path = picklistValuesRepresentationSelect().selections;
+const path = picklistValuesRepresentationSelect().selections;
 
 export function buildNetworkSnapshot(lds: LDS, config: GetPicklistValuesConfig) {
     const { recordTypeId, fieldApiName } = config;

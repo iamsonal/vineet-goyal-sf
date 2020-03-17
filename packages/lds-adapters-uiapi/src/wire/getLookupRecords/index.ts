@@ -13,7 +13,7 @@ import {
 import { getFieldId, FieldId } from '../../primitives/FieldId';
 import { isSpanningRecord } from '../../selectors/record';
 import { ObjectId } from '../../primitives/ObjectId';
-import getLookupRecordsResourceRequest from '../../generated/resources/getUiApiLookupsByObjectApiNameAndFieldApiNameAndTargetApiName';
+import getLookupRecordsResourceRequest from '../../generated/resources/getUiApiLookupsByFieldApiNameAndObjectApiNameAndTargetApiName';
 import { deepFreeze } from '../../util/deep-freeze';
 import { RecordRepresentation } from '../../generated/types/RecordRepresentation';
 

@@ -29,9 +29,9 @@ import {
     getMruListUiNativeAdapterFactory,
 } from '../../generated/adapters/getMruListUi';
 import getUiApiListRecordsByListViewId from '../../generated/resources/getUiApiListRecordsByListViewId';
-import getUiApiListRecordsByObjectApiNameAndListViewApiName from '../../generated/resources/getUiApiListRecordsByObjectApiNameAndListViewApiName';
+import getUiApiListRecordsByObjectApiNameAndListViewApiName from '../../generated/resources/getUiApiListRecordsByListViewApiNameAndObjectApiName';
 import getUiApiListUiByListViewId from '../../generated/resources/getUiApiListUiByListViewId';
-import getUiApiListUiByObjectApiNameAndListViewApiName from '../../generated/resources/getUiApiListUiByObjectApiNameAndListViewApiName';
+import getUiApiListUiByObjectApiNameAndListViewApiName from '../../generated/resources/getUiApiListUiByListViewApiNameAndObjectApiName';
 import { ListInfoRepresentation } from '../../generated/types/ListInfoRepresentation';
 import {
     keyBuilder as ListRecordCollectionRepresentation_keyBuilder,

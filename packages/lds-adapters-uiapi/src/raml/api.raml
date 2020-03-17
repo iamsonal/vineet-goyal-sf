@@ -843,6 +843,64 @@ types:
       label:
         description: Form section label.
         type: string
+  GraphQLErrorLocation:
+    description: The location where a GraphQL error occurred.
+    type: object
+    properties:
+      column:
+        description: The column number where the GraphQL error occurred.
+        type: integer
+      line:
+        description: The line number where the GraphQL error occurred.
+        type: integer
+  GraphQLErrorRepresentation:
+    description: A GraphQL Error.
+    type: object
+    properties:
+      locations:
+        description: The locations where the error occurred.
+        type: array
+        items:
+          type: GraphQLErrorLocation
+      message:
+        description: The reason the error occurred.
+        type: string
+      paths:
+        description: The paths where the error occurred.
+        type: array
+        items:
+          type: object
+  GraphQLInputRepresentation:
+    description: A GraphQL query and any associated variables.
+    type: object
+    properties:
+      operationName:
+        description: The operation that is being executed.
+        type: string
+      query:
+        description: The GraphQL query.
+        type: string
+      variables:
+        description: The variables for the query.
+        type: object
+        properties:
+          //:
+            type: object
+  GraphQLRepresentation:
+    description: GraphQL query result.
+    type: object
+    properties:
+      data:
+        description: The data of the GraphQL query result.
+        type: object
+        properties:
+          //:
+            type: object
+      errors:
+        description: The errors that resulted from this query.
+        type: array
+        items:
+          type: GraphQLErrorRepresentation
   LeadStatusPicklistValueAttributesRepresentation:
     description: Additional picklist value attributes for lead statuses.
     discriminatorValue: LeadStatus # TODO: Hand Rolled
@@ -1851,6 +1909,13 @@ types:
             properties:
               //:
                 type: string
+  RecommendedResultRepresentation:
+    description: Recommended result.
+    type: object
+    properties:
+      record:
+        description: The recommended result record's object.
+        type: RecordRepresentation
   RecordCollectionRepresentation:
     description: Record Collection Representation.
     discriminator: ''
@@ -1884,12 +1949,24 @@ types:
           type: RecordRepresentation
   RecordDefaultsRepresentation:
     description: Record defaults.
-    discriminator: ''
     type: object
     properties:
       layout:
         description: Record layout.
-        type: RecordLayoutRepresentation | nil # TODO: "nil" union hand rolled
+        type: RecordLayoutRepresentation | nil
+      objectInfos:
+        description: Object metadata.
+        type: object
+        properties:
+          //:
+            type: ObjectInfoRepresentation
+      record:
+        description: Pre-populated record data.
+        type: RecordCreateDefaultRecordRepresentation # TODO: hand rolled
+  RecordDefaultsTemplateRepresentation:
+    description: Record defaults.
+    type: object
+    properties:
       objectInfos:
         description: Object metadata.
         type: object
@@ -2398,6 +2475,25 @@ types:
       result:
         description: object wrapper around inner representation
         type: RelatedListRecordCountRepresentation
+  RelatedListRecordCountCollectionRepresentation:
+    description: RelatedListRecordCountCollectionRepresentation
+    type: object
+    properties:
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      parentRecordId:
+        description: The parent record id requested by the caller.
+        type: string
+      relatedListNames:
+        description: The related list names requested by the caller.
+        type: string
+      results:
+        description: Collection of batch result items. One for each request input.
+        type: array
+        items:
+          type: RelatedListRecordCountRepresentation
   RelatedListRecordCountRepresentation:
     description: RelatedListRecordCountRepresentation
     discriminator: ''
@@ -3710,6 +3806,20 @@ types:
       apiName:
         type: string
         required: true
+  /graphql:
+    post:
+      description: Execute a GraphQL query.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: GraphQLRepresentation
+      body:
+        application/json:
+          type: GraphQLInputRepresentation
+          required: false
+          (oas-body-name): queryInput
   /layout/{objectApiName}:
     get:
       description: Retrieve a specific layout.
@@ -3835,11 +3945,11 @@ types:
             body:
               application/json:
                 type: ListInfoRepresentation
-      uriParameters: # TODO: Order changed from original RAML to generate correct resource files
-        objectApiName:
+      uriParameters:
+        listViewApiName:
           type: string
           required: true
-        listViewApiName:
+        objectApiName:
           type: string
           required: true
   /list-records:
@@ -3915,11 +4025,11 @@ types:
             items:
               type: string
               (oas-collectionFormat): csv
-      uriParameters: # TODO: Order changed from original RAML to generate correct resource files
-        objectApiName:
+      uriParameters:
+        listViewApiName:
           type: string
           required: true
-        listViewApiName:
+        objectApiName:
           type: string
           required: true
   /list-ui:
@@ -4021,11 +4131,11 @@ types:
             items:
               type: string
               (oas-collectionFormat): csv
-      uriParameters: # TODO: Order changed from original RAML to generate correct resource files
-        objectApiName:
+      uriParameters:
+        listViewApiName:
           type: string
           required: true
-        listViewApiName:
+        objectApiName:
           type: string
           required: true
   /lookups/{objectApiName}/{fieldApiName}:
@@ -4060,11 +4170,11 @@ types:
             - Recent
             - Search
             - TypeAhead
-    uriParameters: # TODO: Order changed from original RAML to generate correct resource files
-      objectApiName:
+    uriParameters:
+      fieldApiName:
         type: string
         required: true
-      fieldApiName:
+      objectApiName:
         type: string
         required: true
   /lookups/{objectApiName}/{fieldApiName}/{targetApiName}:
@@ -4099,11 +4209,11 @@ types:
             - Recent
             - Search
             - TypeAhead
-    uriParameters: # TODO: Order changed from original RAML to generate correct resource files
-      objectApiName:
+    uriParameters:
+      fieldApiName:
         type: string
         required: true
-      fieldApiName:
+      objectApiName:
         type: string
         required: true
       targetApiName:
@@ -4280,14 +4390,14 @@ types:
               body:
                 application/json:
                   type: PicklistValuesRepresentation
-        uriParameters: # TODO: Order changed from original RAML to generate correct resource files
+        uriParameters:
+          fieldApiName:
+            type: string
+            required: true
           objectApiName:
             type: string
             required: true
           recordTypeId:
-            type: string
-            required: true
-          fieldApiName:
             type: string
             required: true
       /validation-rules-info:
@@ -4484,6 +4594,53 @@ types:
         objectApiName:
           type: string
           required: true
+      /template:
+        /clone/{recordId}:
+          get:
+            description: Retrieve default values for fields for cloning a record with optional record type.
+            responses:
+              '200':
+                description: Success
+                body:
+                  application/json:
+                    type: RecordDefaultsTemplateRepresentation
+            queryParameters:
+              optionalFields:
+                type: array
+                required: false
+                items:
+                  type: string
+                  (oas-collectionFormat): csv
+              recordTypeId:
+                type: string
+                required: false
+          uriParameters:
+            recordId:
+              type: string
+              required: true
+        /create/{objectApiName}:
+          get:
+            description: Retrieve default values for fields for a new record of a particular object and optional record type without layouts.
+            responses:
+              '200':
+                description: Success
+                body:
+                  application/json:
+                    type: RecordDefaultsTemplateRepresentation
+            queryParameters:
+              optionalFields:
+                type: array
+                required: false
+                items:
+                  type: string
+                  (oas-collectionFormat): csv
+              recordTypeId:
+                type: string
+                required: false
+          uriParameters:
+            objectApiName:
+              type: string
+              required: true
   /record-ui/{recordIds}:
     get:
       description: Retrieve presentation-ready metadata and data about specific records.
@@ -4788,6 +4945,10 @@ types:
             body:
               application/json:
                 type: RelatedListRecordCountRepresentation
+        queryParameters:
+          maxCount:
+            type: integer
+            required: false
       uriParameters:
         parentRecordId:
           type: string
@@ -4796,6 +4957,29 @@ types:
           type: string
           required: true
   /related-list-info:
+    /batch/{parentObjectApiName}/{relatedListNames}:
+      get:
+        description: Retrieve a batch of related list info.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SimplifiedBatchRepresentation
+        queryParameters:
+          recordTypeId:
+            type: string
+            required: false
+      uriParameters:
+        parentObjectApiName:
+          type: string
+          required: true
+        relatedListNames:
+          type: array
+          required: true
+          items:
+            type: string
+            (oas-collectionFormat): csv
     /{parentObjectApiName}:
       get:
         description: Retrieve collection of related list summaries.
@@ -4887,47 +5071,114 @@ types:
         relatedListId:
           type: string
           required: true
-  /related-list-records/{parentRecordId}/{relatedListId}:
+  /related-list-records:
+    /batch/{parentRecordId}/{relatedListIds}:
+      get:
+        description: Returns a batch of record data to populate several related list.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: BatchRepresentation
+        queryParameters:
+          fields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          optionalFields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          pageSize:
+            type: integer
+            required: false
+          sortBy:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+      uriParameters:
+        parentRecordId:
+          type: string
+          required: true
+        relatedListIds:
+          type: array
+          required: true
+          items:
+            type: string
+            (oas-collectionFormat): csv
+    /{parentRecordId}/{relatedListId}:
+      get:
+        description: Returns record data to populate a related list.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RelatedListRecordCollectionRepresentation
+        queryParameters:
+          fields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          optionalFields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          pageSize:
+            type: integer
+            required: false
+          pageToken:
+            type: string
+            required: false
+          sortBy:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+      uriParameters:
+        parentRecordId:
+          type: string
+          required: true
+        relatedListId:
+          type: string
+          required: true
+  /search/recommended-result:
     get:
-      description: Returns record data to populate a related list.
+      description: Returns recommended result record for a given search query.
       responses:
         '200':
           description: Success
           body:
             application/json:
-              type: RelatedListRecordCollectionRepresentation
+              type: RecommendedResultRepresentation
       queryParameters:
-        fields:
+        layoutTypes:
+          description: Specifies the fields to return
           type: array
           required: false
           items:
             type: string
+            enum:
+              - Compact
+              - Full
+              - Mdp
             (oas-collectionFormat): csv
-        optionalFields:
-          type: array
-          required: false
-          items:
-            type: string
-            (oas-collectionFormat): csv
-        pageSize:
-          type: integer
-          required: false
-        pageToken:
+        q:
+          description: A Search Term
           type: string
           required: false
-        sortBy:
-          type: array
-          required: false
-          items:
-            type: string
-            (oas-collectionFormat): csv
-    uriParameters:
-      parentRecordId:
-        type: string
-        required: true
-      relatedListId:
-        type: string
-        required: true
   /themes/active:
     get:
       description: Retrieve the active theme.

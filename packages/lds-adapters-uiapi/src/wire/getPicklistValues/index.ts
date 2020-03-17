@@ -4,7 +4,7 @@ import {
     adapterName as getPicklistValuesAdapterName,
     validateAdapterConfig,
 } from '../../generated/adapters/getPicklistValues';
-import getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName from '../../generated/resources/getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName';
+import getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName from '../../generated/resources/getUiApiObjectInfoPicklistValuesByFieldApiNameAndObjectApiNameAndRecordTypeId';
 import {
     PicklistValuesRepresentation,
     keyBuilder as picklistValuesKeyBuilder,

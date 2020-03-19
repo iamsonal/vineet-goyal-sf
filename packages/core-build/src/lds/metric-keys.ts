@@ -35,6 +35,18 @@ export const CACHE_MISS_COUNT: MetricsKey = {
     },
 };
 
+export const GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT: MetricsKey = {
+    get() {
+        return { owner: METRIC_KEY_OWNER, name: 'get-record-notify-change-allow-count' };
+    },
+};
+
+export const GET_RECORD_NOTIFY_CHANGE_DROP_COUNT: MetricsKey = {
+    get() {
+        return { owner: METRIC_KEY_OWNER, name: 'get-record-notify-change-drop-count' };
+    },
+};
+
 export const STORE_BROADCAST_DURATION: MetricsKey = {
     get() {
         return { owner: METRIC_KEY_OWNER, name: 'store-broadcast-duration' };

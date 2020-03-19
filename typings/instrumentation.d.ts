@@ -50,6 +50,9 @@ declare module 'instrumentation/service' {
 
     export function time(): number;
 
+    export function perfStart(name: string, attributes?: any, eventSource?: string): string;
+    export function perfEnd(name: string, attributes?: any, eventSource?: string): void;
+
     export function mark(namespace: string, name: string, context?: any): void;
     export function markStart(namespace: string, name: string, context?: any): void;
     export function markEnd(namespace: string, name: string, context?: any): void;

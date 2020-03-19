@@ -1,8 +1,10 @@
-import { LDS, Store, AdapterFactory, Adapter } from '@ldsjs/engine';
-import { register, bindWireRefresh } from '@ldsjs/lwc-lds';
-import * as wireService from 'wire-service';
-
+import { Adapter, AdapterFactory, LDS, Store } from '@ldsjs/engine';
+import { bindWireRefresh, register } from '@ldsjs/lwc-lds';
 import { GenerateGetApexWireAdapter, GetApexInvoker } from '@salesforce/lds-adapters-apex';
+import { GetProduct, GetProductCategoryPath } from '@salesforce/lds-adapters-commerce-catalog';
+import { ProductSearch } from '@salesforce/lds-adapters-commerce-search';
+import { GetProductPrice } from '@salesforce/lds-adapters-commerce-store-pricing';
+import { GetCommunityNavigationMenu } from '@salesforce/lds-adapters-community-navigation-menu';
 import {
     CreateRecord,
     DeleteRecord,
@@ -23,29 +25,30 @@ import {
     GetRecordNotifyChange,
     GetRecordUi,
     GetRelatedListActions,
+    GetRelatedListCount,
     GetRelatedListInfo,
-    GetRelatedListsInfo,
     GetRelatedListRecordActions,
     GetRelatedListRecords,
-    GetRelatedListCount,
     GetRelatedListsCount,
+    GetRelatedListsInfo,
     MRU,
+    UpdateLayoutUserState,
     UpdateRecord,
     UpdateRecordAvatar,
-    UpdateLayoutUserState,
     UpdateRelatedListInfo,
 } from '@salesforce/lds-adapters-uiapi';
-
-import { GetCommunityNavigationMenu } from '@salesforce/lds-adapters-community-navigation-menu';
-
-import { GetProduct, GetProductCategoryPath } from '@salesforce/lds-adapters-commerce-catalog';
-import { GetProductPrice } from '@salesforce/lds-adapters-commerce-store-pricing';
-import { ProductSearch } from '@salesforce/lds-adapters-commerce-search';
-
+import * as wireService from 'wire-service';
+import { throttle } from '../utils';
 import AdsBridge from './ads-bridge';
-import networkAdapter from './network-adapter';
+import {
+    incrementGetRecordNotifyChangeAllowCount,
+    incrementGetRecordNotifyChangeDropCount,
+    instrumentAdapter,
+    instrumentNetwork,
+    setupInstrumentation,
+} from './instrumentation';
 import { setupMetadataWatcher } from './metadata';
-import { setupInstrumentation, instrumentAdapter, instrumentNetwork } from './instrumentation';
+import networkAdapter from './network-adapter';
 
 const store = new Store();
 const lds = new LDS(store, networkAdapter, { instrument: instrumentNetwork });
@@ -224,6 +227,18 @@ export const updateLayoutUserState = (
     ).then(() => undefined);
 };
 
+/**
+ * Record Util Pure Functions
+ */
+export {
+    createRecordInputFilteredByEditedFields,
+    generateRecordInputForCreate,
+    generateRecordInputForUpdate,
+    getFieldDisplayValue,
+    getFieldValue,
+    getRecordInput,
+    getSObjectValue,
+} from 'lds-static-functions';
 export { MRU };
 export { getApexInvoker };
 
@@ -275,23 +290,13 @@ const getApexInvoker = function(
 };
 
 /**
- * Record Util Pure Functions
- */
-export {
-    createRecordInputFilteredByEditedFields,
-    generateRecordInputForCreate,
-    generateRecordInputForUpdate,
-    getFieldDisplayValue,
-    getFieldValue,
-    getRecordInput,
-    getSObjectValue,
-} from 'lds-static-functions';
-
-/**
  * Misc.
  */
 export const refresh = bindWireRefresh(lds);
 
 export const adsBridge = new AdsBridge(lds);
 
-export const getRecordNotifyChange = GetRecordNotifyChange(lds);
+export const getRecordNotifyChange = throttle(60, 60000, GetRecordNotifyChange(lds), {
+    allowFunction: incrementGetRecordNotifyChangeAllowCount,
+    dropFunction: incrementGetRecordNotifyChangeDropCount,
+});

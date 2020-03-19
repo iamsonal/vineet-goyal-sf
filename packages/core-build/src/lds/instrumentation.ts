@@ -9,6 +9,8 @@ import {
     MetricsServiceMark,
     MetricsServicePlugin,
     percentileHistogram,
+    perfStart,
+    perfEnd,
     registerCacheStats,
     registerPeriodicLogger,
     registerPlugin,
@@ -20,6 +22,8 @@ import {
 import {
     CACHE_HIT_COUNT,
     CACHE_MISS_COUNT,
+    GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT,
+    GET_RECORD_NOTIFY_CHANGE_DROP_COUNT,
     STORE_BROADCAST_DURATION,
     STORE_INGEST_DURATION,
     STORE_LOOKUP_DURATION,
@@ -40,12 +44,15 @@ interface LdsStatsReport {
 const NAMESPACE = 'lds';
 const STORE_STATS_MARK_NAME = 'store-stats';
 const RUNTIME_PERF_MARK_NAME = 'runtime-perf';
-const NETWORK_MARK_NAME = 'network';
+const NETWORK_TRANSACTION_NAME = 'lds-network';
 const cacheHitMetric = counter(CACHE_HIT_COUNT);
 const cacheMissMetric = counter(CACHE_MISS_COUNT);
+const getRecordNotifyChangeAllowMetric = counter(GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT);
+const getRecordNotifyChangeDropMetric = counter(GET_RECORD_NOTIFY_CHANGE_DROP_COUNT);
 const storeSizeMetric = percentileHistogram(STORE_SIZE_COUNT);
 const storeWatchSubscriptionsMetric = percentileHistogram(STORE_WATCH_SUBSCRIPTIONS_COUNT);
 const storeSnapshotSubscriptionsMetric = percentileHistogram(STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT);
+
 /**
  * Aura Metrics Service plugin in charge of aggregating all the LDS performance marks before they
  * get sent to the server. All the marks are summed by operation type and the aggregated result
@@ -200,13 +207,15 @@ export function setupInstrumentation(lds: LDS, store: Store): void {
 }
 
 /**
- * Add a network mark to the metrics service.
+ * Add a network transaction to the metrics service.
+ * Injected to LDS for network handling instrumentation.
  *
- * @param context The mark context.
+ * @param context The transaction context.
  */
 
 export function instrumentNetwork(context: unknown): void {
-    mark(NETWORK_MARK_NAME, context);
+    perfStart(NETWORK_TRANSACTION_NAME);
+    perfEnd(NETWORK_TRANSACTION_NAME, context);
 }
 
 /**
@@ -256,4 +265,12 @@ export function instrumentAdapter<C, D>(name: string, adapter: Adapter<C, D>): A
 
         return result;
     };
+}
+
+export function incrementGetRecordNotifyChangeAllowCount(): void {
+    getRecordNotifyChangeAllowMetric.increment(1);
+}
+
+export function incrementGetRecordNotifyChangeDropCount(): void {
+    getRecordNotifyChangeDropMetric.increment(1);
 }

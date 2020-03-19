@@ -70,6 +70,14 @@ function coerceKeyParams(config: KeyParams): KeyParams {
     return coercedConfig;
 }
 
+const NOTIFY_CHANGE_NETWORK_KEY = 'notify-change-network';
+
+const notifyChangeNetworkRejectInstrumentParamBuilder = () => {
+    return {
+        [NOTIFY_CHANGE_NETWORK_KEY]: 'error',
+    };
+};
+
 export const notifyChangeFactory = (lds: LDS) => {
     return function getUiApiRecordsByRecordIdNotifyChange(configs: KeyParams[]): void {
         for (let i = 0, len = configs.length; i < len; i++) {
@@ -82,12 +90,15 @@ export const notifyChangeFactory = (lds: LDS) => {
                 continue;
             }
             // retrieve data (Representation) from GraphNode and use createResourceRequestFromRepresentation to build refresh resource request from Representation
-            const representation = (node as GraphNode<RecordRepresentation>).retrieve();
+            const representation: RecordRepresentation = (node as GraphNode<
+                RecordRepresentation
+            >).retrieve();
             const optionalFields = getTrackedFields(lds, representation.id);
             const refreshRequest = createResourceRequestFromRepresentation(
                 representation,
                 optionalFields
             );
+            const existingWeakEtag = representation.weakEtag;
             // dispatch resource request, then ingest and broadcast
             lds.dispatchResourceRequest<RecordRepresentation>(refreshRequest).then(
                 response => {
@@ -99,6 +110,13 @@ export const notifyChangeFactory = (lds: LDS) => {
                     >(refreshRequest.key)!;
                     markMissingOptionalFields(recordNode, optionalFields);
                     lds.storeBroadcast();
+                    const notifyChangeNetworkResolveInstrumentParamBuilder = () => {
+                        return {
+                            [NOTIFY_CHANGE_NETWORK_KEY]:
+                                existingWeakEtag !== (body as RecordRepresentation).weakEtag,
+                        };
+                    };
+                    lds.instrument(notifyChangeNetworkResolveInstrumentParamBuilder);
                 },
                 (error: FetchResponse<unknown>) => {
                     lds.storeIngestFetchResponse(
@@ -107,6 +125,7 @@ export const notifyChangeFactory = (lds: LDS) => {
                         RecordRepresentationTTL
                     );
                     lds.storeBroadcast();
+                    lds.instrument(notifyChangeNetworkRejectInstrumentParamBuilder);
                 }
             );
         }

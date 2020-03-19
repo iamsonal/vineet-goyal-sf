@@ -1,7 +1,12 @@
 'use strict';
 
-import { karmaNetworkAdapter, countNetworkCalls } from 'lds';
-import { clearCache, flushPromises, skipPromiseForNetworkResponse } from 'impl-test-utils';
+import { karmaNetworkAdapter } from 'lds';
+import {
+    clearCache,
+    flushPromises,
+    skipPromiseForNetworkResponse,
+    countNetworkCalls,
+} from 'impl-test-utils';
 import { createElement } from 'lwc';
 import timekeeper from 'timekeeper';
 

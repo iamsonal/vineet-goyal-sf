@@ -1,4 +1,1 @@
-export {
-    getProductPriceAdapterFactory as GetProductPrice,
-    getProductPriceNativeAdapterFactory as GetProductPrice_Native,
-} from './generated/adapters/getProductPrice';
+export { getProductPriceAdapterFactory as GetProductPrice } from './generated/adapters/getProductPrice';

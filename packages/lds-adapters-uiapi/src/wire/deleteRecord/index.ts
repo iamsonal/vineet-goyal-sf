@@ -32,15 +32,3 @@ export const factory = (lds: LDS) => (recordId: unknown) => {
         }
     );
 };
-
-// TODO W-6703470 - deleteRecord should get generated and this hand-written
-// function should put "recordId" into a config object envelope and then
-// return the generated adapter factory using that config
-export function deleteRecordNativeAdapterFactory(recordId: unknown) {
-    const coercedRecordId = coerceRecordId18(recordId);
-
-    return {
-        name: 'deleteRecord',
-        config: { recordId: coercedRecordId },
-    };
-}

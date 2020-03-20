@@ -2,6 +2,7 @@ import path from 'path';
 import babel from 'rollup-plugin-babel';
 import typescript from 'rollup-plugin-typescript2';
 import resolve from 'rollup-plugin-node-resolve';
+import replace from 'rollup-plugin-replace';
 
 const compatBabelPlugin = babel({
     presets: [
@@ -110,12 +111,21 @@ function ldsConfig(config) {
     };
 }
 
-function ldsNativeProxyConfig() {
+function ldsWebviewConfig() {
     return {
-        input: path.join(__dirname, 'karma', 'ldsNativeProxy.js'),
-        plugins: [resolve()],
+        input: path.join(__dirname, 'karma', 'lds.js'),
+        plugins: [
+            replace({
+                values: {
+                    '@salesforce/lds-karma-config/lds-setup':
+                        '@salesforce/lds-karma-config/lds-webview-setup',
+                },
+                delimiters: ['', ''],
+            }),
+            resolve(),
+        ],
         output: {
-            file: getTargetPath('ldsNativeProxy.js', false),
+            file: getTargetPath('lds-webview.js', false),
             format: 'umd',
             name: 'lds', // use same name as browser so it gets swapped in properly
             globals: {
@@ -147,5 +157,5 @@ module.exports = [
     uiApiTestSetupConfig({ compat: true }),
     ldsConfig({ compat: false }),
     ldsConfig({ compat: true }),
-    ldsNativeProxyConfig(),
+    ldsWebviewConfig(),
 ];

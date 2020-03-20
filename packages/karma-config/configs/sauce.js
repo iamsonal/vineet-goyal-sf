@@ -1,6 +1,6 @@
 const browserConfig = require('./browser');
 const browserCompatConfig = require('./browser-compat');
-const nativeConfig = require('./native');
+const webviewConfig = require('./webview');
 
 const SAUCE_BROWSERS = {
     sl_chrome_latest: {
@@ -33,7 +33,7 @@ const SAUCE_COMPAT_BROWSERS = {
     },
 };
 
-const SAUCE_NATIVE_DEVICES = {
+const SAUCE_WEBVIEW_DEVICES = {
     sl_android: {
         base: 'SauceLabs',
         deviceName: 'Android GoogleAPI Emulator',
@@ -48,11 +48,11 @@ const SAUCE_NATIVE_DEVICES = {
 };
 
 module.exports = function(config) {
-    const native = Boolean(config.native);
+    const webview = Boolean(config.webview);
     const compat = Boolean(config.compat);
 
-    if (native) {
-        nativeConfig(config);
+    if (webview) {
+        webviewConfig(config);
     } else if (compat) {
         browserCompatConfig(config);
     } else {
@@ -87,8 +87,8 @@ module.exports = function(config) {
         };
     }
 
-    const browsers = native
-        ? SAUCE_NATIVE_DEVICES
+    const browsers = webview
+        ? SAUCE_WEBVIEW_DEVICES
         : compat
         ? SAUCE_COMPAT_BROWSERS
         : SAUCE_BROWSERS;

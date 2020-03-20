@@ -10,24 +10,16 @@ import {
 import { refreshable, untrustedIsObject } from '../../generated/adapters/adapter-utils';
 import {
     GetListUiByApiNameConfig,
-    getListUiByApiNameNativeAdapterFactory,
     getListUiByApiName_ConfigPropertyNames,
     validateAdapterConfig as getListUiByApiName_validateAdapterConfig,
 } from '../../generated/adapters/getListUiByApiName';
 import {
     GetListUiByListViewIdConfig,
-    getListUiByListViewIdNativeAdapterFactory,
     getListUiByListViewId_ConfigPropertyNames,
     validateAdapterConfig as getListUiByListViewId_validateAdapterConfig,
 } from '../../generated/adapters/getListUiByListViewId';
-import {
-    GetListViewSummaryCollectionConfig,
-    getListViewSummaryCollectionNativeAdapterFactory,
-} from '../../generated/adapters/getListViewSummaryCollection';
-import {
-    GetMruListUiConfig,
-    getMruListUiNativeAdapterFactory,
-} from '../../generated/adapters/getMruListUi';
+import { GetListViewSummaryCollectionConfig } from '../../generated/adapters/getListViewSummaryCollection';
+import { GetMruListUiConfig } from '../../generated/adapters/getMruListUi';
 import getUiApiListRecordsByListViewId from '../../generated/resources/getUiApiListRecordsByListViewId';
 import getUiApiListRecordsByObjectApiNameAndListViewApiName from '../../generated/resources/getUiApiListRecordsByListViewApiNameAndObjectApiName';
 import getUiApiListUiByListViewId from '../../generated/resources/getUiApiListUiByListViewId';
@@ -571,27 +563,3 @@ export const factory: AdapterFactory<
         return null;
     };
 };
-
-export function getListUiNativeAdapterFactory(untrustedConfig: unknown) {
-    if (looksLikeGetMruListUiConfig(untrustedConfig)) {
-        const mruConfig = { ...untrustedConfig };
-        // the symbol in the listViewApiName is just there so getListUi can recognize
-        // the request as MRU, should be removed before passing to MRU adapter
-        delete mruConfig.listViewApiName;
-        return getMruListUiNativeAdapterFactory(mruConfig);
-    }
-
-    if (looksLikeGetListUiByListViewIdConfig(untrustedConfig)) {
-        return getListUiByListViewIdNativeAdapterFactory(untrustedConfig);
-    }
-
-    if (looksLikeGetListUiByApiNameConfig(untrustedConfig)) {
-        return getListUiByApiNameNativeAdapterFactory(untrustedConfig);
-    }
-
-    if (looksLikeGetListViewSummaryCollectionConfig(untrustedConfig)) {
-        return getListViewSummaryCollectionNativeAdapterFactory(untrustedConfig);
-    }
-
-    return null;
-}

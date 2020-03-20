@@ -1,4 +1,1 @@
-export {
-    getCommunityNavigationMenuAdapterFactory as GetCommunityNavigationMenu,
-    getCommunityNavigationMenuNativeAdapterFactory as GetCommunityNavigationMenu_Native,
-} from './generated/adapters/getCommunityNavigationMenu';
+export { getCommunityNavigationMenuAdapterFactory as GetCommunityNavigationMenu } from './generated/adapters/getCommunityNavigationMenu';

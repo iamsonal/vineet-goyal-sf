@@ -45,11 +45,11 @@ function browserTestUtilsConfig(config) {
     };
 }
 
-function nativeTestUtilsConfig() {
+function webviewTestUtilsConfig() {
     return {
-        input: path.join(__dirname, 'utils', 'native', 'native-test-utils.js'),
+        input: path.join(__dirname, 'utils', 'webview', 'webview-test-utils.js'),
         output: {
-            file: getTargetPath('native-test-utils.js', false),
+            file: getTargetPath('webview-test-utils.js', false),
             format: 'umd',
             name: implementationTestUtilsName,
             globals: {
@@ -118,7 +118,7 @@ module.exports = [
     browserTestUtilsConfig({ compat: false }),
     browserTestUtilsConfig({ compat: true }),
 
-    nativeTestUtilsConfig(),
+    webviewTestUtilsConfig(),
 
     getLwcLds({ compat: false }),
     getLwcLds({ compat: true }),

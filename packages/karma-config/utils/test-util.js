@@ -1,12 +1,7 @@
 'use strict';
 
-import { karmaNetworkAdapter } from 'lds';
-import {
-    clearCache,
-    flushPromises,
-    skipPromiseForNetworkResponse,
-    countNetworkCalls,
-} from 'impl-test-utils';
+import { karmaNetworkAdapter, store } from 'lds';
+import { countNetworkCalls } from 'impl-test-utils';
 import { createElement } from 'lwc';
 import timekeeper from 'timekeeper';
 
@@ -106,33 +101,21 @@ function mockNetworkSequence(adapter, args, responses, headers = []) {
 
                 const header = headers[index] ? clone(headers[index]) : null;
                 if (response.reject) {
-                    const rejectResult = {
+                    return Promise.reject({
                         ...FETCH_RESPONSE_ERROR,
                         status: response.status || FETCH_RESPONSE_ERROR.status,
                         statusText: response.statusText || FETCH_RESPONSE_ERROR.statusText,
                         ok: response.ok !== undefined ? response.ok : FETCH_RESPONSE_ERROR.ok,
                         body: clone(response.data),
                         ...(header && { headers: header }),
-                    };
-
-                    // TODO - remove this once https://github.com/salesforce/nimbus/issues/98
-                    // is fixed and just have it return a promise
-                    return skipPromiseForNetworkResponse === true
-                        ? rejectResult
-                        : Promise.reject(rejectResult);
+                    });
                 }
 
-                const resolveResponse = {
+                return Promise.resolve({
                     ...FETCH_RESPONSE_OK,
                     body: clone(response),
                     ...(header && { headers: header }),
-                };
-
-                // TODO - remove this once https://github.com/salesforce/nimbus/issues/98
-                // is fixed and just have it return a promise
-                return skipPromiseForNetworkResponse === true
-                    ? resolveResponse
-                    : Promise.resolve(resolveResponse);
+                });
             });
     });
 
@@ -293,6 +276,23 @@ function resetNetworkStub() {
 
 function resetTime() {
     timekeeper.reset();
+}
+
+/**
+ * Clears the cache for the given implementation.
+ *
+ * @returns {void}
+ */
+function clearCache() {
+    store.reset();
+}
+
+/**
+ * Wait for the microtask queue to clear. This is helpful when LWC needs to
+ * finish rerendering after a state change.
+ */
+function flushPromises() {
+    return new Promise(resolve => setTimeout(resolve));
 }
 
 export {

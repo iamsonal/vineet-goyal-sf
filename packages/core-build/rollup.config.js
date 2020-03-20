@@ -100,9 +100,9 @@ const min = {
     ],
 };
 
-const nativeProxy = {
+const webview = {
     ...browser,
-    input: './src/ldsNativeProxy/main.ts',
+    input: './src/lds-webview/main.ts',
     output: {
         file: 'dist/ldsNativeProxy.js',
         format: 'esm',
@@ -111,14 +111,14 @@ const nativeProxy = {
     },
 };
 
-const nativeProxyMin = {
-    ...nativeProxy,
+const webviewMin = {
+    ...webview,
     output: {
-        ...nativeProxy.output,
+        ...webview.output,
         file: 'dist/ldsNativeProxy.min.js',
     },
     plugins: [
-        ...nativeProxy.plugins,
+        ...webview.plugins,
         terser({
             output: {
                 comments: /(ATTENTION!|version:)/,
@@ -144,4 +144,4 @@ const absBridge = {
     ],
 };
 
-export default [browser, min, nativeProxy, nativeProxyMin, absBridge, ldsStaticFunctionsBrowser];
+export default [browser, min, webview, webviewMin, absBridge, ldsStaticFunctionsBrowser];

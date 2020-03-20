@@ -3,7 +3,7 @@ jest.resetModules();
 (global as any).window = {};
 
 const mainExports = require('../main');
-const LdsNativeProxyExports = require('../ldsNativeProxy/main');
+const LdsWebviewExports = require('../lds-webview/main');
 
 /**
  * This export whitelist ensures that we have the minimum amount of exports
@@ -88,8 +88,8 @@ describe('items exported to core', () => {
     });
 });
 
-describe('ldsNativeProxy items exported to core', () => {
+describe('lds-webview items exported to core', () => {
     it('should only export whitelisted items', () => {
-        expect(whiteList).toEqual(Object.keys(LdsNativeProxyExports).sort());
+        expect(whiteList).toEqual(Object.keys(LdsWebviewExports).sort());
     });
 });

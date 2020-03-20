@@ -1,4 +1,1 @@
-export {
-    productSearchAdapterFactory as ProductSearch,
-    productSearchNativeAdapterFactory as ProductSearch_Native,
-} from './generated/adapters/productSearch';
+export { productSearchAdapterFactory as ProductSearch } from './generated/adapters/productSearch';

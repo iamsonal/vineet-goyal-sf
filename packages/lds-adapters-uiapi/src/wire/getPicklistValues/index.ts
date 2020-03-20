@@ -1,6 +1,5 @@
-import { NativeAdapter, AdapterFactory, LDS, FetchResponse } from '@ldsjs/engine';
+import { AdapterFactory, LDS, FetchResponse } from '@ldsjs/engine';
 import {
-    getPicklistValuesNativeAdapterFactory,
     adapterName as getPicklistValuesAdapterName,
     validateAdapterConfig,
 } from '../../generated/adapters/getPicklistValues';
@@ -104,14 +103,4 @@ export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepr
             return buildNetworkSnapshot(lds, config);
         }
     );
-};
-
-export const nativeFactory = (config: GetPicklistValuesConfig): NativeAdapter | null => {
-    const fieldNames = getFieldId(config.fieldApiName);
-    const nativeConfig = {
-        objectApiName: fieldNames.objectApiName,
-        fieldApiName: fieldNames.fieldApiName,
-        recordTypeId: config.recordTypeId,
-    };
-    return getPicklistValuesNativeAdapterFactory(nativeConfig);
 };

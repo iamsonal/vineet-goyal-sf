@@ -14,7 +14,7 @@ export { TTL as LAYOUT_USER_STATE_TTL } from '../src/generated/types/RecordLayou
 
 export { TTL as RECORD_TTL } from '../src/generated/types/RecordRepresentation';
 
-export { TTL as RECORD_AVATAR_TTL } from '../src/generated/types/RecordAvatarBulkMapRepresentation';
+export { TTL as RECORD_AVATAR_TTL } from '../src/generated/types/AbstractRecordAvatarBatchRepresentation';
 
 export { TTL as RECORD_DEFAULTS_REPRESENTATION_TTL } from '../src/generated/types/RecordDefaultsRepresentation';
 

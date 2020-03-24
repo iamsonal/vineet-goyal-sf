@@ -1,5 +1,5 @@
 const { push } = Array.prototype;
-const { entries, keys } = Object;
+const { create, entries, keys } = Object;
 const { hasOwnProperty } = Object.prototype;
 const { parse, stringify } = JSON;
 
@@ -7,6 +7,7 @@ export {
     // Array.prototype
     push as ArrayPrototypePush,
     // Object
+    create as ObjectCreate,
     entries as ObjectEntries,
     keys as ObjectKeys,
     // Object.prototype

@@ -1,11 +1,12 @@
 import { HttpStatusCode, ResourceRequest } from '@ldsjs/engine';
 import { ActionConfig, executeGlobalController } from 'aura';
 import { AuraFetchResponse } from '../AuraFetchResponse';
+import appRouter from '../router';
 
-export const APEX_BASE_URI = '/apex';
+const APEX_BASE_URI = '/apex';
 const ApexController = 'ApexActionController.execute';
 
-export function executeApex(resourceRequest: ResourceRequest): Promise<any> {
+function executeApex(resourceRequest: ResourceRequest): Promise<any> {
     const { body } = resourceRequest;
     return dispatchApexAction(ApexController, body, {
         background: false,
@@ -51,3 +52,5 @@ function dispatchApexAction(
         }
     );
 }
+
+appRouter.post((path: string) => path === APEX_BASE_URI, executeApex);

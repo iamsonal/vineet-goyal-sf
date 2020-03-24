@@ -1,16 +1,17 @@
 import { ResourceRequest } from '@ldsjs/engine';
 import { UI_API_BASE_URI } from './uiapi-base';
 import { buildUiApiParams, dispatchAction } from './utils';
+import appRouter from '../router';
 
 enum UiApiMruListsController {
     GetMruListUi = 'MruListUiController.getMruListUi',
     GetMruListRecords = 'MruListUiController.getMruListRecords',
 }
 
-export const UIAPI_MRU_LIST_RECORDS_PATH = `${UI_API_BASE_URI}/mru-list-records/`;
-export const UIAPI_MRU_LIST_UI_PATH = `${UI_API_BASE_URI}/mru-list-ui/`;
+const UIAPI_MRU_LIST_RECORDS_PATH = `${UI_API_BASE_URI}/mru-list-records/`;
+const UIAPI_MRU_LIST_UI_PATH = `${UI_API_BASE_URI}/mru-list-ui/`;
 
-export function getMruListRecords(resourceRequest: ResourceRequest): Promise<any> {
+function getMruListRecords(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { objectApiName },
         queryParams: { fields, optionalFields, pageSize, pageToken, sortBy },
@@ -31,7 +32,7 @@ export function getMruListRecords(resourceRequest: ResourceRequest): Promise<any
     return dispatchAction(UiApiMruListsController.GetMruListRecords, params);
 }
 
-export function getMruListUi(resourceRequest: ResourceRequest): Promise<any> {
+function getMruListUi(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { objectApiName },
         queryParams: { fields, optionalFields, pageSize, pageToken, sortBy },
@@ -51,3 +52,6 @@ export function getMruListUi(resourceRequest: ResourceRequest): Promise<any> {
 
     return dispatchAction(UiApiMruListsController.GetMruListUi, params);
 }
+
+appRouter.get((path: string) => path.startsWith(UIAPI_MRU_LIST_RECORDS_PATH), getMruListRecords);
+appRouter.get((path: string) => path.startsWith(UIAPI_MRU_LIST_UI_PATH), getMruListUi);

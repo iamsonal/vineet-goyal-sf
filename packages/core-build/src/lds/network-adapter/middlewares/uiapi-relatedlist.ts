@@ -1,6 +1,7 @@
 import { ResourceRequest } from '@ldsjs/engine';
 import { UI_API_BASE_URI } from './uiapi-base';
 import { buildUiApiParams, dispatchAction } from './utils';
+import appRouter from '../router';
 
 enum UiApiRecordController {
     GetRelatedListInfo = 'RelatedListUiController.getRelatedListInfoByApiName',
@@ -11,11 +12,11 @@ enum UiApiRecordController {
     GetRelatedListCounts = 'RelatedListUiController.getRelatedListsRecordCount',
 }
 
-export const UIAPI_RELATED_LIST_INFO_PATH = `${UI_API_BASE_URI}/related-list-info`;
-export const UIAPI_RELATED_LIST_RECORDS_PATH = `${UI_API_BASE_URI}/related-list-records`;
-export const UIAPI_RELATED_LIST_COUNT_PATH = `${UI_API_BASE_URI}/related-list-count`;
+const UIAPI_RELATED_LIST_INFO_PATH = `${UI_API_BASE_URI}/related-list-info`;
+const UIAPI_RELATED_LIST_RECORDS_PATH = `${UI_API_BASE_URI}/related-list-records`;
+const UIAPI_RELATED_LIST_COUNT_PATH = `${UI_API_BASE_URI}/related-list-count`;
 
-export function getRelatedListInfo(resourceRequest: ResourceRequest): Promise<any> {
+function getRelatedListInfo(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams, queryParams } = resourceRequest;
 
     const params = buildUiApiParams(
@@ -30,7 +31,7 @@ export function getRelatedListInfo(resourceRequest: ResourceRequest): Promise<an
     return dispatchAction(UiApiRecordController.GetRelatedListInfo, params);
 }
 
-export function updateRelatedListInfo(resourceRequest: ResourceRequest): Promise<any> {
+function updateRelatedListInfo(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams, queryParams, body } = resourceRequest;
 
     const params = buildUiApiParams(
@@ -49,7 +50,7 @@ export function updateRelatedListInfo(resourceRequest: ResourceRequest): Promise
     return dispatchAction(UiApiRecordController.UpdateRelatedListInfo, params);
 }
 
-export function getRelatedListsInfo(resourceRequest: ResourceRequest): Promise<any> {
+function getRelatedListsInfo(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams, queryParams } = resourceRequest;
 
     const params = buildUiApiParams(
@@ -63,7 +64,7 @@ export function getRelatedListsInfo(resourceRequest: ResourceRequest): Promise<a
     return dispatchAction(UiApiRecordController.GetRelatedListsInfo, params);
 }
 
-export function getRelatedListRecords(resourceRequest: ResourceRequest): Promise<any> {
+function getRelatedListRecords(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { parentRecordId, relatedListId },
         queryParams: { fields, optionalFields, pageSize, pageToken, sortBy },
@@ -85,7 +86,7 @@ export function getRelatedListRecords(resourceRequest: ResourceRequest): Promise
     return dispatchAction(UiApiRecordController.GetRelatedListRecords, params);
 }
 
-export function getRelatedListCount(resourceRequest: ResourceRequest): Promise<any> {
+function getRelatedListCount(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams } = resourceRequest;
 
     const params = buildUiApiParams(
@@ -99,7 +100,7 @@ export function getRelatedListCount(resourceRequest: ResourceRequest): Promise<a
     return dispatchAction(UiApiRecordController.GetRelatedListCount, params);
 }
 
-export function getRelatedListsCount(resourceRequest: ResourceRequest): Promise<any> {
+function getRelatedListsCount(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams } = resourceRequest;
 
     const params = buildUiApiParams(
@@ -112,3 +113,37 @@ export function getRelatedListsCount(resourceRequest: ResourceRequest): Promise<
 
     return dispatchAction(UiApiRecordController.GetRelatedListCounts, params);
 }
+
+appRouter.patch(
+    (path: string) => path.startsWith(UIAPI_RELATED_LIST_INFO_PATH),
+    updateRelatedListInfo
+);
+// related-list-info/API_NAME/RELATED_LIST_ID
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_RELATED_LIST_INFO_PATH) &&
+        /related-list-info\/[a-zA-Z_\d]+\/[a-zA-Z_\d]+/.test(path),
+    getRelatedListInfo
+);
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_RELATED_LIST_INFO_PATH) &&
+        /related-list-info\/[a-zA-Z_\d]+\/[a-zA-Z_\d]+/.test(path) === false,
+    getRelatedListsInfo
+);
+appRouter.get(
+    (path: string) => path.startsWith(UIAPI_RELATED_LIST_RECORDS_PATH),
+    getRelatedListRecords
+);
+// related-list-count/batch/parentRecordId/relatedListNames
+appRouter.get(
+    (path: string) => path.startsWith(UIAPI_RELATED_LIST_COUNT_PATH + '/batch'),
+    getRelatedListsCount
+);
+// related-list-count/parentRecordId/relatedListName
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_RELATED_LIST_COUNT_PATH) &&
+        path.startsWith(UIAPI_RELATED_LIST_COUNT_PATH + '/batch') === false,
+    getRelatedListCount
+);

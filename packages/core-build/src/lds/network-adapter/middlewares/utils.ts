@@ -5,6 +5,10 @@ import { CacheStatsLogger } from 'instrumentation/service';
 import { HttpStatusCode, ResourceRequest } from '@ldsjs/engine';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 
+import appRouter from '../router';
+
+import { ObjectKeys } from '../../../utils/language';
+
 export type ControllerInvoker = (
     resourceRequest: ResourceRequest,
     resourceKey: string
@@ -30,6 +34,21 @@ interface UiApiClientOptions {
 interface UiApiParams {
     [name: string]: any;
     clientOptions?: UiApiClientOptions;
+}
+
+interface AuraAction {
+    controller: string;
+    action: ActionConfig;
+}
+
+interface Adapter {
+    method: string;
+    predicate: (path: string) => boolean;
+    transport: AuraAction;
+}
+
+export interface ApiFamily {
+    [adapter: string]: Adapter;
 }
 
 function createOkResponse(body: unknown): AuraFetchResponse<unknown> {
@@ -122,7 +141,7 @@ export function buildUiApiParams(
         clientOptions.ifUnmodifiedSince = ifUnmodifiedSince;
     }
 
-    return Object.keys(clientOptions).length > 0
+    return ObjectKeys(clientOptions).length > 0
         ? { ...params, clientOptions: clientOptions }
         : params;
 }
@@ -131,4 +150,24 @@ export function buildUiApiParams(
 export function shouldForceRefresh(resourceRequest: ResourceRequest): boolean {
     const cacheControl = resourceRequest.headers['Cache-Control'];
     return cacheControl !== undefined || cacheControl === 'no-cache';
+}
+
+export function registerApiFamilyRoutes(apiFamily: ApiFamily) {
+    ObjectKeys(apiFamily).forEach(adapterName => {
+        const adapter = apiFamily[adapterName];
+        const { method, predicate, transport } = adapter;
+        appRouter[method](
+            predicate,
+            (resourceRequest: ResourceRequest): Promise<any> => {
+                const actionConfig: DispatchActionConfig = {
+                    action: transport.action,
+                };
+
+                const { urlParams, queryParams } = resourceRequest;
+                const params = { ...urlParams, ...queryParams };
+
+                return dispatchAction(transport.controller, params, actionConfig);
+            }
+        );
+    });
 }

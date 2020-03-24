@@ -10,6 +10,7 @@ import {
     DispatchActionConfig,
     shouldForceRefresh,
 } from './utils';
+import appRouter from '../router';
 
 enum UiApiRecordController {
     CreateRecord = 'RecordUiController.createRecord',
@@ -31,16 +32,16 @@ enum UiApiRecordController {
     UpdateLayoutUserState = 'RecordUiController.updateLayoutUserState',
 }
 
-export const UIAPI_GET_LAYOUT = `${UI_API_BASE_URI}/layout/`;
-export const UIAPI_RECORDS_PATH = `${UI_API_BASE_URI}/records`;
-export const UIAPI_RECORD_AVATARS_BASE = `${UI_API_BASE_URI}/record-avatars/`;
-export const UIAPI_RECORD_AVATARS_BATCH_PATH = `${UI_API_BASE_URI}/record-avatars/batch/`;
-export const UIAPI_RECORD_AVATAR_UPDATE = `/association`;
-export const UIAPI_RECORD_CREATE_DEFAULTS_PATH = `${UI_API_BASE_URI}/record-defaults/create/`;
-export const UIAPI_RECORD_UI_PATH = `${UI_API_BASE_URI}/record-ui/`;
-export const UIAPI_GET_LAYOUT_USER_STATE = '/user-state';
-export const UIAPI_OBJECT_INFO_PATH = `${UI_API_BASE_URI}/object-info/`;
-export const UIAPI_OBJECT_INFO_BATCH_PATH = `${UI_API_BASE_URI}/object-info/batch/`;
+const UIAPI_GET_LAYOUT = `${UI_API_BASE_URI}/layout/`;
+const UIAPI_RECORDS_PATH = `${UI_API_BASE_URI}/records`;
+const UIAPI_RECORD_AVATARS_BASE = `${UI_API_BASE_URI}/record-avatars/`;
+const UIAPI_RECORD_AVATARS_BATCH_PATH = `${UI_API_BASE_URI}/record-avatars/batch/`;
+const UIAPI_RECORD_AVATAR_UPDATE = `/association`;
+const UIAPI_RECORD_CREATE_DEFAULTS_PATH = `${UI_API_BASE_URI}/record-defaults/create/`;
+const UIAPI_RECORD_UI_PATH = `${UI_API_BASE_URI}/record-ui/`;
+const UIAPI_GET_LAYOUT_USER_STATE = '/user-state';
+const UIAPI_OBJECT_INFO_PATH = `${UI_API_BASE_URI}/object-info/`;
+const UIAPI_OBJECT_INFO_BATCH_PATH = `${UI_API_BASE_URI}/object-info/batch/`;
 
 const objectInfoStorage = createStorage({
     name: 'ldsObjectInfo',
@@ -60,7 +61,7 @@ const layoutUserStateStorage = createStorage({
 });
 const layoutUserStateStorageStatsLogger = registerLdsCacheStats('getLayoutUserState:storage');
 
-export function getObjectInfo(resourceRequest: ResourceRequest, cacheKey: string): Promise<any> {
+function getObjectInfo(resourceRequest: ResourceRequest, cacheKey: string): Promise<any> {
     const params = buildUiApiParams(
         {
             objectApiName: resourceRequest.urlParams.objectApiName,
@@ -82,7 +83,7 @@ export function getObjectInfo(resourceRequest: ResourceRequest, cacheKey: string
     return dispatchAction(UiApiRecordController.GetObjectInfo, params, config);
 }
 
-export function getObjectInfos(resourceRequest: ResourceRequest, cacheKey: string): Promise<any> {
+function getObjectInfos(resourceRequest: ResourceRequest, cacheKey: string): Promise<any> {
     const params = buildUiApiParams(
         {
             objectApiNames: resourceRequest.urlParams.objectApiNames,
@@ -104,7 +105,7 @@ export function getObjectInfos(resourceRequest: ResourceRequest, cacheKey: strin
     return dispatchAction(UiApiRecordController.GetObjectInfos, params, config);
 }
 
-export function getRecord(resourceRequest: ResourceRequest): Promise<any> {
+function getRecord(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams, queryParams } = resourceRequest;
     const { recordId } = urlParams;
     const { fields, layoutTypes, modes, optionalFields } = queryParams;
@@ -133,7 +134,7 @@ export function getRecord(resourceRequest: ResourceRequest): Promise<any> {
     return dispatchAction(controller, params, actionConfig);
 }
 
-export function createRecord(resourceRequest: ResourceRequest): Promise<any> {
+function createRecord(resourceRequest: ResourceRequest): Promise<any> {
     const params = buildUiApiParams(
         {
             recordInput: resourceRequest.body,
@@ -144,7 +145,7 @@ export function createRecord(resourceRequest: ResourceRequest): Promise<any> {
     return dispatchAction(UiApiRecordController.CreateRecord, params, actionConfig);
 }
 
-export function deleteRecord(resourceRequest: ResourceRequest): Promise<any> {
+function deleteRecord(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams } = resourceRequest;
     const params = buildUiApiParams(
         {
@@ -155,7 +156,7 @@ export function deleteRecord(resourceRequest: ResourceRequest): Promise<any> {
     return dispatchAction(UiApiRecordController.DeleteRecord, params, actionConfig);
 }
 
-export function updateRecord(resourceRequest: ResourceRequest): Promise<any> {
+function updateRecord(resourceRequest: ResourceRequest): Promise<any> {
     const { body, urlParams } = resourceRequest;
 
     const params = buildUiApiParams(
@@ -169,7 +170,7 @@ export function updateRecord(resourceRequest: ResourceRequest): Promise<any> {
     return dispatchAction(UiApiRecordController.UpdateRecord, params, actionConfig);
 }
 
-export function updateLayoutUserState(resourceRequest: ResourceRequest): Promise<any> {
+function updateLayoutUserState(resourceRequest: ResourceRequest): Promise<any> {
     const {
         body,
         urlParams: { objectApiName },
@@ -201,7 +202,7 @@ export function updateLayoutUserState(resourceRequest: ResourceRequest): Promise
     );
 }
 
-export function getRecordAvatars(resourceRequest: ResourceRequest): Promise<any> {
+function getRecordAvatars(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams } = resourceRequest;
 
     const recordIds = urlParams.recordIds;
@@ -210,13 +211,13 @@ export function getRecordAvatars(resourceRequest: ResourceRequest): Promise<any>
     return dispatchAction(UiApiRecordController.GetRecordAvatars, params, actionConfig);
 }
 
-export function updateRecordAvatar(resourceRequest: ResourceRequest): Promise<any> {
+function updateRecordAvatar(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams, body } = resourceRequest;
     const params = buildUiApiParams({ input: body, recordId: urlParams.recordId }, resourceRequest);
     return dispatchAction(UiApiRecordController.UpdateRecordAvatar, params, actionConfig);
 }
 
-export function getRecordUi(resourceRequest: ResourceRequest): Promise<any> {
+function getRecordUi(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { recordIds },
         queryParams: { layoutTypes, modes, optionalFields },
@@ -235,7 +236,7 @@ export function getRecordUi(resourceRequest: ResourceRequest): Promise<any> {
     return dispatchAction(UiApiRecordController.GetRecordUi, params, actionConfig);
 }
 
-export function getPicklistValues(resourceRequest: ResourceRequest): Promise<any> {
+function getPicklistValues(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams } = resourceRequest;
 
     const params = buildUiApiParams(
@@ -250,7 +251,7 @@ export function getPicklistValues(resourceRequest: ResourceRequest): Promise<any
     return dispatchAction(UiApiRecordController.GetPicklistValues, params, actionConfig);
 }
 
-export function getPicklistValuesByRecordType(resourceRequest: ResourceRequest): Promise<any> {
+function getPicklistValuesByRecordType(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { objectApiName, recordTypeId },
     } = resourceRequest;
@@ -270,7 +271,7 @@ export function getPicklistValuesByRecordType(resourceRequest: ResourceRequest):
     );
 }
 
-export function getLayout(resourceRequest: ResourceRequest, cacheKey: string): Promise<any> {
+function getLayout(resourceRequest: ResourceRequest, cacheKey: string): Promise<any> {
     const {
         urlParams: { objectApiName },
         queryParams: { layoutType, mode, recordTypeId },
@@ -299,10 +300,7 @@ export function getLayout(resourceRequest: ResourceRequest, cacheKey: string): P
     return dispatchAction(UiApiRecordController.GetLayout, params, config);
 }
 
-export function getLayoutUserState(
-    resourceRequest: ResourceRequest,
-    cacheKey: string
-): Promise<any> {
+function getLayoutUserState(resourceRequest: ResourceRequest, cacheKey: string): Promise<any> {
     const {
         urlParams: { objectApiName },
         queryParams: { layoutType, mode, recordTypeId },
@@ -331,7 +329,7 @@ export function getLayoutUserState(
     return dispatchAction(UiApiRecordController.GetLayoutUserState, params, config);
 }
 
-export function getRecordCreateDefaults(resourceRequest: ResourceRequest): Promise<any> {
+function getRecordCreateDefaults(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { objectApiName },
         queryParams: { formFactor, optionalFields, recordTypeId },
@@ -349,3 +347,60 @@ export function getRecordCreateDefaults(resourceRequest: ResourceRequest): Promi
 
     return dispatchAction(UiApiRecordController.GetRecordCreateDefaults, params, actionConfig);
 }
+
+appRouter.delete((path: string) => path.startsWith(UIAPI_RECORDS_PATH), deleteRecord);
+
+appRouter.patch((path: string) => path.startsWith(UIAPI_RECORDS_PATH), updateRecord);
+appRouter.patch(
+    (path: string) =>
+        path.startsWith(UIAPI_GET_LAYOUT) && path.endsWith(UIAPI_GET_LAYOUT_USER_STATE),
+    updateLayoutUserState
+);
+
+appRouter.post((path: string) => path === UIAPI_RECORDS_PATH, createRecord);
+appRouter.post(
+    (path: string) =>
+        path.startsWith(UIAPI_RECORD_AVATARS_BASE) && path.endsWith(UIAPI_RECORD_AVATAR_UPDATE),
+    updateRecordAvatar
+);
+
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_GET_LAYOUT) && path.endsWith(UIAPI_GET_LAYOUT_USER_STATE),
+    getLayoutUserState
+);
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_GET_LAYOUT) && path.endsWith(UIAPI_GET_LAYOUT_USER_STATE) === false,
+    getLayout
+);
+// object-info/batch/
+appRouter.get((path: string) => path.startsWith(UIAPI_OBJECT_INFO_BATCH_PATH), getObjectInfos);
+// object-info/API_NAME/picklist-values/RECORD_TYPE_ID/FIELD_API_NAME
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_OBJECT_INFO_PATH) &&
+        /picklist-values\/[a-zA-Z\d]+\/[a-zA-Z\d]+/.test(path),
+    getPicklistValues
+);
+// object-info/API_NAME/picklist-values/RECORD_TYPE_ID
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_OBJECT_INFO_PATH) && /picklist-values\/[a-zA-Z\d]+/.test(path),
+    getPicklistValuesByRecordType
+);
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_OBJECT_INFO_PATH) &&
+        path.startsWith(UIAPI_OBJECT_INFO_BATCH_PATH) === false &&
+        /picklist-values\/[a-zA-Z\d]+\/[a-zA-Z\d]+/.test(path) === false &&
+        /picklist-values\/[a-zA-Z\d]+/.test(path) === false,
+    getObjectInfo
+);
+appRouter.get((path: string) => path.startsWith(UIAPI_RECORDS_PATH), getRecord);
+appRouter.get(
+    (path: string) => path.startsWith(UIAPI_RECORD_CREATE_DEFAULTS_PATH),
+    getRecordCreateDefaults
+);
+appRouter.get((path: string) => path.startsWith(UIAPI_RECORD_AVATARS_BATCH_PATH), getRecordAvatars);
+appRouter.get((path: string) => path.startsWith(UIAPI_RECORD_UI_PATH), getRecordUi);

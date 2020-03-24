@@ -1,6 +1,7 @@
 import { ResourceRequest } from '@ldsjs/engine';
 import { UI_API_BASE_URI } from './uiapi-base';
 import { buildUiApiParams, dispatchAction } from './utils';
+import appRouter from '../router';
 
 enum UiApiActionsController {
     GetLookupActions = 'ActionsController.getLookupActions',
@@ -10,13 +11,13 @@ enum UiApiActionsController {
     GetRelatedListRecordActions = 'ActionsController.getRelatedListRecordActions',
 }
 
-export const UIAPI_ACTIONS_LOOKUP_PATH = `${UI_API_BASE_URI}/actions/lookup/`;
-export const UIAPI_ACTIONS_RECORD_PATH = `${UI_API_BASE_URI}/actions/record/`;
-export const UIAPI_ACTIONS_RECORD_EDIT = '/record-edit';
-export const UIAPI_ACTIONS_RELATED_LIST = '/related-list/';
-export const UIAPI_ACTIONS_RELATED_LIST_RECORD = '/related-list-record/';
+const UIAPI_ACTIONS_LOOKUP_PATH = `${UI_API_BASE_URI}/actions/lookup/`;
+const UIAPI_ACTIONS_RECORD_PATH = `${UI_API_BASE_URI}/actions/record/`;
+const UIAPI_ACTIONS_RECORD_EDIT = '/record-edit';
+const UIAPI_ACTIONS_RELATED_LIST = '/related-list/';
+const UIAPI_ACTIONS_RELATED_LIST_RECORD = '/related-list-record/';
 
-export function getLookupActions(resourceRequest: ResourceRequest): Promise<any> {
+function getLookupActions(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { objectApiNames },
         queryParams,
@@ -26,7 +27,7 @@ export function getLookupActions(resourceRequest: ResourceRequest): Promise<any>
     return dispatchAction(UiApiActionsController.GetLookupActions, parameters);
 }
 
-export function getRecordActions(resourceRequest: ResourceRequest): Promise<any> {
+function getRecordActions(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { recordIds },
         queryParams,
@@ -36,7 +37,7 @@ export function getRecordActions(resourceRequest: ResourceRequest): Promise<any>
     return dispatchAction(UiApiActionsController.GetRecordActions, parameters);
 }
 
-export function getRecordEditActions(resourceRequest: ResourceRequest): Promise<any> {
+function getRecordEditActions(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { recordIds },
         queryParams,
@@ -46,7 +47,7 @@ export function getRecordEditActions(resourceRequest: ResourceRequest): Promise<
     return dispatchAction(UiApiActionsController.GetRecordEditActions, parameters);
 }
 
-export function getRelatedListActions(resourceRequest: ResourceRequest): Promise<any> {
+function getRelatedListActions(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { recordIds, relatedListIds },
         queryParams,
@@ -59,7 +60,7 @@ export function getRelatedListActions(resourceRequest: ResourceRequest): Promise
     return dispatchAction(UiApiActionsController.GetRelatedListActions, parameters);
 }
 
-export function getRelatedListRecordActions(resourceRequest: ResourceRequest): Promise<any> {
+function getRelatedListRecordActions(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { recordIds, relatedListRecordIds },
         queryParams,
@@ -71,3 +72,29 @@ export function getRelatedListRecordActions(resourceRequest: ResourceRequest): P
 
     return dispatchAction(UiApiActionsController.GetRelatedListRecordActions, parameters);
 }
+
+appRouter.get((path: string) => path.startsWith(UIAPI_ACTIONS_LOOKUP_PATH), getLookupActions);
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_ACTIONS_RECORD_PATH) && path.endsWith(UIAPI_ACTIONS_RECORD_EDIT),
+    getRecordEditActions
+);
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_ACTIONS_RECORD_PATH) &&
+        path.indexOf(UIAPI_ACTIONS_RELATED_LIST_RECORD) > 0,
+    getRelatedListRecordActions
+);
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_ACTIONS_RECORD_PATH) && path.indexOf(UIAPI_ACTIONS_RELATED_LIST) > 0,
+    getRelatedListActions
+);
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_ACTIONS_RECORD_PATH) &&
+        path.indexOf(UIAPI_ACTIONS_RELATED_LIST) === -1 &&
+        path.indexOf(UIAPI_ACTIONS_RELATED_LIST_RECORD) === -1 &&
+        !path.endsWith(UIAPI_ACTIONS_RECORD_EDIT),
+    getRecordActions
+);

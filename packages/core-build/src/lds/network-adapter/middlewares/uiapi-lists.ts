@@ -1,6 +1,7 @@
 import { ResourceRequest } from '@ldsjs/engine';
 import { UI_API_BASE_URI } from './uiapi-base';
 import { buildUiApiParams, dispatchAction } from './utils';
+import appRouter from '../router';
 
 enum UiApiListsController {
     GetListsByObjectName = 'ListUiController.getListsByObjectName',
@@ -10,10 +11,10 @@ enum UiApiListsController {
     GetListRecordsByName = 'ListUiController.getListRecordsByName',
 }
 
-export const UIAPI_LIST_RECORDS_PATH = `${UI_API_BASE_URI}/list-records/`;
-export const UIAPI_LIST_UI_PATH = `${UI_API_BASE_URI}/list-ui/`;
+const UIAPI_LIST_RECORDS_PATH = `${UI_API_BASE_URI}/list-records/`;
+const UIAPI_LIST_UI_PATH = `${UI_API_BASE_URI}/list-ui/`;
 
-export function getListRecordsByName(resourceRequest: ResourceRequest): Promise<any> {
+function getListRecordsByName(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { objectApiName, listViewApiName },
         queryParams: { fields, optionalFields, pageSize, pageToken, sortBy },
@@ -35,7 +36,7 @@ export function getListRecordsByName(resourceRequest: ResourceRequest): Promise<
     return dispatchAction(UiApiListsController.GetListRecordsByName, params);
 }
 
-export function getListRecordsById(resourceRequest: ResourceRequest): Promise<any> {
+function getListRecordsById(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { listViewId },
         queryParams: { fields, optionalFields, pageSize, pageToken, sortBy },
@@ -56,7 +57,7 @@ export function getListRecordsById(resourceRequest: ResourceRequest): Promise<an
     return dispatchAction(UiApiListsController.GetListRecordsById, params);
 }
 
-export function getListUiByName(resourceRequest: ResourceRequest): Promise<any> {
+function getListUiByName(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { objectApiName, listViewApiName },
         queryParams: { fields, optionalFields, pageSize, pageToken, sortBy },
@@ -78,7 +79,7 @@ export function getListUiByName(resourceRequest: ResourceRequest): Promise<any> 
     return dispatchAction(UiApiListsController.GetListUiByName, params);
 }
 
-export function getListUiById(resourceRequest: ResourceRequest): Promise<any> {
+function getListUiById(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { listViewId },
         queryParams: { fields, optionalFields, pageSize, pageToken, sortBy },
@@ -99,7 +100,7 @@ export function getListUiById(resourceRequest: ResourceRequest): Promise<any> {
     return dispatchAction(UiApiListsController.GetListUiById, params);
 }
 
-export function getListsByObjectName(resourceRequest: ResourceRequest): Promise<any> {
+function getListsByObjectName(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { objectApiName },
         queryParams: { pageSize, pageToken, q, recentListsOnly },
@@ -118,3 +119,33 @@ export function getListsByObjectName(resourceRequest: ResourceRequest): Promise<
 
     return dispatchAction(UiApiListsController.GetListsByObjectName, params);
 }
+
+// .../list-records/${objectApiName}/${listViewApiName}
+appRouter.get(
+    (path: string) => path.startsWith(UIAPI_LIST_RECORDS_PATH) && /list-records\/.*\//.test(path),
+    getListRecordsByName
+);
+// .../list-records/${listViewId}
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_LIST_RECORDS_PATH) && /list-records\/.*\//.test(path) === false,
+    getListRecordsById
+);
+// .../list-ui/${objectApiName}/${listViewApiName}
+appRouter.get(
+    (path: string) => path.startsWith(UIAPI_LIST_UI_PATH) && /list-ui\/.*\//.test(path),
+    getListUiByName
+);
+// .../list-ui/${listViewId}
+appRouter.get(
+    (path: string) => path.startsWith(UIAPI_LIST_UI_PATH) && /00B[a-zA-Z\d]{15}$/.test(path),
+    getListUiById
+);
+// .../list-ui/${objectApiName}
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_LIST_UI_PATH) &&
+        /list-ui\/.*\//.test(path) === false &&
+        /00B[a-zA-Z\d]{15}$/.test(path) === false,
+    getListsByObjectName
+);

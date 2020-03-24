@@ -1,12 +1,13 @@
 import { ResourceRequest } from '@ldsjs/engine';
 import { UI_API_BASE_URI } from './uiapi-base';
 import { buildUiApiParams, dispatchAction } from './utils';
+import appRouter from '../router';
 
-export const UIAPI_LOOKUP_RECORDS = `${UI_API_BASE_URI}/lookups`;
+const UIAPI_LOOKUP_RECORDS = `${UI_API_BASE_URI}/lookups`;
 
 const LookupRecords = 'LookupController.getLookupRecords';
 
-export function lookupRecords(resourceRequest: ResourceRequest): Promise<any> {
+function lookupRecords(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams, queryParams } = resourceRequest;
 
     const params = buildUiApiParams(
@@ -19,3 +20,5 @@ export function lookupRecords(resourceRequest: ResourceRequest): Promise<any> {
 
     return dispatchAction(LookupRecords, params);
 }
+
+appRouter.get((path: string) => path.startsWith(UIAPI_LOOKUP_RECORDS), lookupRecords);

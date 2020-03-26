@@ -72,6 +72,66 @@ describe('getObjectInfo - fetch errors', () => {
         }
     });
 
+    it('should be a cache hit when ingested 404 does not exceed ttl', async () => {
+        const mockError = getMock('object-error');
+
+        const config = { objectApiName: 'Account' };
+        mockGetObjectInfoNetwork(config, {
+            status: 404,
+            statusText: 'Not Found',
+            ok: false,
+            reject: true,
+            data: mockError,
+        });
+
+        const element = await setupElement(config, ObjectBasic);
+
+        expect(element.pushCount()).toBe(1);
+        expect(element.getWiredError()).toContainErrorResponse(mockError);
+
+        const elementB = await setupElement(config, ObjectBasic);
+
+        expect(elementB.pushCount()).toBe(1);
+        expect(elementB.getWiredError()).toContainErrorResponse(mockError);
+    });
+
+    it('should not emit when refetching objectInfo returns the same error after ingested error TTLs out', async () => {
+        const mockError = getMock('object-error');
+
+        const config = { objectApiName: 'Account' };
+        mockGetObjectInfoNetwork(config, [
+            {
+                status: 404,
+                statusText: 'Not Found',
+                ok: false,
+                reject: true,
+                data: mockError,
+            },
+            {
+                status: 404,
+                statusText: 'Not Found',
+                ok: false,
+                reject: true,
+                data: mockError,
+            },
+        ]);
+
+        const element = await setupElement(config, ObjectBasic);
+
+        expect(element.pushCount()).toBe(1);
+        expect(element.getWiredError()).toContainErrorResponse(mockError);
+
+        expireObjectInfo();
+
+        const elementB = await setupElement(config, ObjectBasic);
+
+        expect(elementB.pushCount()).toBe(1);
+        expect(elementB.getWiredError()).toContainErrorResponse(mockError);
+
+        // First element should not have received new error
+        expect(element.pushCount()).toBe(1);
+    });
+
     it('should refresh when ingested error exceeds ttl', async () => {
         const mock = getMock('object-Account');
         const mockError = getMock('object-error');

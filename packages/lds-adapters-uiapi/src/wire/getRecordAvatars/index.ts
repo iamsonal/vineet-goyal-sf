@@ -21,9 +21,11 @@ import { selectChildren as selectChildrenAbstractRecordAvatarBatchRepresentation
 
 function selectAvatars(recordIds: string[]): PathSelection[] {
     return recordIds.map((recordId: string) => {
-        return selectChildrenAbstractRecordAvatarBatchRepresentation({
-            propertyName: recordId,
-        });
+        return {
+            kind: 'Link',
+            name: recordId,
+            fragment: selectChildrenAbstractRecordAvatarBatchRepresentation(),
+        };
     });
 }
 

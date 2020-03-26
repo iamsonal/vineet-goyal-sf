@@ -14,7 +14,10 @@ export function records(
             kind: 'Link',
             name: selection.name,
             plural: true,
-            selections: selection.selections,
+            fragment: {
+                kind: 'Fragment',
+                selections: selection.selections,
+            },
             pageToken: selection.pageToken,
             pageSize: selection.pageSize,
             tokenDataKey: selection.tokenDataKey,

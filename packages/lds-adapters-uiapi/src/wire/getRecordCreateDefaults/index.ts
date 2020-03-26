@@ -25,18 +25,21 @@ function buildSelector(resp: RecordDefaultsRepresentation): PathSelection[] {
             kind: 'Link',
             name: 'layout',
             nullable: true,
-            selections: layoutSelections.selections,
+            fragment: layoutSelections,
         },
         {
             kind: 'Link',
             name: 'objectInfos',
             map: true,
-            selections: objectInfoSelections.selections,
+            fragment: objectInfoSelections,
         },
         {
             kind: 'Link',
             name: 'record',
-            selections: recordSelections,
+            fragment: {
+                kind: 'Fragment',
+                selections: recordSelections,
+            },
         },
     ];
 }

@@ -8,9 +8,9 @@ import { select as objectInfoSelect } from '../../generated/types/ObjectInfoRepr
 import { select as recordLayoutRepresentationSelect } from '../../generated/types/RecordLayoutRepresentation';
 import { select as recordLayoutUserStateRepresentationSelect } from '../../generated/types/RecordLayoutUserStateRepresentation';
 
-const layoutSelections = recordLayoutRepresentationSelect().selections;
-const objectInfoPathSelection = objectInfoSelect().selections;
-const layoutUserStatePathSelector = recordLayoutUserStateRepresentationSelect().selections;
+const layoutSelections = recordLayoutRepresentationSelect();
+const objectInfoPathSelection = objectInfoSelect();
+const layoutUserStatePathSelector = recordLayoutUserStateRepresentationSelect();
 
 export interface RecordDef {
     recordId: string;
@@ -39,7 +39,7 @@ export function buildRecordUiSelector(
             const modeSel: PathSelection = {
                 kind: 'Link',
                 name: mode,
-                selections: layoutSelections,
+                fragment: layoutSelections,
             };
 
             ArrayPrototypePush.call(modeSelections, modeSel);
@@ -66,7 +66,10 @@ export function buildRecordUiSelector(
         ArrayPrototypePush.call(recordSelections, {
             kind: 'Link',
             name: recordId,
-            selections: buildSelectionFromFields(fields, optionalFields),
+            fragment: {
+                kind: 'Link',
+                selections: buildSelectionFromFields(fields, optionalFields),
+            },
         });
     }
 
@@ -77,7 +80,7 @@ export function buildRecordUiSelector(
                 kind: 'Link',
                 name: 'layoutUserStates',
                 map: true,
-                selections: layoutUserStatePathSelector,
+                fragment: layoutUserStatePathSelector,
             },
             {
                 kind: 'Object',
@@ -88,7 +91,7 @@ export function buildRecordUiSelector(
                 kind: 'Link',
                 name: 'objectInfos',
                 map: true,
-                selections: objectInfoPathSelection,
+                fragment: objectInfoPathSelection,
             },
             {
                 name: 'records',

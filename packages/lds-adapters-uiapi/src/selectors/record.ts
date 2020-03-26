@@ -4,6 +4,7 @@ import { ObjectKeys, ArrayPrototypePush } from '../util/language';
 
 import { RecordRepresentation } from '../generated/types/RecordRepresentation';
 import { RecordCreateDefaultRecordRepresentation } from '../generated/types/RecordCreateDefaultRecordRepresentation';
+import { LinkSelection } from '@ldsjs/engine/dist/es/es2018/Select';
 
 type RecordRepresentationLike = RecordRepresentation | RecordCreateDefaultRecordRepresentation;
 
@@ -145,16 +146,23 @@ function convertTrieToSelection(fieldDefinition: RecordFieldTrie): PathSelection
                 kind: 'Link',
                 name: 'value',
                 nullable: true,
-                selections: convertTrieToSelection(childFieldDefinition),
+                fragment: {
+                    kind: 'Fragment',
+                    selections: convertTrieToSelection(childFieldDefinition),
+                },
             };
         }
 
-        ArrayPrototypePush.call(fieldsSelection, {
+        const fieldSelection: LinkSelection = {
             kind: 'Link',
             name: childFieldDefinition.name,
             required: childFieldDefinition.optional === true ? false : undefined,
-            selections: [DISPLAY_VALUE_SELECTION, fieldValueSelection],
-        });
+            fragment: {
+                kind: 'Fragment',
+                selections: [DISPLAY_VALUE_SELECTION, fieldValueSelection],
+            },
+        };
+        ArrayPrototypePush.call(fieldsSelection, fieldSelection);
     }
 
     return [
@@ -213,16 +221,23 @@ export function buildSelectionFromRecord(record: RecordRepresentationLike): Path
                 kind: 'Link',
                 name: 'value',
                 nullable: true,
-                selections: buildSelectionFromRecord(fieldValue),
+                fragment: {
+                    kind: 'Fragment',
+                    selections: buildSelectionFromRecord(fieldValue),
+                },
             };
         }
 
-        ArrayPrototypePush.call(fieldsSelection, {
+        const fieldSelection: LinkSelection = {
             kind: 'Link',
             name: fieldName,
             required: undefined,
-            selections: [DISPLAY_VALUE_SELECTION, fieldValueSelection],
-        });
+            fragment: {
+                kind: 'Fragment',
+                selections: [DISPLAY_VALUE_SELECTION, fieldValueSelection],
+            },
+        };
+        ArrayPrototypePush.call(fieldsSelection, fieldSelection);
     }
 
     return [

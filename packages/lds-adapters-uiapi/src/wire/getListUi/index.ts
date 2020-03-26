@@ -56,7 +56,7 @@ import { isErrorSnapshot, isFulfilledSnapshot } from '../../util/snapshot';
 import { getListViewSummaryCollectionAdapterFactory } from '../getListViewSummaryCollection';
 import { getMruListUiAdapterFactory } from '../getMruListUi';
 
-const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select().selections;
+const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select();
 
 // TODO RAML - this more properly goes in the generated resource files
 const DEFAULT_PAGE_SIZE = 50;
@@ -112,59 +112,65 @@ function buildListUiFragment(
             {
                 kind: 'Link',
                 name: 'info',
-                selections: LIST_INFO_SELECTIONS,
+                fragment: {
+                    kind: 'Fragment',
+                    selections: LIST_INFO_SELECTIONS,
+                },
             },
             {
                 kind: 'Link',
                 name: 'records',
-                selections: [
-                    ...pathSelectionsFor({
-                        name: 'records',
-                        pageSize: defaultedConfig.pageSize || DEFAULT_PAGE_SIZE,
-                        pageToken: defaultedConfig.pageToken,
-                        selections: buildSelectionFromFields(
-                            ...fields.getRecordSelectionFieldSets()
-                        ),
-                        tokenDataKey: ListRecordCollection_paginationKeyBuilder({
-                            listViewId: listInfo.eTag,
-                            sortBy:
-                                defaultedConfig.sortBy === undefined
-                                    ? null
-                                    : defaultedConfig.sortBy,
+                fragment: {
+                    kind: 'Fragment',
+                    selections: [
+                        ...pathSelectionsFor({
+                            name: 'records',
+                            pageSize: defaultedConfig.pageSize || DEFAULT_PAGE_SIZE,
+                            pageToken: defaultedConfig.pageToken,
+                            selections: buildSelectionFromFields(
+                                ...fields.getRecordSelectionFieldSets()
+                            ),
+                            tokenDataKey: ListRecordCollection_paginationKeyBuilder({
+                                listViewId: listInfo.eTag,
+                                sortBy:
+                                    defaultedConfig.sortBy === undefined
+                                        ? null
+                                        : defaultedConfig.sortBy,
+                            }),
                         }),
-                    }),
-                    {
-                        kind: 'Scalar',
-                        name: 'fields',
-                        plural: true,
-                    },
-                    {
-                        kind: 'Scalar',
-                        name: 'listInfoETag',
-                    },
-                    {
-                        kind: 'Link',
-                        name: 'listReference',
-                        selections: LIST_REFERENCE_SELECTIONS,
-                    },
-                    {
-                        kind: 'Scalar',
-                        name: 'optionalFields',
-                        plural: true,
-                    },
-                    staticValuePathSelection({
-                        name: 'pageSize',
-                        value:
-                            defaultedConfig.pageSize === undefined
-                                ? DEFAULT_PAGE_SIZE
-                                : defaultedConfig.pageSize,
-                    }),
-                    {
-                        kind: 'Scalar',
-                        name: 'sortBy',
-                        plural: true,
-                    },
-                ],
+                        {
+                            kind: 'Scalar',
+                            name: 'fields',
+                            plural: true,
+                        },
+                        {
+                            kind: 'Scalar',
+                            name: 'listInfoETag',
+                        },
+                        {
+                            kind: 'Link',
+                            name: 'listReference',
+                            fragment: LIST_REFERENCE_SELECTIONS,
+                        },
+                        {
+                            kind: 'Scalar',
+                            name: 'optionalFields',
+                            plural: true,
+                        },
+                        staticValuePathSelection({
+                            name: 'pageSize',
+                            value:
+                                defaultedConfig.pageSize === undefined
+                                    ? DEFAULT_PAGE_SIZE
+                                    : defaultedConfig.pageSize,
+                        }),
+                        {
+                            kind: 'Scalar',
+                            name: 'sortBy',
+                            plural: true,
+                        },
+                    ],
+                },
             },
         ],
     };

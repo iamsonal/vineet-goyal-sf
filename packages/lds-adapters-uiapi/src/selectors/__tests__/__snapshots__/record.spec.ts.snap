@@ -62,113 +62,125 @@ Array [
     "name": "fields",
     "selections": Array [
       Object {
-        "kind": "Link",
-        "name": "Account",
-        "required": undefined,
-        "selections": Array [
-          Object {
-            "kind": "Scalar",
-            "name": "displayValue",
-          },
-          Object {
-            "kind": "Link",
-            "name": "value",
-            "nullable": true,
-            "selections": Array [
-              Object {
-                "kind": "Scalar",
-                "name": "apiName",
-              },
-              Object {
-                "kind": "Object",
-                "name": "childRelationships",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "id",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "lastModifiedById",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "lastModifiedDate",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "recordTypeId",
-              },
-              Object {
-                "kind": "Object",
-                "name": "recordTypeInfo",
-                "nullable": true,
+        "fragment": Object {
+          "kind": "Fragment",
+          "selections": Array [
+            Object {
+              "kind": "Scalar",
+              "name": "displayValue",
+            },
+            Object {
+              "fragment": Object {
+                "kind": "Fragment",
                 "selections": Array [
                   Object {
                     "kind": "Scalar",
-                    "name": "available",
+                    "name": "apiName",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "childRelationships",
                   },
                   Object {
                     "kind": "Scalar",
-                    "name": "defaultRecordTypeMapping",
+                    "name": "id",
                   },
                   Object {
                     "kind": "Scalar",
-                    "name": "master",
+                    "name": "lastModifiedById",
                   },
                   Object {
                     "kind": "Scalar",
-                    "name": "name",
+                    "name": "lastModifiedDate",
                   },
                   Object {
                     "kind": "Scalar",
                     "name": "recordTypeId",
                   },
-                ],
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "systemModstamp",
-              },
-              Object {
-                "kind": "Object",
-                "name": "fields",
-                "selections": Array [
                   Object {
-                    "kind": "Link",
-                    "name": "Name",
-                    "required": undefined,
+                    "kind": "Object",
+                    "name": "recordTypeInfo",
+                    "nullable": true,
                     "selections": Array [
                       Object {
                         "kind": "Scalar",
-                        "name": "displayValue",
+                        "name": "available",
                       },
                       Object {
                         "kind": "Scalar",
-                        "name": "value",
+                        "name": "defaultRecordTypeMapping",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "master",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "name",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "recordTypeId",
                       },
                     ],
                   },
                   Object {
-                    "kind": "Link",
-                    "name": "Id",
-                    "required": false,
+                    "kind": "Scalar",
+                    "name": "systemModstamp",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "fields",
                     "selections": Array [
                       Object {
-                        "kind": "Scalar",
-                        "name": "displayValue",
+                        "fragment": Object {
+                          "kind": "Fragment",
+                          "selections": Array [
+                            Object {
+                              "kind": "Scalar",
+                              "name": "displayValue",
+                            },
+                            Object {
+                              "kind": "Scalar",
+                              "name": "value",
+                            },
+                          ],
+                        },
+                        "kind": "Link",
+                        "name": "Name",
+                        "required": undefined,
                       },
                       Object {
-                        "kind": "Scalar",
-                        "name": "value",
+                        "fragment": Object {
+                          "kind": "Fragment",
+                          "selections": Array [
+                            Object {
+                              "kind": "Scalar",
+                              "name": "displayValue",
+                            },
+                            Object {
+                              "kind": "Scalar",
+                              "name": "value",
+                            },
+                          ],
+                        },
+                        "kind": "Link",
+                        "name": "Id",
+                        "required": false,
                       },
                     ],
                   },
                 ],
               },
-            ],
-          },
-        ],
+              "kind": "Link",
+              "name": "value",
+              "nullable": true,
+            },
+          ],
+        },
+        "kind": "Link",
+        "name": "Account",
+        "required": undefined,
       },
     ],
   },
@@ -302,113 +314,125 @@ Array [
     "name": "fields",
     "selections": Array [
       Object {
-        "kind": "Link",
-        "name": "Account",
-        "required": undefined,
-        "selections": Array [
-          Object {
-            "kind": "Scalar",
-            "name": "displayValue",
-          },
-          Object {
-            "kind": "Link",
-            "name": "value",
-            "nullable": true,
-            "selections": Array [
-              Object {
-                "kind": "Scalar",
-                "name": "apiName",
-              },
-              Object {
-                "kind": "Object",
-                "name": "childRelationships",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "id",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "lastModifiedById",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "lastModifiedDate",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "recordTypeId",
-              },
-              Object {
-                "kind": "Object",
-                "name": "recordTypeInfo",
-                "nullable": true,
+        "fragment": Object {
+          "kind": "Fragment",
+          "selections": Array [
+            Object {
+              "kind": "Scalar",
+              "name": "displayValue",
+            },
+            Object {
+              "fragment": Object {
+                "kind": "Fragment",
                 "selections": Array [
                   Object {
                     "kind": "Scalar",
-                    "name": "available",
+                    "name": "apiName",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "childRelationships",
                   },
                   Object {
                     "kind": "Scalar",
-                    "name": "defaultRecordTypeMapping",
+                    "name": "id",
                   },
                   Object {
                     "kind": "Scalar",
-                    "name": "master",
+                    "name": "lastModifiedById",
                   },
                   Object {
                     "kind": "Scalar",
-                    "name": "name",
+                    "name": "lastModifiedDate",
                   },
                   Object {
                     "kind": "Scalar",
                     "name": "recordTypeId",
                   },
-                ],
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "systemModstamp",
-              },
-              Object {
-                "kind": "Object",
-                "name": "fields",
-                "selections": Array [
                   Object {
-                    "kind": "Link",
-                    "name": "Name",
-                    "required": undefined,
+                    "kind": "Object",
+                    "name": "recordTypeInfo",
+                    "nullable": true,
                     "selections": Array [
                       Object {
                         "kind": "Scalar",
-                        "name": "displayValue",
+                        "name": "available",
                       },
                       Object {
                         "kind": "Scalar",
-                        "name": "value",
+                        "name": "defaultRecordTypeMapping",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "master",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "name",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "recordTypeId",
                       },
                     ],
                   },
                   Object {
-                    "kind": "Link",
-                    "name": "Id",
-                    "required": undefined,
+                    "kind": "Scalar",
+                    "name": "systemModstamp",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "fields",
                     "selections": Array [
                       Object {
-                        "kind": "Scalar",
-                        "name": "displayValue",
+                        "fragment": Object {
+                          "kind": "Fragment",
+                          "selections": Array [
+                            Object {
+                              "kind": "Scalar",
+                              "name": "displayValue",
+                            },
+                            Object {
+                              "kind": "Scalar",
+                              "name": "value",
+                            },
+                          ],
+                        },
+                        "kind": "Link",
+                        "name": "Name",
+                        "required": undefined,
                       },
                       Object {
-                        "kind": "Scalar",
-                        "name": "value",
+                        "fragment": Object {
+                          "kind": "Fragment",
+                          "selections": Array [
+                            Object {
+                              "kind": "Scalar",
+                              "name": "displayValue",
+                            },
+                            Object {
+                              "kind": "Scalar",
+                              "name": "value",
+                            },
+                          ],
+                        },
+                        "kind": "Link",
+                        "name": "Id",
+                        "required": undefined,
                       },
                     ],
                   },
                 ],
               },
-            ],
-          },
-        ],
+              "kind": "Link",
+              "name": "value",
+              "nullable": true,
+            },
+          ],
+        },
+        "kind": "Link",
+        "name": "Account",
+        "required": undefined,
       },
     ],
   },
@@ -477,222 +501,246 @@ Array [
     "name": "fields",
     "selections": Array [
       Object {
+        "fragment": Object {
+          "kind": "Fragment",
+          "selections": Array [
+            Object {
+              "kind": "Scalar",
+              "name": "displayValue",
+            },
+            Object {
+              "fragment": Object {
+                "kind": "Fragment",
+                "selections": Array [
+                  Object {
+                    "kind": "Scalar",
+                    "name": "apiName",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "childRelationships",
+                  },
+                  Object {
+                    "kind": "Scalar",
+                    "name": "id",
+                  },
+                  Object {
+                    "kind": "Scalar",
+                    "name": "lastModifiedById",
+                  },
+                  Object {
+                    "kind": "Scalar",
+                    "name": "lastModifiedDate",
+                  },
+                  Object {
+                    "kind": "Scalar",
+                    "name": "recordTypeId",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "recordTypeInfo",
+                    "nullable": true,
+                    "selections": Array [
+                      Object {
+                        "kind": "Scalar",
+                        "name": "available",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "defaultRecordTypeMapping",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "master",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "name",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "recordTypeId",
+                      },
+                    ],
+                  },
+                  Object {
+                    "kind": "Scalar",
+                    "name": "systemModstamp",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "fields",
+                    "selections": Array [
+                      Object {
+                        "fragment": Object {
+                          "kind": "Fragment",
+                          "selections": Array [
+                            Object {
+                              "kind": "Scalar",
+                              "name": "displayValue",
+                            },
+                            Object {
+                              "kind": "Scalar",
+                              "name": "value",
+                            },
+                          ],
+                        },
+                        "kind": "Link",
+                        "name": "Name",
+                        "required": undefined,
+                      },
+                      Object {
+                        "fragment": Object {
+                          "kind": "Fragment",
+                          "selections": Array [
+                            Object {
+                              "kind": "Scalar",
+                              "name": "displayValue",
+                            },
+                            Object {
+                              "kind": "Scalar",
+                              "name": "value",
+                            },
+                          ],
+                        },
+                        "kind": "Link",
+                        "name": "Id",
+                        "required": undefined,
+                      },
+                    ],
+                  },
+                ],
+              },
+              "kind": "Link",
+              "name": "value",
+              "nullable": true,
+            },
+          ],
+        },
         "kind": "Link",
         "name": "Account",
         "required": undefined,
-        "selections": Array [
-          Object {
-            "kind": "Scalar",
-            "name": "displayValue",
-          },
-          Object {
-            "kind": "Link",
-            "name": "value",
-            "nullable": true,
-            "selections": Array [
-              Object {
-                "kind": "Scalar",
-                "name": "apiName",
-              },
-              Object {
-                "kind": "Object",
-                "name": "childRelationships",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "id",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "lastModifiedById",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "lastModifiedDate",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "recordTypeId",
-              },
-              Object {
-                "kind": "Object",
-                "name": "recordTypeInfo",
-                "nullable": true,
+      },
+      Object {
+        "fragment": Object {
+          "kind": "Fragment",
+          "selections": Array [
+            Object {
+              "kind": "Scalar",
+              "name": "displayValue",
+            },
+            Object {
+              "fragment": Object {
+                "kind": "Fragment",
                 "selections": Array [
                   Object {
                     "kind": "Scalar",
-                    "name": "available",
+                    "name": "apiName",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "childRelationships",
                   },
                   Object {
                     "kind": "Scalar",
-                    "name": "defaultRecordTypeMapping",
+                    "name": "id",
                   },
                   Object {
                     "kind": "Scalar",
-                    "name": "master",
+                    "name": "lastModifiedById",
                   },
                   Object {
                     "kind": "Scalar",
-                    "name": "name",
+                    "name": "lastModifiedDate",
                   },
                   Object {
                     "kind": "Scalar",
                     "name": "recordTypeId",
                   },
-                ],
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "systemModstamp",
-              },
-              Object {
-                "kind": "Object",
-                "name": "fields",
-                "selections": Array [
                   Object {
-                    "kind": "Link",
-                    "name": "Name",
-                    "required": undefined,
+                    "kind": "Object",
+                    "name": "recordTypeInfo",
+                    "nullable": true,
                     "selections": Array [
                       Object {
                         "kind": "Scalar",
-                        "name": "displayValue",
+                        "name": "available",
                       },
                       Object {
                         "kind": "Scalar",
-                        "name": "value",
+                        "name": "defaultRecordTypeMapping",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "master",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "name",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "recordTypeId",
                       },
                     ],
                   },
                   Object {
-                    "kind": "Link",
-                    "name": "Id",
-                    "required": undefined,
+                    "kind": "Scalar",
+                    "name": "systemModstamp",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "fields",
                     "selections": Array [
                       Object {
-                        "kind": "Scalar",
-                        "name": "displayValue",
-                      },
-                      Object {
-                        "kind": "Scalar",
-                        "name": "value",
+                        "fragment": Object {
+                          "kind": "Fragment",
+                          "selections": Array [
+                            Object {
+                              "kind": "Scalar",
+                              "name": "displayValue",
+                            },
+                            Object {
+                              "kind": "Scalar",
+                              "name": "value",
+                            },
+                          ],
+                        },
+                        "kind": "Link",
+                        "name": "Id",
+                        "required": undefined,
                       },
                     ],
                   },
                 ],
               },
-            ],
-          },
-        ],
-      },
-      Object {
+              "kind": "Link",
+              "name": "value",
+              "nullable": true,
+            },
+          ],
+        },
         "kind": "Link",
         "name": "CreatedBy",
         "required": undefined,
-        "selections": Array [
-          Object {
-            "kind": "Scalar",
-            "name": "displayValue",
-          },
-          Object {
-            "kind": "Link",
-            "name": "value",
-            "nullable": true,
-            "selections": Array [
-              Object {
-                "kind": "Scalar",
-                "name": "apiName",
-              },
-              Object {
-                "kind": "Object",
-                "name": "childRelationships",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "id",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "lastModifiedById",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "lastModifiedDate",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "recordTypeId",
-              },
-              Object {
-                "kind": "Object",
-                "name": "recordTypeInfo",
-                "nullable": true,
-                "selections": Array [
-                  Object {
-                    "kind": "Scalar",
-                    "name": "available",
-                  },
-                  Object {
-                    "kind": "Scalar",
-                    "name": "defaultRecordTypeMapping",
-                  },
-                  Object {
-                    "kind": "Scalar",
-                    "name": "master",
-                  },
-                  Object {
-                    "kind": "Scalar",
-                    "name": "name",
-                  },
-                  Object {
-                    "kind": "Scalar",
-                    "name": "recordTypeId",
-                  },
-                ],
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "systemModstamp",
-              },
-              Object {
-                "kind": "Object",
-                "name": "fields",
-                "selections": Array [
-                  Object {
-                    "kind": "Link",
-                    "name": "Id",
-                    "required": undefined,
-                    "selections": Array [
-                      Object {
-                        "kind": "Scalar",
-                        "name": "displayValue",
-                      },
-                      Object {
-                        "kind": "Scalar",
-                        "name": "value",
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
       },
       Object {
+        "fragment": Object {
+          "kind": "Fragment",
+          "selections": Array [
+            Object {
+              "kind": "Scalar",
+              "name": "displayValue",
+            },
+            Object {
+              "kind": "Scalar",
+              "name": "value",
+            },
+          ],
+        },
         "kind": "Link",
         "name": "IsDeleted",
         "required": undefined,
-        "selections": Array [
-          Object {
-            "kind": "Scalar",
-            "name": "displayValue",
-          },
-          Object {
-            "kind": "Scalar",
-            "name": "value",
-          },
-        ],
       },
     ],
   },
@@ -761,282 +809,318 @@ Array [
     "name": "fields",
     "selections": Array [
       Object {
+        "fragment": Object {
+          "kind": "Fragment",
+          "selections": Array [
+            Object {
+              "kind": "Scalar",
+              "name": "displayValue",
+            },
+            Object {
+              "fragment": Object {
+                "kind": "Fragment",
+                "selections": Array [
+                  Object {
+                    "kind": "Scalar",
+                    "name": "apiName",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "childRelationships",
+                  },
+                  Object {
+                    "kind": "Scalar",
+                    "name": "id",
+                  },
+                  Object {
+                    "kind": "Scalar",
+                    "name": "lastModifiedById",
+                  },
+                  Object {
+                    "kind": "Scalar",
+                    "name": "lastModifiedDate",
+                  },
+                  Object {
+                    "kind": "Scalar",
+                    "name": "recordTypeId",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "recordTypeInfo",
+                    "nullable": true,
+                    "selections": Array [
+                      Object {
+                        "kind": "Scalar",
+                        "name": "available",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "defaultRecordTypeMapping",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "master",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "name",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "recordTypeId",
+                      },
+                    ],
+                  },
+                  Object {
+                    "kind": "Scalar",
+                    "name": "systemModstamp",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "fields",
+                    "selections": Array [
+                      Object {
+                        "fragment": Object {
+                          "kind": "Fragment",
+                          "selections": Array [
+                            Object {
+                              "kind": "Scalar",
+                              "name": "displayValue",
+                            },
+                            Object {
+                              "kind": "Scalar",
+                              "name": "value",
+                            },
+                          ],
+                        },
+                        "kind": "Link",
+                        "name": "Id",
+                        "required": undefined,
+                      },
+                      Object {
+                        "fragment": Object {
+                          "kind": "Fragment",
+                          "selections": Array [
+                            Object {
+                              "kind": "Scalar",
+                              "name": "displayValue",
+                            },
+                            Object {
+                              "kind": "Scalar",
+                              "name": "value",
+                            },
+                          ],
+                        },
+                        "kind": "Link",
+                        "name": "Name",
+                        "required": undefined,
+                      },
+                      Object {
+                        "fragment": Object {
+                          "kind": "Fragment",
+                          "selections": Array [
+                            Object {
+                              "kind": "Scalar",
+                              "name": "displayValue",
+                            },
+                            Object {
+                              "kind": "Scalar",
+                              "name": "value",
+                            },
+                          ],
+                        },
+                        "kind": "Link",
+                        "name": "RecordTypeId",
+                        "required": undefined,
+                      },
+                    ],
+                  },
+                ],
+              },
+              "kind": "Link",
+              "name": "value",
+              "nullable": true,
+            },
+          ],
+        },
         "kind": "Link",
         "name": "Account",
         "required": undefined,
-        "selections": Array [
-          Object {
-            "kind": "Scalar",
-            "name": "displayValue",
-          },
-          Object {
-            "kind": "Link",
-            "name": "value",
-            "nullable": true,
-            "selections": Array [
-              Object {
-                "kind": "Scalar",
-                "name": "apiName",
-              },
-              Object {
-                "kind": "Object",
-                "name": "childRelationships",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "id",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "lastModifiedById",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "lastModifiedDate",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "recordTypeId",
-              },
-              Object {
-                "kind": "Object",
-                "name": "recordTypeInfo",
-                "nullable": true,
-                "selections": Array [
-                  Object {
-                    "kind": "Scalar",
-                    "name": "available",
-                  },
-                  Object {
-                    "kind": "Scalar",
-                    "name": "defaultRecordTypeMapping",
-                  },
-                  Object {
-                    "kind": "Scalar",
-                    "name": "master",
-                  },
-                  Object {
-                    "kind": "Scalar",
-                    "name": "name",
-                  },
-                  Object {
-                    "kind": "Scalar",
-                    "name": "recordTypeId",
-                  },
-                ],
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "systemModstamp",
-              },
-              Object {
-                "kind": "Object",
-                "name": "fields",
-                "selections": Array [
-                  Object {
-                    "kind": "Link",
-                    "name": "Id",
-                    "required": undefined,
-                    "selections": Array [
-                      Object {
-                        "kind": "Scalar",
-                        "name": "displayValue",
-                      },
-                      Object {
-                        "kind": "Scalar",
-                        "name": "value",
-                      },
-                    ],
-                  },
-                  Object {
-                    "kind": "Link",
-                    "name": "Name",
-                    "required": undefined,
-                    "selections": Array [
-                      Object {
-                        "kind": "Scalar",
-                        "name": "displayValue",
-                      },
-                      Object {
-                        "kind": "Scalar",
-                        "name": "value",
-                      },
-                    ],
-                  },
-                  Object {
-                    "kind": "Link",
-                    "name": "RecordTypeId",
-                    "required": undefined,
-                    "selections": Array [
-                      Object {
-                        "kind": "Scalar",
-                        "name": "displayValue",
-                      },
-                      Object {
-                        "kind": "Scalar",
-                        "name": "value",
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
       },
       Object {
+        "fragment": Object {
+          "kind": "Fragment",
+          "selections": Array [
+            Object {
+              "kind": "Scalar",
+              "name": "displayValue",
+            },
+            Object {
+              "kind": "Scalar",
+              "name": "value",
+            },
+          ],
+        },
         "kind": "Link",
         "name": "AccountId",
         "required": undefined,
-        "selections": Array [
-          Object {
-            "kind": "Scalar",
-            "name": "displayValue",
-          },
-          Object {
-            "kind": "Scalar",
-            "name": "value",
-          },
-        ],
       },
       Object {
-        "kind": "Link",
-        "name": "CreatedBy",
-        "required": undefined,
-        "selections": Array [
-          Object {
-            "kind": "Scalar",
-            "name": "displayValue",
-          },
-          Object {
-            "kind": "Link",
-            "name": "value",
-            "nullable": true,
-            "selections": Array [
-              Object {
-                "kind": "Scalar",
-                "name": "apiName",
-              },
-              Object {
-                "kind": "Object",
-                "name": "childRelationships",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "id",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "lastModifiedById",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "lastModifiedDate",
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "recordTypeId",
-              },
-              Object {
-                "kind": "Object",
-                "name": "recordTypeInfo",
-                "nullable": true,
+        "fragment": Object {
+          "kind": "Fragment",
+          "selections": Array [
+            Object {
+              "kind": "Scalar",
+              "name": "displayValue",
+            },
+            Object {
+              "fragment": Object {
+                "kind": "Fragment",
                 "selections": Array [
                   Object {
                     "kind": "Scalar",
-                    "name": "available",
+                    "name": "apiName",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "childRelationships",
                   },
                   Object {
                     "kind": "Scalar",
-                    "name": "defaultRecordTypeMapping",
+                    "name": "id",
                   },
                   Object {
                     "kind": "Scalar",
-                    "name": "master",
+                    "name": "lastModifiedById",
                   },
                   Object {
                     "kind": "Scalar",
-                    "name": "name",
+                    "name": "lastModifiedDate",
                   },
                   Object {
                     "kind": "Scalar",
                     "name": "recordTypeId",
                   },
-                ],
-              },
-              Object {
-                "kind": "Scalar",
-                "name": "systemModstamp",
-              },
-              Object {
-                "kind": "Object",
-                "name": "fields",
-                "selections": Array [
                   Object {
-                    "kind": "Link",
-                    "name": "Id",
-                    "required": undefined,
+                    "kind": "Object",
+                    "name": "recordTypeInfo",
+                    "nullable": true,
                     "selections": Array [
                       Object {
                         "kind": "Scalar",
-                        "name": "displayValue",
+                        "name": "available",
                       },
                       Object {
                         "kind": "Scalar",
-                        "name": "value",
+                        "name": "defaultRecordTypeMapping",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "master",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "name",
+                      },
+                      Object {
+                        "kind": "Scalar",
+                        "name": "recordTypeId",
                       },
                     ],
                   },
                   Object {
-                    "kind": "Link",
-                    "name": "Name",
-                    "required": undefined,
+                    "kind": "Scalar",
+                    "name": "systemModstamp",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "fields",
                     "selections": Array [
                       Object {
-                        "kind": "Scalar",
-                        "name": "displayValue",
+                        "fragment": Object {
+                          "kind": "Fragment",
+                          "selections": Array [
+                            Object {
+                              "kind": "Scalar",
+                              "name": "displayValue",
+                            },
+                            Object {
+                              "kind": "Scalar",
+                              "name": "value",
+                            },
+                          ],
+                        },
+                        "kind": "Link",
+                        "name": "Id",
+                        "required": undefined,
                       },
                       Object {
-                        "kind": "Scalar",
-                        "name": "value",
+                        "fragment": Object {
+                          "kind": "Fragment",
+                          "selections": Array [
+                            Object {
+                              "kind": "Scalar",
+                              "name": "displayValue",
+                            },
+                            Object {
+                              "kind": "Scalar",
+                              "name": "value",
+                            },
+                          ],
+                        },
+                        "kind": "Link",
+                        "name": "Name",
+                        "required": undefined,
                       },
                     ],
                   },
                 ],
               },
-            ],
-          },
-        ],
+              "kind": "Link",
+              "name": "value",
+              "nullable": true,
+            },
+          ],
+        },
+        "kind": "Link",
+        "name": "CreatedBy",
+        "required": undefined,
       },
       Object {
+        "fragment": Object {
+          "kind": "Fragment",
+          "selections": Array [
+            Object {
+              "kind": "Scalar",
+              "name": "displayValue",
+            },
+            Object {
+              "kind": "Scalar",
+              "name": "value",
+            },
+          ],
+        },
         "kind": "Link",
         "name": "IsDeleted",
         "required": undefined,
-        "selections": Array [
-          Object {
-            "kind": "Scalar",
-            "name": "displayValue",
-          },
-          Object {
-            "kind": "Scalar",
-            "name": "value",
-          },
-        ],
       },
       Object {
+        "fragment": Object {
+          "kind": "Fragment",
+          "selections": Array [
+            Object {
+              "kind": "Scalar",
+              "name": "displayValue",
+            },
+            Object {
+              "kind": "Scalar",
+              "name": "value",
+            },
+          ],
+        },
         "kind": "Link",
         "name": "IsPremier_Attached__c",
         "required": undefined,
-        "selections": Array [
-          Object {
-            "kind": "Scalar",
-            "name": "displayValue",
-          },
-          Object {
-            "kind": "Scalar",
-            "name": "value",
-          },
-        ],
       },
     ],
   },

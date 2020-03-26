@@ -12,16 +12,45 @@ function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
 }
 
+function buildSinonMatch(obj) {
+    if (Array.isArray(obj)) {
+        const next = obj.map(value => {
+            if (typeof value === 'object' && value !== null) {
+                return buildSinonMatch(value);
+            }
+            return value;
+        });
+
+        return sinon.match(next);
+    }
+
+    const next = Object.keys(obj).reduce((seed, key) => {
+        let value = obj[key];
+        if (typeof value === 'object' && value !== null) {
+            value = buildSinonMatch(value);
+        }
+
+        seed[key] = value;
+
+        return seed;
+    }, {});
+
+    return sinon.match(next);
+}
+
 function mockUpdateNetwork(keys, params, mockData) {
     const { parentObjectApiName, relatedListId } = keys;
     const updateParams = { ...params };
     const queryParams = { ...keys };
     delete queryParams.parentObjectApiName;
     delete queryParams.relatedListId;
+    delete updateParams.parentObjectApiName;
+    delete updateParams.recordTypeId;
+    delete updateParams.relatedListId;
 
-    const paramMatch = sinon.match({
+    const paramMatch = buildSinonMatch({
         path: `${URL_BASE}/related-list-info/${parentObjectApiName}/${relatedListId}`,
-        queryParams,
+        queryParams: queryParams,
         method: 'patch',
         body: updateParams,
     });
@@ -42,7 +71,7 @@ function mockGetNetwork(keys, mockData) {
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-describe('update record', () => {
+describe('updateRelatedListInfo', () => {
     it('passes all parameters to HTTP request, and sends the correct response', async () => {
         const mockData = getMock(
             'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r'
@@ -73,19 +102,18 @@ describe('update record', () => {
             userPreferences: mockData.userPreferences,
         };
         const response = await updateRelatedListInfo(props);
-
         expect(response.data).toEqualSnapshotWithoutEtags(mockData);
     });
 
     // excluded until the issue regarding updateRLInfo incorrectly inspecting the cache is resolved
-    xit('properly emits when data has been updated', async () => {
+    it('properly emits when data has been updated', async () => {
         const mockData = getMock(
             'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r'
         );
         const mockUpdatedResponse = getMock(
             'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r'
         );
-        mockUpdatedResponse.userPreferences.columnWrap = true;
+        mockUpdatedResponse.userPreferences.columnWrap.Name = true;
 
         const keyConfig = {
             parentObjectApiName: mockData.listReference.parentObjectApiName,
@@ -120,18 +148,18 @@ describe('update record', () => {
     });
 
     // excluded until the issue regarding updateRLInfo incorrectly inspecting the cache is resolved
-    xit('hits the network twice when two update calls are made', async () => {
+    it('hits the network twice when two update calls are made', async () => {
         const mockData = getMock(
             'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r'
         );
         const mockFirstUpdate = getMock(
             'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r'
         );
-        mockFirstUpdate.userPreferences.columnWrap = true;
+        mockFirstUpdate.userPreferences.columnWrap.Name = true;
         const mockSecondUpdate = getMock(
             'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r'
         );
-        mockSecondUpdate.userPreferences.columnWidths = 10;
+        mockSecondUpdate.userPreferences.columnWidths.Name = 10;
 
         const updateConfig = {
             orderedByInfo: [],
@@ -171,8 +199,10 @@ describe('update record', () => {
         mockUpdateNetwork(keyConfig, updateConfig, mockFirstUpdate);
         mockUpdateNetwork(keyConfig, updateSecondConfig, mockSecondUpdate);
 
-        await updateRelatedListInfo(updateConfig);
-        await updateRelatedListInfo(updateSecondConfig);
+        const firstResult = await updateRelatedListInfo(updateConfig);
+        expect(firstResult.data).toEqualSnapshotWithoutEtags(mockFirstUpdate);
+        const secondResult = await updateRelatedListInfo(updateSecondConfig);
+        expect(secondResult.data).toEqualSnapshotWithoutEtags(mockSecondUpdate);
     });
 
     it('updates values on elements when an update is made', async () => {

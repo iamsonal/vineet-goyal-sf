@@ -11,7 +11,6 @@ function paginatedDataCustomReader(
     const nonCustomSelection: any = {
         name: selection.name,
         plural: true,
-        selections: selection.selections,
         pageToken: selection.pageToken,
         pageSize: selection.pageSize,
         tokenDataKey: selection.tokenDataKey,
@@ -19,9 +18,14 @@ function paginatedDataCustomReader(
 
     if (record[selection.name] && record[selection.name][0] && record[selection.name][0].__ref) {
         nonCustomSelection.kind = 'Link';
+        nonCustomSelection.fragment = {
+            kind: 'Fragment',
+            selections: selection.selections,
+        };
         reader.readPluralLink(key, nonCustomSelection, record, data);
     } else {
         nonCustomSelection.kind = 'Object';
+        nonCustomSelection.selections = selection.selections;
         reader.readPluralObject(key, nonCustomSelection, record, data);
     }
 

@@ -158,16 +158,18 @@ export function registerApiFamilyRoutes(apiFamily: ApiFamily) {
         const { method, predicate, transport } = adapter;
         appRouter[method](
             predicate,
-            (resourceRequest: ResourceRequest): Promise<any> => {
-                const actionConfig: DispatchActionConfig = {
-                    action: transport.action,
-                };
+            {
+                [`${adapterName}`]: function(resourceRequest: ResourceRequest): Promise<any> {
+                    const actionConfig: DispatchActionConfig = {
+                        action: transport.action,
+                    };
 
-                const { urlParams, queryParams } = resourceRequest;
-                const params = { ...urlParams, ...queryParams };
+                    const { urlParams, queryParams } = resourceRequest;
+                    const params = { ...urlParams, ...queryParams };
 
-                return dispatchAction(transport.controller, params, actionConfig);
-            }
+                    return dispatchAction(transport.controller, params, actionConfig);
+                },
+            }[adapterName]
         );
     });
 }

@@ -4,7 +4,7 @@ import { ArrayPrototypePush, JSONParse, JSONStringify, ObjectEntries } from '../
 
 import { ControllerInvoker } from './middlewares/utils';
 
-import { default as appRouter, Route } from './router';
+import { default as appRouter } from './router';
 import './middlewares';
 
 interface RequestHandlers {
@@ -15,17 +15,13 @@ interface RequestHandlers {
 function controllerInvokerFactory(resourceRequest: ResourceRequest): ControllerInvoker {
     const { path, method } = resourceRequest;
 
-    const routes: Route[] = appRouter.methods[method];
-    if (routes === undefined || routes.length === 0) {
+    const ret = appRouter.lookup(resourceRequest);
+
+    if (ret === null) {
         throw new Error(`No invoker matching controller factory: ${path} ${method}.`);
     }
 
-    const matchedRoute = routes.find(route => route.predicate(path));
-    if (matchedRoute !== undefined) {
-        return matchedRoute.handler;
-    } else {
-        throw new Error(`No invoker matching controller factory: ${path} ${method}.`);
-    }
+    return ret;
 }
 
 interface RequestHandlers {

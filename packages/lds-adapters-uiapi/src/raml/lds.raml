@@ -416,6 +416,7 @@ types:
         (key):
           parentRecordId: urlParams.parentRecordId
           relatedListNames: urlParams.relatedListNames
+          recordTypeId: queryParams.recordTypeId || null
     '/{parentRecordId}/{relatedListName}':
       get:
         (adapter):
@@ -431,6 +432,10 @@ types:
         (key):
           parentObjectApiName: urlParams.parentObjectApiName
           recordTypeId: queryParams.recordTypeId || null
+    '/batch/{parentObjectApiName}/{relatedListNames}':
+      get:
+        (adapter):
+          name: getRelatedListInfoBatch
     '/{parentObjectApiName}/{relatedListId}':
       get:
         (adapter):

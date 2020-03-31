@@ -28,6 +28,7 @@ import {
     GetRecordUi,
     GetRelatedListActions,
     GetRelatedListInfo,
+    GetRelatedListInfoBatch,
     GetRelatedListsInfo,
     GetRelatedListCount,
     GetRelatedListsCount,
@@ -64,6 +65,7 @@ const getRecordNotifyChange = GetRecordNotifyChange(lds);
 const getRecordUi = register(lds, wireService, GetRecordUi(lds));
 const getRelatedListActions = register(lds, wireService, GetRelatedListActions(lds));
 const getRelatedListInfo = register(lds, wireService, GetRelatedListInfo(lds));
+const getRelatedListInfoBatch = register(lds, wireService, GetRelatedListInfoBatch(lds));
 const getRelatedListsInfo = register(lds, wireService, GetRelatedListsInfo(lds));
 const getRelatedListCount = register(lds, wireService, GetRelatedListCount(lds));
 const getRelatedListsCount = register(lds, wireService, GetRelatedListsCount(lds));
@@ -93,6 +95,7 @@ export {
     getRecordUi,
     getRelatedListActions,
     getRelatedListInfo,
+    getRelatedListInfoBatch,
     getRelatedListsInfo,
     getRelatedListCount,
     getRelatedListsCount,

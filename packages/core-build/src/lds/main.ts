@@ -36,6 +36,7 @@ import {
     UpdateRecord,
     UpdateRecordAvatar,
     UpdateRelatedListInfo,
+    GetRelatedListInfoBatch,
 } from '@salesforce/lds-adapters-uiapi';
 import * as wireService from 'wire-service';
 import { throttle } from '../utils';
@@ -196,6 +197,12 @@ export const getRelatedListCount = setupWireAdapter('getRelatedListCount', GetRe
 export const _getRelatedListCount = createImperativeFunction(getRelatedListCount);
 export const getRelatedListsCount = setupWireAdapter('getRelatedListsCount', GetRelatedListsCount);
 export const _getRelatedListsCount = createImperativeFunction(getRelatedListsCount);
+
+export const getRelatedListInfoBatch = setupWireAdapter(
+    'getRelatedListInfoBatch',
+    GetRelatedListInfoBatch
+);
+export const _getRelatedListInfoBatch = createImperativeFunction(getRelatedListInfoBatch);
 
 const baseUpdateRecord = UpdateRecord(lds);
 export const updateRecord = (...config: Parameters<ReturnType<typeof UpdateRecord>>) => {

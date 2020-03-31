@@ -27,6 +27,7 @@ export { getRecordActionsAdapterFactory as GetRecordActions } from './generated/
 export { getRelatedListActionsAdapterFactory as GetRelatedListActions } from './generated/adapters/getRelatedListActions';
 export { getRecordEditActionsAdapterFactory as GetRecordEditActions } from './generated/adapters/getRecordEditActions';
 export { getRelatedListsInfoAdapterFactory as GetRelatedListsInfo } from './generated/adapters/getRelatedListsInfo';
+export { getRelatedListInfoBatchAdapterFactory as GetRelatedListInfoBatch } from './generated/adapters/getRelatedListInfoBatch';
 export { getRelatedListCountAdapterFactory as GetRelatedListCount } from './generated/adapters/getRelatedListCount';
 export { getRelatedListsCountAdapterFactory as GetRelatedListsCount } from './generated/adapters/getRelatedListsCount';
 export { getRelatedListRecordActionsAdapterFactory as GetRelatedListRecordActions } from './generated/adapters/getRelatedListRecordActions';
@@ -63,6 +64,8 @@ export {
 // Exposing those ingestion methods method "@ldsjs/engine" performance tests.
 // TODO W-6900152 -  Explore other solutions to see how we can avoid exposing the types out of the module.
 export { ingest as ingestRecordUi } from './generated/types/RecordUiRepresentation';
+export { ingest as ingestRelatedListInfo } from './generated/types/RelatedListInfoRepresentation';
+export { ingest as ingestRelatedListInfoBatch } from './generated/types/RelatedListInfoBatchRepresentation';
 
 // record-util pure functions
 export {

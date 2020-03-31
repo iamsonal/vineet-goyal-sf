@@ -42,6 +42,7 @@ const whiteList = [
     'getRelatedListRecordActions',
     'getRelatedListCount',
     'getRelatedListsCount',
+    'getRelatedListInfoBatch',
 
     /** Apex exports */
     'getApexInvoker',
@@ -80,6 +81,7 @@ const whiteList = [
     '_getRelatedListActions',
     '_getRelatedListRecords',
     '_getRelatedListRecordActions',
+    '_getRelatedListInfoBatch',
 ].sort();
 
 describe('items exported to core', () => {

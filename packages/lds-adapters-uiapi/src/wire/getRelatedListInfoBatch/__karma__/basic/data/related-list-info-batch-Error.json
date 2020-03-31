@@ -1,0 +1,13 @@
+{
+    "results": [
+        {
+            "result": [
+                {
+                    "errorCode": "INVALID_TYPE",
+                    "message": "The related lists UI API currently supports only custom objects"
+                }
+            ],
+            "statusCode": 400
+        }
+    ]
+}

@@ -1,4 +1,5 @@
-const { keys, values, hasOwnProperty } = Object;
+const { keys, values } = Object;
+const { hasOwnProperty } = Object.prototype;
 const { isArray } = Array;
 const { stringify } = JSON;
 

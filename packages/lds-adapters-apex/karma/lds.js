@@ -7,7 +7,11 @@ import {
     wireService,
 } from '@salesforce/lds-karma-config/lds-setup';
 
-import { GenerateGetApexWireAdapter, GetApexInvoker } from '@salesforce/lds-adapters-apex';
+import {
+    GenerateGetApexWireAdapter,
+    GetApexInvoker,
+    getSObjectValue,
+} from '@salesforce/lds-adapters-apex';
 
 const apexContactControllerGetContactListWireAdapterIdentifier = GetApexInvoker(lds, {
     namespace: '',
@@ -37,6 +41,7 @@ export {
     // adapters
     apex,
     apexContactControllerGetContactList,
+    getSObjectValue,
     // lds
     karmaNetworkAdapter,
     store,

@@ -1,5 +1,6 @@
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import { expireApex, mockApexNetwork, mockApexNetworkOnce } from 'apex-test-util';
+import { getSObjectValue } from 'lds';
 
 import Imperative from '../lwc/imperative';
 import Wired from '../lwc/wired';
@@ -20,6 +21,43 @@ const requestBody = {
     cacheable: true,
 };
 const mockHeaders = { cacheable: true };
+
+describe('Apex getSObjectValue', () => {
+    it('returns Contact.Name from sObject response', async () => {
+        const mockApex = getMock('apex-getContactList');
+        mockApexNetworkOnce(requestBody, mockApex, mockHeaders);
+
+        const element = await setupElement({}, Wired);
+
+        expect(element.getWiredContacts()).toEqual(mockApex);
+
+        let sObject = element.getWiredContacts()[0];
+        let expectedData = mockApex[0];
+
+        expect(getSObjectValue(sObject, 'Contact.Name')).toEqual(expectedData['Name']);
+    });
+
+    it('returns undefined for null sObject', async () => {
+        expect(getSObjectValue(null, 'Contact.Name')).toBeUndefined();
+    });
+
+    it('returns undefined for string sObject', async () => {
+        expect(getSObjectValue('heya', 'Contact.Name')).toBeUndefined();
+    });
+
+    it('returns undefined for field that is not in sObject', async () => {
+        const mockApex = getMock('apex-getContactList');
+        mockApexNetworkOnce(requestBody, mockApex, mockHeaders);
+
+        const element = await setupElement({}, Wired);
+
+        expect(element.getWiredContacts()).toEqual(mockApex);
+
+        let sObject = element.getWiredContacts()[0];
+
+        expect(getSObjectValue(sObject, 'Contact.ShouldNotExist__c')).toBeUndefined();
+    });
+});
 
 describe('@wire Apex call', () => {
     it('returns data', async () => {

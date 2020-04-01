@@ -22,8 +22,8 @@ router.methods = {} as Record<string, Route[]>;
 });
 
 router.lookup = function(resourceRequest: ResourceRequest): ControllerInvoker | null {
-    const { path, method } = resourceRequest;
-
+    const { baseUri, basePath, method } = resourceRequest;
+    const path = `${baseUri}${basePath}`;
     const routes: Route[] = this.methods[method];
     if (routes === undefined || routes.length === 0) {
         return null;

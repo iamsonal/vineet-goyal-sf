@@ -13,7 +13,8 @@ interface RequestHandlers {
 }
 
 function controllerInvokerFactory(resourceRequest: ResourceRequest): ControllerInvoker {
-    const { path, method } = resourceRequest;
+    const { baseUri, basePath, method } = resourceRequest;
+    const path = `${baseUri}${basePath}`;
 
     const ret = appRouter.lookup(resourceRequest);
 
@@ -56,7 +57,8 @@ function getFulfillingRequest(
 }
 
 function getTransactionKey(resourceRequest: ResourceRequest): string {
-    const { path, key, queryParams, headers } = resourceRequest;
+    const { baseUri, basePath, key, queryParams, headers } = resourceRequest;
+    const path = `${baseUri}${basePath}`;
     return `${path}::${JSONStringify(headers)}::${
         queryParams ? JSONStringify(queryParams) : ''
     }::${key}`;

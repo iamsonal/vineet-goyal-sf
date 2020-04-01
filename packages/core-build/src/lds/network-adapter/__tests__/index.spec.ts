@@ -13,7 +13,6 @@ function buildResourceRequest(resourceRequest: Partial<ResourceRequest>): Resour
         baseUri: resourceRequest.baseUri || '/test',
         basePath: resourceRequest.basePath || '/test',
         method: resourceRequest.method || 'get',
-        path: resourceRequest.path || '/test',
         body: resourceRequest.body || {},
         queryParams: resourceRequest.queryParams || {},
         urlParams: resourceRequest.urlParams || {},
@@ -120,7 +119,7 @@ beforeEach(() => {
 
 describe('network adapter', () => {
     it('throws an error if no matching invoker is found', () => {
-        const unknownRequest = buildResourceRequest({ method: 'get', path: '/test' });
+        const unknownRequest = buildResourceRequest({ method: 'get', basePath: '/test' });
         expect(() => {
             networkAdapter(unknownRequest);
         }).toThrow(/No invoker matching controller factory/);
@@ -145,8 +144,8 @@ describe('routes', () => {
         original = appRouter.lookup;
         // override lookup function to bookkeep seen route from tests
         appRouter.lookup = function(resourceRequest: ResourceRequest): ControllerInvoker | null {
-            const { path, method } = resourceRequest;
-
+            const { basePath, baseUri, method } = resourceRequest;
+            const path = `${baseUri}${basePath}`;
             const routes: Route[] = this.methods[method];
             if (routes === undefined || routes.length === 0) {
                 return null;
@@ -170,7 +169,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/object-info/Test_c`,
+                baseUri: UI_API_BASE_URI,
+                basePath: '/object-info/Test_c',
                 urlParams: {
                     objectApiName: 'Test_c',
                 },
@@ -184,7 +184,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/object-info/Test_c`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/object-info/Test_c`,
             urlParams: {
                 objectApiName: 'Test_c',
             },
@@ -193,7 +194,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/object-info/Test_c`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/object-info/Test_c`,
                 urlParams: {
                     objectApiName: 'Test_c',
                 },
@@ -206,7 +208,8 @@ describe('routes', () => {
 
         testStorage('ldsObjectInfo', {
             method: 'get',
-            path: `${UI_API_BASE_URI}/object-info/Test_c`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/object-info/Test_c`,
             urlParams: {
                 objectApiName: 'Test_c',
             },
@@ -217,7 +220,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/object-info/batch/Test1_c,Test2_c`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/object-info/batch/Test1_c,Test2_c`,
                 urlParams: {
                     objectApiNames: ['Test1_c', 'Test2_c'],
                 },
@@ -231,7 +235,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/object-info/batch/Test1_c,Test2_c`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/object-info/batch/Test1_c,Test2_c`,
             urlParams: {
                 objectApiNames: ['Test1_c', 'Test2_c'],
             },
@@ -240,7 +245,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/object-info/batch/Test1_c,Test2_c`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/object-info/batch/Test1_c,Test2_c`,
                 urlParams: {
                     objectApiNames: ['Test1_c', 'Test2_c'],
                 },
@@ -267,7 +273,8 @@ describe('routes', () => {
 
         testStorage('ldsObjectInfo', {
             method: 'get',
-            path: `${UI_API_BASE_URI}/object-info/Test_c`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/object-info/Test_c`,
             urlParams: {
                 objectApiName: 'Test_c',
             },
@@ -278,7 +285,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'post',
-                path: `${UI_API_BASE_URI}/records`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/records`,
                 body: {
                     apiName: 'Test__c',
                     fields: [],
@@ -298,13 +306,15 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'post',
-            path: `${UI_API_BASE_URI}/records`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/records`,
         });
 
         testResolveResponse(
             {
                 method: 'post',
-                path: `${UI_API_BASE_URI}/records`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/records`,
                 body: {
                     apiName: 'Test__c',
                     fields: [],
@@ -321,7 +331,8 @@ describe('routes', () => {
     describe('get /records/{recordId}', () => {
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/records/1234`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/records/1234`,
             urlParams: {
                 recordId: '1234',
             },
@@ -330,7 +341,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/records/1234`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/records/1234`,
                 urlParams: {
                     recordId: '1234',
                 },
@@ -352,7 +364,8 @@ describe('routes', () => {
             testControllerInput(
                 {
                     method: 'get',
-                    path: `${UI_API_BASE_URI}/records/1234`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/records/1234`,
                     urlParams: {
                         recordId: '1234',
                     },
@@ -377,7 +390,8 @@ describe('routes', () => {
             testControllerInput(
                 {
                     method: 'get',
-                    path: `${UI_API_BASE_URI}/records/1234`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/records/1234`,
                     urlParams: {
                         recordId: '1234',
                     },
@@ -405,7 +419,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'patch',
-                path: `${UI_API_BASE_URI}/records/1234`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/records/1234`,
                 urlParams: {
                     recordId: '1234',
                 },
@@ -433,13 +448,15 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'patch',
-            path: `${UI_API_BASE_URI}/records/1234`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/records/1234`,
         });
 
         testResolveResponse(
             {
                 method: 'patch',
-                path: `${UI_API_BASE_URI}/records/1234`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/records/1234`,
                 urlParams: {
                     recordId: '1234',
                 },
@@ -460,7 +477,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'delete',
-                path: `${UI_API_BASE_URI}/records/1234`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/records/1234`,
                 urlParams: {
                     recordId: '1234',
                 },
@@ -477,13 +495,15 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'delete',
-            path: `${UI_API_BASE_URI}/records/1234`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/records/1234`,
         });
 
         testResolveResponse(
             {
                 method: 'delete',
-                path: `${UI_API_BASE_URI}/records/1234`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/records/1234`,
                 urlParams: {
                     recordId: '1234',
                 },
@@ -501,7 +521,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/record-avatars/batch/1234,5678`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/record-avatars/batch/1234,5678`,
                 urlParams: {
                     recordIds: ['1234', '5678'],
                 },
@@ -515,7 +536,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/record-avatars/batch/1234,5678`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/record-avatars/batch/1234,5678`,
             urlParams: {
                 recordIds: ['1234', '5678'],
             },
@@ -524,7 +546,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/record-avatars/batch/1234,5678`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/record-avatars/batch/1234,5678`,
                 urlParams: {
                     recordIds: ['1234', '5678'],
                 },
@@ -543,7 +566,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'post',
-                path: `${UI_API_BASE_URI}/record-avatars/1234/association`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/record-avatars/1234/association`,
                 urlParams: {
                     recordId: '1234',
                 },
@@ -573,7 +597,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'post',
-            path: `${UI_API_BASE_URI}/record-avatars/1234/association`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/record-avatars/1234/association`,
             urlParams: {
                 recordId: '1234',
             },
@@ -589,7 +614,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'post',
-                path: `${UI_API_BASE_URI}/record-avatars/1234/association`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/record-avatars/1234/association`,
                 urlParams: {
                     recordId: '1234',
                 },
@@ -615,7 +641,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/record-ui/1234,5678`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/record-ui/1234,5678`,
                 urlParams: {
                     recordIds: '1234,5678',
                 },
@@ -634,7 +661,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/record-ui/1234,5678`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/record-ui/1234,5678`,
             urlParams: {
                 recordIds: '1234,5678',
             },
@@ -643,7 +671,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/record-ui/1234,5678`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/record-ui/1234,5678`,
                 urlParams: {
                     recordIds: '1234,5678',
                 },
@@ -661,7 +690,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/layout/Opportunity/user-state`,
                 urlParams: {
                     objectApiName: 'Opportunity',
                 },
@@ -685,7 +715,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/layout/Opportunity/user-state`,
             urlParams: {
                 objectApiName: 'Opportunity',
             },
@@ -699,7 +730,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/layout/Opportunity/user-state`,
                 urlParams: {
                     objectApiName: 'Opportunity',
                 },
@@ -717,7 +749,8 @@ describe('routes', () => {
 
         testStorage('ldsLayoutUserState', {
             method: 'get',
-            path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/layout/Opportunity/user-state`,
             urlParams: {
                 objectApiName: 'Opportunity',
             },
@@ -733,7 +766,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'patch',
-                path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/layout/Opportunity/user-state`,
                 urlParams: {
                     objectApiName: 'Opportunity',
                 },
@@ -762,7 +796,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'patch',
-            path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/layout/Opportunity/user-state`,
             urlParams: {
                 objectApiName: 'Opportunity',
             },
@@ -776,7 +811,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'patch',
-                path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/layout/Opportunity/user-state`,
                 urlParams: {
                     objectApiName: 'Opportunity',
                 },
@@ -803,7 +839,8 @@ describe('routes', () => {
             await networkAdapter(
                 buildResourceRequest({
                     method: 'patch',
-                    path: `${UI_API_BASE_URI}/layout/Opportunity/user-state`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/layout/Opportunity/user-state`,
                     urlParams: {
                         objectApiName: 'Opportunity',
                     },
@@ -824,7 +861,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/layout/Opportunity`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/layout/Opportunity`,
                 urlParams: {
                     objectApiName: 'Opportunity',
                 },
@@ -854,7 +892,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/layout/Opportunity`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/layout/Opportunity`,
             urlParams: {
                 objectApiName: 'Opportunity',
             },
@@ -871,7 +910,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/layout/Opportunity`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/layout/Opportunity`,
                 urlParams: {
                     objectApiName: 'Opportunity',
                 },
@@ -895,7 +935,8 @@ describe('routes', () => {
 
         testStorage('ldsLayout', {
             method: 'get',
-            path: `${UI_API_BASE_URI}/layout/Opportunity`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/layout/Opportunity`,
             urlParams: {
                 objectApiName: 'Opportunity',
             },
@@ -916,9 +957,8 @@ describe('routes', () => {
 
             await networkAdapter({
                 method: 'post',
-                baseUri: '/apex',
+                baseUri: '',
                 basePath: '/apex',
-                path: '/apex',
                 body: {
                     namespace: '',
                     classname: 'ContactController',
@@ -953,9 +993,8 @@ describe('routes', () => {
 
             const res = await networkAdapter({
                 method: 'post',
-                baseUri: '/apex',
+                baseUri: '',
                 basePath: '/apex',
-                path: '/apex',
                 body: {
                     namespace: '',
                     classname: 'TestController',
@@ -984,7 +1023,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/actions/lookup/Test_a,Test_c`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/actions/lookup/Test_a,Test_c`,
                 urlParams: {
                     objectApiNames: ['Test_a', 'Test_c'],
                 },
@@ -998,7 +1038,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/actions/lookup/Test_a,Test_c`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/actions/lookup/Test_a,Test_c`,
             urlParams: {
                 objectApiNames: ['Test_a', 'Test_c'],
             },
@@ -1007,7 +1048,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/actions/lookup/Test_a,Test_c`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/actions/lookup/Test_a,Test_c`,
                 urlParams: {
                     objectApiNames: ['Test_a', 'Test_c'],
                 },
@@ -1029,7 +1071,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User`,
                 urlParams: {
                     objectApiName: 'Opportunity',
                     recordTypeId: '012T00000004MUHIA2',
@@ -1053,7 +1096,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User`,
             urlParams: {
                 objectApiName: 'Opportunity',
                 recordTypeId: '012T00000004MUHIA2',
@@ -1064,7 +1108,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User`,
                 urlParams: {
                     objectApiName: 'Opportunity',
                     recordTypeId: '012T00000004MUHIA2',
@@ -1099,7 +1144,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/object-info/Opportunity/picklist-values/012T00000004MUHIA2`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/object-info/Opportunity/picklist-values/012T00000004MUHIA2`,
                 urlParams: {
                     objectApiName: 'Opportunity',
                     recordTypeId: '012T00000004MUHIA2',
@@ -1117,7 +1163,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/object-info/Opportunity/picklist-values/012T00000004MUHIA2`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/object-info/Opportunity/picklist-values/012T00000004MUHIA2`,
             urlParams: {
                 objectApiName: 'Opportunity',
                 recordTypeId: '012T00000004MUHIA2',
@@ -1127,7 +1174,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/object-info/Opportunity/picklist-values/012T00000004MUHIA2`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/object-info/Opportunity/picklist-values/012T00000004MUHIA2`,
                 urlParams: {
                     objectApiName: 'Opportunity',
                     recordTypeId: '012T00000004MUHIA2',
@@ -1144,7 +1192,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/lookups/Opportunity/Owner/User`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/lookups/Opportunity/Owner/User`,
                 urlParams: {
                     objectApiName: 'Opportunity',
                     fieldApiName: 'Owner',
@@ -1164,7 +1213,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/lookups/Opportunity/Owner/User`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/lookups/Opportunity/Owner/User`,
             urlParams: {
                 objectApiName: 'Opportunity',
                 fieldApiName: 'Owner',
@@ -1181,7 +1231,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/lookups/Opportunity/Owner/User`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/lookups/Opportunity/Owner/User`,
                 urlParams: {
                     objectApiName: 'Opportunity',
                     fieldApiName: 'Owner',
@@ -1219,7 +1270,8 @@ describe('routes', () => {
             testControllerInput(
                 {
                     method: 'get',
-                    path: `${UI_API_BASE_URI}/actions/record/1234,5678/record-edit`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/actions/record/1234,5678/record-edit`,
                     urlParams: {
                         recordIds: ['1234', '5678'],
                     },
@@ -1233,7 +1285,8 @@ describe('routes', () => {
 
             testRejectFetchResponse({
                 method: 'get',
-                path: `${UI_API_BASE_URI}/actions/record/1234,5678/record-edit`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/actions/record/1234,5678/record-edit`,
                 urlParams: {
                     recordIds: ['1234', '5678'],
                 },
@@ -1242,7 +1295,8 @@ describe('routes', () => {
             testResolveResponse(
                 {
                     method: 'get',
-                    path: `${UI_API_BASE_URI}/actions/record/1234,5678/record-edit`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/actions/record/1234,5678/record-edit`,
                     urlParams: {
                         recordIds: ['1234', '5678'],
                     },
@@ -1264,7 +1318,8 @@ describe('routes', () => {
             testControllerInput(
                 {
                     method: 'get',
-                    path: `${UI_API_BASE_URI}/actions/record/1234,5678/related-list-record/1111,2222`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/actions/record/1234,5678/related-list-record/1111,2222`,
                     urlParams: {
                         recordIds: ['1234', '5678'],
                         relatedListRecordIds: ['1111', '2222'],
@@ -1279,7 +1334,8 @@ describe('routes', () => {
 
             testRejectFetchResponse({
                 method: 'get',
-                path: `${UI_API_BASE_URI}/actions/record/1234,5678/related-list-record/1111,2222`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/actions/record/1234,5678/related-list-record/1111,2222`,
                 urlParams: {
                     recordIds: ['1234', '5678'],
                     relatedListRecordIds: ['1111', '2222'],
@@ -1289,7 +1345,8 @@ describe('routes', () => {
             testResolveResponse(
                 {
                     method: 'get',
-                    path: `${UI_API_BASE_URI}/actions/record/1234,5678/related-list-record/1111,2222`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/actions/record/1234,5678/related-list-record/1111,2222`,
                     urlParams: {
                         recordIds: ['1234', '5678'],
                         relatedListRecordIds: ['1111', '2222'],
@@ -1312,7 +1369,8 @@ describe('routes', () => {
             testControllerInput(
                 {
                     method: 'get',
-                    path: `${UI_API_BASE_URI}/actions/record/1234/related-list/1111`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/actions/record/1234/related-list/1111`,
                     urlParams: {
                         recordIds: ['1234'],
                         relatedListIds: ['1111'],
@@ -1327,7 +1385,8 @@ describe('routes', () => {
 
             testRejectFetchResponse({
                 method: 'get',
-                path: `${UI_API_BASE_URI}/actions/record/1234/related-list/1111`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/actions/record/1234/related-list/1111`,
                 urlParams: {
                     recordIds: ['1234'],
                     relatedListIds: ['1111'],
@@ -1337,7 +1396,8 @@ describe('routes', () => {
             testResolveResponse(
                 {
                     method: 'get',
-                    path: `${UI_API_BASE_URI}/actions/record/1234,5678/related-list/1111`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/actions/record/1234,5678/related-list/1111`,
                     urlParams: {
                         recordIds: ['1234'],
                         relatedListIds: ['1111'],
@@ -1357,7 +1417,8 @@ describe('routes', () => {
             testControllerInput(
                 {
                     method: 'get',
-                    path: `${UI_API_BASE_URI}/related-list-count/1234/1111`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/related-list-count/1234/1111`,
                     urlParams: {
                         parentRecordId: '1234',
                         relatedListName: '1111',
@@ -1371,7 +1432,8 @@ describe('routes', () => {
             );
             testRejectFetchResponse({
                 method: 'get',
-                path: `${UI_API_BASE_URI}/related-list-count/1234/1111`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-count/1234/1111`,
                 urlParams: {
                     parentRecordId: '1234',
                     relatedListName: '1111',
@@ -1381,7 +1443,8 @@ describe('routes', () => {
             testResolveResponse(
                 {
                     method: 'get',
-                    path: `${UI_API_BASE_URI}/related-list-count/1234/1111`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/related-list-count/1234/1111`,
                     urlParams: {
                         parentRecordId: '1234',
                         relatedListName: '1111',
@@ -1395,7 +1458,8 @@ describe('routes', () => {
             testControllerInput(
                 {
                     method: 'get',
-                    path: `${UI_API_BASE_URI}/related-list-count/batch/1234/1111,2222`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/related-list-count/batch/1234/1111,2222`,
                     urlParams: {
                         parentRecordId: '1234',
                         relatedListNames: ['1111', '2222'],
@@ -1409,7 +1473,8 @@ describe('routes', () => {
             );
             testRejectFetchResponse({
                 method: 'get',
-                path: `${UI_API_BASE_URI}/related-list-count/batch/1234/1111,2222`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-count/batch/1234/1111,2222`,
                 urlParams: {
                     parentRecordId: '1234',
                     relatedListNames: ['1111', '2222'],
@@ -1419,7 +1484,8 @@ describe('routes', () => {
             testResolveResponse(
                 {
                     method: 'get',
-                    path: `${UI_API_BASE_URI}/related-list-count/batch/1234/1111,2222`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/related-list-count/batch/1234/1111,2222`,
                     urlParams: {
                         parentRecordId: '1234',
                         relatedListNames: ['1111', '2222'],
@@ -1453,7 +1519,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/actions/record/1234,5678`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/actions/record/1234,5678`,
                 urlParams: {
                     recordIds: ['1234', '5678'],
                 },
@@ -1463,7 +1530,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/actions/record/1234,5678`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/actions/record/1234,5678`,
             urlParams: {
                 recordIds: ['1234', '5678'],
             },
@@ -1472,7 +1540,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/actions/record/1234,5678`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/actions/record/1234,5678`,
                 urlParams: {
                     recordIds: ['1234', '5678'],
                 },
@@ -1495,7 +1564,8 @@ describe('routes', () => {
             testControllerInput(
                 {
                     method: 'get',
-                    path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/related-list-info/Opportunity/Contact__r`,
                     urlParams: {
                         parentObjectApiName: 'Opportunity',
                         relatedListId: 'Contact__r',
@@ -1517,7 +1587,8 @@ describe('routes', () => {
 
             testRejectFetchResponse({
                 method: 'get',
-                path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-info/Opportunity/Contact__r`,
                 urlParams: {
                     parentObjectApiName: 'Opportunity',
                     relatedListId: 'Contact__r',
@@ -1532,7 +1603,8 @@ describe('routes', () => {
             testControllerInput(
                 {
                     method: 'get',
-                    path: `${UI_API_BASE_URI}/related-list-info/Opportunity`,
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/related-list-info/Opportunity`,
                     urlParams: {
                         parentObjectApiName: 'Opportunity',
                     },
@@ -1552,7 +1624,8 @@ describe('routes', () => {
 
             testRejectFetchResponse({
                 method: 'get',
-                path: `${UI_API_BASE_URI}/related-list-info/Opportunity`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-info/Opportunity`,
                 urlParams: {
                     parentObjectApiName: 'Opportunity',
                 },
@@ -1567,7 +1640,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-info/Opportunity/Contact__r`,
                 urlParams: {
                     parentObjectApiName: 'Opportunity',
                     relatedListId: 'Contact__r',
@@ -1589,7 +1663,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/related-list-info/Opportunity/Contact__r`,
             urlParams: {
                 parentObjectApiName: 'Opportunity',
                 relatedListId: 'Contact__r',
@@ -1602,7 +1677,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-info/Opportunity/Contact__r`,
                 urlParams: {
                     parentObjectApiName: 'Opportunity',
                     relatedListId: 'Contact__r',
@@ -1616,7 +1692,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'patch',
-                path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-info/Opportunity/Contact__r`,
                 urlParams: {
                     parentObjectApiName: 'Opportunity',
                     relatedListId: 'Contact__r',
@@ -1660,13 +1737,15 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'patch',
-            path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/related-list-info/Opportunity/Contact__r`,
         });
 
         testResolveResponse(
             {
                 method: 'patch',
-                path: `${UI_API_BASE_URI}/related-list-info/Opportunity/Contact__r`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-info/Opportunity/Contact__r`,
                 urlParams: {
                     parentObjectApiName: 'Opportunity',
                     relatedListId: 'Contact__r',
@@ -1691,7 +1770,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/related-list-records/{parentRecordId}/{relatedListId}`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-records/{parentRecordId}/{relatedListId}`,
                 urlParams: {
                     parentRecordId: '012T00000004MUHIA2',
                     relatedListId: 'Contact__r',
@@ -1721,7 +1801,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/related-list-records/{parentRecordId}/{relatedListId}`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/related-list-records/{parentRecordId}/{relatedListId}`,
             urlParams: {
                 parentObjectId: '012T00000004MUHIA2',
                 relatedListId: 'Contact__r',
@@ -1733,7 +1814,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/related-list-info/batch/Opportunity/Contact__r`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-info/batch/Opportunity/Contact__r`,
                 urlParams: {
                     parentObjectApiName: 'Opportunity',
                     relatedListNames: 'Contact__r',
@@ -1755,7 +1837,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/related-list-info/batch/Opportunity/Contact__r`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/related-list-info/batch/Opportunity/Contact__r`,
             urlParams: {
                 parentObjectApiName: 'Opportunity',
                 relatedListNames: 'Contact__r',
@@ -1768,7 +1851,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/related-list-info/batch/Opportunity/Contact__r`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/related-list-info/batch/Opportunity/Contact__r`,
                 urlParams: {
                     parentObjectApiName: 'Opportunity',
                     relatedListNames: 'Contact__r',
@@ -1876,7 +1960,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/list-records/Account/AllAccounts`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-records/Account/AllAccounts`,
                 urlParams: {
                     objectApiName: 'Account',
                     listViewApiName: 'AllAccounts',
@@ -1906,7 +1991,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/list-records/Account/AllAccounts`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/list-records/Account/AllAccounts`,
             urlParams: {
                 objectApiName: 'Account',
                 listViewApiName: 'AllAccounts',
@@ -1920,7 +2006,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/list-records/Account/AllAccounts`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-records/Account/AllAccounts`,
                 urlParams: {
                     objectApiName: 'Account',
                     listViewApiName: 'AllAccounts',
@@ -1955,7 +2042,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/list-records/00B123456789012AAA`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-records/00B123456789012AAA`,
                 urlParams: {
                     listViewId: '00B123456789012AAA',
                 },
@@ -1983,7 +2071,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/list-records/00B123456789012AAA`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/list-records/00B123456789012AAA`,
             urlParams: {
                 listViewId: '00B123456789012AAA',
             },
@@ -1992,7 +2081,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/list-records/00B123456789012AAA`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-records/00B123456789012AAA`,
                 urlParams: {
                     listViewId: '00B123456789012AAA',
                 },
@@ -2022,7 +2112,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/list-ui/Account`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-ui/Account`,
                 urlParams: {
                     objectApiName: 'Account',
                 },
@@ -2048,7 +2139,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/list-ui/Account`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/list-ui/Account`,
             urlParams: {
                 objectApiName: 'Account',
             },
@@ -2057,7 +2149,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/list-ui/Account`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-ui/Account`,
                 urlParams: {
                     objectApiName: 'Account',
                 },
@@ -2086,7 +2179,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/list-ui/Account/AllAccounts`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-ui/Account/AllAccounts`,
                 urlParams: {
                     objectApiName: 'Account',
                     listViewApiName: 'AllAccounts',
@@ -2116,7 +2210,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/list-ui/Account/AllAccounts`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/list-ui/Account/AllAccounts`,
             urlParams: {
                 objectApiName: 'Account',
                 listViewApiName: 'AllAccounts',
@@ -2130,7 +2225,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/list-ui/Account/AllAccounts`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-ui/Account/AllAccounts`,
                 urlParams: {
                     objectApiName: 'Account',
                     listViewApiName: 'AllAccounts',
@@ -2190,7 +2286,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/list-ui/00B123456789012AAA`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-ui/00B123456789012AAA`,
                 urlParams: {
                     listViewId: '00B123456789012AAA',
                 },
@@ -2218,7 +2315,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/list-ui/00B123456789012AAA`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/list-ui/00B123456789012AAA`,
             urlParams: {
                 listViewId: '00B123456789012AAA',
             },
@@ -2227,7 +2325,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/list-ui/00B123456789012AAA`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-ui/00B123456789012AAA`,
                 urlParams: {
                     listViewId: '00B123456789012AAA',
                 },
@@ -2285,7 +2384,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/mru-list-records/Account`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/mru-list-records/Account`,
                 urlParams: {
                     objectApiName: 'Account',
                 },
@@ -2313,7 +2413,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/mru-list-records/Account`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/mru-list-records/Account`,
             urlParams: {
                 listViewId: 'Account',
             },
@@ -2322,7 +2423,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/mru-list-records/Account`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/mru-list-records/Account`,
                 urlParams: {
                     objectApiName: 'Account',
                 },
@@ -2352,7 +2454,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/mru-list-ui/Account`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/mru-list-ui/Account`,
                 urlParams: {
                     objectApiName: 'Account',
                 },
@@ -2380,7 +2483,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/mru-list-ui/Account`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/mru-list-ui/Account`,
             urlParams: {
                 objectApiName: 'Account',
             },
@@ -2389,7 +2493,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/mru-list-ui/Account`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/mru-list-ui/Account`,
                 urlParams: {
                     objectApiName: 'Account',
                 },
@@ -2447,7 +2552,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/record-defaults/create/Account`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/record-defaults/create/Account`,
                 urlParams: {
                     objectApiName: 'Account',
                 },
@@ -2471,7 +2577,8 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'get',
-            path: `${UI_API_BASE_URI}/record-defaults/create/Account`,
+            baseUri: UI_API_BASE_URI,
+            basePath: `/record-defaults/create/Account`,
             urlParams: {
                 objectApiName: 'Account',
             },
@@ -2485,7 +2592,8 @@ describe('routes', () => {
         testResolveResponse(
             {
                 method: 'get',
-                path: `${UI_API_BASE_URI}/record-defaults/create/Account`,
+                baseUri: UI_API_BASE_URI,
+                basePath: `/record-defaults/create/Account`,
                 urlParams: {
                     objectApiName: 'Account',
                 },
@@ -2506,7 +2614,8 @@ describe('routes', () => {
     describe('get /connect/communities/{communityId}/navigation-menu/navigation-menu-items', () => {
         testControllerInput(
             {
-                path: `${CONNECT_BASE_URI}/communities/1234567890ABCDE/navigation-menu/navigation-menu-items`,
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/communities/1234567890ABCDE/navigation-menu/navigation-menu-items`,
             },
             [
                 'NavigationMenuController.getCommunityNavigationMenu',
@@ -2516,12 +2625,14 @@ describe('routes', () => {
         );
 
         testRejectFetchResponse({
-            path: `${CONNECT_BASE_URI}/communities/1234567890ABCDE/navigation-menu/navigation-menu-items`,
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/communities/1234567890ABCDE/navigation-menu/navigation-menu-items`,
         });
 
         testResolveResponse(
             {
-                path: `${CONNECT_BASE_URI}/communities/1234567890ABCDE/navigation-menu/navigation-menu-items`,
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/communities/1234567890ABCDE/navigation-menu/navigation-menu-items`,
             },
             {}
         );
@@ -2530,7 +2641,8 @@ describe('routes', () => {
     describe('get /commerce/webstores/{webstoreId}/products/{productId}', () => {
         testControllerInput(
             {
-                path: `${COMMERCE_BASE_URI}/webstores/1234567890ABCDE/products/1234567890ABCDE`,
+                baseUri: COMMERCE_BASE_URI,
+                basePath: `/webstores/1234567890ABCDE/products/1234567890ABCDE`,
             },
             [
                 'CommerceCatalogController.getProduct',
@@ -2540,12 +2652,14 @@ describe('routes', () => {
         );
 
         testRejectFetchResponse({
-            path: `${COMMERCE_BASE_URI}/webstores/1234567890ABCDE/products/1234567890ABCDE`,
+            baseUri: COMMERCE_BASE_URI,
+            basePath: `/webstores/1234567890ABCDE/products/1234567890ABCDE`,
         });
 
         testResolveResponse(
             {
-                path: `${COMMERCE_BASE_URI}/webstores/1234567890ABCDE/products/1234567890ABCDE`,
+                baseUri: COMMERCE_BASE_URI,
+                basePath: `/webstores/1234567890ABCDE/products/1234567890ABCDE`,
             },
             {}
         );
@@ -2554,7 +2668,8 @@ describe('routes', () => {
     describe('get /commerce/webstores/{webstoreId}/product-category-path/product-categories/{productCategoryId}', () => {
         testControllerInput(
             {
-                path: `${COMMERCE_BASE_URI}/webstores/1234567890ABCDE/product-category-path/product-categories/1234567890ABCDE`,
+                baseUri: COMMERCE_BASE_URI,
+                basePath: `/webstores/1234567890ABCDE/product-category-path/product-categories/1234567890ABCDE`,
             },
             [
                 'CommerceCatalogController.getProductCategoryPath',
@@ -2564,12 +2679,14 @@ describe('routes', () => {
         );
 
         testRejectFetchResponse({
-            path: `${COMMERCE_BASE_URI}/webstores/1234567890ABCDE/product-category-path/product-categories/1234567890ABCDE`,
+            baseUri: COMMERCE_BASE_URI,
+            basePath: `/webstores/1234567890ABCDE/product-category-path/product-categories/1234567890ABCDE`,
         });
 
         testResolveResponse(
             {
-                path: `${COMMERCE_BASE_URI}/webstores/1234567890ABCDE/product-category-path/product-categories/1234567890ABCDE`,
+                baseUri: COMMERCE_BASE_URI,
+                basePath: `/webstores/1234567890ABCDE/product-category-path/product-categories/1234567890ABCDE`,
             },
             {}
         );
@@ -2579,7 +2696,8 @@ describe('routes', () => {
         testControllerInput(
             {
                 method: 'post',
-                path: `${COMMERCE_BASE_URI}/webstores/1234567890ABCDE/search/product-search`,
+                baseUri: COMMERCE_BASE_URI,
+                basePath: `/webstores/1234567890ABCDE/search/product-search`,
             },
             [
                 'CommerceProductSearchController.productSearch',
@@ -2590,13 +2708,15 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             method: 'post',
-            path: `${COMMERCE_BASE_URI}/webstores/1234567890ABCDE/search/product-search`,
+            baseUri: COMMERCE_BASE_URI,
+            basePath: `/webstores/1234567890ABCDE/search/product-search`,
         });
 
         testResolveResponse(
             {
                 method: 'post',
-                path: `${COMMERCE_BASE_URI}/webstores/1234567890ABCDE/search/product-search`,
+                baseUri: COMMERCE_BASE_URI,
+                basePath: `/webstores/1234567890ABCDE/search/product-search`,
             },
             {}
         );
@@ -2605,7 +2725,8 @@ describe('routes', () => {
     describe('get /commerce/webstores/{webstoreId}/pricing/products/{productId}', () => {
         testControllerInput(
             {
-                path: `${COMMERCE_BASE_URI}/webstores/1234567890ABCDE/pricing/products/1234567890ABCDE`,
+                baseUri: COMMERCE_BASE_URI,
+                basePath: `/webstores/1234567890ABCDE/pricing/products/1234567890ABCDE`,
             },
             [
                 'CommerceStorePricingController.getProductPrice',
@@ -2615,12 +2736,14 @@ describe('routes', () => {
         );
 
         testRejectFetchResponse({
-            path: `${COMMERCE_BASE_URI}/webstores/1234567890ABCDE/pricing/products/1234567890ABCDE`,
+            baseUri: COMMERCE_BASE_URI,
+            basePath: `/webstores/1234567890ABCDE/pricing/products/1234567890ABCDE`,
         });
 
         testResolveResponse(
             {
-                path: `${COMMERCE_BASE_URI}/webstores/1234567890ABCDE/pricing/products/1234567890ABCDE`,
+                baseUri: COMMERCE_BASE_URI,
+                basePath: `/webstores/1234567890ABCDE/pricing/products/1234567890ABCDE`,
             },
             {}
         );

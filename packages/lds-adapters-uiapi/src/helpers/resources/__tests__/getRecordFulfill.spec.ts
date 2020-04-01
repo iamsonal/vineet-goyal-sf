@@ -4,7 +4,8 @@ import fulfill from '../getRecordFulfill';
 function buildResourceRequest(resourceRequest: Partial<ResourceRequest>): ResourceRequest {
     return {
         method: resourceRequest.method || 'get',
-        path: resourceRequest.path || '/test',
+        baseUri: '',
+        basePath: resourceRequest.basePath || '/test',
         body: resourceRequest.body || {},
         queryParams: resourceRequest.queryParams || {},
         urlParams: resourceRequest.urlParams || {},
@@ -23,7 +24,7 @@ describe('fulfills', () => {
 
     it('does not fulfill for unequal paths', () => {
         const existing = buildResourceRequest({});
-        const incoming = buildResourceRequest({ path: '/other' });
+        const incoming = buildResourceRequest({ basePath: '/other' });
         expect(fulfill(existing, incoming)).toBe(false);
     });
 

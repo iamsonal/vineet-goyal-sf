@@ -4,8 +4,14 @@ import { ArrayIsArray, ObjectKeys } from '../../util/language';
 
 export default function fulfill(existing: ResourceRequest, incoming: ResourceRequest): boolean {
     // early out if incoming isn't a request only for fields and optionalFields
-    const { queryParams, headers, path } = incoming;
-    const { path: existingPath, headers: existingHeaders } = existing;
+    const { queryParams, headers, basePath, baseUri } = incoming;
+    const {
+        basePath: existingBasePath,
+        baseUri: existingBaseUri,
+        headers: existingHeaders,
+    } = existing;
+    const path = `${baseUri}${basePath}`;
+    const existingPath = `${existingBasePath}${existingBaseUri}`;
 
     if (queryParams.layoutTypes !== undefined) {
         return false;

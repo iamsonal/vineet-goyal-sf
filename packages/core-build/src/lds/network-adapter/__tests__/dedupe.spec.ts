@@ -7,7 +7,8 @@ import networkAdapter from '../index';
 function buildResourceRequest(resourceRequest: Partial<ResourceRequest>): ResourceRequest {
     return {
         method: resourceRequest.method || 'get',
-        path: UI_API_BASE_URI + (resourceRequest.path || '/test'),
+        baseUri: UI_API_BASE_URI,
+        basePath: resourceRequest.basePath || '/test',
         body: resourceRequest.body || {},
         queryParams: resourceRequest.queryParams || {},
         urlParams: resourceRequest.urlParams || {},
@@ -29,7 +30,8 @@ describe('non-GET request', () => {
     it('does not dedupe non-GET requests', async () => {
         const request = buildResourceRequest({
             method: 'post',
-            path: '/records',
+            baseUri: '',
+            basePath: '/records',
             body: {
                 apiName: 'Test__c',
                 fields: [],
@@ -53,7 +55,7 @@ describe('non-GET request', () => {
 
 describe('identical GET request', () => {
     it('dedupes inflight GET requests', async () => {
-        const request = buildResourceRequest({ method: 'get', path: '/records/1234' });
+        const request = buildResourceRequest({ method: 'get', basePath: '/records/1234' });
         const fn = jest.spyOn(aura, 'executeGlobalController').mockImplementation(() => {
             return new Promise(resolve => {
                 setTimeout(() => resolve({}));
@@ -70,7 +72,7 @@ describe('identical GET request', () => {
     });
 
     it('does not clone for non-deduped request', async () => {
-        const request = buildResourceRequest({ method: 'get', path: '/records/1234' });
+        const request = buildResourceRequest({ method: 'get', basePath: '/records/1234' });
         const fn = jest.spyOn(aura, 'executeGlobalController').mockImplementation(() => {
             return new Promise(resolve => {
                 setTimeout(() => resolve({}));
@@ -87,7 +89,7 @@ describe('identical GET request', () => {
     });
 
     it('does not propagate mutation to deduped request', async () => {
-        const request = buildResourceRequest({ method: 'get', path: '/records/1234' });
+        const request = buildResourceRequest({ method: 'get', basePath: '/records/1234' });
         const ret = { foo: 'bar' };
         const fn = jest.spyOn(aura, 'executeGlobalController').mockImplementation(() => {
             return new Promise(resolve => {
@@ -118,10 +120,10 @@ describe('identical GET request per fulfill', () => {
             });
         });
 
-        const request1 = buildResourceRequest({ method: 'get', path: '/records/1234' });
+        const request1 = buildResourceRequest({ method: 'get', basePath: '/records/1234' });
         const request2 = buildResourceRequest({
             method: 'get',
-            path: '/records/5678',
+            basePath: '/records/5678',
             fulfill: () => {
                 return true;
             },
@@ -141,14 +143,14 @@ describe('identical GET request per fulfill', () => {
         // providing fulfill() here to verify request2's fulfill() is used
         const request1 = buildResourceRequest({
             method: 'get',
-            path: '/records/1234',
+            basePath: '/records/1234',
             fulfill: () => {
                 return true;
             },
         });
         const request2 = buildResourceRequest({
             method: 'get',
-            path: '/records/5678',
+            basePath: '/records/5678',
             fulfill: () => {
                 return false;
             },

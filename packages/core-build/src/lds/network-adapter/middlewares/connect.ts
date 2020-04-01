@@ -33,11 +33,6 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && COMMUNITIES_NAVIGATION_MENU_PATH.test(path),
         transport: {
             controller: 'NavigationMenuController.getCommunityNavigationMenu',
-            action: {
-                background: false,
-                hotspot: true,
-                longRunning: false,
-            },
         },
     },
     getProduct: {
@@ -46,11 +41,6 @@ const connect: ApiFamily = {
             path.startsWith(COMMERCE_BASE_URI) && GET_PRODUCT_PATH.test(path),
         transport: {
             controller: 'CommerceCatalogController.getProduct',
-            action: {
-                background: false,
-                hotspot: true,
-                longRunning: false,
-            },
         },
     },
     getProductCategoryPath: {
@@ -59,11 +49,6 @@ const connect: ApiFamily = {
             path.startsWith(COMMERCE_BASE_URI) && GET_PRODUCT_CATEGORY_PATH_PATH.test(path),
         transport: {
             controller: 'CommerceCatalogController.getProductCategoryPath',
-            action: {
-                background: false,
-                hotspot: true,
-                longRunning: false,
-            },
         },
     },
     getProductPrice: {
@@ -72,11 +57,6 @@ const connect: ApiFamily = {
             path.startsWith(COMMERCE_BASE_URI) && GET_PRODUCT_PRICE_PATH.test(path),
         transport: {
             controller: 'CommerceStorePricingController.getProductPrice',
-            action: {
-                background: false,
-                hotspot: true,
-                longRunning: false,
-            },
         },
     },
     productSearch: {
@@ -85,11 +65,6 @@ const connect: ApiFamily = {
             path.startsWith(COMMERCE_BASE_URI) && PRODUCT_SEARCH_PATH.test(path),
         transport: {
             controller: 'CommerceProductSearchController.productSearch',
-            action: {
-                background: false,
-                hotspot: true,
-                longRunning: false,
-            },
         },
     },
 };

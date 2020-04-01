@@ -38,7 +38,7 @@ interface UiApiParams {
 
 interface AuraAction {
     controller: string;
-    action: ActionConfig;
+    action?: ActionConfig;
 }
 
 interface Adapter {
@@ -50,6 +50,12 @@ interface Adapter {
 export interface ApiFamily {
     [adapter: string]: Adapter;
 }
+
+const defaultActionConfig: ActionConfig = {
+    background: false,
+    hotspot: true,
+    longRunning: false,
+};
 
 function createOkResponse(body: unknown): AuraFetchResponse<unknown> {
     return new AuraFetchResponse(HttpStatusCode.Ok, body);
@@ -161,7 +167,8 @@ export function registerApiFamilyRoutes(apiFamily: ApiFamily) {
             {
                 [`${adapterName}`]: function(resourceRequest: ResourceRequest): Promise<any> {
                     const actionConfig: DispatchActionConfig = {
-                        action: transport.action,
+                        action:
+                            transport.action === undefined ? defaultActionConfig : transport.action,
                     };
 
                     const { urlParams, queryParams } = resourceRequest;

@@ -23,6 +23,7 @@ interface GetLookupRecordsConfigRequestParams {
     pageSize?: number;
     dependentFieldBindings?: string[];
     searchType?: 'Recent' | 'Search' | 'TypeAhead';
+    sourceRecordId?: string;
 }
 
 interface GetLookupRecordsAdapterConfig {
@@ -68,6 +69,11 @@ function coerceRequestParams(untrusted: unknown): GetLookupRecordsConfigRequestP
     const searchType = requestParams.searchType;
     if (searchType !== undefined) {
         coercedConfig.searchType = searchType;
+    }
+
+    const sourceRecordId = requestParams.sourceRecordId;
+    if (sourceRecordId !== undefined) {
+        coercedConfig.sourceRecordId = sourceRecordId;
     }
 
     return coercedConfig;
@@ -118,6 +124,7 @@ export function buildNetworkSnapshot(lds: LDS, config: GetLookupRecordsConfig) {
             q: config.q,
             searchType: config.searchType,
             dependentFieldBindings: config.dependentFieldBindings,
+            sourceRecordId: config.sourceRecordId,
         },
     });
 

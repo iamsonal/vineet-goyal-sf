@@ -1,0 +1,44 @@
+{
+    "count": 1,
+    "currentPageToken": null,
+    "currentPageUrl": "/services/data/v49.0/ui-api/lookups/Opportunity/Territory2Id/Territory2?q=sub&searchType=TypeAhead&page=1&pageSize=25",
+    "nextPageToken": null,
+    "nextPageUrl": null,
+    "previousPageToken": null,
+    "previousPageUrl": null,
+    "records": [
+        {
+            "apiName": "Territory2",
+            "childRelationships": {},
+            "eTag": "0489fb7b1a4d8ce06c4ed4486c2fabda",
+            "fields": {
+                "Description": { "displayValue": null, "value": null },
+                "ForecastUser": { "displayValue": null, "value": null },
+                "ForecastUserId": { "displayValue": null, "value": null },
+                "Id": { "displayValue": null, "value": "0MIxx0000004C92GAE" },
+                "LastModifiedById": {
+                    "displayValue": null,
+                    "value": "005xx000001X7c9AAC"
+                },
+                "LastModifiedDate": {
+                    "displayValue": null,
+                    "value": "2020-03-18T14:11:44.000Z"
+                },
+                "Name": { "displayValue": null, "value": "sub territory 1" },
+                "ParentTerritory2": { "displayValue": null, "value": null },
+                "ParentTerritory2Id": { "displayValue": null, "value": null },
+                "SystemModstamp": {
+                    "displayValue": null,
+                    "value": "2020-03-18T14:11:44.000Z"
+                }
+            },
+            "id": "0MIxx0000004C92GAE",
+            "lastModifiedById": "005xx000001X7c9AAC",
+            "lastModifiedDate": "2020-03-18T14:11:44.000Z",
+            "recordTypeId": null,
+            "recordTypeInfo": null,
+            "systemModstamp": "2020-03-18T14:11:44.000Z",
+            "weakEtag": 1584540704000
+        }
+    ]
+}

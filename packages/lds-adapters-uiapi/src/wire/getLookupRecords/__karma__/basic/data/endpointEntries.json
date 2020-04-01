@@ -6,7 +6,8 @@
             "q": "nc",
             "searchType": "Recent",
             "page": 1,
-            "pageSize": 25
+            "pageSize": 25,
+            "sourceRecordId": ""
         }
     },
     {
@@ -16,7 +17,8 @@
             "q": "jak",
             "searchType": "TypeAhead",
             "page": 1,
-            "pageSize": 10
+            "pageSize": 10,
+            "sourceRecordId": ""
         }
     },
     {
@@ -26,7 +28,8 @@
             "q": "Bur",
             "searchType": "TypeAhead",
             "page": 1,
-            "pageSize": 10
+            "pageSize": 10,
+            "sourceRecordId": ""
         }
     },
     {
@@ -40,7 +43,8 @@
             "q": "Bu",
             "searchType": "Recent",
             "page": 123456,
-            "pageSize": 10
+            "pageSize": 10,
+            "sourceRecordId": ""
         }
     },
     {
@@ -49,7 +53,8 @@
         "params": {
             "searchType": "TypeAhead",
             "page": 1,
-            "pageSize": 25
+            "pageSize": 25,
+            "sourceRecordId": ""
         }
     },
     {
@@ -58,7 +63,20 @@
         "params": {
             "searchType": "Recent",
             "page": 1,
-            "pageSize": 25
+            "pageSize": 25,
+            "sourceRecordId": ""
+        }
+    },
+    {
+        "endpoint": "lookups/Opportunity/Territory2Id/Territory2",
+        "filename": "lookup-records-Opportunity-Territory2-SourceRecordId",
+        "params": {
+            "page": 1,
+            "pageSize": 25,
+            "q": "sub",
+            "searchType": "TypeAhead",
+            "dependentFieldBindings": null,
+            "sourceRecordId": "006xx000001a2p5AAA"
         }
     }
 ]

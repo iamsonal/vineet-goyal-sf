@@ -62,6 +62,7 @@ describe('getLookupRecords', () => {
                 page: 1,
                 pageSize: 25,
                 dependentFieldBindings: null,
+                sourceRecordId: '',
             },
         };
 
@@ -85,6 +86,7 @@ describe('getLookupRecords', () => {
                 searchType: 'TypeAhead',
                 page: 1,
                 pageSize: 10,
+                sourceRecordId: '',
             },
         };
 
@@ -111,6 +113,7 @@ describe('getLookupRecords', () => {
                 searchType: 'TypeAhead',
                 page: 1,
                 pageSize: 10,
+                sourceRecordId: '',
             },
         };
 
@@ -136,6 +139,7 @@ describe('getLookupRecords', () => {
                 searchType: 'TypeAhead',
                 page: 1,
                 pageSize: 10,
+                sourceRecordId: '',
             },
         };
 
@@ -160,6 +164,7 @@ describe('getLookupRecords', () => {
                 searchType: 'TypeAhead',
                 page: 1,
                 pageSize: 10,
+                sourceRecordId: '',
             },
         };
 
@@ -188,6 +193,7 @@ describe('getLookupRecords', () => {
                 searchType: 'TypeAhead',
                 page: 1,
                 pageSize: 10,
+                sourceRecordId: '',
             },
         };
 
@@ -221,6 +227,7 @@ describe('getLookupRecords', () => {
                 pageSize: 10,
                 searchType: 'TypeAhead',
                 page: 1,
+                sourceRecordId: '',
             },
         };
 
@@ -245,6 +252,7 @@ describe('getLookupRecords', () => {
                 pageSize: 10,
                 searchType: 'TypeAhead',
                 page: 1,
+                sourceRecordId: '',
             },
         };
 
@@ -277,6 +285,7 @@ describe('getLookupRecords', () => {
                 searchType: 'TypeAhead',
                 page: 1,
                 pageSize: 10,
+                sourceRecordId: '',
             },
         };
 
@@ -291,6 +300,33 @@ describe('getLookupRecords', () => {
 
         expect(element.pushCount()).toBe(2);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(refreshed);
+    });
+
+    describe('Territory Management', () => {
+        it('should make correct http request when sourceRecordId is filled', async () => {
+            const reference = 'lookup-records-Opportunity-Territory2-SourceRecordId';
+            const mock = getMock(reference);
+
+            const config = {
+                fieldApiName: 'Opportunity.Territory2Id',
+                targetApiName: 'Territory2',
+                requestParams: {
+                    page: 1,
+                    pageSize: 25,
+                    q: 'sub',
+                    searchType: 'TypeAhead',
+                    dependentFieldBindings: null,
+                    sourceRecordId: '006xx000001a2p5AAA',
+                },
+            };
+
+            mockNetworkBehaviour(getEndpointEntry(reference), mock);
+
+            const elm = await setupElement(config, GetLookupRecords);
+
+            expect(elm.pushCount()).toBe(1);
+            expect(elm.getWiredData()).toEqualSnapshotWithoutEtags(mock);
+        });
     });
 
     describe('Error Management', () => {
@@ -320,6 +356,7 @@ describe('getLookupRecords', () => {
                     searchType: 'Recent',
                     page: 123456,
                     pageSize: 10,
+                    sourceRecordId: '',
                 },
             };
             const element = await setupElement(config, GetLookupRecords);
@@ -342,6 +379,7 @@ describe('getLookupRecords', () => {
                     searchType: 'Recent',
                     page: 1,
                     pageSize: 25,
+                    sourceRecordId: '',
                 },
             };
 
@@ -364,6 +402,7 @@ describe('getLookupRecords', () => {
                     searchType: 'TypeAhead',
                     page: 1,
                     pageSize: 25,
+                    sourceRecordId: '',
                 },
             };
 

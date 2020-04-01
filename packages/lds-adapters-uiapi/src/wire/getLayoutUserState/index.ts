@@ -1,4 +1,4 @@
-import { AdapterFactory, LDS, FetchResponse } from '@ldsjs/engine';
+import { AdapterFactory, LDS, FetchResponse, Snapshot, SnapshotRefresh } from '@ldsjs/engine';
 import {
     GetLayoutUserStateConfig,
     validateAdapterConfig,
@@ -10,8 +10,7 @@ import {
 import { default as resources_getUiApiLayoutUserStateByObjectApiName_default } from '../../generated/resources/getUiApiLayoutUserStateByObjectApiName';
 import { LayoutMode } from '../../primitives/LayoutMode';
 import { LayoutType } from '../../primitives/LayoutType';
-import { isFulfilledSnapshot } from '../../util/snapshot';
-import { refreshable, AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
+import { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
 import { select as recordLayoutUserStateRepresentationSelect } from '../../generated/types/RecordLayoutUserStateRepresentation';
 
 const recordLayoutSelect = recordLayoutUserStateRepresentationSelect();
@@ -68,6 +67,16 @@ export function coerceConfigWithDefaults(
     };
 }
 
+function buildSnapshotRefresh(
+    lds: LDS,
+    config: GetLayoutUserStateConfigWithDefaults
+): SnapshotRefresh<RecordLayoutUserStateRepresentation> {
+    return {
+        config,
+        resolve: () => buildNetworkSnapshot(lds, config),
+    };
+}
+
 export function buildInMemorySnapshot(lds: LDS, config: GetLayoutUserStateConfigWithDefaults) {
     const { objectApiName, recordTypeId, layoutType, mode } = config;
     const key = keyBuilder({
@@ -77,14 +86,20 @@ export function buildInMemorySnapshot(lds: LDS, config: GetLayoutUserStateConfig
         mode,
     });
 
-    return lds.storeLookup<RecordLayoutUserStateRepresentation>({
-        recordId: key,
-        node: recordLayoutSelect,
-        variables: {},
-    });
+    return lds.storeLookup<RecordLayoutUserStateRepresentation>(
+        {
+            recordId: key,
+            node: recordLayoutSelect,
+            variables: {},
+        },
+        buildSnapshotRefresh(lds, config)
+    );
 }
 
-export function buildNetworkSnapshot(lds: LDS, config: GetLayoutUserStateConfigWithDefaults) {
+export function buildNetworkSnapshot(
+    lds: LDS,
+    config: GetLayoutUserStateConfigWithDefaults
+): Promise<Snapshot<RecordLayoutUserStateRepresentation>> {
     const { recordTypeId, layoutType, mode, objectApiName } = config;
     const key = keyBuilder({
         apiName: objectApiName,
@@ -117,7 +132,7 @@ export function buildNetworkSnapshot(lds: LDS, config: GetLayoutUserStateConfigW
         (error: FetchResponse<unknown>) => {
             lds.storeIngestFetchResponse(key, error);
             lds.storeBroadcast();
-            return lds.errorSnapshot(error);
+            return lds.errorSnapshot(error, buildSnapshotRefresh(lds, config));
         }
     );
 }
@@ -125,28 +140,18 @@ export function buildNetworkSnapshot(lds: LDS, config: GetLayoutUserStateConfigW
 export const factory: AdapterFactory<
     GetLayoutUserStateConfig,
     RecordLayoutUserStateRepresentation
-> = (lds: LDS) => {
-    return refreshable(
-        function getLayoutUserState(untrustedConfig: unknown) {
-            const config = coerceConfigWithDefaults(untrustedConfig);
-            if (config === null) {
-                return null;
-            }
-
-            const cacheSnapshot = buildInMemorySnapshot(lds, config);
-            // Cache Hit
-            if (isFulfilledSnapshot(cacheSnapshot)) {
-                return cacheSnapshot;
-            }
-
-            return buildNetworkSnapshot(lds, config);
-        },
-        (untrustedConfig: unknown) => {
-            const config = coerceConfigWithDefaults(untrustedConfig);
-            if (config === null) {
-                throw new Error('Refresh should not be called with partial configuration');
-            }
-            return buildNetworkSnapshot(lds, config);
+> = (lds: LDS) =>
+    function getLayoutUserState(untrustedConfig: unknown) {
+        const config = coerceConfigWithDefaults(untrustedConfig);
+        if (config === null) {
+            return null;
         }
-    );
-};
+
+        const cacheSnapshot = buildInMemorySnapshot(lds, config);
+        // Cache Hit
+        if (lds.snapshotDataAvailable(cacheSnapshot)) {
+            return cacheSnapshot;
+        }
+
+        return buildNetworkSnapshot(lds, config);
+    };

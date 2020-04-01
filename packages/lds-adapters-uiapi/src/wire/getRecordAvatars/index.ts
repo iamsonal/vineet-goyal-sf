@@ -5,9 +5,10 @@ import {
     Snapshot,
     UnfulfilledSnapshot,
     FetchResponse,
+    SnapshotRefresh,
 } from '@ldsjs/engine';
 import { ObjectKeys } from '../../util/language';
-import { isFulfilledSnapshot, isUnfulfilledSnapshot } from '../../util/snapshot';
+import { isUnfulfilledSnapshot } from '../../util/snapshot';
 import { RecordAvatarBulkRepresentation } from '../../generated/types/RecordAvatarBulkRepresentation';
 import getUiApiRecordAvatarsBatchByRecordIds from '../../generated/resources/getUiApiRecordAvatarsBatchByRecordIds';
 import {
@@ -15,7 +16,7 @@ import {
     getRecordAvatars_ConfigPropertyNames,
     GetRecordAvatarsConfig,
 } from '../../generated/adapters/getRecordAvatars';
-import { refreshable, keyPrefix } from '../../generated/adapters/adapter-utils';
+import { keyPrefix } from '../../generated/adapters/adapter-utils';
 import { RecordAvatarBulkMapRepresentation } from '../../generated/types/RecordAvatarBulkMapRepresentation';
 import { selectChildren as selectChildrenAbstractRecordAvatarBatchRepresentation } from '../../generated/types/AbstractRecordAvatarBatchRepresentation';
 
@@ -34,15 +35,30 @@ function selectAvatars(recordIds: string[]): PathSelection[] {
 const KEY = `${keyPrefix}RecordAvatarsBulk`;
 
 export function buildInMemorySnapshot(lds: LDS, config: GetRecordAvatarsConfig) {
-    const sel = selectAvatars(config.recordIds);
-    return lds.storeLookup<RecordAvatarBulkRepresentation>({
-        recordId: KEY,
-        node: {
-            kind: 'Fragment',
-            selections: sel,
+    const { recordIds } = config;
+    const sel = selectAvatars(recordIds);
+    return lds.storeLookup<RecordAvatarBulkRepresentation>(
+        {
+            recordId: KEY,
+            node: {
+                kind: 'Fragment',
+                selections: sel,
+            },
+            variables: {},
         },
-        variables: {},
-    });
+        buildSnapshotRefresh(lds, config, recordIds)
+    );
+}
+
+function buildSnapshotRefresh(
+    lds: LDS,
+    config: GetRecordAvatarsConfig,
+    recordIds: string[]
+): SnapshotRefresh<RecordAvatarBulkRepresentation> {
+    return {
+        config,
+        resolve: () => buildNetworkSnapshot(lds, config, recordIds),
+    };
 }
 
 /**
@@ -56,7 +72,7 @@ export function buildNetworkSnapshot(
     lds: LDS,
     config: GetRecordAvatarsConfig,
     recordIds: string[]
-) {
+): Promise<Snapshot<RecordAvatarBulkRepresentation>> {
     const resourceRequest = getUiApiRecordAvatarsBatchByRecordIds({
         urlParams: {
             recordIds,
@@ -82,7 +98,7 @@ export function buildNetworkSnapshot(
         (err: FetchResponse<unknown>) => {
             lds.storeIngestFetchResponse(KEY, err);
             lds.storeBroadcast();
-            return lds.errorSnapshot(err);
+            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config, recordIds));
         }
     );
 }
@@ -106,33 +122,22 @@ function getRecordIds(config: GetRecordAvatarsConfig, snapshot: Snapshot<unknown
 
 export const factory: AdapterFactory<GetRecordAvatarsConfig, RecordAvatarBulkRepresentation> = (
     lds: LDS
-) => {
-    return refreshable(
-        function(unknown: unknown) {
-            const config = validateAdapterConfig(unknown, getRecordAvatars_ConfigPropertyNames);
-            if (config === null) {
-                return null;
-            }
-            const cacheLookup = buildInMemorySnapshot(lds, config);
-
-            // CACHE HIT
-            if (isFulfilledSnapshot(cacheLookup)) {
-                return cacheLookup;
-            }
-
-            // CACHE MISS
-            // Only fetch avatars that are missing
-            const recordIds = getRecordIds(config, cacheLookup);
-
-            return buildNetworkSnapshot(lds, config, recordIds);
-        },
-        (untrusted: unknown) => {
-            const config = validateAdapterConfig(untrusted, getRecordAvatars_ConfigPropertyNames);
-            if (config === null) {
-                throw new Error('Refresh should not be called with partial configuration');
-            }
-
-            return buildNetworkSnapshot(lds, config, config.recordIds);
+) =>
+    function getRecordAvatars(unknown: unknown) {
+        const config = validateAdapterConfig(unknown, getRecordAvatars_ConfigPropertyNames);
+        if (config === null) {
+            return null;
         }
-    );
-};
+        const cacheLookup = buildInMemorySnapshot(lds, config);
+
+        // CACHE HIT
+        if (lds.snapshotDataAvailable(cacheLookup)) {
+            return cacheLookup;
+        }
+
+        // CACHE MISS
+        // Only fetch avatars that are missing
+        const recordIds = getRecordIds(config, cacheLookup);
+
+        return buildNetworkSnapshot(lds, config, recordIds);
+    };

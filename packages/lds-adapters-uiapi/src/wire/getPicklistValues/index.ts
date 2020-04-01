@@ -1,4 +1,4 @@
-import { AdapterFactory, LDS, FetchResponse } from '@ldsjs/engine';
+import { AdapterFactory, LDS, FetchResponse, Snapshot, SnapshotRefresh } from '@ldsjs/engine';
 import {
     adapterName as getPicklistValuesAdapterName,
     validateAdapterConfig,
@@ -10,8 +10,6 @@ import {
     select as picklistValuesRepresentationSelect,
 } from '../../generated/types/PicklistValuesRepresentation';
 import { getFieldId } from '../../primitives/FieldId';
-import { isFulfilledSnapshot } from '../../util/snapshot';
-import { refreshable } from '../../generated/adapters/adapter-utils';
 
 export interface GetPicklistValuesConfig {
     recordTypeId: string;
@@ -20,7 +18,20 @@ export interface GetPicklistValuesConfig {
 
 const path = picklistValuesRepresentationSelect().selections;
 
-export function buildNetworkSnapshot(lds: LDS, config: GetPicklistValuesConfig) {
+function buildSnapshotRefresh(
+    lds: LDS,
+    config: GetPicklistValuesConfig
+): SnapshotRefresh<PicklistValuesRepresentation> {
+    return {
+        config,
+        resolve: () => buildNetworkSnapshot(lds, config),
+    };
+}
+
+export function buildNetworkSnapshot(
+    lds: LDS,
+    config: GetPicklistValuesConfig
+): Promise<Snapshot<PicklistValuesRepresentation>> {
     const { recordTypeId, fieldApiName } = config;
     const fieldNames = getFieldId(fieldApiName);
     const request = getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName({
@@ -43,7 +54,7 @@ export function buildNetworkSnapshot(lds: LDS, config: GetPicklistValuesConfig) 
         (err: FetchResponse<unknown>) => {
             lds.storeIngestFetchResponse(key, err);
             lds.storeBroadcast();
-            return lds.errorSnapshot(err);
+            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
         }
     );
 }
@@ -59,14 +70,17 @@ export function buildInMemorySnapshot(lds: LDS, config: GetPicklistValuesConfig)
     });
     const key = picklistValuesKeyBuilder({ id: request.path });
 
-    return lds.storeLookup<PicklistValuesRepresentation>({
-        recordId: key,
-        node: {
-            kind: 'Fragment',
-            selections: path,
+    return lds.storeLookup<PicklistValuesRepresentation>(
+        {
+            recordId: key,
+            node: {
+                kind: 'Fragment',
+                selections: path,
+            },
+            variables: {},
         },
-        variables: {},
-    });
+        buildSnapshotRefresh(lds, config)
+    );
 }
 
 const picklistValuesConfigPropertyNames = {
@@ -79,28 +93,17 @@ const picklistValuesConfigPropertyNames = {
 
 export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepresentation> = (
     lds: LDS
-) => {
-    return refreshable(
-        function(untrusted: unknown) {
-            const config = validateAdapterConfig(untrusted, picklistValuesConfigPropertyNames);
-            if (config === null) {
-                return null;
-            }
-
-            const snapshot = buildInMemorySnapshot(lds, config);
-            if (isFulfilledSnapshot(snapshot)) {
-                return snapshot;
-            }
-
-            return buildNetworkSnapshot(lds, config);
-        },
-        (untrusted: unknown) => {
-            const config = validateAdapterConfig(untrusted, picklistValuesConfigPropertyNames);
-            if (config === null) {
-                throw new Error('Refresh should not be called with partial configuration');
-            }
-
-            return buildNetworkSnapshot(lds, config);
+) =>
+    function getPicklistValues(untrusted: unknown) {
+        const config = validateAdapterConfig(untrusted, picklistValuesConfigPropertyNames);
+        if (config === null) {
+            return null;
         }
-    );
-};
+
+        const snapshot = buildInMemorySnapshot(lds, config);
+        if (lds.snapshotDataAvailable(snapshot)) {
+            return snapshot;
+        }
+
+        return buildNetworkSnapshot(lds, config);
+    };

@@ -1,68 +1,56 @@
-import { Snapshot, AdapterFactory, LDS, FetchResponse } from '@ldsjs/engine';
+import { Snapshot, AdapterFactory, LDS, FetchResponse, SnapshotRefresh } from '@ldsjs/engine';
 import {
     GetRelatedListRecordsConfig,
     validateAdapterConfig,
     getRelatedListRecords_ConfigPropertyNames as relatedListRecordsConfigProperties,
 } from '../../generated/adapters/getRelatedListRecords';
-import { refreshable } from '../../generated/adapters/adapter-utils';
 import getUiApiRelatedListRecordsByParentRecordIdAndRelatedListId from '../../generated/resources/getUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
 import {
     RelatedListRecordCollectionRepresentation,
     keyBuilder as RelatedListRecordCollectionRepresentation_keyBuilder,
 } from '../../generated/types/RelatedListRecordCollectionRepresentation';
 import { buildRelatedListRecordCollectionSelector } from './selectors';
-import { isFulfilledSnapshot, isUnfulfilledSnapshot } from '../../util/snapshot';
+import { isUnfulfilledSnapshot } from '../../util/snapshot';
+
+function buildRefreshSnapshot(
+    lds: LDS,
+    config: GetRelatedListRecordsConfig
+): SnapshotRefresh<RelatedListRecordCollectionRepresentation> {
+    return {
+        config,
+        resolve: () => getRelatedListRecordsNetwork(config, lds, buildCacheKeyFromConfig(config)),
+    };
+}
 
 export const factory: AdapterFactory<
     GetRelatedListRecordsConfig,
     RelatedListRecordCollectionRepresentation
-> = (lds: LDS) => {
-    return refreshable(
-        (untrustedConfig: unknown) => {
-            const config = validateAdapterConfig(
-                untrustedConfig,
-                relatedListRecordsConfigProperties
-            );
+> = (lds: LDS) =>
+    function getRelatedListRecords(untrustedConfig: unknown) {
+        const config = validateAdapterConfig(untrustedConfig, relatedListRecordsConfigProperties);
 
-            if (config === null) {
-                return null;
-            }
-
-            const cacheKey = buildCacheKeyFromConfig(config);
-            const recordCollectionSelector = buildRelatedListRecordCollectionSelector(
-                cacheKey,
-                config
-            );
-
-            const lookupResult = lds.storeLookup<RelatedListRecordCollectionRepresentation>(
-                recordCollectionSelector
-            );
-
-            if (isFulfilledSnapshot(lookupResult)) {
-                // cache hit :partyparrot:
-                return lookupResult;
-            }
-
-            // Cache miss, go fetch data
-            return getRelatedListRecords(config, lds, cacheKey);
-        },
-        (untrustedConfig: unknown) => {
-            const config = validateAdapterConfig(
-                untrustedConfig,
-                relatedListRecordsConfigProperties
-            );
-            if (config === null) {
-                throw new Error(
-                    'Invalid config passed to "getRelatedListRecords" refresh function'
-                );
-            }
-
-            return getRelatedListRecords(config, lds, buildCacheKeyFromConfig(config));
+        if (config === null) {
+            return null;
         }
-    );
-};
 
-function getRelatedListRecords(
+        const cacheKey = buildCacheKeyFromConfig(config);
+        const recordCollectionSelector = buildRelatedListRecordCollectionSelector(cacheKey, config);
+
+        const lookupResult = lds.storeLookup<RelatedListRecordCollectionRepresentation>(
+            recordCollectionSelector,
+            buildRefreshSnapshot(lds, config)
+        );
+
+        if (lds.snapshotDataAvailable(lookupResult)) {
+            // cache hit :partyparrot:
+            return lookupResult;
+        }
+
+        // Cache miss, go fetch data
+        return getRelatedListRecordsNetwork(config, lds, cacheKey);
+    };
+
+function getRelatedListRecordsNetwork(
     config: GetRelatedListRecordsConfig,
     lds: LDS,
     cacheKey: string
@@ -100,7 +88,8 @@ function getRelatedListRecords(
             lds.storeBroadcast();
 
             const lookupResult = lds.storeLookup<RelatedListRecordCollectionRepresentation>(
-                listRecordCollectionSelector
+                listRecordCollectionSelector,
+                buildRefreshSnapshot(lds, config)
             );
 
             if (isUnfulfilledSnapshot(lookupResult)) {
@@ -115,7 +104,7 @@ function getRelatedListRecords(
         (err: FetchResponse<unknown>) => {
             lds.storeIngestFetchResponse(cacheKey, err);
             lds.storeBroadcast();
-            return lds.errorSnapshot(err);
+            return lds.errorSnapshot(err, buildRefreshSnapshot(lds, config));
         }
     );
 }

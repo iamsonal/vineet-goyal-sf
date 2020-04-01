@@ -1,4 +1,11 @@
-import { AdapterFactory, LDS, PathSelection, Selector, FetchResponse } from '@ldsjs/engine';
+import {
+    AdapterFactory,
+    LDS,
+    PathSelection,
+    Selector,
+    FetchResponse,
+    SnapshotRefresh,
+} from '@ldsjs/engine';
 import { validateAdapterConfig } from '../../generated/adapters/getRecordCreateDefaults';
 import getUiApiRecordDefaultsCreateByObjectApiName from '../../generated/resources/getUiApiRecordDefaultsCreateByObjectApiName';
 import { RecordDefaultsRepresentation } from '../../generated/types/RecordDefaultsRepresentation';
@@ -12,7 +19,6 @@ import {
     getRecordCreateDefaults_ConfigPropertyNames,
 } from '../../generated/adapters/getRecordCreateDefaults';
 import { isFulfilledSnapshot } from '../../util/snapshot';
-import { refreshable } from '../../generated/adapters/adapter-utils';
 
 const layoutSelections = recordLayoutRepresentationSelect();
 const objectInfoSelections = objectInfoRepresentationSelect();
@@ -46,6 +52,16 @@ function buildSelector(resp: RecordDefaultsRepresentation): PathSelection[] {
 
 type GetRecordCreateDefaultsConfigWithDefaults = Required<GetRecordCreateDefaultsConfig>;
 
+function buildSnapshotRefresh(
+    lds: LDS,
+    config: GetRecordCreateDefaultsConfigWithDefaults
+): SnapshotRefresh<RecordDefaultsRepresentation> {
+    return {
+        config,
+        resolve: () => buildNetworkSnapshot(lds, config),
+    };
+}
+
 export function buildNetworkSnapshot(lds: LDS, config: GetRecordCreateDefaultsConfigWithDefaults) {
     const { formFactor, optionalFields, recordTypeId } = config;
     const request = getUiApiRecordDefaultsCreateByObjectApiName({
@@ -77,12 +93,15 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordCreateDefaultsCo
             lds.storePublish(selectorKey, cacheSelector);
             lds.storeIngest(key, request, body);
             lds.storeBroadcast();
-            return lds.storeLookup<RecordDefaultsRepresentation>(cacheSelector);
+            return lds.storeLookup<RecordDefaultsRepresentation>(
+                cacheSelector,
+                buildSnapshotRefresh(lds, config)
+            );
         },
         (err: FetchResponse<unknown>) => {
             lds.storeIngestFetchResponse(key, err);
             lds.storeBroadcast();
-            return lds.errorSnapshot(err);
+            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
         }
     );
 }
@@ -154,10 +173,13 @@ export function buildInMemorySnapshot(lds: LDS, config: GetRecordCreateDefaultsC
 
     // We've seen this request before
     if (isFulfilledSnapshot(cacheSnapshot)) {
-        const snapshot = lds.storeLookup<RecordDefaultsRepresentation>(cacheSnapshot.data);
+        const snapshot = lds.storeLookup<RecordDefaultsRepresentation>(
+            cacheSnapshot.data,
+            buildSnapshotRefresh(lds, config)
+        );
 
         // Cache hit
-        if (isFulfilledSnapshot(snapshot)) {
+        if (lds.snapshotDataAvailable(snapshot)) {
             return snapshot;
         }
     }
@@ -168,27 +190,16 @@ export function buildInMemorySnapshot(lds: LDS, config: GetRecordCreateDefaultsC
 export const factory: AdapterFactory<
     GetRecordCreateDefaultsConfig,
     RecordDefaultsRepresentation
-> = (lds: LDS) => {
-    return refreshable(
-        (untrusted: unknown) => {
-            const config = coerceConfigWithDefaults(untrusted);
-            if (config === null) {
-                return null;
-            }
-
-            const snapshot = buildInMemorySnapshot(lds, config);
-            if (snapshot !== null) {
-                return snapshot;
-            }
-            return buildNetworkSnapshot(lds, config);
-        },
-        (untrusted: unknown) => {
-            const config = coerceConfigWithDefaults(untrusted);
-            if (config === null) {
-                throw new Error('Refresh should not be called with partial configuration');
-            }
-
-            return buildNetworkSnapshot(lds, config);
+> = (lds: LDS) =>
+    function getRecordCreateDefaults(untrusted: unknown) {
+        const config = coerceConfigWithDefaults(untrusted);
+        if (config === null) {
+            return null;
         }
-    );
-};
+
+        const snapshot = buildInMemorySnapshot(lds, config);
+        if (snapshot !== null) {
+            return snapshot;
+        }
+        return buildNetworkSnapshot(lds, config);
+    };

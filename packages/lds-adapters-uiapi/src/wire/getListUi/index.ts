@@ -6,8 +6,9 @@ import {
     LDS,
     ResourceRequest,
     Snapshot,
+    SnapshotRefresh,
 } from '@ldsjs/engine';
-import { refreshable, untrustedIsObject } from '../../generated/adapters/adapter-utils';
+import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
 import {
     GetListUiByApiNameConfig,
     getListUiByApiName_ConfigPropertyNames,
@@ -52,7 +53,6 @@ import {
     pathSelectionsFor,
     staticValuePathSelection,
 } from '../../util/pagination';
-import { isErrorSnapshot, isFulfilledSnapshot } from '../../util/snapshot';
 import { getListViewSummaryCollectionAdapterFactory } from '../getListViewSummaryCollection';
 import { getMruListUiAdapterFactory } from '../getMruListUi';
 
@@ -194,7 +194,17 @@ function buildInMemorySnapshot(
         variables: {},
     };
 
-    return lds.storeLookup<ListUiRepresentation>(selector);
+    return lds.storeLookup<ListUiRepresentation>(selector, buildSnapshotRefresh(lds, config));
+}
+
+function buildSnapshotRefresh(
+    lds: LDS,
+    config: GetListUiConfig
+): SnapshotRefresh<ListUiRepresentation> {
+    return {
+        config,
+        resolve: () => buildNetworkSnapshot_getListUi(lds, config),
+    };
 }
 
 /**
@@ -283,14 +293,17 @@ function buildNetworkSnapshot_getListUi(
             lds.storeIngest(listUiKey, request, body);
             lds.storeBroadcast();
 
-            return lds.storeLookup<ListUiRepresentation>({
-                recordId: listUiKey,
-                node: fragment,
-                variables: {},
-            });
+            return lds.storeLookup<ListUiRepresentation>(
+                {
+                    recordId: listUiKey,
+                    node: fragment,
+                    variables: {},
+                },
+                buildSnapshotRefresh(lds, config)
+            );
         },
         (err: unknown) => {
-            return lds.errorSnapshot(err);
+            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
         }
     );
 }
@@ -480,54 +493,42 @@ export const factory: AdapterFactory<
     ListUiRepresentation | ListViewSummaryCollectionRepresentation
 > = (lds: LDS) => {
     // adapter implementation for getListUiBy*
-    const listUiAdapter = refreshable(
-        (untrustedConfig: unknown) => {
-            const config = validateGetListUiConfig(untrustedConfig);
+    const listUiAdapter = (untrustedConfig: unknown) => {
+        const config = validateGetListUiConfig(untrustedConfig);
 
-            if (config === null) {
-                return null;
-            }
+        if (config === null) {
+            return null;
+        }
 
-            // try to get a list reference and a list info for the list; this should come back
-            // non-null if we have the list info cached
-            const listRef = getListReference(config);
-            const listInfo = listRef && getListInfo(listRef, lds);
+        // try to get a list reference and a list info for the list; this should come back
+        // non-null if we have the list info cached
+        const listRef = getListReference(config);
+        const listInfo = listRef && getListInfo(listRef, lds);
 
-            // no list info means it's not in the cache - make a full list-ui request
-            if (!listInfo) {
-                return buildNetworkSnapshot_getListUi(lds, config);
-            }
-
-            // with the list info we can construct the full selector and try to get the
-            // list ui from the store
-            const snapshot = buildInMemorySnapshot(lds, config, listInfo);
-
-            if (isFulfilledSnapshot(snapshot)) {
-                // cache hit :partyparrot:
-                return snapshot;
-            }
-
-            // if there was an error or if the list ui was not found in the store then
-            // make a full list-ui request
-            else if (isErrorSnapshot(snapshot) || !snapshot.data) {
-                return buildNetworkSnapshot_getListUi(lds, config);
-            }
-
-            // we *should* only be missing records and/or tokens at this point; send a list-records
-            // request to fill them in
-            return buildNetworkSnapshot_getListRecords(lds, config, listInfo, snapshot);
-        },
-        (untrustedConfig: unknown) => {
-            const config = validateGetListUiConfig(untrustedConfig);
-
-            // This should never happen
-            if (config === null) {
-                throw new Error('Invalid config passed to "getListUi" refresh function');
-            }
-
+        // no list info means it's not in the cache - make a full list-ui request
+        if (!listInfo) {
             return buildNetworkSnapshot_getListUi(lds, config);
         }
-    );
+
+        // with the list info we can construct the full selector and try to get the
+        // list ui from the store
+        const snapshot = buildInMemorySnapshot(lds, config, listInfo);
+
+        // if the list ui was not found in the store then
+        // make a full list-ui request
+        if (!snapshot.data) {
+            return buildNetworkSnapshot_getListUi(lds, config);
+        }
+
+        if (lds.snapshotDataAvailable(snapshot)) {
+            // cache hit :partyparrot:
+            return snapshot;
+        }
+
+        // we *should* only be missing records and/or tokens at this point; send a list-records
+        // request to fill them in
+        return buildNetworkSnapshot_getListRecords(lds, config, listInfo, snapshot);
+    };
 
     let listViewSummaryCollectionAdapter: Adapter<any, any> | null = null;
     let mruAdapter: Adapter<any, any> | null = null;

@@ -1,12 +1,18 @@
-import { AdapterFactory, Fragment, LDS, Snapshot, Selector, FetchResponse } from '@ldsjs/engine';
+import {
+    AdapterFactory,
+    Fragment,
+    LDS,
+    Snapshot,
+    Selector,
+    FetchResponse,
+    SnapshotRefresh,
+} from '@ldsjs/engine';
 
 import {
     GetListViewSummaryCollectionConfig,
     validateAdapterConfig,
     getListViewSummaryCollection_ConfigPropertyNames,
 } from '../../generated/adapters/getListViewSummaryCollection';
-
-import { isFulfilledSnapshot } from '../../util/snapshot';
 import {
     ListViewSummaryCollectionRepresentation,
     paginationKeyBuilder,
@@ -17,7 +23,6 @@ import {
     minimizeRequest,
     staticValuePathSelection,
 } from '../../util/pagination';
-import { refreshable } from '../../generated/adapters/adapter-utils';
 import { select as listViewSummaryRepresentationSelect } from '../../generated/types/ListViewSummaryRepresentation';
 
 // TODO RAML - this more properly goes in the generated resource files
@@ -63,6 +68,15 @@ function buildListViewSummaryCollectionFragment(
     };
 }
 
+function buildRefreshSnapshot(
+    lds: LDS,
+    config: GetListViewSummaryCollectionConfig
+): SnapshotRefresh<ListViewSummaryCollectionRepresentation> {
+    return {
+        config,
+        resolve: () => buildNetworkSnapshot(lds, config),
+    };
+}
 export function buildInMemorySnapshot(
     lds: LDS,
     config: GetListViewSummaryCollectionConfig
@@ -83,7 +97,10 @@ export function buildInMemorySnapshot(
         variables: {},
     };
 
-    return lds.storeLookup<ListViewSummaryCollectionRepresentation>(selector);
+    return lds.storeLookup<ListViewSummaryCollectionRepresentation>(
+        selector,
+        buildRefreshSnapshot(lds, config)
+    );
 }
 
 export function buildNetworkSnapshot(
@@ -137,7 +154,7 @@ export function buildNetworkSnapshot(
         (error: FetchResponse<unknown>) => {
             lds.storeIngestFetchResponse(request.key, error);
             lds.storeBroadcast();
-            return lds.errorSnapshot(error);
+            return lds.errorSnapshot(error, buildRefreshSnapshot(lds, config));
         }
     );
 }
@@ -145,48 +162,29 @@ export function buildNetworkSnapshot(
 export const getListViewSummaryCollectionAdapterFactory: AdapterFactory<
     GetListViewSummaryCollectionConfig,
     ListViewSummaryCollectionRepresentation
-> = (lds: LDS) => {
-    return refreshable(
-        function getListViewSummaryCollection(
-            untrustedConfig: unknown
-        ):
-            | Promise<Snapshot<ListViewSummaryCollectionRepresentation>>
-            | Snapshot<ListViewSummaryCollectionRepresentation>
-            | null {
-            const config = validateAdapterConfig(
-                untrustedConfig,
-                getListViewSummaryCollection_ConfigPropertyNames
-            );
+> = (lds: LDS) =>
+    function getListViewSummaryCollection(
+        untrustedConfig: unknown
+    ):
+        | Promise<Snapshot<ListViewSummaryCollectionRepresentation>>
+        | Snapshot<ListViewSummaryCollectionRepresentation>
+        | null {
+        const config = validateAdapterConfig(
+            untrustedConfig,
+            getListViewSummaryCollection_ConfigPropertyNames
+        );
 
-            // Invalid or incomplete config
-            if (config === null) {
-                return null;
-            }
-
-            const cacheSnapshot = buildInMemorySnapshot(lds, config);
-
-            // Cache Hit
-            if (isFulfilledSnapshot(cacheSnapshot)) {
-                return cacheSnapshot;
-            }
-
-            return buildNetworkSnapshot(lds, config, cacheSnapshot);
-        },
-        // Refresh snapshot
-        (untrustedConfig: unknown) => {
-            const config = validateAdapterConfig(
-                untrustedConfig,
-                getListViewSummaryCollection_ConfigPropertyNames
-            );
-
-            // This should never happen
-            if (config === null) {
-                throw new Error(
-                    'Invalid config passed to "getListViewSummaryCollection" refresh function'
-                );
-            }
-
-            return buildNetworkSnapshot(lds, config);
+        // Invalid or incomplete config
+        if (config === null) {
+            return null;
         }
-    );
-};
+
+        const cacheSnapshot = buildInMemorySnapshot(lds, config);
+
+        // Cache Hit
+        if (lds.snapshotDataAvailable(cacheSnapshot)) {
+            return cacheSnapshot;
+        }
+
+        return buildNetworkSnapshot(lds, config, cacheSnapshot);
+    };

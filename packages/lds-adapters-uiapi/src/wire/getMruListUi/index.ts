@@ -1,5 +1,12 @@
-import { AdapterFactory, Fragment, LDS, Selector, Snapshot, FetchResponse } from '@ldsjs/engine';
-import { refreshable } from '../../generated/adapters/adapter-utils';
+import {
+    AdapterFactory,
+    Fragment,
+    LDS,
+    Selector,
+    Snapshot,
+    FetchResponse,
+    SnapshotRefresh,
+} from '@ldsjs/engine';
 import {
     GetMruListUiConfig,
     getMruListUi_ConfigPropertyNames,
@@ -24,7 +31,6 @@ import {
     pathSelectionsFor,
     staticValuePathSelection,
 } from '../../util/pagination';
-import { isFulfilledSnapshot, isErrorSnapshot } from '../../util/snapshot';
 import { select as ListReferenceRepresentation_select } from '../../generated/types/ListReferenceRepresentation';
 
 const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select();
@@ -116,6 +122,16 @@ function buildListUiFragment(
     };
 }
 
+function buildSnapshotRefresh(
+    lds: LDS,
+    config: GetMruListUiConfig
+): SnapshotRefresh<ListUiRepresentation> {
+    return {
+        config,
+        resolve: () => buildNetworkSnapshot_getMruListUi(lds, config),
+    };
+}
+
 export function buildInMemorySnapshot(
     lds: LDS,
     config: GetMruListUiConfig,
@@ -143,7 +159,7 @@ export function buildInMemorySnapshot(
         variables: {},
     };
 
-    return lds.storeLookup<ListUiRepresentation>(selector);
+    return lds.storeLookup<ListUiRepresentation>(selector, buildSnapshotRefresh(lds, config));
 }
 
 /**
@@ -214,14 +230,17 @@ function buildNetworkSnapshot_getMruListUi(
             lds.storeIngest(listUiKey, request, body);
             lds.storeBroadcast();
 
-            return lds.storeLookup<ListUiRepresentation>({
-                recordId: listUiKey,
-                node: fragment,
-                variables: {},
-            });
+            return lds.storeLookup<ListUiRepresentation>(
+                {
+                    recordId: listUiKey,
+                    node: fragment,
+                    variables: {},
+                },
+                buildSnapshotRefresh(lds, config)
+            );
         },
         (err: unknown) => {
-            return lds.errorSnapshot(err);
+            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
         }
     );
 }
@@ -326,7 +345,7 @@ function buildNetworkSnapshot_getMruListRecords(
                 err
             );
             lds.storeBroadcast();
-            return lds.errorSnapshot(err);
+            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
         }
     );
 }
@@ -334,63 +353,50 @@ function buildNetworkSnapshot_getMruListRecords(
 export const getMruListUiAdapterFactory: AdapterFactory<
     GetMruListUiConfig,
     ListUiRepresentation
-> = (lds: LDS) => {
-    return refreshable<GetMruListUiConfig, ListUiRepresentation, ListUiRepresentation>(
-        (untrustedConfig: unknown) => {
-            const config = validateAdapterConfig(
-                untrustedConfig,
-                getMruListUi_ConfigPropertyNames_augmented
-            );
+> = (lds: LDS) =>
+    function getMruListUi(untrustedConfig: unknown) {
+        const config = validateAdapterConfig(
+            untrustedConfig,
+            getMruListUi_ConfigPropertyNames_augmented
+        );
 
-            if (config === null) {
-                return null;
-            }
+        if (config === null) {
+            return null;
+        }
 
-            // try to get a list reference and a list info for the list; this should come back
-            // non-null if we have the list info cached
-            const listInfo = getListInfo(
-                {
-                    id: null,
-                    listViewApiName: null,
-                    objectApiName: config.objectApiName,
-                    type: 'mru',
-                },
-                lds
-            );
+        // try to get a list reference and a list info for the list; this should come back
+        // non-null if we have the list info cached
+        const listInfo = getListInfo(
+            {
+                id: null,
+                listViewApiName: null,
+                objectApiName: config.objectApiName,
+                type: 'mru',
+            },
+            lds
+        );
 
-            // no list info means it's not in the cache - make a full list-ui request
-            if (!listInfo) {
-                return buildNetworkSnapshot_getMruListUi(lds, config);
-            }
-
-            // with the list info we can construct the full selector and try to get the
-            // list ui from the store
-            const snapshot = buildInMemorySnapshot(lds, config, listInfo);
-
-            if (isFulfilledSnapshot(snapshot)) {
-                // cache hit :partyparrot:
-                return snapshot;
-            }
-
-            // if there was an error or if the list ui was not found in the store then
-            // make a full list-ui request
-            else if (isErrorSnapshot(snapshot) || !snapshot.data) {
-                return buildNetworkSnapshot_getMruListUi(lds, config);
-            }
-
-            // we *should* only be missing records and/or tokens at this point; send a list-records
-            // request to fill them in
-            return buildNetworkSnapshot_getMruListRecords(lds, config, listInfo, snapshot);
-        },
-        (untrustedConfig: unknown) => {
-            const config = validateAdapterConfig(untrustedConfig, getMruListUi_ConfigPropertyNames);
-
-            // This should never happen
-            if (config === null) {
-                throw new Error('Invalid config passed to "getMruListUi" refresh function');
-            }
-
+        // no list info means it's not in the cache - make a full list-ui request
+        if (!listInfo) {
             return buildNetworkSnapshot_getMruListUi(lds, config);
         }
-    );
-};
+
+        // with the list info we can construct the full selector and try to get the
+        // list ui from the store
+        const snapshot = buildInMemorySnapshot(lds, config, listInfo);
+
+        // if the list ui was not found in the store then
+        // make a full list-ui request
+        if (!snapshot.data) {
+            return buildNetworkSnapshot_getMruListUi(lds, config);
+        }
+
+        if (lds.snapshotDataAvailable(snapshot)) {
+            // cache hit :partyparrot:
+            return snapshot;
+        }
+
+        // we *should* only be missing records and/or tokens at this point; send a list-records
+        // request to fill them in
+        return buildNetworkSnapshot_getMruListRecords(lds, config, listInfo, snapshot);
+    };

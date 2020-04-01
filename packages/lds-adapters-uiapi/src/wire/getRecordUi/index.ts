@@ -6,12 +6,9 @@ import {
     FetchResponse,
     GraphNode,
     ErrorSnapshot,
+    SnapshotRefresh,
 } from '@ldsjs/engine';
-import {
-    AdapterValidationConfig,
-    refreshable,
-    keyPrefix,
-} from '../../generated/adapters/adapter-utils';
+import { AdapterValidationConfig, keyPrefix } from '../../generated/adapters/adapter-utils';
 import { GetRecordUiConfig, validateAdapterConfig } from '../../generated/adapters/getRecordUi';
 import getUiApiRecordUiByRecordIds from '../../generated/resources/getUiApiRecordUiByRecordIds';
 import { RecordLayoutRepresentation } from '../../generated/types/RecordLayoutRepresentation';
@@ -36,7 +33,7 @@ import { getTrackedFields, markMissingOptionalFields, isGraphNode } from '../../
 import { dedupe } from '../../validation/utils';
 import { buildRecordUiSelector, RecordDef } from './selectors';
 import { getRecordTypeId } from '../../util/records';
-import { isErrorSnapshot, isFulfilledSnapshot } from '../../util/snapshot';
+import { isFulfilledSnapshot } from '../../util/snapshot';
 import { LayoutType } from '../../primitives/LayoutType';
 import { LayoutMode } from '../../primitives/LayoutMode';
 import { getRecordUiMissingRecordLookupFields } from '../../util/record-ui';
@@ -127,6 +124,16 @@ function keyBuilder(
     return `${keyPrefix}RecordUiRepresentation:${joinedRecordIds}:${joinedLayoutTypes}:${joinedModes}:${joinedOptionalFields}`;
 }
 
+function buildSnapshotRefresh(
+    lds: LDS,
+    config: GetRecordUiConfigWithDefaults
+): SnapshotRefresh<RecordUiRepresentation> {
+    return {
+        config,
+        resolve: () => buildNetworkSnapshot(lds, config),
+    };
+}
+
 export function buildInMemorySnapshot(
     lds: LDS,
     config: GetRecordUiConfigWithDefaults
@@ -141,10 +148,13 @@ export function buildInMemorySnapshot(
 
     // if we do, return the same snapshot instance by calling storeLookupMemoize
     if (selectorNode !== null) {
-        const cacheData = lds.storeLookupMemoize<RecordUiRepresentation>(selectorNode);
+        const cacheData = lds.storeLookupMemoize<RecordUiRepresentation>(
+            selectorNode,
+            buildSnapshotRefresh(lds, config)
+        );
 
         // CACHE HIT
-        if (isFulfilledSnapshot(cacheData) || isErrorSnapshot(cacheData)) {
+        if (lds.snapshotDataAvailable(cacheData)) {
             return cacheData;
         }
     }
@@ -173,10 +183,13 @@ export function buildInMemorySnapshot(
         // publish the selector instance for later getNode check
         lds.storePublish(configKey, cachedSelector);
 
-        const cacheData = lds.storeLookupMemoize<RecordUiRepresentation>(cachedSelector);
+        const cacheData = lds.storeLookupMemoize<RecordUiRepresentation>(
+            cachedSelector,
+            buildSnapshotRefresh(lds, config)
+        );
 
         // CACHE HIT
-        if (isFulfilledSnapshot(cacheData)) {
+        if (lds.snapshotDataAvailable(cacheData)) {
             return cacheData;
         }
     }
@@ -207,7 +220,10 @@ function getSelectorNode(lds: LDS, key: string): null | Selector {
     return null;
 }
 
-export function buildNetworkSnapshot(lds: LDS, config: GetRecordUiConfigWithDefaults) {
+export function buildNetworkSnapshot(
+    lds: LDS,
+    config: GetRecordUiConfigWithDefaults
+): Promise<Snapshot<RecordUiRepresentation>> {
     const { recordIds, layoutTypes, modes, optionalFields } = config;
 
     // TODO: a better hash function for config -> configKey
@@ -305,7 +321,10 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordUiConfigWithDefa
             lds.storePublish(configKey, sel);
             publishDependencies(lds, validRecordIds, [key, cachedSelectorKey, configKey]);
 
-            return lds.storeLookupMemoize<RecordUiRepresentation>(sel);
+            return lds.storeLookupMemoize<RecordUiRepresentation>(
+                sel,
+                buildSnapshotRefresh(lds, config)
+            );
         },
         (err: FetchResponse<unknown>) => {
             lds.storeIngestFetchResponse(key, err, RecordUiRepresentationTTL);
@@ -322,10 +341,13 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordUiConfigWithDefa
                     variables: {},
                 };
                 lds.storePublish(configKey, sel);
-                return lds.storeLookupMemoize<RecordUiRepresentation>(sel) as ErrorSnapshot;
+                return lds.storeLookupMemoize<RecordUiRepresentation>(
+                    sel,
+                    buildSnapshotRefresh(lds, config)
+                ) as ErrorSnapshot;
             }
 
-            return lds.errorSnapshot(err);
+            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
         }
     );
 }
@@ -371,34 +393,20 @@ export function coerceConfigWithDefaults(
     };
 }
 
-export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> = (lds: LDS) => {
-    return refreshable(
-        function getRecordUi(
-            untrustedConfig: unknown
-        ): Promise<Snapshot<RecordUiRepresentation>> | Snapshot<RecordUiRepresentation> | null {
-            // standard config validation and coercion
-            const config = coerceConfigWithDefaults(untrustedConfig);
-            if (config === null) {
-                return null;
-            }
-
-            const cacheSnapshot = buildInMemorySnapshot(lds, config);
-            if (
-                cacheSnapshot !== null &&
-                (isFulfilledSnapshot(cacheSnapshot) || isErrorSnapshot(cacheSnapshot))
-            ) {
-                return cacheSnapshot;
-            }
-
-            return buildNetworkSnapshot(lds, config);
-        },
-        (untrustedConfig: unknown) => {
-            const config = coerceConfigWithDefaults(untrustedConfig);
-            if (config === null) {
-                throw new Error('Refresh should not be called with partial configuration');
-            }
-
-            return buildNetworkSnapshot(lds, config);
+export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> = (lds: LDS) =>
+    function getRecordUi(
+        untrustedConfig: unknown
+    ): Promise<Snapshot<RecordUiRepresentation>> | Snapshot<RecordUiRepresentation> | null {
+        // standard config validation and coercion
+        const config = coerceConfigWithDefaults(untrustedConfig);
+        if (config === null) {
+            return null;
         }
-    );
-};
+
+        const cacheSnapshot = buildInMemorySnapshot(lds, config);
+        if (cacheSnapshot !== null) {
+            return cacheSnapshot;
+        }
+
+        return buildNetworkSnapshot(lds, config);
+    };

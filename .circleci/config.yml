@@ -4,7 +4,7 @@
 env_default: &env_default
   working_directory: ~/lds-lp
   docker:
-    - image: circleci/node:10-browsers
+    - image: circleci/node:12-browsers
 
 env_perf: &env_perf
   <<: *env_default

@@ -26,8 +26,8 @@ annotationTypes:
     allowedTargets: TypeDeclaration
 types:
   AbstractFormSubitemRepresentation:
+    discriminator: subitemType # TODO Hand rolled
     description: Form Subitem
-    discriminator: ''
     type: object
     properties:
       subitemType:
@@ -38,7 +38,7 @@ types:
           - Field
   AbstractPicklistValueAttributesRepresentation:
     description: Additional picklist value attributes.
-    discriminator: picklistAtrributesValueType # TODO: Hand Rolled
+    discriminator: picklistAtrributesValueType
     type: object
     properties:
       picklistAtrributesValueType:
@@ -51,7 +51,7 @@ types:
           - Standard
   AbstractRecordAvatarRepresentation:
     description: Represents an avatar associated to a record.
-    discriminator: type # TODO: Hand Rolled
+    discriminator: type
     type: object
     properties:
       recordId:
@@ -65,12 +65,12 @@ types:
           - Theme
   AbstractRecordLayoutComponentRepresentation:
     description: Record layout component.
-    discriminator: ''
+    discriminator: componentType # TODO Hand rolled
     type: object
     properties:
       apiName:
         description: The API name of the field powering this component, if there is one. The API name of the field if the componentType is Field. The API name of the canvas app if the componentType is Canvas.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       componentType:
         description: Component type.
         type: string
@@ -83,7 +83,6 @@ types:
           - VisualforcePage
   ActionRepresentation:
     description: Actions.
-    discriminator: ''
     type: object
     properties:
       actions:
@@ -110,7 +109,6 @@ types:
           type: object
   AggregateRepresentation:
     description: The result of all operations
-    discriminator: ''
     type: object
     properties:
       compositeResponse:
@@ -120,7 +118,6 @@ types:
           type: OperationResponseRepresentation
   AggregateUiRepresentation:
     description: Aggregate UI.
-    discriminator: ''
     type: object
     properties:
       forms:
@@ -164,7 +161,6 @@ types:
             type: RecordRepresentation
   AppRepresentation:
     description: Metadata for an app
-    discriminator: ''
     type: object
     properties:
       appId:
@@ -205,7 +201,7 @@ types:
         type: string
       mobileStartUrl:
         description: Mobile specific launch url for this app
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       navItems:
         description: tabs/nav items for the app
         type: array
@@ -227,7 +223,6 @@ types:
           type: NavItemRepresentation
   AppsRepresentation:
     description: A list of apps accessible for current user.
-    discriminator: ''
     type: object
     properties:
       apps:
@@ -269,7 +264,7 @@ types:
         required: false # TODO: hand rolled
   CanvasLayoutComponentRepresentation:
     description: Canvas record layout component.
-    discriminator: ''
+    discriminatorValue: Canvas # TODO Hand rolled
     type: AbstractRecordLayoutComponentRepresentation
     properties:
       displayLocation:
@@ -289,7 +284,7 @@ types:
         type: string
   CaseStatusPicklistValueAttributesRepresentation:
     description: Additional picklist value attributes for case statuses.
-    discriminatorValue: CaseStatus # TODO: Hand Rolled
+    discriminatorValue: CaseStatus
     type: AbstractPicklistValueAttributesRepresentation
     properties:
       closed:
@@ -297,7 +292,6 @@ types:
         type: boolean
   ChildRelationshipRepresentation:
     description: Child Relationship.
-    discriminator: ''
     type: object
     properties:
       childObjectApiName:
@@ -321,7 +315,7 @@ types:
         type: string
   CustomLinkLayoutComponentRepresentation:
     description: Custom link record layout component.
-    discriminator: ''
+    discriminatorValue: CustomLink # TODO Hand rolled
     type: AbstractRecordLayoutComponentRepresentation
     properties:
       behavior:
@@ -341,7 +335,6 @@ types:
         type: string
   DuplicateRecordErrorRepresentation:
     description: Duplicate record error.
-    discriminator: ''
     type: object
     properties:
       matchResults:
@@ -351,7 +344,6 @@ types:
           type: MatchResultRepresentation
   DuplicateResultInfoRepresentation:
     description: Duplicate Result Info
-    discriminator: ''
     type: object
     properties:
       allowSave:
@@ -365,7 +357,6 @@ types:
         type: string
   DuplicateRuleFilterItemRepresentation:
     description: 'Duplicate Rule filter item '
-    discriminator: ''
     type: object
     properties:
       field:
@@ -382,7 +373,6 @@ types:
         type: string
   DuplicateRuleFilterRepresentation:
     description: 'Duplicate Rule filter '
-    discriminator: ''
     type: object
     properties:
       booleanFilter:
@@ -398,7 +388,6 @@ types:
         type: string
   DuplicateRuleRepresentation:
     description: Duplicate Rule for dedupe configuration
-    discriminator: ''
     type: object
     properties:
       actionOnInsert:
@@ -447,7 +436,6 @@ types:
             - Report
   DuplicatesConfigurationRepresentation:
     description: 'Duplicate Configuration for an object API. '
-    discriminator: ''
     type: object
     properties:
       dedupeEnabled:
@@ -468,7 +456,6 @@ types:
         type: boolean
   DuplicatesRepresentation:
     description: 'Duplicates '
-    discriminator: ''
     type: object
     properties:
       allowSave:
@@ -489,12 +476,11 @@ types:
           type: MatchRepresentation
   EmptySpaceFormSubitemRepresentation:
     description: Empty Space Subitem.
-    discriminator: ''
+    discriminatorValue: EmptySpace # TODO Hand rolled
     type: AbstractFormSubitemRepresentation
     properties: {}
   EntityActionRepresentation:
     description: Entity's Actions.
-    discriminator: ''
     type: object
     properties:
       actions:
@@ -531,7 +517,6 @@ types:
         type: string
   FavoriteCollectionRepresentation:
     description: A list of favorites.
-    discriminator: ''
     type: object
     properties:
       favorites:
@@ -562,7 +547,6 @@ types:
           - Tab
   FavoriteRepresentation:
     description: A representation of a single favorite.
-    discriminator: ''
     type: object
     properties:
       accessCount:
@@ -605,15 +589,15 @@ types:
           - Tab
   FieldFormSubitemRepresentation:
     description: Field form subitem.
-    discriminator: ''
-    type: AbstractFormSubitemRepresentation
+    discriminatorValue: Field
+    type: AbstractFormSubitemRepresentation # TODO: Hand Rolled
     properties:
       apiName:
         description: 'The API name of the field powering this component '
         type: string
   FieldLayoutComponentRepresentation:
     description: Field record layout component.
-    discriminator: ''
+    discriminatorValue: Field # TODO Hand rolled
     type: AbstractRecordLayoutComponentRepresentation
     properties:
       label:
@@ -621,7 +605,6 @@ types:
         type: string
   FieldRepresentation:
     description: Field metadata.
-    discriminator: ''
     type: object
     properties:
       apiName:
@@ -635,10 +618,10 @@ types:
         type: boolean
       compoundComponentName:
         description: When this field is a component of a compound field, this is the normalized component name otherwise this will be null. For example, this will return "Street" if the field represents "BillingStreet" of an Address compound field.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       compoundFieldName:
         description: When this field is an individual component field of a compound field, this indicates which field is the top level compound field. This will be null when the field does not represent a component field of a compound field.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       controllerName:
         description: The name of the field that controls the values of this picklist.
         type: string | nil # TODO: "nil" union hand rolled
@@ -683,7 +666,7 @@ types:
           - Url
       extraTypeInfo:
         description: Additional data type information.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
         enum:
           - ExternalLookup
           - ImageUrl
@@ -697,7 +680,7 @@ types:
         type: boolean
       filteredLookupInfo:
         description: If the field is a reference field type with a lookup filter, this contains the lookup information.
-        type: FilteredLookupInfoRepresentation | nil # TODO: "nil" union hand rolled
+        type: FilteredLookupInfoRepresentation | nil
       highScaleNumber:
         description: Indicates whether the field stores numbers to 8 decimal places regardless of what's specified in the field details.
         type: boolean
@@ -706,7 +689,7 @@ types:
         type: boolean
       inlineHelpText:
         description: The text that displays in the field-level help hover text for this field.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       label:
         description: Text label that is displayed next to the field in the Salesforce user interface. This label may be localized.
         type: string
@@ -727,7 +710,7 @@ types:
         type: boolean
       referenceTargetField:
         description: For indirect lookup relationships on external objects, the target custom field of the referenced object.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       referenceToInfos:
         description: For fields that refer to other objects, this list includes information about the object types and name fields of the referenced objects.
         type: array
@@ -735,7 +718,7 @@ types:
           type: ReferenceToInfoRepresentation
       relationshipName:
         description: The name of the relationship, if this is a master-detail relationship field.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       required:
         description: Indicates whether the field is required on create or update.
         type: boolean
@@ -756,18 +739,16 @@ types:
         type: boolean
   FieldValueRepresentation:
     description: Contains both the raw and displayable field values for a field in a Record.
-    discriminator: ''
     type: object
     properties:
       displayValue:
         description: The displayable value for a field. For a date, this will be a value familiar to users rather than an ISO 8601 formatted date value, which is what the raw value would be. Similarly, currency values will also have a formatted display value. For data that can be localized to the context user's language using the toLabel() function, that value will also be displayed here.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       value:
         description: The value of a field in its raw data form.
-        type: nil | string | number | boolean | RecordRepresentation # TODO: union hand rolled
+        type: RecordRepresentation | boolean | number | string | nil
   FilteredLookupInfoRepresentation:
     description: Filtered lookup info.
-    discriminator: ''
     type: object
     properties:
       controllingFields:
@@ -783,7 +764,6 @@ types:
         type: boolean
   FormItemRepresentation:
     description: Form item
-    discriminator: ''
     type: object
     properties:
       formSubitems:
@@ -796,7 +776,6 @@ types:
         type: string
   FormRepresentation:
     description: Form.
-    discriminator: ''
     type: object
     properties:
       apiName:
@@ -816,7 +795,6 @@ types:
           type: FormSectionRepresentation
   FormRowRepresentation:
     description: Form row.
-    discriminator: ''
     type: object
     properties:
       formItems:
@@ -826,7 +804,6 @@ types:
           type: FormItemRepresentation
   FormSectionRepresentation:
     description: Form section.
-    discriminator: ''
     type: object
     properties:
       apiName:
@@ -903,7 +880,7 @@ types:
           type: GraphQLErrorRepresentation
   LeadStatusPicklistValueAttributesRepresentation:
     description: Additional picklist value attributes for lead statuses.
-    discriminatorValue: LeadStatus # TODO: Hand Rolled
+    discriminatorValue: LeadStatus
     type: AbstractPicklistValueAttributesRepresentation
     properties:
       converted:
@@ -911,7 +888,6 @@ types:
         type: boolean
   ListColumnRepresentation:
     description: ListColumnRepresentation
-    discriminator: ''
     type: object
     properties:
       fieldApiName:
@@ -925,7 +901,6 @@ types:
         type: boolean
   ListFilterByInfoRepresentation:
     description: ListFilterByInfoRepresentation
-    discriminator: ''
     type: object
     properties:
       fieldApiName:
@@ -969,7 +944,6 @@ types:
         type: ListUserPreferenceRepresentation # TODO hand-rolled
   ListInfoRepresentation:
     description: ListInfoRepresentation
-    discriminator: ''
     type: object
     properties:
       cloneable:
@@ -992,7 +966,7 @@ types:
         (oas-readOnly): true
       filterLogicString:
         description: This is the filter logic such as "(1 OR 2) and 3".  Indexes are 1-based.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       filteredByInfo:
         description: Describes how the list view is filtered.
         type: array
@@ -1027,7 +1001,6 @@ types:
         type: boolean
   ListOrderByInfoRepresentation:
     description: ListOrderByInfoRepresentation
-    discriminator: ''
     type: object
     properties:
       fieldApiName:
@@ -1051,7 +1024,6 @@ types:
         type: boolean
   ListRecordCollectionRepresentation:
     description: ListRecordCollectionRepresentation
-    discriminator: ''
     type: object
     properties:
       count:
@@ -1076,10 +1048,10 @@ types:
         type: ListReferenceRepresentation
       nextPageToken:
         description: The token for the next page of records.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       nextPageUrl:
         description: The URL of the next page of records
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       optionalFields:
         description: The list of optional fields requested when these records were fetched.
         type: array
@@ -1090,10 +1062,10 @@ types:
         type: integer
       previousPageToken:
         description: The token for the previous page of records.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       previousPageUrl:
         description: The URL of the previous page of records.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       records:
         description: List data.
         type: array
@@ -1105,20 +1077,18 @@ types:
         (oas-collectionFormat): csv # TODO: hand-rolled
   ListRecordCollectionRepresentation212:
     description: ListRecordCollectionRepresentation212
-    discriminator: ''
     type: object
     properties: {}
   ListReferenceRepresentation:
     description: ListReferenceRepresentation
-    discriminator: ''
     type: object
     properties:
       id:
         description: List view id.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       listViewApiName:
         description: The list view's api name.  E.g. "AllAccounts".
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       objectApiName:
         description: Entity API name for list view.
         type: string
@@ -1127,7 +1097,6 @@ types:
         type: string
   ListUiRepresentation:
     description: ListUiRepresentation
-    discriminator: ''
     type: object
     properties:
       eTag:
@@ -1142,7 +1111,6 @@ types:
         type: ListRecordCollectionRepresentation
   ListUiRepresentation212:
     description: ListUiRepresentation212
-    discriminator: ''
     type: object
     properties:
       eTag:
@@ -1167,7 +1135,6 @@ types:
             type: boolean
   ListUserPreferenceRepresentation:
     description: ListUserPreferenceRepresentation
-    discriminator: ''
     type: object
     properties:
       columnWidths:
@@ -1184,7 +1151,6 @@ types:
             type: boolean
   ListViewSummaryCollectionRepresentation:
     description: ListView Summary Collection Representation
-    discriminator: ''
     type: object
     properties:
       count:
@@ -1207,10 +1173,10 @@ types:
           type: ListViewSummaryRepresentation
       nextPageToken:
         description: The pageToken of the next page of list views.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       nextPageUrl:
         description: The URL of the next page of list views
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       objectApiName:
         description: The objectApiName given in the URL.
         type: string
@@ -1219,19 +1185,18 @@ types:
         type: integer
       previousPageToken:
         description: The pageToken of the previous page of list views.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       previousPageUrl:
         description: The URL of the previous page of list views.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       queryString:
         description: The queryString given in the query parameter.  If no queryString is provided, this returns null.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       recentListsOnly:
         description: The recentListsOnly value from the query parameter.  If recentListsOnly is not provided, this returns the default value used (false).
         type: boolean
   ListViewSummaryRepresentation:
     description: List View Summary Representation
-    discriminator: ''
     type: object
     properties:
       apiName:
@@ -1248,20 +1213,18 @@ types:
         type: string
   LocationFieldRepresentation:
     description: Represents a record field's complex location value.
-    discriminator: ''
     type: object
     properties:
       latitude:
         description: Gets the latitude of the location. This value maybe null if both latitude and longitude are null.
-        type: number
         format: double
+        type: number
       longitude:
         description: Gets the longitude of the location. This value maybe null if both latitude and longitude are null.
-        type: number
         format: double
+        type: number
   LookupValuesRepresentation:
     description: Search results for a given lookup field, organized by type.
-    discriminator: ''
     type: object
     properties:
       lookupResults:
@@ -1272,7 +1235,6 @@ types:
             type: RecordCollectionRepresentation
   MatchRepresentation:
     description: 'Representation of group of possible matches '
-    discriminator: ''
     type: object
     properties:
       duplicateResultInfos:
@@ -1291,7 +1253,6 @@ types:
           type: string
   MatchResultInfoRepresentation:
     description: Match Result Info
-    discriminator: ''
     type: object
     properties:
       recordIds:
@@ -1304,7 +1265,6 @@ types:
         type: string
   MatchResultRepresentation:
     description: Duplicate rule match.
-    discriminator: ''
     type: object
     properties:
       apiName:
@@ -1332,7 +1292,6 @@ types:
         type: ThemeInfoRepresentation
   MatchRuleRepresentation:
     description: 'Match Rule for dedupe configuration '
-    discriminator: ''
     type: object
     properties:
       matchEngine:
@@ -1364,7 +1323,6 @@ types:
         type: object
   NavItemRepresentation:
     description: Metadata for a navitem (tab)
-    discriminator: ''
     type: object
     properties:
       availableInClassic:
@@ -1378,7 +1336,7 @@ types:
         type: string
       content:
         description: Launch url for this tab
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       custom:
         description: Boolean specifying if this tab is a custom tab
         type: boolean
@@ -1390,7 +1348,7 @@ types:
         type: string
       id:
         description: ID of the nav item
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       itemType:
         description: Nav menu item type
         type: string
@@ -1402,16 +1360,16 @@ types:
         type: string
       objectLabel:
         description: The label of the associated object, if applicable.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       objectLabelPlural:
         description: The plural label of the associated object, if applicable.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       pageReference:
         description: Corresponding page reference for the nav item
         type: PageReferenceRepresentation
       standardType:
         description: Standard type
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
   NavItemsInputRepresentation:
     description: An ordered list of nav items
     type: object
@@ -1423,7 +1381,6 @@ types:
           type: object
   NavItemsRepresentation:
     description: An ordered lists of nav items.
-    discriminator: ''
     type: object
     properties:
       currentPageUrl:
@@ -1443,7 +1400,6 @@ types:
         type: string
   ObjectInfoDirectoryEntryRepresentation:
     description: Entry for an object info within the directory of objects.
-    discriminator: ''
     type: object
     properties:
       apiName:
@@ -1468,7 +1424,6 @@ types:
         type: string
   ObjectInfoDirectoryRepresentation:
     description: Directory of objects that can be used within UI API end-points.
-    discriminator: ''
     type: object
     properties:
       objects:
@@ -1479,7 +1434,6 @@ types:
             type: ObjectInfoDirectoryEntryRepresentation
   ObjectInfoRepresentation:
     description: Object metadata.
-    discriminator: ''
     type: object
     properties:
       apiName:
@@ -1498,7 +1452,7 @@ types:
         type: boolean
       defaultRecordTypeId:
         description: The ID for the default record type for this object, if any. Null if there is none, or only a master type.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       deletable:
         description: Indicates whether the object can be deleted.
         type: boolean
@@ -1523,7 +1477,7 @@ types:
             type: FieldRepresentation
       keyPrefix:
         description: The key prefix for IDs of this object.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       label:
         description: The object display label.
         type: string
@@ -1555,7 +1509,7 @@ types:
         type: boolean
       themeInfo:
         description: Theme information for the object.
-        type: ThemeInfoRepresentation | nil # TODO: "nil" union hand rolled
+        type: ThemeInfoRepresentation | nil
       updateable:
         description: Indicates whether the object can be updated.
         type: boolean
@@ -1577,7 +1531,6 @@ types:
         type: string
   OperationResponseRepresentation:
     description: The output of an operation execution within aggregate.
-    discriminator: ''
     type: object
     properties:
       body:
@@ -1600,8 +1553,7 @@ types:
         type: string
   OpportunityStagePicklistValueAttributesRepresentation:
     description: Additional picklist value attributes for opportunity stages.
-    discriminator: ''
-    discriminatorValue: OpportunityStage #TODO: hand rolled
+    discriminatorValue: OpportunityStage
     type: AbstractPicklistValueAttributesRepresentation
     properties:
       closed:
@@ -1609,8 +1561,8 @@ types:
         type: boolean
       defaultProbability:
         description: The default percentage estimate of the confidence in closing a specific opportunity for this opportunity stage value. May be null if forecasting is not enabled for the org. For more info, see the doc for the OpportunityStage standard object.
-        type: number
         format: double
+        type: number
       forecastCategoryName:
         description: The default forecast category value for this opportunity stage value. May be null if forecasting is not enabled for the org. For more info, see the doc for the OpportunityStage standard object.
         type: string
@@ -1638,7 +1590,6 @@ types:
         type: string
   PageReferenceRepresentation:
     description: A page reference.
-    discriminator: ''
     type: object
     properties:
       attributes:
@@ -1658,24 +1609,22 @@ types:
         type: string
   PhotoMetadataRepresentation:
     description: Represents an metadata of an avatar associated to a record.
-    discriminator: ''
     type: object
     properties:
       companyBluemasterId:
         description: The ID of the response that this avatar is associated to.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       responseId:
         description: The ID of the bluemasterID that this avatar is associated to.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
   PhotoRecordAvatarRepresentation:
     description: Represents an avatar associated to a Record
-    discriminator: ''
-    discriminatorValue: Photo # TODO Hand rolled
+    discriminatorValue: Photo
     type: AbstractRecordAvatarRepresentation
     properties:
       backgroundColor:
         description: Retrieve the background color for the photo, if known, otherwise this will be null.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       eTag:
         description: ETag like field, readOnly, handy while caching.
         type: string
@@ -1691,18 +1640,17 @@ types:
         type: string
       provider:
         description: The provider of the image
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       width:
         description: Retrieve the width of the photo in pixels, if known, otherwise this will be null.
         type: string | nil # TODO: hand rolled. Generated RAML defined as integer with format int64
   PicklistValueRepresentation:
     description: A single picklist value.
-    discriminator: ''
     type: object
     properties:
       attributes:
         description: For picklist values representing the status of a lead or an opportunity's stage, this value will contain additional attributes to help consumers understand the meaning of the value. Depending on the PicklistValueType this could be populated with information about a LeadStatus or an OpportunityStage. For any other PicklistValueType this property will be null.
-        type: AbstractPicklistValueAttributesRepresentation | nil # TODO: "nil" union hand rolled
+        type: AbstractPicklistValueAttributesRepresentation | nil
       label:
         description: The displayable value of the picklist to use in a UI.
         type: string
@@ -1716,7 +1664,6 @@ types:
         type: string
   PicklistValuesCollectionRepresentation:
     description: Picklist values for multiple picklist fields and scoped to a record type.
-    discriminator: ''
     type: object
     properties:
       eTag:
@@ -1731,7 +1678,6 @@ types:
             type: PicklistValuesRepresentation
   PicklistValuesRepresentation:
     description: Picklist values for a field and scoped to a record type.
-    discriminator: ''
     type: object
     properties:
       controllerValues:
@@ -1749,7 +1695,7 @@ types:
             type: integer
       defaultValue:
         description: The default value for the picklist, or null if there isn't one.
-        type: PicklistValueRepresentation | nil # TODO: "nil" union hand rolled
+        type: PicklistValueRepresentation | nil
       eTag:
         description: ETag like field, readOnly, handy while caching.
         type: string
@@ -1764,7 +1710,6 @@ types:
           type: PicklistValueRepresentation
   PlatformActionRepresentation:
     description: Record.
-    discriminator: ''
     type: object
     properties:
       actionListContext:
@@ -1772,10 +1717,10 @@ types:
         type: string
       actionTarget:
         description: The URL to invoke or describe the action when the action is invoked. If the action is a standard button overridden by a Visualforce page, the ActionTarget returns the URL of the Visualforce page, such as /apex/pagename.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       actionTargetType:
         description: The type of the target when this action is triggered. Valid values are:Describe -- applies to actions with a user interface, such as quick actionsInvoke -- applies to actions with no user interface, such as action links or invocable actionsVisualforce -- applies to standard buttons overridden by a Visualforce page
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       apiName:
         description: The action's object API name.
         type: string
@@ -1787,7 +1732,7 @@ types:
         type: string
       iconUrl:
         description: The URL of the action’s icon image.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       id:
         description: The ID of this Platform Action Record.
         type: string
@@ -1799,35 +1744,34 @@ types:
         type: string
       primaryColor:
         description: Hex Color Code, such as 7F8DE1
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       relatedListRecordId:
         description: Represents the ID of a record in an object’s related list.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       relatedSourceObject:
         description: When the ActionListContext is RelatedList or RelatedListRecord, this field represents the API name of the related list to which the action belongs.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       section:
         description: 'Which section the action appears in a page. The value can be:
           Page, ActivityComposer, CollaborateComposer, SingleActionLinks'
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       sourceObject:
         description: The object the action belongs to, either EntityApiName or recordId depending on the endpoints.
         type: string
       subtype:
         description: The subtype of the action. For quick actions, the subtype is QuickActionType Enum value. For custom buttons, the subtype is WebLinkTypeEnum. For action links, subtypes are Api, ApiAsync, Download, and Ui. Standard buttons and productivity actions have no subtype.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       targetObject:
         description: Target Object for the action
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       targetUrl:
         description: Target URL for Custom Button Actions
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       type:
         description: The type of the action defined in PlatformActionTypeEnum
         type: string
   PrimingComponentsRepresentation:
     description: Priming Components Representation.
-    discriminator: ''
     type: object
     properties:
       componentDefs:
@@ -1859,7 +1803,6 @@ types:
           type: WireDataRepresentation
   PrimingGeneratedModuleRepresentation:
     description: Priming generated module information.
-    discriminator: ''
     type: object
     properties:
       adg:
@@ -1870,7 +1813,6 @@ types:
         type: string
   PrimingRecordCollectionRepresentation:
     description: Priming Record Collection Representation.
-    discriminator: ''
     type: object
     properties:
       primingRecords:
@@ -1886,7 +1828,6 @@ types:
                   type: PrimingRecordRepresentation
   PrimingRecordRepresentation:
     description: Priming record information.
-    discriminator: ''
     type: object
     properties:
       id:
@@ -1897,7 +1838,6 @@ types:
         type: string
   PrimingRoutesCollectionRepresentation:
     description: Priming Routes Collection Representation.
-    discriminator: ''
     type: object
     properties:
       flexipageRoutes:
@@ -1918,7 +1858,6 @@ types:
         type: RecordRepresentation
   RecordCollectionRepresentation:
     description: Record Collection Representation.
-    discriminator: ''
     type: object
     properties:
       count:
@@ -1926,22 +1865,22 @@ types:
         type: integer
       currentPageToken:
         description: The token of the current page of records.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       currentPageUrl:
         description: The URL of the current page of records.
         type: string
       nextPageToken:
         description: The token of the next page of records.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       nextPageUrl:
         description: The URL of the next page of records
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       previousPageToken:
         description: The token of the previous page of records.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       previousPageUrl:
         description: The URL of the previous page of records.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       records:
         description: Collection  of RecordRepresentations which the relation resolves to
         type: array
@@ -1978,7 +1917,6 @@ types:
         type: RecordCreateDefaultRecordRepresentation # TODO: hand rolled
   RecordExceptionErrorRepresentation:
     description: Record exception error.
-    discriminator: ''
     type: object
     properties:
       constituentField:
@@ -2001,7 +1939,6 @@ types:
         type: string
   RecordExceptionRepresentation:
     description: Record exception.
-    discriminator: ''
     type: object
     properties:
       errors:
@@ -2041,12 +1978,11 @@ types:
             type: string | number | nil | boolean # TODO: hand rolled
   RecordLayoutComponentRepresentation:
     description: Concrete record layout component.
-    discriminator: ''
+    discriminatorValue: EmptySpace
     type: AbstractRecordLayoutComponentRepresentation
     properties: {}
   RecordLayoutItemRepresentation:
     description: Record layout item.
-    discriminator: ''
     type: object
     properties:
       editableForNew:
@@ -2065,7 +2001,7 @@ types:
           type: AbstractRecordLayoutComponentRepresentation
       lookupIdApiName:
         description: TODO
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       required:
         description: Indicates whether field is required in Layout
         type: boolean
@@ -2074,7 +2010,6 @@ types:
         type: boolean
   RecordLayoutRepresentation:
     description: Record layout.
-    discriminator: ''
     type: object
     properties:
       eTag:
@@ -2111,7 +2046,6 @@ types:
           type: RecordLayoutSectionRepresentation
   RecordLayoutRowRepresentation:
     description: Record layout row.
-    discriminator: ''
     type: object
     properties:
       layoutItems:
@@ -2121,7 +2055,6 @@ types:
           type: RecordLayoutItemRepresentation
   RecordLayoutSectionRepresentation:
     description: Record layout section.
-    discriminator: ''
     type: object
     properties:
       collapsible:
@@ -2132,10 +2065,10 @@ types:
         type: integer
       heading:
         description: Heading text for the section.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       id:
         description: Section ID.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       layoutRows:
         description: The rows in the section.
         type: array
@@ -2156,7 +2089,6 @@ types:
         type: boolean
   RecordLayoutSectionUserStateRepresentation:
     description: Record layout section user state.
-    discriminator: ''
     type: object
     properties:
       collapsed:
@@ -2177,7 +2109,6 @@ types:
             type: object # TODO: update to RecordLayoutSectionUserStateInputRepresentation when raml compiler is fixed.
   RecordLayoutUserStateRepresentation:
     description: Record layout user state.
-    discriminator: ''
     type: object
     properties:
       id:
@@ -2201,7 +2132,6 @@ types:
         type: string
   RecordRepresentation:
     description: Record.
-    discriminator: ''
     type: object
     properties:
       apiName:
@@ -2228,26 +2158,25 @@ types:
         type: string
       lastModifiedById:
         description: The lastModifiedById of the record.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       lastModifiedDate:
         description: The lastModifiedDate of the record.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       recordTypeId:
         description: The RecordTypeId of the record.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       recordTypeInfo:
         description: The record type info for this record, if any.
-        type: RecordTypeInfoRepresentation | nil # TODO: "nil" union hand rolled
+        type: RecordTypeInfoRepresentation | nil
       systemModstamp:
         description: The systemModstamp of the record.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       weakEtag:
         description: Record Version like field, readOnly, handy while caching and comparing versions of records.
         type: integer
         (oas-readOnly): true
   RecordTypeInfoRepresentation:
     description: Record type.
-    discriminator: ''
     type: object
     properties:
       available:
@@ -2267,7 +2196,6 @@ types:
         type: string
   RecordUiRepresentation:
     description: Record ui.
-    discriminator: ''
     type: object
     properties:
       eTag:
@@ -2309,7 +2237,6 @@ types:
             type: RecordRepresentation
   ReferenceToInfoRepresentation:
     description: Information about a reference field's referenced types and the name field names of those types.
-    discriminator: ''
     type: object
     properties:
       apiName:
@@ -2322,7 +2249,6 @@ types:
           type: string
   RelatedListColumnRepresentation:
     description: RelatedListColumnRepresentation
-    discriminator: ''
     type: object
     properties:
       fieldApiName:
@@ -2333,7 +2259,7 @@ types:
         type: string
       lookupId:
         description: The lookupId for the column when the field is a reference, otherwise null.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       sortable:
         description: Whether the list column is sortable.
         type: boolean
@@ -2364,7 +2290,6 @@ types:
         type: RelatedListInfoRepresentation
   RelatedListInfoRepresentation:
     description: RelatedListInfoRepresentation
-    discriminator: ''
     type: object
     properties:
       cloneable:
@@ -2422,7 +2347,6 @@ types:
         type: boolean
   RelatedListRecordCollectionRepresentation:
     description: RelatedListRecordCollectionRepresentation
-    discriminator: ''
     type: object
     properties:
       count:
@@ -2433,7 +2357,7 @@ types:
         type: string
       currentPageUrl:
         description: The URL of the current page of records.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       fields:
         description: The list of fields requested when these records were fetched.
         type: array
@@ -2441,16 +2365,16 @@ types:
           type: string
       listInfoETag:
         description: RelatedListInfo ETag.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       listReference:
         description: The reference to the related list that contains these records.
         type: RelatedListReferenceRepresentation
       nextPageToken:
         description: The token for the next page of records.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       nextPageUrl:
         description: The URL of the next page of records
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       optionalFields:
         description: The list of optional fields requested when these records were fetched.
         type: array
@@ -2458,13 +2382,13 @@ types:
           type: string
       pageSize:
         description: The page size requested when these records were fetched.
-        type: integer | nil # TODO: "nil" union hand rolled
+        type: integer | nil
       previousPageToken:
         description: The token for the previous page of records.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       previousPageUrl:
         description: The URL of the previous page of records.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       records:
         description: Related list data.
         type: array
@@ -2521,12 +2445,11 @@ types:
           type: RelatedListRecordCountRepresentation
   RelatedListRecordCountRepresentation:
     description: RelatedListRecordCountRepresentation
-    discriminator: ''
     type: object
     properties:
       count:
         description: How many items are in the given list.
-        type: integer
+        type: integer | nil
       eTag:
         description: ETag like field, readOnly, handy while caching.
         type: string
@@ -2539,27 +2462,26 @@ types:
         type: RelatedListReferenceRepresentation
   RelatedListReferenceRepresentation:
     description: RelatedListReferenceRepresentation
-    discriminator: ''
     type: object
     properties:
       id:
         description: List view id.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       inContextOfRecordId:
         description: The parent record for a related list.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       listViewApiName:
         description: The list view or related list api name.  E.g. "AllAccounts" for a listview or "Contacts" for a related list.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       objectApiName:
         description: Entity API name for list view.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       parentObjectApiName:
         description: The object API name for the parent of a related list.
         type: string
       recordTypeId:
         description: The record type id for the parent of a related list.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       relatedListId:
         description: The id of the related list.
         type: string
@@ -2568,7 +2490,6 @@ types:
         type: string
   RelatedListSummaryInfoCollectionRepresentation:
     description: Information about a collection of related lists that all have the same parent type.
-    discriminator: ''
     type: object
     properties:
       eTag:
@@ -2580,7 +2501,7 @@ types:
         type: string
       parentRecordTypeId:
         description: The record type id of the parent.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       relatedLists:
         description: Summary information about the related lists.
         type: array
@@ -2588,7 +2509,6 @@ types:
           type: RelatedListSummaryInfoRepresentation
   RelatedListSummaryInfoRepresentation:
     description: RelatedListSummaryInfoRepresentation
-    discriminator: ''
     type: object
     properties:
       eTag:
@@ -2605,7 +2525,7 @@ types:
         description: The API name of the field in the child entity that links to the parent entity.
         type: string
       keyPrefix:
-        description: The key prefix for IDs of this object.
+        description: The key prefix for IDs of the object that populates the list.  This can be null for some related lists.
         type: string | nil # TODO: "nil" union hand rolled
       label:
         description: The label for the related list.
@@ -2621,13 +2541,13 @@ types:
         type: string
       relatedListInfoUrl:
         description: The URL to fetch the metadata for the related list.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       themeInfo:
         description: The theme info for this related list's entity.
         type: ThemeInfoRepresentation
   ReportLayoutComponentRepresentation:
     description: Report record layout component.
-    discriminator: ''
+    discriminatorValue: ReportChart
     type: AbstractRecordLayoutComponentRepresentation
     properties:
       cacheData:
@@ -2656,7 +2576,6 @@ types:
         type: string
   ResourceReferenceRepresentation:
     description: Resource reference.
-    discriminator: ''
     type: object
     properties:
       categoryType:
@@ -2681,7 +2600,6 @@ types:
         type: string
   SimplifiedBatchRepresentation:
     description: Result of an entire batch request operation. Results are ordered in the same order in which the requests were given. Results may either be a successful result with a response body, a successful result without a response body, or an error result without a response body. Success and error are determined by the status code in each result.
-    discriminator: ''
     type: object
     properties:
       results:
@@ -2703,7 +2621,6 @@ types:
         type: ObjectInfoRepresentation
   ThemeBannerRepresentation:
     description: A representation of a theme banner image.
-    discriminator: ''
     type: object
     properties:
       fullSizeUrl:
@@ -2711,7 +2628,6 @@ types:
         type: string
   ThemeImageRepresentation:
     description: A representation of a theme image.
-    discriminator: ''
     type: object
     properties:
       largeUrl:
@@ -2725,7 +2641,6 @@ types:
         type: string
   ThemeInfoRepresentation:
     description: Theme info.
-    discriminator: ''
     type: object
     properties:
       color:
@@ -2733,26 +2648,24 @@ types:
         type: string
       iconUrl:
         description: Icon URL.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
   ThemeRecordAvatarRepresentation:
     description: Represents an avatar associated to a Record
-    discriminator: ''
-    discriminatorValue: Theme # TODO Hand rolled
+    discriminatorValue: Theme
     type: AbstractRecordAvatarRepresentation
     properties:
       backgroundColor:
         description: Retrieve the background color for the theme as a six-letter hexidecimal value.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       eTag:
         description: ETag like field, readOnly, handy while caching.
         type: string
         (oas-readOnly): true
       iconUrl:
         description: The URL of the image for the icon.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
   ThemeRepresentation:
     description: A representation of a theme.
-    discriminator: ''
     type: object
     properties:
       brandColor:
@@ -2793,7 +2706,6 @@ types:
         type: string
   ValidationRuleRepresentation:
     description: Validation rule metadata.
-    discriminator: ''
     type: object
     properties:
       eTag:
@@ -2822,7 +2734,6 @@ types:
         type: string
   ValidationRulesRepresentation:
     description: Validation rules metadata.
-    discriminator: ''
     type: object
     properties:
       eTag:
@@ -2836,7 +2747,7 @@ types:
           type: ValidationRuleRepresentation
   VisualforceLayoutComponentRepresentation:
     description: Visualforce record layout component.
-    discriminator: ''
+    discriminatorValue: VisualforcePage # TODO Hand rolled
     type: AbstractRecordLayoutComponentRepresentation
     properties:
       height:
@@ -2856,7 +2767,6 @@ types:
         type: string
   WireDataRepresentation:
     description: wire data representation for priming LDS
-    discriminator: ''
     type: object
     properties:
       operationResponseRepresentation:
@@ -4747,7 +4657,7 @@ types:
           properties:
             binaryInputList:
               type: file
-              required: false
+              required: false # TODO 'false' converted to false
     /batch/{recordIds}:
       get:
         description: Retrieve record data for a list of recordIds.
@@ -4879,11 +4789,11 @@ types:
             body:
               application/json:
                 type: RecordRepresentation
-        # TODO: hand rolled - manually commented out name collision. https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAorh3L
-        #queryParameters:
-        #  allowSaveOnDuplicate:
-        #    type: boolean
-        #    required: false
+          # TODO: hand rolled - manually commented out name collision. https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAorh3L
+          #queryParameters:
+          #  allowSaveOnDuplicate:
+          #    type: boolean
+          #    required: false
         body:
           application/json:
             type: RecordInputRepresentation
@@ -4893,7 +4803,7 @@ types:
             properties:
               binaryInputList:
                 type: file
-                required: false
+                required: false # TODO 'false' converted to false
         headers:
           # TODO manually changed, needs follow up with UIAPI
           'If-Unmodified-Since':

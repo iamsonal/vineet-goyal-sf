@@ -17,7 +17,7 @@ function mockNetwork(config, mockData) {
     delete queryParams.parentObjectApiName;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/related-list-info/${parentObjectApiName}`,
+        basePath: `${URL_BASE}/related-list-info/${parentObjectApiName}`,
         queryParams,
     });
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);

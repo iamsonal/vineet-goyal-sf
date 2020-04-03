@@ -20,7 +20,7 @@ function mockNetworkListUi(config, mockData) {
     delete queryParams.listViewApiName;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/list-ui/${objectApiName}/${listViewApiName}`,
+        basePath: `${URL_BASE}/list-ui/${objectApiName}/${listViewApiName}`,
         queryParams,
     });
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
@@ -34,7 +34,7 @@ function mockNetworkListRecords(config, mockData) {
     delete queryParams.listViewApiName;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/list-records/${objectApiName}/${listViewApiName}`,
+        basePath: `${URL_BASE}/list-records/${objectApiName}/${listViewApiName}`,
         queryParams,
     });
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);

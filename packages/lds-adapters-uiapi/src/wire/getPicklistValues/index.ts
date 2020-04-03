@@ -41,7 +41,8 @@ export function buildNetworkSnapshot(
             recordTypeId,
         },
     });
-    const key = picklistValuesKeyBuilder({ id: request.path });
+
+    const key = picklistValuesKeyBuilder({ id: `${request.baseUri}${request.basePath}` });
 
     return lds.dispatchResourceRequest<PicklistValuesRepresentation>(request).then(
         response => {
@@ -68,7 +69,8 @@ export function buildInMemorySnapshot(lds: LDS, config: GetPicklistValuesConfig)
             recordTypeId: config.recordTypeId,
         },
     });
-    const key = picklistValuesKeyBuilder({ id: request.path });
+
+    const key = picklistValuesKeyBuilder({ id: `${request.baseUri}${request.basePath}` });
 
     return lds.storeLookup<PicklistValuesRepresentation>(
         {

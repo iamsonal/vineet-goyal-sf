@@ -23,7 +23,7 @@ function mockNetwork(config, mockData) {
     delete queryParams.relatedListId;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/related-list-records/${parentRecordId}/${relatedListId}`,
+        basePath: `${URL_BASE}/related-list-records/${parentRecordId}/${relatedListId}`,
         queryParams,
     });
 

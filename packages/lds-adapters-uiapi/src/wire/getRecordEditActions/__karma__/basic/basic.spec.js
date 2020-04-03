@@ -19,7 +19,7 @@ function getMock(filename) {
 function mockNetwork(config, mockData) {
     const { urlParams, queryParams } = config;
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/actions/record/${urlParams.recordIds.sort().join(',')}/record-edit`,
+        basePath: `${URL_BASE}/actions/record/${urlParams.recordIds.sort().join(',')}/record-edit`,
         urlParams,
         queryParams,
     });

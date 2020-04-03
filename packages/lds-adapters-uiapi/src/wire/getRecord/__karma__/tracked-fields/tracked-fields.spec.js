@@ -26,7 +26,7 @@ function getListUiSinonParamsMatch(config) {
     delete queryParams.listViewId;
 
     return sinon.match({
-        path: `${URL_BASE}/list-ui/${listViewId}`,
+        basePath: `${URL_BASE}/list-ui/${listViewId}`,
         queryParams,
     });
 }

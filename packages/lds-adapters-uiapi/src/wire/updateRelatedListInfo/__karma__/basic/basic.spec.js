@@ -49,7 +49,7 @@ function mockUpdateNetwork(keys, params, mockData) {
     delete updateParams.relatedListId;
 
     const paramMatch = buildSinonMatch({
-        path: `${URL_BASE}/related-list-info/${parentObjectApiName}/${relatedListId}`,
+        basePath: `${URL_BASE}/related-list-info/${parentObjectApiName}/${relatedListId}`,
         queryParams: queryParams,
         method: 'patch',
         body: updateParams,
@@ -64,7 +64,7 @@ function mockGetNetwork(keys, mockData) {
     delete queryParams.relatedListId;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/related-list-info/${parentObjectApiName}/${relatedListId}`,
+        basePath: `${URL_BASE}/related-list-info/${parentObjectApiName}/${relatedListId}`,
         method: 'get',
         queryParams,
     });

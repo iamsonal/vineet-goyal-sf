@@ -20,7 +20,7 @@ function mockNetworkListUi(config, mockData) {
     delete queryParams.listViewId;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/list-ui/${listViewId}`,
+        basePath: `${URL_BASE}/list-ui/${listViewId}`,
         queryParams,
     });
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
@@ -32,7 +32,7 @@ function mockNetworkListRecords(config, mockData) {
     delete queryParams.listViewId;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/list-records/${listViewId}`,
+        basePath: `${URL_BASE}/list-records/${listViewId}`,
         queryParams,
     });
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
@@ -46,7 +46,7 @@ function mockNetworkByApiNames(config, mockData) {
     delete queryParams.listViewApiName;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/list-ui/${objectApiName}/${listViewApiName}`,
+        basePath: `${URL_BASE}/list-ui/${objectApiName}/${listViewApiName}`,
         queryParams,
     });
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
@@ -345,7 +345,7 @@ describe('with listViewId', () => {
 
         // FIXME: what does this actually return? what should we mock it to?
         const paramMatch = sinon.match({
-            path: `${URL_BASE}/list-ui/${listViewId}`,
+            basePath: `${URL_BASE}/list-ui/${listViewId}`,
         });
         karmaNetworkAdapter.withArgs(paramMatch).resolves();
 

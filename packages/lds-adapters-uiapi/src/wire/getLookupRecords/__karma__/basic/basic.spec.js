@@ -22,7 +22,9 @@ function getMock(filename) {
 function getSinonParamsMatch({ endpoint, params = {} }) {
     return sinon.match(config => {
         const { queryParams } = config;
-        return `${URL_BASE}/${endpoint}` === config.path && sinon.match(params).test(queryParams);
+        return (
+            `${URL_BASE}/${endpoint}` === config.basePath && sinon.match(params).test(queryParams)
+        );
     });
 }
 

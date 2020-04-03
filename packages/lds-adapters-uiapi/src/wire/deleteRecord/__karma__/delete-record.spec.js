@@ -18,7 +18,7 @@ describe('deleteRecord - basic', () => {
         await deleteRecord(recordId);
 
         const expected = {
-            path: `${URL_BASE}/records/${recordId}`,
+            basePath: `${URL_BASE}/records/${recordId}`,
             method: 'delete',
             urlParams: { recordId },
         };

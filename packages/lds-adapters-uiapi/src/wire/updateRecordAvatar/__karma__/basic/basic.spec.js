@@ -23,7 +23,7 @@ function getMock(filename) {
 
 function mockNetwork(recordId, body, mockData) {
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/record-avatars/${recordId}/association`,
+        basePath: `${URL_BASE}/record-avatars/${recordId}/association`,
         method: 'post',
         body: { ...body },
     });
@@ -33,7 +33,7 @@ function mockNetwork(recordId, body, mockData) {
 function mockGetRecordAvatarsNetwork(config, mockData) {
     const recordIds = config.recordIds.join(',');
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/record-avatars/batch/${recordIds}`,
+        basePath: `${URL_BASE}/record-avatars/batch/${recordIds}`,
     });
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -44,7 +44,7 @@ function mockGetRecordAvatarsNetwork(config, mockData) {
 
 function mockNetworkErrorUpdateAvatar(recordId, body, errorResponse) {
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/record-avatars/${recordId}/association`,
+        basePath: `${URL_BASE}/record-avatars/${recordId}/association`,
         method: 'post',
         body: { ...body },
     });

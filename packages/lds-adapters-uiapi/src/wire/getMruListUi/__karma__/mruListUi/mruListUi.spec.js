@@ -20,7 +20,7 @@ function mockNetworkMruListUi(config, mockData) {
     delete queryParams.objectApiName;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/mru-list-ui/${objectApiName}`,
+        basePath: `${URL_BASE}/mru-list-ui/${objectApiName}`,
         queryParams,
     });
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
@@ -32,7 +32,7 @@ function mockNetworkMruListRecords(config, mockData) {
     delete queryParams.objectApiName;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/mru-list-records/${objectApiName}`,
+        basePath: `${URL_BASE}/mru-list-records/${objectApiName}`,
         queryParams,
     });
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);

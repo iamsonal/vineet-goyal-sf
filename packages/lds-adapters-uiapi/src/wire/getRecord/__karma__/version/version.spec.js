@@ -58,7 +58,7 @@ function getNetworkParams(config) {
     delete queryParams.recordId;
 
     return sinon.match({
-        path: `${URL_BASE}/records/${recordId}`,
+        basePath: `${URL_BASE}/records/${recordId}`,
         queryParams,
     });
 }

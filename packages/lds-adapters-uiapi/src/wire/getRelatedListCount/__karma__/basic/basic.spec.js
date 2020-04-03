@@ -19,7 +19,7 @@ function mockNetwork(config, mockData) {
     delete queryParams.relatedListName;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/related-list-count/${parentRecordId}/${relatedListName}`,
+        basePath: `${URL_BASE}/related-list-count/${parentRecordId}/${relatedListName}`,
         queryParams,
     });
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);

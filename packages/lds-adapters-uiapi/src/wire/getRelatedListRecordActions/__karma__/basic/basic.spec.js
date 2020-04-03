@@ -20,7 +20,7 @@ function mockNetwork(config, mockData) {
     const { recordIds, relatedListRecordIds, ...queryParams } = config;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/actions/record/${recordIds
+        basePath: `${URL_BASE}/actions/record/${recordIds
             .sort()
             .join(',')}/related-list-record/${relatedListRecordIds.sort().join(',')}`,
         queryParams,

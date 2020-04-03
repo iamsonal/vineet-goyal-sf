@@ -13,7 +13,7 @@ function getMock(filename) {
 function mockNetworkListUi(config, mockData) {
     function paramMatch(value) {
         return (
-            value.path === `${URL_BASE}/list-ui/${config.objectApiName}` &&
+            value.basePath === `${URL_BASE}/list-ui/${config.objectApiName}` &&
             // default sinon matching will match superset with subset
             Object.entries(value.queryParams).every(([k, v]) => config[k] === v) &&
             Object.entries(config).every(

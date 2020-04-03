@@ -33,7 +33,7 @@ function mockNetworkError(config, mockData) {
 function getParamMatch(config) {
     const { urlParams, queryParams } = config;
     return sinon.match({
-        path: `${URL_BASE}/actions/lookup/${urlParams.objectApiNames.sort().join(',')}`,
+        basePath: `${URL_BASE}/actions/lookup/${urlParams.objectApiNames.sort().join(',')}`,
         urlParams,
         queryParams,
     });

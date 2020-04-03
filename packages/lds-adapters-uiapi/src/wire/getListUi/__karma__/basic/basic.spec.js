@@ -25,7 +25,7 @@ function mockNetworkListUi(config, mockData) {
     delete queryParams.listViewId;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/list-ui/${listViewId}`,
+        basePath: `${URL_BASE}/list-ui/${listViewId}`,
         queryParams,
     });
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
@@ -52,7 +52,7 @@ describe('basic', () => {
         };
 
         const matchParams = sinon.match({
-            path: `${URL_BASE}/list-ui/${listViewId}`,
+            basePath: `${URL_BASE}/list-ui/${listViewId}`,
         });
         mockNetworkErrorOnce(karmaNetworkAdapter, matchParams, response404);
 
@@ -110,7 +110,7 @@ describe('refresh', () => {
         mockNetworkSequence(
             karmaNetworkAdapter,
             sinon.match({
-                path: `${URL_BASE}/list-ui/${mock.info.listReference.id}`,
+                basePath: `${URL_BASE}/list-ui/${mock.info.listReference.id}`,
                 queryParams: {},
             }),
             [mock, refreshed]

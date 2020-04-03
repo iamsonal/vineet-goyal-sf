@@ -24,7 +24,8 @@ import {
 } from './dist/uiapi-constants';
 
 const API_VERSION = 'v49.0';
-const URL_BASE = `/services/data/${API_VERSION}/ui-api`;
+const BASE_URI = `/services/data/${API_VERSION}`;
+const URL_BASE = `/ui-api`;
 
 // FIXME: update to a real value once TTL is implemented
 const LIST_UI_TTL = 60 * 1000;
@@ -32,7 +33,8 @@ const LOOKUP_RECORDS_TTL = 2 * 60 * 1000;
 
 function mockCreateRecordNetwork(config, mockData) {
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/records`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/records`,
         method: 'post',
         body: config,
     });
@@ -41,7 +43,8 @@ function mockCreateRecordNetwork(config, mockData) {
 
 function mockDeleteRecordNetwork(recordId, mockData = {}) {
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/records/${recordId}`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/records/${recordId}`,
         method: 'delete',
     });
 
@@ -56,7 +59,8 @@ function mockGetAvatarsNetwork(config, mockData) {
     const { recordIds, ...queryParams } = config;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/record-avatars/batch/${recordIds.join(',')}`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/record-avatars/batch/${recordIds.join(',')}`,
         queryParams,
     });
 
@@ -75,7 +79,7 @@ function mockGetLayoutNetwork(config, mockData) {
     }
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/layout/${objectApiName}`,
+        basePath: `${URL_BASE}/layout/${objectApiName}`,
         queryParams,
     });
 
@@ -94,7 +98,8 @@ function mockGetLayoutUserStateNetwork(config, mockData) {
     }
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/layout/${objectApiName}/user-state`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/layout/${objectApiName}/user-state`,
         queryParams,
     });
 
@@ -109,7 +114,8 @@ function mockGetRecordNetwork(config, mockData) {
     const { recordId, ...queryParams } = config;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/records/${recordId}`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/records/${recordId}`,
         queryParams,
     });
 
@@ -122,9 +128,10 @@ function mockGetRecordNetwork(config, mockData) {
 
 function mockGetRecordActionsNetwork(config, mockData) {
     const { recordIds, ...queryParams } = config;
-    const path = `${URL_BASE}/actions/record/${recordIds.sort().join(',')}`;
+    const basePath = `${URL_BASE}/actions/record/${recordIds.sort().join(',')}`;
     const paramMatch = sinon.match({
-        path,
+        baseUri: BASE_URI,
+        basePath,
         queryParams,
     });
 
@@ -137,11 +144,12 @@ function mockGetRecordActionsNetwork(config, mockData) {
 
 function mockGetRelatedListActionsNetwork(config, mockData) {
     const { recordIds, relatedListIds, ...queryParams } = config;
-    const path = `${URL_BASE}/actions/record/${recordIds
+    const basePath = `${URL_BASE}/actions/record/${recordIds
         .sort()
         .join(',')}/related-list/${relatedListIds.sort().join(',')}`;
     const paramMatch = sinon.match({
-        path,
+        baseUri: BASE_URI,
+        basePath,
         queryParams,
     });
 
@@ -155,7 +163,8 @@ function mockGetRelatedListActionsNetwork(config, mockData) {
 function mockGetRecordEditActionsNetwork(config, mockData) {
     const { recordIds, ...queryParams } = config;
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/actions/record/${recordIds.sort().join(',')}/record-edit`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/actions/record/${recordIds.sort().join(',')}/record-edit`,
         queryParams,
     });
 
@@ -174,7 +183,8 @@ function mockGetRecordCreateDefaultsNetwork(config, mockData) {
     }
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/record-defaults/create/${objectApiName}`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/record-defaults/create/${objectApiName}`,
         queryParams,
     });
 
@@ -189,7 +199,8 @@ function mockGetRecordUiNetwork(config, mockData) {
     const { recordIds, ...queryParams } = config;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/record-ui/${recordIds}`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/record-ui/${recordIds}`,
         queryParams,
     });
 
@@ -202,7 +213,8 @@ function mockGetRecordUiNetwork(config, mockData) {
 
 function mockUpdateRecordNetwork(recordId, updateParams, mockData, headers) {
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/records/${recordId}`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/records/${recordId}`,
         method: 'patch',
         body: updateParams,
         ...(headers && { headers }),
@@ -219,7 +231,8 @@ function mockUpdateLayoutUserStateNetwork(config, body, mockData) {
 
     const paramMatch = sinon.match({
         method: 'patch',
-        path: `${URL_BASE}/layout/${objectApiName}/user-state`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/layout/${objectApiName}/user-state`,
         queryParams,
         body: {
             ...body,
@@ -232,7 +245,8 @@ function mockGetRelatedListRecordNetwork(config, mockData) {
     const { recordIds, relatedListRecordIds, ...queryParams } = config;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/actions/record/${recordIds
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/actions/record/${recordIds
             .sort()
             .join(',')}/related-list-record/${relatedListRecordIds.sort().join(',')}`,
         queryParams,
@@ -253,7 +267,8 @@ function mockGetObjectInfoNetwork(config, mockData) {
     }
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/object-info/${objectApiName}`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/object-info/${objectApiName}`,
         queryParams,
     });
 
@@ -268,7 +283,8 @@ function mockGetObjectInfosNetwork(config, mockData) {
     let { objectApiNames, ...queryParams } = config;
 
     const paramMatch = sinon.match({
-        path: `${URL_BASE}/object-info/batch/${objectApiNames}`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/object-info/batch/${objectApiNames}`,
         queryParams,
     });
 
@@ -295,12 +311,12 @@ function mockGetPicklistValuesNetwork(config, mockData) {
         objectApiName = objectApiName.objectApiName;
     }
 
-    let path =
+    let basePath =
         fieldApiName === undefined
             ? `${URL_BASE}/object-info/${objectApiName}/picklist-values/${recordTypeId}`
             : `${URL_BASE}/object-info/${objectApiName}/picklist-values/${recordTypeId}/${fieldApiName}`;
 
-    const paramMatch = sinon.match({ path });
+    const paramMatch = sinon.match({ basePath });
 
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);

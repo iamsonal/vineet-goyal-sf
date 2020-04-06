@@ -1,4 +1,4 @@
-import { LDS, Selector, Snapshot, FetchResponse } from '@ldsjs/engine';
+import { LDS, Selector, Snapshot, FetchResponse, SnapshotRefresh } from '@ldsjs/engine';
 import { GetRecordConfig } from '../../generated/adapters/getRecord';
 import getUiApiRecordsByRecordId from '../../generated/resources/getUiApiRecordsByRecordId';
 import { TTL as RecordRepresentationTTL } from '../../generated/types/RecordRepresentation';
@@ -14,7 +14,6 @@ import {
 } from '../../util/records';
 import { buildSelectionFromFields } from '../../selectors/record';
 import { difference } from '../../validation/utils';
-import { isFulfilledSnapshot, isErrorSnapshot } from '../../util/snapshot';
 
 function buildRecordSelector(
     recordId: string,
@@ -28,6 +27,16 @@ function buildRecordSelector(
             selections: buildSelectionFromFields(fields, optionalFields),
         },
         variables: {},
+    };
+}
+
+function buildSnapshotRefresh(
+    lds: LDS,
+    config: GetRecordConfig
+): SnapshotRefresh<RecordRepresentation> {
+    return {
+        config,
+        resolve: () => buildNetworkSnapshot(lds, config),
     };
 }
 
@@ -64,24 +73,32 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordConfig) {
 
             lds.storeBroadcast();
             return lds.storeLookup<RecordRepresentation>(
-                buildRecordSelector(config.recordId, fields, optionalFields)
+                buildRecordSelector(config.recordId, fields, optionalFields),
+                buildSnapshotRefresh(lds, config)
             );
         },
         (err: FetchResponse<unknown>) => {
             lds.storeIngestFetchResponse(request.key, err, RecordRepresentationTTL);
             lds.storeBroadcast();
-            return lds.errorSnapshot(err);
+            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
         }
     );
 }
 
 // used by getRecordLayoutType#refresh
-export function buildInMemorySnapshot(lds: LDS, config: GetRecordConfig) {
+export function buildInMemorySnapshot(
+    lds: LDS,
+    config: GetRecordConfig,
+    refresh?: SnapshotRefresh<RecordRepresentation>
+) {
     const fields = config.fields === undefined ? [] : config.fields;
     const optionalFields = config.optionalFields === undefined ? [] : config.optionalFields;
 
     const sel = buildRecordSelector(config.recordId, fields, optionalFields);
-    return lds.storeLookup<RecordRepresentation>(sel);
+    return lds.storeLookup<RecordRepresentation>(
+        sel,
+        refresh ? refresh : buildSnapshotRefresh(lds, config)
+    );
 }
 
 export function getRecordByFields(
@@ -89,7 +106,7 @@ export function getRecordByFields(
     config: GetRecordConfig
 ): Snapshot<RecordRepresentation> | Promise<Snapshot<RecordRepresentation>> {
     const snapshot = buildInMemorySnapshot(lds, config);
-    if (isFulfilledSnapshot(snapshot) || isErrorSnapshot(snapshot)) {
+    if (lds.snapshotDataAvailable(snapshot)) {
         return snapshot;
     }
 

@@ -1,5 +1,5 @@
 import { AdapterFactory, FetchResponse, GraphNode, LDS, Snapshot } from '@ldsjs/engine';
-import { AdapterValidationConfig, refreshable } from '../../generated/adapters/adapter-utils';
+import { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
 import { GetRecordConfig, validateAdapterConfig } from '../../generated/adapters/getRecord';
 import getUiApiRecordsByRecordId from '../../generated/resources/getUiApiRecordsByRecordId';
 import {
@@ -11,15 +11,8 @@ import {
 } from '../../generated/types/RecordRepresentation';
 import coerceRecordId18 from '../../primitives/RecordId18/coerce';
 import { getTrackedFields, markMissingOptionalFields } from '../../util/records';
-import {
-    buildNetworkSnapshot as getRecordByFieldsNetwork,
-    getRecordByFields,
-} from './GetRecordFields';
-import {
-    getRecordLayoutType,
-    GetRecordLayoutTypeConfig,
-    refresh as refreshLayoutType,
-} from './GetRecordLayoutType';
+import { getRecordByFields } from './GetRecordFields';
+import { getRecordLayoutType, GetRecordLayoutTypeConfig } from './GetRecordLayoutType';
 
 // Custom adapter config due to `unsupported` items
 const GET_RECORD_ADAPTER_CONFIG: AdapterValidationConfig = {
@@ -132,40 +125,21 @@ export const notifyChangeFactory = (lds: LDS) => {
     };
 };
 
-export const factory: AdapterFactory<GetRecordConfig, RecordRepresentation> = (lds: LDS) => {
-    return refreshable(
-        function getRecord(
-            untrustedConfig: unknown
-        ): Promise<Snapshot<RecordRepresentation>> | Snapshot<RecordRepresentation> | null {
-            // standard config validation and coercion
-            const config = validateAdapterConfig(untrustedConfig, GET_RECORD_ADAPTER_CONFIG);
-            if (config === null) {
-                return null;
-            }
-
-            if (hasLayoutTypes(config)) {
-                return getRecordLayoutType(lds, config);
-            } else if (hasFieldsOrOptionalFields(config)) {
-                return getRecordByFields(lds, config);
-            }
-
+export const factory: AdapterFactory<GetRecordConfig, RecordRepresentation> = (lds: LDS) =>
+    function getRecord(
+        untrustedConfig: unknown
+    ): Promise<Snapshot<RecordRepresentation>> | Snapshot<RecordRepresentation> | null {
+        // standard config validation and coercion
+        const config = validateAdapterConfig(untrustedConfig, GET_RECORD_ADAPTER_CONFIG);
+        if (config === null) {
             return null;
-        },
-        (untrustedConfig: unknown) => {
-            const config = validateAdapterConfig(untrustedConfig, GET_RECORD_ADAPTER_CONFIG);
-            if (config === null) {
-                throw new Error('Refresh should not be called with partial configuration');
-            }
-
-            if (hasLayoutTypes(config)) {
-                return refreshLayoutType(lds, config);
-            } else if (hasFieldsOrOptionalFields(config)) {
-                return getRecordByFieldsNetwork(lds, config);
-            }
-
-            throw new Error(
-                'Refresh should be called with either record fields configuration or record by layout configuration'
-            );
         }
-    );
-};
+
+        if (hasLayoutTypes(config)) {
+            return getRecordLayoutType(lds, config);
+        } else if (hasFieldsOrOptionalFields(config)) {
+            return getRecordByFields(lds, config);
+        }
+
+        return null;
+    };

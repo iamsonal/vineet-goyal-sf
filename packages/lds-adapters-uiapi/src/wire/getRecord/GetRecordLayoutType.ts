@@ -1,4 +1,4 @@
-import { LDS, PathSelection, Snapshot } from '@ldsjs/engine';
+import { LDS, PathSelection, Snapshot, SnapshotRefresh } from '@ldsjs/engine';
 import { buildInMemorySnapshot as getObjectInfoCache } from '../../generated/adapters/getObjectInfo';
 import { GetRecordUiConfig } from '../../generated/adapters/getRecordUi';
 import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
@@ -16,7 +16,7 @@ import { LayoutMode } from '../../primitives/LayoutMode';
 import { LayoutType } from '../../primitives/LayoutType';
 import { RecordLayoutFragment, getRecordTypeId } from '../../util/records';
 import { getQualifiedFieldApiNamesFromLayout } from '../../util/layouts';
-import { isErrorSnapshot, isFulfilledSnapshot, isUnfulfilledSnapshot } from '../../util/snapshot';
+import { isErrorSnapshot, isUnfulfilledSnapshot } from '../../util/snapshot';
 import { dedupe } from '../../validation/utils';
 import {
     factory as getRecordUiFactory,
@@ -39,7 +39,20 @@ export interface GetRecordLayoutTypeConfig {
     optionalFields?: string[];
 }
 
-export function refresh(lds: LDS, config: GetRecordLayoutTypeConfig) {
+function buildSnapshotRefresh(
+    lds: LDS,
+    config: GetRecordLayoutTypeConfig
+): SnapshotRefresh<RecordRepresentation> {
+    return {
+        config,
+        resolve: () => refresh(lds, config),
+    };
+}
+
+function refresh(
+    lds: LDS,
+    config: GetRecordLayoutTypeConfig
+): Promise<Snapshot<RecordRepresentation>> {
     const {
         recordId,
         layoutTypes,
@@ -56,8 +69,9 @@ export function refresh(lds: LDS, config: GetRecordLayoutTypeConfig) {
     };
 
     return getRecordUiNetwork(lds, recordUiConfig).then(snapshot => {
+        const refresh = buildSnapshotRefresh(lds, config);
         if (isErrorSnapshot(snapshot)) {
-            return lds.errorSnapshot(snapshot.error);
+            return lds.errorSnapshot(snapshot.error, refresh);
         }
 
         if (isUnfulfilledSnapshot(snapshot)) {
@@ -70,17 +84,22 @@ export function refresh(lds: LDS, config: GetRecordLayoutTypeConfig) {
 
         const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, snapshot.data);
         const fields = getFieldsFromLayoutMap(layoutMap, objectInfo);
-        return getRecordByFieldsCache(lds, {
-            recordId,
-            fields,
-            modes,
-        });
+        return getRecordByFieldsCache(
+            lds,
+            {
+                recordId,
+                fields,
+                modes,
+            },
+            refresh
+        );
     });
 }
 
 // Makes a request directly to /record-ui/{recordIds}
 function fetchRecordLayout(
     lds: LDS,
+    refresh: SnapshotRefresh<RecordRepresentation>,
     recordId: string,
     layoutTypes: LayoutType[],
     modes: LayoutMode[],
@@ -96,7 +115,7 @@ function fetchRecordLayout(
     const recordUiSnapshotOrPromise = recordUiAdapter(recordUiConfig);
     if (isPromise(recordUiSnapshotOrPromise)) {
         return recordUiSnapshotOrPromise.then(snapshot => {
-            return processRecordUiRepresentation(lds, recordId, modes, snapshot);
+            return processRecordUiRepresentation(lds, refresh, recordId, modes, snapshot);
         });
     }
 
@@ -106,7 +125,7 @@ function fetchRecordLayout(
         }
     }
 
-    return processRecordUiRepresentation(lds, recordId, modes, recordUiSnapshotOrPromise!);
+    return processRecordUiRepresentation(lds, refresh, recordId, modes, recordUiSnapshotOrPromise!);
 }
 
 function getLayoutMapAndObjectInfo(recordId: string, data: RecordUiRepresentation) {
@@ -126,12 +145,13 @@ function getLayoutMapAndObjectInfo(recordId: string, data: RecordUiRepresentatio
 
 function processRecordUiRepresentation(
     lds: LDS,
+    refresh: SnapshotRefresh<RecordRepresentation>,
     recordId: string,
     modes: LayoutMode[],
     snapshot: Snapshot<RecordUiRepresentation>
 ) {
     if (isErrorSnapshot(snapshot)) {
-        return lds.errorSnapshot(snapshot.error);
+        return lds.errorSnapshot(snapshot.error, refresh);
     }
     if (isUnfulfilledSnapshot(snapshot)) {
         throw new Error(
@@ -141,7 +161,7 @@ function processRecordUiRepresentation(
         );
     }
     const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, snapshot.data);
-    return getRecord(lds, recordId, layoutMap, objectInfo);
+    return getRecord(lds, refresh, recordId, layoutMap, objectInfo);
 }
 
 function isPromise<D>(value: D | Promise<D> | null): value is Promise<D> {
@@ -151,7 +171,12 @@ function isPromise<D>(value: D | Promise<D> | null): value is Promise<D> {
 
 function lookupObjectInfo(lds: LDS, apiName: string): ObjectInfoRepresentation | null {
     const snapshot = getObjectInfoCache(lds, { objectApiName: apiName });
-    return isFulfilledSnapshot(snapshot) ? snapshot.data : null;
+    if (lds.snapshotDataAvailable(snapshot)) {
+        if (!isErrorSnapshot(snapshot) && snapshot.data !== undefined) {
+            return snapshot.data;
+        }
+    }
+    return null;
 }
 
 interface RecordLayoutRepresentationMap {
@@ -193,7 +218,7 @@ function lookupLayouts(
             });
 
             // Cache hit
-            if (isFulfilledSnapshot(snapshot)) {
+            if (lds.snapshotDataAvailable(snapshot) && !isErrorSnapshot(snapshot)) {
                 layoutMap[mode] = snapshot.data!;
             } else {
                 return null;
@@ -236,6 +261,7 @@ function getFieldsFromLayoutMap(
 
 function getRecord(
     lds: LDS,
+    refresh: SnapshotRefresh<RecordRepresentation>,
     recordId: string,
     layoutMap: RecordLayoutRepresentationMap,
     objectInfo: ObjectInfoRepresentation
@@ -244,10 +270,22 @@ function getRecord(
 
     // We know what fields we need so delegate to getRecordByFields
     // This should be a cache hit because we just fetched the record-ui
-    return getRecordByFields(lds, {
+    const recordSnapshotOrPromise = getRecordByFields(lds, {
         recordId,
         fields,
     });
+
+    // attach a record layout refresh
+    if (isPromise(recordSnapshotOrPromise)) {
+        recordSnapshotOrPromise.then(snapshot => {
+            snapshot.refresh = refresh;
+            return snapshot;
+        });
+    } else {
+        recordSnapshotOrPromise.refresh = refresh;
+    }
+
+    return recordSnapshotOrPromise;
 }
 
 export function getRecordLayoutType(
@@ -265,9 +303,10 @@ export function getRecordLayoutType(
         },
         variables: {},
     });
+    const refresh = buildSnapshotRefresh(lds, config);
     // If we haven't seen the record then go to the server
-    if (!isFulfilledSnapshot(recordSnapshot)) {
-        return fetchRecordLayout(lds, recordId, layoutTypes, modes, optionalFields);
+    if (!lds.snapshotDataAvailable(recordSnapshot) || recordSnapshot.data === undefined) {
+        return fetchRecordLayout(lds, refresh, recordId, layoutTypes, modes, optionalFields);
     }
 
     const record = recordSnapshot.data;
@@ -275,7 +314,7 @@ export function getRecordLayoutType(
     const objectInfo = lookupObjectInfo(lds, apiName);
     // If we do not have object info in cache, call record-ui endpoint directly
     if (objectInfo === null) {
-        return fetchRecordLayout(lds, recordId, layoutTypes, modes, optionalFields);
+        return fetchRecordLayout(lds, refresh, recordId, layoutTypes, modes, optionalFields);
     }
 
     const recordTypeId = getRecordTypeId(record);
@@ -283,8 +322,8 @@ export function getRecordLayoutType(
     // It takes one xhr per layout to load so if there are missing layouts
     // give up and call record-ui endpoint directly
     if (layoutMap === null) {
-        return fetchRecordLayout(lds, recordId, layoutTypes, modes, optionalFields);
+        return fetchRecordLayout(lds, refresh, recordId, layoutTypes, modes, optionalFields);
     }
 
-    return getRecord(lds, recordId, layoutMap, objectInfo);
+    return getRecord(lds, refresh, recordId, layoutMap, objectInfo);
 }

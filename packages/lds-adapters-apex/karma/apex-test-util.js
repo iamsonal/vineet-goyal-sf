@@ -26,7 +26,7 @@ function expireApex() {
  */
 function mockApexNetworkOnce(body, mockData, responseHeaders) {
     const matchParams = sinon.match({
-        path: '/apex',
+        basePath: '/apex',
         method: 'post',
         body: { ...body },
         headers: {},
@@ -50,7 +50,7 @@ function mockApexNetworkOnce(body, mockData, responseHeaders) {
  */
 function mockApexNetwork(body, mockData, responseHeaders) {
     const matchParams = sinon.match({
-        path: '/apex',
+        basePath: '/apex',
         method: 'post',
         body: { ...body },
         headers: {},

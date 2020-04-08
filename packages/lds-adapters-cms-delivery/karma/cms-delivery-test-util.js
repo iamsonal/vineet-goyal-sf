@@ -3,7 +3,8 @@ import { mockNetworkOnce } from 'test-util';
 import sinon from 'sinon';
 
 const API_VERSION = 'v49.0';
-const URL_BASE = `/services/data/${API_VERSION}/connect/cms/delivery`;
+const BASE_URI = `/services/data/${API_VERSION}`;
+const URL_BASE = `/connect/cms/delivery`;
 
 function mockGetDeliveryChannelsNetwork(config, mockData) {
     let { page, pageSize } = config;
@@ -12,7 +13,8 @@ function mockGetDeliveryChannelsNetwork(config, mockData) {
         body: null,
         headers: {},
         method: 'get',
-        path: `${URL_BASE}/channels`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/channels`,
         queryParams: {
             page,
             pageSize,
@@ -39,7 +41,8 @@ function mockListContentNetwork(config, mockData) {
         body: null,
         headers: {},
         method: 'get',
-        path: `${URL_BASE}/channels/${channelId}/contents/query`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/channels/${channelId}/contents/query`,
         queryParams: {
             endDate,
             includeMetadata,

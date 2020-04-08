@@ -3,7 +3,8 @@ import { mockNetworkOnce, mockNetworkErrorOnce } from 'test-util';
 import sinon from 'sinon';
 
 const API_VERSION = 'v49.0';
-const URL_BASE = `/services/data/${API_VERSION}/commerce`;
+const BASE_URI = `/services/data/${API_VERSION}`;
+const URL_BASE = `/commerce`;
 
 function mockGetProductNetworkOnce(config, mockData) {
     let { webstoreId, productId } = config;
@@ -12,7 +13,8 @@ function mockGetProductNetworkOnce(config, mockData) {
         body: null,
         headers: {},
         method: 'get',
-        path: `${URL_BASE}/webstores/${webstoreId}/products/${productId}`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/webstores/${webstoreId}/products/${productId}`,
         queryParams: {},
     });
 
@@ -26,7 +28,8 @@ function mockGetProductNetworkErrorOnce(config, mock) {
         body: null,
         headers: {},
         method: 'get',
-        path: `${URL_BASE}/webstores/${webstoreId}/products/${productId}`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/webstores/${webstoreId}/products/${productId}`,
         queryParams: {},
     });
 
@@ -40,7 +43,8 @@ function mockGetProductCategoryPathNetworkOnce(config, mockData) {
         body: null,
         headers: {},
         method: 'get',
-        path: `${URL_BASE}/webstores/${webstoreId}/product-category-path/product-categories/${productCategoryId}`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/webstores/${webstoreId}/product-category-path/product-categories/${productCategoryId}`,
         queryParams: {},
     });
 
@@ -54,7 +58,8 @@ function mockGetProductCategoryPathNetworkErrorOnce(config, mock) {
         body: null,
         headers: {},
         method: 'get',
-        path: `${URL_BASE}/webstores/${webstoreId}/product-category-path/product-categories/${productCategoryId}`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/webstores/${webstoreId}/product-category-path/product-categories/${productCategoryId}`,
         queryParams: {},
     });
 

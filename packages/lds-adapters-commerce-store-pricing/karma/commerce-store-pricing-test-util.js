@@ -3,7 +3,8 @@ import { mockNetworkOnce, mockNetworkErrorOnce } from 'test-util';
 import sinon from 'sinon';
 
 const API_VERSION = 'v49.0';
-const URL_BASE = `/services/data/${API_VERSION}/commerce`;
+const BASE_URI = `/services/data/${API_VERSION}`;
+const URL_BASE = `/commerce`;
 
 function mockGetProductPriceNetworkOnce(config, mockData) {
     const paramMatch = getMatcher(config);
@@ -22,7 +23,8 @@ function getMatcher(config) {
         body: null,
         headers: {},
         method: 'get',
-        path: `${URL_BASE}/webstores/${webstoreId}/pricing/products/${productId}`,
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/webstores/${webstoreId}/pricing/products/${productId}`,
         queryParams: {
             effectiveAccountId,
         },

@@ -41,6 +41,18 @@ jest.mock('instrumentation/service', () => {
 
 import { __spies as instrumentationSpies } from 'instrumentation/service';
 
+// constants for record type tests
+const MASTER_RECORD_TYPE_ID = '012000000000000AAA';
+
+const nonMasterRecordTypeInfo = {
+    available: true,
+    defaultRecordTypeMapping: true,
+    master: false,
+    name: 'non-master-record-type',
+    description: 'foo',
+    recordTypeId: 'non-master',
+};
+
 function queryRecord(lds: LDS, { recordId }: { recordId: string }): any {
     return lds.storeLookup({
         recordId: keyBuilderRecord({ recordId }),
@@ -145,6 +157,119 @@ describe('AdsBridge', () => {
 
             expect(record).toEqual(recordCopy);
             expect(instrumentationSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
+        });
+
+        it('does not let master record type overwrite non-master record type', () => {
+            const { bridge, lds } = createBridge();
+
+            addRecord(
+                lds,
+                createRecord({
+                    id: '123',
+                    recordTypeId: nonMasterRecordTypeInfo.recordTypeId,
+                    recordTypeInfo: nonMasterRecordTypeInfo,
+                })
+            );
+
+            bridge.addRecords([
+                createRecord({
+                    id: '123',
+                    recordTypeId: MASTER_RECORD_TYPE_ID,
+                    recordTypeInfo: null,
+                }),
+            ]);
+
+            expect(queryRecord(lds, { recordId: '123' })).toMatchObject({
+                data: {
+                    recordTypeId: nonMasterRecordTypeInfo.recordTypeId,
+                    recordTypeInfo: nonMasterRecordTypeInfo,
+                },
+            });
+        });
+
+        it('lets non-master record type overwrie master record type', () => {
+            const { bridge, lds } = createBridge();
+
+            addRecord(
+                lds,
+                createRecord({
+                    id: '123',
+                    recordTypeId: MASTER_RECORD_TYPE_ID,
+                    recordTypeInfo: null,
+                })
+            );
+
+            bridge.addRecords([
+                createRecord({
+                    id: '123',
+                    recordTypeId: nonMasterRecordTypeInfo.recordTypeId,
+                    recordTypeInfo: nonMasterRecordTypeInfo,
+                }),
+            ]);
+
+            expect(queryRecord(lds, { recordId: '123' })).toMatchObject({
+                data: {
+                    recordTypeId: nonMasterRecordTypeInfo.recordTypeId,
+                    recordTypeInfo: nonMasterRecordTypeInfo,
+                },
+            });
+        });
+
+        it('recurses over nested records when checking record types', () => {
+            const { bridge, lds } = createBridge();
+
+            addRecord(
+                lds,
+                createRecord({
+                    id: '123',
+                    recordTypeId: MASTER_RECORD_TYPE_ID,
+                    recordTypeInfo: null,
+                    fields: {
+                        Child: {
+                            displayValue: null,
+                            value: createRecord({
+                                id: '456',
+                                recordTypeId: MASTER_RECORD_TYPE_ID,
+                                recordTypeInfo: null,
+                            }),
+                        },
+                    },
+                })
+            );
+
+            bridge.addRecords([
+                // same as above, except child now has non-master record type
+                createRecord({
+                    id: '123',
+                    recordTypeId: MASTER_RECORD_TYPE_ID,
+                    recordTypeInfo: null,
+                    fields: {
+                        Child: {
+                            displayValue: null,
+                            value: createRecord({
+                                id: '456',
+                                recordTypeId: nonMasterRecordTypeInfo.recordTypeId,
+                                recordTypeInfo: nonMasterRecordTypeInfo,
+                            }),
+                        },
+                    },
+                }),
+            ]);
+
+            expect(queryRecord(lds, { recordId: '123' })).toMatchObject({
+                data: {
+                    recordTypeId: MASTER_RECORD_TYPE_ID,
+                    recordTypeInfo: null,
+                    fields: {
+                        Child: {
+                            value: {
+                                recordTypeId: nonMasterRecordTypeInfo.recordTypeId,
+                                recordTypeInfo: nonMasterRecordTypeInfo,
+                            },
+                        },
+                    },
+                },
+            });
         });
     });
 

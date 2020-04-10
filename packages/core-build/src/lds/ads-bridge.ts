@@ -14,6 +14,7 @@ import {
     ArrayPrototypePush,
     JSONParse,
     JSONStringify,
+    ObjectKeys,
     ObjectPrototypeHasOwnProperty,
 } from '../utils/language';
 
@@ -36,6 +37,8 @@ const FAKE_RECORD_REQUEST = {
 
 const RECORD_ID_PREFIX = 'UiApi::RecordRepresentation:';
 const RECORD_ID_REGEXP = /^UiApi::RecordRepresentation:([a-zA-Z0-9])+$/;
+
+const MASTER_RECORD_TYPE_ID = '012000000000000AAA';
 
 type Unsubscribe = () => void;
 
@@ -85,6 +88,12 @@ type LdsRecordChangedCallback = (record: AdsRecordMap, objectMetadata: AdsObject
 
 function isGraphNode<T, U>(node: ProxyGraphNode<T, U>): node is GraphNode<T, U> {
     return node !== null && node.type === 'Node';
+}
+
+function isSpanningRecord(
+    fieldValue: null | string | number | boolean | RecordRepresentation
+): fieldValue is RecordRepresentation {
+    return fieldValue !== null && typeof fieldValue === 'object';
 }
 
 /**
@@ -200,6 +209,44 @@ function getObjectMetadata(lds: LDS, record: RecordRepresentation): ObjectMetada
     };
 }
 
+/**
+ * RecordGvp can send records back to ADS with record types incorrectly set to the master
+ * record type. Since there are no known legitimate scenarios where a record can change from a
+ * non-master record type back to the master record type, we assume such a transition
+ * indicates a RecordGvp mistake. This function checks for that scenario and overwrites the
+ * incoming ADS record type information with what we already have in the store when it
+ * occurs.
+ *
+ * @param lds LDS
+ * @param record record from ADS, will be fixed in situ
+ */
+function fixRecordTypes(lds: LDS, record: RecordRepresentation): void {
+    // non-master record types should always be correct
+    if (record.recordTypeId === MASTER_RECORD_TYPE_ID) {
+        const key = keyBuilderRecord({ recordId: record.id });
+        const recordNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(key);
+
+        if (
+            isGraphNode(recordNode) &&
+            recordNode.scalar('recordTypeId') !== MASTER_RECORD_TYPE_ID
+        ) {
+            // ignore bogus incoming record type information & keep what we have
+            record.recordTypeId = recordNode.scalar('recordTypeId');
+            record.recordTypeInfo = recordNode.object('recordTypeInfo').data;
+        }
+    }
+
+    // recurse on nested records
+    const fieldKeys = ObjectKeys(record.fields);
+    const fieldKeysLen = fieldKeys.length;
+    for (let i = 0; i < fieldKeysLen; ++i) {
+        const fieldValue = record.fields[fieldKeys[i]].value;
+        if (isSpanningRecord(fieldValue)) {
+            fixRecordTypes(lds, fieldValue);
+        }
+    }
+}
+
 export default class AdsBridge {
     private isRecordEmitLocked: boolean = false;
     private watchUnsubscribe: Unsubscribe | undefined;
@@ -261,6 +308,11 @@ export default class AdsBridge {
                     // Deep-copy the record to ingest and ingest the record copy. This avoids
                     // corrupting the ADS cache since ingestion mutates the passed record.
                     const recordCopy = JSONParse(JSONStringify(record));
+
+                    // Don't let incorrect ADS/RecordGVP recordTypeIds replace a valid record type in our store
+                    // with the master record type. See W-7302870 for details.
+                    fixRecordTypes(lds, recordCopy);
+
                     lds.storeIngest(INGEST_KEY, FAKE_RECORD_REQUEST, recordCopy);
                 }
             }

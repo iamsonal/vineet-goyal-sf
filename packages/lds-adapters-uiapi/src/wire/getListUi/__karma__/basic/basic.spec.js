@@ -50,7 +50,6 @@ describe('basic', () => {
                 },
             ],
         };
-
         const matchParams = sinon.match({
             basePath: `${URL_BASE}/list-ui/${listViewId}`,
         });

@@ -27,7 +27,6 @@ annotationTypes:
 types:
   ProductCategoryDetailRepresentation:
     description: Wrapper containing the detail for a category.
-    discriminator: ''
     type: object
     properties:
       bannerImage:
@@ -52,7 +51,6 @@ types:
         type: ProductCategoryMediaRepresentation
   ProductCategoryMediaGroupRepresentation:
     description: Representation of a media group associated with a product category
-    discriminator: ''
     type: object
     properties:
       developerName:
@@ -81,7 +79,6 @@ types:
           - Tile
   ProductCategoryMediaRepresentation:
     description: Representation of a media associated with a product category
-    discriminator: ''
     type: object
     properties:
       alternateText:
@@ -111,7 +108,6 @@ types:
         type: string
   ProductCategoryPathRepresentation:
     description: Wrapper containing the path for a category.
-    discriminator: ''
     type: object
     properties:
       path:
@@ -121,7 +117,6 @@ types:
           type: ProductCategoryRepresentation
   ProductCategoryRepresentation:
     description: Representation for basic category data.
-    discriminator: ''
     type: object
     properties:
       description:
@@ -135,7 +130,6 @@ types:
         type: string
   ProductDetailRepresentation:
     description: Representation for the details of a single product
-    discriminator: ''
     type: object
     properties:
       defaultImage:
@@ -163,7 +157,6 @@ types:
         type: ProductCategoryPathRepresentation
   ProductEntitlementRepresentation:
     description: Representation of a media group associated with a product
-    discriminator: ''
     type: object
     properties:
       canViewPrice:
@@ -171,7 +164,6 @@ types:
         type: boolean | nil # TODO hand rolled nil union
   ProductMediaContentDocumentRepresentation:
     description: Representation of a product media as content document
-    discriminator: ''
     type: object
     properties:
       id:
@@ -191,7 +183,6 @@ types:
         type: string
   ProductMediaGroupRepresentation:
     description: Representation of a media group associated with a product
-    discriminator: ''
     type: object
     properties:
       developerName:
@@ -220,7 +211,6 @@ types:
           - Tile
   ProductMediaRepresentation:
     description: Representation of a media associated with a product
-    discriminator: ''
     type: object
     properties:
       alternateText:

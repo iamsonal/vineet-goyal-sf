@@ -27,7 +27,6 @@ annotationTypes:
 types:
   CommerceSearchIndexCollectionOutputRepresentation:
     description: Index collection information of a webstore
-    discriminator: ''
     type: object
     properties:
       indexes:
@@ -37,7 +36,6 @@ types:
           type: CommerceSearchIndexOutputRepresentation
   CommerceSearchIndexOutputRepresentation:
     description: Index information of a webstore
-    discriminator: ''
     type: object
     properties:
       completionDate:
@@ -73,7 +71,7 @@ types:
         type: string
   DistinctFacetValueRepresentation:
     description: Representation of distinct facet value.
-    discriminator: ''
+    discriminatorValue: DistinctValue # TODO: hand rolled
     type: FacetValueRepresentation
     properties:
       displayName:
@@ -88,7 +86,7 @@ types:
         # format: int64
   DistinctValueSearchFacetRepresentation:
     description: Summary representation of a Facet with distinct values in product search results.
-    discriminator: ''
+    discriminatorValue: DistinctValue # TODO: hand rolled
     type: SearchFacetRepresentation
     properties:
       values:
@@ -98,7 +96,7 @@ types:
           type: DistinctFacetValueRepresentation
   FacetValueRepresentation:
     description: Abstract superclass of all facet value representations.
-    discriminator: ''
+    discriminator: type # TODO: hand rolled
     type: object
     properties:
       type:
@@ -133,7 +131,6 @@ types:
           - Standard
   FacetableAttributeOutputRepresentation:
     description: Facetable attribute in a webstore
-    discriminator: ''
     type: object
     properties:
       displayRank:
@@ -171,7 +168,6 @@ types:
           type: object
   FacetableAttributesCollectionOutputRepresentation:
     description: Facetable attributes in a webstore
-    discriminator: ''
     type: object
     properties:
       facetableAttributeSettings:
@@ -211,7 +207,6 @@ types:
         type: string
   ProductSearchResultsRepresentation:
     description: Representation for Product Search Results.
-    discriminator: ''
     type: object
     properties:
       categories:
@@ -230,7 +225,6 @@ types:
         type: ProductSummaryCollectionRepresentation
   ProductSearchSuggestionsResultsRepresentation:
     description: Representation for Product Search Suggestions Results.
-    discriminator: ''
     type: object
     properties:
       completions:
@@ -243,7 +237,6 @@ types:
         type: string
   ProductSummaryCollectionRepresentation:
     description: Collection of Product Summary representations in product search results.
-    discriminator: ''
     type: object
     properties:
       currencyIsoCode:
@@ -264,7 +257,6 @@ types:
         type: integer
   ProductSummaryRepresentation:
     description: Summary representation of a Product in product search results.
-    discriminator: ''
     type: object
     properties:
       # ProductMediaRepresentation did not get created
@@ -301,7 +293,6 @@ types:
           type: string
   SearchCategoryRepresentation:
     description: Search Category representation in product search results.
-    discriminator: ''
     type: object
     properties:
       # ProductCategoryRepresentation did not get created
@@ -321,7 +312,7 @@ types:
         # format: int64
   SearchFacetRepresentation:
     description: Abstract superclass of all Search Facet representations.
-    discriminator: ''
+    discriminator: facetType # TODO: hand rolled
     type: object
     properties:
       attributeType:
@@ -368,7 +359,6 @@ types:
           type: object
   SearchProductSettingCollectionOutputRepresentation:
     description: The representation of multiple search product settings.
-    discriminator: ''
     type: object
     properties:
       searchProductSettings:
@@ -388,7 +378,6 @@ types:
         type: boolean
   SearchProductSettingOutputRepresentation:
     description: The representation of a single search product setting.
-    discriminator: ''
     type: object
     properties:
       id:
@@ -416,7 +405,6 @@ types:
           - Standard
   SearchableAttributeOutputRepresentation:
     description: Searchable attribute in a webstore
-    discriminator: ''
     type: object
     properties:
       label:
@@ -443,7 +431,6 @@ types:
           type: object
   SearchableAttributesCollectionOutputRepresentation:
     description: Searchable attributes in a webstore
-    discriminator: ''
     type: object
     properties:
       searchableAttributeSettings:
@@ -453,7 +440,6 @@ types:
           type: SearchableAttributeOutputRepresentation
   SuggestedCompletionRepresentation:
     description: Representation for Product Search suggestions endpoint's Completion Proposals.
-    discriminator: ''
     type: object
     properties:
       simpleString:
@@ -482,7 +468,6 @@ types:
           body:
             application/json:
               type: FacetableAttributesCollectionInputRepresentation
-              required: false
               (oas-body-name): facetableAttributeSettings
         uriParameters:
           webstoreId:
@@ -508,7 +493,6 @@ types:
           body:
             application/json:
               type: SearchableAttributesCollectionInputRepresentation
-              required: false
               (oas-body-name): searchableAttributeSettings
         uriParameters:
           webstoreId:
@@ -580,7 +564,6 @@ types:
         body:
           application/json:
             type: SearchProductSettingCollectionInputRepresentation
-            required: false
             (oas-body-name): searchProductSettings
       uriParameters:
         webstoreId:
@@ -603,7 +586,6 @@ types:
         body:
           application/json:
             type: ProductSearchInputRepresentation
-            required: false
             (oas-body-name): productSearchInput
       uriParameters:
         webstoreId:

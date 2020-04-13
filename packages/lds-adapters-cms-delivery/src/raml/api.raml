@@ -39,7 +39,6 @@ types:
           type: string
   ManagedContentAssociationsRepresentation:
     description: The Managed Content Associations, e.g. topic associations, describing how this Managed Content is organized and discoverable
-    discriminator: ''
     type: object
     properties:
       topics:
@@ -59,7 +58,6 @@ types:
             type: object
   ManagedContentChannelCollectionRepresentation:
     description: Collection of Managed Content Channels
-    discriminator: ''
     type: object
     properties:
       channels:
@@ -101,7 +99,6 @@ types:
         type: boolean
   ManagedContentChannelRepresentation:
     description: Details of a Managed Content Channel
-    discriminator: ''
     type: object
     properties:
       channelId:
@@ -122,7 +119,7 @@ types:
         type: boolean
   ManagedContentDateAndTimeNodeValueRepresentation:
     description: Information about a managed content node of datetime type.
-    discriminator: ''
+    discriminatorValue: DateTime # TODO: hand rolled
     type: ManagedContentNodeValueRepresentation
     properties:
       dateTimeValue:
@@ -133,7 +130,7 @@ types:
         type: string
   ManagedContentDateNodeValueRepresentation:
     description: Information about a managed content node of type date.
-    discriminator: ''
+    discriminatorValue: Date # TODO: hand rolled
     type: ManagedContentNodeValueRepresentation
     properties:
       value:
@@ -148,7 +145,7 @@ types:
         type: string
   ManagedContentMediaNodeValueRepresentation:
     description: Information about a managed content node of media type.
-    discriminator: ''
+    discriminatorValue: Media # TODO: hand rolled
     type: ManagedContentNodeValueRepresentation
     properties:
       altText:
@@ -181,7 +178,6 @@ types:
         type: string
   ManagedContentNodeTypeRepresentation:
     description: Information about a managed content node type.
-    discriminator: ''
     type: object
     properties:
       label:
@@ -204,7 +200,7 @@ types:
           - Url
   ManagedContentNodeValueRepresentation:
     description: Information about a managed content node.
-    discriminator: ''
+    discriminator: nodeType # TODO: hand rolled
     type: object
     properties:
       nodeType:
@@ -221,7 +217,6 @@ types:
           - Url
   ManagedContentRepresentation:
     description: Information about a managed content.
-    discriminator: ''
     type: object
     properties:
       id:
@@ -232,7 +227,6 @@ types:
         type: string
   ManagedContentSearchResultCollectionRepresentation:
     description: A container of paginated cms keyword-based search result items plus a short search result summary
-    discriminator: ''
     type: object
     properties:
       count:
@@ -251,7 +245,6 @@ types:
         type: string
   ManagedContentSearchResultContentTypeRepresentation:
     description: A keyword-based search result item's content type
-    discriminator: ''
     type: object
     properties:
       developerName:
@@ -262,7 +255,6 @@ types:
         type: string
   ManagedContentSearchResultRepresentation:
     description: A keyword-based search result item
-    discriminator: ''
     type: object
     properties:
       contentType:
@@ -282,7 +274,6 @@ types:
         type: string
   ManagedContentSpaceMemberCollectionRepresentation:
     description: Collection representation of the members in a content space
-    discriminator: ''
     type: object
     properties:
       members:
@@ -302,7 +293,6 @@ types:
         type: string
   ManagedContentSpaceMemberPermissionsRepresentation:
     description: Representation of permissions of a member in a content space
-    discriminator: ''
     type: object
     properties:
       permissions:
@@ -316,7 +306,6 @@ types:
                 type: ManagedContentSpacePermissionRepresentation
   ManagedContentSpaceMemberRepresentation:
     description: Representation of a ManagedContentSpaceMember
-    discriminator: ''
     type: object
     properties:
       id:
@@ -330,7 +319,6 @@ types:
         type: ManagedContentSpaceRoleRepresentation
   ManagedContentSpacePermissionRepresentation:
     description: Representation of a permission bit vector based on a scopeType or contentTypeIdOrEnum
-    discriminator: ''
     type: object
     properties:
       canCreate:
@@ -356,7 +344,6 @@ types:
         type: boolean
   ManagedContentSpaceRoleCollectionRepresentation:
     description: Collection representation of the roles in a content space
-    discriminator: ''
     type: object
     properties:
       roles:
@@ -366,7 +353,6 @@ types:
           type: ManagedContentSpaceRoleRepresentation
   ManagedContentSpaceRoleRepresentation:
     description: Representation of a ManagedContentSpaceRole
-    discriminator: ''
     type: object
     properties:
       description:
@@ -380,7 +366,7 @@ types:
         type: string
   ManagedContentTextNodeValueRepresentation:
     description: Information about a managed content node of type text.
-    discriminator: ''
+    discriminatorValue: Text # TODO: hand rolled
     type: ManagedContentNodeValueRepresentation
     properties:
       value:
@@ -388,7 +374,6 @@ types:
         type: string
   ManagedContentTranslationRepresentation:
     description: Information about a managed content translation job
-    discriminator: ''
     type: object
     properties:
       createdBy:
@@ -460,7 +445,6 @@ types:
           - Import
   ManagedContentTypeRepresentation:
     description: Information about a managed content type.
-    discriminator: ''
     type: object
     properties:
       label:
@@ -477,7 +461,6 @@ types:
             type: ManagedContentNodeTypeRepresentation
   ManagedContentTypeSearchBlackListCollectionRepresentation:
     description: Collection of Content Type Search Status
-    discriminator: ''
     type: object
     properties:
       currentPageUrl:
@@ -506,7 +489,6 @@ types:
         type: string
   ManagedContentTypeSearchBlackListRepresentation:
     description: Details of a Managed Content Type Search Blacklist
-    discriminator: ''
     type: object
     properties:
       isSearchable:
@@ -523,7 +505,6 @@ types:
         type: string
   ManagedContentVersionCollectionRepresentation:
     description: Collection of managed content versions.
-    discriminator: ''
     type: object
     properties:
       currentPageUrl:
@@ -582,7 +563,6 @@ types:
         type: string
   ManagedContentVersionInternalCollectionRepresentation:
     description: Collection of managed content versions.
-    discriminator: ''
     type: object
     properties:
       items:
@@ -595,7 +575,6 @@ types:
         type: integer
   ManagedContentVersionInternalRepresentation:
     description: Information about a managed content version.
-    discriminator: ''
     type: object
     properties:
       associations:
@@ -645,7 +624,6 @@ types:
         type: string
   ManagedContentVersionRepresentation:
     description: Information about a managed content version.
-    discriminator: ''
     type: object
     properties:
       # Need to be able to set required: false
@@ -681,7 +659,6 @@ types:
         type: string
   TopicSummaryRepresentation:
     description: A summary of a topic
-    discriminator: ''
     type: object
     properties:
       id:
@@ -719,7 +696,6 @@ types:
         body:
           application/json:
             type: ManagedContentTypeSearchBlackListInputRepresentation
-            required: false
             (oas-body-name): contentTypeSearchInput
       uriParameters:
         channelId:
@@ -841,7 +817,6 @@ types:
         body:
           application/json:
             type: ManagedContentChannelInputRepresentation
-            required: false
             (oas-body-name): ManagedContentChannelInput
     /management/channels/{channelId}:
       get:
@@ -863,7 +838,6 @@ types:
         body:
           application/json:
             type: ManagedContentChannelInputRepresentation
-            required: false
             (oas-body-name): ManagedContentChannelInput
       uriParameters:
         channelId:
@@ -1010,7 +984,6 @@ types:
           body:
             application/json:
               type: ManagedContentVersionInputRep
-              required: false
               (oas-body-name): contentVersion
         uriParameters:
           contentSpaceId:
@@ -1040,7 +1013,6 @@ types:
           body:
             application/json:
               type: ManagedContentVersionInputRep
-              required: false
               (oas-body-name): contentVersion
         uriParameters:
           contentSpaceId:
@@ -1066,7 +1038,6 @@ types:
           body:
             application/json:
               type: ManagedContentInputRep
-              required: false
               (oas-body-name): contentVersion
         uriParameters:
           contentSpaceId:
@@ -1095,7 +1066,6 @@ types:
           body:
             application/json:
               type: ManagedContentSpaceMemberInputRepresentation
-              required: false
               (oas-body-name): member
         uriParameters:
           contentSpaceId:
@@ -1118,7 +1088,6 @@ types:
           body:
             application/json:
               type: ManagedContentSpaceMemberInputRepresentation
-              required: false
               (oas-body-name): member
         uriParameters:
           contentSpaceId:
@@ -1187,5 +1156,4 @@ types:
         body:
           application/json:
             type: ManagedContentTranslationRequestInputRep
-            required: false
             (oas-body-name): translationRequest

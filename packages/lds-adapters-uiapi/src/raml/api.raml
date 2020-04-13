@@ -2265,7 +2265,6 @@ types:
         type: boolean
   RelatedListInfoBatchRepresentation: #TODO: Handrolled
     description: RelatedListInfoBatchRepresentation
-    discriminator: ''
     type: object
     properties:
       results:
@@ -2401,7 +2400,6 @@ types:
           type: string
   BatchRelatedListCountRepresentation: #TODO: Handrolled
     description: BatchRelatedListCountRepresentation
-    discriminator: ''
     type: object
     properties:
       results:
@@ -3511,7 +3509,6 @@ types:
       body:
         application/json:
           type: AggregateInputRepresentation
-          required: false
           (oas-body-name): input
   /apps:
     get:
@@ -3604,7 +3601,6 @@ types:
         body:
           application/json:
             type: NavItemsInputRepresentation
-            required: false
             (oas-body-name): navItems
       uriParameters:
         appId:
@@ -3661,7 +3657,6 @@ types:
       body:
         application/json:
           type: FavoriteInputRepresentation
-          required: false
           (oas-body-name): favorite
     /batch:
       put:
@@ -3675,7 +3670,6 @@ types:
         body:
           application/json:
             type: FavoriteBatchCollectionInputRepresentation
-            required: false
             (oas-body-name): favorites
     /{favoriteId}:
       delete:
@@ -3709,7 +3703,6 @@ types:
         body:
           application/json:
             type: FavoriteInputRepresentation
-            required: false
             (oas-body-name): favorite
       uriParameters:
         favoriteId:
@@ -3753,7 +3746,6 @@ types:
       body:
         application/json:
           type: GraphQLInputRepresentation
-          required: false
           (oas-body-name): queryInput
   /layout/{objectApiName}:
     get:
@@ -3851,7 +3843,6 @@ types:
       body:
         application/json:
           type: RecordLayoutUserStateInputRepresentation
-          required: false
           (oas-body-name): userState
     uriParameters:
       objectApiName:
@@ -4366,7 +4357,6 @@ types:
       body:
         application/json:
           type: RecordInputRepresentation
-          required: false
           (oas-body-name): recordInput
   /priming-components:
     get:
@@ -4476,7 +4466,6 @@ types:
         body:
           application/json:
             type: AvatarAssociationInputRepresentation
-            required: false
             (oas-body-name): input
       uriParameters:
         recordId:
@@ -4657,7 +4646,6 @@ types:
       body:
         application/json:
           type: RecordInputRepresentation
-          required: false
           (oas-body-name): recordInput
         multipart/form-data:
           properties:
@@ -4803,7 +4791,6 @@ types:
         body:
           application/json:
             type: RecordInputRepresentation
-            required: false
             (oas-body-name): recordInput
           multipart/form-data:
             properties:
@@ -4966,7 +4953,6 @@ types:
         body:
           application/json:
             type: ListInfoInputRepresentation
-            required: false
             (oas-body-name): relatedListInfoInput
       uriParameters:
         parentObjectApiName:
@@ -5003,7 +4989,6 @@ types:
         body:
           application/json:
             type: ListInfoInputRepresentation
-            required: false
             (oas-body-name): relatedListInfoInput
       uriParameters:
         parentRecordId:

@@ -27,7 +27,6 @@ annotationTypes:
 types:
   PriceAdjustmentScheduleRepresentation:
     description: Representation for the details of a single price adjustment schedule
-    discriminator: ''
     type: object
     properties:
       id:
@@ -40,7 +39,6 @@ types:
           type: PriceAdjustmentTierRepresentation
   PriceAdjustmentTierRepresentation:
     description: Representation for the details of a single price adjustment tier
-    discriminator: ''
     type: object
     properties:
       adjustmentType:
@@ -82,7 +80,6 @@ types:
           type: object
   PricingResultLineItemRepresentation:
     description: Representation of the Line Item portion of the response for multiple products pricing
-    discriminator: ''
     type: object
     properties:
       # Error Response representation did not get created
@@ -106,7 +103,6 @@ types:
         type: string
   PricingResultRepresentation:
     description: Representation for the response for multiple products pricing
-    discriminator: ''
     type: object
     properties:
       currencyIsoCode:
@@ -126,7 +122,6 @@ types:
         type: boolean
   ProductPriceRepresentation:
     description: Representation for the details of a single product price
-    discriminator: ''
     type: object
     properties:
       currencyIsoCode:
@@ -160,7 +155,6 @@ types:
     body:
       application/json:
         type: PricingInputRepresentation
-        required: false
         (oas-body-name): pricingInput
   uriParameters:
     webstoreId:

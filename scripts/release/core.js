@@ -60,6 +60,13 @@ const CORE_LDS_STATIC_FUNCTIONS_PATH = path.resolve(
     'core/ui-force-components/modules/force/lds/lds-static-functions.js'
 );
 
+const CORE_LDS_MOBILE_STATIC_FUNCTIONS_PATH = path.resolve(
+    BLT_HOME,
+    'app',
+    CORE_BRANCH,
+    'core/ui-bridge-components/modules/native/ldsNativeProxy/lds-static-functions.js'
+);
+
 const RELEASABLE_BRANCHES = ['master'];
 
 function error(msg, code = 1) {
@@ -167,10 +174,12 @@ function copyArtifacts(repoPath, corePath) {
         checkCore(CORE_LDS_STATIC_FUNCTIONS_PATH);
     } else if (argv.target === 'native') {
         checkCore(CORE_LDS_NATIVE_PROXY_PATH);
+        checkCore(CORE_LDS_MOBILE_STATIC_FUNCTIONS_PATH);
     } else {
         checkCore(CORE_LDS_PATH);
         checkCore(CORE_LDS_STATIC_FUNCTIONS_PATH);
         checkCore(CORE_LDS_NATIVE_PROXY_PATH);
+        checkCore(CORE_LDS_MOBILE_STATIC_FUNCTIONS_PATH);
     }
 
     if (!argv['skip-git-check']) {
@@ -193,9 +202,11 @@ function copyArtifacts(repoPath, corePath) {
         copyArtifacts(REPO_LDS_STATIC_FUNCTIONS_PATH, CORE_LDS_STATIC_FUNCTIONS_PATH);
     } else if (argv.target === 'native') {
         copyArtifacts(REPO_LDS_NATIVE_PROXY_PATH, CORE_LDS_NATIVE_PROXY_PATH);
+        copyArtifacts(REPO_LDS_STATIC_FUNCTIONS_PATH, CORE_LDS_MOBILE_STATIC_FUNCTIONS_PATH);
     } else {
         copyArtifacts(REPO_LDS_PATH, CORE_LDS_PATH);
         copyArtifacts(REPO_LDS_STATIC_FUNCTIONS_PATH, CORE_LDS_STATIC_FUNCTIONS_PATH);
         copyArtifacts(REPO_LDS_NATIVE_PROXY_PATH, CORE_LDS_NATIVE_PROXY_PATH);
+        copyArtifacts(REPO_LDS_STATIC_FUNCTIONS_PATH, CORE_LDS_MOBILE_STATIC_FUNCTIONS_PATH);
     }
 })();

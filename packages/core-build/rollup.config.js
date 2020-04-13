@@ -104,10 +104,8 @@ const webview = {
     ...browser,
     input: './src/lds-webview/main.ts',
     output: {
+        ...browser.output,
         file: 'dist/ldsNativeProxy.js',
-        format: 'esm',
-        banner,
-        footer,
     },
 };
 

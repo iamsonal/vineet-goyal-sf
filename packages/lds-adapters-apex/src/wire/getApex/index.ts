@@ -6,6 +6,7 @@ import {
     ResourceIngest,
     Selector,
     Snapshot,
+    FetchResponse,
 } from '@ldsjs/engine';
 import { stableJSONStringify } from '../../util/utils';
 import { default as getApexRequest } from '../../generated/resources/postApex';
@@ -169,7 +170,7 @@ function network(
                 data: resp.body,
             } as FulfilledSnapshot<any, any>;
         },
-        (err: unknown) => {
+        (err: FetchResponse<unknown>) => {
             return lds.errorSnapshot(err);
         }
     );

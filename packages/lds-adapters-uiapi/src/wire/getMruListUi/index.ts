@@ -239,7 +239,7 @@ function buildNetworkSnapshot_getMruListUi(
                 buildSnapshotRefresh(lds, config)
             );
         },
-        (err: unknown) => {
+        (err: FetchResponse<unknown>) => {
             return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
         }
     );

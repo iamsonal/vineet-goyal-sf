@@ -302,7 +302,7 @@ function buildNetworkSnapshot_getListUi(
                 buildSnapshotRefresh(lds, config)
             );
         },
-        (err: unknown) => {
+        (err: FetchResponse<unknown>) => {
             return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
         }
     );

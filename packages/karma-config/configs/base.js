@@ -8,8 +8,6 @@ const SINON = require.resolve('sinon/pkg/sinon.js');
 function getTestSpecs(sharedOnly) {
     const files = [];
 
-    files.push('**/__karma__/matchers.js');
-
     const { SUITE: SUITE_ENV } = process.env;
     if (SUITE_ENV) {
         files.push(`**/__karma__/**/${SUITE_ENV}.spec.js`);
@@ -49,7 +47,6 @@ const configBuilder = config => {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            '**/matchers.js': ['lwc'],
             '**/*.spec.js': ['lwc'],
             '**/*.json': ['json_fixtures'],
         },

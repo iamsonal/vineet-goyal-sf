@@ -93,15 +93,10 @@ function createPreprocessor(config, emitter, logger) {
 
         const banner =
             "typeof process === 'undefined' && (process = { env: { NODE_ENV: 'test' } });";
-        let intro;
-        let outro;
-        // Currently, all matchers are added by global beforeEach
-        if (!input.endsWith('matchers.js')) {
-            // Wrap all the tests into a describe block with the file stricture name
-            const ancestorDirectories = path.relative(basePath, suiteDir).split(path.sep);
-            intro = ancestorDirectories.map(tag => `describe("${tag}", function () {`).join('\n');
-            outro = ancestorDirectories.map(() => `});`).join('\n');
-        }
+        // Wrap all the tests into a describe block with the file stricture name
+        const ancestorDirectories = path.relative(basePath, suiteDir).split(path.sep);
+        const intro = ancestorDirectories.map(tag => `describe("${tag}", function () {`).join('\n');
+        const outro = ancestorDirectories.map(() => `});`).join('\n');
 
         try {
             // The engine and the test-util are injected as UMD.

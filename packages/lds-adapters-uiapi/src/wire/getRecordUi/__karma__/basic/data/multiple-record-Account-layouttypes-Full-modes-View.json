@@ -40,6 +40,8 @@
                         "id": "00h3h0000025GuBAAU",
                         "layoutType": "Full",
                         "mode": "View",
+                        "objectApiName": "Account",
+                        "recordTypeId": "012000000000000AAA",
                         "sections": [
                             {
                                 "collapsible": false,

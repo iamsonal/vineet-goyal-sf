@@ -1,8 +1,8 @@
 {
     "defaultImage": {
-        "alternateText": "Alternate Text",
+        "alternateText": null,
         "contentVersionId": null,
-        "id": "2pmxx0000000001AAA",
+        "id": null,
         "mediaType": "Image",
         "sortOrder": 0,
         "title": "Image Title",
@@ -21,9 +21,10 @@
         "ExternalId": null,
         "LastViewedDate": "2020-02-17T12:36:45Z",
         "LastReferencedDate": "2020-02-17T12:36:45Z",
-        "StockKeepingUnit": "K001-b2clite-1581941813-0",
+        "StockKeepingUnit": null,
         "CurrencyIsoCode": "USD",
         "ExternalDataSourceId": null,
+        "weight__c": null,
         "Name": "Kitten One",
         "SystemModstamp": "2020-02-17T12:17:10Z",
         "IsArchived": "false",
@@ -57,7 +58,7 @@
             "id": "2mgxx0000000002AAA",
             "mediaItems": [
                 {
-                    "alternateText": "image",
+                    "alternateText": null,
                     "contentVersionId": null,
                     "id": null,
                     "mediaType": "Image",

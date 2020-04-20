@@ -83,13 +83,13 @@ types:
     properties:
       alternateText:
         description: Alternative text for the product category media
-        type: string
+        type: string | nil # TODO W-7380839 (226): "nil" union hand rolled
       contentVersionId:
         description: Content document that represents the product category media
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil # TODO W-7380839 (226): "nil" union hand rolled
       id:
         description: ID of the product category image
-        type: string
+        type: string | nil # TODO W-7380839 (226): "nil" union hand rolled
       mediaType:
         description: Type of the product category media
         type: string
@@ -124,7 +124,7 @@ types:
         type: string | nil # TODO "nil" union type hand rolled
       id:
         description: ID of the category
-        type: string
+        type: string | nil # TODO W-7380839 (226): "nil" union hand rolled
       name:
         description: Name of the category
         type: string
@@ -143,7 +143,7 @@ types:
         type: object
         properties:
           //:
-            type: string | nil # TODO: hand rolled nil union
+            type: string | nil # TODO W-7380839 (226): "nil" union hand rolled
       id:
         description: ID of the product
         type: string
@@ -215,13 +215,13 @@ types:
     properties:
       alternateText:
         description: Alternative text for the product media
-        type: string
+        type: string | nil # TODO W-7380839 (226): "nil" union hand rolled
       contentVersionId:
         description: The ContentVersionId of the latest published ContentVersion if the media is stored as a ContentDocument.  If the image is a customer-provided external URL, the value will be null.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil # TODO W-7380839 (226): "nil" union hand rolled
       id:
         description: ID of the product image
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil # TODO W-7380839 (226): "nil" union hand rolled
       mediaType:
         description: Type of the product media
         type: string
@@ -336,4 +336,3 @@ types:
         required: true
       webstoreId:
         type: string
-        required: true

@@ -47,10 +47,10 @@ types:
           - InternalLink
       actionValue:
         description: Returns the route url or event fqn for Navigation Menu item
-        type: string
+        type: string | nil # TODO W-7380839 (226): "nil" union hand rolled
       imageUrl:
         description: Returns the image url for Navigation Menu item
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil # TODO W-7380839 (226): "nil" union hand rolled
       label:
         description: Returns the label for Navigation Menu item
         type: string

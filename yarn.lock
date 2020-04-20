@@ -2079,34 +2079,37 @@
     "@babel/runtime" "^7.7.2"
     core-js "^3.4.1"
 
-"@ldsjs/cli@^0.4.0":
-  version "0.4.0"
-  resolved "http://npm.lwcjs.org/@ldsjs/cli/-/@ldsjs/cli-0.4.0/08761451614d01c91e6b7796b4efa6f45f7cefb4.tgz#08761451614d01c91e6b7796b4efa6f45f7cefb4"
-  integrity sha512-UZD95al+zo7uaYTJin5itYvibSKiXVetVsr6mmxPjiQQJHxhJ8hcHuYXmvxYXKLj/rkhzqNSll0iIllo34BRvA==
+"@ldsjs/cli@^0.5.0":
+  version "0.5.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/cli/-/@ldsjs/cli-0.5.0/e64ed0a7cf8603cad3ad5eddb4e8a76b53d3c9f4.tgz#e64ed0a7cf8603cad3ad5eddb4e8a76b53d3c9f4"
+  integrity sha512-HDmYvKx6XXM33tFpxj6PziPs/P9QpR8RUWGbnneZK87ZH2TlSpC0Q5zcihnzhU3Uudj9/WWMbhDCOkxIA9XL/w==
   dependencies:
-    "@ldsjs/compiler" "0.4.0"
+    "@ldsjs/compiler" "0.5.0"
     "@oclif/command" "^1.5.19"
     "@oclif/config" "^1.13.3"
     "@oclif/plugin-help" "^2.2.1"
+    chalk "^4.0.0"
+    strip-ansi "^6.0.0"
+    text-table "^0.2.0"
 
-"@ldsjs/compiler@0.4.0", "@ldsjs/compiler@^0.4.0":
-  version "0.4.0"
-  resolved "http://npm.lwcjs.org/@ldsjs/compiler/-/@ldsjs/compiler-0.4.0/a1b70d2ddb7ea12047d70bf6954f3d72a9869b7b.tgz#a1b70d2ddb7ea12047d70bf6954f3d72a9869b7b"
-  integrity sha512-xeGHzYTBiAw/zoV29D54clGGXe8LnZaAQgYMIZQ5nHoy8/9qHPNrmDi4QJb1lExHtpmKRaTBHIMz3bnEfZNQFA==
+"@ldsjs/compiler@0.5.0", "@ldsjs/compiler@^0.5.0":
+  version "0.5.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/compiler/-/@ldsjs/compiler-0.5.0/74b98ccf6c90cf05c6c464f6ab58f79d83d08400.tgz#74b98ccf6c90cf05c6c464f6ab58f79d83d08400"
+  integrity sha512-rFEFO/7QTHECz//0ukV1dXGQvpmRBFQe6ZCLwFdGzzedu0HTh4o3KQp9cadJKI0d5sImiy6S79bluYghfxDN4g==
   dependencies:
-    amf-client-js "3.2.2"
+    amf-client-js "4.0.6"
 
-"@ldsjs/engine@0.4.0", "@ldsjs/engine@^0.4.0":
-  version "0.4.0"
-  resolved "http://npm.lwcjs.org/@ldsjs/engine/-/@ldsjs/engine-0.4.0/f9930ee145b13a3525ba56f253b748062cf65af0.tgz#f9930ee145b13a3525ba56f253b748062cf65af0"
-  integrity sha512-LiJaTKIHhPQx5AGDvMMlz0oJDRYbpJXMS+yUoLh168+W3WU9gN+u+xwmkfLdtap6Ou6lXcGPNzd3tpdr66IN9A==
+"@ldsjs/engine@0.5.0", "@ldsjs/engine@^0.5.0":
+  version "0.5.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/engine/-/@ldsjs/engine-0.5.0/2923e262d54b14d6928041c9a2c3f9fe51255723.tgz#2923e262d54b14d6928041c9a2c3f9fe51255723"
+  integrity sha512-Yl1ChOFveXtNRuIxOvyRz9ayOlrWMw4KyTJjksqHdkfxuqx+1/Y1SE+PkrRAzZ9e9d+/DrcfBB0wjjMz/PDzWg==
 
-"@ldsjs/lwc-lds@^0.4.0":
-  version "0.4.0"
-  resolved "http://npm.lwcjs.org/@ldsjs/lwc-lds/-/@ldsjs/lwc-lds-0.4.0/5e04e6edde33774173f6577a1d1065bdccef2a62.tgz#5e04e6edde33774173f6577a1d1065bdccef2a62"
-  integrity sha512-qdRljbWQxaG6UrwP0zb8VyY8C9RzPTP3FdkUGOP1D/nCyKKWC78HSWUpHEvVVG1iBvqfvnjSu2qBLHPPVPKO6Q==
+"@ldsjs/lwc-lds@^0.5.0":
+  version "0.5.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/lwc-lds/-/@ldsjs/lwc-lds-0.5.0/5961f22ca72500ff2ec306ef08babaacfd28ac90.tgz#5961f22ca72500ff2ec306ef08babaacfd28ac90"
+  integrity sha512-d/Ib6P5Sgjr7ApfMf/fJtvPL7TnLNG8c4oDRjxYrXelkqcb2xsAbUm5IGOzoSR0D3fE/S2T7JKOVc2wIjWcRAQ==
   dependencies:
-    "@ldsjs/engine" "0.4.0"
+    "@ldsjs/engine" "0.5.0"
 
 "@lerna/add@3.20.0":
   version "3.20.0"
@@ -3502,10 +3505,10 @@ alphanum-sort@^1.0.0:
   resolved "https://registry.yarnpkg.com/alphanum-sort/-/alphanum-sort-1.0.2.tgz#97a1119649b211ad33691d9f9f486a8ec9fbe0a3"
   integrity sha1-l6ERlkmyEa0zaR2fn0hqjsn74KM=
 
-amf-client-js@3.2.2:
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/amf-client-js/-/amf-client-js-3.2.2.tgz#ea390140736df43153982034c1db9905a05488fe"
-  integrity sha512-Si8gOcCybwKyOZ+fI3SWyG3VSIFomIIv+kA140W07iMBNXh42q2RXPCuNU/0LqHcXht4ImEUaS2a/OitsJR1xg==
+amf-client-js@4.0.6:
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/amf-client-js/-/amf-client-js-4.0.6.tgz#8ac53be3aa19bf0c56e44dadb481a291cf0f7d5a"
+  integrity sha512-SjX58220exqkwyIXZ4zV6kg7i1icT2r1YAymRZy78NzUIxwhr18ZyrgAp3LOOnbE6sB/FufH4UtSWIL+BxyVLQ==
   dependencies:
     ajv "6.5.2"
     amf-shacl-node "1.1.1"
@@ -5245,6 +5248,14 @@ chalk@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-3.0.0.tgz#3f73c2bf526591f574cc492c51e2456349f844e4"
   integrity sha512-4D3B6Wf41KOYRFdszmDqMCGq5VV/uMAB273JILmO+3jAlh8X4qDtdtgCR3fxtbLEMzSx22QdhnDcJvu2u1fVwg==
+  dependencies:
+    ansi-styles "^4.1.0"
+    supports-color "^7.1.0"
+
+chalk@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.0.0.tgz#6e98081ed2d17faab615eb52ac66ec1fe6209e72"
+  integrity sha512-N9oWFcegS0sFr9oh1oz2d7Npos6vNoWW9HvtCg5N1KRFpUhaAhvTv5Y58g880fZaEYSNm3qDz8SU1UrGvp+n7A==
   dependencies:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"

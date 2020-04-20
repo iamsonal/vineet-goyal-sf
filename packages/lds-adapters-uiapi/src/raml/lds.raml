@@ -282,6 +282,7 @@ types:
             objectApiName: SalesforceObjectId
             fields: SalesforceFieldIdArray
             optionalFields: SalesforceFieldIdArray
+            sortBy: SalesforceFieldIdArray
         (key):
           listViewApiName: urlParams.listViewApiName
           objectApiName: urlParams.objectApiName
@@ -297,6 +298,7 @@ types:
           coercedParams:
             fields: SalesforceFieldIdArray
             optionalFields: SalesforceFieldIdArray
+            sortBy: SalesforceFieldIdArray
   '/lookups/{objectApiName}/{fieldApiName}/{targetApiName}':
     get:
       (adapter):
@@ -393,6 +395,7 @@ types:
           objectApiName: SalesforceObjectId
           fields: SalesforceFieldIdArray
           optionalFields: SalesforceFieldIdArray
+          sortBy: SalesforceFieldIdArray
       (key):
         listViewApiName: 'null'
         objectApiName: urlParams.objectApiName

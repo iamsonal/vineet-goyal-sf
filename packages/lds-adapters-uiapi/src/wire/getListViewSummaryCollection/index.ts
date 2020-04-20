@@ -12,12 +12,16 @@ import {
     GetListViewSummaryCollectionConfig,
     validateAdapterConfig,
     getListViewSummaryCollection_ConfigPropertyNames,
+    createResourceParams,
 } from '../../generated/adapters/getListViewSummaryCollection';
 import {
     ListViewSummaryCollectionRepresentation,
     paginationKeyBuilder,
 } from '../../generated/types/ListViewSummaryCollectionRepresentation';
-import getUiApiListUiByObjectApiName from '../../generated/resources/getUiApiListUiByObjectApiName';
+import {
+    createResourceRequest,
+    keyBuilder,
+} from '../../generated/resources/getUiApiListUiByObjectApiName';
 import {
     pathSelectionsFor,
     minimizeRequest,
@@ -81,18 +85,8 @@ export function buildInMemorySnapshot(
     lds: LDS,
     config: GetListViewSummaryCollectionConfig
 ): Snapshot<ListViewSummaryCollectionRepresentation> {
-    const request = getUiApiListUiByObjectApiName({
-        urlParams: { objectApiName: config.objectApiName },
-        queryParams: {
-            pageSize: config.pageSize,
-            pageToken: config.pageToken,
-            q: config.q,
-            recentListsOnly: config.recentListsOnly,
-        },
-    });
-
     const selector: Selector = {
-        recordId: request.key,
+        recordId: keyBuilder(createResourceParams(config)),
         node: buildListViewSummaryCollectionFragment(config),
         variables: {},
     };
@@ -108,15 +102,9 @@ export function buildNetworkSnapshot(
     config: GetListViewSummaryCollectionConfig,
     snapshot?: Snapshot<ListViewSummaryCollectionRepresentation>
 ) {
-    const request = getUiApiListUiByObjectApiName({
-        urlParams: { objectApiName: config.objectApiName },
-        queryParams: {
-            pageSize: config.pageSize,
-            pageToken: config.pageToken,
-            q: config.q,
-            recentListsOnly: config.recentListsOnly,
-        },
-    });
+    const resourceParams = createResourceParams(config);
+    const request = createResourceRequest(resourceParams);
+    const key = keyBuilder(resourceParams);
 
     if (snapshot) {
         // compute the minimum number of records we need to request
@@ -147,12 +135,12 @@ export function buildNetworkSnapshot(
     return lds.dispatchResourceRequest<ListViewSummaryCollectionRepresentation>(request).then(
         (resp: FetchResponse<ListViewSummaryCollectionRepresentation>) => {
             const { body } = resp;
-            lds.storeIngest<ListViewSummaryCollectionRepresentation>(request.key, request, body);
+            lds.storeIngest<ListViewSummaryCollectionRepresentation>(key, request, body);
             lds.storeBroadcast();
             return buildInMemorySnapshot(lds, config);
         },
         (error: FetchResponse<unknown>) => {
-            lds.storeIngestFetchResponse(request.key, error);
+            lds.storeIngestFetchResponse(key, error);
             lds.storeBroadcast();
             return lds.errorSnapshot(error, buildRefreshSnapshot(lds, config));
         }

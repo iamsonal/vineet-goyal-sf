@@ -13,7 +13,10 @@ import {
 import { getFieldId, FieldId } from '../../primitives/FieldId';
 import { isSpanningRecord } from '../../selectors/record';
 import { ObjectId } from '../../primitives/ObjectId';
-import getLookupRecordsResourceRequest from '../../generated/resources/getUiApiLookupsByFieldApiNameAndObjectApiNameAndTargetApiName';
+import getLookupRecordsResourceRequest, {
+    keyBuilder,
+    ResourceRequestConfig,
+} from '../../generated/resources/getUiApiLookupsByFieldApiNameAndObjectApiNameAndTargetApiName';
 import { deepFreeze } from '../../util/deep-freeze';
 import { RecordRepresentation } from '../../generated/types/RecordRepresentation';
 
@@ -112,7 +115,7 @@ function removeEtags(recordRep: RecordRepresentation) {
 
 export function buildNetworkSnapshot(lds: LDS, config: GetLookupRecordsConfig) {
     const { objectApiName, fieldApiName, targetApiName } = config;
-    const request = getLookupRecordsResourceRequest({
+    const resourceParams: ResourceRequestConfig = {
         urlParams: {
             objectApiName,
             fieldApiName,
@@ -126,12 +129,14 @@ export function buildNetworkSnapshot(lds: LDS, config: GetLookupRecordsConfig) {
             dependentFieldBindings: config.dependentFieldBindings,
             sourceRecordId: config.sourceRecordId,
         },
-    });
+    };
+    const request = getLookupRecordsResourceRequest(resourceParams);
 
     return lds.dispatchResourceRequest<RecordCollectionRepresentation>(request).then(
         response => {
             // TODO W-7235112 - remove this hack to never ingest lookup responses that
             // avoids issues caused by them not being real RecordRepresentations
+            const key = keyBuilder(resourceParams);
             const { body } = response;
             const { records } = body;
             for (let i = 0, len = records.length; i < len; i += 1) {
@@ -140,11 +145,11 @@ export function buildNetworkSnapshot(lds: LDS, config: GetLookupRecordsConfig) {
             deepFreeze(body);
             return {
                 state: 'Fulfilled',
-                recordId: request.key,
+                recordId: key,
                 variables: {},
                 seenRecords: {},
                 select: {
-                    recordId: request.key,
+                    recordId: key,
                     node: {
                         kind: 'Fragment',
                     },

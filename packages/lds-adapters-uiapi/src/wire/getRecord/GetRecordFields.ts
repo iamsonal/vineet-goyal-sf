@@ -1,6 +1,9 @@
 import { LDS, Selector, Snapshot, FetchResponse, SnapshotRefresh } from '@ldsjs/engine';
-import { GetRecordConfig } from '../../generated/adapters/getRecord';
-import getUiApiRecordsByRecordId from '../../generated/resources/getUiApiRecordsByRecordId';
+import { GetRecordConfig, createResourceParams } from '../../generated/adapters/getRecord';
+import {
+    keyBuilder,
+    createResourceRequest,
+} from '../../generated/resources/getUiApiRecordsByRecordId';
 import { TTL as RecordRepresentationTTL } from '../../generated/types/RecordRepresentation';
 import {
     keyBuilder as recordRepresentationKeyBuilder,
@@ -45,16 +48,14 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordConfig) {
 
     // Should this go into the coersion logic?
     const allTrackedFields = getTrackedFields(lds, recordId, config.optionalFields);
-    const request = getUiApiRecordsByRecordId({
-        urlParams: {
-            recordId,
-        },
-        queryParams: {
-            fields,
-            optionalFields:
-                fields === undefined ? allTrackedFields : difference(allTrackedFields, fields),
-        },
+    const params = createResourceParams({
+        recordId,
+        fields,
+        optionalFields:
+            fields === undefined ? allTrackedFields : difference(allTrackedFields, fields),
     });
+    const request = createResourceRequest(params);
+    const key = keyBuilder(params);
 
     return lds.dispatchResourceRequest<RecordRepresentation>(request).then(
         response => {
@@ -62,10 +63,10 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordConfig) {
             const fields = config.fields === undefined ? [] : config.fields;
             const optionalFields = config.optionalFields === undefined ? [] : config.optionalFields;
 
-            lds.storeIngest<RecordRepresentation>(request.key, request, body);
+            lds.storeIngest<RecordRepresentation>(key, request, body);
 
             const recordNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(
-                request.key
+                key
             )!;
 
             markNulledOutRequiredFields(recordNode, [...fields, ...optionalFields]);
@@ -78,7 +79,7 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordConfig) {
             );
         },
         (err: FetchResponse<unknown>) => {
-            lds.storeIngestFetchResponse(request.key, err, RecordRepresentationTTL);
+            lds.storeIngestFetchResponse(key, err, RecordRepresentationTTL);
             lds.storeBroadcast();
             return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
         }

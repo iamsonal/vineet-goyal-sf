@@ -12,7 +12,6 @@ function buildResourceRequest(resourceRequest: Partial<ResourceRequest>): Resour
         body: resourceRequest.body || {},
         queryParams: resourceRequest.queryParams || {},
         urlParams: resourceRequest.urlParams || {},
-        key: resourceRequest.key || 'key',
         headers: resourceRequest.headers || {},
         ingest: (() => {}) as any,
         fulfill: resourceRequest.fulfill || undefined,

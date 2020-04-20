@@ -5,7 +5,10 @@ import {
     validateAdapterConfig,
 } from '../../generated/adapters/updateRecordAvatar';
 import { AbstractRecordAvatarRepresentation } from '../../generated/types/AbstractRecordAvatarRepresentation';
-import postUiApiRecordAvatarsAssociationByRecordId from '../../generated/resources/postUiApiRecordAvatarsAssociationByRecordId';
+import postUiApiRecordAvatarsAssociationByRecordId, {
+    keyBuilder,
+    ResourceRequestConfig,
+} from '../../generated/resources/postUiApiRecordAvatarsAssociationByRecordId';
 import {
     select as photoSelector,
     PhotoRecordAvatarRepresentation,
@@ -23,7 +26,7 @@ export const factory = (lds: LDS) => {
         if (config === null) {
             throw new Error('updateRecordAvatar invalid configuration');
         }
-        const request = postUiApiRecordAvatarsAssociationByRecordId({
+        const resourceParams: ResourceRequestConfig = {
             urlParams: {
                 recordId: config.recordId,
             },
@@ -34,21 +37,23 @@ export const factory = (lds: LDS) => {
                 photoUrl: config.photoUrl,
                 actionType: config.actionType,
             },
-        });
+        };
+        const request = postUiApiRecordAvatarsAssociationByRecordId(resourceParams);
+        const key = keyBuilder(resourceParams);
         return lds.dispatchResourceRequest<AbstractRecordAvatarRepresentation>(request).then(
             response => {
                 let selectors;
                 if (response.body.type === 'Theme') {
                     selectors = themeSelector;
                     lds.storeIngest<ThemeRecordAvatarRepresentation>(
-                        request.key,
+                        key,
                         { ...request, ingest: themeIngest },
                         response.body as ThemeRecordAvatarRepresentation
                     );
                 } else if (response.body.type === 'Photo') {
                     selectors = photoSelector;
                     lds.storeIngest<PhotoRecordAvatarRepresentation>(
-                        request.key,
+                        key,
                         { ...request, ingest: photoIngest },
                         response.body as PhotoRecordAvatarRepresentation
                     );
@@ -59,7 +64,7 @@ export const factory = (lds: LDS) => {
                 lds.storeBroadcast();
                 // TODO W-6804405 - support unions on fragments (only supported on links today)
                 return lds.storeLookup<AbstractRecordAvatarRepresentation>({
-                    recordId: request.key,
+                    recordId: key,
                     node: selectors(),
                     variables: {},
                 });

@@ -7,7 +7,11 @@ import {
     SnapshotRefresh,
 } from '@ldsjs/engine';
 import { validateAdapterConfig } from '../../generated/adapters/getRecordCreateDefaults';
-import getUiApiRecordDefaultsCreateByObjectApiName from '../../generated/resources/getUiApiRecordDefaultsCreateByObjectApiName';
+import getUiApiRecordDefaultsCreateByObjectApiName, {
+    ResourceRequestConfig,
+    keyBuilder,
+} from '../../generated/resources/getUiApiRecordDefaultsCreateByObjectApiName';
+import { createResourceParams } from '../../generated/adapters/getRecordCreateDefaults';
 import { RecordDefaultsRepresentation } from '../../generated/types/RecordDefaultsRepresentation';
 import { select as recordLayoutRepresentationSelect } from '../../generated/types/RecordLayoutRepresentation';
 import { select as objectInfoRepresentationSelect } from '../../generated/types/ObjectInfoRepresentation';
@@ -63,19 +67,10 @@ function buildSnapshotRefresh(
 }
 
 export function buildNetworkSnapshot(lds: LDS, config: GetRecordCreateDefaultsConfigWithDefaults) {
-    const { formFactor, optionalFields, recordTypeId } = config;
-    const request = getUiApiRecordDefaultsCreateByObjectApiName({
-        urlParams: {
-            objectApiName: config.objectApiName,
-        },
-        queryParams: {
-            formFactor,
-            optionalFields,
-            recordTypeId,
-        },
-    });
+    const params: ResourceRequestConfig = createResourceParams(config);
+    const request = getUiApiRecordDefaultsCreateByObjectApiName(params);
 
-    const { key } = request;
+    const key = keyBuilder(params);
     const selectorKey = `${key}__selector`;
 
     return lds.dispatchResourceRequest<RecordDefaultsRepresentation>(request).then(
@@ -136,19 +131,8 @@ function coerceConfigWithDefaults(
 }
 
 export function buildInMemorySnapshot(lds: LDS, config: GetRecordCreateDefaultsConfigWithDefaults) {
-    const { formFactor, optionalFields, recordTypeId } = config;
-    const request = getUiApiRecordDefaultsCreateByObjectApiName({
-        urlParams: {
-            objectApiName: config.objectApiName,
-        },
-        queryParams: {
-            formFactor,
-            optionalFields,
-            recordTypeId,
-        },
-    });
-
-    const { key } = request;
+    const params: ResourceRequestConfig = createResourceParams(config);
+    const key = keyBuilder(params);
 
     const selectorKey = `${key}__selector`;
 

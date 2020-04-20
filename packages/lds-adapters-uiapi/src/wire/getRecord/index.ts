@@ -96,11 +96,11 @@ export const notifyChangeFactory = (lds: LDS) => {
             lds.dispatchResourceRequest<RecordRepresentation>(refreshRequest).then(
                 response => {
                     const { body } = response;
-                    lds.storeIngest<RecordRepresentation>(refreshRequest.key, refreshRequest, body);
+                    lds.storeIngest<RecordRepresentation>(key, refreshRequest, body);
                     const recordNode = lds.getNode<
                         RecordRepresentationNormalized,
                         RecordRepresentation
-                    >(refreshRequest.key)!;
+                    >(key)!;
                     markMissingOptionalFields(recordNode, optionalFields);
                     lds.storeBroadcast();
                     const notifyChangeNetworkResolveInstrumentParamBuilder = () => {
@@ -112,11 +112,7 @@ export const notifyChangeFactory = (lds: LDS) => {
                     lds.instrument(notifyChangeNetworkResolveInstrumentParamBuilder);
                 },
                 (error: FetchResponse<unknown>) => {
-                    lds.storeIngestFetchResponse(
-                        refreshRequest.key,
-                        error,
-                        RecordRepresentationTTL
-                    );
+                    lds.storeIngestFetchResponse(key, error, RecordRepresentationTTL);
                     lds.storeBroadcast();
                     lds.instrument(notifyChangeNetworkRejectInstrumentParamBuilder);
                 }

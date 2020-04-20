@@ -57,11 +57,9 @@ function getFulfillingRequest(
 }
 
 function getTransactionKey(resourceRequest: ResourceRequest): string {
-    const { baseUri, basePath, key, queryParams, headers } = resourceRequest;
+    const { baseUri, basePath, queryParams, headers } = resourceRequest;
     const path = `${baseUri}${basePath}`;
-    return `${path}::${JSONStringify(headers)}::${
-        queryParams ? JSONStringify(queryParams) : ''
-    }::${key}`;
+    return `${path}::${JSONStringify(headers)}::${queryParams ? JSONStringify(queryParams) : ''}`;
 }
 
 const inflightRequests: InflightRequests = Object.create(null);

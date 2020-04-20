@@ -12,9 +12,13 @@ import {
     getMruListUi_ConfigPropertyNames,
     validateAdapterConfig,
 } from '../../generated/adapters/getMruListUi';
-import getUiApiMruListRecordsByObjectApiName from '../../generated/resources/getUiApiMruListRecordsByObjectApiName';
-import getUiApiMruListUiByObjectApiName from '../../generated/resources/getUiApiMruListUiByObjectApiName';
+import { createResourceRequest as createMruListRecordsResourceRequest } from '../../generated/resources/getUiApiMruListRecordsByObjectApiName';
+import {
+    createResourceRequest as createMruListUiResourceRequest,
+    keyBuilder,
+} from '../../generated/resources/getUiApiMruListUiByObjectApiName';
 import { ListInfoRepresentation } from '../../generated/types/ListInfoRepresentation';
+import { createResourceParams as createMruListUiResourceParams } from '../../generated/adapters/getMruListUi';
 import {
     keyBuilder as ListRecordCollectionRepresentation_keyBuilder,
     ListRecordCollectionRepresentation,
@@ -139,22 +143,9 @@ export function buildInMemorySnapshot(
     fields?: ListFields
 ): Snapshot<ListUiRepresentation> {
     const listFields_ = fields || listFields(lds, config, listInfo);
-
-    const request = getUiApiMruListUiByObjectApiName({
-        urlParams: {
-            objectApiName: config.objectApiName,
-        },
-        queryParams: {
-            fields: config.fields,
-            optionalFields: config.optionalFields,
-            pageSize: config.pageSize,
-            pageToken: config.pageToken,
-            sortBy: config.sortBy,
-        },
-    });
-
+    const resourceParams = createMruListUiResourceParams(config);
     const selector: Selector = {
-        recordId: request.key,
+        recordId: keyBuilder(resourceParams),
         node: buildListUiFragment(config, listInfo, listFields_),
         variables: {},
     };
@@ -173,21 +164,8 @@ function buildNetworkSnapshot_getMruListUi(
     lds: LDS,
     config: GetMruListUiConfig
 ): Promise<Snapshot<ListUiRepresentation>> {
-    const { fields, optionalFields, pageSize, pageToken, sortBy } = config;
-    const queryParams = {
-        fields,
-        optionalFields,
-        pageSize,
-        pageToken,
-        sortBy,
-    };
-
-    let request = getUiApiMruListUiByObjectApiName({
-        urlParams: {
-            objectApiName: config.objectApiName,
-        },
-        queryParams,
-    });
+    const params = createMruListUiResourceParams(config);
+    const request = createMruListUiResourceRequest(params);
 
     return lds.dispatchResourceRequest<ListUiRepresentation>(request).then(
         response => {
@@ -260,7 +238,7 @@ function buildNetworkSnapshot_getMruListRecords(
         sortBy,
     };
 
-    const request = getUiApiMruListRecordsByObjectApiName({
+    const request = createMruListRecordsResourceRequest({
         urlParams: {
             objectApiName: config.objectApiName,
         },

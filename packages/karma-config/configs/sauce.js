@@ -7,11 +7,13 @@ const SAUCE_BROWSERS = {
         base: 'SauceLabs',
         browserName: 'chrome',
         version: 'latest',
+        idleTimeout: 180,
     },
     sl_firefox_latest: {
         base: 'SauceLabs',
         browserName: 'firefox',
         version: 'latest',
+        idleTimeout: 180,
     },
 };
 
@@ -20,16 +22,19 @@ const SAUCE_COMPAT_BROWSERS = {
         base: 'SauceLabs',
         browserName: 'internet explorer',
         version: '11.0',
+        idleTimeout: 180,
     },
     sl_chrome_compat: {
         base: 'SauceLabs',
         browserName: 'chrome',
         version: '59',
+        idleTimeout: 180,
     },
     sl_firefox_compat: {
         base: 'SauceLabs',
         browserName: 'firefox',
         version: '54',
+        idleTimeout: 180,
     },
 };
 
@@ -100,9 +105,11 @@ module.exports = function(config) {
         customLaunchers: browsers,
         concurrency: Infinity,
 
-        // Sometimes Saucelabs gets stuck.  Retry when it does, so we can get better results without
-        // manual resets
+        // Sometimes Saucelabs gets stuck.
+        // Retry when it does, so we can get better results without manual resets.
         browserDisconnectTolerance: 3,
+        browserDisconnectTimeout: 15000,
+        browserNoActivityTimeout: 60000,
 
         reporters: [...config.reporters, 'saucelabs'],
 

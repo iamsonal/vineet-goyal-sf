@@ -36,7 +36,7 @@ function ldsOverrides({ generatedDir, overridesDir }) {
         });
 
         return seed;
-    });
+    }, {});
 
     return {
         resolveId(source, importer) {

@@ -521,7 +521,7 @@ describe('refresh', () => {
         updateRefreshRecord(refreshMockRecordTwo);
 
         const configRecordUi = {
-            recordIds: [recordIdOne, recordIdTwo],
+            recordIds: [recordIdOne, recordIdTwo].sort(),
             layoutTypes: ['Full'],
             modes: ['View'],
             optionalFields: ['Account.Industry'],

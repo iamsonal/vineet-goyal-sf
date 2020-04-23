@@ -1,32 +1,32 @@
 {
-    "eTag": "6a3bd961d870f6d2cdd77fcb223329d3",
+    "eTag": "d297db2370932ab0f28a6ddcb7124067",
     "layoutUserStates": {
-        "00hT1000000FWg1IAG": {
-            "id": "00hT1000000FWg1IAG",
+        "00hxx0000019UNLAA2": {
+            "id": "00hxx0000019UNLAA2",
             "sectionUserStates": {
-                "01BT1000000RglYMAS": {
+                "01Bxx000002C4ReEAK": {
                     "collapsed": false,
-                    "id": "01BT1000000RglYMAS"
+                    "id": "01Bxx000002C4ReEAK"
                 },
-                "01BT1000000RglZMAS": {
+                "01Bxx000002C4RfEAK": {
                     "collapsed": false,
-                    "id": "01BT1000000RglZMAS"
+                    "id": "01Bxx000002C4RfEAK"
                 },
-                "01BT1000000RglaMAC": {
+                "01Bxx000002C4RgEAK": {
                     "collapsed": false,
-                    "id": "01BT1000000RglaMAC"
+                    "id": "01Bxx000002C4RgEAK"
                 },
-                "01BT1000000RglcMAC": {
+                "01Bxx000002C4RiEAK": {
                     "collapsed": false,
-                    "id": "01BT1000000RglcMAC"
+                    "id": "01Bxx000002C4RiEAK"
                 },
-                "01BT1000000RgldMAC": {
+                "01Bxx000002C4RjEAK": {
                     "collapsed": false,
-                    "id": "01BT1000000RgldMAC"
+                    "id": "01Bxx000002C4RjEAK"
                 },
-                "01BT1000000RgleMAC": {
+                "01Bxx000002C4RkEAK": {
                     "collapsed": false,
-                    "id": "01BT1000000RgleMAC"
+                    "id": "01Bxx000002C4RkEAK"
                 }
             }
         }
@@ -36,8 +36,8 @@
             "012000000000000AAA": {
                 "Full": {
                     "Edit": {
-                        "eTag": "48f5b1e8bc781f52b75f641621e48d5d",
-                        "id": "00hT1000000FWg1IAG",
+                        "eTag": "1f2b006215f7623f7d6bc60af94b0452",
+                        "id": "00hxx0000019UNLAA2",
                         "layoutType": "Full",
                         "mode": "Edit",
                         "objectApiName": "Account",
@@ -47,7 +47,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "Account Information",
-                                "id": "01BT1000000RglZMAS",
+                                "id": "01Bxx000002C4RfEAK",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -329,7 +329,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "Address Information",
-                                "id": "01BT1000000RgldMAC",
+                                "id": "01Bxx000002C4RjEAK",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -413,7 +413,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "Additional Information",
-                                "id": "01BT1000000RglaMAC",
+                                "id": "01Bxx000002C4RgEAK",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -558,7 +558,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "System Information",
-                                "id": "01BT1000000RglcMAC",
+                                "id": "01Bxx000002C4RiEAK",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -612,7 +612,7 @@
                                 "collapsible": false,
                                 "columns": 1,
                                 "heading": "Description Information",
-                                "id": "01BT1000000RgleMAC",
+                                "id": "01Bxx000002C4RkEAK",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -641,7 +641,7 @@
                                 "collapsible": false,
                                 "columns": 3,
                                 "heading": "Custom Links",
-                                "id": "01BT1000000RglYMAS",
+                                "id": "01Bxx000002C4ReEAK",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -654,7 +654,7 @@
                                                         "apiName": "Billing",
                                                         "behavior": "NewWindow",
                                                         "componentType": "CustomLink",
-                                                        "customLinkUrl": "/servlet/servlet.Integration?lid=00bT1000000QOju&eid=ENTITY_ID&ic=1",
+                                                        "customLinkUrl": "/servlet/servlet.Integration?lid=00bxx000000lHFp&eid=ENTITY_ID&ic=1",
                                                         "label": "Billing"
                                                     }
                                                 ],
@@ -826,6 +826,27 @@
                     "relationshipName": "RelatedAuthorizationFormConsents"
                 },
                 {
+                    "childObjectApiName": "BuyerAccount",
+                    "fieldName": "BuyerId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "BuyerAccounts"
+                },
+                {
+                    "childObjectApiName": "BuyerGroupMember",
+                    "fieldName": "BuyerId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "BuyerGroupMembers"
+                },
+                {
+                    "childObjectApiName": "CardPaymentMethod",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "CardPaymentMethods"
+                },
+                {
                     "childObjectApiName": "Case",
                     "fieldName": "AccountId",
                     "junctionIdListNames": [],
@@ -908,6 +929,20 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "Contracts"
+                },
+                {
+                    "childObjectApiName": "DelegatedAccount",
+                    "fieldName": "TargetId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "ManagedAccount"
+                },
+                {
+                    "childObjectApiName": "DigitalWallet",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "DigitalWallets"
                 },
                 {
                     "childObjectApiName": "DuplicateRecordItem",
@@ -1008,6 +1043,20 @@
                     "relationshipName": "PartnersTo"
                 },
                 {
+                    "childObjectApiName": "Payment",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "Payments"
+                },
+                {
+                    "childObjectApiName": "PaymentAuthorization",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "PaymentAuthorizations"
+                },
+                {
                     "childObjectApiName": "ProcessInstance",
                     "fieldName": "TargetObjectId",
                     "junctionIdListNames": [],
@@ -1048,6 +1097,20 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "RecordActionHistories"
+                },
+                {
+                    "childObjectApiName": "Refund",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "Refunds"
+                },
+                {
+                    "childObjectApiName": "RefundLinePayment",
+                    "fieldName": "AssociatedAccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "RefundLinePayments"
                 },
                 {
                     "childObjectApiName": "ResourcePreference",
@@ -1125,7 +1188,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "03ae5aee9c39de6982cc1f02f88f3698",
+            "eTag": "dd8b91372c6d7c5bff1b87abd9378b18",
             "feedEnabled": true,
             "fields": {
                 "AccountNumber": {
@@ -1760,7 +1823,7 @@
                     "relationshipName": "DandbCompany",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -1929,6 +1992,39 @@
                     "sortable": true,
                     "unique": false,
                     "updateable": true
+                },
+                "IsBuyer": {
+                    "apiName": "IsBuyer",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": false,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "Buyer Account",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": true,
+                    "unique": false,
+                    "updateable": false
                 },
                 "IsDeleted": {
                     "apiName": "IsDeleted",
@@ -2435,7 +2531,7 @@
                     "relationshipName": "OperatingHours",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2544,7 +2640,7 @@
                     "relationshipName": "Parent",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -3394,7 +3490,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://virgo-gemini-1495-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
@@ -3498,6 +3594,13 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "DeclinedEventRelations"
+                },
+                {
+                    "childObjectApiName": "DelegatedAccount",
+                    "fieldName": "ManagedById",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "ParentId"
                 },
                 {
                     "childObjectApiName": "EmailMessageRelation",
@@ -3729,7 +3832,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "d5592e025f2a1a9d073a13f3200f8a56",
+            "eTag": "e7062194c9a86f42bdc792c882b2903a",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -3798,7 +3901,7 @@
                     "relationshipName": "Account",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": false
@@ -4143,7 +4246,7 @@
                     "relationshipName": "Contact",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -4921,7 +5024,7 @@
                     "relationshipName": "Individual",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -5459,7 +5562,7 @@
                     "relationshipName": "Manager",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -5827,7 +5930,7 @@
                     "relationshipName": "Profile",
                     "required": true,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -10094,7 +10197,7 @@
                     "relationshipName": "UserRole",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -10177,16 +10280,16 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://virgo-gemini-1495-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         }
     },
     "records": {
-        "001T1000002GMKSIA4": {
+        "001xx000003GboeAAC": {
             "apiName": "Account",
             "childRelationships": {},
-            "eTag": "56bd217297eef1ab17693e8de24b31f9",
+            "eTag": "6cdf2c54b2b4d1620700ff2a4620b650",
             "fields": {
                 "AccountNumber": {
                     "displayValue": null,
@@ -10225,33 +10328,33 @@
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "5f3e9753ffaec8722da568cc1012ea76",
+                        "eTag": "3b090818cf67c6bd399308bbfa4ef8e8",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005T1000000HocOIAS"
+                                "value": "005xx000001XAN7AAO"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005T1000000HocOIAS",
-                        "lastModifiedById": "005T1000000HocOIAS",
-                        "lastModifiedDate": "2020-03-13T19:30:31.000Z",
+                        "id": "005xx000001XAN7AAO",
+                        "lastModifiedById": "005xx000001XAN7AAO",
+                        "lastModifiedDate": "2020-04-23T17:17:57.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-03-13T19:30:31.000Z",
-                        "weakEtag": 1584127831000
+                        "systemModstamp": "2020-04-23T17:17:57.000Z",
+                        "weakEtag": 1587662277000
                     }
                 },
                 "CreatedById": {
                     "displayValue": null,
-                    "value": "005T1000000HocOIAS"
+                    "value": "005xx000001XAN7AAO"
                 },
                 "CreatedDate": {
-                    "displayValue": "3/13/2020, 12:10 PM",
-                    "value": "2020-03-13T19:10:27.000Z"
+                    "displayValue": "4/23/2020, 10:02 AM",
+                    "value": "2020-04-23T17:02:18.000Z"
                 },
                 "CustomerPriority__c": {
                     "displayValue": null,
@@ -10265,10 +10368,6 @@
                     "displayValue": null,
                     "value": "(336) 222-8000"
                 },
-                "Id": {
-                    "displayValue": null,
-                    "value": "001T1000002GMKSIA4"
-                },
                 "Industry": {
                     "displayValue": "Apparel",
                     "value": "Apparel"
@@ -10278,33 +10377,33 @@
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "5f3e9753ffaec8722da568cc1012ea76",
+                        "eTag": "3b090818cf67c6bd399308bbfa4ef8e8",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005T1000000HocOIAS"
+                                "value": "005xx000001XAN7AAO"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005T1000000HocOIAS",
-                        "lastModifiedById": "005T1000000HocOIAS",
-                        "lastModifiedDate": "2020-03-13T19:30:31.000Z",
+                        "id": "005xx000001XAN7AAO",
+                        "lastModifiedById": "005xx000001XAN7AAO",
+                        "lastModifiedDate": "2020-04-23T17:17:57.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-03-13T19:30:31.000Z",
-                        "weakEtag": 1584127831000
+                        "systemModstamp": "2020-04-23T17:17:57.000Z",
+                        "weakEtag": 1587662277000
                     }
                 },
                 "LastModifiedById": {
                     "displayValue": null,
-                    "value": "005T1000000HocOIAS"
+                    "value": "005xx000001XAN7AAO"
                 },
                 "LastModifiedDate": {
-                    "displayValue": "3/13/2020, 12:10 PM",
-                    "value": "2020-03-13T19:10:27.000Z"
+                    "displayValue": "4/23/2020, 10:02 AM",
+                    "value": "2020-04-23T17:02:18.000Z"
                 },
                 "Name": {
                     "displayValue": null,
@@ -10323,29 +10422,29 @@
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "5f3e9753ffaec8722da568cc1012ea76",
+                        "eTag": "3b090818cf67c6bd399308bbfa4ef8e8",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005T1000000HocOIAS"
+                                "value": "005xx000001XAN7AAO"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005T1000000HocOIAS",
-                        "lastModifiedById": "005T1000000HocOIAS",
-                        "lastModifiedDate": "2020-03-13T19:30:31.000Z",
+                        "id": "005xx000001XAN7AAO",
+                        "lastModifiedById": "005xx000001XAN7AAO",
+                        "lastModifiedDate": "2020-04-23T17:17:57.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-03-13T19:30:31.000Z",
-                        "weakEtag": 1584127831000
+                        "systemModstamp": "2020-04-23T17:17:57.000Z",
+                        "weakEtag": 1587662277000
                     }
                 },
                 "OwnerId": {
                     "displayValue": null,
-                    "value": "005T1000000HocOIAS"
+                    "value": "005xx000001XAN7AAO"
                 },
                 "Ownership": {
                     "displayValue": "Public",
@@ -10368,8 +10467,8 @@
                     "value": "Warm"
                 },
                 "SLAExpirationDate__c": {
-                    "displayValue": "4/9/2019",
-                    "value": "2019-04-09"
+                    "displayValue": "5/20/2019",
+                    "value": "2019-05-20"
                 },
                 "SLASerialNumber__c": {
                     "displayValue": null,
@@ -10424,13 +10523,13 @@
                     "value": "www.burlington.com"
                 }
             },
-            "id": "001T1000002GMKSIA4",
-            "lastModifiedById": "005T1000000HocOIAS",
-            "lastModifiedDate": "2020-03-13T19:10:27.000Z",
+            "id": "001xx000003GboeAAC",
+            "lastModifiedById": "005xx000001XAN7AAO",
+            "lastModifiedDate": "2020-04-23T17:02:18.000Z",
             "recordTypeId": "012000000000000AAA",
             "recordTypeInfo": null,
-            "systemModstamp": "2020-03-13T19:10:27.000Z",
-            "weakEtag": 1584126627000
+            "systemModstamp": "2020-04-23T17:02:18.000Z",
+            "weakEtag": 1587661338000
         }
     }
 }

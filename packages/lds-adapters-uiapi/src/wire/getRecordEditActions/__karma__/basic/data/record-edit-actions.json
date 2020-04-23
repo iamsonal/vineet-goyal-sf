@@ -1,22 +1,22 @@
 {
     "actions": {
-        "001xx000003GYvcAAG": {
+        "001xx000003GboeAAC": {
             "actions": [
                 {
                     "actionListContext": "RecordEdit",
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "SaveEdit",
-                    "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::RecordEdit:Desktop:StandardButton:SaveEdit",
-                    "iconUrl": "http://vincechen-ltm.internal.salesforce.com:6109/img/icon/t4v35/action/new_custom19_120.png",
-                    "id": "0JVxx0000000464GAA",
+                    "externalId": "00Dxx0000006Izj:001xx000003GboeAAC::RecordEdit:Desktop:StandardButton:SaveEdit",
+                    "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_custom19_120.png",
+                    "id": "0JVxx0000000142GAA",
                     "isMassAction": "false",
                     "label": "Save",
                     "primaryColor": null,
                     "relatedListRecordId": null,
                     "relatedSourceObject": null,
                     "section": "Page",
-                    "sourceObject": "001xx000003GYvcAAG",
+                    "sourceObject": "001xx000003GboeAAC",
                     "subtype": null,
                     "targetObject": "Account",
                     "targetUrl": null,
@@ -27,16 +27,16 @@
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "SaveAndNew",
-                    "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::RecordEdit:Desktop:StandardButton:SaveAndNew",
-                    "iconUrl": "http://vincechen-ltm.internal.salesforce.com:6109/img/icon/t4v35/action/new_custom19_120.png",
-                    "id": "0JVxx0000000465GAA",
+                    "externalId": "00Dxx0000006Izj:001xx000003GboeAAC::RecordEdit:Desktop:StandardButton:SaveAndNew",
+                    "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_custom19_120.png",
+                    "id": "0JVxx0000000143GAA",
                     "isMassAction": "false",
                     "label": "Save &amp; New",
                     "primaryColor": null,
                     "relatedListRecordId": null,
                     "relatedSourceObject": null,
                     "section": "Page",
-                    "sourceObject": "001xx000003GYvcAAG",
+                    "sourceObject": "001xx000003GboeAAC",
                     "subtype": null,
                     "targetObject": "Account",
                     "targetUrl": null,
@@ -47,16 +47,16 @@
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "CancelEdit",
-                    "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::RecordEdit:Desktop:StandardButton:CancelEdit",
-                    "iconUrl": "http://vincechen-ltm.internal.salesforce.com:6109/img/icon/t4v35/action/new_custom19_120.png",
-                    "id": "0JVxx0000000466GAA",
+                    "externalId": "00Dxx0000006Izj:001xx000003GboeAAC::RecordEdit:Desktop:StandardButton:CancelEdit",
+                    "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_custom19_120.png",
+                    "id": "0JVxx0000000144GAA",
                     "isMassAction": "false",
                     "label": "Cancel",
                     "primaryColor": null,
                     "relatedListRecordId": null,
                     "relatedSourceObject": null,
                     "section": "Page",
-                    "sourceObject": "001xx000003GYvcAAG",
+                    "sourceObject": "001xx000003GboeAAC",
                     "subtype": null,
                     "targetObject": "Account",
                     "targetUrl": null,
@@ -64,9 +64,9 @@
                 }
             ],
             "links": [],
-            "url": "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG/record-edit"
+            "url": "/services/data/v50.0/ui-api/actions/record/001xx000003GboeAAC/record-edit"
         }
     },
-    "eTag": "314927adaad05a72b33ebb45db742493",
-    "url": "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG/record-edit"
+    "eTag": "ddd70ae49903390aa828f5336fe97200",
+    "url": "/services/data/v50.0/ui-api/actions/record/001xx000003GboeAAC/record-edit"
 }

@@ -1,18 +1,18 @@
 {
     "apiName": "User",
     "childRelationships": {},
-    "eTag": "5f3e9753ffaec8722da568cc1012ea76",
+    "eTag": "8c5e626ab3a99547aae0371f6e683aec",
     "fields": {
         "Name": {
             "displayValue": null,
             "value": "User User"
         }
     },
-    "id": "005T1000000HocOIAS",
-    "lastModifiedById": "005T1000000HocOIAS",
-    "lastModifiedDate": "2020-03-13T19:30:31.000Z",
+    "id": "005xx000001XAN7AAO",
+    "lastModifiedById": "005xx000001XAN7AAO",
+    "lastModifiedDate": "2020-04-23T17:17:57.000Z",
     "recordTypeId": null,
     "recordTypeInfo": null,
-    "systemModstamp": "2020-03-13T19:30:31.000Z",
-    "weakEtag": 1584127831000
+    "systemModstamp": "2020-04-23T17:17:57.000Z",
+    "weakEtag": 1587662277000
 }

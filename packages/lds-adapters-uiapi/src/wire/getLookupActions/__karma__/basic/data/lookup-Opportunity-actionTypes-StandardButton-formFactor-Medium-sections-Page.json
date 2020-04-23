@@ -7,9 +7,9 @@
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "CreateFromLookup",
-                    "externalId": "00Dxx0000006Hih:Opportunity::Lookup:Tablet:StandardButton:CreateFromLookup",
-                    "iconUrl": "http://broth-virgo-4719-dev-ed.localhost.internal.salesforce.com:6109/img/icon/t4v35/action/new_120.png",
-                    "id": "0JVxx0000000350GAA",
+                    "externalId": "00Dxx0000006Izj:Opportunity::Lookup:Tablet:StandardButton:CreateFromLookup",
+                    "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_120.png",
+                    "id": "0JVxx0000000107GAA",
                     "isMassAction": "false",
                     "label": "New",
                     "primaryColor": "33BCE7",
@@ -24,9 +24,9 @@
                 }
             ],
             "links": [],
-            "url": "/services/data/v49.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
+            "url": "/services/data/v50.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
         }
     },
-    "eTag": "c3a06af6135ee9ffd4cda3f810b49b16",
-    "url": "/services/data/v49.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
+    "eTag": "4ef58a304b5b3e32b8525a5b78fad817",
+    "url": "/services/data/v50.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
 }

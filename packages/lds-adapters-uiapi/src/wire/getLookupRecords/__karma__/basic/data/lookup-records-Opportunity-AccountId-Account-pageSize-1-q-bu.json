@@ -1,7 +1,7 @@
 {
     "count": 1,
     "currentPageToken": null,
-    "currentPageUrl": "/services/data/v49.0/ui-api/lookups/Opportunity/AccountId/Account?q=Bur&searchType=TypeAhead&page=1&pageSize=10",
+    "currentPageUrl": "/services/data/v50.0/ui-api/lookups/Opportunity/AccountId/Account?q=Bur&searchType=TypeAhead&page=1&pageSize=10",
     "nextPageToken": null,
     "nextPageUrl": null,
     "previousPageToken": null,

@@ -44,13 +44,13 @@
                 }
             ],
             "links": [
-                "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG/record-edit",
-                "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG/related-list",
-                "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG/related-list-record/${relatedRecordId}"
+                "/services/data/v50.0/ui-api/actions/record/001xx000003GYvcAAG/record-edit",
+                "/services/data/v50.0/ui-api/actions/record/001xx000003GYvcAAG/related-list",
+                "/services/data/v50.0/ui-api/actions/record/001xx000003GYvcAAG/related-list-record/${relatedRecordId}"
             ],
-            "url": "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG?sections=SingleActionLinks"
+            "url": "/services/data/v50.0/ui-api/actions/record/001xx000003GYvcAAG?sections=SingleActionLinks"
         }
     },
     "eTag": "af0d1e2d9008fdcafcf8281c38cfbb09",
-    "url": "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG?sections=SingleActionLinks"
+    "url": "/services/data/v50.0/ui-api/actions/record/001xx000003GYvcAAG?sections=SingleActionLinks"
 }

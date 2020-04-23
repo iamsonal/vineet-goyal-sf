@@ -217,7 +217,7 @@
     "defaultRecordTypeId": "012000000000000AAA",
     "deletable": true,
     "dependentFields": {},
-    "eTag": "1192321486473c588a7b90340832b9fe",
+    "eTag": "dfebe0bdb0f6a115fd23fa80b8f87e05",
     "feedEnabled": true,
     "fields": {
         "AccountId": {
@@ -253,7 +253,7 @@
             "relationshipName": "Account",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": true,
+            "searchPrefilterable": false,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -324,7 +324,7 @@
             "relationshipName": "Campaign",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": true,
+            "searchPrefilterable": false,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -1471,7 +1471,7 @@
             "relationshipName": "Pricebook2",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": true,
+            "searchPrefilterable": false,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -1694,7 +1694,7 @@
     "searchable": true,
     "themeInfo": {
         "color": "FCB95B",
-        "iconUrl": "https://virgo-gemini-1495-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/opportunity_120.png"
+        "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/opportunity_120.png"
     },
     "updateable": true
 }

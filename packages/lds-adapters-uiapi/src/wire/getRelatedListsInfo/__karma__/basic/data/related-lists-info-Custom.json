@@ -29,7 +29,7 @@
             "objectApiName": "CwcCustom01__c",
             "parentFieldApiName": "Id",
             "relatedListId": "CwcCustom01s__r",
-            "relatedListInfoUrl": "/services/data/v49.0/ui-api/related-list-info/CwcCustom00__c/CwcCustom01s__r?recordTypeId=012000000000000AAA",
+            "relatedListInfoUrl": "/services/data/v50.0/ui-api/related-list-info/CwcCustom00__c/CwcCustom01s__r?recordTypeId=012000000000000AAA",
             "themeInfo": {
                 "color": "e46fbe",
                 "iconUrl": "https://na44.stmfa.stm.salesforce.com/img/icon/t4v35/custom/custom25_120.png"

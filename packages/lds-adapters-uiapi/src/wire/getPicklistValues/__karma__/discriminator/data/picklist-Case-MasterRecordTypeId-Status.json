@@ -10,7 +10,7 @@
         "value": "New"
     },
     "eTag": "ffca9e9446bd3e36ecef36b85abb82e9",
-    "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Status",
+    "url": "/services/data/v50.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Status",
     "values": [
         {
             "attributes": {

@@ -1,6 +1,6 @@
 {
-    "eTag": "cd12d3db26958fd0ac6bd3d486161894",
-    "id": "00hT1000000FWg1IAG",
+    "eTag": "9d48b5f58fbe2b52b2244318365abfbc",
+    "id": "00hxx0000019UNLAA2",
     "layoutType": "Full",
     "mode": "View",
     "objectApiName": "Account",
@@ -10,7 +10,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Account Information",
-            "id": "01BT1000000RglZMAS",
+            "id": "01Bxx000002C4RfEAK",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -292,7 +292,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Address Information",
-            "id": "01BT1000000RgldMAC",
+            "id": "01Bxx000002C4RjEAK",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -376,7 +376,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Additional Information",
-            "id": "01BT1000000RglaMAC",
+            "id": "01Bxx000002C4RgEAK",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -521,7 +521,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "System Information",
-            "id": "01BT1000000RglcMAC",
+            "id": "01Bxx000002C4RiEAK",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -575,7 +575,7 @@
             "collapsible": false,
             "columns": 1,
             "heading": "Description Information",
-            "id": "01BT1000000RgleMAC",
+            "id": "01Bxx000002C4RkEAK",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -604,7 +604,7 @@
             "collapsible": false,
             "columns": 3,
             "heading": "Custom Links",
-            "id": "01BT1000000RglYMAS",
+            "id": "01Bxx000002C4ReEAK",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -617,7 +617,7 @@
                                     "apiName": "Billing",
                                     "behavior": "NewWindow",
                                     "componentType": "CustomLink",
-                                    "customLinkUrl": "/servlet/servlet.Integration?lid=00bT1000000QOju&eid=ENTITY_ID&ic=1",
+                                    "customLinkUrl": "/servlet/servlet.Integration?lid=00bxx000000lHFp&eid=ENTITY_ID&ic=1",
                                     "label": "Billing"
                                 }
                             ],

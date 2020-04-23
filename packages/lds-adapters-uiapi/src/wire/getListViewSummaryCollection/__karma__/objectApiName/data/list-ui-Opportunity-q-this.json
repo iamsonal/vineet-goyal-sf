@@ -1,20 +1,20 @@
 {
     "count": 2,
     "currentPageToken": "0",
-    "currentPageUrl": "/services/data/v49.0/ui-api/list-ui/Opportunity?pageSize=20&pageToken=0&q=this",
-    "eTag": "61e073613ed2a42181cea71056f5ebbe",
+    "currentPageUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity?pageSize=20&pageToken=0&q=this",
+    "eTag": "ad2d93deb5794ff8d9b437b1b81370f6",
     "lists": [
         {
             "apiName": "ClosingThisMonth",
-            "id": "00Bxx0000029YhtEAE",
+            "id": "00Bxx0000029aF3EAI",
             "label": "Closing This Month",
-            "listUiUrl": "/services/data/v49.0/ui-api/list-ui/Opportunity/ClosingThisMonth"
+            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/ClosingThisMonth"
         },
         {
             "apiName": "NewThisWeek",
-            "id": "00Bxx0000029YiSEAU",
+            "id": "00Bxx0000029aFcEAI",
             "label": "New This Week",
-            "listUiUrl": "/services/data/v49.0/ui-api/list-ui/Opportunity/NewThisWeek"
+            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/NewThisWeek"
         }
     ],
     "nextPageToken": null,

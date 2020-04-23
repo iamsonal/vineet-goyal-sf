@@ -124,6 +124,27 @@
                         "relationshipName": "RelatedAuthorizationFormConsents"
                     },
                     {
+                        "childObjectApiName": "BuyerAccount",
+                        "fieldName": "BuyerId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "BuyerAccounts"
+                    },
+                    {
+                        "childObjectApiName": "BuyerGroupMember",
+                        "fieldName": "BuyerId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "BuyerGroupMembers"
+                    },
+                    {
+                        "childObjectApiName": "CardPaymentMethod",
+                        "fieldName": "AccountId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "CardPaymentMethods"
+                    },
+                    {
                         "childObjectApiName": "Case",
                         "fieldName": "AccountId",
                         "junctionIdListNames": [],
@@ -166,6 +187,13 @@
                         "relationshipName": "Contacts"
                     },
                     {
+                        "childObjectApiName": "ContactPointAddress",
+                        "fieldName": "ParentId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "ContactPointAddresses"
+                    },
+                    {
                         "childObjectApiName": "ContactPointEmail",
                         "fieldName": "ParentId",
                         "junctionIdListNames": [],
@@ -201,6 +229,20 @@
                         "relationshipName": "Contracts"
                     },
                     {
+                        "childObjectApiName": "DelegatedAccount",
+                        "fieldName": "TargetId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "ManagedAccount"
+                    },
+                    {
+                        "childObjectApiName": "DigitalWallet",
+                        "fieldName": "AccountId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "DigitalWallets"
+                    },
+                    {
                         "childObjectApiName": "DuplicateRecordItem",
                         "fieldName": "RecordId",
                         "junctionIdListNames": [],
@@ -233,7 +275,7 @@
                         "fieldName": "AccountId",
                         "junctionIdListNames": [],
                         "junctionReferenceTo": [],
-                        "relationshipName": "ExpenseAccounts"
+                        "relationshipName": "Expenses"
                     },
                     {
                         "childObjectApiName": "MaintenancePlan",
@@ -299,6 +341,20 @@
                         "relationshipName": "PartnersTo"
                     },
                     {
+                        "childObjectApiName": "Payment",
+                        "fieldName": "AccountId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "Payments"
+                    },
+                    {
+                        "childObjectApiName": "PaymentAuthorization",
+                        "fieldName": "AccountId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "PaymentAuthorizations"
+                    },
+                    {
                         "childObjectApiName": "ProcessInstance",
                         "fieldName": "TargetObjectId",
                         "junctionIdListNames": [],
@@ -339,6 +395,20 @@
                         "junctionIdListNames": [],
                         "junctionReferenceTo": [],
                         "relationshipName": "RecordActionHistories"
+                    },
+                    {
+                        "childObjectApiName": "Refund",
+                        "fieldName": "AccountId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "Refunds"
+                    },
+                    {
+                        "childObjectApiName": "RefundLinePayment",
+                        "fieldName": "AssociatedAccountId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "RefundLinePayments"
                     },
                     {
                         "childObjectApiName": "ResourcePreference",
@@ -416,7 +486,7 @@
                 "defaultRecordTypeId": "012000000000000AAA",
                 "deletable": true,
                 "dependentFields": {},
-                "eTag": "a1cd8b305e86ee6e127f9538080ae73e",
+                "eTag": "dd8b91372c6d7c5bff1b87abd9378b18",
                 "feedEnabled": true,
                 "fields": {
                     "AccountNumber": {
@@ -1220,6 +1290,39 @@
                         "sortable": true,
                         "unique": false,
                         "updateable": true
+                    },
+                    "IsBuyer": {
+                        "apiName": "IsBuyer",
+                        "calculated": false,
+                        "compound": false,
+                        "compoundComponentName": null,
+                        "compoundFieldName": null,
+                        "controllerName": null,
+                        "controllingFields": [],
+                        "createable": false,
+                        "custom": false,
+                        "dataType": "Boolean",
+                        "extraTypeInfo": null,
+                        "filterable": true,
+                        "filteredLookupInfo": null,
+                        "highScaleNumber": false,
+                        "htmlFormatted": false,
+                        "inlineHelpText": null,
+                        "label": "Buyer Account",
+                        "length": 0,
+                        "nameField": false,
+                        "polymorphicForeignKey": false,
+                        "precision": 0,
+                        "reference": false,
+                        "referenceTargetField": null,
+                        "referenceToInfos": [],
+                        "relationshipName": null,
+                        "required": true,
+                        "scale": 0,
+                        "searchPrefilterable": false,
+                        "sortable": true,
+                        "unique": false,
+                        "updateable": false
                     },
                     "IsDeleted": {
                         "apiName": "IsDeleted",
@@ -2685,7 +2788,7 @@
                 "searchable": true,
                 "themeInfo": {
                     "color": "7F8DE1",
-                    "iconUrl": "http://broth-virgo-4719-dev-ed.localhost.internal.salesforce.com:6109/img/icon/t4v35/standard/account_120.png"
+                    "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
                 },
                 "updateable": true
             },
@@ -2911,7 +3014,7 @@
                 "defaultRecordTypeId": "012000000000000AAA",
                 "deletable": true,
                 "dependentFields": {},
-                "eTag": "0c73c5b7d04cc66d390f1964a7d7bc58",
+                "eTag": "dfebe0bdb0f6a115fd23fa80b8f87e05",
                 "feedEnabled": true,
                 "fields": {
                     "AccountId": {
@@ -4388,7 +4491,7 @@
                 "searchable": true,
                 "themeInfo": {
                     "color": "FCB95B",
-                    "iconUrl": "http://broth-virgo-4719-dev-ed.localhost.internal.salesforce.com:6109/img/icon/t4v35/standard/opportunity_120.png"
+                    "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/opportunity_120.png"
                 },
                 "updateable": true
             },

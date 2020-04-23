@@ -1,18 +1,18 @@
 {
-    "apiName": "Opportunity",
+    "apiName": "Account",
     "childRelationships": {},
-    "eTag": "38b5284e8e6eded90fb0093347d17a22",
+    "eTag": "fed39650e5cf5409e4b332c397560b20",
     "fields": {
+        "Fax": {
+            "displayValue": null,
+            "value": "(336) 222-8000"
+        },
         "Name": {
             "displayValue": null,
-            "value": "Burlington Textiles Weaving Plant Generator"
-        },
-        "OwnerId": {
-            "displayValue": null,
-            "value": "005xx000001XAN7AAO"
+            "value": "Burlington Textiles Corp of America"
         }
     },
-    "id": "006xx000001a6HmAAI",
+    "id": "001xx000003GboeAAC",
     "lastModifiedById": "005xx000001XAN7AAO",
     "lastModifiedDate": "2020-04-23T17:02:18.000Z",
     "recordTypeId": "012000000000000AAA",

@@ -44,7 +44,7 @@
                 },
                 {
                     "actionListContext": "Record",
-                    "actionTarget": "/services/data/v49.0/quickActions/NewTask/describe",
+                    "actionTarget": "/services/data/v50.0/quickActions/NewTask/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.NewTask",
                     "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::Record:Desktop:09Dxx0000004CbD",
@@ -64,7 +64,7 @@
                 },
                 {
                     "actionListContext": "Record",
-                    "actionTarget": "/services/data/v49.0/quickActions/NewEvent/describe",
+                    "actionTarget": "/services/data/v50.0/quickActions/NewEvent/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.NewEvent",
                     "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::Record:Desktop:09Dxx0000004CbF",
@@ -144,7 +144,7 @@
                 },
                 {
                     "actionListContext": "Record",
-                    "actionTarget": "/services/data/v49.0/quickActions/SendEmail/describe",
+                    "actionTarget": "/services/data/v50.0/quickActions/SendEmail/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.SendEmail",
                     "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::Record:Desktop:09Dxx0000004CbG",
@@ -164,7 +164,7 @@
                 },
                 {
                     "actionListContext": "Record",
-                    "actionTarget": "/services/data/v49.0/quickActions/NewContact/describe",
+                    "actionTarget": "/services/data/v50.0/quickActions/NewContact/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.NewContact",
                     "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::Record:Desktop:09Dxx0000004Cb4",
@@ -184,7 +184,7 @@
                 },
                 {
                     "actionListContext": "Record",
-                    "actionTarget": "/services/data/v49.0/quickActions/NewCase/describe",
+                    "actionTarget": "/services/data/v50.0/quickActions/NewCase/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.NewCase",
                     "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::Record:Desktop:09Dxx0000004Cb7",
@@ -204,7 +204,7 @@
                 },
                 {
                     "actionListContext": "Record",
-                    "actionTarget": "/services/data/v49.0/quickActions/LogACall/describe",
+                    "actionTarget": "/services/data/v50.0/quickActions/LogACall/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.LogACall",
                     "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::Record:Desktop:09Dxx0000004CbE",
@@ -224,7 +224,7 @@
                 },
                 {
                     "actionListContext": "Record",
-                    "actionTarget": "/services/data/v49.0/quickActions/NewNote/describe",
+                    "actionTarget": "/services/data/v50.0/quickActions/NewNote/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.NewNote",
                     "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::Record:Desktop:09Dxx0000004Cb9",
@@ -244,7 +244,7 @@
                 },
                 {
                     "actionListContext": "Record",
-                    "actionTarget": "/services/data/v49.0/quickActions/NewOpportunity/describe",
+                    "actionTarget": "/services/data/v50.0/quickActions/NewOpportunity/describe",
                     "actionTargetType": "Describe",
                     "apiName": "Global.NewOpportunity",
                     "externalId": "00Dxx0000006Hih:001xx000003GYvcAAG::Record:Desktop:09Dxx0000004Cb6",
@@ -504,13 +504,13 @@
                 }
             ],
             "links": [
-                "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG/record-edit",
-                "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG/related-list",
-                "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG/related-list-record/${relatedRecordId}"
+                "/services/data/v50.0/ui-api/actions/record/001xx000003GYvcAAG/record-edit",
+                "/services/data/v50.0/ui-api/actions/record/001xx000003GYvcAAG/related-list",
+                "/services/data/v50.0/ui-api/actions/record/001xx000003GYvcAAG/related-list-record/${relatedRecordId}"
             ],
-            "url": "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG"
+            "url": "/services/data/v50.0/ui-api/actions/record/001xx000003GYvcAAG"
         }
     },
     "eTag": "39c298589491067963026eafe35fec28",
-    "url": "/services/data/v49.0/ui-api/actions/record/001xx000003GYvcAAG"
+    "url": "/services/data/v50.0/ui-api/actions/record/001xx000003GYvcAAG"
 }

@@ -5,7 +5,7 @@
             "controllerValues": {},
             "defaultValue": null,
             "eTag": "b6c1d63b0f2489aaf0633e6edbee3c64",
-            "url": "/services/data/v49.0/ui-api/object-info/Opportunity/picklist-values/012000000000000AAA/DeliveryInstallationStatus__c",
+            "url": "/services/data/v50.0/ui-api/object-info/Opportunity/picklist-values/012000000000000AAA/DeliveryInstallationStatus__c",
             "values": [
                 {
                     "attributes": null,
@@ -31,7 +31,7 @@
             "controllerValues": {},
             "defaultValue": null,
             "eTag": "b9aa7b56b438787c017e7027e54fa794",
-            "url": "/services/data/v49.0/ui-api/object-info/Opportunity/picklist-values/012000000000000AAA/ForecastCategory",
+            "url": "/services/data/v50.0/ui-api/object-info/Opportunity/picklist-values/012000000000000AAA/ForecastCategory",
             "values": [
                 {
                     "attributes": null,
@@ -69,7 +69,7 @@
             "controllerValues": {},
             "defaultValue": null,
             "eTag": "66c729e9c7b2f2d6917e26c030cb6623",
-            "url": "/services/data/v49.0/ui-api/object-info/Opportunity/picklist-values/012000000000000AAA/ForecastCategoryName",
+            "url": "/services/data/v50.0/ui-api/object-info/Opportunity/picklist-values/012000000000000AAA/ForecastCategoryName",
             "values": [
                 {
                     "attributes": null,
@@ -107,7 +107,7 @@
             "controllerValues": {},
             "defaultValue": null,
             "eTag": "193cf615f74495c9e9596a67eb88ac24",
-            "url": "/services/data/v49.0/ui-api/object-info/Opportunity/picklist-values/012000000000000AAA/LeadSource",
+            "url": "/services/data/v50.0/ui-api/object-info/Opportunity/picklist-values/012000000000000AAA/LeadSource",
             "values": [
                 {
                     "attributes": null,
@@ -145,7 +145,7 @@
             "controllerValues": {},
             "defaultValue": null,
             "eTag": "d0a7586a5818fba5a939e56abc65ce93",
-            "url": "/services/data/v49.0/ui-api/object-info/Opportunity/picklist-values/012000000000000AAA/StageName",
+            "url": "/services/data/v50.0/ui-api/object-info/Opportunity/picklist-values/012000000000000AAA/StageName",
             "values": [
                 {
                     "attributes": {
@@ -273,7 +273,7 @@
             "controllerValues": {},
             "defaultValue": null,
             "eTag": "8a1603747dd7fb0a212e3042772c4335",
-            "url": "/services/data/v49.0/ui-api/object-info/Opportunity/picklist-values/012000000000000AAA/Type",
+            "url": "/services/data/v50.0/ui-api/object-info/Opportunity/picklist-values/012000000000000AAA/Type",
             "values": [
                 {
                     "attributes": null,

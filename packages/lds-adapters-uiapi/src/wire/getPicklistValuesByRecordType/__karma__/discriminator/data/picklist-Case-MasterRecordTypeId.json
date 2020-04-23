@@ -5,7 +5,7 @@
             "controllerValues": {},
             "defaultValue": null,
             "eTag": "516c79484e50ed761975932f284e7073",
-            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Origin",
+            "url": "/services/data/v50.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Origin",
             "values": [
                 {
                     "attributes": null,
@@ -31,7 +31,7 @@
             "controllerValues": {},
             "defaultValue": null,
             "eTag": "5114eda1a059d33126e0e1c6f27d7c79",
-            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/PotentialLiability__c",
+            "url": "/services/data/v50.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/PotentialLiability__c",
             "values": [
                 {
                     "attributes": null,
@@ -56,7 +56,7 @@
                 "value": "Medium"
             },
             "eTag": "6a1d5f21c366ed931b5397d10b9d55fc",
-            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Priority",
+            "url": "/services/data/v50.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Priority",
             "values": [
                 {
                     "attributes": null,
@@ -82,7 +82,7 @@
             "controllerValues": {},
             "defaultValue": null,
             "eTag": "ac687bc44e125ad3266ee81f6328855a",
-            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Product__c",
+            "url": "/services/data/v50.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Product__c",
             "values": [
                 {
                     "attributes": null,
@@ -144,7 +144,7 @@
             "controllerValues": {},
             "defaultValue": null,
             "eTag": "8ed9ccb9093cb0b73af9d930a2af7041",
-            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Reason",
+            "url": "/services/data/v50.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Reason",
             "values": [
                 {
                     "attributes": null,
@@ -194,7 +194,7 @@
             "controllerValues": {},
             "defaultValue": null,
             "eTag": "5114eda1a059d33126e0e1c6f27d7c79",
-            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/SLAViolation__c",
+            "url": "/services/data/v50.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/SLAViolation__c",
             "values": [
                 {
                     "attributes": null,
@@ -222,7 +222,7 @@
                 "value": "New"
             },
             "eTag": "ffca9e9446bd3e36ecef36b85abb82e9",
-            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Status",
+            "url": "/services/data/v50.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Status",
             "values": [
                 {
                     "attributes": {
@@ -266,7 +266,7 @@
             "controllerValues": {},
             "defaultValue": null,
             "eTag": "2951043f50f2ee49eff4a684dcbd706f",
-            "url": "/services/data/v49.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Type",
+            "url": "/services/data/v50.0/ui-api/object-info/Case/picklist-values/012000000000000AAA/Type",
             "values": [
                 {
                     "attributes": null,

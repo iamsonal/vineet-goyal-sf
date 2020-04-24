@@ -71,11 +71,17 @@ function mockGetNetwork(keys, mockData) {
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+function extractParamsFromMockData(mockData) {
+    return {
+        parentObjectApiName: mockData.listReference.parentObjectApiName,
+        recordTypeId: mockData.listReference.recordTypeId,
+        relatedListId: mockData.listReference.relatedListId,
+    };
+}
+
 describe('updateRelatedListInfo', () => {
     it('passes all parameters to HTTP request, and sends the correct response', async () => {
-        const mockData = getMock(
-            'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r'
-        );
+        const mockData = getMock('related-list-info-Custom');
         const keyConfig = {
             parentObjectApiName: mockData.listReference.parentObjectApiName,
             recordTypeId: mockData.listReference.recordTypeId,
@@ -107,19 +113,11 @@ describe('updateRelatedListInfo', () => {
 
     // excluded until the issue regarding updateRLInfo incorrectly inspecting the cache is resolved
     it('properly emits when data has been updated', async () => {
-        const mockData = getMock(
-            'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r'
-        );
-        const mockUpdatedResponse = getMock(
-            'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r'
-        );
+        const mockData = getMock('related-list-info-Custom');
+        const mockUpdatedResponse = getMock('related-list-info-Custom');
         mockUpdatedResponse.userPreferences.columnWrap.Name = true;
 
-        const keyConfig = {
-            parentObjectApiName: mockData.listReference.parentObjectApiName,
-            recordTypeId: mockData.listReference.recordTypeId,
-            relatedListId: mockData.listReference.relatedListId,
-        };
+        const keyConfig = extractParamsFromMockData(mockData);
 
         const updateConfig = {
             orderedByInfo: [],
@@ -149,16 +147,10 @@ describe('updateRelatedListInfo', () => {
 
     // excluded until the issue regarding updateRLInfo incorrectly inspecting the cache is resolved
     it('hits the network twice when two update calls are made', async () => {
-        const mockData = getMock(
-            'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r'
-        );
-        const mockFirstUpdate = getMock(
-            'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r'
-        );
+        const mockData = getMock('related-list-info-Custom');
+        const mockFirstUpdate = getMock('related-list-info-Custom');
         mockFirstUpdate.userPreferences.columnWrap.Name = true;
-        const mockSecondUpdate = getMock(
-            'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r'
-        );
+        const mockSecondUpdate = getMock('related-list-info-Custom');
         mockSecondUpdate.userPreferences.columnWidths.Name = 10;
 
         const updateConfig = {
@@ -190,11 +182,7 @@ describe('updateRelatedListInfo', () => {
             },
         };
 
-        const keyConfig = {
-            parentObjectApiName: mockData.listReference.parentObjectApiName,
-            recordTypeId: mockData.listReference.recordTypeId,
-            relatedListId: mockData.listReference.relatedListId,
-        };
+        const keyConfig = extractParamsFromMockData(mockData);
 
         mockUpdateNetwork(keyConfig, updateConfig, mockFirstUpdate);
         mockUpdateNetwork(keyConfig, updateSecondConfig, mockSecondUpdate);
@@ -206,18 +194,10 @@ describe('updateRelatedListInfo', () => {
     });
 
     it('updates values on elements when an update is made', async () => {
-        const mockData = getMock(
-            'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r'
-        );
-        const mockUpdateData = getMock(
-            'related-list-info-CObjParent__c -012000000000000AAA -CObjChilds__r-updated'
-        );
+        const mockData = getMock('related-list-info-Custom');
+        const mockUpdateData = getMock('related-list-info-updated');
 
-        const keyConfig = {
-            parentObjectApiName: mockData.listReference.parentObjectApiName,
-            recordTypeId: mockData.listReference.recordTypeId,
-            relatedListId: mockData.listReference.relatedListId,
-        };
+        const keyConfig = extractParamsFromMockData(mockData);
         const updateParams = {
             orderedByInfo: [],
             userPreferences: {

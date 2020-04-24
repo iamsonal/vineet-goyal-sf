@@ -35,8 +35,16 @@ function mockNetwork(config, mockData) {
 }
 
 // TODO W-6741077 Add currentPageUrl back to selectors once it is returned in the uiapi
-function stripCurrentPageUrl(mockData) {
+function stripExtraFieldsAndPageUrl(mockData) {
     delete mockData.currentPageUrl;
+
+    mockData.records.forEach(record => {
+        Object.keys(record.fields).forEach(key => {
+            if (!(mockData.fields.indexOf(key) > -1)) {
+                delete record.fields[key];
+            }
+        });
+    });
     return mockData;
 }
 
@@ -56,8 +64,9 @@ describe('basic', () => {
             fields: mockData.fields,
         };
         const element = await setupElement(props, RelatedListBasic);
-
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripCurrentPageUrl(mockData));
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
+            stripExtraFieldsAndPageUrl(mockData)
+        );
     });
 
     it('gets data with no records', async () => {
@@ -76,7 +85,9 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripCurrentPageUrl(mockData));
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
+            stripExtraFieldsAndPageUrl(mockData)
+        );
     });
 
     it('refreshes related list records', async () => {
@@ -102,13 +113,15 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripCurrentPageUrl(mockData));
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
+            stripExtraFieldsAndPageUrl(mockData)
+        );
         expect(element.pushCount()).toBe(1);
 
         await element.refresh();
 
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripCurrentPageUrl(refreshedMockData)
+            stripExtraFieldsAndPageUrl(refreshedMockData)
         );
         expect(element.pushCount()).toBe(2);
     });
@@ -134,7 +147,9 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripCurrentPageUrl(mockData));
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
+            stripExtraFieldsAndPageUrl(mockData)
+        );
         expect(element.pushCount()).toBe(1);
 
         // Delete the record from lds, our component should refresh automatically
@@ -142,7 +157,7 @@ describe('basic', () => {
         await deleteRecord(recordId);
 
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripCurrentPageUrl(refreshedMockData)
+            stripExtraFieldsAndPageUrl(refreshedMockData)
         );
         expect(element.pushCount()).toBe(2);
     });
@@ -167,13 +182,15 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripCurrentPageUrl(mockData));
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
+            stripExtraFieldsAndPageUrl(mockData)
+        );
         expect(element.pushCount()).toBe(1);
 
         await element.refresh();
 
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripCurrentPageUrl(refreshedMockData)
+            stripExtraFieldsAndPageUrl(refreshedMockData)
         );
         expect(element.pushCount()).toBe(2);
     });

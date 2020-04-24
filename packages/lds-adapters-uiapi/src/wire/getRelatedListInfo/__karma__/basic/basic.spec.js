@@ -27,19 +27,14 @@ function mockNetwork(config, mockData) {
 describe('basic', () => {
     it('gets data with valid parentObjectApiName and relatedListId', async () => {
         const mockData = getMock('related-list-info-Custom');
-        const resourceConfig = {
+        const config = {
             parentObjectApiName: mockData.listReference.parentObjectApiName,
             recordTypeId: mockData.listReference.recordTypeId,
             relatedListId: mockData.listReference.relatedListId,
         };
-        mockNetwork(resourceConfig, mockData);
+        mockNetwork(config, mockData);
 
-        const props = {
-            parentObjectApiName: mockData.listReference.parentObjectApiName,
-            recordTypeId: mockData.listReference.recordTypeId,
-            relatedListId: mockData.listReference.relatedListId,
-        };
-        const element = await setupElement(props, RelatedListBasic);
+        const element = await setupElement(config, RelatedListBasic);
 
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
     });

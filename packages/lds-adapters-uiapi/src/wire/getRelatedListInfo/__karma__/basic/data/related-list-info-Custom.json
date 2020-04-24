@@ -5,32 +5,40 @@
     "displayColumns": [
         {
             "fieldApiName": "Name",
-            "label": "CObjChild Name",
+            "label": "CwcCustom01 Name",
             "lookupId": "Id",
+            "sortable": true
+        },
+        {
+            "fieldApiName": "Decimal__c",
+            "label": "Decimal",
+            "lookupId": null,
             "sortable": true
         }
     ],
-    "eTag": "7a2a41f1b70a77f9b0e2068c429502ea",
+    "eTag": "00738cd38dc733b23f761107203e25cd",
     "filterLogicString": "",
     "filteredByInfo": [],
-    "label": "CObjChilds",
+    "label": "CwcCustom01s",
     "listReference": {
         "id": null,
         "inContextOfRecordId": null,
         "listViewApiName": null,
         "objectApiName": null,
-        "parentObjectApiName": "CObjParent__c",
+        "parentObjectApiName": "CwcCustom00__c",
         "recordTypeId": "012000000000000AAA",
-        "relatedListId": "CObjChilds__r",
+        "relatedListId": "CwcCustom01s__r",
         "type": "relatedList"
     },
     "orderedByInfo": [],
     "updateable": false,
     "userPreferences": {
         "columnWidths": {
+            "Decimal__c": -1,
             "Name": -1
         },
         "columnWrap": {
+            "Decimal__c": false,
             "Name": false
         }
     },

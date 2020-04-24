@@ -1,10 +1,10 @@
 {
-    "eTag": "df59cfaf9126b64845f11db288383c56",
+    "eTag": "40c3d922de3a5e231ffd48d6b07b2f44",
     "parentObjectApiName": "CwcCustom00__c",
     "parentRecordTypeId": "012000000000000AAA",
     "relatedLists": [
         {
-            "eTag": "024271ab329868c63a6f7f1385fb00e6",
+            "eTag": "e7590304a721b4fd4f046666c94cc8d3",
             "entityLabel": "Note, Attachment, Google Doc And File",
             "entityPluralLabel": "Notes, Attachments, Google Docs And Files",
             "fieldApiName": "ParentId",
@@ -20,7 +20,7 @@
             }
         },
         {
-            "eTag": "9f26eb56dc7e373705ba00b6cb4d6d92",
+            "eTag": "0ce609e8be05d8f594f8b7e412558bf4",
             "entityLabel": "CwcCustom01",
             "entityPluralLabel": "CwcCustom01s",
             "fieldApiName": "CwcCustom00__c",
@@ -33,6 +33,22 @@
             "themeInfo": {
                 "color": "e46fbe",
                 "iconUrl": "https://na44.stmfa.stm.salesforce.com/img/icon/t4v35/custom/custom25_120.png"
+            }
+        },
+        {
+            "eTag": "6b47af1bac0755bf5f9fb9b30966c27f",
+            "entityLabel": "CwcCustom02",
+            "entityPluralLabel": "CwcCustom02s",
+            "fieldApiName": "CwcCustom00__c",
+            "keyPrefix": "a02",
+            "label": "CwcCustom02s",
+            "objectApiName": "CwcCustom02__c",
+            "parentFieldApiName": "Id",
+            "relatedListId": "CwcCustom02s__r",
+            "relatedListInfoUrl": "/services/data/v50.0/ui-api/related-list-info/CwcCustom00__c/CwcCustom02s__r?recordTypeId=012000000000000AAA",
+            "themeInfo": {
+                "color": "d8c760",
+                "iconUrl": "https://na44.stmfa.stm.salesforce.com/img/icon/t4v35/custom/custom51_120.png"
             }
         }
     ]

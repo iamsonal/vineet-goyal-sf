@@ -48,8 +48,6 @@ types:
       parentRecordId: listReference.inContextOfRecordId
       relatedListId: listReference.relatedListId
     (paginated): records
-  FieldValueRepresentation:
-    (merge): ../helpers/FieldValueRepresentation/merge
   RecordCollectionRepresentation:
     (ttl): 120000
   PhotoRecordAvatarRepresentation:
@@ -84,8 +82,6 @@ types:
       - eTag
   PageReferenceRepresentation:
     (opaque): true
-  RecordAvatarBulkMapRepresentation:
-    (merge): ../helpers/RecordAvatarBulkRepresentation/merge
   AbstractRecordAvatarBatchRepresentation:
     (ttl): 300000
   RecordLayoutRepresentation:
@@ -115,8 +111,6 @@ types:
       - mode
   RecordRepresentation:
     (ttl): 30000
-    (merge): ../helpers/RecordRepresentation/merge
-    (polymorph): ../helpers/RecordRepresentation/polymorph
     (key):
       recordId: id
   RecordAvatarRepresentation:

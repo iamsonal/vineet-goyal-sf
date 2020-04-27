@@ -6,7 +6,7 @@ import {
     keyBuilder,
     RecordRepresentation,
     RecordRepresentationNormalized,
-} from '../../generated/types/RecordRepresentation';
+} from '../../overrides/types/RecordRepresentation';
 import {
     createRecordInputFilteredByEditedFields,
     generateRecordInputForCreate,

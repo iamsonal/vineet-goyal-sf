@@ -1,21 +1,23 @@
 #%RAML 1.0 Overlay
 extends: ./api.raml
-annotationTypes: !include lds://annotations.raml
 
-(keyPrefix): 'CMS::'
+uses:
+  lds: lds://annotations.raml
+
+(lds.keyPrefix): 'CMS::'
 
 types:
   ManagedContentChannelCollectionRepresentation:
-    (opaque): true
+    (lds.opaque): true
   ManagedContentVersionCollectionRepresentation:
-    (opaque): true
+    (lds.opaque): true
 
 /connect/cms/delivery/channels:
   get:
-    (adapter):
+    (lds.adapter):
       name: getDeliveryChannels
 /connect/cms/delivery/channels/{channelId}/contents:
   /query:
     get:
-      (adapter):
+      (lds.adapter):
         name: listContent

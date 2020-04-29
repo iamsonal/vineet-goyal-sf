@@ -1,14 +1,16 @@
 #%RAML 1.0 Overlay
 extends: ./api.raml
-annotationTypes: !include lds://annotations.raml
 
-(keyPrefix): 'Commerce::'
+uses:
+  lds: lds://annotations.raml
+
+(lds.keyPrefix): 'Commerce::'
 
 types:
   ProductSearchResultsRepresentation:
-    (opaque): true
+    (lds.opaque): true
 
 /commerce/webstores/{webstoreId}/search/product-search:
   post:
-    (adapter):
+    (lds.adapter):
       name: productSearch

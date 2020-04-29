@@ -1,20 +1,22 @@
 #%RAML 1.0 Overlay
 extends: ./api.raml
-annotationTypes: !include lds://annotations.raml
 
-(keyPrefix): 'Commerce::'
+uses:
+  lds: lds://annotations.raml
+
+(lds.keyPrefix): 'Commerce::'
 
 types:
   ProductDetailRepresentation:
-    (opaque): true
+    (lds.opaque): true
   ProductCategoryPathRepresentation:
-    (opaque): true
+    (lds.opaque): true
 
 /commerce/webstores/{webstoreId}/products/{productId}:
   get:
-    (adapter):
+    (lds.adapter):
       name: getProduct
 /commerce/webstores/{webstoreId}/product-category-path/product-categories/{productCategoryId}:
   get:
-    (adapter):
+    (lds.adapter):
       name: getProductCategoryPath

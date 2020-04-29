@@ -1,5 +1,7 @@
 #%RAML 1.0 Overlay
 extends: ./api.raml
-annotationTypes: !include lds://annotations.raml
 
-(keyPrefix): 'Apex::'
+uses:
+  lds: lds://annotations.raml
+
+(lds.keyPrefix): 'Apex::'

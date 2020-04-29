@@ -1,184 +1,186 @@
 #%RAML 1.0 Overlay
 extends: ./api.raml
-annotationTypes: !include lds://annotations.raml
 
-(keyPrefix): 'UiApi::'
+uses:
+  lds: lds://annotations.raml
+
+(lds.keyPrefix): 'UiApi::'
 
 types:
   ActionRepresentation:
-    (ttl): 300000
-    (private):
+    (lds.ttl): 300000
+    (lds.private):
       - eTag
       - url
   EntityActionRepresentation:
-    (key):
+    (lds.key):
       url: url
-    (private):
+    (lds.private):
       - links
       - url
   ListInfoRepresentation:
-    (key):
+    (lds.key):
       listViewApiName: listReference.listViewApiName
       objectApiName: listReference.objectApiName
       type: listReference.type
-    (integrity):
+    (lds.integrity):
       - eTag
-    (private):
+    (lds.private):
       - eTag
   ListReferenceRepresentation:
-    (key):
+    (lds.key):
       id: id
   ListRecordCollectionRepresentation:
     # TODO: This is a complete complete hack, UISDK needs to add the list view id on the list record
     # collection. Using the list info etag for now as a work around for now to get the identity of
     # the list.
-    (key):
+    (lds.key):
       listViewId: listInfoETag
       sortBy: sortBy
-    (paginated): records
+    (lds.paginated): records
   ListViewSummaryCollectionRepresentation:
-    (key):
+    (lds.key):
       objectApiName: objectApiName
       queryString: queryString
       recentListsOnly: recentListsOnly
-    (paginated): lists
+    (lds.paginated): lists
   RelatedListRecordCollectionRepresentation:
-    (key):
+    (lds.key):
       sortBy: sortBy
       parentRecordId: listReference.inContextOfRecordId
       relatedListId: listReference.relatedListId
-    (paginated): records
+    (lds.paginated): records
   RecordCollectionRepresentation:
-    (ttl): 120000
+    (lds.ttl): 120000
   PhotoRecordAvatarRepresentation:
-    (private):
+    (lds.private):
       - eTag
   ThemeRecordAvatarRepresentation:
-    (private):
+    (lds.private):
       - eTag
   ListUiRepresentation:
-    (key):
+    (lds.key):
       listViewApiName: info.listReference.listViewApiName
       objectApiName: info.listReference.objectApiName
       type: info.listReference.type
       sortBy: records.sortBy
   RelatedListSummaryInfoCollectionRepresentation:
-    (key):
+    (lds.key):
       parentObjectApiName: parentObjectApiName
       recordTypeId: parentRecordTypeId
-    (integrity):
+    (lds.integrity):
       - eTag
   ObjectInfoDirectoryEntryRepresentation:
-    (key):
+    (lds.key):
       objectInfoUrl: objectInfoUrl
   ObjectInfoRepresentation:
-    (ttl): 900000
-    (key):
+    (lds.ttl): 900000
+    (lds.key):
       apiName: apiName
-    (opaque): true
-    (integrity):
+    (lds.opaque): true
+    (lds.integrity):
       - eTag
-    (private):
+    (lds.private):
       - eTag
   PageReferenceRepresentation:
-    (opaque): true
+    (lds.opaque): true
   AbstractRecordAvatarBatchRepresentation:
-    (ttl): 300000
+    (lds.ttl): 300000
   RecordLayoutRepresentation:
-    (integrity):
+    (lds.integrity):
       - eTag
-    (ttl): 900000
-    (key):
+    (lds.ttl): 900000
+    (lds.key):
       recordTypeId: recordTypeId
       objectApiName: objectApiName
       layoutType: layoutType
       mode: mode
-    (opaque): true
-    (private):
+    (lds.opaque): true
+    (lds.private):
       - eTag
   RecordLayoutUserStateRepresentation:
-    (opaque): true
-    (ttl): 900000
-    (key):
+    (lds.opaque): true
+    (lds.ttl): 900000
+    (lds.key):
       recordTypeId: recordTypeId
       apiName: apiName
       layoutType: layoutType
       mode: mode
-    (private):
+    (lds.private):
       - apiName
       - recordTypeId
       - layoutType
       - mode
   RecordRepresentation:
-    (ttl): 30000
-    (key):
+    (lds.ttl): 30000
+    (lds.key):
       recordId: id
   RecordAvatarRepresentation:
-    (ttl): 300000
+    (lds.ttl): 300000
   AbstractRecordAvatarRepresentation:
-    (key):
+    (lds.key):
       recordId: recordId
   RecordUiRepresentation:
-    (ttl): 900000
+    (lds.ttl): 900000
   RelatedListInfoRepresentation:
-    (key):
+    (lds.key):
       parentObjectApiName: listReference.parentObjectApiName
       recordTypeId: listReference.recordTypeId
       relatedListId: listReference.relatedListId
-    (ttl): 900000
-    (opaque): true
-    (private):
+    (lds.ttl): 900000
+    (lds.opaque): true
+    (lds.private):
       - eTag
   RelatedListRecordCountRepresentation:
-    (private):
+    (lds.private):
       - eTag
-    (key):
+    (lds.key):
       parentRecordId: listReference.inContextOfRecordId
       relatedListName: listReference.relatedListId
   PicklistValuesRepresentation:
-    (ttl): 300000
-    (integrity):
+    (lds.ttl): 300000
+    (lds.integrity):
       - eTag
-    (key):
+    (lds.key):
       id: url
-    (private):
+    (lds.private):
       - eTag
   PicklistValuesCollectionRepresentation:
-    (ttl): 300000
-    (private):
+    (lds.ttl): 300000
+    (lds.private):
       - eTag
   RecordDefaultsRepresentation:
-    (ttl): 900000
+    (lds.ttl): 900000
   SalesforceObjectId:
-    (coerceFunction): ../primitives/ObjectId/coerce
+    (lds.coerceFunction): ../primitives/ObjectId/coerce
   SalesforceObjectIdArray:
-    (coerceFunction): ../primitives/ObjectIdArray/coerce
+    (lds.coerceFunction): ../primitives/ObjectIdArray/coerce
   SalesforceFieldId:
-    (coerceFunction): ../primitives/FieldId/coerce
+    (lds.coerceFunction): ../primitives/FieldId/coerce
   SortedStringArray:
-    (coerceFunction): ../primitives/SortedStringArray/coerce
+    (lds.coerceFunction): ../primitives/SortedStringArray/coerce
   SalesforceFieldIdArray:
-    (coerceFunction): ../primitives/FieldIdArray/coerce
+    (lds.coerceFunction): ../primitives/FieldIdArray/coerce
   SalesforceRecordId18:
-    (coerceFunction): ../primitives/RecordId18/coerce
+    (lds.coerceFunction): ../primitives/RecordId18/coerce
   SalesforceRecordId18Array:
-    (coerceFunction): ../primitives/RecordId18Array/coerce
+    (lds.coerceFunction): ../primitives/RecordId18Array/coerce
   SalesforceLayoutType:
-    (coerceFunction): ../primitives/LayoutType/coerce
+    (lds.coerceFunction): ../primitives/LayoutType/coerce
   SalesforceLayoutTypeArray:
-    (coerceFunction): ../primitives/LayoutTypeArray/coerce
+    (lds.coerceFunction): ../primitives/LayoutTypeArray/coerce
   SalesforceLayoutMode:
-    (coerceFunction): ../primitives/LayoutMode/coerce
+    (lds.coerceFunction): ../primitives/LayoutMode/coerce
   SalesforceLayoutModeArray:
-    (coerceFunction): ../primitives/LayoutModeArray/coerce
+    (lds.coerceFunction): ../primitives/LayoutModeArray/coerce
   SalesforceFormFactor:
-    (coerceFunction): ../primitives/FormFactor/coerce
+    (lds.coerceFunction): ../primitives/FormFactor/coerce
 
 /ui-api:
   /actions:
     '/lookup/{objectApiNames}':
       get:
-        (adapter):
+        (lds.adapter):
           name: getLookupActions
           coercedParams:
             objectApiNames: SalesforceObjectIdArray
@@ -187,7 +189,7 @@ types:
             sections: SortedStringArray
     '/record/{recordIds}':
       get:
-        (adapter):
+        (lds.adapter):
           name: getRecordActions
           coercedParams:
             apiNames: SortedStringArray
@@ -199,11 +201,11 @@ types:
             - apiNames
       /record-edit:
         get:
-          (adapter):
+          (lds.adapter):
             name: getRecordEditActions
       /related-list/{relatedListIds}:
         get:
-          (adapter):
+          (lds.adapter):
             name: getRelatedListActions
             coercedParams:
               recordIds: SalesforceRecordId18Array
@@ -212,7 +214,7 @@ types:
               sections: SortedStringArray
       '/related-list-record/{relatedListRecordIds}':
         get:
-          (adapter):
+          (lds.adapter):
             name: getRelatedListRecordActions
             coercedParams:
               recordIds: SalesforceRecordId18Array
@@ -222,15 +224,15 @@ types:
               sections: SortedStringArray
   /apps:
     get:
-      (adapter):
+      (lds.adapter):
         name: getApps
     /selected:
       get:
-        (adapter):
+        (lds.adapter):
           name: getSelectedApp
   /layout/{objectApiName}:
     get:
-      (adapter):
+      (lds.adapter):
         name: getLayout
         coercedParams:
           objectApiName: SalesforceObjectId
@@ -239,7 +241,7 @@ types:
           recordTypeId: SalesforceRecordId18
   /layout/{objectApiName}/user-state:
     get:
-      (adapter):
+      (lds.adapter):
         name: getLayoutUserState
         coercedParams:
           objectApiName: SalesforceObjectId
@@ -249,35 +251,35 @@ types:
   /list-info:
     '/{listViewId}':
       get:
-        (key):
+        (lds.key):
           listViewId: urlParams.listViewId
   /list-records:
     '/{listViewId}':
       get:
-        (key):
+        (lds.key):
           listViewId: urlParams.listViewId
           sortBy: queryParams.sortBy || null
   /list-ui:
     '/{objectApiName}':
       get:
-        (adapter):
+        (lds.adapter):
           name: getListViewSummaryCollection
           coercedParams:
             objectApiName: SalesforceObjectId
-        (key):
+        (lds.key):
           objectApiName: urlParams.objectApiName
           queryString: queryParams.q || null
           recentListsOnly: queryParams.recentListsOnly || false
     '/{objectApiName}/{listViewApiName}':
       get:
-        (adapter):
+        (lds.adapter):
           name: getListUiByApiName
           coercedParams:
             objectApiName: SalesforceObjectId
             fields: SalesforceFieldIdArray
             optionalFields: SalesforceFieldIdArray
             sortBy: SalesforceFieldIdArray
-        (key):
+        (lds.key):
           listViewApiName: urlParams.listViewApiName
           objectApiName: urlParams.objectApiName
           type: '"listView"'
@@ -287,7 +289,7 @@ types:
       # we have to use custom code to construct that key from the cached
       # ListReferenceRepresentation records
       get:
-        (adapter):
+        (lds.adapter):
           name: getListUiByListViewId
           coercedParams:
             fields: SalesforceFieldIdArray
@@ -295,7 +297,7 @@ types:
             sortBy: SalesforceFieldIdArray
   '/lookups/{objectApiName}/{fieldApiName}/{targetApiName}':
     get:
-      (adapter):
+      (lds.adapter):
         name: getLookupRecords
         coercedParams:
           fieldApiName: SalesforceFieldId
@@ -303,24 +305,24 @@ types:
   /record-avatars:
     '/batch/{recordIds}':
       get:
-        (adapter):
+        (lds.adapter):
           name: getRecordAvatars
           coercedParams:
             recordIds: SalesforceRecordId18Array
             formFactor: SalesforceFormFactor
     '/{recordId}/association':
       post:
-        (adapter):
+        (lds.adapter):
           name: updateRecordAvatar
-        (key):
+        (lds.key):
           recordId: urlParams.recordId
   /records:
     post:
-      (adapter):
+      (lds.adapter):
         name: createRecord
     '/{recordId}':
       get:
-        (adapter):
+        (lds.adapter):
           name: getRecord
           coercedParams:
             recordId: SalesforceRecordId18
@@ -332,16 +334,16 @@ types:
             - layoutTypes
             - fields
             - optionalFields
-        (key):
+        (lds.key):
           recordId: urlParams.recordId
       patch:
-        (adapter):
+        (lds.adapter):
           name: updateRecord
           coercedParams:
             recordId: SalesforceRecordId18
   '/record-ui/{recordIds}':
     get:
-      (adapter):
+      (lds.adapter):
         name: getRecordUi
         coercedParams:
           recordIds: SalesforceRecordId18Array
@@ -350,46 +352,46 @@ types:
           optionalFields: SalesforceFieldIdArray
   /object-info:
     get:
-      (adapter):
+      (lds.adapter):
         name: getObjectInfoDirectory
     '/batch/{objectApiNames}':
       get:
-        (adapter):
+        (lds.adapter):
           name: getObjectInfos
           coercedParams:
             objectApiNames: SalesforceObjectIdArray
     '/{objectApiName}':
       get:
-        (adapter):
+        (lds.adapter):
           name: getObjectInfo
           coercedParams:
             objectApiName: SalesforceObjectId
-        (key):
+        (lds.key):
           apiName: urlParams.objectApiName
       '/picklist-values/{recordTypeId}':
         get:
-          (adapter):
+          (lds.adapter):
             name: getPicklistValuesByRecordType
             coercedParams:
               objectApiName: SalesforceObjectId
               recordTypeId: SalesforceRecordId18
       '/picklist-values/{recordTypeId}/{fieldApiName}':
         get:
-          (adapter):
+          (lds.adapter):
             name: getPicklistValues
             coercedParams:
               recordTypeId: SalesforceRecordId18
               fieldApiName: SalesforceFieldId
   '/mru-list-ui/{objectApiName}':
     get:
-      (adapter):
+      (lds.adapter):
         name: getMruListUi
         coercedParams:
           objectApiName: SalesforceObjectId
           fields: SalesforceFieldIdArray
           optionalFields: SalesforceFieldIdArray
           sortBy: SalesforceFieldIdArray
-      (key):
+      (lds.key):
         listViewApiName: 'null'
         objectApiName: urlParams.objectApiName
         type: '"mru"'
@@ -397,7 +399,7 @@ types:
   '/record-defaults':
     '/create/{objectApiName}':
       get:
-        (adapter):
+        (lds.adapter):
           name: getRecordCreateDefaults
           coercedParams:
             objectApiName: SalesforceObjectId
@@ -407,43 +409,43 @@ types:
   '/related-list-count':
     '/batch/{parentRecordId}/{relatedListNames}':
       get:
-        (adapter):
+        (lds.adapter):
           name: getRelatedListsCount
-        (key):
+        (lds.key):
           parentRecordId: urlParams.parentRecordId
           relatedListNames: urlParams.relatedListNames
           recordTypeId: queryParams.recordTypeId || null
     '/{parentRecordId}/{relatedListName}':
       get:
-        (adapter):
+        (lds.adapter):
           name: getRelatedListCount
-        (key):
+        (lds.key):
           parentRecordId: urlParams.parentRecordId
           relatedListName: urlParams.relatedListName
   '/related-list-info':
     '/{parentObjectApiName}':
       get:
-        (adapter):
+        (lds.adapter):
           name: getRelatedListsInfo
-        (key):
+        (lds.key):
           parentObjectApiName: urlParams.parentObjectApiName
           recordTypeId: queryParams.recordTypeId || null
     '/batch/{parentObjectApiName}/{relatedListNames}':
       get:
-        (adapter):
+        (lds.adapter):
           name: getRelatedListInfoBatch
     '/{parentObjectApiName}/{relatedListId}':
       get:
-        (adapter):
+        (lds.adapter):
           name: getRelatedListInfo
-        (key):
+        (lds.key):
           parentObjectApiName: urlParams.parentObjectApiName
           relatedListId: urlParams.relatedListId
           recordTypeId: queryParams.recordTypeId || null
       patch:
-        (adapter):
+        (lds.adapter):
           name: updateRelatedListInfo
   '/related-list-records/{parentRecordId}/{relatedListId}':
     get:
-      (adapter):
+      (lds.adapter):
         name: getRelatedListRecords

@@ -1,14 +1,15 @@
 #%RAML 1.0 Overlay
 extends: ./api.raml
-annotationTypes: !include lds://annotations.raml
+uses:
+  lds: lds://annotations.raml
 
-(keyPrefix): 'Commerce::'
+(lds.keyPrefix): 'Commerce::'
 
 types:
   ProductPriceRepresentation:
-    (opaque): true
+    (lds.opaque): true
 
 /commerce/webstores/{webstoreId}/pricing/products/{productId}:
   get:
-    (adapter):
+    (lds.adapter):
       name: getProductPrice

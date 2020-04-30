@@ -101,6 +101,7 @@ const getObjectInfoLdsAdapter = createLdsAdapter('getObjectInfo', GetObjectInfo)
 export const _getObjectInfo = createImperativeFunction(getObjectInfoLdsAdapter);
 
 const getObjectInfosLdsAdapter = createLdsAdapter('getObjectInfos', GetObjectInfos);
+export const _getObjectInfos = createImperativeFunction(getObjectInfosLdsAdapter);
 
 const getLayoutLdsAdapter = createLdsAdapter('getLayout', GetLayout);
 export const _getLayout = createImperativeFunction(getLayoutLdsAdapter);

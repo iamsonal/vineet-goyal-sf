@@ -62,6 +62,7 @@ export const getRecordNotifyChange = lds.getRecordNotifyChange;
 export const _getLayout = lds._getLayout;
 export const _getLayoutUserState = lds._getLayoutUserState;
 export const _getObjectInfo = lds._getObjectInfo;
+export const _getObjectInfos = lds._getObjectInfos;
 export const _getRecord = lds._getRecord;
 export const _getRecordActions = lds._getRecordActions;
 export const _getRecordAvatars = lds._getRecordAvatars;

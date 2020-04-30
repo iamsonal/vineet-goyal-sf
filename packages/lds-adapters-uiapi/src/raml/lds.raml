@@ -449,3 +449,7 @@ types:
     get:
       (lds.adapter):
         name: getRelatedListRecords
+      (lds.key):
+        sortBy: queryParams.sortBy || []
+        parentRecordId: urlParams.parentRecordId
+        relatedListId: urlParams.relatedListId

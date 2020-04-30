@@ -34,10 +34,8 @@ function mockNetwork(config, mockData) {
     }
 }
 
-// TODO W-6741077 Add currentPageUrl back to selectors once it is returned in the uiapi
-function stripExtraFieldsAndPageUrl(mockData) {
-    delete mockData.currentPageUrl;
-
+// TODO: Remove this code once extra fields aren't returned from uiapi (test only issue since they're stripped out at runtime by lds)
+function stripExtraFields(mockData) {
     mockData.records.forEach(record => {
         Object.keys(record.fields).forEach(key => {
             if (!(mockData.fields.indexOf(key) > -1)) {
@@ -64,9 +62,7 @@ describe('basic', () => {
             fields: mockData.fields,
         };
         const element = await setupElement(props, RelatedListBasic);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripExtraFields(mockData));
     });
 
     it('gets data with no records', async () => {
@@ -85,9 +81,7 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripExtraFields(mockData));
     });
 
     it('refreshes related list records', async () => {
@@ -113,15 +107,13 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripExtraFields(mockData));
         expect(element.pushCount()).toBe(1);
 
         await element.refresh();
 
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(refreshedMockData)
+            stripExtraFields(refreshedMockData)
         );
         expect(element.pushCount()).toBe(2);
     });
@@ -147,9 +139,7 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripExtraFields(mockData));
         expect(element.pushCount()).toBe(1);
 
         // Delete the record from lds, our component should refresh automatically
@@ -157,7 +147,7 @@ describe('basic', () => {
         await deleteRecord(recordId);
 
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(refreshedMockData)
+            stripExtraFields(refreshedMockData)
         );
         expect(element.pushCount()).toBe(2);
     });
@@ -182,15 +172,13 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripExtraFields(mockData));
         expect(element.pushCount()).toBe(1);
 
         await element.refresh();
 
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(refreshedMockData)
+            stripExtraFields(refreshedMockData)
         );
         expect(element.pushCount()).toBe(2);
     });

@@ -21,7 +21,7 @@ export { factory as GetRecordCreateDefaults } from './wire/getRecordCreateDefaul
 
 export { getPicklistValuesByRecordTypeAdapterFactory as GetPicklistValuesByRecordType } from './generated/adapters/getPicklistValuesByRecordType';
 export { getRelatedListInfoAdapterFactory as GetRelatedListInfo } from './generated/adapters/getRelatedListInfo';
-export { factory as GetRelatedListRecords } from './wire/getRelatedListRecords';
+export { getRelatedListRecordsAdapterFactory as GetRelatedListRecords } from './generated/adapters/getRelatedListRecords';
 export { getLookupActionsAdapterFactory as GetLookupActions } from './generated/adapters/getLookupActions';
 export { getRecordActionsAdapterFactory as GetRecordActions } from './generated/adapters/getRecordActions';
 export { getRelatedListActionsAdapterFactory as GetRelatedListActions } from './generated/adapters/getRelatedListActions';

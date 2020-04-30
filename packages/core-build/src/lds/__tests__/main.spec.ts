@@ -14,6 +14,14 @@ jest.mock('@salesforce/lds-adapters-uiapi', () => {
         createRecordSpy: jest.fn(mockAdapter),
         updateRecordSpy: jest.fn(mockAdapter),
         updateRecordAvatarSpy: jest.fn(mockAdapter),
+        getRelatedListInfoSpy: jest.fn(mockAdapter),
+        getRelatedListsInfoSpy: jest.fn(mockAdapter),
+        getRelatedListActionsSpy: jest.fn(mockAdapter),
+        getRelatedListCountSpy: jest.fn(mockAdapter),
+        getRelatedListsCountSpy: jest.fn(mockAdapter),
+        getRelatedListInfoBatchSpy: jest.fn(mockAdapter),
+        getRelatedListRecordsSpy: jest.fn(mockAdapter),
+        getRelatedListRecordActionsSpy: jest.fn(mockAdapter),
     };
 
     return {
@@ -26,6 +34,14 @@ jest.mock('@salesforce/lds-adapters-uiapi', () => {
         CreateRecord: () => spies.createRecordSpy,
         UpdateRecord: () => spies.updateRecordSpy,
         UpdateRecordAvatar: () => spies.updateRecordAvatarSpy,
+        GetRelatedListInfo: () => spies.getRelatedListInfoSpy,
+        GetRelatedListsInfo: () => spies.getRelatedListsInfoSpy,
+        GetRelatedListActions: () => spies.getRelatedListActionsSpy,
+        GetRelatedListCount: () => spies.getRelatedListCountSpy,
+        GetRelatedListsCount: () => spies.getRelatedListsCountSpy,
+        GetRelatedListInfoBatch: () => spies.getRelatedListInfoBatchSpy,
+        GetRelatedListRecords: () => spies.getRelatedListRecordsSpy,
+        GetRelatedListRecordActions: () => spies.getRelatedListRecordActionsSpy,
         __spies: spies,
     };
 });
@@ -81,6 +97,14 @@ import {
     updateRecordAvatar,
     refresh,
     updateLayoutUserState,
+    _getRelatedListInfo,
+    _getRelatedListsInfo,
+    _getRelatedListActions,
+    _getRelatedListCount,
+    _getRelatedListsCount,
+    _getRelatedListInfoBatch,
+    _getRelatedListRecords,
+    _getRelatedListRecordActions,
 } from '../main';
 
 import { __spies as uiApiRecordsSpies } from '@salesforce/lds-adapters-uiapi';
@@ -244,6 +268,67 @@ describe('lds main', () => {
             const config = {};
             await _getRecordActions(config as any);
             expect(uiApiRecordsSpies.getRecordActionsSpy).toHaveBeenCalledWith(config);
+        });
+    });
+
+    describe('_getRelatedListInfo', () => {
+        it('should call adapter returned by GetRelatedListInfo', async () => {
+            const config = {};
+            await _getRelatedListInfo(config as any);
+            expect(uiApiRecordsSpies.getRelatedListInfoSpy).toHaveBeenCalledWith(config);
+        });
+    });
+    describe('_getRelatedListsInfo', () => {
+        it('should call adapter returned by GetRelatedListsInfo', async () => {
+            const config = {};
+            await _getRelatedListsInfo(config as any);
+            expect(uiApiRecordsSpies.getRelatedListsInfoSpy).toHaveBeenCalledWith(config);
+        });
+    });
+    describe('_getRelatedListActions', () => {
+        it('should call adapter returned by GetRelatedListActions', async () => {
+            const config = {};
+            await _getRelatedListActions(config as any);
+            expect(uiApiRecordsSpies.getRelatedListActionsSpy).toHaveBeenCalledWith(config);
+        });
+    });
+    describe('_getRelatedListCount', () => {
+        it('should call adapter returned by GetRelatedListCount', async () => {
+            const config = {};
+            await _getRelatedListCount(config as any);
+            expect(uiApiRecordsSpies.getRelatedListCountSpy).toHaveBeenCalledWith(config);
+        });
+    });
+
+    describe('_getRelatedListsCount', () => {
+        it('should call adapter returned by GetRelatedListsCount', async () => {
+            const config = {};
+            await _getRelatedListsCount(config as any);
+            expect(uiApiRecordsSpies.getRelatedListsCountSpy).toHaveBeenCalledWith(config);
+        });
+    });
+
+    describe('_getRelatedListInfoBatch', () => {
+        it('should call adapter returned by GetRelatedListInfoBatch', async () => {
+            const config = {};
+            await _getRelatedListInfoBatch(config as any);
+            expect(uiApiRecordsSpies.getRelatedListInfoBatchSpy).toHaveBeenCalledWith(config);
+        });
+    });
+
+    describe('_getRelatedListRecords', () => {
+        it('should call adapter returned by GetRelatedListRecords', async () => {
+            const config = {};
+            await _getRelatedListRecords(config as any);
+            expect(uiApiRecordsSpies.getRelatedListRecordsSpy).toHaveBeenCalledWith(config);
+        });
+    });
+
+    describe('_getRelatedListRecordActions', () => {
+        it('should call adapter returned by GetRelatedListRecordActions', async () => {
+            const config = {};
+            await _getRelatedListRecordActions(config as any);
+            expect(uiApiRecordsSpies.getRelatedListRecordActionsSpy).toHaveBeenCalledWith(config);
         });
     });
 });

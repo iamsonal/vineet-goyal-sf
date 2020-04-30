@@ -124,7 +124,7 @@ export const getLayoutUserStateLdsAdapter = createLdsAdapter(
 );
 export const _getLayoutUserState = createImperativeFunction(getLayoutUserStateLdsAdapter);
 
-export const getRelatedListInfo = setupWireAdapter('getRelatedListInfo', GetRelatedListInfo);
+export const getRelatedListInfo = createLdsAdapter('getRelatedListInfo', GetRelatedListInfo);
 export const _getRelatedListInfo = createImperativeFunction(getRelatedListInfo);
 
 const baseCreateRecord = CreateRecord(lds);
@@ -153,13 +153,13 @@ export const getRecordCreateDefaults = setupWireAdapter(
 );
 export const getRecordEditActions = setupWireAdapter('getRecordEditActions', GetRecordEditActions);
 export const getRecordUi = registerWireAdapter(getRecordUiLdsAdapter);
-export const getRelatedListActions = setupWireAdapter(
+export const getRelatedListActions = createLdsAdapter(
     'getRelatedListActions',
     GetRelatedListActions
 );
 export const _getRelatedListActions = createImperativeFunction(getRelatedListActions);
 
-export const getRelatedListsInfo = setupWireAdapter('getRelatedListsInfo', GetRelatedListsInfo);
+export const getRelatedListsInfo = createLdsAdapter('getRelatedListsInfo', GetRelatedListsInfo);
 export const _getRelatedListsInfo = createImperativeFunction(getRelatedListsInfo);
 
 const baseUpdateRelatedListInfo = UpdateRelatedListInfo(lds);
@@ -182,24 +182,24 @@ export const updateRelatedListInfo = (
     return Promise.resolve(value.data);
 };
 
-export const getRelatedListRecords = setupWireAdapter(
+export const getRelatedListRecords = createLdsAdapter(
     'getRelatedListRecords',
     GetRelatedListRecords
 );
 export const _getRelatedListRecords = createImperativeFunction(getRelatedListRecords);
 
-export const getRelatedListRecordActions = setupWireAdapter(
+export const getRelatedListRecordActions = createLdsAdapter(
     'getRelatedListRecordActions',
     GetRelatedListRecordActions
 );
 export const _getRelatedListRecordActions = createImperativeFunction(getRelatedListRecordActions);
 
-export const getRelatedListCount = setupWireAdapter('getRelatedListCount', GetRelatedListCount);
+export const getRelatedListCount = createLdsAdapter('getRelatedListCount', GetRelatedListCount);
 export const _getRelatedListCount = createImperativeFunction(getRelatedListCount);
-export const getRelatedListsCount = setupWireAdapter('getRelatedListsCount', GetRelatedListsCount);
+export const getRelatedListsCount = createLdsAdapter('getRelatedListsCount', GetRelatedListsCount);
 export const _getRelatedListsCount = createImperativeFunction(getRelatedListsCount);
 
-export const getRelatedListInfoBatch = setupWireAdapter(
+export const getRelatedListInfoBatch = createLdsAdapter(
     'getRelatedListInfoBatch',
     GetRelatedListInfoBatch
 );

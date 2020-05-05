@@ -125,8 +125,9 @@ export const getLayoutUserStateLdsAdapter = createLdsAdapter(
 );
 export const _getLayoutUserState = createImperativeFunction(getLayoutUserStateLdsAdapter);
 
-export const getRelatedListInfo = createLdsAdapter('getRelatedListInfo', GetRelatedListInfo);
-export const _getRelatedListInfo = createImperativeFunction(getRelatedListInfo);
+const getRelatedListInfoAdapter = createLdsAdapter('getRelatedListInfo', GetRelatedListInfo);
+export const _getRelatedListInfo = createImperativeFunction(getRelatedListInfoAdapter);
+export const getRelatedListInfo = registerWireAdapter(getRelatedListInfoAdapter);
 
 const baseCreateRecord = CreateRecord(lds);
 export const createRecord = (...config: Parameters<ReturnType<typeof CreateRecord>>) => {
@@ -154,14 +155,19 @@ export const getRecordCreateDefaults = setupWireAdapter(
 );
 export const getRecordEditActions = setupWireAdapter('getRecordEditActions', GetRecordEditActions);
 export const getRecordUi = registerWireAdapter(getRecordUiLdsAdapter);
-export const getRelatedListActions = createLdsAdapter(
+export const getRelatedListActionsAdapter = createLdsAdapter(
     'getRelatedListActions',
     GetRelatedListActions
 );
-export const _getRelatedListActions = createImperativeFunction(getRelatedListActions);
+export const _getRelatedListActions = createImperativeFunction(getRelatedListActionsAdapter);
+export const getRelatedListActions = registerWireAdapter(getRelatedListActionsAdapter);
 
-export const getRelatedListsInfo = createLdsAdapter('getRelatedListsInfo', GetRelatedListsInfo);
-export const _getRelatedListsInfo = createImperativeFunction(getRelatedListsInfo);
+export const getRelatedListsInfoAdapter = createLdsAdapter(
+    'getRelatedListsInfo',
+    GetRelatedListsInfo
+);
+export const _getRelatedListsInfo = createImperativeFunction(getRelatedListsInfoAdapter);
+export const getRelatedListsInfo = registerWireAdapter(getRelatedListsInfoAdapter);
 
 const baseUpdateRelatedListInfo = UpdateRelatedListInfo(lds);
 // In order to export the imperative wire correctly, we need to add some safety checks
@@ -183,34 +189,51 @@ export const updateRelatedListInfo = (
     return Promise.resolve(value.data);
 };
 
-export const getRelatedListRecords = createLdsAdapter(
+export const getRelatedListRecordsAdapter = createLdsAdapter(
     'getRelatedListRecords',
     GetRelatedListRecords
 );
-export const _getRelatedListRecords = createImperativeFunction(getRelatedListRecords);
+export const _getRelatedListRecords = createImperativeFunction(getRelatedListRecordsAdapter);
+export const getRelatedListRecords = registerWireAdapter(getRelatedListRecordsAdapter);
 
-export const getRelatedListRecordActions = createLdsAdapter(
+export const getRelatedListRecordActionsAdapter = createLdsAdapter(
     'getRelatedListRecordActions',
     GetRelatedListRecordActions
 );
-export const _getRelatedListRecordActions = createImperativeFunction(getRelatedListRecordActions);
+export const _getRelatedListRecordActions = createImperativeFunction(
+    getRelatedListRecordActionsAdapter
+);
+export const getRelatedListRecordActions = registerWireAdapter(getRelatedListRecordActionsAdapter);
 
-export const getRelatedListCount = createLdsAdapter('getRelatedListCount', GetRelatedListCount);
-export const _getRelatedListCount = createImperativeFunction(getRelatedListCount);
-export const getRelatedListsCount = createLdsAdapter('getRelatedListsCount', GetRelatedListsCount);
-export const _getRelatedListsCount = createImperativeFunction(getRelatedListsCount);
+export const getRelatedListCountAdapter = createLdsAdapter(
+    'getRelatedListCount',
+    GetRelatedListCount
+);
+export const _getRelatedListCount = createImperativeFunction(getRelatedListCountAdapter);
+export const getRelatedListCount = registerWireAdapter(getRelatedListCountAdapter);
 
-export const getRelatedListInfoBatch = createLdsAdapter(
+export const getRelatedListsCountAdapter = createLdsAdapter(
+    'getRelatedListsCount',
+    GetRelatedListsCount
+);
+export const _getRelatedListsCount = createImperativeFunction(getRelatedListsCountAdapter);
+export const getRelatedListsCount = registerWireAdapter(getRelatedListsCountAdapter);
+
+export const getRelatedListInfoBatchAdapter = createLdsAdapter(
     'getRelatedListInfoBatch',
     GetRelatedListInfoBatch
 );
-export const _getRelatedListInfoBatch = createImperativeFunction(getRelatedListInfoBatch);
+export const _getRelatedListInfoBatch = createImperativeFunction(getRelatedListInfoBatchAdapter);
+export const getRelatedListInfoBatch = registerWireAdapter(getRelatedListInfoBatchAdapter);
 
-export const getRelatedListRecordsBatch = createLdsAdapter(
+export const getRelatedListRecordsBatchAdapter = createLdsAdapter(
     'getRelatedListRecordsBatch',
     GetRelatedListRecordsBatch
 );
-export const _getRelatedListRecordsBatch = createImperativeFunction(getRelatedListRecordsBatch);
+export const _getRelatedListRecordsBatch = createImperativeFunction(
+    getRelatedListRecordsBatchAdapter
+);
+export const getRelatedListRecordsBatch = registerWireAdapter(getRelatedListRecordsBatchAdapter);
 
 const baseUpdateRecord = UpdateRecord(lds);
 export const updateRecord = (...config: Parameters<ReturnType<typeof UpdateRecord>>) => {

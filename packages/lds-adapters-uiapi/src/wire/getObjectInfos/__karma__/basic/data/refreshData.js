@@ -11,3 +11,18 @@ await helpers.requestGetAndSave(
     `/ui-api/object-info/batch/Account,Opportunity`,
     path.join(rootDir, 'object-Account-Opportunity.json')
 );
+
+await helpers.requestGetAndSave(
+    `/ui-api/object-info/Account`,
+    path.join(rootDir, 'object-Account.json')
+);
+
+await helpers.requestGetAndSave(
+    `/ui-api/object-info/Opportunity`,
+    path.join(rootDir, 'object-Opportunity.json')
+);
+
+await helpers.requestGetAndSave(
+    `/ui-api/object-info/noexist`,
+    path.join(rootDir, 'object-error.json')
+);

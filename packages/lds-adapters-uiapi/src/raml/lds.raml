@@ -360,6 +360,14 @@ types:
           name: getObjectInfos
           coercedParams:
             objectApiNames: SalesforceObjectIdArray
+        (lds.composite):
+          resource: /ui-api/object-info/{objectApiName}
+          uriParameters:
+            objectApiName: objectApiNames
+          envelope:
+            path: results
+            statusCode: statusCode
+            body: result
     '/{objectApiName}':
       get:
         (lds.adapter):

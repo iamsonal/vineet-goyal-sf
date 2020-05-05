@@ -2616,16 +2616,11 @@ types:
         type: array # TODO: hand-rolled
         items:
           type: SimplifiedBatchResultRepresentation
-  AbstractSimplifiedBatchResultRepresentation: #TODO: hand-rolled
-    discriminator: statusCode
+  SimplifiedBatchResultRepresentation: # TODO: hand-rolled
     type: object
     properties:
       statusCode:
         type: number
-  SimplifiedBatchResultRepresentation: # TODO: hand-rolled
-    discriminatorValue: 200
-    type: AbstractSimplifiedBatchResultRepresentation
-    properties:
       result:
         type: ObjectInfoRepresentation
   ThemeBannerRepresentation:

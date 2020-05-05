@@ -434,6 +434,17 @@ types:
       get:
         (lds.adapter):
           name: getRelatedListInfoBatch
+        (lds.composite):
+          resource: /ui-api/related-list-info/{parentObjectApiName}/{relatedListId}
+          uriParameters:
+            parentObjectApiName: parentObjectApiName
+            relatedListId: relatedListNames
+          queryParameters:
+            recordTypeId: recordTypeId
+          envelope:
+            path: results
+            statusCode: statusCode
+            body: result
     '/{parentObjectApiName}/{relatedListId}':
       get:
         (lds.adapter):

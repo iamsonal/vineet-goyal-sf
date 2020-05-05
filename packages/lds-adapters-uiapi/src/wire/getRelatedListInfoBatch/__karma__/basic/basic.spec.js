@@ -1,61 +1,17 @@
-import { karmaNetworkAdapter } from 'lds';
+import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
-    mockNetworkOnce,
-    getMock as globalGetMock,
-    setupElement,
-    mockNetworkSequence,
-} from 'test-util';
-import { URL_BASE, expireRelatedListInfo } from 'uiapi-test-util';
-import sinon from 'sinon';
+    expireRelatedListInfo,
+    mockGetRelatedListInfoNetwork,
+    mockGetRelatedListInfoBatchNetwork,
+} from 'uiapi-test-util';
 
 import RelatedListInfoBatch from '../lwc/related-list-info-batch';
+import RelatedListInfoSingle from '../../../getRelatedListInfo/__karma__/lwc/related-list-basic';
 
 const MOCK_PREFIX = 'wire/getRelatedListInfoBatch/__karma__/basic/data/';
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
-}
-
-function mockNetwork(config, mockData) {
-    const parentObjectApiName = config.parentObjectApiName;
-    const relatedListNames = config.relatedListNames;
-    const queryParams = { ...config };
-    delete queryParams.parentObjectApiName;
-    delete queryParams.relatedListNames;
-
-    const paramMatch = sinon.match({
-        basePath: `${URL_BASE}/related-list-info/batch/${parentObjectApiName}/${relatedListNames}`,
-        queryParams,
-    });
-
-    if (Array.isArray(mockData)) {
-        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
-    } else {
-        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
-    }
-}
-
-function mockNetworkFuzzy(config, mockData) {
-    const parentObjectApiName = config.parentObjectApiName;
-    const queryParams = { ...config };
-    delete queryParams.parentObjectApiName;
-    delete queryParams.relatedListNames;
-
-    function hitCorrectParentObjectApiName(networkConfig) {
-        return networkConfig.path.startsWith(
-            `${URL_BASE}/related-list-info/batch/${parentObjectApiName}/`
-        );
-    }
-
-    if (Array.isArray(mockData)) {
-        mockNetworkSequence(
-            karmaNetworkAdapter,
-            sinon.match(hitCorrectParentObjectApiName),
-            mockData
-        );
-    } else {
-        mockNetworkOnce(karmaNetworkAdapter, sinon.match(hitCorrectParentObjectApiName), mockData);
-    }
 }
 
 describe('basic', () => {
@@ -70,7 +26,7 @@ describe('basic', () => {
             parentObjectApiName: parentObjectApiName,
             relatedListNames: relatedListNames.join(','),
         };
-        mockNetwork(resourceConfig, mockData);
+        mockGetRelatedListInfoBatchNetwork(resourceConfig, mockData);
 
         const props = {
             parentObjectApiName: parentObjectApiName,
@@ -93,7 +49,7 @@ describe('basic', () => {
             parentObjectApiName: parentObjectApiName,
             relatedListNames: relatedListNames.join(','),
         };
-        mockNetwork(resourceConfig, mockData);
+        mockGetRelatedListInfoBatchNetwork(resourceConfig, mockData);
 
         const props = {
             parentObjectApiName: parentObjectApiName,
@@ -121,7 +77,7 @@ describe('basic', () => {
             parentObjectApiName: parentObjectApiName,
             relatedListNames: relatedListNames.join(','),
         };
-        mockNetwork(resourceConfig, [mockData, updatedMockData]);
+        mockGetRelatedListInfoBatchNetwork(resourceConfig, [mockData, updatedMockData]);
 
         const props = {
             parentObjectApiName: parentObjectApiName,
@@ -137,25 +93,23 @@ describe('basic', () => {
         expect(element.getWiredData()).toBeImmutable();
     });
 
-    xit('returns cached result combined with network data in cache-miss scenario', async () => {
-        //TODO: Re-enable once the wire can return combined network + cache responses
+    it('returns cached result combined with network data in cache-miss scenario', async () => {
         const mockData1 = getMock('related-list-info-batch-Custom');
-        const mockData2 = getMock('related-list-info-batch-Custom02');
         const mockDataCombined = getMock('related-list-info-batch-Custom-Both');
 
         const parentObjectApiName = mockData1.results[0].result.listReference.parentObjectApiName;
-        const relatedListNames = mockData1.results.map(
+        const relatedListNames1 = mockData1.results.map(
             result => result.result.listReference.relatedListId
         );
-        const resourceConfig = {
+        const resourceConfig1 = {
             parentObjectApiName: parentObjectApiName,
-            relatedListNames: relatedListNames.join(','),
+            relatedListNames: relatedListNames1.join(','),
         };
-        mockNetworkFuzzy(resourceConfig, [mockData1, mockData2]);
+        mockGetRelatedListInfoBatchNetwork(resourceConfig1, mockData1);
 
         const props1 = {
             parentObjectApiName: parentObjectApiName,
-            relatedListNames: relatedListNames,
+            relatedListNames: relatedListNames1,
         };
         // first component should have the correct data from network.
         const element = await setupElement(props1, RelatedListInfoBatch);
@@ -166,6 +120,11 @@ describe('basic', () => {
         const combinedRelatedListNames = mockDataCombined.results.map(
             result => result.result.listReference.relatedListId
         );
+        const resourceConfigCombined = {
+            parentObjectApiName: parentObjectApiName,
+            relatedListNames: combinedRelatedListNames.join(','),
+        };
+        mockGetRelatedListInfoBatchNetwork(resourceConfigCombined, mockDataCombined);
         const props2 = {
             parentObjectApiName: parentObjectApiName,
             relatedListNames: combinedRelatedListNames,
@@ -176,9 +135,44 @@ describe('basic', () => {
         expect(element2.getWiredData()).toBeImmutable();
     });
 
-    xdescribe('error cases', () => {
-        // TODO: Test/Enable once the error parsing can be adding the the api.raml definitions
-        // Params aren't reflected in error responses.
+    it('returns cached result when single wires match requested data', async () => {
+        const mockData1 = getMock('related-list-info-batch-Custom');
+        const mockData2 = getMock('related-list-info-batch-Custom02');
+        const mockDataCombined = getMock('related-list-info-batch-Custom-Both');
+
+        const parentObjectApiName = mockData1.results[0].result.listReference.parentObjectApiName;
+        const relatedListName1 = mockData1.results[0].result.listReference.relatedListId;
+        const relatedListName2 = mockData2.results[0].result.listReference.relatedListId;
+        const resourceConfig1 = {
+            parentObjectApiName: parentObjectApiName,
+            relatedListId: relatedListName1,
+        };
+        const resourceConfig2 = {
+            parentObjectApiName: parentObjectApiName,
+            relatedListId: relatedListName2,
+        };
+        mockGetRelatedListInfoNetwork(resourceConfig1, mockData1.results[0].result);
+        mockGetRelatedListInfoNetwork(resourceConfig2, mockData2.results[0].result);
+
+        // Setup single components to propagate the cache
+        await setupElement(resourceConfig1, RelatedListInfoSingle);
+        await setupElement(resourceConfig2, RelatedListInfoSingle);
+
+        // Setup batch element.
+        const combinedRelatedListNames = mockDataCombined.results.map(
+            result => result.result.listReference.relatedListId
+        );
+        const batchProps = {
+            parentObjectApiName: parentObjectApiName,
+            relatedListNames: combinedRelatedListNames,
+        };
+        // batch component should have the correct data from cache
+        const batchElement = await setupElement(batchProps, RelatedListInfoBatch);
+        expect(batchElement.getWiredData()).toEqualSnapshotWithoutEtags(mockDataCombined);
+        expect(batchElement.getWiredData()).toBeImmutable();
+    });
+
+    describe('error cases', () => {
         const GOOD_PARENT_OBJECT_API_NAME = 'CwcCustom00__c';
         const BAD_RELATED_LIST_NAME = 'relatedListThatDoesntExist';
         const GOOD_RELATED_LIST_NAME = 'CwcCustom01s__r';
@@ -189,7 +183,7 @@ describe('basic', () => {
                 parentObjectApiName: GOOD_PARENT_OBJECT_API_NAME,
                 relatedListNames: BAD_RELATED_LIST_NAME,
             };
-            mockNetwork(resourceConfig, mockData);
+            mockGetRelatedListInfoBatchNetwork(resourceConfig, mockData);
 
             const props = {
                 parentObjectApiName: GOOD_PARENT_OBJECT_API_NAME,
@@ -205,13 +199,13 @@ describe('basic', () => {
             const mockData = getMock('related-list-info-batch-Mixed-Error');
             const resourceConfig = {
                 parentObjectApiName: GOOD_PARENT_OBJECT_API_NAME,
-                relatedListNames: BAD_RELATED_LIST_NAME + ',' + GOOD_RELATED_LIST_NAME,
+                relatedListNames: GOOD_RELATED_LIST_NAME + ',' + BAD_RELATED_LIST_NAME,
             };
-            mockNetwork(resourceConfig, mockData);
+            mockGetRelatedListInfoBatchNetwork(resourceConfig, mockData);
 
             const props = {
                 parentObjectApiName: GOOD_PARENT_OBJECT_API_NAME,
-                relatedListNames: [BAD_RELATED_LIST_NAME, GOOD_RELATED_LIST_NAME],
+                relatedListNames: [GOOD_RELATED_LIST_NAME, BAD_RELATED_LIST_NAME],
             };
             const element = await setupElement(props, RelatedListInfoBatch);
 
@@ -220,12 +214,12 @@ describe('basic', () => {
         });
 
         it('emits to component with cached error data', async () => {
-            const mockData = getMock('related-list-info-batch-Error');
+            const mockData = getMock('related-list-info-batch-Missing');
             const resourceConfig = {
                 parentObjectApiName: GOOD_PARENT_OBJECT_API_NAME,
                 relatedListNames: BAD_RELATED_LIST_NAME,
             };
-            mockNetwork(resourceConfig, mockData);
+            mockGetRelatedListInfoBatchNetwork(resourceConfig, mockData);
 
             const props = {
                 parentObjectApiName: GOOD_PARENT_OBJECT_API_NAME,
@@ -243,13 +237,13 @@ describe('basic', () => {
         });
 
         it('should retreive actual data after error response cache expired', async () => {
-            const mockError = getMock('related-list-info-batch-Error');
+            const mockError = getMock('related-list-info-batch-Missing');
             const mockData = getMock('related-list-info-batch-Custom');
             const resourceConfig = {
                 parentObjectApiName: GOOD_PARENT_OBJECT_API_NAME,
                 relatedListNames: GOOD_RELATED_LIST_NAME,
             };
-            mockNetwork(resourceConfig, [mockError, mockData]);
+            mockGetRelatedListInfoBatchNetwork(resourceConfig, [mockError, mockData]);
 
             const props = {
                 parentObjectApiName: GOOD_PARENT_OBJECT_API_NAME,

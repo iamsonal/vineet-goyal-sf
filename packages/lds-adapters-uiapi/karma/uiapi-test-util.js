@@ -325,6 +325,42 @@ function mockGetPicklistValuesNetwork(config, mockData) {
     }
 }
 
+function mockGetRelatedListInfoNetwork(config, mockData) {
+    const { parentObjectApiName, relatedListId } = config;
+    const queryParams = { ...config };
+    delete queryParams.parentObjectApiName;
+    delete queryParams.relatedListId;
+
+    const paramMatch = sinon.match({
+        basePath: `${URL_BASE}/related-list-info/${parentObjectApiName}/${relatedListId}`,
+        queryParams,
+    });
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetRelatedListInfoBatchNetwork(config, mockData) {
+    const parentObjectApiName = config.parentObjectApiName;
+    const relatedListNames = config.relatedListNames;
+    const queryParams = { ...config };
+    delete queryParams.parentObjectApiName;
+    delete queryParams.relatedListNames;
+
+    const paramMatch = sinon.match({
+        basePath: `${URL_BASE}/related-list-info/batch/${parentObjectApiName}/${relatedListNames}`,
+        queryParams,
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
 /**
  * Force a cache expiration for records by fast-forwarding time past the
  * standard record TTL.
@@ -522,6 +558,8 @@ export {
     mockGetRelatedListRecordNetwork,
     mockUpdateRecordNetwork,
     mockUpdateLayoutUserStateNetwork,
+    mockGetRelatedListInfoNetwork,
+    mockGetRelatedListInfoBatchNetwork,
     // mock data utils
     extractRecordFields,
 };

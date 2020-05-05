@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-cms-delivery",
-    "version": "0.1.0",
+    "version": "0.1.11",
     "description": "Wire adapters for CMS endpoints",
     "license": "MIT",
     "main": "dist/umd/es2018/cms-delivery.js",
@@ -17,6 +17,6 @@
         "test:compat": "karma start --single-run --compat"
     },
     "devDependencies": {
-        "@salesforce/lds-karma-config": "0.1.3"
+        "@salesforce/lds-karma-config": "0.1.11"
     }
 }

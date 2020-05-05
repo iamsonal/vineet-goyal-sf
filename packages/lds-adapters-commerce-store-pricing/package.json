@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-commerce-store-pricing",
-    "version": "0.1.3",
+    "version": "0.1.11",
     "description": "Wire adapters Commerce Store Pricing",
     "license": "MIT",
     "main": "dist/umd/es2018/commerce-store-pricing.js",
@@ -17,6 +17,6 @@
         "test:compat": "karma start --single-run --compat"
     },
     "devDependencies": {
-        "@salesforce/lds-karma-config": "0.1.3"
+        "@salesforce/lds-karma-config": "0.1.11"
     }
 }

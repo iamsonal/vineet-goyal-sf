@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-karma-config",
-    "version": "0.1.3",
+    "version": "0.1.11",
     "description": "Karma config and utils for wire adapter testing",
     "private": true,
     "license": "MIT",

@@ -6,6 +6,7 @@ import {
     validate,
     KeyParams,
     keyBuilder,
+    keyBuilderFromType as generatedKeyBuilderFromType,
     normalize,
     select,
     equals,
@@ -13,7 +14,7 @@ import {
     ingest as generatedIngest,
 } from '../../generated/types/RecordRepresentation';
 import { createLink } from '../../generated/types/type-utils';
-import { default as helpers_RecordRepresentation_polymorph_default } from '../../helpers/RecordRepresentation/polymorph';
+import { keyPrefix } from '../../generated/adapters/adapter-utils';
 import { default as helpers_RecordRepresentation_merge_default } from '../../helpers/RecordRepresentation/merge';
 
 export {
@@ -27,6 +28,20 @@ export {
     select,
     equals,
     deepFreeze,
+};
+
+const VIEW_ENTITY_API_NAME = 'Name';
+const VIEW_ENTITY_KEY_PREFIX = `${keyPrefix}RecordViewEntityRepresentation:${VIEW_ENTITY_API_NAME}:`;
+
+export const keyBuilderFromType: typeof generatedKeyBuilderFromType = function RecordRepresentationKeyBuilderFromType(
+    object: RecordRepresentation
+) {
+    const { apiName, id } = object;
+    if (apiName === VIEW_ENTITY_API_NAME) {
+        return VIEW_ENTITY_KEY_PREFIX + id;
+    }
+
+    return generatedKeyBuilderFromType(object);
 };
 
 export const ingest: typeof generatedIngest = function RecordRepresentationIngest(
@@ -43,7 +58,7 @@ export const ingest: typeof generatedIngest = function RecordRepresentationInges
         }
     }
 
-    const key = helpers_RecordRepresentation_polymorph_default(input);
+    const key = keyBuilderFromType(input);
 
     let incomingRecord = normalize(
         input,

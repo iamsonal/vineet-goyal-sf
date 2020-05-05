@@ -1,12 +1,9 @@
-import { karmaNetworkAdapter, deleteRecord } from 'lds';
-import sinon from 'sinon';
+import { deleteRecord } from 'lds';
+import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
-    mockNetworkOnce,
-    mockNetworkSequence,
-    getMock as globalGetMock,
-    setupElement,
-} from 'test-util';
-import { URL_BASE, mockDeleteRecordNetwork } from 'uiapi-test-util';
+    mockDeleteRecordNetwork,
+    mockGetRelatedListRecordsNetwork,
+} from '../../../../../karma/uiapi-test-util';
 
 import RelatedListBasic from '../lwc/related-list-basic';
 
@@ -16,29 +13,12 @@ function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
 }
 
-function mockNetwork(config, mockData) {
-    const { parentRecordId, relatedListId } = config;
-    const queryParams = { ...config };
-    delete queryParams.parentRecordId;
-    delete queryParams.relatedListId;
-
-    const paramMatch = sinon.match({
-        basePath: `${URL_BASE}/related-list-records/${parentRecordId}/${relatedListId}`,
-        queryParams,
-    });
-
-    if (Array.isArray(mockData)) {
-        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
-    } else {
-        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
-    }
-}
-
 // TODO: Remove this code once extra fields aren't returned from uiapi (test only issue since they're stripped out at runtime by lds)
 function stripExtraFields(mockData) {
     mockData.records.forEach(record => {
         Object.keys(record.fields).forEach(key => {
-            if (!(mockData.fields.indexOf(key) > -1)) {
+            const requestedFields = mockData.fields.concat(mockData.optionalFields);
+            if (!(requestedFields.indexOf(key) > -1)) {
                 delete record.fields[key];
             }
         });
@@ -54,7 +34,7 @@ describe('basic', () => {
             relatedListId: mockData.listReference.relatedListId,
             fields: mockData.fields,
         };
-        mockNetwork(resourceConfig, mockData);
+        mockGetRelatedListRecordsNetwork(resourceConfig, mockData);
 
         const props = {
             parentRecordId: mockData.listReference.inContextOfRecordId,
@@ -72,7 +52,7 @@ describe('basic', () => {
             relatedListId: mockData.listReference.relatedListId,
             fields: mockData.fields,
         };
-        mockNetwork(resourceConfig, mockData);
+        mockGetRelatedListRecordsNetwork(resourceConfig, mockData);
 
         const props = {
             parentRecordId: mockData.listReference.inContextOfRecordId,
@@ -98,7 +78,7 @@ describe('basic', () => {
             relatedListId: mockData.listReference.relatedListId,
             fields: mockData.fields,
         };
-        mockNetwork(resourceConfig, [mockData, refreshedMockData]);
+        mockGetRelatedListRecordsNetwork(resourceConfig, [mockData, refreshedMockData]);
 
         const props = {
             parentRecordId: mockData.listReference.inContextOfRecordId,
@@ -130,7 +110,7 @@ describe('basic', () => {
         };
 
         const recordId = refreshedMockData.records.splice(0, 1)[0].id;
-        mockNetwork(resourceConfig, [mockData, refreshedMockData]);
+        mockGetRelatedListRecordsNetwork(resourceConfig, [mockData, refreshedMockData]);
 
         const props = {
             parentRecordId: mockData.listReference.inContextOfRecordId,
@@ -163,7 +143,7 @@ describe('basic', () => {
             relatedListId: mockData.listReference.relatedListId,
             fields: mockData.fields,
         };
-        mockNetwork(resourceConfig, [mockData, refreshedMockData]);
+        mockGetRelatedListRecordsNetwork(resourceConfig, [mockData, refreshedMockData]);
 
         const props = {
             parentRecordId: mockData.listReference.inContextOfRecordId,

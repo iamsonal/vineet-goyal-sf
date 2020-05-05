@@ -11,11 +11,13 @@ enum UiApiRecordController {
     GetRelatedListCount = 'RelatedListUiController.getRelatedListRecordCount',
     GetRelatedListCounts = 'RelatedListUiController.getRelatedListsRecordCount',
     GetRelatedListInfoBatch = 'RelatedListUiController.getRelatedListInfoBatch',
+    GetRelatedListRecordsBatch = 'RelatedListUiController.getRelatedListRecordsBatch',
 }
 
 const UIAPI_RELATED_LIST_INFO_PATH = `${UI_API_BASE_URI}/related-list-info`;
 const UIAPI_RELATED_LIST_INFO_BATCH_PATH = `${UI_API_BASE_URI}/related-list-info/batch`;
 const UIAPI_RELATED_LIST_RECORDS_PATH = `${UI_API_BASE_URI}/related-list-records`;
+const UIAPI_RELATED_LIST_RECORDS_BATCH_PATH = `${UI_API_BASE_URI}/related-list-records/batch`;
 const UIAPI_RELATED_LIST_COUNT_PATH = `${UI_API_BASE_URI}/related-list-count`;
 
 function getRelatedListInfo(resourceRequest: ResourceRequest): Promise<any> {
@@ -88,6 +90,27 @@ function getRelatedListRecords(resourceRequest: ResourceRequest): Promise<any> {
     return dispatchAction(UiApiRecordController.GetRelatedListRecords, params);
 }
 
+function getRelatedListRecordsBatch(resourceRequest: ResourceRequest): Promise<any> {
+    const {
+        urlParams: { parentRecordId, relatedListIds },
+        queryParams: { fields, optionalFields, pageSize, sortBy },
+    } = resourceRequest;
+
+    const params = buildUiApiParams(
+        {
+            parentRecordId: parentRecordId,
+            relatedListIds: relatedListIds,
+            fields,
+            optionalFields,
+            pageSize,
+            sortBy,
+        },
+        resourceRequest
+    );
+
+    return dispatchAction(UiApiRecordController.GetRelatedListRecordsBatch, params);
+}
+
 function getRelatedListCount(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams } = resourceRequest;
 
@@ -156,8 +179,14 @@ appRouter.get(
     getRelatedListsInfo
 );
 appRouter.get(
-    (path: string) => path.startsWith(UIAPI_RELATED_LIST_RECORDS_PATH),
+    (path: string) =>
+        path.startsWith(UIAPI_RELATED_LIST_RECORDS_PATH) &&
+        path.startsWith(UIAPI_RELATED_LIST_RECORDS_BATCH_PATH) === false,
     getRelatedListRecords
+);
+appRouter.get(
+    (path: string) => path.startsWith(UIAPI_RELATED_LIST_RECORDS_BATCH_PATH),
+    getRelatedListRecordsBatch
 );
 // related-list-count/batch/parentRecordId/relatedListNames
 appRouter.get(

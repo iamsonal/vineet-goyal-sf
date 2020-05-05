@@ -34,6 +34,7 @@ import {
     GetRelatedListsCount,
     GetRelatedListRecordActions,
     GetRelatedListRecords,
+    GetRelatedListRecordsBatch,
     MRU,
     UpdateLayoutUserState,
     UpdateRecord,
@@ -70,6 +71,7 @@ const getRelatedListsInfo = register(lds, wireService, GetRelatedListsInfo(lds))
 const getRelatedListCount = register(lds, wireService, GetRelatedListCount(lds));
 const getRelatedListsCount = register(lds, wireService, GetRelatedListsCount(lds));
 const getRelatedListRecords = register(lds, wireService, GetRelatedListRecords(lds));
+const getRelatedListRecordsBatch = register(lds, wireService, GetRelatedListRecordsBatch(lds));
 const getRelatedListRecordActions = register(lds, wireService, GetRelatedListRecordActions(lds));
 const updateRecord = UpdateRecord(lds);
 const updateRecordAvatar = UpdateRecordAvatar(lds);
@@ -100,6 +102,7 @@ export {
     getRelatedListCount,
     getRelatedListsCount,
     getRelatedListRecords,
+    getRelatedListRecordsBatch,
     getRelatedListRecordActions,
     getObjectInfo,
     getObjectInfos,

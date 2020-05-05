@@ -464,3 +464,21 @@ types:
         sortBy: queryParams.sortBy || []
         parentRecordId: urlParams.parentRecordId
         relatedListId: urlParams.relatedListId
+  '/related-list-records/batch/{parentRecordId}/{relatedListIds}':
+    get:
+      (lds.adapter):
+        name: getRelatedListRecordsBatch
+      (lds.composite):
+        resource: /ui-api/related-list-records/{parentRecordId}/{relatedListId}
+        envelope:
+          path: results
+          statusCode: statusCode
+          body: result
+        uriParameters:
+          parentRecordId: parentRecordId
+          relatedListId: relatedListIds
+        queryParameters:
+          fields: fields
+          optionalFields: optionalFields
+          sortBy: sortBy
+          pageSize: pageSize

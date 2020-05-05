@@ -45,6 +45,7 @@ const whiteList = [
     'getRelatedListCount',
     'getRelatedListsCount',
     'getRelatedListInfoBatch',
+    'getRelatedListRecordsBatch',
 
     /** Apex exports */
     'getApexInvoker',
@@ -85,6 +86,7 @@ const whiteList = [
     '_getRelatedListRecords',
     '_getRelatedListRecordActions',
     '_getRelatedListInfoBatch',
+    '_getRelatedListRecordsBatch',
 ].sort();
 
 describe('items exported to core', () => {
@@ -112,6 +114,7 @@ describe('lds-mobile items exported', () => {
         '_getRelatedListActions',
         '_getRelatedListInfo',
         '_getRelatedListInfoBatch',
+        '_getRelatedListRecordsBatch',
         '_getRelatedListRecordActions',
         '_getRelatedListRecords',
         'adsBridge',

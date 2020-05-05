@@ -11,6 +11,10 @@ export default class Basic extends LightningElement {
     @api parentRecordId;
     @api relatedListId;
     @api fields;
+    @api optionalFields;
+    @api pageToken;
+    @api pageSize;
+    @api sortBy;
 
     wirePushCount = -1;
 
@@ -18,6 +22,10 @@ export default class Basic extends LightningElement {
         parentRecordId: '$parentRecordId',
         relatedListId: '$relatedListId',
         fields: '$fields',
+        optionalFields: '$optionalFields',
+        pageToken: '$pageToken',
+        pageSize: '$pageSize',
+        sortBy: '$sortBy',
     })
     onGetRelatedListRecords(result) {
         this.relatedListRecordsData = result;

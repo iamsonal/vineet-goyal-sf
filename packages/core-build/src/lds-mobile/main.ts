@@ -30,6 +30,7 @@ import {
     UpdateRecordAvatar,
     UpdateRelatedListInfo,
     GetRelatedListInfoBatch,
+    GetRelatedListRecordsBatch,
     UpdateLayoutUserState,
     DeleteRecord,
     MRU,
@@ -72,6 +73,7 @@ export const getRelatedListRecords = GetRelatedListRecords(lds);
 export const getRelatedListsCount = GetRelatedListsCount(lds);
 export const getRelatedListsInfo = GetRelatedListsInfo(lds);
 export const getRelatedListInfoBatch = GetRelatedListInfoBatch(lds);
+export const getRelatedListRecordsBatch = GetRelatedListRecordsBatch(lds);
 export const getListUi = GetListUi(lds);
 export const getProduct = GetProduct(lds);
 export const getProductCategoryPath = GetProductCategoryPath(lds);
@@ -112,6 +114,7 @@ const adapterMap: AdapterMap = {
     getRelatedListsCount,
     getRelatedListsInfo,
     getRelatedListInfoBatch,
+    getRelatedListRecordsBatch,
     getListUi,
     getProduct,
     productSearch,

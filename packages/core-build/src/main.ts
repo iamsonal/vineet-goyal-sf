@@ -32,6 +32,7 @@ export const getRelatedListCount = lds.getRelatedListCount;
 export const getRelatedListsCount = lds.getRelatedListsCount;
 export const updateRelatedListInfo = lds.updateRelatedListInfo;
 export const getRelatedListInfoBatch = lds.getRelatedListInfoBatch;
+export const getRelatedListRecordsBatch = lds.getRelatedListRecordsBatch;
 
 /** Apex exports */
 export const getApexInvoker = lds.getApexInvoker;
@@ -71,4 +72,5 @@ export const _getRelatedListInfo = lds._getRelatedListInfo;
 export const _getRelatedListInfoBatch = lds._getRelatedListInfoBatch;
 export const _getRelatedListActions = lds._getRelatedListActions;
 export const _getRelatedListRecords = lds._getRelatedListRecords;
+export const _getRelatedListRecordsBatch = lds._getRelatedListRecordsBatch;
 export const _getRelatedListRecordActions = lds._getRelatedListRecordActions;

@@ -17,7 +17,8 @@
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat",
         "test:mobile": "karma start --single-run --webview",
-        "test:unit": "jest"
+        "test:unit": "jest",
+        "test:overrides": "jest --testPathPattern=src/overrides"
     },
     "devDependencies": {
         "@salesforce/lds-karma-config": "0.1.3"

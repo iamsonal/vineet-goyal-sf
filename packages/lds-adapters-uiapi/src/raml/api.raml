@@ -2338,6 +2338,23 @@ types:
       visibilityEditable:
         description: Indicates whether the visibility of the listview can be edited.
         type: boolean
+  RelatedListRecordCollectionBatchRepresentation: #TODO: Handrolled
+    description: RelatedListRecordCollectionBatchRepresentation
+    type: object
+    properties:
+      results:
+        description: Collection of batch result items. One for each request input.
+        type: array
+        items:
+          type: CompositeRelatedListRecordCollectionResultRepresentation
+  CompositeRelatedListRecordCollectionResultRepresentation: #TODO: Handrolled
+    type: object
+    properties:
+      statusCode:
+        type: number
+      result:
+        description: object wrapper around inner representation
+        type: RelatedListRecordCollectionRepresentation
   RelatedListRecordCollectionRepresentation:
     description: RelatedListRecordCollectionRepresentation
     type: object
@@ -5000,29 +5017,20 @@ types:
             description: Success
             body:
               application/json:
-                type: BatchRepresentation
+                type: RelatedListRecordCollectionBatchRepresentation
         queryParameters:
           fields:
-            type: array
+            type: string
             required: false
-            items:
-              type: string
-              (oas-collectionFormat): csv
           optionalFields:
-            type: array
+            type: string
             required: false
-            items:
-              type: string
-              (oas-collectionFormat): csv
           pageSize:
-            type: integer
+            type: string
             required: false
           sortBy:
-            type: array
+            type: string
             required: false
-            items:
-              type: string
-              (oas-collectionFormat): csv
       uriParameters:
         parentRecordId:
           type: string

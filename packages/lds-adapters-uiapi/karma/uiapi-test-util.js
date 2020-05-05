@@ -259,6 +259,44 @@ function mockGetRelatedListRecordNetwork(config, mockData) {
     }
 }
 
+function mockGetRelatedListRecordsNetwork(config, mockData) {
+    const { parentRecordId, relatedListId } = config;
+    const queryParams = { ...config };
+    delete queryParams.parentRecordId;
+    delete queryParams.relatedListId;
+
+    const paramMatch = sinon.match({
+        basePath: `${URL_BASE}/related-list-records/${parentRecordId}/${relatedListId}`,
+        queryParams,
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetRelatedListRecordsBatchNetwork(config, mockData) {
+    const { parentRecordId, relatedListIds } = config;
+    const queryParams = { ...config };
+    delete queryParams.parentRecordId;
+    delete queryParams.relatedListIds;
+
+    const csvRelatedListIds = relatedListIds.join();
+
+    const paramMatch = sinon.match({
+        basePath: `${URL_BASE}/related-list-records/batch/${parentRecordId}/${csvRelatedListIds}`,
+        queryParams,
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
 function mockGetObjectInfoNetwork(config, mockData) {
     let { objectApiName, ...queryParams } = config;
 
@@ -556,6 +594,8 @@ export {
     mockGetRecordUiNetwork,
     mockGetRelatedListActionsNetwork,
     mockGetRelatedListRecordNetwork,
+    mockGetRelatedListRecordsNetwork,
+    mockGetRelatedListRecordsBatchNetwork,
     mockUpdateRecordNetwork,
     mockUpdateLayoutUserStateNetwork,
     mockGetRelatedListInfoNetwork,

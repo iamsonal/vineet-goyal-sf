@@ -22,6 +22,7 @@ export { factory as GetRecordCreateDefaults } from './wire/getRecordCreateDefaul
 export { getPicklistValuesByRecordTypeAdapterFactory as GetPicklistValuesByRecordType } from './generated/adapters/getPicklistValuesByRecordType';
 export { getRelatedListInfoAdapterFactory as GetRelatedListInfo } from './generated/adapters/getRelatedListInfo';
 export { getRelatedListRecordsAdapterFactory as GetRelatedListRecords } from './generated/adapters/getRelatedListRecords';
+export { getRelatedListRecordsBatchAdapterFactory as GetRelatedListRecordsBatch } from './overrides/adapters/getRelatedListRecordsBatch';
 export { getLookupActionsAdapterFactory as GetLookupActions } from './generated/adapters/getLookupActions';
 export { getRecordActionsAdapterFactory as GetRecordActions } from './generated/adapters/getRecordActions';
 export { getRelatedListActionsAdapterFactory as GetRelatedListActions } from './generated/adapters/getRelatedListActions';
@@ -66,6 +67,8 @@ export {
 export { ingest as ingestRecordUi } from './generated/types/RecordUiRepresentation';
 export { ingest as ingestRelatedListInfo } from './generated/types/RelatedListInfoRepresentation';
 export { ingest as ingestRelatedListInfoBatch } from './generated/types/RelatedListInfoBatchRepresentation';
+export { ingest as ingestRelatedListRecords } from './generated/types/RelatedListRecordCollectionRepresentation';
+export { ingest as ingestRelatedListRecordsBatch } from './generated/types/RelatedListRecordCollectionBatchRepresentation';
 
 // record-util pure functions
 export {

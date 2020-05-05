@@ -22,6 +22,7 @@ jest.mock('@salesforce/lds-adapters-uiapi', () => {
         getRelatedListInfoBatchSpy: jest.fn(mockAdapter),
         getRelatedListRecordsSpy: jest.fn(mockAdapter),
         getRelatedListRecordActionsSpy: jest.fn(mockAdapter),
+        getRelatedListRecordsBatchSpy: jest.fn(mockAdapter),
     };
 
     return {
@@ -42,6 +43,7 @@ jest.mock('@salesforce/lds-adapters-uiapi', () => {
         GetRelatedListInfoBatch: () => spies.getRelatedListInfoBatchSpy,
         GetRelatedListRecords: () => spies.getRelatedListRecordsSpy,
         GetRelatedListRecordActions: () => spies.getRelatedListRecordActionsSpy,
+        GetRelatedListRecordsBatch: () => spies.getRelatedListRecordsBatchSpy,
         __spies: spies,
     };
 });
@@ -105,6 +107,7 @@ import {
     _getRelatedListInfoBatch,
     _getRelatedListRecords,
     _getRelatedListRecordActions,
+    _getRelatedListRecordsBatch,
 } from '../main';
 
 import { __spies as uiApiRecordsSpies } from '@salesforce/lds-adapters-uiapi';
@@ -329,6 +332,14 @@ describe('lds main', () => {
             const config = {};
             await _getRelatedListRecordActions(config as any);
             expect(uiApiRecordsSpies.getRelatedListRecordActionsSpy).toHaveBeenCalledWith(config);
+        });
+    });
+
+    describe('_getRelatedListRecordsBatch', () => {
+        it('should call adapter returned by GetRelatedListRecordsBatch', async () => {
+            const config = {};
+            await _getRelatedListRecordsBatch(config as any);
+            expect(uiApiRecordsSpies.getRelatedListRecordsBatchSpy).toHaveBeenCalledWith(config);
         });
     });
 });

@@ -194,8 +194,7 @@ function copyArtifacts(repoPath, corePath) {
         build();
     }
 
-    // TODO: enable later
-    //printCommits(CORE_LDS_PATH);
+    printCommits(CORE_LDS_PATH);
 
     if (argv.target === 'lds') {
         copyArtifacts(REPO_LDS_PATH, CORE_LDS_PATH);

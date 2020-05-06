@@ -11,7 +11,6 @@ import {
     LDS,
     FetchResponse,
     ResourceRequest,
-    isUnfulfilledSnapshot,
     SnapshotRefresh,
     Fragment,
     FulfilledSnapshot,
@@ -28,6 +27,7 @@ import {
     paginationKeyBuilder as RelatedListRecordCollection_paginationKeyBuilder,
     RelatedListRecordCollectionRepresentation,
 } from '../../generated/types/RelatedListRecordCollectionRepresentation';
+import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
 export { keyBuilder, ingestError, ResourceRequestConfig, createResourceRequest };
 

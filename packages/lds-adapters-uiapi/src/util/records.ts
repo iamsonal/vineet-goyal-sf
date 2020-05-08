@@ -671,6 +671,7 @@ export const UIAPI_SUPPORTED_ENTITY_API_NAMES: { [key: string]: true } = {
     RecordsetFilterCriteria: true,
     RecordsetFilterCriteriaRule: true,
     RegulatoryCode: true,
+    ResidentialLoanApplication: true,
     ResourceAbsence: true,
     ResourcePreference: true,
     RetailStore: true,

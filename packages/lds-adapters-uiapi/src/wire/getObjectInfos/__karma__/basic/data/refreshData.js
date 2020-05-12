@@ -13,6 +13,21 @@ await helpers.requestGetAndSave(
 );
 
 await helpers.requestGetAndSave(
+    `/ui-api/object-info/batch/Opportunity,Account`,
+    path.join(rootDir, 'object-Opportunity-Account.json')
+);
+
+await helpers.requestGetAndSave(
+    `/ui-api/object-info/batch/Account,Opportunity,BadOpportunity`,
+    path.join(rootDir, 'object-Account-Opportunity-BadOpportunity.json')
+);
+
+await helpers.requestGetAndSave(
+    `/ui-api/object-info/batch/BadAccount,BadOpportunity`,
+    path.join(rootDir, 'object-BadAccount-BadOpportunity.json')
+);
+
+await helpers.requestGetAndSave(
     `/ui-api/object-info/Account`,
     path.join(rootDir, 'object-Account.json')
 );

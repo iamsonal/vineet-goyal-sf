@@ -155,6 +155,8 @@ types:
     (lds.coerceFunction): ../primitives/ObjectId/coerce
   SalesforceObjectIdArray:
     (lds.coerceFunction): ../primitives/ObjectIdArray/coerce
+  SalesforceSortedObjectIdArray:
+    (lds.coerceFunction): ../primitives/SortedObjectIdArray/coerce
   SalesforceFieldId:
     (lds.coerceFunction): ../primitives/FieldId/coerce
   SortedStringArray:
@@ -183,7 +185,7 @@ types:
         (lds.adapter):
           name: getLookupActions
           coercedParams:
-            objectApiNames: SalesforceObjectIdArray
+            objectApiNames: SalesforceSortedObjectIdArray
             actionTypes: SortedStringArray
             formFactor: SalesforceFormFactor
             sections: SortedStringArray

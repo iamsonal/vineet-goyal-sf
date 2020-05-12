@@ -25,5 +25,5 @@ export default function getObjectApiNamesArray(value: unknown): Array<string> | 
         return undefined;
     }
 
-    return dedupe(array).sort();
+    return dedupe(array);
 }

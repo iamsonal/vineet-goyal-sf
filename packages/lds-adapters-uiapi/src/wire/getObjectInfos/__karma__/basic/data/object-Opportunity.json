@@ -217,7 +217,7 @@
     "defaultRecordTypeId": "012000000000000AAA",
     "deletable": true,
     "dependentFields": {},
-    "eTag": "0c73c5b7d04cc66d390f1964a7d7bc58",
+    "eTag": "dfebe0bdb0f6a115fd23fa80b8f87e05",
     "feedEnabled": true,
     "fields": {
         "AccountId": {
@@ -1694,7 +1694,7 @@
     "searchable": true,
     "themeInfo": {
         "color": "FCB95B",
-        "iconUrl": "http://broth-virgo-4719-dev-ed.localhost.internal.salesforce.com:6109/img/icon/t4v35/standard/opportunity_120.png"
+        "iconUrl": "http://sagittarius-roasted-7434-dev-ed.localhost.internal.salesforce.com:6109/img/icon/t4v35/standard/opportunity_120.png"
     },
     "updateable": true
 }

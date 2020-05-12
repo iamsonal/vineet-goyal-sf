@@ -25,14 +25,14 @@ describe('ObjectIdArray coercion', () => {
         expect(coerce('ObjectX')).toEqual(['ObjectX']);
     });
 
-    it('should return array when passed multiple valid object names', () => {
-        expect(coerce(['ObjectX', { objectApiName: 'ObjectA' }])).toEqual(['ObjectX', 'ObjectA']);
+    it('should return sorted array when passed multiple valid object names', () => {
+        expect(coerce(['ObjectX', { objectApiName: 'ObjectA' }])).toEqual(['ObjectA', 'ObjectX']);
     });
 
-    it('should return deduped array when passed duplicate valid object names', () => {
+    it('should return sorted deduped array when passed duplicate valid object names', () => {
         expect(coerce(['ObjectX', 'ObjectX', { objectApiName: 'ObjectA' }])).toEqual([
-            'ObjectX',
             'ObjectA',
+            'ObjectX',
         ]);
     });
 });

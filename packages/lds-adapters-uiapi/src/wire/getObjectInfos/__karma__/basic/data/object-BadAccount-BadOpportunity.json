@@ -1,0 +1,22 @@
+{
+    "results": [
+        {
+            "result": [
+                {
+                    "errorCode": "FORBIDDEN",
+                    "message": "You don&#39;t have access to this record. Ask your administrator for help or to request access."
+                }
+            ],
+            "statusCode": 403
+        },
+        {
+            "result": [
+                {
+                    "errorCode": "FORBIDDEN",
+                    "message": "You don&#39;t have access to this record. Ask your administrator for help or to request access."
+                }
+            ],
+            "statusCode": 403
+        }
+    ]
+}

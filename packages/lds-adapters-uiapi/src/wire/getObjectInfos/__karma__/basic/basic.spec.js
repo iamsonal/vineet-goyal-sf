@@ -22,6 +22,39 @@ describe('getObjectInfos', () => {
         expect(actual).toEqualSnapshotWithoutEtags(mockData);
     });
 
+    it('returns data in the order provided', async () => {
+        const mockData = getMock('object-Opportunity-Account');
+        const resourceConfig = { objectApiNames: ['Opportunity', 'Account'] };
+        mockGetObjectInfosNetwork(resourceConfig, mockData);
+
+        const element = await setupElement(resourceConfig, ObjectInfos);
+
+        const actual = element.getWiredData();
+        expect(actual).toEqualSnapshotWithoutEtags(mockData);
+    });
+
+    it('returns data, a mix of 404s and 200s, in the order provided', async () => {
+        const mockData = getMock('object-Account-Opportunity-BadOpportunity');
+        const resourceConfig = { objectApiNames: ['Account', 'Opportunity', 'BadOpportunity'] };
+        mockGetObjectInfosNetwork(resourceConfig, mockData);
+
+        const element = await setupElement(resourceConfig, ObjectInfos);
+
+        const actual = element.getWiredData();
+        expect(actual).toEqualSnapshotWithoutEtags(mockData);
+    });
+
+    it('returns 200, even with all resources returned having 404', async () => {
+        const mockData = getMock('object-BadAccount-BadOpportunity');
+        const resourceConfig = { objectApiNames: ['BadAccount', 'BadOpportunity'] };
+        mockGetObjectInfosNetwork(resourceConfig, mockData);
+
+        const element = await setupElement(resourceConfig, ObjectInfos);
+
+        const actual = element.getWiredData();
+        expect(actual).toEqualSnapshotWithoutEtags(mockData);
+    });
+
     it('returns cached result when cached data is available', async () => {
         const mockData = getMock('object-Account-Opportunity');
         const resourceConfig = { objectApiNames: ['Account', 'Opportunity'] };
@@ -131,12 +164,12 @@ describe('getObjectInfos', () => {
         expect(wiredData).toEqualSnapshotWithoutEtags({
             results: [
                 {
-                    statusCode: 200,
-                    result: account,
-                },
-                {
                     statusCode: 404,
                     result: notFound,
+                },
+                {
+                    statusCode: 200,
+                    result: account,
                 },
             ],
         });

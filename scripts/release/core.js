@@ -6,6 +6,8 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
+const REPO_ROOT_PARENT = path.resolve(__dirname, '../../..');
+const RELATIVE_LDS_REPO_ROOT = path.resolve(REPO_ROOT_PARENT, 'lds');
 const REPO_ROOT = path.resolve(__dirname, '../../');
 const REPO_LDS_PATH = path.resolve(REPO_ROOT, 'packages/core-build/dist/lds.js');
 const REPO_LDS_NATIVE_PROXY_PATH = path.resolve(
@@ -36,6 +38,11 @@ const argv = require('yargs')
     .describe('skip-build', 'skips building')
     .boolean('skip-clean')
     .describe('skip-clean', 'skips cleaning')
+    .boolean('print-commits-only')
+    .describe(
+        'print-commits-only',
+        'print commits since last core release without doing the copy-over'
+    )
     .help().argv;
 
 const CORE_BRANCH = argv.branch || 'main';
@@ -140,6 +147,22 @@ function build() {
 }
 
 function printCommits(corePath) {
+    if (fs.existsSync(RELATIVE_LDS_REPO_ROOT)) {
+        console.log('* Include LDS engine commits:');
+        const hash = execSync(`grep '// engine version: ' ${corePath}`)
+            .toString()
+            .trim()
+            .split('-')[1];
+
+        const commits = execSync(
+            `cd ${RELATIVE_LDS_REPO_ROOT}; git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative ${hash}...HEAD`
+        )
+            .toString()
+            .trim();
+
+        console.log(commits);
+    }
+
     console.log('* Include commits:');
     const hash = execSync(`tail -n 1 ${corePath}`)
         .toString()
@@ -168,6 +191,11 @@ function copyArtifacts(repoPath, corePath) {
     console.log(`- lds path:  ${CORE_LDS_PATH}`);
     console.log(`- ldsNativeProxy path:  ${CORE_LDS_NATIVE_PROXY_PATH}`);
     console.log();
+
+    if (argv['print-commits-only']) {
+        printCommits(CORE_LDS_PATH);
+        return;
+    }
 
     if (argv.target === 'lds') {
         checkCore(CORE_LDS_PATH);

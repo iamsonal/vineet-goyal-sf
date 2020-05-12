@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-uiapi",
-    "version": "0.1.11",
+    "version": "0.1.12",
     "description": "Wire adapters for record related UI API endpoints",
     "license": "MIT",
     "main": "dist/umd/es2018/uiapi-records-service.js",
@@ -21,6 +21,6 @@
         "test:overrides": "jest --testPathPattern=src/overrides"
     },
     "devDependencies": {
-        "@salesforce/lds-karma-config": "0.1.11"
+        "@salesforce/lds-karma-config": "0.1.12"
     }
 }

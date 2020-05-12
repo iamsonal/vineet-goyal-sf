@@ -5,7 +5,7 @@
         "params": {
             "q": "nc",
             "searchType": "Recent",
-            "page": 1,
+            "pageParam": 1,
             "pageSize": 25,
             "sourceRecordId": ""
         }
@@ -16,7 +16,7 @@
         "params": {
             "q": "jak",
             "searchType": "TypeAhead",
-            "page": 1,
+            "pageParam": 1,
             "pageSize": 10,
             "sourceRecordId": ""
         }
@@ -27,7 +27,7 @@
         "params": {
             "q": "Bur",
             "searchType": "TypeAhead",
-            "page": 1,
+            "pageParam": 1,
             "pageSize": 10,
             "sourceRecordId": ""
         }
@@ -42,7 +42,7 @@
         "params": {
             "q": "Bu",
             "searchType": "Recent",
-            "page": 123456,
+            "pageParam": 123456,
             "pageSize": 10,
             "sourceRecordId": ""
         }
@@ -52,7 +52,7 @@
         "filename": "lookup-records-Case-Account-DisambiguationField-NotOnFirstRecord",
         "params": {
             "searchType": "TypeAhead",
-            "page": 1,
+            "pageParam": 1,
             "pageSize": 25,
             "sourceRecordId": ""
         }
@@ -62,7 +62,7 @@
         "filename": "lookup-records-Case-Account-DisambiguationField-OnFirstRecord",
         "params": {
             "searchType": "Recent",
-            "page": 1,
+            "pageParam": 1,
             "pageSize": 25,
             "sourceRecordId": ""
         }
@@ -71,7 +71,7 @@
         "endpoint": "lookups/Opportunity/Territory2Id/Territory2",
         "filename": "lookup-records-Opportunity-Territory2-SourceRecordId",
         "params": {
-            "page": 1,
+            "pageParam": 1,
             "pageSize": 25,
             "q": "sub",
             "searchType": "TypeAhead",

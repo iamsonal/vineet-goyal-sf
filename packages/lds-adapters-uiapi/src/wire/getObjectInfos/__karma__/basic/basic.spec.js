@@ -70,6 +70,24 @@ describe('getObjectInfos', () => {
         expect(actual).toEqualSnapshotWithoutEtags(mockData);
     });
 
+    it('should return in order requested when retrieved from the cache', async () => {
+        const mockData = getMock('object-Account-Opportunity');
+        const resourceConfig = { objectApiNames: ['Account', 'Opportunity'] };
+
+        const reversedOrderMockData = getMock('object-Opportunity-Account');
+        const reversedOrderResourceConfig = { objectApiNames: ['Opportunity', 'Account'] };
+
+        mockGetObjectInfosNetwork(resourceConfig, mockData);
+
+        // populate cache
+        await setupElement(resourceConfig, ObjectInfos);
+
+        // second component requests the same resources, but in reversed order
+        const reversedBatch = await setupElement(reversedOrderResourceConfig, ObjectInfos);
+
+        expect(reversedBatch.getWiredData()).toEqualSnapshotWithoutEtags(reversedOrderMockData);
+    });
+
     it('should be a cache hit when Account and Opportunity object infos are loaded separately', async () => {
         const opportunity = getMock('object-Opportunity');
         const account = getMock('object-Account');

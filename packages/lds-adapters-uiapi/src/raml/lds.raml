@@ -205,6 +205,11 @@ types:
         get:
           (lds.adapter):
             name: getRecordEditActions
+            coercedParams:
+              apiNames: SortedStringArray
+              recordIds: SalesforceRecordId18Array
+              formFactor: SalesforceFormFactor
+              sections: SortedStringArray
       /related-list/{relatedListIds}:
         get:
           (lds.adapter):

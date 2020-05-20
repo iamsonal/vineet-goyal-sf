@@ -107,6 +107,14 @@ export const _getObjectInfos = createImperativeFunction(getObjectInfosLdsAdapter
 const getLayoutLdsAdapter = createLdsAdapter('getLayout', GetLayout);
 export const _getLayout = createImperativeFunction(getLayoutLdsAdapter);
 
+const getPicklistValuesByRecordTypeLdsAdapter = createLdsAdapter(
+    'getPicklistValuesByRecordType',
+    GetPicklistValuesByRecordType
+);
+export const _getPicklistValuesByRecordType = createImperativeFunction(
+    getPicklistValuesByRecordTypeLdsAdapter
+);
+
 const getRecordLdsAdapter = createLdsAdapter('getRecord', GetRecord);
 export const _getRecord = createImperativeFunction(getRecordLdsAdapter);
 
@@ -142,9 +150,8 @@ export const getLookupRecords = setupWireAdapter('getLookupRecords', GetLookupRe
 export const getObjectInfo = registerWireAdapter(getObjectInfoLdsAdapter);
 export const getObjectInfos = registerWireAdapter(getObjectInfosLdsAdapter);
 export const getPicklistValues = setupWireAdapter('getPicklistValues', GetPicklistValues);
-export const getPicklistValuesByRecordType = setupWireAdapter(
-    'getPicklistValuesByRecordType',
-    GetPicklistValuesByRecordType
+export const getPicklistValuesByRecordType = registerWireAdapter(
+    getPicklistValuesByRecordTypeLdsAdapter
 );
 export const getRecord = registerWireAdapter(getRecordLdsAdapter);
 export const getRecordActions = registerWireAdapter(getRecordActionsLdsAdapter);

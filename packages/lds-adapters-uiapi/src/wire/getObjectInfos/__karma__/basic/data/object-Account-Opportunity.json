@@ -2788,7 +2788,7 @@
                 "searchable": true,
                 "themeInfo": {
                     "color": "7F8DE1",
-                    "iconUrl": "http://sagittarius-roasted-7434-dev-ed.localhost.internal.salesforce.com:6109/img/icon/t4v35/standard/account_120.png"
+                    "iconUrl": "https://chocolate-miami-4378-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
                 },
                 "updateable": true
             },
@@ -4491,7 +4491,7 @@
                 "searchable": true,
                 "themeInfo": {
                     "color": "FCB95B",
-                    "iconUrl": "http://sagittarius-roasted-7434-dev-ed.localhost.internal.salesforce.com:6109/img/icon/t4v35/standard/opportunity_120.png"
+                    "iconUrl": "https://chocolate-miami-4378-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/opportunity_120.png"
                 },
                 "updateable": true
             },

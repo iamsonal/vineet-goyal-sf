@@ -1,8 +1,9 @@
-import { LightningElement, api, wire } from 'lwc';
-import { getObjectInfos } from 'lds';
+import { LightningElement, api, wire, track } from 'lwc';
+import { getObjectInfos, refresh } from 'lds';
 
 export default class Basic extends LightningElement {
     @api objectApiNames;
+    @track trackObjectInfos;
     wirePushCount = -1;
 
     @wire(getObjectInfos, {
@@ -10,6 +11,7 @@ export default class Basic extends LightningElement {
     })
     onGetObjectInfo(result) {
         this.objectInfos = result;
+        this.trackObjectInfos = result;
         this.wirePushCount += 1;
     }
 
@@ -26,5 +28,14 @@ export default class Basic extends LightningElement {
     @api
     pushCount() {
         return this.wirePushCount;
+    }
+
+    @api
+    refresh() {
+        return refresh(this.objectInfos);
+    }
+
+    @api refreshTracked() {
+        return refresh(this.trackObjectInfos);
     }
 }

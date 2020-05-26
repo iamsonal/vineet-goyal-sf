@@ -49,7 +49,7 @@ describe('basic', () => {
         expect(element.getWiredData()).toBeImmutable();
     });
 
-    xit('parses error message with valid parentRecordId and invalid relatedListNames', async () => {
+    it('parses error message with valid parentRecordId and invalid relatedListNames', async () => {
         const mockData = getMock('related-lists-count-errorCase');
 
         const parentRecordId = 'a00RM0000004aVwYAI';

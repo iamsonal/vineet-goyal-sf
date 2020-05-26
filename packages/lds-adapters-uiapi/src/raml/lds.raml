@@ -426,10 +426,17 @@ types:
       get:
         (lds.adapter):
           name: getRelatedListsCount
-        (lds.key):
-          parentRecordId: urlParams.parentRecordId
-          relatedListNames: urlParams.relatedListNames
-          recordTypeId: queryParams.recordTypeId || null
+        (lds.composite):
+          resource: /ui-api/related-list-count/{parentRecordId}/{relatedListName}
+          uriParameters:
+            parentRecordId: parentRecordId
+            relatedListName: relatedListNames
+          queryParameters:
+            maxCount: maxCount
+          envelope:
+            path: results
+            statusCode: statusCode
+            body: result
     '/{parentRecordId}/{relatedListName}':
       get:
         (lds.adapter):

@@ -74,8 +74,7 @@ describe('notify change', () => {
             ],
         };
 
-        // need two network mocks to satisfy notifyChange + buildNetworkSnapshot from mergeAndRefreshHigherVersionRecord
-        mockGetRecordNetwork(refreshConfig, [refreshMock, refreshMock]);
+        mockGetRecordNetwork(refreshConfig, refreshMock);
 
         const element = await setupElement(initialConfig, RecordFields);
         const representation = element.getWiredData();

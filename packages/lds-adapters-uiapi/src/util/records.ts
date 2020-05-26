@@ -12,7 +12,9 @@ import {
     RecordRepresentationNormalized,
 } from '../generated/types/RecordRepresentation';
 import {
+    ArrayPrototypeConcat,
     ArrayPrototypePush,
+    ArrayPrototypeReduce,
     ObjectKeys,
     ObjectPrototypeHasOwnProperty,
     StringPrototypeEndsWith,
@@ -21,8 +23,8 @@ import { FieldId, splitQualifiedFieldApiName } from '../primitives/FieldId';
 import getFieldApiName from '../primitives/FieldId/coerce';
 import { dedupe } from '../validation/utils';
 import { MASTER_RECORD_TYPE_ID } from './layout';
-import { MAX_RECORD_DEPTH } from '../selectors/record';
 import { UIAPI_SUPPORTED_ENTITY_API_NAMES } from './supported-entities';
+import { MAX_RECORD_DEPTH, insertFieldsIntoTrie } from '../selectors/record';
 
 type FieldValueRepresentationValue = FieldValueRepresentation['value'];
 
@@ -33,6 +35,16 @@ interface FieldValueRepresentationLinkState {
 export interface RecordLayoutFragment {
     apiName: RecordRepresentation['apiName'];
     recordTypeId: RecordRepresentation['recordTypeId'];
+}
+
+/**
+ * A trie data structure representing where each node represents a field on a RecordRepresentation.
+ */
+export interface RecordFieldTrie {
+    name: string;
+    children: { [name: string]: RecordFieldTrie };
+    scalar?: boolean;
+    optional?: boolean;
 }
 
 export function isGraphNode(node: ProxyGraphNode<unknown>): node is GraphNode<unknown> {
@@ -119,6 +131,128 @@ export function extractTrackedFields(
     return fieldsList;
 }
 
+export function extractTrackedFieldsToTrie(
+    node: ProxyGraphNode<RecordRepresentationNormalized, RecordRepresentation>,
+    root: RecordFieldTrie,
+    visitedRecordIds: Record<string, boolean> = {},
+    depth: number = 0
+) {
+    // Filter Error and null nodes
+    if (!isGraphNode(node)) {
+        return;
+    }
+
+    const recordId = node.data.id;
+
+    // Stop the traversal if the key has already been visited, since the fields for this record
+    // have already been gathered at this point.
+    if (ObjectPrototypeHasOwnProperty.call(visitedRecordIds, recordId)) {
+        return;
+    }
+
+    // The visitedRecordIds object passed to the spanning record is a copy of the original
+    // visitedRecordIds + the current record id, since we want to detect circular references within
+    // a given path.
+    let spanningVisitedRecordIds = {
+        ...visitedRecordIds,
+        [recordId]: true,
+    };
+
+    const fields = node.object('fields');
+    const keys = fields.keys();
+
+    let current = root;
+    for (let i = 0, len = keys.length; i < len; i += 1) {
+        const key = keys[i];
+        const fieldValueRep = fields.link<
+            FieldValueRepresentationNormalized,
+            FieldValueRepresentation,
+            FieldValueRepresentationLinkState
+        >(key);
+
+        let next: RecordFieldTrie = current.children[key];
+        if (next === undefined) {
+            next = {
+                name: key as string,
+                children: {},
+            };
+            if (fieldValueRep.isMissing()) {
+                current.children[key] = next;
+                continue;
+            }
+
+            const field = fieldValueRep.follow();
+            // Filter Error and null nodes
+            if (!isGraphNode(field)) {
+                continue;
+            }
+
+            if (field.isScalar('value') === false) {
+                if (depth + 1 > MAX_RECORD_DEPTH) {
+                    continue;
+                }
+
+                const spanning = field
+                    .link<RecordRepresentationNormalized, RecordRepresentation>('value')
+                    .follow();
+
+                extractTrackedFieldsToTrie(spanning, next, spanningVisitedRecordIds, depth + 1);
+                if (ObjectKeys(next.children).length > 0) {
+                    current.children[key] = next;
+                } else {
+                    continue;
+                }
+            } else {
+                const state = fieldValueRep.linkData();
+                if (state !== undefined) {
+                    const { fields } = state;
+                    for (let s = 0, len = fields.length; s < len; s += 1) {
+                        const childFieldName = fields[s];
+                        next.children[childFieldName] = {
+                            name: childFieldName,
+                            children: {},
+                        };
+                    }
+                }
+            }
+
+            current.children[key] = next;
+        }
+    }
+}
+
+export function convertTrieToFields(root: RecordFieldTrie): string[] {
+    const childKeys = ObjectKeys(root.children);
+    if (childKeys.length === 0) {
+        return [root.name];
+    }
+
+    return ArrayPrototypeReduce.call(
+        childKeys,
+        (acc, cur) =>
+            ArrayPrototypeConcat.call(
+                acc,
+                convertTrieToFields(root.children[cur]).map(i => `${root.name}.${i}`)
+            ),
+        []
+    ) as string[];
+}
+
+// merge all nodes in Trie B into Trie A
+function mergeFieldsTries(rootA: RecordFieldTrie, rootB: RecordFieldTrie) {
+    const rootAchildren = rootA.children;
+    const rootBchildren = rootB.children;
+    const childBKeys = ObjectKeys(rootBchildren);
+    for (let i = 0, len = childBKeys.length; i < len; i++) {
+        const childBKey = childBKeys[i];
+        if (rootAchildren[childBKey] === undefined) {
+            rootAchildren[childBKey] = rootBchildren[childBKey];
+        } else {
+            mergeFieldsTries(rootAchildren[childBKey], rootBchildren[childBKey]);
+        }
+    }
+}
+
 export function getTrackedFields(
     lds: LDS,
     recordId: string,
@@ -128,16 +262,27 @@ export function getTrackedFields(
         recordId,
     });
     const fieldsList = fieldsFromConfig === undefined ? [] : [...fieldsFromConfig];
-
     const graphNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(key);
     if (!isGraphNode(graphNode)) {
         return fieldsList;
     }
 
-    const fileName = graphNode.scalar('apiName');
-    const fields = extractTrackedFields(graphNode, fileName, fieldsList);
+    const name = graphNode.scalar('apiName');
+    const root = {
+        name,
+        children: {},
+    };
+    extractTrackedFieldsToTrie(graphNode, root);
 
-    return dedupe(fields).sort();
+    const rootFromConfig = {
+        name,
+        children: {},
+    };
+    insertFieldsIntoTrie(rootFromConfig, fieldsList);
+
+    mergeFieldsTries(root, rootFromConfig);
+
+    return convertTrieToFields(root).sort();
 }
 
 /**
@@ -534,4 +679,33 @@ export function isSuperset(a: string[], b: string[]): boolean {
     }
 
     return true;
+}
+
+/** return true if a and b start with the same root name and a contains all nodes in b */
+export function isSuperRecordFieldTrie(a: RecordFieldTrie, b: RecordFieldTrie): boolean {
+    if (a.name !== b.name) {
+        return false;
+    }
+
+    const childrenA = a.children;
+    const childrenB = b.children;
+    const childKeysA = ObjectKeys(childrenA);
+    const childKeysB = ObjectKeys(childrenB);
+    const childKeysBLength = childKeysB.length;
+    if (childKeysBLength > childKeysA.length) {
+        return false;
+    }
+
+    let ret = true;
+    for (let i = 0; i < childKeysBLength; i++) {
+        const childBKey = childKeysB[i];
+        const childA = childrenA[childBKey];
+        if (childA === undefined) {
+            return false;
+        }
+
+        ret = ret && isSuperRecordFieldTrie(childA, childrenB[childBKey]);
+    }
+
+    return ret;
 }

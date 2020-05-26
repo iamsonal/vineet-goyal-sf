@@ -29,7 +29,12 @@ import {
     ObjectCreate,
     ObjectKeys,
 } from '../../util/language';
-import { getTrackedFields, markMissingOptionalFields, isGraphNode } from '../../util/records';
+import {
+    getTrackedFields,
+    markMissingOptionalFields,
+    markNulledOutRequiredFields,
+    isGraphNode,
+} from '../../util/records';
 import { dedupe } from '../../validation/utils';
 import { buildRecordUiSelector, RecordDef } from './selectors';
 import { getRecordTypeId } from '../../util/records';
@@ -197,8 +202,21 @@ export function buildInMemorySnapshot(
     return null;
 }
 
+function markRecordUiNulledOutLookupFields(
+    recordLookupFields: {
+        [key: string]: string[];
+    },
+    recordNodes: GraphNode<RecordRepresentationNormalized, RecordRepresentation>[]
+) {
+    for (let i = 0, len = recordNodes.length; i < len; i++) {
+        const recordId = recordNodes[i].data.id;
+        if (recordLookupFields[recordId] !== undefined) {
+            markNulledOutRequiredFields(recordNodes[i], recordLookupFields[recordId]);
+        }
+    }
+}
+
 function markRecordUiOptionalFields(
-    lds: LDS,
     optionalFields: string[],
     recordNodes: GraphNode<RecordRepresentationNormalized, RecordRepresentation>[]
 ) {
@@ -312,9 +330,11 @@ export function buildNetworkSnapshot(
                 }
             }
 
+            markRecordUiNulledOutLookupFields(recordLookupFields, recordNodes);
+
             const { optionalFields } = config;
             if (optionalFields.length > 0) {
-                markRecordUiOptionalFields(lds, optionalFields, recordNodes);
+                markRecordUiOptionalFields(optionalFields, recordNodes);
             }
 
             lds.storeBroadcast();

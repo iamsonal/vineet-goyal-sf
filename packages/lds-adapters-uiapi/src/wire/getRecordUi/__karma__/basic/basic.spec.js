@@ -41,7 +41,10 @@ describe('refresh', () => {
     it('should refresh recordUi', async () => {
         const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockRecordUiData);
-        const recordFields = extractRecordFields(mockRecordUiData.records[recordId]);
+        const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
+            add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            omit: ['Account.Parent'],
+        });
 
         const refreshMockUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const refreshMockRecord = refreshMockUiData.records[recordId];
@@ -75,7 +78,10 @@ describe('refresh', () => {
     it('should refresh recordUi, record type id changes', async () => {
         const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockRecordUiData);
-        const recordFields = extractRecordFields(mockRecordUiData.records[recordId]);
+        const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
+            add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            omit: ['Account.Parent'],
+        });
 
         const refreshMockUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const refreshMockRecord = refreshMockUiData.records[recordId];
@@ -142,7 +148,10 @@ describe('refresh', () => {
             value: '0033h000005X8gZAAS',
         };
 
-        const recordFields = extractRecordFields(mockRecordUiData.records[recordId]).sort();
+        const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
+            add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            omit: ['Account.Parent'],
+        });
         const config = {
             recordIds: recordId,
             layoutTypes: ['Full'],
@@ -186,7 +195,10 @@ describe('refresh', () => {
             value: null,
         };
 
-        const recordFields = extractRecordFields(mockRecordUiData.records[recordId]).sort(); // Need the sort because we added another field above
+        const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
+            add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            omit: ['Account.Parent'],
+        });
         const config = {
             recordIds: recordId,
             layoutTypes: ['Full'],
@@ -215,7 +227,10 @@ describe('refresh', () => {
     it('should refreshUi, but server returns 404', async () => {
         const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockRecordUiData);
-        const recordFields = extractRecordFields(mockRecordUiData.records[recordId]);
+        const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
+            add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            omit: ['Account.Parent'],
+        });
 
         const mockError = [
             {
@@ -267,7 +282,10 @@ describe('refresh', () => {
     it('should refreshUi, but server returns 500', async () => {
         const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockRecordUiData);
-        const recordFields = extractRecordFields(mockRecordUiData.records[recordId]);
+        const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
+            add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            omit: ['Account.Parent'],
+        });
 
         const config = {
             recordIds: recordId,
@@ -310,7 +328,10 @@ describe('refresh', () => {
         const objectInfoError = getMock('objectInfo-error');
         const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockRecordUiData);
-        const recordFields = extractRecordFields(mockRecordUiData.records[recordId]);
+        const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
+            add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            omit: ['Account.Parent'],
+        });
         const mockRecordUiDataChanged = getMock(
             'single-record-Account-layouttypes-Full-modes-View'
         );
@@ -364,7 +385,10 @@ describe('refresh', () => {
     it('should request all previously requested optional fields when getRecordUi is called with optionalFields', async () => {
         const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockRecordUiData);
-        const recordFields = extractRecordFields(mockRecordUiData.records[recordId]);
+        const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
+            add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            omit: ['Account.Parent'],
+        });
 
         recordFields.push('Account.OptionalField1');
         recordFields.push('Account.OptionalField2');
@@ -386,14 +410,8 @@ describe('refresh', () => {
             optionalFields: recordFields,
         };
 
-        const configRecordRefresh = {
-            recordId: recordId,
-            optionalFields: recordFields,
-        };
-
         mockGetRecordUiNetwork(configRecordUiOne, mockRecordUiData);
         mockGetRecordUiNetwork(configRecordUiTwoAndRefresh, [mockRecordUiData, refreshMockUiData]);
-        mockGetRecordNetwork(configRecordRefresh, refreshMockRecord);
 
         // Get Record Ui with first optional field.
         const elementRecordUi = await setupElement(configRecordUiOne, RecordUi);
@@ -512,7 +530,10 @@ describe('refresh', () => {
         const mockRecordUiData = getMock('multiple-record-Account-layouttypes-Full-modes-View');
         const recordIdOne = getRecordIdFromMock(mockRecordUiData, 0);
         const recordIdTwo = getRecordIdFromMock(mockRecordUiData, 1);
-        const recordFieldsOne = extractRecordFields(mockRecordUiData.records[recordIdOne]);
+        const recordFieldsOne = extractRecordFields(mockRecordUiData.records[recordIdOne], {
+            add: ['Account.Parent.Id', 'Account.Parent.Name'],
+            omit: ['Account.Parent'],
+        });
 
         const refreshMockUiData = getMock('multiple-record-Account-layouttypes-Full-modes-View');
         const refreshMockRecordOne = refreshMockUiData.records[recordIdOne];

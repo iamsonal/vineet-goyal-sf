@@ -5,10 +5,12 @@ import {
 } from '../../generated/types/RecordRepresentation';
 import { buildNetworkSnapshot as getRecordFieldsNetwork } from '../../wire/getRecord/GetRecordFields';
 import {
-    extractTrackedFields,
     isGraphNode,
-    isSuperset,
     isSupportedEntity,
+    extractTrackedFieldsToTrie,
+    RecordFieldTrie,
+    convertTrieToFields,
+    isSuperRecordFieldTrie,
 } from '../../util/records';
 import { ObjectKeys } from '../../util/language';
 
@@ -50,21 +52,32 @@ function mergeAndRefreshHigherVersionRecord(
     lds: LDS,
     incoming: RecordRepresentationNormalized,
     existing: RecordRepresentationNormalized,
-    incomingQualifiedApiNames: string[],
-    existingQualifiedApiNames: string[]
+    incomingTrackedFieldsTrieRoot: RecordFieldTrie,
+    existingTrackedFieldsTrieRoot: RecordFieldTrie
 ): RecordRepresentationNormalized {
     // If the higher version (incoming) does not contain a superset of fields as existing
     // then we need to refresh to get updated versions of fields in existing
-    if (isSuperset(incomingQualifiedApiNames, existingQualifiedApiNames) === false) {
+    if (
+        isSuperRecordFieldTrie(incomingTrackedFieldsTrieRoot, existingTrackedFieldsTrieRoot) ===
+        false
+    ) {
         // If this is an unsupported entity, do NOT attempt to go to the network
         // Simply merge what we have and move on
         if (isSupportedEntity(incoming.apiName) === false) {
             return mergeRecordFields(incoming, existing);
         }
 
+        // check to see if we already have all fields in incoming, if so, no need to issue a new network request
+        if (
+            isSuperRecordFieldTrie(existingTrackedFieldsTrieRoot, incomingTrackedFieldsTrieRoot) ===
+            true
+        ) {
+            return mergePendingFields(incoming, existing);
+        }
+
         getRecordFieldsNetwork(lds, {
             recordId: incoming.id,
-            optionalFields: incomingQualifiedApiNames,
+            optionalFields: convertTrieToFields(incomingTrackedFieldsTrieRoot),
         });
 
         // We want to mark fields in the store as pending
@@ -82,12 +95,15 @@ function mergeAndRefreshLowerVersionRecord(
     lds: LDS,
     incoming: RecordRepresentationNormalized,
     existing: RecordRepresentationNormalized,
-    incomingQualifiedApiNames: string[],
-    existingQualifiedApiNames: string[]
+    incomingTrackedFieldsTrieRoot: RecordFieldTrie,
+    existingTrackedFieldsTrieRoot: RecordFieldTrie
 ): RecordRepresentationNormalized {
     // If the higher version (existing) does not have a superset of fields as incoming
     // then we need to refresh to get updated versions of fields on incoming
-    if (isSuperset(existingQualifiedApiNames, incomingQualifiedApiNames) === false) {
+    if (
+        isSuperRecordFieldTrie(existingTrackedFieldsTrieRoot, incomingTrackedFieldsTrieRoot) ===
+        false
+    ) {
         // If this is an unsupported entity, do NOT attempt to go to the network
         // Simply merge what we have and move on
         if (isSupportedEntity(incoming.apiName) === false) {
@@ -97,7 +113,7 @@ function mergeAndRefreshLowerVersionRecord(
         const merged = mergePendingFields(existing, incoming);
         getRecordFieldsNetwork(lds, {
             recordId: incoming.id,
-            optionalFields: incomingQualifiedApiNames,
+            optionalFields: convertTrieToFields(incomingTrackedFieldsTrieRoot),
         });
         return merged;
     }
@@ -110,7 +126,6 @@ function mergeRecordConflict(
     incoming: RecordRepresentationNormalized,
     existing: RecordRepresentationNormalized
 ) {
-    const { apiName } = incoming;
     const incomingNode = lds.wrapNormalizedGraphNode<
         RecordRepresentationNormalized,
         RecordRepresentation
@@ -119,16 +134,25 @@ function mergeRecordConflict(
         RecordRepresentationNormalized,
         RecordRepresentation
     >(existing);
-    const incomingQualifiedApiNames = extractTrackedFields(incomingNode, apiName);
-    const existingQualifiedApiNames = extractTrackedFields(existingNode, apiName);
+    const incomingTrackedFieldsTrieRoot = {
+        name: incoming.apiName,
+        children: {},
+    };
+    const existingTrackedFieldsTrieRoot = {
+        name: existing.apiName,
+        children: {},
+    };
+
+    extractTrackedFieldsToTrie(incomingNode, incomingTrackedFieldsTrieRoot);
+    extractTrackedFieldsToTrie(existingNode, existingTrackedFieldsTrieRoot);
 
     if (incoming.weakEtag > existing.weakEtag) {
         return mergeAndRefreshHigherVersionRecord(
             lds,
             incoming,
             existing,
-            incomingQualifiedApiNames,
-            existingQualifiedApiNames
+            incomingTrackedFieldsTrieRoot,
+            existingTrackedFieldsTrieRoot
         );
     }
 
@@ -136,8 +160,8 @@ function mergeRecordConflict(
         lds,
         incoming,
         existing,
-        incomingQualifiedApiNames,
-        existingQualifiedApiNames
+        incomingTrackedFieldsTrieRoot,
+        existingTrackedFieldsTrieRoot
     );
 }
 

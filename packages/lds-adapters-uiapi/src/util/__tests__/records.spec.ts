@@ -17,6 +17,9 @@ import {
     getTrackedFields,
     isSuperset,
     extractTrackedFields,
+    extractTrackedFieldsToTrie,
+    convertTrieToFields,
+    isSuperRecordFieldTrie,
 } from '../records';
 
 import record from './data/sampleRecord';
@@ -200,6 +203,42 @@ describe('extractTrackedFields', () => {
         const node = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(recordKey);
 
         const fields = extractTrackedFields(node, record.apiName);
+        expect(fields).toEqual([
+            'TestD__c.TestC__c',
+            'TestD__c.TestC__r.Id',
+            'TestD__c.TestC__r.TestA__c',
+            'TestD__c.TestC__r.TestA__r.Id',
+            'TestD__c.TestC__r.TestA__r.Opportunity__c',
+            'TestD__c.TestC__r.TestA__r.Opportunity__r.Account.Id',
+            'TestD__c.TestC__r.TestA__r.Opportunity__r.Account.Name',
+            'TestD__c.TestC__r.TestA__r.Opportunity__r.Account.OperatingHours.CreatedById',
+            'TestD__c.TestC__r.TestA__r.Opportunity__r.Account.OperatingHours.Id',
+            'TestD__c.TestC__r.TestA__r.Opportunity__r.Account.OperatingHoursId',
+            'TestD__c.TestC__r.TestA__r.Opportunity__r.AccountId',
+            'TestD__c.TestC__r.TestA__r.Opportunity__r.Id',
+        ]);
+    });
+});
+
+describe('extractTrackedFieldsToTrie', () => {
+    it('should not include fields more than 6 levels deep', () => {
+        const record = buildDeepRecord();
+
+        const store = new Store();
+        const lds = new LDS(store, () => Promise.reject());
+        const recordKey = keyBuilder({ recordId: record.id });
+        ingest(record, { fullPath: recordKey, parent: null }, lds, store, 0);
+
+        const node = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(recordKey);
+
+        const root = {
+            name: record.apiName,
+            children: {},
+        };
+
+        extractTrackedFieldsToTrie(node, root);
+
+        const fields = convertTrieToFields(root);
         expect(fields).toEqual([
             'TestD__c.TestC__c',
             'TestD__c.TestC__r.Id',
@@ -542,5 +581,95 @@ describe('isSuperset', () => {
         const superset = ['c', 'a'];
         const subset = ['a', 'b', 'c'];
         expect(isSuperset(superset, subset)).toBe(false);
+    });
+});
+
+describe('isSuperRecordFieldTrie', () => {
+    it('should return true for supertrie', () => {
+        const rootA = {
+            name: 'a',
+            children: {
+                b: {
+                    name: 'b',
+                    children: {},
+                },
+                c: {
+                    name: 'c',
+                    children: {},
+                },
+            },
+        };
+
+        const rootB = {
+            name: 'a',
+            children: {
+                c: {
+                    name: 'c',
+                    children: {},
+                },
+            },
+        };
+
+        expect(isSuperRecordFieldTrie(rootA, rootB)).toBe(true);
+    });
+
+    it('should return true for equivalent', () => {
+        const rootA = {
+            name: 'a',
+            children: {
+                b: {
+                    name: 'b',
+                    children: {},
+                },
+                c: {
+                    name: 'c',
+                    children: {},
+                },
+            },
+        };
+
+        const rootB = {
+            name: 'a',
+            children: {
+                b: {
+                    name: 'b',
+                    children: {},
+                },
+                c: {
+                    name: 'c',
+                    children: {},
+                },
+            },
+        };
+
+        expect(isSuperRecordFieldTrie(rootA, rootB)).toBe(true);
+    });
+
+    it('should return false for subtrie', () => {
+        const rootA = {
+            name: 'a',
+            children: {
+                c: {
+                    name: 'c',
+                    children: {},
+                },
+            },
+        };
+
+        const rootB = {
+            name: 'a',
+            children: {
+                b: {
+                    name: 'b',
+                    children: {},
+                },
+                c: {
+                    name: 'c',
+                    children: {},
+                },
+            },
+        };
+
+        expect(isSuperRecordFieldTrie(rootA, rootB)).toBe(false);
     });
 });

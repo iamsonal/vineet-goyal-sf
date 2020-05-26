@@ -1,22 +1,13 @@
 import { PathSelection } from '@ldsjs/engine';
 
 import { ObjectKeys, ArrayPrototypePush } from '../util/language';
+import { RecordFieldTrie } from '../util/records';
 
 import { RecordRepresentation } from '../generated/types/RecordRepresentation';
 import { RecordCreateDefaultRecordRepresentation } from '../generated/types/RecordCreateDefaultRecordRepresentation';
 import { LinkSelection } from '@ldsjs/engine/dist/es/es2018/Select';
 
 type RecordRepresentationLike = RecordRepresentation | RecordCreateDefaultRecordRepresentation;
-
-/**
- * A trie data structure representing where each node represents a field on a RecordRepresentation.
- */
-interface RecordFieldTrie {
-    name: string;
-    scalar: boolean;
-    optional: boolean;
-    children: { [name: string]: RecordFieldTrie };
-}
 
 export const MAX_RECORD_DEPTH = 5;
 const FIELD_SEPARATOR = '.';
@@ -94,7 +85,7 @@ export function isSpanningRecord(
     return fieldValue !== null && typeof fieldValue === 'object';
 }
 
-function insertFieldsIntoTrie(root: RecordFieldTrie, fields: string[], optional: boolean) {
+export function insertFieldsIntoTrie(root: RecordFieldTrie, fields: string[], optional?: boolean) {
     for (let i = 0, len = fields.length; i < len; i++) {
         const field = fields[i].split(FIELD_SEPARATOR);
 

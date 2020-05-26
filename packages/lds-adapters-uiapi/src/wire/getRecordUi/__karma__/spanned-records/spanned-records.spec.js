@@ -3,6 +3,7 @@ import { expireRecordUi, mockGetRecordNetwork, mockGetRecordUiNetwork } from 'ui
 
 import RecordFields from '../../../getRecord/__karma__/lwc/record-fields';
 import RecordUi from '../lwc/record-ui';
+import { extractRecordFields } from '../../../../../karma/uiapi-test-util';
 
 const MOCK_PREFIX = 'wire/getRecordUi/__karma__/spanned-records/data/';
 
@@ -126,5 +127,57 @@ describe('single recordId - spanned record', () => {
         const wireC = await setupElement(configAccountRecord, RecordFields);
 
         expect(wireC.getWiredData()).toEqualSnapshotWithoutEtags(mockAccoutnRecordData);
+    });
+
+    it('get recordUi with null spanning record, update spanned record on server, get recordUi again', async () => {
+        const mockRecordUiData = getMock(
+            'single-record-Contact-layouttypes-Full-modes-View-null-Assignee_To'
+        );
+        const mockRecordUiDataWithAssignee_To = getMock(
+            'single-record-Contact-layouttypes-Full-modes-View'
+        );
+
+        const recordId = getRecordIdFromMock(mockRecordUiData);
+
+        const recordUiConfig = {
+            recordIds: recordId,
+            layoutTypes: ['Full'],
+            modes: ['View'],
+        };
+
+        // 1st request returns with a null spanning record (Assignee_To__c)
+        mockGetRecordUiNetwork(recordUiConfig, mockRecordUiData);
+
+        // 2nd request returns with a populated spanning record
+        mockGetRecordUiNetwork(
+            {
+                ...recordUiConfig,
+                optionalFields: extractRecordFields(mockRecordUiData.records[recordId], {
+                    omit: ['Contact.Assignee_To__r', 'Contact.ReportsTo'],
+                    add: [
+                        'Contact.Assignee_To__r.FirstName',
+                        'Contact.Assignee_To__r.Id',
+                        'Contact.Assignee_To__r.LastName',
+                        'Contact.Assignee_To__r.Name',
+                        'Contact.CreatedBy.SystemModstamp',
+                        'Contact.LastModifiedBy.SystemModstamp',
+                        'Contact.ReportsTo.FirstName',
+                        'Contact.ReportsTo.Id',
+                        'Contact.ReportsTo.LastName',
+                        'Contact.ReportsTo.Name',
+                    ],
+                }),
+            },
+            mockRecordUiDataWithAssignee_To
+        );
+
+        const wire = await setupElement(recordUiConfig, RecordUi);
+        expireRecordUi();
+        await setupElement(recordUiConfig, RecordUi);
+        expect(wire.pushCount()).toBe(2);
+        expect(wire.getWiredData()).toEqualSnapshotWithoutEtags({
+            ...mockRecordUiData,
+            records: mockRecordUiDataWithAssignee_To.records,
+        });
     });
 });

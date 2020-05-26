@@ -482,7 +482,6 @@ describe('tracked fields', () => {
                 'ADM_Work__c.Due_Date__c',
                 'ADM_Work__c.Epic_Rank__c',
                 'ADM_Work__c.Epic__c',
-                'ADM_Work__c.Epic__r',
                 'ADM_Work__c.Epic__r.CreatedBy.Id',
                 'ADM_Work__c.Found_in_Build__c',
                 'ADM_Work__c.Found_in_Build__r.Id',

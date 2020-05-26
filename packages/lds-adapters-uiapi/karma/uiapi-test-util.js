@@ -548,10 +548,17 @@ function extractRecordFields(record, options) {
         parent: null,
         record,
     };
-    const fields = extractRecordFieldsAtPath(path);
+    let fields = extractRecordFieldsAtPath(path);
 
-    if (options && options.omit) {
-        return fields.filter(name => options.omit.indexOf(name) === -1);
+    if (options) {
+        const { omit, add } = options;
+        if (omit) {
+            fields = fields.filter(name => options.omit.indexOf(name) === -1);
+        }
+        if (add) {
+            fields.push(...add);
+            fields.sort();
+        }
     }
 
     return fields;

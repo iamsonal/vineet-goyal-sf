@@ -38,7 +38,7 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListInfos);
 
-        expect(element.getWiredData()).toEqual(mockData);
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
         expect(element.getWiredData()).toBeImmutable();
     });
 });

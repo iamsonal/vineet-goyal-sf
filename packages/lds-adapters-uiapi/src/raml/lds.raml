@@ -12,6 +12,12 @@ types:
     (lds.private):
       - eTag
       - url
+  AppRepresentation:
+    (lds.private):
+      - eTag
+  AppsRepresentation:
+    (lds.private):
+      - eTag
   EntityActionRepresentation:
     (lds.key):
       url: url
@@ -39,6 +45,8 @@ types:
       sortBy: sortBy
     (lds.paginated): records
   ListViewSummaryCollectionRepresentation:
+    (lds.private):
+      - eTag
     (lds.key):
       objectApiName: objectApiName
       queryString: queryString
@@ -50,6 +58,9 @@ types:
       parentRecordId: listReference.inContextOfRecordId
       relatedListId: listReference.relatedListId
     (lds.paginated): records
+  RelatedListSummaryInfoRepresentation:
+    (lds.private):
+      - eTag
   RecordCollectionRepresentation:
     (lds.ttl): 120000
   PhotoRecordAvatarRepresentation:
@@ -59,6 +70,8 @@ types:
     (lds.private):
       - eTag
   ListUiRepresentation:
+    (lds.private):
+      - eTag
     (lds.key):
       listViewApiName: info.listReference.listViewApiName
       objectApiName: info.listReference.objectApiName
@@ -69,6 +82,8 @@ types:
       parentObjectApiName: parentObjectApiName
       recordTypeId: parentRecordTypeId
     (lds.integrity):
+      - eTag
+    (lds.private):
       - eTag
   ObjectInfoDirectoryEntryRepresentation:
     (lds.key):
@@ -112,6 +127,8 @@ types:
       - layoutType
       - mode
   RecordRepresentation:
+    (lds.private):
+      - eTag
     (lds.ttl): 30000
     (lds.key):
       recordId: id
@@ -121,6 +138,8 @@ types:
     (lds.key):
       recordId: recordId
   RecordUiRepresentation:
+    (lds.private):
+      - eTag
     (lds.ttl): 900000
   RelatedListInfoRepresentation:
     (lds.key):

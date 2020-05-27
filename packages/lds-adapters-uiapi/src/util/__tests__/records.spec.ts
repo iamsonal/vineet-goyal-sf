@@ -1,4 +1,4 @@
-import { Store, LDS } from '@ldsjs/engine';
+import { Store, LDS, Environment } from '@ldsjs/engine';
 
 import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
 import {
@@ -51,7 +51,7 @@ function buildDeepRecord(): RecordRepresentation {
 describe('getTrackedFields', () => {
     it('should return correct tracked fields', () => {
         const store = new Store();
-        const lds = new LDS(store, () => Promise.reject());
+        const lds = new LDS(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildSampleRecord(),
@@ -73,7 +73,7 @@ describe('getTrackedFields', () => {
 
     it('should include fields passed to getTrackedFields', () => {
         const store = new Store();
-        const lds = new LDS(store, () => Promise.reject());
+        const lds = new LDS(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildSampleRecord(),
@@ -96,7 +96,7 @@ describe('getTrackedFields', () => {
 
     it('should dedupe fields passed to getTrackedFields', () => {
         const store = new Store();
-        const lds = new LDS(store, () => Promise.reject());
+        const lds = new LDS(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildSampleRecord(),
@@ -118,7 +118,7 @@ describe('getTrackedFields', () => {
 
     it('should resolve tracked fields on records with circular reference', () => {
         const store = new Store();
-        const lds = new LDS(store, () => Promise.reject());
+        const lds = new LDS(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildRecursiveRecord(),
@@ -134,7 +134,7 @@ describe('getTrackedFields', () => {
 
     it('should resolve tracked fields on record with circular reference on a per-path basis', () => {
         const store = new Store();
-        const lds = new LDS(store, () => Promise.reject());
+        const lds = new LDS(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildRecursiveRecordDifferentPaths(),
@@ -163,7 +163,7 @@ describe('getTrackedFields', () => {
         const record = buildDeepRecord();
 
         const store = new Store();
-        const lds = new LDS(store, () => Promise.reject());
+        const lds = new LDS(new Environment(store, () => Promise.reject()));
 
         ingest(
             record,
@@ -196,7 +196,7 @@ describe('extractTrackedFields', () => {
         const record = buildDeepRecord();
 
         const store = new Store();
-        const lds = new LDS(store, () => Promise.reject());
+        const lds = new LDS(new Environment(store, () => Promise.reject()));
         const recordKey = keyBuilder({ recordId: record.id });
         ingest(record, { fullPath: recordKey, parent: null }, lds, store, 0);
 
@@ -225,7 +225,7 @@ describe('extractTrackedFieldsToTrie', () => {
         const record = buildDeepRecord();
 
         const store = new Store();
-        const lds = new LDS(store, () => Promise.reject());
+        const lds = new LDS(new Environment(store, () => Promise.reject()));
         const recordKey = keyBuilder({ recordId: record.id });
         ingest(record, { fullPath: recordKey, parent: null }, lds, store, 0);
 

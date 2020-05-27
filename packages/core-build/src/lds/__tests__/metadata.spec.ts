@@ -1,4 +1,4 @@
-import { Store, LDS } from '@ldsjs/engine';
+import { Store, LDS, Environment } from '@ldsjs/engine';
 
 import { createStorage } from '../storage';
 import { setupMetadataWatcher } from '../metadata';
@@ -6,7 +6,8 @@ import { createObjectInfo, addObjectInfo } from './test-utils';
 
 function createMetadataWatcher() {
     const store = new Store();
-    const lds = new LDS(store, () => Promise.resolve());
+    const environment = new Environment(store, () => Promise.resolve());
+    const lds = new LDS(environment);
     const storage = createStorage({ name: 'test' });
 
     setupMetadataWatcher(lds);

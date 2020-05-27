@@ -1,4 +1,4 @@
-import { LDS, Store } from '@ldsjs/engine';
+import { LDS, Store, Environment } from '@ldsjs/engine';
 import { BridgeNetworkProvider } from './MobileNetworkAdapter';
 import { MobileBridge, AdapterMap } from './MobileBridge';
 
@@ -41,9 +41,10 @@ import { ProductSearch } from '@salesforce/lds-adapters-commerce-search';
 import { GetProductPrice } from '@salesforce/lds-adapters-commerce-store-pricing';
 import { GetCommunityNavigationMenu } from '@salesforce/lds-adapters-community-navigation-menu';
 
-// TODO: this will eventually be OfflineStore (W-7386475: [lds-jscore][optimistic-emit] Enable OfflineStore in mobile lds target)
 const store = new Store();
-const lds = new LDS(store, BridgeNetworkProvider, {});
+// TODO: this will eventually be made an offline environment (W-7386475: [lds-jscore][optimistic-emit] Enable OfflineStore in mobile lds target)
+const environment = new Environment(store, BridgeNetworkProvider);
+const lds = new LDS(environment);
 
 export const getRecord = GetRecord(lds);
 export const deleteRecord = DeleteRecord(lds);

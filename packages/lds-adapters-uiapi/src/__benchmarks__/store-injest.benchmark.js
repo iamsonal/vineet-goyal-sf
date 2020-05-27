@@ -1,4 +1,4 @@
-import { LDS, Store } from '@ldsjs/engine';
+import { LDS, Store, Environment } from '@ldsjs/engine';
 import { ingestRecord, ingestRecordUi } from '@salesforce/lds-adapters-uiapi';
 
 import mockRecord from './mocks/custom-proto-medium-record';
@@ -32,7 +32,7 @@ function populate(count, lds, store) {
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
     const store = new Store();
-    const lds = new LDS(store, rejectNetworkAdapter);
+    const lds = new LDS(new Environment(store, rejectNetworkAdapter));
     ingestRecord(JSON.parse(mockRecord), 'record', lds, store);
     ingestRecordUi(JSON.parse(mockRecordUI), 'record', lds, store);
 }
@@ -45,7 +45,7 @@ describe('O(n) ingestion time for n records', () => {
         const number = 1000;
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
             populate(10, lds, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
@@ -68,7 +68,7 @@ describe('O(n) ingestion time for n records', () => {
         const number = 100;
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
             populate(10, lds, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
@@ -91,7 +91,7 @@ describe('O(n) ingestion time for n records', () => {
         const number = 10;
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
             populate(10, lds, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
@@ -114,7 +114,7 @@ describe('O(n) ingestion time for n records', () => {
         const number = 1;
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
             populate(10, lds, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
@@ -138,7 +138,7 @@ describe('Constant time', () => {
         let next;
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
             populate(1000, lds, store);
             next = clone(mockRecord);
         });
@@ -154,7 +154,7 @@ describe('Constant time', () => {
         let next;
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
             populate(100, lds, store);
             next = clone(mockRecord);
         });
@@ -170,7 +170,7 @@ describe('Constant time', () => {
         let next;
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
             populate(10, lds, store);
             next = clone(mockRecord);
         });
@@ -186,7 +186,7 @@ describe('Constant time', () => {
         let next;
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
             populate(1, lds, store);
             next = clone(mockRecord);
         });
@@ -202,7 +202,7 @@ describe('Constant time', () => {
         let next;
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
             next = clone(mockRecord);
         });
 
@@ -229,7 +229,7 @@ describe('O(n*m) ingestion time for n complex objects comprised of m objects (re
         let next;
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
             next = generateUniqueRecordUi(mockRecordUI, 1);
         });
 
@@ -244,7 +244,7 @@ describe('O(n*m) ingestion time for n complex objects comprised of m objects (re
         let next;
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
 
             for (let i = 0; i < 10; i += 1) {
                 ingestRecordUi(
@@ -276,7 +276,7 @@ describe('O(n*m) ingestion time for n complex objects comprised of m objects (re
 
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
 
             for (let i = 0; i < 10; i += 1) {
                 ingestRecordUi(

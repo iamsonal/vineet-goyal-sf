@@ -7,12 +7,12 @@ import {
     ValueChangedEvent,
 } from 'wire-service';
 
-import { LDS, Store } from '@ldsjs/engine';
+import { LDS, Store, Environment } from '@ldsjs/engine';
 import { bindWireRefresh, register } from '@ldsjs/lwc-lds';
 
 const karmaNetworkAdapter = sinon.stub().rejects();
 const store = new Store();
-const lds = new LDS(store, karmaNetworkAdapter);
+const lds = new LDS(new Environment(store, karmaNetworkAdapter));
 const refresh = bindWireRefresh(lds);
 const wireService = {
     register: wireServiceRegister,

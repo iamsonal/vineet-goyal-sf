@@ -1,4 +1,4 @@
-import { LDS, Store } from '@ldsjs/engine';
+import { LDS, Store, Environment } from '@ldsjs/engine';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 
 import AdsBridge from '../ads-bridge';
@@ -12,7 +12,8 @@ import {
 
 function createBridge() {
     const store = new Store();
-    const lds = new LDS(store, () => Promise.resolve());
+    const environment = new Environment(store, () => Promise.resolve());
+    const lds = new LDS(environment);
     const bridge = new AdsBridge(lds);
 
     return { store, lds, bridge };

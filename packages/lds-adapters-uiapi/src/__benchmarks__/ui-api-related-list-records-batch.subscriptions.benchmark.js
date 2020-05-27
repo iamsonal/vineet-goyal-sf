@@ -1,4 +1,4 @@
-import { LDS, Store } from '@ldsjs/engine';
+import { LDS, Store, Environment } from '@ldsjs/engine';
 import { ingestRelatedListRecordsBatch } from '@salesforce/lds-adapters-uiapi';
 
 import mockRelatedListRecordsBatch from './mocks/custom-related-list-records-batch';
@@ -13,7 +13,7 @@ function clone(data) {
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
     const store = new Store();
-    const lds = new LDS(store, rejectNetworkAdapter);
+    const lds = new LDS(new Environment(store, rejectNetworkAdapter));
     ingestRelatedListRecordsBatch(JSON.parse(mockRelatedListRecordsBatch), 'warmupKey', lds, store);
 }
 
@@ -24,7 +24,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListRecordsBatch(
                 clone(mockRelatedListRecordsBatch),
                 'relatedListRecordsBatch',
@@ -49,7 +49,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListRecordsBatch(
                 clone(mockRelatedListRecordsBatch),
                 'relatedListRecordsBatch',
@@ -83,7 +83,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListRecordsBatch(
                 clone(mockRelatedListRecordsBatch),
                 'relatedListRecordsBatch',
@@ -120,7 +120,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(store, rejectNetworkAdapter);
+            lds = new LDS(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListRecordsBatch(
                 clone(mockRelatedListRecordsBatch),
                 'relatedListRecordsBatch',

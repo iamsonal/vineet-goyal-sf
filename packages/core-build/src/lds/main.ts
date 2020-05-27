@@ -1,4 +1,4 @@
-import { Adapter, AdapterFactory, LDS, Store } from '@ldsjs/engine';
+import { Adapter, AdapterFactory, LDS, Store, Environment } from '@ldsjs/engine';
 import { bindWireRefresh, register } from '@ldsjs/lwc-lds';
 import { GenerateGetApexWireAdapter, GetApexInvoker } from '@salesforce/lds-adapters-apex';
 import { GetProduct, GetProductCategoryPath } from '@salesforce/lds-adapters-commerce-catalog';
@@ -53,7 +53,8 @@ import { setupMetadataWatcher } from './metadata';
 import networkAdapter from './network-adapter';
 
 const store = new Store();
-const lds = new LDS(store, networkAdapter, { instrument: instrumentNetwork });
+const environment = new Environment(store, networkAdapter);
+const lds = new LDS(environment, { instrument: instrumentNetwork });
 
 setupInstrumentation(lds, store);
 setupMetadataWatcher(lds);

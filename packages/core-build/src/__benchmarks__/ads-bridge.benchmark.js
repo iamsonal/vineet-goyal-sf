@@ -1,4 +1,4 @@
-import { LDS, Store } from '@ldsjs/engine';
+import { LDS, Store, Environment } from '@ldsjs/engine';
 import AdsBridge from '../../dist/ads-bridge';
 import { ingestRecord, ingestObjectInfo } from '@salesforce/lds-adapters-uiapi';
 
@@ -29,7 +29,7 @@ describe('LDS to ADS bridge', () => {
         let adsBridge;
         before(() => {
             const store = new Store();
-            lds = new LDS(store, () => new Promise(() => {}));
+            lds = new LDS(new Environment(store, () => new Promise(() => {})));
             adsBridge = new AdsBridge(lds);
             const time = Date.now();
 
@@ -54,7 +54,7 @@ describe('LDS to ADS bridge', () => {
         let adsBridge;
         before(() => {
             const store = new Store();
-            lds = new LDS(store, () => new Promise(() => {}));
+            lds = new LDS(new Environment(store, () => new Promise(() => {})));
             adsBridge = new AdsBridge(lds);
             const time = Date.now();
 

@@ -70,6 +70,7 @@ export const _getRecordActions = lds._getRecordActions;
 export const _getRecordAvatars = lds._getRecordAvatars;
 export const _getRecordUi = lds._getRecordUi;
 export const _getRelatedListInfo = lds._getRelatedListInfo;
+export const _getRelatedListsInfo = lds._getRelatedListsInfo;
 export const _getRelatedListInfoBatch = lds._getRelatedListInfoBatch;
 export const _getRelatedListActions = lds._getRelatedListActions;
 export const _getRelatedListRecords = lds._getRelatedListRecords;

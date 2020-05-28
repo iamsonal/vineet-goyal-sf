@@ -1,3 +1,7 @@
+jest.resetModules();
+
+(global as any).window = {};
+
 describe('Main exports', () => {
     const mainExports = require('../main');
     const ldsExports = require('../lds/main');

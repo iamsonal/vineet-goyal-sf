@@ -16,6 +16,8 @@ export function gauge() {
 export function mark() {}
 export function markStart() {}
 export function markEnd() {}
+export function perfStart() {}
+export function perfEnd() {}
 export function percentileHistogram() {
     return {
         update() {},

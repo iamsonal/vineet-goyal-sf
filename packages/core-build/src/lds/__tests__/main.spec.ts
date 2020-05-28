@@ -1,3 +1,24 @@
+import {
+    _getRecord,
+    _getRecordActions,
+    _getLayout,
+    _getObjectInfo,
+    createRecord,
+    updateRecord,
+    updateRecordAvatar,
+    refresh,
+    updateLayoutUserState,
+    _getRelatedListInfo,
+    _getRelatedListsInfo,
+    _getRelatedListActions,
+    _getRelatedListCount,
+    _getRelatedListsCount,
+    _getRelatedListInfoBatch,
+    _getRelatedListRecords,
+    _getRelatedListRecordActions,
+    _getRelatedListRecordsBatch,
+} from '../main';
+
 jest.mock('@salesforce/lds-adapters-uiapi', () => {
     const mockAdapter = () => {
         return {
@@ -89,26 +110,15 @@ jest.mock('instrumentation/service', () => {
     };
 });
 
-import {
-    _getRecord,
-    _getRecordActions,
-    _getLayout,
-    _getObjectInfo,
-    createRecord,
-    updateRecord,
-    updateRecordAvatar,
-    refresh,
-    updateLayoutUserState,
-    _getRelatedListInfo,
-    _getRelatedListsInfo,
-    _getRelatedListActions,
-    _getRelatedListCount,
-    _getRelatedListsCount,
-    _getRelatedListInfoBatch,
-    _getRelatedListRecords,
-    _getRelatedListRecordActions,
-    _getRelatedListRecordsBatch,
-} from '../main';
+jest.mock('../instrumentation', () => {
+    return {
+        ...jest.requireActual('../instrumentation'),
+        Instrumentation: class mockInstrumentation {
+            constructor() {}
+            instrumentNetwork = () => {};
+        },
+    };
+});
 
 import { __spies as uiApiRecordsSpies } from '@salesforce/lds-adapters-uiapi';
 import { __spies as lwcLdsSpies } from '@ldsjs/lwc-lds';

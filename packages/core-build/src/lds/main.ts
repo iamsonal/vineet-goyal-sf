@@ -43,18 +43,21 @@ import * as wireService from 'wire-service';
 import { throttle } from '../utils';
 import AdsBridge from './ads-bridge';
 import {
+    Instrumentation,
     incrementGetRecordNotifyChangeAllowCount,
     incrementGetRecordNotifyChangeDropCount,
     instrumentAdapter,
-    instrumentNetwork,
     setupInstrumentation,
 } from './instrumentation';
 import { setupMetadataWatcher } from './metadata';
 import networkAdapter from './network-adapter';
 
 const store = new Store();
+const instrumentation = new Instrumentation();
 const environment = new Environment(store, networkAdapter);
-const lds = new LDS(environment, { instrument: instrumentNetwork });
+const lds = new LDS(environment, {
+    instrument: instrumentation.instrumentNetwork.bind(instrumentation),
+});
 
 setupInstrumentation(lds, store);
 setupMetadataWatcher(lds);

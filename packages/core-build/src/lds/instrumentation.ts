@@ -41,6 +41,22 @@ interface LdsStatsReport {
     watchSubscriptionCount: number;
 }
 
+const INCOMING_WEAKETAG_0_KEY = 'incoming-weaketag-0';
+const EXISTING_WEAKETAG_0_KEY = 'existing-weaketag-0';
+
+interface WeakETagZeroEvent {
+    apiName: string;
+    [EXISTING_WEAKETAG_0_KEY]: boolean;
+    [INCOMING_WEAKETAG_0_KEY]: boolean;
+}
+
+interface WeakEtagZeroEvents {
+    [apiName: string]: {
+        [EXISTING_WEAKETAG_0_KEY]: number;
+        [INCOMING_WEAKETAG_0_KEY]: number;
+    };
+}
+
 const NAMESPACE = 'lds';
 const STORE_STATS_MARK_NAME = 'store-stats';
 const RUNTIME_PERF_MARK_NAME = 'runtime-perf';
@@ -53,6 +69,69 @@ const storeSizeMetric = percentileHistogram(STORE_SIZE_COUNT);
 const storeWatchSubscriptionsMetric = percentileHistogram(STORE_WATCH_SUBSCRIPTIONS_COUNT);
 const storeSnapshotSubscriptionsMetric = percentileHistogram(STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT);
 
+export class Instrumentation {
+    private weakEtagZeroEvents: WeakEtagZeroEvents = {};
+
+    constructor() {
+        if (window && window.addEventListener) {
+            window.addEventListener('beforeunload', () => {
+                if (Object.keys(this.weakEtagZeroEvents).length > 0) {
+                    perfStart(NETWORK_TRANSACTION_NAME);
+                    perfEnd(NETWORK_TRANSACTION_NAME, this.weakEtagZeroEvents);
+                }
+            });
+        }
+    }
+
+    /**
+     * Add a network transaction to the metrics service.
+     * Injected to LDS for network handling instrumentation.
+     *
+     * @param context The transaction context.
+     */
+
+    public instrumentNetwork(context: unknown): void {
+        if (this.isWeakETagEvent(context)) {
+            this.aggregateWeakETagEvents(context);
+        } else {
+            perfStart(NETWORK_TRANSACTION_NAME);
+            perfEnd(NETWORK_TRANSACTION_NAME, context);
+        }
+    }
+
+    /**
+     * Returns via duck-typing whether or not this is a weakETagZeroEvent.
+     * @param context The transaction context.
+     * @returns Whether or not this is a weakETagZeroEvent.
+     */
+    private isWeakETagEvent(context: unknown): context is WeakETagZeroEvent {
+        return (
+            typeof (context as any)[EXISTING_WEAKETAG_0_KEY] === 'boolean' &&
+            typeof (context as any)[INCOMING_WEAKETAG_0_KEY] === 'boolean'
+        );
+    }
+
+    /**
+     * Parses and aggregates weakETagZero events to be sent in summarized log line.
+     * @param context The transaction context.
+     */
+    private aggregateWeakETagEvents(context: WeakETagZeroEvent): void {
+        const { apiName } = context;
+        const key = 'weaketag-0-' + apiName;
+        if (this.weakEtagZeroEvents[key] === undefined) {
+            this.weakEtagZeroEvents[key] = {
+                [EXISTING_WEAKETAG_0_KEY]: 0,
+                [INCOMING_WEAKETAG_0_KEY]: 0,
+            };
+        }
+        if (context[EXISTING_WEAKETAG_0_KEY] !== undefined) {
+            this.weakEtagZeroEvents[key][EXISTING_WEAKETAG_0_KEY] += 1;
+        }
+        if (context[INCOMING_WEAKETAG_0_KEY] !== undefined) {
+            this.weakEtagZeroEvents[key][INCOMING_WEAKETAG_0_KEY] += 1;
+        }
+    }
+}
 /**
  * Aura Metrics Service plugin in charge of aggregating all the LDS performance marks before they
  * get sent to the server. All the marks are summed by operation type and the aggregated result
@@ -204,18 +283,6 @@ export function setupInstrumentation(lds: LDS, store: Store): void {
         storeSnapshotSubscriptionsMetric.update(storeStats.snapshotSubscriptionCount);
         storeWatchSubscriptionsMetric.update(storeStats.watchSubscriptionCount);
     });
-}
-
-/**
- * Add a network transaction to the metrics service.
- * Injected to LDS for network handling instrumentation.
- *
- * @param context The transaction context.
- */
-
-export function instrumentNetwork(context: unknown): void {
-    perfStart(NETWORK_TRANSACTION_NAME);
-    perfEnd(NETWORK_TRANSACTION_NAME, context);
 }
 
 /**

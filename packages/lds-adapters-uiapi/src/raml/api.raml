@@ -1397,7 +1397,7 @@ types:
           type: NavItemRepresentation
       nextPageUrl:
         description: URL to the next page of of nav items.
-        type: string
+        type: string | nil
   ObjectInfoDirectoryEntryRepresentation:
     description: Entry for an object info within the directory of objects.
     type: object
@@ -4255,6 +4255,12 @@ types:
         formFactor:
           type: string
           required: false
+        navItemNames:
+          type: array
+          required: false
+          items:
+            type: string
+            (oas-collectionFormat): csv
         page:
           type: integer
           required: false

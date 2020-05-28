@@ -52,6 +52,18 @@ types:
       queryString: queryString
       recentListsOnly: recentListsOnly
     (lds.paginated): lists
+  NavItemsRepresentation:
+    examples:
+      getNavItemsResponse1: !include ../mocks/types/NavItemsRepresentation/response1.json
+      getNavItemsResponseT1T2: !include ../mocks/types/NavItemsRepresentation/responseT1T2.json
+    (lds.ttl): 120000
+    (lds.private):
+      - eTag
+      - currentPageUrl
+  NavItemRepresentation:
+    (lds.ttl): 120000
+    (lds.key):
+      developerName: developerName
   RelatedListRecordCollectionRepresentation:
     (lds.key):
       sortBy: sortBy
@@ -328,6 +340,24 @@ types:
         coercedParams:
           fieldApiName: SalesforceFieldId
           targetApiName: SalesforceObjectId
+  /nav-items:
+    get:
+      (lds.adapter):
+        name: getNavItems
+        coercedParams:
+          formFactor: SalesforceFormFactor
+        tests:
+          expectedResponses:
+            - configInput: |
+                {}
+              mockPayloadId: getNavItemsResponse1
+          validConfigs:
+            - |
+              {
+                "formFactor": "Small",
+                "navItemNames": ["item1","item2"],
+                "page":100
+              }
   /record-avatars:
     '/batch/{recordIds}':
       get:

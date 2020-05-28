@@ -2157,6 +2157,13 @@
   dependencies:
     core-js "^2.5.7"
 
+"@ldsjs/adapter-test-library@^0.7.0":
+  version "0.7.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/adapter-test-library/-/@ldsjs/adapter-test-library-0.7.0/d5ae4e00d0287301baefe434e37a4ce4b77e2e3b.tgz#d5ae4e00d0287301baefe434e37a4ce4b77e2e3b"
+  integrity sha512-nXEN91n4Ln/UmZs6stueRnH+F5SGx0H1hMtmZmpWwlunPVGTczkK837T0OaJqsX9v+nQNFJenUuz/C0hu7CCYw==
+  dependencies:
+    sinon "^7.5.0"
+
 "@ldsjs/cli@^0.7.0":
   version "0.7.0"
   resolved "http://npm.lwcjs.org/@ldsjs/cli/-/@ldsjs/cli-0.7.0/8afb20251b39abfc49d0b8afd750c99d9adb469a.tgz#8afb20251b39abfc49d0b8afd750c99d9adb469a"

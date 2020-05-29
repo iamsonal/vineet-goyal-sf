@@ -242,18 +242,19 @@ describe('lds main', () => {
             expect(instrumentationSpies.counterIncrementSpy).toHaveBeenCalledTimes(2);
         });
 
-        it('should resolve with snapshot data when adapter fulfilled snapshot', async () => {
+        it('should return snapshot data synchronously when snapshot is fulfilled', () => {
             const expected = {};
             uiApiRecordsSpies.getRecordSpy.mockReturnValue({
                 data: expected,
                 state: 'Fulfilled',
             });
-            await expect(
+
+            expect(
                 _getRecord({
                     recordId: '00x000000000000017',
                     fields: ['Opportunity.Account.Name'],
                 })
-            ).resolves.toBe(expected);
+            ).toBe(expected);
             expect(instrumentationSpies.cacheStatsLogHitsSpy).toHaveBeenCalledTimes(1);
             expect(instrumentationSpies.cacheStatsLogMissesSpy).toHaveBeenCalledTimes(0);
             expect(instrumentationSpies.counterIncrementSpy).toHaveBeenCalledTimes(2);

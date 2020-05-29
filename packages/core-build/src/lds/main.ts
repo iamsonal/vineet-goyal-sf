@@ -84,7 +84,7 @@ const setupWireAdapter = <C, D>(name: string, factory: AdapterFactory<C, D>): Ad
 
 /* TODO W-6568533 - replace this temporary imperative invocation with wire reform */
 const createImperativeFunction = <C, D>(adapter: Adapter<C, D>) => {
-    return (config: C): Promise<D> => {
+    return (config: C): D | Promise<D> => {
         const result = adapter(config);
         if (result === null) {
             return Promise.reject(new Error('Insufficient config'));
@@ -96,7 +96,7 @@ const createImperativeFunction = <C, D>(adapter: Adapter<C, D>) => {
                 return snapshot.data;
             }) as Promise<D>;
         } else if (result.state === 'Fulfilled') {
-            return Promise.resolve(result.data);
+            return result.data;
         }
         return Promise.reject(new Error('isMissingData=true'));
     };

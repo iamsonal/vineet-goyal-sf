@@ -49,6 +49,19 @@ describe('basic', () => {
         expect(element.getWiredData()).toBeImmutable();
     });
 
+    it('gets no data from network with valid parentRecordId and empty relatedListNames', async () => {
+        const mockData = getMock('related-lists-count-Custom');
+        const parentRecordId = mockData.results[0].result.listReference.inContextOfRecordId;
+
+        const props = {
+            parentRecordId: parentRecordId,
+            relatedListNames: [],
+        };
+        const element = await setupElement(props, RelatedListsCount);
+
+        expect(element.getWiredData()).toEqual(undefined);
+    });
+
     it('parses error message with valid parentRecordId and invalid relatedListNames', async () => {
         const mockData = getMock('related-lists-count-errorCase');
 

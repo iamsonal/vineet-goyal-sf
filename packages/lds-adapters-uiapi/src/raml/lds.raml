@@ -475,6 +475,8 @@ types:
       get:
         (lds.adapter):
           name: getRelatedListsCount
+          coercedParams:
+            relatedListNames: SalesforceFieldIdArray
         (lds.composite):
           resource: /ui-api/related-list-count/{parentRecordId}/{relatedListName}
           uriParameters:

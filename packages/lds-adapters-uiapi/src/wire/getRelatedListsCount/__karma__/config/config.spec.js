@@ -24,4 +24,14 @@ describe('validation', () => {
         const elm = await setupElement(config, RelatedListsCount);
         expect(elm.pushCount()).toBe(0);
     });
+
+    it(`should not make an HTTP request if if relatedList names is length 0`, async () => {
+        const config = {
+            parentRecordId: 'a00RM0000004aVwYAI',
+            relatedListNames: [],
+        };
+
+        const elm = await setupElement(config, RelatedListsCount);
+        expect(elm.pushCount()).toBe(0);
+    });
 });

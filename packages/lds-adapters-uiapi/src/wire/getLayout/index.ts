@@ -5,6 +5,9 @@ import {
     ResourceRequestOverride,
     FetchResponse,
     SnapshotRefresh,
+    ResourceResponse,
+    ResourceRequest,
+    UnfulfilledSnapshot,
 } from '@ldsjs/engine';
 import {
     AdapterValidationConfig,
@@ -18,6 +21,7 @@ import {
     select as recordLayoutRepresentationSelect,
 } from '../../generated/types/RecordLayoutRepresentation';
 import { MASTER_RECORD_TYPE_ID } from '../../util/layout';
+import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
 const layoutSelections = recordLayoutRepresentationSelect();
 
@@ -42,11 +46,7 @@ function buildSnapshotRefresh(
     };
 }
 
-export function buildNetworkSnapshot(
-    lds: LDS,
-    config: GetLayoutConfigWithDefaults,
-    requestOverride?: ResourceRequestOverride
-): Promise<Snapshot<RecordLayoutRepresentation>> {
+function buildRequestAndKey(config: GetLayoutConfigWithDefaults) {
     const recordTypeId = config.recordTypeId;
     const request = getUiApiLayoutByObjectApiName({
         urlParams: {
@@ -66,25 +66,71 @@ export function buildNetworkSnapshot(
         mode: config.mode,
     });
 
+    return { request, key };
+}
+
+function onResourceResponseSuccess(
+    lds: LDS,
+    config: GetLayoutConfigWithDefaults,
+    key: string,
+    request: ResourceRequest,
+    response: ResourceResponse<RecordLayoutRepresentation>
+) {
+    const { body } = response;
+
+    lds.storeIngest<RecordLayoutRepresentation>(key, request, body);
+    lds.storeBroadcast();
+    return lds.storeLookup<RecordLayoutRepresentation>(
+        {
+            recordId: key,
+            node: layoutSelections,
+            variables: {},
+        },
+        buildSnapshotRefresh(lds, config)
+    );
+}
+
+function onResourceResponseError(
+    lds: LDS,
+    config: GetLayoutConfigWithDefaults,
+    key: string,
+    error: FetchResponse<unknown>
+) {
+    lds.storeIngestFetchResponse(key, error);
+    lds.storeBroadcast();
+    return lds.errorSnapshot(error, buildSnapshotRefresh(lds, config));
+}
+
+export function buildNetworkSnapshot(
+    lds: LDS,
+    config: GetLayoutConfigWithDefaults,
+    requestOverride?: ResourceRequestOverride
+): Promise<Snapshot<RecordLayoutRepresentation>> {
+    const { request, key } = buildRequestAndKey(config);
+
     return lds.dispatchResourceRequest<RecordLayoutRepresentation>(request, requestOverride).then(
         response => {
-            const { body } = response;
-
-            lds.storeIngest<RecordLayoutRepresentation>(key, request, body);
-            lds.storeBroadcast();
-            return lds.storeLookup<RecordLayoutRepresentation>(
-                {
-                    recordId: key,
-                    node: layoutSelections,
-                    variables: {},
-                },
-                buildSnapshotRefresh(lds, config)
-            );
+            return onResourceResponseSuccess(lds, config, key, request, response);
         },
         (error: FetchResponse<unknown>) => {
-            lds.storeIngestFetchResponse(key, error);
-            lds.storeBroadcast();
-            return lds.errorSnapshot(error, buildSnapshotRefresh(lds, config));
+            return onResourceResponseError(lds, config, key, error);
+        }
+    );
+}
+
+export function resolveUnfulfilledSnapshot(
+    lds: LDS,
+    config: GetLayoutConfigWithDefaults,
+    snapshot: UnfulfilledSnapshot<RecordLayoutRepresentation, unknown>
+): Promise<Snapshot<RecordLayoutRepresentation>> {
+    const { request, key } = buildRequestAndKey(config);
+
+    return lds.resolveUnfulfilledSnapshot<RecordLayoutRepresentation>(request, snapshot).then(
+        response => {
+            return onResourceResponseSuccess(lds, config, key, request, response);
+        },
+        (error: FetchResponse<unknown>) => {
+            return onResourceResponseError(lds, config, key, error);
         }
     );
 }
@@ -146,6 +192,10 @@ export const factory: AdapterFactory<GetLayoutConfig, RecordLayoutRepresentation
         // Cache hit
         if (lds.snapshotDataAvailable(snapshot)) {
             return snapshot;
+        }
+
+        if (isUnfulfilledSnapshot(snapshot)) {
+            return resolveUnfulfilledSnapshot(lds, config, snapshot);
         }
 
         return buildNetworkSnapshot(lds, config);

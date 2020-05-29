@@ -1,4 +1,14 @@
-import { AdapterFactory, LDS, FetchResponse, Snapshot, SnapshotRefresh } from '@ldsjs/engine';
+import {
+    AdapterFactory,
+    LDS,
+    FetchResponse,
+    Snapshot,
+    SnapshotRefresh,
+    ResourceRequest,
+    ResourceResponse,
+    UnfulfilledSnapshot,
+    isUnfulfilledSnapshot,
+} from '@ldsjs/engine';
 import {
     adapterName as getPicklistValuesAdapterName,
     validateAdapterConfig,
@@ -28,10 +38,7 @@ function buildSnapshotRefresh(
     };
 }
 
-export function buildNetworkSnapshot(
-    lds: LDS,
-    config: GetPicklistValuesConfig
-): Promise<Snapshot<PicklistValuesRepresentation>> {
+function buildRequestAndKey(config: GetPicklistValuesConfig) {
     const { recordTypeId, fieldApiName } = config;
     const fieldNames = getFieldId(fieldApiName);
     const request = getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName({
@@ -43,19 +50,62 @@ export function buildNetworkSnapshot(
     });
 
     const key = picklistValuesKeyBuilder({ id: `${request.baseUri}${request.basePath}` });
+    return { request, key };
+}
+
+function onResponseSuccess(
+    lds: LDS,
+    config: GetPicklistValuesConfig,
+    key: string,
+    request: ResourceRequest,
+    response: ResourceResponse<PicklistValuesRepresentation>
+) {
+    const { body } = response;
+    lds.storeIngest(key, request, body);
+    lds.storeBroadcast();
+    return buildInMemorySnapshot(lds, config);
+}
+
+function onResponseError(
+    lds: LDS,
+    config: GetPicklistValuesConfig,
+    key: string,
+    err: FetchResponse<unknown>
+) {
+    lds.storeIngestFetchResponse(key, err);
+    lds.storeBroadcast();
+    return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+}
+
+export function buildNetworkSnapshot(
+    lds: LDS,
+    config: GetPicklistValuesConfig
+): Promise<Snapshot<PicklistValuesRepresentation>> {
+    const { request, key } = buildRequestAndKey(config);
 
     return lds.dispatchResourceRequest<PicklistValuesRepresentation>(request).then(
         response => {
-            const { body } = response;
-
-            lds.storeIngest(key, request, body);
-            lds.storeBroadcast();
-            return buildInMemorySnapshot(lds, config);
+            return onResponseSuccess(lds, config, key, request, response);
         },
         (err: FetchResponse<unknown>) => {
-            lds.storeIngestFetchResponse(key, err);
-            lds.storeBroadcast();
-            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+            return onResponseError(lds, config, key, err);
+        }
+    );
+}
+
+export function resolveUnfulfilledSnapshot(
+    lds: LDS,
+    config: GetPicklistValuesConfig,
+    snapshot: UnfulfilledSnapshot<PicklistValuesRepresentation, any>
+): Promise<Snapshot<PicklistValuesRepresentation>> {
+    const { request, key } = buildRequestAndKey(config);
+
+    return lds.resolveUnfulfilledSnapshot<PicklistValuesRepresentation>(request, snapshot).then(
+        response => {
+            return onResponseSuccess(lds, config, key, request, response);
+        },
+        (err: FetchResponse<unknown>) => {
+            return onResponseError(lds, config, key, err);
         }
     );
 }
@@ -105,6 +155,10 @@ export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepr
         const snapshot = buildInMemorySnapshot(lds, config);
         if (lds.snapshotDataAvailable(snapshot)) {
             return snapshot;
+        }
+
+        if (isUnfulfilledSnapshot(snapshot)) {
+            return resolveUnfulfilledSnapshot(lds, config, snapshot);
         }
 
         return buildNetworkSnapshot(lds, config);

@@ -1,24 +1,23 @@
 import {
-    keyBuilderFromType as generatedKeyBuilderFromType,
+    keyBuilderFromType,
     RecordRepresentation,
 } from '../../../generated/types/RecordRepresentation';
-import { keyBuilderFromType } from '../../../overrides/types/RecordRepresentation';
 
 describe('keyBuilderFromType', () => {
-    it('returns the same key when apiName is not Name', () => {
+    it('returns RecordRepresentation key when apiName is not Name', () => {
         const mockRecordRepresentation = {
             id: 'foo',
             apiName: 'Opportunity',
         } as RecordRepresentation;
-        const regularKey = generatedKeyBuilderFromType(mockRecordRepresentation);
-        const polymorphicKey = keyBuilderFromType(mockRecordRepresentation);
-        expect(polymorphicKey).toBe(regularKey);
+        const expected = 'UiApi::RecordRepresentation:foo';
+        const key = keyBuilderFromType(mockRecordRepresentation);
+        expect(key).toBe(expected);
     });
 
-    it('returns different key when apiName is Name', () => {
+    it('returns RecordViewEntityRepresentation key when apiName is Name', () => {
         const mockRecordRepresentation = { id: 'foo', apiName: 'Name' } as RecordRepresentation;
         const expected = 'UiApi::RecordViewEntityRepresentation:Name:foo';
-        const polymorphicKey = keyBuilderFromType(mockRecordRepresentation);
-        expect(polymorphicKey).toBe(expected);
+        const key = keyBuilderFromType(mockRecordRepresentation);
+        expect(key).toBe(expected);
     });
 });

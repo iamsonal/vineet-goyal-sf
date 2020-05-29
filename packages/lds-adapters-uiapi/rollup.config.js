@@ -1,12 +1,11 @@
 import path from 'path';
-import fs from 'fs';
 import typescript from 'rollup-plugin-typescript2';
 import resolve from 'rollup-plugin-node-resolve';
 
+const { buildOverridesMap, resolveModulesWithOverrides } = require('./scripts/ldsModuleOverride');
+
 const entry = path.join(__dirname, 'src', 'index.ts');
 const dist = path.join(__dirname, 'dist');
-
-const TYPESCRIPT_EXTENSION = '.ts';
 
 const defaultConfigs = [
     { formats: ['es', 'umd'], target: 'es2018' },
@@ -14,46 +13,11 @@ const defaultConfigs = [
 ];
 
 function ldsOverrides({ generatedDir, overridesDir }) {
-    const overridesDirAbsPath = path.resolve(overridesDir);
-    if (fs.existsSync(overridesDirAbsPath) === false) {
-        return;
-    }
-    const folders = fs.readdirSync(overridesDirAbsPath);
-
-    const overrides = folders.reduce((seed, directoryName) => {
-        const overrideFolder = `${overridesDir}/${directoryName}`;
-        const generatedFolder = `${generatedDir}/${directoryName}`;
-        const overrideItems = fs.readdirSync(path.resolve(overrideFolder));
-
-        overrideItems.forEach(childFileName => {
-            const generatedFilePath = path.resolve(
-                `${generatedFolder}/${path.basename(childFileName, TYPESCRIPT_EXTENSION)}`
-            );
-            seed[generatedFilePath] = {
-                generatedFilePath,
-                manualFilePath: path.resolve(`${overrideFolder}/${childFileName}`),
-            };
-        });
-
-        return seed;
-    }, {});
+    const overrides = buildOverridesMap({ generatedDir, overridesDir });
 
     return {
         resolveId(source, importer) {
-            if (importer === undefined) {
-                return null;
-            }
-
-            const absPath = path.resolve(path.dirname(importer), source);
-            const override = overrides[absPath];
-            if (override !== undefined) {
-                if (importer === override.manualFilePath) {
-                    return path.resolve(`${override.generatedFilePath}.ts`);
-                }
-
-                return override.manualFilePath;
-            }
-            return null;
+            return resolveModulesWithOverrides(source, importer, overrides);
         },
     };
 }
@@ -77,8 +41,8 @@ export default function(args) {
                 output,
                 plugins: [
                     ldsOverrides({
-                        generatedDir: './src/generated',
-                        overridesDir: './src/overrides',
+                        generatedDir: path.resolve(__dirname, './src/generated'),
+                        overridesDir: path.resolve(__dirname, './src/overrides'),
                     }),
                     resolve(),
                     typescript({

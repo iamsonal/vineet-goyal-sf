@@ -1,0 +1,7 @@
+import path from 'path';
+import { init } from '../../scripts/rollup/rollup.config.shared';
+
+const entry = path.join(__dirname, 'src', 'index.ts');
+const dist = path.join(__dirname, 'dist');
+
+export default init(entry, dist);

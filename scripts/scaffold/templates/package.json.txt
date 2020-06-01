@@ -1,0 +1,23 @@
+{
+    "name": "{{PACKAGE_NAMESPACE}}/{{PACKAGE_NAME_TAG}}",
+    "version": "0.1.0",
+    "description": "{{DESCRIPTION_TAG}}",
+    "license": "MIT",
+    "main": "dist/umd/es2018/adapters.js",
+    "module": "dist/es/es2018/adapters.js",
+    "types": "dist/es/es2018/adapters.d.ts",
+    "contributors": {{PACKAGE_CONTRIBUTORS}},
+    "scripts": {
+        "clean": "rm -rf dist src/generated",
+        "build": "yarn build:raml && yarn build:services",
+        "build:raml": "lds generate src/raml/lds.raml src/generated",
+        "build:services": "rollup --config rollup.config.js",
+        "test:unit": "jest"
+    },
+    "devDependencies": {
+        "@ldsjs/cli": "^{{LDS_VERSION}}",
+        "@ldsjs/compiler": "^{{LDS_VERSION}}",
+        "@ldsjs/engine": "^{{LDS_VERSION}}",
+        "@ldsjs/lwc-lds": "^{{LDS_VERSION}}"
+    }
+}

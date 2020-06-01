@@ -1,0 +1,17 @@
+{
+    "name": "@salesforce/lds-compiler-plugins",
+    "version": "0.1.12",
+    "description": "Plugins for LDS compiler",
+    "private": true,
+    "license": "MIT",
+    "main": "dist/plugin.js",
+    "scripts": {
+        "clean": "rm -rf dist",
+        "build": "rollup --config rollup.config.js",
+        "test": "jest",
+        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
+    },
+    "devDependencies": {
+        "@ldsjs/compiler": "^0.7.1"
+    }
+}

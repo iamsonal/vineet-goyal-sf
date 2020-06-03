@@ -875,6 +875,8 @@ describe('AdsBridge', () => {
                 lds,
                 createObjectInfo({
                     apiName: 'User',
+                    associateEntityType: null,
+                    associateParentEntity: null,
                     keyPrefix: null,
                     label: 'User',
                     nameFields: ['Name'],
@@ -910,6 +912,8 @@ describe('AdsBridge', () => {
                 lds,
                 createObjectInfo({
                     apiName: 'Test__c',
+                    associateEntityType: null,
+                    associateParentEntity: null,
                     keyPrefix: 'TEST',
                     label: 'Test',
                     nameFields: ['Name'],
@@ -945,6 +949,8 @@ describe('AdsBridge', () => {
                 lds,
                 createObjectInfo({
                     apiName: 'Test__c',
+                    associateEntityType: null,
+                    associateParentEntity: null,
                     keyPrefix: 'TEST',
                     label: 'Test',
                     nameFields: ['First_Name', 'Last_Name'],

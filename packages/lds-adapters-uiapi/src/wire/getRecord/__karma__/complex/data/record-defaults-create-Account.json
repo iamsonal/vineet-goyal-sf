@@ -552,6 +552,8 @@
     "objectInfos": {
         "Account": {
             "apiName": "Account",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "Account",
@@ -3343,6 +3345,8 @@
         },
         "User": {
             "apiName": "User",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "AcceptedEventRelation",

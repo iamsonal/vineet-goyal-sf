@@ -1,43 +1,43 @@
 {
     "apiName": "Opportunity",
     "childRelationships": {},
-    "eTag": "c92db2c8d3016553b2d4f54d55c40d11",
+    "eTag": "aa6d6550e9e5aeab1db6dbe55340b38b",
     "fields": {
         "Account": {
             "displayValue": "Burlington Textiles Corp of America",
             "value": {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "fed39650e5cf5409e4b332c397560b20",
+                "eTag": "49aacc08dfa91af4baf266efba35b6a2",
                 "fields": {
                     "Id": {
                         "displayValue": null,
-                        "value": "001xx000003GboeAAC"
+                        "value": "001xx000003Gn4WAAS"
                     },
                     "Name": {
                         "displayValue": null,
                         "value": "Burlington Textiles Corp of America"
                     }
                 },
-                "id": "001xx000003GboeAAC",
-                "lastModifiedById": "005xx000001XAN7AAO",
-                "lastModifiedDate": "2020-04-23T17:02:18.000Z",
+                "id": "001xx000003Gn4WAAS",
+                "lastModifiedById": "005xx000001XL1tAAG",
+                "lastModifiedDate": "2020-05-28T14:00:50.000Z",
                 "recordTypeId": "012000000000000AAA",
                 "recordTypeInfo": null,
-                "systemModstamp": "2020-04-23T17:02:18.000Z",
-                "weakEtag": 1587661338000
+                "systemModstamp": "2020-05-28T14:00:50.000Z",
+                "weakEtag": 1590674450000
             }
         },
         "AccountId": {
             "displayValue": null,
-            "value": "001xx000003GboeAAC"
+            "value": "001xx000003Gn4WAAS"
         }
     },
-    "id": "006xx000001a6HmAAI",
-    "lastModifiedById": "005xx000001XAN7AAO",
-    "lastModifiedDate": "2020-04-23T17:02:18.000Z",
+    "id": "006xx000001aA4kAAE",
+    "lastModifiedById": "005xx000001XL1tAAG",
+    "lastModifiedDate": "2020-05-28T14:00:50.000Z",
     "recordTypeId": "012000000000000AAA",
     "recordTypeInfo": null,
-    "systemModstamp": "2020-04-23T17:02:18.000Z",
-    "weakEtag": 1587661338000
+    "systemModstamp": "2020-05-28T14:00:50.000Z",
+    "weakEtag": 1590674450000
 }

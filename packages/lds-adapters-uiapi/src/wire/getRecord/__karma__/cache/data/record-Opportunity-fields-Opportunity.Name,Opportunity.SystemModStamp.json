@@ -1,22 +1,22 @@
 {
     "apiName": "Opportunity",
     "childRelationships": {},
-    "eTag": "040afc96dad903a06b41b7d744828e09",
+    "eTag": "bc1a2401002bc63af4a7c5e53bbb3eb4",
     "fields": {
         "Name": {
             "displayValue": null,
             "value": "SFDX Opportunity"
         },
         "SystemModstamp": {
-            "displayValue": "4/23/2020, 10:31 AM",
-            "value": "2020-04-23T17:31:39.000Z"
+            "displayValue": "5/28/2020, 7:42 AM",
+            "value": "2020-05-28T14:42:43.000Z"
         }
     },
-    "id": "006xx000001a6MOAAY",
-    "lastModifiedById": "005xx000001XAN7AAO",
-    "lastModifiedDate": "2020-04-23T17:31:39.000Z",
+    "id": "006xx000001aAAyAAM",
+    "lastModifiedById": "005xx000001XL1tAAG",
+    "lastModifiedDate": "2020-05-28T14:42:43.000Z",
     "recordTypeId": "012000000000000AAA",
     "recordTypeInfo": null,
-    "systemModstamp": "2020-04-23T17:31:39.000Z",
-    "weakEtag": 1587663099000
+    "systemModstamp": "2020-05-28T14:42:43.000Z",
+    "weakEtag": 1590676963000
 }

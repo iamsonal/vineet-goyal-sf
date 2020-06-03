@@ -26,3 +26,16 @@ describe('getObjectInfo - basic', () => {
         });
     });
 });
+
+describe('getObjectInfo - basic history', () => {
+    it(`gets data when objectApiName is AccountHistory`, async () => {
+        const mockData = getMock('object-AccountHistory');
+        const resourceConfig = { objectApiName: mockData.apiName };
+        mockGetObjectInfoNetwork(resourceConfig, mockData);
+
+        const props = { objectApiName: mockData.apiName };
+        const element = await setupElement(props, ObjectBasic);
+
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+    });
+});

@@ -1439,6 +1439,12 @@ types:
       apiName:
         description: The object API name.
         type: string
+      associateEntityType:
+        description: If an associated entity type, the type of that association, otherwise null.
+        type: string | nil # TODO: hand rolled nil union (W-7643258)
+      associateParentEntity:
+        description: If an associated entity type, the entity to which it is associated, otherwise null.
+        type: string | nil # TODO: hand rolled nil union (W-7643258)
       childRelationships:
         description: Child relationships for the object.
         type: array

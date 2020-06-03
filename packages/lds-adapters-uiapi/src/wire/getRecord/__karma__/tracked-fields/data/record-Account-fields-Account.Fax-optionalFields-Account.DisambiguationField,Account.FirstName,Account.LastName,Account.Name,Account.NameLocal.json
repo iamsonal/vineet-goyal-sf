@@ -1,7 +1,7 @@
 {
     "apiName": "Account",
     "childRelationships": {},
-    "eTag": "fed39650e5cf5409e4b332c397560b20",
+    "eTag": "49aacc08dfa91af4baf266efba35b6a2",
     "fields": {
         "Fax": {
             "displayValue": null,
@@ -12,11 +12,11 @@
             "value": "Burlington Textiles Corp of America"
         }
     },
-    "id": "001xx000003GboeAAC",
-    "lastModifiedById": "005xx000001XAN7AAO",
-    "lastModifiedDate": "2020-04-23T17:02:18.000Z",
+    "id": "001xx000003Gn4WAAS",
+    "lastModifiedById": "005xx000001XL1tAAG",
+    "lastModifiedDate": "2020-05-28T14:00:50.000Z",
     "recordTypeId": "012000000000000AAA",
     "recordTypeInfo": null,
-    "systemModstamp": "2020-04-23T17:02:18.000Z",
-    "weakEtag": 1587661338000
+    "systemModstamp": "2020-05-28T14:00:50.000Z",
+    "weakEtag": 1590674450000
 }

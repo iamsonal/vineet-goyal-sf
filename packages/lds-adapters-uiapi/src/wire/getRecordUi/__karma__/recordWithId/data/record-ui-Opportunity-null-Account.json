@@ -548,6 +548,8 @@
     "objectInfos": {
         "Account": {
             "apiName": "Account",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "Account",
@@ -3253,6 +3255,8 @@
         },
         "Campaign": {
             "apiName": "Campaign",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "ActivityHistory",
@@ -4644,6 +4648,8 @@
         },
         "Opportunity": {
             "apiName": "Opportunity",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "AccountPartner",
@@ -6396,6 +6402,8 @@
         },
         "User": {
             "apiName": "User",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "AcceptedEventRelation",

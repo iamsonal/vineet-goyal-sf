@@ -1,32 +1,32 @@
 {
-    "eTag": "7f7e2aa2d15e36c5eca9781216a93839",
+    "eTag": "5c53d6af7d669ff20c5d0cfceb86aa30",
     "layoutUserStates": {
-        "00hxx0000019UNLAA2": {
-            "id": "00hxx0000019UNLAA2",
+        "00hxx0000019kctAAA": {
+            "id": "00hxx0000019kctAAA",
             "sectionUserStates": {
-                "01Bxx000002C4ReEAK": {
+                "01Bxx000002CTpKEAW": {
                     "collapsed": false,
-                    "id": "01Bxx000002C4ReEAK"
+                    "id": "01Bxx000002CTpKEAW"
                 },
-                "01Bxx000002C4RfEAK": {
+                "01Bxx000002CTpLEAW": {
                     "collapsed": false,
-                    "id": "01Bxx000002C4RfEAK"
+                    "id": "01Bxx000002CTpLEAW"
                 },
-                "01Bxx000002C4RgEAK": {
+                "01Bxx000002CTpMEAW": {
                     "collapsed": false,
-                    "id": "01Bxx000002C4RgEAK"
+                    "id": "01Bxx000002CTpMEAW"
                 },
-                "01Bxx000002C4RiEAK": {
+                "01Bxx000002CTpOEAW": {
                     "collapsed": false,
-                    "id": "01Bxx000002C4RiEAK"
+                    "id": "01Bxx000002CTpOEAW"
                 },
-                "01Bxx000002C4RjEAK": {
+                "01Bxx000002CTpPEAW": {
                     "collapsed": false,
-                    "id": "01Bxx000002C4RjEAK"
+                    "id": "01Bxx000002CTpPEAW"
                 },
-                "01Bxx000002C4RkEAK": {
+                "01Bxx000002CTpQEAW": {
                     "collapsed": false,
-                    "id": "01Bxx000002C4RkEAK"
+                    "id": "01Bxx000002CTpQEAW"
                 }
             }
         }
@@ -36,8 +36,8 @@
             "012000000000000AAA": {
                 "Full": {
                     "Edit": {
-                        "eTag": "1f2b006215f7623f7d6bc60af94b0452",
-                        "id": "00hxx0000019UNLAA2",
+                        "eTag": "62e875b011d74f4d660f4774b36ea469",
+                        "id": "00hxx0000019kctAAA",
                         "layoutType": "Full",
                         "mode": "Edit",
                         "objectApiName": "Account",
@@ -47,7 +47,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "Account Information",
-                                "id": "01Bxx000002C4RfEAK",
+                                "id": "01Bxx000002CTpLEAW",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -329,7 +329,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "Address Information",
-                                "id": "01Bxx000002C4RjEAK",
+                                "id": "01Bxx000002CTpPEAW",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -413,7 +413,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "Additional Information",
-                                "id": "01Bxx000002C4RgEAK",
+                                "id": "01Bxx000002CTpMEAW",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -558,7 +558,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "System Information",
-                                "id": "01Bxx000002C4RiEAK",
+                                "id": "01Bxx000002CTpOEAW",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -612,7 +612,7 @@
                                 "collapsible": false,
                                 "columns": 1,
                                 "heading": "Description Information",
-                                "id": "01Bxx000002C4RkEAK",
+                                "id": "01Bxx000002CTpQEAW",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -641,7 +641,7 @@
                                 "collapsible": false,
                                 "columns": 3,
                                 "heading": "Custom Links",
-                                "id": "01Bxx000002C4ReEAK",
+                                "id": "01Bxx000002CTpKEAW",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -654,7 +654,7 @@
                                                         "apiName": "Billing",
                                                         "behavior": "NewWindow",
                                                         "componentType": "CustomLink",
-                                                        "customLinkUrl": "/servlet/servlet.Integration?lid=00bxx000000lHFp&eid=ENTITY_ID&ic=1",
+                                                        "customLinkUrl": "/servlet/servlet.Integration?lid=00bxx000000lJU1&eid=ENTITY_ID&ic=1",
                                                         "label": "Billing"
                                                     }
                                                 ],
@@ -705,6 +705,8 @@
     "objectInfos": {
         "Account": {
             "apiName": "Account",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "Account",
@@ -3490,12 +3492,14 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://broth-flatwhite-4720-dev-ed.localhost.internal.salesforce.com:7443/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
         "User": {
             "apiName": "User",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "AcceptedEventRelation",
@@ -3832,7 +3836,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "e7062194c9a86f42bdc792c882b2903a",
+            "eTag": "e44bbf9c4b130c9646bb8d98a7a100f3",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -8052,6 +8056,39 @@
                     "unique": false,
                     "updateable": true
                 },
+                "UserPreferencesHideContractsRedirectConfirmation": {
+                    "apiName": "UserPreferencesHideContractsRedirectConfirmation",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HideContractsRedirectConfirmation",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
                 "UserPreferencesHideEndUserOnboardingAssistantModal": {
                     "apiName": "UserPreferencesHideEndUserOnboardingAssistantModal",
                     "calculated": false,
@@ -8103,6 +8140,39 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "HideEventCalendar",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
+                "UserPreferencesHideInvoicesRedirectConfirmation": {
+                    "apiName": "UserPreferencesHideInvoicesRedirectConfirmation",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HideInvoicesRedirectConfirmation",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -8268,6 +8338,39 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "HideMailAppWelcomeMat",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
+                "UserPreferencesHideProductsRedirectConfirmation": {
+                    "apiName": "UserPreferencesHideProductsRedirectConfirmation",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HideProductsRedirectConfirmation",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -10280,16 +10383,16 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://broth-flatwhite-4720-dev-ed.localhost.internal.salesforce.com:7443/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         }
     },
     "records": {
-        "001xx000003GboeAAC": {
+        "001xx000003Gn4WAAS": {
             "apiName": "Account",
             "childRelationships": {},
-            "eTag": "fd914dc7620f10f484dce54e1e079b0f",
+            "eTag": "529bff11ae3bccb80b090fcc33926a24",
             "fields": {
                 "AccountNumber": {
                     "displayValue": null,
@@ -10328,33 +10431,33 @@
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "3b090818cf67c6bd399308bbfa4ef8e8",
+                        "eTag": "7538f1feb13911fe68c144db8bf9ea9e",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005xx000001XAN7AAO"
+                                "value": "005xx000001XL1tAAG"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005xx000001XAN7AAO",
-                        "lastModifiedById": "005xx000001XAN7AAO",
-                        "lastModifiedDate": "2020-04-23T17:17:57.000Z",
+                        "id": "005xx000001XL1tAAG",
+                        "lastModifiedById": "005xx000001XL1tAAG",
+                        "lastModifiedDate": "2020-05-28T14:42:41.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-04-23T17:17:57.000Z",
-                        "weakEtag": 1587662277000
+                        "systemModstamp": "2020-05-28T14:42:41.000Z",
+                        "weakEtag": 1590676961000
                     }
                 },
                 "CreatedById": {
                     "displayValue": null,
-                    "value": "005xx000001XAN7AAO"
+                    "value": "005xx000001XL1tAAG"
                 },
                 "CreatedDate": {
-                    "displayValue": "4/23/2020, 10:02 AM",
-                    "value": "2020-04-23T17:02:18.000Z"
+                    "displayValue": "5/28/2020, 7:00 AM",
+                    "value": "2020-05-28T14:00:50.000Z"
                 },
                 "CustomerPriority__c": {
                     "displayValue": null,
@@ -10381,33 +10484,33 @@
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "3b090818cf67c6bd399308bbfa4ef8e8",
+                        "eTag": "7538f1feb13911fe68c144db8bf9ea9e",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005xx000001XAN7AAO"
+                                "value": "005xx000001XL1tAAG"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005xx000001XAN7AAO",
-                        "lastModifiedById": "005xx000001XAN7AAO",
-                        "lastModifiedDate": "2020-04-23T17:17:57.000Z",
+                        "id": "005xx000001XL1tAAG",
+                        "lastModifiedById": "005xx000001XL1tAAG",
+                        "lastModifiedDate": "2020-05-28T14:42:41.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-04-23T17:17:57.000Z",
-                        "weakEtag": 1587662277000
+                        "systemModstamp": "2020-05-28T14:42:41.000Z",
+                        "weakEtag": 1590676961000
                     }
                 },
                 "LastModifiedById": {
                     "displayValue": null,
-                    "value": "005xx000001XAN7AAO"
+                    "value": "005xx000001XL1tAAG"
                 },
                 "LastModifiedDate": {
-                    "displayValue": "4/23/2020, 10:02 AM",
-                    "value": "2020-04-23T17:02:18.000Z"
+                    "displayValue": "5/28/2020, 7:00 AM",
+                    "value": "2020-05-28T14:00:50.000Z"
                 },
                 "Name": {
                     "displayValue": null,
@@ -10426,29 +10529,29 @@
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "3b090818cf67c6bd399308bbfa4ef8e8",
+                        "eTag": "7538f1feb13911fe68c144db8bf9ea9e",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005xx000001XAN7AAO"
+                                "value": "005xx000001XL1tAAG"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005xx000001XAN7AAO",
-                        "lastModifiedById": "005xx000001XAN7AAO",
-                        "lastModifiedDate": "2020-04-23T17:17:57.000Z",
+                        "id": "005xx000001XL1tAAG",
+                        "lastModifiedById": "005xx000001XL1tAAG",
+                        "lastModifiedDate": "2020-05-28T14:42:41.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-04-23T17:17:57.000Z",
-                        "weakEtag": 1587662277000
+                        "systemModstamp": "2020-05-28T14:42:41.000Z",
+                        "weakEtag": 1590676961000
                     }
                 },
                 "OwnerId": {
                     "displayValue": null,
-                    "value": "005xx000001XAN7AAO"
+                    "value": "005xx000001XL1tAAG"
                 },
                 "Ownership": {
                     "displayValue": "Public",
@@ -10471,8 +10574,8 @@
                     "value": "Warm"
                 },
                 "SLAExpirationDate__c": {
-                    "displayValue": "5/20/2019",
-                    "value": "2019-05-20"
+                    "displayValue": "6/23/2019",
+                    "value": "2019-06-23"
                 },
                 "SLASerialNumber__c": {
                     "displayValue": null,
@@ -10527,13 +10630,13 @@
                     "value": "www.burlington.com"
                 }
             },
-            "id": "001xx000003GboeAAC",
-            "lastModifiedById": "005xx000001XAN7AAO",
-            "lastModifiedDate": "2020-04-23T17:02:18.000Z",
+            "id": "001xx000003Gn4WAAS",
+            "lastModifiedById": "005xx000001XL1tAAG",
+            "lastModifiedDate": "2020-05-28T14:00:50.000Z",
             "recordTypeId": "012000000000000AAA",
             "recordTypeInfo": null,
-            "systemModstamp": "2020-04-23T17:02:18.000Z",
-            "weakEtag": 1587661338000
+            "systemModstamp": "2020-05-28T14:00:50.000Z",
+            "weakEtag": 1590674450000
         }
     }
 }

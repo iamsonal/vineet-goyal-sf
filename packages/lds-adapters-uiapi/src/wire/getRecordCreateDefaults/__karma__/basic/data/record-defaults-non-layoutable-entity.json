@@ -3,6 +3,8 @@
     "objectInfos": {
         "User": {
             "apiName": "User",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "AcceptedEventRelation",
@@ -6780,6 +6782,8 @@
         },
         "Product2DataTranslation": {
             "apiName": "Product2DataTranslation",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [],
             "createable": true,
             "custom": false,

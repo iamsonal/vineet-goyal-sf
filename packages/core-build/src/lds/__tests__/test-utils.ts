@@ -20,6 +20,8 @@ export function createRecord(config: any = {}) {
 export function createObjectInfo(config: any = {}) {
     return {
         apiName: 'Test__c',
+        associateEntityType: null,
+        associateParentEntity: null,
         childRelationships: [],
         createable: true,
         custom: true,

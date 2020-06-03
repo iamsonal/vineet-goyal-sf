@@ -1,7 +1,7 @@
 {
     "layout": {
-        "eTag": "ccd46142c9f9f7ffff4cbbdf87375927",
-        "id": "00hxx0000019UNLAA2",
+        "eTag": "63c3fc6b3bb31e99894f3793d64af2d9",
+        "id": "00hxx0000019kctAAA",
         "layoutType": "Full",
         "mode": "Create",
         "objectApiName": "Account",
@@ -11,7 +11,7 @@
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Account Information",
-                "id": "01Bxx000002C4RfEAK",
+                "id": "01Bxx000002CTpLEAW",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -293,7 +293,7 @@
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Address Information",
-                "id": "01Bxx000002C4RjEAK",
+                "id": "01Bxx000002CTpPEAW",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -377,7 +377,7 @@
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Additional Information",
-                "id": "01Bxx000002C4RgEAK",
+                "id": "01Bxx000002CTpMEAW",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -522,7 +522,7 @@
                 "collapsible": false,
                 "columns": 1,
                 "heading": "Description Information",
-                "id": "01Bxx000002C4RkEAK",
+                "id": "01Bxx000002CTpQEAW",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -552,6 +552,8 @@
     "objectInfos": {
         "Account": {
             "apiName": "Account",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "Account",
@@ -3337,12 +3339,14 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://broth-flatwhite-4720-dev-ed.localhost.internal.salesforce.com:7443/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
         "User": {
             "apiName": "User",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "AcceptedEventRelation",
@@ -3679,7 +3683,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "e7062194c9a86f42bdc792c882b2903a",
+            "eTag": "e44bbf9c4b130c9646bb8d98a7a100f3",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -7899,6 +7903,39 @@
                     "unique": false,
                     "updateable": true
                 },
+                "UserPreferencesHideContractsRedirectConfirmation": {
+                    "apiName": "UserPreferencesHideContractsRedirectConfirmation",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HideContractsRedirectConfirmation",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
                 "UserPreferencesHideEndUserOnboardingAssistantModal": {
                     "apiName": "UserPreferencesHideEndUserOnboardingAssistantModal",
                     "calculated": false,
@@ -7950,6 +7987,39 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "HideEventCalendar",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
+                "UserPreferencesHideInvoicesRedirectConfirmation": {
+                    "apiName": "UserPreferencesHideInvoicesRedirectConfirmation",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HideInvoicesRedirectConfirmation",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -8115,6 +8185,39 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "HideMailAppWelcomeMat",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
+                "UserPreferencesHideProductsRedirectConfirmation": {
+                    "apiName": "UserPreferencesHideProductsRedirectConfirmation",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HideProductsRedirectConfirmation",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -10127,7 +10230,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://broth-flatwhite-4720-dev-ed.localhost.internal.salesforce.com:7443/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         }
@@ -10135,7 +10238,7 @@
     "record": {
         "apiName": "Account",
         "childRelationships": {},
-        "eTag": "844f0770a62f5da7400435b22f101b3b",
+        "eTag": "928f00f6747a2af4d14f7d1ca2dff2ae",
         "fields": {
             "AccountNumber": {
                 "displayValue": null,
@@ -10210,18 +10313,18 @@
                 "value": {
                     "apiName": "User",
                     "childRelationships": {},
-                    "eTag": "edbe7f8661ae1f1497230b6403975022",
+                    "eTag": "3815b30945bd74f93f113f72644ef8ad",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "005xx000001XAN7AAO"
+                            "value": "005xx000001XL1tAAG"
                         },
                         "Name": {
                             "displayValue": null,
                             "value": "User User"
                         }
                     },
-                    "id": "005xx000001XAN7AAO",
+                    "id": "005xx000001XL1tAAG",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -10232,7 +10335,7 @@
             },
             "OwnerId": {
                 "displayValue": null,
-                "value": "005xx000001XAN7AAO"
+                "value": "005xx000001XL1tAAG"
             },
             "Ownership": {
                 "displayValue": null,

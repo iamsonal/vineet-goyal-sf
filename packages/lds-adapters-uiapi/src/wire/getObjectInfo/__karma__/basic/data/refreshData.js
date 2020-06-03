@@ -11,3 +11,8 @@ await helpers.requestGetAndSave(
     `/ui-api/object-info/Account`,
     path.join(rootDir, 'object-Account.json')
 );
+
+await helpers.requestGetAndSave(
+    `/ui-api/object-info/AccountHistory`,
+    path.join(rootDir, 'object-AccountHistory.json')
+);

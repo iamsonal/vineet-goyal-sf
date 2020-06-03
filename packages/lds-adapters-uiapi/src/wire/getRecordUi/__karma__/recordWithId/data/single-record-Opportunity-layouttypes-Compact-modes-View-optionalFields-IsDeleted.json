@@ -1,5 +1,5 @@
 {
-    "eTag": "a8cea049bda22d93096588da1bd9c2ed",
+    "eTag": "b586b94f68730ee2c7e8f39b56a4b7ae",
     "layoutUserStates": {},
     "layouts": {
         "Opportunity": {
@@ -127,6 +127,8 @@
     "objectInfos": {
         "Account": {
             "apiName": "Account",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "Account",
@@ -2912,12 +2914,14 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://broth-flatwhite-4720-dev-ed.localhost.internal.salesforce.com:7443/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
         "Opportunity": {
             "apiName": "Opportunity",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "AccountPartner",
@@ -4612,12 +4616,14 @@
             "searchable": true,
             "themeInfo": {
                 "color": "FCB95B",
-                "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/opportunity_120.png"
+                "iconUrl": "https://broth-flatwhite-4720-dev-ed.localhost.internal.salesforce.com:7443/img/icon/t4v35/standard/opportunity_120.png"
             },
             "updateable": true
         },
         "User": {
             "apiName": "User",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "AcceptedEventRelation",
@@ -4954,7 +4960,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "e7062194c9a86f42bdc792c882b2903a",
+            "eTag": "e44bbf9c4b130c9646bb8d98a7a100f3",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -9174,6 +9180,39 @@
                     "unique": false,
                     "updateable": true
                 },
+                "UserPreferencesHideContractsRedirectConfirmation": {
+                    "apiName": "UserPreferencesHideContractsRedirectConfirmation",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HideContractsRedirectConfirmation",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
                 "UserPreferencesHideEndUserOnboardingAssistantModal": {
                     "apiName": "UserPreferencesHideEndUserOnboardingAssistantModal",
                     "calculated": false,
@@ -9225,6 +9264,39 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "HideEventCalendar",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
+                "UserPreferencesHideInvoicesRedirectConfirmation": {
+                    "apiName": "UserPreferencesHideInvoicesRedirectConfirmation",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HideInvoicesRedirectConfirmation",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -9390,6 +9462,39 @@
                     "htmlFormatted": false,
                     "inlineHelpText": null,
                     "label": "HideMailAppWelcomeMat",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
+                "UserPreferencesHideProductsRedirectConfirmation": {
+                    "apiName": "UserPreferencesHideProductsRedirectConfirmation",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "HideProductsRedirectConfirmation",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -11402,53 +11507,53 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://broth-flatwhite-4720-dev-ed.localhost.internal.salesforce.com:7443/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         }
     },
     "records": {
-        "006xx000001a6HmAAI": {
+        "006xx000001aA4kAAE": {
             "apiName": "Opportunity",
             "childRelationships": {},
-            "eTag": "f9931aee218bbd8c9b1789dc9c0b8948",
+            "eTag": "1e38ab8080bec7786a544108fbd50b57",
             "fields": {
                 "Account": {
                     "displayValue": "Burlington Textiles Corp of America",
                     "value": {
                         "apiName": "Account",
                         "childRelationships": {},
-                        "eTag": "fed39650e5cf5409e4b332c397560b20",
+                        "eTag": "49aacc08dfa91af4baf266efba35b6a2",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "001xx000003GboeAAC"
+                                "value": "001xx000003Gn4WAAS"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "Burlington Textiles Corp of America"
                             }
                         },
-                        "id": "001xx000003GboeAAC",
-                        "lastModifiedById": "005xx000001XAN7AAO",
-                        "lastModifiedDate": "2020-04-23T17:02:18.000Z",
+                        "id": "001xx000003Gn4WAAS",
+                        "lastModifiedById": "005xx000001XL1tAAG",
+                        "lastModifiedDate": "2020-05-28T14:00:50.000Z",
                         "recordTypeId": "012000000000000AAA",
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-04-23T17:02:18.000Z",
-                        "weakEtag": 1587661338000
+                        "systemModstamp": "2020-05-28T14:00:50.000Z",
+                        "weakEtag": 1590674450000
                     }
                 },
                 "AccountId": {
                     "displayValue": null,
-                    "value": "001xx000003GboeAAC"
+                    "value": "001xx000003Gn4WAAS"
                 },
                 "Amount": {
                     "displayValue": "$235,000.00",
                     "value": 235000
                 },
                 "CloseDate": {
-                    "displayValue": "4/4/2018",
-                    "value": "2018-04-04"
+                    "displayValue": "5/8/2018",
+                    "value": "2018-05-08"
                 },
                 "IsDeleted": {
                     "displayValue": null,
@@ -11463,38 +11568,38 @@
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "3b090818cf67c6bd399308bbfa4ef8e8",
+                        "eTag": "7538f1feb13911fe68c144db8bf9ea9e",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005xx000001XAN7AAO"
+                                "value": "005xx000001XL1tAAG"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005xx000001XAN7AAO",
-                        "lastModifiedById": "005xx000001XAN7AAO",
-                        "lastModifiedDate": "2020-04-23T17:17:57.000Z",
+                        "id": "005xx000001XL1tAAG",
+                        "lastModifiedById": "005xx000001XL1tAAG",
+                        "lastModifiedDate": "2020-05-28T14:42:41.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-04-23T17:17:57.000Z",
-                        "weakEtag": 1587662277000
+                        "systemModstamp": "2020-05-28T14:42:41.000Z",
+                        "weakEtag": 1590676961000
                     }
                 },
                 "OwnerId": {
                     "displayValue": null,
-                    "value": "005xx000001XAN7AAO"
+                    "value": "005xx000001XL1tAAG"
                 }
             },
-            "id": "006xx000001a6HmAAI",
-            "lastModifiedById": "005xx000001XAN7AAO",
-            "lastModifiedDate": "2020-04-23T17:02:18.000Z",
+            "id": "006xx000001aA4kAAE",
+            "lastModifiedById": "005xx000001XL1tAAG",
+            "lastModifiedDate": "2020-05-28T14:00:50.000Z",
             "recordTypeId": "012000000000000AAA",
             "recordTypeInfo": null,
-            "systemModstamp": "2020-04-23T17:02:18.000Z",
-            "weakEtag": 1587661338000
+            "systemModstamp": "2020-05-28T14:00:50.000Z",
+            "weakEtag": 1590674450000
         }
     }
 }

@@ -684,6 +684,8 @@
     "objectInfos": {
         "Account": {
             "apiName": "Account",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "Account",
@@ -2580,6 +2582,8 @@
         },
         "Contact": {
             "apiName": "Contact",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "AcceptedEventRelation",
@@ -4953,6 +4957,8 @@
         },
         "User": {
             "apiName": "User",
+            "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "AcceptedEventRelation",

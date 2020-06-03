@@ -29,7 +29,13 @@ import {
     ListUiRepresentation,
 } from '../../generated/types/ListUiRepresentation';
 import { buildSelectionFromFields } from '../../selectors/record';
-import { getListInfo, LIST_INFO_SELECTIONS, ListFields, listFields } from '../../util/lists';
+import {
+    getListInfo,
+    LIST_INFO_SELECTIONS,
+    ListFields,
+    listFields,
+    LIST_INFO_PRIVATES,
+} from '../../util/lists';
 import {
     minimizeRequest,
     pathSelectionsFor,
@@ -63,12 +69,14 @@ function buildListUiFragment(
 ): Fragment {
     return {
         kind: 'Fragment',
+        private: [],
         selections: [
             {
                 kind: 'Link',
                 name: 'info',
                 fragment: {
                     kind: 'Fragment',
+                    private: LIST_INFO_PRIVATES,
                     selections: LIST_INFO_SELECTIONS,
                 },
             },
@@ -77,6 +85,7 @@ function buildListUiFragment(
                 name: 'records',
                 fragment: {
                     kind: 'Fragment',
+                    private: [],
                     selections: [
                         ...pathSelectionsFor({
                             name: 'records',

@@ -27,6 +27,7 @@ function buildRecordSelector(
         recordId: recordRepresentationKeyBuilder({ recordId }),
         node: {
             kind: 'Fragment',
+            private: [],
             selections: buildSelectionFromFields(fields, optionalFields),
         },
         variables: {},

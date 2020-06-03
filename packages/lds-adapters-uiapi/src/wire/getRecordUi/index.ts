@@ -177,6 +177,7 @@ export function buildInMemorySnapshot(
         recordId: cachedSelectorKey,
         node: {
             kind: 'Fragment',
+            private: [],
             opaque: true,
         },
         variables: {},
@@ -356,6 +357,7 @@ export function buildNetworkSnapshot(
                     recordId: key,
                     node: {
                         kind: 'Fragment',
+                        private: [],
                         opaque: true,
                     },
                     variables: {},

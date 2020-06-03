@@ -299,6 +299,7 @@ export function getRecordLayoutType(
         recordId: storeKey,
         node: {
             kind: 'Fragment',
+            private: [],
             selections: recordLayoutFragmentSelector,
         },
         variables: {},

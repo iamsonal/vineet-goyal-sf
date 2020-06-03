@@ -47,6 +47,7 @@ import {
     listFields,
     ListFields,
     LIST_INFO_SELECTIONS,
+    LIST_INFO_PRIVATES,
 } from '../../util/lists';
 import {
     minimizeRequest,
@@ -108,12 +109,14 @@ function buildListUiFragment(
 
     return {
         kind: 'Fragment',
+        private: [],
         selections: [
             {
                 kind: 'Link',
                 name: 'info',
                 fragment: {
                     kind: 'Fragment',
+                    private: LIST_INFO_PRIVATES,
                     selections: LIST_INFO_SELECTIONS,
                 },
             },
@@ -122,6 +125,7 @@ function buildListUiFragment(
                 name: 'records',
                 fragment: {
                     kind: 'Fragment',
+                    private: [],
                     selections: [
                         ...pathSelectionsFor({
                             name: 'records',

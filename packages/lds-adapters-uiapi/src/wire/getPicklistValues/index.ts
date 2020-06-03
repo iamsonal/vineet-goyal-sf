@@ -127,6 +127,7 @@ export function buildInMemorySnapshot(lds: LDS, config: GetPicklistValuesConfig)
             recordId: key,
             node: {
                 kind: 'Fragment',
+                private: ['eTag'],
                 selections: path,
             },
             variables: {},

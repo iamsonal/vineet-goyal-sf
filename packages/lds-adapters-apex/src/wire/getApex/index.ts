@@ -37,6 +37,7 @@ function cache(
         recordId: recordId + '_cacheable',
         node: {
             kind: 'Fragment',
+            private: [],
             selections: [
                 {
                     kind: 'Scalar',
@@ -54,7 +55,7 @@ function cache(
 
     const snap = lds.storeLookup<any>({
         recordId,
-        node: { kind: 'Fragment', opaque: true },
+        node: { kind: 'Fragment', opaque: true, private: [] },
         variables: {},
     });
 
@@ -131,7 +132,7 @@ function network(
     const recordId = getApexId(namespace, classname, method, isContinuation, config);
     const select: Selector<any> = {
         recordId,
-        node: { kind: 'Fragment', opaque: true },
+        node: { kind: 'Fragment', opaque: true, private: [] },
         variables: {},
     };
     const body = {

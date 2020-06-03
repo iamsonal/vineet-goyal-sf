@@ -139,6 +139,7 @@ function convertTrieToSelection(fieldDefinition: RecordFieldTrie): PathSelection
                 nullable: true,
                 fragment: {
                     kind: 'Fragment',
+                    private: [],
                     selections: convertTrieToSelection(childFieldDefinition),
                 },
             };
@@ -150,6 +151,7 @@ function convertTrieToSelection(fieldDefinition: RecordFieldTrie): PathSelection
             required: childFieldDefinition.optional === true ? false : undefined,
             fragment: {
                 kind: 'Fragment',
+                private: [],
                 selections: [DISPLAY_VALUE_SELECTION, fieldValueSelection],
             },
         };
@@ -214,6 +216,7 @@ export function buildSelectionFromRecord(record: RecordRepresentationLike): Path
                 nullable: true,
                 fragment: {
                     kind: 'Fragment',
+                    private: [],
                     selections: buildSelectionFromRecord(fieldValue),
                 },
             };
@@ -225,6 +228,7 @@ export function buildSelectionFromRecord(record: RecordRepresentationLike): Path
             required: undefined,
             fragment: {
                 kind: 'Fragment',
+                private: [],
                 selections: [DISPLAY_VALUE_SELECTION, fieldValueSelection],
             },
         };

@@ -60,6 +60,11 @@ export function getListReference(
  */
 export const LIST_INFO_SELECTIONS: PathSelection[] = ListInfoRepresentation_select().selections;
 
+/**
+ * List info private memebers
+ */
+export const LIST_INFO_PRIVATES: string[] = ListInfoRepresentation_select().private;
+
 const LIST_INFO_SELECTIONS_ETAG: PathSelection[] = [
     ...LIST_INFO_SELECTIONS,
     { kind: 'Scalar', name: 'eTag' },
@@ -78,7 +83,7 @@ export function getListInfo(
     const key = ListInfoRepresentation_keyBuilder(listRef);
     const lookupResult = lds.storeLookup<ListInfoRepresentation>({
         recordId: key,
-        node: { kind: 'Fragment', selections: LIST_INFO_SELECTIONS_ETAG },
+        node: { kind: 'Fragment', selections: LIST_INFO_SELECTIONS_ETAG, private: [] },
         variables: {},
     });
 

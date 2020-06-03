@@ -42,6 +42,7 @@ export function buildInMemorySnapshot(lds: LDS, config: GetRecordAvatarsConfig) 
             recordId: KEY,
             node: {
                 kind: 'Fragment',
+                private: [],
                 selections: sel,
             },
             variables: {},

@@ -59,6 +59,7 @@ function queryRecord(lds: LDS, { recordId }: { recordId: string }): any {
         recordId: keyBuilderRecord({ recordId }),
         node: {
             kind: 'Fragment',
+            private: [],
         },
         variables: {},
     });

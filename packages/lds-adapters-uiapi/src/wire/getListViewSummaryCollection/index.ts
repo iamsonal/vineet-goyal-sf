@@ -39,6 +39,7 @@ function buildListViewSummaryCollectionFragment(
 ): Fragment {
     return {
         kind: 'Fragment',
+        private: [],
         selections: [
             ...pathSelectionsFor({
                 name: 'lists',

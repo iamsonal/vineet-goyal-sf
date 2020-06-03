@@ -64,6 +64,7 @@ Array [
       Object {
         "fragment": Object {
           "kind": "Fragment",
+          "private": Array [],
           "selections": Array [
             Object {
               "kind": "Scalar",
@@ -72,6 +73,7 @@ Array [
             Object {
               "fragment": Object {
                 "kind": "Fragment",
+                "private": Array [],
                 "selections": Array [
                   Object {
                     "kind": "Scalar",
@@ -135,6 +137,7 @@ Array [
                       Object {
                         "fragment": Object {
                           "kind": "Fragment",
+                          "private": Array [],
                           "selections": Array [
                             Object {
                               "kind": "Scalar",
@@ -153,6 +156,7 @@ Array [
                       Object {
                         "fragment": Object {
                           "kind": "Fragment",
+                          "private": Array [],
                           "selections": Array [
                             Object {
                               "kind": "Scalar",
@@ -316,6 +320,7 @@ Array [
       Object {
         "fragment": Object {
           "kind": "Fragment",
+          "private": Array [],
           "selections": Array [
             Object {
               "kind": "Scalar",
@@ -324,6 +329,7 @@ Array [
             Object {
               "fragment": Object {
                 "kind": "Fragment",
+                "private": Array [],
                 "selections": Array [
                   Object {
                     "kind": "Scalar",
@@ -387,6 +393,7 @@ Array [
                       Object {
                         "fragment": Object {
                           "kind": "Fragment",
+                          "private": Array [],
                           "selections": Array [
                             Object {
                               "kind": "Scalar",
@@ -405,6 +412,7 @@ Array [
                       Object {
                         "fragment": Object {
                           "kind": "Fragment",
+                          "private": Array [],
                           "selections": Array [
                             Object {
                               "kind": "Scalar",
@@ -503,6 +511,7 @@ Array [
       Object {
         "fragment": Object {
           "kind": "Fragment",
+          "private": Array [],
           "selections": Array [
             Object {
               "kind": "Scalar",
@@ -511,6 +520,7 @@ Array [
             Object {
               "fragment": Object {
                 "kind": "Fragment",
+                "private": Array [],
                 "selections": Array [
                   Object {
                     "kind": "Scalar",
@@ -574,6 +584,7 @@ Array [
                       Object {
                         "fragment": Object {
                           "kind": "Fragment",
+                          "private": Array [],
                           "selections": Array [
                             Object {
                               "kind": "Scalar",
@@ -592,6 +603,7 @@ Array [
                       Object {
                         "fragment": Object {
                           "kind": "Fragment",
+                          "private": Array [],
                           "selections": Array [
                             Object {
                               "kind": "Scalar",
@@ -624,6 +636,7 @@ Array [
       Object {
         "fragment": Object {
           "kind": "Fragment",
+          "private": Array [],
           "selections": Array [
             Object {
               "kind": "Scalar",
@@ -632,6 +645,7 @@ Array [
             Object {
               "fragment": Object {
                 "kind": "Fragment",
+                "private": Array [],
                 "selections": Array [
                   Object {
                     "kind": "Scalar",
@@ -695,6 +709,7 @@ Array [
                       Object {
                         "fragment": Object {
                           "kind": "Fragment",
+                          "private": Array [],
                           "selections": Array [
                             Object {
                               "kind": "Scalar",
@@ -727,6 +742,7 @@ Array [
       Object {
         "fragment": Object {
           "kind": "Fragment",
+          "private": Array [],
           "selections": Array [
             Object {
               "kind": "Scalar",
@@ -811,6 +827,7 @@ Array [
       Object {
         "fragment": Object {
           "kind": "Fragment",
+          "private": Array [],
           "selections": Array [
             Object {
               "kind": "Scalar",
@@ -819,6 +836,7 @@ Array [
             Object {
               "fragment": Object {
                 "kind": "Fragment",
+                "private": Array [],
                 "selections": Array [
                   Object {
                     "kind": "Scalar",
@@ -882,6 +900,7 @@ Array [
                       Object {
                         "fragment": Object {
                           "kind": "Fragment",
+                          "private": Array [],
                           "selections": Array [
                             Object {
                               "kind": "Scalar",
@@ -900,6 +919,7 @@ Array [
                       Object {
                         "fragment": Object {
                           "kind": "Fragment",
+                          "private": Array [],
                           "selections": Array [
                             Object {
                               "kind": "Scalar",
@@ -918,6 +938,7 @@ Array [
                       Object {
                         "fragment": Object {
                           "kind": "Fragment",
+                          "private": Array [],
                           "selections": Array [
                             Object {
                               "kind": "Scalar",
@@ -950,6 +971,7 @@ Array [
       Object {
         "fragment": Object {
           "kind": "Fragment",
+          "private": Array [],
           "selections": Array [
             Object {
               "kind": "Scalar",
@@ -968,6 +990,7 @@ Array [
       Object {
         "fragment": Object {
           "kind": "Fragment",
+          "private": Array [],
           "selections": Array [
             Object {
               "kind": "Scalar",
@@ -976,6 +999,7 @@ Array [
             Object {
               "fragment": Object {
                 "kind": "Fragment",
+                "private": Array [],
                 "selections": Array [
                   Object {
                     "kind": "Scalar",
@@ -1039,6 +1063,7 @@ Array [
                       Object {
                         "fragment": Object {
                           "kind": "Fragment",
+                          "private": Array [],
                           "selections": Array [
                             Object {
                               "kind": "Scalar",
@@ -1057,6 +1082,7 @@ Array [
                       Object {
                         "fragment": Object {
                           "kind": "Fragment",
+                          "private": Array [],
                           "selections": Array [
                             Object {
                               "kind": "Scalar",
@@ -1089,6 +1115,7 @@ Array [
       Object {
         "fragment": Object {
           "kind": "Fragment",
+          "private": Array [],
           "selections": Array [
             Object {
               "kind": "Scalar",
@@ -1107,6 +1134,7 @@ Array [
       Object {
         "fragment": Object {
           "kind": "Fragment",
+          "private": Array [],
           "selections": Array [
             Object {
               "kind": "Scalar",

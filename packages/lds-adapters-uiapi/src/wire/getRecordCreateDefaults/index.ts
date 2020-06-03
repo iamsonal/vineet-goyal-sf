@@ -48,6 +48,7 @@ function buildSelector(resp: RecordDefaultsRepresentation): PathSelection[] {
             name: 'record',
             fragment: {
                 kind: 'Fragment',
+                private: [],
                 selections: recordSelections,
             },
         },
@@ -80,6 +81,7 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordCreateDefaultsCo
                 recordId: key,
                 node: {
                     kind: 'Fragment',
+                    private: [],
                     selections: buildSelector(body),
                 },
                 variables: {},
@@ -150,6 +152,7 @@ export function buildInMemorySnapshot(lds: LDS, config: GetRecordCreateDefaultsC
         recordId: selectorKey,
         node: {
             kind: 'Fragment',
+            private: [],
             opaque: true,
         },
         variables: {},

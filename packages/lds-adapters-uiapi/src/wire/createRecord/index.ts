@@ -32,6 +32,7 @@ export const factory = (lds: LDS) => {
                     recordId: key,
                     node: {
                         kind: 'Fragment',
+                        private: [],
                         selections,
                     },
                     variables: {},

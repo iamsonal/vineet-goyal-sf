@@ -16,6 +16,7 @@ export function records(
             plural: true,
             fragment: {
                 kind: 'Fragment',
+                private: [],
                 selections: selection.selections,
             },
             pageToken: selection.pageToken,

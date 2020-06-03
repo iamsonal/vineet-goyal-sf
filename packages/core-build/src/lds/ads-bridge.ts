@@ -181,6 +181,7 @@ function getObjectMetadata(lds: LDS, record: RecordRepresentation): ObjectMetada
         recordId: keyBuilderObjectInfo({ apiName: record.apiName }),
         node: {
             kind: 'Fragment',
+            private: ['eTag'],
             opaque: true,
         },
         variables: {},

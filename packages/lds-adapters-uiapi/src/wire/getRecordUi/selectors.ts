@@ -75,6 +75,7 @@ export function buildRecordUiSelector(
 
     return {
         kind: 'Fragment',
+        private: [],
         selections: [
             {
                 kind: 'Link',

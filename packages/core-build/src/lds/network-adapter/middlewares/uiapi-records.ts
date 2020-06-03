@@ -10,7 +10,13 @@ import {
     DispatchActionConfig,
     shouldForceRefresh,
 } from './utils';
+import {
+    buildGetRecordByFieldsCompositeRequest,
+    dispatchSplitRecordAggregateUiAction,
+    shouldUseAggregateUiForGetRecord,
+} from './execute-aggregate-ui';
 import appRouter from '../router';
+import { ArrayIsArray } from '../../../utils/language';
 
 enum UiApiRecordController {
     CreateRecord = 'RecordUiController.createRecord',
@@ -109,6 +115,48 @@ function getRecord(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams, queryParams } = resourceRequest;
     const { recordId } = urlParams;
     const { fields, layoutTypes, modes, optionalFields } = queryParams;
+
+    const fieldsArray: string[] =
+        fields !== undefined && ArrayIsArray(fields) ? (fields as string[]) : [];
+
+    const optionalFieldsArray: string[] =
+        optionalFields !== undefined && Array.isArray(optionalFields)
+            ? (optionalFields as string[])
+            : [];
+
+    const fieldsString = fieldsArray.join(',');
+    const optionalFieldsString = optionalFieldsArray.join(',');
+    // Don't submit a megarequest to UIAPI due to SOQL limit reasons.
+    // Split and aggregate if needed
+    const useAggregateUi: boolean = shouldUseAggregateUiForGetRecord(
+        fieldsString,
+        optionalFieldsString
+    );
+
+    if (useAggregateUi) {
+        const compositeRequest = buildGetRecordByFieldsCompositeRequest(
+            recordId as string,
+            resourceRequest,
+            {
+                fieldsArray,
+                optionalFieldsArray,
+                fieldsLength: fieldsString.length,
+                optionalFieldsLength: optionalFieldsString.length,
+            }
+        );
+
+        const aggregateUiParams = {
+            input: {
+                compositeRequest,
+            },
+        };
+
+        return dispatchSplitRecordAggregateUiAction(
+            UiApiRecordController.ExecuteAggregateUi,
+            aggregateUiParams,
+            actionConfig
+        );
+    }
 
     let getRecordParams: any = {};
     let controller: UiApiRecordController;

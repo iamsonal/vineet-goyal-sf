@@ -31,7 +31,7 @@ interface UiApiClientOptions {
     ifUnmodifiedSince?: string;
 }
 
-interface UiApiParams {
+export interface UiApiParams {
     [name: string]: any;
     clientOptions?: UiApiClientOptions;
 }

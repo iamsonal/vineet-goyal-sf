@@ -1,11 +1,16 @@
-const { push } = Array.prototype;
+const { push, reduce, join } = Array.prototype;
 const { create, entries, keys } = Object;
 const { hasOwnProperty } = Object.prototype;
 const { parse, stringify } = JSON;
+const { isArray } = Array;
 
 export {
     // Array.prototype
     push as ArrayPrototypePush,
+    reduce as ArrayPrototypeReduce,
+    join as ArrayPrototypeJoin,
+    // Array
+    isArray as ArrayIsArray,
     // Object
     create as ObjectCreate,
     entries as ObjectEntries,

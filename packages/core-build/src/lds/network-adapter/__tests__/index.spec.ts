@@ -1,4 +1,4 @@
-import { ResourceRequest } from '@ldsjs/engine';
+import { ResourceRequest, HttpStatusCode } from '@ldsjs/engine';
 import * as aura from 'aura';
 import auraStorage from 'aura-storage';
 import { AuraFetchResponse } from '../AuraFetchResponse';
@@ -7,6 +7,7 @@ import { COMMERCE_BASE_URI, CONNECT_BASE_URI } from '../middlewares/connect-base
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 import { ControllerInvoker } from '../middlewares/utils';
 import { default as appRouter, Route } from '../router';
+import { buildGetRecordByFieldsCompositeRequest } from '../middlewares/execute-aggregate-ui';
 
 function buildResourceRequest(resourceRequest: Partial<ResourceRequest>): ResourceRequest {
     return {
@@ -22,9 +23,15 @@ function buildResourceRequest(resourceRequest: Partial<ResourceRequest>): Resour
     };
 }
 
-function testControllerInput(request: Partial<ResourceRequest>, expectedParams: any[]) {
+function testControllerInput(
+    request: Partial<ResourceRequest>,
+    expectedParams: any[],
+    expectedResponseBody?
+) {
     test('invokes the right controller', async () => {
-        const fn = jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce({});
+        const fn = jest
+            .spyOn(aura, 'executeGlobalController')
+            .mockResolvedValueOnce(expectedResponseBody ? expectedResponseBody : {});
 
         await networkAdapter(buildResourceRequest(request));
 
@@ -106,6 +113,21 @@ function testStorage(storageName: string, request: Partial<ResourceRequest>) {
         expect(aura.executeGlobalController).toHaveBeenCalledTimes(1);
         expect(res.body).toEqual(mockResponse);
     });
+}
+
+function generateMockedRecordFields(
+    numberOfFields: number,
+    customFieldName?: string
+): Array<string> {
+    const fields: Array<string> = new Array();
+    const fieldName =
+        customFieldName !== undefined ? customFieldName.replace(/\s+/g, '') : 'CustomField';
+
+    for (let i = 0; i < numberOfFields; i++) {
+        fields.push(`${fieldName}${i}__c`);
+    }
+
+    return fields;
 }
 
 // Make sure to reset the executeGlobalController mock and the storage between each test.
@@ -383,6 +405,57 @@ describe('routes', () => {
                     },
                     { background: false, hotspot: true, longRunning: false },
                 ]
+            );
+        });
+
+        describe('with a large amount of fields', () => {
+            let generatedFields = generateMockedRecordFields(2000, 'ExtremelyLongTestFieldName');
+            let responseBody = {
+                compositeResponse: [
+                    {
+                        body: {},
+                        httpStatusCode: HttpStatusCode.Ok,
+                    },
+                ],
+            };
+            let resourceRequest: ResourceRequest = {
+                body: null,
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/records/1234`,
+                headers: null,
+                ingest: null,
+                urlParams: {
+                    recordId: '1234',
+                },
+                queryParams: {
+                    fields: generatedFields,
+                },
+            };
+
+            let expectedRequestPayload = buildGetRecordByFieldsCompositeRequest(
+                '1234',
+                resourceRequest,
+                {
+                    fieldsArray: generatedFields,
+                    optionalFieldsArray: [],
+                    fieldsLength: generatedFields.join(',').length,
+                    optionalFieldsLength: 0,
+                }
+            );
+
+            testControllerInput(
+                resourceRequest,
+                [
+                    'RecordUiController.executeAggregateUi',
+                    {
+                        input: {
+                            compositeRequest: expectedRequestPayload,
+                        },
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ],
+                responseBody
             );
         });
 

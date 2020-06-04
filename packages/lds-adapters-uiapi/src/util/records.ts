@@ -12,6 +12,10 @@ import {
     RecordRepresentationNormalized,
 } from '../generated/types/RecordRepresentation';
 import {
+    CreateRecordTemplateRepresentationNormalized,
+    CreateRecordTemplateRepresentation,
+} from '../generated/types/CreateRecordTemplateRepresentation';
+import {
     ArrayPrototypeConcat,
     ArrayPrototypePush,
     ArrayPrototypeReduce,
@@ -27,8 +31,12 @@ import { UIAPI_SUPPORTED_ENTITY_API_NAMES } from './supported-entities';
 import { MAX_RECORD_DEPTH, insertFieldsIntoTrie } from '../selectors/record';
 
 type FieldValueRepresentationValue = FieldValueRepresentation['value'];
+type RecordRepresentationLikeNormalized =
+    | RecordRepresentationNormalized
+    | CreateRecordTemplateRepresentationNormalized;
+type RecordRepresentationLike = RecordRepresentation | CreateRecordTemplateRepresentation;
 
-interface FieldValueRepresentationLinkState {
+export interface FieldValueRepresentationLinkState {
     fields: string[];
 }
 
@@ -526,7 +534,7 @@ export function getRecordTypeId(record: RecordRepresentation | RecordLayoutFragm
 // This function traverses through a record and marks missing
 // optional fields as "missing"
 export function markMissingOptionalFields(
-    record: ProxyGraphNode<RecordRepresentationNormalized, RecordRepresentation>,
+    record: ProxyGraphNode<RecordRepresentationLikeNormalized, RecordRepresentationLike>,
     optionalFields: string[]
 ): void {
     if (!isGraphNode(record)) {
@@ -591,7 +599,7 @@ export function markNulledOutRequiredFields(
 }
 
 function _markMissingPath(
-    record: ProxyGraphNode<RecordRepresentationNormalized, RecordRepresentation>,
+    record: ProxyGraphNode<RecordRepresentationLikeNormalized, RecordRepresentationLike>,
     path: string[]
 ): void {
     // Filter out Error and null nodes

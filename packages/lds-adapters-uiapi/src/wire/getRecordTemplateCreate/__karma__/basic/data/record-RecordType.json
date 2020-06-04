@@ -1,0 +1,22 @@
+{
+    "apiName": "RecordType",
+    "childRelationships": {},
+    "eTag": "30dad859aa33708d1621f9286224c6f9",
+    "fields": {
+        "Id": {
+            "displayValue": null,
+            "value": "012RM00000025SOYAY"
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "Business Account"
+        }
+    },
+    "id": "012RM00000025SOYAY",
+    "lastModifiedById": "005RM000001ZaffYAC",
+    "lastModifiedDate": "2020-03-16T16:55:03.000Z",
+    "recordTypeId": null,
+    "recordTypeInfo": null,
+    "systemModstamp": "2020-03-16T16:55:03.000Z",
+    "weakEtag": 1584377703000
+}

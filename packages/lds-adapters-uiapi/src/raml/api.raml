@@ -1908,7 +1908,7 @@ types:
       record:
         description: Pre-populated record data.
         type: RecordCreateDefaultRecordRepresentation # TODO: hand rolled
-  RecordDefaultsTemplateRepresentation:
+  CreateTemplateRepresentation:
     description: Record defaults.
     type: object
     properties:
@@ -1920,7 +1920,20 @@ types:
             type: ObjectInfoRepresentation
       record:
         description: Pre-populated record data.
-        type: RecordCreateDefaultRecordRepresentation # TODO: hand rolled
+        type: CreateRecordTemplateRepresentation
+  CloneTemplateRepresentation:
+    description: Record defaults.
+    type: object
+    properties:
+      objectInfos:
+        description: Object metadata.
+        type: object
+        properties:
+          //:
+            type: ObjectInfoRepresentation
+      record:
+        description: Pre-populated record data.
+        type: CloneRecordTemplateRepresentation
   RecordExceptionErrorRepresentation:
     description: Record exception error.
     type: object
@@ -2884,6 +2897,36 @@ types:
         description: Record Version like field, readOnly, handy while caching and comparing versions of records.
         type: integer
         (oas-readOnly): true
+  CreateRecordTemplateRepresentation:
+    type: object
+    properties:
+      apiName:
+        description: The record's object API name.
+        type: string
+      fields:
+        description: 'The field data for this record.'
+        type: object
+        properties:
+          //:
+            type: FieldValueRepresentation
+      recordTypeId:
+        description: The RecordTypeId of the record.
+        type: string | nil
+  CloneRecordTemplateRepresentation:
+    type: object
+    properties:
+      apiName:
+        description: The record's object API name.
+        type: string
+      fields:
+        description: 'The field data for this record.'
+        type: object
+        properties:
+          //:
+            type: FieldValueRepresentation
+      recordTypeId:
+        description: The RecordTypeId of the record.
+        type: string | nil
 /ui-api:
   /actions:
     /flexipage/{flexipageNames}:
@@ -4538,53 +4581,53 @@ types:
         objectApiName:
           type: string
           required: true
-      /template:
-        /clone/{recordId}:
-          get:
-            description: Retrieve default values for fields for cloning a record with optional record type.
-            responses:
-              '200':
-                description: Success
-                body:
-                  application/json:
-                    type: RecordDefaultsTemplateRepresentation
-            queryParameters:
-              optionalFields:
-                type: array
-                required: false
-                items:
-                  type: string
-                  (oas-collectionFormat): csv
-              recordTypeId:
+    /template:
+      /clone/{recordId}:
+        get:
+          description: Retrieve default values for fields for cloning a record with optional record type.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: CloneTemplateRepresentation
+          queryParameters:
+            optionalFields:
+              type: array
+              required: false
+              items:
                 type: string
-                required: false
-          uriParameters:
-            recordId:
+                (oas-collectionFormat): csv
+            recordTypeId:
               type: string
-              required: true
-        /create/{objectApiName}:
-          get:
-            description: Retrieve default values for fields for a new record of a particular object and optional record type without layouts.
-            responses:
-              '200':
-                description: Success
-                body:
-                  application/json:
-                    type: RecordDefaultsTemplateRepresentation
-            queryParameters:
-              optionalFields:
-                type: array
-                required: false
-                items:
-                  type: string
-                  (oas-collectionFormat): csv
-              recordTypeId:
+              required: false
+        uriParameters:
+          recordId:
+            type: string
+            required: true
+      /create/{objectApiName}:
+        get:
+          description: Retrieve default values for fields for a new record of a particular object and optional record type without layouts.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: CreateTemplateRepresentation
+          queryParameters:
+            optionalFields:
+              type: array
+              required: false
+              items:
                 type: string
-                required: false
-          uriParameters:
-            objectApiName:
+                (oas-collectionFormat): csv
+            recordTypeId:
               type: string
-              required: true
+              required: false
+        uriParameters:
+          objectApiName:
+            type: string
+            required: true
   /record-ui/{recordIds}:
     get:
       description: Retrieve presentation-ready metadata and data about specific records.

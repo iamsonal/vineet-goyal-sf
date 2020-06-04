@@ -23,6 +23,7 @@ import {
     GetRecordCreateDefaults,
     GetRecordEditActions,
     GetRecordNotifyChange,
+    GetRecordTemplateCreate,
     GetRecordUi,
     GetRelatedListActions,
     GetRelatedListCount,
@@ -245,6 +246,13 @@ export const _getRelatedListRecordsBatch = createImperativeFunction(
     getRelatedListRecordsBatchAdapter
 );
 export const getRelatedListRecordsBatch = registerWireAdapter(getRelatedListRecordsBatchAdapter);
+
+const getRecordTemplateCreateAdapter = createLdsAdapter(
+    'getRecordTemplateCreate',
+    GetRecordTemplateCreate
+);
+export const _getRecordTemplateCreate = createImperativeFunction(getRecordTemplateCreateAdapter);
+export const getRecordTemplateCreate = registerWireAdapter(getRecordTemplateCreateAdapter);
 
 const baseUpdateRecord = UpdateRecord(lds);
 export const updateRecord = (...config: Parameters<ReturnType<typeof UpdateRecord>>) => {

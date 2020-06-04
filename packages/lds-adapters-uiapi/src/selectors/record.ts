@@ -12,7 +12,7 @@ type RecordRepresentationLike = RecordRepresentation | RecordCreateDefaultRecord
 export const MAX_RECORD_DEPTH = 5;
 const FIELD_SEPARATOR = '.';
 
-const API_NAME_SELECTION: PathSelection = {
+export const API_NAME_SELECTION: PathSelection = {
     kind: 'Scalar',
     name: 'apiName',
 };
@@ -34,11 +34,11 @@ const LAST_MODIFIED_BY_DATE_SELECTION: PathSelection = {
     kind: 'Scalar',
     name: 'lastModifiedDate',
 };
-const RECORD_TYPE_ID_SELECTION: PathSelection = {
+export const RECORD_TYPE_ID_SELECTION: PathSelection = {
     kind: 'Scalar',
     name: 'recordTypeId',
 };
-const RECORD_TYPE_INFO_SELECTION: PathSelection = {
+export const RECORD_TYPE_INFO_SELECTION: PathSelection = {
     kind: 'Object',
     name: 'recordTypeInfo',
     nullable: true,
@@ -77,6 +77,11 @@ const DISPLAY_VALUE_SELECTION: PathSelection = {
 const SCALAR_VALUE_SELECTION: PathSelection = {
     kind: 'Scalar',
     name: 'value',
+};
+
+export const FIELDS_SELECTION: PathSelection = {
+    kind: 'Object',
+    name: 'fields',
 };
 
 export function isSpanningRecord(
@@ -169,7 +174,7 @@ function convertTrieToSelection(fieldDefinition: RecordFieldTrie): PathSelection
         SYSTEM_MODSTAMP_SELECTION,
         {
             kind: 'Object',
-            name: 'fields',
+            name: FIELDS_SELECTION.name,
             selections: fieldsSelection,
         },
     ];
@@ -246,7 +251,7 @@ export function buildSelectionFromRecord(record: RecordRepresentationLike): Path
         SYSTEM_MODSTAMP_SELECTION,
         {
             kind: 'Object',
-            name: 'fields',
+            name: FIELDS_SELECTION.name,
             selections: fieldsSelection,
         },
     ];

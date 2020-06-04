@@ -183,6 +183,15 @@ types:
       - eTag
   RecordDefaultsRepresentation:
     (lds.ttl): 900000
+  CreateTemplateRepresentation:
+    (lds.ttl): 900000
+    (lds.key):
+      objectApiName: record.apiName
+      recordTypeId: record.recordTypeId
+  CreateRecordTemplateRepresentation:
+    (lds.key):
+      apiName: apiName
+      recordTypeId: recordTypeId
   SalesforceObjectId:
     (lds.coerceFunction): ../primitives/ObjectId/coerce
   SalesforceObjectIdArray:
@@ -471,6 +480,16 @@ types:
             optionalFields: SalesforceFieldIdArray
             recordTypeId: SalesforceRecordId18
             formFactor: SalesforceFormFactor
+    '/template/create/{objectApiName}':
+      get:
+        (lds.adapter):
+          name: getRecordTemplateCreate
+          coercedParams:
+            objectApiName: SalesforceObjectId
+            optionalFields: SalesforceFieldIdArray
+        (lds.key):
+          objectApiName: urlParams.objectApiName
+          recordTypeId: queryParams.recordTypeId || null
   '/related-list-count':
     '/batch/{parentRecordId}/{relatedListNames}':
       get:

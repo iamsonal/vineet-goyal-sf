@@ -23,6 +23,7 @@ import {
     GetRecordActions,
     GetRecordAvatars,
     GetRecordCreateDefaults,
+    GetRecordTemplateCreate,
     GetRecordEditActions,
     GetRecordNotifyChange,
     GetRecordUi,
@@ -61,6 +62,7 @@ const getRecord = register(lds, wireService, GetRecord(lds));
 const getRecordActions = register(lds, wireService, GetRecordActions(lds));
 const getRecordAvatars = register(lds, wireService, GetRecordAvatars(lds));
 const getRecordCreateDefaults = register(lds, wireService, GetRecordCreateDefaults(lds));
+const getRecordTemplateCreate = register(lds, wireService, GetRecordTemplateCreate(lds));
 const getRecordEditActions = register(lds, wireService, GetRecordEditActions(lds));
 const getRecordNotifyChange = GetRecordNotifyChange(lds);
 const getRecordUi = register(lds, wireService, GetRecordUi(lds));
@@ -88,6 +90,7 @@ export {
     getLookupActions,
     getLookupRecords,
     getRecordCreateDefaults,
+    getRecordTemplateCreate,
     getPicklistValues,
     getPicklistValuesByRecordType,
     getRecord,

@@ -11,6 +11,7 @@ import {
     LayoutType,
     MASTER_RECORD_TYPE_ID,
     ACTIONS_TTL,
+    CREATE_TEMPLATE_REPRESENTATION_TTL,
     LAYOUT_TTL,
     LAYOUT_USER_STATE_TTL,
     RECORD_TTL,
@@ -185,6 +186,26 @@ function mockGetRecordCreateDefaultsNetwork(config, mockData) {
     const paramMatch = sinon.match({
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/record-defaults/create/${objectApiName}`,
+        queryParams,
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetRecordTemplateCreateNetwork(config, mockData) {
+    let { objectApiName, ...queryParams } = config;
+
+    if (typeof objectApiName !== 'string') {
+        objectApiName = objectApiName.objectApiName;
+    }
+
+    const paramMatch = sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/record-defaults/template/create/${objectApiName}`,
         queryParams,
     });
 
@@ -503,6 +524,14 @@ function expireRecordDefaultsRepresentation() {
     timekeeper.travel(Date.now() + RECORD_DEFAULTS_REPRESENTATION_TTL + 1);
 }
 
+/**
+ * Force a cache expiration for RecordDefaultsTemplateRepresentation by fast-forwarding time past the
+ * standard RecordDefaultsRepresentation TTL.
+ */
+function expireCreateTemplateRepresentation() {
+    timekeeper.travel(Date.now() + CREATE_TEMPLATE_REPRESENTATION_TTL + 1);
+}
+
 function isSpanningRecord(value) {
     return value !== null && typeof value === 'object';
 }
@@ -583,6 +612,7 @@ export {
     expireRecordUi,
     expireRecordAvatar,
     expireRecordDefaultsRepresentation,
+    expireCreateTemplateRepresentation,
     expireRelatedListInfo,
     expireObjectInfo,
     // network mock utils
@@ -598,6 +628,7 @@ export {
     mockGetRecordActionsNetwork,
     mockGetRecordEditActionsNetwork,
     mockGetRecordCreateDefaultsNetwork,
+    mockGetRecordTemplateCreateNetwork,
     mockGetRecordUiNetwork,
     mockGetRelatedListActionsNetwork,
     mockGetRelatedListRecordNetwork,

@@ -8,6 +8,8 @@ export { LayoutType } from '../src/primitives/LayoutType';
 // TTLs
 export { TTL as ACTIONS_TTL } from '../src/generated/types/ActionRepresentation';
 
+export { TTL as CREATE_TEMPLATE_REPRESENTATION_TTL } from '../src/generated/types/CreateTemplateRepresentation';
+
 export { TTL as LAYOUT_TTL } from '../src/generated/types/RecordLayoutRepresentation';
 
 export { TTL as LAYOUT_USER_STATE_TTL } from '../src/generated/types/RecordLayoutUserStateRepresentation';

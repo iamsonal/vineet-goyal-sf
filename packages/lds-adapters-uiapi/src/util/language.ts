@@ -4,7 +4,7 @@ const { hasOwnProperty } = Object.prototype;
 const { split, endsWith } = String.prototype;
 
 const { isArray } = Array;
-const { concat, push, reduce } = Array.prototype;
+const { concat, filter, push, reduce } = Array.prototype;
 
 const { parse, stringify } = JSON;
 
@@ -20,6 +20,7 @@ export {
     isArray as ArrayIsArray,
     // Array.prototype
     concat as ArrayPrototypeConcat,
+    filter as ArrayPrototypeFilter,
     push as ArrayPrototypePush,
     reduce as ArrayPrototypeReduce,
     // String.prototype

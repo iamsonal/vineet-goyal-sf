@@ -39,6 +39,7 @@ export { getAppsAdapterFactory as GetApps } from './generated/adapters/getApps';
 export { getSelectedAppAdapterFactory as GetSelectedApp } from './generated/adapters/getSelectedApp';
 export { UpdateRecordConfig } from './generated/adapters/updateRecord';
 export { updateRelatedListInfoAdapterFactory as UpdateRelatedListInfo } from './generated/adapters/updateRelatedListInfo';
+export { getRecordTemplateCreateAdapterFactory as GetRecordTemplateCreate } from './wire/getRecordTemplateCreate';
 
 // Validation Utils
 export { untrustedIsObject } from './generated/adapters/adapter-utils';

@@ -1,0 +1,6 @@
+[
+    {
+        "errorCode": "INVALID_ID_FIELD",
+        "message": "Illegal value for query parameter 'recordTypeId': 001RM000004PkciYAC"
+    }
+]

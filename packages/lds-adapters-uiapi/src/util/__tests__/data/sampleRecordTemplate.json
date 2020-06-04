@@ -1,0 +1,68 @@
+{
+    "apiName": "Account",
+    "fields": {
+        "CreatedDate": {
+            "displayValue": null,
+            "value": null
+        },
+        "Name": {
+            "displayValue": null,
+            "value": null
+        },
+        "Owner": {
+            "displayValue": "Marc Benioff",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "ade4471f8f09c5fdaaff6c4d8e337c1b",
+                "fields": {
+                    "City": {
+                        "displayValue": null,
+                        "value": "San Francisco"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005R0000000cdZIIAY"
+                    },
+                    "LastModifiedBy": {
+                        "displayValue": "Parker Harris",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "00b0d84b7c294fcf8d38c8e16727830d",
+                            "fields": {
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005000000000000005"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "Parker Harris"
+                                }
+                            },
+                            "id": "005000000000000005",
+                            "lastModifiedById": "005000000000000005",
+                            "lastModifiedDate": "2020-05-21T18:29:49.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2020-05-21T18:32:17.000Z",
+                            "weakEtag": 1590085937000
+                        }
+                    }
+                },
+                "id": "005R0000000cdZIIAY",
+                "lastModifiedById": "005R0000000cdZIIAY",
+                "lastModifiedDate": "2020-05-21T18:29:49.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-05-21T18:32:17.000Z",
+                "weakEtag": 1590085937000
+            }
+        },
+        "OwnerId": {
+            "displayValue": null,
+            "value": "005R0000000cdZIIAY"
+        }
+    },
+    "recordTypeId": "012000000000000AAA"
+}

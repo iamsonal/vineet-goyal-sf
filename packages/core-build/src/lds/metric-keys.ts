@@ -35,6 +35,29 @@ export const CACHE_MISS_COUNT: MetricsKey = {
     },
 };
 
+/**
+ * W-7667066
+ * This count represents the number of times getRecord() was invoked, but not including
+ * executeAggregateUi calls.  It can be represented as the sum of the Aura Action invocations
+ * GetRecordWithLayouts and GetRecordWithFields.
+ */
+export const GET_RECORD_NORMAL_INVOKE_COUNT: MetricsKey = {
+    get() {
+        return { owner: METRIC_KEY_OWNER, name: 'get-record-normal-invoke-count' };
+    },
+};
+
+/**
+ * W-7667066
+ * This count represents the number of times getRecord() was invoked, with a large enough payload
+ * that executeAggregateUi was used.
+ */
+export const GET_RECORD_AGGREGATE_INVOKE_COUNT: MetricsKey = {
+    get() {
+        return { owner: METRIC_KEY_OWNER, name: 'get-record-aggregate-invoke-count' };
+    },
+};
+
 export const GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT: MetricsKey = {
     get() {
         return { owner: METRIC_KEY_OWNER, name: 'get-record-notify-change-allow-count' };

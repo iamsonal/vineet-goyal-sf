@@ -22,6 +22,8 @@ import {
 import {
     CACHE_HIT_COUNT,
     CACHE_MISS_COUNT,
+    GET_RECORD_AGGREGATE_INVOKE_COUNT,
+    GET_RECORD_NORMAL_INVOKE_COUNT,
     GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT,
     GET_RECORD_NOTIFY_CHANGE_DROP_COUNT,
     STORE_BROADCAST_DURATION,
@@ -63,6 +65,8 @@ const RUNTIME_PERF_MARK_NAME = 'runtime-perf';
 const NETWORK_TRANSACTION_NAME = 'lds-network';
 const cacheHitMetric = counter(CACHE_HIT_COUNT);
 const cacheMissMetric = counter(CACHE_MISS_COUNT);
+const getRecordAggregateInvokeMetric = counter(GET_RECORD_AGGREGATE_INVOKE_COUNT);
+const getRecordNormalInvokeMetric = counter(GET_RECORD_NORMAL_INVOKE_COUNT);
 const getRecordNotifyChangeAllowMetric = counter(GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT);
 const getRecordNotifyChangeDropMetric = counter(GET_RECORD_NOTIFY_CHANGE_DROP_COUNT);
 const storeSizeMetric = percentileHistogram(STORE_SIZE_COUNT);
@@ -332,6 +336,14 @@ export function instrumentAdapter<C, D>(name: string, adapter: Adapter<C, D>): A
 
         return result;
     };
+}
+
+export function incrementGetRecordNormalInvokeCount(): void {
+    getRecordNormalInvokeMetric.increment(1);
+}
+
+export function incrementGetRecordAggregateInvokeCount(): void {
+    getRecordAggregateInvokeMetric.increment(1);
 }
 
 export function incrementGetRecordNotifyChangeAllowCount(): void {

@@ -1,6 +1,10 @@
 import { ResourceRequest } from '@ldsjs/engine';
 
-import { registerLdsCacheStats } from '../../instrumentation';
+import {
+    incrementGetRecordAggregateInvokeCount,
+    incrementGetRecordNormalInvokeCount,
+    registerLdsCacheStats,
+} from '../../instrumentation';
 import { createStorage } from '../../storage';
 
 import { actionConfig, UI_API_BASE_URI } from './uiapi-base';
@@ -134,6 +138,8 @@ function getRecord(resourceRequest: ResourceRequest): Promise<any> {
     );
 
     if (useAggregateUi) {
+        incrementGetRecordAggregateInvokeCount();
+
         const compositeRequest = buildGetRecordByFieldsCompositeRequest(
             recordId as string,
             resourceRequest,
@@ -160,6 +166,8 @@ function getRecord(resourceRequest: ResourceRequest): Promise<any> {
 
     let getRecordParams: any = {};
     let controller: UiApiRecordController;
+
+    incrementGetRecordNormalInvokeCount();
 
     if (layoutTypes !== undefined) {
         getRecordParams = {

@@ -81,10 +81,10 @@ export const ingest: typeof generatedIngest = function RecordRepresentationInges
     );
 
     if (existingRecord === undefined || equals(existingRecord, incomingRecord) === false) {
-        store.publish(key, incomingRecord);
+        lds.storePublish(key, incomingRecord);
     }
 
-    store.setExpiration(key, timestamp + 30000);
+    lds.storeSetExpiration(key, timestamp + 30000);
 
     return createLink(key);
 };

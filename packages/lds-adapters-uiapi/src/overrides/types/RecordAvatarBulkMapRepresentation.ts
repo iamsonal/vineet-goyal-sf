@@ -59,7 +59,7 @@ export const ingest: typeof generatedIngest = function RecordAvatarBulkMapRepres
     );
 
     if (existingRecord === undefined || equals(existingRecord, incomingRecord) === false) {
-        store.publish(key, incomingRecord);
+        lds.storePublish(key, incomingRecord);
     }
 
     return createLink(key);

@@ -144,7 +144,7 @@ function convertTrieToSelection(fieldDefinition: RecordFieldTrie): PathSelection
                 nullable: true,
                 fragment: {
                     kind: 'Fragment',
-                    private: [],
+                    private: ['eTag', 'weakEtag'],
                     selections: convertTrieToSelection(childFieldDefinition),
                 },
             };

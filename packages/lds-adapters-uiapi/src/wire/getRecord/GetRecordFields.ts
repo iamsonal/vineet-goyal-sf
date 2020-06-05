@@ -27,7 +27,7 @@ function buildRecordSelector(
         recordId: recordRepresentationKeyBuilder({ recordId }),
         node: {
             kind: 'Fragment',
-            private: [],
+            private: ['eTag', 'weakEtag'],
             selections: buildSelectionFromFields(fields, optionalFields),
         },
         variables: {},

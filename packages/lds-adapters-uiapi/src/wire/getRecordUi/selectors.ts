@@ -67,15 +67,16 @@ export function buildRecordUiSelector(
             kind: 'Link',
             name: recordId,
             fragment: {
-                kind: 'Link',
+                kind: 'Fragment',
                 selections: buildSelectionFromFields(fields, optionalFields),
+                private: ['eTag', 'weakEtag'],
             },
         });
     }
 
     return {
         kind: 'Fragment',
-        private: [],
+        private: ['eTag'],
         selections: [
             {
                 kind: 'Link',

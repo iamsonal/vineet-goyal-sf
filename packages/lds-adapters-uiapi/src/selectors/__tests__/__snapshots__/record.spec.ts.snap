@@ -73,7 +73,10 @@ Array [
             Object {
               "fragment": Object {
                 "kind": "Fragment",
-                "private": Array [],
+                "private": Array [
+                  "eTag",
+                  "weakEtag",
+                ],
                 "selections": Array [
                   Object {
                     "kind": "Scalar",
@@ -329,7 +332,10 @@ Array [
             Object {
               "fragment": Object {
                 "kind": "Fragment",
-                "private": Array [],
+                "private": Array [
+                  "eTag",
+                  "weakEtag",
+                ],
                 "selections": Array [
                   Object {
                     "kind": "Scalar",
@@ -520,7 +526,10 @@ Array [
             Object {
               "fragment": Object {
                 "kind": "Fragment",
-                "private": Array [],
+                "private": Array [
+                  "eTag",
+                  "weakEtag",
+                ],
                 "selections": Array [
                   Object {
                     "kind": "Scalar",
@@ -645,7 +654,10 @@ Array [
             Object {
               "fragment": Object {
                 "kind": "Fragment",
-                "private": Array [],
+                "private": Array [
+                  "eTag",
+                  "weakEtag",
+                ],
                 "selections": Array [
                   Object {
                     "kind": "Scalar",

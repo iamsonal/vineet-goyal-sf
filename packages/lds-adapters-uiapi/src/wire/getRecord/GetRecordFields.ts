@@ -1,4 +1,13 @@
-import { LDS, Selector, Snapshot, FetchResponse, SnapshotRefresh } from '@ldsjs/engine';
+import {
+    LDS,
+    Selector,
+    Snapshot,
+    FetchResponse,
+    SnapshotRefresh,
+    UnfulfilledSnapshot,
+    ResourceResponse,
+    ResourceRequest,
+} from '@ldsjs/engine';
 import { GetRecordConfig, createResourceParams } from '../../generated/adapters/getRecord';
 import {
     keyBuilder,
@@ -17,6 +26,7 @@ import {
 } from '../../util/records';
 import { buildSelectionFromFields } from '../../selectors/record';
 import { difference } from '../../validation/utils';
+import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
 function buildRecordSelector(
     recordId: string,
@@ -44,7 +54,7 @@ function buildSnapshotRefresh(
     };
 }
 
-export function buildNetworkSnapshot(lds: LDS, config: GetRecordConfig) {
+function prepareRequest(lds: LDS, config: GetRecordConfig) {
     const { recordId, fields } = config;
 
     // Should this go into the coersion logic?
@@ -58,31 +68,72 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordConfig) {
     const request = createResourceRequest(params);
     const key = keyBuilder(params);
 
+    return { request, key, allTrackedFields };
+}
+
+function onResourceSuccess(
+    lds: LDS,
+    config: GetRecordConfig,
+    key: string,
+    allTrackedFields: string[],
+    request: ResourceRequest,
+    response: ResourceResponse<RecordRepresentation>
+) {
+    const { body } = response;
+    const fields = config.fields === undefined ? [] : config.fields;
+    const optionalFields = config.optionalFields === undefined ? [] : config.optionalFields;
+
+    lds.storeIngest<RecordRepresentation>(key, request, body);
+
+    const recordNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(key)!;
+
+    markNulledOutRequiredFields(recordNode, [...fields, ...optionalFields]);
+    markMissingOptionalFields(recordNode, allTrackedFields);
+
+    lds.storeBroadcast();
+    return lds.storeLookup<RecordRepresentation>(
+        buildRecordSelector(config.recordId, fields, optionalFields),
+        buildSnapshotRefresh(lds, config)
+    );
+}
+
+function onResourceError(
+    lds: LDS,
+    config: GetRecordConfig,
+    key: string,
+    err: FetchResponse<unknown>
+) {
+    lds.storeIngestFetchResponse(key, err, RecordRepresentationTTL);
+    lds.storeBroadcast();
+    return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+}
+
+export function buildNetworkSnapshot(lds: LDS, config: GetRecordConfig) {
+    const { request, key, allTrackedFields } = prepareRequest(lds, config);
+
     return lds.dispatchResourceRequest<RecordRepresentation>(request).then(
         response => {
-            const { body } = response;
-            const fields = config.fields === undefined ? [] : config.fields;
-            const optionalFields = config.optionalFields === undefined ? [] : config.optionalFields;
-
-            lds.storeIngest<RecordRepresentation>(key, request, body);
-
-            const recordNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(
-                key
-            )!;
-
-            markNulledOutRequiredFields(recordNode, [...fields, ...optionalFields]);
-            markMissingOptionalFields(recordNode, allTrackedFields);
-
-            lds.storeBroadcast();
-            return lds.storeLookup<RecordRepresentation>(
-                buildRecordSelector(config.recordId, fields, optionalFields),
-                buildSnapshotRefresh(lds, config)
-            );
+            return onResourceSuccess(lds, config, key, allTrackedFields, request, response);
         },
         (err: FetchResponse<unknown>) => {
-            lds.storeIngestFetchResponse(key, err, RecordRepresentationTTL);
-            lds.storeBroadcast();
-            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+            return onResourceError(lds, config, key, err);
+        }
+    );
+}
+
+export function resolveUnfulfilledSnapshot(
+    lds: LDS,
+    config: GetRecordConfig,
+    snapshot: UnfulfilledSnapshot<RecordRepresentation, any>
+) {
+    const { request, key, allTrackedFields } = prepareRequest(lds, config);
+
+    return lds.resolveUnfulfilledSnapshot<RecordRepresentation>(request, snapshot).then(
+        response => {
+            return onResourceSuccess(lds, config, key, allTrackedFields, request, response);
+        },
+        (err: FetchResponse<unknown>) => {
+            return onResourceError(lds, config, key, err);
         }
     );
 }
@@ -110,6 +161,10 @@ export function getRecordByFields(
     const snapshot = buildInMemorySnapshot(lds, config);
     if (lds.snapshotDataAvailable(snapshot)) {
         return snapshot;
+    }
+
+    if (isUnfulfilledSnapshot(snapshot)) {
+        return resolveUnfulfilledSnapshot(lds, config, snapshot);
     }
 
     return buildNetworkSnapshot(lds, config);

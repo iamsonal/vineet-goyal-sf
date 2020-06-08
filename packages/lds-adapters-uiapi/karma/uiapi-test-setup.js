@@ -36,6 +36,19 @@ const matchers = {
             },
         };
     },
+
+    toEqualNavItemsSnapShot: () => {
+        return {
+            compare: function(actual, expected) {
+                var striped = clone(expected);
+                stripEtags(striped);
+                stripProperties(striped, ['currentPageUrl']);
+
+                expect(actual).toEqualSnapshotWithoutEtags(striped);
+                return { pass: true };
+            },
+        };
+    },
 };
 
 beforeAll(() => {

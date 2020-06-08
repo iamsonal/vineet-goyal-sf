@@ -35,6 +35,7 @@ import {
     UpdateLayoutUserState,
     DeleteRecord,
     MRU,
+    GetNavItems,
 } from '@salesforce/lds-adapters-uiapi';
 
 import { GetProduct, GetProductCategoryPath } from '@salesforce/lds-adapters-commerce-catalog';
@@ -83,6 +84,7 @@ export const getProductCategoryPath = GetProductCategoryPath(lds);
 export const productSearch = ProductSearch(lds);
 export const getProductPrice = GetProductPrice(lds);
 export const getCommunityNavigationMenu = GetCommunityNavigationMenu(lds);
+export const getNavItems = GetNavItems(lds);
 
 export { MRU };
 
@@ -125,6 +127,7 @@ const adapterMap: AdapterMap = {
     getProductPrice,
     getProductCategoryPath,
     getCommunityNavigationMenu,
+    getNavItems,
 };
 
 const mobileBridge = new MobileBridge(lds, adapterMap);

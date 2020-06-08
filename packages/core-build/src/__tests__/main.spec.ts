@@ -47,6 +47,7 @@ const whiteList = [
     'getRelatedListsCount',
     'getRelatedListInfoBatch',
     'getRelatedListRecordsBatch',
+    'getNavItems',
 
     /** Apex exports */
     'getApexInvoker',

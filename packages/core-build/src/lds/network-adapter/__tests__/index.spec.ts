@@ -2864,6 +2864,32 @@ describe('routes', () => {
         );
     });
 
+    describe('get /nav-items', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/nav-items`,
+                queryParams: {
+                    formFactor: 'Small',
+                    page: 0,
+                    pageSize: 20,
+                    navItemNames: ['t1', 't2'],
+                },
+            },
+            [
+                'AppsController.getNavItems',
+                {
+                    formFactor: 'Small',
+                    page: 0,
+                    pageSize: 20,
+                    navItemNames: ['t1', 't2'],
+                },
+                undefined,
+            ]
+        );
+    });
+
     // [IMPORTANT] this test has to be the last one in the suite to verify all registered routes have corresponding tests
     it.each(Object.keys(testedRoutes).map(key => key.split(':')))(
         '%s %s route tested',

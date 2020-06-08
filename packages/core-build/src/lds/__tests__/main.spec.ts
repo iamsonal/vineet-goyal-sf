@@ -44,6 +44,7 @@ jest.mock('@salesforce/lds-adapters-uiapi', () => {
         getRelatedListRecordsSpy: jest.fn(mockAdapter),
         getRelatedListRecordActionsSpy: jest.fn(mockAdapter),
         getRelatedListRecordsBatchSpy: jest.fn(mockAdapter),
+        getNavItemsSpy: jest.fn(mockAdapter),
     };
 
     return {
@@ -65,6 +66,7 @@ jest.mock('@salesforce/lds-adapters-uiapi', () => {
         GetRelatedListRecords: () => spies.getRelatedListRecordsSpy,
         GetRelatedListRecordActions: () => spies.getRelatedListRecordActionsSpy,
         GetRelatedListRecordsBatch: () => spies.getRelatedListRecordsBatchSpy,
+        GetNavItems: () => spies.getNavItemsSpy,
         __spies: spies,
     };
 });

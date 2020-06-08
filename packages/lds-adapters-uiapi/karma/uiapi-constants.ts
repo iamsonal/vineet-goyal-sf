@@ -29,3 +29,5 @@ export { TTL as PICKLIST_VALUES_TTL } from '../src/generated/types/PicklistValue
 export { TTL as PICKLIST_VALUES_COLLECTION_TTL } from '../src/generated/types/PicklistValuesCollectionRepresentation';
 
 export { TTL as RELATED_LIST_INFO_TTL } from '../src/generated/types/RelatedListInfoRepresentation';
+
+export { TTL as NAV_ITEMS_TTL } from '../src/generated/types/NavItemRepresentation';

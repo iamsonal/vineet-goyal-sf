@@ -41,6 +41,7 @@ describe('Main exports', () => {
         'getApexInvoker',
         'getRelatedListInfoBatch',
         'getRelatedListRecordsBatch',
+        'getNavItems',
     ].forEach(moduleName => {
         it(`should export ${moduleName} from lds`, () => {
             expect((mainExports as any)[moduleName]).toBe((ldsExports as any)[moduleName]);

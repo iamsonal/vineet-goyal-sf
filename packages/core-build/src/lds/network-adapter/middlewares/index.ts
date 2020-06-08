@@ -6,3 +6,4 @@ import './uiapi-lists';
 import './uiapi-lookup';
 import './uiapi-mrulists';
 import './uiapi-relatedlist';
+import './uiapi-apps';

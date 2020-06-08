@@ -22,6 +22,7 @@ import {
     PICKLIST_VALUES_TTL,
     PICKLIST_VALUES_COLLECTION_TTL,
     RELATED_LIST_INFO_TTL,
+    NAV_ITEMS_TTL,
 } from './dist/uiapi-constants';
 
 const API_VERSION = 'v50.0';
@@ -420,6 +421,22 @@ function mockGetRelatedListInfoBatchNetwork(config, mockData) {
     }
 }
 
+function mockGetNavItemsNetwork(config, mockData) {
+    const queryParams = { ...config };
+
+    const paramMatch = sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/nav-items`,
+        queryParams,
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
 /**
  * Force a cache expiration for records by fast-forwarding time past the
  * standard record TTL.
@@ -525,7 +542,14 @@ function expireRecordDefaultsRepresentation() {
 }
 
 /**
- * Force a cache expiration for RecordDefaultsTemplateRepresentation by fast-forwarding time past the
+ * Force a cache expiration for navItems by fast-forwarding time past the
+ * standard NavItemsPepresentation TTL.
+ */
+function expireNavItems() {
+    timekeeper.travel(Date.now() + NAV_ITEMS_TTL + 1);
+}
+
+/** Force a cache expiration for RecordDefaultsTemplateRepresentation by fast-forwarding time past the
  * standard RecordDefaultsRepresentation TTL.
  */
 function expireCreateTemplateRepresentation() {
@@ -615,6 +639,7 @@ export {
     expireCreateTemplateRepresentation,
     expireRelatedListInfo,
     expireObjectInfo,
+    expireNavItems,
     // network mock utils
     mockCreateRecordNetwork,
     mockDeleteRecordNetwork,
@@ -638,6 +663,7 @@ export {
     mockUpdateLayoutUserStateNetwork,
     mockGetRelatedListInfoNetwork,
     mockGetRelatedListInfoBatchNetwork,
+    mockGetNavItemsNetwork,
     // mock data utils
     extractRecordFields,
 };

@@ -1,0 +1,55 @@
+{
+    "currentPageUrl": "/services/data/v47.0/ui-api/nav-items?formFactor=Small&navItemNames=%5Bstandard-Contract%2C%20standard-Contact%5D",
+    "eTag": "074de989772bbd5b5d049c89b0a98668",
+    "navItems": [
+        {
+            "availableInClassic": true,
+            "availableInLightning": true,
+            "color": "A094ED",
+            "content": "https://lexdev.my.stmpa.stm.salesforce.com/003/o",
+            "custom": false,
+            "developerName": "standard-Contact",
+            "iconUrl": "https://lexdev.my.stmpa.stm.salesforce.com/img/icon/t4v35/standard/contact_120.png",
+            "id": null,
+            "itemType": "Entity",
+            "label": "Contacts-Updated",
+            "objectApiName": "Contact",
+            "objectLabel": "Contact",
+            "objectLabelPlural": "Contacts",
+            "pageReference": {
+                "attributes": {
+                    "objectApiName": "Contact",
+                    "actionName": "home"
+                },
+                "state": {},
+                "type": "standard__objectPage"
+            },
+            "standardType": null
+        },
+        {
+            "availableInClassic": true,
+            "availableInLightning": true,
+            "color": "6EC06E",
+            "content": "https://lexdev.my.stmpa.stm.salesforce.com/800/o",
+            "custom": false,
+            "developerName": "standard-Contract",
+            "iconUrl": "https://lexdev.my.stmpa.stm.salesforce.com/img/icon/t4v35/standard/contract_120.png",
+            "id": null,
+            "itemType": "Entity",
+            "label": "Contracts-Updated",
+            "objectApiName": "Contract",
+            "objectLabel": "Contract",
+            "objectLabelPlural": "Contracts",
+            "pageReference": {
+                "attributes": {
+                    "objectApiName": "Contract",
+                    "actionName": "home"
+                },
+                "state": {},
+                "type": "standard__objectPage"
+            },
+            "standardType": null
+        }
+    ],
+    "nextPageUrl": null
+}

@@ -39,6 +39,7 @@ import {
     UpdateRelatedListInfo,
     GetRelatedListInfoBatch,
     GetRelatedListRecordsBatch,
+    GetNavItems,
 } from '@salesforce/lds-adapters-uiapi';
 import * as wireService from 'wire-service';
 import { throttle } from '../utils';
@@ -308,6 +309,12 @@ const getCommunityNavigationMenuAdapter = createLdsAdapter(
     GetCommunityNavigationMenu
 );
 export const getCommunityNavigationMenu = registerWireAdapter(getCommunityNavigationMenuAdapter);
+
+/**
+ * Apps
+ */
+const getNavItemsAdapter = createLdsAdapter('getNavItems', GetNavItems);
+export const getNavItems = registerWireAdapter(getNavItemsAdapter);
 
 /**
  * Commerce

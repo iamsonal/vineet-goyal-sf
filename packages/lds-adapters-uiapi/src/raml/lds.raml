@@ -202,6 +202,8 @@ types:
     (lds.coerceFunction): ../primitives/FieldId/coerce
   SortedStringArray:
     (lds.coerceFunction): ../primitives/SortedStringArray/coerce
+  SortedStringArrayAllowEmpty:
+    (lds.coerceFunction): ../primitives/SortedStringArrayAllowEmpty/coerce
   SalesforceFieldIdArray:
     (lds.coerceFunction): ../primitives/FieldIdArray/coerce
   SalesforceRecordId18:
@@ -235,7 +237,7 @@ types:
         (lds.adapter):
           name: getRecordActions
           coercedParams:
-            apiNames: SortedStringArray
+            apiNames: SortedStringArrayAllowEmpty
             recordIds: SalesforceRecordId18Array
             formFactor: SalesforceFormFactor
             sections: SortedStringArray

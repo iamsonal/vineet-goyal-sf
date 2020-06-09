@@ -7,8 +7,8 @@ import {
     ResourceRequest,
     ResourceResponse,
     UnfulfilledSnapshot,
-    isUnfulfilledSnapshot,
 } from '@ldsjs/engine';
+import { isUnfulfilledSnapshot } from '../../util/snapshot';
 import {
     adapterName as getPicklistValuesAdapterName,
     validateAdapterConfig,

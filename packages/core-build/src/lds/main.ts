@@ -1,5 +1,5 @@
 import { Adapter, AdapterFactory, LDS, Store, Environment } from '@ldsjs/engine';
-import { bindWireRefresh, register } from '@ldsjs/lwc-lds';
+import { bindWireRefresh, createWireAdapterConstructor, register } from '@ldsjs/lwc-lds';
 import { GenerateGetApexWireAdapter, GetApexInvoker } from '@salesforce/lds-adapters-apex';
 import { GetProduct, GetProductCategoryPath } from '@salesforce/lds-adapters-commerce-catalog';
 import { ProductSearch } from '@salesforce/lds-adapters-commerce-search';
@@ -64,25 +64,24 @@ const lds = new LDS(environment, {
 setupInstrumentation(lds, store);
 setupMetadataWatcher(lds);
 
-/** Create a new LDS adapter from an adapter factory. */
-const createLdsAdapter = <C, D>(name: string, factory: AdapterFactory<C, D>): Adapter<C, D> => {
-    return instrumentAdapter(name, factory(lds));
-};
-
-/** Register an LDS adapter to the LWC Wire Service */
-const registerWireAdapter = (adapter: Adapter<any, any>) => {
-    return register(lds, wireService, adapter);
-};
-
-/** Create and register an LDS adapter factory. */
-const setupWireAdapter = <C, D>(name: string, factory: AdapterFactory<C, D>): Adapter<C, D> => {
-    const adapter = createLdsAdapter(name, factory);
-    return registerWireAdapter(adapter);
-};
-
 /**
- * UI API
+ * TODO W-6568533 - remove imperative? parameter, change return type to Adapter<C,D>
  */
+const setupWireAdapter = <C, D>(
+    name: string,
+    factory: AdapterFactory<C, D>,
+    imperative?: boolean
+): [any /* WireAdapterConstructor */, ((config: C) => D | Promise<D>) | null] => {
+    const instrumentedAdapter = instrumentAdapter(name, factory(lds));
+    return [
+        createWireAdapterConstructor(
+            instrumentedAdapter as Adapter<unknown, unknown>,
+            name + 'Constructor',
+            lds
+        ),
+        imperative ? createImperativeFunction(instrumentedAdapter) : null,
+    ];
+};
 
 /* TODO W-6568533 - replace this temporary imperative invocation with wire reform */
 const createImperativeFunction = <C, D>(adapter: Adapter<C, D>) => {
@@ -104,84 +103,113 @@ const createImperativeFunction = <C, D>(adapter: Adapter<C, D>) => {
     };
 };
 
-const getObjectInfoLdsAdapter = createLdsAdapter('getObjectInfo', GetObjectInfo);
-export const _getObjectInfo = createImperativeFunction(getObjectInfoLdsAdapter);
+/**
+ * UI API
+ */
+export const [getLayout, _getLayout] = setupWireAdapter('getLayout', GetLayout, true);
 
-const getObjectInfosLdsAdapter = createLdsAdapter('getObjectInfos', GetObjectInfos);
-export const _getObjectInfos = createImperativeFunction(getObjectInfosLdsAdapter);
-
-const getLayoutLdsAdapter = createLdsAdapter('getLayout', GetLayout);
-export const _getLayout = createImperativeFunction(getLayoutLdsAdapter);
-
-const getPicklistValuesByRecordTypeLdsAdapter = createLdsAdapter(
-    'getPicklistValuesByRecordType',
-    GetPicklistValuesByRecordType
-);
-export const _getPicklistValuesByRecordType = createImperativeFunction(
-    getPicklistValuesByRecordTypeLdsAdapter
-);
-
-const getRecordLdsAdapter = createLdsAdapter('getRecord', GetRecord);
-export const _getRecord = createImperativeFunction(getRecordLdsAdapter);
-
-const getRecordActionsLdsAdapter = GetRecordActions(lds);
-export const _getRecordActions = createImperativeFunction(getRecordActionsLdsAdapter);
-
-const getRecordAvatarsLdsAdapter = createLdsAdapter('getRecordAvatars', GetRecordAvatars);
-export const _getRecordAvatars = createImperativeFunction(getRecordAvatarsLdsAdapter);
-
-const getRecordUiLdsAdapter = createLdsAdapter('getRecordUi', GetRecordUi);
-export const _getRecordUi = createImperativeFunction(getRecordUiLdsAdapter);
-
-export const getLayoutUserStateLdsAdapter = createLdsAdapter(
+export const [getLayoutUserState, _getLayoutUserState] = setupWireAdapter(
     'getLayoutUserState',
-    GetLayoutUserState
+    GetLayoutUserState,
+    true
 );
-export const _getLayoutUserState = createImperativeFunction(getLayoutUserStateLdsAdapter);
+// updateLayoutUserState adapter should always return undefined
+const baseUpdateLayoutUserState = UpdateLayoutUserState(lds);
+export const updateLayoutUserState = (
+    apiName: unknown,
+    recordTypeId: unknown,
+    layoutType: unknown,
+    mode: unknown,
+    layoutUserStateInput: unknown
+) => {
+    return baseUpdateLayoutUserState(
+        apiName,
+        recordTypeId,
+        layoutType,
+        mode,
+        layoutUserStateInput
+    ).then(() => undefined);
+};
 
-const getRelatedListInfoAdapter = createLdsAdapter('getRelatedListInfo', GetRelatedListInfo);
-export const _getRelatedListInfo = createImperativeFunction(getRelatedListInfoAdapter);
-export const getRelatedListInfo = registerWireAdapter(getRelatedListInfoAdapter);
+export const [getListUi] = setupWireAdapter('getListUi', GetListUi);
+export const [getLookupActions] = setupWireAdapter('getLookupActions', GetLookupActions);
+export const [getLookupRecords] = setupWireAdapter('getLookupRecords', GetLookupRecords);
+export const [getObjectInfo, _getObjectInfo] = setupWireAdapter(
+    'getObjectInfo',
+    GetObjectInfo,
+    true
+);
+export const [getObjectInfos, _getObjectInfos] = setupWireAdapter(
+    'getObjectInfos',
+    GetObjectInfos,
+    true
+);
+export const [getPicklistValues] = setupWireAdapter('getPicklistValues', GetPicklistValues);
+export const [getPicklistValuesByRecordType, _getPicklistValuesByRecordType] = setupWireAdapter(
+    'getPicklistValuesByRecordType',
+    GetPicklistValuesByRecordType,
+    true
+);
 
+export const [getRecord, _getRecord] = setupWireAdapter('getRecord', GetRecord, true);
 const baseCreateRecord = CreateRecord(lds);
 export const createRecord = (...config: Parameters<ReturnType<typeof CreateRecord>>) => {
     return baseCreateRecord(...config).then(snapshot => snapshot.data);
 };
 export const deleteRecord = DeleteRecord(lds);
-export const getLayout = registerWireAdapter(getLayoutLdsAdapter);
-export const getLayoutUserState = registerWireAdapter(getLayoutUserStateLdsAdapter);
-export const getListUi = setupWireAdapter('getListUi', GetListUi);
-export const getLookupActions = setupWireAdapter('getLookupActions', GetLookupActions);
-export const getLookupRecords = setupWireAdapter('getLookupRecords', GetLookupRecords);
-export const getObjectInfo = registerWireAdapter(getObjectInfoLdsAdapter);
-export const getObjectInfos = registerWireAdapter(getObjectInfosLdsAdapter);
-export const getPicklistValues = setupWireAdapter('getPicklistValues', GetPicklistValues);
-export const getPicklistValuesByRecordType = registerWireAdapter(
-    getPicklistValuesByRecordTypeLdsAdapter
+const baseUpdateRecord = UpdateRecord(lds);
+export const updateRecord = (...config: Parameters<ReturnType<typeof UpdateRecord>>) => {
+    return baseUpdateRecord(...config).then(snapshot => snapshot.data);
+};
+
+export const [getRecordActions, _getRecordActions] = setupWireAdapter(
+    'getRecordActions',
+    GetRecordActions,
+    true
 );
-export const getRecord = registerWireAdapter(getRecordLdsAdapter);
-export const getRecordActions = registerWireAdapter(getRecordActionsLdsAdapter);
-export const getRecordAvatars = registerWireAdapter(getRecordAvatarsLdsAdapter);
-export const getRecordCreateDefaults = setupWireAdapter(
+
+export const [getRecordAvatars, _getRecordAvatars] = setupWireAdapter(
+    'getRecordAvatars',
+    GetRecordAvatars,
+    true
+);
+const baseUpdateRecordAvatar = UpdateRecordAvatar(lds);
+export const updateRecordAvatar = (
+    ...config: Parameters<ReturnType<typeof UpdateRecordAvatar>>
+) => {
+    return baseUpdateRecordAvatar(...config).then(snapshot => snapshot.data);
+};
+
+export const [getRecordCreateDefaults] = setupWireAdapter(
     'getRecordCreateDefaults',
     GetRecordCreateDefaults
 );
-export const getRecordEditActions = setupWireAdapter('getRecordEditActions', GetRecordEditActions);
-export const getRecordUi = registerWireAdapter(getRecordUiLdsAdapter);
-export const getRelatedListActionsAdapter = createLdsAdapter(
+export const [getRecordEditActions] = setupWireAdapter(
+    'getRecordEditActions',
+    GetRecordEditActions
+);
+export const [getRecordTemplateCreate, _getRecordTemplateCreate] = setupWireAdapter(
+    'getRecordTemplateCreate',
+    GetRecordTemplateCreate,
+    true
+);
+export const [getRecordUi, _getRecordUi] = setupWireAdapter('getRecordUi', GetRecordUi, true);
+export const [getRelatedListActions, _getRelatedListActions] = setupWireAdapter(
     'getRelatedListActions',
-    GetRelatedListActions
+    GetRelatedListActions,
+    true
 );
-export const _getRelatedListActions = createImperativeFunction(getRelatedListActionsAdapter);
-export const getRelatedListActions = registerWireAdapter(getRelatedListActionsAdapter);
-
-export const getRelatedListsInfoAdapter = createLdsAdapter(
-    'getRelatedListsInfo',
-    GetRelatedListsInfo
+export const [getRelatedListCount, _getRelatedListCount] = setupWireAdapter(
+    'getRelatedListCount',
+    GetRelatedListCount,
+    true
 );
-export const _getRelatedListsInfo = createImperativeFunction(getRelatedListsInfoAdapter);
-export const getRelatedListsInfo = registerWireAdapter(getRelatedListsInfoAdapter);
 
+export const [getRelatedListInfo, _getRelatedListInfo] = setupWireAdapter(
+    'getRelatedListInfo',
+    GetRelatedListInfo,
+    true
+);
 const baseUpdateRelatedListInfo = UpdateRelatedListInfo(lds);
 // In order to export the imperative wire correctly, we need to add some safety checks
 // to ensure the config passed is correct
@@ -202,88 +230,36 @@ export const updateRelatedListInfo = (
     return Promise.resolve(value.data);
 };
 
-export const getRelatedListRecordsAdapter = createLdsAdapter(
-    'getRelatedListRecords',
-    GetRelatedListRecords
-);
-export const _getRelatedListRecords = createImperativeFunction(getRelatedListRecordsAdapter);
-export const getRelatedListRecords = registerWireAdapter(getRelatedListRecordsAdapter);
-
-export const getRelatedListRecordActionsAdapter = createLdsAdapter(
-    'getRelatedListRecordActions',
-    GetRelatedListRecordActions
-);
-export const _getRelatedListRecordActions = createImperativeFunction(
-    getRelatedListRecordActionsAdapter
-);
-export const getRelatedListRecordActions = registerWireAdapter(getRelatedListRecordActionsAdapter);
-
-export const getRelatedListCountAdapter = createLdsAdapter(
-    'getRelatedListCount',
-    GetRelatedListCount
-);
-export const _getRelatedListCount = createImperativeFunction(getRelatedListCountAdapter);
-export const getRelatedListCount = registerWireAdapter(getRelatedListCountAdapter);
-
-export const getRelatedListsCountAdapter = createLdsAdapter(
-    'getRelatedListsCount',
-    GetRelatedListsCount
-);
-export const _getRelatedListsCount = createImperativeFunction(getRelatedListsCountAdapter);
-export const getRelatedListsCount = registerWireAdapter(getRelatedListsCountAdapter);
-
-export const getRelatedListInfoBatchAdapter = createLdsAdapter(
+export const [getRelatedListInfoBatch, _getRelatedListInfoBatch] = setupWireAdapter(
     'getRelatedListInfoBatch',
-    GetRelatedListInfoBatch
+    GetRelatedListInfoBatch,
+    true
 );
-export const _getRelatedListInfoBatch = createImperativeFunction(getRelatedListInfoBatchAdapter);
-export const getRelatedListInfoBatch = registerWireAdapter(getRelatedListInfoBatchAdapter);
-
-export const getRelatedListRecordsBatchAdapter = createLdsAdapter(
+export const [getRelatedListRecordActions, _getRelatedListRecordActions] = setupWireAdapter(
+    'getRelatedListRecordActions',
+    GetRelatedListRecordActions,
+    true
+);
+export const [getRelatedListRecords, _getRelatedListRecords] = setupWireAdapter(
+    'getRelatedListRecords',
+    GetRelatedListRecords,
+    true
+);
+export const [getRelatedListRecordsBatch, _getRelatedListRecordsBatch] = setupWireAdapter(
     'getRelatedListRecordsBatch',
-    GetRelatedListRecordsBatch
+    GetRelatedListRecordsBatch,
+    true
 );
-export const _getRelatedListRecordsBatch = createImperativeFunction(
-    getRelatedListRecordsBatchAdapter
+export const [getRelatedListsCount, _getRelatedListsCount] = setupWireAdapter(
+    'getRelatedListsCount',
+    GetRelatedListsCount,
+    true
 );
-export const getRelatedListRecordsBatch = registerWireAdapter(getRelatedListRecordsBatchAdapter);
-
-const getRecordTemplateCreateAdapter = createLdsAdapter(
-    'getRecordTemplateCreate',
-    GetRecordTemplateCreate
+export const [getRelatedListsInfo, _getRelatedListsInfo] = setupWireAdapter(
+    'getRelatedListsInfo',
+    GetRelatedListsInfo,
+    true
 );
-export const _getRecordTemplateCreate = createImperativeFunction(getRecordTemplateCreateAdapter);
-export const getRecordTemplateCreate = registerWireAdapter(getRecordTemplateCreateAdapter);
-
-const baseUpdateRecord = UpdateRecord(lds);
-export const updateRecord = (...config: Parameters<ReturnType<typeof UpdateRecord>>) => {
-    return baseUpdateRecord(...config).then(snapshot => snapshot.data);
-};
-
-const baseUpdateRecordAvatar = UpdateRecordAvatar(lds);
-export const updateRecordAvatar = (
-    ...config: Parameters<ReturnType<typeof UpdateRecordAvatar>>
-) => {
-    return baseUpdateRecordAvatar(...config).then(snapshot => snapshot.data);
-};
-
-// updateLayoutUserState adapter should always return undefined
-const baseUpdateLayoutUserState = UpdateLayoutUserState(lds);
-export const updateLayoutUserState = (
-    apiName: unknown,
-    recordTypeId: unknown,
-    layoutType: unknown,
-    mode: unknown,
-    layoutUserStateInput: unknown
-) => {
-    return baseUpdateLayoutUserState(
-        apiName,
-        recordTypeId,
-        layoutType,
-        mode,
-        layoutUserStateInput
-    ).then(() => undefined);
-};
 
 /**
  * Record Util Pure Functions
@@ -303,37 +279,26 @@ export { getApexInvoker };
 /**
  * Connect
  */
-
-const getCommunityNavigationMenuAdapter = createLdsAdapter(
+export const [getCommunityNavigationMenu] = setupWireAdapter(
     'getCommunityNavigationMenu',
     GetCommunityNavigationMenu
 );
-export const getCommunityNavigationMenu = registerWireAdapter(getCommunityNavigationMenuAdapter);
 
 /**
  * Apps
  */
-const getNavItemsAdapter = createLdsAdapter('getNavItems', GetNavItems);
-export const getNavItems = registerWireAdapter(getNavItemsAdapter);
+export const [getNavItems] = setupWireAdapter('getNavItems', GetNavItems);
 
 /**
  * Commerce
  */
-
-const getProductAdapter = createLdsAdapter('getProduct', GetProduct);
-export const getProduct = registerWireAdapter(getProductAdapter);
-
-const getProductCategoryPathAdapter = createLdsAdapter(
+export const [getProduct] = setupWireAdapter('getProduct', GetProduct);
+export const [getProductCategoryPath] = setupWireAdapter(
     'getProductCategoryPath',
     GetProductCategoryPath
 );
-export const getProductCategoryPath = registerWireAdapter(getProductCategoryPathAdapter);
-
-const getProductPriceAdapter = createLdsAdapter('getProductPrice', GetProductPrice);
-export const getProductPrice = registerWireAdapter(getProductPriceAdapter);
-
-const productSearchAdapter = createLdsAdapter('productSearch', ProductSearch);
-export const productSearch = registerWireAdapter(productSearchAdapter);
+export const [getProductPrice] = setupWireAdapter('getProductPrice', GetProductPrice);
+export const productSearch = setupWireAdapter('productSearch', ProductSearch);
 
 /**
  * Apex

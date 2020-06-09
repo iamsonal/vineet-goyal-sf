@@ -1,14 +1,9 @@
 import sinon from 'sinon';
 
-import { register as registerLwc } from 'lwc';
-import {
-    register as wireServiceRegister,
-    registerWireService,
-    ValueChangedEvent,
-} from 'wire-service';
+import { register as wireServiceRegister, ValueChangedEvent } from 'wire-service';
 
 import { LDS, Store, Environment } from '@ldsjs/engine';
-import { bindWireRefresh, register } from '@ldsjs/lwc-lds';
+import { bindWireRefresh, register, createWireAdapterConstructor } from '@ldsjs/lwc-lds';
 
 const karmaNetworkAdapter = sinon.stub().rejects();
 const store = new Store();
@@ -19,6 +14,12 @@ const wireService = {
     ValueChangedEvent,
 };
 
-registerWireService(registerLwc);
-
-export { karmaNetworkAdapter, lds, refresh, register, store, wireService };
+export {
+    karmaNetworkAdapter,
+    lds,
+    refresh,
+    register,
+    store,
+    wireService,
+    createWireAdapterConstructor,
+};

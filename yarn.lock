@@ -2176,19 +2176,19 @@
   dependencies:
     core-js "^2.5.7"
 
-"@ldsjs/adapter-test-library@^0.7.2":
-  version "0.7.2"
-  resolved "http://npm.lwcjs.org/@ldsjs/adapter-test-library/-/@ldsjs/adapter-test-library-0.7.2/65ebf15a1b4354716d6b878c38918bc745cf57c7.tgz#65ebf15a1b4354716d6b878c38918bc745cf57c7"
-  integrity sha512-s0E00/nLmHfTRk5S0X27CK7jQ948AQVkA95wYntrmjIrl5YtKJMUVm2dBvmwTg3LuBBpAJtlBJR1pftBsGOPyQ==
+"@ldsjs/adapter-test-library@^0.8.0":
+  version "0.8.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/adapter-test-library/-/@ldsjs/adapter-test-library-0.8.0/672bb693d052a8ba3ff46d8a8d75251baa172d63.tgz#672bb693d052a8ba3ff46d8a8d75251baa172d63"
+  integrity sha512-w3i/BnL8Cb6vd2qzEQs3unpiC6uiC98z/tsTpv7bN7UINR+Ej3lr8Rk20wCvd0x1eRL8cNqzYjVyGtm3SIuhRQ==
   dependencies:
     sinon "^7.5.0"
 
-"@ldsjs/cli@^0.7.2":
-  version "0.7.2"
-  resolved "http://npm.lwcjs.org/@ldsjs/cli/-/@ldsjs/cli-0.7.2/894261b1ce2fa8970f2173faa68347d6c20156fc.tgz#894261b1ce2fa8970f2173faa68347d6c20156fc"
-  integrity sha512-+LNBgmWC4+6Z0OJgRmdPU8c52yDLhb5mG6INkKrxXxMu9DN9O1h7o+qFlYLfMhRYqZh08Ls90sH/9TVOTrK1+A==
+"@ldsjs/cli@^0.8.0":
+  version "0.8.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/cli/-/@ldsjs/cli-0.8.0/b6005df01cbd5fce282e71cfbf1fd28069286cff.tgz#b6005df01cbd5fce282e71cfbf1fd28069286cff"
+  integrity sha512-dVE7hv9970TNRpTpVmHeQwVDyhV/015Uj+SKyPQnPrxU0yyKpdptS7DPyTZ1BS0MB7YyZYKHF7ukPsTG6jP8jw==
   dependencies:
-    "@ldsjs/compiler" "0.7.2"
+    "@ldsjs/compiler" "0.8.0"
     "@oclif/command" "^1.5.19"
     "@oclif/config" "^1.13.3"
     "@oclif/plugin-help" "^2.2.1"
@@ -2196,10 +2196,10 @@
     strip-ansi "^6.0.0"
     text-table "^0.2.0"
 
-"@ldsjs/compiler@0.7.2", "@ldsjs/compiler@^0.7.2":
-  version "0.7.2"
-  resolved "http://npm.lwcjs.org/@ldsjs/compiler/-/@ldsjs/compiler-0.7.2/5b60cab607a2706184d9278f02a52e3654a01934.tgz#5b60cab607a2706184d9278f02a52e3654a01934"
-  integrity sha512-uPeoHCqoOX6eJeA4j/fwcucI7oVprXH+Z5lI8cK+rVzgXH4IGfq76usK0ahYTALyZyWZF7/46LL1KN0SI+efMA==
+"@ldsjs/compiler@0.8.0", "@ldsjs/compiler@^0.8.0":
+  version "0.8.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/compiler/-/@ldsjs/compiler-0.8.0/8f3b42a93a4e46f63b3f5465178d6b092eb033b7.tgz#8f3b42a93a4e46f63b3f5465178d6b092eb033b7"
+  integrity sha512-F40KruRXcL9/vpgObhULTCRiQLpK94HOr0m+loibsz2BRZON6wMqzyhAPOkChgl8/UzJ1kT48H8t+A3BZZ2xRw==
   dependencies:
     amf-client-js "4.0.6"
 
@@ -2210,17 +2210,17 @@
   dependencies:
     amf-client-js "4.0.6"
 
-"@ldsjs/engine@0.7.2", "@ldsjs/engine@^0.7.2":
-  version "0.7.2"
-  resolved "http://npm.lwcjs.org/@ldsjs/engine/-/@ldsjs/engine-0.7.2/04d9e53cd86c9fb5bb0694ed4173e03c00e0226a.tgz#04d9e53cd86c9fb5bb0694ed4173e03c00e0226a"
-  integrity sha512-L0hNgnV7CeWUUJlIGiMRYae3/gdSUzTkswDWA1UPTtIDVQego9GEP89IThVJbtLug9kr0bSRBfdLMh9Cvmqwug==
+"@ldsjs/engine@0.8.0", "@ldsjs/engine@^0.8.0":
+  version "0.8.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/engine/-/@ldsjs/engine-0.8.0/2b8fd80d9fba19ef318ec8e38b961f1272c185af.tgz#2b8fd80d9fba19ef318ec8e38b961f1272c185af"
+  integrity sha512-OchfVA4OgvrD4zjixIw/5nS9XyFj5O8+aIHTdiOrwNzC6NoICCBgAaZLIYRmablIL5OMTBaBAmlZA0bVCCMkOA==
 
-"@ldsjs/lwc-lds@^0.7.2":
-  version "0.7.2"
-  resolved "http://npm.lwcjs.org/@ldsjs/lwc-lds/-/@ldsjs/lwc-lds-0.7.2/6f41cbf2d85a9dad984293ee2b819a329a15f40e.tgz#6f41cbf2d85a9dad984293ee2b819a329a15f40e"
-  integrity sha512-T/jWFzvOfD2itWTA2dT+Zk5/S3ETkYRdtkZbz11DbLAQEjF4ld7yKqH2R96dUqEpmxXeRb6w6CfpnzkodfEI5g==
+"@ldsjs/lwc-lds@^0.8.0":
+  version "0.8.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/lwc-lds/-/@ldsjs/lwc-lds-0.8.0/66ea7ceed1f9883ee7ed9e76165d62c7c36b959a.tgz#66ea7ceed1f9883ee7ed9e76165d62c7c36b959a"
+  integrity sha512-OdqRJGDZYOtKPrYQCMJb3ZqGxktRY4b6MfDJKxgfL7kcXIm/wW6dLKLd7NDFaKI8CtSHYiPpmWtCQEn+FSz4fg==
   dependencies:
-    "@ldsjs/engine" "0.7.2"
+    "@ldsjs/engine" "0.8.0"
 
 "@lerna/add@3.21.0":
   version "3.21.0"

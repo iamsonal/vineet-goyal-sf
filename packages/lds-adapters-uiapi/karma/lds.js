@@ -1,10 +1,9 @@
 import {
     karmaNetworkAdapter,
     lds,
-    register,
     refresh,
     store,
-    wireService,
+    createWireAdapterConstructor,
 } from '@salesforce/lds-karma-config/lds-setup';
 
 import {
@@ -46,37 +45,118 @@ import {
 
 const createRecord = CreateRecord(lds);
 const deleteRecord = DeleteRecord(lds);
-const getLayout = register(lds, wireService, GetLayout(lds));
-const getLayoutUserState = register(lds, wireService, GetLayoutUserState(lds));
-const getListUi = register(lds, wireService, GetListUi(lds));
-const getLookupActions = register(lds, wireService, GetLookupActions(lds));
-const getLookupRecords = register(lds, wireService, GetLookupRecords(lds));
-const getObjectInfo = register(lds, wireService, GetObjectInfo(lds));
-const getObjectInfos = register(lds, wireService, GetObjectInfos(lds));
-const getNavItems = register(lds, wireService, GetNavItems(lds));
-const getPicklistValues = register(lds, wireService, GetPicklistValues(lds));
-const getPicklistValuesByRecordType = register(
-    lds,
-    wireService,
-    GetPicklistValuesByRecordType(lds)
+const getLayout = createWireAdapterConstructor(GetLayout(lds), 'getLayoutConstructor', lds);
+const getLayoutUserState = createWireAdapterConstructor(
+    GetLayoutUserState(lds),
+    'getLayoutUserStateConstructor',
+    lds
 );
-const getRecord = register(lds, wireService, GetRecord(lds));
-const getRecordActions = register(lds, wireService, GetRecordActions(lds));
-const getRecordAvatars = register(lds, wireService, GetRecordAvatars(lds));
-const getRecordCreateDefaults = register(lds, wireService, GetRecordCreateDefaults(lds));
-const getRecordTemplateCreate = register(lds, wireService, GetRecordTemplateCreate(lds));
-const getRecordEditActions = register(lds, wireService, GetRecordEditActions(lds));
+const getListUi = createWireAdapterConstructor(GetListUi(lds), 'getListUiConstructor', lds);
+const getLookupActions = createWireAdapterConstructor(
+    GetLookupActions(lds),
+    'getLookupActionsConstructor',
+    lds
+);
+const getLookupRecords = createWireAdapterConstructor(
+    GetLookupRecords(lds),
+    'getLookupRecordsConstructor',
+    lds
+);
+const getObjectInfo = createWireAdapterConstructor(
+    GetObjectInfo(lds),
+    'getObjectInfoConstructor',
+    lds
+);
+const getObjectInfos = createWireAdapterConstructor(
+    GetObjectInfos(lds),
+    'getObjectInfosConstructor',
+    lds
+);
+const getNavItems = createWireAdapterConstructor(GetNavItems(lds), 'getNavItemsConstructor', lds);
+const getPicklistValues = createWireAdapterConstructor(
+    GetPicklistValues(lds),
+    'getPicklistValuesConstructor',
+    lds
+);
+const getPicklistValuesByRecordType = createWireAdapterConstructor(
+    GetPicklistValuesByRecordType(lds),
+    'getPicklistValuesByRecordTypeConstructor',
+    lds
+);
+
+const getRecord = createWireAdapterConstructor(GetRecord(lds), 'getRecordConstructor', lds);
+const getRecordActions = createWireAdapterConstructor(
+    GetRecordActions(lds),
+    'getRecordActionsConstructor',
+    lds
+);
+const getRecordAvatars = createWireAdapterConstructor(
+    GetRecordAvatars(lds),
+    'getRecordAvatarsConstructor',
+    lds
+);
+const getRecordCreateDefaults = createWireAdapterConstructor(
+    GetRecordCreateDefaults(lds),
+    'getRecordCreateDefaultsConstructor',
+    lds
+);
+const getRecordTemplateCreate = createWireAdapterConstructor(
+    GetRecordTemplateCreate(lds),
+    'getRecordTemplateCreateConstructor',
+    lds
+);
+const getRecordEditActions = createWireAdapterConstructor(
+    GetRecordEditActions(lds),
+    'getRecordEditActionsConstructor',
+    lds
+);
 const getRecordNotifyChange = GetRecordNotifyChange(lds);
-const getRecordUi = register(lds, wireService, GetRecordUi(lds));
-const getRelatedListActions = register(lds, wireService, GetRelatedListActions(lds));
-const getRelatedListInfo = register(lds, wireService, GetRelatedListInfo(lds));
-const getRelatedListInfoBatch = register(lds, wireService, GetRelatedListInfoBatch(lds));
-const getRelatedListsInfo = register(lds, wireService, GetRelatedListsInfo(lds));
-const getRelatedListCount = register(lds, wireService, GetRelatedListCount(lds));
-const getRelatedListsCount = register(lds, wireService, GetRelatedListsCount(lds));
-const getRelatedListRecords = register(lds, wireService, GetRelatedListRecords(lds));
-const getRelatedListRecordsBatch = register(lds, wireService, GetRelatedListRecordsBatch(lds));
-const getRelatedListRecordActions = register(lds, wireService, GetRelatedListRecordActions(lds));
+const getRecordUi = createWireAdapterConstructor(GetRecordUi(lds), 'getRecordUiConstructor', lds);
+const getRelatedListActions = createWireAdapterConstructor(
+    GetRelatedListActions(lds),
+    'getRelatedListActionsConstructor',
+    lds
+);
+const getRelatedListInfo = createWireAdapterConstructor(
+    GetRelatedListInfo(lds),
+    'getRelatedListInfoConstructor',
+    lds
+);
+const getRelatedListInfoBatch = createWireAdapterConstructor(
+    GetRelatedListInfoBatch(lds),
+    'getRelatedListInfoBatchConstructor',
+    lds
+);
+const getRelatedListsInfo = createWireAdapterConstructor(
+    GetRelatedListsInfo(lds),
+    'getRelatedListsInfoConstructor',
+    lds
+);
+const getRelatedListCount = createWireAdapterConstructor(
+    GetRelatedListCount(lds),
+    'getRelatedListCountConstructor',
+    lds
+);
+const getRelatedListsCount = createWireAdapterConstructor(
+    GetRelatedListsCount(lds),
+    'getRelatedListsCountConstructor',
+    lds
+);
+const getRelatedListRecords = createWireAdapterConstructor(
+    GetRelatedListRecords(lds),
+    'getRelatedListRecordsConstructor',
+    lds
+);
+const getRelatedListRecordsBatch = createWireAdapterConstructor(
+    GetRelatedListRecordsBatch(lds),
+    'getRelatedListRecordsBatchConstructor',
+    lds
+);
+const getRelatedListRecordActions = createWireAdapterConstructor(
+    GetRelatedListRecordActions(lds),
+    'getRelatedListRecordActionsConstructor',
+    lds
+);
 const updateRecord = UpdateRecord(lds);
 const updateRecordAvatar = UpdateRecordAvatar(lds);
 const updateLayoutUserState = UpdateLayoutUserState(lds);

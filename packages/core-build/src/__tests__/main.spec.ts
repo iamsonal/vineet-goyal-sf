@@ -96,13 +96,13 @@ const whiteList = [
 
 describe('items exported to core', () => {
     it('should only export whitelisted items', () => {
-        expect(whiteList).toEqual(Object.keys(mainExports).sort());
+        expect(Object.keys(mainExports).sort()).toEqual(whiteList);
     });
 });
 
 describe('lds-webview items exported to core', () => {
     it('should only export whitelisted items', () => {
-        expect(whiteList).toEqual(Object.keys(LdsWebviewExports).sort());
+        expect(Object.keys(LdsWebviewExports).sort()).toEqual(whiteList);
     });
 });
 
@@ -144,7 +144,7 @@ describe('lds-mobile items exported', () => {
         .concat(extraMobileExports);
 
     it('should only export whitelisted items', () => {
-        expect(expectedMobileExports.sort()).toEqual(Object.keys(LdsMobileExports).sort());
+        expect(Object.keys(LdsMobileExports).sort()).toEqual(expectedMobileExports.sort());
     });
 
     it('adapters should be registered for bridge access', () => {

@@ -42,6 +42,8 @@ describe('Main exports', () => {
         'getRelatedListInfoBatch',
         'getRelatedListRecordsBatch',
         'getNavItems',
+        'getDuplicateConfiguration',
+        'getDuplicates',
     ].forEach(moduleName => {
         it(`should export ${moduleName} from lds`, () => {
             expect((mainExports as any)[moduleName]).toBe((ldsExports as any)[moduleName]);

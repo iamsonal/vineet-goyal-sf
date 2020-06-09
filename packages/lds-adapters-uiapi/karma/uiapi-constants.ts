@@ -33,3 +33,7 @@ export { TTL as PICKLIST_VALUES_COLLECTION_TTL } from '../src/generated/types/Pi
 export { TTL as RELATED_LIST_INFO_TTL } from '../src/generated/types/RelatedListInfoRepresentation';
 
 export { TTL as NAV_ITEMS_TTL } from '../src/generated/types/NavItemRepresentation';
+
+export { TTL as DUPLICATES_TTL } from '../src/generated/types/DuplicatesRepresentation';
+
+export { TTL as DUPLICATE_CONFIGURATION_TTL } from '../src/generated/types/DuplicatesConfigurationRepresentation';

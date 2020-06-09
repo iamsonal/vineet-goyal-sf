@@ -37,6 +37,8 @@ import {
     DeleteRecord,
     MRU,
     GetNavItems,
+    GetDuplicateConfiguration,
+    GetDuplicates,
 } from '@salesforce/lds-adapters-uiapi';
 
 import { GetProduct, GetProductCategoryPath } from '@salesforce/lds-adapters-commerce-catalog';
@@ -89,6 +91,8 @@ export const getCommunityNavigationMenu = GetCommunityNavigationMenu(lds);
 export const getNavItems = GetNavItems(lds);
 
 export { MRU };
+export const getDuplicateConfiguration = GetDuplicateConfiguration(lds);
+export const getDuplicates = GetDuplicates(lds);
 
 const adapterMap: AdapterMap = {
     createRecord,
@@ -131,6 +135,8 @@ const adapterMap: AdapterMap = {
     getProductCategoryPath,
     getCommunityNavigationMenu,
     getNavItems,
+    getDuplicateConfiguration,
+    getDuplicates,
 };
 
 const mobileBridge = new MobileBridge(lds, adapterMap);

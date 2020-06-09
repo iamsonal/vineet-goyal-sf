@@ -1024,6 +1024,97 @@ describe('routes', () => {
         });
     });
 
+    describe('post /predupe', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/predupe`,
+                body: {
+                    apiName: 'Lead',
+                    fields: {},
+                },
+            },
+            [
+                'RecordUiController.findDuplicates',
+                {
+                    recordInput: {
+                        apiName: 'Lead',
+                        fields: {},
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: UI_API_BASE_URI,
+            basePath: `/predupe`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/predupe`,
+                body: {
+                    apiName: 'Lead',
+                    fields: {},
+                },
+            },
+            {
+                allowSave: true,
+                duplicateError: false,
+                duplicateRules: [],
+                matches: [],
+            }
+        );
+    });
+
+    describe('get /duplicates/{objectApiName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: '/duplicates/Test_c',
+                urlParams: {
+                    objectApiName: 'Test_c',
+                },
+            },
+            [
+                'RecordUiController.getDedupeConfig',
+                { objectApiName: 'Test_c' },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: UI_API_BASE_URI,
+            basePath: `/duplicates/Test_c`,
+            urlParams: {
+                objectApiName: 'Test_c',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/duplicates/Test_c`,
+                urlParams: {
+                    objectApiName: 'Test_c',
+                },
+            },
+            {
+                apiName: 'Test_c',
+                dedupeEnabled: true,
+                predupeEnabled: true,
+            }
+        );
+    });
+
     describe('post /apex', () => {
         it('invokes the right controller', async () => {
             const fn = jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce({});

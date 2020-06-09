@@ -1,0 +1,46 @@
+{
+    "apiName": "Account",
+    "dedupeEnabled": true,
+    "dedupeFields": [
+        "BillingCity",
+        "BillingCountry",
+        "BillingPostalCode",
+        "BillingState",
+        "BillingStreet",
+        "Name",
+        "Phone",
+        "Website"
+    ],
+    "duplicateRules": [
+        {
+            "actionOnInsert": "Allow",
+            "actionOnUpdate": "Allow",
+            "active": true,
+            "duplicateRuleFilters": [],
+            "eTag": "30f267d2a1ed977a3d234477800902ca",
+            "matchRules": [
+                {
+                    "eTag": "b5c20d9f5e270b2aa3310b0e7581e341",
+                    "matchEngine": "FuzzyMatchEngine",
+                    "matchFields": [
+                        "BillingCity",
+                        "BillingCountry",
+                        "BillingPostalCode",
+                        "BillingState",
+                        "BillingStreet",
+                        "Name",
+                        "Phone",
+                        "Website"
+                    ],
+                    "name": "Standard Account Matching Rule v1.0",
+                    "objectApiName": "Account"
+                }
+            ],
+            "name": "Standard_Account_Duplicate_Rule",
+            "operationsOnInsert": ["Alert", "Report"],
+            "operationsOnUpdate": ["Report"]
+        }
+    ],
+    "eTag": "737aac52a89adfbfc7c5fe385f254409",
+    "predupeEnabled": true
+}

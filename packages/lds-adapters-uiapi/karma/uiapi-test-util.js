@@ -24,6 +24,8 @@ import {
     PICKLIST_VALUES_COLLECTION_TTL,
     RELATED_LIST_INFO_TTL,
     NAV_ITEMS_TTL,
+    DUPLICATE_CONFIGURATION_TTL,
+    DUPLICATES_TTL,
 } from './dist/uiapi-constants';
 
 const API_VERSION = 'v50.0';
@@ -454,6 +456,44 @@ function mockGetNavItemsNetwork(config, mockData) {
     }
 }
 
+function mockGetDuplicatesConfigurationNetwork(config, mockData) {
+    let { objectApiName, ...queryParams } = config;
+
+    const paramMatch = sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/duplicates/${objectApiName}`,
+        queryParams,
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDuplicatesNetwork(config, mockData) {
+    const paramMatch = sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/predupe`,
+        method: 'post',
+        body: config,
+    });
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function expireDuplicateConfiguration() {
+    timekeeper.travel(Date.now() + DUPLICATE_CONFIGURATION_TTL + 1);
+}
+
+function expireDuplicatesRepresentation() {
+    timekeeper.travel(Date.now() + DUPLICATES_TTL + 1);
+}
+
 /**
  * Force a cache expiration for records by fast-forwarding time past the
  * standard record TTL.
@@ -667,6 +707,8 @@ export {
     expireRelatedListInfo,
     expireObjectInfo,
     expireNavItems,
+    expireDuplicateConfiguration,
+    expireDuplicatesRepresentation,
     // network mock utils
     mockCreateRecordNetwork,
     mockDeleteRecordNetwork,
@@ -692,6 +734,8 @@ export {
     mockGetRelatedListInfoNetwork,
     mockGetRelatedListInfoBatchNetwork,
     mockGetNavItemsNetwork,
+    mockGetDuplicatesConfigurationNetwork,
+    mockGetDuplicatesNetwork,
     // mock data utils
     extractRecordFields,
 };

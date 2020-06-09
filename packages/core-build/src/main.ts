@@ -36,6 +36,8 @@ export const updateRelatedListInfo = lds.updateRelatedListInfo;
 export const getRelatedListInfoBatch = lds.getRelatedListInfoBatch;
 export const getRelatedListRecordsBatch = lds.getRelatedListRecordsBatch;
 export const getNavItems = lds.getNavItems;
+export const getDuplicateConfiguration = lds.getDuplicateConfiguration;
+export const getDuplicates = lds.getDuplicates;
 
 /** Apex exports */
 export const getApexInvoker = lds.getApexInvoker;

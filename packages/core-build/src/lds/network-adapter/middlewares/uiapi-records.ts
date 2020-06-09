@@ -40,6 +40,8 @@ enum UiApiRecordController {
     UpdateRecord = 'RecordUiController.updateRecord',
     UpdateRecordAvatar = 'RecordUiController.postRecordAvatarAssociation',
     UpdateLayoutUserState = 'RecordUiController.updateLayoutUserState',
+    GetDuplicateConfiguration = 'RecordUiController.getDedupeConfig',
+    GetDuplicates = 'RecordUiController.findDuplicates',
 }
 
 const UIAPI_GET_LAYOUT = `${UI_API_BASE_URI}/layout/`;
@@ -52,6 +54,8 @@ const UIAPI_RECORD_UI_PATH = `${UI_API_BASE_URI}/record-ui/`;
 const UIAPI_GET_LAYOUT_USER_STATE = '/user-state';
 const UIAPI_OBJECT_INFO_PATH = `${UI_API_BASE_URI}/object-info/`;
 const UIAPI_OBJECT_INFO_BATCH_PATH = `${UI_API_BASE_URI}/object-info/batch/`;
+const UIAPI_DUPLICATE_CONFIGURATION_PATH = `${UI_API_BASE_URI}/duplicates/`;
+const UIAPI_DUPLICATES_PATH = `${UI_API_BASE_URI}/predupe`;
 
 const objectInfoStorage = createStorage({
     name: 'ldsObjectInfo',
@@ -404,6 +408,30 @@ function getRecordCreateDefaults(resourceRequest: ResourceRequest): Promise<any>
     return dispatchAction(UiApiRecordController.GetRecordCreateDefaults, params, actionConfig);
 }
 
+function getDuplicateConfiguration(resourceRequest: ResourceRequest): Promise<any> {
+    const params = buildUiApiParams(
+        {
+            objectApiName: resourceRequest.urlParams.objectApiName,
+        },
+        resourceRequest
+    );
+
+    return dispatchAction(UiApiRecordController.GetDuplicateConfiguration, params, actionConfig);
+}
+
+function getDuplicates(resourceRequest: ResourceRequest): Promise<any> {
+    const { body } = resourceRequest;
+
+    const params = buildUiApiParams(
+        {
+            recordInput: body,
+        },
+        resourceRequest
+    );
+
+    return dispatchAction(UiApiRecordController.GetDuplicates, params, actionConfig);
+}
+
 appRouter.delete((path: string) => path.startsWith(UIAPI_RECORDS_PATH), deleteRecord);
 
 appRouter.patch((path: string) => path.startsWith(UIAPI_RECORDS_PATH), updateRecord);
@@ -460,3 +488,9 @@ appRouter.get(
 );
 appRouter.get((path: string) => path.startsWith(UIAPI_RECORD_AVATARS_BATCH_PATH), getRecordAvatars);
 appRouter.get((path: string) => path.startsWith(UIAPI_RECORD_UI_PATH), getRecordUi);
+
+appRouter.get(
+    (path: string) => path.startsWith(UIAPI_DUPLICATE_CONFIGURATION_PATH),
+    getDuplicateConfiguration
+);
+appRouter.post((path: string) => path.startsWith(UIAPI_DUPLICATES_PATH), getDuplicates);

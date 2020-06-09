@@ -42,6 +42,8 @@ export { updateRelatedListInfoAdapterFactory as UpdateRelatedListInfo } from './
 export { getNavItemsAdapterFactory as GetNavItems } from './generated/adapters/getNavItems';
 export { getRecordTemplateCloneAdapterFactory as GetRecordTemplateClone } from './wire/getRecordTemplateClone';
 export { getRecordTemplateCreateAdapterFactory as GetRecordTemplateCreate } from './wire/getRecordTemplateCreate';
+export { getDuplicateConfigurationAdapterFactory as GetDuplicateConfiguration } from './generated/adapters/getDuplicateConfiguration';
+export { getDuplicatesAdapterFactory as GetDuplicates } from './generated/adapters/getDuplicates';
 
 // Validation Utils
 export { untrustedIsObject } from './generated/adapters/adapter-utils';
@@ -72,6 +74,8 @@ export { ingest as ingestRelatedListInfo } from './generated/types/RelatedListIn
 export { ingest as ingestRelatedListInfoBatch } from './generated/types/RelatedListInfoBatchRepresentation';
 export { ingest as ingestRelatedListRecords } from './generated/types/RelatedListRecordCollectionRepresentation';
 export { ingest as ingestRelatedListRecordsBatch } from './generated/types/RelatedListRecordCollectionBatchRepresentation';
+export { ingest as ingestDuplicateConfiguration } from './generated/types/DuplicatesConfigurationRepresentation';
+export { ingest as ingestDuplicatesRepresentation } from './generated/types/DuplicatesRepresentation';
 
 // record-util pure functions
 export {

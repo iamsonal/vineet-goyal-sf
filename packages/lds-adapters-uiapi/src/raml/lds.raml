@@ -224,6 +224,45 @@ types:
     (lds.coerceFunction): ../primitives/LayoutModeArray/coerce
   SalesforceFormFactor:
     (lds.coerceFunction): ../primitives/FormFactor/coerce
+  DuplicatesRepresentation:
+    (lds.ttl): 30000
+    (lds.opaque): true
+    examples:
+      getDuplicatesResponse1: !include ../mocks/types/DuplicatesRepresentation/validResponse.json
+  DuplicatesConfigurationRepresentation:
+    (lds.ttl): 900000
+    (lds.private):
+      - eTag
+    (lds.key):
+      apiName: apiName
+    (lds.integrity):
+      - eTag
+    examples:
+      getDuplicateConfigurationResponse1: !include ../mocks/types/DuplicatesConfigurationRepresentation/validResponse.json
+  DuplicateRuleRepresentation:
+    (lds.ttl): 900000
+    (lds.private):
+      - eTag
+    (lds.integrity):
+      - eTag
+  DuplicateRuleFilterRepresentation:
+    (lds.ttl): 900000
+    (lds.private):
+      - eTag
+    (lds.integrity):
+      - eTag
+  DuplicateRuleFilterItemRepresentation:
+    (lds.ttl): 900000
+    (lds.private):
+      - eTag
+    (lds.integrity):
+      - eTag
+  MatchRuleRepresentation:
+    (lds.ttl): 900000
+    (lds.private):
+      - eTag
+    (lds.integrity):
+      - eTag
 
 /ui-api:
   /actions:
@@ -589,3 +628,79 @@ types:
           optionalFields: optionalFields
           sortBy: sortBy
           pageSize: pageSize
+  /predupe:
+    post:
+      (lds.adapter):
+        name: getDuplicates
+        tests:
+          expectedResponses:
+            - configInput: |
+                {
+                  "apiName": "Lead",
+                  "fields": {
+                    "FirstName": "Jim",
+                    "LastName": "Steele"
+                  }
+                }
+              mockPayloadId: getDuplicatesResponse1
+          validConfigs:
+            - |
+              {
+                "fields": {
+                  "FirstName": "Jim",
+                  "LastName": "Steele"
+                }
+              }
+            - |
+              {
+                "apiName": "Lead",
+                "fields": {
+                  "FirstName": "Jim",
+                  "LastName": "Steele"
+                }
+              }
+          invalidConfigs:
+            - |
+              {
+                "apiName": "Lead"
+              }
+            - |
+              {
+                "apiName": "Lead",
+                "fields": [
+                  {
+                    "FirstName": "Jim"
+                  },
+                  {
+                    "LastName": "Steele"
+                  }
+                ]
+              }
+  /duplicates/{objectApiName}:
+    get:
+      (lds.adapter):
+        name: getDuplicateConfiguration
+        tests:
+          expectedResponses:
+            - configInput: |
+                {
+                  "objectApiName": "Lead"
+                }
+              mockPayloadId: getDuplicateConfigurationResponse1
+          validConfigs:
+            - |
+              {
+                "objectApiName": "Lead"
+              }
+          invalidConfigs:
+            - |
+              {}
+            - |
+              {
+                "objectApiName":
+                  {
+                    "name": "Lead"
+                  }
+              }
+      (lds.key):
+        apiName: urlParams.objectApiName

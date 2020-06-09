@@ -41,6 +41,8 @@ import {
     GetRelatedListInfoBatch,
     GetRelatedListRecordsBatch,
     GetNavItems,
+    GetDuplicateConfiguration,
+    GetDuplicates,
 } from '@salesforce/lds-adapters-uiapi';
 import * as wireService from 'wire-service';
 import { throttle } from '../utils';
@@ -305,6 +307,15 @@ export const [getProductCategoryPath] = setupWireAdapter(
 );
 export const [getProductPrice] = setupWireAdapter('getProductPrice', GetProductPrice);
 export const productSearch = setupWireAdapter('productSearch', ProductSearch);
+
+/**
+ * Dedupe
+ */
+export const [getDuplicateConfiguration] = setupWireAdapter(
+    'getDuplicateConfiguration',
+    GetDuplicateConfiguration
+);
+export const [getDuplicates] = setupWireAdapter('getDuplicates', GetDuplicates);
 
 /**
  * Apex

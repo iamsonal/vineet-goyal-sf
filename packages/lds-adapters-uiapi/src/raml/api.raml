@@ -359,6 +359,10 @@ types:
     description: 'Duplicate Rule filter item '
     type: object
     properties:
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
       field:
         description: The field name on which filter is set.
         type: string
@@ -378,6 +382,10 @@ types:
       booleanFilter:
         description: The custom filter logic expressed as a boolean expression.
         type: string
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
       filterItems:
         description: List of filter items.
         type: array
@@ -410,6 +418,10 @@ types:
         type: array
         items:
           type: DuplicateRuleFilterRepresentation
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
       matchRules:
         description: MatchRules for the current DuplicateRule.
         type: array
@@ -438,6 +450,9 @@ types:
     description: 'Duplicate Configuration for an object API. '
     type: object
     properties:
+      apiName:
+        description: ApiName of the Entity.
+        type: string
       dedupeEnabled:
         description: Determine dedupe is enabled/disabled
         type: boolean
@@ -451,6 +466,10 @@ types:
         type: array
         items:
           type: DuplicateRuleRepresentation
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
       predupeEnabled:
         description: Determine predupe is enabled/disabled.
         type: boolean
@@ -1294,6 +1313,10 @@ types:
     description: 'Match Rule for dedupe configuration '
     type: object
     properties:
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
       matchEngine:
         description: Name of Matching Engine.
         type: string
@@ -3668,6 +3691,8 @@ types:
       objectApiName:
         type: string
         required: true
+        examples:
+          getDuplicateConfigurationResponse1: 'Lead'
   /favorites:
     get:
       description: Gets a collection of favorites.
@@ -4415,6 +4440,15 @@ types:
         application/json:
           type: RecordInputRepresentation
           (oas-body-name): recordInput
+          examples:
+            getDuplicatesResponse1: |
+              {
+                "apiName": "Lead",
+                "fields": {
+                  "FirstName": "Jim",
+                  "LastName": "Steele"
+                }
+              }
   /priming-components:
     get:
       description: Retrieve dynamic components, wire data, dependent component list, and labels for priming flexipages.

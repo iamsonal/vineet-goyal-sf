@@ -42,6 +42,8 @@ import {
     UpdateRecord,
     UpdateRecordAvatar,
     UpdateRelatedListInfo,
+    GetDuplicateConfiguration,
+    GetDuplicates,
 } from '@salesforce/lds-adapters-uiapi';
 
 const createRecord = CreateRecord(lds);
@@ -163,6 +165,18 @@ const getRelatedListRecordActions = createWireAdapterConstructor(
     'getRelatedListRecordActionsConstructor',
     lds
 );
+
+const getDuplicateConfiguration = createWireAdapterConstructor(
+    GetDuplicateConfiguration(lds),
+    'getDuplicateConfigurationConstructor',
+    lds
+);
+const getDuplicates = createWireAdapterConstructor(
+    GetDuplicates(lds),
+    'getDuplicatesConstructor',
+    lds
+);
+
 const updateRecord = UpdateRecord(lds);
 const updateRecordAvatar = UpdateRecordAvatar(lds);
 const updateLayoutUserState = UpdateLayoutUserState(lds);
@@ -204,6 +218,8 @@ export {
     updateRecord,
     updateLayoutUserState,
     updateRelatedListInfo,
+    getDuplicateConfiguration,
+    getDuplicates,
     // notify change functions
     getRecordNotifyChange,
     // lds

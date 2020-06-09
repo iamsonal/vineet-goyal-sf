@@ -40,6 +40,7 @@ export { getSelectedAppAdapterFactory as GetSelectedApp } from './generated/adap
 export { UpdateRecordConfig } from './generated/adapters/updateRecord';
 export { updateRelatedListInfoAdapterFactory as UpdateRelatedListInfo } from './generated/adapters/updateRelatedListInfo';
 export { getNavItemsAdapterFactory as GetNavItems } from './generated/adapters/getNavItems';
+export { getRecordTemplateCloneAdapterFactory as GetRecordTemplateClone } from './wire/getRecordTemplateClone';
 export { getRecordTemplateCreateAdapterFactory as GetRecordTemplateCreate } from './wire/getRecordTemplateCreate';
 
 // Validation Utils

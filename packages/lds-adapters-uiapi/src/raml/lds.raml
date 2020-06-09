@@ -192,6 +192,10 @@ types:
     (lds.key):
       apiName: apiName
       recordTypeId: recordTypeId
+  CloneTemplateRepresentation:
+    # This should have a key.
+    # Currently, the unique identifier for the response is in the fields object.
+    (lds.ttl): 1000
   SalesforceObjectId:
     (lds.coerceFunction): ../primitives/ObjectId/coerce
   SalesforceObjectIdArray:
@@ -482,16 +486,24 @@ types:
             optionalFields: SalesforceFieldIdArray
             recordTypeId: SalesforceRecordId18
             formFactor: SalesforceFormFactor
-    '/template/create/{objectApiName}':
-      get:
-        (lds.adapter):
-          name: getRecordTemplateCreate
-          coercedParams:
-            objectApiName: SalesforceObjectId
-            optionalFields: SalesforceFieldIdArray
-        (lds.key):
-          objectApiName: urlParams.objectApiName
-          recordTypeId: queryParams.recordTypeId || null
+    '/template':
+      '/create/{objectApiName}':
+        get:
+          (lds.adapter):
+            name: getRecordTemplateCreate
+            coercedParams:
+              objectApiName: SalesforceObjectId
+              optionalFields: SalesforceFieldIdArray
+          (lds.key):
+            objectApiName: urlParams.objectApiName
+            recordTypeId: queryParams.recordTypeId || null
+      '/clone/{recordId}':
+        get:
+          (lds.adapter):
+            name: getRecordTemplateClone
+            coercedParams:
+              recordId: SalesforceRecordId18
+              optionalFields: SalesforceFieldIdArray
   '/related-list-count':
     '/batch/{parentRecordId}/{relatedListNames}':
       get:

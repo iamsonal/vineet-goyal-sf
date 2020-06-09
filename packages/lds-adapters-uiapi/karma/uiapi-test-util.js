@@ -12,6 +12,7 @@ import {
     MASTER_RECORD_TYPE_ID,
     ACTIONS_TTL,
     CREATE_TEMPLATE_REPRESENTATION_TTL,
+    CLONE_TEMPLATE_REPRESENTATION_TTL,
     LAYOUT_TTL,
     LAYOUT_USER_STATE_TTL,
     RECORD_TTL,
@@ -207,6 +208,22 @@ function mockGetRecordTemplateCreateNetwork(config, mockData) {
     const paramMatch = sinon.match({
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/record-defaults/template/create/${objectApiName}`,
+        queryParams,
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetRecordTemplateCloneNetwork(config, mockData) {
+    const { recordId, ...queryParams } = config;
+
+    const paramMatch = sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/record-defaults/template/clone/${recordId}`,
         queryParams,
     });
 
@@ -549,11 +566,20 @@ function expireNavItems() {
     timekeeper.travel(Date.now() + NAV_ITEMS_TTL + 1);
 }
 
-/** Force a cache expiration for RecordDefaultsTemplateRepresentation by fast-forwarding time past the
- * standard RecordDefaultsRepresentation TTL.
+/**
+ * Force a cache expiration for CreateTemplateRepresentation by fast-forwarding time past the
+ * standard CreateTemplateRepresentation TTL.
  */
 function expireCreateTemplateRepresentation() {
     timekeeper.travel(Date.now() + CREATE_TEMPLATE_REPRESENTATION_TTL + 1);
+}
+
+/**
+ * Force a cache expiration for CloneTemplateRepresentation by fast-forwarding time past the
+ * standard CloneTemplateRepresentation TTL.
+ */
+function expireCloneTemplateRepresentation() {
+    timekeeper.travel(Date.now() + CLONE_TEMPLATE_REPRESENTATION_TTL + 1);
 }
 
 function isSpanningRecord(value) {
@@ -636,6 +662,7 @@ export {
     expireRecordUi,
     expireRecordAvatar,
     expireRecordDefaultsRepresentation,
+    expireCloneTemplateRepresentation,
     expireCreateTemplateRepresentation,
     expireRelatedListInfo,
     expireObjectInfo,
@@ -653,6 +680,7 @@ export {
     mockGetRecordActionsNetwork,
     mockGetRecordEditActionsNetwork,
     mockGetRecordCreateDefaultsNetwork,
+    mockGetRecordTemplateCloneNetwork,
     mockGetRecordTemplateCreateNetwork,
     mockGetRecordUiNetwork,
     mockGetRelatedListActionsNetwork,

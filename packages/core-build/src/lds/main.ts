@@ -23,6 +23,7 @@ import {
     GetRecordCreateDefaults,
     GetRecordEditActions,
     GetRecordNotifyChange,
+    GetRecordTemplateClone,
     GetRecordTemplateCreate,
     GetRecordUi,
     GetRelatedListActions,
@@ -191,6 +192,11 @@ export const [getRecordEditActions] = setupWireAdapter(
 export const [getRecordTemplateCreate, _getRecordTemplateCreate] = setupWireAdapter(
     'getRecordTemplateCreate',
     GetRecordTemplateCreate,
+    true
+);
+export const [getRecordTemplateClone, _getRecordTemplateClone] = setupWireAdapter(
+    'getRecordTemplateClone',
+    GetRecordTemplateClone,
     true
 );
 export const [getRecordUi, _getRecordUi] = setupWireAdapter('getRecordUi', GetRecordUi, true);

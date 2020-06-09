@@ -17,6 +17,7 @@ import {
     GetRecordActions,
     GetRecordAvatars,
     GetRecordCreateDefaults,
+    GetRecordTemplateClone,
     GetRecordTemplateCreate,
     GetRecordEditActions,
     GetRecordUi,
@@ -62,6 +63,7 @@ export const updateRecord = UpdateRecord(lds);
 export const updateLayoutUserState = UpdateLayoutUserState(lds);
 export const updateRecordAvatar = UpdateRecordAvatar(lds);
 export const getRecordCreateDefaults = GetRecordCreateDefaults(lds);
+export const getRecordTemplateClone = GetRecordTemplateClone(lds);
 export const getRecordTemplateCreate = GetRecordTemplateCreate(lds);
 export const getRelatedListInfo = GetRelatedListInfo(lds);
 export const getLookupActions = GetLookupActions(lds);
@@ -105,6 +107,7 @@ const adapterMap: AdapterMap = {
     // updateLayoutUserState,
     updateRecordAvatar,
     getRecordCreateDefaults,
+    getRecordTemplateClone,
     getRecordTemplateCreate,
     getRelatedListInfo,
     getLookupActions,

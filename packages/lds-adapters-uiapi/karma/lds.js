@@ -23,6 +23,7 @@ import {
     GetRecordActions,
     GetRecordAvatars,
     GetRecordCreateDefaults,
+    GetRecordTemplateClone,
     GetRecordTemplateCreate,
     GetRecordEditActions,
     GetRecordNotifyChange,
@@ -100,6 +101,11 @@ const getRecordCreateDefaults = createWireAdapterConstructor(
     'getRecordCreateDefaultsConstructor',
     lds
 );
+const getRecordTemplateClone = createWireAdapterConstructor(
+    GetRecordTemplateClone(lds),
+    'getRecordTemplateCloneConstructor',
+    lds
+);
 const getRecordTemplateCreate = createWireAdapterConstructor(
     GetRecordTemplateCreate(lds),
     'getRecordTemplateCreateConstructor',
@@ -172,6 +178,7 @@ export {
     getLookupActions,
     getLookupRecords,
     getRecordCreateDefaults,
+    getRecordTemplateClone,
     getRecordTemplateCreate,
     getPicklistValues,
     getPicklistValuesByRecordType,

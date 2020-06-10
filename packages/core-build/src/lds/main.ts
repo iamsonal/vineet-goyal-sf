@@ -1,4 +1,4 @@
-import { Adapter, AdapterFactory, LDS, Store, Environment } from '@ldsjs/engine';
+import { Adapter, AdapterFactory } from '@ldsjs/engine';
 import { bindWireRefresh, createWireAdapterConstructor, register } from '@ldsjs/lwc-lds';
 import { GenerateGetApexWireAdapter, GetApexInvoker } from '@salesforce/lds-adapters-apex';
 import { GetProduct, GetProductCategoryPath } from '@salesforce/lds-adapters-commerce-catalog';
@@ -47,25 +47,13 @@ import {
 import * as wireService from 'wire-service';
 import { throttle } from '../utils';
 import AdsBridge from './ads-bridge';
+
 import {
-    Instrumentation,
     incrementGetRecordNotifyChangeAllowCount,
     incrementGetRecordNotifyChangeDropCount,
     instrumentAdapter,
-    setupInstrumentation,
-} from './instrumentation';
-import { setupMetadataWatcher } from './metadata';
-import networkAdapter from './network-adapter';
-
-const store = new Store();
-const instrumentation = new Instrumentation();
-const environment = new Environment(store, networkAdapter);
-const lds = new LDS(environment, {
-    instrument: instrumentation.instrumentNetwork.bind(instrumentation),
-});
-
-setupInstrumentation(lds, store);
-setupMetadataWatcher(lds);
+} from '@salesforce/lds-instrumentation';
+import { lds } from '@salesforce/lds-aura-runtime';
 
 /**
  * TODO W-6568533 - remove imperative? parameter, change return type to Adapter<C,D>

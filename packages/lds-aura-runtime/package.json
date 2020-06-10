@@ -1,0 +1,21 @@
+{
+    "name": "@salesforce/lds-aura-runtime",
+    "version": "0.1.12",
+    "description": "LDS engine for Aura runtime",
+    "license": "MIT",
+    "main": "dist/ldsEngine.js",
+    "module": "dist/ldsEngine.js",
+    "types": "dist/main.d.ts",
+    "scripts": {
+        "prepare": "yarn build",
+        "build": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist",
+        "test": "jest",
+        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
+    },
+    "devDependencies": {
+        "@salesforce/lds-web-runtime": "0.1.12",
+        "@salesforce/lds-aura-storage": "0.1.12",
+        "@salesforce/lds-instrumentation": "0.1.12"
+    }
+}

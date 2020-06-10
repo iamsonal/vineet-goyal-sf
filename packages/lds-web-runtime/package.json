@@ -1,0 +1,17 @@
+{
+    "name": "@salesforce/lds-web-runtime",
+    "version": "0.1.12",
+    "description": "LDS engine for Lightning Web Runtime",
+    "license": "MIT",
+    "main": "dist/ldsEngineWebRuntime.js",
+    "module": "dist/ldsEngineWebRuntime.js",
+    "types": "dist/main.d.ts",
+    "scripts": {
+        "prepare": "yarn build",
+        "build": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist"
+    },
+    "devDependencies": {
+        "@salesforce/lds-instrumentation": "0.1.12"
+    }
+}

@@ -34,14 +34,12 @@ const browser = {
     input: './src/main.ts',
 
     external: [
-        'aura-storage',
-        'aura',
-        'force/shared',
         'lds-static-functions',
-        'instrumentation/service',
-        'logger',
         'lwc',
         'wire-service',
+        'instrumentation/service', // only used by AdsBridge
+        '@salesforce/lds-aura-runtime',
+        '@salesforce/lds-instrumentation',
     ],
 
     output: {
@@ -51,6 +49,8 @@ const browser = {
         footer,
         paths: {
             'lds-static-functions': './lds-static-functions',
+            '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
+            '@salesforce/lds-aura-runtime': 'force/ldsEngine',
         },
     },
 
@@ -165,12 +165,13 @@ const ldsMobileMin = {
     ],
 };
 
-const absBridge = {
+const adsBridge = {
     input: './src/lds/ads-bridge.ts',
     output: {
         file: 'dist/ads-bridge.js',
         format: 'esm',
     },
+    external: ['instrumentation/service'],
     plugins: [
         ...browser.plugins,
         replace({
@@ -186,6 +187,6 @@ export default [
     webviewMin,
     ldsMobile,
     ldsMobileMin,
-    absBridge,
     ldsStaticFunctionsBrowser,
+    adsBridge,
 ];

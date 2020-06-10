@@ -1,8 +1,11 @@
 {
-    "name": "core-build",
+    "name": "@salesforce/lds-aura-network-adapter",
     "version": "0.1.12",
-    "description": "Core build and Lightning Platform specific code for Lightning Data Service",
-    "private": true,
+    "description": "LDS Network Adapter for Aura Runtime",
+    "license": "MIT",
+    "main": "dist/ldsNetwork.js",
+    "module": "dist/ldsNetwork.js",
+    "types": "dist/main.d.ts",
     "scripts": {
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",
@@ -11,9 +14,8 @@
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     },
     "devDependencies": {
-        "@salesforce/lds-adapters-apex": "0.1.12",
-        "@salesforce/lds-adapters-uiapi": "0.1.12",
         "@salesforce/lds-instrumentation": "0.1.12",
-        "@salesforce/lds-aura-runtime": "0.1.12"
+        "@salesforce/lds-aura-storage": "0.1.12",
+        "@salesforce/lds-adapters-uiapi": "0.1.12"
     }
 }

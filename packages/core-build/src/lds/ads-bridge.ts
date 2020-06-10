@@ -19,7 +19,7 @@ import {
 } from '../utils/language';
 
 import { timer } from 'instrumentation/service';
-import { timerMetricAddDuration } from './instrumentation';
+import { timerMetricAddDuration } from '@salesforce/lds-instrumentation';
 import {
     ADS_BRIDGE_ADD_RECORDS_DURATION,
     ADS_BRIDGE_EMIT_RECORD_CHANGED_DURATION,

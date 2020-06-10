@@ -112,16 +112,6 @@ jest.mock('instrumentation/service', () => {
     };
 });
 
-jest.mock('../instrumentation', () => {
-    return {
-        ...jest.requireActual('../instrumentation'),
-        Instrumentation: class mockInstrumentation {
-            constructor() {}
-            instrumentNetwork = () => {};
-        },
-    };
-});
-
 import { __spies as uiApiRecordsSpies } from '@salesforce/lds-adapters-uiapi';
 import { __spies as lwcLdsSpies } from '@ldsjs/lwc-lds';
 import { __spies as instrumentationSpies } from 'instrumentation/service';

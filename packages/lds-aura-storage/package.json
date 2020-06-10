@@ -1,0 +1,17 @@
+{
+    "name": "@salesforce/lds-aura-storage",
+    "version": "0.1.12",
+    "description": "LDS Network Adapter for Aura Runtime",
+    "license": "MIT",
+    "main": "dist/ldsStorage.js",
+    "module": "dist/ldsStorage.js",
+    "types": "dist/main.d.ts",
+    "scripts": {
+        "prepare": "yarn build",
+        "build": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist",
+        "test": "jest",
+        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
+    },
+    "devDependencies": {}
+}

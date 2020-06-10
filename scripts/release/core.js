@@ -19,6 +19,23 @@ const REPO_LDS_STATIC_FUNCTIONS_PATH = path.resolve(
     'packages/core-build/dist/lds-static-functions.js'
 );
 
+const REPO_LDS_ENGINE_AURA_RUNTIME_PATH = path.resolve(
+    REPO_ROOT,
+    'packages/lds-aura-runtime/dist/ldsEngine.js'
+);
+const REPO_LDS_NETWORK_PATH = path.resolve(
+    REPO_ROOT,
+    'packages/lds-aura-network-adapter/dist/ldsNetwork.js'
+);
+const REPO_LDS_STORAGE_PATH = path.resolve(
+    REPO_ROOT,
+    'packages/lds-aura-storage/dist/ldsStorage.js'
+);
+const REPO_LDS_INSTRUMENTATION_PATH = path.resolve(
+    REPO_ROOT,
+    'packages/lds-instrumentation/dist/ldsInstrumentation.js'
+);
+
 // The BLT_HOME environment variable is set when sourcing the "env.sh" script contained in the blt
 // folder. Otherwise it gets set to the default BLT install location.
 const BLT_HOME = process.env.BLT_HOME || path.resolve(os.homedir(), 'blt');
@@ -45,7 +62,9 @@ const argv = require('yargs')
     )
     .help().argv;
 
-const CORE_BRANCH = argv.branch || 'main';
+const MAIN_BRANCH = 'main';
+
+const CORE_BRANCH = argv.branch || MAIN_BRANCH;
 const CORE_LDS_PATH = path.resolve(
     BLT_HOME,
     'app',
@@ -72,6 +91,34 @@ const CORE_LDS_MOBILE_STATIC_FUNCTIONS_PATH = path.resolve(
     'app',
     CORE_BRANCH,
     'core/ui-bridge-components/modules/native/ldsNativeProxy/lds-static-functions.js'
+);
+
+const CORE_LDS_ENGINE_AURA_RUNTIME_PATH = path.resolve(
+    BLT_HOME,
+    'app',
+    CORE_BRANCH,
+    'core/ui-force-components/modules/force/ldsEngine/ldsEngine.js'
+);
+
+const CORE_LDS_NETWORK_PATH = path.resolve(
+    BLT_HOME,
+    'app',
+    CORE_BRANCH,
+    'core/ui-force-components/modules/force/ldsNetwork/ldsNetwork.js'
+);
+
+const CORE_LDS_STORAGE_PATH = path.resolve(
+    BLT_HOME,
+    'app',
+    CORE_BRANCH,
+    'core/ui-force-components/modules/force/ldsStorage/ldsStorage.js'
+);
+
+const CORE_LDS_INSTRUMENTATION_PATH = path.resolve(
+    BLT_HOME,
+    'app',
+    CORE_BRANCH,
+    'core/ui-force-components/modules/force/ldsInstrumentation/ldsInstrumentation.js'
 );
 
 const RELEASABLE_BRANCHES = ['master'];
@@ -210,6 +257,14 @@ function copyArtifacts(repoPath, corePath) {
         checkCore(CORE_LDS_MOBILE_STATIC_FUNCTIONS_PATH);
     }
 
+    // main (228) only modules
+    if (CORE_BRANCH === MAIN_BRANCH && argv.target !== 'native') {
+        checkCore(CORE_LDS_ENGINE_AURA_RUNTIME_PATH);
+        checkCore(CORE_LDS_NETWORK_PATH);
+        checkCore(CORE_LDS_STORAGE_PATH);
+        checkCore(CORE_LDS_INSTRUMENTATION_PATH);
+    }
+
     if (!argv['skip-git-check']) {
         checkGitStatus();
     }
@@ -235,5 +290,13 @@ function copyArtifacts(repoPath, corePath) {
         copyArtifacts(REPO_LDS_STATIC_FUNCTIONS_PATH, CORE_LDS_STATIC_FUNCTIONS_PATH);
         copyArtifacts(REPO_LDS_NATIVE_PROXY_PATH, CORE_LDS_NATIVE_PROXY_PATH);
         copyArtifacts(REPO_LDS_STATIC_FUNCTIONS_PATH, CORE_LDS_MOBILE_STATIC_FUNCTIONS_PATH);
+    }
+
+    // main (228) only modules
+    if (CORE_BRANCH === MAIN_BRANCH && argv.target !== 'native') {
+        copyArtifacts(REPO_LDS_ENGINE_AURA_RUNTIME_PATH, CORE_LDS_ENGINE_AURA_RUNTIME_PATH);
+        copyArtifacts(REPO_LDS_NETWORK_PATH, CORE_LDS_NETWORK_PATH);
+        copyArtifacts(REPO_LDS_STORAGE_PATH, CORE_LDS_STORAGE_PATH);
+        copyArtifacts(REPO_LDS_INSTRUMENTATION_PATH, CORE_LDS_INSTRUMENTATION_PATH);
     }
 })();

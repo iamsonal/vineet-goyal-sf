@@ -2754,6 +2754,122 @@ describe('routes', () => {
         );
     });
 
+    describe('get /record-defaults/template/clone/{recordId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/record-defaults/template/clone/001RM000004PkciYAC`,
+                urlParams: {
+                    recordId: '001RM000004PkciYAC',
+                },
+                queryParams: {
+                    optionalFields: ['Account.Name'],
+                    recordTypeId: '012RM00000025SOYAY',
+                },
+            },
+            [
+                'RecordUiController.getRecordDefaultsTemplateClone',
+                {
+                    recordId: '001RM000004PkciYAC',
+                    recordTypeId: '012RM00000025SOYAY',
+                    optionalFields: ['Account.Name'],
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: UI_API_BASE_URI,
+            basePath: `/record-defaults/template/clone/001RM000004PkciYAC`,
+            urlParams: {
+                recordId: '001RM000004PkciYAC',
+            },
+            queryParams: {
+                optionalFields: ['Account.Name'],
+                recordTypeId: '012RM00000025SOYAY',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/record-defaults/template/clone/001RM000004PkciYAC`,
+                urlParams: {
+                    recordId: '001RM000004PkciYAC',
+                },
+                queryParams: {
+                    optionalFields: ['Account.Name'],
+                    recordTypeId: '012RM00000025SOYAY',
+                },
+            },
+            {
+                objectInfos: {},
+                record: {},
+            }
+        );
+    });
+
+    describe('get /record-defaults/template/create/{objectApiName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/record-defaults/template/create/Account`,
+                urlParams: {
+                    objectApiName: 'Account',
+                },
+                queryParams: {
+                    optionalFields: ['Account.Name'],
+                    recordTypeId: '012RM00000025SOYAY',
+                },
+            },
+            [
+                'RecordUiController.getRecordDefaultsTemplateForCreate',
+                {
+                    objectApiName: 'Account',
+                    recordTypeId: '012RM00000025SOYAY',
+                    optionalFields: ['Account.Name'],
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: UI_API_BASE_URI,
+            basePath: `/record-defaults/template/create/Account`,
+            urlParams: {
+                objectApiName: 'Account',
+            },
+            queryParams: {
+                optionalFields: ['Account.Name'],
+                recordTypeId: '012RM00000025SOYAY',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/record-defaults/template/create/Account`,
+                urlParams: {
+                    objectApiName: 'Account',
+                },
+                queryParams: {
+                    optionalFields: ['Account.Name'],
+                    recordTypeId: '012RM00000025SOYAY',
+                },
+            },
+            {
+                objectInfos: {},
+                record: {},
+            }
+        );
+    });
+
     describe('get /record-defaults/create/{objectApiName}', () => {
         testControllerInput(
             {

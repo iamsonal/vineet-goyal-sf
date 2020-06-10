@@ -29,6 +29,8 @@ enum UiApiRecordController {
     GetLayout = 'RecordUiController.getLayout',
     GetLayoutUserState = 'RecordUiController.getLayoutUserState',
     GetRecordAvatars = 'RecordUiController.getRecordAvatars',
+    GetRecordTemplateClone = 'RecordUiController.getRecordDefaultsTemplateClone',
+    GetRecordTemplateCreate = 'RecordUiController.getRecordDefaultsTemplateForCreate',
     GetRecordCreateDefaults = 'RecordUiController.getRecordCreateDefaults',
     GetRecordUi = 'RecordUiController.getRecordUis',
     GetRecordWithFields = 'RecordUiController.getRecordWithFields',
@@ -49,6 +51,8 @@ const UIAPI_RECORDS_PATH = `${UI_API_BASE_URI}/records`;
 const UIAPI_RECORD_AVATARS_BASE = `${UI_API_BASE_URI}/record-avatars/`;
 const UIAPI_RECORD_AVATARS_BATCH_PATH = `${UI_API_BASE_URI}/record-avatars/batch/`;
 const UIAPI_RECORD_AVATAR_UPDATE = `/association`;
+const UIAPI_RECORD_TEMPLATE_CLONE_PATH = `${UI_API_BASE_URI}/record-defaults/template/clone/`;
+const UIAPI_RECORD_TEMPLATE_CREATE_PATH = `${UI_API_BASE_URI}/record-defaults/template/create/`;
 const UIAPI_RECORD_CREATE_DEFAULTS_PATH = `${UI_API_BASE_URI}/record-defaults/create/`;
 const UIAPI_RECORD_UI_PATH = `${UI_API_BASE_URI}/record-ui/`;
 const UIAPI_GET_LAYOUT_USER_STATE = '/user-state';
@@ -389,6 +393,42 @@ function getLayoutUserState(resourceRequest: ResourceRequest, cacheKey: string):
     return dispatchAction(UiApiRecordController.GetLayoutUserState, params, config);
 }
 
+function getRecordTemplateClone(resourceRequest: ResourceRequest): Promise<any> {
+    const {
+        urlParams: { recordId },
+        queryParams: { optionalFields, recordTypeId },
+    } = resourceRequest;
+
+    const params = buildUiApiParams(
+        {
+            recordId,
+            recordTypeId,
+            optionalFields,
+        },
+        resourceRequest
+    );
+
+    return dispatchAction(UiApiRecordController.GetRecordTemplateClone, params, actionConfig);
+}
+
+function getRecordTemplateCreate(resourceRequest: ResourceRequest): Promise<any> {
+    const {
+        urlParams: { objectApiName },
+        queryParams: { optionalFields, recordTypeId },
+    } = resourceRequest;
+
+    const params = buildUiApiParams(
+        {
+            objectApiName,
+            recordTypeId,
+            optionalFields,
+        },
+        resourceRequest
+    );
+
+    return dispatchAction(UiApiRecordController.GetRecordTemplateCreate, params, actionConfig);
+}
+
 function getRecordCreateDefaults(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { objectApiName },
@@ -482,6 +522,14 @@ appRouter.get(
     getObjectInfo
 );
 appRouter.get((path: string) => path.startsWith(UIAPI_RECORDS_PATH), getRecord);
+appRouter.get(
+    (path: string) => path.startsWith(UIAPI_RECORD_TEMPLATE_CLONE_PATH),
+    getRecordTemplateClone
+);
+appRouter.get(
+    (path: string) => path.startsWith(UIAPI_RECORD_TEMPLATE_CREATE_PATH),
+    getRecordTemplateCreate
+);
 appRouter.get(
     (path: string) => path.startsWith(UIAPI_RECORD_CREATE_DEFAULTS_PATH),
     getRecordCreateDefaults

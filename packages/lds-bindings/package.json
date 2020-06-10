@@ -1,0 +1,22 @@
+{
+    "name": "@salesforce/lds-bindings",
+    "version": "0.1.12",
+    "description": "LDS Bindings for SFDC",
+    "license": "MIT",
+    "main": "dist/ldsBindings.js",
+    "module": "dist/ldsBindings.js",
+    "types": "dist/main.d.ts",
+    "scripts": {
+        "prepare": "yarn build",
+        "build": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist",
+        "test": "jest"
+    },
+    "dependencies": {
+        "@ldsjs/lwc-lds": "^0.8.0"
+    },
+    "devDependencies": {
+        "@ldsjs/engine": "^0.8.0",
+        "@salesforce/lds-web-runtime": "0.1.12"
+    }
+}

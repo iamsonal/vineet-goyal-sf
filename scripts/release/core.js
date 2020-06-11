@@ -19,6 +19,7 @@ const REPO_LDS_STATIC_FUNCTIONS_PATH = path.resolve(
     'packages/core-build/dist/lds-static-functions.js'
 );
 
+const REPO_LDS_BINDINGS_PATH = path.resolve(REPO_ROOT, 'packages/lds-bindings/dist/ldsBindings.js');
 const REPO_LDS_ENGINE_AURA_RUNTIME_PATH = path.resolve(
     REPO_ROOT,
     'packages/lds-aura-runtime/dist/ldsEngine.js'
@@ -119,6 +120,13 @@ const CORE_LDS_INSTRUMENTATION_PATH = path.resolve(
     'app',
     CORE_BRANCH,
     'core/ui-force-components/modules/force/ldsInstrumentation/ldsInstrumentation.js'
+);
+
+const CORE_LDS_BINDINGS_PATH = path.resolve(
+    BLT_HOME,
+    'app',
+    CORE_BRANCH,
+    'core/ui-force-components/modules/force/ldsBindings/ldsBindings.js'
 );
 
 const RELEASABLE_BRANCHES = ['master'];
@@ -263,6 +271,7 @@ function copyArtifacts(repoPath, corePath) {
         checkCore(CORE_LDS_NETWORK_PATH);
         checkCore(CORE_LDS_STORAGE_PATH);
         checkCore(CORE_LDS_INSTRUMENTATION_PATH);
+        checkCore(CORE_LDS_BINDINGS_PATH);
     }
 
     if (!argv['skip-git-check']) {
@@ -298,5 +307,6 @@ function copyArtifacts(repoPath, corePath) {
         copyArtifacts(REPO_LDS_NETWORK_PATH, CORE_LDS_NETWORK_PATH);
         copyArtifacts(REPO_LDS_STORAGE_PATH, CORE_LDS_STORAGE_PATH);
         copyArtifacts(REPO_LDS_INSTRUMENTATION_PATH, CORE_LDS_INSTRUMENTATION_PATH);
+        copyArtifacts(REPO_LDS_BINDINGS_PATH, CORE_LDS_BINDINGS_PATH);
     }
 })();

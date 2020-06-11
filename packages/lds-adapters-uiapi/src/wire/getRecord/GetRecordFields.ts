@@ -59,11 +59,12 @@ function prepareRequest(lds: LDS, config: GetRecordConfig) {
 
     // Should this go into the coersion logic?
     const allTrackedFields = getTrackedFields(lds, recordId, config.optionalFields);
+    const optionalFields =
+        fields === undefined ? allTrackedFields : difference(allTrackedFields, fields);
     const params = createResourceParams({
         recordId,
         fields,
-        optionalFields:
-            fields === undefined ? allTrackedFields : difference(allTrackedFields, fields),
+        optionalFields: optionalFields.length > 0 ? optionalFields : undefined,
     });
     const request = createResourceRequest(params);
     const key = keyBuilder(params);

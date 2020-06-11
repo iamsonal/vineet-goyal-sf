@@ -181,7 +181,6 @@ describe('layout', () => {
         const fullLayoutFieldParams = {
             recordId,
             fields: recordFields.sort(),
-            optionalFields: [],
         };
 
         mockGetRecordNetwork(fullLayoutFieldParams, mockFullLayoutRecord);
@@ -253,7 +252,6 @@ describe('layout', () => {
         const fullLayoutFieldParams = {
             recordId,
             fields: recordFields.sort(),
-            optionalFields: [],
         };
         mockGetRecordNetwork(fullLayoutFieldParams, mockFullLayoutRecord);
 

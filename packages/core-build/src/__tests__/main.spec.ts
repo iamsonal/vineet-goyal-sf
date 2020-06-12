@@ -4,7 +4,6 @@ jest.resetModules();
 (global as any).__nimbus = { plugins: { lds: {} } };
 
 const mainExports = require('../main');
-const LdsWebviewExports = require('../lds-webview/main');
 const LdsMobileExports = require('../lds-mobile/main');
 
 /**
@@ -101,12 +100,6 @@ const whiteList = [
 describe('items exported to core', () => {
     it('should only export whitelisted items', () => {
         expect(Object.keys(mainExports).sort()).toEqual(whiteList);
-    });
-});
-
-describe('lds-webview items exported to core', () => {
-    it('should only export whitelisted items', () => {
-        expect(Object.keys(LdsWebviewExports).sort()).toEqual(whiteList);
     });
 });
 

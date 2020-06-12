@@ -100,34 +100,6 @@ const min = {
     ],
 };
 
-const webview = {
-    ...browser,
-    input: './src/lds-webview/main.ts',
-    output: {
-        ...browser.output,
-        file: 'dist/ldsNativeProxy.js',
-    },
-};
-
-const webviewMin = {
-    ...webview,
-    output: {
-        ...webview.output,
-        file: 'dist/ldsNativeProxy.min.js',
-    },
-    plugins: [
-        ...webview.plugins,
-        terser({
-            output: {
-                comments: /(ATTENTION!|version:)/,
-            },
-        }),
-        replace({
-            'process.env.NODE_ENV': JSON.stringify('production'),
-        }),
-    ],
-};
-
 const ldsMobile = {
     ...browser,
     input: './src/lds-mobile/main.ts',
@@ -180,13 +152,4 @@ const adsBridge = {
     ],
 };
 
-export default [
-    browser,
-    min,
-    webview,
-    webviewMin,
-    ldsMobile,
-    ldsMobileMin,
-    ldsStaticFunctionsBrowser,
-    adsBridge,
-];
+export default [browser, min, ldsMobile, ldsMobileMin, ldsStaticFunctionsBrowser, adsBridge];

@@ -23,7 +23,7 @@ function getRelationshipName(objectInfo: ObjectInfoRepresentation, fieldApiName:
     return objectInfo.fields[fieldApiName].relationshipName!;
 }
 
-function getNameField(objectInfo: ObjectInfoRepresentation, fieldApiName: string): string {
+export function getNameField(objectInfo: ObjectInfoRepresentation, fieldApiName: string): string {
     // TODO - this logic is adopted from lds222. It searches
     // ObjectInfoRep.ReferenceToInfoRep[].nameFields[]:
     // 1. If any of the arrays are empty returns `Name`

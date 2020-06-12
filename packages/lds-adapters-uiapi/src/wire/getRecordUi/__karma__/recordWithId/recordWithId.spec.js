@@ -1021,6 +1021,16 @@ describe('populating null nested record', () => {
             },
             recordMock
         );
+        mockGetRecordNetwork(
+            {
+                recordId,
+                optionalFields: extractRecordFields(recordMock, {
+                    omit: ['Opportunity.Campaign'],
+                    add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
+                }),
+            },
+            recordMock
+        );
 
         // Load record-ui without Account field present
         const recordUiWire = await setupElement(recordUiConfig, RecordUi);
@@ -1227,6 +1237,10 @@ describe('recordTypeId update', () => {
             }),
         };
         mockGetRecordUiNetwork(updatedRecordUiNetworkConfig, updatedRecordUiData);
+        mockGetRecordNetwork(
+            { recordId, optionalFields: updatedRecordUiNetworkConfig.optionalFields },
+            updatedRecordData
+        );
 
         // 1. fetch recordUi data from network
         const wireA = await setupElement(config, RecordUi);
@@ -1278,6 +1292,10 @@ describe('recordTypeId update', () => {
             optionalFields: recordFields,
         };
         mockGetRecordUiNetwork(viewNetworkConfig, updatedViewRecordUiData);
+        mockGetRecordNetwork(
+            { recordId, optionalFields: recordFields },
+            updatedViewRecordUiData.records[recordId]
+        );
 
         // 1. Fetch recordUi data from network
         const wireA = await setupElement(editConfig, RecordUi);
@@ -1320,6 +1338,16 @@ describe('recordTypeId update', () => {
             optionalFields: extractRecordFields(updatedRecordData).sort(),
         };
         mockGetRecordUiNetwork(updatedRecordUiNetworkConfig, updatedRecordUiData);
+        mockGetRecordNetwork(
+            {
+                recordId,
+                optionalFields: extractRecordFields(updatedRecordData, {
+                    omit: ['Opportunity.Campaign'],
+                    add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
+                }),
+            },
+            updatedRecordData
+        );
 
         // 1. fetch recordUi data from network
         const wireA = await setupElement(config, RecordUi);
@@ -1361,6 +1389,16 @@ describe('recordTypeId update', () => {
             optionalFields: extractRecordFields(updatedRecordData).sort(),
         };
         mockGetRecordUiNetwork(updatedRecordUiNetworkConfig, updatedRecordUiData);
+        mockGetRecordNetwork(
+            {
+                recordId,
+                optionalFields: extractRecordFields(updatedRecordData, {
+                    omit: ['Opportunity.Campaign'],
+                    add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
+                }),
+            },
+            updatedRecordData
+        );
 
         // 1. fetch recordUi data from
         await setupElement(config, RecordUi);
@@ -1413,6 +1451,16 @@ describe('recordTypeId update', () => {
                 }),
             },
             updatedRecordUiData
+        );
+        mockGetRecordNetwork(
+            {
+                recordId,
+                optionalFields: extractRecordFields(updatedRecordData, {
+                    omit: ['Opportunity.Campaign'],
+                    add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
+                }),
+            },
+            updatedRecordData
         );
 
         // 1. fetch recordUi data from network.
@@ -1475,6 +1523,16 @@ describe('recordTypeId update', () => {
             },
             [mockRecordUiData, updatedRecordUiData]
         );
+        mockGetRecordNetwork(
+            {
+                recordId,
+                optionalFields: extractRecordFields(updatedRecordData, {
+                    omit: ['Opportunity.Campaign'],
+                    add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
+                }),
+            },
+            updatedRecordData
+        );
 
         mockGetRecordUiNetwork(updatedRecordUiNetworkConfig, updatedRecordUiData);
 
@@ -1497,6 +1555,9 @@ describe('recordTypeId update', () => {
     it('refreshes snapshot with additional optional field when recordTypeId gets changed', async () => {
         // network mock for 1. fetch recordUi from network
         const mockRecordUiData = getMock('single-record-Opportunity-layouttypes-Full-modes-View');
+        const updatedRecordUiData = createUpdatedOpportunityRecordUi(
+            clone(clone(mockRecordUiData))
+        );
         const recordId = getRecordIdFromMock(mockRecordUiData);
 
         const config = {
@@ -1511,6 +1572,10 @@ describe('recordTypeId update', () => {
             'single-record-Opportunity-layouttypes-Full-modes-View-optionalFields-CloneSourceId'
         );
 
+        const updatedRecordUiWithExtraFieldsData = createUpdatedOpportunityRecordUi(
+            clone(recordUiWithExtraFieldsData)
+        );
+
         const optionalFieldsConfig = {
             recordIds: recordId,
             layoutTypes: ['Full'],
@@ -1518,25 +1583,18 @@ describe('recordTypeId update', () => {
             optionalFields: ['Opportunity.CloneSourceId'],
         };
 
-        mockGetRecordUiNetwork(
-            {
-                ...config,
-                optionalFields: extractRecordFields(mockRecordUiData.records[recordId], {
-                    omit: ['Opportunity.Campaign'],
-                    add: [
-                        'Opportunity.CloneSourceId',
-                        'Opportunity.Campaign.Id',
-                        'Opportunity.Campaign.Name',
-                    ],
-                }),
-            },
-            recordUiWithExtraFieldsData
-        );
+        const optionalFields = extractRecordFields(mockRecordUiData.records[recordId], {
+            omit: ['Opportunity.Campaign'],
+            add: [
+                'Opportunity.CloneSourceId',
+                'Opportunity.Campaign.Id',
+                'Opportunity.Campaign.Name',
+            ],
+        });
+
+        mockGetRecordUiNetwork({ ...config, optionalFields }, recordUiWithExtraFieldsData);
 
         // network mock for 3. updated recordTypeId with updateRecord.
-        const updatedRecordUiWithExtraFieldsData = createUpdatedOpportunityRecordUi(
-            clone(recordUiWithExtraFieldsData)
-        );
         const updatedRecordDataWithExtraFields =
             updatedRecordUiWithExtraFieldsData.records[recordId];
         const updateParams = {
@@ -1548,9 +1606,9 @@ describe('recordTypeId update', () => {
             allowSaveOnDuplicate: false,
         };
         mockUpdateRecordNetwork(recordId, updateParams, updatedRecordDataWithExtraFields);
+        mockGetRecordNetwork({ recordId, optionalFields }, updatedRecordDataWithExtraFields);
 
         // mocks for 4. existing recordUi snapshots refresh (wireA and wireB)
-        const updatedRecordUiData = createUpdatedOpportunityRecordUi(clone(mockRecordUiData));
         mockGetRecordUiNetwork(
             {
                 ...config,

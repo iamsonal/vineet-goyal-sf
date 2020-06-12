@@ -318,6 +318,17 @@ describe('refresh', () => {
         };
         mockGetRecordUiNetwork(networkParams, [mockRecordUiData, refershMockUiData]);
 
+        const refreshMockRecordData = refershMockUiData.records[recordId];
+        mockGetRecordNetwork(
+            {
+                recordId,
+                optionalFields: extractRecordFields(refreshMockRecordData, {
+                    omit: ['Opportunity.Campaign'],
+                    add: ['Opportunity.Campaign.Id', 'Opportunity.Campaign.Name'],
+                }),
+            },
+            refreshMockRecordData
+        );
         const config = {
             recordId,
             layoutTypes: ['Full'],
@@ -331,7 +342,7 @@ describe('refresh', () => {
 
         expect(element.pushCount()).toBe(2);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            refershMockUiData.records[mockRecord.id]
+            refershMockUiData.records[recordId]
         );
     });
 });

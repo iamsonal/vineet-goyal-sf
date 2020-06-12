@@ -65,6 +65,10 @@ describe('refresh', () => {
             },
             refreshMockUiData
         );
+        mockGetRecordNetwork(
+            { recordId, optionalFields: recordFields },
+            refreshMockUiData.records[recordId]
+        );
 
         const element = await setupElement(config, RecordUi);
         expect(element.pushCount()).toBe(1);
@@ -119,6 +123,10 @@ describe('refresh', () => {
             },
             refreshMockUiData
         );
+        mockGetRecordNetwork(
+            { recordId, optionalFields: recordFields },
+            refreshMockUiData.records[recordId]
+        );
 
         const element = await setupElement(config, RecordUi);
         expect(element.pushCount()).toBe(1);
@@ -167,6 +175,10 @@ describe('refresh', () => {
             },
             refreshMockUiData
         );
+        mockGetRecordNetwork(
+            { recordId, optionalFields: recordFields },
+            refreshMockUiData.records[recordId]
+        );
 
         const element = await setupElement(config, RecordUi);
         expect(element.pushCount()).toBe(1);
@@ -213,6 +225,10 @@ describe('refresh', () => {
                 optionalFields: recordFields,
             },
             refreshMockUiData
+        );
+        mockGetRecordNetwork(
+            { recordId, optionalFields: recordFields },
+            refreshMockUiData.records[recordId]
         );
 
         const element = await setupElement(config, RecordUi);
@@ -412,6 +428,10 @@ describe('refresh', () => {
 
         mockGetRecordUiNetwork(configRecordUiOne, mockRecordUiData);
         mockGetRecordUiNetwork(configRecordUiTwoAndRefresh, [mockRecordUiData, refreshMockUiData]);
+        mockGetRecordNetwork(
+            { recordId, optionalFields: recordFields },
+            refreshMockUiData.records[recordId]
+        );
 
         // Get Record Ui with first optional field.
         const elementRecordUi = await setupElement(configRecordUiOne, RecordUi);
@@ -555,6 +575,14 @@ describe('refresh', () => {
                 optionalFields: recordFieldsOne,
             },
             refreshMockUiData
+        );
+        mockGetRecordNetwork(
+            { recordId: recordIdOne, optionalFields: recordFieldsOne },
+            refreshMockRecordOne
+        );
+        mockGetRecordNetwork(
+            { recordId: recordIdTwo, optionalFields: recordFieldsOne },
+            refreshMockRecordTwo
         );
 
         // Get record ui.

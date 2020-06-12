@@ -11511,17 +11511,9 @@
                         "childRelationships": {},
                         "eTag": "f6ca672838aa64601299948cb46621b4",
                         "fields": {
-                            "FirstName": {
-                                "displayValue": null,
-                                "value": "Carole"
-                            },
                             "Id": {
                                 "displayValue": null,
                                 "value": "003xx000004WhD7AAK"
-                            },
-                            "LastName": {
-                                "displayValue": null,
-                                "value": "White"
                             },
                             "Name": {
                                 "displayValue": null,

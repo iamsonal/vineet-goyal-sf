@@ -219,14 +219,19 @@ function markRecordUiNulledOutLookupFields(
 
 function markRecordUiOptionalFields(
     optionalFields: string[],
+    recordLookupFields: {
+        [key: string]: string[];
+    },
     recordNodes: GraphNode<RecordRepresentationNormalized, RecordRepresentation>[]
 ) {
-    if (optionalFields.length === 0) {
-        return;
-    }
-
     for (let i = 0, len = recordNodes.length; i < len; i++) {
-        markMissingOptionalFields(recordNodes[i], optionalFields);
+        const recordId = recordNodes[i].data.id;
+        if (optionalFields.length > 0 || recordLookupFields[recordId] !== undefined) {
+            markMissingOptionalFields(recordNodes[i], [
+                ...optionalFields,
+                ...recordLookupFields[recordId],
+            ]);
+        }
     }
 }
 
@@ -332,11 +337,7 @@ export function buildNetworkSnapshot(
             }
 
             markRecordUiNulledOutLookupFields(recordLookupFields, recordNodes);
-
-            const { optionalFields } = config;
-            if (optionalFields.length > 0) {
-                markRecordUiOptionalFields(optionalFields, recordNodes);
-            }
+            markRecordUiOptionalFields(optionalFields, recordLookupFields, recordNodes);
 
             lds.storeBroadcast();
             lds.storePublish(configKey, sel);

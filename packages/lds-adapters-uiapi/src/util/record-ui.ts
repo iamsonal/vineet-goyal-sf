@@ -2,6 +2,7 @@ import { ObjectKeys } from './language';
 import { RecordRepresentation } from '../generated/types/RecordRepresentation';
 import { ObjectInfoRepresentation } from '../generated/types/ObjectInfoRepresentation';
 import { RecordUiRepresentation } from '../generated/types/RecordUiRepresentation';
+import { getNameField } from './layouts';
 
 function getMissingRecordLookupFields(
     record: RecordRepresentation,
@@ -28,21 +29,11 @@ function getMissingRecordLookupFields(
             continue;
         }
 
-        const { referenceToInfos } = field;
-        for (let r = 0, referenceLen = referenceToInfos.length; r < referenceLen; r += 1) {
-            const referenceToInfo = referenceToInfos[r];
-            // Include the Id field. Ex: Opportunity.Account.Id, Opportunity.relation1__r.Id
-            const idFieldName = `${apiName}.${relationshipName}.Id`;
-            lookupFields[idFieldName] = true;
-
-            const { nameFields } = referenceToInfo;
-            // Include all name fields so UIAPI populates the displayValue. Ex: Account.Owner.FirstName, Account.Owner.LastName. Or Account.custom__r.Name.
-            for (let n = 0, nameFieldsLen = nameFields.length; n < nameFieldsLen; n += 1) {
-                const nameField = nameFields[n];
-                const nameFieldName = `${apiName}.${relationshipName}.${nameField}`;
-                lookupFields[nameFieldName] = true;
-            }
-        }
+        // Include the Id field. Ex: Opportunity.Account.Id, Opportunity.relation1__r.Id
+        const idFieldName = `${apiName}.${relationshipName}.Id`;
+        lookupFields[idFieldName] = true;
+        const nameField = `${apiName}.${relationshipName}.${getNameField(objectInfo, fieldName)}`;
+        lookupFields[nameField] = true;
     }
 
     return ObjectKeys(lookupFields);

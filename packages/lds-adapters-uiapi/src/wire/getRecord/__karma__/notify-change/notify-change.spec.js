@@ -74,7 +74,7 @@ describe('notify change', () => {
             ],
         };
 
-        mockGetRecordNetwork(refreshConfig, refreshMock);
+        mockGetRecordNetwork(refreshConfig, [refreshMock, refreshMock]);
 
         const element = await setupElement(initialConfig, RecordFields);
         const representation = element.getWiredData();

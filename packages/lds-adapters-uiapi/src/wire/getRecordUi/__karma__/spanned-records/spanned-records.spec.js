@@ -155,20 +155,36 @@ describe('single recordId - spanned record', () => {
                 optionalFields: extractRecordFields(mockRecordUiData.records[recordId], {
                     omit: ['Contact.Assignee_To__r', 'Contact.ReportsTo'],
                     add: [
-                        'Contact.Assignee_To__r.FirstName',
                         'Contact.Assignee_To__r.Id',
-                        'Contact.Assignee_To__r.LastName',
                         'Contact.Assignee_To__r.Name',
                         'Contact.CreatedBy.SystemModstamp',
                         'Contact.LastModifiedBy.SystemModstamp',
-                        'Contact.ReportsTo.FirstName',
                         'Contact.ReportsTo.Id',
-                        'Contact.ReportsTo.LastName',
                         'Contact.ReportsTo.Name',
                     ],
                 }),
             },
             mockRecordUiDataWithAssignee_To
+        );
+
+        // 3rd request (from record merge conflict)
+        mockGetRecordNetwork(
+            {
+                recordId,
+                optionalFields: extractRecordFields(
+                    mockRecordUiDataWithAssignee_To.records[recordId],
+                    {
+                        omit: ['Contact.ReportsTo'],
+                        add: [
+                            'Contact.CreatedBy.SystemModstamp',
+                            'Contact.LastModifiedBy.SystemModstamp',
+                            'Contact.ReportsTo.Id',
+                            'Contact.ReportsTo.Name',
+                        ],
+                    }
+                ),
+            },
+            mockRecordUiDataWithAssignee_To.records[recordId]
         );
 
         const wire = await setupElement(recordUiConfig, RecordUi);

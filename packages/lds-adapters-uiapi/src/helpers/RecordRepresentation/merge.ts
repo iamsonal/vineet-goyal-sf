@@ -67,14 +67,6 @@ function mergeAndRefreshHigherVersionRecord(
             return mergeRecordFields(incoming, existing);
         }
 
-        // check to see if we already have all fields in incoming, if so, no need to issue a new network request
-        if (
-            isSuperRecordFieldTrie(existingTrackedFieldsTrieRoot, incomingTrackedFieldsTrieRoot) ===
-            true
-        ) {
-            return mergePendingFields(incoming, existing);
-        }
-
         getRecordFieldsNetwork(lds, {
             recordId: incoming.id,
             optionalFields: convertTrieToFields(incomingTrackedFieldsTrieRoot),

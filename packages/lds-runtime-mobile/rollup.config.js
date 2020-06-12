@@ -5,7 +5,7 @@ const browser = {
     input: './src/main.ts',
 
     output: {
-        file: 'dist/ldsEngineMobileRuntime.js',
+        file: 'dist/ldsEngineRuntimeMobile.js',
         format: 'esm',
     },
 

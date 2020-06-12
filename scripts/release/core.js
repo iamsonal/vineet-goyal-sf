@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 'use strict';
 
 const os = require('os');
@@ -10,10 +11,6 @@ const REPO_ROOT_PARENT = path.resolve(__dirname, '../../..');
 const RELATIVE_LDS_REPO_ROOT = path.resolve(REPO_ROOT_PARENT, 'lds');
 const REPO_ROOT = path.resolve(__dirname, '../../');
 const REPO_LDS_PATH = path.resolve(REPO_ROOT, 'packages/core-build/dist/lds.js');
-const REPO_LDS_NATIVE_PROXY_PATH = path.resolve(
-    REPO_ROOT,
-    'packages/core-build/dist/ldsNativeProxy.js'
-);
 const REPO_LDS_STATIC_FUNCTIONS_PATH = path.resolve(
     REPO_ROOT,
     'packages/core-build/dist/lds-static-functions.js'
@@ -23,6 +20,10 @@ const REPO_LDS_BINDINGS_PATH = path.resolve(REPO_ROOT, 'packages/lds-bindings/di
 const REPO_LDS_ENGINE_AURA_RUNTIME_PATH = path.resolve(
     REPO_ROOT,
     'packages/lds-aura-runtime/dist/ldsEngine.js'
+);
+const REPO_LDS_ENGINE_RUNTIME_MOBILE_PATH = path.resolve(
+    REPO_ROOT,
+    'packages/lds-runtime-mobile/dist/ldsEngineRuntimeMobile.js'
 );
 const REPO_LDS_NETWORK_PATH = path.resolve(
     REPO_ROOT,
@@ -44,11 +45,7 @@ const BLT_HOME = process.env.BLT_HOME || path.resolve(os.homedir(), 'blt');
 const argv = require('yargs')
     .options('branch', {
         alias: 'b',
-        describe: 'wihch core branch to release the artifact',
-    })
-    .option('target', {
-        alias: 't',
-        describe: 'which artifact to copy and release',
+        describe: 'which core branch to release the artifact',
     })
     .boolean('skip-git-check')
     .describe('skip-git-check', 'skips git branch and status check')
@@ -73,13 +70,6 @@ const CORE_LDS_PATH = path.resolve(
     'core/ui-force-components/modules/force/lds/lds.js'
 );
 
-const CORE_LDS_NATIVE_PROXY_PATH = path.resolve(
-    BLT_HOME,
-    'app',
-    CORE_BRANCH,
-    'core/ui-bridge-components/modules/native/ldsNativeProxy/ldsNativeProxy.js'
-);
-
 const CORE_LDS_STATIC_FUNCTIONS_PATH = path.resolve(
     BLT_HOME,
     'app',
@@ -87,18 +77,18 @@ const CORE_LDS_STATIC_FUNCTIONS_PATH = path.resolve(
     'core/ui-force-components/modules/force/lds/lds-static-functions.js'
 );
 
-const CORE_LDS_MOBILE_STATIC_FUNCTIONS_PATH = path.resolve(
-    BLT_HOME,
-    'app',
-    CORE_BRANCH,
-    'core/ui-bridge-components/modules/native/ldsNativeProxy/lds-static-functions.js'
-);
-
 const CORE_LDS_ENGINE_AURA_RUNTIME_PATH = path.resolve(
     BLT_HOME,
     'app',
     CORE_BRANCH,
     'core/ui-force-components/modules/force/ldsEngine/ldsEngine.js'
+);
+
+const CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH = path.resolve(
+    BLT_HOME,
+    'app',
+    CORE_BRANCH,
+    'core/ui-bridge-components/modules/native/ldsEngineMobile/ldsEngineMobile.js'
 );
 
 const CORE_LDS_NETWORK_PATH = path.resolve(
@@ -244,7 +234,6 @@ function copyArtifacts(repoPath, corePath) {
     console.log(`- blt home: ${BLT_HOME}`);
     console.log(`- core branch: ${CORE_BRANCH}`);
     console.log(`- lds path:  ${CORE_LDS_PATH}`);
-    console.log(`- ldsNativeProxy path:  ${CORE_LDS_NATIVE_PROXY_PATH}`);
     console.log();
 
     if (argv['print-commits-only']) {
@@ -252,22 +241,13 @@ function copyArtifacts(repoPath, corePath) {
         return;
     }
 
-    if (argv.target === 'lds') {
-        checkCore(CORE_LDS_PATH);
-        checkCore(CORE_LDS_STATIC_FUNCTIONS_PATH);
-    } else if (argv.target === 'native') {
-        checkCore(CORE_LDS_NATIVE_PROXY_PATH);
-        checkCore(CORE_LDS_MOBILE_STATIC_FUNCTIONS_PATH);
-    } else {
-        checkCore(CORE_LDS_PATH);
-        checkCore(CORE_LDS_STATIC_FUNCTIONS_PATH);
-        checkCore(CORE_LDS_NATIVE_PROXY_PATH);
-        checkCore(CORE_LDS_MOBILE_STATIC_FUNCTIONS_PATH);
-    }
+    checkCore(CORE_LDS_PATH);
+    checkCore(CORE_LDS_STATIC_FUNCTIONS_PATH);
 
     // main (228) only modules
-    if (CORE_BRANCH === MAIN_BRANCH && argv.target !== 'native') {
+    if (CORE_BRANCH === MAIN_BRANCH) {
         checkCore(CORE_LDS_ENGINE_AURA_RUNTIME_PATH);
+        checkCore(CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH);
         checkCore(CORE_LDS_NETWORK_PATH);
         checkCore(CORE_LDS_STORAGE_PATH);
         checkCore(CORE_LDS_INSTRUMENTATION_PATH);
@@ -288,22 +268,13 @@ function copyArtifacts(repoPath, corePath) {
 
     printCommits(CORE_LDS_PATH);
 
-    if (argv.target === 'lds') {
-        copyArtifacts(REPO_LDS_PATH, CORE_LDS_PATH);
-        copyArtifacts(REPO_LDS_STATIC_FUNCTIONS_PATH, CORE_LDS_STATIC_FUNCTIONS_PATH);
-    } else if (argv.target === 'native') {
-        copyArtifacts(REPO_LDS_NATIVE_PROXY_PATH, CORE_LDS_NATIVE_PROXY_PATH);
-        copyArtifacts(REPO_LDS_STATIC_FUNCTIONS_PATH, CORE_LDS_MOBILE_STATIC_FUNCTIONS_PATH);
-    } else {
-        copyArtifacts(REPO_LDS_PATH, CORE_LDS_PATH);
-        copyArtifacts(REPO_LDS_STATIC_FUNCTIONS_PATH, CORE_LDS_STATIC_FUNCTIONS_PATH);
-        copyArtifacts(REPO_LDS_NATIVE_PROXY_PATH, CORE_LDS_NATIVE_PROXY_PATH);
-        copyArtifacts(REPO_LDS_STATIC_FUNCTIONS_PATH, CORE_LDS_MOBILE_STATIC_FUNCTIONS_PATH);
-    }
+    copyArtifacts(REPO_LDS_PATH, CORE_LDS_PATH);
+    copyArtifacts(REPO_LDS_STATIC_FUNCTIONS_PATH, CORE_LDS_STATIC_FUNCTIONS_PATH);
 
     // main (228) only modules
-    if (CORE_BRANCH === MAIN_BRANCH && argv.target !== 'native') {
+    if (CORE_BRANCH === MAIN_BRANCH) {
         copyArtifacts(REPO_LDS_ENGINE_AURA_RUNTIME_PATH, CORE_LDS_ENGINE_AURA_RUNTIME_PATH);
+        copyArtifacts(REPO_LDS_ENGINE_RUNTIME_MOBILE_PATH, CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH);
         copyArtifacts(REPO_LDS_NETWORK_PATH, CORE_LDS_NETWORK_PATH);
         copyArtifacts(REPO_LDS_STORAGE_PATH, CORE_LDS_STORAGE_PATH);
         copyArtifacts(REPO_LDS_INSTRUMENTATION_PATH, CORE_LDS_INSTRUMENTATION_PATH);

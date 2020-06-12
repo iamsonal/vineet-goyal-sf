@@ -1,5 +1,5 @@
 import { Adapter, AdapterFactory } from '@ldsjs/engine';
-import { bindWireRefresh, createWireAdapterConstructor, register } from '@ldsjs/lwc-lds';
+import { bindWireRefresh, createWireAdapterConstructor } from '@ldsjs/lwc-lds';
 import { GenerateGetApexWireAdapter, GetApexInvoker } from '@salesforce/lds-adapters-apex';
 import { GetProduct, GetProductCategoryPath } from '@salesforce/lds-adapters-commerce-catalog';
 import { ProductSearch } from '@salesforce/lds-adapters-commerce-search';
@@ -44,7 +44,6 @@ import {
     GetDuplicateConfiguration,
     GetDuplicates,
 } from '@salesforce/lds-adapters-uiapi';
-import * as wireService from 'wire-service';
 import { throttle } from '../utils';
 import AdsBridge from './ads-bridge';
 
@@ -314,13 +313,23 @@ const getApexInvoker = function(
     method: string,
     isContinuation: boolean
 ) {
-    const identifier = GetApexInvoker(lds, { namespace, classname, method, isContinuation });
-    return register(
-        lds,
-        wireService,
-        GenerateGetApexWireAdapter(lds, { namespace, classname, method, isContinuation }),
-        identifier
+    const adapterName = `getApex_${namespace}_${classname}_${method}_${isContinuation}`;
+    const invokeApexImperative: any = GetApexInvoker(lds, {
+        namespace,
+        classname,
+        method,
+        isContinuation,
+    });
+    const instrumentedAdapter = instrumentAdapter(
+        adapterName,
+        GenerateGetApexWireAdapter(lds, { namespace, classname, method, isContinuation })
     );
+    invokeApexImperative.adapter = createWireAdapterConstructor(
+        instrumentedAdapter,
+        adapterName,
+        lds
+    );
+    return invokeApexImperative;
 };
 
 /**

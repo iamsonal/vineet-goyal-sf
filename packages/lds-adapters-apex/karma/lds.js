@@ -2,9 +2,8 @@ import {
     karmaNetworkAdapter,
     lds,
     refresh,
-    register,
     store,
-    wireService,
+    createWireAdapterConstructor,
 } from '@salesforce/lds-karma-config/lds-setup';
 
 import {
@@ -30,11 +29,11 @@ const apex = {
     refreshApex: refresh,
 };
 
-const apexContactControllerGetContactList = register(
-    lds,
-    wireService,
+const apexContactControllerGetContactList = apexContactControllerGetContactListWireAdapterIdentifier;
+apexContactControllerGetContactList.adapter = createWireAdapterConstructor(
     apexContactControllerGetContactListWireAdapter,
-    apexContactControllerGetContactListWireAdapterIdentifier
+    'getApex__ContactController_getContactList_false',
+    lds
 );
 
 export {

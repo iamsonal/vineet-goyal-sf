@@ -21,6 +21,9 @@
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat"
     },
+    "publishConfig": {
+        "registry": "https://npm.lwcjs.org"
+    },
     "devDependencies": {
         "@salesforce/lds-karma-config": "0.1.12"
     }

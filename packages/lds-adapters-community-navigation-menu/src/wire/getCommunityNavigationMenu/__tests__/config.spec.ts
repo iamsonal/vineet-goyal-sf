@@ -1,4 +1,4 @@
-import { GetCommunityNavigationMenu as getCommunityNavigationMenu } from '../../../index';
+import { GetCommunityNavigationMenu as getCommunityNavigationMenu } from '../../../generated/artifacts/main';
 
 describe('nav menu adapter config', () => {
     // TODO: enable as a part of W-7270344

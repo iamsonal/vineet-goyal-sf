@@ -4,6 +4,7 @@ __benchmarks_results__
 
 # Project artifacts
 dist
+sfdc
 build
 .rpt2_cache
 generated

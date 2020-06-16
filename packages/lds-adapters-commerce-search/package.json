@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-commerce-search",
-    "version": "0.1.12",
+    "version": "0.1.13",
     "description": "Wire adapters Community Navigation Menu",
     "license": "MIT",
     "main": "dist/umd/es2018/commerce-search.js",
@@ -17,6 +17,6 @@
         "test:compat": "karma start --single-run --compat"
     },
     "devDependencies": {
-        "@salesforce/lds-karma-config": "0.1.12"
+        "@salesforce/lds-karma-config": "0.1.13"
     }
 }

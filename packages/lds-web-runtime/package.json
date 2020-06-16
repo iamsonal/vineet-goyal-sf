@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-web-runtime",
-    "version": "0.1.12",
+    "version": "0.1.13",
     "description": "LDS engine for Lightning Web Runtime",
     "license": "MIT",
     "main": "dist/ldsEngineWebRuntime.js",
@@ -12,6 +12,6 @@
         "clean": "rm -rf dist"
     },
     "devDependencies": {
-        "@salesforce/lds-instrumentation": "0.1.12"
+        "@salesforce/lds-instrumentation": "0.1.13"
     }
 }

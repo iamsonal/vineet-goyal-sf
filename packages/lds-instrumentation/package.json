@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-instrumentation",
-    "version": "0.1.12",
+    "version": "0.1.13",
     "description": "Instrumentation utils for Lightning Data Service",
     "license": "MIT",
     "main": "dist/ldsInstrumentation.js",
@@ -12,6 +12,5 @@
         "clean": "rm -rf dist",
         "test": "jest",
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
-    },
-    "devDependencies": {}
+    }
 }

@@ -1,6 +1,6 @@
 {
     "name": "core-build",
-    "version": "0.1.12",
+    "version": "0.1.13",
     "description": "Core build and Lightning Platform specific code for Lightning Data Service",
     "private": true,
     "scripts": {
@@ -11,9 +11,9 @@
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     },
     "devDependencies": {
-        "@salesforce/lds-adapters-apex": "0.1.12",
-        "@salesforce/lds-adapters-uiapi": "0.1.12",
-        "@salesforce/lds-instrumentation": "0.1.12",
-        "@salesforce/lds-aura-runtime": "0.1.12"
+        "@salesforce/lds-adapters-apex": "0.1.13",
+        "@salesforce/lds-adapters-uiapi": "0.1.13",
+        "@salesforce/lds-aura-runtime": "0.1.13",
+        "@salesforce/lds-instrumentation": "0.1.13"
     }
 }

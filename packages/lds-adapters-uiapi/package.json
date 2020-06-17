@@ -20,6 +20,9 @@
         "test:unit": "jest",
         "test:overrides": "jest --testPathPattern=src/overrides"
     },
+    "dependencies": {
+        "@salesforce/lds-bindings": "0.1.13"
+    },
     "devDependencies": {
         "@salesforce/lds-compiler-plugins": "0.1.13",
         "@salesforce/lds-karma-config": "0.1.13"

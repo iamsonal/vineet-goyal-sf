@@ -24,6 +24,9 @@
     "publishConfig": {
         "registry": "https://npm.lwcjs.org"
     },
+    "dependencies": {
+        "@salesforce/lds-bindings": "0.1.13"
+    },
     "devDependencies": {
         "@salesforce/lds-karma-config": "0.1.13"
     }

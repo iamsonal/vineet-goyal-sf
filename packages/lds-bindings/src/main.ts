@@ -2,6 +2,7 @@ import { Adapter, AdapterFactory, LDS } from '@ldsjs/engine';
 import {
     createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor,
     WireAdapterConstructor,
+    bindWireRefresh,
 } from '@ldsjs/lwc-lds';
 import { lds } from '@salesforce/lds-web-runtime';
 import { instrumentAdapter } from '@salesforce/lds-instrumentation';
@@ -17,3 +18,5 @@ export function createWireAdapterConstructor<C, D>(
 export function createLDSAdapter<T>(name: string, factory: (lds: LDS) => T): T {
     return factory(lds);
 }
+
+export const refresh = bindWireRefresh(lds);

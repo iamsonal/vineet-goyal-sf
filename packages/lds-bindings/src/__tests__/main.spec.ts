@@ -9,9 +9,11 @@ jest.mock('@salesforce/lds-web-runtime', () => {
 jest.mock('@ldsjs/lwc-lds', () => {
     const spies = {
         createWireAdapterConstructor: jest.fn(),
+        bindWireRefreshSpy: jest.fn(),
     };
     return {
         createWireAdapterConstructor: spies.createWireAdapterConstructor,
+        bindWireRefresh: () => spies.bindWireRefreshSpy,
         __spies: spies,
     };
 });

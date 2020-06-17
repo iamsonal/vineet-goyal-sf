@@ -2176,19 +2176,19 @@
   dependencies:
     core-js "^2.5.7"
 
-"@ldsjs/adapter-test-library@^0.8.1":
-  version "0.8.1"
-  resolved "http://npm.lwcjs.org/@ldsjs/adapter-test-library/-/@ldsjs/adapter-test-library-0.8.1/cc19beae5dac23a0c66d09b39c1e31df5b5c7e74.tgz#cc19beae5dac23a0c66d09b39c1e31df5b5c7e74"
-  integrity sha512-+0ZMLROj6Z7oVI5Ti6Ztw7gyudpWbmbOzTB3/8EALcsF9xtngOcEeQACjBJckSzZdlUWJFycTmZY3Okk5FmhiA==
+"@ldsjs/adapter-test-library@^0.9.0":
+  version "0.9.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/adapter-test-library/-/@ldsjs/adapter-test-library-0.9.0/16ecca679239e1796aca0ab6bd033c5866aa2bfe.tgz#16ecca679239e1796aca0ab6bd033c5866aa2bfe"
+  integrity sha512-91oZ8MtN4V46WN5/Pvx3rQ0Q+FSk5mvo56LYmAuH9cdCu7Ho+nkMlLhtwXJ7q9OoJoD2ww/CA9WPAztPQXCX+w==
   dependencies:
     sinon "^7.5.0"
 
-"@ldsjs/cli@^0.8.1":
-  version "0.8.1"
-  resolved "http://npm.lwcjs.org/@ldsjs/cli/-/@ldsjs/cli-0.8.1/f9212fafaa2519b4ab56dc4416d7028e00b5b19b.tgz#f9212fafaa2519b4ab56dc4416d7028e00b5b19b"
-  integrity sha512-TxjgrAYyRy4GxI9mu14obws9B4gwzT6woVeSEmZ3LZZOER4ssFBGGvNXn+wFDfxQli+j0jRLA0+c7KJMJE5McA==
+"@ldsjs/cli@^0.9.0":
+  version "0.9.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/cli/-/@ldsjs/cli-0.9.0/26b7df92c0de30ecca816c4dd84d610dfe25b0a8.tgz#26b7df92c0de30ecca816c4dd84d610dfe25b0a8"
+  integrity sha512-jnJPSJv8DNwrVV3aNluY1yCNCl2w0ODOgVhlhJ20NFd0020WNfEzFCI65q1t/FWAUM2qHaUIKA0Z9nodlYYyvg==
   dependencies:
-    "@ldsjs/compiler" "0.8.1"
+    "@ldsjs/compiler" "0.9.0"
     "@oclif/command" "^1.5.19"
     "@oclif/config" "^1.13.3"
     "@oclif/plugin-help" "^2.2.1"
@@ -2196,29 +2196,24 @@
     strip-ansi "^6.0.0"
     text-table "^0.2.0"
 
-"@ldsjs/compiler@0.8.1", "@ldsjs/compiler@^0.8.1":
-  version "0.8.1"
-  resolved "http://npm.lwcjs.org/@ldsjs/compiler/-/@ldsjs/compiler-0.8.1/4f7dafe5cb459b5df9ddf9d87228f4e0f069d1dd.tgz#4f7dafe5cb459b5df9ddf9d87228f4e0f069d1dd"
-  integrity sha512-GCyUC4A93sSZParnR5h8LbN+MqBoCWwePh1pCfCU4F+16ZDsJgJoDJPQx/SwcLAVP9O45UTB5PQbOmGUaDwlRQ==
+"@ldsjs/compiler@0.9.0", "@ldsjs/compiler@^0.9.0":
+  version "0.9.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/compiler/-/@ldsjs/compiler-0.9.0/93c65fa74bbd9c1a9c4d85fa825a53a0f08c9ffb.tgz#93c65fa74bbd9c1a9c4d85fa825a53a0f08c9ffb"
+  integrity sha512-C6Og8YBEyON70f6zbaf5XNpGLgJ5vjL+0mnK6ohvj52lSQ8eK5a4ZVKOJ5QVukJKLnfePqTBnj4+OSVJ/+JY2Q==
   dependencies:
     amf-client-js "4.0.6"
 
-"@ldsjs/engine@0.8.1", "@ldsjs/engine@^0.8.1":
-  version "0.8.1"
-  resolved "http://npm.lwcjs.org/@ldsjs/engine/-/@ldsjs/engine-0.8.1/c53ae5ff9915454a2d2222cd8118897103c19632.tgz#c53ae5ff9915454a2d2222cd8118897103c19632"
-  integrity sha512-egVQfMKCHNrVZZJXDV4LLBwh6ubt6ei663Ue6+9qFi7MtHZZBsYwV9Bp2qpCnuk8rUICHIS+2gnhJB9gxY7ZqQ==
+"@ldsjs/engine@0.9.0", "@ldsjs/engine@^0.9.0":
+  version "0.9.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/engine/-/@ldsjs/engine-0.9.0/5ebebbf6a09d950f48fcec48d9eb755c4190e373.tgz#5ebebbf6a09d950f48fcec48d9eb755c4190e373"
+  integrity sha512-MNMG3eimgm8ErZSveyl491vIN/X8x9VINV+Ac2uP800kUmkqNap10qpNUPWKUz318fqo58541K+K+I9O53i8IQ==
 
-"@ldsjs/engine@^0.8.0":
-  version "0.8.0"
-  resolved "http://npm.lwcjs.org/@ldsjs/engine/-/@ldsjs/engine-0.8.0/2b8fd80d9fba19ef318ec8e38b961f1272c185af.tgz#2b8fd80d9fba19ef318ec8e38b961f1272c185af"
-  integrity sha512-OchfVA4OgvrD4zjixIw/5nS9XyFj5O8+aIHTdiOrwNzC6NoICCBgAaZLIYRmablIL5OMTBaBAmlZA0bVCCMkOA==
-
-"@ldsjs/lwc-lds@^0.8.1":
-  version "0.8.1"
-  resolved "http://npm.lwcjs.org/@ldsjs/lwc-lds/-/@ldsjs/lwc-lds-0.8.1/234144486e8dae677757f4fefacc853d7fecaf87.tgz#234144486e8dae677757f4fefacc853d7fecaf87"
-  integrity sha512-GHKdP+zlv3L5oG5SeawtHxUrU9kpHVsLkQjE1vfN60wIlGS0R0JoSBcYCsloXjv1BbiJu7Ni6p+LNUW1TyvoXA==
+"@ldsjs/lwc-lds@^0.9.0":
+  version "0.9.0"
+  resolved "http://npm.lwcjs.org/@ldsjs/lwc-lds/-/@ldsjs/lwc-lds-0.9.0/98f6a0c5e35b8f3606f643df68a7d0820a16412c.tgz#98f6a0c5e35b8f3606f643df68a7d0820a16412c"
+  integrity sha512-5VO1ZkOoF8/5vdnTk5M0fVfr9em1tadHq4KNeaApap9qRHLSPOcoqk0x/4mNMYf6TXOwIMrzaheAcZ6ny5cppA==
   dependencies:
-    "@ldsjs/engine" "0.8.1"
+    "@ldsjs/engine" "0.9.0"
 
 "@lerna/add@3.21.0":
   version "3.21.0"

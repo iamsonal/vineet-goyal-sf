@@ -13,10 +13,10 @@
         "test": "jest"
     },
     "dependencies": {
-        "@ldsjs/lwc-lds": "^0.8.1"
+        "@ldsjs/lwc-lds": "^0.9.0"
     },
     "devDependencies": {
-        "@ldsjs/engine": "^0.8.1",
+        "@ldsjs/engine": "^0.9.0",
         "@salesforce/lds-web-runtime": "0.1.13"
     }
 }

@@ -5,7 +5,7 @@
     "license": "MIT",
     "main": "dist/umd/es2018/cms-delivery.js",
     "module": "dist/es/es2018/cms-delivery.js",
-    "types": "dist/es/es2018/artifacts/main.d.ts",
+    "types": "dist/types/src/generated/artifacts/main.d.ts",
     "files": [
         "dist",
         "sfdc",

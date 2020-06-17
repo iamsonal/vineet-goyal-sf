@@ -1,10 +1,31 @@
 import typescript from 'rollup-plugin-typescript2';
 import path from 'path';
+import fs from 'fs';
 
 const defaultConfigs = [
     { formats: ['es', 'umd'], target: 'es2018' },
     { formats: ['umd'], target: 'es5' },
 ];
+
+const PATHS = {
+    '@salesforce/lds-bindings': 'force/ldsBindings',
+};
+
+const EXTERNALS = ['@salesforce/lds-bindings', '@salesforce/lds-web-runtime'];
+
+/**
+ * @param {string} cwd
+ */
+function getDistDir(cwd) {
+    return path.join(cwd, 'dist');
+}
+
+/**
+ * @param {string} cwd
+ */
+function getTypesDir(cwd) {
+    return path.join(getDistDir(cwd), 'types');
+}
 
 /**
  * @param {{
@@ -17,24 +38,44 @@ const defaultConfigs = [
  */
 function sfdcConfiguration(config) {
     const { sfdcEntry, cwd } = config;
-    const tsConfig = path.join(cwd, 'tsconfig.json');
-    const dist = path.join(__dirname, 'sfdc');
+    const sfdcDistFolder = path.join(cwd, 'sfdc');
+    const sfdcEntryDirectoryLocal = path.relative(cwd, sfdcEntry);
+    const typesDir = getTypesDir(cwd);
+    const relativePathFromSfdcEntryToTypesDist = path.relative(sfdcDistFolder, typesDir);
+    const typesImportPath = path.join(
+        relativePathFromSfdcEntryToTypesDist,
+        path.dirname(sfdcEntryDirectoryLocal),
+        path.basename(sfdcEntryDirectoryLocal, path.extname(sfdcEntryDirectoryLocal))
+    );
 
     return [
         {
             input: sfdcEntry,
-            external: ['@salesforce/lds-bindings'],
+            external: EXTERNALS,
             output: {
-                file: path.join(dist, 'index.js'),
+                file: path.join(sfdcDistFolder, 'index.js'),
                 format: 'es',
-                paths: {
-                    '@salesforce/lds-bindings': 'force/ldsBindings',
-                },
+                paths: PATHS,
+                plugins: [
+                    {
+                        writeBundle() {
+                            fs.writeFileSync(
+                                path.join(sfdcDistFolder, 'index.d.ts'),
+                                `export * from '${typesImportPath}';`
+                            );
+                        },
+                    },
+                ],
             },
             plugins: [
                 typescript({
-                    clean: true,
-                    tsconfig: tsConfig,
+                    clean: false,
+                    cwd,
+                    tsconfigOverride: {
+                        compilerOptions: {
+                            declaration: false,
+                        },
+                    },
                 }),
             ],
         },
@@ -56,8 +97,9 @@ function sfdcConfiguration(config) {
  */
 function localConfiguration(args, config) {
     const { configTarget, configFormat } = args;
-    const { entry, fileName, bundleName } = config;
-    const dist = path.join(__dirname, 'dist');
+    const { entry, fileName, bundleName, cwd } = config;
+    const dist = getDistDir(cwd);
+    const typesDir = getTypesDir(cwd);
 
     return defaultConfigs
         .filter(config => configTarget === undefined || configTarget === config.target)
@@ -76,8 +118,11 @@ function localConfiguration(args, config) {
                 plugins: [
                     typescript({
                         clean: true,
+                        useTsconfigDeclarationDir: true,
                         tsconfigOverride: {
                             compilerOptions: {
+                                composite: true,
+                                declarationDir: typesDir,
                                 target: config.target,
                             },
                         },
@@ -97,5 +142,5 @@ function localConfiguration(args, config) {
  * }} config
  */
 export function rollup(config) {
-    return args => [...sfdcConfiguration(config), ...localConfiguration(args, config)];
+    return args => [...localConfiguration(args, config), ...sfdcConfiguration(config)];
 }

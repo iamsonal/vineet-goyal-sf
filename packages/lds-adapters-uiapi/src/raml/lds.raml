@@ -296,13 +296,34 @@ types:
               recordIds: SalesforceRecordId18Array
               formFactor: SalesforceFormFactor
               sections: SortedStringArray
-      /related-list/{relatedListIds}:
+      /related-list/batch/{relatedListIds}:
+        get:
+          (lds.adapter):
+            name: getRelatedListsActions
+            coercedParams:
+              recordIds: SalesforceRecordId18Array
+              relatedListIds: SortedStringArray
+              formFactor: SalesforceFormFactor
+              sections: SortedStringArray
+          (lds.composite):
+            resource: /ui-api/actions/record/{recordIds}/related-list/{relatedListId}
+            uriParameters:
+              recordIds: recordIds
+              relatedListId: relatedListIds
+            queryParameters:
+              actionTypes: actionTypes
+              formFactor: formFactor
+              sections: sections
+            envelope:
+              path: results
+              statusCode: statusCode
+              body: result
+      /related-list/{relatedListId}:
         get:
           (lds.adapter):
             name: getRelatedListActions
             coercedParams:
               recordIds: SalesforceRecordId18Array
-              relatedListIds: SortedStringArray
               formFactor: SalesforceFormFactor
               sections: SortedStringArray
       '/related-list-record/{relatedListRecordIds}':

@@ -26,6 +26,7 @@ export { getRelatedListRecordsBatchAdapterFactory as GetRelatedListRecordsBatch 
 export { getLookupActionsAdapterFactory as GetLookupActions } from './generated/adapters/getLookupActions';
 export { getRecordActionsAdapterFactory as GetRecordActions } from './generated/adapters/getRecordActions';
 export { getRelatedListActionsAdapterFactory as GetRelatedListActions } from './generated/adapters/getRelatedListActions';
+export { getRelatedListsActionsAdapterFactory as GetRelatedListsActions } from './generated/adapters/getRelatedListsActions';
 export { getRecordEditActionsAdapterFactory as GetRecordEditActions } from './generated/adapters/getRecordEditActions';
 export { getRelatedListsInfoAdapterFactory as GetRelatedListsInfo } from './generated/adapters/getRelatedListsInfo';
 export { getRelatedListInfoBatchAdapterFactory as GetRelatedListInfoBatch } from './generated/adapters/getRelatedListInfoBatch';

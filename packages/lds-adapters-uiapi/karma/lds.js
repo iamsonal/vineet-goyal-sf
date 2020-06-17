@@ -29,6 +29,7 @@ import {
     GetRecordNotifyChange,
     GetRecordUi,
     GetRelatedListActions,
+    GetRelatedListsActions,
     GetRelatedListInfo,
     GetRelatedListInfoBatch,
     GetRelatedListsInfo,
@@ -125,6 +126,11 @@ const getRelatedListActions = createWireAdapterConstructor(
     'getRelatedListActionsConstructor',
     lds
 );
+const getRelatedListsActions = createWireAdapterConstructor(
+    GetRelatedListsActions(lds),
+    'getRelatedListsActionsConstructor',
+    lds
+);
 const getRelatedListInfo = createWireAdapterConstructor(
     GetRelatedListInfo(lds),
     'getRelatedListInfoConstructor',
@@ -202,6 +208,7 @@ export {
     getRecordEditActions,
     getRecordUi,
     getRelatedListActions,
+    getRelatedListsActions,
     getRelatedListInfo,
     getRelatedListInfoBatch,
     getRelatedListsInfo,

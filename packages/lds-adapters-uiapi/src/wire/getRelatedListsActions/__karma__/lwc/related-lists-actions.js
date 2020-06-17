@@ -1,16 +1,16 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getRelatedListActions } from 'lds';
+import { getRelatedListsActions } from 'lds';
 
-export default class RelatedListActions extends LightningElement {
+export default class RelatedListsActions extends LightningElement {
     @api recordIds;
-    @api relatedListId;
+    @api relatedListIds;
     wirePushCount = -1;
 
-    @wire(getRelatedListActions, {
+    @wire(getRelatedListsActions, {
         recordIds: '$recordIds',
-        relatedListId: '$relatedListId',
+        relatedListIds: '$relatedListIds',
     })
-    onGetRelatedListActions(result) {
+    onGetRelatedListsActions(result) {
         this.action = result;
         this.wirePushCount += 1;
     }

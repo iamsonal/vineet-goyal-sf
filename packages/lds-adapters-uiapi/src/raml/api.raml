@@ -98,6 +98,22 @@ types:
       url:
         description: the url of the current request
         type: string
+  ActionBatchRepresentation: # TODO: hand-rolled
+    description: Result of an entire batch request operation. Results are ordered in the same order in which the requests were given. Results may either be a successful result with a response body, a successful result without a response body, or an error result without a response body. Success and error are determined by the status code in each result.
+    type: object
+    properties:
+      results:
+        description: Collection of batch result items. One for each request input.
+        type: array # TODO: hand-rolled
+        items:
+          type: ActionBatchResultRepresentation
+  ActionBatchResultRepresentation: # TODO: hand-rolled
+    type: object
+    properties:
+      statusCode:
+        type: number
+      result:
+        type: ActionRepresentation
   AggregateInputRepresentation:
     description: The operations that are to be executed within aggregate
     type: object
@@ -3454,56 +3470,103 @@ types:
             items:
               type: string
               (oas-collectionFormat): csv
-      /related-list/{relatedListIds}:
-        get:
-          description: Retrieve presentation-ready action data about specific recordId for the RelatedList subcontexts relatedListIds.
-          responses:
-            '200':
-              description: Success
-              body:
-                application/json:
-                  type: ActionRepresentation
-          queryParameters:
-            actionTypes:
+        /batch/{relatedListIds}:
+          get:
+            description: Retrieve presentation-ready action data about specific recordId for the RelatedList subcontexts relatedListIds but returned in the manner LDS expects for batching.
+            responses:
+              '200':
+                description: Success
+                body:
+                  application/json:
+                    type: ActionBatchRepresentation
+            queryParameters:
+              actionTypes:
+                type: array
+                required: false
+                items:
+                  type: string
+                  enum:
+                    - ActionLink
+                    - CustomButton
+                    - InvocableAction
+                    - ProductivityAction
+                    - QuickAction
+                    - StandardButton
+                  (oas-collectionFormat): csv
+              formFactor:
+                type: string
+                required: false
+              sections:
+                type: array
+                required: false
+                items:
+                  type: string
+                  enum:
+                    - ActivityComposer
+                    - CollaborateComposer
+                    - Page
+                    - SingleActionLinks
+                  (oas-collectionFormat): csv
+          uriParameters:
+            recordIds:
               type: array
-              required: false
+              required: true
               items:
                 type: string
-                enum:
-                  - ActionLink
-                  - CustomButton
-                  - InvocableAction
-                  - ProductivityAction
-                  - QuickAction
-                  - StandardButton
                 (oas-collectionFormat): csv
-            formFactor:
-              type: string
-              required: false
-            sections:
+            relatedListIds:
               type: array
-              required: false
+              required: true
               items:
                 type: string
-                enum:
-                  - ActivityComposer
-                  - CollaborateComposer
-                  - Page
-                  - SingleActionLinks
                 (oas-collectionFormat): csv
-        uriParameters:
-          recordIds:
-            type: array
-            required: true
-            items:
+        /{relatedListId}:
+          get:
+            description: Retrieve presentation-ready action data about specific recordId for the RelatedList subcontexts relatedListIds.
+            responses:
+              '200':
+                description: Success
+                body:
+                  application/json:
+                    type: ActionRepresentation
+            queryParameters:
+              actionTypes:
+                type: array
+                required: false
+                items:
+                  type: string
+                  enum:
+                    - ActionLink
+                    - CustomButton
+                    - InvocableAction
+                    - ProductivityAction
+                    - QuickAction
+                    - StandardButton
+                  (oas-collectionFormat): csv
+              formFactor:
+                type: string
+                required: false
+              sections:
+                type: array
+                required: false
+                items:
+                  type: string
+                  enum:
+                    - ActivityComposer
+                    - CollaborateComposer
+                    - Page
+                    - SingleActionLinks
+                  (oas-collectionFormat): csv
+          uriParameters:
+            recordIds:
+              type: array
+              required: true
+              items:
+                type: string
+                (oas-collectionFormat): csv
+            relatedListId:
               type: string
-              (oas-collectionFormat): csv
-          relatedListIds:
-            type: array
-            required: true
-            items:
-              type: string
-              (oas-collectionFormat): csv
+              required: true
       /related-list-record/{relatedListRecordIds}:
         get:
           description: Retrieve presentation-ready action data about specific recordId under the related-list-record relatedListRecordIds.

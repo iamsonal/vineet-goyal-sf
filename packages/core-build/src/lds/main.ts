@@ -27,6 +27,7 @@ import {
     GetRecordTemplateCreate,
     GetRecordUi,
     GetRelatedListActions,
+    GetRelatedListsActions,
     GetRelatedListCount,
     GetRelatedListInfo,
     GetRelatedListRecordActions,
@@ -192,6 +193,11 @@ export const [getRecordUi, _getRecordUi] = setupWireAdapter('getRecordUi', GetRe
 export const [getRelatedListActions, _getRelatedListActions] = setupWireAdapter(
     'getRelatedListActions',
     GetRelatedListActions,
+    true
+);
+export const [getRelatedListsActions, _getRelatedListsActions] = setupWireAdapter(
+    'getRelatedListsActions',
+    GetRelatedListsActions,
     true
 );
 export const [getRelatedListCount, _getRelatedListCount] = setupWireAdapter(

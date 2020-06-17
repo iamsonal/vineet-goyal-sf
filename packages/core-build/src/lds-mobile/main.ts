@@ -22,6 +22,7 @@ import {
     GetRecordEditActions,
     GetRecordUi,
     GetRelatedListActions,
+    GetRelatedListsActions,
     GetRelatedListCount,
     GetRelatedListInfo,
     GetRelatedListRecordActions,
@@ -71,6 +72,7 @@ export const getRelatedListInfo = GetRelatedListInfo(lds);
 export const getLookupActions = GetLookupActions(lds);
 export const getRecordActions = GetRecordActions(lds);
 export const getRelatedListActions = GetRelatedListActions(lds);
+export const getRelatedListsActions = GetRelatedListsActions(lds);
 export const getRecordEditActions = GetRecordEditActions(lds);
 export const getRelatedListRecordActions = GetRelatedListRecordActions(lds);
 export const getObjectInfo = GetObjectInfo(lds);
@@ -117,6 +119,7 @@ const adapterMap: AdapterMap = {
     getLookupActions,
     getRecordActions,
     getRelatedListActions,
+    getRelatedListsActions,
     getRecordEditActions,
     getRelatedListRecordActions,
     getObjectInfo,

@@ -8,6 +8,7 @@ enum UiApiActionsController {
     GetRecordActions = 'ActionsController.getRecordActions',
     GetRecordEditActions = 'ActionsController.getRecordEditActions',
     GetRelatedListActions = 'ActionsController.getRelatedListActions',
+    GetRelatedListsActions = 'ActionsController.getRelatedListsActions',
     GetRelatedListRecordActions = 'ActionsController.getRelatedListRecordActions',
 }
 
@@ -15,6 +16,7 @@ const UIAPI_ACTIONS_LOOKUP_PATH = `${UI_API_BASE_URI}/actions/lookup/`;
 const UIAPI_ACTIONS_RECORD_PATH = `${UI_API_BASE_URI}/actions/record/`;
 const UIAPI_ACTIONS_RECORD_EDIT = '/record-edit';
 const UIAPI_ACTIONS_RELATED_LIST = '/related-list/';
+const UIAPI_ACTIONS_RELATED_LIST_BATCH = '/related-list/batch/';
 const UIAPI_ACTIONS_RELATED_LIST_RECORD = '/related-list-record/';
 
 function getLookupActions(resourceRequest: ResourceRequest): Promise<any> {
@@ -49,6 +51,19 @@ function getRecordEditActions(resourceRequest: ResourceRequest): Promise<any> {
 
 function getRelatedListActions(resourceRequest: ResourceRequest): Promise<any> {
     const {
+        urlParams: { recordIds, relatedListId },
+        queryParams,
+    } = resourceRequest;
+    const parameters = buildUiApiParams(
+        { recordIds, relatedListId, ...queryParams },
+        resourceRequest
+    );
+
+    return dispatchAction(UiApiActionsController.GetRelatedListActions, parameters);
+}
+
+function getRelatedListsActions(resourceRequest: ResourceRequest): Promise<any> {
+    const {
         urlParams: { recordIds, relatedListIds },
         queryParams,
     } = resourceRequest;
@@ -57,7 +72,7 @@ function getRelatedListActions(resourceRequest: ResourceRequest): Promise<any> {
         resourceRequest
     );
 
-    return dispatchAction(UiApiActionsController.GetRelatedListActions, parameters);
+    return dispatchAction(UiApiActionsController.GetRelatedListsActions, parameters);
 }
 
 function getRelatedListRecordActions(resourceRequest: ResourceRequest): Promise<any> {
@@ -87,8 +102,16 @@ appRouter.get(
 );
 appRouter.get(
     (path: string) =>
-        path.startsWith(UIAPI_ACTIONS_RECORD_PATH) && path.indexOf(UIAPI_ACTIONS_RELATED_LIST) > 0,
+        path.startsWith(UIAPI_ACTIONS_RECORD_PATH) &&
+        path.indexOf(UIAPI_ACTIONS_RELATED_LIST) > 0 &&
+        path.indexOf(UIAPI_ACTIONS_RELATED_LIST_BATCH) === -1,
     getRelatedListActions
+);
+appRouter.get(
+    (path: string) =>
+        path.startsWith(UIAPI_ACTIONS_RECORD_PATH) &&
+        path.indexOf(UIAPI_ACTIONS_RELATED_LIST_BATCH) > 0,
+    getRelatedListsActions
 );
 appRouter.get(
     (path: string) =>

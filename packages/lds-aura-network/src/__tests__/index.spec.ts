@@ -1537,12 +1537,12 @@ describe('routes', () => {
                     basePath: `/actions/record/1234/related-list/1111`,
                     urlParams: {
                         recordIds: ['1234'],
-                        relatedListIds: ['1111'],
+                        relatedListId: '1111',
                     },
                 },
                 [
                     'ActionsController.getRelatedListActions',
-                    { recordIds: ['1234'], relatedListIds: ['1111'] },
+                    { recordIds: ['1234'], relatedListId: '1111' },
                     undefined,
                 ]
             );
@@ -1553,7 +1553,7 @@ describe('routes', () => {
                 basePath: `/actions/record/1234/related-list/1111`,
                 urlParams: {
                     recordIds: ['1234'],
-                    relatedListIds: ['1111'],
+                    relatedListId: '1111',
                 },
             });
 
@@ -1562,6 +1562,54 @@ describe('routes', () => {
                     method: 'get',
                     baseUri: UI_API_BASE_URI,
                     basePath: `/actions/record/1234,5678/related-list/1111`,
+                    urlParams: {
+                        recordIds: ['1234'],
+                        relatedListId: '1111',
+                    },
+                },
+                {
+                    actions: {
+                        '1234': {
+                            actions: [],
+                        },
+                    },
+                }
+            );
+        });
+
+        describe('/related-list/batch', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/actions/record/1234/related-list/batch/1111`,
+                    urlParams: {
+                        recordIds: ['1234'],
+                        relatedListIds: ['1111'],
+                    },
+                },
+                [
+                    'ActionsController.getRelatedListsActions',
+                    { recordIds: ['1234'], relatedListIds: ['1111'] },
+                    undefined,
+                ]
+            );
+
+            testRejectFetchResponse({
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/actions/record/1234/related-list/batch/1111`,
+                urlParams: {
+                    recordIds: ['1234'],
+                    relatedListIds: ['1111'],
+                },
+            });
+
+            testResolveResponse(
+                {
+                    method: 'get',
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/actions/record/1234,5678/related-list/batch/1111`,
                     urlParams: {
                         recordIds: ['1234'],
                         relatedListIds: ['1111'],

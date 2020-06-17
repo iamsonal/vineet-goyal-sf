@@ -11,6 +11,7 @@ import {
     _getRelatedListInfo,
     _getRelatedListsInfo,
     _getRelatedListActions,
+    _getRelatedListsActions,
     _getRelatedListCount,
     _getRelatedListsCount,
     _getRelatedListInfoBatch,
@@ -38,6 +39,7 @@ jest.mock('@salesforce/lds-adapters-uiapi', () => {
         getRelatedListInfoSpy: jest.fn(mockAdapter),
         getRelatedListsInfoSpy: jest.fn(mockAdapter),
         getRelatedListActionsSpy: jest.fn(mockAdapter),
+        getRelatedListsActionsSpy: jest.fn(mockAdapter),
         getRelatedListCountSpy: jest.fn(mockAdapter),
         getRelatedListsCountSpy: jest.fn(mockAdapter),
         getRelatedListInfoBatchSpy: jest.fn(mockAdapter),
@@ -60,6 +62,7 @@ jest.mock('@salesforce/lds-adapters-uiapi', () => {
         GetRelatedListInfo: () => spies.getRelatedListInfoSpy,
         GetRelatedListsInfo: () => spies.getRelatedListsInfoSpy,
         GetRelatedListActions: () => spies.getRelatedListActionsSpy,
+        GetRelatedListsActions: () => spies.getRelatedListsActionsSpy,
         GetRelatedListCount: () => spies.getRelatedListCountSpy,
         GetRelatedListsCount: () => spies.getRelatedListsCountSpy,
         GetRelatedListInfoBatch: () => spies.getRelatedListInfoBatchSpy,
@@ -296,6 +299,13 @@ describe('lds main', () => {
             const config = {};
             await _getRelatedListActions(config as any);
             expect(uiApiRecordsSpies.getRelatedListActionsSpy).toHaveBeenCalledWith(config);
+        });
+    });
+    describe('_getRelatedListsActions', () => {
+        it('should call adapter returned by GetRelatedListsActions', async () => {
+            const config = {};
+            await _getRelatedListsActions(config as any);
+            expect(uiApiRecordsSpies.getRelatedListsActionsSpy).toHaveBeenCalledWith(config);
         });
     });
     describe('_getRelatedListCount', () => {

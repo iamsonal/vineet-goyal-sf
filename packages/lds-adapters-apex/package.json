@@ -5,9 +5,14 @@
     "license": "MIT",
     "main": "dist/umd/es2018/apex-service.js",
     "module": "dist/es/es2018/apex-service.js",
-    "types": "dist/es/es2018/index.d.ts",
+    "types": "dist/types/src/main.d.ts",
+    "files": [
+        "dist",
+        "sfdc",
+        "src/raml/*"
+    ],
     "scripts": {
-        "clean": "rm -rf dist src/generated karma/dist",
+        "clean": "rm -rf dist sfdc src/generated karma/dist",
         "build": "yarn build:raml && yarn build:services && yarn build:karma-utils",
         "build:raml": "lds generate src/raml/lds.raml src/generated",
         "build:services": "rollup --config rollup.config.js",
@@ -16,6 +21,12 @@
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat",
         "test:unit": "jest"
+    },
+    "publishConfig": {
+        "registry": "https://npm.lwcjs.org"
+    },
+    "dependencies": {
+        "@salesforce/lds-bindings": "0.1.13"
     },
     "devDependencies": {
         "@salesforce/lds-karma-config": "0.1.13"

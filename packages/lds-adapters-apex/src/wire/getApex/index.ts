@@ -177,7 +177,7 @@ function network(
     );
 }
 
-export const factory = (lds: LDS, invokerParams: ApexInvokerParams) => {
+export const factory = (lds: LDS, invokerParams: ApexInvokerParams): Adapter<any, any> => {
     const { namespace, classname, method, isContinuation } = invokerParams;
     const adapter = getLdsAdapterFactory(lds, namespace, classname, method, isContinuation, true);
 

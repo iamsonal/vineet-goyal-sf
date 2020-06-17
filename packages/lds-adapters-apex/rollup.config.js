@@ -1,41 +1,49 @@
+import { localConfiguration, sfdcConfiguration } from '../../scripts/rollup/rollup.config.adapters';
 import path from 'path';
 import typescript from 'rollup-plugin-typescript2';
 
-const entry = path.join(__dirname, 'src', 'index.ts');
-const dist = path.join(__dirname, 'dist');
+const sfdcEntry = path.join(__dirname, 'src', 'sfdc.ts');
+const entry = path.join(__dirname, 'src', 'main.ts');
 
-const defaultConfigs = [
-    { formats: ['es', 'umd'], target: 'es2018' },
-    { formats: ['umd'], target: 'es5' },
-];
+const config = {
+    cwd: __dirname,
+    sfdcEntry,
+    entry,
+    fileName: 'apex-service',
+    bundleName: 'apexService',
+};
 
+/**
+ * @param {{
+ *  configTarget: string,
+ *  configFormat: string,
+ * }} args
+ */
 export default function(args) {
-    const { configTarget, configFormat } = args;
+    const sfdcConfigurations = sfdcConfiguration(config, {
+        external: ['./lds-apex-static-utils'],
+    });
+    const localConfigurations = localConfiguration(args, config);
 
-    return defaultConfigs
-        .filter(config => configTarget === undefined || configTarget === config.target)
-        .map(config => {
-            const output = config.formats
-                .filter(format => configFormat === undefined || configFormat === format)
-                .map(format => ({
-                    file: `${dist}/${format}/${config.target}/apex-service.js`,
-                    format,
-                    name: 'apexService',
-                }));
-
-            return {
-                input: entry,
-                output,
-                plugins: [
-                    typescript({
-                        clean: true,
-                        tsconfigOverride: {
-                            compilerOptions: {
-                                target: config.target,
-                            },
+    return [
+        ...localConfigurations,
+        ...sfdcConfigurations,
+        {
+            input: path.join(__dirname, 'src', 'lds-apex-static-utils.ts'),
+            output: {
+                file: path.join(__dirname, 'sfdc', 'lds-apex-static-utils.js'),
+                format: 'es',
+            },
+            plugins: [
+                typescript({
+                    clean: false,
+                    tsconfigOverride: {
+                        compilerOptions: {
+                            declaration: false,
                         },
-                    }),
-                ],
-            };
-        });
+                    },
+                }),
+            ],
+        },
+    ];
 }

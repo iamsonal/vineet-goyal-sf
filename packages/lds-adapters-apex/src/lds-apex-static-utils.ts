@@ -2,7 +2,6 @@ import { splitQualifiedFieldApiName, getFieldApiName } from './util/utils';
 import { ObjectPrototypeHasOwnProperty } from './util/language';
 import { untrustedIsObject } from './generated/adapters/adapter-utils';
 import { FieldId } from './types';
-export { factory as GenerateGetApexWireAdapter, invoker as GetApexInvoker } from './wire/getApex';
 /**
  * Gets a field value from an Apex sObject.
  * @param sobject The sObject holding the field.

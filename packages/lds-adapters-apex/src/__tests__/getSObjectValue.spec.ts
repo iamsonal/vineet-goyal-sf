@@ -1,4 +1,4 @@
-import { getSObjectValue } from '../index';
+import { getSObjectValue } from '../lds-apex-static-utils';
 import { ApexSObject } from '../types';
 
 describe('getSObjectValue', () => {

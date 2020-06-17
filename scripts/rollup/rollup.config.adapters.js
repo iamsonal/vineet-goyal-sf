@@ -11,7 +11,7 @@ const PATHS = {
     '@salesforce/lds-bindings': 'force/ldsBindings',
 };
 
-const EXTERNALS = ['@salesforce/lds-bindings', '@salesforce/lds-web-runtime'];
+const EXTERNALS = ['@salesforce/lds-bindings'];
 
 /**
  * @param {string} cwd
@@ -35,9 +35,14 @@ function getTypesDir(cwd) {
  *  fileName: string,
  *  bundleName: string
  * }} config
+ *
+ * @param{{
+ *   external?: string[]
+ * }} overrides;
  */
-function sfdcConfiguration(config) {
+export function sfdcConfiguration(config, overrides = {}) {
     const { sfdcEntry, cwd } = config;
+    const { external: overridesExternals = [] } = overrides;
     const sfdcDistFolder = path.join(cwd, 'sfdc');
     const sfdcEntryDirectoryLocal = path.relative(cwd, sfdcEntry);
     const typesDir = getTypesDir(cwd);
@@ -51,7 +56,7 @@ function sfdcConfiguration(config) {
     return [
         {
             input: sfdcEntry,
-            external: EXTERNALS,
+            external: [...EXTERNALS, ...overridesExternals],
             output: {
                 file: path.join(sfdcDistFolder, 'index.js'),
                 format: 'es',
@@ -95,7 +100,7 @@ function sfdcConfiguration(config) {
  *  bundleName: string
  * }} config
  */
-function localConfiguration(args, config) {
+export function localConfiguration(args, config) {
     const { configTarget, configFormat } = args;
     const { entry, fileName, bundleName, cwd } = config;
     const dist = getDistDir(cwd);

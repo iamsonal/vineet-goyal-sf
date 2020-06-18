@@ -3,7 +3,7 @@ const baseConfig = require('../../scripts/jest/base.config');
 module.exports = {
     ...baseConfig,
 
-    displayName: 'lds-aura-runtime',
+    displayName: 'lds-runtime-aura',
     roots: ['<rootDir>/src'],
 
     /**

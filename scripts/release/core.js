@@ -18,9 +18,9 @@ const REPO_LDS_STATIC_FUNCTIONS_PATH = path.resolve(
 );
 
 const REPO_LDS_BINDINGS_PATH = path.resolve(REPO_ROOT, 'packages/lds-bindings/dist/ldsBindings.js');
-const REPO_LDS_ENGINE_AURA_RUNTIME_PATH = path.resolve(
+const REPO_LDS_ENGINE_RUNTIME_AURA_PATH = path.resolve(
     REPO_ROOT,
-    'packages/lds-aura-runtime/dist/ldsEngine.js'
+    'packages/lds-runtime-aura/dist/ldsEngine.js'
 );
 const REPO_LDS_ENGINE_RUNTIME_MOBILE_PATH = path.resolve(
     REPO_ROOT,
@@ -82,7 +82,7 @@ const CORE_LDS_STATIC_FUNCTIONS_PATH = path.resolve(
     'core/ui-force-components/modules/force/lds/lds-static-functions.js'
 );
 
-const CORE_LDS_ENGINE_AURA_RUNTIME_PATH = path.resolve(
+const CORE_LDS_ENGINE_RUNTIME_AURA_PATH = path.resolve(
     BLT_HOME,
     'app',
     CORE_BRANCH,
@@ -294,7 +294,7 @@ function deployAdapterPackage() {
 
     // main (228) only modules
     if (CORE_BRANCH === MAIN_BRANCH) {
-        checkCore(CORE_LDS_ENGINE_AURA_RUNTIME_PATH);
+        checkCore(CORE_LDS_ENGINE_RUNTIME_AURA_PATH);
         checkCore(CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH);
         checkCore(CORE_LDS_NETWORK_PATH);
         checkCore(CORE_LDS_STORAGE_PATH);
@@ -321,7 +321,7 @@ function deployAdapterPackage() {
 
     // main (228) only modules
     if (CORE_BRANCH === MAIN_BRANCH) {
-        copyArtifacts(REPO_LDS_ENGINE_AURA_RUNTIME_PATH, CORE_LDS_ENGINE_AURA_RUNTIME_PATH);
+        copyArtifacts(REPO_LDS_ENGINE_RUNTIME_AURA_PATH, CORE_LDS_ENGINE_RUNTIME_AURA_PATH);
         copyArtifacts(REPO_LDS_ENGINE_RUNTIME_MOBILE_PATH, CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH);
         copyArtifacts(REPO_LDS_NETWORK_PATH, CORE_LDS_NETWORK_PATH);
         copyArtifacts(REPO_LDS_STORAGE_PATH, CORE_LDS_STORAGE_PATH);

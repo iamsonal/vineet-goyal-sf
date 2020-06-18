@@ -1,4 +1,4 @@
-import { lds } from '@salesforce/lds-web-runtime';
+import { lds } from '@salesforce/lds-runtime-web';
 
 import { setupMetadataWatcher } from './metadata';
 

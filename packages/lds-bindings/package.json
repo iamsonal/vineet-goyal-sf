@@ -12,11 +12,14 @@
         "clean": "rm -rf dist",
         "test": "jest"
     },
+    "publishConfig": {
+        "registry": "https://npm.lwcjs.org"
+    },
     "dependencies": {
         "@ldsjs/lwc-lds": "^0.9.0"
     },
     "devDependencies": {
         "@ldsjs/engine": "^0.9.0",
-        "@salesforce/lds-web-runtime": "0.1.13"
+        "@salesforce/lds-runtime-web": "0.1.13"
     }
 }

@@ -38,7 +38,7 @@ const browser = {
         'lwc',
         'wire-service',
         'instrumentation/service', // only used by AdsBridge
-        '@salesforce/lds-aura-runtime',
+        '@salesforce/lds-runtime-aura',
         '@salesforce/lds-instrumentation',
     ],
 
@@ -50,7 +50,7 @@ const browser = {
         paths: {
             'lds-static-functions': './lds-static-functions',
             '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
-            '@salesforce/lds-aura-runtime': 'force/ldsEngine',
+            '@salesforce/lds-runtime-aura': 'force/ldsEngine',
         },
     },
 

@@ -4,7 +4,7 @@ import {
     WireAdapterConstructor,
     bindWireRefresh,
 } from '@ldsjs/lwc-lds';
-import { lds } from '@salesforce/lds-web-runtime';
+import { lds } from '@salesforce/lds-runtime-web';
 import { instrumentAdapter } from '@salesforce/lds-instrumentation';
 
 export function createWireAdapterConstructor<C, D>(

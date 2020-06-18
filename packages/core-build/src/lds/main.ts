@@ -53,7 +53,7 @@ import {
     incrementGetRecordNotifyChangeDropCount,
     instrumentAdapter,
 } from '@salesforce/lds-instrumentation';
-import { lds } from '@salesforce/lds-aura-runtime';
+import { lds } from '@salesforce/lds-runtime-aura';
 
 /**
  * TODO W-6568533 - remove imperative? parameter, change return type to Adapter<C,D>

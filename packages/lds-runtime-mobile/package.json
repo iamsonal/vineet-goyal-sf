@@ -11,6 +11,9 @@
         "build": "rollup --config rollup.config.js",
         "clean": "rm -rf dist"
     },
+    "publishConfig": {
+        "registry": "https://npm.lwcjs.org"
+    },
     "dependencies": {
         "@ldsjs/engine": "^0.9.0"
     }

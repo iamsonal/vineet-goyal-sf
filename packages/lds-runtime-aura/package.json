@@ -1,5 +1,5 @@
 {
-    "name": "@salesforce/lds-aura-runtime",
+    "name": "@salesforce/lds-runtime-aura",
     "version": "0.1.13",
     "description": "LDS engine for Aura runtime",
     "license": "MIT",
@@ -13,9 +13,12 @@
         "test": "jest",
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     },
+    "publishConfig": {
+        "registry": "https://npm.lwcjs.org"
+    },
     "devDependencies": {
         "@salesforce/lds-aura-storage": "0.1.13",
         "@salesforce/lds-instrumentation": "0.1.13",
-        "@salesforce/lds-web-runtime": "0.1.13"
+        "@salesforce/lds-runtime-web": "0.1.13"
     }
 }

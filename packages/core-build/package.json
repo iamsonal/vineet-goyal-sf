@@ -13,7 +13,7 @@
     "devDependencies": {
         "@salesforce/lds-adapters-apex": "0.1.13",
         "@salesforce/lds-adapters-uiapi": "0.1.13",
-        "@salesforce/lds-aura-runtime": "0.1.13",
+        "@salesforce/lds-runtime-aura": "0.1.13",
         "@salesforce/lds-instrumentation": "0.1.13"
     }
 }

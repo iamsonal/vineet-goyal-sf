@@ -1,6 +1,6 @@
 import { createWireAdapterConstructor, createLDSAdapter } from '../main';
 
-jest.mock('@salesforce/lds-web-runtime', () => {
+jest.mock('@salesforce/lds-runtime-web', () => {
     return {
         lds: {},
     };
@@ -29,7 +29,7 @@ jest.mock('@salesforce/lds-instrumentation', () => {
     };
 });
 
-import { lds } from '@salesforce/lds-web-runtime';
+import { lds } from '@salesforce/lds-runtime-web';
 
 import { createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor } from '@ldsjs/lwc-lds';
 

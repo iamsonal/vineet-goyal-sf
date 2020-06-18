@@ -17,7 +17,7 @@ const banner = generatedFileBanner.concat([PROXY_COMPAT_DISABLE]).join('\n');
 export default {
     input: './src/main.ts',
 
-    external: ['lwc', '@salesforce/lds-instrumentation', '@salesforce/lds-web-runtime'],
+    external: ['lwc', '@salesforce/lds-instrumentation', '@salesforce/lds-runtime-web'],
 
     output: {
         file: 'dist/ldsBindings.js',
@@ -25,7 +25,7 @@ export default {
         banner,
         paths: {
             '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
-            '@salesforce/lds-web-runtime': 'force/ldsEngine',
+            '@salesforce/lds-runtime-web': 'force/ldsEngine',
         },
     },
 

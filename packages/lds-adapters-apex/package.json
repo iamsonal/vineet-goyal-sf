@@ -20,7 +20,13 @@
         "start": "karma start",
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat",
-        "test:unit": "jest"
+        "test:unit": "jest",
+        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-apex"
+    },
+    "sfdc": {
+        "addition": [
+            "lds-apex-static-utils"
+        ]
     },
     "publishConfig": {
         "registry": "https://npm.lwcjs.org"

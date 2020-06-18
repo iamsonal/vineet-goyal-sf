@@ -19,7 +19,8 @@
         "build:services": "rollup --config rollup.config.js",
         "start": "karma start",
         "test": "karma start --single-run",
-        "test:compat": "karma start --single-run --compat"
+        "test:compat": "karma start --single-run --compat",
+        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-commerce-store-pricing"
     },
     "publishConfig": {
         "registry": "https://npm.lwcjs.org"

@@ -23,7 +23,13 @@
         "test:compat": "karma start --single-run --compat",
         "test:mobile": "karma start --single-run --webview",
         "test:unit": "jest",
-        "test:overrides": "jest --testPathPattern=src/overrides"
+        "test:overrides": "jest --testPathPattern=src/overrides",
+        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-uiapi"
+    },
+    "sfdc": {
+        "addition": [
+            "uiapi-static-functions"
+        ]
     },
     "publishConfig": {
         "registry": "https://npm.lwcjs.org"

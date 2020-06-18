@@ -5,6 +5,7 @@
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
+const camelCase = require('camelcase');
 const { execSync } = require('child_process');
 
 const REPO_ROOT_PARENT = path.resolve(__dirname, '../../..');
@@ -46,6 +47,10 @@ const argv = require('yargs')
     .options('branch', {
         alias: 'b',
         describe: 'which core branch to release the artifact',
+    })
+    .options('adapter', {
+        alias: 'a',
+        describe: 'which adapter family package to release the artifact',
     })
     .boolean('skip-git-check')
     .describe('skip-git-check', 'skips git branch and status check')
@@ -142,14 +147,14 @@ function checkCore(corePath) {
 
     if (!fs.existsSync(corePath)) {
         error(
-            `LDS doesn't exist at ${corePath}. Make sure that the branch you want to release into is enabled.`
+            `File doesn't exist at ${corePath}. Make sure that the branch you want to release into is enabled.`
         );
     }
 
     try {
         fs.accessSync(corePath, fs.constants.W_OK);
     } catch {
-        error(`LDS file is not writable. Make sure to run "p4 edit ${corePath}".`);
+        error(`File is not writable. Make sure to run "p4 edit ${corePath}".`);
     }
 }
 
@@ -229,7 +234,50 @@ function copyArtifacts(repoPath, corePath) {
     fs.copyFileSync(repoPath, corePath);
 }
 
+function deployAdapterPackage() {
+    const adapterCoreModuleName = camelCase(argv.adapter);
+    const coreAdapterPath = path.resolve(
+        BLT_HOME,
+        'app',
+        CORE_BRANCH,
+        `core/ui-force-components/modules/force/${adapterCoreModuleName}/${adapterCoreModuleName}.js`
+    );
+    checkCore(coreAdapterPath);
+
+    const repoAdapterPath = path.resolve(REPO_ROOT, `packages/${argv.adapter}/sfdc/index.js`);
+    copyArtifacts(repoAdapterPath, coreAdapterPath);
+
+    const repoAdapterPackageJsonPath = path.resolve(
+        REPO_ROOT,
+        `packages/${argv.adapter}/package.json`
+    );
+    const repoAdapterPackageJson = require(repoAdapterPackageJsonPath);
+    if (repoAdapterPackageJson.sfdc !== undefined) {
+        const utilModuleNames = repoAdapterPackageJson.sfdc.addition;
+        utilModuleNames.forEach(utilModuleName => {
+            const coreUtilModulePath = path.resolve(
+                BLT_HOME,
+                'app',
+                CORE_BRANCH,
+                `core/ui-force-components/modules/force/${adapterCoreModuleName}/${utilModuleName}.js`
+            );
+            checkCore(coreUtilModulePath);
+
+            const repoUtilModulePath = path.resolve(
+                REPO_ROOT,
+                `packages/${argv.adapter}/sfdc/${utilModuleName}.js`
+            );
+            copyArtifacts(repoUtilModulePath, coreUtilModulePath);
+        });
+    }
+}
+
 (function() {
+    if (argv.adapter !== undefined) {
+        deployAdapterPackage();
+        return;
+    }
+
     console.log('Releasing to:');
     console.log(`- blt home: ${BLT_HOME}`);
     console.log(`- core branch: ${CORE_BRANCH}`);

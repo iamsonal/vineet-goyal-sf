@@ -132,32 +132,6 @@ export function beforeEach() {
                         patched.records.sortBy = patched.records.sortBy.split(',');
                     }
 
-                    // begin W-6933698 hack
-                    // TODO - list UI API returns an internal format for records.listReference for MRU
-                    // lists. Patch the expected data to align with what it will be once W-6933698 is fixed.
-                    if (patched.records.listReference.listViewApiName === 'Recent') {
-                        patched.records.listReference.listViewApiName = null;
-                        patched.records.listReference.type = 'mru';
-                    }
-                    // end W-6933698 hack
-
-                    // begin W-6935308 hack
-                    // TODO - list UI API does not fill in default pageSize, but the wire adapter does. Patch
-                    // the expected data to align with what it will be once W-6935308 is fixed.
-                    if (patched.records.pageSize === null) {
-                        patched.records.pageSize = 50;
-                    }
-                    // note that W-6935308 will also change sortBy, but that's not easily correctable here...
-                    // end W-6935308 hack
-
-                    // begin W-6937109 hack
-                    // TODO - list UI API sends back partially-filled-in listReferences in .records. Patch the
-                    // expected data to align with what it will be once W-6937109 is fixed.
-                    patched.records.listReference.id = patched.info.listReference.id;
-                    patched.records.listReference.listViewApiName =
-                        patched.info.listReference.listViewApiName;
-                    // end W-6937109 hack
-
                     expect(actual.data).toEqual(patched);
 
                     return { pass: true };

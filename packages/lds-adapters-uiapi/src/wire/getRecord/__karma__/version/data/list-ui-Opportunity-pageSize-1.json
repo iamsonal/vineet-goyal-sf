@@ -132,12 +132,17 @@
     "records": {
         "count": 1,
         "currentPageToken": "0",
-        "currentPageUrl": "/services/data/v47.0/ui-api/list-records/00B30000009VCQUEA4?pageSize=1&pageToken=0",
+        "currentPageUrl": "/services/data/v50.0/ui-api/list-records/00B30000009VCQUEA4?pageSize=1&pageToken=0",
         "listInfoETag": "7965fd2bbab2de44ae0b7459309b5f2c",
-        "listReference": null,
+        "listReference": {
+            "id": "00B30000009VCQUEA4",
+            "listViewApiName": "Dolly_Opportunity_Edit_Retail",
+            "objectApiName": "Opportunity",
+            "type": "listView"
+        },
         "nextPageToken": "1",
-        "nextPageUrl": "/services/data/v47.0/ui-api/list-records/00B30000009VCQUEA4?pageSize=1&pageToken=1",
-        "pageSize": null,
+        "nextPageUrl": "/services/data/v50.0/ui-api/list-records/00B30000009VCQUEA4?pageSize=1&pageToken=1",
+        "pageSize": 1,
         "previousPageToken": null,
         "previousPageUrl": null,
         "fields": [],

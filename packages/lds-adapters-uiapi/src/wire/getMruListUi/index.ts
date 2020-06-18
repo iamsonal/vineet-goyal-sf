@@ -181,22 +181,6 @@ function buildNetworkSnapshot_getMruListUi(
             const { body } = response;
             const listInfo = body.info;
 
-            // TODO: server botches records.listReference but gets info.listReference correct,
-            // see W-6933698
-            body.records.listReference = body.info.listReference;
-
-            // TODO: server should inject default pageSize when none was specified, see
-            // W-6935308
-            if (body.records.pageSize === null) {
-                body.records.pageSize = DEFAULT_PAGE_SIZE;
-            }
-
-            // TODO: server should inject default sortBy when none was specified, see
-            // W-6935308
-            if (body.records.sortBy === null) {
-                // default sortBy is a pain to calculate, wait for real fix
-            }
-
             // server returns sortBy in csv format
             if (body.records.sortBy) {
                 body.records.sortBy = ((body.records.sortBy as unknown) as string).split(',');
@@ -286,22 +270,6 @@ function buildNetworkSnapshot_getMruListRecords(
             // fall back to mru-list-ui if list view has changed
             if (listInfoETag !== listInfo.eTag) {
                 return buildNetworkSnapshot_getMruListUi(lds, config);
-            }
-
-            // TODO: server botches records.listReference but gets info.listReference correct,
-            // see W-6933698
-            body.listReference = listInfo.listReference;
-
-            // TODO: server should inject default pageSize when none was specified, see
-            // W-6935308
-            if (body.pageSize === null) {
-                body.pageSize = DEFAULT_PAGE_SIZE;
-            }
-
-            // TODO: server should inject default sortBy when none was specified, see
-            // W-6935308
-            if (body.sortBy === null) {
-                // default sortBy is a pain to calculate, wait for real fix
             }
 
             // server returns sortBy in csv format

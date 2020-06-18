@@ -54,8 +54,8 @@ import {
     pathSelectionsFor,
     staticValuePathSelection,
 } from '../../util/pagination';
-import { getListViewSummaryCollectionAdapterFactory } from '../getListViewSummaryCollection';
-import { getMruListUiAdapterFactory } from '../getMruListUi';
+import { factory as getListViewSummaryCollectionAdapterFactory } from '../getListViewSummaryCollection';
+import { factory as getMruListUiAdapterFactory } from '../getMruListUi';
 
 const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select();
 

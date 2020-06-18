@@ -305,10 +305,7 @@ function buildNetworkSnapshot_getMruListRecords(
     );
 }
 
-export const getMruListUiAdapterFactory: AdapterFactory<
-    GetMruListUiConfig,
-    ListUiRepresentation
-> = (lds: LDS) =>
+export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> = (lds: LDS) =>
     function getMruListUi(untrustedConfig: unknown) {
         const config = validateAdapterConfig(
             untrustedConfig,

@@ -211,6 +211,7 @@ export const [getRelatedListInfo, _getRelatedListInfo] = setupWireAdapter(
     GetRelatedListInfo,
     true
 );
+
 const baseUpdateRelatedListInfo = UpdateRelatedListInfo(lds);
 // In order to export the imperative wire correctly, we need to add some safety checks
 // to ensure the config passed is correct

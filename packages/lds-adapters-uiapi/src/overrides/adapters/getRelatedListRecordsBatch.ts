@@ -14,6 +14,8 @@ import {
 import { LDS, Snapshot, AdapterFactory } from '@ldsjs/engine';
 import { RelatedListRecordCollectionBatchRepresentation } from '../../generated/types/RelatedListRecordCollectionBatchRepresentation';
 
+export { adapterName } from '../../generated/adapters/getRelatedListRecordsBatch';
+
 export const getRelatedListRecordsBatch_ConfigPropertyNames: AdapterValidationConfig = {
     displayName: 'getRelatedListRecordsBatch',
     parameters: {

@@ -203,10 +203,9 @@ export const buildInMemorySnapshot: typeof generatedBuildInMemorySnapshot = (
     });
 };
 
-export const getRecordTemplateCloneAdapterFactory: AdapterFactory<
-    GetRecordTemplateCloneConfig,
-    CloneTemplateRepresentation
-> = (lds: LDS) =>
+export const factory: AdapterFactory<GetRecordTemplateCloneConfig, CloneTemplateRepresentation> = (
+    lds: LDS
+) =>
     function getRecordDefaultsTemplateForCreate(
         untrustedConfig: unknown
     ):

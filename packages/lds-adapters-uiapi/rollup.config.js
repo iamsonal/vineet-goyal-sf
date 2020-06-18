@@ -1,16 +1,9 @@
+import { sfdcConfiguration, localConfiguration } from '../../scripts/rollup/rollup.config.adapters';
 import path from 'path';
 import typescript from 'rollup-plugin-typescript2';
 import resolve from 'rollup-plugin-node-resolve';
 
 const { buildOverridesMap, resolveModulesWithOverrides } = require('./scripts/ldsModuleOverride');
-
-const entry = path.join(__dirname, 'src', 'index.ts');
-const dist = path.join(__dirname, 'dist');
-
-const defaultConfigs = [
-    { formats: ['es', 'umd'], target: 'es2018' },
-    { formats: ['umd'], target: 'es5' },
-];
 
 function ldsOverrides({ generatedDir, overridesDir }) {
     const overrides = buildOverridesMap({ generatedDir, overridesDir });
@@ -22,38 +15,56 @@ function ldsOverrides({ generatedDir, overridesDir }) {
     };
 }
 
-export default function(args) {
-    const { configTarget, configFormat } = args;
+const sfdcEntry = path.join(__dirname, 'src', 'sfdc.ts');
+const entry = path.join(__dirname, 'src', 'main.ts');
 
-    return defaultConfigs
-        .filter(config => configTarget === undefined || configTarget === config.target)
-        .map(config => {
-            const output = config.formats
-                .filter(format => configFormat === undefined || configFormat === format)
-                .map(format => ({
-                    file: `${dist}/${format}/${config.target}/uiapi-records-service.js`,
-                    format,
-                    name: 'uiapiRecordsService',
-                }));
+const plugins = [
+    ldsOverrides({
+        generatedDir: path.join(__dirname, 'src', 'generated'),
+        overridesDir: path.join(__dirname, 'src', 'overrides'),
+    }),
+];
 
-            return {
-                input: entry,
-                output,
-                plugins: [
-                    ldsOverrides({
-                        generatedDir: path.resolve(__dirname, './src/generated'),
-                        overridesDir: path.resolve(__dirname, './src/overrides'),
-                    }),
-                    resolve(),
-                    typescript({
-                        clean: true,
-                        tsconfigOverride: {
-                            compilerOptions: {
-                                target: config.target,
-                            },
-                        },
-                    }),
-                ],
-            };
-        });
-}
+const config = {
+    cwd: __dirname,
+    sfdcEntry,
+    entry,
+    fileName: 'uiapi-records-service',
+    bundleName: 'uiapiRecordsService',
+};
+
+const staticFunctions = {
+    input: path.join(__dirname, 'src', 'uiapi-static-functions.ts'),
+    output: {
+        file: path.join(__dirname, 'sfdc', 'uiapi-static-functions.js'),
+        format: 'esm',
+    },
+
+    plugins: [
+        resolve(),
+        typescript({
+            clean: true,
+            tsconfigOverride: {
+                compilerOptions: {
+                    declaration: false,
+                },
+            },
+        }),
+    ],
+};
+
+export default args => {
+    const localConfigurations = localConfiguration(args, config, {
+        plugins,
+    });
+
+    const sfdcConfigurations = sfdcConfiguration(config, {
+        plugins,
+        external: ['./uiapi-static-functions', '@salesforce/lds-instrumentation'],
+        outputPaths: {
+            '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
+        },
+    });
+
+    return [...localConfigurations, ...sfdcConfigurations, staticFunctions];
+};

@@ -2,6 +2,19 @@ import typescript from 'rollup-plugin-typescript2';
 import path from 'path';
 import fs from 'fs';
 
+const PROXY_COMPAT_DISABLE = '/* proxy-compat-disable */';
+const generatedFileBanner = [
+    '/*  *******************************************************************************************',
+    ' *  ATTENTION!',
+    ' *  THIS IS A GENERATED FILE FROM https://github.com/salesforce/lds-lightning-platform',
+    ' *  If you would like to contribute to LDS, please follow the steps outlined in the git repo.',
+    ' *  Any changes made to this file in p4 will be automatically overwritten.',
+    ' *  *******************************************************************************************',
+    ' */',
+];
+
+const banner = generatedFileBanner.concat([PROXY_COMPAT_DISABLE]).join('\n');
+
 const defaultConfigs = [
     { formats: ['es', 'umd'], target: 'es2018' },
     { formats: ['umd'], target: 'es5' },
@@ -28,21 +41,31 @@ function getTypesDir(cwd) {
 }
 
 /**
+ * @typedef { import("rollup").ExternalOption } ExternalOption
+ * @typedef { import('rollup').OptionsPaths } OptionsPaths
+ * @typedef { import('rollup').Plugin } Plugin
+ */
+
+/**
  * @param {{
  *  cwd: string,
- *  sfdcEntry: string,
- *  entry: string,
- *  fileName: string,
- *  bundleName: string
+ *  sfdcEntry: string
  * }} config
  *
- * @param{{
- *   external?: string[]
- * }} overrides;
+ * @param {{
+ *   external?: ExternalOption,
+ *   paths?: OptionsPaths,
+ *   plugins?: Plugin[]
+ * }} [overrides]
  */
 export function sfdcConfiguration(config, overrides = {}) {
     const { sfdcEntry, cwd } = config;
-    const { external: overridesExternals = [] } = overrides;
+    const {
+        external: overridesExternals = [],
+        outputPaths: overridesOutputPaths = {},
+        plugins: overridesPlugins = [],
+    } = overrides;
+
     const sfdcDistFolder = path.join(cwd, 'sfdc');
     const sfdcEntryDirectoryLocal = path.relative(cwd, sfdcEntry);
     const typesDir = getTypesDir(cwd);
@@ -60,7 +83,8 @@ export function sfdcConfiguration(config, overrides = {}) {
             output: {
                 file: path.join(sfdcDistFolder, 'index.js'),
                 format: 'es',
-                paths: PATHS,
+                banner,
+                paths: { ...PATHS, ...overridesOutputPaths },
                 plugins: [
                     {
                         writeBundle() {
@@ -73,6 +97,7 @@ export function sfdcConfiguration(config, overrides = {}) {
                 ],
             },
             plugins: [
+                ...overridesPlugins,
                 typescript({
                     clean: false,
                     cwd,
@@ -97,12 +122,16 @@ export function sfdcConfiguration(config, overrides = {}) {
  *  sfdcEntry: string,
  *  entry: string,
  *  fileName: string,
- *  bundleName: string
+ *  bundleName: string,
  * }} config
+ * @param {{
+ *   plugins?: Plugin[]
+ * }} [overrides]
  */
-export function localConfiguration(args, config) {
+export function localConfiguration(args, config, overrides = {}) {
     const { configTarget, configFormat } = args;
     const { entry, fileName, bundleName, cwd } = config;
+    const { plugins: overridesPlugins = [] } = overrides;
     const dist = getDistDir(cwd);
     const typesDir = getTypesDir(cwd);
 
@@ -121,6 +150,7 @@ export function localConfiguration(args, config) {
                 input: entry,
                 output,
                 plugins: [
+                    ...overridesPlugins,
                     typescript({
                         clean: true,
                         useTsconfigDeclarationDir: true,
@@ -143,7 +173,8 @@ export function localConfiguration(args, config) {
  *  sfdcEntry: string,
  *  entry: string,
  *  fileName: string,
- *  bundleName: string
+ *  bundleName: string,
+ *  plugins: Plugin[]
  * }} config
  */
 export function rollup(config) {

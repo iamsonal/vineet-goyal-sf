@@ -5,13 +5,18 @@
     "license": "MIT",
     "main": "dist/umd/es2018/uiapi-records-service.js",
     "module": "dist/es/es2018/uiapi-records-service.js",
-    "types": "dist/es/es2018/index.d.ts",
+    "types": "dist/types/src/main.d.ts",
+    "files": [
+        "dist",
+        "sfdc",
+        "src/raml/*"
+    ],
     "scripts": {
-        "clean": "rm -rf dist src/generated karma/dist",
+        "clean": "rm -rf dist sfdc src/generated karma/dist",
         "build": "yarn build:raml && yarn build:services && yarn build:karma-utils",
-        "build:raml": "lds generate src/raml/lds.raml src/generated -p '../lds-compiler-plugins'",
-        "build:services": "rollup --config rollup.config.js",
         "build:karma-utils": "rollup --config rollup.config.karma.js",
+        "build:raml": "lds generate src/raml/lds.raml src/generated -p './scripts/lds-uiapi-plugin.js'",
+        "build:services": "rollup --config rollup.config.js",
         "start": "karma start",
         "start:mobile": "karma start --webview",
         "test": "karma start --single-run",
@@ -19,6 +24,9 @@
         "test:mobile": "karma start --single-run --webview",
         "test:unit": "jest",
         "test:overrides": "jest --testPathPattern=src/overrides"
+    },
+    "publishConfig": {
+        "registry": "https://npm.lwcjs.org"
     },
     "dependencies": {
         "@salesforce/lds-bindings": "0.1.13"

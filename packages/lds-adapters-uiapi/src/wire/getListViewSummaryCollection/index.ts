@@ -148,7 +148,7 @@ export function buildNetworkSnapshot(
     );
 }
 
-export const getListViewSummaryCollectionAdapterFactory: AdapterFactory<
+export const factory: AdapterFactory<
     GetListViewSummaryCollectionConfig,
     ListViewSummaryCollectionRepresentation
 > = (lds: LDS) =>

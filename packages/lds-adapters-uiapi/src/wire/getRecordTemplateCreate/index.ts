@@ -197,7 +197,7 @@ export const buildInMemorySnapshot: typeof generatedBuildInMemorySnapshot = (
     });
 };
 
-export const getRecordTemplateCreateAdapterFactory: AdapterFactory<
+export const factory: AdapterFactory<
     GetRecordTemplateCreateConfig,
     CreateTemplateRepresentation
 > = (lds: LDS) =>

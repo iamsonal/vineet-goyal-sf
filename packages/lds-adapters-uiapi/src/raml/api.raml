@@ -2587,7 +2587,7 @@ types:
         type: string
       keyPrefix:
         description: The key prefix for IDs of the object that populates the list.  This can be null for some related lists.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil # TODO: "nil" union hand rolled - W-7730185
       label:
         description: The label for the related list.
         type: string
@@ -2605,7 +2605,7 @@ types:
         type: string | nil
       themeInfo:
         description: The theme info for this related list's entity.
-        type: ThemeInfoRepresentation
+        type: ThemeInfoRepresentation | nil #TODO: nil union hand rolled - W-7730185
   ReportLayoutComponentRepresentation:
     description: Report record layout component.
     discriminatorValue: ReportChart

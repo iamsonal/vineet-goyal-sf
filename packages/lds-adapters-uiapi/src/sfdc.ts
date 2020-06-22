@@ -20,13 +20,13 @@ import {
     GetLayoutUserState,
     GetRelatedListActions,
     GetRelatedListCount,
+    GetRelatedListsCount,
     GetRelatedListInfo,
     GetRelatedListInfoBatch,
     GetRelatedListRecordActions,
     GetRelatedListRecords,
     GetRelatedListRecordsBatch,
     GetRelatedListsActions,
-    GetRelatedListsCount,
     GetRelatedListsInfo,
     GetRecordNotifyChange,
     GetRecordTemplateClone,
@@ -152,9 +152,6 @@ export const _getRecordTemplateCreate = createImperativeFunction(
 export const _getRelatedListActions = createImperativeFunction(
     createLDSAdapter('getRelatedListActions', GetRelatedListActions)
 );
-export const _getRelatedListCount = createImperativeFunction(
-    createLDSAdapter('getRelatedListCount', GetRelatedListCount)
-);
 export const _getRelatedListInfo = createImperativeFunction(
     createLDSAdapter('getRelatedListInfo', GetRelatedListInfo)
 );
@@ -170,14 +167,17 @@ export const _getRelatedListRecords = createImperativeFunction(
 export const _getRelatedListRecordsBatch = createImperativeFunction(
     createLDSAdapter('getRelatedListRecordsBatch', GetRelatedListRecordsBatch)
 );
-export const _getRelatedListsCount = createImperativeFunction(
-    createLDSAdapter('getRelatedListsCount', GetRelatedListsCount)
-);
 export const _getRelatedListsInfo = createImperativeFunction(
     createLDSAdapter('getRelatedListsInfo', GetRelatedListsInfo)
 );
 export const _getRelatedListsActions = createImperativeFunction(
     createLDSAdapter('getRelatedListsActions', GetRelatedListsActions)
+);
+export const _getRelatedListCount = createImperativeFunction(
+    createLDSAdapter('getRelatedListCount', GetRelatedListCount)
+);
+export const _getRelatedListsCount = createImperativeFunction(
+    createLDSAdapter('getRelatedListsCount', GetRelatedListsCount)
 );
 
 // This ingestion method needs to be exposed to ingest records coming from the ADS Bridge.

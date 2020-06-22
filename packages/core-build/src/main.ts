@@ -85,3 +85,5 @@ export const _getRelatedListsActions = lds._getRelatedListsActions;
 export const _getRelatedListRecords = lds._getRelatedListRecords;
 export const _getRelatedListRecordsBatch = lds._getRelatedListRecordsBatch;
 export const _getRelatedListRecordActions = lds._getRelatedListRecordActions;
+export const _getRelatedListCount = lds._getRelatedListCount;
+export const _getRelatedListsCount = lds._getRelatedListsCount;

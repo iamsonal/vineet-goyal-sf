@@ -4,6 +4,8 @@ const path = require('path');
 const mkdirp = require('mkdirp');
 const dedent = require('dedent');
 
+const SFDC_PRIVATE_ADAPTERS = require('./sfdc-private-adapters');
+
 const ADAPTERS_NOT_DEFINED_IN_OVERLAY = [
     {
         name: 'deleteRecord',
@@ -14,14 +16,6 @@ const ADAPTERS_NOT_DEFINED_IN_OVERLAY = [
         method: 'get',
     },
 ];
-
-// the adapters which are not included in the sfdc generated artifacts
-const SFDC_PRIVATE_ADAPTERS = {
-    updateLayoutUserState: true,
-    updateRelatedListInfo: true,
-    getListUiByListViewId: true,
-    getListUiByApiName: true,
-};
 
 const CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER = 'createWireAdapterConstructor';
 const CREATE_LDS_ADAPTER = 'createLDSAdapter';

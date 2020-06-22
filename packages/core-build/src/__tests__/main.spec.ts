@@ -97,6 +97,8 @@ const whiteList = [
     '_getRelatedListRecordActions',
     '_getRelatedListInfoBatch',
     '_getRelatedListRecordsBatch',
+    '_getRelatedListCount',
+    '_getRelatedListsCount',
 ].sort();
 
 describe('items exported to core', () => {
@@ -126,6 +128,8 @@ describe('lds-mobile items exported', () => {
         '_getRelatedListRecordsBatch',
         '_getRelatedListRecordActions',
         '_getRelatedListRecords',
+        '_getRelatedListCount',
+        '_getRelatedListsCount',
         'adsBridge',
         'generateRecordInputForCreate',
         'generateRecordInputForUpdate',

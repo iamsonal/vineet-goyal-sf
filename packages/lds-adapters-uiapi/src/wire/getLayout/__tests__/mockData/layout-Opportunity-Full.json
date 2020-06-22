@@ -1,0 +1,510 @@
+{
+    "eTag": "83c4e4d5cbab1cae8416c882f96e6113",
+    "id": "00hRM000002qNK7YAM",
+    "layoutType": "Full",
+    "mode": "View",
+    "objectApiName": "Opportunity",
+    "recordTypeId": "012000000000000AAA",
+    "sections": [
+        {
+            "collapsible": false,
+            "columns": 2,
+            "heading": "Opportunity Information",
+            "id": "01BRM00000A2Rzq2AF",
+            "layoutRows": [
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": false,
+                            "editableForUpdate": false,
+                            "label": "Opportunity Owner",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "OwnerId",
+                                    "componentType": "Field",
+                                    "label": "Owner ID"
+                                }
+                            ],
+                            "lookupIdApiName": "OwnerId",
+                            "required": false,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Amount",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "Amount",
+                                    "componentType": "Field",
+                                    "label": "Amount"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        }
+                    ]
+                },
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Private",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "IsPrivate",
+                                    "componentType": "Field",
+                                    "label": "Private"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": false,
+                            "editableForUpdate": false,
+                            "label": "Expected Revenue",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "ExpectedRevenue",
+                                    "componentType": "Field",
+                                    "label": "Expected Amount"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        }
+                    ]
+                },
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Opportunity Name",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "Name",
+                                    "componentType": "Field",
+                                    "label": "Name"
+                                }
+                            ],
+                            "lookupIdApiName": "Id",
+                            "required": true,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Close Date",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "CloseDate",
+                                    "componentType": "Field",
+                                    "label": "Close Date"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": true,
+                            "sortable": false
+                        }
+                    ]
+                },
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Account Name",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "AccountId",
+                                    "componentType": "Field",
+                                    "label": "Account ID"
+                                }
+                            ],
+                            "lookupIdApiName": "AccountId",
+                            "required": false,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Next Step",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "NextStep",
+                                    "componentType": "Field",
+                                    "label": "Next Step"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        }
+                    ]
+                },
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Type",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "Type",
+                                    "componentType": "Field",
+                                    "label": "Opportunity Type"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Stage",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "StageName",
+                                    "componentType": "Field",
+                                    "label": "Stage"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": true,
+                            "sortable": false
+                        }
+                    ]
+                },
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Lead Source",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "LeadSource",
+                                    "componentType": "Field",
+                                    "label": "Lead Source"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Probability (%)",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "Probability",
+                                    "componentType": "Field",
+                                    "label": "Probability (%)"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        }
+                    ]
+                },
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": false,
+                            "editableForUpdate": false,
+                            "label": "",
+                            "layoutComponents": [
+                                {
+                                    "apiName": null,
+                                    "componentType": "EmptySpace"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Primary Campaign Source",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "CampaignId",
+                                    "componentType": "Field",
+                                    "label": "Campaign ID"
+                                }
+                            ],
+                            "lookupIdApiName": "CampaignId",
+                            "required": false,
+                            "sortable": false
+                        }
+                    ]
+                }
+            ],
+            "rows": 7,
+            "useHeading": false
+        },
+        {
+            "collapsible": false,
+            "columns": 2,
+            "heading": "Additional Information",
+            "id": "01BRM00000A2Rzs2AF",
+            "layoutRows": [
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Order Number",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "OrderNumber__c",
+                                    "componentType": "Field",
+                                    "label": "Order Number"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Main Competitor(s)",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "MainCompetitors__c",
+                                    "componentType": "Field",
+                                    "label": "Main Competitor(s)"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        }
+                    ]
+                },
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Current Generator(s)",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "CurrentGenerators__c",
+                                    "componentType": "Field",
+                                    "label": "Current Generator(s)"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Delivery/Installation Status",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "DeliveryInstallationStatus__c",
+                                    "componentType": "Field",
+                                    "label": "Delivery/Installation Status"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        }
+                    ]
+                },
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Tracking Number",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "TrackingNumber__c",
+                                    "componentType": "Field",
+                                    "label": "Tracking Number"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": false,
+                            "editableForUpdate": false,
+                            "label": "",
+                            "layoutComponents": [
+                                {
+                                    "apiName": null,
+                                    "componentType": "EmptySpace"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        }
+                    ]
+                }
+            ],
+            "rows": 3,
+            "useHeading": false
+        },
+        {
+            "collapsible": false,
+            "columns": 2,
+            "heading": "System Information",
+            "id": "01BRM00000A2Rzv2AF",
+            "layoutRows": [
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": false,
+                            "editableForUpdate": false,
+                            "label": "Created By",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "CreatedById",
+                                    "componentType": "Field",
+                                    "label": "Created By ID"
+                                },
+                                {
+                                    "apiName": "CreatedDate",
+                                    "componentType": "Field",
+                                    "label": "Created Date"
+                                }
+                            ],
+                            "lookupIdApiName": "CreatedById",
+                            "required": false,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": false,
+                            "editableForUpdate": false,
+                            "label": "Last Modified By",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "LastModifiedById",
+                                    "componentType": "Field",
+                                    "label": "Last Modified By ID"
+                                },
+                                {
+                                    "apiName": "LastModifiedDate",
+                                    "componentType": "Field",
+                                    "label": "Last Modified Date"
+                                }
+                            ],
+                            "lookupIdApiName": "LastModifiedById",
+                            "required": false,
+                            "sortable": false
+                        }
+                    ]
+                }
+            ],
+            "rows": 1,
+            "useHeading": false
+        },
+        {
+            "collapsible": false,
+            "columns": 1,
+            "heading": "Description Information",
+            "id": "01BRM00000A2Rzu2AF",
+            "layoutRows": [
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": true,
+                            "editableForUpdate": true,
+                            "label": "Description",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "Description",
+                                    "componentType": "Field",
+                                    "label": "Description"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        }
+                    ]
+                }
+            ],
+            "rows": 1,
+            "useHeading": false
+        },
+        {
+            "collapsible": false,
+            "columns": 3,
+            "heading": "Custom Links",
+            "id": "01BRM00000A2Rzt2AF",
+            "layoutRows": [
+                {
+                    "layoutItems": [
+                        {
+                            "editableForNew": false,
+                            "editableForUpdate": false,
+                            "label": "",
+                            "layoutComponents": [
+                                {
+                                    "apiName": "DeliveryStatus",
+                                    "behavior": "NewWindow",
+                                    "componentType": "CustomLink",
+                                    "customLinkUrl": "/servlet/servlet.Integration?lid=00bRM000000tCBT&eid=ENTITY_ID&ic=1",
+                                    "label": "Delivery Status"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": false,
+                            "editableForUpdate": false,
+                            "label": "",
+                            "layoutComponents": [
+                                {
+                                    "apiName": null,
+                                    "componentType": "EmptySpace"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        },
+                        {
+                            "editableForNew": false,
+                            "editableForUpdate": false,
+                            "label": "",
+                            "layoutComponents": [
+                                {
+                                    "apiName": null,
+                                    "componentType": "EmptySpace"
+                                }
+                            ],
+                            "lookupIdApiName": null,
+                            "required": false,
+                            "sortable": false
+                        }
+                    ]
+                }
+            ],
+            "rows": 1,
+            "useHeading": false
+        }
+    ]
+}

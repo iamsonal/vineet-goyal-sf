@@ -28,7 +28,7 @@ const REPO_LDS_ENGINE_RUNTIME_MOBILE_PATH = path.resolve(
 );
 const REPO_LDS_NETWORK_PATH = path.resolve(
     REPO_ROOT,
-    'packages/lds-aura-network/dist/ldsNetwork.js'
+    'packages/lds-network-aura/dist/ldsNetwork.js'
 );
 const REPO_LDS_STORAGE_PATH = path.resolve(
     REPO_ROOT,

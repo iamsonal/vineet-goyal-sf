@@ -1,7 +1,8 @@
 {
-    "name": "@salesforce/lds-aura-network-adapter",
+    "name": "@salesforce/lds-network-aura",
     "version": "0.1.13",
     "description": "LDS Network Adapter for Aura Runtime",
+    "private": true,
     "license": "MIT",
     "main": "dist/ldsNetwork.js",
     "module": "dist/ldsNetwork.js",

@@ -2,6 +2,7 @@
     "name": "@salesforce/lds-runtime-aura",
     "version": "0.1.13",
     "description": "LDS engine for Aura runtime",
+    "private": true,
     "license": "MIT",
     "main": "dist/ldsEngine.js",
     "module": "dist/ldsEngine.js",

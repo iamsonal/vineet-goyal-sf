@@ -3,7 +3,7 @@ const baseConfig = require('../../scripts/jest/base.config');
 module.exports = {
     ...baseConfig,
 
-    displayName: 'lds-aura-network-adapter',
+    displayName: 'lds-network-aura',
     roots: ['<rootDir>/src'],
 
     /**

@@ -119,11 +119,6 @@
             "path": "./packages/core-build/dist/lds.min.js",
             "maxSize": "50 kB",
             "compression": "brotli"
-        },
-        {
-            "path": "./packages/core-build/dist/lds-mobile.min.js",
-            "maxSize": "50 kB",
-            "compression": "brotli"
         }
     ]
 }

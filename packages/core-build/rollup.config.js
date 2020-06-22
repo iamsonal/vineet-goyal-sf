@@ -100,43 +100,6 @@ const min = {
     ],
 };
 
-const ldsMobile = {
-    ...browser,
-    input: './src/lds-mobile/main.ts',
-    output: {
-        file: 'dist/lds-mobile.js',
-        name: 'ldsMobile',
-        format: 'umd',
-        banner,
-        footer,
-    },
-    plugins: [
-        ...browser.plugins,
-        replace({
-            'process.env.NODE_ENV': JSON.stringify('production'),
-        }),
-    ],
-};
-
-const ldsMobileMin = {
-    ...ldsMobile,
-    output: {
-        ...ldsMobile.output,
-        file: 'dist/lds-mobile.min.js',
-    },
-    plugins: [
-        ...ldsMobile.plugins,
-        terser({
-            output: {
-                comments: /(ATTENTION!|version:)/,
-            },
-        }),
-        replace({
-            'process.env.NODE_ENV': JSON.stringify('production'),
-        }),
-    ],
-};
-
 const adsBridge = {
     input: './src/lds/ads-bridge.ts',
     output: {
@@ -152,4 +115,4 @@ const adsBridge = {
     ],
 };
 
-export default [browser, min, ldsMobile, ldsMobileMin, ldsStaticFunctionsBrowser, adsBridge];
+export default [browser, min, ldsStaticFunctionsBrowser, adsBridge];

@@ -1,4 +1,4 @@
-import { createWireAdapterConstructor, createLDSAdapter } from '../main';
+import { createWireAdapterConstructor, createLDSAdapter, refresh } from '../main';
 
 jest.mock('@salesforce/lds-runtime-web', () => {
     return {
@@ -35,6 +35,8 @@ import { createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor } fr
 
 import { instrumentAdapter } from '@salesforce/lds-instrumentation';
 
+import { __spies as lwcLdsSpies } from '@ldsjs/lwc-lds';
+
 beforeEach(() => {
     (instrumentAdapter as any).mockClear();
     (lwcLdsCreateWireAdapterConstructor as any).mockClear();
@@ -69,5 +71,13 @@ describe('createLDSAdapter', () => {
         const value = createLDSAdapter('foo', factory);
         expect(factory).toHaveBeenCalledWith(lds);
         expect(value).toBe(mockAdapter);
+    });
+});
+
+describe('refresh', () => {
+    it('should call function returned by bindWireRefresh', async () => {
+        const data = {};
+        await refresh(data);
+        expect(lwcLdsSpies.bindWireRefreshSpy).toHaveBeenCalledWith(data);
     });
 });

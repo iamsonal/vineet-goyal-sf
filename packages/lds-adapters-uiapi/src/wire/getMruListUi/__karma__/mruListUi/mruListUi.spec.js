@@ -1,4 +1,4 @@
-import { karmaNetworkAdapter } from 'lds';
+import { karmaNetworkAdapter } from 'lds-engine';
 import sinon from 'sinon';
 import { flushPromises, getMock as globalGetMock, mockNetworkOnce, setupElement } from 'test-util';
 import { URL_BASE } from 'uiapi-test-util';

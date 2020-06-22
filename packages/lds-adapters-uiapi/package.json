@@ -13,8 +13,8 @@
     ],
     "scripts": {
         "clean": "rm -rf dist sfdc src/generated karma/dist",
-        "build": "yarn build:raml && yarn build:services && yarn build:karma-utils",
-        "build:karma-utils": "rollup --config rollup.config.karma.js",
+        "build": "yarn build:raml && yarn build:services && yarn build:karma",
+        "build:karma": "rollup --config rollup.config.karma.js",
         "build:raml": "lds generate src/raml/lds.raml src/generated -p './scripts/lds-uiapi-plugin.js'",
         "build:services": "rollup --config rollup.config.js",
         "start": "karma start",
@@ -39,6 +39,6 @@
     },
     "devDependencies": {
         "@salesforce/lds-compiler-plugins": "0.1.13",
-        "@salesforce/lds-karma-config": "0.1.13"
+        "@salesforce/lds-karma": "0.1.13"
     }
 }

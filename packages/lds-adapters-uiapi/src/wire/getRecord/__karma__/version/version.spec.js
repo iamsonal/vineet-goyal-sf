@@ -14,7 +14,7 @@ import {
 
 import GetListUi from '../../../getListUi/__karma__/lwc/listViewId';
 import RecordFields from '../lwc/record-fields';
-import { karmaNetworkAdapter } from 'lds';
+import { karmaNetworkAdapter } from 'lds-engine';
 import sinon from 'sinon';
 
 const MOCK_PREFIX = 'wire/getRecord/__karma__/version/data/';

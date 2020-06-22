@@ -1,4 +1,4 @@
-import { karmaNetworkAdapter } from 'lds';
+import { karmaNetworkAdapter } from 'lds-engine';
 import { mockNetworkOnce } from 'test-util';
 import sinon from 'sinon';
 

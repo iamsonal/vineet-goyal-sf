@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getRecordAvatars, refresh } from 'lds';
+import { getRecordAvatars, refresh } from 'lds-adapters-uiapi';
 
 export default class GetRecordAvatars extends LightningElement {
     @api recordIds;

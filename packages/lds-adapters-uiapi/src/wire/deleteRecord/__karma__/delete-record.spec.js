@@ -1,6 +1,7 @@
 import { getMock as globalGetMock, setupElement, flushPromises } from 'test-util';
 import { URL_BASE, mockDeleteRecordNetwork, mockGetRecordNetwork } from 'uiapi-test-util';
-import { deleteRecord, karmaNetworkAdapter } from 'lds';
+import { deleteRecord } from 'lds-adapters-uiapi';
+import { karmaNetworkAdapter } from 'lds-engine';
 
 import RecordFields from '../../getRecord/__karma__/lwc/record-fields';
 

@@ -1,7 +1,7 @@
 import ObjectApiName from '../lwc/objectApiName';
 import { mockNetworkOnce, flushPromises, setupElement, getMock as globalGetMock } from 'test-util';
 import { URL_BASE } from 'uiapi-test-util';
-import { karmaNetworkAdapter } from 'lds';
+import { karmaNetworkAdapter } from 'lds-engine';
 import sinon from 'sinon';
 
 const MOCK_PREFIX = 'wire/getListViewSummaryCollection/__karma__/objectApiName/data/';

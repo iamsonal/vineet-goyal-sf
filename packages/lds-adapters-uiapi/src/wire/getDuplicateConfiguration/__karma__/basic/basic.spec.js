@@ -7,7 +7,7 @@ import {
 
 import GetDuplicatesConfiguration from '../lwc/get-duplicate-configuration';
 import sinon from 'sinon';
-import { karmaNetworkAdapter } from 'lds';
+import { karmaNetworkAdapter } from 'lds-engine';
 
 const MOCK_PREFIX = 'wire/getDuplicateConfiguration/__karma__/basic/data/';
 

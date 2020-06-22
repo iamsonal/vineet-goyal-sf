@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getRelatedListInfo } from 'lds';
+import { getRelatedListInfo } from 'lds-adapters-uiapi';
 
 export default class Basic extends LightningElement {
     @api parentObjectApiName;

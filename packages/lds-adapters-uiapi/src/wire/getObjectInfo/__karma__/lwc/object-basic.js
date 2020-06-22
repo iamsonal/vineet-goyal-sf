@@ -1,5 +1,5 @@
 import { LightningElement, api, track, wire } from 'lwc';
-import { getObjectInfo, refresh } from 'lds';
+import { getObjectInfo, refresh } from 'lds-adapters-uiapi';
 
 export default class ObjectInfo extends LightningElement {
     @api objectApiName;

@@ -51,9 +51,9 @@
             "files": [
                 "packages/**/karma/**",
                 "packages/**/__karma__/**",
-                "packages/karma-config/**/lds.js",
-                "packages/karma-config/**/test-util.js",
-                "packages/karma-config/**/global-setup.js"
+                "packages/lds-karma/**/lds.js",
+                "packages/lds-karma/**/test-util.js",
+                "packages/lds-karma/**/global-setup.js"
             ],
 
             "env": {

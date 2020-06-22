@@ -5,7 +5,7 @@
  */
 
 import { LightningElement, wire, api } from 'lwc';
-import { getRelatedListRecordsBatch, refresh } from 'lds';
+import { getRelatedListRecordsBatch, refresh } from 'lds-adapters-uiapi';
 
 export default class Basic extends LightningElement {
     @api parentRecordId;

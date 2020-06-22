@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getRecordCreateDefaults, refresh } from 'lds';
+import { getRecordCreateDefaults, refresh } from 'lds-adapters-uiapi';
 
 export default class GetRecordCreateDefaults extends LightningElement {
     @api objectApiName;

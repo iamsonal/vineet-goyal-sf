@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getRecord, refresh } from 'lds';
+import { getRecord, refresh } from 'lds-adapters-uiapi';
 
 export default class RecordLayoutTypes extends LightningElement {
     @api recordId;

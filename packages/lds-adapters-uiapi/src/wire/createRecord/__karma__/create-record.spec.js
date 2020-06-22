@@ -1,6 +1,6 @@
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import { expireRecords, mockCreateRecordNetwork, mockGetRecordNetwork } from 'uiapi-test-util';
-import { createRecord } from 'lds';
+import { createRecord } from 'lds-adapters-uiapi';
 
 import RecordFields from '../../getRecord/__karma__/lwc/record-fields';
 

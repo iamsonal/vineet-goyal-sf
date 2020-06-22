@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getDuplicates } from 'lds';
+import { getDuplicates } from 'lds-adapters-uiapi';
 
 export default class Basic extends LightningElement {
     @api apiName;

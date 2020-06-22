@@ -1,5 +1,5 @@
 import { api, LightningElement, wire } from 'lwc';
-import { getListUi } from 'lds';
+import { getListUi } from 'lds-adapters-uiapi';
 
 export default class ListViewId extends LightningElement {
     @api listViewId;

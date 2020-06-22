@@ -1,4 +1,5 @@
-import { karmaNetworkAdapter, updateRecord } from 'lds';
+import { updateRecord } from 'lds-adapters-uiapi';
+import { karmaNetworkAdapter } from 'lds-engine';
 import { getMock as globalGetMock, mockNetworkOnce, setupElement } from 'test-util';
 import sinon from 'sinon';
 import {

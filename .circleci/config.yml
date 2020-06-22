@@ -124,7 +124,7 @@ upload_test_mobile_apps_to_sauce: &upload_test_mobile_apps_to_sauce
   run:
     name: Upload LDS Android Hybrid Test App to sauce files
     command: |
-      curl -v -u ${SAUCE_USERNAME}:${SAUCE_KEY} POST https://saucelabs.com/rest/v1/storage/${SAUCE_USERNAME}/${ANDROID_TEST_APK_NAME}?overwrite=true -H 'Content-Type: application/octet-stream' --data-binary @packages/karma-config/utils/webview/lds-android-hybrid-test-app.apk
+      curl -v -u ${SAUCE_USERNAME}:${SAUCE_KEY} POST https://saucelabs.com/rest/v1/storage/${SAUCE_USERNAME}/${ANDROID_TEST_APK_NAME}?overwrite=true -H 'Content-Type: application/octet-stream' --data-binary @packages/lds-karma/utils/webview/lds-android-hybrid-test-app.apk
 
 # Best
 setup_best_environment: &setup_best_environment

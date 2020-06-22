@@ -1,5 +1,5 @@
 import { api, LightningElement, wire } from 'lwc';
-import { getCommunityNavigationMenu } from 'lds';
+import { getCommunityNavigationMenu } from 'lds-adapters-community-navigation-menu';
 
 export default class GetNavItems extends LightningElement {
     wirePushCount = -1;

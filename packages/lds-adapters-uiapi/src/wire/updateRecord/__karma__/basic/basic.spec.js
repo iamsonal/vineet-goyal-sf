@@ -1,4 +1,4 @@
-import { updateRecord } from 'lds';
+import { updateRecord } from 'lds-adapters-uiapi';
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     expireRecords,

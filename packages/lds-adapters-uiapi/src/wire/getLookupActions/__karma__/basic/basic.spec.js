@@ -1,5 +1,5 @@
 import Basic from '../lwc/basic';
-import { karmaNetworkAdapter } from 'lds';
+import { karmaNetworkAdapter } from 'lds-engine';
 import {
     getMock as globalGetMock,
     mockNetworkErrorOnce,

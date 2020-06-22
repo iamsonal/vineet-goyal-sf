@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getNavItems, refresh } from 'lds';
+import { getNavItems, refresh } from 'lds-adapters-uiapi';
 
 export default class NavItems extends LightningElement {
     @api formFactor;

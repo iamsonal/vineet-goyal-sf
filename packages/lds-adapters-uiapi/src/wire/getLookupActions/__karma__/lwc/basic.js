@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getLookupActions } from 'lds';
+import { getLookupActions } from 'lds-adapters-uiapi';
 
 export default class Basic extends LightningElement {
     @api actionTypes;

@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getRecordTemplateClone, refresh } from 'lds';
+import { getRecordTemplateClone, refresh } from 'lds-adapters-uiapi';
 
 export default class GetRecordTemplateClone extends LightningElement {
     @api recordId;

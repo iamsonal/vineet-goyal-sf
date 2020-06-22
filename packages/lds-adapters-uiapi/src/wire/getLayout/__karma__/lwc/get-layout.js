@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getLayout, refresh } from 'lds';
+import { getLayout, refresh } from 'lds-adapters-uiapi';
 
 export default class GetLayout extends LightningElement {
     @api objectApiName;

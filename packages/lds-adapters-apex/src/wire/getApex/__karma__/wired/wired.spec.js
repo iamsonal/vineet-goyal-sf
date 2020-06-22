@@ -1,6 +1,6 @@
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import { expireApex, mockApexNetwork, mockApexNetworkOnce } from 'apex-test-util';
-import { getSObjectValue } from 'lds';
+import { getSObjectValue } from 'lds-adapters-apex';
 
 import Imperative from '../lwc/imperative';
 import Wired from '../lwc/wired';

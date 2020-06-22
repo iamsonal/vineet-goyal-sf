@@ -18,7 +18,8 @@ import {
     mockGetRecordUiNetwork,
     mockUpdateRecordNetwork,
 } from 'uiapi-test-util';
-import { karmaNetworkAdapter, updateRecord } from 'lds';
+import { updateRecord } from 'lds-adapters-uiapi';
+import { karmaNetworkAdapter } from 'lds-engine';
 
 import GetLayout from '../../../getLayout/__karma__/lwc/get-layout';
 import RecordFields from '../../../getRecord/__karma__/lwc/record-fields';

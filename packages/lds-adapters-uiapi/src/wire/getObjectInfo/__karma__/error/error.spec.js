@@ -1,6 +1,6 @@
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import { expireObjectInfo, mockGetObjectInfoNetwork } from 'uiapi-test-util';
-import { refresh } from 'lds';
+import { refresh } from 'lds-adapters-uiapi';
 
 import ObjectBasic from '../lwc/object-basic';
 

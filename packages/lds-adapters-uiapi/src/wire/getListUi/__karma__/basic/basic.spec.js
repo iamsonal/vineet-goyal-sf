@@ -6,7 +6,7 @@ import {
     setupElement,
 } from 'test-util';
 import { URL_BASE, expireRecords, mockGetRecordNetwork } from 'uiapi-test-util';
-import { karmaNetworkAdapter } from 'lds';
+import { karmaNetworkAdapter } from 'lds-engine';
 import sinon from 'sinon';
 import { beforeEach as util_beforeEach } from '../util';
 

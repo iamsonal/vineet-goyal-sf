@@ -1,12 +1,12 @@
 {
-    "name": "@salesforce/lds-karma-config",
+    "name": "@salesforce/lds-karma",
     "version": "0.1.13",
     "description": "Karma config and utils for wire adapter testing",
     "private": true,
     "license": "MIT",
     "main": "configs/index.js",
     "scripts": {
-        "clean": "rm -rf utils/dist",
+        "clean": "rm -rf dist",
         "build": "rollup --config rollup.config.js"
     }
 }

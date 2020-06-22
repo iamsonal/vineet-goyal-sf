@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { listContent } from 'lds';
+import { listContent } from 'lds-adapters-cms-delivery';
 
 export default class ListContent extends LightningElement {
     wirePushCount = -1;

@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getPicklistValues, refresh } from 'lds';
+import { getPicklistValues, refresh } from 'lds-adapters-uiapi';
 
 export default class GetPicklistValues extends LightningElement {
     @api fieldApiName;

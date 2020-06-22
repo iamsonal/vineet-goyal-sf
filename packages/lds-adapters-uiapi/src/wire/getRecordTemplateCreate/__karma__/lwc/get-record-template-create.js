@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getRecordTemplateCreate, refresh } from 'lds';
+import { getRecordTemplateCreate, refresh } from 'lds-adapters-uiapi';
 
 export default class GetRecordDefaultsTemplateForCreate extends LightningElement {
     @api objectApiName;

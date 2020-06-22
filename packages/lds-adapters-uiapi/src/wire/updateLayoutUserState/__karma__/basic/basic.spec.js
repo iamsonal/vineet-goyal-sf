@@ -1,4 +1,4 @@
-import { updateLayoutUserState } from 'lds';
+import { updateLayoutUserState } from 'lds-adapters-uiapi';
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     LayoutMode,

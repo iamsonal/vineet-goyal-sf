@@ -3,7 +3,7 @@ import ObjectAndListViewApiName from '../lwc/objectAndListViewApiName';
 import { beforeEach as util_beforeEach, convertToFieldIds } from '../util';
 import { mockNetworkOnce, flushPromises, setupElement, getMock as globalGetMock } from 'test-util';
 import { URL_BASE, expireListUi } from 'uiapi-test-util';
-import { karmaNetworkAdapter } from 'lds';
+import { karmaNetworkAdapter } from 'lds-engine';
 import sinon from 'sinon';
 
 window.engine = window.ldsEngine;

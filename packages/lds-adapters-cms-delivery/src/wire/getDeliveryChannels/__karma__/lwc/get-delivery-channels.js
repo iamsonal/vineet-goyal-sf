@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getDeliveryChannels } from 'lds';
+import { getDeliveryChannels } from 'lds-adapters-cms-delivery';
 
 export default class GetDeliveryChannels extends LightningElement {
     wirePushCount = -1;

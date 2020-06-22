@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getRecordEditActions } from 'lds';
+import { getRecordEditActions } from 'lds-adapters-uiapi';
 
 export default class Basic extends LightningElement {
     @api recordIds;

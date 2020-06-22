@@ -1,8 +1,8 @@
-import { karmaNetworkAdapter } from 'lds';
+import { karmaNetworkAdapter } from 'lds-engine';
 import sinon from 'sinon';
 import { mockNetworkOnce, getMock as globalGetMock, setupElement } from 'test-util';
 import { URL_BASE, expireRelatedListInfo } from 'uiapi-test-util';
-import { updateRelatedListInfo } from 'lds';
+import { updateRelatedListInfo } from 'lds-adapters-uiapi';
 
 import RelatedListBasic from '../lwc/related-list-basic';
 

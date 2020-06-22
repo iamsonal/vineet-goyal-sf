@@ -1,37 +1,37 @@
-const baseConfig = require('@salesforce/lds-karma-config');
+const baseConfig = require('@salesforce/lds-karma');
+const camelcase = require('camelcase');
 
-const LDS = require.resolve('./karma/dist/lds.js');
-const LDS_COMPAT = require.resolve('./karma/dist/compat/lds.js');
+const ADAPTER_MODULE_NAME = 'lds-adapters-commerce-catalog';
+const ADAPTER_TEST_UTIL_NAME = 'commerce-catalog-test-util';
 
-const COMMERCE_CATALOG = require.resolve('./dist/umd/es2018/commerce-catalog.js');
-const COMMERCE_CATALOG_COMPAT = require.resolve('./dist/umd/es5/commerce-catalog.js');
+const FILES = [
+    require.resolve(`./karma/dist/${ADAPTER_MODULE_NAME}.js`),
+    require.resolve(`./karma/dist/${ADAPTER_TEST_UTIL_NAME}.js`),
+];
 
-const COMMERCE_CATALOG_TEST_UTIL = require.resolve('./karma/dist/commerce-catalog-test-util.js');
-const COMMERCE_CATALOG_TEST_UTIL_COMPAT = require.resolve(
-    './karma/dist/compat/commerce-catalog-test-util.js'
-);
+const COMPAT_FILES = [
+    require.resolve(`./karma/dist/compat/${ADAPTER_MODULE_NAME}.js`),
+    require.resolve(`./karma/dist/compat/${ADAPTER_TEST_UTIL_NAME}.js`),
+];
 
 module.exports = config => {
     baseConfig(config);
 
     const compat = Boolean(config.compat);
-    const files = [];
-
-    config.files.forEach(file => {
-        files.push(file);
-
-        // the files order matters
-        if (typeof file === 'string') {
-            if (file.endsWith('/test-util.js')) {
-                files.push(compat ? COMMERCE_CATALOG_TEST_UTIL_COMPAT : COMMERCE_CATALOG_TEST_UTIL);
-            } else if (file.endsWith('/lwclds.js')) {
-                files.push(compat ? COMMERCE_CATALOG_COMPAT : COMMERCE_CATALOG);
-                files.push(compat ? LDS_COMPAT : LDS);
-            }
-        }
-    });
+    const index = config.files.findIndex(file => file.endsWith('/global-setup.js'));
+    const files = [
+        ...config.files.slice(0, index + 1),
+        ...(compat ? COMPAT_FILES : FILES),
+        ...config.files.slice(index + 1),
+    ];
 
     config.set({
         files,
+        lwcPreprocessor: {
+            globals: {
+                [ADAPTER_MODULE_NAME]: camelcase(ADAPTER_MODULE_NAME),
+                [ADAPTER_TEST_UTIL_NAME]: camelcase(ADAPTER_TEST_UTIL_NAME),
+            },
+        },
     });
 };

@@ -1,5 +1,5 @@
 import GetLookupRecords from '../lwc/get-lookup-records';
-import { karmaNetworkAdapter } from 'lds';
+import { karmaNetworkAdapter } from 'lds-engine';
 import {
     getMock as globalGetMock,
     mockNetworkOnce,

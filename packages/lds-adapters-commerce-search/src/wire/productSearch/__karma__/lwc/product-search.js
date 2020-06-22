@@ -1,5 +1,5 @@
 import { LightningElement, api, wire } from 'lwc';
-import { productSearch } from 'lds';
+import { productSearch } from 'lds-adapters-commerce-search';
 
 export default class ProductSearch extends LightningElement {
     wirePushCount = -1;

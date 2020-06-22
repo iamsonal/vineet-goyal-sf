@@ -1,5 +1,5 @@
 import { LightningElement, api, wire } from 'lwc';
-import { getProductCategoryPath } from 'lds';
+import { getProductCategoryPath } from 'lds-adapters-commerce-catalog';
 
 export default class CategoryPath extends LightningElement {
     wirePushCount = -1;

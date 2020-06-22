@@ -1,5 +1,5 @@
 import { LightningElement, api, wire } from 'lwc';
-import { getProductPrice } from 'lds';
+import { getProductPrice } from 'lds-adapters-commerce-store-pricing';
 
 export default class ProductPrice extends LightningElement {
     wirePushCount = -1;

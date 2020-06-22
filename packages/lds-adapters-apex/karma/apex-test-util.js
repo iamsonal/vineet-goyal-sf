@@ -1,6 +1,6 @@
 'use strict';
 
-import { karmaNetworkAdapter } from 'lds';
+import { karmaNetworkAdapter } from 'lds-engine';
 import timekeeper from 'timekeeper';
 import sinon from 'sinon';
 import { mockNetworkOnce, mockNetworkSequence } from 'test-util';

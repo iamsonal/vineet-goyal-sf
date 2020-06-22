@@ -1,44 +1,38 @@
-const baseConfig = require('@salesforce/lds-karma-config');
+const baseConfig = require('@salesforce/lds-karma');
+const camelcase = require('camelcase');
 
-const LDS = require.resolve('./karma/dist/lds.js');
-const LDS_COMPAT = require.resolve('./karma/dist/compat/lds.js');
+const ADAPTER_MODULE_NAME = 'lds-adapters-uiapi';
+const ADAPTER_TEST_UTIL_NAME = 'uiapi-test-util';
 
-const UIAPI_RECORD_SERVICE = require.resolve('./dist/umd/es2018/uiapi-records-service.js');
-const UIAPI_RECORD_SERVICE_COMPAT = require.resolve('./dist/umd/es5/uiapi-records-service.js');
+const FILES = [
+    require.resolve(`./karma/dist/${ADAPTER_MODULE_NAME}.js`),
+    require.resolve(`./karma/dist/${ADAPTER_TEST_UTIL_NAME}.js`),
+    require.resolve('./karma/dist/uiapi-test-setup.js'),
+];
 
-const UIAPI_TEST_UTIL = require.resolve('./karma/dist/uiapi-test-util.js');
-const UIAPI_TEST_UTIL_COMPAT = require.resolve('./karma/dist/compat/uiapi-test-util.js');
-
-const UIAPI_TEST_SETUP = require.resolve('./karma/dist/uiapi-test-setup.js');
-const UIAPI_TEST_SETUP_COMPAT = require.resolve('./karma/dist/compat/uiapi-test-setup.js');
+const COMPAT_FILES = [
+    require.resolve(`./karma/dist/compat/${ADAPTER_MODULE_NAME}.js`),
+    require.resolve(`./karma/dist/compat/${ADAPTER_TEST_UTIL_NAME}.js`),
+    require.resolve('./karma/dist/compat/uiapi-test-setup.js'),
+];
 
 module.exports = config => {
     baseConfig(config);
 
     const compat = Boolean(config.compat);
-    const files = [];
-
-    config.files.forEach(file => {
-        files.push(file);
-
-        // the files order matters
-        if (typeof file === 'string') {
-            if (file.endsWith('/test-util.js')) {
-                files.push(compat ? UIAPI_TEST_UTIL_COMPAT : UIAPI_TEST_UTIL);
-            } else if (file.endsWith('/global-setup.js')) {
-                files.push(compat ? UIAPI_TEST_SETUP_COMPAT : UIAPI_TEST_SETUP);
-            } else if (file.endsWith('/lwclds.js')) {
-                files.push(compat ? UIAPI_RECORD_SERVICE_COMPAT : UIAPI_RECORD_SERVICE);
-                files.push(compat ? LDS_COMPAT : LDS);
-            }
-        }
-    });
+    const index = config.files.findIndex(file => file.endsWith('/global-setup.js'));
+    const files = [
+        ...config.files.slice(0, index + 1),
+        ...(compat ? COMPAT_FILES : FILES),
+        ...config.files.slice(index + 1),
+    ];
 
     config.set({
         files,
         lwcPreprocessor: {
             globals: {
-                'uiapi-test-util': 'uiApiTestUtil',
+                [ADAPTER_MODULE_NAME]: camelcase(ADAPTER_MODULE_NAME),
+                [ADAPTER_TEST_UTIL_NAME]: camelcase(ADAPTER_TEST_UTIL_NAME),
             },
         },
     });

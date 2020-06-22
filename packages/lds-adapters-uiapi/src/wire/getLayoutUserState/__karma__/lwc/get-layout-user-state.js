@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getLayoutUserState, refresh } from 'lds';
+import { getLayoutUserState, refresh } from 'lds-adapters-uiapi';
 
 export default class GetLayoutUserState extends LightningElement {
     @api objectApiName;

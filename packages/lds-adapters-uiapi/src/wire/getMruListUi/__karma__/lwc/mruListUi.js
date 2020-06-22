@@ -1,5 +1,5 @@
 import { api, LightningElement, wire } from 'lwc';
-import { getListUi, MRU } from 'lds';
+import { getListUi, MRU } from 'lds-adapters-uiapi';
 
 export default class MruListUi extends LightningElement {
     @api fields;

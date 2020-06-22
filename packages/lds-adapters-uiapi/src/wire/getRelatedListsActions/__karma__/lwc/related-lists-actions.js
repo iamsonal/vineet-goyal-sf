@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getRelatedListsActions } from 'lds';
+import { getRelatedListsActions } from 'lds-adapters-uiapi';
 
 export default class RelatedListsActions extends LightningElement {
     @api recordIds;

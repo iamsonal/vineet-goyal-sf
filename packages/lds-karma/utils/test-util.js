@@ -1,6 +1,6 @@
 'use strict';
 
-import { karmaNetworkAdapter, store } from 'lds';
+import { karmaNetworkAdapter, store } from 'lds-engine';
 import { countNetworkCalls } from 'impl-test-utils';
 import { createElement } from 'lwc';
 import timekeeper from 'timekeeper';

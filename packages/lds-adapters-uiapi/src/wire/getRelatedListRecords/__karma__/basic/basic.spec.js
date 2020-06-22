@@ -1,4 +1,4 @@
-import { deleteRecord } from 'lds';
+import { deleteRecord } from 'lds-adapters-uiapi';
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     mockDeleteRecordNetwork,

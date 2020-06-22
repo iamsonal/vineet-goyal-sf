@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getLookupRecords, refresh } from 'lds';
+import { getLookupRecords, refresh } from 'lds-adapters-uiapi';
 
 export default class Basic extends LightningElement {
     @api fieldApiName;

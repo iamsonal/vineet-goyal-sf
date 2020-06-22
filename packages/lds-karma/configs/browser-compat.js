@@ -6,14 +6,6 @@ const karmaPluginCompat = require('../plugins/karma-plugin-compat');
 
 const LWC_ENGINE_COMPAT = lwcDistribution.getModulePath('engine', 'umd', 'es5', 'prod_debug');
 
-const LWC_WIRE_SERVICE_COMPAT = lwcDistribution.getModulePath(
-    'wire-service',
-    'umd',
-    'es5',
-    'prod_debug'
-);
-const LDS_ENGINE_COMPAT = require.resolve('@ldsjs/engine/dist/umd/es5/engine.js');
-const LWC_LDS_COMPAT = require.resolve('../utils/dist/compat/lwclds.js');
 const POLYFILL_COMPAT = require.resolve('es5-proxy-compat/polyfills.js');
 const SHADOW_POLYFILL_COMPAT = lwcDistribution.getModulePath(
     'synthetic-shadow',
@@ -21,21 +13,27 @@ const SHADOW_POLYFILL_COMPAT = lwcDistribution.getModulePath(
     'es5',
     'prod_debug'
 );
-const BROWSER_TEST_UTILS_COMPAT = require.resolve('../utils/dist/compat/browser-test-utils.js');
-const TEST_UTIL_COMPAT = require.resolve('../utils/dist/compat/test-util.js');
-const GLOBAL_SETUP_COMPAT = require.resolve('../utils/dist/compat/global-setup.js');
+
+const LDS_ENGINE_COMPAT = require.resolve('../dist/compat/lds-runtime-browser.js');
+const LDS_BINDINGS_COMPAT = require.resolve('../dist/compat/lds-bindings.js');
+
+const BROWSER_TEST_UTILS_COMPAT = require.resolve('../dist/compat/utils/browser-test-utils.js');
+const TEST_UTIL_COMPAT = require.resolve('../dist/compat/utils/test-util.js');
+const GLOBAL_SETUP_COMPAT = require.resolve('../dist/compat/utils/global-setup.js');
 
 function getFiles() {
     const files = [];
 
+    // LWC
     files.push(POLYFILL_COMPAT);
     files.push(SHADOW_POLYFILL_COMPAT);
-
     files.push(LWC_ENGINE_COMPAT);
-    files.push(LWC_WIRE_SERVICE_COMPAT);
-    files.push(LDS_ENGINE_COMPAT);
-    files.push(LWC_LDS_COMPAT);
 
+    // LDS
+    files.push(LDS_ENGINE_COMPAT);
+    files.push(LDS_BINDINGS_COMPAT);
+
+    // Test Utils
     files.push(BROWSER_TEST_UTILS_COMPAT);
     files.push(TEST_UTIL_COMPAT);
     // The files order matters. global-setup has dependency with test-util.

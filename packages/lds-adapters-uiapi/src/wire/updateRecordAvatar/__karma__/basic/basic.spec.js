@@ -1,4 +1,5 @@
-import { karmaNetworkAdapter, updateRecordAvatar } from 'lds';
+import { updateRecordAvatar } from 'lds-adapters-uiapi';
+import { karmaNetworkAdapter } from 'lds-engine';
 import {
     mockNetworkOnce,
     getMock as globalGetMock,

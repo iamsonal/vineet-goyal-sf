@@ -1,5 +1,5 @@
 import { LightningElement, api, wire } from 'lwc';
-import { getProduct } from 'lds';
+import { getProduct } from 'lds-adapters-commerce-catalog';
 
 export default class GetProduct extends LightningElement {
     @api webstoreId;

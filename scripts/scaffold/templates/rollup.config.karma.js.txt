@@ -1,0 +1,9 @@
+import {
+    ldsAdaptersConfigs,
+    adapterTestUtilConfigs,
+} from '../../scripts/rollup/rollup.config.karma';
+
+module.exports = [
+    ...ldsAdaptersConfigs({ adapterModuleName: '{{PACKAGE_NAME_TAG}}' }),
+    ...adapterTestUtilConfigs({ testUtilName: '{{ARTIFACT_NAME}}-test-util' }),
+];

@@ -16,10 +16,10 @@
         "registry": "https://npm.lwcjs.org"
     },
     "dependencies": {
-        "@ldsjs/lwc-lds": "^0.10.0"
+        "@ldsjs/lwc-lds": "^0.10.1"
     },
     "devDependencies": {
-        "@ldsjs/engine": "^0.10.0",
+        "@ldsjs/engine": "^0.10.1",
         "@salesforce/lds-runtime-web": "0.1.13"
     }
 }

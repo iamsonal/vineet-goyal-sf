@@ -34,12 +34,17 @@ const browser = {
     input: './src/main.ts',
 
     external: [
-        'lds-static-functions',
-        'lwc',
-        'wire-service',
         'instrumentation/service', // only used by AdsBridge
         '@salesforce/lds-runtime-aura',
         '@salesforce/lds-instrumentation',
+        '@salesforce/lds-bindings',
+        '@salesforce/lds-adapters-uiapi', //for AdsBridge
+        '@salesforce/lds-adapters-uiapi/sfdc',
+        '@salesforce/lds-adapters-apex/sfdc',
+        '@salesforce/lds-adapters-community-navigation-menu/sfdc',
+        '@salesforce/lds-adapters-commerce-catalog/sfdc',
+        '@salesforce/lds-adapters-commerce-search/sfdc',
+        '@salesforce/lds-adapters-commerce-store-pricing/sfdc',
     ],
 
     output: {
@@ -48,9 +53,18 @@ const browser = {
         banner,
         footer,
         paths: {
-            'lds-static-functions': './lds-static-functions',
             '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
             '@salesforce/lds-runtime-aura': 'force/ldsEngine',
+            '@salesforce/lds-bindings': 'force/ldsBindings',
+            '@salesforce/lds-adapters-uiapi': 'force/ldsAdaptersUiapi', //for AdsBridge
+            '@salesforce/lds-adapters-uiapi/sfdc': 'force/ldsAdaptersUiapi',
+            '@salesforce/lds-adapters-apex/sfdc': 'force/ldsAdaptersApex',
+            '@salesforce/lds-adapters-community-navigation-menu/sfdc':
+                'force/ldsAdaptersCmsDelivery',
+            '@salesforce/lds-adapters-commerce-catalog/sfdc': 'force/ldsAdaptersCommerceCatalog',
+            '@salesforce/lds-adapters-commerce-search/sfdc': 'force/ldsAdaptersCommerceSearch',
+            '@salesforce/lds-adapters-commerce-store-pricing/sfdc':
+                'force/ldsAdaptersCommerceStorePricing',
         },
     },
 
@@ -61,22 +75,6 @@ const browser = {
         }),
         replace({
             'process.env.VERSION': JSON.stringify(hash),
-        }),
-    ],
-};
-
-const ldsStaticFunctionsBrowser = {
-    input: './src/lds/lds-static-functions.ts',
-    output: {
-        file: 'dist/lds-static-functions.js',
-        format: 'esm',
-        banner: generatedFileBanner.join('\n'),
-    },
-
-    plugins: [
-        resolve(),
-        typescript({
-            clean: true,
         }),
     ],
 };
@@ -115,4 +113,4 @@ const adsBridge = {
     ],
 };
 
-export default [browser, min, ldsStaticFunctionsBrowser, adsBridge];
+export default [browser, min, adsBridge];

@@ -1,89 +1,91 @@
 import * as lds from './lds/main';
 
 /** UI API exports */
-export const createRecord = lds.createRecord;
-export const deleteRecord = lds.deleteRecord;
-export const getLayout = lds.getLayout;
-export const getLayoutUserState = lds.getLayoutUserState;
-export const getListUi = lds.getListUi;
-export const getLookupActions = lds.getLookupActions;
-export const getLookupRecords = lds.getLookupRecords;
-export const getObjectInfo = lds.getObjectInfo;
-export const getObjectInfos = lds.getObjectInfos;
-export const getPicklistValues = lds.getPicklistValues;
-export const getPicklistValuesByRecordType = lds.getPicklistValuesByRecordType;
-export const getRecord = lds.getRecord;
-export const getRecordActions = lds.getRecordActions;
-export const getRecordAvatars = lds.getRecordAvatars;
-export const getRecordCreateDefaults = lds.getRecordCreateDefaults;
-export const getRecordTemplateClone = lds.getRecordTemplateClone;
-export const getRecordTemplateCreate = lds.getRecordTemplateCreate;
-export const getRecordUi = lds.getRecordUi;
-export const getRelatedListInfo = lds.getRelatedListInfo;
-export const MRU = lds.MRU;
-export const refresh = lds.refresh;
-export const updateLayoutUserState = lds.updateLayoutUserState;
-export const updateRecord = lds.updateRecord;
-export const updateRecordAvatar = lds.updateRecordAvatar;
-export const getRelatedListRecords = lds.getRelatedListRecords;
-export const getRecordEditActions = lds.getRecordEditActions;
-export const getRelatedListActions = lds.getRelatedListActions;
-export const getRelatedListsActions = lds.getRelatedListsActions;
-export const getRelatedListsInfo = lds.getRelatedListsInfo;
-export const getRelatedListRecordActions = lds.getRelatedListRecordActions;
-export const getRelatedListCount = lds.getRelatedListCount;
-export const getRelatedListsCount = lds.getRelatedListsCount;
-export const updateRelatedListInfo = lds.updateRelatedListInfo;
-export const getRelatedListInfoBatch = lds.getRelatedListInfoBatch;
-export const getRelatedListRecordsBatch = lds.getRelatedListRecordsBatch;
-export const getNavItems = lds.getNavItems;
-export const getDuplicateConfiguration = lds.getDuplicateConfiguration;
-export const getDuplicates = lds.getDuplicates;
+export {
+    // Adapters
+    MRU,
+    createRecord,
+    deleteRecord,
+    getLayout,
+    getLayoutUserState,
+    getListUi,
+    getLookupActions,
+    getLookupRecords,
+    getObjectInfo,
+    getObjectInfos,
+    getPicklistValues,
+    getPicklistValuesByRecordType,
+    getRecord,
+    getRecordActions,
+    getRecordAvatars,
+    getRecordCreateDefaults,
+    getRecordTemplateClone,
+    getRecordTemplateCreate,
+    getRecordUi,
+    getRelatedListInfo,
+    updateLayoutUserState,
+    updateRecord,
+    updateRecordAvatar,
+    getRelatedListRecords,
+    getRecordEditActions,
+    getRelatedListActions,
+    getRelatedListsActions,
+    getRelatedListsInfo,
+    getRelatedListRecordActions,
+    getRelatedListCount,
+    getRelatedListsCount,
+    updateRelatedListInfo,
+    getRelatedListInfoBatch,
+    getRelatedListRecordsBatch,
+    getNavItems,
+    getDuplicateConfiguration,
+    getDuplicates,
+    // Record Util Pure Functions
+    createRecordInputFilteredByEditedFields,
+    generateRecordInputForCreate,
+    generateRecordInputForUpdate,
+    getFieldDisplayValue,
+    getFieldValue,
+    getRecordInput,
+    getRecordNotifyChange,
+    // TODO W-6568533 - replace this temporary imperative invocation with wire reform
+    _getLayout,
+    _getLayoutUserState,
+    _getObjectInfo,
+    _getObjectInfos,
+    _getPicklistValuesByRecordType,
+    _getRecord,
+    _getRecordActions,
+    _getRecordAvatars,
+    _getRecordTemplateClone,
+    _getRecordTemplateCreate,
+    _getRecordUi,
+    _getRelatedListInfo,
+    _getRelatedListsInfo,
+    _getRelatedListInfoBatch,
+    _getRelatedListActions,
+    _getRelatedListsActions,
+    _getRelatedListRecords,
+    _getRelatedListRecordsBatch,
+    _getRelatedListRecordActions,
+    _getRelatedListCount,
+    _getRelatedListsCount,
+} from '@salesforce/lds-adapters-uiapi/sfdc';
 
 /** Apex exports */
-export const getApexInvoker = lds.getApexInvoker;
-export const getSObjectValue = lds.getSObjectValue;
+export { getApexInvoker, getSObjectValue } from '@salesforce/lds-adapters-apex/sfdc';
 
 /** Connect exports */
-export const getCommunityNavigationMenu = lds.getCommunityNavigationMenu;
+export { getCommunityNavigationMenu } from '@salesforce/lds-adapters-community-navigation-menu/sfdc';
 
 /** Commere exports */
-export const getProduct = lds.getProduct;
-export const getProductCategoryPath = lds.getProductCategoryPath;
-export const getProductPrice = lds.getProductPrice;
-export const productSearch = lds.productSearch;
+export { getProduct, getProductCategoryPath } from '@salesforce/lds-adapters-commerce-catalog/sfdc';
 
-/** Record Util Pure Functions */
-export const createRecordInputFilteredByEditedFields = lds.createRecordInputFilteredByEditedFields;
-export const generateRecordInputForCreate = lds.generateRecordInputForCreate;
-export const generateRecordInputForUpdate = lds.generateRecordInputForUpdate;
-export const getFieldDisplayValue = lds.getFieldDisplayValue;
-export const getFieldValue = lds.getFieldValue;
-export const getRecordInput = lds.getRecordInput;
+export { productSearch } from '@salesforce/lds-adapters-commerce-search/sfdc';
+
+export { getProductPrice } from '@salesforce/lds-adapters-commerce-store-pricing/sfdc';
+
+export { refresh } from '@salesforce/lds-bindings';
 
 /** Misc exports */
 export const adsBridge = lds.adsBridge;
-export const getRecordNotifyChange = lds.getRecordNotifyChange;
-
-// TODO W-6568533 - replace this temporary imperative invocation with wire reform
-export const _getLayout = lds._getLayout;
-export const _getLayoutUserState = lds._getLayoutUserState;
-export const _getObjectInfo = lds._getObjectInfo;
-export const _getObjectInfos = lds._getObjectInfos;
-export const _getPicklistValuesByRecordType = lds._getPicklistValuesByRecordType;
-export const _getRecord = lds._getRecord;
-export const _getRecordActions = lds._getRecordActions;
-export const _getRecordAvatars = lds._getRecordAvatars;
-export const _getRecordTemplateClone = lds._getRecordTemplateClone;
-export const _getRecordTemplateCreate = lds._getRecordTemplateCreate;
-export const _getRecordUi = lds._getRecordUi;
-export const _getRelatedListInfo = lds._getRelatedListInfo;
-export const _getRelatedListsInfo = lds._getRelatedListsInfo;
-export const _getRelatedListInfoBatch = lds._getRelatedListInfoBatch;
-export const _getRelatedListActions = lds._getRelatedListActions;
-export const _getRelatedListsActions = lds._getRelatedListsActions;
-export const _getRelatedListRecords = lds._getRelatedListRecords;
-export const _getRelatedListRecordsBatch = lds._getRelatedListRecordsBatch;
-export const _getRelatedListRecordActions = lds._getRelatedListRecordActions;
-export const _getRelatedListCount = lds._getRelatedListCount;
-export const _getRelatedListsCount = lds._getRelatedListsCount;

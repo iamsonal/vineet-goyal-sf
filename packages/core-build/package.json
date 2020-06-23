@@ -11,9 +11,14 @@
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     },
     "devDependencies": {
+        "@salesforce/lds-runtime-aura": "0.1.13",
+        "@salesforce/lds-instrumentation": "0.1.13",
+        "@salesforce/lds-bindings": "0.1.13",
         "@salesforce/lds-adapters-apex": "0.1.13",
         "@salesforce/lds-adapters-uiapi": "0.1.13",
-        "@salesforce/lds-runtime-aura": "0.1.13",
-        "@salesforce/lds-instrumentation": "0.1.13"
+        "@salesforce/lds-adapters-community-navigation-menu": "0.1.13",
+        "@salesforce/lds-adapters-commerce-catalog": "0.1.13",
+        "@salesforce/lds-adapters-commerce-search": "0.1.13",
+        "@salesforce/lds-adapters-commerce-store-pricing": "0.1.13"
     }
 }

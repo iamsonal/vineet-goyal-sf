@@ -1,11 +1,6 @@
-jest.resetModules();
-
-(global as any).window = {};
+import * as mainExports from '../main';
 
 describe('Main exports', () => {
-    const mainExports = require('../main');
-    const ldsExports = require('../lds/main');
-
     [
         'createRecord',
         'deleteRecord',
@@ -46,7 +41,7 @@ describe('Main exports', () => {
         'getDuplicates',
     ].forEach(moduleName => {
         it(`should export ${moduleName} from lds`, () => {
-            expect((mainExports as any)[moduleName]).toBe((ldsExports as any)[moduleName]);
+            expect((mainExports as any)[moduleName]).toBeDefined();
         });
     });
 
@@ -61,7 +56,7 @@ describe('Main exports', () => {
         'getSObjectValue',
     ].forEach(moduleName => {
         it(`should export ${moduleName} from lds`, () => {
-            expect((mainExports as any)[moduleName]).toBe((ldsExports as any)[moduleName]);
+            expect((mainExports as any)[moduleName]).toBeDefined();
         });
     });
 });

@@ -21,6 +21,7 @@ const LDS_ROLLUP_KARMA_TEMPLATE_PATH = path.resolve(
 );
 const LDS_KARMA_CONF_TEMPLATE_PATH = path.resolve(__dirname, 'templates', 'karma.conf.js.txt');
 const LDS_KARMA_UTILS_TEMPLATE_PATH = path.resolve(__dirname, 'templates', 'karma-utils.js.txt');
+const LDS_MOCKS_READ_ME_TEMPLATE_PATH = path.resolve(__dirname, 'templates', 'README-mocks.txt');
 
 const ldsRamlTemplate = fs.readFileSync(LDS_RAML_TEMPLATE_PATH).toString();
 const ldsPackageJSONTemplate = fs.readFileSync(LDS_PACKAGE_JSON_TEMPLATE_PATH).toString();
@@ -30,6 +31,7 @@ const ldsApiRamlTemplate = fs.readFileSync(LDS_API_RAML_TEMPLATE_PATH).toString(
 const ldsRollupKarmaTemplate = fs.readFileSync(LDS_ROLLUP_KARMA_TEMPLATE_PATH).toString();
 const ldsKarmaConfTemplate = fs.readFileSync(LDS_KARMA_CONF_TEMPLATE_PATH).toString();
 const ldsKarmaUtilsTemplate = fs.readFileSync(LDS_KARMA_UTILS_TEMPLATE_PATH).toString();
+const ldsMocksReadMeTemplate = fs.readFileSync(LDS_MOCKS_READ_ME_TEMPLATE_PATH).toString();
 
 const NAMESPACE_TAG = '{{NAMESPACE}}';
 const DESCRIPTION_TAG = '{{DESCRIPTION_TAG}}';
@@ -103,9 +105,11 @@ function generate(config) {
     const rollupKarmaPath = path.resolve(packagePath, 'rollup.config.karma.js');
     const karmaConfPath = path.resolve(packagePath, 'karma.conf.js');
     const karmaUtilsPath = path.resolve(packagePath, 'karma', `${localName}-test-util.js`);
+    const mocksReadmePath = path.resolve(packagePath, 'src', 'mocks', 'types', 'README');
 
     mkdirp.sync(`${packagePath}/src/raml`);
     mkdirp.sync(`${packagePath}/karma`);
+    mkdirp.sync(`${packagePath}/src/mocks/types`);
     fs.writeFileSync(ldsRamlPath, ldsRamlTemplate.replace(NAMESPACE_TAG, family));
     fs.writeFileSync(packageJsonPath, renderPackageJSON(config));
     fs.writeFileSync(tsConfigPath, ldsTsConfigTemplate);
@@ -114,6 +118,7 @@ function generate(config) {
     fs.writeFileSync(rollupKarmaPath, renderKarmaRollupConfig(cloud, family));
     fs.writeFileSync(karmaConfPath, renderKarmaConf(cloud, family));
     fs.writeFileSync(karmaUtilsPath, ldsKarmaUtilsTemplate);
+    fs.writeFileSync(mocksReadmePath, ldsMocksReadMeTemplate);
 }
 
 function getPackageNamespace(cloud) {

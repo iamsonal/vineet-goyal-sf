@@ -39,6 +39,8 @@ import {
 export { MRU } from './wire/getListUi';
 export * from './generated/artifacts/sfdc';
 
+export { refresh } from '@salesforce/lds-bindings';
+
 /** Custom adapters */
 // updateLayoutUserState adapter should always return undefined
 const baseUpdateLayoutUserState = createLDSAdapter('updateLayoutUserState', UpdateLayoutUserState);

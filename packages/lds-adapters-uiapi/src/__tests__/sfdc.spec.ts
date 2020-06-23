@@ -1,62 +1,6 @@
 import * as uiapiExports from '../sfdc';
 
 describe('SFDC exports', () => {
-    [
-        'createRecord',
-        'deleteRecord',
-        'getLayout',
-        'getLayoutUserState',
-        'getListUi',
-        'getLookupActions',
-        'getLookupRecords',
-        'getObjectInfo',
-        'getObjectInfos',
-        'getPicklistValues',
-        'getPicklistValuesByRecordType',
-        'getRecord',
-        'getRecordActions',
-        'getRecordAvatars',
-        'getRecordEditActions',
-        'getRecordNotifyChange',
-        'getRecordUi',
-        'getRelatedListRecordActions',
-        'updateLayoutUserState',
-        'updateRecord',
-        'updateRecordAvatar',
-        'MRU',
-        'getRecordCreateDefaults',
-        'getLayoutUserState',
-        'getRelatedListInfo',
-        'updateRelatedListInfo',
-        'getRelatedListsInfo',
-        'getRelatedListRecords',
-        'getRelatedListCount',
-        'getRelatedListsCount',
-        'getRelatedListInfoBatch',
-        'getRelatedListRecordsBatch',
-        'getNavItems',
-        'getDuplicateConfiguration',
-        'getDuplicates',
-    ].forEach(adapterName => {
-        it(`should export ${adapterName} from sfdc uiapi adapters module`, () => {
-            expect((uiapiExports as any)[adapterName]).toBeDefined();
-        });
-    });
-
-    // pure functions
-    [
-        'createRecordInputFilteredByEditedFields',
-        'generateRecordInputForCreate',
-        'generateRecordInputForUpdate',
-        'getFieldDisplayValue',
-        'getFieldValue',
-        'getRecordInput',
-    ].forEach(functionName => {
-        it(`should export ${functionName} from sfdc uiapi adapters module`, () => {
-            expect((uiapiExports as any)[functionName]).toBeDefined();
-        });
-    });
-
     describe('items exported to core', () => {
         /**
          * This export whitelist ensures that we have the minimum amount of exports
@@ -105,6 +49,7 @@ describe('SFDC exports', () => {
 
             /** Misc exports */
             'getRecordNotifyChange',
+            'refresh',
 
             /** Utility functions (all pure) */
             'createRecordInputFilteredByEditedFields',

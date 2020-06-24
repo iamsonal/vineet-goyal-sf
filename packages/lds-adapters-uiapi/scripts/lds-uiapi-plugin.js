@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("@ldsjs/compiler").CompilerConfig} CompilerConfig
+ * @typedef {import("@ldsjs/compiler").ModelInfo} ModelInfo
+ * @typedef { { name: string, method: string } } AdapterInfo
+ */
+
 const plugin = require('@salesforce/lds-compiler-plugins');
 const fs = require('fs');
 const path = require('path');
@@ -23,6 +29,12 @@ function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+/**
+ * @param {string} artifactsDir
+ * @param {AdapterInfo[]} generatedAdapterNames
+ * @param {AdapterInfo[]} imperativeAdapterNames
+ * @returns {void}
+ */
 function generateWireBindingsExport(artifactsDir, generatedAdapterNames, imperativeAdapterNames) {
     const imports = [
         `import { createWireAdapterConstructor, createLDSAdapter } from '@salesforce/lds-bindings';`,
@@ -81,6 +93,12 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterNames, imperat
     fs.writeFileSync(path.join(artifactsDir, 'sfdc.ts'), code.join('\n\n'));
 }
 
+/**
+ * @param {string} artifactsDir
+ * @param {AdapterInfo[]} generatedAdapterNames
+ * @param {AdapterInfo[]} imperativeAdapterNames
+ * @returns {void}
+ */
 function generateAdapterFactoryExport(artifactsDir, generatedAdapterNames, imperativeAdapterNames) {
     const exports = [];
 
@@ -101,6 +119,11 @@ function generateAdapterFactoryExport(artifactsDir, generatedAdapterNames, imper
 
 module.exports = {
     validate: plugin.validate,
+    /**
+     * @param {CompilerConfig} compilerConfig
+     * @param {ModelInfo} modelInfo
+     * @returns {void}
+     */
     afterGenerate: (compilerConfig, modelInfo) => {
         const adapters = modelInfo.resources
             .filter(resource => resource.adapter !== undefined)

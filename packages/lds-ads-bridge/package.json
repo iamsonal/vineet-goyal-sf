@@ -1,0 +1,21 @@
+{
+    "name": "@salesforce/lds-ads-bridge",
+    "version": "0.1.13",
+    "description": "Bridge to sync data between LDS and ADS",
+    "license": "MIT",
+    "private": true,
+    "main": "dist/adsBridge.js",
+    "module": "dist/adsBridge.js",
+    "types": "dist/main.d.ts",
+    "scripts": {
+        "prepare": "yarn build",
+        "build": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist",
+        "test": "jest"
+    },
+    "devDependencies": {
+        "@salesforce/lds-runtime-aura": "0.1.13",
+        "@salesforce/lds-instrumentation": "0.1.13",
+        "@salesforce/lds-adapters-uiapi": "0.1.13"
+    }
+}

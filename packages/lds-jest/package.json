@@ -1,0 +1,18 @@
+{
+    "name": "@salesforce/lds-jest",
+    "version": "0.1.13",
+    "description": "Jest test library for lds adapters",
+    "main": "dist/main.js",
+    "types": "dist/main.d.ts",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+        "clean": "rm -rf dist",
+        "build": "tsc"
+    },
+    "devDependencies": {
+        "@ldsjs/adapter-test-library": "^0.10.1",
+        "@ldsjs/engine": "^0.10.1",
+        "@ldsjs/environments": "^0.10.1"
+    }
+}

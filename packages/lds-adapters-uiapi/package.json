@@ -39,6 +39,7 @@
     },
     "devDependencies": {
         "@salesforce/lds-compiler-plugins": "0.1.13",
-        "@salesforce/lds-karma": "0.1.13"
+        "@salesforce/lds-karma": "0.1.13",
+        "@salesforce/lds-jest": "0.1.13"
     }
 }

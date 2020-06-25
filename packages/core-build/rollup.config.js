@@ -34,11 +34,7 @@ const browser = {
     input: './src/main.ts',
 
     external: [
-        'instrumentation/service', // only used by AdsBridge
-        '@salesforce/lds-runtime-aura',
-        '@salesforce/lds-instrumentation',
         '@salesforce/lds-bindings',
-        '@salesforce/lds-adapters-uiapi', //for AdsBridge
         '@salesforce/lds-adapters-uiapi/sfdc',
         '@salesforce/lds-adapters-apex/sfdc',
         '@salesforce/lds-adapters-community-navigation-menu/sfdc',
@@ -53,10 +49,7 @@ const browser = {
         banner,
         footer,
         paths: {
-            '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
-            '@salesforce/lds-runtime-aura': 'force/ldsEngine',
             '@salesforce/lds-bindings': 'force/ldsBindings',
-            '@salesforce/lds-adapters-uiapi': 'force/ldsAdaptersUiapi', //for AdsBridge
             '@salesforce/lds-adapters-uiapi/sfdc': 'force/ldsAdaptersUiapi',
             '@salesforce/lds-adapters-apex/sfdc': 'force/ldsAdaptersApex',
             '@salesforce/lds-adapters-community-navigation-menu/sfdc':
@@ -98,19 +91,4 @@ const min = {
     ],
 };
 
-const adsBridge = {
-    input: './src/lds/ads-bridge.ts',
-    output: {
-        file: 'dist/ads-bridge.js',
-        format: 'esm',
-    },
-    external: ['instrumentation/service'],
-    plugins: [
-        ...browser.plugins,
-        replace({
-            'process.env.NODE_ENV': JSON.stringify('production'),
-        }),
-    ],
-};
-
-export default [browser, min, adsBridge];
+export default [browser, min];

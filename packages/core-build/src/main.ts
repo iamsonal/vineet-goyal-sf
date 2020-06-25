@@ -1,5 +1,3 @@
-import * as lds from './lds/main';
-
 /** UI API exports */
 export {
     // Adapters
@@ -86,6 +84,3 @@ export { productSearch } from '@salesforce/lds-adapters-commerce-search/sfdc';
 export { getProductPrice } from '@salesforce/lds-adapters-commerce-store-pricing/sfdc';
 
 export { refresh } from '@salesforce/lds-bindings';
-
-/** Misc exports */
-export const adsBridge = lds.adsBridge;

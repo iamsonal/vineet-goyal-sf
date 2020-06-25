@@ -65,7 +65,6 @@ const whiteList = [
     'productSearch',
 
     /** Misc exports */
-    'adsBridge',
     'getRecordNotifyChange',
 
     /** Utility functions (all pure) */

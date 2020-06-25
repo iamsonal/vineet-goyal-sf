@@ -10,9 +10,6 @@ module.exports = {
 
     displayName: 'core-build',
     roots: ['<rootDir>/src'],
-    moduleNameMapper: {
-        'lds-static-functions': '<rootDir>/src/lds/lds-static-functions.ts',
-    },
 
     /**
      * There are a couple caveats with how Jest handles the code coverage thresholds here:

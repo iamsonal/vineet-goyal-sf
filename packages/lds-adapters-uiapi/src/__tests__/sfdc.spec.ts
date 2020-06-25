@@ -94,3 +94,63 @@ describe('SFDC exports', () => {
         });
     });
 });
+
+jest.mock('../main', () => {
+    const mockAdapter = () => {
+        return {
+            then: () => null,
+        };
+    };
+    const spies = {
+        updateLayoutUserStateSpy: jest.fn(mockAdapter),
+        updateRelatedListInfoSpy: jest.fn(mockAdapter),
+    };
+
+    return {
+        ...jest.requireActual('../main'),
+        UpdateLayoutUserState: () => spies.updateLayoutUserStateSpy,
+        UpdateRelatedListInfo: () => spies.updateRelatedListInfoSpy,
+        __spies: spies,
+    };
+});
+
+import { __spies as adapterFactorySpies } from '../main';
+
+describe('Custom Adapters', () => {
+    describe('updateLayoutUserState', () => {
+        it('should return promise that resolves to undefined', () => {
+            adapterFactorySpies.updateLayoutUserStateSpy.mockResolvedValueOnce({});
+
+            return expect(
+                uiapiExports.updateLayoutUserState(
+                    'Opportunity',
+                    '00x000000000000017',
+                    'Full',
+                    'View',
+                    {}
+                )
+            ).resolves.toBeUndefined();
+        });
+    });
+
+    describe('updateRelatedListInfo', () => {
+        it('should return promise that resolves to data', () => {
+            const snapshotData = {};
+            adapterFactorySpies.updateRelatedListInfoSpy.mockResolvedValueOnce({
+                data: snapshotData,
+            });
+
+            return expect(
+                uiapiExports.updateRelatedListInfo({
+                    parentObjectApiName: '',
+                    relatedListId: '',
+                    orderedByInfo: [],
+                    userPreferences: {
+                        columnWidths: {},
+                        columnWrap: {},
+                    },
+                })
+            ).resolves.toBe(snapshotData);
+        });
+    });
+});

@@ -7,6 +7,8 @@ import {
     ResourceRequest,
     Snapshot,
     SnapshotRefresh,
+    ResourceResponse,
+    UnfulfilledSnapshot,
 } from '@ldsjs/engine';
 import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
 import {
@@ -56,6 +58,7 @@ import {
 } from '../../util/pagination';
 import { factory as getListViewSummaryCollectionAdapterFactory } from '../getListViewSummaryCollection';
 import { factory as getMruListUiAdapterFactory } from '../getMruListUi';
+import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
 const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select();
 
@@ -211,17 +214,7 @@ function buildSnapshotRefresh(
     };
 }
 
-/**
- * Builds, sends, and processes the result of a list-ui request, ignoring any cached
- * data for the list view.
- *
- * @param lds LDS engine
- * @param config wire config
- */
-function buildNetworkSnapshot_getListUi(
-    lds: LDS,
-    config: GetListUiConfig
-): Promise<Snapshot<ListUiRepresentation>> {
+function prepareRequest_getListUi(config: GetListUiConfig) {
     const { fields, optionalFields, pageSize, pageToken, sortBy } = config;
     const queryParams = {
         fields,
@@ -249,59 +242,106 @@ function buildNetworkSnapshot_getListUi(
         throw new Error('unrecognized config');
     }
 
-    return lds.dispatchResourceRequest<ListUiRepresentation>(request).then(
+    return request;
+}
+
+function onResourceSuccess_getListUi(
+    lds: LDS,
+    config: GetListUiConfig,
+    request: ResourceRequest,
+    response: ResourceResponse<ListUiRepresentation>
+) {
+    const { body } = response,
+        listInfo = body.info,
+        { listReference } = listInfo;
+
+    // response might have records.sortBy in csv format
+    const sortBy = body.records.sortBy;
+    if (sortBy && typeof sortBy === 'string') {
+        body.records.sortBy = ((sortBy as unknown) as string).split(',');
+    }
+
+    const listUiKey = listUiRepresentation_keyBuilder({
+        ...listReference,
+        sortBy: body.records.sortBy,
+    });
+
+    // grab relevant bits before ingest destroys the structure
+    const fields = listFields(lds, config, listInfo);
+    fields.processRecords(body.records.records);
+
+    // remember the id/name of this list
+    addListReference(listReference);
+
+    // remember any default values that the server filled in
+    addServerDefaults(config, body);
+
+    // build the selector while the list info is still easily accessible
+    const fragment = buildListUiFragment(config, listInfo, fields);
+
+    lds.storeIngest(listUiKey, request, body);
+    lds.storeBroadcast();
+
+    return lds.storeLookup<ListUiRepresentation>(
+        {
+            recordId: listUiKey,
+            node: fragment,
+            variables: {},
+        },
+        buildSnapshotRefresh(lds, config)
+    );
+}
+
+function onResourceError_getListUi(lds: LDS, config: GetListUiConfig, err: FetchResponse<unknown>) {
+    return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+}
+
+function resolveUnfulfilledSnapshot_getListUi(
+    lds: LDS,
+    config: GetListUiConfig,
+    snapshot: UnfulfilledSnapshot<ListUiRepresentation, any>
+) {
+    const request = prepareRequest_getListUi(config);
+
+    return lds.resolveUnfulfilledSnapshot<ListUiRepresentation>(request, snapshot).then(
         response => {
-            const { body } = response,
-                listInfo = body.info,
-                { listReference } = listInfo;
-
-            // server returns sortBy in csv format
-            if (body.records.sortBy) {
-                body.records.sortBy = ((body.records.sortBy as unknown) as string).split(',');
-            }
-
-            const listUiKey = listUiRepresentation_keyBuilder({
-                ...listReference,
-                sortBy: body.records.sortBy,
-            });
-
-            // grab relevant bits before ingest destroys the structure
-            const fields = listFields(lds, config, listInfo);
-            fields.processRecords(body.records.records);
-
-            // remember the id/name of this list
-            addListReference(listReference);
-
-            // remember any default values that the server filled in
-            addServerDefaults(config, body);
-
-            // build the selector while the list info is still easily accessible
-            const fragment = buildListUiFragment(config, listInfo, fields);
-
-            lds.storeIngest(listUiKey, request, body);
-            lds.storeBroadcast();
-
-            return lds.storeLookup<ListUiRepresentation>(
-                {
-                    recordId: listUiKey,
-                    node: fragment,
-                    variables: {},
-                },
-                buildSnapshotRefresh(lds, config)
-            );
+            return onResourceSuccess_getListUi(lds, config, request, response);
         },
         (err: FetchResponse<unknown>) => {
-            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+            return onResourceError_getListUi(lds, config, err);
         }
     );
 }
 
-function buildNetworkSnapshot_getListRecords(
+/**
+ * Builds, sends, and processes the result of a list-ui request, ignoring any cached
+ * data for the list view.
+ *
+ * @param lds LDS engine
+ * @param config wire config
+ */
+function buildNetworkSnapshot_getListUi(
+    lds: LDS,
+    config: GetListUiConfig
+): Promise<Snapshot<ListUiRepresentation>> {
+    const request = prepareRequest_getListUi(config);
+
+    return lds.dispatchResourceRequest<ListUiRepresentation>(request).then(
+        response => {
+            return onResourceSuccess_getListUi(lds, config, request, response);
+        },
+        (err: FetchResponse<unknown>) => {
+            return onResourceError_getListUi(lds, config, err);
+        }
+    );
+}
+
+function prepareRequest_getListRecords(
     lds: LDS,
     config: GetListUiConfig,
     listInfo: ListInfoRepresentation,
     snapshot?: Snapshot<ListUiRepresentation>
-): Promise<Snapshot<ListUiRepresentation>> {
+) {
     const { fields, optionalFields, pageSize, pageToken, sortBy } = config;
     const queryParams = {
         fields,
@@ -353,45 +393,99 @@ function buildNetworkSnapshot_getListRecords(
         }
     }
 
+    return request;
+}
+
+function onResourceSuccess_getListRecords(
+    lds: LDS,
+    config: GetListUiConfig,
+    request: ResourceRequest,
+    listInfo: ListInfoRepresentation,
+    response: ResourceResponse<ListRecordCollectionRepresentation>
+) {
+    const { body } = response;
+    const { listInfoETag } = body;
+
+    // fall back to list-ui if list view has changed
+    if (listInfoETag !== listInfo.eTag) {
+        return buildNetworkSnapshot_getListUi(lds, config);
+    }
+
+    // response might have records.sortBy in csv format
+    const { sortBy } = body;
+    if (sortBy && typeof sortBy === 'string') {
+        body.sortBy = ((sortBy as unknown) as string).split(',');
+    }
+
+    const fields = listFields(lds, config, listInfo).processRecords(body.records);
+
+    lds.storeIngest(
+        ListRecordCollectionRepresentation_keyBuilder({
+            listViewId: listInfoETag,
+            sortBy: body.sortBy,
+        }),
+        request,
+        body
+    );
+    lds.storeBroadcast();
+
+    return buildInMemorySnapshot(lds, config, listInfo, fields);
+}
+
+function onResourceError_getListRecords(
+    lds: LDS,
+    config: GetListUiConfig,
+    listInfo: ListInfoRepresentation,
+    err: FetchResponse<unknown>
+) {
+    lds.storeIngestFetchResponse(
+        listUiRepresentation_keyBuilder({
+            ...listInfo.listReference,
+            sortBy: getSortBy(config),
+        }),
+        err
+    );
+    lds.storeBroadcast();
+    return lds.errorSnapshot(err);
+}
+
+function resolveUnfulfilledSnapshot_getListRecords(
+    lds: LDS,
+    config: GetListUiConfig,
+    listInfo: ListInfoRepresentation,
+    snapshot: UnfulfilledSnapshot<ListUiRepresentation, any>
+): Promise<Snapshot<ListUiRepresentation>> {
+    const request = prepareRequest_getListRecords(lds, config, listInfo, snapshot);
+
+    return lds
+        .resolveUnfulfilledSnapshot<ListRecordCollectionRepresentation>(
+            request,
+            (snapshot as unknown) as UnfulfilledSnapshot<ListRecordCollectionRepresentation, any>
+        )
+        .then(
+            response => {
+                return onResourceSuccess_getListRecords(lds, config, request, listInfo, response);
+            },
+            (err: FetchResponse<unknown>) => {
+                return onResourceError_getListRecords(lds, config, listInfo, err);
+            }
+        );
+}
+
+function buildNetworkSnapshot_getListRecords(
+    lds: LDS,
+    config: GetListUiConfig,
+    listInfo: ListInfoRepresentation,
+    snapshot?: Snapshot<ListUiRepresentation>
+): Promise<Snapshot<ListUiRepresentation>> {
+    const request = prepareRequest_getListRecords(lds, config, listInfo, snapshot);
+
     return lds.dispatchResourceRequest<ListRecordCollectionRepresentation>(request).then(
         response => {
-            const { body } = response;
-            const { listInfoETag } = body;
-
-            // fall back to list-ui if list view has changed
-            if (listInfoETag !== listInfo.eTag) {
-                return buildNetworkSnapshot_getListUi(lds, config);
-            }
-
-            // server returns sortBy in csv format
-            if (body.sortBy) {
-                body.sortBy = ((body.sortBy as unknown) as string).split(',');
-            }
-
-            const fields = listFields(lds, config, listInfo).processRecords(body.records);
-
-            lds.storeIngest(
-                ListRecordCollectionRepresentation_keyBuilder({
-                    listViewId: listInfoETag,
-                    sortBy: body.sortBy,
-                }),
-                request,
-                body
-            );
-            lds.storeBroadcast();
-
-            return buildInMemorySnapshot(lds, config, listInfo, fields);
+            return onResourceSuccess_getListRecords(lds, config, request, listInfo, response);
         },
         (err: FetchResponse<unknown>) => {
-            lds.storeIngestFetchResponse(
-                listUiRepresentation_keyBuilder({
-                    ...listInfo.listReference,
-                    sortBy: getSortBy(config),
-                }),
-                err
-            );
-            lds.storeBroadcast();
-            return lds.errorSnapshot(err);
+            return onResourceError_getListRecords(lds, config, listInfo, err);
         }
     );
 }
@@ -489,6 +583,10 @@ export const factory: AdapterFactory<
         // if the list ui was not found in the store then
         // make a full list-ui request
         if (!snapshot.data) {
+            if (isUnfulfilledSnapshot(snapshot)) {
+                return resolveUnfulfilledSnapshot_getListUi(lds, config, snapshot);
+            }
+
             return buildNetworkSnapshot_getListUi(lds, config);
         }
 
@@ -499,6 +597,10 @@ export const factory: AdapterFactory<
 
         // we *should* only be missing records and/or tokens at this point; send a list-records
         // request to fill them in
+        if (isUnfulfilledSnapshot(snapshot)) {
+            return resolveUnfulfilledSnapshot_getListRecords(lds, config, listInfo, snapshot);
+        }
+
         return buildNetworkSnapshot_getListRecords(lds, config, listInfo, snapshot);
     };
 

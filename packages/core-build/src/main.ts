@@ -46,28 +46,6 @@ export {
     getFieldValue,
     getRecordInput,
     getRecordNotifyChange,
-    // TODO W-6568533 - replace this temporary imperative invocation with wire reform
-    _getLayout,
-    _getLayoutUserState,
-    _getObjectInfo,
-    _getObjectInfos,
-    _getPicklistValuesByRecordType,
-    _getRecord,
-    _getRecordActions,
-    _getRecordAvatars,
-    _getRecordTemplateClone,
-    _getRecordTemplateCreate,
-    _getRecordUi,
-    _getRelatedListInfo,
-    _getRelatedListsInfo,
-    _getRelatedListInfoBatch,
-    _getRelatedListActions,
-    _getRelatedListsActions,
-    _getRelatedListRecords,
-    _getRelatedListRecordsBatch,
-    _getRelatedListRecordActions,
-    _getRelatedListCount,
-    _getRelatedListsCount,
 } from '@salesforce/lds-adapters-uiapi/sfdc';
 
 /** Apex exports */

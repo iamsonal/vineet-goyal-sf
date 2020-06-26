@@ -1,9 +1,9 @@
 import { Adapter, AdapterFactory, LDS } from '@ldsjs/engine';
 import {
     createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor,
-    WireAdapterConstructor,
     bindWireRefresh,
 } from '@ldsjs/lwc-lds';
+import { WireAdapterConstructor } from '@lwc/engine-core';
 import { lds } from '@salesforce/lds-runtime-web';
 import { instrumentAdapter } from '@salesforce/lds-instrumentation';
 

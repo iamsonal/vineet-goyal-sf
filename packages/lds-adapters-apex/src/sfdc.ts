@@ -1,6 +1,9 @@
 import { GetApexInvoker, GenerateGetApexWireAdapter } from './main';
 import { createWireAdapterConstructor, createLDSAdapter } from '@salesforce/lds-bindings';
 
+// export for @salesforce/apex
+export { refresh as refreshApex } from '@salesforce/lds-bindings';
+
 /**
  * Apex
  */

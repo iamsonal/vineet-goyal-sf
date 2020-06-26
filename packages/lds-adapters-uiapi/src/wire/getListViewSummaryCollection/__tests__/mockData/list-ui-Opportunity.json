@@ -1,0 +1,76 @@
+{
+    "count": 10,
+    "currentPageToken": "0",
+    "currentPageUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity?pageSize=20&pageToken=0",
+    "eTag": "d4008daecf86b48979fc895948c0ca6c",
+    "lists": [
+        {
+            "apiName": "AllOpportunities",
+            "id": "00Bxx0000029aFNEAY",
+            "label": "All Opportunities",
+            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/AllOpportunities"
+        },
+        {
+            "apiName": "ClosingNextMonth",
+            "id": "00Bxx0000029aFLEAY",
+            "label": "Closing Next Month",
+            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/ClosingNextMonth"
+        },
+        {
+            "apiName": "ClosingThisMonth",
+            "id": "00Bxx0000029aF3EAI",
+            "label": "Closing This Month",
+            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/ClosingThisMonth"
+        },
+        {
+            "apiName": "MyOpportunities",
+            "id": "00Bxx0000029aFkEAI",
+            "label": "My Opportunities",
+            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/MyOpportunities"
+        },
+        {
+            "apiName": "NewLastWeek",
+            "id": "00Bxx0000029aFDEAY",
+            "label": "New Last Week",
+            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/NewLastWeek"
+        },
+        {
+            "apiName": "NewThisWeek",
+            "id": "00Bxx0000029aFcEAI",
+            "label": "New This Week",
+            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/NewThisWeek"
+        },
+        {
+            "apiName": "Default_Opportunity_Pipeline",
+            "id": "00Bxx0000029aLTEAY",
+            "label": "Opportunity Pipeline",
+            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/Default_Opportunity_Pipeline"
+        },
+        {
+            "apiName": "Private",
+            "id": "00Bxx0000029aFYEAY",
+            "label": "Private",
+            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/Private"
+        },
+        {
+            "apiName": "RecentlyViewedOpportunities",
+            "id": "00Bxx0000029aFeEAI",
+            "label": "Recently Viewed Opportunities",
+            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/RecentlyViewedOpportunities"
+        },
+        {
+            "apiName": "Won",
+            "id": "00Bxx0000029aFqEAI",
+            "label": "Won",
+            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/Won"
+        }
+    ],
+    "nextPageToken": null,
+    "nextPageUrl": null,
+    "objectApiName": "Opportunity",
+    "pageSize": 20,
+    "previousPageToken": null,
+    "previousPageUrl": null,
+    "queryString": null,
+    "recentListsOnly": false
+}

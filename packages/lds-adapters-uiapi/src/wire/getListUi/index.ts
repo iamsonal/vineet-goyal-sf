@@ -112,7 +112,7 @@ function buildListUiFragment(
 
     return {
         kind: 'Fragment',
-        private: [],
+        private: ['eTag'],
         selections: [
             {
                 kind: 'Link',

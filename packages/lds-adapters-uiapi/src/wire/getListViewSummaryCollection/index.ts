@@ -6,6 +6,9 @@ import {
     Selector,
     FetchResponse,
     SnapshotRefresh,
+    ResourceRequest,
+    ResourceResponse,
+    UnfulfilledSnapshot,
 } from '@ldsjs/engine';
 
 import {
@@ -28,6 +31,8 @@ import {
     staticValuePathSelection,
 } from '../../util/pagination';
 import { select as listViewSummaryRepresentationSelect } from '../../generated/types/ListViewSummaryRepresentation';
+import { ResourceRequestConfig } from '../../generated/resources/getUiApiListUiByObjectApiName';
+import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
 // TODO RAML - this more properly goes in the generated resource files
 const DEFAULT_PAGE_SIZE = 20;
@@ -39,7 +44,7 @@ function buildListViewSummaryCollectionFragment(
 ): Fragment {
     return {
         kind: 'Fragment',
-        private: [],
+        private: ['eTag'],
         selections: [
             ...pathSelectionsFor({
                 name: 'lists',
@@ -98,14 +103,13 @@ export function buildInMemorySnapshot(
     );
 }
 
-export function buildNetworkSnapshot(
+function prepareRequest(
     lds: LDS,
     config: GetListViewSummaryCollectionConfig,
+    resourceParams: ResourceRequestConfig,
     snapshot?: Snapshot<ListViewSummaryCollectionRepresentation>
 ) {
-    const resourceParams = createResourceParams(config);
     const request = createResourceRequest(resourceParams);
-    const key = keyBuilder(resourceParams);
 
     if (snapshot) {
         // compute the minimum number of records we need to request
@@ -133,17 +137,69 @@ export function buildNetworkSnapshot(
         }
     }
 
+    return request;
+}
+
+function onResourceSuccess(
+    lds: LDS,
+    config: GetListViewSummaryCollectionConfig,
+    request: ResourceRequest,
+    key: string,
+    response: ResourceResponse<ListViewSummaryCollectionRepresentation>
+) {
+    const { body } = response;
+    lds.storeIngest<ListViewSummaryCollectionRepresentation>(key, request, body);
+    lds.storeBroadcast();
+    return buildInMemorySnapshot(lds, config);
+}
+
+function onResourceError(
+    lds: LDS,
+    config: GetListViewSummaryCollectionConfig,
+    key: string,
+    error: FetchResponse<unknown>
+) {
+    lds.storeIngestFetchResponse(key, error);
+    lds.storeBroadcast();
+    return lds.errorSnapshot(error, buildRefreshSnapshot(lds, config));
+}
+
+function resolveUnfulfilledSnapshot(
+    lds: LDS,
+    config: GetListViewSummaryCollectionConfig,
+    snapshot: UnfulfilledSnapshot<ListViewSummaryCollectionRepresentation, any>
+) {
+    const resourceParams = createResourceParams(config);
+    const key = keyBuilder(resourceParams);
+    const request = prepareRequest(lds, config, resourceParams, snapshot);
+
+    return lds
+        .resolveUnfulfilledSnapshot<ListViewSummaryCollectionRepresentation>(request, snapshot)
+        .then(
+            (resp: ResourceResponse<ListViewSummaryCollectionRepresentation>) => {
+                return onResourceSuccess(lds, config, request, key, resp);
+            },
+            (error: FetchResponse<unknown>) => {
+                return onResourceError(lds, config, key, error);
+            }
+        );
+}
+
+export function buildNetworkSnapshot(
+    lds: LDS,
+    config: GetListViewSummaryCollectionConfig,
+    snapshot?: Snapshot<ListViewSummaryCollectionRepresentation>
+) {
+    const resourceParams = createResourceParams(config);
+    const key = keyBuilder(resourceParams);
+    const request = prepareRequest(lds, config, resourceParams, snapshot);
+
     return lds.dispatchResourceRequest<ListViewSummaryCollectionRepresentation>(request).then(
         (resp: FetchResponse<ListViewSummaryCollectionRepresentation>) => {
-            const { body } = resp;
-            lds.storeIngest<ListViewSummaryCollectionRepresentation>(key, request, body);
-            lds.storeBroadcast();
-            return buildInMemorySnapshot(lds, config);
+            return onResourceSuccess(lds, config, request, key, resp);
         },
         (error: FetchResponse<unknown>) => {
-            lds.storeIngestFetchResponse(key, error);
-            lds.storeBroadcast();
-            return lds.errorSnapshot(error, buildRefreshSnapshot(lds, config));
+            return onResourceError(lds, config, key, error);
         }
     );
 }
@@ -173,6 +229,10 @@ export const factory: AdapterFactory<
         // Cache Hit
         if (lds.snapshotDataAvailable(cacheSnapshot)) {
             return cacheSnapshot;
+        }
+
+        if (isUnfulfilledSnapshot(cacheSnapshot)) {
+            return resolveUnfulfilledSnapshot(lds, config, cacheSnapshot);
         }
 
         return buildNetworkSnapshot(lds, config, cacheSnapshot);

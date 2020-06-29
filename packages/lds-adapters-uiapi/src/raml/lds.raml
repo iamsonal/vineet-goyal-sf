@@ -56,6 +56,7 @@ types:
     examples:
       getNavItemsResponse1: !include ../mocks/types/NavItemsRepresentation/response1.json
       getNavItemsResponseT1T2: !include ../mocks/types/NavItemsRepresentation/responseT1T2.json
+      getNavItemsResponseEmptyPageRef: !include ../mocks/types/NavItemsRepresentation/responseEmptyPageRef.json
     (lds.ttl): 120000
     (lds.private):
       - eTag
@@ -421,6 +422,11 @@ types:
           targetApiName: SalesforceObjectId
   /nav-items:
     get:
+      queryParameters:
+        navItemNames:
+          examples:
+            getNavItemsResponseEmptyPageRef: ['Today']
+            getNavItemsResponseT1T2: ['T1', 'T2']
       (lds.adapter):
         name: getNavItems
         coercedParams:
@@ -430,6 +436,12 @@ types:
             - configInput: |
                 {}
               mockPayloadId: getNavItemsResponse1
+            - configInput: |
+                { "navItemNames": ["Today"] }
+              mockPayloadId: getNavItemsResponseEmptyPageRef
+            - configInput: |
+                { "navItemNames": ["T1", "T2"] }
+              mockPayloadId: getNavItemsResponseT1T2
           validConfigs:
             - |
               {

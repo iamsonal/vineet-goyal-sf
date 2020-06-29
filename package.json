@@ -24,7 +24,7 @@
         "test:integration:compat": "lerna run --stream --scope @salesforce/* --concurrency=1 test:compat",
         "test:mobile": "lerna run --stream --scope @salesforce/* --concurrency=1 test:mobile",
         "test:memory": "rollup -c ./scripts/memory/rollup.config.js && node --expose-gc ./scripts/memory/build/test.js",
-        "test:size": "bundlesize",
+        "test:size": "lerna run --scope @salesforce/* test:size",
         "release:adapters": "lerna run --scope @salesforce/* release:core",
         "release": "./scripts/release/core.js && yarn release:adapters",
         "release:local": "./scripts/release/core.js --skip-git-check && yarn release:adapters"
@@ -113,12 +113,5 @@
         "packages/**/*.{js,ts}": [
             "eslint"
         ]
-    },
-    "bundlesize": [
-        {
-            "path": "./packages/core-build/dist/lds.min.js",
-            "maxSize": "50 kB",
-            "compression": "brotli"
-        }
-    ]
+    }
 }

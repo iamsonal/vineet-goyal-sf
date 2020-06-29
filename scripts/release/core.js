@@ -11,7 +11,6 @@ const { execSync } = require('child_process');
 const REPO_ROOT_PARENT = path.resolve(__dirname, '../../..');
 const RELATIVE_LDS_REPO_ROOT = path.resolve(REPO_ROOT_PARENT, 'lds');
 const REPO_ROOT = path.resolve(__dirname, '../../');
-const REPO_LDS_PATH = path.resolve(REPO_ROOT, 'packages/core-build/dist/lds.js');
 
 const REPO_LDS_BINDINGS_PATH = path.resolve(REPO_ROOT, 'packages/lds-bindings/dist/ldsBindings.js');
 const REPO_LDS_ENGINE_RUNTIME_AURA_PATH = path.resolve(
@@ -65,12 +64,6 @@ const argv = require('yargs')
 const MAIN_BRANCH = 'main';
 
 const CORE_BRANCH = argv.branch || MAIN_BRANCH;
-const CORE_LDS_PATH = path.resolve(
-    BLT_HOME,
-    'app',
-    CORE_BRANCH,
-    'core/ui-force-components/modules/force/lds/lds.js'
-);
 
 const CORE_LDS_ENGINE_RUNTIME_AURA_PATH = path.resolve(
     BLT_HOME,
@@ -278,15 +271,12 @@ function deployAdapterPackage() {
     console.log('Releasing to:');
     console.log(`- blt home: ${BLT_HOME}`);
     console.log(`- core branch: ${CORE_BRANCH}`);
-    console.log(`- lds path:  ${CORE_LDS_PATH}`);
     console.log();
 
     if (argv['print-commits-only']) {
         printCommits(CORE_LDS_ENGINE_RUNTIME_AURA_PATH);
         return;
     }
-
-    checkCore(CORE_LDS_PATH);
 
     // main (228) only modules
     if (CORE_BRANCH === MAIN_BRANCH) {
@@ -312,8 +302,6 @@ function deployAdapterPackage() {
     }
 
     printCommits(CORE_LDS_ENGINE_RUNTIME_AURA_PATH);
-
-    copyArtifacts(REPO_LDS_PATH, CORE_LDS_PATH);
 
     // main (228) only modules
     if (CORE_BRANCH === MAIN_BRANCH) {

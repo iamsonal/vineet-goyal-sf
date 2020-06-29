@@ -35,6 +35,23 @@ import {
 } from './metric-keys';
 
 import { ObjectKeys } from './utils/language';
+import { LRUCache } from './utils/lru-cache';
+import { stableJSONStringify } from './utils/utils';
+
+import {
+    getLayoutConfigKey,
+    getLayoutUserStateConfigKey,
+    getListUiConfigKey,
+    getLookupActionsConfigKey,
+    getLookupRecordsConfigKey,
+    getObjectInfoConfigKey,
+    getPicklistValuesConfigKey,
+    getPicklistValuesByRecordTypeConfigKey,
+    getRecordAvatarsConfigKey,
+    getRecordCreateDefaultsConfigKey,
+    getRecordConfigKey,
+    getRecordUiConfigKey,
+} from './config-key-functions';
 
 interface LdsStatsReport {
     recordCount: number;
@@ -59,10 +76,21 @@ interface WeakEtagZeroEvents {
     };
 }
 
+interface wireAdapterMetricConfigs {
+    [name: string]: {
+        ttl: number;
+        wireConfigKeyFn: (config: any) => string;
+    };
+}
+
 const NAMESPACE = 'lds';
 const STORE_STATS_MARK_NAME = 'store-stats';
 const RUNTIME_PERF_MARK_NAME = 'runtime-perf';
 const NETWORK_TRANSACTION_NAME = 'lds-network';
+
+const ADAPTER_CACHE_HIT_COUNT_METRIC_NAME = 'cache-hit-count';
+const ADAPTER_CACHE_MISS_COUNT_METRIC_NAME = 'cache-miss-count';
+const ADAPTER_CACHE_MISS_DURATION_METRIC_NAME = 'cache-miss-out-of-ttl-duration';
 const cacheHitMetric = counter(CACHE_HIT_COUNT);
 const cacheMissMetric = counter(CACHE_MISS_COUNT);
 const getRecordAggregateInvokeMetric = counter(GET_RECORD_AGGREGATE_INVOKE_COUNT);
@@ -73,17 +101,181 @@ const storeSizeMetric = percentileHistogram(STORE_SIZE_COUNT);
 const storeWatchSubscriptionsMetric = percentileHistogram(STORE_WATCH_SUBSCRIPTIONS_COUNT);
 const storeSnapshotSubscriptionsMetric = percentileHistogram(STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT);
 
+const wireAdapterMetricConfigs: wireAdapterMetricConfigs = {
+    getLayout: {
+        ttl: 900000,
+        wireConfigKeyFn: getLayoutConfigKey,
+    },
+    getLayoutUserState: {
+        ttl: 900000,
+        wireConfigKeyFn: getLayoutUserStateConfigKey,
+    },
+    getListUi: {
+        ttl: 900000,
+        wireConfigKeyFn: getListUiConfigKey,
+    },
+    getLookupActions: {
+        ttl: 300000,
+        wireConfigKeyFn: getLookupActionsConfigKey,
+    },
+    getLookupRecords: {
+        ttl: 30000,
+        wireConfigKeyFn: getLookupRecordsConfigKey,
+    },
+    getObjectInfo: {
+        ttl: 900000,
+        wireConfigKeyFn: getObjectInfoConfigKey,
+    },
+    getPicklistValues: {
+        ttl: 300000,
+        wireConfigKeyFn: getPicklistValuesConfigKey,
+    },
+    getPicklistValuesByRecordType: {
+        ttl: 300000,
+        wireConfigKeyFn: getPicklistValuesByRecordTypeConfigKey,
+    },
+    getRecord: {
+        ttl: 30000,
+        wireConfigKeyFn: getRecordConfigKey,
+    },
+    getRecordAvatars: {
+        ttl: 300000,
+        wireConfigKeyFn: getRecordAvatarsConfigKey,
+    },
+    getRecordCreateDefaults: {
+        ttl: 900000,
+        wireConfigKeyFn: getRecordCreateDefaultsConfigKey,
+    },
+    getRecordUi: {
+        ttl: 900000,
+        wireConfigKeyFn: getRecordUiConfigKey,
+    },
+};
+
 export class Instrumentation {
     private weakEtagZeroEvents: WeakEtagZeroEvents = {};
+    private adapterCacheMisses: LRUCache = new LRUCache(250);
 
     constructor() {
-        if (window && window.addEventListener) {
+        if (window !== undefined && window.addEventListener) {
             window.addEventListener('beforeunload', () => {
                 if (Object.keys(this.weakEtagZeroEvents).length > 0) {
                     perfStart(NETWORK_TRANSACTION_NAME);
                     perfEnd(NETWORK_TRANSACTION_NAME, this.weakEtagZeroEvents);
                 }
             });
+        }
+    }
+
+    /**
+     * Instruments an existing adapter to log argus metrics and cache stats.
+     * @param name The adapter name.
+     * @param adapter The adapter function.
+     * @param wireConfigKeyFn Optional function to transform wire configs to a unique key.
+     * @returns The wrapped adapter.
+     */
+    public instrumentAdapter<C, D>(name: string, adapter: Adapter<C, D>): Adapter<C, D> {
+        const stats = registerLdsCacheStats(name);
+        /**
+         * W-6981216
+         * Dynamically generated metric. Simple counter for cache hits by adapter name.
+         */
+        const cacheHitByAdapterMetric = counter(
+            createMetricsKey(NAMESPACE, ADAPTER_CACHE_HIT_COUNT_METRIC_NAME, name)
+        );
+
+        /**
+         * W-6981216
+         * Dynamically generated metric. Simple counter for cache misses by adapter name.
+         */
+        const cacheMissByAdapterMetric = counter(
+            createMetricsKey(NAMESPACE, ADAPTER_CACHE_MISS_COUNT_METRIC_NAME, name)
+        );
+
+        /**
+         * W-7376275
+         * Dynamically generated metric. Measures the amount of time it takes for LDS to get another cache miss on
+         * a request we've made in the past.
+         *
+         * Request Record 1 -> Record 2 -> Back to Record 1 outside of TTL is an example of when this metric will fire.
+         */
+        const wireAdapterMetricConfig = wireAdapterMetricConfigs[name];
+        const cacheMissDurationByAdapterMetric: Timer | undefined =
+            (wireAdapterMetricConfig && wireAdapterMetricConfig.ttl) !== undefined
+                ? timer(createMetricsKey(NAMESPACE, ADAPTER_CACHE_MISS_DURATION_METRIC_NAME, name))
+                : undefined;
+
+        const instrumentedAdapter = (config: C) => {
+            const result = adapter(config);
+            // In the case where the adapter returns a Snapshot it is constructed out of the store
+            // (cache hit) whereas a Promise<Snapshot> indicates a network request (cache miss).
+            //
+            // Note: we can't do a plain instanceof check for a promise here since the Promise may
+            // originate from another javascript realm (for example: in jest test). Instead we use a
+            // duck-typing approach by checking is the result has a then property.
+            //
+            // For adapters without persistent store:
+            //  - total cache hit ratio:
+            //      [in-memory cache hit count] / ([in-memory cache hit count] + [in-memory cache miss count])
+            // For adapters with persistent store:
+            //  - in-memory cache hit ratio:
+            //      [in-memory cache hit count] / ([in-memory cache hit count] + [in-memory cache miss count])
+            //  - total cache hit ratio:
+            //      ([in-memory cache hit count] + [store cache hit count]) / ([in-memory cache hit count] + [in-memory cache miss count])
+
+            // if result === null then config is insufficient/invalid so do not log
+            if (result !== null && 'then' in result!) {
+                stats.logMisses();
+                cacheMissMetric.increment(1);
+                cacheMissByAdapterMetric.increment(1);
+                if (cacheMissDurationByAdapterMetric !== undefined) {
+                    this.logAdapterCacheMissDuration(
+                        config,
+                        cacheMissDurationByAdapterMetric,
+                        Date.now(),
+                        wireAdapterMetricConfig.ttl,
+                        wireAdapterMetricConfig.wireConfigKeyFn
+                    );
+                }
+            } else if (result !== null) {
+                stats.logHits();
+                cacheHitMetric.increment(1);
+                cacheHitByAdapterMetric.increment(1);
+            }
+            return result;
+        };
+        // Set the name property on the function for debugging purposes.
+        Object.defineProperty(instrumentedAdapter, 'name', { value: name + '__instrumented' });
+        return instrumentedAdapter;
+    }
+
+    /**
+     * Logs when adapter requests come in. If we have subsequent cache misses on a given config, above its TTL then log the duration to metrics.
+     * Backed by an LRU Cache implementation to prevent too many record entries from being stored in-memory.
+     * @param config The config passed into wire adapter.
+     * @param name The wire adapter name.
+     * @param metric The argus timer metric for tracking cache miss durations.
+     * @param currentCacheMissTimestamp Timestamp for when the request was made.
+     * @param ttl TTL for the wire adapter.
+     * @param wireConfigKeyFn Optional function to transform wire configs to a unique key. Otherwise, defaults to use stableJSONStringify().
+     */
+    private logAdapterCacheMissDuration(
+        config: unknown,
+        metric: Timer,
+        currentCacheMissTimestamp: number,
+        ttl: number,
+        wireConfigKeyFn: (config: any) => string
+    ): void {
+        const configKey = wireConfigKeyFn
+            ? wireConfigKeyFn(config)
+            : (stableJSONStringify(config) as string);
+        const existingCacheMissTimestamp = this.adapterCacheMisses.get(configKey);
+        this.adapterCacheMisses.set(configKey, currentCacheMissTimestamp);
+        if (existingCacheMissTimestamp !== undefined) {
+            const duration = currentCacheMissTimestamp - existingCacheMissTimestamp;
+            if (duration > ttl) {
+                metric.addDuration(duration);
+            }
         }
     }
 
@@ -353,3 +545,5 @@ export function incrementGetRecordNotifyChangeAllowCount(): void {
 export function incrementGetRecordNotifyChangeDropCount(): void {
     getRecordNotifyChangeDropMetric.increment(1);
 }
+
+export const instrumentation = new Instrumentation();

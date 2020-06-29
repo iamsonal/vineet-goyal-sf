@@ -5,13 +5,13 @@ import {
 } from '@ldsjs/lwc-lds';
 import { WireAdapterConstructor } from '@lwc/engine-core';
 import { lds } from '@salesforce/lds-runtime-web';
-import { instrumentAdapter } from '@salesforce/lds-instrumentation';
+import { instrumentation } from '@salesforce/lds-instrumentation';
 
 export function createWireAdapterConstructor<C, D>(
     name: string,
     factory: AdapterFactory<C, D>
 ): WireAdapterConstructor {
-    const adapter = instrumentAdapter(name, createLDSAdapter(name, factory));
+    const adapter = instrumentation.instrumentAdapter(name, createLDSAdapter(name, factory));
     return lwcLdsCreateWireAdapterConstructor(adapter as Adapter<unknown, unknown>, name, lds);
 }
 

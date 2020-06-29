@@ -24,21 +24,20 @@ jest.mock('@salesforce/lds-instrumentation', () => {
     };
 
     return {
-        instrumentAdapter: spies.instrumentAdapter,
+        instrumentation: {
+            instrumentAdapter: spies.instrumentAdapter,
+        },
         __spies: spies,
     };
 });
 
 import { lds } from '@salesforce/lds-runtime-web';
-
+import { __spies as instrumentationSpies } from '@salesforce/lds-instrumentation';
 import { createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor } from '@ldsjs/lwc-lds';
-
-import { instrumentAdapter } from '@salesforce/lds-instrumentation';
-
 import { __spies as lwcLdsSpies } from '@ldsjs/lwc-lds';
 
 beforeEach(() => {
-    (instrumentAdapter as any).mockClear();
+    instrumentationSpies.instrumentAdapter.mockClear();
     (lwcLdsCreateWireAdapterConstructor as any).mockClear();
 });
 
@@ -47,13 +46,13 @@ describe('createWireAdapterConstructor', () => {
         const mockAdapter = {};
         const mockInstrumented = {};
         const mockWire = {};
-        (instrumentAdapter as any).mockReturnValue(mockInstrumented);
+        instrumentationSpies.instrumentAdapter.mockReturnValue(mockInstrumented);
         (lwcLdsCreateWireAdapterConstructor as any).mockReturnValue(mockWire);
         const factory = jest.fn().mockReturnValue(mockAdapter);
 
         const value = createWireAdapterConstructor('foo', factory);
         expect(factory).toHaveBeenCalled();
-        expect(instrumentAdapter).toHaveBeenCalledWith('foo', mockAdapter);
+        expect(instrumentationSpies.instrumentAdapter).toHaveBeenCalledWith('foo', mockAdapter);
         expect(lwcLdsCreateWireAdapterConstructor).toHaveBeenCalledWith(
             mockInstrumented,
             'foo',

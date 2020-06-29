@@ -2,7 +2,7 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '49.0'
+version: '50.0'
 mediaType: application/json
 protocols:
   - https
@@ -47,10 +47,10 @@ types:
           - InternalLink
       actionValue:
         description: Returns the route url or event fqn for Navigation Menu item
-        type: string | nil # TODO W-7380839 (226): "nil" union hand rolled
+        type: string | nil
       imageUrl:
         description: Returns the image url for Navigation Menu item
-        type: string | nil # TODO W-7380839 (226): "nil" union hand rolled
+        type: string | nil
       label:
         description: Returns the label for Navigation Menu item
         type: string
@@ -87,12 +87,14 @@ types:
         items:
           type: string
           enum:
+            - Event
             - ExternalLink
             - GlobalAction
             - InternalLink
             - MenuLabel
             - NavigationalTopic
             - SalesforceObject
+            - SystemLink
           (oas-collectionFormat): csv
       navigationLinkSetDeveloperName:
         type: string

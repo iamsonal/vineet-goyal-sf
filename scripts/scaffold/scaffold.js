@@ -81,13 +81,14 @@ function renderRollupConfig(cloud, family) {
 }
 
 function renderPackageJSON(config) {
-    const { description, packageName, cloud } = config;
+    const { description, packageName, cloud, family } = config;
     const formatted = ldsPackageJSONTemplate
         .replace(DESCRIPTION_TAG, description)
-        .replace(PACKAGE_NAME_TAG, packageName)
+        .replace(new RegExp(PACKAGE_NAME_TAG, 'g'), packageName)
         .replace(PACKAGE_NAMESPACE_TAG, getPackageNamespace(cloud))
         .replace(new RegExp(LDS_VERSION_TAG, 'g'), config.engineVersion)
-        .replace(PACKAGE_CONTRIBUTORS_TAG, JSON.stringify(config.contacts));
+        .replace(PACKAGE_CONTRIBUTORS_TAG, JSON.stringify(config.contacts))
+        .replace(new RegExp(ARTIFACT_NAME, 'g'), getLocalName(cloud, family));
 
     return JSON.stringify(JSON.parse(formatted), null, 2);
 }

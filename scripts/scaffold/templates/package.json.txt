@@ -3,9 +3,14 @@
     "version": "0.1.0",
     "description": "{{DESCRIPTION_TAG}}",
     "license": "MIT",
-    "main": "dist/umd/es2018/adapters.js",
-    "module": "dist/es/es2018/adapters.js",
-    "types": "dist/es/es2018/adapters.d.ts",
+    "main": "dist/umd/es2018/{{ARTIFACT_NAME}}.js",
+    "module": "dist/es/es2018/{{ARTIFACT_NAME}}.js",
+    "types": "dist/types/src/generated/artifacts/main.d.ts",
+    "files": [
+        "dist",
+        "sfdc",
+        "src/raml/*"
+    ],
     "contributors": {{PACKAGE_CONTRIBUTORS}},
     "scripts": {
         "clean": "rm -rf dist sfdc src/generated karma/dist",
@@ -18,6 +23,9 @@
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat",
         "release:core": "../../scripts/release/core.js --adapter={{PACKAGE_NAME_TAG}}"
+    },
+    "publishConfig": {
+        "registry": "https://npm.lwcjs.org"
     },
     "devDependencies": {
         "@ldsjs/cli": "^{{LDS_VERSION}}",

@@ -47,6 +47,7 @@ function setupWatcher(config, emitter, logger) {
     watcher.on('all', (_type, filename) => {
         if (isWireSource(filename)) {
             spawnSync('yarn', ['build:services'], { stdio: 'inherit' });
+            spawnSync('yarn', ['build:karma'], { stdio: 'inherit' });
         } else if (isRamlSource(filename)) {
             spawnSync('yarn', ['build'], { stdio: 'inherit' });
         } else if (!filename.includes('__karma__')) {
@@ -102,13 +103,11 @@ function createPreprocessor(config, emitter, logger) {
             // The engine and the test-util are injected as UMD.
             // This mapping defines how those modules can be referenced from the window object.
             const globals = {
-                lds: 'lds',
-                'lds-engine': 'ldsEngine',
                 lwc: 'LWC',
                 sinon: 'sinon',
-                'test-util': 'testUtil',
                 timekeeper: 'timekeeper',
-                'wire-service': 'WireService',
+                'lds-engine': 'ldsEngine',
+                'test-util': 'testUtil',
                 ...(config.lwcPreprocessor && config.lwcPreprocessor.globals),
             };
 

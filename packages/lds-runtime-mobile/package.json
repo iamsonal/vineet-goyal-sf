@@ -9,6 +9,7 @@
     "scripts": {
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",
+        "test": "jest",
         "clean": "rm -rf dist"
     },
     "publishConfig": {
@@ -17,5 +18,8 @@
     "dependencies": {
         "@ldsjs/engine": "^0.11.0",
         "@ldsjs/environments": "^0.11.0"
+    },
+    "devDependencies": {
+        "@hybrid/nimbus-plugin-lds": "0.0.1"
     }
 }

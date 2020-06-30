@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-commerce-catalog",
-    "version": "0.1.13",
+    "version": "0.1.14",
     "description": "Wire adapters Commerce Catalog",
     "license": "MIT",
     "main": "dist/umd/es2018/commerce-catalog.js",
@@ -26,9 +26,9 @@
         "registry": "https://npm.lwcjs.org"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "0.1.13"
+        "@salesforce/lds-bindings": "0.1.14"
     },
     "devDependencies": {
-        "@salesforce/lds-karma": "0.1.13"
+        "@salesforce/lds-karma": "0.1.14"
     }
 }

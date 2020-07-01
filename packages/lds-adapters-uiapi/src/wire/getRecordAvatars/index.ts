@@ -6,6 +6,8 @@ import {
     UnfulfilledSnapshot,
     FetchResponse,
     SnapshotRefresh,
+    ResourceResponse,
+    ResourceRequest,
 } from '@ldsjs/engine';
 import { ObjectKeys } from '../../util/language';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
@@ -37,7 +39,7 @@ const KEY = `${keyPrefix}RecordAvatarsBulk`;
 export function buildInMemorySnapshot(lds: LDS, config: GetRecordAvatarsConfig) {
     const { recordIds } = config;
     const sel = selectAvatars(recordIds);
-    return lds.storeLookup<RecordAvatarBulkRepresentation>(
+    return lds.storeLookup<RecordAvatarBulkMapRepresentation>(
         {
             recordId: KEY,
             node: {
@@ -55,11 +57,83 @@ function buildSnapshotRefresh(
     lds: LDS,
     config: GetRecordAvatarsConfig,
     recordIds: string[]
-): SnapshotRefresh<RecordAvatarBulkRepresentation> {
+): SnapshotRefresh<RecordAvatarBulkMapRepresentation> {
     return {
         config,
         resolve: () => buildNetworkSnapshot(lds, config, recordIds),
     };
+}
+
+function buildRequest(recordIds: string[]) {
+    const resourceRequest = getUiApiRecordAvatarsBatchByRecordIds({
+        urlParams: {
+            recordIds,
+        },
+        queryParams: {},
+    });
+    return resourceRequest;
+}
+
+function isRecordAvatarBulkMapRepresentation(
+    response: ResourceResponse<RecordAvatarBulkRepresentation | RecordAvatarBulkMapRepresentation>
+): response is ResourceResponse<RecordAvatarBulkMapRepresentation> {
+    return (response.body as any).hasErrors === undefined;
+}
+
+function onResponseSuccess(
+    lds: LDS,
+    config: GetRecordAvatarsConfig,
+    recordIds: string[],
+    request: ResourceRequest,
+    response: ResourceResponse<RecordAvatarBulkRepresentation | RecordAvatarBulkMapRepresentation>
+) {
+    let formatted: RecordAvatarBulkMapRepresentation;
+
+    // the selector passed to resolveUnfulfilledSnapshot requests the data already formatted so the response
+    // can either be a RecordAvatarBulkRepresentation or a RecordAvatarBulkMapRepresentation
+    if (isRecordAvatarBulkMapRepresentation(response)) {
+        formatted = response.body;
+    } else {
+        formatted = (response as ResourceResponse<
+            RecordAvatarBulkRepresentation
+        >).body.results.reduce((seed, avatar, index) => {
+            const recordId = recordIds[index];
+            seed[recordId] = avatar;
+            return seed;
+        }, {} as RecordAvatarBulkMapRepresentation);
+    }
+
+    lds.storeIngest<RecordAvatarBulkMapRepresentation>(KEY, request, formatted);
+    lds.storeBroadcast();
+    return buildInMemorySnapshot(lds, config);
+}
+
+function onResponseError(
+    lds: LDS,
+    config: GetRecordAvatarsConfig,
+    recordIds: string[],
+    err: FetchResponse<unknown>
+) {
+    lds.storeIngestFetchResponse(KEY, err);
+    lds.storeBroadcast();
+    return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config, recordIds));
+}
+
+function resolveUnfulfilledSnapshot(
+    lds: LDS,
+    config: GetRecordAvatarsConfig,
+    recordIds: string[],
+    snapshot: UnfulfilledSnapshot<RecordAvatarBulkMapRepresentation, any>
+) {
+    const resourceRequest = buildRequest(recordIds);
+    return lds.resolveUnfulfilledSnapshot(resourceRequest, snapshot).then(
+        response => {
+            return onResponseSuccess(lds, config, recordIds, resourceRequest, response);
+        },
+        (err: FetchResponse<unknown>) => {
+            return onResponseError(lds, config, recordIds, err);
+        }
+    );
 }
 
 /**
@@ -73,33 +147,15 @@ export function buildNetworkSnapshot(
     lds: LDS,
     config: GetRecordAvatarsConfig,
     recordIds: string[]
-): Promise<Snapshot<RecordAvatarBulkRepresentation>> {
-    const resourceRequest = getUiApiRecordAvatarsBatchByRecordIds({
-        urlParams: {
-            recordIds,
-        },
-        queryParams: {},
-    });
+): Promise<Snapshot<RecordAvatarBulkMapRepresentation>> {
+    const resourceRequest = buildRequest(recordIds);
 
     return lds.dispatchResourceRequest<RecordAvatarBulkRepresentation>(resourceRequest).then(
         response => {
-            const formatted: RecordAvatarBulkMapRepresentation = response.body.results.reduce(
-                (seed, avatar, index) => {
-                    const recordId = recordIds[index];
-                    seed[recordId] = avatar;
-                    return seed;
-                },
-                {} as RecordAvatarBulkMapRepresentation
-            );
-
-            lds.storeIngest<RecordAvatarBulkMapRepresentation>(KEY, resourceRequest, formatted);
-            lds.storeBroadcast();
-            return buildInMemorySnapshot(lds, config);
+            return onResponseSuccess(lds, config, recordIds, resourceRequest, response);
         },
         (err: FetchResponse<unknown>) => {
-            lds.storeIngestFetchResponse(KEY, err);
-            lds.storeBroadcast();
-            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config, recordIds));
+            return onResponseError(lds, config, recordIds, err);
         }
     );
 }
@@ -121,7 +177,7 @@ function getRecordIds(config: GetRecordAvatarsConfig, snapshot: Snapshot<unknown
     return ObjectKeys((snapshot as UnfulfilledSnapshot<unknown, unknown>).missingPaths).sort();
 }
 
-export const factory: AdapterFactory<GetRecordAvatarsConfig, RecordAvatarBulkRepresentation> = (
+export const factory: AdapterFactory<GetRecordAvatarsConfig, RecordAvatarBulkMapRepresentation> = (
     lds: LDS
 ) =>
     function getRecordAvatars(unknown: unknown) {
@@ -139,6 +195,10 @@ export const factory: AdapterFactory<GetRecordAvatarsConfig, RecordAvatarBulkRep
         // CACHE MISS
         // Only fetch avatars that are missing
         const recordIds = getRecordIds(config, cacheLookup);
+
+        if (isUnfulfilledSnapshot(cacheLookup)) {
+            return resolveUnfulfilledSnapshot(lds, config, recordIds, cacheLookup);
+        }
 
         return buildNetworkSnapshot(lds, config, recordIds);
     };

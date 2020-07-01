@@ -1,1 +1,6 @@
-export { testDataEmittedWhenStale, testDurableHitDoesNotHitNetwork } from './offline';
+export {
+    testDataEmittedWhenStale,
+    testDurableHitDoesNotHitNetwork,
+    buildOfflineLds,
+    populateDurableStore,
+} from './offline';

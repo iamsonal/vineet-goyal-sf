@@ -8,7 +8,7 @@ import {
     MockPayload,
 } from '@ldsjs/adapter-test-library';
 
-function buildLds(durableStore: MockDurableStore, network: NetworkAdapter) {
+export function buildOfflineLds(durableStore: MockDurableStore, network: NetworkAdapter) {
     const store = new Store();
     const env = makeDurable(makeOffline(new Environment(store, network)), durableStore);
     const lds = new LDS(env);
@@ -22,12 +22,12 @@ function buildLds(durableStore: MockDurableStore, network: NetworkAdapter) {
 }
 
 // populates the durable store with a provided payload
-async function populateDurableStore<Config, DataType>(
+export async function populateDurableStore<Config, DataType>(
     adapterFactory: AdapterFactory<Config, DataType>,
     config: Config,
     payload: MockPayload
 ) {
-    const { durableStore, lds, network } = buildLds(
+    const { durableStore, lds, network } = buildOfflineLds(
         new MockDurableStore(),
         buildMockNetworkAdapter([payload])
     );
@@ -45,7 +45,7 @@ export async function testDataEmittedWhenStale<Config, DataType>(
     payload: MockPayload,
     ttl: number
 ) {
-    const { lds } = buildLds(new MockDurableStore(), buildMockNetworkAdapter([payload]));
+    const { lds } = buildOfflineLds(new MockDurableStore(), buildMockNetworkAdapter([payload]));
     const adapter = adapterFactory(lds);
     const result = await (adapter(config) as Promise<any>);
     expect(result.state).toBe('Fulfilled');
@@ -60,7 +60,7 @@ export async function testDurableHitDoesNotHitNetwork<Config, DataType>(
     payload: MockPayload
 ) {
     const durableStore = await populateDurableStore(adapterFactory, config, payload);
-    const { lds, network } = buildLds(durableStore, buildMockNetworkAdapter([payload]));
+    const { lds, network } = buildOfflineLds(durableStore, buildMockNetworkAdapter([payload]));
     const adapter = adapterFactory(lds);
     const result = await (adapter(config) as Promise<any>);
     expect(result.state).toBe('Fulfilled');

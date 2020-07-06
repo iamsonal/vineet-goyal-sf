@@ -1,4 +1,13 @@
-import { AdapterFactory, LDS, FetchResponse, Snapshot, SnapshotRefresh } from '@ldsjs/engine';
+import {
+    AdapterFactory,
+    LDS,
+    FetchResponse,
+    Snapshot,
+    SnapshotRefresh,
+    UnfulfilledSnapshot,
+    ResourceResponse,
+    ResourceRequest,
+} from '@ldsjs/engine';
 import {
     GetLayoutUserStateConfig,
     validateAdapterConfig,
@@ -12,6 +21,7 @@ import { LayoutMode } from '../../primitives/LayoutMode';
 import { LayoutType } from '../../primitives/LayoutType';
 import { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
 import { select as recordLayoutUserStateRepresentationSelect } from '../../generated/types/RecordLayoutUserStateRepresentation';
+import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
 const recordLayoutSelect = recordLayoutUserStateRepresentationSelect();
 
@@ -100,6 +110,68 @@ export function buildNetworkSnapshot(
     lds: LDS,
     config: GetLayoutUserStateConfigWithDefaults
 ): Promise<Snapshot<RecordLayoutUserStateRepresentation>> {
+    const { request, key } = prepareRequest(config);
+
+    return lds.dispatchResourceRequest<RecordLayoutUserStateRepresentation>(request).then(
+        response => {
+            return onResourceResponseSuccess(lds, config, key, request, response);
+        },
+        (error: FetchResponse<unknown>) => {
+            return onResourceResponseError(lds, config, key, error);
+        }
+    );
+}
+
+function resolveUnfulfilledSnapshot(
+    lds: LDS,
+    config: GetLayoutUserStateConfigWithDefaults,
+    snapshot: UnfulfilledSnapshot<RecordLayoutUserStateRepresentation, any>
+) {
+    const { request, key } = prepareRequest(config);
+
+    return lds
+        .resolveUnfulfilledSnapshot<RecordLayoutUserStateRepresentation>(request, snapshot)
+        .then(
+            response => {
+                return onResourceResponseSuccess(lds, config, key, request, response);
+            },
+            (error: FetchResponse<unknown>) => {
+                return onResourceResponseError(lds, config, key, error);
+            }
+        );
+}
+
+function onResourceResponseSuccess(
+    lds: LDS,
+    config: GetLayoutUserStateConfigWithDefaults,
+    key: string,
+    request: ResourceRequest,
+    response: ResourceResponse<RecordLayoutUserStateRepresentation>
+) {
+    const { body } = response;
+    const { recordTypeId, layoutType, mode } = config;
+    // Hack- adding in this params so record-ui will be able to use normed values.
+    body.apiName = config.objectApiName;
+    body.recordTypeId = recordTypeId;
+    body.layoutType = layoutType;
+    body.mode = mode;
+    lds.storeIngest<RecordLayoutUserStateRepresentation>(key, request, body);
+    lds.storeBroadcast();
+    return buildInMemorySnapshot(lds, config);
+}
+
+function onResourceResponseError(
+    lds: LDS,
+    config: GetLayoutUserStateConfigWithDefaults,
+    key: string,
+    error: FetchResponse<unknown>
+) {
+    lds.storeIngestFetchResponse(key, error);
+    lds.storeBroadcast();
+    return lds.errorSnapshot(error, buildSnapshotRefresh(lds, config));
+}
+
+function prepareRequest(config: GetLayoutUserStateConfigWithDefaults) {
     const { recordTypeId, layoutType, mode, objectApiName } = config;
     const key = keyBuilder({
         apiName: objectApiName,
@@ -117,24 +189,7 @@ export function buildNetworkSnapshot(
         },
     });
 
-    return lds.dispatchResourceRequest<RecordLayoutUserStateRepresentation>(request).then(
-        response => {
-            const { body } = response;
-            // Hack- adding in this params so record-ui will be able to use normed values.
-            body.apiName = config.objectApiName;
-            body.recordTypeId = recordTypeId;
-            body.layoutType = layoutType;
-            body.mode = mode;
-            lds.storeIngest<RecordLayoutUserStateRepresentation>(key, request, body);
-            lds.storeBroadcast();
-            return buildInMemorySnapshot(lds, config);
-        },
-        (error: FetchResponse<unknown>) => {
-            lds.storeIngestFetchResponse(key, error);
-            lds.storeBroadcast();
-            return lds.errorSnapshot(error, buildSnapshotRefresh(lds, config));
-        }
-    );
+    return { request, key };
 }
 
 export const factory: AdapterFactory<
@@ -151,6 +206,10 @@ export const factory: AdapterFactory<
         // Cache Hit
         if (lds.snapshotDataAvailable(cacheSnapshot)) {
             return cacheSnapshot;
+        }
+
+        if (isUnfulfilledSnapshot(cacheSnapshot)) {
+            return resolveUnfulfilledSnapshot(lds, config, cacheSnapshot);
         }
 
         return buildNetworkSnapshot(lds, config);

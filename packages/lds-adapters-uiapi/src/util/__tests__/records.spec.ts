@@ -20,6 +20,7 @@ import {
     extractTrackedFieldsToTrie,
     convertTrieToFields,
     isSuperRecordFieldTrie,
+    extractRecordIds,
 } from '../records';
 
 import record from './data/sampleRecord';
@@ -27,6 +28,7 @@ import recursiveRecord from './data/recursiveRecord';
 import recursiveRecordDifferentPaths from './data/recursiveRecordDifferentPaths';
 import objectInfo from './data/sampleObjectInfo';
 import deepRecord from './data/sampleRecordDeep';
+import { ObjectKeys } from '../language';
 
 function buildSampleRecord(): RecordRepresentation {
     return JSON.parse(JSON.stringify(record));
@@ -671,5 +673,39 @@ describe('isSuperRecordFieldTrie', () => {
         };
 
         expect(isSuperRecordFieldTrie(rootA, rootB)).toBe(false);
+    });
+});
+
+describe('extractRecordIds', () => {
+    it('extracts ids from simple record', () => {
+        const ids = extractRecordIds(buildSampleRecord());
+        expect(ObjectKeys(ids)).toEqual([
+            'UiApi::RecordRepresentation:001T1000001nFt5IAE',
+            'UiApi::RecordRepresentation:005T1000000HkSeIAK',
+            'UiApi::RecordRepresentation:005000000000000005',
+        ]);
+    });
+    it('extracts ids deeply nested records', () => {
+        const ids = extractRecordIds(buildDeepRecord());
+        expect(ObjectKeys(ids)).toEqual([
+            'UiApi::RecordRepresentation:a03RM0000004t2LYAQ',
+            'UiApi::RecordRepresentation:a02RM00000081S9YAI',
+            'UiApi::RecordRepresentation:a00RM0000008EhHYAU',
+            'UiApi::RecordRepresentation:006RM000003JZMkYAO',
+            'UiApi::RecordRepresentation:001RM000004XMZ5YAO',
+            'UiApi::RecordRepresentation:0OHRM0000000D014AE',
+            'UiApi::RecordRepresentation:005RM000001stMBYAY',
+        ]);
+    });
+    it('extracts ids and handles rescursive references', () => {
+        const ids = extractRecordIds(buildRecursiveRecord());
+        expect(ObjectKeys(ids)).toEqual(['UiApi::RecordRepresentation:005xx000001XP3tAAG']);
+    });
+    it('extracts ids and handles different recursive paths', () => {
+        const ids = extractRecordIds(buildRecursiveRecordDifferentPaths());
+        expect(ObjectKeys(ids)).toEqual([
+            'UiApi::RecordRepresentation:005000000000000005',
+            'UiApi::RecordRepresentation:005xx000001XP3tAAG',
+        ]);
     });
 });

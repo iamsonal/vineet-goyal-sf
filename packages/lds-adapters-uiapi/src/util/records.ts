@@ -22,13 +22,15 @@ import {
     ObjectKeys,
     ObjectPrototypeHasOwnProperty,
     StringPrototypeEndsWith,
+    ObjectCreate,
 } from './language';
 import { FieldId, splitQualifiedFieldApiName } from '../primitives/FieldId';
 import getFieldApiName from '../primitives/FieldId/coerce';
 import { dedupe } from '../validation/utils';
 import { MASTER_RECORD_TYPE_ID } from './layout';
 import { UIAPI_SUPPORTED_ENTITY_API_NAMES } from './supported-entities';
-import { MAX_RECORD_DEPTH, insertFieldsIntoTrie } from '../selectors/record';
+import { MAX_RECORD_DEPTH, insertFieldsIntoTrie, isSpanningRecord } from '../selectors/record';
+import { RecordCreateDefaultRecordRepresentation } from '../generated/types/RecordCreateDefaultRecordRepresentation';
 
 type FieldValueRepresentationValue = FieldValueRepresentation['value'];
 type RecordRepresentationLikeNormalized =
@@ -716,4 +718,35 @@ export function isSuperRecordFieldTrie(a: RecordFieldTrie, b: RecordFieldTrie): 
     }
 
     return ret;
+}
+
+/**
+ * Returns a list of nested record ids from a record
+ */
+function extractRecordIdsRecursively(
+    record: RecordRepresentation | RecordCreateDefaultRecordRepresentation,
+    ids: { [key: string]: boolean }
+) {
+    if (record.id !== null) {
+        const key = recordRepresentationKeyBuilder({ recordId: record.id });
+        ids[key] = true;
+    }
+
+    const fieldNames = ObjectKeys(record.fields);
+    for (let i = 0, len = fieldNames.length; i < len; i++) {
+        const fieldName = fieldNames[i];
+        const { value: fieldValue } = record.fields[fieldName];
+
+        if (isSpanningRecord(fieldValue)) {
+            extractRecordIdsRecursively(fieldValue, ids);
+        }
+    }
+}
+
+export function extractRecordIds(
+    record: RecordRepresentation | RecordCreateDefaultRecordRepresentation
+) {
+    const ids: { [key: string]: boolean } = ObjectCreate(null);
+    extractRecordIdsRecursively(record, ids);
+    return ids;
 }

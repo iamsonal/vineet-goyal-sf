@@ -1,0 +1,22 @@
+{
+    "apiName": "Account",
+    "childRelationships": {},
+    "eTag": "49aacc08dfa91af4baf266efba35b6a2",
+    "fields": {
+        "Id": {
+            "displayValue": null,
+            "value": "001xx000003Gn4WAAS"
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "Burlington Textiles Corp of America"
+        }
+    },
+    "id": "001xx000003Gn4WAAS",
+    "lastModifiedById": "005xx000001XL1tAAG",
+    "lastModifiedDate": "2020-05-28T14:00:50.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2020-05-28T14:00:50.000Z",
+    "weakEtag": 1590674450000
+}

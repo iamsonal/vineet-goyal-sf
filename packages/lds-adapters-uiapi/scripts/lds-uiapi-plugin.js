@@ -5,6 +5,7 @@
  */
 
 const plugin = require('@salesforce/lds-compiler-plugins');
+const offlineRecordPlugin = require('./lds-uiapi-offline-record-plugin');
 const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
@@ -159,5 +160,8 @@ module.exports = {
             generatedAdapters.filter(({ name }) => !SFDC_PRIVATE_ADAPTERS[name]),
             imperativeAdapters.filter(({ name }) => !SFDC_PRIVATE_ADAPTERS[name])
         );
+
+        // right now LDS cli only supports one plugin, so invoke the offline record plugin from this one
+        offlineRecordPlugin(compilerConfig, modelInfo);
     },
 };

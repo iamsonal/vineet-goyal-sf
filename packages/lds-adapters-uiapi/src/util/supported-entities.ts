@@ -183,6 +183,7 @@ export const UIAPI_SUPPORTED_ENTITY_API_NAMES: { [key: string]: true } = {
     ProductCategoryMedia: true,
     ProductCoverage: true,
     ProductMedia: true,
+    ProductTransfer: true,
     ProductWarrantyTerm: true,
     ProgramRebateTypPayoutSrc: true,
     ProgramRebateType: true,

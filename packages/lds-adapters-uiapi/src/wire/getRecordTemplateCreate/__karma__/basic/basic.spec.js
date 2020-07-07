@@ -1,6 +1,7 @@
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     expireCreateTemplateRepresentation,
+    expireCreateRecordTemplateRepresentation,
     expireObjectInfo,
     mockGetObjectInfoNetwork,
     mockGetRecordTemplateCreateNetwork,
@@ -242,7 +243,7 @@ describe('GetRecordTemplateCreate', () => {
         });
     });
 
-    it('should make HTTP request when created defaults have expired', async () => {
+    it('should make HTTP request when template representation has expired', async () => {
         const mock = getMock('record-template-create-Account-optionalField-Name');
 
         const config = {
@@ -257,7 +258,37 @@ describe('GetRecordTemplateCreate', () => {
 
         expect(wireA.pushCount()).toBe(1);
         expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mock);
+
+        // expire the template
         expireCreateTemplateRepresentation();
+
+        const wireB = await setupElement(config, GetRecordTemplateCreate);
+
+        expect(wireB.pushCount()).toBe(1);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mock);
+
+        // wireA should not have received new data
+        expect(wireA.pushCount()).toBe(1);
+    });
+
+    it('should make HTTP request when create record representation has expired', async () => {
+        const mock = getMock('record-template-create-Account-optionalField-Name');
+
+        const config = {
+            objectApiName: 'Account',
+            optionalFields: ['Account.Name'],
+            recordTypeId: '012RM00000025SOYAY',
+        };
+
+        mockGetRecordTemplateCreateNetwork(config, [mock, mock]);
+
+        const wireA = await setupElement(config, GetRecordTemplateCreate);
+
+        expect(wireA.pushCount()).toBe(1);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mock);
+
+        // expire the record
+        expireCreateRecordTemplateRepresentation();
 
         const wireB = await setupElement(config, GetRecordTemplateCreate);
 

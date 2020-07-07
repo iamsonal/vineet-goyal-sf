@@ -10,6 +10,8 @@ export { TTL as ACTIONS_TTL } from '../src/generated/types/ActionRepresentation'
 
 export { TTL as CREATE_TEMPLATE_REPRESENTATION_TTL } from '../src/generated/types/CreateTemplateRepresentation';
 
+export { TTL as CREATE_RECORD_TEMPLATE_REPRESENTATION_TTL } from '../src/generated/types/CreateRecordTemplateRepresentation';
+
 export { TTL as CLONE_TEMPLATE_REPRESENTATION_TTL } from '../src/generated/types/CloneTemplateRepresentation';
 
 export { TTL as LAYOUT_TTL } from '../src/generated/types/RecordLayoutRepresentation';

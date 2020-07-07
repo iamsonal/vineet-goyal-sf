@@ -12,6 +12,7 @@ import {
     MASTER_RECORD_TYPE_ID,
     ACTIONS_TTL,
     CREATE_TEMPLATE_REPRESENTATION_TTL,
+    CREATE_RECORD_TEMPLATE_REPRESENTATION_TTL,
     CLONE_TEMPLATE_REPRESENTATION_TTL,
     LAYOUT_TTL,
     LAYOUT_USER_STATE_TTL,
@@ -633,6 +634,14 @@ function expireCreateTemplateRepresentation() {
 }
 
 /**
+ * Force a cache expiration for CreateRecordTemplateRepresentation by fast-forwarding time past the
+ * standard CreateRecordTemplateRepresentation TTL.
+ */
+function expireCreateRecordTemplateRepresentation() {
+    timekeeper.travel(Date.now() + CREATE_RECORD_TEMPLATE_REPRESENTATION_TTL + 1);
+}
+
+/**
  * Force a cache expiration for CloneTemplateRepresentation by fast-forwarding time past the
  * standard CloneTemplateRepresentation TTL.
  */
@@ -722,6 +731,7 @@ export {
     expireRecordDefaultsRepresentation,
     expireCloneTemplateRepresentation,
     expireCreateTemplateRepresentation,
+    expireCreateRecordTemplateRepresentation,
     expireRelatedListInfo,
     expireObjectInfo,
     expireNavItems,

@@ -56,6 +56,22 @@ describe('GetRecordTemplateCreate', () => {
         expect(elm2.getWiredData()).toEqualSnapshotWithoutEtags(mock);
     });
 
+    it('should handle when optionalFields do not come back from server', async () => {
+        const mock = getMock('record-template-create-Account-optionalField-Name');
+        const config = {
+            objectApiName: 'Account',
+            optionalFields: ['Account.MissingField', 'Account.Name'],
+            recordTypeId: '012RM00000025SOYAY',
+        };
+
+        mockGetRecordTemplateCreateNetwork(config, mock);
+
+        const wireA = await setupElement(config, GetRecordTemplateCreate);
+
+        expect(wireA.pushCount()).toBe(1);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mock);
+    });
+
     it('should not make another HTTP request when config is the same', async () => {
         const mock = getMock('record-template-create-Account-optionalField-Name');
 

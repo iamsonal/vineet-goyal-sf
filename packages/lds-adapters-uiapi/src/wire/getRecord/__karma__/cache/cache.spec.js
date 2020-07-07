@@ -1,5 +1,12 @@
-import { getMock as globalGetMock, setupElement } from 'test-util';
-import { expireRecords, mockGetRecordNetwork } from 'uiapi-test-util';
+import {
+    getMock as globalGetMock,
+    setupElement,
+    FETCH_RESPONSE_OK,
+    flushPromises,
+} from 'test-util';
+import { expireRecords, mockGetRecordNetwork, URL_BASE } from 'uiapi-test-util';
+import { karmaNetworkAdapter } from 'lds-engine';
+import sinon from 'sinon';
 
 import RecordFields from '../lwc/record-fields';
 
@@ -7,6 +14,46 @@ const MOCK_PREFIX = 'wire/getRecord/__karma__/cache/data/';
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
+}
+
+function getNetworkParams(config) {
+    const recordId = config.recordId;
+    const queryParams = { ...config };
+    delete queryParams.recordId;
+
+    return sinon.match({
+        basePath: `${URL_BASE}/records/${recordId}`,
+        queryParams,
+    });
+}
+
+function mockNetworkOnceDefer(config, response) {
+    let promiseResolve;
+    karmaNetworkAdapter
+        .withArgs(getNetworkParams(config))
+        .onFirstCall()
+        .callsFake(function() {
+            return new Promise(res => {
+                promiseResolve = res;
+            });
+        })
+        .onSecondCall()
+        .throws('Network adapter stub called more than once');
+
+    return async () => {
+        if (typeof promiseResolve !== 'function') {
+            throw new Error(
+                `Attempting to resolve server response before network request has been issued. config: ${JSON.stringify(
+                    config
+                )}`
+            );
+        }
+        promiseResolve({
+            ...FETCH_RESPONSE_OK,
+            body: JSON.parse(JSON.stringify(response)),
+        });
+        await flushPromises();
+    };
 }
 
 describe('cache', () => {
@@ -154,6 +201,29 @@ describe('cache', () => {
             fields: {},
         };
         expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(expected);
+    });
+
+    it('should emit known fields immediately even if another getRecord XHR is in flight', async () => {
+        const accountMock = getMock('record-Account-fields-Account.Id');
+        const config = {
+            recordId: accountMock.id,
+            optionalFields: ['Account.Id'],
+        };
+        mockGetRecordNetwork(config, accountMock);
+        const element = await setupElement(config, RecordFields);
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(accountMock);
+
+        const secondMock = getMock('record-Account-fields-Account.Id,Account.Name');
+        const secondConfig = {
+            recordId: secondMock.id,
+            optionalFields: ['Account.Id', 'Account.Name'],
+        };
+        mockNetworkOnceDefer(secondConfig, accountMock);
+
+        await setupElement(secondConfig, RecordFields);
+
+        const thirdElement = await setupElement(config, RecordFields);
+        expect(thirdElement.getWiredData()).toEqualSnapshotWithoutEtags(accountMock);
     });
 
     // TODO: figure out what is the desire behavior before re-activating

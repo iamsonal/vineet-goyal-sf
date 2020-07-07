@@ -26,8 +26,9 @@
         "test:memory": "rollup -c ./scripts/memory/rollup.config.js && node --expose-gc ./scripts/memory/build/test.js",
         "test:size": "lerna run --scope @salesforce/* test:size",
         "release:adapters": "lerna run --scope @salesforce/* release:core",
+        "release:adapters:local": "lerna run --scope @salesforce/* release:core -- --auto-checkout",
         "release": "./scripts/release/core.js && yarn release:adapters",
-        "release:local": "./scripts/release/core.js --skip-git-check && yarn release:adapters"
+        "release:local": "./scripts/release/core.js --skip-git-check --auto-checkout && yarn release:adapters:local"
     },
     "devDependencies": {
         "@babel/core": "^7.6.4",

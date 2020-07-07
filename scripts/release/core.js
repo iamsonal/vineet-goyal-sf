@@ -59,6 +59,8 @@ const argv = require('yargs')
         'print-commits-only',
         'print commits since last core release without doing the copy-over'
     )
+    .boolean('auto-checkout')
+    .describe('auto-checkout', 'automatically runs `p4 edit` on Core files before building')
     .help().argv;
 
 const MAIN_BRANCH = 'main';
@@ -141,6 +143,10 @@ function checkCore(corePath) {
         );
     }
 
+    if (argv['auto-checkout']) {
+        execSync(`p4 edit ${corePath}`);
+    }
+
     try {
         fs.accessSync(corePath, fs.constants.W_OK);
     } catch {
@@ -220,8 +226,10 @@ function printCommits(corePath) {
 
 function copyArtifacts(repoPath, corePath) {
     console.log(`* Copy artifacts ${repoPath}`);
-
     fs.copyFileSync(repoPath, corePath);
+
+    console.log('* Reverting if unchanged');
+    execSync(`p4 revert -a ${corePath}`);
 }
 
 function deployAdapterPackage() {

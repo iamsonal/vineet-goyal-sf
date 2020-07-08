@@ -47,6 +47,22 @@ describe('Basic', () => {
 
         expect(elm.getWiredData()).toEqualRecordAvatarsSnapshot(config.recordIds, mock);
     });
+
+    it('should correctly resolve when response includes height and width', async () => {
+        const mock = getMock('avatar-001xx000003GYLdAAO-with-height-and-width');
+
+        const config = {
+            recordIds: ['001xx000003GYLdAAO'],
+        };
+
+        mockGetAvatarsNetwork(config, mock);
+
+        const elm = await setupElement(config, GetRecordAvatars);
+
+        expect(elm.pushCount()).toBe(1);
+
+        expect(elm.getWiredData()).toEqualRecordAvatarsSnapshot(config.recordIds, mock);
+    });
 });
 
 describe('Caching', () => {

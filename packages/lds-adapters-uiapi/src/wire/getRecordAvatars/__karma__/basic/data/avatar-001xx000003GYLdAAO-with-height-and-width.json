@@ -1,0 +1,22 @@
+{
+    "hasErrors": false,
+    "results": [
+        {
+            "result": {
+                "backgroundColor": null,
+                "eTag": "d1d957785b35d29cf808260d64e6ebf3",
+                "height": 48,
+                "photoMetadata": {
+                    "companyBluemasterId": "4484428",
+                    "responseId": "7ea8854c-544a-4d61-89d7-4cb8fb7a46fe"
+                },
+                "photoUrl": "https://www.acmefg.com/wp-content/themes/acme/assets/images/favicon.ico",
+                "provider": "bt",
+                "recordId": "001xx000003GYLdAAO",
+                "type": "Photo",
+                "width": 48
+            },
+            "statusCode": 200
+        }
+    ]
+}

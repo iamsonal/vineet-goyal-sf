@@ -1676,7 +1676,7 @@ types:
         (oas-readOnly): true
       height:
         description: Retrieve the height of the photo in pixels, if known, otherwise this will be null.
-        type: string | nil # TODO: hand rolled. Generated RAML defined as integer with format int64
+        type: integer | nil
       photoMetadata:
         description: The photo metadata for the image
         type: PhotoMetadataRepresentation
@@ -1688,7 +1688,7 @@ types:
         type: string | nil
       width:
         description: Retrieve the width of the photo in pixels, if known, otherwise this will be null.
-        type: string | nil # TODO: hand rolled. Generated RAML defined as integer with format int64
+        type: integer | nil
   PicklistValueRepresentation:
     description: A single picklist value.
     type: object

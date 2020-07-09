@@ -36,6 +36,26 @@ export interface UiApiParams {
     clientOptions?: UiApiClientOptions;
 }
 
+interface UiApiBody {
+    [name: string]: any;
+}
+
+interface UiApiError {
+    errorCode: number;
+    message: string;
+}
+
+interface ConnectInJavaError {
+    data: {
+        errorCode: string;
+        message: string;
+        statusCode: number;
+    };
+    id: string;
+    message: string;
+    stackTrace: string;
+}
+
 interface AuraAction {
     controller: string;
     action?: ActionConfig;
@@ -51,11 +71,31 @@ export interface ApiFamily {
     [adapter: string]: Adapter;
 }
 
+interface InstrumentationConfig {
+    params: UiApiParams;
+}
+
+export interface InstrumentationResolveConfig extends InstrumentationConfig {
+    body: UiApiBody;
+}
+
+export interface InstrumentationRejectConfig extends InstrumentationConfig {
+    err?: UiApiError | ConnectInJavaError;
+}
+
 const defaultActionConfig: ActionConfig = {
     background: false,
     hotspot: true,
     longRunning: false,
 };
+
+export type InstrumentationResolveCallback = (config: InstrumentationResolveConfig) => void;
+export type InstrumentationRejectCallback = (config: InstrumentationRejectConfig) => void;
+
+export interface InstrumentationCallbacks {
+    rejectFn?: InstrumentationRejectCallback;
+    resolveFn?: InstrumentationResolveCallback;
+}
 
 function createOkResponse(body: unknown): AuraFetchResponse<unknown> {
     return new AuraFetchResponse(HttpStatusCode.Ok, body);
@@ -64,14 +104,15 @@ function createOkResponse(body: unknown): AuraFetchResponse<unknown> {
 /** Invoke an Aura controller with the pass parameters. */
 export function dispatchAction(
     endpoint: string,
-    params: any,
-    config: DispatchActionConfig = {}
+    params: UiApiParams,
+    config: DispatchActionConfig = {},
+    instrumentationCallbacks: InstrumentationCallbacks = {}
 ): Promise<AuraFetchResponse<unknown>> {
     const { action: actionConfig, cache: cacheConfig } = config;
 
     const fetchFromNetwork = () => {
         return executeGlobalController(endpoint, params, actionConfig).then(
-            body => {
+            (body: UiApiBody) => {
                 // If a cache is passed, store the action body in the cache before returning the
                 // value. Even though `AuraStorage.set` is an asynchronous operation we don't
                 // need to wait for the store to resolve/reject before returning the value.
@@ -80,12 +121,26 @@ export function dispatchAction(
                     cacheConfig.storage.set(cacheConfig.key, body).catch(_error => {});
                 }
 
+                if (instrumentationCallbacks.resolveFn) {
+                    instrumentationCallbacks.resolveFn({
+                        body,
+                        params,
+                    });
+                }
+
                 return createOkResponse(body);
             },
             err => {
+                if (instrumentationCallbacks.rejectFn) {
+                    instrumentationCallbacks.rejectFn({
+                        err,
+                        params,
+                    });
+                }
+
                 // Handle ConnectedInJava exception shapes
                 if (err.data !== undefined && err.data.statusCode !== undefined) {
-                    const { data } = err;
+                    const { data } = err as ConnectInJavaError;
                     throw new AuraFetchResponse(data.statusCode, data);
                 }
 
@@ -174,7 +229,7 @@ export function registerApiFamilyRoutes(apiFamily: ApiFamily) {
                     const { urlParams, queryParams } = resourceRequest;
                     const params = { ...urlParams, ...queryParams };
 
-                    return dispatchAction(transport.controller, params, actionConfig);
+                    return dispatchAction(transport.controller, params, actionConfig, {});
                 },
             }[adapterName]
         );

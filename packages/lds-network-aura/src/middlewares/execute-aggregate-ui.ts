@@ -4,11 +4,18 @@ import { AuraFetchResponse } from '../AuraFetchResponse';
 import { executeGlobalController } from 'aura';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { ObjectKeys, ArrayPrototypeJoin, ArrayPrototypePush } from '../utils/language';
+import { InstrumentationCallbacks } from './utils';
 
 // Boundary which represents the limit that we start chunking at,
 // determined by comma separated string length of fields
 const MAX_STRING_LENGTH_PER_CHUNK = 10000;
 const referenceId = 'LDS_Records_AggregateUi';
+
+interface AggregateUiParams {
+    input: {
+        compositeRequest: CompositeRequest[];
+    };
+}
 
 export interface CompositeRequest {
     url: string;
@@ -71,8 +78,10 @@ export function mergeRecordFields(
  */
 export function dispatchSplitRecordAggregateUiAction(
     endpoint: string,
-    params: any,
-    config: DispatchActionConfig = {}
+    params: AggregateUiParams,
+    config: DispatchActionConfig = {},
+    recordId: string,
+    instrumentationCallbacks: InstrumentationCallbacks = {}
 ): Promise<AuraFetchResponse<unknown>> {
     const { action: actionConfig } = config;
 
@@ -96,6 +105,11 @@ export function dispatchSplitRecordAggregateUiAction(
             const merged = body.compositeResponse.reduce(
                 (seed: null | RecordRepresentation, response) => {
                     if (response.httpStatusCode !== HttpStatusCode.Ok) {
+                        if (instrumentationCallbacks.rejectFn) {
+                            instrumentationCallbacks.rejectFn({
+                                params: { recordId },
+                            });
+                        }
                         throw new AuraFetchResponse(HttpStatusCode.ServerError, {
                             error: response.message,
                         });
@@ -110,9 +124,23 @@ export function dispatchSplitRecordAggregateUiAction(
                 null
             ) as RecordRepresentation;
 
+            if (instrumentationCallbacks.resolveFn) {
+                instrumentationCallbacks.resolveFn({
+                    body: merged,
+                    params: { recordId },
+                });
+            }
+
             return createOkResponse(merged);
         },
         err => {
+            if (instrumentationCallbacks && instrumentationCallbacks.rejectFn) {
+                instrumentationCallbacks.rejectFn({
+                    err,
+                    params: { recordId },
+                });
+            }
+
             // Handle ConnectedInJava exception shapes
             if (err.data !== undefined && err.data.statusCode !== undefined) {
                 const { data } = err;

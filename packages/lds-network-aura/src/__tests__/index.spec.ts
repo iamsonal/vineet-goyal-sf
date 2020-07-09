@@ -8,20 +8,7 @@ import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 import { ControllerInvoker } from '../middlewares/utils';
 import { default as appRouter, Route } from '../router';
 import { buildGetRecordByFieldsCompositeRequest } from '../middlewares/execute-aggregate-ui';
-
-function buildResourceRequest(resourceRequest: Partial<ResourceRequest>): ResourceRequest {
-    return {
-        baseUri: resourceRequest.baseUri || '/test',
-        basePath: resourceRequest.basePath || '/test',
-        method: resourceRequest.method || 'get',
-        body: resourceRequest.body || {},
-        queryParams: resourceRequest.queryParams || {},
-        urlParams: resourceRequest.urlParams || {},
-        key: resourceRequest.key || 'key',
-        headers: resourceRequest.headers || {},
-        ingest: (() => {}) as any,
-    };
-}
+import { buildResourceRequest } from './test-utils';
 
 function testControllerInput(
     request: Partial<ResourceRequest>,

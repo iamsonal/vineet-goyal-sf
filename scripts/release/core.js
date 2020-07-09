@@ -34,6 +34,10 @@ const REPO_LDS_INSTRUMENTATION_PATH = path.resolve(
     'packages/lds-instrumentation/dist/ldsInstrumentation.js'
 );
 const REPO_ADS_BRIDGE_PATH = path.resolve(REPO_ROOT, 'packages/lds-ads-bridge/dist/adsBridge.js');
+const REPO_LDS_ENVIRONMENT_SETTINGS_PATH = path.resolve(
+    REPO_ROOT,
+    'packages/lds-environment-settings/dist/ldsEnvironmentSettings.js'
+);
 
 // The BLT_HOME environment variable is set when sourcing the "env.sh" script contained in the blt
 // folder. Otherwise it gets set to the default BLT install location.
@@ -114,6 +118,13 @@ const CORE_ADS_BRIDGE_PATH = path.resolve(
     'app',
     CORE_BRANCH,
     'core/ui-force-components/modules/force/adsBridge/adsBridge.js'
+);
+
+const CORE_LDS_ENVIRONMENT_SETTINGS_PATH = path.resolve(
+    BLT_HOME,
+    'app',
+    CORE_BRANCH,
+    'core/ui-force-components/modules/force/ldsEnvironmentSettings/ldsEnvironmentSettings.js'
 );
 
 const RELEASABLE_BRANCHES = ['master'];
@@ -295,6 +306,7 @@ function deployAdapterPackage() {
         checkCore(CORE_LDS_INSTRUMENTATION_PATH);
         checkCore(CORE_LDS_BINDINGS_PATH);
         checkCore(CORE_ADS_BRIDGE_PATH);
+        checkCore(CORE_LDS_ENVIRONMENT_SETTINGS_PATH);
     }
 
     if (!argv['skip-git-check']) {
@@ -320,5 +332,6 @@ function deployAdapterPackage() {
         copyArtifacts(REPO_LDS_INSTRUMENTATION_PATH, CORE_LDS_INSTRUMENTATION_PATH);
         copyArtifacts(REPO_LDS_BINDINGS_PATH, CORE_LDS_BINDINGS_PATH);
         copyArtifacts(REPO_ADS_BRIDGE_PATH, CORE_ADS_BRIDGE_PATH);
+        copyArtifacts(REPO_LDS_ENVIRONMENT_SETTINGS_PATH, CORE_LDS_ENVIRONMENT_SETTINGS_PATH);
     }
 })();

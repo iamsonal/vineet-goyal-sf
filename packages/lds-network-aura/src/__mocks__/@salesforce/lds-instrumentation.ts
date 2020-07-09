@@ -13,3 +13,5 @@ export function registerLdsCacheStats() {
         logMisses() {},
     };
 }
+
+export function logCRUDLightningInteraction() {}

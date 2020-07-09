@@ -15,7 +15,23 @@ beforeEach(() => {
     if (jest.isMockFunction(aura.executeGlobalController)) {
         aura.executeGlobalController.mockReset();
     }
+    instrumentationSpies.logCRUDLightningInteraction.mockClear();
 });
+
+jest.mock('@salesforce/lds-instrumentation', () => {
+    const spies = {
+        logCRUDLightningInteraction: jest.fn(),
+    };
+
+    return {
+        incrementGetRecordNormalInvokeCount: () => {},
+        registerLdsCacheStats: () => {},
+        logCRUDLightningInteraction: spies.logCRUDLightningInteraction,
+        __spies: spies,
+    };
+});
+
+import { __spies as instrumentationSpies } from '@salesforce/lds-instrumentation';
 
 describe('executeAggregateUi', () => {
     describe('buildGetRecordByFieldsCompositeRequest', () => {
@@ -113,7 +129,7 @@ describe('executeAggregateUi', () => {
                 .spyOn(aura, 'executeGlobalController')
                 .mockResolvedValueOnce(aggregateResponse);
 
-            return dispatchSplitRecordAggregateUiAction('', {}, {}).then(data => {
+            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').then(data => {
                 expect(successfulResponseMock).toHaveBeenCalledTimes(1);
 
                 expect(data.status).toBe(HttpStatusCode.Ok);
@@ -154,7 +170,7 @@ describe('executeAggregateUi', () => {
                 .spyOn(aura, 'executeGlobalController')
                 .mockResolvedValueOnce(aggregateResponse);
 
-            return dispatchSplitRecordAggregateUiAction('', {}, {}).catch(e => {
+            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').catch(e => {
                 expect(unsuccessfulResponseMock).toHaveBeenCalledTimes(1);
 
                 expect(e.status).toBe(HttpStatusCode.ServerError);
@@ -172,7 +188,7 @@ describe('executeAggregateUi', () => {
                 .spyOn(aura, 'executeGlobalController')
                 .mockRejectedValueOnce(expectedServerResponse);
 
-            return dispatchSplitRecordAggregateUiAction('', {}, {}).catch(e => {
+            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').catch(e => {
                 expect(serverErrorResponseMock).toHaveBeenCalledTimes(1);
                 expect(e).toBeInstanceOf(AuraFetchResponse);
                 expect(e.body.statusCode).toEqual(HttpStatusCode.BadRequest);
@@ -188,7 +204,7 @@ describe('executeAggregateUi', () => {
                 .spyOn(aura, 'executeGlobalController')
                 .mockRejectedValueOnce(expectedServerResponse);
 
-            return dispatchSplitRecordAggregateUiAction('', {}, {}).catch(e => {
+            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').catch(e => {
                 expect(serverErrorResponseMock).toHaveBeenCalledTimes(1);
                 expect(e).toBeInstanceOf(AuraFetchResponse);
                 expect(e.status).toEqual(HttpStatusCode.ServerError);
@@ -201,7 +217,7 @@ describe('executeAggregateUi', () => {
                 .spyOn(aura, 'executeGlobalController')
                 .mockResolvedValueOnce({});
 
-            return dispatchSplitRecordAggregateUiAction('', {}, {}).catch(e => {
+            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').catch(e => {
                 expect(emptyBodyResponseMock).toHaveBeenCalledTimes(1);
                 expect(e).toBeInstanceOf(AuraFetchResponse);
                 expect(e.status).toEqual(HttpStatusCode.ServerError);
@@ -1232,7 +1248,7 @@ describe('mergeRecordFields', () => {
     });
 });
 
-function generateMockedRecordFields(
+export function generateMockedRecordFields(
     numberOfFields: number,
     customFieldName?: string
 ): Array<string> {

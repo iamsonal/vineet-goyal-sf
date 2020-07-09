@@ -3,6 +3,7 @@ import { ResourceRequest } from '@ldsjs/engine';
 import {
     incrementGetRecordAggregateInvokeCount,
     incrementGetRecordNormalInvokeCount,
+    logCRUDLightningInteraction,
     registerLdsCacheStats,
 } from '@salesforce/lds-instrumentation';
 import { createStorage } from '@salesforce/lds-aura-storage';
@@ -13,6 +14,10 @@ import {
     dispatchAction,
     DispatchActionConfig,
     shouldForceRefresh,
+    InstrumentationRejectCallback,
+    InstrumentationRejectConfig,
+    InstrumentationResolveCallback,
+    InstrumentationResolveConfig,
 } from './utils';
 import {
     buildGetRecordByFieldsCompositeRequest,
@@ -21,6 +26,7 @@ import {
 } from './execute-aggregate-ui';
 import appRouter from '../router';
 import { ArrayIsArray } from '../utils/language';
+import { getEnvironmentSetting, EnvironmentSettings } from '@salesforce/lds-environment-settings';
 
 enum UiApiRecordController {
     CreateRecord = 'RecordUiController.createRecord',
@@ -60,6 +66,107 @@ const UIAPI_OBJECT_INFO_PATH = `${UI_API_BASE_URI}/object-info/`;
 const UIAPI_OBJECT_INFO_BATCH_PATH = `${UI_API_BASE_URI}/object-info/batch/`;
 const UIAPI_DUPLICATE_CONFIGURATION_PATH = `${UI_API_BASE_URI}/duplicates/`;
 const UIAPI_DUPLICATES_PATH = `${UI_API_BASE_URI}/predupe`;
+
+enum CrudEventType {
+    CREATE = 'create',
+    DELETE = 'delete',
+    READ = 'read',
+    UPDATE = 'update',
+}
+
+enum CrudEventState {
+    ERROR = 'ERROR',
+    SUCCESS = 'SUCCESS',
+}
+
+interface CrudInstrumentationCallbacks {
+    createRecordRejectFunction: InstrumentationRejectCallback;
+    createRecordResolveFunction: InstrumentationResolveCallback;
+    deleteRecordRejectFunction: InstrumentationRejectCallback;
+    deleteRecordResolveFunction: InstrumentationResolveCallback;
+    getRecordAggregateRejectFunction: InstrumentationRejectCallback;
+    getRecordAggregateResolveFunction: InstrumentationResolveCallback;
+    getRecordRejectFunction: InstrumentationRejectCallback;
+    getRecordResolveFunction: InstrumentationResolveCallback;
+    updateRecordRejectFunction: InstrumentationRejectCallback;
+    updateRecordResolveFunction: InstrumentationResolveCallback;
+}
+
+let crudInstrumentationCallbacks: CrudInstrumentationCallbacks | null = null;
+
+const forceRecordTransactionsDisabled: boolean | undefined = getEnvironmentSetting(
+    EnvironmentSettings.ForceRecordTransactionsDisabled
+);
+
+if (forceRecordTransactionsDisabled === false) {
+    crudInstrumentationCallbacks = {
+        createRecordRejectFunction: (config: InstrumentationRejectConfig) => {
+            logCRUDLightningInteraction(CrudEventType.CREATE, {
+                recordId: config.params.recordInput.apiName,
+                state: CrudEventState.ERROR,
+            });
+        },
+        createRecordResolveFunction: (config: InstrumentationResolveConfig) => {
+            logCRUDLightningInteraction(CrudEventType.CREATE, {
+                recordId: config.body.id,
+                recordType: config.body.apiName,
+                state: CrudEventState.SUCCESS,
+            });
+        },
+        deleteRecordRejectFunction: (config: InstrumentationRejectConfig) => {
+            logCRUDLightningInteraction(CrudEventType.DELETE, {
+                recordId: config.params.recordId,
+                state: CrudEventState.ERROR,
+            });
+        },
+        deleteRecordResolveFunction: (config: InstrumentationResolveConfig) => {
+            logCRUDLightningInteraction(CrudEventType.DELETE, {
+                recordId: config.params.recordId,
+                recordType: config.body.apiName,
+                state: CrudEventState.SUCCESS,
+            });
+        },
+        getRecordAggregateRejectFunction: (config: InstrumentationRejectConfig) => {
+            logCRUDLightningInteraction(CrudEventType.READ, {
+                recordId: config.params.recordId,
+                state: CrudEventState.ERROR,
+            });
+        },
+        getRecordAggregateResolveFunction: (config: InstrumentationResolveConfig) => {
+            logCRUDLightningInteraction(CrudEventType.READ, {
+                recordId: config.params.recordId,
+                recordType: config.body.apiName,
+                state: CrudEventState.SUCCESS,
+            });
+        },
+        getRecordRejectFunction: (config: InstrumentationRejectConfig) => {
+            logCRUDLightningInteraction(CrudEventType.READ, {
+                recordId: config.params.recordId,
+                state: CrudEventState.ERROR,
+            });
+        },
+        getRecordResolveFunction: (config: InstrumentationResolveConfig) => {
+            logCRUDLightningInteraction(CrudEventType.READ, {
+                recordId: config.params.recordId,
+                recordType: config.body.apiName,
+                state: CrudEventState.SUCCESS,
+            });
+        },
+        updateRecordRejectFunction: (config: InstrumentationRejectConfig) => {
+            logCRUDLightningInteraction(CrudEventType.UPDATE, {
+                recordId: config.params.recordId,
+                state: CrudEventState.ERROR,
+            });
+        },
+        updateRecordResolveFunction: (config: InstrumentationResolveConfig) => {
+            logCRUDLightningInteraction(CrudEventType.UPDATE, {
+                recordId: config.params.recordId,
+                recordType: config.body.apiName,
+                state: CrudEventState.SUCCESS,
+            });
+        },
+    };
+}
 
 const objectInfoStorage = createStorage({
     name: 'ldsObjectInfo',
@@ -165,10 +272,20 @@ function getRecord(resourceRequest: ResourceRequest): Promise<any> {
             },
         };
 
+        const instrumentationCallbacks =
+            crudInstrumentationCallbacks !== null
+                ? {
+                      rejectFn: crudInstrumentationCallbacks.getRecordAggregateRejectFunction,
+                      resolveFn: crudInstrumentationCallbacks.getRecordAggregateResolveFunction,
+                  }
+                : {};
+
         return dispatchSplitRecordAggregateUiAction(
             UiApiRecordController.ExecuteAggregateUi,
             aggregateUiParams,
-            actionConfig
+            actionConfig,
+            recordId as string,
+            instrumentationCallbacks
         );
     }
 
@@ -195,7 +312,14 @@ function getRecord(resourceRequest: ResourceRequest): Promise<any> {
     }
 
     const params = buildUiApiParams(getRecordParams, resourceRequest);
-    return dispatchAction(controller, params, actionConfig);
+    const instrumentationCallbacks =
+        crudInstrumentationCallbacks !== null
+            ? {
+                  rejectFn: crudInstrumentationCallbacks.getRecordRejectFunction,
+                  resolveFn: crudInstrumentationCallbacks.getRecordResolveFunction,
+              }
+            : {};
+    return dispatchAction(controller, params, actionConfig, instrumentationCallbacks);
 }
 
 function createRecord(resourceRequest: ResourceRequest): Promise<any> {
@@ -205,8 +329,19 @@ function createRecord(resourceRequest: ResourceRequest): Promise<any> {
         },
         resourceRequest
     );
-
-    return dispatchAction(UiApiRecordController.CreateRecord, params, actionConfig);
+    const instrumentationCallbacks =
+        crudInstrumentationCallbacks !== null
+            ? {
+                  rejectFn: crudInstrumentationCallbacks.createRecordRejectFunction,
+                  resolveFn: crudInstrumentationCallbacks.createRecordResolveFunction,
+              }
+            : {};
+    return dispatchAction(
+        UiApiRecordController.CreateRecord,
+        params,
+        actionConfig,
+        instrumentationCallbacks
+    );
 }
 
 function deleteRecord(resourceRequest: ResourceRequest): Promise<any> {
@@ -217,7 +352,19 @@ function deleteRecord(resourceRequest: ResourceRequest): Promise<any> {
         },
         resourceRequest
     );
-    return dispatchAction(UiApiRecordController.DeleteRecord, params, actionConfig);
+    const instrumentationCallbacks =
+        crudInstrumentationCallbacks !== null
+            ? {
+                  rejectFn: crudInstrumentationCallbacks.deleteRecordRejectFunction,
+                  resolveFn: crudInstrumentationCallbacks.deleteRecordResolveFunction,
+              }
+            : {};
+    return dispatchAction(
+        UiApiRecordController.DeleteRecord,
+        params,
+        actionConfig,
+        instrumentationCallbacks
+    );
 }
 
 function updateRecord(resourceRequest: ResourceRequest): Promise<any> {
@@ -230,8 +377,19 @@ function updateRecord(resourceRequest: ResourceRequest): Promise<any> {
         },
         resourceRequest
     );
-
-    return dispatchAction(UiApiRecordController.UpdateRecord, params, actionConfig);
+    const instrumentationCallbacks =
+        crudInstrumentationCallbacks !== null
+            ? {
+                  rejectFn: crudInstrumentationCallbacks.updateRecordRejectFunction,
+                  resolveFn: crudInstrumentationCallbacks.updateRecordResolveFunction,
+              }
+            : {};
+    return dispatchAction(
+        UiApiRecordController.UpdateRecord,
+        params,
+        actionConfig,
+        instrumentationCallbacks
+    );
 }
 
 function updateLayoutUserState(resourceRequest: ResourceRequest): Promise<any> {

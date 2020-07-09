@@ -2,6 +2,7 @@ import { LDS, Store, Adapter } from '@ldsjs/engine';
 import {
     CacheStatsLogger,
     counter,
+    interaction,
     mark as instrumentationServiceMark,
     markEnd,
     markStart,
@@ -544,6 +545,16 @@ export function incrementGetRecordNotifyChangeAllowCount(): void {
 
 export function incrementGetRecordNotifyChangeDropCount(): void {
     getRecordNotifyChangeDropMetric.increment(1);
+}
+
+/**
+ * Note: locator.scope is set to 'force_record' in order for the instrumentation gate to work, which will
+ * disable all crud operations if it is on.
+ * @param eventSource - Source of the logging event.
+ * @param attributes - Free form object of attributes to log.
+ */
+export function logCRUDLightningInteraction(eventSource: string, attributes: object): void {
+    interaction(eventSource, 'force_record', null, eventSource, 'crud', attributes);
 }
 
 export const instrumentation = new Instrumentation();

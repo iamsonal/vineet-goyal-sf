@@ -1456,13 +1456,6 @@
     unique-filename "^1.1.1"
     which "^1.3.1"
 
-"@hybrid/nimbus-plugin-lds@0.0.1":
-  version "0.0.1"
-  resolved "http://npm.lwcjs.org/@hybrid/nimbus-plugin-lds/-/@hybrid/nimbus-plugin-lds-0.0.1/7ad7315624a7a9f8c935c7728ed97672516750cc.tgz#7ad7315624a7a9f8c935c7728ed97672516750cc"
-  integrity sha512-harMK3ZAkJ7iPfl0Fp81f8WjHlFV/1VW9KXmVAdzWvLM5V4yNBIE0vWyHwe17oqesi7Ihp1549nSrKiXjoocwQ==
-  dependencies:
-    nimbus-types "^2.0.0-alpha1"
-
 "@jest/console@^24.7.1", "@jest/console@^24.9.0":
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-24.9.0.tgz#79b1bc06fb74a8cfb01cbdedf945584b1b9707f0"
@@ -3014,6 +3007,13 @@
   version "1.7.5"
   resolved "https://registry.yarnpkg.com/@lwc/wire-service/-/wire-service-1.7.5.tgz#cf6fa0d660dd53cdaf4e85a2fa08c4d84e73c3b2"
   integrity sha512-gJrHjkjSIf9qeP3GQYrfROZXtdKW7e4Kid79vSAVbe7ZrU9Bk6SE+/45nqnB88Vk/OkajOfW86mq6VcAgl6LCQ==
+
+"@mobileplatform/nimbus-plugin-lds@0.0.1":
+  version "0.0.1"
+  resolved "http://npm.lwcjs.org/@mobileplatform/nimbus-plugin-lds/-/@mobileplatform/nimbus-plugin-lds-0.0.1/2672e2240e11bb019fd46b7b790b4a28fe911271.tgz#2672e2240e11bb019fd46b7b790b4a28fe911271"
+  integrity sha512-NrZsyzFC3SYlQO818jbDl1TX7Zesq0I+wL06LiW/IPJzwtnIAC60JBBsls8yvnOS4XB6bfCWOCWhbUWDNGi+EA==
+  dependencies:
+    nimbus-types "^2.0.0-alpha1"
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"

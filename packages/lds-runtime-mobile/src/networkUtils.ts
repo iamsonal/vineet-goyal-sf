@@ -1,4 +1,4 @@
-import { Request, Response } from '@hybrid/nimbus-plugin-lds';
+import { Request, Response } from '@mobileplatform/nimbus-plugin-lds';
 import { ResourceRequest, FetchResponse, HttpStatusCode } from '@ldsjs/engine';
 
 function ldsParamsToString(params: ResourceRequest['queryParams']): Request['queryParams'] {
@@ -36,6 +36,23 @@ function statusTextFromStatusCode(status: number): string {
     }
 }
 
+function methodFromResourceRequestMethod(method: string) {
+    switch (method.toLowerCase()) {
+        case 'get':
+            return 'GET';
+        case 'put':
+            return 'PUT';
+        case 'post':
+            return 'POST';
+        case 'delete':
+            return 'DELETE';
+        case 'patch':
+            return 'PATCH';
+        default:
+            throw Error(`Unexpected method ${method}`);
+    }
+}
+
 function isStatusOk(status: number): boolean {
     return status >= 200 && status <= 299;
 }
@@ -43,7 +60,7 @@ function isStatusOk(status: number): boolean {
 export function buildNimbusNetworkPluginRequest(resourceRequest: ResourceRequest): Request {
     const { basePath, baseUri, method, headers, queryParams, body } = resourceRequest;
     return {
-        method: method.toUpperCase(),
+        method: methodFromResourceRequestMethod(method),
         body: body ? JSON.stringify(body) : null,
         headers,
         queryParams: ldsParamsToString(queryParams),

@@ -1,8 +1,12 @@
 // so eslint doesn't complain about nimbus
 /* global __nimbus */
 
-import '@hybrid/nimbus-plugin-lds'; // TS needs this import for nimbus declaration
 import { DurableStore, DurableStoreEntries } from '@ldsjs/environments';
+import { ObjectKeys, ObjectCreate, JSONStringify, JSONParse } from './utils/language';
+import { filterPendingFields } from './utils/records';
+import { RecordRepresentationNormalized } from '@salesforce/lds-adapters-uiapi';
+
+const RECORD_REPRESENTATION_PREFIX = 'UiApi::RecordRepresentation:';
 
 export class NimbusDurableStore implements DurableStore {
     getEntries(entryIds: string[]): Promise<DurableStoreEntries | undefined> {
@@ -13,28 +17,31 @@ export class NimbusDurableStore implements DurableStore {
                 return undefined;
             }
 
-            const returnEntries: DurableStoreEntries = Object.create(null);
-            const keys = Object.keys(entries);
+            const returnEntries: DurableStoreEntries = ObjectCreate(null);
+            const keys = ObjectKeys(entries);
             for (let i = 0, len = keys.length; i < len; i++) {
                 const key = keys[i];
                 const value = entries[key];
                 // values are stored on native side as JSON strings
-                returnEntries[key] = JSON.parse(value);
+                returnEntries[key] = JSONParse(value);
             }
             return returnEntries;
         });
     }
 
     setEntries(entries: DurableStoreEntries): Promise<void> {
-        // TODO W-7644069 need to pluck out pending fields from records
-
-        const putEntries = Object.create(null);
-        const keys = Object.keys(entries);
+        const putEntries = ObjectCreate(null);
+        const keys = ObjectKeys(entries);
         for (let i = 0, len = keys.length; i < len; i++) {
             const key = keys[i];
             const value = entries[key];
+
+            if (key.startsWith(RECORD_REPRESENTATION_PREFIX)) {
+                value.data = filterPendingFields(value.data as RecordRepresentationNormalized);
+            }
+
             // values are stored on native side as JSON strings
-            putEntries[key] = JSON.stringify(value);
+            putEntries[key] = JSONStringify(value);
         }
 
         return __nimbus.plugins.LdsDurableStore.setEntries(putEntries);

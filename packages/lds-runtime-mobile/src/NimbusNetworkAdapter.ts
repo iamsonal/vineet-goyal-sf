@@ -1,7 +1,6 @@
 // so eslint doesn't complain about nimbus
 /* global __nimbus */
 
-import '@hybrid/nimbus-plugin-lds'; // TS needs this import for nimbus declaration
 import { ResourceRequest, FetchResponse, NetworkAdapter } from '@ldsjs/engine';
 
 import { buildNimbusNetworkPluginRequest, buildLdsResponse } from './networkUtils';

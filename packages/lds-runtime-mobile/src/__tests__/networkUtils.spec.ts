@@ -1,5 +1,5 @@
 import { ResourceRequest } from '@ldsjs/engine';
-import { Response } from '@hybrid/nimbus-plugin-lds';
+import { Response } from '@mobileplatform/nimbus-plugin-lds';
 
 import { buildNimbusNetworkPluginRequest, buildLdsResponse } from '../networkUtils';
 

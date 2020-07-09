@@ -1,4 +1,10 @@
 {
     "extends": "../../tsconfig.json",
-    "include": ["src"]
+    "include": ["src"],
+    "compilerOptions": {
+        "typeRoots": [
+            "../../node_modules/@types",
+            "../../node_modules/@mobileplatform/nimbus-plugin-lds"
+        ]
+    }
 }

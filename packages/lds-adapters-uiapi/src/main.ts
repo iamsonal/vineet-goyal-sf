@@ -46,3 +46,5 @@ export {
     getRecordInput,
     getFieldValue,
 } from './uiapi-static-functions';
+
+export { makeDurableRecordAware } from './environments/makeDurableRecordAware';

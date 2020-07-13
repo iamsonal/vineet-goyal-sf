@@ -19,6 +19,7 @@
         "build:services": "rollup --config rollup.config.js",
         "start": "karma start",
         "test": "karma start --single-run",
+        "test:unit": "jest",
         "test:compat": "karma start --single-run --compat",
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-commerce-search"
     },

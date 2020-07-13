@@ -9,8 +9,66 @@ uses:
 types:
   ProductSearchResultsRepresentation:
     (lds.opaque): true
+  ProductSearchSuggestionsResultsRepresentation:
+    (lds.opaque): true
+    examples:
+      validResponse: !include ../mocks/types/ProductSearchSuggestionsResultsRepresentation/validResponse.json
+      validResponseEmpty: !include ../mocks/types/ProductSearchSuggestionsResultsRepresentation/validResponseEmpty.json
 
 /commerce/webstores/{webstoreId}/search/product-search:
   post:
     (lds.adapter):
       name: productSearch
+
+/commerce/webstores/{webstoreId}/search/suggestions:
+  get:
+    (lds.adapter):
+      name: getSuggestions
+      tests:
+        expectedResponses:
+          - configInput: |
+              {
+                "webstoreId": "0ZExx0000000001",
+                "searchTerm": "coffee",
+                "effectiveAccountId": "001xx000003GYTfAAO"
+              }
+            mockPayloadId: validResponse
+          - configInput: |
+              {
+                "webstoreId": "0ZExx0000000002",
+                "searchTerm": "coffee",
+                "effectiveAccountId": "001xx000003GYTfAAO"
+              }
+            mockPayloadId: validResponseEmpty
+        validConfigs:
+          - |
+            {
+              "webstoreId": "0ZExx0000000001",
+              "searchTerm": "coffee",
+              "effectiveAccountId": "001xx000003GYTfAAO"
+            }
+          - |
+            {
+              "webstoreId": "0ZExx0000000001"
+            }
+        invalidConfigs:
+          - |
+            {}
+          - |
+            {
+              "webstoreId": 1234567890
+            }
+    queryParameters:
+      searchTerm:
+        examples:
+          validResponse: 'coffee'
+          validResponseEmpty: 'coffee'
+      effectiveAccountId:
+        examples:
+          validResponse: '001xx000003GYTfAAO'
+          validResponseEmpty: '001xx000003GYTfAAO'
+  uriParameters:
+    webstoreId:
+      examples:
+        validResponse: '0ZExx0000000001'
+        validResponseEmpty: '0ZExx0000000002'

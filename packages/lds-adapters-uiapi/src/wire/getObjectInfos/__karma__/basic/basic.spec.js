@@ -219,29 +219,6 @@ describe('getObjectInfos', () => {
         expect(comp.getWiredData()).toEqualSnapshotWithoutEtags(updatedData);
     });
 
-    // W-7597581 : this test should pass when this WI is resolved, skip until then
-
-    xit('returns data from network when the error cache is expired', async () => {
-        const mockData = getMock('object-Account-Opportunity-BadOpportunity');
-        const updatedData = getMock('object-Account-Opportunity-BadOpportunity');
-
-        Object.assign(updatedData.results[0].result, {
-            eTag: 'e7c7f7e02c57bdcfa9d751b5a508f907',
-            defaultRecordTypeId: '012000000000000BBB',
-        });
-        const resourceConfig = { objectApiNames: ['Account', 'Opportunity', 'BadOpportunity'] };
-
-        mockGetObjectInfosNetwork(resourceConfig, [mockData, updatedData]);
-        // Populate cache
-        await setupElement(resourceConfig, ObjectInfos);
-        // Expire cache
-        expireObjectInfo();
-
-        const comp = await setupElement(resourceConfig, ObjectInfos);
-        expect(comp.pushCount()).toBe(1);
-        expect(comp.getWiredData()).toEqualSnapshotWithoutEtags(updatedData);
-    });
-
     it('should refresh data', async () => {
         const mockData = getMock('object-Account-Opportunity');
         const refreshData = getMock('object-Account-Opportunity');

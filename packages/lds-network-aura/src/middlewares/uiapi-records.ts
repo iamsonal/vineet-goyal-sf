@@ -122,7 +122,6 @@ if (forceRecordTransactionsDisabled === false) {
         deleteRecordResolveFunction: (config: InstrumentationResolveConfig) => {
             logCRUDLightningInteraction(CrudEventType.DELETE, {
                 recordId: config.params.recordId,
-                recordType: config.body.apiName,
                 state: CrudEventState.SUCCESS,
             });
         },

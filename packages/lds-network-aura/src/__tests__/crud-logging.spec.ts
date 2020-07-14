@@ -336,13 +336,8 @@ describe('crud logging', () => {
                 body: {},
             };
 
-            const response = {
-                id: '1234',
-                apiName: 'Test__c',
-                fields: {},
-            };
-
-            jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce(response);
+            // the response from RecordUiController.deleteRecord is null
+            jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce(null);
             await networkAdapter(buildResourceRequest(request));
 
             expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
@@ -350,7 +345,6 @@ describe('crud logging', () => {
                 'delete',
                 {
                     recordId: '1234',
-                    recordType: 'Test__c',
                     state: 'SUCCESS',
                 }
             );

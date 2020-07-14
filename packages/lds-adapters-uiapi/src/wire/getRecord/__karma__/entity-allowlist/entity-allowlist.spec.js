@@ -3,13 +3,13 @@ import { expireRecords, mockGetRecordNetwork } from 'uiapi-test-util';
 
 import RecordFields from '../lwc/record-fields';
 
-const MOCK_PREFIX = 'wire/getRecord/__karma__/entity-whitelist/data/';
+const MOCK_PREFIX = 'wire/getRecord/__karma__/entity-allowlist/data/';
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
 }
 
-describe('entity white list', () => {
+describe('entity allow list', () => {
     it('should not attempt to refresh merge conflict for unsupported entity', async () => {
         const mock = getMock('record-Account-fields-Account.Owner.Id');
         const config = {

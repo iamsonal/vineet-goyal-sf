@@ -56,7 +56,7 @@ beforeEach(() => {
 
 describe('AdsBridge', () => {
     describe('addRecords', () => {
-        it('ingests all the records if no whitelist is provided', () => {
+        it('ingests all the records if no allowlist is provided', () => {
             const { lds, bridge } = createBridge();
 
             bridge.addRecords([
@@ -77,7 +77,7 @@ describe('AdsBridge', () => {
             expect(timerMetricAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
-        it('ingests the records unless they are explicitly not whitelisted', () => {
+        it('ingests the records unless they are explicitly not allowlisted', () => {
             const { lds, bridge } = createBridge();
 
             bridge.addRecords(

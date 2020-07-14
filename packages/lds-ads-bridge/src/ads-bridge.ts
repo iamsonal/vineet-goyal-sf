@@ -282,12 +282,12 @@ export default class AdsBridge {
     /**
      * This method is invoked when a record has been ingested by ADS.
      *
-     * ADS may invoke this method with records that are not UIAPI whitelisted so not refreshable by
-     * LDS. LDS filters the provided list so it ingests only UIAPI whitelisted records.
+     * ADS may invoke this method with records that are not UIAPI allowlisted so not refreshable by
+     * LDS. LDS filters the provided list so it ingests only UIAPI allowlisted records.
      */
     public addRecords(
         records: RecordRepresentation[],
-        uiApiEntityWhitelist?: {
+        uiApiEntityAllowlist?: {
             [name: string]: 'false' | undefined;
         }
     ): void {
@@ -299,10 +299,10 @@ export default class AdsBridge {
                 const record = records[i];
                 const { apiName } = record;
 
-                // Ingest the record if no whitelist is passed or the entity name is whitelisted.
+                // Ingest the record if no allowlist is passed or the entity name is allowlisted.
                 if (
-                    uiApiEntityWhitelist === undefined ||
-                    uiApiEntityWhitelist[apiName] !== 'false'
+                    uiApiEntityAllowlist === undefined ||
+                    uiApiEntityAllowlist[apiName] !== 'false'
                 ) {
                     didIngestRecord = true;
 

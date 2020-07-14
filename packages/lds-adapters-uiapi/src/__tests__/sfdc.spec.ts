@@ -3,11 +3,11 @@ import * as uiapiExports from '../sfdc';
 describe('SFDC exports', () => {
     describe('items exported to core', () => {
         /**
-         * This export whitelist ensures that we have the minimum amount of exports
+         * This export allowlist ensures that we have the minimum amount of exports
          * for LDS. An approved pull request/code review by David Turissini (@davidturissini) or
          * Kevin Venkiteswaran (@kevinv11n) is required before merging ANY changes to this list.
          */
-        const whiteList = [
+        const allowList = [
             /** UI API exports */
             'createRecord',
             'deleteRecord',
@@ -66,8 +66,8 @@ describe('SFDC exports', () => {
             'keyBuilderRecord',
         ].sort();
 
-        it('should only export whitelisted items', () => {
-            expect(Object.keys(uiapiExports).sort()).toEqual(whiteList);
+        it('should only export allowlisted items', () => {
+            expect(Object.keys(uiapiExports).sort()).toEqual(allowList);
         });
     });
 });

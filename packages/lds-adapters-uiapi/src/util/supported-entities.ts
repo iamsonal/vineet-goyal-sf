@@ -263,6 +263,12 @@ export const UIAPI_SUPPORTED_ENTITY_API_NAMES: { [key: string]: true } = {
     WorkContract: true,
     WorkOrder: true,
     WorkOrderLineItem: true,
+    WorkPlan: true,
+    WorkPlanSelectionRule: true,
+    WorkPlanTemplate: true,
+    WorkPlanTemplateEntry: true,
+    WorkStep: true,
+    WorkStepTemplate: true,
     WorkType: true,
     WorkerCompCoverageClass: true,
 };

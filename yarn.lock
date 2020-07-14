@@ -11,7 +11,7 @@
     deep-eql "^0.1.3"
     keypather "^1.10.2"
 
-"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.1", "@babel/code-frame@^7.5.5":
+"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.1":
   version "7.10.1"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.10.1.tgz#d5481c5095daa1c57e16e54c6f9198443afb49ff"
   integrity sha512-IGhtTmpjGbYzcEDOw7DcQtbQSXcG9ftmAXtWTu9V936vDye4xjjekktFAtgZsWpzTj/X01jocB46mTywm/4SZw==
@@ -2176,19 +2176,19 @@
   dependencies:
     core-js "^2.5.7"
 
-"@ldsjs/adapter-test-library@^0.11.3":
-  version "0.11.3"
-  resolved "http://npm.lwcjs.org/@ldsjs/adapter-test-library/-/@ldsjs/adapter-test-library-0.11.3/9572edca534a731568a0737c3eca9216eb14dbb2.tgz#9572edca534a731568a0737c3eca9216eb14dbb2"
-  integrity sha512-0UWYLnDnNnT8kU87ggOknqtYXXowbQ/daPqWRUpS80BNltRQMgc7S6BsVKssi27ztkKaTYXh3UElkj2Lgr4pJA==
+"@ldsjs/adapter-test-library@^0.11.4":
+  version "0.11.4"
+  resolved "http://npm.lwcjs.org/@ldsjs/adapter-test-library/-/@ldsjs/adapter-test-library-0.11.4/c2ae4ee59d19d179d8d23a89ff006ac065cc6aa6.tgz#c2ae4ee59d19d179d8d23a89ff006ac065cc6aa6"
+  integrity sha512-epPoke18ioM5NYR/HN9F7+8GwcXen5diUQOH8BZ56YdWl+WauuBGYQgk4g9o6qWZipd7XQWn6hwF4wrC4JkUXQ==
   dependencies:
     sinon "^7.5.0"
 
-"@ldsjs/cli@^0.11.3":
-  version "0.11.3"
-  resolved "http://npm.lwcjs.org/@ldsjs/cli/-/@ldsjs/cli-0.11.3/4cebebf3d4cc9dfb1d08445e589860888e4ae3d6.tgz#4cebebf3d4cc9dfb1d08445e589860888e4ae3d6"
-  integrity sha512-sT2QqmRKXCEe0ndJ5Os379ciuFtvEB46wE7ActR/BB+7I1tlmznedCdE7ipmum6VVpkVXJaFrhvTHuYUNk6Dkw==
+"@ldsjs/cli@^0.11.4":
+  version "0.11.4"
+  resolved "http://npm.lwcjs.org/@ldsjs/cli/-/@ldsjs/cli-0.11.4/36b8b3045013146faf8216a9d3cf88df7f175389.tgz#36b8b3045013146faf8216a9d3cf88df7f175389"
+  integrity sha512-PREYvKlhWUY1Apix3zEzhsOSQakbYLwP3Yn66fLZ8+vBNB/6Og6osDi4283iWaGdeLtgNvzXdQge3LtaiRZdVg==
   dependencies:
-    "@ldsjs/compiler" "0.11.3"
+    "@ldsjs/compiler" "0.11.4"
     "@oclif/command" "^1.5.19"
     "@oclif/config" "^1.13.3"
     "@oclif/plugin-help" "^2.2.1"
@@ -2196,29 +2196,29 @@
     strip-ansi "^6.0.0"
     text-table "^0.2.0"
 
-"@ldsjs/compiler@0.11.3", "@ldsjs/compiler@^0.11.3":
-  version "0.11.3"
-  resolved "http://npm.lwcjs.org/@ldsjs/compiler/-/@ldsjs/compiler-0.11.3/caa35b3c906dcb939edf583d87a389e28d20a588.tgz#caa35b3c906dcb939edf583d87a389e28d20a588"
-  integrity sha512-4UqErRml4mlRf+W5q4LNQVWZJMOkvM3c0zM2Y4tvjyT3qKPo5kb1qL+unMW+H1kvdK+YgJSjSKCFcoQEqDOhZg==
+"@ldsjs/compiler@0.11.4", "@ldsjs/compiler@^0.11.4":
+  version "0.11.4"
+  resolved "http://npm.lwcjs.org/@ldsjs/compiler/-/@ldsjs/compiler-0.11.4/e40b29bfae67d47321233e3c9636ee04af3bc18a.tgz#e40b29bfae67d47321233e3c9636ee04af3bc18a"
+  integrity sha512-0c5iLeee0u2QS5bSb80B0SMpURvAQKEBkKHMMMNJaFrE5gLWMIrbsaNKTptV65Hkea0CWHk76I40M423gTO+gw==
   dependencies:
     amf-client-js "4.1.2"
 
-"@ldsjs/engine@0.11.3", "@ldsjs/engine@^0.11.3":
-  version "0.11.3"
-  resolved "http://npm.lwcjs.org/@ldsjs/engine/-/@ldsjs/engine-0.11.3/884d69b39ebfa4ade6f58a7d3742e7aba3b6e407.tgz#884d69b39ebfa4ade6f58a7d3742e7aba3b6e407"
-  integrity sha512-7Xk60Q6l1n4RytW18YbAo6kfonqLdbtR9zd+hq/0rohdqbbV4a0MmNjUxsxQDNe+4ejsKG7JgOd6UTeN3CQPtQ==
+"@ldsjs/engine@0.11.4", "@ldsjs/engine@^0.11.4":
+  version "0.11.4"
+  resolved "http://npm.lwcjs.org/@ldsjs/engine/-/@ldsjs/engine-0.11.4/e386fc44b915145575f30ac5af149b8a621b6eab.tgz#e386fc44b915145575f30ac5af149b8a621b6eab"
+  integrity sha512-6eKxOxY2UgdZ4zDiv1QaGp9nf/189q1m4lnmg0fRJFhILRP8Su7x9WApqiiw5r30p3ICkIsYbJay53rxdvVyqw==
 
-"@ldsjs/environments@^0.11.3":
-  version "0.11.3"
-  resolved "http://npm.lwcjs.org/@ldsjs/environments/-/@ldsjs/environments-0.11.3/79d5cb3ecfa0c33fa7e9e8b69bbee4fa82a011ee.tgz#79d5cb3ecfa0c33fa7e9e8b69bbee4fa82a011ee"
-  integrity sha512-2StOVYahwKTcsgsYdi05nHaLvwJandU6i0TILGGuRlhtSN5S8glX29N3u48I9lkRrmcZ9r1gAuYVDpFYmOTNnA==
+"@ldsjs/environments@^0.11.4":
+  version "0.11.4"
+  resolved "http://npm.lwcjs.org/@ldsjs/environments/-/@ldsjs/environments-0.11.4/5df2e31d424de1755c64ad27ef8187ad1d9ef830.tgz#5df2e31d424de1755c64ad27ef8187ad1d9ef830"
+  integrity sha512-3FOnbeOUvC8ugdZ8JST0uNRFVFNHgBb660t/m1s5xKkKpNiESfZWrhP8ND0uJ0zL7WDlpyMQ9K1GtVm1MAbM2A==
 
-"@ldsjs/lwc-lds@^0.11.3":
-  version "0.11.3"
-  resolved "http://npm.lwcjs.org/@ldsjs/lwc-lds/-/@ldsjs/lwc-lds-0.11.3/2eba196e7f882450843e97e09519075f49f9be3c.tgz#2eba196e7f882450843e97e09519075f49f9be3c"
-  integrity sha512-2ecd1Cs2HzUF9sy/BYPR5+RpfprAWzlTCJkUQKmRdXFdI1NtWan4JGClGLq/30l6NWZw7ilNYe3JIkbvl/QfEA==
+"@ldsjs/lwc-lds@^0.11.4":
+  version "0.11.4"
+  resolved "http://npm.lwcjs.org/@ldsjs/lwc-lds/-/@ldsjs/lwc-lds-0.11.4/b6317746355357c1a7f695bf9dc8cd9a7d62331e.tgz#b6317746355357c1a7f695bf9dc8cd9a7d62331e"
+  integrity sha512-+in2As98XuKMWo/fx2N12OVEMyKp3OLBQXP/AX9NzQxxtlaA1ddx1EnNMT0hOW0ZsiJM58oapL/JnP7JGegrjA==
   dependencies:
-    "@ldsjs/engine" "0.11.3"
+    "@ldsjs/engine" "0.11.4"
 
 "@lerna/add@3.21.0":
   version "3.21.0"
@@ -13330,17 +13330,6 @@ rollup-plugin-replace@^2.2.0:
     magic-string "^0.25.2"
     rollup-pluginutils "^2.6.0"
 
-rollup-plugin-terser@^5.1.2:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-terser/-/rollup-plugin-terser-5.3.0.tgz#9c0dd33d5771df9630cd027d6a2559187f65885e"
-  integrity sha512-XGMJihTIO3eIBsVGq7jiNYOdDMb3pVxuzY0uhOE/FM4x/u9nQgr3+McsjzqBn3QfHIpNSZmFnpoKAwHBEcsT7g==
-  dependencies:
-    "@babel/code-frame" "^7.5.5"
-    jest-worker "^24.9.0"
-    rollup-pluginutils "^2.8.2"
-    serialize-javascript "^2.1.2"
-    terser "^4.6.2"
-
 rollup-plugin-typescript2@^0.24.3:
   version "0.24.3"
   resolved "https://registry.yarnpkg.com/rollup-plugin-typescript2/-/rollup-plugin-typescript2-0.24.3.tgz#276fa33a9d584d500da62d3e5400307f4a46bdf2"
@@ -13359,7 +13348,7 @@ rollup-pluginutils@2.8.1:
   dependencies:
     estree-walker "^0.6.1"
 
-rollup-pluginutils@^2.6.0, rollup-pluginutils@^2.8.1, rollup-pluginutils@^2.8.2:
+rollup-pluginutils@^2.6.0, rollup-pluginutils@^2.8.1:
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/rollup-pluginutils/-/rollup-pluginutils-2.8.2.tgz#72f2af0748b592364dbd3389e600e5a9444a351e"
   integrity sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==
@@ -13633,11 +13622,6 @@ serialize-error@^7.0.0:
   integrity sha512-8I8TjW5KMOKsZQTvoxjuSIa7foAwPWGOts+6o7sgjz41/qMD9VQHEDxi6PBvK2l0MXUmqZyNpUK+T2tQaaElvw==
   dependencies:
     type-fest "^0.13.1"
-
-serialize-javascript@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-2.1.2.tgz#ecec53b0e0317bdc95ef76ab7074b7384785fa61"
-  integrity sha512-rs9OggEUF0V4jUSecXazOYsLfu7OGK2qIn3c7IPBiffz32XniEp/TX9Xmc9LQfK2nQ2QKHvZ2oygKUGU0lG4jQ==
 
 serve-favicon@^2.4.5:
   version "2.5.0"
@@ -14545,7 +14529,7 @@ temp-write@^3.4.0:
     temp-dir "^1.0.0"
     uuid "^3.0.1"
 
-terser@^4.6.2, terser@~4.7.0:
+terser@~4.7.0:
   version "4.7.0"
   resolved "https://registry.yarnpkg.com/terser/-/terser-4.7.0.tgz#15852cf1a08e3256a80428e865a2fa893ffba006"
   integrity sha512-Lfb0RiZcjRDXCC3OSHJpEkxJ9Qeqs6mp2v4jf2MHfy8vGERmVDuvjXdd/EnP5Deme5F2yBRBymKmKHCBg2echw==

@@ -569,11 +569,7 @@ describe('routes', () => {
                 },
                 body: {},
             },
-            {
-                id: '1234',
-                apiName: 'Test__c',
-                fields: {},
-            }
+            null
         );
     });
 

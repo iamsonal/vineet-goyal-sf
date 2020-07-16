@@ -3,6 +3,14 @@ const baseConfig = require('../../scripts/jest/base.config');
 module.exports = {
     ...baseConfig,
 
-    displayName: 'lds-runtime-mobile',
+    displayName: '@salesforce/lds-runtime-mobile',
     roots: ['<rootDir>/src'],
+
+    coverageThreshold: {
+        global: {
+            branches: 50,
+            functions: 50,
+            lines: 50,
+        },
+    },
 };

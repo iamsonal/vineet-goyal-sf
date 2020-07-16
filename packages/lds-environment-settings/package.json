@@ -9,7 +9,7 @@
     "scripts": {
         "clean": "rm -rf dist",
         "build": "rollup --config rollup.config.js",
-        "test": "jest",
+        "test:unit": "jest",
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     }
 }

@@ -60,11 +60,7 @@ run_unit_tests: &run_unit_tests
     # Jest should run sequentially instead of parallel on the CI to avoid running out of memory and
     # reduce run duration.
     # https://jestjs.io/docs/en/troubleshooting#tests-are-extremely-slow-on-docker-and-or-continuous-integration-ci-server
-    command: yarn test:unit --runInBand --ci --coverage
-
-store_unit_tests_coverage: &store_unit_tests_coverage
-  store_artifacts:
-    path: coverage
+    command: yarn test:unit:coverage --runInBand --ci
 
 run_integration_tests: &run_integration_tests
   run:
@@ -183,7 +179,6 @@ jobs:
       - *run_format
 
       - *run_unit_tests
-      - *store_unit_tests_coverage
 
   test_integration:
     <<: *env_default

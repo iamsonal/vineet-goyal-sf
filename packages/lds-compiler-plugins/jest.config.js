@@ -4,6 +4,6 @@ module.exports = {
     ...baseConfig,
 
     displayName: '@salesforce/lds-compiler-plugins',
-
     roots: ['<rootDir>/src'],
+    coverageThreshold: {},
 };

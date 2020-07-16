@@ -9,7 +9,7 @@
     "scripts": {
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",
-        "test": "jest",
+        "test:unit": "jest",
         "clean": "rm -rf dist"
     },
     "publishConfig": {

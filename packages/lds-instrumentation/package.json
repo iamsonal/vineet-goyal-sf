@@ -10,7 +10,7 @@
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",
         "clean": "rm -rf dist",
-        "test": "jest",
+        "test:unit": "jest",
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     }
 }

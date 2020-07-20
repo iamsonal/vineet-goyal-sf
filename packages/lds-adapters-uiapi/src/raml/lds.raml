@@ -189,6 +189,9 @@ types:
     (lds.key):
       objectApiName: record.apiName
       recordTypeId: record.recordTypeId
+    examples:
+      CreateTemplateResponseWithEmptyFields: !include ../mocks/types/CreateTemplateRepresentation/record-template-create-Account.json
+      CreateTemplateResponseWithSingleField: !include ../mocks/types/CreateTemplateRepresentation/record-template-create-Account-optionalFields-Name.json
   CreateRecordTemplateRepresentation:
     (lds.ttl): 30000
     (lds.key):
@@ -198,6 +201,9 @@ types:
     # This should have a key.
     # Currently, the unique identifier for the response is in the fields object.
     (lds.ttl): 1000
+    examples:
+      CloneTemplateResponseWithSourceField: !include ../mocks/types/CloneTemplateRepresentation/record-template-clone-Account.json
+      CloneTemplateResponseWithMultipleFields: !include ../mocks/types/CloneTemplateRepresentation/record-template-clone-Account-optionalFields-Name.json
   SalesforceObjectId:
     (lds.coerceFunction): ../primitives/ObjectId/coerce
   SalesforceObjectIdArray:
@@ -564,22 +570,104 @@ types:
             formFactor: SalesforceFormFactor
     '/template':
       '/create/{objectApiName}':
+        uriParameters:
+          objectApiName:
+            examples:
+              CreateTemplateResponseWithEmptyFields: 'Account'
+              CreateTemplateResponseWithSingleField: 'Account'
         get:
+          queryParameters:
+            recordTypeId:
+              examples:
+                CreateTemplateResponseWithEmptyFields: '012RM00000025SOYAY'
+            optionalFields:
+              examples:
+                CreateTemplateResponseWithSingleField: |
+                  ["Account.Name"]
           (lds.adapter):
             name: getRecordTemplateCreate
             coercedParams:
               objectApiName: SalesforceObjectId
               optionalFields: SalesforceFieldIdArray
+            tests:
+              validConfigs:
+                - |
+                  {
+                    "objectApiName": "Account"
+                  }
+                - |
+                  {
+                    "objectApiName": "Account",
+                    "optionalFields": ["Account.Name"]
+                  }
+                - |
+                  {
+                    "objectApiName": "Account",
+                    "optionalFields": "Account.Name",
+                    "recordTypeId": null
+                  }
+                - |
+                  {
+                    "objectApiName": "Account",
+                    "optionalFields": [],
+                    "recordTypeId": "012RM00000025SOYAY"
+                  }
+              invalidConfigs:
+                - |
+                  {
+                    "objectApiName": null
+                  }
           (lds.key):
             objectApiName: urlParams.objectApiName
             recordTypeId: queryParams.recordTypeId || null
       '/clone/{recordId}':
+        uriParameters:
+          recordId:
+            examples:
+              CloneTemplateResponseWithSourceField: '001RM000004PkciYAC'
+              CloneTemplateResponseWithMultipleFields: '001RM000004PkciYAC'
         get:
+          queryParameters:
+            recordTypeId:
+              examples:
+                CloneTemplateResponseWithSourceField: '012RM00000025SOYAY'
+            optionalFields:
+              examples:
+                CloneTemplateResponseWithMultipleFields: |
+                  ["Account.Name"]
           (lds.adapter):
             name: getRecordTemplateClone
             coercedParams:
               recordId: SalesforceRecordId18
               optionalFields: SalesforceFieldIdArray
+            tests:
+              validConfigs:
+                - |
+                  {
+                    "recordId": "001RM000004PkciYAC"
+                  }
+                - |
+                  {
+                    "recordId": "001RM000004PkciYAC",
+                    "optionalFields": ["Account.Name"]
+                  }
+                - |
+                  {
+                    "recordId": "001RM000004PkciYAC",
+                    "optionalFields": "Account.Name",
+                    "recordTypeId": null
+                  }
+                - |
+                  {
+                    "recordId": "001RM000004Pkci",
+                    "optionalFields": [],
+                    "recordTypeId": "012RM00000025SOYAY"
+                  }
+              invalidConfigs:
+                - |
+                  {
+                    "recordId": null
+                  }
   '/related-list-count':
     '/batch/{parentRecordId}/{relatedListNames}':
       get:

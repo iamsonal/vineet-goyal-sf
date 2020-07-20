@@ -28,6 +28,9 @@ import recursiveRecord from './data/recursiveRecord';
 import recursiveRecordDifferentPaths from './data/recursiveRecordDifferentPaths';
 import objectInfo from './data/sampleObjectInfo';
 import deepRecord from './data/sampleRecordDeep';
+import storeRecordsWith6LevelRefsCustom from './data/store-records-6-level-refs-custom.json';
+import storeRecordsWith6LevelRefsAccount from './data/store-records-6-level-refs-account.json';
+
 import { ObjectKeys } from '../language';
 
 function buildSampleRecord(): RecordRepresentation {
@@ -190,6 +193,75 @@ describe('getTrackedFields', () => {
             'TestD__c.TestC__r.TestA__r.Opportunity__r.AccountId',
             'TestD__c.TestC__r.TestA__r.Opportunity__r.Id',
         ]);
+    });
+
+    it('should not include 6 levels deep custom relationship field', () => {
+        const store = new Store();
+        store.records = storeRecordsWith6LevelRefsCustom;
+        const lds = new LDS(new Environment(store, () => Promise.reject()));
+
+        const expectedFields = [
+            'Department__c.Id',
+            'Department__c.Name',
+            'Department__c.ParentDepartment__c',
+            'Department__c.ParentDepartment__r.Id',
+            'Department__c.ParentDepartment__r.Name',
+            'Department__c.ParentDepartment__r.ParentDepartment__c',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.Id',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.Name',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__c',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Id',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Name',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__c',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Id',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Name',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__c',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Id',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Name',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__c',
+        ];
+
+        // Record with 6 depth relationship field (boundary value)
+        // Name: Dep6, RecordId: a00xx000000bnVlAAI
+        const dep6Fields = getTrackedFields(lds, 'a00xx000000bnVlAAI', []);
+        expect(dep6Fields).toEqual(expectedFields);
+
+        // Record with 7 depth relationship field
+        // Name: Dep7, RecordId: a00xx000000bnXNAAY
+        const dep7Fields = getTrackedFields(lds, 'a00xx000000bnXNAAY', []);
+        expect(dep7Fields).toEqual(expectedFields);
+    });
+
+    it('should not include 6 levels deep relationship field', () => {
+        const store = new Store();
+        store.records = storeRecordsWith6LevelRefsAccount;
+        const lds = new LDS(new Environment(store, () => Promise.reject()));
+
+        const expectedFields = [
+            'Department__c.Id',
+            'Department__c.Name',
+            'Department__c.ParentDepartment__c',
+            'Department__c.ParentDepartment__r.Id',
+            'Department__c.ParentDepartment__r.Name',
+            'Department__c.ParentDepartment__r.ParentDepartment__c',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.Id',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.Name',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__c',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Id',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Name',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__c',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Id',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Name',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__c',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.AccountId',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Id',
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Name',
+        ];
+
+        // Record with 6 depth relationship field (boundary value)
+        // Name: Dep6, RecordId: a00xx000000bnVlAAI
+        const dep6Fields = getTrackedFields(lds, 'a00xx000000bnVlAAI', []);
+        expect(dep6Fields).toEqual(expectedFields);
     });
 });
 

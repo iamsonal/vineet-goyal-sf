@@ -1,0 +1,264 @@
+{
+    "UiApi::RecordRepresentation:a00xx000000bnVlAAI__fields__Id": {
+        "displayValue": null,
+        "value": "a00xx000000bnVlAAI"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnVlAAI__fields__Name": {
+        "displayValue": null,
+        "value": "Dep6"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnVlAAI": {
+        "apiName": "Department__c",
+        "childRelationships": {},
+        "eTag": "74f3b2a6e160e40db6855332062b6f21",
+        "fields": {
+            "Id": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnVlAAI__fields__Id"
+            },
+            "Name": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnVlAAI__fields__Name"
+            },
+            "ParentDepartment__c": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnVlAAI__fields__ParentDepartment__c"
+            },
+            "ParentDepartment__r": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnVlAAI__fields__ParentDepartment__r"
+            }
+        },
+        "id": "a00xx000000bnVlAAI",
+        "lastModifiedById": "005xx000001X7gzAAC",
+        "lastModifiedDate": "2020-07-10T21:53:46.000Z",
+        "recordTypeId": "012000000000000AAA",
+        "recordTypeInfo": null,
+        "systemModstamp": "2020-07-10T21:53:46.000Z",
+        "weakEtag": 1594418026000
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnPJAAY__fields__Id": {
+        "displayValue": null,
+        "value": "a00xx000000bnPJAAY"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnPJAAY__fields__Name": {
+        "displayValue": null,
+        "value": "Dep2"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnPJAAY": {
+        "apiName": "Department__c",
+        "childRelationships": {},
+        "eTag": "3762dfed96dac4d665a70a76a3462acd",
+        "fields": {
+            "Id": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnPJAAY__fields__Id"
+            },
+            "Name": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnPJAAY__fields__Name"
+            },
+            "ParentDepartment__c": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnPJAAY__fields__ParentDepartment__c"
+            },
+            "ParentDepartment__r": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnPJAAY__fields__ParentDepartment__r"
+            }
+        },
+        "id": "a00xx000000bnPJAAY",
+        "lastModifiedById": "005xx000001X7gzAAC",
+        "lastModifiedDate": "2020-07-10T21:53:02.000Z",
+        "recordTypeId": "012000000000000AAA",
+        "recordTypeInfo": null,
+        "systemModstamp": "2020-07-10T21:53:02.000Z",
+        "weakEtag": 1594417982000
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnNhAAI__fields__Id": {
+        "displayValue": null,
+        "value": "a00xx000000bnNhAAI"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnNhAAI__fields__Name": {
+        "displayValue": null,
+        "value": "Dep1"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnNhAAI__fields__Account": {
+        "displayValue": null,
+        "value": null
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnNhAAI__fields__AccountId": {
+        "displayValue": null,
+        "value": "001xx000003Gn4WAAS"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnNhAAI": {
+        "apiName": "Department__c",
+        "childRelationships": {},
+        "eTag": "bb9980f056f92f1ae9df787d8642e09b",
+        "fields": {
+            "Id": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnNhAAI__fields__Id"
+            },
+            "Name": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnNhAAI__fields__Name"
+            },
+            "Account": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnNhAAI__fields__Account"
+            },
+            "AccountId": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnNhAAI__fields__AccountId"
+            }
+        },
+        "id": "a00xx000000bnNhAAI",
+        "lastModifiedById": "005xx000001X7gzAAC",
+        "lastModifiedDate": "2020-07-10T21:52:51.000Z",
+        "recordTypeId": "012000000000000AAA",
+        "recordTypeInfo": null,
+        "systemModstamp": "2020-07-10T21:52:51.000Z",
+        "weakEtag": 1594417971000
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnQvAAI__fields__Id": {
+        "displayValue": null,
+        "value": "a00xx000000bnQvAAI"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnQvAAI__fields__Name": {
+        "displayValue": null,
+        "value": "Dep3"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnQvAAI": {
+        "apiName": "Department__c",
+        "childRelationships": {},
+        "eTag": "7f269e2a71792ed8cfcc5dd1ad6fc6e6",
+        "fields": {
+            "Id": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnQvAAI__fields__Id"
+            },
+            "Name": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnQvAAI__fields__Name"
+            },
+            "ParentDepartment__c": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnQvAAI__fields__ParentDepartment__c"
+            },
+            "ParentDepartment__r": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnQvAAI__fields__ParentDepartment__r"
+            }
+        },
+        "id": "a00xx000000bnQvAAI",
+        "lastModifiedById": "005xx000001X7gzAAC",
+        "lastModifiedDate": "2020-07-10T21:53:11.000Z",
+        "recordTypeId": "012000000000000AAA",
+        "recordTypeInfo": null,
+        "systemModstamp": "2020-07-10T21:53:11.000Z",
+        "weakEtag": 1594417991000
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnU9AAI__fields__Id": {
+        "displayValue": null,
+        "value": "a00xx000000bnU9AAI"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnU9AAI__fields__Name": {
+        "displayValue": null,
+        "value": "Dep5"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnU9AAI": {
+        "apiName": "Department__c",
+        "childRelationships": {},
+        "eTag": "4c44d34b6c943170a7ed28dd6d98e00f",
+        "fields": {
+            "Id": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnU9AAI__fields__Id"
+            },
+            "Name": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnU9AAI__fields__Name"
+            },
+            "ParentDepartment__c": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnU9AAI__fields__ParentDepartment__c"
+            },
+            "ParentDepartment__r": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnU9AAI__fields__ParentDepartment__r"
+            }
+        },
+        "id": "a00xx000000bnU9AAI",
+        "lastModifiedById": "005xx000001X7gzAAC",
+        "lastModifiedDate": "2020-07-10T21:53:36.000Z",
+        "recordTypeId": "012000000000000AAA",
+        "recordTypeInfo": null,
+        "systemModstamp": "2020-07-10T21:53:36.000Z",
+        "weakEtag": 1594418016000
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnSXAAY__fields__Id": {
+        "displayValue": null,
+        "value": "a00xx000000bnSXAAY"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnSXAAY__fields__Name": {
+        "displayValue": null,
+        "value": "Dep4"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnSXAAY": {
+        "apiName": "Department__c",
+        "childRelationships": {},
+        "eTag": "7019073e189a8c127acf76febd26a269",
+        "fields": {
+            "Id": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnSXAAY__fields__Id"
+            },
+            "Name": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnSXAAY__fields__Name"
+            },
+            "ParentDepartment__c": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnSXAAY__fields__ParentDepartment__c"
+            },
+            "ParentDepartment__r": {
+                "__ref": "UiApi::RecordRepresentation:a00xx000000bnSXAAY__fields__ParentDepartment__r"
+            }
+        },
+        "id": "a00xx000000bnSXAAY",
+        "lastModifiedById": "005xx000001X7gzAAC",
+        "lastModifiedDate": "2020-07-10T21:53:26.000Z",
+        "recordTypeId": "012000000000000AAA",
+        "recordTypeInfo": null,
+        "systemModstamp": "2020-07-10T21:53:26.000Z",
+        "weakEtag": 1594418006000
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnPJAAY__fields__ParentDepartment__c": {
+        "displayValue": null,
+        "value": "a00xx000000bnNhAAI"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnPJAAY__fields__ParentDepartment__r": {
+        "displayValue": "Dep1",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:a00xx000000bnNhAAI"
+        }
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnVlAAI__fields__ParentDepartment__c": {
+        "displayValue": null,
+        "value": "a00xx000000bnU9AAI"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnVlAAI__fields__ParentDepartment__r": {
+        "displayValue": "Dep5",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:a00xx000000bnU9AAI"
+        }
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnQvAAI__fields__ParentDepartment__c": {
+        "displayValue": null,
+        "value": "a00xx000000bnPJAAY"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnQvAAI__fields__ParentDepartment__r": {
+        "displayValue": "Dep2",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:a00xx000000bnPJAAY"
+        }
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnU9AAI__fields__ParentDepartment__c": {
+        "displayValue": null,
+        "value": "a00xx000000bnSXAAY"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnU9AAI__fields__ParentDepartment__r": {
+        "displayValue": "Dep4",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:a00xx000000bnSXAAY"
+        }
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnSXAAY__fields__ParentDepartment__c": {
+        "displayValue": null,
+        "value": "a00xx000000bnQvAAI"
+    },
+    "UiApi::RecordRepresentation:a00xx000000bnSXAAY__fields__ParentDepartment__r": {
+        "displayValue": "Dep3",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:a00xx000000bnQvAAI"
+        }
+    }
+}

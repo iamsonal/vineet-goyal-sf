@@ -1,4 +1,4 @@
-import { LDS, ProxyGraphNode, GraphNode } from '@ldsjs/engine';
+import { LDS, ProxyGraphNode, GraphNode, StoreLink } from '@ldsjs/engine';
 import { FieldRepresentation } from '../generated/types/FieldRepresentation';
 import {
     FieldValueRepresentation,
@@ -37,6 +37,9 @@ type RecordRepresentationLikeNormalized =
     | RecordRepresentationNormalized
     | CreateRecordTemplateRepresentationNormalized;
 type RecordRepresentationLike = RecordRepresentation | CreateRecordTemplateRepresentation;
+
+const CUSTOM_API_NAME_SUFFIX = '__c';
+const CUSTOM_RELATIONSHIP_FIELD_SUFFIX = '__r';
 
 export interface FieldValueRepresentationLinkState {
     fields: string[];
@@ -170,10 +173,9 @@ export function extractTrackedFieldsToTrie(
 
     const fields = node.object('fields');
     const keys = fields.keys();
-
     let current = root;
     for (let i = 0, len = keys.length; i < len; i += 1) {
-        const key = keys[i];
+        const key = keys[i] as string;
         const fieldValueRep = fields.link<
             FieldValueRepresentationNormalized,
             FieldValueRepresentation,
@@ -183,7 +185,7 @@ export function extractTrackedFieldsToTrie(
         let next: RecordFieldTrie = current.children[key];
         if (next === undefined) {
             next = {
-                name: key as string,
+                name: key,
                 children: {},
             };
             if (fieldValueRep.isMissing()) {
@@ -223,12 +225,36 @@ export function extractTrackedFieldsToTrie(
                             children: {},
                         };
                     }
+                } else if (
+                    depth === MAX_RECORD_DEPTH &&
+                    field.scalar('value') === null &&
+                    isLookupFieldKey(key, fields) === true
+                ) {
+                    // When this is max depth and the field's value is null,
+                    // it needs to check the key to see if this is a lookup field.
+                    continue;
                 }
             }
 
             current.children[key] = next;
         }
     }
+}
+
+function isLookupFieldKey(
+    key: string,
+    fields: GraphNode<
+        {
+            [key: string]: StoreLink<unknown>;
+        },
+        RecordRepresentation
+    >
+): boolean {
+    return (
+        StringPrototypeEndsWith.call(key, CUSTOM_RELATIONSHIP_FIELD_SUFFIX) ||
+        (StringPrototypeEndsWith.call(key, CUSTOM_API_NAME_SUFFIX) === false &&
+            fields.data[`${key}Id`] !== undefined)
+    );
 }
 
 export function convertTrieToFields(root: RecordFieldTrie): string[] {
@@ -654,7 +680,6 @@ function _markMissingPath(
     }
 }
 
-const CUSTOM_API_NAME_SUFFIX = '__c';
 /**
  * Tells you if an objectApiName is supported by UI API or not.
  * Note: LDS does not currently support all the entities, the list is limited to UI API supported entities

@@ -37,6 +37,7 @@ export { ingest as ingestRelatedListRecords } from './generated/types/RelatedLis
 export { ingest as ingestRelatedListRecordsBatch } from './generated/types/RelatedListRecordCollectionBatchRepresentation';
 export { ingest as ingestDuplicateConfiguration } from './generated/types/DuplicatesConfigurationRepresentation';
 export { ingest as ingestDuplicatesRepresentation } from './generated/types/DuplicatesRepresentation';
+export { ingest as ingestRelatedListSummaryInfoCollection } from './generated/types/RelatedListSummaryInfoCollectionRepresentation';
 
 export {
     createRecordInputFilteredByEditedFields,

@@ -16,6 +16,7 @@ import { ObjectKeys } from '../../util/language';
 
 const INCOMING_WEAKETAG_0_KEY = 'incoming-weaketag-0';
 const EXISTING_WEAKETAG_0_KEY = 'existing-weaketag-0';
+const RECORD_API_NAME_CHANGE_EVENT = 'record-api-name-change-event';
 
 // This function sets fields that we are refreshing to pending
 // These values will go into the store
@@ -220,6 +221,17 @@ export default function merge(
     //         throw new Error('API Name cannot be different for merging records.');
     //     }
     // }
+    // Adding instrumentation to see how frequently this occurs
+    if (existing.apiName !== incoming.apiName) {
+        const paramsBuilder = () => {
+            return {
+                [RECORD_API_NAME_CHANGE_EVENT]: true,
+                existingApiName: existing.apiName,
+                incomingApiName: incoming.apiName,
+            };
+        };
+        lds.instrument(paramsBuilder);
+    }
 
     const incomingWeakEtag = incoming.weakEtag;
     const existingWeakEtag = existing.weakEtag;

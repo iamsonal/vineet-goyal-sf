@@ -1,6 +1,7 @@
 import { LDS, Store, Adapter, Snapshot } from '@ldsjs/engine';
 import {
     CacheStatsLogger,
+    Counter,
     counter,
     interaction,
     mark as instrumentationServiceMark,
@@ -54,6 +55,17 @@ import {
     getRecordUiConfigKey,
 } from './config-key-functions';
 
+interface RecordApiNameChangeCounters {
+    [apiName: string]: Counter;
+}
+
+const RECORD_API_NAME_CHANGE_EVENT = 'record-api-name-change-event';
+interface RecordApiNameChangeEvent {
+    [RECORD_API_NAME_CHANGE_EVENT]: boolean;
+    existingApiName: string;
+    incomingApiName: string;
+}
+
 interface LdsStatsReport {
     recordCount: number;
     subscriptionCount: number;
@@ -94,6 +106,7 @@ const ADAPTER_CACHE_HIT_DURATION_METRIC_NAME = 'cache-hit-duration';
 const ADAPTER_CACHE_MISS_COUNT_METRIC_NAME = 'cache-miss-count';
 const ADAPTER_CACHE_MISS_DURATION_METRIC_NAME = 'cache-miss-duration';
 const ADAPTER_CACHE_MISS_OUT_OF_TTL_DURATION_METRIC_NAME = 'cache-miss-out-of-ttl-duration';
+const RECORD_API_NAME_CHANGE_COUNT_METRIC_NAME = 'record-api-name-change-count';
 const cacheHitMetric = counter(CACHE_HIT_COUNT);
 const cacheMissMetric = counter(CACHE_MISS_COUNT);
 const getRecordAggregateInvokeMetric = counter(GET_RECORD_AGGREGATE_INVOKE_COUNT);
@@ -156,6 +169,7 @@ const wireAdapterMetricConfigs: wireAdapterMetricConfigs = {
 };
 
 export class Instrumentation {
+    private recordApiNameChangeCounters: RecordApiNameChangeCounters = {};
     private weakEtagZeroEvents: WeakEtagZeroEvents = {};
     private adapterCacheMisses: LRUCache = new LRUCache(250);
 
@@ -323,10 +337,21 @@ export class Instrumentation {
     public instrumentNetwork(context: unknown): void {
         if (this.isWeakETagEvent(context)) {
             this.aggregateWeakETagEvents(context);
+        } else if (this.isRecordApiNameChangeEvent(context)) {
+            this.incrementRecordApiNameChangeCount(context);
         } else {
             perfStart(NETWORK_TRANSACTION_NAME);
             perfEnd(NETWORK_TRANSACTION_NAME, context);
         }
+    }
+
+    /**
+     * Returns whether or not this is a recordApiNameChangeEvent.
+     * @param context The transaction context.
+     * @returns Whether or not this is a recordApiNameChangeEvent.
+     */
+    private isRecordApiNameChangeEvent(context: unknown): context is RecordApiNameChangeEvent {
+        return (context as any)[RECORD_API_NAME_CHANGE_EVENT] === true;
     }
 
     /**
@@ -360,6 +385,27 @@ export class Instrumentation {
         if (context[INCOMING_WEAKETAG_0_KEY] !== undefined) {
             this.weakEtagZeroEvents[key][INCOMING_WEAKETAG_0_KEY] += 1;
         }
+    }
+
+    /**
+     * W-7801618
+     * Counter for occurrences where the incoming record to be merged has a different apiName.
+     * Dynamically generated metric, stored in an {@link RecordApiNameChangeCounters} object.
+     *
+     * @param context The transaction context.
+     *
+     * Note: Short-lived metric candidate, remove at the end of 230
+     */
+    private incrementRecordApiNameChangeCount(context: RecordApiNameChangeEvent): void {
+        const { existingApiName: apiName } = context;
+        let apiNameChangeCounter = this.recordApiNameChangeCounters[apiName];
+        if (apiNameChangeCounter === undefined) {
+            apiNameChangeCounter = counter(
+                createMetricsKey(NAMESPACE, RECORD_API_NAME_CHANGE_COUNT_METRIC_NAME, apiName)
+            );
+            this.recordApiNameChangeCounters[apiName] = apiNameChangeCounter;
+        }
+        apiNameChangeCounter.increment(1);
     }
 }
 /**

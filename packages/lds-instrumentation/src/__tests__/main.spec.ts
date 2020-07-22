@@ -45,6 +45,10 @@ const instrumentation = new Instrumentation();
 
 const instrumentationSpies = {
     aggregateWeakETagEvents: jest.spyOn(instrumentation, 'aggregateWeakETagEvents'),
+    incrementRecordApiNameChangeEvents: jest.spyOn(
+        instrumentation,
+        'incrementRecordApiNameChangeCount'
+    ),
     logAdapterCacheMissOutOfTtlDuration: jest.spyOn(
         instrumentation,
         'logAdapterCacheMissOutOfTtlDuration'
@@ -53,6 +57,7 @@ const instrumentationSpies = {
 
 beforeEach(() => {
     instrumentationSpies.aggregateWeakETagEvents.mockClear();
+    instrumentationSpies.incrementRecordApiNameChangeEvents.mockClear();
     instrumentationSpies.logAdapterCacheMissOutOfTtlDuration.mockClear();
     instrumentationServiceSpies.perfEnd.mockClear();
     instrumentationServiceSpies.perfStart.mockClear();
@@ -203,12 +208,43 @@ describe('instrumentation', () => {
             expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(1);
         });
 
-        it('should immediately log when instrumentNetwork is called with any other event ', () => {
+        it('should immediately log when instrumentNetwork is called with any other event', () => {
             const context = {
                 random: 'event',
             };
             instrumentation.instrumentNetwork(context);
             expect(instrumentationSpies.aggregateWeakETagEvents).toHaveBeenCalledTimes(0);
+            expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(1);
+            expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('recordApiNameChange', () => {
+        it('should increment record apiName change counter when instrumentNetwork is called', () => {
+            const context = {
+                'record-api-name-change-event': true,
+                existingApiName: 'Account',
+                incomingApiName: 'NewAccount',
+            };
+            instrumentation.instrumentNetwork(context);
+            expect(instrumentationSpies.incrementRecordApiNameChangeEvents).toHaveBeenCalledTimes(
+                1
+            );
+            expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(0);
+            expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(0);
+            expect(
+                (instrumentation as any).recordApiNameChangeCounters[context.existingApiName]
+            ).toBeTruthy();
+        });
+
+        it('should immediately log when instrumentNetwork is called with any other event', () => {
+            const context = {
+                random: 'event',
+            };
+            instrumentation.instrumentNetwork(context);
+            expect(instrumentationSpies.incrementRecordApiNameChangeEvents).toHaveBeenCalledTimes(
+                0
+            );
             expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(1);
             expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(1);
         });

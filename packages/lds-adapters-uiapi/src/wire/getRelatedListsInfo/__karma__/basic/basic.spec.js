@@ -38,7 +38,8 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListInfos);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        delete mockData.eTag; // W-7853002 - awkward scenario. We want the collection to be treated as opaque but we havent removed etags on the objects yet.
+        expect(element.getWiredData()).toEqual(mockData);
         expect(element.getWiredData()).toBeImmutable();
     });
 });

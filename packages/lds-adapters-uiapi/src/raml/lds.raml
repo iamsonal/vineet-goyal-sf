@@ -71,9 +71,6 @@ types:
       parentRecordId: listReference.inContextOfRecordId
       relatedListId: listReference.relatedListId
     (lds.paginated): records
-  RelatedListSummaryInfoRepresentation:
-    (lds.private):
-      - eTag
   RecordCollectionRepresentation:
     (lds.ttl): 120000
   PhotoRecordAvatarRepresentation:
@@ -94,6 +91,7 @@ types:
     (lds.key):
       parentObjectApiName: parentObjectApiName
       recordTypeId: parentRecordTypeId
+    (lds.opaque): true
     (lds.integrity):
       - eTag
     (lds.private):

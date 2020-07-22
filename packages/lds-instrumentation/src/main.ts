@@ -1,4 +1,4 @@
-import { LDS, Store, Adapter } from '@ldsjs/engine';
+import { LDS, Store, Adapter, Snapshot } from '@ldsjs/engine';
 import {
     CacheStatsLogger,
     counter,
@@ -90,8 +90,10 @@ const RUNTIME_PERF_MARK_NAME = 'runtime-perf';
 const NETWORK_TRANSACTION_NAME = 'lds-network';
 
 const ADAPTER_CACHE_HIT_COUNT_METRIC_NAME = 'cache-hit-count';
+const ADAPTER_CACHE_HIT_DURATION_METRIC_NAME = 'cache-hit-duration';
 const ADAPTER_CACHE_MISS_COUNT_METRIC_NAME = 'cache-miss-count';
-const ADAPTER_CACHE_MISS_DURATION_METRIC_NAME = 'cache-miss-out-of-ttl-duration';
+const ADAPTER_CACHE_MISS_DURATION_METRIC_NAME = 'cache-miss-duration';
+const ADAPTER_CACHE_MISS_OUT_OF_TTL_DURATION_METRIC_NAME = 'cache-miss-out-of-ttl-duration';
 const cacheHitMetric = counter(CACHE_HIT_COUNT);
 const cacheMissMetric = counter(CACHE_MISS_COUNT);
 const getRecordAggregateInvokeMetric = counter(GET_RECORD_AGGREGATE_INVOKE_COUNT);
@@ -181,16 +183,32 @@ export class Instrumentation {
          * W-6981216
          * Dynamically generated metric. Simple counter for cache hits by adapter name.
          */
-        const cacheHitByAdapterMetric = counter(
+        const cacheHitCountByAdapterMetric = counter(
             createMetricsKey(NAMESPACE, ADAPTER_CACHE_HIT_COUNT_METRIC_NAME, name)
+        );
+
+        /**
+         * W-7404607
+         * Dynamically generated metric. Timer for cache hits by adapter name.
+         */
+        const cacheHitDurationByAdapterMetric = timer(
+            createMetricsKey(NAMESPACE, ADAPTER_CACHE_HIT_DURATION_METRIC_NAME, name)
         );
 
         /**
          * W-6981216
          * Dynamically generated metric. Simple counter for cache misses by adapter name.
          */
-        const cacheMissByAdapterMetric = counter(
+        const cacheMissCountByAdapterMetric = counter(
             createMetricsKey(NAMESPACE, ADAPTER_CACHE_MISS_COUNT_METRIC_NAME, name)
+        );
+
+        /**
+         * W-7404607
+         * Dynamically generated metric. Timer for cache hits by adapter name.
+         */
+        const cacheMissDurationByAdapterMetric = timer(
+            createMetricsKey(NAMESPACE, ADAPTER_CACHE_MISS_DURATION_METRIC_NAME, name)
         );
 
         /**
@@ -201,12 +219,19 @@ export class Instrumentation {
          * Request Record 1 -> Record 2 -> Back to Record 1 outside of TTL is an example of when this metric will fire.
          */
         const wireAdapterMetricConfig = wireAdapterMetricConfigs[name];
-        const cacheMissDurationByAdapterMetric: Timer | undefined =
+        const cacheMissOutOfTtlDurationByAdapterMetric: Timer | undefined =
             (wireAdapterMetricConfig && wireAdapterMetricConfig.ttl) !== undefined
-                ? timer(createMetricsKey(NAMESPACE, ADAPTER_CACHE_MISS_DURATION_METRIC_NAME, name))
+                ? timer(
+                      createMetricsKey(
+                          NAMESPACE,
+                          ADAPTER_CACHE_MISS_OUT_OF_TTL_DURATION_METRIC_NAME,
+                          name
+                      )
+                  )
                 : undefined;
 
         const instrumentedAdapter = (config: C) => {
+            const startTime = Date.now();
             const result = adapter(config);
             // In the case where the adapter returns a Snapshot it is constructed out of the store
             // (cache hit) whereas a Promise<Snapshot> indicates a network request (cache miss).
@@ -226,13 +251,20 @@ export class Instrumentation {
 
             // if result === null then config is insufficient/invalid so do not log
             if (result !== null && 'then' in result!) {
+                (result as Promise<Snapshot<D>>).then((_snapshot: Snapshot<D>) => {
+                    timerMetricAddDuration(
+                        cacheMissDurationByAdapterMetric,
+                        Date.now() - startTime
+                    );
+                });
                 stats.logMisses();
                 cacheMissMetric.increment(1);
-                cacheMissByAdapterMetric.increment(1);
-                if (cacheMissDurationByAdapterMetric !== undefined) {
-                    this.logAdapterCacheMissDuration(
+                cacheMissCountByAdapterMetric.increment(1);
+
+                if (cacheMissOutOfTtlDurationByAdapterMetric !== undefined) {
+                    this.logAdapterCacheMissOutOfTtlDuration(
                         config,
-                        cacheMissDurationByAdapterMetric,
+                        cacheMissOutOfTtlDurationByAdapterMetric,
                         Date.now(),
                         wireAdapterMetricConfig.ttl,
                         wireAdapterMetricConfig.wireConfigKeyFn
@@ -241,7 +273,8 @@ export class Instrumentation {
             } else if (result !== null) {
                 stats.logHits();
                 cacheHitMetric.increment(1);
-                cacheHitByAdapterMetric.increment(1);
+                cacheHitCountByAdapterMetric.increment(1);
+                timerMetricAddDuration(cacheHitDurationByAdapterMetric, Date.now() - startTime);
             }
             return result;
         };
@@ -260,7 +293,7 @@ export class Instrumentation {
      * @param ttl TTL for the wire adapter.
      * @param wireConfigKeyFn Optional function to transform wire configs to a unique key. Otherwise, defaults to use stableJSONStringify().
      */
-    private logAdapterCacheMissDuration(
+    private logAdapterCacheMissOutOfTtlDuration(
         config: unknown,
         metric: Timer,
         currentCacheMissTimestamp: number,
@@ -480,55 +513,6 @@ export function setupInstrumentation(lds: LDS, store: Store): void {
         storeSnapshotSubscriptionsMetric.update(storeStats.snapshotSubscriptionCount);
         storeWatchSubscriptionsMetric.update(storeStats.watchSubscriptionCount);
     });
-}
-
-/**
- * Instrument an existing adapter that would logs the cache hits and misses.
- *
- * @param name The adapter name.
- * @param adapter The adapter function.
- * @returns The wrapped adapter.
- */
-export function instrumentAdapter<C, D>(name: string, adapter: Adapter<C, D>): Adapter<C, D> {
-    const stats = registerLdsCacheStats(name);
-    const cacheMissByAdapterMetric = counter(createMetricsKey(NAMESPACE, 'cache-miss-count', name));
-    const cacheHitByAdapterMetric = counter(createMetricsKey(NAMESPACE, 'cache-hit-count', name));
-
-    return (config: C) => {
-        const result = adapter(config);
-
-        // In the case where the adapter returns a Snapshot it is constructed out of the store
-        // (cache hit) whereas a Promise<Snapshot> indicates a network request (cache miss).
-        //
-        // Note: we can't do a plain instanceof check for a promise here since the Promise may
-        // originate from another javascript realm (for example: in jest test). Instead we use a
-        // duck-typing approach by checking is the result has a then property.
-        //
-        // For adapters without persistent store:
-        //  - total cache hit ratio:
-        //      [in-memory cache hit count] / ([in-memory cache hit count] + [in-memory cache miss count])
-        // For adapters with persistent store:
-        //  - in-memory cache hit ratio:
-        //      [in-memory cache hit count] / ([in-memory cache hit count] + [in-memory cache miss count])
-        //  - total cache hit ratio:
-        //      ([in-memory cache hit count] + [store cache hit count]) / ([in-memory cache hit count] + [in-memory cache miss count])
-        //
-
-        // if result === null then config is insufficient/invalid so do not log
-        if (result !== null) {
-            if ('then' in result) {
-                stats.logMisses();
-                cacheMissMetric.increment(1);
-                cacheMissByAdapterMetric.increment(1);
-            } else {
-                stats.logHits();
-                cacheHitMetric.increment(1);
-                cacheHitByAdapterMetric.increment(1);
-            }
-        }
-
-        return result;
-    };
 }
 
 export function incrementGetRecordNormalInvokeCount(): void {

@@ -45,12 +45,15 @@ const instrumentation = new Instrumentation();
 
 const instrumentationSpies = {
     aggregateWeakETagEvents: jest.spyOn(instrumentation, 'aggregateWeakETagEvents'),
-    logAdapterCacheMissDuration: jest.spyOn(instrumentation, 'logAdapterCacheMissDuration'),
+    logAdapterCacheMissOutOfTtlDuration: jest.spyOn(
+        instrumentation,
+        'logAdapterCacheMissOutOfTtlDuration'
+    ),
 };
 
 beforeEach(() => {
     instrumentationSpies.aggregateWeakETagEvents.mockClear();
-    instrumentationSpies.logAdapterCacheMissDuration.mockClear();
+    instrumentationSpies.logAdapterCacheMissOutOfTtlDuration.mockClear();
     instrumentationServiceSpies.perfEnd.mockClear();
     instrumentationServiceSpies.perfStart.mockClear();
     instrumentationServiceSpies.timerAddDurationSpy.mockClear();
@@ -86,7 +89,9 @@ describe('instrumentation', () => {
             var now = Date.now();
             timekeeper.freeze(now);
             instrumentedAdapter(getRecordConfig);
-            expect(instrumentationSpies.logAdapterCacheMissDuration).toHaveBeenCalledTimes(1);
+            expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
+                1
+            );
             expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(0);
 
             // Fast forward out of TTL for record
@@ -94,8 +99,10 @@ describe('instrumentation', () => {
 
             // Cache Hit
             instrumentedAdapter(getRecordConfigCacheHit);
-            expect(instrumentationSpies.logAdapterCacheMissDuration).toHaveBeenCalledTimes(1);
-            expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(0);
+            expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
+                1
+            );
+            expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('should not log metrics when adapter with no TTL defined has a cache miss on existing value out of TTL', () => {
@@ -116,12 +123,16 @@ describe('instrumentation', () => {
             var now = Date.now();
             timekeeper.freeze(now);
             instrumentedAdapter(adapterConfig);
-            expect(instrumentationSpies.logAdapterCacheMissDuration).toHaveBeenCalledTimes(0);
+            expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
+                0
+            );
             expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(0);
 
             // Cache Miss #2
             instrumentedAdapter(adapterConfig);
-            expect(instrumentationSpies.logAdapterCacheMissDuration).toHaveBeenCalledTimes(0);
+            expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
+                0
+            );
             expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(0);
         });
 
@@ -146,7 +157,9 @@ describe('instrumentation', () => {
             var now = Date.now();
             timekeeper.freeze(now);
             instrumentedAdapter(getRecordConfig);
-            expect(instrumentationSpies.logAdapterCacheMissDuration).toHaveBeenCalledTimes(1);
+            expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
+                1
+            );
             expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(0);
             expect((instrumentation as any).adapterCacheMisses.get(recordKey)).toEqual(now);
 
@@ -155,7 +168,9 @@ describe('instrumentation', () => {
 
             // Cache Miss #2, outside of TTL
             instrumentedAdapter(getRecordConfig);
-            expect(instrumentationSpies.logAdapterCacheMissDuration).toHaveBeenCalledTimes(2);
+            expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
+                2
+            );
             expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
             expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenLastCalledWith(30001);
             const updatedTimestamp = now + 30001;

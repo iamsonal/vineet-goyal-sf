@@ -4,6 +4,7 @@ const API_VERSION = 'v50.0';
 const URL_BASE = `/services/data/${API_VERSION}`;
 
 const toDelete = [];
+const toDeleteMetadata = [];
 
 async function cleanup() {
     while (toDelete.length) {
@@ -14,6 +15,12 @@ async function cleanup() {
         console.log(`Deleting ${entry.type} with id ${entry.id}`);
         // eslint-disable-next-line no-undef
         await $conn.sobject(entry.type).destroy(entry.id);
+    }
+
+    while (toDeleteMetadata.length) {
+        const entry = toDeleteMetadata.shift();
+        console.log(`Deleting ${entry.type} metadata with names: ${entry.metadata.join(', ')}`);
+        await $conn.metadata.delete(entry.type, entry.metadata);
     }
 }
 
@@ -232,6 +239,52 @@ async function getRecordId(recordName, entityName) {
     return getIdFromSoql(`SELECT Id FROM ${entityName} WHERE Name = '${recordName}' LIMIT 1`);
 }
 
+// metadata helpers
+
+async function createSObject(entityName, label, recordTypes = 0) {
+    console.log(`Creating entity ${entityName}`);
+    let result = await $conn.metadata.create('CustomObject', [
+        {
+            fullName: entityName,
+            label,
+            pluralLabel: label,
+            nameField: {
+                type: 'Text',
+                label: `${label} Name`,
+            },
+            deploymentStatus: 'Deployed',
+            sharingModel: 'ReadWrite',
+        },
+    ]);
+
+    if (!result.success) {
+        throw new Error(result.errors.message);
+    }
+
+    toDeleteMetadata.push({ type: 'CustomObject', metadata: [entityName] });
+
+    if (recordTypes) {
+        console.log(`Creating ${recordTypes} record types for entity ${entityName}`);
+        const baseName = entityName.replace(/__c$/, '');
+
+        let metadata = [];
+        for (let i = 1; i <= recordTypes; ++i) {
+            metadata.push({
+                fullName: `${entityName}.${baseName}_Type_${i}`,
+                active: true,
+                label: `${label} Type ${i}`,
+            });
+        }
+
+        result = await $conn.metadata.create('RecordType', metadata);
+        result.forEach(res => {
+            if (!res.success) {
+                throw new Error(res.errors.message);
+            }
+        });
+    }
+}
+
 module.exports = {
     cleanup,
     createAccountWithOwner,
@@ -250,4 +303,5 @@ module.exports = {
     requestPost,
     requestPatch,
     requestPatchAndSave,
+    createSObject,
 };

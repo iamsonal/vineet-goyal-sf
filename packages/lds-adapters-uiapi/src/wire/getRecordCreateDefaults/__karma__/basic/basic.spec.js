@@ -1,4 +1,4 @@
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import { getMock as globalGetMock, setupElement, updateElement } from 'test-util';
 import {
     expireLayout,
     expireRecordDefaultsRepresentation,
@@ -134,10 +134,10 @@ describe('getRecordCreateDefaults', () => {
     });
 
     it('should emit correctly when layout is null', async () => {
-        const mock = getMock('record-defaults-non-layoutable-entity');
+        const mock = getMock('record-defaults-Partner');
 
         const config = {
-            objectApiName: 'Product2DataTranslation',
+            objectApiName: 'Partner',
         };
 
         mockGetRecordCreateDefaultsNetwork(config, mock);
@@ -145,6 +145,28 @@ describe('getRecordCreateDefaults', () => {
         const elm = await setupElement(config, GetRecordCreateDefaults);
         expect(elm.pushCount()).toBe(1);
         expect(elm.getWiredData()).toEqualSnapshotWithoutEtags(mock);
+    });
+
+    it('should cache correctly when layout is null', async () => {
+        const mock = getMock('record-defaults-Partner');
+
+        const config = {
+            objectApiName: 'Partner',
+        };
+
+        mockGetRecordCreateDefaultsNetwork(config, mock);
+
+        const wireA = await setupElement(config, GetRecordCreateDefaults);
+        expect(wireA.pushCount()).toBe(1);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mock);
+
+        const wireB = await setupElement(config, GetRecordCreateDefaults);
+
+        expect(wireB.pushCount()).toBe(1);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mock);
+
+        // wireA should not have received new data
+        expect(wireA.pushCount()).toBe(1);
     });
 
     it('should make correct HTTP requests for multiple requests on same entity with different optionalFields', async () => {
@@ -223,6 +245,47 @@ describe('getRecordCreateDefaults refreshes', () => {
         await setupElement(layoutConfig, GetLayout);
 
         expect(wireGetRecordCreateDefaults.pushCount()).toBe(2);
+    });
+
+    it('when recordTypeId changes', async () => {
+        const mockRecordCreateDefaults1 = getMock(
+            'record-defaults-create-TestEntity__c-recordTypeId-1'
+        );
+        const config1 = {
+            objectApiName: mockRecordCreateDefaults1.record.apiName,
+            recordTypeId: mockRecordCreateDefaults1.record.recordTypeId,
+        };
+
+        mockGetRecordCreateDefaultsNetwork(config1, mockRecordCreateDefaults1);
+        const wireGetRecordCreateDefaults = await setupElement(config1, GetRecordCreateDefaults);
+        expect(wireGetRecordCreateDefaults.pushCount()).toBe(1);
+        expect(wireGetRecordCreateDefaults.getWiredData()).toEqualSnapshotWithoutEtags(
+            mockRecordCreateDefaults1
+        );
+
+        const mockRecordCreateDefaults2 = getMock(
+            'record-defaults-create-TestEntity__c-recordTypeId-2'
+        );
+        const config2 = {
+            objectApiName: mockRecordCreateDefaults2.record.apiName,
+            recordTypeId: mockRecordCreateDefaults2.record.recordTypeId,
+        };
+
+        mockGetRecordCreateDefaultsNetwork(config2, mockRecordCreateDefaults2);
+
+        await updateElement(wireGetRecordCreateDefaults, config2);
+
+        expect(wireGetRecordCreateDefaults.pushCount()).toBe(2);
+        expect(wireGetRecordCreateDefaults.getWiredData()).toEqualSnapshotWithoutEtags(
+            mockRecordCreateDefaults2
+        );
+
+        await updateElement(wireGetRecordCreateDefaults, config1);
+
+        expect(wireGetRecordCreateDefaults.pushCount()).toBe(3);
+        expect(wireGetRecordCreateDefaults.getWiredData()).toEqualSnapshotWithoutEtags(
+            mockRecordCreateDefaults1
+        );
     });
 });
 

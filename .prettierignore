@@ -5,6 +5,7 @@ __benchmarks_results__
 # Project artifacts
 dist
 sfdc
+no-lwc
 build
 .rpt2_cache
 generated

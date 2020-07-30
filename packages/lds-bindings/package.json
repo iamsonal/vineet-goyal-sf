@@ -6,6 +6,10 @@
     "main": "dist/ldsBindings.js",
     "module": "dist/ldsBindings.js",
     "types": "dist/main.d.ts",
+    "files": [
+        "dist",
+        "no-lwc"
+    ],
     "scripts": {
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",

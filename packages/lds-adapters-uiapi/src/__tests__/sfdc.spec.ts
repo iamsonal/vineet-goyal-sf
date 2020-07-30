@@ -85,8 +85,8 @@ jest.mock('../main', () => {
 
     return {
         ...jest.requireActual('../main'),
-        UpdateLayoutUserState: () => spies.updateLayoutUserStateSpy,
-        UpdateRelatedListInfo: () => spies.updateRelatedListInfoSpy,
+        updateLayoutUserStateAdapterFactory: () => spies.updateLayoutUserStateSpy,
+        updateRelatedListInfoAdapterFactory: () => spies.updateRelatedListInfoSpy,
         __spies: spies,
     };
 });

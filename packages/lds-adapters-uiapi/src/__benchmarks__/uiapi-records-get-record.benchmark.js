@@ -1,5 +1,5 @@
 import { LDS, Store, Environment } from '@ldsjs/engine';
-import { ingestRecord, GetRecord } from '@salesforce/lds-adapters-uiapi';
+import { ingestRecord, getRecordAdapterFactory } from '@salesforce/lds-adapters-uiapi';
 
 import { WARM_UP_ITERATION_COUNT } from './shared';
 
@@ -57,7 +57,7 @@ const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
 
 const store = new Store();
 const lds = new LDS(new Environment(store, rejectNetworkAdapter));
-const getRecord = GetRecord(lds);
+const getRecord = getRecordAdapterFactory(lds);
 
 const deepRecord = createRecord(5, 3, 'deep'); // 729 fields
 const wideRecord = createRecord(0, 500, 'wide'); // 500 fields

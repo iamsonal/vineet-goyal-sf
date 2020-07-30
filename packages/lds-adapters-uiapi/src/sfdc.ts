@@ -7,7 +7,11 @@ import {
 
 import { throttle } from './sfdc-util/throttle';
 
-import { GetRecordNotifyChange, UpdateLayoutUserState, UpdateRelatedListInfo } from './main';
+import {
+    GetRecordNotifyChange,
+    updateLayoutUserStateAdapterFactory,
+    updateRelatedListInfoAdapterFactory,
+} from './main';
 
 export { MRU } from './wire/getListUi';
 export * from './generated/artifacts/sfdc';
@@ -16,7 +20,10 @@ export { refresh } from '@salesforce/lds-bindings';
 
 /** Custom adapters */
 // updateLayoutUserState adapter should always return undefined
-const baseUpdateLayoutUserState = createLDSAdapter('updateLayoutUserState', UpdateLayoutUserState);
+const baseUpdateLayoutUserState = createLDSAdapter(
+    'updateLayoutUserState',
+    updateLayoutUserStateAdapterFactory
+);
 export const updateLayoutUserState = (
     apiName: unknown,
     recordTypeId: unknown,
@@ -35,12 +42,12 @@ export const updateLayoutUserState = (
 
 const baseUpdateRelatedListInfo = createLDSAdapter(
     'baseUpdateRelatedListInfo',
-    UpdateRelatedListInfo
+    updateRelatedListInfoAdapterFactory
 );
 // In order to export the imperative wire correctly, we need to add some safety checks
 // to ensure the config passed is correct
 export const updateRelatedListInfo = (
-    config: Parameters<ReturnType<typeof UpdateRelatedListInfo>>[0]
+    config: Parameters<ReturnType<typeof updateRelatedListInfoAdapterFactory>>[0]
 ) => {
     const value = baseUpdateRelatedListInfo(config);
     if (value === null) {

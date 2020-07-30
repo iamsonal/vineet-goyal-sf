@@ -26,9 +26,6 @@ const ADAPTERS_NOT_DEFINED_IN_OVERLAY = [
 
 const CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER = 'createWireAdapterConstructor';
 const CREATE_LDS_ADAPTER = 'createLDSAdapter';
-function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
 
 /**
  * @param {string} artifactsDir
@@ -105,14 +102,13 @@ function generateAdapterFactoryExport(artifactsDir, generatedAdapterNames, imper
 
     generatedAdapterNames.forEach(({ name }) => {
         const factoryIdentifier = `${name}AdapterFactory`;
-        exports.push(
-            `export { ${factoryIdentifier} as ${capitalize(name)} } from '../adapters/${name}';`
-        );
+        exports.push(`export { ${factoryIdentifier} } from '../adapters/${name}';`);
     });
 
     exports.push('');
     imperativeAdapterNames.forEach(({ name }) => {
-        exports.push(`export { factory as ${capitalize(name)} } from '../../wire/${name}';`);
+        const factoryIdentifier = `${name}AdapterFactory`;
+        exports.push(`export { factory as ${factoryIdentifier} } from '../../wire/${name}';`);
     });
 
     fs.writeFileSync(path.join(artifactsDir, 'main.ts'), exports.join('\n'));

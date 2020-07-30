@@ -2,7 +2,6 @@ import { CompilerConfig, ModelInfo } from '@ldsjs/compiler';
 import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';
-import { capitalize } from './util';
 
 type ADAPTER = Required<ModelInfo['resources'][0]>['adapter'];
 
@@ -14,7 +13,7 @@ function generateNpmModule(outputDir: string, adapters: ADAPTER[]) {
         const { name } = adapter;
         const factoryIdentifier = `${name}AdapterFactory`;
 
-        return `export { ${factoryIdentifier} as ${capitalize(name)} } from '../adapters/${name}';`;
+        return `export { ${factoryIdentifier} } from '../adapters/${name}';`;
     });
 
     const source = code.join('\n');

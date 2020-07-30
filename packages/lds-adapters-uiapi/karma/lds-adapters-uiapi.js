@@ -1,43 +1,43 @@
 import { createLDSAdapter, createWireAdapterConstructor } from 'force/ldsBindings';
 
 import {
-    CreateRecord,
-    DeleteRecord,
-    UpdateLayoutUserState,
-    UpdateRecord,
-    UpdateRecordAvatar,
-    UpdateRelatedListInfo,
+    createRecordAdapterFactory,
+    deleteRecordAdapterFactory,
+    updateLayoutUserStateAdapterFactory,
+    updateRecordAdapterFactory,
+    updateRecordAvatarAdapterFactory,
+    updateRelatedListInfoAdapterFactory,
     GetRecordNotifyChange,
-    GetLayout,
-    GetLookupActions,
-    GetRecordActions,
-    GetRecordEditActions,
-    GetRelatedListsActions,
-    GetRelatedListActions,
-    GetRelatedListRecordActions,
-    GetLayoutUserState,
-    GetListUi,
-    GetLookupRecords,
-    GetRecordCreateDefaults,
-    GetRecordTemplateClone,
-    GetRecordTemplateCreate,
-    GetPicklistValues,
-    GetPicklistValuesByRecordType,
-    GetRecord,
-    GetRecordAvatars,
-    GetRecordUi,
-    GetRelatedListInfo,
-    GetRelatedListInfoBatch,
-    GetRelatedListsInfo,
-    GetRelatedListCount,
-    GetRelatedListsCount,
-    GetRelatedListRecords,
-    GetRelatedListRecordsBatch,
-    GetObjectInfo,
-    GetNavItems,
-    GetObjectInfos,
-    GetDuplicateConfiguration,
-    GetDuplicates,
+    getLayoutAdapterFactory,
+    getLookupActionsAdapterFactory,
+    getRecordActionsAdapterFactory,
+    getRecordEditActionsAdapterFactory,
+    getRelatedListsActionsAdapterFactory,
+    getRelatedListActionsAdapterFactory,
+    getRelatedListRecordActionsAdapterFactory,
+    getLayoutUserStateAdapterFactory,
+    getListUiAdapterFactory,
+    getLookupRecordsAdapterFactory,
+    getRecordCreateDefaultsAdapterFactory,
+    getRecordTemplateCloneAdapterFactory,
+    getRecordTemplateCreateAdapterFactory,
+    getPicklistValuesAdapterFactory,
+    getPicklistValuesByRecordTypeAdapterFactory,
+    getRecordAdapterFactory,
+    getRecordAvatarsAdapterFactory,
+    getRecordUiAdapterFactory,
+    getRelatedListInfoAdapterFactory,
+    getRelatedListInfoBatchAdapterFactory,
+    getRelatedListsInfoAdapterFactory,
+    getRelatedListCountAdapterFactory,
+    getRelatedListsCountAdapterFactory,
+    getRelatedListRecordsAdapterFactory,
+    getRelatedListRecordsBatchAdapterFactory,
+    getObjectInfoAdapterFactory,
+    getNavItemsAdapterFactory,
+    getObjectInfosAdapterFactory,
+    getDuplicateConfigurationAdapterFactory,
+    getDuplicatesAdapterFactory,
 } from '../dist/es/es2018/uiapi-records-service';
 
 export {
@@ -53,17 +53,20 @@ export {
 
 export { refresh } from 'force/ldsBindings';
 
-export const createRecord = createLDSAdapter('createRecord', CreateRecord);
-export const deleteRecord = createLDSAdapter('deleteRecord', DeleteRecord);
-export const updateRecord = createLDSAdapter('updateRecord', UpdateRecord);
-export const updateRecordAvatar = createLDSAdapter('updateRecordAvatar', UpdateRecordAvatar);
+export const createRecord = createLDSAdapter('createRecord', createRecordAdapterFactory);
+export const deleteRecord = createLDSAdapter('deleteRecord', deleteRecordAdapterFactory);
+export const updateRecord = createLDSAdapter('updateRecord', updateRecordAdapterFactory);
+export const updateRecordAvatar = createLDSAdapter(
+    'updateRecordAvatar',
+    updateRecordAvatarAdapterFactory
+);
 export const updateLayoutUserState = createLDSAdapter(
     'updateLayoutUserState',
-    UpdateLayoutUserState
+    updateLayoutUserStateAdapterFactory
 );
 export const updateRelatedListInfo = createLDSAdapter(
     'updateRelatedListInfo',
-    UpdateRelatedListInfo
+    updateRelatedListInfoAdapterFactory
 );
 
 export const getRecordNotifyChange = createLDSAdapter(
@@ -71,116 +74,137 @@ export const getRecordNotifyChange = createLDSAdapter(
     GetRecordNotifyChange
 );
 
-export const getLayout = createWireAdapterConstructor('getLayout', GetLayout);
+export const getLayout = createWireAdapterConstructor('getLayout', getLayoutAdapterFactory);
 
 export const getLayoutUserState = createWireAdapterConstructor(
     'getLayoutUserState',
-    GetLayoutUserState
+    getLayoutUserStateAdapterFactory
 );
 
-export const getListUi = createWireAdapterConstructor('getListUi', GetListUi);
+export const getListUi = createWireAdapterConstructor('getListUi', getListUiAdapterFactory);
 
-export const getLookupActions = createWireAdapterConstructor('getLookupActions', GetLookupActions);
+export const getLookupActions = createWireAdapterConstructor(
+    'getLookupActions',
+    getLookupActionsAdapterFactory
+);
 
-export const getLookupRecords = createWireAdapterConstructor('getLookupRecords', GetLookupRecords);
+export const getLookupRecords = createWireAdapterConstructor(
+    'getLookupRecords',
+    getLookupRecordsAdapterFactory
+);
 
 export const getRecordCreateDefaults = createWireAdapterConstructor(
     'getRecordCreateDefaults',
-    GetRecordCreateDefaults
+    getRecordCreateDefaultsAdapterFactory
 );
 
 export const getRecordTemplateClone = createWireAdapterConstructor(
     'getRecordTemplateClone',
-    GetRecordTemplateClone
+    getRecordTemplateCloneAdapterFactory
 );
 
 export const getRecordTemplateCreate = createWireAdapterConstructor(
     'getRecordTemplateCreate',
-    GetRecordTemplateCreate
+    getRecordTemplateCreateAdapterFactory
 );
 
 export const getPicklistValues = createWireAdapterConstructor(
     'getPicklistValues',
-    GetPicklistValues
+    getPicklistValuesAdapterFactory
 );
 
 export const getPicklistValuesByRecordType = createWireAdapterConstructor(
     'getPicklistValuesByRecordType',
-    GetPicklistValuesByRecordType
+    getPicklistValuesByRecordTypeAdapterFactory
 );
 
-export const getRecord = createWireAdapterConstructor('getRecord', GetRecord);
+export const getRecord = createWireAdapterConstructor('getRecord', getRecordAdapterFactory);
 
-export const getRecordActions = createWireAdapterConstructor('getRecordActions', GetRecordActions);
+export const getRecordActions = createWireAdapterConstructor(
+    'getRecordActions',
+    getRecordActionsAdapterFactory
+);
 
-export const getRecordAvatars = createWireAdapterConstructor('getRecordAvatars', GetRecordAvatars);
+export const getRecordAvatars = createWireAdapterConstructor(
+    'getRecordAvatars',
+    getRecordAvatarsAdapterFactory
+);
 
 export const getRecordEditActions = createWireAdapterConstructor(
     'getRecordEditActions',
-    GetRecordEditActions
+    getRecordEditActionsAdapterFactory
 );
 
-export const getRecordUi = createWireAdapterConstructor('getRecordUi', GetRecordUi);
+export const getRecordUi = createWireAdapterConstructor('getRecordUi', getRecordUiAdapterFactory);
 
 export const getRelatedListActions = createWireAdapterConstructor(
     'getRelatedListActions',
-    GetRelatedListActions
+    getRelatedListActionsAdapterFactory
 );
 
 export const getRelatedListsActions = createWireAdapterConstructor(
     'getRelatedListsActions',
-    GetRelatedListsActions
+    getRelatedListsActionsAdapterFactory
 );
 
 export const getRelatedListInfo = createWireAdapterConstructor(
     'getRelatedListInfo',
-    GetRelatedListInfo
+    getRelatedListInfoAdapterFactory
 );
 
 export const getRelatedListInfoBatch = createWireAdapterConstructor(
     'getRelatedListInfoBatch',
-    GetRelatedListInfoBatch
+    getRelatedListInfoBatchAdapterFactory
 );
 
 export const getRelatedListsInfo = createWireAdapterConstructor(
     'getRelatedListsInfo',
-    GetRelatedListsInfo
+    getRelatedListsInfoAdapterFactory
 );
 
 export const getRelatedListCount = createWireAdapterConstructor(
     'getRelatedListCount',
-    GetRelatedListCount
+    getRelatedListCountAdapterFactory
 );
 
 export const getRelatedListsCount = createWireAdapterConstructor(
     'getRelatedListsCount',
-    GetRelatedListsCount
+    getRelatedListsCountAdapterFactory
 );
 
 export const getRelatedListRecords = createWireAdapterConstructor(
     'getRelatedListRecords',
-    GetRelatedListRecords
+    getRelatedListRecordsAdapterFactory
 );
 
 export const getRelatedListRecordsBatch = createWireAdapterConstructor(
     'getRelatedListRecordsBatch',
-    GetRelatedListRecordsBatch
+    getRelatedListRecordsBatchAdapterFactory
 );
 
 export const getRelatedListRecordActions = createWireAdapterConstructor(
     'getRelatedListRecordActions',
-    GetRelatedListRecordActions
+    getRelatedListRecordActionsAdapterFactory
 );
 
-export const getObjectInfo = createWireAdapterConstructor('getObjectInfo', GetObjectInfo);
+export const getObjectInfo = createWireAdapterConstructor(
+    'getObjectInfo',
+    getObjectInfoAdapterFactory
+);
 
-export const getObjectInfos = createWireAdapterConstructor('getObjectInfos', GetObjectInfos);
+export const getObjectInfos = createWireAdapterConstructor(
+    'getObjectInfos',
+    getObjectInfosAdapterFactory
+);
 
-export const getNavItems = createWireAdapterConstructor('getNavItems', GetNavItems);
+export const getNavItems = createWireAdapterConstructor('getNavItems', getNavItemsAdapterFactory);
 
 export const getDuplicateConfiguration = createWireAdapterConstructor(
     'getDuplicateConfiguration',
-    GetDuplicateConfiguration
+    getDuplicateConfigurationAdapterFactory
 );
 
-export const getDuplicates = createWireAdapterConstructor('getDuplicates', GetDuplicates);
+export const getDuplicates = createWireAdapterConstructor(
+    'getDuplicates',
+    getDuplicatesAdapterFactory
+);

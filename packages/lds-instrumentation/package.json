@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-instrumentation",
-    "version": "0.1.14",
+    "version": "1.0.0",
     "description": "Instrumentation utils for Lightning Data Service",
     "license": "MIT",
     "main": "dist/ldsInstrumentation.js",

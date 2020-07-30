@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-runtime-aura",
-    "version": "0.1.14",
+    "version": "1.0.0",
     "description": "LDS engine for Aura runtime",
     "private": true,
     "license": "MIT",
@@ -18,8 +18,8 @@
         "registry": "https://npm.lwcjs.org"
     },
     "devDependencies": {
-        "@salesforce/lds-aura-storage": "0.1.14",
-        "@salesforce/lds-instrumentation": "0.1.14",
-        "@salesforce/lds-runtime-web": "0.1.14"
+        "@salesforce/lds-aura-storage": "1.0.0",
+        "@salesforce/lds-instrumentation": "1.0.0",
+        "@salesforce/lds-runtime-web": "1.0.0"
     }
 }

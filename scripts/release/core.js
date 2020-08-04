@@ -13,6 +13,10 @@ const RELATIVE_LDS_REPO_ROOT = path.resolve(REPO_ROOT_PARENT, 'lds');
 const REPO_ROOT = path.resolve(__dirname, '../../');
 
 const REPO_LDS_BINDINGS_PATH = path.resolve(REPO_ROOT, 'packages/lds-bindings/dist/ldsBindings.js');
+const REPO_LDS_BINDINGS_NO_LWC_PATH = path.resolve(
+    REPO_ROOT,
+    'packages/lds-bindings/no-lwc/index.js'
+);
 const REPO_LDS_ENGINE_RUNTIME_AURA_PATH = path.resolve(
     REPO_ROOT,
     'packages/lds-runtime-aura/dist/ldsEngine.js'
@@ -111,6 +115,13 @@ const CORE_LDS_BINDINGS_PATH = path.resolve(
     'app',
     CORE_BRANCH,
     'core/ui-force-components/modules/force/ldsBindings/ldsBindings.js'
+);
+
+const CORE_LDS_BINDINGS_NO_LWC_PATH = path.resolve(
+    BLT_HOME,
+    'app',
+    CORE_BRANCH,
+    'core/ui-bridge-components/modules/native/ldsBindingsNoLWC/ldsBindingsNoLWC.js'
 );
 
 const CORE_ADS_BRIDGE_PATH = path.resolve(
@@ -305,6 +316,7 @@ function deployAdapterPackage() {
         checkCore(CORE_LDS_STORAGE_PATH);
         checkCore(CORE_LDS_INSTRUMENTATION_PATH);
         checkCore(CORE_LDS_BINDINGS_PATH);
+        checkCore(CORE_LDS_BINDINGS_NO_LWC_PATH);
         checkCore(CORE_ADS_BRIDGE_PATH);
         checkCore(CORE_LDS_ENVIRONMENT_SETTINGS_PATH);
     }
@@ -331,6 +343,7 @@ function deployAdapterPackage() {
         copyArtifacts(REPO_LDS_STORAGE_PATH, CORE_LDS_STORAGE_PATH);
         copyArtifacts(REPO_LDS_INSTRUMENTATION_PATH, CORE_LDS_INSTRUMENTATION_PATH);
         copyArtifacts(REPO_LDS_BINDINGS_PATH, CORE_LDS_BINDINGS_PATH);
+        copyArtifacts(REPO_LDS_BINDINGS_NO_LWC_PATH, CORE_LDS_BINDINGS_NO_LWC_PATH);
         copyArtifacts(REPO_ADS_BRIDGE_PATH, CORE_ADS_BRIDGE_PATH);
         copyArtifacts(REPO_LDS_ENVIRONMENT_SETTINGS_PATH, CORE_LDS_ENVIRONMENT_SETTINGS_PATH);
     }

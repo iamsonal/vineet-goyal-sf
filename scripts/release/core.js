@@ -250,8 +250,9 @@ function copyArtifacts(repoPath, corePath) {
     console.log(`* Copy artifacts ${repoPath}`);
     fs.copyFileSync(repoPath, corePath);
 
-    console.log('* Reverting if unchanged');
-    execSync(`p4 revert -a ${corePath}`);
+    // todo: uncomment when we migrate existing adapters to the "new" adapter package model
+    //console.log('* Reverting if unchanged');
+    //execSync(`p4 revert -a ${corePath}`);
 }
 
 function deployAdapterPackage() {

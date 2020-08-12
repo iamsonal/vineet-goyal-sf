@@ -2,9 +2,12 @@
 
 /**
  * @typedef {import("@ldsjs/compiler").CompilerConfig} CompilerConfig
+ * @typedef {import("@ldsjs/compiler").ShapeDefinition} ShapeDefinition
+ * @typedef {import("@ldsjs/compiler").ArrayShapeDefinition} ArrayShapeDefinition
  * @typedef {import("@ldsjs/compiler").NodeShapeDefinition} NodeShapeDefinition
  * @typedef {import("@ldsjs/compiler").ModelInfo} ModelInfo
- * @typedef { { name: string, method: string } } AdapterInfo
+ * @typedef {{name: string, method: string}} AdapterInfo
+ * @typedef {{[key:string]: "object" | "map" | "array"}} RecordPathMap
  */
 
 const fs = require('fs');
@@ -34,10 +37,10 @@ function replacePath(path) {
 /**
  * Recursively searches for RecordRepresentations in a node
  * The records will either be single reps, in a map or an array.
- * @param {NodeShapeDefinition} shape
+ * @param {ShapeDefinition} shape
  * @param {ModelInfo} modelInfo
  * @param {string} currentPath
- * @param {{[key:string]: "object | map | array"}} recordLocations
+ * @param {RecordPathMap} recordLocations
  * @returns {void}
  */
 function recursivelyFindRecordReps(shape, modelInfo, currentPath, recordLocations) {
@@ -50,15 +53,20 @@ function recursivelyFindRecordReps(shape, modelInfo, currentPath, recordLocation
         if (shape.linkLabel === RECORD_REPRESENTATION) {
             return;
         }
-        recursivelyFindRecordReps(shape.linkTarget, modelInfo, currentPath, recordLocations);
+        recursivelyFindRecordReps(
+            /** @type {ShapeDefinition} */ (shape.linkTarget),
+            modelInfo,
+            currentPath,
+            recordLocations
+        );
     } else {
-        const properties = shape.properties;
+        const properties = /**@type {NodeShapeDefinition}*/ (shape).properties;
         if (properties === undefined) {
             return;
         }
         for (const prop of properties) {
             const range = prop.range;
-            const items = range.items;
+            const items = /**@type {ArrayShapeDefinition}*/ (range).items;
             if (prop.name === '//') {
                 if (range.isLink) {
                     const linkLabel = range.linkLabel;
@@ -69,7 +77,7 @@ function recursivelyFindRecordReps(shape, modelInfo, currentPath, recordLocation
             } else if (items !== undefined) {
                 if (items.isLink) {
                     if (items.linkLabel === RECORD_REPRESENTATION) {
-                        recordLocations[currentPath] = 'array';
+                        recordLocations[currentPath.concat(`.${prop.name}`)] = 'array';
                     }
                 }
             } else {
@@ -98,6 +106,7 @@ function generateRecordRevivalHandlers(compilerConfig, modelInfo) {
         const { returnShape, name, path, method } = resource;
 
         if (returnShape !== undefined) {
+            /** @type {RecordPathMap} */
             const recordPaths = {};
             recursivelyFindRecordReps(
                 returnShape,
@@ -157,8 +166,8 @@ function generateRecordRevivalHandlers(compilerConfig, modelInfo) {
                         const {basePath, method} = ${REQUEST_FIELD};
                         return method === '${method}' && basePath === ${resolvedPath};
                     },
-                    ${REVIVE}<T>(${RESPONSE_FIELD}: FetchResponse<T>, ${STORE_FIELD}: Store, ${DURABLE_STORE_FIELD}: DurableStore) { 
-                        ${revivalCode} 
+                    ${REVIVE}<T>(${RESPONSE_FIELD}: FetchResponse<T>, ${STORE_FIELD}: Store, ${DURABLE_STORE_FIELD}: DurableStore) {
+                        ${revivalCode}
                     },
                 };
                 `);

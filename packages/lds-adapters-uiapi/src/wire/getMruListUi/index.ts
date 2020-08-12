@@ -91,6 +91,7 @@ function buildListUiFragment(
                             name: 'records',
                             pageSize: config.pageSize || DEFAULT_PAGE_SIZE,
                             pageToken: config.pageToken,
+                            private: ['eTag', 'weakEtag'],
                             selections: buildSelectionFromFields(
                                 ...fields.getRecordSelectionFieldSets()
                             ),

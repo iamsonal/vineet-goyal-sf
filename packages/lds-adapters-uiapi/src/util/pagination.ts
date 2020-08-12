@@ -106,6 +106,7 @@ export function pathSelectionsFor(config: {
     name: string;
     pageSize: number;
     pageToken?: string;
+    private?: string[];
     selections: PathSelection[];
     tokenDataKey: string;
 }): PathSelection[] {
@@ -118,6 +119,7 @@ export function pathSelectionsFor(config: {
             plural: true,
             reader: paginatedDataCustomReader,
             selections: config.selections,
+            private: config.private,
             tokenDataKey: config.tokenDataKey,
         },
         {

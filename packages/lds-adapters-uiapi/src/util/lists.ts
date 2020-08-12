@@ -32,7 +32,7 @@ const listReferences: ListReferences = {
 /**
  * Adds a list reference so it can be retrieved with #getListReference later.
  *
- * @param listRef list refenence
+ * @param listRef list reference
  */
 export function addListReference(listRef: ListReferenceRepresentation): void {
     if (listRef.id) {

@@ -1,0 +1,49 @@
+{
+    "eTag": "767a8d3ea381f7b2544894a11ca383f5",
+    "records": {
+        "001xx000003Gn4WAAS": {
+            "apiName": "Account",
+            "childRelationships": {},
+            "eTag": "67a3eb82d85b61ba6342b28c19ffafca",
+            "fields": {
+                "Id": {
+                    "displayValue": null,
+                    "value": "001xx000003Gn4WAAS"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Burlington Textiles Corp of America"
+                }
+            },
+            "id": "001xx000003Gn4WAAS",
+            "lastModifiedById": "005xx000001XL1tAAG",
+            "lastModifiedDate": "2020-05-28T14:00:50.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2020-05-28T14:00:50.000Z",
+            "weakEtag": 1590674450000
+        },
+        "001xx000003Gn4VAAS": {
+            "apiName": "Account",
+            "childRelationships": {},
+            "eTag": "11e911d2ee35fe2b9d9af9d995c2103e",
+            "fields": {
+                "Id": {
+                    "displayValue": null,
+                    "value": "001xx000003Gn4VAAS"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Edge Communications"
+                }
+            },
+            "id": "001xx000003Gn4VAAS",
+            "lastModifiedById": "005xx000001XL1tAAG",
+            "lastModifiedDate": "2020-05-28T14:00:50.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2020-05-28T14:00:50.000Z",
+            "weakEtag": 1590674450000
+        }
+    }
+}

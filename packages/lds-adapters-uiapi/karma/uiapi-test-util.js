@@ -132,6 +132,32 @@ function mockGetRecordNetwork(config, mockData) {
     }
 }
 
+function mockGetRecordsNetwork(config, mockData) {
+    const allRecordIds = [],
+        allFields = [],
+        allOptionalFields = [];
+    config.records.forEach(rec => {
+        const { recordId = [], fields = [], optionalFields = [] } = rec;
+        allRecordIds.push(...recordId);
+        allFields.push(...fields);
+        allOptionalFields.push(...optionalFields);
+    });
+    const paramMatch = sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/records/batch/${allRecordIds.join(
+            ','
+        )}/fields=${allFields.sort().join(',')}&optionalFields=${allOptionalFields
+            .sort()
+            .join(',')}`,
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
 function mockGetRecordActionsNetwork(config, mockData) {
     const { recordIds, ...queryParams } = config;
     const basePath = `${URL_BASE}/actions/record/${recordIds.sort().join(',')}`;
@@ -747,6 +773,7 @@ export {
     mockGetObjectInfosNetwork,
     mockGetPicklistValuesNetwork,
     mockGetRecordNetwork,
+    mockGetRecordsNetwork,
     mockGetRecordActionsNetwork,
     mockGetRecordEditActionsNetwork,
     mockGetRecordCreateDefaultsNetwork,

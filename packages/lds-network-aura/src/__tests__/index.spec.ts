@@ -1754,6 +1754,53 @@ describe('routes', () => {
         );
     });
 
+    describe('get /actions/object/${objectApiName}', () => {
+        describe('/record-create', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/actions/object/Account/record-create`,
+                    urlParams: {
+                        objectApiName: 'Account',
+                    },
+                },
+                [
+                    'ActionsController.getRecordCreateActions',
+                    { objectApiName: 'Account' },
+                    undefined,
+                ]
+            );
+
+            testRejectFetchResponse({
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/actions/object/Account/record-create`,
+                urlParams: {
+                    objectApiName: 'Account',
+                },
+            });
+
+            testResolveResponse(
+                {
+                    method: 'get',
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/actions/object/Account/record-create`,
+                    urlParams: {
+                        objectApiName: 'Account',
+                    },
+                },
+                {
+                    actions: {
+                        Account: {
+                            actions: [],
+                        },
+                    },
+                }
+            );
+        });
+    });
+
     describe('get /related-list-info', () => {
         describe('/{parentObjectApiName}/{relatedListId}', () => {
             testControllerInput(

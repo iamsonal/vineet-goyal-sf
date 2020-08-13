@@ -281,6 +281,15 @@ types:
             actionTypes: SortedStringArray
             formFactor: SalesforceFormFactor
             sections: SortedStringArray
+    '/object/{objectApiName}/record-create':
+      get:
+        (lds.adapter):
+          name: getRecordCreateActions
+          coercedParams:
+            apiNames: SortedStringArray
+            objectApiName: SalesforceObjectId
+            formFactor: SalesforceFormFactor
+            sections: SortedStringArray
     '/record/{recordIds}':
       get:
         (lds.adapter):

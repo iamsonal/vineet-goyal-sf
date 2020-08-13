@@ -225,6 +225,26 @@ function mockGetRecordEditActionsNetwork(config, mockData) {
     }
 }
 
+function mockGetRecordCreateActionsNetwork(config, mockData) {
+    let { objectApiName, ...queryParams } = config;
+
+    if (typeof objectApiName !== 'string') {
+        objectApiName = objectApiName.objectApiName;
+    }
+
+    const paramMatch = sinon.match({
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/actions/object/${objectApiName}/record-create`,
+        queryParams,
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
 function mockGetRecordCreateDefaultsNetwork(config, mockData) {
     let { objectApiName, ...queryParams } = config;
 
@@ -776,6 +796,7 @@ export {
     mockGetRecordsNetwork,
     mockGetRecordActionsNetwork,
     mockGetRecordEditActionsNetwork,
+    mockGetRecordCreateActionsNetwork,
     mockGetRecordCreateDefaultsNetwork,
     mockGetRecordTemplateCloneNetwork,
     mockGetRecordTemplateCreateNetwork,

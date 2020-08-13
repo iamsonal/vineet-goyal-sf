@@ -3281,6 +3281,48 @@ types:
           items:
             type: string
             (oas-collectionFormat): csv
+    /object/{objectApiName}/record-create:
+      get:
+        description: Retrieve presentation-ready action data about specific objectApiName
+          under the RecordCreate subcontext.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ActionRepresentation
+        queryParameters:
+          actionTypes:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActionLink
+                - CustomButton
+                - InvocableAction
+                - ProductivityAction
+                - QuickAction
+                - StandardButton
+              (oas-collectionFormat): csv
+          formFactor:
+            type: string
+            required: false
+          sections:
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - ActivityComposer
+                - CollaborateComposer
+                - Page
+                - SingleActionLinks
+              (oas-collectionFormat): csv
+      uriParameters:
+        objectApiName:
+          type: string
+          required: true
     /photo/{recordIds}:
       get:
         description: Retrieve presentation-ready action data for photo of recorIds.

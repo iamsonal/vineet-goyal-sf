@@ -12,7 +12,7 @@ import {
     getLookupActionsAdapterFactory,
     getRecordActionsAdapterFactory,
     getRecordEditActionsAdapterFactory,
-    getRecordCreateActionsAdapterFactory,
+    getObjectCreateActionsAdapterFactory,
     getRelatedListsActionsAdapterFactory,
     getRelatedListActionsAdapterFactory,
     getRelatedListRecordActionsAdapterFactory,
@@ -223,7 +223,7 @@ export const getDuplicates = createWireAdapterConstructor(
     getDuplicatesAdapterFactory
 );
 
-export const getRecordCreateActions = createWireAdapterConstructor(
-    'getRecordCreateActions',
-    getRecordCreateActionsAdapterFactory
+export const getObjectCreateActions = createWireAdapterConstructor(
+    'getObjectCreateActions',
+    getObjectCreateActionsAdapterFactory
 );

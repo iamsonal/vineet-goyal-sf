@@ -1,14 +1,14 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getRecordCreateActions } from 'lds-adapters-uiapi';
+import { getObjectCreateActions } from 'lds-adapters-uiapi';
 
-export default class RecordCreateActions extends LightningElement {
+export default class ObjectCreateActions extends LightningElement {
     @api objectApiName;
     wirePushCount = -1;
 
-    @wire(getRecordCreateActions, {
+    @wire(getObjectCreateActions, {
         objectApiName: '$objectApiName',
     })
-    onGetRecordCreateActions(result) {
+    onGetObjectCreateActions(result) {
         this.action = result;
         this.wirePushCount += 1;
     }

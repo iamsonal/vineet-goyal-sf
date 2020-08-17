@@ -225,7 +225,7 @@ function mockGetRecordEditActionsNetwork(config, mockData) {
     }
 }
 
-function mockGetRecordCreateActionsNetwork(config, mockData) {
+function mockGetObjectCreateActionsNetwork(config, mockData) {
     let { objectApiName, ...queryParams } = config;
 
     if (typeof objectApiName !== 'string') {
@@ -796,7 +796,7 @@ export {
     mockGetRecordsNetwork,
     mockGetRecordActionsNetwork,
     mockGetRecordEditActionsNetwork,
-    mockGetRecordCreateActionsNetwork,
+    mockGetObjectCreateActionsNetwork,
     mockGetRecordCreateDefaultsNetwork,
     mockGetRecordTemplateCloneNetwork,
     mockGetRecordTemplateCreateNetwork,

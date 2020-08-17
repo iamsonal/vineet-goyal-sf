@@ -12,10 +12,10 @@ const objectApiName = await helpers.getAccountByName(ACCOUNT_NAME);
 
 await helpers.requestGetAndSave(
     `/ui-api/actions/object/${objectApiName}/record-create`,
-    path.join(rootDir, 'record-create-actions.json')
+    path.join(rootDir, 'object-create-actions.json')
 );
 
 await helpers.requestGetAndSave(
     `/ui-api/actions/object/${objectApiName}/notExisted`,
-    path.join(rootDir, 'record-create-error.json')
+    path.join(rootDir, 'object-create-error.json')
 );

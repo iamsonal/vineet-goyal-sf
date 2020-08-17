@@ -35,7 +35,7 @@ describe('SFDC exports', () => {
             'updateRecord',
             'updateRecordAvatar',
             'getRecordEditActions',
-            'getRecordCreateActions',
+            'getObjectCreateActions',
             'getRelatedListsInfo',
             'updateRelatedListInfo',
             'getRelatedListRecords',

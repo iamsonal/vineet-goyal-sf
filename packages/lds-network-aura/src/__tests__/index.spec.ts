@@ -1766,7 +1766,7 @@ describe('routes', () => {
                     },
                 },
                 [
-                    'ActionsController.getRecordCreateActions',
+                    'ActionsController.getObjectCreateActions',
                     { objectApiName: 'Account' },
                     undefined,
                 ]

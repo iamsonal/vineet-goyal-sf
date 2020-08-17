@@ -7,7 +7,7 @@ enum UiApiActionsController {
     GetLookupActions = 'ActionsController.getLookupActions',
     GetRecordActions = 'ActionsController.getRecordActions',
     GetRecordEditActions = 'ActionsController.getRecordEditActions',
-    GetRecordCreateActions = 'ActionsController.getRecordCreateActions',
+    GetObjectCreateActions = 'ActionsController.getObjectCreateActions',
     GetRelatedListActions = 'ActionsController.getRelatedListActions',
     GetRelatedListsActions = 'ActionsController.getRelatedListsActions',
     GetRelatedListRecordActions = 'ActionsController.getRelatedListRecordActions',
@@ -18,7 +18,7 @@ const UIAPI_ACTIONS_RECORD_PATH = `${UI_API_BASE_URI}/actions/record/`;
 const UIAPI_ACTIONS_OBJECT_PATH = `${UI_API_BASE_URI}/actions/object/`;
 const UIAPI_ACTIONS_RECORD_EDIT = '/record-edit';
 const UIAPI_ACTIONS_RELATED_LIST = '/related-list/';
-const UIAPI_ACTIONS_RECORD_CREATE = '/record-create';
+const UIAPI_ACTIONS_OBJECT_CREATE = '/record-create';
 const UIAPI_ACTIONS_RELATED_LIST_BATCH = '/related-list/batch/';
 const UIAPI_ACTIONS_RELATED_LIST_RECORD = '/related-list-record/';
 
@@ -91,14 +91,14 @@ function getRelatedListRecordActions(resourceRequest: ResourceRequest): Promise<
     return dispatchAction(UiApiActionsController.GetRelatedListRecordActions, parameters);
 }
 
-function getRecordCreateActions(resourceRequest: ResourceRequest): Promise<any> {
+function getObjectCreateActions(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { objectApiName },
         queryParams,
     } = resourceRequest;
     const parameters = buildUiApiParams({ objectApiName, ...queryParams }, resourceRequest);
 
-    return dispatchAction(UiApiActionsController.GetRecordCreateActions, parameters);
+    return dispatchAction(UiApiActionsController.GetObjectCreateActions, parameters);
 }
 
 appRouter.get((path: string) => path.startsWith(UIAPI_ACTIONS_LOOKUP_PATH), getLookupActions);
@@ -136,6 +136,6 @@ appRouter.get(
 );
 appRouter.get(
     (path: string) =>
-        path.startsWith(UIAPI_ACTIONS_OBJECT_PATH) && path.indexOf(UIAPI_ACTIONS_RECORD_CREATE) > 0,
-    getRecordCreateActions
+        path.startsWith(UIAPI_ACTIONS_OBJECT_PATH) && path.indexOf(UIAPI_ACTIONS_OBJECT_CREATE) > 0,
+    getObjectCreateActions
 );

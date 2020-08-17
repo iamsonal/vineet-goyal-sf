@@ -3,11 +3,11 @@
         "001xx000003GboeAAC": {
             "actions": [
                 {
-                    "actionListContext": "RecordCreate",
+                    "actionListContext": "ObjectCreate",
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "SaveEdit",
-                    "externalId": "00Dxx0000006Izj:001xx000003GboeAAC::RecordCreate:Desktop:StandardButton:SaveEdit",
+                    "externalId": "00Dxx0000006Izj:001xx000003GboeAAC::ObjectCreate:Desktop:StandardButton:SaveEdit",
                     "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_custom19_120.png",
                     "id": "0JVxx0000000142GAA",
                     "isMassAction": "false",
@@ -23,11 +23,11 @@
                     "type": "StandardButton"
                 },
                 {
-                    "actionListContext": "RecordCreate",
+                    "actionListContext": "ObjectCreate",
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "SaveAndNew",
-                    "externalId": "00Dxx0000006Izj:001xx000003GboeAAC::RecordCreate:Desktop:StandardButton:SaveAndNew",
+                    "externalId": "00Dxx0000006Izj:001xx000003GboeAAC::ObjectCreate:Desktop:StandardButton:SaveAndNew",
                     "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_custom19_120.png",
                     "id": "0JVxx0000000143GAA",
                     "isMassAction": "false",
@@ -43,11 +43,11 @@
                     "type": "StandardButton"
                 },
                 {
-                    "actionListContext": "RecordCreate",
+                    "actionListContext": "ObjectCreate",
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "CancelEdit",
-                    "externalId": "00Dxx0000006Izj:001xx000003GboeAAC::RecordCreate:Desktop:StandardButton:CancelEdit",
+                    "externalId": "00Dxx0000006Izj:001xx000003GboeAAC::ObjectCreate:Desktop:StandardButton:CancelEdit",
                     "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_custom19_120.png",
                     "id": "0JVxx0000000144GAA",
                     "isMassAction": "false",

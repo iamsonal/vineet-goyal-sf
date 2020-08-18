@@ -7,9 +7,9 @@
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "CreateFromLookup",
-                    "externalId": "00Dxx0000006Izj:Opportunity::Lookup:Desktop:StandardButton:CreateFromLookup",
-                    "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_120.png",
-                    "id": "0JVxx0000000108GAA",
+                    "externalId": "00Dxx0000006TGp:Opportunity::Lookup:Desktop:StandardButton:CreateFromLookup",
+                    "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_120.png",
+                    "id": "0JVxx0000000186GAA",
                     "isMassAction": "false",
                     "label": "New",
                     "primaryColor": "33BCE7",
@@ -24,7 +24,7 @@
                 }
             ],
             "links": [],
-            "url": "/services/data/v50.0/ui-api/actions/lookup/Opportunity"
+            "url": "/services/data/v51.0/ui-api/actions/lookup/Opportunity"
         },
         "Lead": {
             "actions": [
@@ -33,9 +33,9 @@
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "CreateFromLookup",
-                    "externalId": "00Dxx0000006Izj:Lead::Lookup:Desktop:StandardButton:CreateFromLookup",
-                    "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_120.png",
-                    "id": "0JVxx0000000109GAA",
+                    "externalId": "00Dxx0000006TGp:Lead::Lookup:Desktop:StandardButton:CreateFromLookup",
+                    "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_120.png",
+                    "id": "0JVxx0000000187GAA",
                     "isMassAction": "false",
                     "label": "New",
                     "primaryColor": "33BCE7",
@@ -50,9 +50,9 @@
                 }
             ],
             "links": [],
-            "url": "/services/data/v50.0/ui-api/actions/lookup/Lead"
+            "url": "/services/data/v51.0/ui-api/actions/lookup/Lead"
         }
     },
-    "eTag": "472212c4d860113aa2ab5caff5302e0d",
-    "url": "/services/data/v50.0/ui-api/actions/lookup/Lead,Opportunity"
+    "eTag": "f47e0c1cad8d93a339e5ca87c29beb99",
+    "url": "/services/data/v51.0/ui-api/actions/lookup/Lead,Opportunity"
 }

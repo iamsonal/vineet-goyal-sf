@@ -1,5 +1,5 @@
 {
-    "eTag": "439f1aac2ced3162fde6e3b34201b0ec",
+    "eTag": "6471a3482ac26b96289245475f3cffaf",
     "info": {
         "cloneable": false,
         "createable": true,
@@ -36,7 +36,7 @@
                 "sortable": true
             }
         ],
-        "eTag": "7bcce9146d3a116f0df99fb627ba7f08",
+        "eTag": "6c8cc22dc5fb23e4f8ca87310b6dfa1b",
         "filterLogicString": null,
         "filteredByInfo": [],
         "label": "Recently Viewed",
@@ -72,9 +72,9 @@
     "records": {
         "count": 1,
         "currentPageToken": "0",
-        "currentPageUrl": "/services/data/v50.0/ui-api/mru-list-records/Opportunity?fields=IsPrivate%2CNextStep&pageSize=1&pageToken=0",
+        "currentPageUrl": "/services/data/v51.0/ui-api/mru-list-records/Opportunity?fields=IsPrivate%2CNextStep&pageSize=1&pageToken=0",
         "fields": ["IsPrivate", "NextStep"],
-        "listInfoETag": "7bcce9146d3a116f0df99fb627ba7f08",
+        "listInfoETag": "6c8cc22dc5fb23e4f8ca87310b6dfa1b",
         "listReference": {
             "id": null,
             "listViewApiName": null,
@@ -82,7 +82,7 @@
             "type": "mru"
         },
         "nextPageToken": "1",
-        "nextPageUrl": "/services/data/v50.0/ui-api/mru-list-records/Opportunity?fields=IsPrivate%2CNextStep&pageSize=1&pageToken=1",
+        "nextPageUrl": "/services/data/v51.0/ui-api/mru-list-records/Opportunity?fields=IsPrivate%2CNextStep&pageSize=1&pageToken=1",
         "optionalFields": [],
         "pageSize": 1,
         "previousPageToken": null,
@@ -91,30 +91,30 @@
             {
                 "apiName": "Opportunity",
                 "childRelationships": {},
-                "eTag": "e7c72753626d25b7477e91a4c6854318",
+                "eTag": "2eaacb92063d9af09bb1033a70957a91",
                 "fields": {
                     "Account": {
                         "displayValue": "Grand Hotels &amp; Resorts Ltd",
                         "value": {
                             "apiName": "Account",
                             "childRelationships": {},
-                            "eTag": "fbfcecb1fb662a8e3169dae84c0c9c5b",
+                            "eTag": "718f91442d7244021906b956dd64a543",
                             "fields": {
                                 "CreatedDate": {
-                                    "displayValue": "4/23/2020, 10:02 AM",
-                                    "value": "2020-04-23T17:02:18.000Z"
+                                    "displayValue": "8/18/2020, 8:31 AM",
+                                    "value": "2020-08-18T15:31:29.000Z"
                                 },
                                 "Id": {
                                     "displayValue": null,
-                                    "value": "001xx000003GbohAAC"
+                                    "value": "001xx000003GlJPAA0"
                                 },
                                 "LastModifiedById": {
                                     "displayValue": null,
-                                    "value": "005xx000001XAN7AAO"
+                                    "value": "005xx000001XNH7AAO"
                                 },
                                 "LastModifiedDate": {
-                                    "displayValue": "4/23/2020, 10:02 AM",
-                                    "value": "2020-04-23T17:02:18.000Z"
+                                    "displayValue": "8/18/2020, 8:31 AM",
+                                    "value": "2020-08-18T15:31:29.000Z"
                                 },
                                 "Name": {
                                     "displayValue": null,
@@ -125,34 +125,34 @@
                                     "value": null
                                 },
                                 "SystemModstamp": {
-                                    "displayValue": "4/23/2020, 10:02 AM",
-                                    "value": "2020-04-23T17:02:18.000Z"
+                                    "displayValue": "8/18/2020, 8:31 AM",
+                                    "value": "2020-08-18T15:31:29.000Z"
                                 }
                             },
-                            "id": "001xx000003GbohAAC",
-                            "lastModifiedById": "005xx000001XAN7AAO",
-                            "lastModifiedDate": "2020-04-23T17:02:18.000Z",
+                            "id": "001xx000003GlJPAA0",
+                            "lastModifiedById": "005xx000001XNH7AAO",
+                            "lastModifiedDate": "2020-08-18T15:31:29.000Z",
                             "recordTypeId": "012000000000000AAA",
                             "recordTypeInfo": null,
-                            "systemModstamp": "2020-04-23T17:02:18.000Z",
-                            "weakEtag": 1587661338000
+                            "systemModstamp": "2020-08-18T15:31:29.000Z",
+                            "weakEtag": 1597764689000
                         }
                     },
                     "AccountId": {
                         "displayValue": null,
-                        "value": "001xx000003GbohAAC"
+                        "value": "001xx000003GlJPAA0"
                     },
                     "CloseDate": {
-                        "displayValue": "4/4/2018",
-                        "value": "2018-04-04"
+                        "displayValue": "7/30/2018",
+                        "value": "2018-07-30"
                     },
                     "CreatedDate": {
-                        "displayValue": "4/23/2020, 10:02 AM",
-                        "value": "2020-04-23T17:02:18.000Z"
+                        "displayValue": "8/18/2020, 8:31 AM",
+                        "value": "2020-08-18T15:31:29.000Z"
                     },
                     "Id": {
                         "displayValue": null,
-                        "value": "006xx000001a6I2AAI"
+                        "value": "006xx000001a8i2AAA"
                     },
                     "IsPrivate": {
                         "displayValue": null,
@@ -160,11 +160,11 @@
                     },
                     "LastModifiedById": {
                         "displayValue": null,
-                        "value": "005xx000001XAN7AAO"
+                        "value": "005xx000001XNH7AAO"
                     },
                     "LastModifiedDate": {
-                        "displayValue": "4/23/2020, 10:02 AM",
-                        "value": "2020-04-23T17:02:18.000Z"
+                        "displayValue": "8/18/2020, 8:31 AM",
+                        "value": "2020-08-18T15:31:29.000Z"
                     },
                     "Name": {
                         "displayValue": null,
@@ -179,66 +179,66 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "a4de56c8e59b095fb7b5554e9cbe4cfc",
+                            "eTag": "2ad9a48a2b247d8e996cb7fc3c81ea16",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
                                     "value": "UUser"
                                 },
                                 "CreatedDate": {
-                                    "displayValue": "4/23/2020, 10:02 AM",
-                                    "value": "2020-04-23T17:02:18.000Z"
+                                    "displayValue": "8/18/2020, 8:31 AM",
+                                    "value": "2020-08-18T15:31:29.000Z"
                                 },
                                 "Id": {
                                     "displayValue": null,
-                                    "value": "005xx000001XAN7AAO"
+                                    "value": "005xx000001XNH7AAO"
                                 },
                                 "LastModifiedById": {
                                     "displayValue": null,
-                                    "value": "005xx000001XAN7AAO"
+                                    "value": "005xx000001XNH7AAO"
                                 },
                                 "LastModifiedDate": {
-                                    "displayValue": "4/23/2020, 10:12 AM",
-                                    "value": "2020-04-23T17:12:52.000Z"
+                                    "displayValue": "8/18/2020, 8:59 AM",
+                                    "value": "2020-08-18T15:59:22.000Z"
                                 },
                                 "Name": {
                                     "displayValue": null,
                                     "value": "User User"
                                 },
                                 "SystemModstamp": {
-                                    "displayValue": "4/23/2020, 10:17 AM",
-                                    "value": "2020-04-23T17:17:16.000Z"
+                                    "displayValue": "8/18/2020, 8:59 AM",
+                                    "value": "2020-08-18T15:59:22.000Z"
                                 }
                             },
-                            "id": "005xx000001XAN7AAO",
-                            "lastModifiedById": "005xx000001XAN7AAO",
-                            "lastModifiedDate": "2020-04-23T17:12:52.000Z",
+                            "id": "005xx000001XNH7AAO",
+                            "lastModifiedById": "005xx000001XNH7AAO",
+                            "lastModifiedDate": "2020-08-18T15:59:22.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2020-04-23T17:17:16.000Z",
-                            "weakEtag": 1587662236000
+                            "systemModstamp": "2020-08-18T15:59:22.000Z",
+                            "weakEtag": 1597766362000
                         }
                     },
                     "OwnerId": {
                         "displayValue": null,
-                        "value": "005xx000001XAN7AAO"
+                        "value": "005xx000001XNH7AAO"
                     },
                     "StageName": {
                         "displayValue": "Value Proposition",
                         "value": "Value Proposition"
                     },
                     "SystemModstamp": {
-                        "displayValue": "4/23/2020, 10:02 AM",
-                        "value": "2020-04-23T17:02:18.000Z"
+                        "displayValue": "8/18/2020, 8:31 AM",
+                        "value": "2020-08-18T15:31:29.000Z"
                     }
                 },
-                "id": "006xx000001a6I2AAI",
-                "lastModifiedById": "005xx000001XAN7AAO",
-                "lastModifiedDate": "2020-04-23T17:02:18.000Z",
+                "id": "006xx000001a8i2AAA",
+                "lastModifiedById": "005xx000001XNH7AAO",
+                "lastModifiedDate": "2020-08-18T15:31:29.000Z",
                 "recordTypeId": "012000000000000AAA",
                 "recordTypeInfo": null,
-                "systemModstamp": "2020-04-23T17:02:18.000Z",
-                "weakEtag": 1587661338000
+                "systemModstamp": "2020-08-18T15:31:29.000Z",
+                "weakEtag": 1597764689000
             }
         ],
         "sortBy": null

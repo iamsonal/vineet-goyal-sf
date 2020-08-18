@@ -1,29 +1,29 @@
 {
     "apiName": "Case",
     "childRelationships": {},
-    "eTag": "0e9c1ba652dcc2371ff20df3f64f8305",
+    "eTag": "2aa5b573efdd29ff03a1cbc0daab60d3",
     "fields": {
         "Id": {
             "displayValue": null,
-            "value": "500xx000000buv1AAA"
+            "value": "500xx000000brG7AAI"
         },
         "Owner": {
-            "displayValue": null,
+            "displayValue": "User User",
             "value": {
                 "apiName": "Name",
                 "childRelationships": {},
-                "eTag": "18ce08aad6eaf711a5d66191f71164c4",
+                "eTag": "4b4a8819f605f3059f27c5fcd732aa44",
                 "fields": {
                     "Id": {
                         "displayValue": null,
-                        "value": "005xx000001XL1tAAG"
+                        "value": "005xx000001XN4DAAW"
                     },
                     "Type": {
                         "displayValue": "User",
                         "value": "User"
                     }
                 },
-                "id": "005xx000001XL1tAAG",
+                "id": "005xx000001XN4DAAW",
                 "lastModifiedById": null,
                 "lastModifiedDate": null,
                 "recordTypeId": null,
@@ -34,14 +34,14 @@
         },
         "OwnerId": {
             "displayValue": null,
-            "value": "005xx000001XL1tAAG"
+            "value": "005xx000001XN4DAAW"
         }
     },
-    "id": "500xx000000buv1AAA",
-    "lastModifiedById": "005xx000001XL1tAAG",
-    "lastModifiedDate": "2020-05-28T14:00:50.000Z",
+    "id": "500xx000000brG7AAI",
+    "lastModifiedById": "005xx000001XN4DAAW",
+    "lastModifiedDate": "2020-08-17T18:55:35.000Z",
     "recordTypeId": "012000000000000AAA",
     "recordTypeInfo": null,
-    "systemModstamp": "2020-05-28T14:00:50.000Z",
-    "weakEtag": 1590674450000
+    "systemModstamp": "2020-08-17T18:55:35.000Z",
+    "weakEtag": 1597690535000
 }

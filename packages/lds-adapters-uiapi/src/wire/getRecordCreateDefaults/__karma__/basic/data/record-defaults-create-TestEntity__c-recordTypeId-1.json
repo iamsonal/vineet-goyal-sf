@@ -1,17 +1,17 @@
 {
     "layout": {
-        "eTag": "7f4fc3644f66df9e918459490088270e",
-        "id": "00hT1000000NQj3IAG",
+        "eTag": "6b4c1b2fc3893af3c3b25a03cf9ea67a",
+        "id": "00hxx0000019ZYGAA2",
         "layoutType": "Full",
         "mode": "Create",
         "objectApiName": "TestEntity__c",
-        "recordTypeId": "012T10000004Kb3IAE",
+        "recordTypeId": "012xx0000005sTYAAY",
         "sections": [
             {
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Information",
-                "id": "01BT1000000SKJOMA4",
+                "id": "01Bxx000002CEf4EAG",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -86,7 +86,7 @@
             "defaultRecordTypeId": null,
             "deletable": true,
             "dependentFields": {},
-            "eTag": "602864a3356eae902b87abad81c976dd",
+            "eTag": "b809d2b76757a40a5f0caa791176efd3",
             "feedEnabled": false,
             "fields": {
                 "CreatedById": {
@@ -512,7 +512,7 @@
                     "relationshipName": "Related",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": false
@@ -595,7 +595,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "769ED9",
-                "iconUrl": "https://pluto-tonkatsu-6922-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/orders_120.png"
+                "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/orders_120.png"
             },
             "updateable": true
         },
@@ -701,13 +701,6 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "DeclinedEventRelations"
-                },
-                {
-                    "childObjectApiName": "DelegatedAccount",
-                    "fieldName": "ManagedById",
-                    "junctionIdListNames": [],
-                    "junctionReferenceTo": [],
-                    "relationshipName": "ParentId"
                 },
                 {
                     "childObjectApiName": "EmailMessageRelation",
@@ -939,7 +932,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "4a394056422b1762299cd293ab73bf42",
+            "eTag": "8be9efbe5e66db80925dbea4f4a64d09",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -1008,7 +1001,7 @@
                     "relationshipName": "Account",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": false
@@ -1353,7 +1346,7 @@
                     "relationshipName": "Contact",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2131,7 +2124,7 @@
                     "relationshipName": "Individual",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2669,7 +2662,7 @@
                     "relationshipName": "Manager",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -3037,7 +3030,7 @@
                     "relationshipName": "Profile",
                     "required": true,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -3922,7 +3915,7 @@
                     "highScaleNumber": false,
                     "htmlFormatted": false,
                     "inlineHelpText": null,
-                    "label": "Work.com User",
+                    "label": "WDC User",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -5852,39 +5845,6 @@
                     "unique": false,
                     "updateable": true
                 },
-                "UserPreferencesPipelineViewHideHelpPopover": {
-                    "apiName": "UserPreferencesPipelineViewHideHelpPopover",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": false,
-                    "dataType": "Boolean",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "PipelineViewHideHelpPopover",
-                    "length": 0,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": true,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": false,
-                    "unique": false,
-                    "updateable": true
-                },
                 "UserPreferencesPreviewCustomTheme": {
                     "apiName": "UserPreferencesPreviewCustomTheme",
                     "calculated": false,
@@ -7304,7 +7264,7 @@
                     "relationshipName": "UserRole",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -7387,21 +7347,21 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://pluto-tonkatsu-6922-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         },
         "RecordType": {
             "apiName": "RecordType",
-            "associateParentEntity": null,
             "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [],
             "createable": true,
             "custom": false,
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "f5d36985031218e37107b41fb9f933bb",
+            "eTag": "72bbb510897dedfe7eed06f006fa880f",
             "feedEnabled": false,
             "fields": {
                 "BusinessProcessId": {
@@ -7799,7 +7759,7 @@
                     "highScaleNumber": false,
                     "htmlFormatted": false,
                     "inlineHelpText": null,
-                    "label": "SObject Type Name",
+                    "label": "sObject Type Name",
                     "length": 40,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -7863,8 +7823,8 @@
         },
         "TestEntity__c": {
             "apiName": "TestEntity__c",
-            "associateParentEntity": null,
             "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [
                 {
                     "childObjectApiName": "AttachedContentDocument",
@@ -7984,7 +7944,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "ce473c978acc93a8d22ba94145c9edf3",
+            "eTag": "075911610e095460ce715dac8433fbb5",
             "feedEnabled": false,
             "fields": {
                 "CloneSourceId": {
@@ -8375,7 +8335,7 @@
                     "updateable": false
                 }
             },
-            "keyPrefix": "a0D",
+            "keyPrefix": "a00",
             "label": "Test Entity",
             "labelPlural": "Test Entity",
             "layoutable": true,
@@ -8390,19 +8350,19 @@
                     "name": "Master",
                     "recordTypeId": "012000000000000AAA"
                 },
-                "012T10000004Kb3IAE": {
+                "012xx0000005sTYAAY": {
                     "available": false,
                     "defaultRecordTypeMapping": false,
                     "master": false,
                     "name": "Test Entity Type 1",
-                    "recordTypeId": "012T10000004Kb3IAE"
+                    "recordTypeId": "012xx0000005sTYAAY"
                 },
-                "012T10000004Kb4IAE": {
+                "012xx0000005sTZAAY": {
                     "available": false,
                     "defaultRecordTypeMapping": false,
                     "master": false,
                     "name": "Test Entity Type 2",
-                    "recordTypeId": "012T10000004Kb4IAE"
+                    "recordTypeId": "012xx0000005sTZAAY"
                 }
             },
             "searchable": false,
@@ -8414,15 +8374,15 @@
         },
         "Name": {
             "apiName": "Name",
-            "associateParentEntity": null,
             "associateEntityType": null,
+            "associateParentEntity": null,
             "childRelationships": [],
             "createable": false,
             "custom": false,
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "a7f42ac68302479c6c684da69076d7c7",
+            "eTag": "695b01a3180e2ae8655ae3b940fb5e1f",
             "feedEnabled": false,
             "fields": {
                 "Alias": {
@@ -9051,16 +9011,8 @@
     "record": {
         "apiName": "TestEntity__c",
         "childRelationships": {},
-        "eTag": "b128daabc49524918b9240ef375cb5c5",
+        "eTag": "7e587c0d80c06a50a125e690b18586fa",
         "fields": {
-            "CreatedBy": {
-                "displayValue": null,
-                "value": null
-            },
-            "LastModifiedBy": {
-                "displayValue": null,
-                "value": null
-            },
             "Name": {
                 "displayValue": null,
                 "value": null
@@ -9070,18 +9022,18 @@
                 "value": {
                     "apiName": "Name",
                     "childRelationships": {},
-                    "eTag": "8565a0ffafb05437e67289d5989c2e27",
+                    "eTag": "ba0a45917ed4d1e4d7318761c36ca841",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "005T1000000HozDIAS"
+                            "value": "005xx000001XN4DAAW"
                         },
                         "Name": {
                             "displayValue": null,
                             "value": "User User"
                         }
                     },
-                    "id": "005T1000000HozDIAS",
+                    "id": "005xx000001XN4DAAW",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -9092,25 +9044,25 @@
             },
             "OwnerId": {
                 "displayValue": null,
-                "value": "005T1000000HozDIAS"
+                "value": "005xx000001XN4DAAW"
             },
             "RecordType": {
                 "displayValue": "Test Entity Type 1",
                 "value": {
                     "apiName": "RecordType",
                     "childRelationships": {},
-                    "eTag": "50d168d4fcfd678fd9abf101e268a661",
+                    "eTag": "3e71ad808b4c4f8c92268551f7233373",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "012T10000004Kb3IAE"
+                            "value": "012xx0000005sTYAAY"
                         },
                         "Name": {
                             "displayValue": "Test Entity Type 1",
                             "value": "Test Entity Type 1"
                         }
                     },
-                    "id": "012T10000004Kb3IAE",
+                    "id": "012xx0000005sTYAAY",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -9121,19 +9073,19 @@
             },
             "RecordTypeId": {
                 "displayValue": null,
-                "value": "012T10000004Kb3IAE"
+                "value": "012xx0000005sTYAAY"
             }
         },
         "id": null,
         "lastModifiedById": null,
         "lastModifiedDate": null,
-        "recordTypeId": "012T10000004Kb3IAE",
+        "recordTypeId": "012xx0000005sTYAAY",
         "recordTypeInfo": {
             "available": false,
             "defaultRecordTypeMapping": false,
             "master": false,
             "name": "Test Entity Type 1",
-            "recordTypeId": "012T10000004Kb3IAE"
+            "recordTypeId": "012xx0000005sTYAAY"
         },
         "systemModstamp": null,
         "weakEtag": 0

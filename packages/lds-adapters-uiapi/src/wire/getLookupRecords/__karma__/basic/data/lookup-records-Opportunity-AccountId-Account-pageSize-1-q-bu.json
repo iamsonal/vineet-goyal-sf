@@ -1,7 +1,7 @@
 {
-    "count": 1,
+    "count": 3,
     "currentPageToken": null,
-    "currentPageUrl": "/services/data/v50.0/ui-api/lookups/Opportunity/AccountId/Account?q=Bur&searchType=TypeAhead&page=1&pageSize=10",
+    "currentPageUrl": "/services/data/v51.0/ui-api/lookups/Opportunity/AccountId/Account?q=Bur&searchType=TypeAhead&page=1&pageSize=10",
     "nextPageToken": null,
     "nextPageUrl": null,
     "previousPageToken": null,
@@ -10,7 +10,7 @@
         {
             "apiName": "Account",
             "childRelationships": {},
-            "eTag": "e391d02a8ce961b3c2e5655a534b6f5c",
+            "eTag": "d0e3354475068f7b1fabda2bdf245ba1",
             "fields": {
                 "DisambiguationField": {
                     "displayValue": null,
@@ -18,24 +18,84 @@
                 },
                 "Id": {
                     "displayValue": null,
-                    "value": "001xx000003GYTgAAO"
+                    "value": "001xx000003Gl4pAAC"
                 },
                 "Name": {
                     "displayValue": null,
-                    "value": "Burlington Textiles Corp of America"
+                    "value": "Burlignton"
                 },
                 "Site": {
                     "displayValue": null,
                     "value": null
                 }
             },
-            "id": "001xx000003GYTgAAO",
-            "lastModifiedById": null,
-            "lastModifiedDate": null,
+            "id": "001xx000003Gl4pAAC",
+            "lastModifiedById": "005xx000001XN4DAAW",
+            "lastModifiedDate": "2020-08-17T19:09:06.000Z",
             "recordTypeId": "012000000000000AAA",
             "recordTypeInfo": null,
-            "systemModstamp": null,
-            "weakEtag": 0
+            "systemModstamp": "2020-08-17T19:09:06.000Z",
+            "weakEtag": 1597691346000
+        },
+        {
+            "apiName": "Account",
+            "childRelationships": {},
+            "eTag": "c82a36e40610b6b8e77f9dca31ea019d",
+            "fields": {
+                "DisambiguationField": {
+                    "displayValue": null,
+                    "value": null
+                },
+                "Id": {
+                    "displayValue": null,
+                    "value": "001xx000003Gl4qAAC"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Burros"
+                },
+                "Site": {
+                    "displayValue": null,
+                    "value": null
+                }
+            },
+            "id": "001xx000003Gl4qAAC",
+            "lastModifiedById": "005xx000001XN4DAAW",
+            "lastModifiedDate": "2020-08-17T19:09:06.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2020-08-17T19:09:06.000Z",
+            "weakEtag": 1597691346000
+        },
+        {
+            "apiName": "Account",
+            "childRelationships": {},
+            "eTag": "ef4e3a36b6b43639549c82d0534d6f28",
+            "fields": {
+                "DisambiguationField": {
+                    "displayValue": null,
+                    "value": null
+                },
+                "Id": {
+                    "displayValue": null,
+                    "value": "001xx000003Gl4rAAC"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "Burton"
+                },
+                "Site": {
+                    "displayValue": null,
+                    "value": null
+                }
+            },
+            "id": "001xx000003Gl4rAAC",
+            "lastModifiedById": "005xx000001XN4DAAW",
+            "lastModifiedDate": "2020-08-17T19:09:06.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2020-08-17T19:09:06.000Z",
+            "weakEtag": 1597691346000
         }
     ]
 }

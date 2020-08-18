@@ -1,68 +1,68 @@
 {
     "count": 10,
     "currentPageToken": "0",
-    "currentPageUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity?pageSize=20&pageToken=0",
-    "eTag": "d4008daecf86b48979fc895948c0ca6c",
+    "currentPageUrl": "/services/data/v51.0/ui-api/list-ui/Opportunity?pageSize=20&pageToken=0",
+    "eTag": "a06372d5f6798897f919ca9887ca5d15",
     "lists": [
         {
             "apiName": "AllOpportunities",
-            "id": "00Bxx0000029aFNEAY",
+            "id": "00Bxx0000029foXEAQ",
             "label": "All Opportunities",
-            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/AllOpportunities"
+            "listUiUrl": "/services/data/v51.0/ui-api/list-ui/Opportunity/AllOpportunities"
         },
         {
             "apiName": "ClosingNextMonth",
-            "id": "00Bxx0000029aFLEAY",
+            "id": "00Bxx0000029foVEAQ",
             "label": "Closing Next Month",
-            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/ClosingNextMonth"
+            "listUiUrl": "/services/data/v51.0/ui-api/list-ui/Opportunity/ClosingNextMonth"
         },
         {
             "apiName": "ClosingThisMonth",
-            "id": "00Bxx0000029aF3EAI",
+            "id": "00Bxx0000029foDEAQ",
             "label": "Closing This Month",
-            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/ClosingThisMonth"
+            "listUiUrl": "/services/data/v51.0/ui-api/list-ui/Opportunity/ClosingThisMonth"
         },
         {
             "apiName": "MyOpportunities",
-            "id": "00Bxx0000029aFkEAI",
+            "id": "00Bxx0000029fouEAA",
             "label": "My Opportunities",
-            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/MyOpportunities"
+            "listUiUrl": "/services/data/v51.0/ui-api/list-ui/Opportunity/MyOpportunities"
         },
         {
             "apiName": "NewLastWeek",
-            "id": "00Bxx0000029aFDEAY",
+            "id": "00Bxx0000029foNEAQ",
             "label": "New Last Week",
-            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/NewLastWeek"
+            "listUiUrl": "/services/data/v51.0/ui-api/list-ui/Opportunity/NewLastWeek"
         },
         {
             "apiName": "NewThisWeek",
-            "id": "00Bxx0000029aFcEAI",
+            "id": "00Bxx0000029fomEAA",
             "label": "New This Week",
-            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/NewThisWeek"
+            "listUiUrl": "/services/data/v51.0/ui-api/list-ui/Opportunity/NewThisWeek"
         },
         {
             "apiName": "Default_Opportunity_Pipeline",
-            "id": "00Bxx0000029aLTEAY",
+            "id": "00Bxx0000029fudEAA",
             "label": "Opportunity Pipeline",
-            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/Default_Opportunity_Pipeline"
+            "listUiUrl": "/services/data/v51.0/ui-api/list-ui/Opportunity/Default_Opportunity_Pipeline"
         },
         {
             "apiName": "Private",
-            "id": "00Bxx0000029aFYEAY",
+            "id": "00Bxx0000029foiEAA",
             "label": "Private",
-            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/Private"
+            "listUiUrl": "/services/data/v51.0/ui-api/list-ui/Opportunity/Private"
         },
         {
             "apiName": "RecentlyViewedOpportunities",
-            "id": "00Bxx0000029aFeEAI",
+            "id": "00Bxx0000029fooEAA",
             "label": "Recently Viewed Opportunities",
-            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/RecentlyViewedOpportunities"
+            "listUiUrl": "/services/data/v51.0/ui-api/list-ui/Opportunity/RecentlyViewedOpportunities"
         },
         {
             "apiName": "Won",
-            "id": "00Bxx0000029aFqEAI",
+            "id": "00Bxx0000029fp0EAA",
             "label": "Won",
-            "listUiUrl": "/services/data/v50.0/ui-api/list-ui/Opportunity/Won"
+            "listUiUrl": "/services/data/v51.0/ui-api/list-ui/Opportunity/Won"
         }
     ],
     "nextPageToken": null,

@@ -8,7 +8,7 @@
     "defaultRecordTypeId": null,
     "deletable": false,
     "dependentFields": {},
-    "eTag": "375f9cc456e36a32a8ef673ba6d01aa2",
+    "eTag": "e4b760282f0ff91f4df9ba6675e48d18",
     "feedEnabled": false,
     "fields": {
         "AccountId": {
@@ -462,7 +462,7 @@
     "searchable": false,
     "themeInfo": {
         "color": "7F8DE1",
-        "iconUrl": "https://scarraway-wsm.internal.salesforce.com:7443/img/icon/t4v35/standard/account_120.png"
+        "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
     },
     "updateable": false
 }

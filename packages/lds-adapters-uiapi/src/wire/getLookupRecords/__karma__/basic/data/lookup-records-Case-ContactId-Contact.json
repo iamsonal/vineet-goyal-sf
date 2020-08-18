@@ -1,7 +1,7 @@
 {
     "count": 1,
     "currentPageToken": null,
-    "currentPageUrl": "/services/data/v50.0/ui-api/lookups/Case/ContactId/Contact?q=jak&searchType=TypeAhead&page=1&pageSize=10",
+    "currentPageUrl": "/services/data/v51.0/ui-api/lookups/Case/ContactId/Contact?q=jak&searchType=TypeAhead&page=1&pageSize=10",
     "nextPageToken": null,
     "nextPageUrl": null,
     "previousPageToken": null,
@@ -10,40 +10,11 @@
         {
             "apiName": "Contact",
             "childRelationships": {},
-            "eTag": "152a071891855bccb47ddee039efc4cd",
+            "eTag": "85d004dc34030de24c97244650d3edbf",
             "fields": {
                 "Account": {
-                    "displayValue": "sForce",
-                    "value": {
-                        "apiName": "Account",
-                        "childRelationships": {},
-                        "eTag": "05ddd52cc05ea22955ed9650e9960b4c",
-                        "fields": {
-                            "Id": {
-                                "displayValue": null,
-                                "value": "001xx000003GYTqAAO"
-                            },
-                            "Name": {
-                                "displayValue": null,
-                                "value": "sForce"
-                            }
-                        },
-                        "id": "001xx000003GYTqAAO",
-                        "lastModifiedById": null,
-                        "lastModifiedDate": null,
-                        "recordTypeId": "012000000000000AAA",
-                        "recordTypeInfo": null,
-                        "systemModstamp": null,
-                        "weakEtag": 0
-                    }
-                },
-                "AccountId": {
                     "displayValue": null,
-                    "value": "001xx000003GYTqAAO"
-                },
-                "DisambiguationField": {
-                    "displayValue": null,
-                    "value": "sForce"
+                    "value": null
                 },
                 "FirstName": {
                     "displayValue": null,
@@ -51,24 +22,24 @@
                 },
                 "Id": {
                     "displayValue": null,
-                    "value": "003xx000004WhCtAAK"
+                    "value": "003xx000004WliAAAS"
                 },
                 "LastName": {
                     "displayValue": null,
-                    "value": "Llorrac"
+                    "value": "Norris"
                 },
                 "Name": {
                     "displayValue": null,
-                    "value": "Jake Llorrac"
+                    "value": "Jake Norris"
                 }
             },
-            "id": "003xx000004WhCtAAK",
-            "lastModifiedById": null,
-            "lastModifiedDate": null,
+            "id": "003xx000004WliAAAS",
+            "lastModifiedById": "005xx000001XN4DAAW",
+            "lastModifiedDate": "2020-08-17T19:09:06.000Z",
             "recordTypeId": "012000000000000AAA",
             "recordTypeInfo": null,
-            "systemModstamp": null,
-            "weakEtag": 0
+            "systemModstamp": "2020-08-17T19:09:06.000Z",
+            "weakEtag": 1597691346000
         }
     ]
 }

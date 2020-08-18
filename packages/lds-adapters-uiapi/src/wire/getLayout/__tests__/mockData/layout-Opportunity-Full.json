@@ -1,6 +1,6 @@
 {
-    "eTag": "83c4e4d5cbab1cae8416c882f96e6113",
-    "id": "00hRM000002qNK7YAM",
+    "eTag": "f446c0ebb622bac92430cf7f0f7bbe81",
+    "id": "00hxx0000019ZToAAM",
     "layoutType": "Full",
     "mode": "View",
     "objectApiName": "Opportunity",
@@ -10,7 +10,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Opportunity Information",
-            "id": "01BRM00000A2Rzq2AF",
+            "id": "01Bxx000002CESwEAO",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -257,7 +257,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Additional Information",
-            "id": "01BRM00000A2Rzs2AF",
+            "id": "01Bxx000002CESyEAO",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -368,7 +368,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "System Information",
-            "id": "01BRM00000A2Rzv2AF",
+            "id": "01Bxx000002CET1EAO",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -422,7 +422,7 @@
             "collapsible": false,
             "columns": 1,
             "heading": "Description Information",
-            "id": "01BRM00000A2Rzu2AF",
+            "id": "01Bxx000002CET0EAO",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -451,7 +451,7 @@
             "collapsible": false,
             "columns": 3,
             "heading": "Custom Links",
-            "id": "01BRM00000A2Rzt2AF",
+            "id": "01Bxx000002CESzEAO",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -464,7 +464,7 @@
                                     "apiName": "DeliveryStatus",
                                     "behavior": "NewWindow",
                                     "componentType": "CustomLink",
-                                    "customLinkUrl": "/servlet/servlet.Integration?lid=00bRM000000tCBT&eid=ENTITY_ID&ic=1",
+                                    "customLinkUrl": "/servlet/servlet.Integration?lid=00bxx000000lIiB&eid=ENTITY_ID&ic=1",
                                     "label": "Delivery Status"
                                 }
                             ],

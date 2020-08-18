@@ -219,7 +219,7 @@
     "defaultRecordTypeId": "012000000000000AAA",
     "deletable": true,
     "dependentFields": {},
-    "eTag": "dfebe0bdb0f6a115fd23fa80b8f87e05",
+    "eTag": "157342764ee421fe62d28dd7bcf8dab4",
     "feedEnabled": true,
     "fields": {
         "AccountId": {
@@ -1100,6 +1100,82 @@
             "unique": false,
             "updateable": false
         },
+        "LastAmountChangedHistoryId": {
+            "apiName": "LastAmountChangedHistoryId",
+            "calculated": false,
+            "compound": false,
+            "compoundComponentName": null,
+            "compoundFieldName": null,
+            "controllerName": null,
+            "controllingFields": [],
+            "createable": false,
+            "custom": false,
+            "dataType": "Reference",
+            "extraTypeInfo": null,
+            "filterable": true,
+            "filteredLookupInfo": null,
+            "highScaleNumber": false,
+            "htmlFormatted": false,
+            "inlineHelpText": null,
+            "label": "Opportunity History ID",
+            "length": 18,
+            "nameField": false,
+            "polymorphicForeignKey": false,
+            "precision": 0,
+            "reference": true,
+            "referenceTargetField": null,
+            "referenceToInfos": [
+                {
+                    "apiName": "OpportunityHistory",
+                    "nameFields": []
+                }
+            ],
+            "relationshipName": "LastAmountChangedHistory",
+            "required": false,
+            "scale": 0,
+            "searchPrefilterable": false,
+            "sortable": true,
+            "unique": false,
+            "updateable": false
+        },
+        "LastCloseDateChangedHistoryId": {
+            "apiName": "LastCloseDateChangedHistoryId",
+            "calculated": false,
+            "compound": false,
+            "compoundComponentName": null,
+            "compoundFieldName": null,
+            "controllerName": null,
+            "controllingFields": [],
+            "createable": false,
+            "custom": false,
+            "dataType": "Reference",
+            "extraTypeInfo": null,
+            "filterable": true,
+            "filteredLookupInfo": null,
+            "highScaleNumber": false,
+            "htmlFormatted": false,
+            "inlineHelpText": null,
+            "label": "Opportunity History ID",
+            "length": 18,
+            "nameField": false,
+            "polymorphicForeignKey": false,
+            "precision": 0,
+            "reference": true,
+            "referenceTargetField": null,
+            "referenceToInfos": [
+                {
+                    "apiName": "OpportunityHistory",
+                    "nameFields": []
+                }
+            ],
+            "relationshipName": "LastCloseDateChangedHistory",
+            "required": false,
+            "scale": 0,
+            "searchPrefilterable": false,
+            "sortable": true,
+            "unique": false,
+            "updateable": false
+        },
         "LastModifiedById": {
             "apiName": "LastModifiedById",
             "calculated": false,
@@ -1696,7 +1772,7 @@
     "searchable": true,
     "themeInfo": {
         "color": "FCB95B",
-        "iconUrl": "https://broth-flatwhite-4720-dev-ed.localhost.internal.salesforce.com:7443/img/icon/t4v35/standard/opportunity_120.png"
+        "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/opportunity_120.png"
     },
     "updateable": true
 }

@@ -1,7 +1,7 @@
 {
     "apiName": "User",
     "childRelationships": {},
-    "eTag": "7538f1feb13911fe68c144db8bf9ea9e",
+    "eTag": "4c032b8d12ea476ab6d960f95a916ad3",
     "fields": {
         "City": {
             "displayValue": null,
@@ -9,14 +9,14 @@
         },
         "Id": {
             "displayValue": null,
-            "value": "005xx000001XL1tAAG"
+            "value": "005xx000001XN4DAAW"
         }
     },
-    "id": "005xx000001XL1tAAG",
-    "lastModifiedById": "005xx000001XL1tAAG",
-    "lastModifiedDate": "2020-05-28T14:42:41.000Z",
+    "id": "005xx000001XN4DAAW",
+    "lastModifiedById": "005xx000001XN4DAAW",
+    "lastModifiedDate": "2020-08-17T19:09:21.000Z",
     "recordTypeId": null,
     "recordTypeInfo": null,
-    "systemModstamp": "2020-05-28T14:42:41.000Z",
-    "weakEtag": 1590676961000
+    "systemModstamp": "2020-08-17T19:09:21.000Z",
+    "weakEtag": 1597691361000
 }

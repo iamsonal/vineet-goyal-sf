@@ -105,13 +105,6 @@
                     "relationshipName": "DeclinedEventRelations"
                 },
                 {
-                    "childObjectApiName": "DelegatedAccount",
-                    "fieldName": "ManagedById",
-                    "junctionIdListNames": [],
-                    "junctionReferenceTo": [],
-                    "relationshipName": "ParentId"
-                },
-                {
                     "childObjectApiName": "EmailMessageRelation",
                     "fieldName": "RelationId",
                     "junctionIdListNames": [],
@@ -341,7 +334,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "4a394056422b1762299cd293ab73bf42",
+            "eTag": "8be9efbe5e66db80925dbea4f4a64d09",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -410,7 +403,7 @@
                     "relationshipName": "Account",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": false
@@ -755,7 +748,7 @@
                     "relationshipName": "Contact",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -1533,7 +1526,7 @@
                     "relationshipName": "Individual",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2071,7 +2064,7 @@
                     "relationshipName": "Manager",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2439,7 +2432,7 @@
                     "relationshipName": "Profile",
                     "required": true,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -3324,7 +3317,7 @@
                     "highScaleNumber": false,
                     "htmlFormatted": false,
                     "inlineHelpText": null,
-                    "label": "Work.com User",
+                    "label": "WDC User",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -5254,39 +5247,6 @@
                     "unique": false,
                     "updateable": true
                 },
-                "UserPreferencesPipelineViewHideHelpPopover": {
-                    "apiName": "UserPreferencesPipelineViewHideHelpPopover",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": false,
-                    "dataType": "Boolean",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "PipelineViewHideHelpPopover",
-                    "length": 0,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": true,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": false,
-                    "unique": false,
-                    "updateable": true
-                },
                 "UserPreferencesPreviewCustomTheme": {
                     "apiName": "UserPreferencesPreviewCustomTheme",
                     "calculated": false,
@@ -6706,7 +6666,7 @@
                     "relationshipName": "UserRole",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -6789,12 +6749,12 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://pluto-tonkatsu-6922-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         },
-        "Product2DataTranslation": {
-            "apiName": "Product2DataTranslation",
+        "Partner": {
+            "apiName": "Partner",
             "associateEntityType": null,
             "associateParentEntity": null,
             "childRelationships": [],
@@ -6803,7 +6763,7 @@
             "defaultRecordTypeId": null,
             "deletable": true,
             "dependentFields": {},
-            "eTag": "58abc525735eaf8deed68446a7213340",
+            "eTag": "90be2e00cdc3a3d30541433e7517def1",
             "feedEnabled": false,
             "fields": {
                 "AccountFromId": {
@@ -7277,7 +7237,7 @@
             "searchable": false,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://pluto-tonkatsu-6922-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_partner_120.png"
+                "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/account_partner_120.png"
             },
             "updateable": false
         }
@@ -7285,7 +7245,7 @@
     "record": {
         "apiName": "Partner",
         "childRelationships": {},
-        "eTag": "82113e8a5a6a7ba166d926a37ea9f4bd",
+        "eTag": "e6b89f2025d5b2e242513abb868f2b89",
         "fields": {
             "CreatedDate": {
                 "displayValue": null,

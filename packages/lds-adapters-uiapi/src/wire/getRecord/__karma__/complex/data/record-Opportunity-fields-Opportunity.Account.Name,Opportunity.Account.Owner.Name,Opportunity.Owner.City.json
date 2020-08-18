@@ -1,18 +1,18 @@
 {
     "apiName": "Opportunity",
     "childRelationships": {},
-    "eTag": "00437c18cb5995d99e6757e0f579a7e7",
+    "eTag": "b02ca0a3d14640c16a90eb5d9cd5b11e",
     "fields": {
         "Account": {
             "displayValue": "Burlington Textiles Corp of America",
             "value": {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "7d4154d81ed47100a8bcba5de1386f13",
+                "eTag": "b62f814f5013b17ed31d5320c5e246e5",
                 "fields": {
                     "Id": {
                         "displayValue": null,
-                        "value": "001xx000003Gn4WAAS"
+                        "value": "001xx000003Gl1cAAC"
                     },
                     "Name": {
                         "displayValue": null,
@@ -23,50 +23,50 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "7538f1feb13911fe68c144db8bf9ea9e",
+                            "eTag": "4c032b8d12ea476ab6d960f95a916ad3",
                             "fields": {
                                 "Id": {
                                     "displayValue": null,
-                                    "value": "005xx000001XL1tAAG"
+                                    "value": "005xx000001XN4DAAW"
                                 },
                                 "Name": {
                                     "displayValue": null,
                                     "value": "User User"
                                 }
                             },
-                            "id": "005xx000001XL1tAAG",
-                            "lastModifiedById": "005xx000001XL1tAAG",
-                            "lastModifiedDate": "2020-05-28T14:42:41.000Z",
+                            "id": "005xx000001XN4DAAW",
+                            "lastModifiedById": "005xx000001XN4DAAW",
+                            "lastModifiedDate": "2020-08-17T19:09:21.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2020-05-28T14:42:41.000Z",
-                            "weakEtag": 1590676961000
+                            "systemModstamp": "2020-08-17T19:09:21.000Z",
+                            "weakEtag": 1597691361000
                         }
                     },
                     "OwnerId": {
                         "displayValue": null,
-                        "value": "005xx000001XL1tAAG"
+                        "value": "005xx000001XN4DAAW"
                     }
                 },
-                "id": "001xx000003Gn4WAAS",
-                "lastModifiedById": "005xx000001XL1tAAG",
-                "lastModifiedDate": "2020-05-28T14:00:50.000Z",
+                "id": "001xx000003Gl1cAAC",
+                "lastModifiedById": "005xx000001XN4DAAW",
+                "lastModifiedDate": "2020-08-17T18:55:35.000Z",
                 "recordTypeId": "012000000000000AAA",
                 "recordTypeInfo": null,
-                "systemModstamp": "2020-05-28T14:00:50.000Z",
-                "weakEtag": 1590674450000
+                "systemModstamp": "2020-08-17T18:55:35.000Z",
+                "weakEtag": 1597690535000
             }
         },
         "AccountId": {
             "displayValue": null,
-            "value": "001xx000003Gn4WAAS"
+            "value": "001xx000003Gl1cAAC"
         },
         "Owner": {
-            "displayValue": null,
+            "displayValue": "User User",
             "value": {
                 "apiName": "User",
                 "childRelationships": {},
-                "eTag": "7538f1feb13911fe68c144db8bf9ea9e",
+                "eTag": "4c032b8d12ea476ab6d960f95a916ad3",
                 "fields": {
                     "City": {
                         "displayValue": null,
@@ -74,28 +74,28 @@
                     },
                     "Id": {
                         "displayValue": null,
-                        "value": "005xx000001XL1tAAG"
+                        "value": "005xx000001XN4DAAW"
                     }
                 },
-                "id": "005xx000001XL1tAAG",
-                "lastModifiedById": "005xx000001XL1tAAG",
-                "lastModifiedDate": "2020-05-28T14:42:41.000Z",
+                "id": "005xx000001XN4DAAW",
+                "lastModifiedById": "005xx000001XN4DAAW",
+                "lastModifiedDate": "2020-08-17T19:09:21.000Z",
                 "recordTypeId": null,
                 "recordTypeInfo": null,
-                "systemModstamp": "2020-05-28T14:42:41.000Z",
-                "weakEtag": 1590676961000
+                "systemModstamp": "2020-08-17T19:09:21.000Z",
+                "weakEtag": 1597691361000
             }
         },
         "OwnerId": {
             "displayValue": null,
-            "value": "005xx000001XL1tAAG"
+            "value": "005xx000001XN4DAAW"
         }
     },
-    "id": "006xx000001aA4kAAE",
-    "lastModifiedById": "005xx000001XL1tAAG",
-    "lastModifiedDate": "2020-05-28T14:00:50.000Z",
+    "id": "006xx000001a8UsAAI",
+    "lastModifiedById": "005xx000001XN4DAAW",
+    "lastModifiedDate": "2020-08-17T18:55:35.000Z",
     "recordTypeId": "012000000000000AAA",
     "recordTypeInfo": null,
-    "systemModstamp": "2020-05-28T14:00:50.000Z",
-    "weakEtag": 1590674450000
+    "systemModstamp": "2020-08-17T18:55:35.000Z",
+    "weakEtag": 1597690535000
 }

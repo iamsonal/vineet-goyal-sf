@@ -239,6 +239,12 @@ async function getRecordId(recordName, entityName) {
     return getIdFromSoql(`SELECT Id FROM ${entityName} WHERE Name = '${recordName}' LIMIT 1`);
 }
 
+async function getRecordTypeId(entityName, recordTypeName) {
+    return getIdFromSoql(
+        `SELECT Id FROM RecordType WHERE sObjectType='${entityName}' AND Name = '${recordTypeName}' LIMIT 1`
+    );
+}
+
 // metadata helpers
 
 async function createSObject(entityName, label, recordTypes = 0) {
@@ -268,26 +274,112 @@ async function createSObject(entityName, label, recordTypes = 0) {
         const baseName = entityName.replace(/__c$/, '');
 
         let metadata = [];
+        let profileMetadata = [];
         for (let i = 1; i <= recordTypes; ++i) {
+            const recordTypeName = `${entityName}.${baseName}_Type_${i}`;
             metadata.push({
-                fullName: `${entityName}.${baseName}_Type_${i}`,
+                fullName: recordTypeName,
                 active: true,
                 label: `${label} Type ${i}`,
+            });
+
+            profileMetadata.push({
+                fullName: 'Admin',
+                recordTypeVisibilities: {
+                    recordType: recordTypeName,
+                    visible: true,
+                    default: i === 1,
+                },
             });
         }
 
         result = await $conn.metadata.create('RecordType', metadata);
-        result.forEach(res => {
-            if (!res.success) {
-                throw new Error(res.errors.message);
+        if (Array.isArray(result)) {
+            result.forEach(res => {
+                if (!res.success) {
+                    throw new Error(res.errors.message);
+                }
+            });
+        } else {
+            if (!result.success) {
+                throw new Error(result.errors.message);
             }
+        }
+
+        result = await $conn.metadata.upsert('Profile', profileMetadata);
+        if (Array.isArray(result)) {
+            result.forEach(res => {
+                if (!res.success) {
+                    throw new Error(
+                        `Error assigning RecordType to 'Admin' profile: ${res.errors.message}`
+                    );
+                }
+            });
+        } else {
+            if (!result.success) {
+                throw new Error(
+                    `Error assigning RecordType to 'Admin' profile: ${result.errors.message}`
+                );
+            }
+        }
+    }
+}
+
+/**
+ * Create a custom field for the specified entity.
+ * Uses Metadata API object 'CustomField' to upsert field metadata.
+ * https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/customfield.htm
+ * @param {string} entityApiName The api name of the entity. i.e. Account
+ * @param {string} fieldApiName The api name for the new field. i.e. CustomField__c
+ * @param {string} type The type of the field. Pick from list of Enum:
+ * https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_field_types.htm
+ * @param {string} label The label to use for the new field. i.e. Custom Field Label
+ * @param {object} params An object containing properties for different field types. i.e. number fields
+ * have { precision: 3, scale: 0}. See available properties in doc above for Metadata API 'CustomField'.
+ */
+async function createCustomField(entityApiName, fieldApiName, type, label, params) {
+    // eslint-disable-next-line no-console
+    console.log(`Creating new custom field '${fieldApiName}'`);
+    const fullName = `${entityApiName}.${fieldApiName}`;
+    // eslint-disable-next-line no-undef
+    let results = await $conn.metadata.create('CustomField', {
+        fullName,
+        type: type,
+        label: label,
+        ...params,
+    });
+
+    if (!results.success) {
+        throw new Error(
+            `Error creating new custom field '${fieldApiName}' : ${results.errors.message}`
+        );
+    }
+
+    toDeleteMetadata.push({ type: 'CustomField', metadata: [fullName] });
+
+    if (results.success) {
+        // eslint-disable-next-line no-console
+        console.log(`Updating FLS for field ${fullName} on profile 'Admin'`);
+        // eslint-disable-next-line no-undef
+        let result = await $conn.metadata.upsert('Profile', {
+            fullName: 'Admin',
+            fieldPermissions: {
+                editable: true,
+                field: fullName,
+            },
         });
+        if (!result.success) {
+            throw new Error(
+                `Error updating FLS for field ${fullName} on profile 'Admin' : ${results.errors.message}`
+            );
+        }
     }
 }
 
 module.exports = {
     cleanup,
     createAccountWithOwner,
+    createCustomField,
     createOpportunityWithAccount,
     createTempRecord,
     getAccountByName,
@@ -295,6 +387,7 @@ module.exports = {
     getListViewByName,
     getOpportunityByName,
     getRecordId,
+    getRecordTypeId,
     getSysAdminUserId,
     requestDelete,
     requestGet,

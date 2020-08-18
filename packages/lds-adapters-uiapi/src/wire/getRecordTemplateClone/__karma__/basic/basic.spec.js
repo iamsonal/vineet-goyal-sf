@@ -11,29 +11,18 @@ import GetObjectInfo from '../../../getObjectInfo/__karma__/lwc/object-basic';
 import GetRecordTemplateClone from '../lwc/get-record-template-clone';
 import { expireRecords, mockGetRecordNetwork } from '../../../../../karma/uiapi-test-util';
 
-// use mocks from getRecordTemplateCreate
-const CREATE_MOCK_PREFIX = 'wire/getRecordTemplateCreate/__karma__/basic/data/';
+const MOCK_PREFIX = 'wire/getRecordTemplateClone/__karma__/basic/data/';
 
-function getCreateTemplateMock(filename) {
-    const mock = globalGetMock(CREATE_MOCK_PREFIX + filename);
-    return mock;
-}
-
-const recordIdGlobal = '001RM000004PkciYAC';
-function getCreateTemplateMockWithSrcId(filename, recordId) {
-    const mock = globalGetMock(CREATE_MOCK_PREFIX + filename);
-    mock.record.fields.CloneSourceId = {
-        displayValue: null,
-        value: recordId ? recordId : recordIdGlobal,
-    };
-    return mock;
+function getMock(filename) {
+    return globalGetMock(MOCK_PREFIX + filename);
 }
 
 describe('GetRecordTemplateClone', () => {
     it('should make HTTP request when recordTypeId param is undefined and response contains master rtId', async () => {
-        const mock = getCreateTemplateMockWithSrcId('record-template-create-Account');
+        const mock = getMock('record-template-clone-Custom_Object__c');
+        const recordId = mock.record.fields.CloneSourceId.value;
         const config = {
-            recordId: recordIdGlobal,
+            recordId,
             recordTypeId: undefined,
         };
 
@@ -45,14 +34,16 @@ describe('GetRecordTemplateClone', () => {
     });
 
     it('should not make another HTTP request when master recordTypeId is also the default recordTypeId', async () => {
-        const mock = getCreateTemplateMockWithSrcId('record-template-create-Account');
+        const mock = getMock('record-template-clone-Custom_Object__c');
+        const recordId = mock.record.fields.CloneSourceId.value;
+        const recordTypeId = mock.record.recordTypeId;
         const config = {
-            recordId: recordIdGlobal,
-            recordTypeId: '012000000000000AAA',
+            recordId,
+            recordTypeId,
         };
 
         const config2 = {
-            recordId: recordIdGlobal,
+            recordId,
             recordTypeId: undefined,
         };
 
@@ -68,14 +59,14 @@ describe('GetRecordTemplateClone', () => {
     });
 
     it('should not make another HTTP request when config is the same', async () => {
-        const mock = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-Name'
-        );
-
+        const mock = getMock('record-template-clone-Custom_Object_2__c-optionalField-Number');
+        const recordId = mock.record.fields.CloneSourceId.value;
+        const recordTypeId = mock.record.recordTypeId;
+        const apiName = mock.record.apiName;
         const config = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.Name'],
-            recordTypeId: '012RM00000025SOYAY',
+            recordId,
+            optionalFields: [`${apiName}.Number__c`],
+            recordTypeId,
         };
 
         mockGetRecordTemplateCloneNetwork(config, mock);
@@ -95,183 +86,228 @@ describe('GetRecordTemplateClone', () => {
     });
 
     it('should make another HTTP request when optionalFields of 2nd request is superset', async () => {
-        const nameMock = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-Name'
+        const numberMock = getMock('record-template-clone-Custom_Object_2__c-optionalField-Number');
+        const numberMockRecordId = numberMock.record.fields.CloneSourceId.value;
+        const numberMockRecordTypeId = numberMock.record.recordTypeId;
+        const numberMockApiName = numberMock.record.apiName;
+        const lookupNumberMock = getMock(
+            'record-template-clone-Custom_Object_2__c-optionalField-Lookup-Number'
         );
-        const parentNameMock = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-Parent-Name'
-        );
+        const lookupNumberMockRecordId = lookupNumberMock.record.fields.CloneSourceId.value;
+        const lookupNumberMockRecordTypeId = lookupNumberMock.record.recordTypeId;
+        const lookupNumberMockApiName = lookupNumberMock.record.apiName;
 
-        const nameConfig = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.Name'],
-            recordTypeId: '012RM00000025SOYAY',
+        const numberConfig = {
+            recordId: numberMockRecordId,
+            optionalFields: [`${numberMockApiName}.Number__c`],
+            recordTypeId: numberMockRecordTypeId,
         };
 
-        const parentNameConfig = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.Name', 'Account.Parent'],
-            recordTypeId: '012RM00000025SOYAY',
+        const lookupNumberConfig = {
+            recordId: lookupNumberMockRecordId,
+            optionalFields: [
+                `${lookupNumberMockApiName}.Account__c`,
+                `${lookupNumberMockApiName}.Account__r.Id`,
+                `${lookupNumberMockApiName}.Account__r.Name`,
+                `${lookupNumberMockApiName}.Number__c`,
+            ],
+            recordTypeId: lookupNumberMockRecordTypeId,
         };
 
-        const parentNameNetworkConfig = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.CloneSourceId', 'Account.Name', 'Account.Parent'],
-            recordTypeId: '012RM00000025SOYAY',
+        const lookupNumberNetworkConfig = {
+            recordId: lookupNumberMockRecordId,
+            optionalFields: [
+                `${lookupNumberMockApiName}.Account__c`,
+                `${lookupNumberMockApiName}.Account__r.Id`,
+                `${lookupNumberMockApiName}.Account__r.Name`,
+                `${lookupNumberMockApiName}.CloneSourceId`,
+                `${lookupNumberMockApiName}.Number__c`,
+            ],
+            recordTypeId: lookupNumberMockRecordTypeId,
         };
 
-        mockGetRecordTemplateCloneNetwork(nameConfig, nameMock);
-        mockGetRecordTemplateCloneNetwork(parentNameNetworkConfig, parentNameMock);
+        mockGetRecordTemplateCloneNetwork(numberConfig, numberMock);
+        mockGetRecordTemplateCloneNetwork(lookupNumberNetworkConfig, lookupNumberMock);
 
-        const wireA = await setupElement(nameConfig, GetRecordTemplateClone);
+        const wireA = await setupElement(numberConfig, GetRecordTemplateClone);
 
         expect(wireA.pushCount()).toBe(1);
-        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(nameMock);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(numberMock);
 
-        const wireB = await setupElement(parentNameConfig, GetRecordTemplateClone);
+        const wireB = await setupElement(lookupNumberConfig, GetRecordTemplateClone);
 
         expect(wireB.pushCount()).toBe(1);
-        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(parentNameMock);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(lookupNumberMock);
 
         expect(wireA.pushCount()).toBe(2);
-        nameMock.record.fields.Name.displayValue = 'Bar';
-        nameMock.record.fields.Name.value = 'Bar';
-        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(nameMock);
     });
 
     it('should make another HTTP request when optionalFields for both wires are not the same set', async () => {
-        const nameMock = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-Name'
-        );
-        const parentMock = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-Parent'
-        );
-        const parentNameMock = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-Parent-Name'
-        );
+        const numberMock = getMock('record-template-clone-Custom_Object_2__c-optionalField-Number');
+        const numberMockRecordId = numberMock.record.fields.CloneSourceId.value;
+        const numberMockRecordTypeId = numberMock.record.recordTypeId;
+        const numberMockApiName = numberMock.record.apiName;
 
-        const nameConfig = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.Name'],
-            recordTypeId: '012RM00000025SOYAY',
+        const lookupMock = getMock('record-template-clone-Custom_Object_2__c-optionalField-Lookup');
+        const lookupMockRecordId = lookupMock.record.fields.CloneSourceId.value;
+        const lookupMockRecordTypeId = lookupMock.record.recordTypeId;
+        const lookupMockApiName = lookupMock.record.apiName;
+
+        const lookupNumberMock = getMock(
+            'record-template-clone-Custom_Object_2__c-optionalField-Lookup-Number'
+        );
+        const lookupNumberMockRecordId = lookupNumberMock.record.fields.CloneSourceId.value;
+        const lookupNumberMockRecordTypeId = lookupNumberMock.record.recordTypeId;
+        const lookupNumberMockApiName = lookupNumberMock.record.apiName;
+
+        const numberConfig = {
+            recordId: numberMockRecordId,
+            optionalFields: [`${numberMockApiName}.Number__c`],
+            recordTypeId: numberMockRecordTypeId,
         };
 
-        const parentConfig = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.Parent'],
-            recordTypeId: '012RM00000025SOYAY',
+        const lookupConfig = {
+            recordId: lookupMockRecordId,
+            optionalFields: [
+                `${lookupMockApiName}.Account__c`,
+                `${lookupMockApiName}.Account__r.Id`,
+                `${lookupMockApiName}.Account__r.Name`,
+            ],
+            recordTypeId: lookupMockRecordTypeId,
         };
 
-        const parentNameNetwork = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.CloneSourceId', 'Account.Name', 'Account.Parent'],
-            recordTypeId: '012RM00000025SOYAY',
+        const lookupNumberNetwork = {
+            recordId: lookupNumberMockRecordId,
+            optionalFields: [
+                `${lookupNumberMockApiName}.Account__c`,
+                `${lookupNumberMockApiName}.Account__r.Id`,
+                `${lookupNumberMockApiName}.Account__r.Name`,
+                `${lookupNumberMockApiName}.CloneSourceId`,
+                `${lookupNumberMockApiName}.Number__c`,
+            ],
+            recordTypeId: lookupNumberMockRecordTypeId,
         };
 
-        mockGetRecordTemplateCloneNetwork(nameConfig, nameMock);
-        mockGetRecordTemplateCloneNetwork(parentNameNetwork, parentNameMock);
+        mockGetRecordTemplateCloneNetwork(numberConfig, numberMock);
+        mockGetRecordTemplateCloneNetwork(lookupNumberNetwork, lookupNumberMock);
 
-        const wireA = await setupElement(nameConfig, GetRecordTemplateClone);
+        const wireA = await setupElement(numberConfig, GetRecordTemplateClone);
 
         expect(wireA.pushCount()).toBe(1);
-        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(nameMock);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(numberMock);
 
-        const wireB = await setupElement(parentConfig, GetRecordTemplateClone);
+        const wireB = await setupElement(lookupConfig, GetRecordTemplateClone);
 
         expect(wireB.pushCount()).toBe(1);
-        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(parentMock);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(lookupMock);
 
         expect(wireA.pushCount()).toBe(2);
-        nameMock.record.fields.Name.displayValue = 'Bar';
-        nameMock.record.fields.Name.value = 'Bar';
-        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(nameMock);
     });
 
     [undefined, null].forEach(value => {
         it(`should make another HTTP request when defaultRecordTypeId is already cached but optionalFields are not the same and 2nd recordTypeId is ${value}`, async () => {
-            const nameMock = getCreateTemplateMockWithSrcId(
-                'record-template-create-Account-optionalField-Name'
+            const numberMock = getMock(
+                'record-template-clone-Custom_Object_2__c-optionalField-Number'
             );
-            const parentMock = getCreateTemplateMockWithSrcId(
-                'record-template-create-Account-optionalField-Parent'
-            );
-            const parentNameMock = getCreateTemplateMockWithSrcId(
-                'record-template-create-Account-optionalField-Parent-Name'
-            );
+            const numberMockRecordId = numberMock.record.fields.CloneSourceId.value;
+            const numberMockRecordTypeId = numberMock.record.recordTypeId;
+            const numberMockApiName = numberMock.record.apiName;
 
-            const nameConfig = {
-                recordId: recordIdGlobal,
-                optionalFields: ['Account.Name'],
-                recordTypeId: '012RM00000025SOYAY',
+            const lookupMock = getMock(
+                'record-template-clone-Custom_Object_2__c-optionalField-Lookup'
+            );
+            const lookupMockRecordId = lookupMock.record.fields.CloneSourceId.value;
+            const lookupMockApiName = lookupMock.record.apiName;
+
+            const lookupNumberMock = getMock(
+                'record-template-clone-Custom_Object_2__c-optionalField-Lookup-Number'
+            );
+            const lookupNumberMockRecordId = lookupNumberMock.record.fields.CloneSourceId.value;
+            const lookupNumberMockApiName = lookupNumberMock.record.apiName;
+
+            const numberConfig = {
+                recordId: numberMockRecordId,
+                optionalFields: [`${numberMockApiName}.Number__c`],
+                recordTypeId: numberMockRecordTypeId,
             };
 
-            const parentConfig = {
-                recordId: recordIdGlobal,
-                optionalFields: ['Account.Parent'],
+            const lookupConfig = {
+                recordId: lookupMockRecordId,
+                optionalFields: [
+                    `${lookupMockApiName}.Account__c`,
+                    `${lookupMockApiName}.Account__r.Id`,
+                    `${lookupMockApiName}.Account__r.Name`,
+                ],
                 recordTypeId: value,
             };
 
-            const parentNameNetwork = {
-                recordId: recordIdGlobal,
-                optionalFields: ['Account.CloneSourceId', 'Account.Name', 'Account.Parent'],
+            const lookupNumberNetwork = {
+                recordId: lookupNumberMockRecordId,
+                optionalFields: [
+                    `${lookupNumberMockApiName}.Account__c`,
+                    `${lookupNumberMockApiName}.Account__r.Id`,
+                    `${lookupNumberMockApiName}.Account__r.Name`,
+                    `${lookupNumberMockApiName}.CloneSourceId`,
+                    `${lookupNumberMockApiName}.Number__c`,
+                ],
                 recordTypeId: undefined,
             };
 
-            mockGetRecordTemplateCloneNetwork(nameConfig, nameMock);
-            mockGetRecordTemplateCloneNetwork(parentNameNetwork, parentNameMock);
+            mockGetRecordTemplateCloneNetwork(numberConfig, numberMock);
+            mockGetRecordTemplateCloneNetwork(lookupNumberNetwork, lookupNumberMock);
 
-            const wireA = await setupElement(nameConfig, GetRecordTemplateClone);
+            const wireA = await setupElement(numberConfig, GetRecordTemplateClone);
 
             expect(wireA.pushCount()).toBe(1);
-            expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(nameMock);
+            expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(numberMock);
 
-            const wireB = await setupElement(parentConfig, GetRecordTemplateClone);
+            const wireB = await setupElement(lookupConfig, GetRecordTemplateClone);
 
             expect(wireB.pushCount()).toBe(1);
-            expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(parentMock);
+            expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(lookupMock);
 
             expect(wireA.pushCount()).toBe(2);
-            nameMock.record.fields.Name.displayValue = 'Bar';
-            nameMock.record.fields.Name.value = 'Bar';
-            expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(nameMock);
         });
     });
 
     [undefined, null].forEach(value => {
         it(`should not make another HTTP request when initial request with recordTypeId is ${value} and resulting recordTypeId is default`, async () => {
-            const nameMock = getCreateTemplateMockWithSrcId(
-                'record-template-create-Account-optionalField-Name'
+            const numberMock = getMock(
+                'record-template-clone-Custom_Object_2__c-optionalField-Number'
             );
+            const numberMockRecordId = numberMock.record.fields.CloneSourceId.value;
+            const numberMockRecordTypeId = numberMock.record.recordTypeId;
+            const numberMockApiName = numberMock.record.apiName;
 
             const rtUndefinedConfig = {
-                recordId: recordIdGlobal,
-                optionalFields: ['Account.Name'],
+                recordId: numberMockRecordId,
+                optionalFields: [`${numberMockApiName}.Number__c`],
                 recordTypeId: value,
             };
 
             const rtDefinedConfig = {
-                recordId: recordIdGlobal,
-                optionalFields: ['Account.Name'],
-                recordTypeId: '012RM00000025SOYAY',
+                recordId: numberMockRecordId,
+                optionalFields: [`${numberMockApiName}.Number__c`],
+                recordTypeId: numberMockRecordTypeId,
             };
 
             const network = {
-                recordId: recordIdGlobal,
-                optionalFields: ['Account.Name'],
+                recordId: numberMockRecordId,
+                optionalFields: [`${numberMockApiName}.Number__c`],
                 recordTypeId: undefined,
             };
 
-            mockGetRecordTemplateCloneNetwork(network, nameMock);
+            mockGetRecordTemplateCloneNetwork(network, numberMock);
 
             const wireA = await setupElement(rtUndefinedConfig, GetRecordTemplateClone);
 
             expect(wireA.pushCount()).toBe(1);
-            expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(nameMock);
+            expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(numberMock);
 
             const wireB = await setupElement(rtDefinedConfig, GetRecordTemplateClone);
 
             expect(wireB.pushCount()).toBe(1);
-            expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(nameMock);
+            expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(numberMock);
 
             // No change expected as value did not change
             expect(wireA.pushCount()).toBe(1);
@@ -279,20 +315,21 @@ describe('GetRecordTemplateClone', () => {
     });
 
     it('should make HTTP request when clone defaults have expired', async () => {
-        const mock = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-Name'
-        );
+        const mock = getMock('record-template-clone-Custom_Object_2__c-optionalField-Number');
+        const recordId = mock.record.fields.CloneSourceId.value;
+        const recordTypeId = mock.record.recordTypeId;
+        const apiName = mock.record.apiName;
 
         const config = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.Name'],
-            recordTypeId: '012RM00000025SOYAY',
+            recordId,
+            optionalFields: [`${apiName}.Number__c`],
+            recordTypeId,
         };
 
         const networkConfig = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.CloneSourceId', 'Account.Name'],
-            recordTypeId: '012RM00000025SOYAY',
+            recordId,
+            optionalFields: [`${apiName}.CloneSourceId`, `${apiName}.Number__c`],
+            recordTypeId,
         };
 
         mockGetRecordTemplateCloneNetwork(config, mock);
@@ -314,19 +351,24 @@ describe('GetRecordTemplateClone', () => {
     });
 
     it('should not refresh when a related object info is retrieved but it not changed', async () => {
-        const mockRecordCloneDefaults = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-Name'
+        const mockRecordCloneDefaults = getMock(
+            'record-template-clone-Custom_Object_2__c-optionalField-Number'
         );
-        const mockObjectInfo = getCreateTemplateMock('object-info-Account');
+        const recordId = mockRecordCloneDefaults.record.fields.CloneSourceId.value;
+        const recordTypeId = mockRecordCloneDefaults.record.recordTypeId;
+        const cloneDefaultsApiName = mockRecordCloneDefaults.record.apiName;
+
+        const mockObjectInfo = getMock('object-info-Custom_Object_2__c');
+        const apiName = mockObjectInfo.apiName;
 
         const defaultsconfig = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.Name'],
-            recordTypeId: '012RM00000025SOYAY',
+            recordId,
+            optionalFields: [`${cloneDefaultsApiName}.Number__c`],
+            recordTypeId,
         };
 
         const objectInfoConfig = {
-            objectApiName: 'Account',
+            objectApiName: apiName,
         };
 
         mockGetRecordTemplateCloneNetwork(defaultsconfig, mockRecordCloneDefaults);
@@ -347,21 +389,26 @@ describe('GetRecordTemplateClone', () => {
 
 describe('getRecordTemplateClone refreshes', () => {
     it('when a related object info changes', async () => {
-        const mockRecordCloneDefaults = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-Name'
+        const mockRecordCloneDefaults = getMock(
+            'record-template-clone-Custom_Object_2__c-optionalField-Number'
         );
-        const mockObjectInfo = getCreateTemplateMock('object-info-Account');
+        const recordId = mockRecordCloneDefaults.record.fields.CloneSourceId.value;
+        const recordTypeId = mockRecordCloneDefaults.record.recordTypeId;
+        const cloneDefaultsApiName = mockRecordCloneDefaults.record.apiName;
+
+        const mockObjectInfo = getMock('object-info-Custom_Object_2__c');
+        const apiName = mockObjectInfo.apiName;
         mockObjectInfo.eTag = 'e7c7f7e02c57bdcfa9d751b5a508f907';
         mockObjectInfo.updateable = false;
 
         const defaultsconfig = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.Name'],
-            recordTypeId: '012RM00000025SOYAY',
+            recordId,
+            optionalFields: [`${cloneDefaultsApiName}.Number__c`],
+            recordTypeId,
         };
 
         const objectInfoConfig = {
-            objectApiName: 'Account',
+            objectApiName: apiName,
         };
 
         mockGetRecordTemplateCloneNetwork(defaultsconfig, mockRecordCloneDefaults);
@@ -380,29 +427,37 @@ describe('getRecordTemplateClone refreshes', () => {
     });
 
     it('when a related spanning record changes', async () => {
-        const mockRecordCloneDefaults = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-RecordType-Owner'
+        const mockRecordCloneDefaults = getMock(
+            'record-template-clone-Custom_Object_2__c-optionalField-RecordType-Owner'
         );
-        const mockRecord = getCreateTemplateMock('record-RecordType');
+        const templateRecordId = mockRecordCloneDefaults.record.fields.CloneSourceId.value;
+        const templateRecordTypeId = mockRecordCloneDefaults.record.recordTypeId;
+        const templateApiName = mockRecordCloneDefaults.record.apiName;
+
+        const mockRecord = getMock('record-RecordType');
+        const recordId = mockRecord.id;
+        const recordTypeName = mockRecord.fields.Name.value;
         mockRecord.eTag = 'e7c7f7e02c57bdcfa9d751b5a508f907';
         mockRecord.fields.Name = {
             displayValue: null,
-            value: 'Business Account Updated',
+            value: `${recordTypeName} Updated`,
         };
 
         const defaultsconfig = {
-            recordId: recordIdGlobal,
+            recordId: templateRecordId,
             optionalFields: [
-                'Account.Owner.Id',
-                'Account.Owner.Name',
-                'Account.RecordType.Id',
-                'Account.RecordType.Name',
+                `${templateApiName}.Owner.Id`,
+                `${templateApiName}.Owner.Name`,
+                `${templateApiName}.OwnerId`,
+                `${templateApiName}.RecordType.Id`,
+                `${templateApiName}.RecordType.Name`,
+                `${templateApiName}.RecordTypeId`,
             ],
-            recordTypeId: '012RM00000025SOYAY',
+            recordTypeId: templateRecordTypeId,
         };
 
         const recordConfig = {
-            recordId: '012RM00000025SOYAY',
+            recordId,
             fields: ['RecordType.Id', 'RecordType.Name'],
         };
 
@@ -418,32 +473,30 @@ describe('getRecordTemplateClone refreshes', () => {
 
         await setupElement(recordConfig, GetRecord);
 
-        mockRecordCloneDefaults.record.fields.RecordType.value.fields.Name = {
-            displayValue: null,
-            value: 'Business Account Updated',
-        };
         expect(wireGetRecordTemplateClone.pushCount()).toBe(2);
-        expect(wireGetRecordTemplateClone.getWiredData()).toEqualSnapshotWithoutEtags(
-            mockRecordCloneDefaults
-        );
     });
 });
 
 describe('related wire', () => {
     it('does not refresh when GetRecordTemplateClone brings back no change to object info', async () => {
-        const mockRecordCloneDefaults = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-Name'
+        const mockRecordCloneDefaults = getMock(
+            'record-template-clone-Custom_Object_2__c-optionalField-Number'
         );
-        const mockObjectInfo = getCreateTemplateMock('object-info-Account');
+        const recordId = mockRecordCloneDefaults.record.fields.CloneSourceId.value;
+        const recordTypeId = mockRecordCloneDefaults.record.recordTypeId;
+        const cloneDefaultsApiName = mockRecordCloneDefaults.record.recordTypeId;
+
+        const mockObjectInfo = getMock('object-info-Custom_Object_2__c');
+        const apiName = mockObjectInfo.apiName;
 
         const defaultsconfig = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.Name'],
-            recordTypeId: '012RM00000025SOYAY',
+            recordId,
+            optionalFields: [`${cloneDefaultsApiName}.Number__c`],
+            recordTypeId,
         };
 
         const objectInfoConfig = {
-            objectApiName: 'Account',
+            objectApiName: apiName,
         };
         mockGetObjectInfoNetwork(objectInfoConfig, mockObjectInfo);
         mockGetRecordTemplateCloneNetwork(defaultsconfig, mockRecordCloneDefaults);
@@ -457,15 +510,17 @@ describe('related wire', () => {
     });
 
     it('does not refresh when GetRecordTemplateClone requests invalid optional field', async () => {
-        const mockRecordCloneDefaults = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account'
-        );
+        const mockRecordCloneDefaults = getMock('record-template-clone-Custom_Object__c');
+        const recordId = mockRecordCloneDefaults.record.fields.CloneSourceId.value;
+        const recordTypeId = mockRecordCloneDefaults.record.recordTypeId;
+        const apiName = mockRecordCloneDefaults.record.apiName;
 
         const config = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.InvalidField'],
-            recordTypeId: '012000000000000AAA',
+            recordId,
+            optionalFields: [`${apiName}.InvalidField`],
+            recordTypeId,
         };
+
         mockGetRecordTemplateCloneNetwork(config, mockRecordCloneDefaults);
 
         const wireGetRecordTemplateClone = await setupElement(config, GetRecordTemplateClone);
@@ -476,19 +531,24 @@ describe('related wire', () => {
     });
 
     it('refreshes when getRecordTemplateClone brings back an updated object info', async () => {
-        const mockRecordCloneDefaults = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-Name'
+        const mockRecordCloneDefaults = getMock(
+            'record-template-clone-Custom_Object_2__c-optionalField-Number'
         );
-        const mockObjectInfo = getCreateTemplateMock('object-info-Account');
+        const recordId = mockRecordCloneDefaults.record.fields.CloneSourceId.value;
+        const recordTypeId = mockRecordCloneDefaults.record.recordTypeId;
+        const cloneDefaultsApiName = mockRecordCloneDefaults.record.apiName;
+
+        const mockObjectInfo = getMock('object-info-Custom_Object_2__c');
+        const apiName = mockObjectInfo.apiName;
 
         const defaultsconfig = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.Name'],
-            recordTypeId: '012RM00000025SOYAY',
+            recordId,
+            optionalFields: [`${cloneDefaultsApiName}.Number__c`],
+            recordTypeId,
         };
 
         const objectInfoConfig = {
-            objectApiName: 'Account',
+            objectApiName: apiName,
         };
         mockObjectInfo.eTag = 'e7c7f7e02c57bdcfa9d751b5a508f907';
 
@@ -504,30 +564,38 @@ describe('related wire', () => {
     });
 
     it('refreshes when getRecordTemplateClone brings back an updated spanning record', async () => {
-        const mockRecordCloneDefaults = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-RecordType-Owner'
+        const mockRecordCloneDefaults = getMock(
+            'record-template-clone-Custom_Object_2__c-optionalField-RecordType-Owner'
         );
-        const mockRecord = getCreateTemplateMock('record-RecordType');
+        const templateRecordId = mockRecordCloneDefaults.record.fields.CloneSourceId.value;
+        const templateRecordTypeId = mockRecordCloneDefaults.record.recordTypeId;
+        const templateApiName = mockRecordCloneDefaults.record.apiName;
+        const recordTypeName =
+            mockRecordCloneDefaults.record.fields.RecordType.value.fields.Name.value;
         mockRecordCloneDefaults.record.fields.RecordType.value.fields.Name = {
             displayValue: null,
-            value: 'Business Account Updated',
+            value: `${recordTypeName} Updated`,
         };
-
         const defaultsconfig = {
-            recordId: recordIdGlobal,
+            recordId: templateRecordId,
             optionalFields: [
-                'Account.Owner.Id',
-                'Account.Owner.Name',
-                'Account.RecordType.Id',
-                'Account.RecordType.Name',
+                `${templateApiName}.Owner.Id`,
+                `${templateApiName}.Owner.Name`,
+                `${templateApiName}.OwnerId`,
+                `${templateApiName}.RecordType.Id`,
+                `${templateApiName}.RecordType.Name`,
+                `${templateApiName}.RecordTypeId`,
             ],
-            recordTypeId: '012RM00000025SOYAY',
+            recordTypeId: templateRecordTypeId,
         };
 
+        const mockRecord = getMock('record-RecordType');
+        const recordId = mockRecord.id;
         const recordConfig = {
-            recordId: '012RM00000025SOYAY',
+            recordId,
             fields: ['RecordType.Id', 'RecordType.Name'],
         };
+
         mockGetRecordNetwork(recordConfig, mockRecord);
         mockGetRecordTemplateCloneNetwork(defaultsconfig, mockRecordCloneDefaults);
 
@@ -542,27 +610,24 @@ describe('related wire', () => {
 
 describe('refresh', () => {
     it('should refresh get record clone defaults', async () => {
-        const mock = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-Name'
-        );
-        const refreshed = getCreateTemplateMockWithSrcId(
-            'record-template-create-Account-optionalField-Name'
-        );
-        refreshed.record.fields.Name = {
-            displayValue: 'Bar',
-            value: 'Bar',
-        };
+        const mock = getMock('record-template-clone-Custom_Object_2__c-optionalField-Number');
+        const recordId = mock.record.fields.CloneSourceId.value;
+        const recordTypeId = mock.record.recordTypeId;
+        const apiName = mock.record.apiName;
+
+        const refreshed = getMock('record-template-clone-Custom_Object_2__c-optionalField-Number');
+        ++refreshed.record.fields.Number__c.value;
 
         const config = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.Name'],
-            recordTypeId: '012RM00000025SOYAY',
+            recordId,
+            optionalFields: [`${apiName}.Number__c`],
+            recordTypeId,
         };
 
         const networkConfig = {
-            recordId: recordIdGlobal,
-            optionalFields: ['Account.CloneSourceId', 'Account.Name'],
-            recordTypeId: '012RM00000025SOYAY',
+            recordId,
+            optionalFields: [`${apiName}.CloneSourceId`, `${apiName}.Number__c`],
+            recordTypeId,
         };
 
         mockGetRecordTemplateCloneNetwork(config, mock);

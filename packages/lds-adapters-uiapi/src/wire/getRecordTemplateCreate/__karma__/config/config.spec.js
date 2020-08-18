@@ -22,10 +22,11 @@ describe('objectApiName', () => {
     });
 
     it('should make correct HTTP request for ObjectId objectApiName', async () => {
-        const mock = getMock('record-template-create-Account');
+        const mock = getMock('record-template-create-Custom_Object_2__c');
+        const apiName = mock.record.apiName;
 
         const config = {
-            objectApiName: 'Account',
+            objectApiName: apiName,
         };
 
         mockGetRecordTemplateCreateNetwork(config, mock);
@@ -40,16 +41,17 @@ describe('objectApiName', () => {
 describe('recordTypeId', () => {
     [undefined, null].forEach(value => {
         it(`requests with undefined if recordTypeId is ${value}`, async () => {
-            const mock = getMock('record-template-create-Account');
+            const mock = getMock('record-template-create-Custom_Object_2__c');
+            const apiName = mock.record.apiName;
 
             const networkParams = {
-                objectApiName: 'Account',
+                objectApiName: apiName,
                 recordTypeId: undefined,
             };
             mockGetRecordTemplateCreateNetwork(networkParams, mock);
 
             const config = {
-                objectApiName: 'Account',
+                objectApiName: apiName,
                 recordTypeId: value,
             };
             const elm = await setupElement(config, GetRecordTemplateCreate);
@@ -59,11 +61,13 @@ describe('recordTypeId', () => {
     });
 
     it('should make correct HTTP request for valid recordTypeId', async () => {
-        const mock = getMock('record-template-create-Account');
+        const mock = getMock('record-template-create-Custom_Object_2__c');
+        const apiName = mock.record.apiName;
+        const recordTypeId = mock.record.recordTypeId;
 
         const config = {
-            objectApiName: 'Account',
-            recordTypeId: '012RM00000025SOYAY',
+            objectApiName: apiName,
+            recordTypeId,
         };
 
         mockGetRecordTemplateCreateNetwork(config, mock);
@@ -75,12 +79,14 @@ describe('recordTypeId', () => {
     });
 
     it('should not error if recordType is null in response', async () => {
-        const mock = getMock('record-template-create-Account');
+        const mock = getMock('record-template-create-Custom_Object_2__c');
+        const apiName = mock.record.apiName;
+        const recordTypeId = mock.record.recordTypeId;
         mock.record.recordTypeId = null;
 
         const config = {
-            objectApiName: 'Account',
-            recordTypeId: '012RM00000025SOYAY',
+            objectApiName: apiName,
+            recordTypeId,
         };
 
         mockGetRecordTemplateCreateNetwork(config, mock);
@@ -95,10 +101,11 @@ describe('recordTypeId', () => {
 describe('optionalFields', () => {
     [undefined, null].forEach(value => {
         it(`requests with undefined if optionalFields is ${value}`, async () => {
-            const mock = getMock('record-template-create-Account');
+            const mock = getMock('record-template-create-Custom_Object_2__c');
+            const apiName = mock.record.apiName;
 
             const config = {
-                objectApiName: 'Account',
+                objectApiName: apiName,
                 optionalFields: value,
             };
 
@@ -115,11 +122,12 @@ describe('optionalFields', () => {
     });
 
     it('should make correct HTTP request for valid optionalFields', async () => {
-        const mock = getMock('record-template-create-Account-optionalFields-Name');
+        const mock = getMock('record-template-create-Custom_Object_2__c-optionalField-Number');
+        const apiName = mock.record.apiName;
 
         const config = {
-            objectApiName: 'Account',
-            optionalFields: ['Account.Name'],
+            objectApiName: apiName,
+            optionalFields: [`${apiName}.Number__c`],
         };
 
         mockGetRecordTemplateCreateNetwork(config, mock);
@@ -131,16 +139,17 @@ describe('optionalFields', () => {
     });
 
     it('coerces string type optionalFields to array', async () => {
-        const mock = getMock('record-template-create-Account-optionalFields-Name');
+        const mock = getMock('record-template-create-Custom_Object_2__c-optionalField-Number');
+        const apiName = mock.record.apiName;
 
         const config = {
-            objectApiName: 'Account',
-            optionalFields: 'Account.Name',
+            objectApiName: apiName,
+            optionalFields: `${apiName}.Number__c`,
         };
 
         const networkParams = {
             ...config,
-            optionalFields: ['Account.Name'],
+            optionalFields: [`${apiName}.Number__c`],
         };
         mockGetRecordTemplateCreateNetwork(networkParams, mock);
 

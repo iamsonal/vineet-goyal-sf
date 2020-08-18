@@ -22,14 +22,15 @@ describe('recordId', () => {
     });
 
     it('should make correct HTTP request for valid recordId', async () => {
-        const mock = getMock('record-template-clone-Account');
+        const mock = getMock('record-template-clone-Custom_Object_2__c');
+        const recordId = mock.record.fields.CloneSourceId.value;
 
         const config = {
-            recordId: '001RM000004PkciYAC',
+            recordId,
         };
 
         const network = {
-            recordId: '001RM000004PkciYAC',
+            recordId,
             recordTypeId: undefined,
         };
 
@@ -45,16 +46,17 @@ describe('recordId', () => {
 describe('recordTypeId', () => {
     [undefined, null].forEach(value => {
         it(`requests with undefined if recordTypeId is ${value}`, async () => {
-            const mock = getMock('record-template-clone-Account');
+            const mock = getMock('record-template-clone-Custom_Object_2__c');
+            const recordId = mock.record.fields.CloneSourceId.value;
 
             const networkParams = {
-                recordId: '001RM000004PkciYAC',
+                recordId,
                 recordTypeId: undefined,
             };
             mockGetRecordTemplateCloneNetwork(networkParams, mock);
 
             const config = {
-                recordId: '001RM000004PkciYAC',
+                recordId,
                 recordTypeId: value,
             };
             const elm = await setupElement(config, GetRecordTemplateClone);
@@ -64,12 +66,13 @@ describe('recordTypeId', () => {
     });
 
     it('should make correct HTTP request for valid recordTypeId', async () => {
-        const mock = getMock('record-template-clone-Account');
-        mock.record.recordTypeId = '012RM00000025SOYAY';
+        const mock = getMock('record-template-clone-Custom_Object_2__c');
+        const recordId = mock.record.fields.CloneSourceId.value;
+        const recordTypeId = mock.record.recordTypeId;
 
         const config = {
-            recordId: '001RM000004PkciYAC',
-            recordTypeId: '012RM00000025SOYAY',
+            recordId,
+            recordTypeId,
         };
 
         mockGetRecordTemplateCloneNetwork(config, mock);
@@ -81,12 +84,14 @@ describe('recordTypeId', () => {
     });
 
     it('should not error if recordType is null in response', async () => {
-        const mock = getMock('record-template-clone-Account');
+        const mock = getMock('record-template-clone-Custom_Object_2__c');
+        const recordId = mock.record.fields.CloneSourceId.value;
+        const recordTypeId = mock.record.recordTypeId;
         mock.record.recordTypeId = null;
 
         const config = {
-            recordId: '001RM000004PkciYAC',
-            recordTypeId: '012RM00000025SOYAY',
+            recordId,
+            recordTypeId,
         };
 
         mockGetRecordTemplateCloneNetwork(config, mock);
@@ -101,10 +106,11 @@ describe('recordTypeId', () => {
 describe('optionalFields', () => {
     [undefined, null].forEach(value => {
         it(`requests with undefined if optionalFields is ${value}`, async () => {
-            const mock = getMock('record-template-clone-Account');
+            const mock = getMock('record-template-clone-Custom_Object_2__c');
+            const recordId = mock.record.fields.CloneSourceId.value;
 
             const config = {
-                recordId: '001RM000004PkciYAC',
+                recordId,
                 optionalFields: value,
             };
 
@@ -121,12 +127,15 @@ describe('optionalFields', () => {
     });
 
     it('should make correct HTTP request for valid optionalFields', async () => {
-        const mock = getMock('record-template-clone-Account-optionalFields-Name');
+        const mock = getMock('record-template-clone-Custom_Object_2__c-optionalField-Number');
+        const recordId = mock.record.fields.CloneSourceId.value;
+        const recordTypeId = mock.record.recordTypeId;
+        const apiName = mock.record.apiName;
 
         const config = {
-            recordId: '001RM000004PkciYAC',
-            recordTypeId: '012RM00000025SOYAY',
-            optionalFields: ['Account.Name'],
+            recordId,
+            recordTypeId,
+            optionalFields: [`${apiName}.Number__c`],
         };
 
         mockGetRecordTemplateCloneNetwork(config, mock);
@@ -138,17 +147,20 @@ describe('optionalFields', () => {
     });
 
     it('coerces string type optionalFields to array', async () => {
-        const mock = getMock('record-template-clone-Account-optionalFields-Name');
+        const mock = getMock('record-template-clone-Custom_Object_2__c-optionalField-Number');
+        const recordId = mock.record.fields.CloneSourceId.value;
+        const recordTypeId = mock.record.recordTypeId;
+        const apiName = mock.record.apiName;
 
         const config = {
-            recordId: '001RM000004PkciYAC',
-            recordTypeId: '012RM00000025SOYAY',
-            optionalFields: 'Account.Name',
+            recordId,
+            recordTypeId,
+            optionalFields: `${apiName}.Number__c`,
         };
 
         const networkParams = {
             ...config,
-            optionalFields: ['Account.Name'],
+            optionalFields: [`${apiName}.Number__c`],
         };
         mockGetRecordTemplateCloneNetwork(networkParams, mock);
 

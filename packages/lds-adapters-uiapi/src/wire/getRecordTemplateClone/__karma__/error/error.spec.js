@@ -6,26 +6,6 @@ import {
 
 import GetRecordTemplateClone from '../lwc/get-record-template-clone';
 
-const recordIdGlobal = '001RM000004PkciYAC';
-
-// use mocks from getRecordTemplateCreate
-const CREATE_MOCK_ERROR_PREFIX = 'wire/getRecordTemplateCreate/__karma__/error/data/';
-const CREATE_MOCK_BASIC_PREFIX = 'wire/getRecordTemplateCreate/__karma__/basic/data/';
-
-function getCreateTemplateMock(filename) {
-    const mock = globalGetMock(CREATE_MOCK_ERROR_PREFIX + filename);
-    return mock;
-}
-
-function getCreateTemplateMockWithSrcId(filename, recordId) {
-    const mock = globalGetMock(CREATE_MOCK_BASIC_PREFIX + filename);
-    mock.record.fields.CloneSourceId = {
-        displayValue: null,
-        value: recordId ? recordId : recordIdGlobal,
-    };
-    return mock;
-}
-
 // Clone Mock
 const MOCK_PREFIX = 'wire/getRecordTemplateClone/__karma__/error/data/';
 function getMock(filename) {
@@ -38,7 +18,7 @@ describe('getRecordTemplateClone errors', () => {
         const errorMock = getMock('record-template-clone-recordIdInvalid');
 
         const config = {
-            recordId: recordIdGlobal, // invalid
+            recordId: '001RM000004PkciYAC', // invalid
         };
 
         mockGetRecordTemplateCloneNetwork(config, { reject: true, data: errorMock });
@@ -53,7 +33,7 @@ describe('getRecordTemplateClone errors', () => {
         const errorMock = getMock('record-template-clone-recordIdInvalid');
 
         const config = {
-            recordId: recordIdGlobal, // invalid
+            recordId: '001RM000004PkciYAC', // invalid
         };
 
         mockGetRecordTemplateCloneNetwork(config, {
@@ -77,10 +57,11 @@ describe('getRecordTemplateClone errors', () => {
 
     it('should refetch recordTemplateClone when ingested template error TTLs out', async () => {
         const errorMock = getMock('record-template-clone-recordIdInvalid');
-        const validMock = getCreateTemplateMockWithSrcId('record-template-create-Account');
+        const validMock = getMock('record-template-clone-Account');
+        const recordId = validMock.record.fields.CloneSourceId.value;
 
         const config = {
-            recordId: recordIdGlobal, // 1st time: invalid, 2nd time: valid
+            recordId, // 1st time: invalid, 2nd time: valid
         };
 
         mockGetRecordTemplateCloneNetwork(config, [
@@ -106,10 +87,10 @@ describe('getRecordTemplateClone errors', () => {
     });
 
     it('should propagate error when server returns 400 for invalid recordTypeId value', async () => {
-        const errorMock = getCreateTemplateMock('record-template-create-recordTypeIdInvalid');
+        const errorMock = getMock('record-template-clone-recordTypeIdInvalid');
 
         const config = {
-            recordId: recordIdGlobal,
+            recordId: '001RM000004PkciYAC',
             recordTypeId: '001RM000004PkciYAC', // invalid
         };
 
@@ -122,10 +103,10 @@ describe('getRecordTemplateClone errors', () => {
     });
 
     it('should propagate error when server returns 400 for invalid optionalField value', async () => {
-        const errorMock = getCreateTemplateMock('record-template-create-optionalFieldsInvalid');
+        const errorMock = getMock('record-template-clone-optionalFieldsInvalid');
 
         const config = {
-            recordId: recordIdGlobal,
+            recordId: '001RM000004PkciYAC',
             optionalFields: ['Name'], // invalid
         };
 

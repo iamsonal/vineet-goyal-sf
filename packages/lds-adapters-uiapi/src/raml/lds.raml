@@ -481,6 +481,21 @@ types:
     post:
       (lds.adapter):
         name: createRecord
+    '/batch/{recordIds}':
+      get:
+        (lds.adapter):
+          name: getRecords
+        (lds.composite):
+          resource: /ui-api/records/{recordId}
+          uriParameters:
+            recordId: recordIds
+          queryParameters:
+            fields: fields
+            optionalFields: optionalFields
+          envelope:
+            path: results
+            statusCode: statusCode
+            body: result
     '/{recordId}':
       get:
         (lds.adapter):

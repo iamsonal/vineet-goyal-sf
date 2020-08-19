@@ -2834,9 +2834,19 @@ types:
     description: 'added by hand, was intended to be hidden and internal, connect-gen modeling is ignoring that and referencing it in two places above. both appear to be referencing abstract datatypes as the Batch Type, could be it.?'
     type: object
     properties:
-      valueType:
-        description: wire data value type.
-        type: string
+      results:
+        description: Collection of batch result items. One for each request input.
+        type: array # TODO: hand-rolled
+        items:
+          type: BatchResultRepresentation
+  BatchResultRepresentation:
+    description: 'object for each result containing record and status code' # TODO: hand-rolled
+    type: object
+    properties:
+      statusCode:
+        type: number
+      result:
+        type: RecordRepresentation
 
   # These types are not generated. Why?
   ErrorSingleRecordAvatarRepresentation:
@@ -4903,8 +4913,10 @@ types:
             required: false
       uriParameters:
         recordIds:
-          type: string
+          type: array # TODO: hand rolled Type changed from string to array
           required: true
+          items:
+            type: string
     /{recordId}:
       delete:
         description: Delete record.

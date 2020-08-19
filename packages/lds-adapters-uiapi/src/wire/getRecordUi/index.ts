@@ -66,6 +66,8 @@ const GET_RECORDUI_ADAPTER_CONFIG: AdapterValidationConfig = {
     },
 };
 
+const MAX_FIELD_STRING_LENGTH = 10000;
+
 function eachLayout(
     recordUi: RecordUiRepresentation,
     cb: (apiName: string, recordTypeId: string, layout: RecordLayoutRepresentation) => void
@@ -257,7 +259,7 @@ export function buildNetworkSnapshot(
     for (let i = 0, len = recordIds.length; i < len; i++) {
         const recordId = recordIds[i];
         allOptionalFields = allOptionalFields.concat(
-            getTrackedFields(lds, recordId, optionalFields)
+            getTrackedFields(lds, recordId, optionalFields, MAX_FIELD_STRING_LENGTH)
         );
     }
 

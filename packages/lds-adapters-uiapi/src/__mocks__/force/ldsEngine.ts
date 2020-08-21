@@ -1,1 +1,3 @@
-export const lds = {};
+export const lds = {
+    withContext: jest.fn(),
+};

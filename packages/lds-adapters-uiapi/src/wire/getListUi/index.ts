@@ -9,6 +9,7 @@ import {
     SnapshotRefresh,
     ResourceResponse,
     UnfulfilledSnapshot,
+    AdapterContext,
 } from '@ldsjs/engine';
 import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
 import {
@@ -89,12 +90,12 @@ const getListUiByListViewId_ConfigPropertyNames_augmented = {
     },
 };
 
-function getSortBy(config: GetListUiConfig): string[] | null {
+function getSortBy(config: GetListUiConfig, context: AdapterContext): string[] | null {
     if (config.sortBy !== undefined) {
         return config.sortBy;
     }
 
-    const defaults = getServerDefaults(config);
+    const defaults = getServerDefaults(config, context);
 
     if (defaults.sortBy !== undefined) {
         return defaults.sortBy;
@@ -105,10 +106,11 @@ function getSortBy(config: GetListUiConfig): string[] | null {
 
 function buildListUiFragment(
     config: GetListUiConfig,
+    context: AdapterContext,
     listInfo: ListInfoRepresentation,
     fields: ListFields
 ): Fragment {
-    const defaultedConfig = { ...getServerDefaults(config), ...config };
+    const defaultedConfig = { ...getServerDefaults(config, context), ...config };
 
     return {
         kind: 'Fragment',
@@ -186,32 +188,37 @@ function buildListUiFragment(
 
 function buildInMemorySnapshot(
     lds: LDS,
+    context: AdapterContext,
     config: GetListUiConfig,
     listInfo: ListInfoRepresentation,
     fields?: ListFields
 ): Snapshot<ListUiRepresentation> {
     const listUiKey = listUiRepresentation_keyBuilder({
         ...listInfo.listReference,
-        sortBy: getSortBy(config),
+        sortBy: getSortBy(config, context),
     });
     const listFields_ = fields || listFields(lds, config, listInfo);
 
     const selector = {
         recordId: listUiKey,
-        node: buildListUiFragment(config, listInfo, listFields_),
+        node: buildListUiFragment(config, context, listInfo, listFields_),
         variables: {},
     };
 
-    return lds.storeLookup<ListUiRepresentation>(selector, buildSnapshotRefresh(lds, config));
+    return lds.storeLookup<ListUiRepresentation>(
+        selector,
+        buildSnapshotRefresh(lds, context, config)
+    );
 }
 
 function buildSnapshotRefresh(
     lds: LDS,
+    context: AdapterContext,
     config: GetListUiConfig
 ): SnapshotRefresh<ListUiRepresentation> {
     return {
         config,
-        resolve: () => buildNetworkSnapshot_getListUi(lds, config),
+        resolve: () => buildNetworkSnapshot_getListUi(lds, context, config),
     };
 }
 
@@ -248,6 +255,7 @@ function prepareRequest_getListUi(config: GetListUiConfig) {
 
 function onResourceSuccess_getListUi(
     lds: LDS,
+    context: AdapterContext,
     config: GetListUiConfig,
     request: ResourceRequest,
     response: ResourceResponse<ListUiRepresentation>
@@ -272,13 +280,13 @@ function onResourceSuccess_getListUi(
     fields.processRecords(body.records.records);
 
     // remember the id/name of this list
-    addListReference(listReference);
+    addListReference(listReference, context);
 
     // remember any default values that the server filled in
-    addServerDefaults(config, body);
+    addServerDefaults(config, body, context);
 
     // build the selector while the list info is still easily accessible
-    const fragment = buildListUiFragment(config, listInfo, fields);
+    const fragment = buildListUiFragment(config, context, listInfo, fields);
 
     lds.storeIngest(listUiKey, request, body);
     lds.storeBroadcast();
@@ -289,16 +297,22 @@ function onResourceSuccess_getListUi(
             node: fragment,
             variables: {},
         },
-        buildSnapshotRefresh(lds, config)
+        buildSnapshotRefresh(lds, context, config)
     );
 }
 
-function onResourceError_getListUi(lds: LDS, config: GetListUiConfig, err: FetchResponse<unknown>) {
-    return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+function onResourceError_getListUi(
+    lds: LDS,
+    context: AdapterContext,
+    config: GetListUiConfig,
+    err: FetchResponse<unknown>
+) {
+    return lds.errorSnapshot(err, buildSnapshotRefresh(lds, context, config));
 }
 
 function resolveUnfulfilledSnapshot_getListUi(
     lds: LDS,
+    context: AdapterContext,
     config: GetListUiConfig,
     snapshot: UnfulfilledSnapshot<ListUiRepresentation, any>
 ) {
@@ -306,10 +320,10 @@ function resolveUnfulfilledSnapshot_getListUi(
 
     return lds.resolveUnfulfilledSnapshot<ListUiRepresentation>(request, snapshot).then(
         response => {
-            return onResourceSuccess_getListUi(lds, config, request, response);
+            return onResourceSuccess_getListUi(lds, context, config, request, response);
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceError_getListUi(lds, config, err);
+            return onResourceError_getListUi(lds, context, config, err);
         }
     );
 }
@@ -323,22 +337,24 @@ function resolveUnfulfilledSnapshot_getListUi(
  */
 function buildNetworkSnapshot_getListUi(
     lds: LDS,
+    context: AdapterContext,
     config: GetListUiConfig
 ): Promise<Snapshot<ListUiRepresentation>> {
     const request = prepareRequest_getListUi(config);
 
     return lds.dispatchResourceRequest<ListUiRepresentation>(request).then(
         response => {
-            return onResourceSuccess_getListUi(lds, config, request, response);
+            return onResourceSuccess_getListUi(lds, context, config, request, response);
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceError_getListUi(lds, config, err);
+            return onResourceError_getListUi(lds, context, config, err);
         }
     );
 }
 
 function prepareRequest_getListRecords(
     lds: LDS,
+    context: AdapterContext,
     config: GetListUiConfig,
     listInfo: ListInfoRepresentation,
     snapshot?: Snapshot<ListUiRepresentation>
@@ -380,7 +396,7 @@ function prepareRequest_getListRecords(
             pagination: lds.pagination(
                 ListRecordCollection_paginationKeyBuilder({
                     listViewId: listInfo.eTag,
-                    sortBy: getSortBy(config),
+                    sortBy: getSortBy(config, context),
                 })
             ),
         });
@@ -399,6 +415,7 @@ function prepareRequest_getListRecords(
 
 function onResourceSuccess_getListRecords(
     lds: LDS,
+    context: AdapterContext,
     config: GetListUiConfig,
     request: ResourceRequest,
     listInfo: ListInfoRepresentation,
@@ -409,7 +426,7 @@ function onResourceSuccess_getListRecords(
 
     // fall back to list-ui if list view has changed
     if (listInfoETag !== listInfo.eTag) {
-        return buildNetworkSnapshot_getListUi(lds, config);
+        return buildNetworkSnapshot_getListUi(lds, context, config);
     }
 
     // response might have records.sortBy in csv format
@@ -430,11 +447,12 @@ function onResourceSuccess_getListRecords(
     );
     lds.storeBroadcast();
 
-    return buildInMemorySnapshot(lds, config, listInfo, fields);
+    return buildInMemorySnapshot(lds, context, config, listInfo, fields);
 }
 
 function onResourceError_getListRecords(
     lds: LDS,
+    context: AdapterContext,
     config: GetListUiConfig,
     listInfo: ListInfoRepresentation,
     err: FetchResponse<unknown>
@@ -442,7 +460,7 @@ function onResourceError_getListRecords(
     lds.storeIngestFetchResponse(
         listUiRepresentation_keyBuilder({
             ...listInfo.listReference,
-            sortBy: getSortBy(config),
+            sortBy: getSortBy(config, context),
         }),
         err
     );
@@ -452,11 +470,12 @@ function onResourceError_getListRecords(
 
 function resolveUnfulfilledSnapshot_getListRecords(
     lds: LDS,
+    context: AdapterContext,
     config: GetListUiConfig,
     listInfo: ListInfoRepresentation,
     snapshot: UnfulfilledSnapshot<ListUiRepresentation, any>
 ): Promise<Snapshot<ListUiRepresentation>> {
-    const request = prepareRequest_getListRecords(lds, config, listInfo, snapshot);
+    const request = prepareRequest_getListRecords(lds, context, config, listInfo, snapshot);
 
     return lds
         .resolveUnfulfilledSnapshot<ListRecordCollectionRepresentation>(
@@ -465,28 +484,43 @@ function resolveUnfulfilledSnapshot_getListRecords(
         )
         .then(
             response => {
-                return onResourceSuccess_getListRecords(lds, config, request, listInfo, response);
+                return onResourceSuccess_getListRecords(
+                    lds,
+                    context,
+                    config,
+                    request,
+                    listInfo,
+                    response
+                );
             },
             (err: FetchResponse<unknown>) => {
-                return onResourceError_getListRecords(lds, config, listInfo, err);
+                return onResourceError_getListRecords(lds, context, config, listInfo, err);
             }
         );
 }
 
 function buildNetworkSnapshot_getListRecords(
     lds: LDS,
+    context: AdapterContext,
     config: GetListUiConfig,
     listInfo: ListInfoRepresentation,
     snapshot?: Snapshot<ListUiRepresentation>
 ): Promise<Snapshot<ListUiRepresentation>> {
-    const request = prepareRequest_getListRecords(lds, config, listInfo, snapshot);
+    const request = prepareRequest_getListRecords(lds, context, config, listInfo, snapshot);
 
     return lds.dispatchResourceRequest<ListRecordCollectionRepresentation>(request).then(
         response => {
-            return onResourceSuccess_getListRecords(lds, config, request, listInfo, response);
+            return onResourceSuccess_getListRecords(
+                lds,
+                context,
+                config,
+                request,
+                listInfo,
+                response
+            );
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceError_getListRecords(lds, config, listInfo, err);
+            return onResourceError_getListRecords(lds, context, config, listInfo, err);
         }
     );
 }
@@ -560,7 +594,7 @@ export const factory: AdapterFactory<
     ListUiRepresentation | ListViewSummaryCollectionRepresentation
 > = (lds: LDS) => {
     // adapter implementation for getListUiBy*
-    const listUiAdapter = (untrustedConfig: unknown) => {
+    const listUiAdapter = (untrustedConfig: unknown, context: AdapterContext) => {
         const config = validateGetListUiConfig(untrustedConfig);
 
         if (config === null) {
@@ -569,26 +603,26 @@ export const factory: AdapterFactory<
 
         // try to get a list reference and a list info for the list; this should come back
         // non-null if we have the list info cached
-        const listRef = getListReference(config);
+        const listRef = getListReference(config, context);
         const listInfo = listRef && getListInfo(listRef, lds);
 
         // no list info means it's not in the cache - make a full list-ui request
         if (!listInfo) {
-            return buildNetworkSnapshot_getListUi(lds, config);
+            return buildNetworkSnapshot_getListUi(lds, context, config);
         }
 
         // with the list info we can construct the full selector and try to get the
         // list ui from the store
-        const snapshot = buildInMemorySnapshot(lds, config, listInfo);
+        const snapshot = buildInMemorySnapshot(lds, context, config, listInfo);
 
         // if the list ui was not found in the store then
         // make a full list-ui request
         if (!snapshot.data) {
             if (isUnfulfilledSnapshot(snapshot)) {
-                return resolveUnfulfilledSnapshot_getListUi(lds, config, snapshot);
+                return resolveUnfulfilledSnapshot_getListUi(lds, context, config, snapshot);
             }
 
-            return buildNetworkSnapshot_getListUi(lds, config);
+            return buildNetworkSnapshot_getListUi(lds, context, config);
         }
 
         if (lds.snapshotDataAvailable(snapshot)) {
@@ -599,10 +633,16 @@ export const factory: AdapterFactory<
         // we *should* only be missing records and/or tokens at this point; send a list-records
         // request to fill them in
         if (isUnfulfilledSnapshot(snapshot)) {
-            return resolveUnfulfilledSnapshot_getListRecords(lds, config, listInfo, snapshot);
+            return resolveUnfulfilledSnapshot_getListRecords(
+                lds,
+                context,
+                config,
+                listInfo,
+                snapshot
+            );
         }
 
-        return buildNetworkSnapshot_getListRecords(lds, config, listInfo, snapshot);
+        return buildNetworkSnapshot_getListRecords(lds, context, config, listInfo, snapshot);
     };
 
     let listViewSummaryCollectionAdapter: Adapter<any, any> | null = null;
@@ -610,7 +650,10 @@ export const factory: AdapterFactory<
 
     // delegate to various other adapter based on what config looks like; note that the adapters
     // we delegate to are responsible for returning refreshable results
-    return function(untrustedConfig: unknown) {
+    return lds.withContext(function UiApi__custom_getListUi(
+        untrustedConfig: unknown,
+        context: AdapterContext
+    ) {
         // if the MRU symbol is there then just return the getMruListUi adapter
         if (looksLikeGetMruListUiConfig(untrustedConfig)) {
             if (mruAdapter === null) {
@@ -639,9 +682,9 @@ export const factory: AdapterFactory<
             looksLikeGetListUiByApiNameConfig(untrustedConfig) ||
             looksLikeGetListUiByListViewIdConfig(untrustedConfig)
         ) {
-            return listUiAdapter(untrustedConfig);
+            return listUiAdapter(untrustedConfig, context);
         }
 
         return null;
-    };
+    });
 };

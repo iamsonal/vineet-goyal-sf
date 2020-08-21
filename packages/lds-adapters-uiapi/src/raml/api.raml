@@ -509,6 +509,139 @@ types:
         type: array
         items:
           type: MatchRepresentation
+  EinsteinAnswerRepresentation:
+    description: Einstein answer.
+    type: object
+    properties:
+      conceptualResults:
+        description: Conceptual results.
+        type: EinsteinConceptualResultsRepresentation
+      feedbackMessages:
+        description: Feedback messages.
+        type: array
+        items:
+          type: EinsteinFeedbackMessageRepresentation
+      queryFilters:
+        description: Query filters.
+        type: array
+        items:
+          type: EinsteinQueryFilterRepresentation
+      queryInterpretation:
+        description: Query interpretation.
+        type: EinsteinQueryInterpretationRepresentation
+  EinsteinAskRepresentation:
+    description: Get an anwers based on a Natural Language Search with it's search
+      Layout metadata and theme info.
+    type: object
+    properties:
+      answer:
+        description: Natural Language Search answer.
+        type: EinsteinAnswerRepresentation
+      searchLayout:
+        description: Search Layout metadata. This layout is composed with the ordered
+          list of fields in Search Layout configured for the record entity type. This
+          describes how to retrieve values to display from the record object.
+        type: RecordLayoutRepresentation
+      themeInfo:
+        description: The record Theme info contains the Icon URL to represent the
+          record entity type along with its color
+        type: ThemeInfoRepresentation
+  EinsteinConceptualResultsRepresentation:
+    description: Einstein conceptual results.
+    type: object
+    properties:
+      orderedBy:
+        description: Ordered by expression.
+        type: OrderedByExpressionRepresentation
+      records:
+        description: Records.
+        type: array
+        items:
+          type: RecordRepresentation
+  EinsteinExpressionRepresentation:
+    description: Einstein expression.
+    type: object
+    properties:
+      displayValue:
+        description: DisplayValue.
+        type: string
+      expression:
+        description: Expression.
+        type: string
+  EinsteinFeedbackFragmentRepresentation:
+    description: Einstein Feedback fragment.
+    type: object
+    properties:
+      text:
+        description: Text.
+        type: string
+  EinsteinFeedbackMessageRepresentation:
+    description: Einstein feedback message.
+    type: object
+    properties:
+      fragments:
+        description: Fragments.
+        type: array
+        items:
+          type: EinsteinFeedbackFragmentRepresentation
+      template:
+        description: Template.
+        type: string
+      type:
+        description: Type.
+        type: string
+        enum:
+          - Feedback
+          - Recourse
+          - Remediation
+  EinsteinFragmentRepresentation:
+    description: Einstein fragment.
+    type: object
+    properties:
+      status:
+        description: Status.
+        type: string
+        enum:
+          - Invalid
+          - Valid
+      text:
+        description: Text.
+        type: string
+  EinsteinQueryFilterRepresentation:
+    description: Einstein query filter.
+    type: object
+    properties:
+      fieldApiName:
+        description: FieldApiName.
+        type: string
+      fieldValue:
+        description: The value of a field in its raw data form.
+        type: RecordRepresentation | boolean | integer | string | nil
+      label:
+        description: Label.
+        type: string
+  EinsteinQueryInterpretationFragmentRepresentation:
+    description: Einstein QueryInterpretation fragment.
+    type: object
+    properties:
+      status:
+        description: Status.
+        type: string
+        enum:
+          - Invalid
+          - Valid
+      text:
+        description: Text.
+        type: string
+  EinsteinQueryInterpretationRepresentation:
+    description: Einstein query interpretation.
+    type: object
+    properties:
+      fragments:
+        description: Fragments.
+        type: array
+        items:
+          type: EinsteinQueryInterpretationFragmentRepresentation
   EmptySpaceFormSubitemRepresentation:
     description: Empty Space Subitem.
     discriminatorValue: EmptySpace # TODO Hand rolled
@@ -1614,6 +1747,16 @@ types:
       won:
         description: Indicates whether this opportunity stage value represents a won opportunity. Multiple opportunity stage values can represent a won opportunity. For more info, see the doc for the OpportunityStage standard object.
         type: boolean
+  OrderedByExpressionRepresentation:
+    description: Einstein orderedBy expression.
+    type: object
+    properties:
+      displayValue:
+        description: DisplayValue.
+        type: string
+      expression:
+        description: Expression.
+        type: string
   PageReferenceInputRepresentation:
     description: A page reference.
     type: object
@@ -1871,6 +2014,20 @@ types:
                 type: array
                 items:
                   type: PrimingRecordRepresentation
+      relayToken:
+        description: Relaytoken containing hashkey for continuing a 'relay' in subsequent
+          requests.
+        type: string
+      ruleErrors:
+        description: Collection of Errors. Key value pair representing errorcode and
+          error message.
+        type: array
+        items:
+          type: PrimingRuleErrorRepresentation
+      stats:
+        description: "Summary of total record count(limits), total rules count, count
+          of rules/records that were returned across a 'relay' "
+        type: PrimingRecordsStatsRepresentation
   PrimingRecordRepresentation:
     description: Priming record information.
     type: object
@@ -1881,6 +2038,22 @@ types:
       systemModstamp:
         description: The systemModstamp of the record.
         type: string
+  PrimingRecordsStatsRepresentation:
+    description: Priming stats information.
+    type: object
+    properties:
+      recordCountServed:
+        description: Count of Records served in all the 'relay' requests
+        type: integer
+      recordCountTotal:
+        description: Total number of records across briefcases
+        type: integer
+      ruleCountServed:
+        description: Count of Rule(s) served in all the 'relay' requests
+        type: integer
+      ruleCountTotal:
+        description: Total number of rules across briefcases
+        type: integer
   PrimingRoutesCollectionRepresentation:
     description: Priming Routes Collection Representation.
     type: object
@@ -1894,6 +2067,13 @@ types:
             properties:
               //:
                 type: string
+  PrimingRuleErrorRepresentation:
+    description: Priming rule specific error status.
+    type: object
+    properties:
+      ruleId:
+        description: RuleId which encountered error during execution
+        type: string
   RecommendedResultRepresentation:
     description: Recommended result.
     type: object
@@ -1901,6 +2081,15 @@ types:
       record:
         description: The recommended result record's object.
         type: RecordRepresentation
+      searchLayout:
+        description: Search Layout metadata. This layout is composed with the ordered
+          list of fields in Search Layout configured for the record entity type. This
+          describes how to retrieve values to display from the record object.
+        type: RecordLayoutRepresentation
+      themeInfo:
+        description: The record Theme info contains the Icon URL to represent the
+          record entity type along with its color
+        type: ThemeInfoRepresentation
   RecordCollectionRepresentation:
     description: Record Collection Representation.
     type: object
@@ -2084,10 +2273,12 @@ types:
           - Compact
           - Full
           - Mdp
+          - Search
       mode:
         description: Mode.
         type: string
         enum:
+          - Clone
           - Create
           - Edit
           - View
@@ -2233,6 +2424,42 @@ types:
         description: Record Version like field, readOnly, handy while caching and comparing versions of records.
         type: integer
         (oas-readOnly): true
+  RecordTemplateCloneRepresentation:
+    description: Record template for specifying api name, fields, record typeinfo
+      and recordtypeid information
+    type: object
+    properties:
+      apiName:
+        description: The record's object API name.
+        type: string
+      fields:
+        description: The field data for this record, matching the requested layout
+          and mode.
+        type: object
+        properties:
+          //:
+            type: FieldValueRepresentation
+      recordTypeId:
+        description: The RecordTypeId of the record.
+        type: string | nil
+  RecordTemplateCreateRepresentation:
+    description: Record defaults create template for specifying api name, fields,
+      record typeinfo and recordtypeid information
+    type: object
+    properties:
+      apiName:
+        description: The record's object API name.
+        type: string
+      fields:
+        description: The field data for this record, matching the requested layout
+          and mode.
+        type: object
+        properties:
+          //:
+            type: FieldValueRepresentation
+      recordTypeId:
+        description: The RecordTypeId of the record.
+        type: string | nil
   RecordTypeInfoRepresentation:
     description: Record type.
     type: object
@@ -3681,6 +3908,7 @@ types:
         formFactor:
           type: string
           required: false
+          default: Large
         query:
           type: string
           required: false
@@ -3955,10 +4183,12 @@ types:
             - Compact
             - Full
             - Mdp
+            - Search
         mode:
           type: string
           required: false
           enum:
+            - Clone
             - Create
             - Edit
             - View
@@ -3989,10 +4219,12 @@ types:
             - Compact
             - Full
             - Mdp
+            - Search
         mode:
           type: string
           required: false
           enum:
+            - Clone
             - Create
             - Edit
             - View
@@ -4018,10 +4250,12 @@ types:
             - Compact
             - Full
             - Mdp
+            - Search
         mode:
           type: string
           required: false
           enum:
+            - Clone
             - Create
             - Edit
             - View
@@ -4804,6 +5038,7 @@ types:
               - Compact
               - Full
               - Mdp
+              - Search
             (oas-collectionFormat): csv
         modes:
           type: array
@@ -4811,6 +5046,7 @@ types:
           items:
             type: string
             enum:
+              - Clone
               - Create
               - Edit
               - View
@@ -4824,9 +5060,11 @@ types:
         pageSize:
           type: integer
           required: false
+          default: 5
         updateMru:
           type: boolean
           required: false
+          default: false
     uriParameters:
       recordIds:
         type: array # TODO manually changed to string[]. relies on Array.toString() to generate CSV
@@ -4888,6 +5126,7 @@ types:
                 - Compact
                 - Full
                 - Mdp
+                - Search
               (oas-collectionFormat): csv
           modes:
             type: array
@@ -4895,6 +5134,7 @@ types:
             items:
               type: string
               enum:
+                - Clone
                 - Create
                 - Edit
                 - View
@@ -4917,6 +5157,7 @@ types:
           required: true
           items:
             type: string
+            (oas-collectionFormat): csv
     /{recordId}:
       delete:
         description: Delete record.
@@ -5282,31 +5523,35 @@ types:
         relatedListId:
           type: string
           required: true
-  /search/recommended-result:
-    get:
-      description: Returns recommended result record for a given search query.
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: RecommendedResultRepresentation
-      queryParameters:
-        layoutTypes:
-          description: Specifies the fields to return
-          type: array
-          required: false
-          items:
+  /search:
+    /einstein/ask:
+      get:
+        description: Returns a Natural Language Search answer for a query.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: EinsteinAskRepresentation
+        queryParameters:
+          q:
+            description: A Search Term
             type: string
-            enum:
-              - Compact
-              - Full
-              - Mdp
-            (oas-collectionFormat): csv
-        q:
-          description: A Search Term
-          type: string
-          required: false
+            required: false
+    /recommended-result:
+      get:
+        description: Returns recommended result record for a given search query.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RecommendedResultRepresentation
+        queryParameters:
+          q:
+            description: A Search Term
+            type: string
+            required: false
   /themes/active:
     get:
       description: Retrieve the active theme.

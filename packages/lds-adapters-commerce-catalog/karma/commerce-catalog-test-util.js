@@ -2,7 +2,7 @@ import { karmaNetworkAdapter } from 'lds-engine';
 import { mockNetworkOnce, mockNetworkErrorOnce } from 'test-util';
 import sinon from 'sinon';
 
-const API_VERSION = 'v50.0';
+const API_VERSION = 'v51.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/commerce`;
 

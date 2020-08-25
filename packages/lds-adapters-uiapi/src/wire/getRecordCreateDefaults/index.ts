@@ -88,7 +88,7 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordCreateDefaultsCo
             };
 
             lds.storePublish(selectorKey, cacheSelector);
-            lds.storeIngest(key, request, body);
+            lds.storeIngest(key, request.ingest, body);
             lds.storeBroadcast();
             return lds.storeLookup<RecordDefaultsRepresentation>(
                 cacheSelector,

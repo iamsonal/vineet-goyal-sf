@@ -288,7 +288,7 @@ function onResourceSuccess_getListUi(
     // build the selector while the list info is still easily accessible
     const fragment = buildListUiFragment(config, context, listInfo, fields);
 
-    lds.storeIngest(listUiKey, request, body);
+    lds.storeIngest(listUiKey, request.ingest, body);
     lds.storeBroadcast();
 
     return lds.storeLookup<ListUiRepresentation>(
@@ -442,7 +442,7 @@ function onResourceSuccess_getListRecords(
             listViewId: listInfoETag,
             sortBy: body.sortBy,
         }),
-        request,
+        request.ingest,
         body
     );
     lds.storeBroadcast();

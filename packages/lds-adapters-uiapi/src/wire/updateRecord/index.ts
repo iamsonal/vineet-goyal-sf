@@ -75,7 +75,7 @@ export const factory = (lds: LDS) => {
                     recordId,
                 });
 
-                lds.storeIngest(key, request, body);
+                lds.storeIngest(key, request.ingest, body);
                 lds.storeBroadcast();
 
                 return lds.storeLookup<RecordRepresentation>({

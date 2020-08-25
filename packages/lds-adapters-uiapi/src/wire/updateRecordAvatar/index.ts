@@ -47,14 +47,14 @@ export const factory = (lds: LDS) => {
                     selectors = themeSelector;
                     lds.storeIngest<ThemeRecordAvatarRepresentation>(
                         key,
-                        { ...request, ingest: themeIngest },
+                        themeIngest,
                         response.body as ThemeRecordAvatarRepresentation
                     );
                 } else if (response.body.type === 'Photo') {
                     selectors = photoSelector;
                     lds.storeIngest<PhotoRecordAvatarRepresentation>(
                         key,
-                        { ...request, ingest: photoIngest },
+                        photoIngest,
                         response.body as PhotoRecordAvatarRepresentation
                     );
                 } else {

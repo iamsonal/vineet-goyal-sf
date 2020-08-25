@@ -103,7 +103,7 @@ function onResponseSuccess(
         }, {} as RecordAvatarBulkMapRepresentation);
     }
 
-    lds.storeIngest<RecordAvatarBulkMapRepresentation>(KEY, request, formatted);
+    lds.storeIngest<RecordAvatarBulkMapRepresentation>(KEY, request.ingest, formatted);
     lds.storeBroadcast();
     return buildInMemorySnapshot(lds, config);
 }

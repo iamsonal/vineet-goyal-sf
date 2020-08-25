@@ -148,7 +148,7 @@ function onResourceSuccess(
     response: ResourceResponse<ListViewSummaryCollectionRepresentation>
 ) {
     const { body } = response;
-    lds.storeIngest<ListViewSummaryCollectionRepresentation>(key, request, body);
+    lds.storeIngest<ListViewSummaryCollectionRepresentation>(key, request.ingest, body);
     lds.storeBroadcast();
     return buildInMemorySnapshot(lds, config);
 }

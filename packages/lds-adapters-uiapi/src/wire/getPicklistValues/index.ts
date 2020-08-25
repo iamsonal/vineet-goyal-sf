@@ -61,7 +61,7 @@ function onResponseSuccess(
     response: ResourceResponse<PicklistValuesRepresentation>
 ) {
     const { body } = response;
-    lds.storeIngest(key, request, body);
+    lds.storeIngest(key, request.ingest, body);
     lds.storeBroadcast();
     return buildInMemorySnapshot(lds, config);
 }

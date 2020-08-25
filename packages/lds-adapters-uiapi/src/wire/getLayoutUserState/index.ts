@@ -155,7 +155,7 @@ function onResourceResponseSuccess(
     body.recordTypeId = recordTypeId;
     body.layoutType = layoutType;
     body.mode = mode;
-    lds.storeIngest<RecordLayoutUserStateRepresentation>(key, request, body);
+    lds.storeIngest<RecordLayoutUserStateRepresentation>(key, request.ingest, body);
     lds.storeBroadcast();
     return buildInMemorySnapshot(lds, config);
 }

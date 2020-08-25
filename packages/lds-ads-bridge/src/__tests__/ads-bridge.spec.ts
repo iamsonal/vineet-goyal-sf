@@ -1,14 +1,9 @@
 import { LDS, Store, Environment } from '@ldsjs/engine';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
+import { ingestRecord } from '@salesforce/lds-adapters-uiapi';
 
 import AdsBridge from '../ads-bridge';
-import {
-    addObjectInfo,
-    addRecord,
-    createObjectInfo,
-    createRecord,
-    getRecordResourceRequest,
-} from './test-utils';
+import { addObjectInfo, addRecord, createObjectInfo, createRecord } from './test-utils';
 
 function createBridge() {
     const store = new Store();
@@ -425,9 +420,7 @@ describe('AdsBridge', () => {
                 },
             });
 
-            const resourceRequest = getRecordResourceRequest();
-
-            lds.storeIngest('', resourceRequest, mockRecord);
+            lds.storeIngest('', ingestRecord, mockRecord);
             lds.storeEvict(keyBuilderRecord({ recordId: mockRecordId }));
             lds.storeBroadcast();
 

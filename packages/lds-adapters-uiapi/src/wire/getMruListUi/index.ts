@@ -199,7 +199,7 @@ function buildNetworkSnapshot_getMruListUi(
             // build the selector while the list info is still easily accessible
             const fragment = buildListUiFragment(config, listInfo, fields);
 
-            lds.storeIngest(listUiKey, request, body);
+            lds.storeIngest(listUiKey, request.ingest, body);
             lds.storeBroadcast();
 
             return lds.storeLookup<ListUiRepresentation>(
@@ -285,7 +285,7 @@ function buildNetworkSnapshot_getMruListRecords(
                     listViewId: listInfoETag,
                     sortBy: body.sortBy,
                 }),
-                request,
+                request.ingest,
                 body
             );
             lds.storeBroadcast();

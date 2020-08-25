@@ -46,23 +46,12 @@ export function createObjectInfo(config: any = {}) {
     };
 }
 
-export function getRecordResourceRequest() {
-    return {
-        ingest: ingestRecord,
-    } as any;
-}
-
 export function addRecord(lds: LDS, data: any) {
-    const resourceRequest = getRecordResourceRequest();
-    lds.storeIngest('', resourceRequest, data);
+    lds.storeIngest('', ingestRecord, data);
     lds.storeBroadcast();
 }
 
 export function addObjectInfo(lds: LDS, data: any) {
-    const resourceRequest = {
-        ingest: ingestObjectInfo,
-    } as any;
-
-    lds.storeIngest('', resourceRequest, data);
+    lds.storeIngest('', ingestObjectInfo, data);
     lds.storeBroadcast();
 }

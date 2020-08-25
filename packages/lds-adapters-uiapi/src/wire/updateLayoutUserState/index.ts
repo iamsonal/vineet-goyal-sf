@@ -63,7 +63,7 @@ function ingestAndBroadcast(
         config.mode
     );
 
-    lds.storeIngest(key, request, body);
+    lds.storeIngest(key, request.ingest, body);
     lds.storeBroadcast();
     return cacheLookupGetLayoutUserState(lds, config);
 }

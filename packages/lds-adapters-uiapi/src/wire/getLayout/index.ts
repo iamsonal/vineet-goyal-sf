@@ -78,7 +78,7 @@ function onResourceResponseSuccess(
 ) {
     const { body } = response;
 
-    lds.storeIngest<RecordLayoutRepresentation>(key, request, body);
+    lds.storeIngest<RecordLayoutRepresentation>(key, request.ingest, body);
     lds.storeBroadcast();
     return lds.storeLookup<RecordLayoutRepresentation>(
         {

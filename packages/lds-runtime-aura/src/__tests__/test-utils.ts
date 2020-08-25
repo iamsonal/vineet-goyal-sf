@@ -35,6 +35,6 @@ export function addObjectInfo(lds: LDS, data: any) {
         ingest: ingestObjectInfo,
     } as any;
 
-    lds.storeIngest('', resourceRequest, data);
+    lds.storeIngest('', resourceRequest.ingest, data);
     lds.storeBroadcast();
 }

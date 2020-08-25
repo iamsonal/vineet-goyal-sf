@@ -321,7 +321,7 @@ export function buildNetworkSnapshot(
             };
 
             lds.storePublish(cachedSelectorKey, sel);
-            lds.storeIngest(key, resourceRequest, body);
+            lds.storeIngest(key, resourceRequest.ingest, body);
 
             // During ingestion, only valid records are stored.
             const recordNodes = [];

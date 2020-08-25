@@ -314,7 +314,7 @@ export default class AdsBridge {
                     // with the master record type. See W-7302870 for details.
                     fixRecordTypes(lds, recordCopy);
 
-                    lds.storeIngest(INGEST_KEY, FAKE_RECORD_REQUEST, recordCopy);
+                    lds.storeIngest(INGEST_KEY, FAKE_RECORD_REQUEST.ingest, recordCopy);
                 }
             }
 

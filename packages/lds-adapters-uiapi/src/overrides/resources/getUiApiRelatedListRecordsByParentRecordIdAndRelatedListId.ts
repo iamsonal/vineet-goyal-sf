@@ -147,7 +147,7 @@ export const ingestSuccess: typeof generatedIngestSuccess = (
     const { body } = resp;
 
     const key = generatedKeyBuilder(resourceRequestConfig);
-    lds.storeIngest<RelatedListRecordCollectionRepresentation>(key, request, body);
+    lds.storeIngest<RelatedListRecordCollectionRepresentation>(key, request.ingest, body);
     const snapshot = lds.storeLookup<RelatedListRecordCollectionRepresentation>(
         {
             recordId: key,

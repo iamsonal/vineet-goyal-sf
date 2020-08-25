@@ -135,7 +135,7 @@ const buildNetworkSnapshot: typeof generatedBuildNetworkSnapshot = (
             // publish metadata for recordTypeId
             saveDefaultRecordTypeId(lds, recordId, body.objectInfos[objectApiName]);
 
-            lds.storeIngest<CloneTemplateRepresentation>(key, request, body);
+            lds.storeIngest<CloneTemplateRepresentation>(key, request.ingest, body);
 
             // mark missing optionalFields
             const templateRecordKey = templateRecordKeyBuilder({

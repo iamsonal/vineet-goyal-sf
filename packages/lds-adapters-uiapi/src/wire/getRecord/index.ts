@@ -96,7 +96,8 @@ export const notifyChangeFactory = (lds: LDS) => {
             lds.dispatchResourceRequest<RecordRepresentation>(refreshRequest).then(
                 response => {
                     const { body } = response;
-                    lds.storeIngest<RecordRepresentation>(key, refreshRequest, body);
+                    // TODO: manual ingest.
+                    lds.storeIngest<RecordRepresentation>(key, refreshRequest.ingest, body);
                     const recordNode = lds.getNode<
                         RecordRepresentationNormalized,
                         RecordRepresentation

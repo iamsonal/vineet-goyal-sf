@@ -84,7 +84,8 @@ function onResourceSuccess(
     const fields = config.fields === undefined ? [] : config.fields;
     const optionalFields = config.optionalFields === undefined ? [] : config.optionalFields;
 
-    lds.storeIngest<RecordRepresentation>(key, request, body);
+    // TODO: manual ingest.
+    lds.storeIngest<RecordRepresentation>(key, request.ingest, body);
 
     const recordNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(key)!;
 

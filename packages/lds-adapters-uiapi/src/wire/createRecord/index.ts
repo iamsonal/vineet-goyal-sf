@@ -25,7 +25,7 @@ export const factory = (lds: LDS) => {
                     recordId: body.id,
                 });
 
-                lds.storeIngest(key, request, body);
+                lds.storeIngest(key, request.ingest, body);
                 lds.storeBroadcast();
 
                 return lds.storeLookup({

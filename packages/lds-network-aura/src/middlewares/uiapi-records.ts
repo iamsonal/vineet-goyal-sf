@@ -415,7 +415,11 @@ function updateLayoutUserState(resourceRequest: ResourceRequest): Promise<any> {
             // currently dump all the entries. We need a way to recreate the same cache key between
             // getLayoutUserState and updateLayoutUserState.
             if (layoutUserStateStorage !== null) {
-                layoutUserStateStorage.clear();
+                try {
+                    layoutUserStateStorage.clear();
+                } catch (error) {
+                    /* noop */
+                }
             }
 
             return response;

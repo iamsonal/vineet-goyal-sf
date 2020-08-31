@@ -9,6 +9,11 @@ function ldsParamsToString(params: ResourceRequest['queryParams']): Request['que
         const key = keys[i];
         const value = params[key];
 
+        if (value === undefined) {
+            // filter out params that have no value
+            continue;
+        }
+
         if (Array.isArray(value)) {
             returnParams[key] = value.join(',');
         } else {

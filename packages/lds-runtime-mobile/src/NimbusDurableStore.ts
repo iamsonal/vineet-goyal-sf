@@ -36,7 +36,8 @@ export class NimbusDurableStore implements DurableStore {
             const key = keys[i];
             const value = entries[key];
 
-            if (key.startsWith(RECORD_REPRESENTATION_PREFIX)) {
+            // TODO: (W-8029812) properly filter record representations
+            if (key.startsWith(RECORD_REPRESENTATION_PREFIX) && !key.includes('__fields__')) {
                 value.data = filterPendingFields(value.data as RecordRepresentationNormalized);
             }
 

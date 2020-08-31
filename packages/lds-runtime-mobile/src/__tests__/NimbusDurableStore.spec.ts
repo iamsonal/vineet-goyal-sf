@@ -56,7 +56,7 @@ describe('nimbus durable store tests', () => {
     it('should filter out pending record fields', () => {
         const durableStore = new MockNimbusDurableStore();
         const key = 'UiApi::RecordRepresentation:foo';
-        const nameKey = 'UiApi:RecordRepresentation:foo__fields_Name';
+        const nameKey = 'UiApi::RecordRepresentation:foo__fields__Name';
         mockNimbusStore(durableStore);
         const nimbusStore = new NimbusDurableStore();
         nimbusStore.setEntries({
@@ -71,6 +71,12 @@ describe('nimbus durable store tests', () => {
                             pending: true,
                         },
                     },
+                },
+            },
+            [nameKey]: {
+                data: {
+                    displayValue: null,
+                    value: 'whoops',
                 },
             },
         });

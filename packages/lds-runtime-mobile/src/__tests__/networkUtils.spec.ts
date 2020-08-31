@@ -51,6 +51,29 @@ describe('networkUtils', () => {
             });
         });
 
+        it('handles queryParam with undefined values', () => {
+            const resourceRequest: ResourceRequest = {
+                baseUri: '/base/uri',
+                basePath: '/foo',
+                method: 'get',
+                body: null,
+                headers: {},
+                queryParams: { qArray: ['test1', 'test2'], uValue: undefined },
+                urlParams: {},
+                ingest: null,
+            };
+
+            const result = buildNimbusNetworkPluginRequest(resourceRequest);
+
+            expect(result).toEqual({
+                method: 'GET',
+                body: null,
+                headers: {},
+                path: '/base/uri/foo',
+                queryParams: { qArray: 'test1,test2' },
+            });
+        });
+
         it('handles body', () => {
             const body = { testBody: 'fooBody' };
             const resourceRequest: ResourceRequest = {

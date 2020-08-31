@@ -6,6 +6,10 @@ export function filterPendingFields(
     record: RecordRepresentationNormalized
 ): RecordRepresentationNormalized {
     const fields = record.fields;
+    // Guard against records that aren't records
+    if (fields === undefined) {
+        return record;
+    }
     const filteredFields: {
         [key: string]: StoreLink<unknown>;
     } = {};

@@ -14,6 +14,7 @@ import {
 } from '../../generated/adapters/updateRecord';
 import patchUiApiRecordsByRecordId from '../../generated/resources/patchUiApiRecordsByRecordId';
 import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
+import { ingest } from '../../overrides/types/RecordRepresentation';
 
 export interface ClientOptions {
     ifUnmodifiedSince?: string;
@@ -75,7 +76,7 @@ export const factory = (lds: LDS) => {
                     recordId,
                 });
 
-                lds.storeIngest(key, request.ingest, body);
+                lds.storeIngest(key, ingest, body);
                 lds.storeBroadcast();
 
                 return lds.storeLookup<RecordRepresentation>({

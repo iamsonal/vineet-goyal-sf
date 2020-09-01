@@ -9,6 +9,7 @@ import {
 import {
     RecordLayoutUserStateRepresentation,
     keyBuilder,
+    ingest,
 } from '../../generated/types/RecordLayoutUserStateRepresentation';
 import patchUiApiLayoutUserStateByObjectApiName from '../../generated/resources/patchUiApiLayoutUserStateByObjectApiName';
 import { validate as validateRecordLayoutUserStateInput } from '../../generated/types/RecordLayoutUserStateInputRepresentation';
@@ -39,7 +40,7 @@ function updateLayoutUserState(
 ) {
     return lds.dispatchResourceRequest<RecordLayoutUserStateRepresentation>(updateRequest).then(
         response => {
-            return ingestAndBroadcast(lds, key, updateRequest, config, response.body);
+            return ingestAndBroadcast(lds, key, config, response.body);
         },
         (err: FetchResponse<{ error: string }>) => {
             deepFreeze(err);
@@ -51,7 +52,6 @@ function updateLayoutUserState(
 function ingestAndBroadcast(
     lds: LDS,
     key: string,
-    request: ResourceRequest,
     config: GetLayoutUserStateConfigWithDefaults,
     body: RecordLayoutUserStateRepresentation
 ) {
@@ -63,7 +63,7 @@ function ingestAndBroadcast(
         config.mode
     );
 
-    lds.storeIngest(key, request.ingest, body);
+    lds.storeIngest(key, ingest, body);
     lds.storeBroadcast();
     return cacheLookupGetLayoutUserState(lds, config);
 }
@@ -214,7 +214,7 @@ export const factory = (lds: LDS): UpdateLayoutUserStateAdapter => {
             );
             if (updatedLayoutUserState !== null) {
                 // Ingest optimistic update done client side
-                ingestAndBroadcast(lds, key, updateRequest, config, updatedLayoutUserState);
+                ingestAndBroadcast(lds, key, config, updatedLayoutUserState);
             }
         }
 

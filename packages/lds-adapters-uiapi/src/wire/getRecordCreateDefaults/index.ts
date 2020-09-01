@@ -12,7 +12,10 @@ import getUiApiRecordDefaultsCreateByObjectApiName, {
     keyBuilder,
 } from '../../generated/resources/getUiApiRecordDefaultsCreateByObjectApiName';
 import { createResourceParams } from '../../generated/adapters/getRecordCreateDefaults';
-import { RecordDefaultsRepresentation } from '../../generated/types/RecordDefaultsRepresentation';
+import {
+    RecordDefaultsRepresentation,
+    ingest,
+} from '../../generated/types/RecordDefaultsRepresentation';
 import { select as recordLayoutRepresentationSelect } from '../../generated/types/RecordLayoutRepresentation';
 import { select as objectInfoRepresentationSelect } from '../../generated/types/ObjectInfoRepresentation';
 import { FormFactor } from '../../primitives/FormFactor';
@@ -88,7 +91,7 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordCreateDefaultsCo
             };
 
             lds.storePublish(selectorKey, cacheSelector);
-            lds.storeIngest(key, request.ingest, body);
+            lds.storeIngest(key, ingest, body);
             lds.storeBroadcast();
             return lds.storeLookup<RecordDefaultsRepresentation>(
                 cacheSelector,

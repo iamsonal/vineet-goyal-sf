@@ -15,6 +15,7 @@ import { RecordLayoutRepresentation } from '../../generated/types/RecordLayoutRe
 import {
     RecordUiRepresentation,
     TTL as RecordUiRepresentationTTL,
+    ingest,
 } from '../../generated/types/RecordUiRepresentation';
 import {
     keyBuilder as recordRepresentationKeyBuilder,
@@ -321,7 +322,7 @@ export function buildNetworkSnapshot(
             };
 
             lds.storePublish(cachedSelectorKey, sel);
-            lds.storeIngest(key, resourceRequest.ingest, body);
+            lds.storeIngest(key, ingest, body);
 
             // During ingestion, only valid records are stored.
             const recordNodes = [];

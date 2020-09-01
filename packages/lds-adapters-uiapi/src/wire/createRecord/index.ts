@@ -9,6 +9,7 @@ import {
 } from '../../generated/types/RecordRepresentation';
 import { RecordInputRepresentation } from '../../generated/types/RecordInputRepresentation';
 import postUiApiRecords from '../../generated/resources/postUiApiRecords';
+import { ingest } from '../../overrides/types/RecordRepresentation';
 
 export const factory = (lds: LDS) => {
     return function(config: RecordInputRepresentation): Promise<Snapshot<RecordRepresentation>> {
@@ -25,7 +26,7 @@ export const factory = (lds: LDS) => {
                     recordId: body.id,
                 });
 
-                lds.storeIngest(key, request.ingest, body);
+                lds.storeIngest(key, ingest, body);
                 lds.storeBroadcast();
 
                 return lds.storeLookup({

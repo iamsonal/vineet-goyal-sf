@@ -4,7 +4,6 @@ import {
     FetchResponse,
     Snapshot,
     SnapshotRefresh,
-    ResourceRequest,
     ResourceResponse,
     UnfulfilledSnapshot,
 } from '@ldsjs/engine';
@@ -18,6 +17,7 @@ import {
     PicklistValuesRepresentation,
     keyBuilder as picklistValuesKeyBuilder,
     select as picklistValuesRepresentationSelect,
+    ingest as picklistValuesRepresentationIngest,
 } from '../../generated/types/PicklistValuesRepresentation';
 import { getFieldId } from '../../primitives/FieldId';
 
@@ -57,11 +57,10 @@ function onResponseSuccess(
     lds: LDS,
     config: GetPicklistValuesConfig,
     key: string,
-    request: ResourceRequest,
     response: ResourceResponse<PicklistValuesRepresentation>
 ) {
     const { body } = response;
-    lds.storeIngest(key, request.ingest, body);
+    lds.storeIngest(key, picklistValuesRepresentationIngest, body);
     lds.storeBroadcast();
     return buildInMemorySnapshot(lds, config);
 }
@@ -85,7 +84,7 @@ export function buildNetworkSnapshot(
 
     return lds.dispatchResourceRequest<PicklistValuesRepresentation>(request).then(
         response => {
-            return onResponseSuccess(lds, config, key, request, response);
+            return onResponseSuccess(lds, config, key, response);
         },
         (err: FetchResponse<unknown>) => {
             return onResponseError(lds, config, key, err);
@@ -102,7 +101,7 @@ export function resolveUnfulfilledSnapshot(
 
     return lds.resolveUnfulfilledSnapshot<PicklistValuesRepresentation>(request, snapshot).then(
         response => {
-            return onResponseSuccess(lds, config, key, request, response);
+            return onResponseSuccess(lds, config, key, response);
         },
         (err: FetchResponse<unknown>) => {
             return onResponseError(lds, config, key, err);

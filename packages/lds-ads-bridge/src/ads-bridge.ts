@@ -1,4 +1,4 @@
-import { LDS, ResourceRequest, ProxyGraphNode, GraphNode } from '@ldsjs/engine';
+import { LDS, ProxyGraphNode, GraphNode } from '@ldsjs/engine';
 import {
     ingestRecord,
     keyBuilderRecord,
@@ -29,11 +29,6 @@ import {
 // No need to pass the actual record key `lds.ingestStore`. The `RecordRepresentation.ts#ingest`
 // function extracts the appropriate record id from the ingested record.
 const INGEST_KEY = '';
-
-// A fake record resource request to trick the LDS engine to ingest records coming from ADS.
-const FAKE_RECORD_REQUEST = {
-    ingest: ingestRecord,
-} as ResourceRequest;
 
 const RECORD_ID_PREFIX = 'UiApi::RecordRepresentation:';
 const RECORD_ID_REGEXP = /^UiApi::RecordRepresentation:([a-zA-Z0-9])+$/;
@@ -314,7 +309,7 @@ export default class AdsBridge {
                     // with the master record type. See W-7302870 for details.
                     fixRecordTypes(lds, recordCopy);
 
-                    lds.storeIngest(INGEST_KEY, FAKE_RECORD_REQUEST.ingest, recordCopy);
+                    lds.storeIngest(INGEST_KEY, ingestRecord, recordCopy);
                 }
             }
 

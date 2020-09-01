@@ -31,10 +31,6 @@ export function createObjectInfo(config: any = {}) {
 }
 
 export function addObjectInfo(lds: LDS, data: any) {
-    const resourceRequest = {
-        ingest: ingestObjectInfo,
-    } as any;
-
-    lds.storeIngest('', resourceRequest.ingest, data);
+    lds.storeIngest('', ingestObjectInfo, data);
     lds.storeBroadcast();
 }

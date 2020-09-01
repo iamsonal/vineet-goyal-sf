@@ -155,7 +155,7 @@ function network(
             const { cacheable } = resp.headers;
             if (((cacheable as unknown) as boolean) === true) {
                 lds.storePublish(recordId + '_cacheable', resp.headers);
-                lds.storeIngest(recordId, request.ingest, resp.body);
+                lds.storeIngest(recordId, apexResponseIngest, resp.body);
                 lds.storeBroadcast();
 
                 return lds.storeLookup<any>(select);

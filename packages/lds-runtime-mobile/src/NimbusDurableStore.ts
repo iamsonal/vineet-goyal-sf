@@ -10,6 +10,10 @@ const RECORD_REPRESENTATION_PREFIX = 'UiApi::RecordRepresentation:';
 
 export class NimbusDurableStore implements DurableStore {
     getEntries(entryIds: string[]): Promise<DurableStoreEntries | undefined> {
+        if (entryIds.length === 0) {
+            return Promise.resolve({});
+        }
+
         return __nimbus.plugins.LdsDurableStore.getEntries(entryIds).then(result => {
             const { isMissingEntries, entries } = result;
 

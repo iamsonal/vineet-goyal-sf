@@ -42,6 +42,7 @@ import {
     staticValuePathSelection,
 } from '../../util/pagination';
 import { select as ListReferenceRepresentation_select } from '../../generated/types/ListReferenceRepresentation';
+import { isFulfilledSnapshot } from '../../util/snapshot';
 
 const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select();
 
@@ -319,7 +320,7 @@ export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> =
 
         // try to get a list reference and a list info for the list; this should come back
         // non-null if we have the list info cached
-        const listInfo = getListInfo(
+        const listInfoSnapshot = getListInfo(
             {
                 id: null,
                 listViewApiName: null,
@@ -330,9 +331,11 @@ export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> =
         );
 
         // no list info means it's not in the cache - make a full list-ui request
-        if (!listInfo) {
+        if (!isFulfilledSnapshot(listInfoSnapshot)) {
             return buildNetworkSnapshot_getMruListUi(lds, config);
         }
+
+        const listInfo = listInfoSnapshot.data;
 
         // with the list info we can construct the full selector and try to get the
         // list ui from the store

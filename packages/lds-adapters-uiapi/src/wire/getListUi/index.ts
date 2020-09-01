@@ -59,7 +59,7 @@ import {
 } from '../../util/pagination';
 import { factory as getListViewSummaryCollectionAdapterFactory } from '../getListViewSummaryCollection';
 import { factory as getMruListUiAdapterFactory } from '../getMruListUi';
-import { isUnfulfilledSnapshot } from '../../util/snapshot';
+import { isUnfulfilledSnapshot, isFulfilledSnapshot } from '../../util/snapshot';
 
 const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select();
 
@@ -586,6 +586,46 @@ function validateGetListUiConfig(untrustedConfig: unknown): GetListUiConfig | nu
 // the listViewApiName value to pass to getListUi() to request the MRU list
 export const MRU = Symbol.for('MRU');
 
+function isResultListInfoRepresentation(
+    result: ResourceResponse<ListInfoRepresentation>
+): result is ResourceResponse<ListInfoRepresentation> {
+    return 'listReference' in result.body;
+}
+
+function getListUiSnapshotFromListInfo(
+    lds: LDS,
+    context: AdapterContext,
+    config: GetListUiConfig,
+    listInfo: ListInfoRepresentation
+) {
+    // with the list info we can construct the full selector and try to get the
+    // list ui from the store
+    const snapshot = buildInMemorySnapshot(lds, context, config, listInfo);
+
+    // if the list ui was not found in the store then
+    // make a full list-ui request
+    if (!snapshot.data) {
+        if (isUnfulfilledSnapshot(snapshot)) {
+            return resolveUnfulfilledSnapshot_getListUi(lds, context, config, snapshot);
+        }
+
+        return buildNetworkSnapshot_getListUi(lds, context, config);
+    }
+
+    if (lds.snapshotDataAvailable(snapshot)) {
+        // cache hit :partyparrot:
+        return snapshot;
+    }
+
+    // we *should* only be missing records and/or tokens at this point; send a list-records
+    // request to fill them in
+    if (isUnfulfilledSnapshot(snapshot)) {
+        return resolveUnfulfilledSnapshot_getListRecords(lds, context, config, listInfo, snapshot);
+    }
+
+    return buildNetworkSnapshot_getListRecords(lds, context, config, listInfo, snapshot);
+}
+
 export const factory: AdapterFactory<
     | GetListViewSummaryCollectionConfig
     | GetListUiByApiNameConfig
@@ -604,45 +644,58 @@ export const factory: AdapterFactory<
         // try to get a list reference and a list info for the list; this should come back
         // non-null if we have the list info cached
         const listRef = getListReference(config, context);
-        const listInfo = listRef && getListInfo(listRef, lds);
 
-        // no list info means it's not in the cache - make a full list-ui request
-        if (!listInfo) {
+        // no listRef means we can't even attempt to build an in-memory snapshot
+        // so make a full list-ui request
+        if (listRef === undefined) {
             return buildNetworkSnapshot_getListUi(lds, context, config);
         }
 
-        // with the list info we can construct the full selector and try to get the
-        // list ui from the store
-        const snapshot = buildInMemorySnapshot(lds, context, config, listInfo);
+        const listInfoSnapshot = getListInfo(listRef, lds);
 
-        // if the list ui was not found in the store then
-        // make a full list-ui request
-        if (!snapshot.data) {
-            if (isUnfulfilledSnapshot(snapshot)) {
-                return resolveUnfulfilledSnapshot_getListUi(lds, context, config, snapshot);
-            }
-
-            return buildNetworkSnapshot_getListUi(lds, context, config);
+        // if we have list info then build a snapshot from that
+        if (isFulfilledSnapshot(listInfoSnapshot)) {
+            return getListUiSnapshotFromListInfo(lds, context, config, listInfoSnapshot.data);
         }
 
-        if (lds.snapshotDataAvailable(snapshot)) {
-            // cache hit :partyparrot:
-            return snapshot;
-        }
+        // if listInfoSnapshot is unfulfilled then we can try to resolve it
+        if (isUnfulfilledSnapshot(listInfoSnapshot)) {
+            const listUiResourceRequest = prepareRequest_getListUi(config);
 
-        // we *should* only be missing records and/or tokens at this point; send a list-records
-        // request to fill them in
-        if (isUnfulfilledSnapshot(snapshot)) {
-            return resolveUnfulfilledSnapshot_getListRecords(
-                lds,
-                context,
-                config,
-                listInfo,
-                snapshot
+            // In default environment resolving an unfulfilled snapshot is just hitting the network
+            // with the given ResourceRequest (so list-ui in this case).  In durable environment
+            // resolving an unfulfilled snapshot will first attempt to read the missing cache keys
+            // from the given unfulfilled snapshot (a list-info snapshot in this case) and build a
+            // fulfilled snapshot from that if those cache keys are present, otherwise it hits the
+            // network with the given resource request.  Usually the ResourceRequest and the unfulfilled
+            // snapshot are for the same response Type, but this lists adapter is special (it mixes
+            // calls with list-info, list-records, and list-ui), and so our use of resolveUnfulfilledSnapshot
+            // is special (polymorphic response, could either be a list-info representation or a
+            // list-ui representation).
+            return lds.resolveUnfulfilledSnapshot(listUiResourceRequest, listInfoSnapshot).then(
+                response => {
+                    // if result came from cache we know it's a listinfo, otherwise
+                    // it's a full list-ui response
+                    if (isResultListInfoRepresentation(response)) {
+                        return getListUiSnapshotFromListInfo(lds, context, config, response.body);
+                    } else {
+                        return onResourceSuccess_getListUi(
+                            lds,
+                            context,
+                            config,
+                            listUiResourceRequest,
+                            response
+                        );
+                    }
+                },
+                (err: FetchResponse<unknown>) => {
+                    return onResourceError_getListUi(lds, context, config, err);
+                }
             );
         }
 
-        return buildNetworkSnapshot_getListRecords(lds, context, config, listInfo, snapshot);
+        // if listInfoSnapshot in any other state then we make a full list-ui request
+        return buildNetworkSnapshot_getListUi(lds, context, config);
     };
 
     let listViewSummaryCollectionAdapter: Adapter<any, any> | null = null;

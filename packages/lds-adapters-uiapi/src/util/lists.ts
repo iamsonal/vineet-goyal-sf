@@ -1,4 +1,4 @@
-import { LDS, PathSelection, AdapterContext } from '@ldsjs/engine';
+import { LDS, PathSelection, AdapterContext, Snapshot } from '@ldsjs/engine';
 import {
     keyBuilder as ListInfoRepresentation_keyBuilder,
     ListInfoRepresentation,
@@ -10,7 +10,6 @@ import { ListUiRepresentation } from '../generated/types/ListUiRepresentation';
 import { RecordRepresentation } from '../generated/types/RecordRepresentation';
 import { ObjectKeys } from './language';
 import { isGraphNode } from './records';
-import { isFulfilledSnapshot } from './snapshot';
 
 export interface ListReferenceQuery {
     listViewId?: string;
@@ -80,7 +79,8 @@ const LIST_INFO_SELECTIONS_ETAG: PathSelection[] = [
 ];
 
 /**
- * Retrieves the list info corresponding to the specified list reference from the store.
+ * Retrieves the snapshot of the list info corresponding to the specified list
+ * reference from the store.
  *
  * @param listRef list reference
  * @param lds LDS
@@ -88,17 +88,13 @@ const LIST_INFO_SELECTIONS_ETAG: PathSelection[] = [
 export function getListInfo(
     listRef: ListReferenceRepresentation,
     lds: LDS
-): ListInfoRepresentation | undefined {
+): Snapshot<ListInfoRepresentation> {
     const key = ListInfoRepresentation_keyBuilder(listRef);
-    const lookupResult = lds.storeLookup<ListInfoRepresentation>({
+    return lds.storeLookup<ListInfoRepresentation>({
         recordId: key,
         node: { kind: 'Fragment', selections: LIST_INFO_SELECTIONS_ETAG, private: [] },
         variables: {},
     });
-
-    if (isFulfilledSnapshot(lookupResult)) {
-        return lookupResult.data;
-    }
 }
 
 // The server assumes defaults for certain config fields, which makes caching

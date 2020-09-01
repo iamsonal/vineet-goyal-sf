@@ -8,9 +8,22 @@ import {
     MockPayload,
 } from '@ldsjs/adapter-test-library';
 
-export function buildOfflineLds(durableStore: MockDurableStore, network: NetworkAdapter) {
+export type CustomEnvironmentFactory = (
+    environment: Environment,
+    durableStore: MockDurableStore,
+    store: Store
+) => Environment;
+
+export function buildOfflineLds(
+    durableStore: MockDurableStore,
+    network: NetworkAdapter,
+    customEnvironment?: CustomEnvironmentFactory
+) {
     const store = new Store();
-    const env = makeDurable(makeOffline(new Environment(store, network)), durableStore);
+    let env = makeDurable(makeOffline(new Environment(store, network)), durableStore);
+    if (customEnvironment !== undefined) {
+        env = customEnvironment(env, durableStore, store);
+    }
     const lds = new LDS(env);
     return {
         lds,
@@ -43,9 +56,14 @@ export async function testDataEmittedWhenStale<Config, DataType>(
     adapterFactory: AdapterFactory<Config, DataType>,
     config: Config,
     payload: MockPayload,
-    ttl: number
+    ttl: number,
+    customEnvironment?: CustomEnvironmentFactory
 ) {
-    const { lds } = buildOfflineLds(new MockDurableStore(), buildMockNetworkAdapter([payload]));
+    const { lds } = buildOfflineLds(
+        new MockDurableStore(),
+        buildMockNetworkAdapter([payload]),
+        customEnvironment
+    );
     const adapter = adapterFactory(lds);
     const result = await (adapter(config) as Promise<any>);
     expect(result.state).toBe('Fulfilled');
@@ -57,10 +75,15 @@ export async function testDataEmittedWhenStale<Config, DataType>(
 export async function testDurableHitDoesNotHitNetwork<Config, DataType>(
     adapterFactory: AdapterFactory<Config, DataType>,
     config: Config,
-    payload: MockPayload
+    payload: MockPayload,
+    customEnvironment?: CustomEnvironmentFactory
 ) {
     const durableStore = await populateDurableStore(adapterFactory, config, payload);
-    const { lds, network } = buildOfflineLds(durableStore, buildMockNetworkAdapter([payload]));
+    const { lds, network } = buildOfflineLds(
+        durableStore,
+        buildMockNetworkAdapter([payload]),
+        customEnvironment
+    );
     const adapter = adapterFactory(lds);
     const result = await (adapter(config) as Promise<any>);
     expect(result.state).toBe('Fulfilled');

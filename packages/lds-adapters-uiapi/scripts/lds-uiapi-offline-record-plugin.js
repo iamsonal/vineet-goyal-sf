@@ -77,14 +77,14 @@ function recursivelyFindRecordReps(shape, modelInfo, currentPath, recordLocation
             } else if (items !== undefined) {
                 if (items.isLink) {
                     if (items.linkLabel === RECORD_REPRESENTATION) {
-                        recordLocations[currentPath.concat(`.${prop.name}`)] = 'array';
+                        recordLocations[currentPath.concat(`?.${prop.name}`)] = 'array';
                     }
                 }
             } else {
                 recursivelyFindRecordReps(
                     prop.range,
                     modelInfo,
-                    currentPath.concat(`.${prop.name}`),
+                    currentPath.concat(`?.${prop.name}`),
                     recordLocations
                 );
             }
@@ -143,6 +143,9 @@ function generateRecordRevivalHandlers(compilerConfig, modelInfo) {
                         return ${REVIVE_RECORDS_FROM_DURABLE_STORE}(ids, ${STORE_FIELD}, ${DURABLE_STORE_FIELD});`;
             } else if (type === 'array') {
                 revivalCode = `const records = ${recordPath};
+                        if(records === undefined) {
+                            return Promise.resolve();
+                        }
                         const reviveIds = ObjectCreate(null);
                         for (let i = 0, len = records.length; i < len; i++) {
                             const record = records[i];

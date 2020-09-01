@@ -6,12 +6,15 @@ import {
     ResourceRequestOverride,
     Selector,
     FetchResponse,
+    ResourceResponse,
+    ResourceRequest,
+    UnfulfilledSnapshot,
+    AdapterContext,
 } from '@ldsjs/engine';
 import {
     validateAdapterConfig,
     getRecordTemplateCreate_ConfigPropertyNames,
     createResourceParams,
-    buildInMemorySnapshot as generatedBuildInMemorySnapshot,
     buildNetworkSnapshot as generatedBuildNetworkSnapshot,
     GetRecordTemplateCreateConfig,
 } from '../../generated/adapters/getRecordTemplateCreate';
@@ -20,6 +23,7 @@ import {
     keyBuilder,
     select,
     ingestError,
+    ResourceRequestConfig,
 } from '../../generated/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
 import {
     CreateTemplateRepresentation,
@@ -30,53 +34,18 @@ import {
     CreateRecordTemplateRepresentationNormalized,
     CreateRecordTemplateRepresentation,
 } from '../../generated/types/CreateRecordTemplateRepresentation';
-import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
 import { markMissingOptionalFields } from '../../util/records';
 import { getTrackedFields } from '../../util/recordTemplate';
-import { isFulfilledSnapshot } from '../../util/snapshot';
-import { keyPrefix, snapshotRefreshOptions } from '../../generated/adapters/adapter-utils';
+import { snapshotRefreshOptions } from '../../generated/adapters/adapter-utils';
 
-const METADATA_PREFIX = 'METADATA::';
+import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
-interface GetRecordTemplateCreateMetadata {
-    recordTypeId: string | null;
-}
-
-function buildMetadataKey(objectApiName: string) {
-    return `${METADATA_PREFIX}${keyPrefix}CreateTemplateRepresentation::${objectApiName}`;
-}
-
-function getMetadata(lds: LDS, objectApiName: string) {
-    const metadataKey = buildMetadataKey(objectApiName);
-    return lds.storeLookup<GetRecordTemplateCreateMetadata>({
-        recordId: metadataKey,
-        node: {
-            kind: 'Fragment',
-            private: [],
-            selections: [
-                {
-                    name: 'recordTypeId',
-                    kind: 'Scalar',
-                },
-            ],
-        },
-        variables: {},
-    });
-}
-
-function saveDefaultRecordTypeId(
-    lds: LDS,
-    objectApiName: string,
-    objectInfo: ObjectInfoRepresentation
-) {
-    const metadataKey = buildMetadataKey(objectApiName);
-    lds.storePublish<GetRecordTemplateCreateMetadata>(metadataKey, {
-        recordTypeId: objectInfo.defaultRecordTypeId,
-    });
+function buildRecordTypeIdContextKey(objectApiName: string): string {
+    return `DEFAULTS::recordTypeId:${objectApiName}`;
 }
 
 function getRecordTypeId(
-    lds: LDS,
+    context: AdapterContext,
     adapterConfig: GetRecordTemplateCreateConfig
 ): string | undefined {
     const config = createResourceParams(adapterConfig);
@@ -85,106 +54,163 @@ function getRecordTypeId(
         return recordTypeId;
     }
 
-    const metadataSnapshot = getMetadata(lds, config.urlParams.objectApiName);
+    const saved = context.get<string>(buildRecordTypeIdContextKey(config.urlParams.objectApiName));
 
-    if (isFulfilledSnapshot(metadataSnapshot)) {
-        const { recordTypeId } = metadataSnapshot.data;
-        if (recordTypeId === null) {
-            return undefined;
-        }
-        return recordTypeId;
+    if (saved === null || saved === undefined) {
+        return undefined;
     }
 
-    return undefined;
+    return saved;
 }
 
-const buildNetworkSnapshot: typeof generatedBuildNetworkSnapshot = (
-    lds: LDS,
-    config: GetRecordTemplateCreateConfig,
-    override?: ResourceRequestOverride
-) => {
+function prepareRequest(lds: LDS, context: AdapterContext, config: GetRecordTemplateCreateConfig) {
     const resourceParams = createResourceParams(config);
-    const recordTypeId = getRecordTypeId(lds, config);
+    const recordTypeId = getRecordTypeId(context, config);
     const { objectApiName } = config;
     const resourceRequest = createResourceRequest(resourceParams);
 
-    const request =
-        recordTypeId === undefined
-            ? resourceRequest
-            : createResourceRequest({
-                  ...resourceParams,
-                  queryParams: {
-                      ...resourceRequest.queryParams,
-                      optionalFields: getTrackedFields(
-                          lds,
-                          recordTemplateKeyBuilder({
-                              apiName: objectApiName,
-                              recordTypeId: recordTypeId,
-                          }),
-                          config.optionalFields
-                      ),
-                  },
-              });
+    return recordTypeId === undefined
+        ? resourceRequest
+        : createResourceRequest({
+              ...resourceParams,
+              queryParams: {
+                  ...resourceRequest.queryParams,
+                  optionalFields: getTrackedFields(
+                      lds,
+                      recordTemplateKeyBuilder({
+                          apiName: objectApiName,
+                          recordTypeId: recordTypeId,
+                      }),
+                      config.optionalFields
+                  ),
+              },
+          });
+}
+
+function onResourceResponseSuccess(
+    lds: LDS,
+    context: AdapterContext,
+    config: GetRecordTemplateCreateConfig,
+    request: ResourceRequest,
+    response: ResourceResponse<CreateTemplateRepresentation>,
+    resourceParams: ResourceRequestConfig
+) {
+    const {
+        urlParams: { objectApiName },
+        queryParams: { optionalFields },
+    } = resourceParams;
+    const { body } = response;
+    const key = keyBuilderFromType(body);
+
+    const responseRecordTypeId = body.record.recordTypeId;
+
+    // publish metadata for recordTypeId
+    const recordTypeId = body.objectInfos[objectApiName].defaultRecordTypeId;
+    context.set(buildRecordTypeIdContextKey(objectApiName), recordTypeId);
+
+    lds.storeIngest<CreateTemplateRepresentation>(key, request.ingest, body);
+
+    // mark missing optionalFields
+    const templateRecordKey = recordTemplateKeyBuilder({
+        apiName: objectApiName,
+        recordTypeId: responseRecordTypeId,
+    });
+    const recordNode = lds.getNode<
+        CreateRecordTemplateRepresentationNormalized,
+        CreateRecordTemplateRepresentation
+    >(templateRecordKey);
+    const allTrackedFields = getTrackedFields(lds, templateRecordKey, optionalFields);
+    markMissingOptionalFields(recordNode, allTrackedFields);
+
+    lds.storeBroadcast();
+    const snapshot = buildInMemorySnapshot(lds, context, {
+        ...config,
+        recordTypeId: responseRecordTypeId as string,
+    });
+
+    if (process.env.NODE_ENV !== 'production') {
+        if (snapshot.state !== 'Fulfilled') {
+            throw new Error(
+                'Invalid network response. Expected network response to result in Fulfilled snapshot'
+            );
+        }
+    }
+
+    return snapshot as FulfilledSnapshot<CreateTemplateRepresentation, {}>;
+}
+
+function onResourceResponseError(
+    lds: LDS,
+    context: AdapterContext,
+    config: GetRecordTemplateCreateConfig,
+    resourceParams: ResourceRequestConfig,
+    error: FetchResponse<unknown>
+) {
+    const snapshot = ingestError(lds, resourceParams, error, {
+        config,
+        resolve: () => buildNetworkSnapshot(lds, context, config, snapshotRefreshOptions),
+    });
+    lds.storeBroadcast();
+    return snapshot;
+}
+
+function buildNetworkSnapshot(
+    lds: LDS,
+    context: AdapterContext,
+    config: GetRecordTemplateCreateConfig,
+    override?: ResourceRequestOverride
+): ReturnType<typeof generatedBuildNetworkSnapshot> {
+    const resourceParams = createResourceParams(config);
+    const request = prepareRequest(lds, context, config);
 
     return lds.dispatchResourceRequest<CreateTemplateRepresentation>(request, override).then(
         response => {
-            const { body } = response;
-            const key = keyBuilderFromType(body);
-
-            const responseRecordTypeId = body.record.recordTypeId;
-
-            // publish metadata for recordTypeId
-            saveDefaultRecordTypeId(lds, objectApiName, body.objectInfos[objectApiName]);
-
-            lds.storeIngest<CreateTemplateRepresentation>(key, request.ingest, body);
-
-            // mark missing optionalFields
-            const templateRecordKey = recordTemplateKeyBuilder({
-                apiName: resourceParams.urlParams.objectApiName,
-                recordTypeId: responseRecordTypeId,
-            });
-            const recordNode = lds.getNode<
-                CreateRecordTemplateRepresentationNormalized,
-                CreateRecordTemplateRepresentation
-            >(templateRecordKey);
-            const allTrackedFields = getTrackedFields(
+            return onResourceResponseSuccess(
                 lds,
-                templateRecordKey,
-                resourceParams.queryParams.optionalFields
+                context,
+                config,
+                request,
+                response,
+                resourceParams
             );
-            markMissingOptionalFields(recordNode, allTrackedFields);
-
-            lds.storeBroadcast();
-            const snapshot = buildInMemorySnapshot(lds, {
-                ...config,
-                recordTypeId: responseRecordTypeId as string,
-            });
-
-            if (process.env.NODE_ENV !== 'production') {
-                if (snapshot.state !== 'Fulfilled') {
-                    throw new Error(
-                        'Invalid network response. Expected network response to result in Fulfilled snapshot'
-                    );
-                }
-            }
-
-            return snapshot as FulfilledSnapshot<CreateTemplateRepresentation, {}>;
         },
         (response: FetchResponse<unknown>) => {
-            const snapshot = ingestError(lds, resourceParams, response, {
-                config,
-                resolve: () => buildNetworkSnapshot(lds, config, snapshotRefreshOptions),
-            });
-            lds.storeBroadcast();
-            return snapshot;
+            return onResourceResponseError(lds, context, config, resourceParams, response);
         }
     );
-};
+}
 
-export const buildInMemorySnapshot: typeof generatedBuildInMemorySnapshot = (
+function resolveUnfulfilledSnapshot(
     lds: LDS,
+    context: AdapterContext,
+    config: GetRecordTemplateCreateConfig,
+    snapshot: UnfulfilledSnapshot<CreateTemplateRepresentation, unknown>
+): Promise<Snapshot<CreateTemplateRepresentation>> {
+    const resourceParams = createResourceParams(config);
+    const request = prepareRequest(lds, context, config);
+
+    return lds.resolveUnfulfilledSnapshot(request, snapshot).then(
+        response => {
+            return onResourceResponseSuccess(
+                lds,
+                context,
+                config,
+                request,
+                response,
+                resourceParams
+            );
+        },
+        (response: FetchResponse<unknown>) => {
+            return onResourceResponseError(lds, context, config, resourceParams, response);
+        }
+    );
+}
+
+function buildInMemorySnapshot(
+    lds: LDS,
+    context: AdapterContext,
     config: GetRecordTemplateCreateConfig
-): Snapshot<CreateTemplateRepresentation, any> => {
+): Snapshot<CreateTemplateRepresentation, any> {
     const resourceParams = createResourceParams(config);
     const selector: Selector = {
         recordId: keyBuilder(resourceParams),
@@ -193,16 +219,17 @@ export const buildInMemorySnapshot: typeof generatedBuildInMemorySnapshot = (
     };
     return lds.storeLookup<CreateTemplateRepresentation>(selector, {
         config,
-        resolve: () => buildNetworkSnapshot(lds, config, snapshotRefreshOptions),
+        resolve: () => buildNetworkSnapshot(lds, context, config, snapshotRefreshOptions),
     });
-};
+}
 
 export const factory: AdapterFactory<
     GetRecordTemplateCreateConfig,
     CreateTemplateRepresentation
-> = (lds: LDS) =>
-    function getRecordDefaultsTemplateForCreate(
-        untrustedConfig: unknown
+> = (lds: LDS) => {
+    return lds.withContext(function UiApi__getRecordDefaultsTemplateForCreate(
+        untrustedConfig: unknown,
+        context: AdapterContext
     ):
         | Promise<Snapshot<CreateTemplateRepresentation, any>>
         | Snapshot<CreateTemplateRepresentation, any>
@@ -217,9 +244,9 @@ export const factory: AdapterFactory<
             return null;
         }
 
-        const recordTypeId = getRecordTypeId(lds, config);
+        const recordTypeId = getRecordTypeId(context, config);
 
-        const cacheSnapshot = buildInMemorySnapshot(lds, {
+        const cacheSnapshot = buildInMemorySnapshot(lds, context, {
             ...config,
             recordTypeId,
         });
@@ -229,5 +256,10 @@ export const factory: AdapterFactory<
             return cacheSnapshot;
         }
 
-        return buildNetworkSnapshot(lds, config);
-    };
+        if (isUnfulfilledSnapshot(cacheSnapshot)) {
+            return resolveUnfulfilledSnapshot(lds, context, config, cacheSnapshot);
+        }
+
+        return buildNetworkSnapshot(lds, context, config);
+    });
+};

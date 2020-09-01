@@ -1,6 +1,6 @@
 'use strict';
 
-import { karmaNetworkAdapter, store } from 'lds-engine';
+import { karmaNetworkAdapter, store, resetAllAdapterContexts } from 'lds-engine';
 import { countNetworkCalls } from 'impl-test-utils';
 import { createElement } from 'lwc';
 import timekeeper from 'timekeeper';
@@ -285,6 +285,7 @@ function resetTime() {
  */
 function clearCache() {
     store.reset();
+    resetAllAdapterContexts();
 }
 
 /**

@@ -15,10 +15,6 @@ const SFDC_PRIVATE_ADAPTERS = require('./sfdc-private-adapters');
 
 const ADAPTERS_NOT_DEFINED_IN_OVERLAY = [
     {
-        name: 'deleteRecord',
-        method: 'delete',
-    },
-    {
         name: 'getListUi',
         method: 'get',
     },

@@ -517,6 +517,13 @@ types:
           name: updateRecord
           coercedParams:
             recordId: SalesforceRecordId18
+      delete:
+        (lds.adapter):
+          name: deleteRecord
+          coercedParams:
+            recordId: SalesforceRecordId18
+        (lds.key):
+          recordId: urlParams.recordId
   '/record-ui/{recordIds}':
     get:
       (lds.adapter):

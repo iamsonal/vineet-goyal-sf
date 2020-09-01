@@ -79,7 +79,7 @@ describe('deleteRecord - errors', () => {
 
         expect(error).toEqual(
             jasmine.objectContaining({
-                message: 'Unexpected parameter, expected a Salesforce Record id.',
+                message: 'Invalid config for "deleteRecord"',
             })
         );
     });

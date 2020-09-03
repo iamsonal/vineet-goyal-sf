@@ -7,7 +7,6 @@ import {
     FetchResponse,
     SnapshotRefresh,
     ResourceResponse,
-    ResourceRequest,
 } from '@ldsjs/engine';
 import { ObjectKeys } from '../../util/language';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
@@ -19,7 +18,10 @@ import {
     GetRecordAvatarsConfig,
 } from '../../generated/adapters/getRecordAvatars';
 import { keyPrefix } from '../../generated/adapters/adapter-utils';
-import { RecordAvatarBulkMapRepresentation } from '../../generated/types/RecordAvatarBulkMapRepresentation';
+import {
+    RecordAvatarBulkMapRepresentation,
+    ingest as recordAvatarBulkMapRepresentationIngest,
+} from '../../generated/types/RecordAvatarBulkMapRepresentation';
 import { selectChildren as selectChildrenAbstractRecordAvatarBatchRepresentation } from '../../generated/types/AbstractRecordAvatarBatchRepresentation';
 
 function selectAvatars(recordIds: string[]): PathSelection[] {
@@ -84,7 +86,6 @@ function onResponseSuccess(
     lds: LDS,
     config: GetRecordAvatarsConfig,
     recordIds: string[],
-    request: ResourceRequest,
     response: ResourceResponse<RecordAvatarBulkRepresentation | RecordAvatarBulkMapRepresentation>
 ) {
     let formatted: RecordAvatarBulkMapRepresentation;
@@ -103,7 +104,11 @@ function onResponseSuccess(
         }, {} as RecordAvatarBulkMapRepresentation);
     }
 
-    lds.storeIngest<RecordAvatarBulkMapRepresentation>(KEY, request.ingest, formatted);
+    lds.storeIngest<RecordAvatarBulkMapRepresentation>(
+        KEY,
+        recordAvatarBulkMapRepresentationIngest,
+        formatted
+    );
     lds.storeBroadcast();
     return buildInMemorySnapshot(lds, config);
 }
@@ -128,7 +133,7 @@ function resolveUnfulfilledSnapshot(
     const resourceRequest = buildRequest(recordIds);
     return lds.resolveUnfulfilledSnapshot(resourceRequest, snapshot).then(
         response => {
-            return onResponseSuccess(lds, config, recordIds, resourceRequest, response);
+            return onResponseSuccess(lds, config, recordIds, response);
         },
         (err: FetchResponse<unknown>) => {
             return onResponseError(lds, config, recordIds, err);
@@ -152,7 +157,7 @@ export function buildNetworkSnapshot(
 
     return lds.dispatchResourceRequest<RecordAvatarBulkRepresentation>(resourceRequest).then(
         response => {
-            return onResponseSuccess(lds, config, recordIds, resourceRequest, response);
+            return onResponseSuccess(lds, config, recordIds, response);
         },
         (err: FetchResponse<unknown>) => {
             return onResponseError(lds, config, recordIds, err);

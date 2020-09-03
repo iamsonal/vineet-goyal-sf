@@ -28,6 +28,7 @@ import {
 import {
     CreateTemplateRepresentation,
     keyBuilderFromType,
+    ingest as createTemplateRepresentationIngest,
 } from '../../generated/types/CreateTemplateRepresentation';
 import {
     keyBuilder as recordTemplateKeyBuilder,
@@ -108,7 +109,7 @@ function onResourceResponseSuccess(
     const recordTypeId = body.objectInfos[objectApiName].defaultRecordTypeId;
     context.set(buildRecordTypeIdContextKey(objectApiName), recordTypeId);
 
-    lds.storeIngest<CreateTemplateRepresentation>(key, request.ingest, body);
+    lds.storeIngest<CreateTemplateRepresentation>(key, createTemplateRepresentationIngest, body);
 
     // mark missing optionalFields
     const templateRecordKey = recordTemplateKeyBuilder({

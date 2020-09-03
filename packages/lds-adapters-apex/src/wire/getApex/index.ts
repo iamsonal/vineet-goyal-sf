@@ -145,10 +145,7 @@ function network(
     };
     const requestConfig = { body };
 
-    const request = {
-        ...getApexRequest(requestConfig),
-        ingest: apexResponseIngest,
-    };
+    const request = getApexRequest(requestConfig);
 
     return lds.dispatchResourceRequest<any>(request).then(
         resp => {

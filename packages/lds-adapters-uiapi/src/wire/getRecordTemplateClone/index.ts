@@ -22,6 +22,7 @@ import {
 import {
     CloneTemplateRepresentation,
     TTL,
+    ingest as cloneTemplateRepresentationIngest,
 } from '../../generated/types/CloneTemplateRepresentation';
 import {
     CloneRecordTemplateRepresentationNormalized,
@@ -135,7 +136,11 @@ const buildNetworkSnapshot: typeof generatedBuildNetworkSnapshot = (
             // publish metadata for recordTypeId
             saveDefaultRecordTypeId(lds, recordId, body.objectInfos[objectApiName]);
 
-            lds.storeIngest<CloneTemplateRepresentation>(key, request.ingest, body);
+            lds.storeIngest<CloneTemplateRepresentation>(
+                key,
+                cloneTemplateRepresentationIngest,
+                body
+            );
 
             // mark missing optionalFields
             const templateRecordKey = templateRecordKeyBuilder({

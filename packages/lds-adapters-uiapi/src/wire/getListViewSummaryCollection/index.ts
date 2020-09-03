@@ -6,7 +6,6 @@ import {
     Selector,
     FetchResponse,
     SnapshotRefresh,
-    ResourceRequest,
     ResourceResponse,
     UnfulfilledSnapshot,
 } from '@ldsjs/engine';
@@ -20,6 +19,7 @@ import {
 import {
     ListViewSummaryCollectionRepresentation,
     paginationKeyBuilder,
+    ingest as listViewSummaryCollectionRepresentationIngest,
 } from '../../generated/types/ListViewSummaryCollectionRepresentation';
 import {
     createResourceRequest,
@@ -143,12 +143,15 @@ function prepareRequest(
 function onResourceSuccess(
     lds: LDS,
     config: GetListViewSummaryCollectionConfig,
-    request: ResourceRequest,
     key: string,
     response: ResourceResponse<ListViewSummaryCollectionRepresentation>
 ) {
     const { body } = response;
-    lds.storeIngest<ListViewSummaryCollectionRepresentation>(key, request.ingest, body);
+    lds.storeIngest<ListViewSummaryCollectionRepresentation>(
+        key,
+        listViewSummaryCollectionRepresentationIngest,
+        body
+    );
     lds.storeBroadcast();
     return buildInMemorySnapshot(lds, config);
 }
@@ -177,7 +180,7 @@ function resolveUnfulfilledSnapshot(
         .resolveUnfulfilledSnapshot<ListViewSummaryCollectionRepresentation>(request, snapshot)
         .then(
             (resp: ResourceResponse<ListViewSummaryCollectionRepresentation>) => {
-                return onResourceSuccess(lds, config, request, key, resp);
+                return onResourceSuccess(lds, config, key, resp);
             },
             (error: FetchResponse<unknown>) => {
                 return onResourceError(lds, config, key, error);
@@ -196,7 +199,7 @@ export function buildNetworkSnapshot(
 
     return lds.dispatchResourceRequest<ListViewSummaryCollectionRepresentation>(request).then(
         (resp: FetchResponse<ListViewSummaryCollectionRepresentation>) => {
-            return onResourceSuccess(lds, config, request, key, resp);
+            return onResourceSuccess(lds, config, key, resp);
         },
         (error: FetchResponse<unknown>) => {
             return onResourceError(lds, config, key, error);

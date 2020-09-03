@@ -23,10 +23,12 @@ import {
     keyBuilder as ListRecordCollectionRepresentation_keyBuilder,
     ListRecordCollectionRepresentation,
     paginationKeyBuilder as ListRecordCollection_paginationKeyBuilder,
+    ingest as types_ListRecordCollectionRepresentation_ingest,
 } from '../../generated/types/ListRecordCollectionRepresentation';
 import {
     keyBuilder as listUiRepresentation_keyBuilder,
     ListUiRepresentation,
+    ingest as types_ListUiRepresentation_ingest,
 } from '../../generated/types/ListUiRepresentation';
 import { buildSelectionFromFields } from '../../selectors/record';
 import {
@@ -200,7 +202,7 @@ function buildNetworkSnapshot_getMruListUi(
             // build the selector while the list info is still easily accessible
             const fragment = buildListUiFragment(config, listInfo, fields);
 
-            lds.storeIngest(listUiKey, request.ingest, body);
+            lds.storeIngest(listUiKey, types_ListUiRepresentation_ingest, body);
             lds.storeBroadcast();
 
             return lds.storeLookup<ListUiRepresentation>(
@@ -286,7 +288,7 @@ function buildNetworkSnapshot_getMruListRecords(
                     listViewId: listInfoETag,
                     sortBy: body.sortBy,
                 }),
-                request.ingest,
+                types_ListRecordCollectionRepresentation_ingest,
                 body
             );
             lds.storeBroadcast();

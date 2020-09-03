@@ -9,11 +9,11 @@ import {
 } from './../../generated/resources/getUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
 import {
     LDS,
-    ResourceRequest,
     SnapshotRefresh,
     Fragment,
     FulfilledSnapshot,
     ResourceResponse,
+    ResourceRequest,
 } from '@ldsjs/engine';
 import { select as RelatedListReferenceRepresentation_select } from '../../generated/types/RelatedListReferenceRepresentation';
 import { buildSelectionFromFields } from '../../selectors/record';
@@ -26,6 +26,7 @@ import { staticValuePathSelection } from '../../util/pagination';
 import {
     paginationKeyBuilder as RelatedListRecordCollection_paginationKeyBuilder,
     RelatedListRecordCollectionRepresentation,
+    ingest as types_RelatedListRecordCollectionRepresentation_ingest,
 } from '../../generated/types/RelatedListRecordCollectionRepresentation';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
@@ -140,14 +141,18 @@ export const select: typeof generatedSelect = (
 export const ingestSuccess: typeof generatedIngestSuccess = (
     lds: LDS,
     resourceRequestConfig: ResourceRequestConfig,
-    request: ResourceRequest,
+    _request: ResourceRequest,
     resp: ResourceResponse<RelatedListRecordCollectionRepresentation>,
     snapshotRefresh?: SnapshotRefresh<RelatedListRecordCollectionRepresentation>
 ) => {
     const { body } = resp;
 
     const key = generatedKeyBuilder(resourceRequestConfig);
-    lds.storeIngest<RelatedListRecordCollectionRepresentation>(key, request.ingest, body);
+    lds.storeIngest<RelatedListRecordCollectionRepresentation>(
+        key,
+        types_RelatedListRecordCollectionRepresentation_ingest,
+        body
+    );
     const snapshot = lds.storeLookup<RelatedListRecordCollectionRepresentation>(
         {
             recordId: key,

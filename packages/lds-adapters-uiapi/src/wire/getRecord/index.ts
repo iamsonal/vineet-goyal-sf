@@ -8,6 +8,7 @@ import {
     RecordRepresentation,
     RecordRepresentationNormalized,
     TTL as RecordRepresentationTTL,
+    ingest as recordRepresentationIngest,
 } from '../../generated/types/RecordRepresentation';
 import coerceRecordId18 from '../../primitives/RecordId18/coerce';
 import { getTrackedFields, markMissingOptionalFields } from '../../util/records';
@@ -96,8 +97,7 @@ export const notifyChangeFactory = (lds: LDS) => {
             lds.dispatchResourceRequest<RecordRepresentation>(refreshRequest).then(
                 response => {
                     const { body } = response;
-                    // TODO: manual ingest.
-                    lds.storeIngest<RecordRepresentation>(key, refreshRequest.ingest, body);
+                    lds.storeIngest<RecordRepresentation>(key, recordRepresentationIngest, body);
                     const recordNode = lds.getNode<
                         RecordRepresentationNormalized,
                         RecordRepresentation

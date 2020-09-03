@@ -6,7 +6,6 @@ import {
     SnapshotRefresh,
     UnfulfilledSnapshot,
     ResourceResponse,
-    ResourceRequest,
 } from '@ldsjs/engine';
 import {
     GetLayoutUserStateConfig,
@@ -15,12 +14,13 @@ import {
 import {
     RecordLayoutUserStateRepresentation,
     keyBuilder,
+    select as recordLayoutUserStateRepresentationSelect,
+    ingest as recordLayoutUserStateRepresentationIngest,
 } from '../../generated/types/RecordLayoutUserStateRepresentation';
 import { default as resources_getUiApiLayoutUserStateByObjectApiName_default } from '../../generated/resources/getUiApiLayoutUserStateByObjectApiName';
 import { LayoutMode } from '../../primitives/LayoutMode';
 import { LayoutType } from '../../primitives/LayoutType';
 import { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
-import { select as recordLayoutUserStateRepresentationSelect } from '../../generated/types/RecordLayoutUserStateRepresentation';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
 const recordLayoutSelect = recordLayoutUserStateRepresentationSelect();
@@ -114,7 +114,7 @@ export function buildNetworkSnapshot(
 
     return lds.dispatchResourceRequest<RecordLayoutUserStateRepresentation>(request).then(
         response => {
-            return onResourceResponseSuccess(lds, config, key, request, response);
+            return onResourceResponseSuccess(lds, config, key, response);
         },
         (error: FetchResponse<unknown>) => {
             return onResourceResponseError(lds, config, key, error);
@@ -133,7 +133,7 @@ function resolveUnfulfilledSnapshot(
         .resolveUnfulfilledSnapshot<RecordLayoutUserStateRepresentation>(request, snapshot)
         .then(
             response => {
-                return onResourceResponseSuccess(lds, config, key, request, response);
+                return onResourceResponseSuccess(lds, config, key, response);
             },
             (error: FetchResponse<unknown>) => {
                 return onResourceResponseError(lds, config, key, error);
@@ -145,7 +145,6 @@ function onResourceResponseSuccess(
     lds: LDS,
     config: GetLayoutUserStateConfigWithDefaults,
     key: string,
-    request: ResourceRequest,
     response: ResourceResponse<RecordLayoutUserStateRepresentation>
 ) {
     const { body } = response;
@@ -155,7 +154,11 @@ function onResourceResponseSuccess(
     body.recordTypeId = recordTypeId;
     body.layoutType = layoutType;
     body.mode = mode;
-    lds.storeIngest<RecordLayoutUserStateRepresentation>(key, request.ingest, body);
+    lds.storeIngest<RecordLayoutUserStateRepresentation>(
+        key,
+        recordLayoutUserStateRepresentationIngest,
+        body
+    );
     lds.storeBroadcast();
     return buildInMemorySnapshot(lds, config);
 }

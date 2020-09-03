@@ -6,7 +6,6 @@ import {
     FetchResponse,
     SnapshotRefresh,
     ResourceResponse,
-    ResourceRequest,
     UnfulfilledSnapshot,
 } from '@ldsjs/engine';
 import {
@@ -19,6 +18,7 @@ import {
     keyBuilder as recordLayoutRepresentationKeyBuilder,
     RecordLayoutRepresentation,
     select as recordLayoutRepresentationSelect,
+    ingest as recordLayoutRepresentationIngest,
 } from '../../generated/types/RecordLayoutRepresentation';
 import { MASTER_RECORD_TYPE_ID } from '../../util/layout';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
@@ -73,12 +73,11 @@ function onResourceResponseSuccess(
     lds: LDS,
     config: GetLayoutConfigWithDefaults,
     key: string,
-    request: ResourceRequest,
     response: ResourceResponse<RecordLayoutRepresentation>
 ) {
     const { body } = response;
 
-    lds.storeIngest<RecordLayoutRepresentation>(key, request.ingest, body);
+    lds.storeIngest<RecordLayoutRepresentation>(key, recordLayoutRepresentationIngest, body);
     lds.storeBroadcast();
     return lds.storeLookup<RecordLayoutRepresentation>(
         {
@@ -110,7 +109,7 @@ export function buildNetworkSnapshot(
 
     return lds.dispatchResourceRequest<RecordLayoutRepresentation>(request, requestOverride).then(
         response => {
-            return onResourceResponseSuccess(lds, config, key, request, response);
+            return onResourceResponseSuccess(lds, config, key, response);
         },
         (error: FetchResponse<unknown>) => {
             return onResourceResponseError(lds, config, key, error);
@@ -127,7 +126,7 @@ export function resolveUnfulfilledSnapshot(
 
     return lds.resolveUnfulfilledSnapshot<RecordLayoutRepresentation>(request, snapshot).then(
         response => {
-            return onResourceResponseSuccess(lds, config, key, request, response);
+            return onResourceResponseSuccess(lds, config, key, response);
         },
         (error: FetchResponse<unknown>) => {
             return onResourceResponseError(lds, config, key, error);

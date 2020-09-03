@@ -18,6 +18,7 @@ import {
     keyBuilder as recordRepresentationKeyBuilder,
     RecordRepresentation,
     RecordRepresentationNormalized,
+    ingest,
 } from '../../generated/types/RecordRepresentation';
 import {
     getTrackedFields,
@@ -84,8 +85,7 @@ function onResourceSuccess(
     const fields = config.fields === undefined ? [] : config.fields;
     const optionalFields = config.optionalFields === undefined ? [] : config.optionalFields;
 
-    // TODO: manual ingest.
-    lds.storeIngest<RecordRepresentation>(key, request.ingest, body);
+    lds.storeIngest<RecordRepresentation>(key, ingest, body);
 
     const recordNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(key)!;
 

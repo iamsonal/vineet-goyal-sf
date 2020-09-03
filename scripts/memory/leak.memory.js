@@ -24,7 +24,7 @@ export default {
         return { store, lds, timestamp };
     },
     func: ({ store, lds, timestamp }) => {
-        const snapshot = store.lookup({
+        const snapshot = lds.storeLookup({
             recordId: 'RecordRepresentation:aJGx00000000001GAA',
             node: {},
             variables: {},

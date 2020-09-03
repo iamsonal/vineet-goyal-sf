@@ -29,7 +29,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            store.lookup({
+            lds.storeLookup({
                 key: 'DuplicatesRepresentation(allowSaveOnDuplicate::apiName:Lead)',
                 node: {},
                 variables: {},
@@ -46,7 +46,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             lds = new LDS(new Environment(store, rejectNetworkAdapter));
             ingestDuplicatesRepresentation(clone(mockDuplicates), 'key', lds, store, TIMESTAMP);
 
-            const snapshot = store.lookup({
+            const snapshot = lds.storeLookup({
                 key: 'DuplicatesRepresentation(allowSaveOnDuplicate::apiName:Lead)',
                 node: {},
                 variables: {},
@@ -60,7 +60,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            store.broadcast();
+            lds.storeBroadcast();
         });
     });
 
@@ -73,7 +73,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             lds = new LDS(new Environment(store, rejectNetworkAdapter));
             ingestDuplicatesRepresentation(clone(mockDuplicates), 'key', lds, store, TIMESTAMP);
 
-            const snapshot = store.lookup({
+            const snapshot = lds.storeLookup({
                 key: 'DuplicatesRepresentation(allowSaveOnDuplicate::apiName:Lead)',
                 node: {},
                 variables: {},
@@ -89,7 +89,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            store.broadcast();
+            lds.storeBroadcast();
         });
     });
 
@@ -102,7 +102,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             lds = new LDS(new Environment(store, rejectNetworkAdapter));
             ingestDuplicatesRepresentation(clone(mockDuplicates), 'key', lds, store, TIMESTAMP);
 
-            const snapshot = store.lookup({
+            const snapshot = lds.storeLookup({
                 key: 'DuplicatesRepresentation(allowSaveOnDuplicate::apiName:Lead)',
                 node: {},
                 variables: {},
@@ -118,7 +118,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            store.broadcast();
+            lds.storeBroadcast();
         });
     });
 });

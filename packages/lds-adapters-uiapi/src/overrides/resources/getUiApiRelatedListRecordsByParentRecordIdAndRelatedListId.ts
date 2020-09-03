@@ -7,14 +7,7 @@ import {
     ingestError,
     createResourceRequest,
 } from './../../generated/resources/getUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
-import {
-    LDS,
-    SnapshotRefresh,
-    Fragment,
-    FulfilledSnapshot,
-    ResourceResponse,
-    ResourceRequest,
-} from '@ldsjs/engine';
+import { LDS, SnapshotRefresh, Fragment, FulfilledSnapshot, ResourceResponse } from '@ldsjs/engine';
 import { select as RelatedListReferenceRepresentation_select } from '../../generated/types/RelatedListReferenceRepresentation';
 import { buildSelectionFromFields } from '../../selectors/record';
 import {
@@ -141,7 +134,6 @@ export const select: typeof generatedSelect = (
 export const ingestSuccess: typeof generatedIngestSuccess = (
     lds: LDS,
     resourceRequestConfig: ResourceRequestConfig,
-    _request: ResourceRequest,
     resp: ResourceResponse<RelatedListRecordCollectionRepresentation>,
     snapshotRefresh?: SnapshotRefresh<RelatedListRecordCollectionRepresentation>
 ) => {

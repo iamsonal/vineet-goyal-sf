@@ -10,7 +10,7 @@
         "build": "rollup --config rollup.config.js"
     },
     "dependencies": {
-        "@ldsjs/engine": "^0.14.2",
-        "@ldsjs/lwc-lds": "^0.14.2"
+        "@ldsjs/engine": "^0.15.0",
+        "@ldsjs/lwc-lds": "^0.15.0"
     }
 }

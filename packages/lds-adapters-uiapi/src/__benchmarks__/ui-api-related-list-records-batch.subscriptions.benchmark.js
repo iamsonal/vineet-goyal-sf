@@ -35,7 +35,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            store.lookup({
+            lds.storeLookup({
                 relatedListRecordsBatch: 'RelatedListRecordsBatch:CwcCustom00__c::CwcCustom01s__r',
                 node: {},
                 variables: {},
@@ -58,7 +58,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
                 TIMESTAMP
             );
 
-            const snapshot = store.lookup({
+            const snapshot = lds.storeLookup({
                 relatedListRecordsBatch: 'RelatedListRecordsBatch:CwcCustom00__c::CwcCustom01s__r',
                 node: {},
                 variables: {},
@@ -73,7 +73,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            store.broadcast();
+            lds.storeBroadcast();
         });
     });
 
@@ -92,7 +92,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
                 TIMESTAMP
             );
 
-            const snapshot = store.lookup({
+            const snapshot = lds.storeLookup({
                 relatedListRecordsBatch: 'RelatedListRecordsBatch:CwcCustom00__c::CwcCustom01s__r',
                 node: {},
                 variables: {},
@@ -110,7 +110,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            store.broadcast();
+            lds.storeBroadcast();
         });
     });
 
@@ -129,7 +129,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
                 TIMESTAMP
             );
 
-            const snapshot = store.lookup({
+            const snapshot = lds.storeLookup({
                 relatedListRecordsBatch: 'RelatedListRecordsBatch:CwcCustom00__c::CwcCustom01s__r',
                 node: {},
                 variables: {},
@@ -146,7 +146,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            store.broadcast();
+            lds.storeBroadcast();
         });
     });
 });

@@ -40,7 +40,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            store.lookup({
+            lds.storeLookup({
                 key: 'key',
                 node: {},
                 variables: {},
@@ -63,7 +63,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
                 TIMESTAMP
             );
 
-            const snapshot = store.lookup({
+            const snapshot = lds.storeLookup({
                 key: 'key',
                 node: {},
                 variables: {},
@@ -77,7 +77,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            store.broadcast();
+            lds.storeBroadcast();
         });
     });
 
@@ -96,7 +96,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
                 TIMESTAMP
             );
 
-            const snapshot = store.lookup({
+            const snapshot = lds.storeLookup({
                 key: 'key',
                 node: {},
                 variables: {},
@@ -112,7 +112,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            store.broadcast();
+            lds.storeBroadcast();
         });
     });
 
@@ -131,7 +131,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
                 TIMESTAMP
             );
 
-            const snapshot = store.lookup({
+            const snapshot = lds.storeLookup({
                 key: 'key',
                 node: {},
                 variables: {},
@@ -147,7 +147,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            store.broadcast();
+            lds.storeBroadcast();
         });
     });
 });

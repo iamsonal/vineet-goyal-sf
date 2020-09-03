@@ -18,15 +18,11 @@ import {
     keyBuilder as singleWireKeyBuilder,
     select as singleWireSelect,
     ingestSuccess as sinlgeWireIngestSuccess,
-    createResourceRequest as singleWireCreateResourceRequest,
     ingestError as singleWireIngestError,
 } from './getUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
 
 // Generated Types
-import {
-    ingest,
-    RelatedListRecordCollectionBatchRepresentation,
-} from '../../generated/types/RelatedListRecordCollectionBatchRepresentation';
+import { RelatedListRecordCollectionBatchRepresentation } from '../../generated/types/RelatedListRecordCollectionBatchRepresentation';
 import { RelatedListRecordCollectionRepresentation } from '../../generated/types/RelatedListRecordCollectionRepresentation';
 import { CompositeRelatedListRecordCollectionResultRepresentation } from '../../generated/types/CompositeRelatedListRecordCollectionResultRepresentation';
 // Generated Adapter Utils
@@ -202,7 +198,6 @@ export function keyBuilder(params: ResourceRequestConfig): string {
 export function ingestSuccess(
     lds: LDS,
     resourceParams: ResourceRequestConfig,
-    _request: ResourceRequest,
     response: FetchResponse<RelatedListRecordCollectionBatchRepresentation>,
     _snapshotRefresh?: SnapshotRefresh<RelatedListRecordCollectionBatchRepresentation>
 ): FulfilledSnapshot<RelatedListRecordCollectionBatchRepresentation, any> {
@@ -242,12 +237,7 @@ export function ingestSuccess(
                 headers: {},
             };
 
-            const childSnapshot = sinlgeWireIngestSuccess(
-                lds,
-                childResourceParams,
-                singleWireCreateResourceRequest(childResourceParams),
-                childResponse
-            );
+            const childSnapshot = sinlgeWireIngestSuccess(lds, childResourceParams, childResponse);
             seenRecords = {
                 ...seenRecords,
                 ...childSnapshot.seenRecords,
@@ -317,7 +307,7 @@ export function ingestError(
     return lds.errorSnapshot(error, snapshotRefresh);
 }
 
-export function createResourceRequest(config: ResourceRequestConfig) {
+export function createResourceRequest(config: ResourceRequestConfig): ResourceRequest {
     const headers: { [key: string]: string } = {};
 
     return {
@@ -332,7 +322,6 @@ export function createResourceRequest(config: ResourceRequestConfig) {
         body: null,
         urlParams: config.urlParams,
         queryParams: config.queryParams,
-        ingest: ingest,
         headers,
     };
 }

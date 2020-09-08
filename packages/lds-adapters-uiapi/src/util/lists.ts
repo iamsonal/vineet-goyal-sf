@@ -1,4 +1,4 @@
-import { LDS, PathSelection, AdapterContext, Snapshot } from '@ldsjs/engine';
+import { LDS, PathSelection, AdapterContext, Snapshot, ResourceResponse } from '@ldsjs/engine';
 import {
     keyBuilder as ListInfoRepresentation_keyBuilder,
     ListInfoRepresentation,
@@ -334,4 +334,10 @@ export function listFields(
             return this;
         },
     };
+}
+
+export function isResultListInfoRepresentation(
+    result: ResourceResponse<ListInfoRepresentation>
+): result is ResourceResponse<ListInfoRepresentation> {
+    return 'listReference' in result.body;
 }

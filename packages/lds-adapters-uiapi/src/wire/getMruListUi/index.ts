@@ -6,6 +6,8 @@ import {
     Snapshot,
     FetchResponse,
     SnapshotRefresh,
+    ResourceResponse,
+    UnfulfilledSnapshot,
 } from '@ldsjs/engine';
 import {
     GetMruListUiConfig,
@@ -37,6 +39,7 @@ import {
     ListFields,
     listFields,
     LIST_INFO_PRIVATES,
+    isResultListInfoRepresentation,
 } from '../../util/lists';
 import {
     minimizeRequest,
@@ -44,7 +47,7 @@ import {
     staticValuePathSelection,
 } from '../../util/pagination';
 import { select as ListReferenceRepresentation_select } from '../../generated/types/ListReferenceRepresentation';
-import { isFulfilledSnapshot } from '../../util/snapshot';
+import { isFulfilledSnapshot, isUnfulfilledSnapshot } from '../../util/snapshot';
 
 const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select();
 
@@ -72,7 +75,7 @@ function buildListUiFragment(
 ): Fragment {
     return {
         kind: 'Fragment',
-        private: [],
+        private: ['eTag'],
         selections: [
             {
                 kind: 'Link',
@@ -149,6 +152,53 @@ function buildSnapshotRefresh(
     };
 }
 
+function onResourceSuccess_getMruListUi(
+    lds: LDS,
+    config: GetMruListUiConfig,
+    response: ResourceResponse<ListUiRepresentation>
+) {
+    const { body } = response;
+    const listInfo = body.info;
+
+    // response might have records.sortBy in csv format
+    const sortBy = body.records.sortBy;
+    if (sortBy && typeof sortBy === 'string') {
+        body.records.sortBy = ((sortBy as unknown) as string).split(',');
+    }
+
+    const listUiKey = listUiRepresentation_keyBuilder({
+        ...listInfo.listReference,
+        sortBy: body.records.sortBy,
+    });
+
+    // grab relevant bits before ingest destroys the structure
+    const fields = listFields(lds, config, listInfo);
+    fields.processRecords(body.records.records);
+
+    // build the selector while the list info is still easily accessible
+    const fragment = buildListUiFragment(config, listInfo, fields);
+
+    lds.storeIngest(listUiKey, types_ListUiRepresentation_ingest, body);
+    lds.storeBroadcast();
+
+    return lds.storeLookup<ListUiRepresentation>(
+        {
+            recordId: listUiKey,
+            node: fragment,
+            variables: {},
+        },
+        buildSnapshotRefresh(lds, config)
+    );
+}
+
+function onResourceError_getMruListUi(
+    lds: LDS,
+    config: GetMruListUiConfig,
+    err: FetchResponse<unknown>
+) {
+    return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+}
+
 export function buildInMemorySnapshot(
     lds: LDS,
     config: GetMruListUiConfig,
@@ -164,6 +214,24 @@ export function buildInMemorySnapshot(
     };
 
     return lds.storeLookup<ListUiRepresentation>(selector, buildSnapshotRefresh(lds, config));
+}
+
+function resolveUnfulfilledSnapshot_getMruListUi(
+    lds: LDS,
+    config: GetMruListUiConfig,
+    snapshot: UnfulfilledSnapshot<ListUiRepresentation, any>
+) {
+    const params = createMruListUiResourceParams(config);
+    const request = createMruListUiResourceRequest(params);
+
+    return lds.resolveUnfulfilledSnapshot<ListUiRepresentation>(request, snapshot).then(
+        response => {
+            return onResourceSuccess_getMruListUi(lds, config, response);
+        },
+        (err: FetchResponse<unknown>) => {
+            return onResourceError_getMruListUi(lds, config, err);
+        }
+    );
 }
 
 /**
@@ -182,50 +250,20 @@ function buildNetworkSnapshot_getMruListUi(
 
     return lds.dispatchResourceRequest<ListUiRepresentation>(request).then(
         response => {
-            const { body } = response;
-            const listInfo = body.info;
-
-            // server returns sortBy in csv format
-            if (body.records.sortBy) {
-                body.records.sortBy = ((body.records.sortBy as unknown) as string).split(',');
-            }
-
-            const listUiKey = listUiRepresentation_keyBuilder({
-                ...listInfo.listReference,
-                sortBy: body.records.sortBy,
-            });
-
-            // grab relevant bits before ingest destroys the structure
-            const fields = listFields(lds, config, listInfo);
-            fields.processRecords(body.records.records);
-
-            // build the selector while the list info is still easily accessible
-            const fragment = buildListUiFragment(config, listInfo, fields);
-
-            lds.storeIngest(listUiKey, types_ListUiRepresentation_ingest, body);
-            lds.storeBroadcast();
-
-            return lds.storeLookup<ListUiRepresentation>(
-                {
-                    recordId: listUiKey,
-                    node: fragment,
-                    variables: {},
-                },
-                buildSnapshotRefresh(lds, config)
-            );
+            return onResourceSuccess_getMruListUi(lds, config, response);
         },
         (err: FetchResponse<unknown>) => {
-            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+            return onResourceError_getMruListUi(lds, config, err);
         }
     );
 }
 
-function buildNetworkSnapshot_getMruListRecords(
+function prepareRequest_getMruListRecords(
     lds: LDS,
     config: GetMruListUiConfig,
     listInfo: ListInfoRepresentation,
     snapshot?: Snapshot<ListUiRepresentation>
-): Promise<Snapshot<ListUiRepresentation>> {
+) {
     const { fields, optionalFields, pageSize, pageToken, sortBy } = config;
     const queryParams = {
         fields,
@@ -266,47 +304,132 @@ function buildNetworkSnapshot_getMruListRecords(
         }
     }
 
+    return request;
+}
+
+function onResourceSuccess_getMruListRecords(
+    lds: LDS,
+    config: GetMruListUiConfig,
+    listInfo: ListInfoRepresentation,
+    response: ResourceResponse<ListRecordCollectionRepresentation>
+) {
+    const { body } = response;
+    const { listInfoETag } = body;
+
+    // fall back to mru-list-ui if list view has changed
+    if (listInfoETag !== listInfo.eTag) {
+        return buildNetworkSnapshot_getMruListUi(lds, config);
+    }
+
+    // server returns sortBy in csv format
+    if (body.sortBy) {
+        body.sortBy = ((body.sortBy as unknown) as string).split(',');
+    }
+
+    const fields = listFields(lds, config, listInfo).processRecords(body.records);
+
+    lds.storeIngest(
+        ListRecordCollectionRepresentation_keyBuilder({
+            listViewId: listInfoETag,
+            sortBy: body.sortBy,
+        }),
+        types_ListRecordCollectionRepresentation_ingest,
+        body
+    );
+    lds.storeBroadcast();
+
+    return buildInMemorySnapshot(lds, config, listInfo, fields);
+}
+
+function onResourceError_getMruListRecords(
+    lds: LDS,
+    config: GetMruListUiConfig,
+    listInfo: ListInfoRepresentation,
+    err: FetchResponse<unknown>
+) {
+    lds.storeIngestFetchResponse(
+        listUiRepresentation_keyBuilder({
+            ...listInfo.listReference,
+            sortBy: config.sortBy === undefined ? null : config.sortBy,
+        }),
+        err
+    );
+    lds.storeBroadcast();
+    return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+}
+
+function resolveUnfulfilledSnapshot_getMruListRecords(
+    lds: LDS,
+    config: GetMruListUiConfig,
+    listInfo: ListInfoRepresentation,
+    snapshot: UnfulfilledSnapshot<ListUiRepresentation, any>
+): Promise<Snapshot<ListUiRepresentation>> {
+    const request = prepareRequest_getMruListRecords(lds, config, listInfo, snapshot);
+
+    return lds
+        .resolveUnfulfilledSnapshot<ListRecordCollectionRepresentation>(
+            request,
+            (snapshot as unknown) as UnfulfilledSnapshot<ListRecordCollectionRepresentation, any>
+        )
+        .then(
+            response => {
+                return onResourceSuccess_getMruListRecords(lds, config, listInfo, response);
+            },
+            (err: FetchResponse<unknown>) => {
+                return onResourceError_getMruListRecords(lds, config, listInfo, err);
+            }
+        );
+}
+
+function buildNetworkSnapshot_getMruListRecords(
+    lds: LDS,
+    config: GetMruListUiConfig,
+    listInfo: ListInfoRepresentation,
+    snapshot?: Snapshot<ListUiRepresentation>
+): Promise<Snapshot<ListUiRepresentation>> {
+    const request = prepareRequest_getMruListRecords(lds, config, listInfo, snapshot);
+
     return lds.dispatchResourceRequest<ListRecordCollectionRepresentation>(request).then(
         response => {
-            const { body } = response;
-            const { listInfoETag } = body;
-
-            // fall back to mru-list-ui if list view has changed
-            if (listInfoETag !== listInfo.eTag) {
-                return buildNetworkSnapshot_getMruListUi(lds, config);
-            }
-
-            // server returns sortBy in csv format
-            if (body.sortBy) {
-                body.sortBy = ((body.sortBy as unknown) as string).split(',');
-            }
-
-            const fields = listFields(lds, config, listInfo).processRecords(body.records);
-
-            lds.storeIngest(
-                ListRecordCollectionRepresentation_keyBuilder({
-                    listViewId: listInfoETag,
-                    sortBy: body.sortBy,
-                }),
-                types_ListRecordCollectionRepresentation_ingest,
-                body
-            );
-            lds.storeBroadcast();
-
-            return buildInMemorySnapshot(lds, config, listInfo, fields);
+            return onResourceSuccess_getMruListRecords(lds, config, listInfo, response);
         },
         (err: FetchResponse<unknown>) => {
-            lds.storeIngestFetchResponse(
-                listUiRepresentation_keyBuilder({
-                    ...listInfo.listReference,
-                    sortBy: config.sortBy === undefined ? null : config.sortBy,
-                }),
-                err
-            );
-            lds.storeBroadcast();
-            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+            return onResourceError_getMruListRecords(lds, config, listInfo, err);
         }
     );
+}
+
+function getMruListUiSnapshotFromListInfo(
+    lds: LDS,
+    config: GetMruListUiConfig,
+    listInfo: ListInfoRepresentation
+) {
+    // with the list info we can construct the full selector and try to get the
+    // list ui from the store
+    const snapshot = buildInMemorySnapshot(lds, config, listInfo);
+
+    // if the list ui was not found in the store then
+    // make a full list-ui request
+    if (!snapshot.data) {
+        if (isUnfulfilledSnapshot(snapshot)) {
+            return resolveUnfulfilledSnapshot_getMruListUi(lds, config, snapshot);
+        }
+
+        return buildNetworkSnapshot_getMruListUi(lds, config);
+    }
+
+    if (lds.snapshotDataAvailable(snapshot)) {
+        // cache hit :partyparrot:
+        return snapshot;
+    }
+
+    // we *should* only be missing records and/or tokens at this point; send a list-records
+    // request to fill them in
+    if (isUnfulfilledSnapshot(snapshot)) {
+        return resolveUnfulfilledSnapshot_getMruListRecords(lds, config, listInfo, snapshot);
+    }
+
+    return buildNetworkSnapshot_getMruListRecords(lds, config, listInfo, snapshot);
 }
 
 export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> = (lds: LDS) =>
@@ -332,29 +455,43 @@ export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> =
             lds
         );
 
-        // no list info means it's not in the cache - make a full list-ui request
-        if (!isFulfilledSnapshot(listInfoSnapshot)) {
-            return buildNetworkSnapshot_getMruListUi(lds, config);
+        // if we have list info then build a snapshot from that
+        if (isFulfilledSnapshot(listInfoSnapshot)) {
+            return getMruListUiSnapshotFromListInfo(lds, config, listInfoSnapshot.data);
         }
 
-        const listInfo = listInfoSnapshot.data;
+        // if listInfoSnapshot is unfulfilled then we can try to resolve it
+        if (isUnfulfilledSnapshot(listInfoSnapshot)) {
+            const mruListUiResourceRequest = createMruListUiResourceRequest(
+                createMruListUiResourceParams(config)
+            );
 
-        // with the list info we can construct the full selector and try to get the
-        // list ui from the store
-        const snapshot = buildInMemorySnapshot(lds, config, listInfo);
-
-        // if the list ui was not found in the store then
-        // make a full list-ui request
-        if (!snapshot.data) {
-            return buildNetworkSnapshot_getMruListUi(lds, config);
+            // In default environment resolving an unfulfilled snapshot is just hitting the network
+            // with the given ResourceRequest (so mru-list-ui in this case).  In durable environment
+            // resolving an unfulfilled snapshot will first attempt to read the missing cache keys
+            // from the given unfulfilled snapshot (a list-info snapshot in this case) and build a
+            // fulfilled snapshot from that if those cache keys are present, otherwise it hits the
+            // network with the given resource request.  Usually the ResourceRequest and the unfulfilled
+            // snapshot are for the same response Type, but this lists adapter is special (it mixes
+            // calls with list-info, list-records, and mru-list-ui), and so our use of resolveUnfulfilledSnapshot
+            // is special (polymorphic response, could either be a list-info representation or a
+            // list-ui representation).
+            return lds.resolveUnfulfilledSnapshot(mruListUiResourceRequest, listInfoSnapshot).then(
+                response => {
+                    // if result came from cache we know it's a listinfo, otherwise
+                    // it's a full list-ui response
+                    if (isResultListInfoRepresentation(response)) {
+                        return getMruListUiSnapshotFromListInfo(lds, config, response.body);
+                    } else {
+                        return onResourceSuccess_getMruListUi(lds, config, response);
+                    }
+                },
+                (err: FetchResponse<unknown>) => {
+                    return onResourceError_getMruListUi(lds, config, err);
+                }
+            );
         }
 
-        if (lds.snapshotDataAvailable(snapshot)) {
-            // cache hit :partyparrot:
-            return snapshot;
-        }
-
-        // we *should* only be missing records and/or tokens at this point; send a list-records
-        // request to fill them in
-        return buildNetworkSnapshot_getMruListRecords(lds, config, listInfo, snapshot);
+        // if listInfoSnapshot in any other state then we make a full mru-list-ui request
+        return buildNetworkSnapshot_getMruListUi(lds, config);
     };

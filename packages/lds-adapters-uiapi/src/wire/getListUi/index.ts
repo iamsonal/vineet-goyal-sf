@@ -53,6 +53,7 @@ import {
     ListFields,
     LIST_INFO_SELECTIONS,
     LIST_INFO_PRIVATES,
+    isResultListInfoRepresentation,
 } from '../../util/lists';
 import {
     minimizeRequest,
@@ -570,12 +571,6 @@ function validateGetListUiConfig(untrustedConfig: unknown): GetListUiConfig | nu
 
 // the listViewApiName value to pass to getListUi() to request the MRU list
 export const MRU = Symbol.for('MRU');
-
-function isResultListInfoRepresentation(
-    result: ResourceResponse<ListInfoRepresentation>
-): result is ResourceResponse<ListInfoRepresentation> {
-    return 'listReference' in result.body;
-}
 
 function getListUiSnapshotFromListInfo(
     lds: LDS,

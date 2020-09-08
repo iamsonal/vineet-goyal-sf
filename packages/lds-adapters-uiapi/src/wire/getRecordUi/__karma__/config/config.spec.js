@@ -1,4 +1,4 @@
-import { flushPromises, getMock as globalGetMock, setupElement } from 'test-util';
+import { getMock as globalGetMock, setupElement } from 'test-util';
 import { mockGetRecordUiNetwork } from 'uiapi-test-util';
 
 import RecordUi from '../lwc/record-ui';
@@ -338,31 +338,5 @@ describe('coercion', () => {
         const element = await setupElement(config, RecordUi);
 
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
-    });
-});
-
-describe('equality', () => {
-    it('gets same snapshot reference when configs are deep equaled', async () => {
-        const mockData = getMock('single-record-Account-layouttypes-Full-modes-View');
-        const recordIds = getRecordIdFromMock(mockData);
-        const config = {
-            recordIds,
-            layoutTypes: ['Full'],
-            modes: ['View'],
-            optionalFields: ['Account.Industry'],
-        };
-        mockGetRecordUiNetwork(config, mockData);
-
-        const element = await setupElement(config, RecordUi);
-        const result1 = element.getWiredData();
-        expect(element.pushCount()).toBe(1);
-
-        // trigger config update
-        element.optionalFields = config.optionalFields.slice();
-        await flushPromises();
-
-        expect(element.pushCount()).toBe(2);
-        const result2 = element.getWiredData();
-        expect(result1).toBe(result2);
     });
 });

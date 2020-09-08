@@ -23,13 +23,7 @@ import {
     RecordRepresentationNormalized,
 } from '../../generated/types/RecordRepresentation';
 import { depenpendencyKeyBuilder as recordRepresentationDependencyKeyBuilder } from '../../helpers/RecordRepresentation/merge';
-import {
-    ArrayPrototypePush,
-    JSONStringify,
-    ObjectAssign,
-    ObjectCreate,
-    ObjectKeys,
-} from '../../util/language';
+import { ArrayPrototypePush, ObjectAssign, ObjectCreate, ObjectKeys } from '../../util/language';
 import {
     getTrackedFields,
     markMissingOptionalFields,
@@ -68,6 +62,10 @@ const GET_RECORDUI_ADAPTER_CONFIG: AdapterValidationConfig = {
 };
 
 const MAX_FIELD_STRING_LENGTH = 10000;
+
+function buildCachedSelectorKey(key: string): string {
+    return `${key}__selector`;
+}
 
 function eachLayout(
     recordUi: RecordUiRepresentation,
@@ -148,33 +146,13 @@ export function buildInMemorySnapshot(
 ): Snapshot<RecordUiRepresentation> | null {
     const { recordIds, layoutTypes, modes, optionalFields } = config;
 
-    // TODO: a better hash function for config -> configKey
-    const configKey = JSONStringify(config);
-
-    // check to see if we see the selector (config) before
-    const selectorNode = getSelectorNode(lds, configKey);
-
-    // if we do, return the same snapshot instance by calling storeLookupMemoize
-    if (selectorNode !== null) {
-        const cacheData = lds.storeLookupMemoize<RecordUiRepresentation>(
-            selectorNode,
-            buildSnapshotRefresh(lds, config)
-        );
-
-        // CACHE HIT
-        if (lds.snapshotDataAvailable(cacheData)) {
-            return cacheData;
-        }
-    }
-
     const key = keyBuilder(
         recordIds,
         layoutTypes as LayoutType[],
         modes as LayoutMode[],
         optionalFields
     );
-
-    const cachedSelectorKey = `${key}__selector`;
+    const cachedSelectorKey = buildCachedSelectorKey(key);
 
     const cacheSel = lds.storeLookup<Selector>({
         recordId: cachedSelectorKey,
@@ -189,10 +167,7 @@ export function buildInMemorySnapshot(
     if (isFulfilledSnapshot(cacheSel)) {
         const cachedSelector = cacheSel.data;
 
-        // publish the selector instance for later getNode check
-        lds.storePublish(configKey, cachedSelector);
-
-        const cacheData = lds.storeLookupMemoize<RecordUiRepresentation>(
+        const cacheData = lds.storeLookup<RecordUiRepresentation>(
             cachedSelector,
             buildSnapshotRefresh(lds, config)
         );
@@ -238,23 +213,11 @@ function markRecordUiOptionalFields(
     }
 }
 
-function getSelectorNode(lds: LDS, key: string): null | Selector {
-    const selectorNode = lds.getNode<Selector, any>(key);
-    if (selectorNode !== null) {
-        return (selectorNode as GraphNode<Selector>).retrieve();
-    }
-
-    return null;
-}
-
 export function buildNetworkSnapshot(
     lds: LDS,
     config: GetRecordUiConfigWithDefaults
 ): Promise<Snapshot<RecordUiRepresentation>> {
     const { recordIds, layoutTypes, modes, optionalFields } = config;
-
-    // TODO: a better hash function for config -> configKey
-    const configKey = JSONStringify(config);
 
     let allOptionalFields: string[] = [];
     for (let i = 0, len = recordIds.length; i < len; i++) {
@@ -270,6 +233,8 @@ export function buildNetworkSnapshot(
         modes as LayoutMode[],
         optionalFields
     );
+    const cachedSelectorKey = buildCachedSelectorKey(key);
+
     const resourceRequest = getUiApiRecordUiByRecordIds({
         urlParams: {
             recordIds,
@@ -306,7 +271,6 @@ export function buildNetworkSnapshot(
                 }
             );
 
-            const cachedSelectorKey = `${key}__selector`;
             const recordLookupFields = getRecordUiMissingRecordLookupFields(body);
             const selPath = buildRecordUiSelector(
                 collectRecordDefs(body, recordIds),
@@ -343,13 +307,9 @@ export function buildNetworkSnapshot(
             markRecordUiOptionalFields(optionalFields, recordLookupFields, recordNodes);
 
             lds.storeBroadcast();
-            lds.storePublish(configKey, sel);
-            publishDependencies(lds, validRecordIds, [key, cachedSelectorKey, configKey]);
+            publishDependencies(lds, validRecordIds, [key, cachedSelectorKey]);
 
-            return lds.storeLookupMemoize<RecordUiRepresentation>(
-                sel,
-                buildSnapshotRefresh(lds, config)
-            );
+            return lds.storeLookup<RecordUiRepresentation>(sel, buildSnapshotRefresh(lds, config));
         },
         (err: FetchResponse<unknown>) => {
             lds.storeIngestFetchResponse(key, err, RecordUiRepresentationTTL);
@@ -366,8 +326,8 @@ export function buildNetworkSnapshot(
                     },
                     variables: {},
                 };
-                lds.storePublish(configKey, sel);
-                return lds.storeLookupMemoize<RecordUiRepresentation>(
+                lds.storePublish(cachedSelectorKey, sel);
+                return lds.storeLookup<RecordUiRepresentation>(
                     sel,
                     buildSnapshotRefresh(lds, config)
                 ) as ErrorSnapshot;

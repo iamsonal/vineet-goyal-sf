@@ -1579,7 +1579,7 @@ types:
         type: string
       keyPrefix:
         description: The key prefix for IDs of this object.
-        type: string
+        type: string | nil # TODO: hand rolled nil union (W-8067992)
       label:
         description: The label of the object info corresponding to this entry.
         type: string

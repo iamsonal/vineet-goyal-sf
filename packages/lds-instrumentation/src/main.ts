@@ -174,7 +174,7 @@ export class Instrumentation {
     private adapterCacheMisses: LRUCache = new LRUCache(250);
 
     constructor() {
-        if (window !== undefined && window.addEventListener) {
+        if (typeof window !== 'undefined' && window.addEventListener) {
             window.addEventListener('beforeunload', () => {
                 if (Object.keys(this.weakEtagZeroEvents).length > 0) {
                     perfStart(NETWORK_TRANSACTION_NAME);

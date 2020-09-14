@@ -154,6 +154,9 @@ function generateRecordRevivalHandlers(compilerConfig, modelInfo) {
                         return ${REVIVE_RECORDS_FROM_DURABLE_STORE}(reviveIds, ${STORE_FIELD}, ${DURABLE_STORE_FIELD});`;
             } else if (type === 'map') {
                 revivalCode = `const records = ${recordPath};
+                        if(records === undefined) {
+                            return Promise.resolve();
+                        }
                         const ids = ObjectKeys(records);
                         const reviveIds = ObjectCreate(null);
                         for (let i = 0, len = ids.length; i < len; i++) {

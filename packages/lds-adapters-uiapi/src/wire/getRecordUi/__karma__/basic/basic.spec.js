@@ -2,7 +2,6 @@ import { clone, getMock as globalGetMock, setupElement } from 'test-util';
 import {
     expireObjectInfo,
     expireRecords,
-    expireRecordUi,
     expireLayoutUserState,
     extractRecordFields,
     LayoutMode,
@@ -57,14 +56,7 @@ describe('refresh', () => {
             optionalFields: ['Account.Industry'],
         };
 
-        mockGetRecordUiNetwork(config, mockRecordUiData);
-        mockGetRecordUiNetwork(
-            {
-                ...config,
-                optionalFields: recordFields,
-            },
-            refreshMockUiData
-        );
+        mockGetRecordUiNetwork(config, [mockRecordUiData, refreshMockUiData]);
         mockGetRecordNetwork(
             { recordId, optionalFields: recordFields },
             refreshMockUiData.records[recordId]
@@ -115,14 +107,7 @@ describe('refresh', () => {
             optionalFields: ['Account.Industry'],
         };
 
-        mockGetRecordUiNetwork(config, mockRecordUiData);
-        mockGetRecordUiNetwork(
-            {
-                ...config,
-                optionalFields: recordFields,
-            },
-            refreshMockUiData
-        );
+        mockGetRecordUiNetwork(config, [mockRecordUiData, refreshMockUiData]);
         mockGetRecordNetwork(
             { recordId, optionalFields: recordFields },
             refreshMockUiData.records[recordId]
@@ -167,14 +152,7 @@ describe('refresh', () => {
             optionalFields: ['Account.Industry'],
         };
 
-        mockGetRecordUiNetwork(config, mockRecordUiData);
-        mockGetRecordUiNetwork(
-            {
-                ...config,
-                optionalFields: recordFields,
-            },
-            refreshMockUiData
-        );
+        mockGetRecordUiNetwork(config, [mockRecordUiData, refreshMockUiData]);
         mockGetRecordNetwork(
             { recordId, optionalFields: recordFields },
             refreshMockUiData.records[recordId]
@@ -218,14 +196,7 @@ describe('refresh', () => {
             optionalFields: ['Account.Industry'],
         };
 
-        mockGetRecordUiNetwork(config, mockRecordUiData);
-        mockGetRecordUiNetwork(
-            {
-                ...config,
-                optionalFields: recordFields,
-            },
-            refreshMockUiData
-        );
+        mockGetRecordUiNetwork(config, [mockRecordUiData, refreshMockUiData]);
         mockGetRecordNetwork(
             { recordId, optionalFields: recordFields },
             refreshMockUiData.records[recordId]
@@ -243,10 +214,6 @@ describe('refresh', () => {
     it('should refreshUi, but server returns 404', async () => {
         const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockRecordUiData);
-        const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
-            add: ['Account.Parent.Id', 'Account.Parent.Name'],
-            omit: ['Account.Parent'],
-        });
 
         const mockError = [
             {
@@ -262,20 +229,15 @@ describe('refresh', () => {
             optionalFields: ['Account.Industry'],
         };
 
-        mockGetRecordUiNetwork(config, mockRecordUiData);
-        mockGetRecordUiNetwork(
-            {
-                ...config,
-                optionalFields: recordFields,
-            },
-            {
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                reject: true,
-                data: mockError,
-            }
-        );
+        const mockErrorResponse = {
+            status: 404,
+            statusText: 'Not Found',
+            ok: false,
+            reject: true,
+            data: mockError,
+        };
+
+        mockGetRecordUiNetwork(config, [mockRecordUiData, mockErrorResponse]);
 
         const element = await setupElement(config, RecordUi);
         expect(element.pushCount()).toBe(1);
@@ -298,10 +260,6 @@ describe('refresh', () => {
     it('should refreshUi, but server returns 500', async () => {
         const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockRecordUiData);
-        const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
-            add: ['Account.Parent.Id', 'Account.Parent.Name'],
-            omit: ['Account.Parent'],
-        });
 
         const config = {
             recordIds: recordId,
@@ -310,17 +268,12 @@ describe('refresh', () => {
             optionalFields: ['Account.Industry'],
         };
 
-        mockGetRecordUiNetwork(config, mockRecordUiData);
-        mockGetRecordUiNetwork(
-            {
-                ...config,
-                optionalFields: recordFields,
-            },
-            {
-                reject: true,
-                data: {},
-            }
-        );
+        const mockError = {
+            reject: true,
+            data: {},
+        };
+
+        mockGetRecordUiNetwork(config, [mockRecordUiData, mockError]);
 
         const element = await setupElement(config, RecordUi);
         expect(element.pushCount()).toBe(1);
@@ -344,10 +297,6 @@ describe('refresh', () => {
         const objectInfoError = getMock('objectInfo-error');
         const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockRecordUiData);
-        const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
-            add: ['Account.Parent.Id', 'Account.Parent.Name'],
-            omit: ['Account.Parent'],
-        });
         const mockRecordUiDataChanged = getMock(
             'single-record-Account-layouttypes-Full-modes-View'
         );
@@ -363,15 +312,7 @@ describe('refresh', () => {
             objectApiName: 'Account',
         };
 
-        mockGetRecordUiNetwork(configRecordUi, mockRecordUiData);
-        // When RecordUI refreshes this mock will get hit.
-        mockGetRecordUiNetwork(
-            {
-                ...configRecordUi,
-                optionalFields: recordFields,
-            },
-            mockRecordUiDataChanged
-        );
+        mockGetRecordUiNetwork(configRecordUi, [mockRecordUiData, mockRecordUiDataChanged]);
         mockGetObjectInfoNetwork(configObjectInfo, {
             status: 404,
             statusText: 'Not Found',
@@ -397,62 +338,6 @@ describe('refresh', () => {
         expect(elementRecordUi.pushCount()).toBe(2);
         expect(elementRecordUi.getWiredData()).toEqualSnapshotWithoutEtags(mockRecordUiDataChanged);
     });
-
-    it('should request all previously requested optional fields when getRecordUi is called with optionalFields', async () => {
-        const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
-        const recordId = getRecordIdFromMock(mockRecordUiData);
-        const recordFields = extractRecordFields(mockRecordUiData.records[recordId], {
-            add: ['Account.Parent.Id', 'Account.Parent.Name'],
-            omit: ['Account.Parent'],
-        });
-
-        recordFields.push('Account.OptionalField1');
-        recordFields.push('Account.OptionalField2');
-        recordFields.sort(); // Need to sort when adding fields for network mocks get hit.
-
-        const refreshMockUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
-        const refreshMockRecord = refreshMockUiData.records[recordId];
-        updateRefreshRecord(refreshMockRecord);
-
-        const configRecordUiOne = {
-            recordIds: recordId,
-            layoutTypes: ['Full'],
-            modes: ['View'],
-            optionalFields: ['Account.OptionalField1'],
-        };
-
-        const configRecordUiTwoAndRefresh = {
-            ...configRecordUiOne,
-            optionalFields: recordFields,
-        };
-
-        mockGetRecordUiNetwork(configRecordUiOne, mockRecordUiData);
-        mockGetRecordUiNetwork(configRecordUiTwoAndRefresh, [mockRecordUiData, refreshMockUiData]);
-        mockGetRecordNetwork(
-            { recordId, optionalFields: recordFields },
-            refreshMockUiData.records[recordId]
-        );
-
-        // Get Record Ui with first optional field.
-        const elementRecordUi = await setupElement(configRecordUiOne, RecordUi);
-        expect(elementRecordUi.pushCount()).toBe(1);
-        expect(elementRecordUi.getWiredData()).toEqualSnapshotWithoutEtags(mockRecordUiData);
-
-        // Get Record Ui with second optional field.
-        const elementRecordUi2 = await setupElement(configRecordUiTwoAndRefresh, RecordUi);
-        expect(elementRecordUi2.pushCount()).toBe(1);
-        expect(elementRecordUi2.getWiredData()).toEqualSnapshotWithoutEtags(mockRecordUiData);
-
-        expireRecordUi();
-
-        // Refresh, test will fail if refresh mock does not get called twice.
-        await elementRecordUi.refresh();
-        expect(elementRecordUi.pushCount()).toBe(2);
-        expect(elementRecordUi2.pushCount()).toBe(2);
-        expect(elementRecordUi.getWiredData()).toEqualSnapshotWithoutEtags(refreshMockUiData);
-        expect(elementRecordUi2.getWiredData()).toEqualSnapshotWithoutEtags(refreshMockUiData);
-    });
-
     it('should re-emit fresh value when dependent layout user state changes', async () => {
         const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockRecordUiData);
@@ -568,14 +453,7 @@ describe('refresh', () => {
             optionalFields: ['Account.Industry'],
         };
 
-        mockGetRecordUiNetwork(configRecordUi, mockRecordUiData);
-        mockGetRecordUiNetwork(
-            {
-                ...configRecordUi,
-                optionalFields: recordFieldsOne,
-            },
-            refreshMockUiData
-        );
+        mockGetRecordUiNetwork(configRecordUi, [mockRecordUiData, refreshMockUiData]);
         mockGetRecordNetwork(
             { recordId: recordIdOne, optionalFields: recordFieldsOne },
             refreshMockRecordOne

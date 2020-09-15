@@ -146,26 +146,8 @@ describe('single recordId - spanned record', () => {
         };
 
         // 1st request returns with a null spanning record (Assignee_To__c)
-        mockGetRecordUiNetwork(recordUiConfig, mockRecordUiData);
-
         // 2nd request returns with a populated spanning record
-        mockGetRecordUiNetwork(
-            {
-                ...recordUiConfig,
-                optionalFields: extractRecordFields(mockRecordUiData.records[recordId], {
-                    omit: ['Contact.Assignee_To__r', 'Contact.ReportsTo'],
-                    add: [
-                        'Contact.Assignee_To__r.Id',
-                        'Contact.Assignee_To__r.Name',
-                        'Contact.CreatedBy.SystemModstamp',
-                        'Contact.LastModifiedBy.SystemModstamp',
-                        'Contact.ReportsTo.Id',
-                        'Contact.ReportsTo.Name',
-                    ],
-                }),
-            },
-            mockRecordUiDataWithAssignee_To
-        );
+        mockGetRecordUiNetwork(recordUiConfig, [mockRecordUiData, mockRecordUiDataWithAssignee_To]);
 
         // 3rd request (from record merge conflict)
         mockGetRecordNetwork(

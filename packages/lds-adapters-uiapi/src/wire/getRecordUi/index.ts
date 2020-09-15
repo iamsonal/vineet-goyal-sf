@@ -26,7 +26,6 @@ import {
 import { depenpendencyKeyBuilder as recordRepresentationDependencyKeyBuilder } from '../../helpers/RecordRepresentation/merge';
 import { ArrayPrototypePush, ObjectAssign, ObjectCreate, ObjectKeys } from '../../util/language';
 import {
-    getTrackedFields,
     markMissingOptionalFields,
     markNulledOutRequiredFields,
     isGraphNode,
@@ -61,8 +60,6 @@ const GET_RECORDUI_ADAPTER_CONFIG: AdapterValidationConfig = {
         ],
     },
 };
-
-const MAX_FIELD_STRING_LENGTH = 10000;
 
 function buildCachedSelectorKey(key: string): string {
     return `${key}__selector`;
@@ -225,14 +222,6 @@ function markRecordUiOptionalFields(
 function prepareRequest(lds: LDS, config: GetRecordUiConfigWithDefaults) {
     const { recordIds, layoutTypes, modes, optionalFields } = config;
 
-    let allOptionalFields: string[] = [];
-    for (let i = 0, len = recordIds.length; i < len; i++) {
-        const recordId = recordIds[i];
-        allOptionalFields = allOptionalFields.concat(
-            getTrackedFields(lds, recordId, optionalFields, MAX_FIELD_STRING_LENGTH)
-        );
-    }
-
     const key = keyBuilder(
         recordIds,
         layoutTypes as LayoutType[],
@@ -248,7 +237,7 @@ function prepareRequest(lds: LDS, config: GetRecordUiConfigWithDefaults) {
         queryParams: {
             layoutTypes,
             modes,
-            optionalFields: dedupe(allOptionalFields).sort(),
+            optionalFields: dedupe(optionalFields).sort(),
         },
     });
 

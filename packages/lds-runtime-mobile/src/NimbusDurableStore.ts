@@ -1,7 +1,11 @@
 // so eslint doesn't complain about nimbus
 /* global __nimbus */
 
-import { DurableStore, DurableStoreEntries } from '@ldsjs/environments';
+import {
+    DurableStore,
+    DurableStoreEntries,
+    OnDurableStoreChangedListener,
+} from '@ldsjs/environments';
 import { ObjectKeys, ObjectCreate, JSONStringify, JSONParse } from './utils/language';
 import { filterPendingFields } from './utils/records';
 import { RecordRepresentationNormalized } from '@salesforce/lds-adapters-uiapi';
@@ -54,5 +58,9 @@ export class NimbusDurableStore implements DurableStore {
 
     evictEntries(entryIds: string[]): Promise<void> {
         return __nimbus.plugins.LdsDurableStore.evictEntries(entryIds);
+    }
+
+    registerOnChangedListener(_listener: OnDurableStoreChangedListener): void {
+        // no-op for now
     }
 }

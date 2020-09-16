@@ -4,9 +4,11 @@ import {
     updateRecordAvatar_ConfigPropertyNames as updateRecordAvatarConfigProperties,
     validateAdapterConfig,
 } from '../../generated/adapters/updateRecordAvatar';
-import { AbstractRecordAvatarRepresentation } from '../../generated/types/AbstractRecordAvatarRepresentation';
+import {
+    AbstractRecordAvatarRepresentation,
+    keyBuilderFromType,
+} from '../../generated/types/AbstractRecordAvatarRepresentation';
 import postUiApiRecordAvatarsAssociationByRecordId, {
-    keyBuilder,
     ResourceRequestConfig,
 } from '../../generated/resources/postUiApiRecordAvatarsAssociationByRecordId';
 import {
@@ -39,23 +41,24 @@ export const factory = (lds: LDS) => {
             },
         };
         const request = postUiApiRecordAvatarsAssociationByRecordId(resourceParams);
-        const key = keyBuilder(resourceParams);
         return lds.dispatchResourceRequest<AbstractRecordAvatarRepresentation>(request).then(
             response => {
+                const { body } = response;
+                const key = keyBuilderFromType(body);
                 let selectors;
-                if (response.body.type === 'Theme') {
+                if (body.type === 'Theme') {
                     selectors = themeSelector;
                     lds.storeIngest<ThemeRecordAvatarRepresentation>(
                         key,
                         themeIngest,
-                        response.body as ThemeRecordAvatarRepresentation
+                        body as ThemeRecordAvatarRepresentation
                     );
-                } else if (response.body.type === 'Photo') {
+                } else if (body.type === 'Photo') {
                     selectors = photoSelector;
                     lds.storeIngest<PhotoRecordAvatarRepresentation>(
                         key,
                         photoIngest,
-                        response.body as PhotoRecordAvatarRepresentation
+                        body as PhotoRecordAvatarRepresentation
                     );
                 } else {
                     throw new Error('Unsupported avatar type');

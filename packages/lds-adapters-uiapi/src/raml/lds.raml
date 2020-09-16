@@ -475,8 +475,6 @@ types:
       post:
         (lds.adapter):
           name: updateRecordAvatar
-        (lds.key):
-          recordId: urlParams.recordId
   /records:
     post:
       (lds.adapter):
@@ -784,6 +782,7 @@ types:
           pageSize: pageSize
   /predupe:
     post:
+      (lds.method): get
       (lds.adapter):
         name: getDuplicates
         tests:

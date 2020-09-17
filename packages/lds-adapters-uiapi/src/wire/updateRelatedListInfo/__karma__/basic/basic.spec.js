@@ -111,11 +111,11 @@ describe('updateRelatedListInfo', () => {
         expect(response.data).toEqualSnapshotWithoutEtags(mockData);
     });
 
-    // excluded until the issue regarding updateRLInfo incorrectly inspecting the cache is resolved
     it('properly emits when data has been updated', async () => {
         const mockData = getMock('related-list-info-Custom');
         const mockUpdatedResponse = getMock('related-list-info-Custom');
         mockUpdatedResponse.userPreferences.columnWrap.Name = true;
+        mockUpdatedResponse.eTag = mockUpdatedResponse.eTag + '999';
 
         const keyConfig = extractParamsFromMockData(mockData);
 
@@ -145,13 +145,14 @@ describe('updateRelatedListInfo', () => {
         expect(element.pushCount()).toBe(2);
     });
 
-    // excluded until the issue regarding updateRLInfo incorrectly inspecting the cache is resolved
     it('hits the network twice when two update calls are made', async () => {
         const mockData = getMock('related-list-info-Custom');
         const mockFirstUpdate = getMock('related-list-info-Custom');
         mockFirstUpdate.userPreferences.columnWrap.Name = true;
+        mockFirstUpdate.eTag = mockFirstUpdate.eTag + '999';
         const mockSecondUpdate = getMock('related-list-info-Custom');
         mockSecondUpdate.userPreferences.columnWidths.Name = 10;
+        mockSecondUpdate.eTag = mockSecondUpdate.eTag + '888';
 
         const updateConfig = {
             orderedByInfo: [],

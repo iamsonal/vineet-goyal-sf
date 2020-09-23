@@ -31,7 +31,7 @@ const CREATE_LDS_ADAPTER = 'createLDSAdapter';
  */
 function generateWireBindingsExport(artifactsDir, generatedAdapterNames, imperativeAdapterNames) {
     const imports = [
-        `import { createWireAdapterConstructor, createLDSAdapter } from '@salesforce/lds-bindings';`,
+        `import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}, ${CREATE_LDS_ADAPTER} } from '@salesforce/lds-bindings';`,
     ];
 
     const exports = [];
@@ -123,7 +123,8 @@ module.exports = {
             .map(resource => {
                 return {
                     name: resource.adapter.name,
-                    method: resource.method,
+                    // using (lds.method) annotation if defined
+                    method: resource.alternativeMethod || resource.method,
                 };
             });
         const imperativeAdapters = [...ADAPTERS_NOT_DEFINED_IN_OVERLAY];
@@ -135,11 +136,6 @@ module.exports = {
             if (fs.existsSync(fullPath)) {
                 imperativeAdapters.push(adapter);
                 return;
-            }
-
-            // Right now, all generated POST adapters are READ operations.
-            if (adapter.method === 'post') {
-                adapter.method = 'get';
             }
             generatedAdapters.push(adapter);
         });

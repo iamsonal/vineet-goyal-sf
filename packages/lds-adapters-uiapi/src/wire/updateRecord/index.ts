@@ -11,6 +11,7 @@ import {
     updateRecord_ConfigPropertyNames,
     validateAdapterConfig,
     UpdateRecordConfig,
+    createResourceParams,
 } from '../../generated/adapters/updateRecord';
 import patchUiApiRecordsByRecordId from '../../generated/resources/patchUiApiRecordsByRecordId';
 import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
@@ -55,18 +56,8 @@ export const factory = (lds: LDS) => {
         const { recordId } = config;
         const headers = getHeaders(clientOptions);
 
-        const request = patchUiApiRecordsByRecordId({
-            urlParams: {
-                recordId,
-            },
-            body: {
-                apiName: config.apiName,
-                fields: config.fields,
-                allowSaveOnDuplicate: config.allowSaveOnDuplicate,
-            },
-            headers,
-        });
-
+        const resourceParams = createResourceParams({ ...config, ...headers });
+        const request = patchUiApiRecordsByRecordId(resourceParams);
         return lds.dispatchResourceRequest<RecordRepresentation>(request).then(
             response => {
                 const { body } = response;

@@ -322,9 +322,15 @@ function getRecord(resourceRequest: ResourceRequest): Promise<any> {
 }
 
 function createRecord(resourceRequest: ResourceRequest): Promise<any> {
+    const {
+        body,
+        queryParams: { useDefaultRule, triggerUserEmail },
+    } = resourceRequest;
     const params = buildUiApiParams(
         {
-            recordInput: resourceRequest.body,
+            useDefaultRule,
+            triggerUserEmail,
+            recordInput: body,
         },
         resourceRequest
     );
@@ -367,10 +373,16 @@ function deleteRecord(resourceRequest: ResourceRequest): Promise<any> {
 }
 
 function updateRecord(resourceRequest: ResourceRequest): Promise<any> {
-    const { body, urlParams } = resourceRequest;
+    const {
+        body,
+        urlParams,
+        queryParams: { useDefaultRule, triggerUserEmail },
+    } = resourceRequest;
 
     const params = buildUiApiParams(
         {
+            useDefaultRule,
+            triggerUserEmail,
             recordId: urlParams.recordId,
             recordInput: body,
         },

@@ -2206,7 +2206,7 @@ types:
     type: object
     properties:
       allowSaveOnDuplicate:
-        description: Set allowSaveOnDuplicate param
+        description: Set allowSaveOnDuplicate param.
         type: boolean
         # This property is actually optional.
         required: false
@@ -5086,6 +5086,13 @@ types:
       #  allowSaveOnDuplicate:
       #    type: boolean
       #    required: false
+      queryParameters:
+        useDefaultRule:
+          type: boolean
+          required: false
+        triggerUserEmail:
+          type: boolean
+          required: false
       body:
         application/json:
           type: RecordInputRepresentation
@@ -5231,11 +5238,18 @@ types:
             body:
               application/json:
                 type: RecordRepresentation
-          # TODO: hand rolled - manually commented out name collision. https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAorh3L
-          #queryParameters:
-          #  allowSaveOnDuplicate:
-          #    type: boolean
-          #    required: false
+        # TODO: hand rolled - manually commented out name collision. https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAorh3L
+        #queryParameters:
+        #  allowSaveOnDuplicate:
+        #    type: boolean
+        #    required: false
+        queryParameters:
+          useDefaultRule:
+            type: boolean
+            required: false
+          triggerUserEmail:
+            type: boolean
+            required: false
         body:
           application/json:
             type: RecordInputRepresentation

@@ -7,16 +7,14 @@ import {
     RecordRepresentation,
     keyBuilder as recordRepresentationKeyBuilder,
 } from '../../generated/types/RecordRepresentation';
-import { RecordInputRepresentation } from '../../generated/types/RecordInputRepresentation';
 import postUiApiRecords from '../../generated/resources/postUiApiRecords';
 import { ingest } from '../../overrides/types/RecordRepresentation';
+import { createResourceParams, CreateRecordConfig } from '../../generated/adapters/createRecord';
 
 export const factory = (lds: LDS) => {
-    return function(config: RecordInputRepresentation): Promise<Snapshot<RecordRepresentation>> {
-        const request = postUiApiRecords({
-            body: config,
-        });
-
+    return function(untrustedConfig: unknown): Promise<Snapshot<RecordRepresentation>> {
+        const resourceParams = createResourceParams(untrustedConfig as CreateRecordConfig);
+        const request = postUiApiRecords(resourceParams);
         return lds.dispatchResourceRequest<RecordRepresentation>(request).then(
             response => {
                 const { body } = response;

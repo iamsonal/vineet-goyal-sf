@@ -313,6 +313,35 @@ describe('routes', () => {
             ]
         );
 
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'post',
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/records`,
+                    body: {
+                        apiName: 'Test__c',
+                        fields: [],
+                    },
+                    queryParams: {
+                        triggerUserEmail: true,
+                    },
+                },
+                [
+                    'RecordUiController.createRecord',
+                    {
+                        recordInput: {
+                            apiName: 'Test__c',
+                            fields: [],
+                        },
+                        useDefaultRule: undefined,
+                        triggerUserEmail: true,
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
         testRejectFetchResponse({
             method: 'post',
             baseUri: UI_API_BASE_URI,
@@ -505,6 +534,43 @@ describe('routes', () => {
                 { background: false, hotspot: true, longRunning: false },
             ]
         );
+
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'patch',
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/records/1234`,
+                    urlParams: {
+                        recordId: '1234',
+                    },
+                    queryParams: {
+                        useDefaultRule: true,
+                    },
+                    body: {
+                        apiName: 'Test__c',
+                        fields: [],
+                    },
+                    headers: {
+                        'If-Modified-Since': '1234',
+                    },
+                },
+                [
+                    'RecordUiController.updateRecord',
+                    {
+                        recordId: '1234',
+                        clientOptions: { ifModifiedSince: '1234' },
+                        recordInput: {
+                            apiName: 'Test__c',
+                            fields: [],
+                        },
+                        useDefaultRule: true,
+                        triggerUserEmail: undefined,
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
 
         testRejectFetchResponse({
             method: 'patch',

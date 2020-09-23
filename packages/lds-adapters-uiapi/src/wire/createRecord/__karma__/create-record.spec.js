@@ -19,6 +19,8 @@ describe('createRecord', () => {
             CloseDate: '2020-01-01T00:26:58+00:00',
         },
         allowSaveOnDuplicate: false,
+        useDefaultRule: false,
+        triggerUserEmail: false,
     };
     it('should make return correct snapshot data', async () => {
         const mockRecord = getMock('record-Opportunity-new');

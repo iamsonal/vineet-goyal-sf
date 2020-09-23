@@ -285,6 +285,50 @@ describe('update record', () => {
         expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
     });
 
+    it('passes useDefaultRule as a query param to HTTP request', async () => {
+        const updateParams = {
+            apiName: 'ADM_Work__c',
+            fields: {
+                Id: 'a07B0000007BIVQIA4',
+                Priority__c: 'P4',
+                Impact__c: null,
+                Frequency__c: null,
+                Product_Tag__c: null,
+                Origin__c: 'ADM_WorkLightning',
+                RecordTypeId: '0129000000006ByAAI',
+            },
+            useDefaultRule: true,
+        };
+        const mockResponse = getMock(
+            'record-ADM_Work__c-fields-Id,Priority__c,Impact__c,Frequency__c,Product_tag__c,Origin__c,RecordTypeId-updated'
+        );
+        mockUpdateRecordNetwork(updateParams.fields.Id, updateParams, mockResponse);
+        const response = await updateRecord(updateParams);
+        expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
+    });
+
+    it('passes triggerUserEmail as a query param to HTTP request', async () => {
+        const updateParams = {
+            apiName: 'ADM_Work__c',
+            fields: {
+                Id: 'a07B0000007BIVQIA4',
+                Priority__c: 'P4',
+                Impact__c: null,
+                Frequency__c: null,
+                Product_Tag__c: null,
+                Origin__c: 'ADM_WorkLightning',
+                RecordTypeId: '0129000000006ByAAI',
+            },
+            triggerUserEmail: true,
+        };
+        const mockResponse = getMock(
+            'record-ADM_Work__c-fields-Id,Priority__c,Impact__c,Frequency__c,Product_tag__c,Origin__c,RecordTypeId-updated'
+        );
+        mockUpdateRecordNetwork(updateParams.fields.Id, updateParams, mockResponse);
+        const response = await updateRecord(updateParams);
+        expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
+    });
+
     it('propagates an immutable error when server rejects request', async () => {
         const updateParams = {
             fields: {

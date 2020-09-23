@@ -38,11 +38,15 @@ const LIST_UI_TTL = 60 * 1000;
 const LOOKUP_RECORDS_TTL = 2 * 60 * 1000;
 
 function mockCreateRecordNetwork(config, mockData) {
+    const { useDefaultRule, triggerUserEmail, ...body } = config;
+    const queryParams = { useDefaultRule, triggerUserEmail };
+
     const paramMatch = sinon.match({
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/records`,
         method: 'post',
-        body: config,
+        body,
+        queryParams,
     });
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -318,11 +322,15 @@ function mockGetRecordUiNetwork(config, mockData) {
 }
 
 function mockUpdateRecordNetwork(recordId, updateParams, mockData, headers) {
+    const { useDefaultRule, triggerUserEmail, ...body } = updateParams;
+    const queryParams = { useDefaultRule, triggerUserEmail };
+
     const paramMatch = sinon.match({
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/records/${recordId}`,
         method: 'patch',
-        body: updateParams,
+        body,
+        queryParams,
         ...(headers && { headers }),
     });
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);

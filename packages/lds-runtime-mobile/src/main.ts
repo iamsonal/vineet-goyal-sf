@@ -4,9 +4,10 @@ import { makeOffline, makeDurable } from '@ldsjs/environments';
 import { NimbusNetworkAdapter } from './NimbusNetworkAdapter';
 import { NimbusDurableStore } from './NimbusDurableStore';
 import { makeDurableRecordAware } from '@salesforce/lds-adapters-uiapi';
+import { makeDurableStoreRecordAware } from './makeDurableStoreRecordAware';
 
 const store = new Store();
-const durableStore = new NimbusDurableStore();
+const durableStore = makeDurableStoreRecordAware(new NimbusDurableStore(), store);
 const env = makeDurableRecordAware(
     makeDurable(makeOffline(new Environment(store, NimbusNetworkAdapter)), durableStore),
     durableStore,

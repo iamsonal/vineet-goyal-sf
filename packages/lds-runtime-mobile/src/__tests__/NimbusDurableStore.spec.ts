@@ -1,117 +1,62 @@
-import {
-    DurableStore,
-    DurableStoreFetchResult,
-    DurableStoreEntries,
-} from '@mobileplatform/nimbus-plugin-lds';
 import { NimbusDurableStore } from '../NimbusDurableStore';
-import { RecordRepresentationNormalized } from '@salesforce/lds-adapters-uiapi';
-
-class MockNimbusDurableStore implements DurableStore {
-    kvp: { [key: string]: string } = {};
-
-    async getEntries(ids: string[]): Promise<DurableStoreFetchResult> {
-        const result = {};
-        let isMissingEntries = false;
-        for (const id of ids) {
-            const val = this.kvp[id];
-            if (val === undefined) {
-                isMissingEntries = true;
-            } else {
-                result[id] = val;
-            }
-        }
-
-        return {
-            entries: result,
-            isMissingEntries,
-        };
-    }
-
-    setEntries(entries: DurableStoreEntries): Promise<void> {
-        Object.assign(this.kvp, entries);
-        return Promise.resolve();
-    }
-    evictEntries(ids: string[]): Promise<void> {
-        for (const id of ids) {
-            delete this.kvp[id];
-        }
-        return Promise.resolve();
-    }
-}
-
-function mockNimbusStore(mockNimbusStore: MockNimbusDurableStore) {
-    global.__nimbus = {
-        plugins: {
-            LdsDurableStore: mockNimbusStore,
-        },
-    } as any;
-}
-function resetNimbusStore() {
-    global.__nimbus = undefined;
-}
+import {
+    MockNimbusDurableStore,
+    resetNimbusStoreGlobal,
+    mockNimbusStoreGlobal,
+} from './MockNimbusDurableStore';
+import { JSONStringify } from '../utils/language';
 describe('nimbus durable store tests', () => {
     afterEach(() => {
-        resetNimbusStore();
-    });
-    it('should filter out pending record fields', () => {
-        const durableStore = new MockNimbusDurableStore();
-        const key = 'UiApi::RecordRepresentation:foo';
-        const nameKey = 'UiApi::RecordRepresentation:foo__fields__Name';
-        mockNimbusStore(durableStore);
-        const nimbusStore = new NimbusDurableStore();
-        nimbusStore.setEntries({
-            [key]: {
-                data: {
-                    id: 'foo',
-                    fields: {
-                        Name: {
-                            __ref: nameKey,
-                        },
-                        Birthday: {
-                            pending: true,
-                        },
-                    },
-                },
-            },
-            [nameKey]: {
-                data: {
-                    displayValue: null,
-                    value: 'whoops',
-                },
-            },
-        });
-
-        const data = durableStore.kvp[key];
-        const entry = JSON.parse(data);
-        const record = entry.data as RecordRepresentationNormalized;
-        expect(record.fields['Name'].__ref).toBe(nameKey);
-        expect(record.fields['Birthday']).toBeUndefined();
+        resetNimbusStoreGlobal();
     });
 
-    it('should not mutate entry', () => {
-        const durableStore = new MockNimbusDurableStore();
-        const key = 'UiApi::RecordRepresentation:foo';
-        const nameKey = 'UiApi:RecordRepresentation:foo__fields_Name';
-        mockNimbusStore(durableStore);
-        const nimbusStore = new NimbusDurableStore();
-        const data = {
-            id: 'foo',
-            fields: {
-                Name: {
-                    __ref: nameKey,
-                },
-                Birthday: {
-                    pending: true,
-                },
-            },
-        };
-        nimbusStore.setEntries({
-            [key]: {
-                data,
-            },
+    describe('getEntries', () => {
+        it('should return undefined if missing entries', async () => {
+            const nimbusStore = new MockNimbusDurableStore();
+            mockNimbusStoreGlobal(nimbusStore);
+            const durableStore = new NimbusDurableStore();
+            const result = await durableStore.getEntries(['missing']);
+            expect(result).toBeUndefined();
         });
+        it('should parse serialized entries', async () => {
+            const recordId = 'foo';
+            const recordData = { data: { bar: true } };
+            const nimbusStore = new MockNimbusDurableStore();
+            nimbusStore.kvp[recordId] = JSONStringify(recordData);
+            mockNimbusStoreGlobal(nimbusStore);
 
-        expect(data.fields.Birthday).toBeDefined();
-        expect(data.fields.Birthday.pending).toBe(true);
+            const durableStore = new NimbusDurableStore();
+            const result = await durableStore.getEntries([recordId]);
+            const entry = result[recordId];
+            expect(entry).toEqual(recordData);
+            expect(entry.data['bar']).toBe(true);
+        });
+        it('should return undefined if missing some entries', async () => {
+            const nimbusStore = new MockNimbusDurableStore();
+            mockNimbusStoreGlobal(nimbusStore);
+            const durableStore = new NimbusDurableStore();
+            nimbusStore.kvp['present'] = JSONStringify({ data: {} });
+            const result = await durableStore.getEntries(['missing', 'present']);
+            expect(result).toBeUndefined();
+        });
+    });
+
+    describe('setEntries', () => {
+        it('should stringify entries', async () => {
+            const nimbusStore = new MockNimbusDurableStore();
+            const setSpy = jest.fn();
+            nimbusStore.setEntries = setSpy;
+            const recordId = 'foo';
+            const recordData = { data: { bar: true } };
+            mockNimbusStoreGlobal(nimbusStore);
+
+            const durableStore = new NimbusDurableStore();
+            const setData = {
+                [recordId]: recordData,
+            };
+            await durableStore.setEntries(setData);
+
+            expect(setSpy.mock.calls[0][0][recordId]).toEqual(JSONStringify(recordData));
+        });
     });
 });

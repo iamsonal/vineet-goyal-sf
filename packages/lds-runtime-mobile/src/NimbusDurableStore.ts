@@ -4,13 +4,10 @@
 import {
     DurableStore,
     DurableStoreEntries,
+    DurableStoreEntry,
     OnDurableStoreChangedListener,
 } from '@ldsjs/environments';
 import { ObjectKeys, ObjectCreate, JSONStringify, JSONParse } from './utils/language';
-import { filterPendingFields } from './utils/records';
-import { RecordRepresentationNormalized } from '@salesforce/lds-adapters-uiapi';
-
-const RECORD_REPRESENTATION_PREFIX = 'UiApi::RecordRepresentation:';
 
 export class NimbusDurableStore implements DurableStore {
     getEntries(entryIds: string[]): Promise<DurableStoreEntries | undefined> {
@@ -29,9 +26,8 @@ export class NimbusDurableStore implements DurableStore {
             const keys = ObjectKeys(entries);
             for (let i = 0, len = keys.length; i < len; i++) {
                 const key = keys[i];
-                const value = entries[key];
                 // values are stored on native side as JSON strings
-                returnEntries[key] = JSONParse(value);
+                returnEntries[key] = JSONParse(entries[key]) as DurableStoreEntry;
             }
             return returnEntries;
         });
@@ -43,12 +39,6 @@ export class NimbusDurableStore implements DurableStore {
         for (let i = 0, len = keys.length; i < len; i++) {
             const key = keys[i];
             const value = entries[key];
-
-            // TODO: (W-8029812) properly filter record representations
-            if (key.startsWith(RECORD_REPRESENTATION_PREFIX) && !key.includes('__fields__')) {
-                value.data = filterPendingFields(value.data as RecordRepresentationNormalized);
-            }
-
             // values are stored on native side as JSON strings
             putEntries[key] = JSONStringify(value);
         }

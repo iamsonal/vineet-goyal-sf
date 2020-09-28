@@ -16,7 +16,8 @@
             "sortable": true
         }
     ],
-    "eTag": "00738cd38dc733b23f761107203e25cd",
+    "eTag": "5c9cc7b44ca93af419baf437572334a1",
+    "fieldApiName": "CwcCustom00__c",
     "filterLogicString": "",
     "filteredByInfo": [],
     "label": "CwcCustom01s",
@@ -30,6 +31,7 @@
         "relatedListId": "CwcCustom01s__r",
         "type": "relatedList"
     },
+    "objectApiNames": ["CwcCustom01__c"],
     "orderedByInfo": [],
     "updateable": false,
     "userPreferences": {

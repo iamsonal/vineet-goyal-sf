@@ -2574,7 +2574,8 @@ types:
         description: Indicates whether the listview can be cloned.
         type: boolean
       createable:
-        description: Indicates whether a new listview for this listview's SObject can be created.
+        description: Indicates whether a new listview for this listview's SObject
+          can be created.
         type: boolean
       deletable:
         description: Indicates whether the listview can be deleted.
@@ -2588,8 +2589,13 @@ types:
         description: ETag like field, readOnly, handy while caching.
         type: string
         (oas-readOnly): true
+      fieldApiName:
+        description: The API name of the field in the child entity that links to the
+          parent entity.
+        type: string
       filterLogicString:
-        description: This is the filter logic such as "(1 OR 2) and 3".  Indexes are 1-based.
+        description: This is the filter logic such as "(1 OR 2) and 3".  Indexes are
+          1-based.
         type: string
       filteredByInfo:
         description: Describes how the list view is filtered.
@@ -2602,6 +2608,11 @@ types:
       listReference:
         description: An object representing the identity of the list.
         type: RelatedListReferenceRepresentation
+      objectApiNames:
+        description: The API name of any objects that are returned by this relatedList.
+        type: array
+        items:
+          type: string
       orderedByInfo:
         description: Describes how records are ordered in this list view.
         type: array

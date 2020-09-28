@@ -17,9 +17,16 @@
                         "label": "Decimal",
                         "lookupId": null,
                         "sortable": true
+                    },
+                    {
+                        "fieldApiName": "Account__r.Name",
+                        "label": "Account",
+                        "lookupId": "Account__c",
+                        "sortable": true
                     }
                 ],
-                "eTag": "00738cd38dc733b23f761107203e25cd",
+                "eTag": "5c9cc7b44ca93af419baf437572334a1",
+                "fieldApiName": "CwcCustom00__c",
                 "filterLogicString": "",
                 "filteredByInfo": [],
                 "label": "CwcCustom01s",
@@ -33,15 +40,24 @@
                     "relatedListId": "CwcCustom01s__r",
                     "type": "relatedList"
                 },
-                "orderedByInfo": [],
+                "objectApiNames": ["CwcCustom01__c", "Account"],
+                "orderedByInfo": [
+                    {
+                        "fieldApiName": "Decimal__c",
+                        "isAscending": false,
+                        "label": "Decimal"
+                    }
+                ],
                 "updateable": false,
                 "userPreferences": {
                     "columnWidths": {
                         "Decimal__c": -1,
+                        "Account__r.Name": -1,
                         "Name": -1
                     },
                     "columnWrap": {
                         "Decimal__c": false,
+                        "Account__r.Name": false,
                         "Name": false
                     }
                 },
@@ -54,7 +70,7 @@
             "result": [
                 {
                     "errorCode": "INVALID_TYPE",
-                    "message": "The related lists UI API currently supports only custom objects"
+                    "message": "The related lists UI API does not currently support this entity"
                 }
             ],
             "statusCode": 400

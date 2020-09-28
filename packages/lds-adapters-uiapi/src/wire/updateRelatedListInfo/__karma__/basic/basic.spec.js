@@ -78,15 +78,22 @@ function extractParamsFromMockData(mockData) {
         relatedListId: mockData.listReference.relatedListId,
     };
 }
+// This tells sinon to not expect null recordTypeId in the request params to match. The validation code
+// for this adapter strips out non-string values (including null)
+function extractNetworkParamsFromMockData(mockData) {
+    return {
+        parentObjectApiName: mockData.listReference.parentObjectApiName,
+        recordTypeId: mockData.listReference.recordTypeId
+            ? mockData.listReference.recordTypeId
+            : undefined,
+        relatedListId: mockData.listReference.relatedListId,
+    };
+}
 
 describe('updateRelatedListInfo', () => {
     it('passes all parameters to HTTP request, and sends the correct response', async () => {
         const mockData = getMock('related-list-info-Custom');
-        const keyConfig = {
-            parentObjectApiName: mockData.listReference.parentObjectApiName,
-            recordTypeId: mockData.listReference.recordTypeId,
-            relatedListId: mockData.listReference.relatedListId,
-        };
+        const networkConfig = extractNetworkParamsFromMockData(mockData);
         const updateParams = {
             orderedByInfo: [],
             userPreferences: {
@@ -98,7 +105,7 @@ describe('updateRelatedListInfo', () => {
                 },
             },
         };
-        mockUpdateNetwork(keyConfig, updateParams, mockData);
+        mockUpdateNetwork(networkConfig, updateParams, mockData);
 
         const props = {
             orderedByInfo: [],
@@ -117,7 +124,8 @@ describe('updateRelatedListInfo', () => {
         mockUpdatedResponse.userPreferences.columnWrap.Name = true;
         mockUpdatedResponse.eTag = mockUpdatedResponse.eTag + '999';
 
-        const keyConfig = extractParamsFromMockData(mockData);
+        const networkConfig = extractNetworkParamsFromMockData(mockData);
+        const componentConfig = extractParamsFromMockData(mockData);
 
         const updateConfig = {
             orderedByInfo: [],
@@ -133,10 +141,10 @@ describe('updateRelatedListInfo', () => {
                 },
             },
         };
-        mockGetNetwork(keyConfig, mockData);
-        mockUpdateNetwork(keyConfig, updateConfig, mockUpdatedResponse);
+        mockGetNetwork(networkConfig, mockData);
+        mockUpdateNetwork(networkConfig, updateConfig, mockUpdatedResponse);
 
-        const element = await setupElement(keyConfig, RelatedListBasic);
+        const element = await setupElement(componentConfig, RelatedListBasic);
 
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
 
@@ -183,10 +191,10 @@ describe('updateRelatedListInfo', () => {
             },
         };
 
-        const keyConfig = extractParamsFromMockData(mockData);
+        const networkConfig = extractNetworkParamsFromMockData(mockData);
 
-        mockUpdateNetwork(keyConfig, updateConfig, mockFirstUpdate);
-        mockUpdateNetwork(keyConfig, updateSecondConfig, mockSecondUpdate);
+        mockUpdateNetwork(networkConfig, updateConfig, mockFirstUpdate);
+        mockUpdateNetwork(networkConfig, updateSecondConfig, mockSecondUpdate);
 
         const firstResult = await updateRelatedListInfo(updateConfig);
         expect(firstResult.data).toEqualSnapshotWithoutEtags(mockFirstUpdate);
@@ -198,7 +206,8 @@ describe('updateRelatedListInfo', () => {
         const mockData = getMock('related-list-info-Custom');
         const mockUpdateData = getMock('related-list-info-updated');
 
-        const keyConfig = extractParamsFromMockData(mockData);
+        const networkConfig = extractNetworkParamsFromMockData(mockData);
+        const componentConfig = extractParamsFromMockData(mockData);
         const updateParams = {
             orderedByInfo: [],
             userPreferences: {
@@ -210,8 +219,8 @@ describe('updateRelatedListInfo', () => {
                 },
             },
         };
-        mockGetNetwork(keyConfig, mockData);
-        mockUpdateNetwork(keyConfig, updateParams, mockUpdateData);
+        mockGetNetwork(networkConfig, mockData);
+        mockUpdateNetwork(networkConfig, updateParams, mockUpdateData);
 
         const props = {
             orderedByInfo: [],
@@ -227,7 +236,7 @@ describe('updateRelatedListInfo', () => {
                 },
             },
         };
-        const element = await setupElement(keyConfig, RelatedListBasic);
+        const element = await setupElement(componentConfig, RelatedListBasic);
 
         expireRelatedListInfo();
 

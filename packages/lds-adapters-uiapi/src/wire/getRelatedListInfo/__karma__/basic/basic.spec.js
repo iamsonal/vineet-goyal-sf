@@ -17,7 +17,17 @@ describe('basic', () => {
             recordTypeId: mockData.listReference.recordTypeId,
             relatedListId: mockData.listReference.relatedListId,
         };
-        mockGetRelatedListInfoNetwork(config, mockData);
+        // This tells sinon to not expect null recordTypeId in the request params to match. The validation code
+        // for this adapter strips out non-string values (including null)
+        const networkConfig = {
+            parentObjectApiName: mockData.listReference.parentObjectApiName,
+            recordTypeId: mockData.listReference.recordTypeId
+                ? mockData.listReference.recordTypeId
+                : undefined,
+            relatedListId: mockData.listReference.relatedListId,
+        };
+
+        mockGetRelatedListInfoNetwork(networkConfig, mockData);
 
         const element = await setupElement(config, RelatedListBasic);
 

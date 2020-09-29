@@ -17,7 +17,7 @@
     ],
     "scripts": {
         "clean": "rm -rf dist sfdc src/generated karma/dist",
-        "build": "yarn build:raml && yarn build:services && yarn build:karma",
+        "build": "yarn build:raml",
         "build:karma": "rollup --config rollup.config.karma.js",
         "build:raml": "lds generate src/raml/lds.raml src/generated -p '../lds-compiler-plugins'",
         "build:services": "rollup --config rollup.config.js",

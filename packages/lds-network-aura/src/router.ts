@@ -13,7 +13,7 @@ export interface Route {
 const router = ObjectCreate(null);
 router.methods = {} as Record<string, Route[]>;
 
-['delete', 'post', 'patch', 'get'].forEach(method => {
+['delete', 'get', 'patch', 'post', 'put'].forEach(method => {
     router[method] = function(predicate: RoutePredicate, handler: ControllerInvoker) {
         const routes = this.methods[method] || [];
         routes.push({ predicate, handler });

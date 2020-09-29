@@ -193,7 +193,15 @@ module.exports = class CreateApiFamily extends Command {
                 type: 'list',
                 name: 'cloud',
                 message: 'Which cloud is this package for?',
-                choices: ['Community', 'Commerce', 'Marketing', 'Mule', 'Platform', 'Sales'],
+                choices: [
+                    'Analytics',
+                    'Community',
+                    'Commerce',
+                    'Marketing',
+                    'Mule',
+                    'Platform',
+                    'Sales',
+                ],
             },
             {
                 type: 'input',

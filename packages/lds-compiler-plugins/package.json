@@ -12,6 +12,6 @@
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     },
     "devDependencies": {
-        "@ldsjs/compiler": "^0.17.0"
+        "@ldsjs/compiler": "^0.17.1"
     }
 }

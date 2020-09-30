@@ -16,8 +16,8 @@
         "registry": "https://npm.lwcjs.org"
     },
     "dependencies": {
-        "@ldsjs/engine": "^0.17.1",
-        "@ldsjs/environments": "^0.17.1"
+        "@ldsjs/engine": "^0.17.2",
+        "@ldsjs/environments": "^0.17.2"
     },
     "devDependencies": {
         "@mobileplatform/nimbus-plugin-lds": "0.0.1",

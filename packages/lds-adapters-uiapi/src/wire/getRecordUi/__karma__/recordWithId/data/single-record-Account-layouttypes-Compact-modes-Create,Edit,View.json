@@ -1,5 +1,5 @@
 {
-    "eTag": "2b0069a32056905cd7fc7878edd4b914",
+    "eTag": "9d87c5b34d1f2ca85c5a7244f683e602",
     "layoutUserStates": {},
     "layouts": {
         "Account": {
@@ -12,6 +12,7 @@
                         "mode": "Create",
                         "objectApiName": "Account",
                         "recordTypeId": "012000000000000AAA",
+                        "saveOptions": [],
                         "sections": [
                             {
                                 "collapsible": false,
@@ -242,6 +243,7 @@
                         "mode": "Edit",
                         "objectApiName": "Account",
                         "recordTypeId": "012000000000000AAA",
+                        "saveOptions": [],
                         "sections": [
                             {
                                 "collapsible": false,
@@ -472,6 +474,7 @@
                         "mode": "View",
                         "objectApiName": "Account",
                         "recordTypeId": "012000000000000AAA",
+                        "saveOptions": [],
                         "sections": [
                             {
                                 "collapsible": false,
@@ -769,6 +772,13 @@
                     "relationshipName": "ActivityHistories"
                 },
                 {
+                    "childObjectApiName": "AlternativePaymentMethod",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "AlternativePaymentMethods"
+                },
+                {
                     "childObjectApiName": "Asset",
                     "fieldName": "AccountId",
                     "junctionIdListNames": [],
@@ -1028,6 +1038,13 @@
                     "relationshipName": "Payments"
                 },
                 {
+                    "childObjectApiName": "PaymentAuthAdjustment",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "PaymentAuthAdjustments"
+                },
+                {
                     "childObjectApiName": "PaymentAuthorization",
                     "fieldName": "AccountId",
                     "junctionIdListNames": [],
@@ -1140,13 +1157,6 @@
                     "relationshipName": "Tasks"
                 },
                 {
-                    "childObjectApiName": "TaxCertificate",
-                    "fieldName": "AccountId",
-                    "junctionIdListNames": [],
-                    "junctionReferenceTo": [],
-                    "relationshipName": "TaxCertificates"
-                },
-                {
                     "childObjectApiName": "TopicAssignment",
                     "fieldName": "EntityId",
                     "junctionIdListNames": [],
@@ -1173,7 +1183,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "696b95373dbf09d45ab61fa721643a07",
+            "eTag": "c213a4e396682c9238269468ed45f6be",
             "feedEnabled": true,
             "fields": {
                 "AccountNumber": {
@@ -1808,7 +1818,7 @@
                     "relationshipName": "DandbCompany",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2483,7 +2493,7 @@
                     "relationshipName": "OperatingHours",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2592,7 +2602,7 @@
                     "relationshipName": "Parent",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -3442,7 +3452,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://ryan-noodles-2841-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
@@ -3779,7 +3789,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "8be9efbe5e66db80925dbea4f4a64d09",
+            "eTag": "5f9d544d72650efcd1a45aa7ee5aa8f7",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -3848,7 +3858,7 @@
                     "relationshipName": "Account",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": false
@@ -4193,7 +4203,7 @@
                     "relationshipName": "Contact",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -4971,7 +4981,7 @@
                     "relationshipName": "Individual",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -5509,7 +5519,7 @@
                     "relationshipName": "Manager",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -5877,7 +5887,7 @@
                     "relationshipName": "Profile",
                     "required": true,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -10111,7 +10121,7 @@
                     "relationshipName": "UserRole",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -10194,16 +10204,16 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://ryan-noodles-2841-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         }
     },
     "records": {
-        "001xx000003Gl1cAAC": {
+        "001T1000002GSPDIA4": {
             "apiName": "Account",
             "childRelationships": {},
-            "eTag": "7599e2256eed862576d0afe162b2fd03",
+            "eTag": "23d568283951a27cf28746ec861e6332",
             "fields": {
                 "AnnualRevenue": {
                     "displayValue": "$350,000,000",
@@ -10242,29 +10252,29 @@
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "4c032b8d12ea476ab6d960f95a916ad3",
+                        "eTag": "0316917a01244951eccffbcd11c5b0cd",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005xx000001XN4DAAW"
+                                "value": "005T1000000DwPcIAK"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005xx000001XN4DAAW",
-                        "lastModifiedById": "005xx000001XN4DAAW",
-                        "lastModifiedDate": "2020-08-17T19:09:21.000Z",
+                        "id": "005T1000000DwPcIAK",
+                        "lastModifiedById": "005T1000000DwPcIAK",
+                        "lastModifiedDate": "2020-09-29T09:28:23.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-08-17T19:09:21.000Z",
-                        "weakEtag": 1597691361000
+                        "systemModstamp": "2020-09-29T18:19:13.000Z",
+                        "weakEtag": 1601403553000
                     }
                 },
                 "OwnerId": {
                     "displayValue": null,
-                    "value": "005xx000001XN4DAAW"
+                    "value": "005T1000000DwPcIAK"
                 },
                 "Parent": {
                     "displayValue": null,
@@ -10280,7 +10290,7 @@
                 },
                 "PhotoUrl": {
                     "displayValue": null,
-                    "value": "/services/images/photo/001xx000003Gl1cAAC"
+                    "value": "/services/images/photo/001T1000002GSPDIA4"
                 },
                 "Site": {
                     "displayValue": null,
@@ -10295,13 +10305,13 @@
                     "value": "www.burlington.com"
                 }
             },
-            "id": "001xx000003Gl1cAAC",
-            "lastModifiedById": "005xx000001XN4DAAW",
-            "lastModifiedDate": "2020-08-17T18:55:35.000Z",
+            "id": "001T1000002GSPDIA4",
+            "lastModifiedById": "005T1000000DwPcIAK",
+            "lastModifiedDate": "2020-09-29T09:28:23.000Z",
             "recordTypeId": "012000000000000AAA",
             "recordTypeInfo": null,
-            "systemModstamp": "2020-08-17T18:55:35.000Z",
-            "weakEtag": 1597690535000
+            "systemModstamp": "2020-09-29T09:28:23.000Z",
+            "weakEtag": 1601371703000
         }
     }
 }

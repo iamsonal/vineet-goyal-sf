@@ -42,6 +42,7 @@
                         "mode": "View",
                         "objectApiName": "Contact",
                         "recordTypeId": "012000000000000AAA",
+                        "saveOptions": [],
                         "sections": [
                             {
                                 "collapsible": false,

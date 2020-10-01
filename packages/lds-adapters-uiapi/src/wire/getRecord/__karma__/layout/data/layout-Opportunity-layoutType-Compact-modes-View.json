@@ -5,6 +5,7 @@
     "mode": "View",
     "objectApiName": "Opportunity",
     "recordTypeId": "012000000000000AAA",
+    "saveOptions": [],
     "sections": [
         {
             "collapsible": false,

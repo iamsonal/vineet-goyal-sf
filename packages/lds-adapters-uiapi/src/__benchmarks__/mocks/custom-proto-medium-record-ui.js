@@ -44,6 +44,7 @@ export default `{
                         "id": "00hx0000000PjtBAAS",
                         "layoutType": "Full",
                         "mode": "View",
+                        "saveOptions": [],
                         "sections": [
                             {
                                 "collapsible": false,

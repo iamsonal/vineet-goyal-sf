@@ -67,6 +67,13 @@
             "relationshipName": "ActivityHistories"
         },
         {
+            "childObjectApiName": "AlternativePaymentMethod",
+            "fieldName": "AccountId",
+            "junctionIdListNames": [],
+            "junctionReferenceTo": [],
+            "relationshipName": "AlternativePaymentMethods"
+        },
+        {
             "childObjectApiName": "Asset",
             "fieldName": "AccountId",
             "junctionIdListNames": [],
@@ -326,6 +333,13 @@
             "relationshipName": "Payments"
         },
         {
+            "childObjectApiName": "PaymentAuthAdjustment",
+            "fieldName": "AccountId",
+            "junctionIdListNames": [],
+            "junctionReferenceTo": [],
+            "relationshipName": "PaymentAuthAdjustments"
+        },
+        {
             "childObjectApiName": "PaymentAuthorization",
             "fieldName": "AccountId",
             "junctionIdListNames": [],
@@ -438,13 +452,6 @@
             "relationshipName": "Tasks"
         },
         {
-            "childObjectApiName": "TaxCertificate",
-            "fieldName": "AccountId",
-            "junctionIdListNames": [],
-            "junctionReferenceTo": [],
-            "relationshipName": "TaxCertificates"
-        },
-        {
             "childObjectApiName": "TopicAssignment",
             "fieldName": "EntityId",
             "junctionIdListNames": [],
@@ -471,7 +478,7 @@
     "defaultRecordTypeId": "012000000000000AAA",
     "deletable": true,
     "dependentFields": {},
-    "eTag": "696b95373dbf09d45ab61fa721643a07",
+    "eTag": "c213a4e396682c9238269468ed45f6be",
     "feedEnabled": true,
     "fields": {
         "AccountNumber": {
@@ -1106,7 +1113,7 @@
             "relationshipName": "DandbCompany",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": false,
+            "searchPrefilterable": true,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -1781,7 +1788,7 @@
             "relationshipName": "OperatingHours",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": false,
+            "searchPrefilterable": true,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -1890,7 +1897,7 @@
             "relationshipName": "Parent",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": false,
+            "searchPrefilterable": true,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -2740,7 +2747,7 @@
     "searchable": true,
     "themeInfo": {
         "color": "7F8DE1",
-        "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
+        "iconUrl": "https://ryan-noodles-2841-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
     },
     "updateable": true
 }

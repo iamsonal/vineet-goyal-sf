@@ -1,17 +1,27 @@
 {
     "layout": {
-        "eTag": "ccd46142c9f9f7ffff4cbbdf87375927",
-        "id": "00hxx0000019UNLAA2",
+        "eTag": "dcf9bd8a0ec64569d29bb1d866094ef1",
+        "id": "00hT1000000FvxKIAS",
         "layoutType": "Full",
         "mode": "Create",
         "objectApiName": "Account",
         "recordTypeId": "012000000000000AAA",
+        "saveOptions": [
+            {
+                "defaultValue": false,
+                "isDisplayed": true,
+                "label": "Evaluate this account against territory rules on save",
+                "name": "UseDefaultAssignmentRule",
+                "restHeaderName": "Sforce-Auto-Assign",
+                "soapHeaderName": "AssignmentRuleHeader.useDefaultRule"
+            }
+        ],
         "sections": [
             {
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Account Information",
-                "id": "01Bxx000002C4RfEAK",
+                "id": "01BT1000000XgZ6MAK",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -293,7 +303,7 @@
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Address Information",
-                "id": "01Bxx000002C4RjEAK",
+                "id": "01BT1000000XgZAMA0",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -377,7 +387,7 @@
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Additional Information",
-                "id": "01Bxx000002C4RgEAK",
+                "id": "01BT1000000XgZ7MAK",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -522,7 +532,7 @@
                 "collapsible": false,
                 "columns": 1,
                 "heading": "Description Information",
-                "id": "01Bxx000002C4RkEAK",
+                "id": "01BT1000000XgZBMA0",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -619,6 +629,13 @@
                     "relationshipName": "ActivityHistories"
                 },
                 {
+                    "childObjectApiName": "AlternativePaymentMethod",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "AlternativePaymentMethods"
+                },
+                {
                     "childObjectApiName": "Asset",
                     "fieldName": "AccountId",
                     "junctionIdListNames": [],
@@ -673,20 +690,6 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "RelatedAuthorizationFormConsents"
-                },
-                {
-                    "childObjectApiName": "BuyerAccount",
-                    "fieldName": "BuyerId",
-                    "junctionIdListNames": [],
-                    "junctionReferenceTo": [],
-                    "relationshipName": "BuyerAccounts"
-                },
-                {
-                    "childObjectApiName": "BuyerGroupMember",
-                    "fieldName": "BuyerId",
-                    "junctionIdListNames": [],
-                    "junctionReferenceTo": [],
-                    "relationshipName": "BuyerGroupMembers"
                 },
                 {
                     "childObjectApiName": "CardPaymentMethod",
@@ -778,13 +781,6 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "Contracts"
-                },
-                {
-                    "childObjectApiName": "DelegatedAccount",
-                    "fieldName": "TargetId",
-                    "junctionIdListNames": [],
-                    "junctionReferenceTo": [],
-                    "relationshipName": "ManagedAccount"
                 },
                 {
                     "childObjectApiName": "DigitalWallet",
@@ -897,6 +893,13 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "Payments"
+                },
+                {
+                    "childObjectApiName": "PaymentAuthAdjustment",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "PaymentAuthAdjustments"
                 },
                 {
                     "childObjectApiName": "PaymentAuthorization",
@@ -1037,7 +1040,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "dd8b91372c6d7c5bff1b87abd9378b18",
+            "eTag": "c213a4e396682c9238269468ed45f6be",
             "feedEnabled": true,
             "fields": {
                 "AccountNumber": {
@@ -1672,7 +1675,7 @@
                     "relationshipName": "DandbCompany",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -1841,39 +1844,6 @@
                     "sortable": true,
                     "unique": false,
                     "updateable": true
-                },
-                "IsBuyer": {
-                    "apiName": "IsBuyer",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": false,
-                    "custom": false,
-                    "dataType": "Boolean",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "Buyer Account",
-                    "length": 0,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": true,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": true,
-                    "unique": false,
-                    "updateable": false
                 },
                 "IsDeleted": {
                     "apiName": "IsDeleted",
@@ -2380,7 +2350,7 @@
                     "relationshipName": "OperatingHours",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2489,7 +2459,7 @@
                     "relationshipName": "Parent",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -3339,7 +3309,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://ryan-noodles-2841-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
@@ -3445,13 +3415,6 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "DeclinedEventRelations"
-                },
-                {
-                    "childObjectApiName": "DelegatedAccount",
-                    "fieldName": "ManagedById",
-                    "junctionIdListNames": [],
-                    "junctionReferenceTo": [],
-                    "relationshipName": "ParentId"
                 },
                 {
                     "childObjectApiName": "EmailMessageRelation",
@@ -3683,7 +3646,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "e7062194c9a86f42bdc792c882b2903a",
+            "eTag": "5f9d544d72650efcd1a45aa7ee5aa8f7",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -3752,7 +3715,7 @@
                     "relationshipName": "Account",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": false
@@ -4097,7 +4060,7 @@
                     "relationshipName": "Contact",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -4875,7 +4838,7 @@
                     "relationshipName": "Individual",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -5413,7 +5376,7 @@
                     "relationshipName": "Manager",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -5781,7 +5744,7 @@
                     "relationshipName": "Profile",
                     "required": true,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -6666,7 +6629,7 @@
                     "highScaleNumber": false,
                     "htmlFormatted": false,
                     "inlineHelpText": null,
-                    "label": "Work.com User",
+                    "label": "WDC User",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -8596,39 +8559,6 @@
                     "unique": false,
                     "updateable": true
                 },
-                "UserPreferencesPipelineViewHideHelpPopover": {
-                    "apiName": "UserPreferencesPipelineViewHideHelpPopover",
-                    "calculated": false,
-                    "compound": false,
-                    "compoundComponentName": null,
-                    "compoundFieldName": null,
-                    "controllerName": null,
-                    "controllingFields": [],
-                    "createable": true,
-                    "custom": false,
-                    "dataType": "Boolean",
-                    "extraTypeInfo": null,
-                    "filterable": true,
-                    "filteredLookupInfo": null,
-                    "highScaleNumber": false,
-                    "htmlFormatted": false,
-                    "inlineHelpText": null,
-                    "label": "PipelineViewHideHelpPopover",
-                    "length": 0,
-                    "nameField": false,
-                    "polymorphicForeignKey": false,
-                    "precision": 0,
-                    "reference": false,
-                    "referenceTargetField": null,
-                    "referenceToInfos": [],
-                    "relationshipName": null,
-                    "required": true,
-                    "scale": 0,
-                    "searchPrefilterable": false,
-                    "sortable": false,
-                    "unique": false,
-                    "updateable": true
-                },
                 "UserPreferencesPreviewCustomTheme": {
                     "apiName": "UserPreferencesPreviewCustomTheme",
                     "calculated": false,
@@ -10048,7 +9978,7 @@
                     "relationshipName": "UserRole",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -10131,7 +10061,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://latte-bigdipper-2815-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://ryan-noodles-2841-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         }
@@ -10139,7 +10069,7 @@
     "record": {
         "apiName": "Account",
         "childRelationships": {},
-        "eTag": "844f0770a62f5da7400435b22f101b3b",
+        "eTag": "594f0a6ae946c0aaea2301928ead80fb",
         "fields": {
             "AccountNumber": {
                 "displayValue": null,
@@ -10173,10 +10103,6 @@
                 "displayValue": null,
                 "value": null
             },
-            "CreatedBy": {
-                "displayValue": null,
-                "value": null
-            },
             "CustomerPriority__c": {
                 "displayValue": null,
                 "value": null
@@ -10190,10 +10116,6 @@
                 "value": null
             },
             "Industry": {
-                "displayValue": null,
-                "value": null
-            },
-            "LastModifiedBy": {
                 "displayValue": null,
                 "value": null
             },
@@ -10214,18 +10136,18 @@
                 "value": {
                     "apiName": "User",
                     "childRelationships": {},
-                    "eTag": "edbe7f8661ae1f1497230b6403975022",
+                    "eTag": "35d1a521f12ba9e2dd739251d89a1c07",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "005xx000001XAN7AAO"
+                            "value": "005T1000000DwPcIAK"
                         },
                         "Name": {
                             "displayValue": null,
                             "value": "User User"
                         }
                     },
-                    "id": "005xx000001XAN7AAO",
+                    "id": "005T1000000DwPcIAK",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -10236,7 +10158,7 @@
             },
             "OwnerId": {
                 "displayValue": null,
-                "value": "005xx000001XAN7AAO"
+                "value": "005T1000000DwPcIAK"
             },
             "Ownership": {
                 "displayValue": null,

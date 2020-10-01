@@ -38,6 +38,7 @@
                         "mode": "View",
                         "objectApiName": "Opportunity",
                         "recordTypeId": "012RM000000DBJIYA4",
+                        "saveOptions": [],
                         "sections": [
                             {
                                 "collapsible": false,

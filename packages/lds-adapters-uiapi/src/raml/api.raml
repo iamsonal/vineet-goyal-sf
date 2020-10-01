@@ -2288,6 +2288,11 @@ types:
       recordTypeId:
         description: Record type ID.
         type: string
+      saveOptions:
+        description: Layout save options.
+        type: array
+        items:
+          type: RecordLayoutSaveOptionRepresentation
       sections:
         description: Layout sections.
         type: array
@@ -2302,6 +2307,28 @@ types:
         type: array
         items:
           type: RecordLayoutItemRepresentation
+  RecordLayoutSaveOptionRepresentation:
+    description: Record layout save option.
+    type: object
+    properties:
+      defaultValue:
+        description: Default Value of the save option.
+        type: boolean
+      isDisplayed:
+        description: Is Displayed
+        type: boolean
+      label:
+        description: Label of the save option.
+        type: string
+      name:
+        description: Name of the save option.
+        type: string
+      restHeaderName:
+        description: Rest Header Name of the save option.
+        type: string
+      soapHeaderName:
+        description: Soap Header Name of the save option.
+        type: string
   RecordLayoutSectionRepresentation:
     description: Record layout section.
     type: object

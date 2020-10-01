@@ -1,10 +1,11 @@
 {
-    "eTag": "d56fab18dc70afd91148ea251352b4c1",
+    "eTag": "0d3120ed83b50510e6042ca392f36c57",
     "id": null,
     "layoutType": "Compact",
     "mode": "View",
     "objectApiName": "Opportunity",
     "recordTypeId": "012000000000000AAA",
+    "saveOptions": [],
     "sections": [
         {
             "collapsible": false,

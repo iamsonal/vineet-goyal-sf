@@ -1,0 +1,41 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  lds: lds://annotations.raml
+
+(lds.keyPrefix): 'LEAP::'
+
+types:
+  LightningAssistantRepresentation:
+    (lds.key):
+      assistant_group_id: assistantGroup
+
+  LightningAssistantQuestionnaireRepresentation:
+    (lds.key):
+      assistant_group_id: assistantGroup
+      questionnaire_id: id
+
+/guidance/assistant/{assistantGroup}:
+  get:
+    (lds.adapter):
+      name: getAssistant
+    (lds.key):
+      assistant_group_id: urlParams.assistantGroup
+  patch:
+    (lds.adapter):
+      name: saveAssistant
+  /questionnaire/{questionnaireId}:
+    get:
+      (lds.adapter):
+        name: getQuestionnaire
+      (lds.key):
+        assistant_group_id: urlParams.assistantGroup
+        questionnaire_id: urlParams.questionnaireId
+    patch:
+      (lds.adapter):
+        name: saveQuestionnaire
+  /questionnaires:
+    get:
+      (lds.adapter):
+        name: getActiveQuestionnaires

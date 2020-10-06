@@ -3,7 +3,11 @@ import * as aura from 'aura';
 import auraStorage from 'aura-storage';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 import networkAdapter from '../main';
-import { COMMERCE_BASE_URI, CONNECT_BASE_URI } from '../middlewares/connect-base';
+import {
+    COMMERCE_BASE_URI,
+    CONNECT_BASE_URI,
+    GUIDANCE_BASE_URI,
+} from '../middlewares/connect-base';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 import { ControllerInvoker } from '../middlewares/utils';
 import { default as appRouter, Route } from '../router';
@@ -3238,6 +3242,145 @@ describe('routes', () => {
                 },
                 undefined,
             ]
+        );
+    });
+
+    describe('get /assistant/{id}', () => {
+        testControllerInput(
+            {
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE`,
+            },
+            [
+                'LightningExperienceAssistantPlatformController.getAssistant',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE`,
+            },
+            {}
+        );
+    });
+
+    describe('patch /assistant/{id}', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE`,
+                body: { assistantData: { data: 'data' } },
+            },
+            [
+                'LightningExperienceAssistantPlatformController.saveAssistant',
+                {
+                    assistantData: { data: 'data' },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'patch',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE`,
+            },
+            {}
+        );
+    });
+
+    describe('get /assistant/{id}/questionnaires', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE/questionnaires`,
+            },
+            [
+                'LightningExperienceAssistantPlatformController.getActiveQuestionnaires',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE/questionnaires`,
+            },
+            {}
+        );
+    });
+
+    describe('get /assistant/{id}/questionnaire/{id}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE/questionnaire/1234567890ABCDE`,
+            },
+            [
+                'LightningExperienceAssistantPlatformController.getQuestionnaire',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE/questionnaire/1234567890ABCDE`,
+            },
+            {}
+        );
+    });
+
+    describe('patch /assistant/{id}/questionnaire/{id}', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE/questionnaire/1234567890ABCDE`,
+                body: {
+                    questionnaireData: {
+                        data: 'data',
+                    },
+                },
+            },
+            [
+                'LightningExperienceAssistantPlatformController.saveQuestionnaire',
+                {
+                    questionnaireData: {
+                        data: 'data',
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'patch',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE/questionnaire/1234567890ABCDE`,
+                body: {
+                    questionnaireData: {
+                        data: 'data',
+                    },
+                },
+            },
+            {
+                questionnaireData: {
+                    data: 'data',
+                },
+            }
         );
     });
 

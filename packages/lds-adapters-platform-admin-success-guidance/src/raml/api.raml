@@ -1,0 +1,388 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '51.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v51.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  AbstractLightningAssistantActionRepresentation:
+    description: The action collection
+    discriminator: actionType
+    type: object
+    properties:
+      actionType:
+        description: The action type
+        type: string
+        enum:
+          - Link
+          - TlxModule
+          - Video
+          - Walkthrough
+  LightningAssistantAnswerDataInputRepresentation:
+    description: An Input Representation for a question to answer mapping within a
+      Lightning Assistant questionnaire.
+    type: object
+    properties:
+      answerId:
+        description: Input id for an answer to a question.
+        type: string
+      whenAnswered:
+        description: Input date of when the question was answered.
+        type: string
+      whenSeen:
+        description: Input date of when the question was seen.
+        type: string
+  LightningAssistantChoiceRepresentation:
+    description: An question choice within a Lightning Assistant questionnaire
+    type: object
+    properties:
+      id:
+        description: The id of this choice
+        type: string
+      labels:
+        description: The localized labels for this choice
+        type: object
+        properties:
+          //:
+            type: string
+      next:
+        description: The id of the follow up question to be displayed
+        type: string
+  LightningAssistantItemInputRepresentation:
+    description: An Input Representation for the Lightning Assistant Item or Step
+      Updates.
+    type: object
+    properties:
+      progress:
+        description: Input completion progress for a Lightning Assistant item or step.
+        type: string
+        enum:
+          - Completed
+          - InProgress
+          - NotStarted
+      whenPerformed:
+        description: Input date of when the item or step was completed.
+        type: string
+      whenSeen:
+        description: Input date of when the item or step was seen.
+        type: string
+  LightningAssistantItemRepresentation:
+    description: An item for use in the Lightning Assistant
+    type: object
+    properties:
+      action:
+        description: The action that will occur when an item is selected
+        type: AbstractLightningAssistantActionRepresentation
+      id:
+        description: The Id of the Lightning Assistant
+        type: string
+      labels:
+        description: The localized labels for this item
+        type: object
+        properties:
+          //:
+            type: string
+      progress:
+        description: The completion progress for this item
+        type: string
+        enum:
+          - Completed
+          - InProgress
+          - NotStarted
+      steps:
+        description: The list of substeps for an item
+        type: array
+        items:
+          type: LightningAssistantStepRepresentation
+  LightningAssistantLinkActionRepresentation:
+    description: A Link Action representation
+    discriminatorValue: Link
+    type: AbstractLightningAssistantActionRepresentation
+    properties:
+      iconName:
+        description: The icon name for the link action
+        type: string
+      label:
+        description: The localized link label
+        type: string
+      url:
+        description: The localized link url
+        type: string
+  LightningAssistantLinkRepresentation:
+    description: A link representation
+    type: object
+    properties:
+      label:
+        description: The localized link label
+        type: string
+      url:
+        description: The localized link url
+        type: string
+  LightningAssistantQuestionRepresentation:
+    description: A queston from a Lightning Assistant questionnaire
+    type: object
+    properties:
+      choices:
+        description: The choices that can be selected to answer this question
+        type: array
+        items:
+          type: LightningAssistantChoiceRepresentation
+      id:
+        description: The id of this option
+        type: string
+      labels:
+        description: The localized labels to describe this question
+        type: object
+        properties:
+          //:
+            type: string
+      link:
+        description: A localized help link for this question
+        type: LightningAssistantLinkRepresentation | nil
+  LightningAssistantQuestionnaireInputRepresentation:
+    description: An Input Representation for an answer to question from a Lightning
+      Assistant questionnaire.
+    type: object
+    properties:
+      progress:
+        description: Input current progress when completing a questionnaire.
+        type: string
+        enum:
+          - Completed
+          - InProgress
+          - NotStarted
+          - Skipped
+      questionToAnswer:
+        description: Input mapping of questions to answer data.
+        type: object
+        properties:
+          //:
+            type: object
+  # Hand Rolled 'QuestionnaireData'
+  QuestionnaireData:
+    description: A Wrapper around the LightningAssistantQuestionnaireInputRepresentation
+    type: object
+    properties:
+      questionnaireData:
+        description: The Oas Body Name for Questionnaire Data.
+        type: LightningAssistantQuestionnaireInputRepresentation
+  LightningAssistantQuestionnaireListRepresentation:
+    description: List of Questionnaires for the Lightning Assistant
+    type: object
+    properties:
+      questionnaireList:
+        description: List of questionnaire ids
+        type: array
+        items:
+          type: string
+  LightningAssistantQuestionnaireRepresentation:
+    description: A Lightning Assistant Questionnaire
+    type: object
+    properties:
+      assistantGroup:
+        description: The Lightning Assistant group this questionnaire belongs in
+        type: string
+      id:
+        description: The name of a questionnaire that can be displayed
+        type: string
+      labels:
+        description: The localized labels for this questionnaire
+        type: object
+        properties:
+          //:
+            type: string
+      progress:
+        description: The completion progress for the questionnaire
+        type: string
+        enum:
+          - Completed
+          - InProgress
+          - NotStarted
+          - Skipped
+      questions:
+        description: The list of questions for this questionnaire
+        type: array
+        items:
+          type: LightningAssistantQuestionRepresentation
+  LightningAssistantRepresentation:
+    description: Lightning Assistant
+    type: object
+    properties:
+      assistantGroup:
+        description: The Lightning Assistant group this Assistant belongs in
+        type: string
+      id:
+        description: The Lightning Assistant id
+        type: string
+      items:
+        description: Lightning Assistant Items
+        type: array
+        items:
+          type: LightningAssistantItemRepresentation
+  LightningAssistantStepRepresentation:
+    description: Lightning Assistant Item Step
+    type: object
+    properties:
+      action:
+        description: The action that will occur when an step is selected
+        type: AbstractLightningAssistantActionRepresentation
+      id:
+        description: The id of the item
+        type: string
+      labels:
+        description: The localized labels for this step
+        type: object
+        properties:
+          //:
+            type: string
+      progress:
+        description: The completion progress for this step
+        type: string
+        enum:
+          - Completed
+          - InProgress
+          - NotStarted
+  LightningAssistantTrailheadActionRepresentation:
+    description: A Trailhead Action Representation
+    discriminatorValue: TlxModule
+    type: AbstractLightningAssistantActionRepresentation
+    properties:
+      iconName:
+        description: The icon name for the Trailhead action
+        type: string
+      moduleId:
+        description: The module id for the Trailhead in LEX module
+        type: string | nil
+      url:
+        description: The url for the Trailhead module
+        type: string | nil
+  LightningAssistantUpdateInputRepresentation:
+    description: An Input Representation for the Lightning Assistant Updates.
+    type: object
+    properties:
+      items:
+        description: Input id for a Lightning Assistant item or step.
+        type: object
+        properties:
+          //:
+            type: object
+  # Hand Rolled 'assistantData'
+  AssistantData:
+    description: The LightningAssistantUpdateInputRepresentation wrapper
+    type: object
+    properties:
+      assistantData:
+        description: The Oas Body Name for Assistant Data.
+        type: LightningAssistantUpdateInputRepresentation
+  LightningAssistantVideoActionRepresentation:
+    description: A Video Action Representation
+    discriminatorValue: Video
+    type: AbstractLightningAssistantActionRepresentation
+    properties:
+      iconName:
+        description: The icon name for the video action
+        type: string
+      url:
+        description: The video action url
+        type: string
+  LightningAssistantWalkthroughActionRepresentation:
+    description: A Walkthrough Action Representation
+    discriminatorValue: Walkthrough
+    type: AbstractLightningAssistantActionRepresentation
+    properties:
+      iconName:
+        description: The icon name for the walkthrough action
+        type: string
+      promptId:
+        description: The prompt id for the walkthrough action
+        type: string
+/guidance/assistant/{assistantGroup}:
+  get:
+    description: Get Guidance Center Assistant
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: LightningAssistantRepresentation
+  patch:
+    description: Save the Guidance Center Assistant
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: LightningAssistantRepresentation
+    body:
+      application/json:
+        # Hand rolled 'type' to provide a wrapper that uses the oas-body-name
+        type: AssistantData
+        # TODO: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
+        (oas-body-name): assistantData
+  uriParameters:
+    assistantGroup:
+      type: string
+      required: true
+  /questionnaire/{questionnaireId}:
+    get:
+      description: Get the Guidance Center Questionnaire and progress
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: LightningAssistantQuestionnaireRepresentation
+    patch:
+      description: Save the Guidance Center Questionnaire answers and progress
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: LightningAssistantQuestionnaireRepresentation
+      body:
+        application/json:
+          # Hand rolled 'type' to provide a wrapper that uses the oas-body-name
+          type: QuestionnaireData
+          # TODO: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
+          (oas-body-name): questionnaireData
+    uriParameters:
+      assistantGroup:
+        type: string
+        required: true
+      questionnaireId:
+        type: string
+        required: true
+  /questionnaires:
+    get:
+      description: Get Guidance Center Active Questionnaires
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: LightningAssistantQuestionnaireListRepresentation
+    uriParameters:
+      assistantGroup:
+        type: string
+        required: true

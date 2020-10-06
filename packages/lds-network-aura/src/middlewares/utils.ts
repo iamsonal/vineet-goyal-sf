@@ -226,8 +226,8 @@ export function registerApiFamilyRoutes(apiFamily: ApiFamily) {
                             transport.action === undefined ? defaultActionConfig : transport.action,
                     };
 
-                    const { urlParams, queryParams } = resourceRequest;
-                    const params = { ...urlParams, ...queryParams };
+                    const { urlParams, queryParams, body } = resourceRequest;
+                    const params = { ...body, ...urlParams, ...queryParams };
 
                     return dispatchAction(transport.controller, params, actionConfig, {});
                 },

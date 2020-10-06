@@ -1,5 +1,5 @@
 import { ApiFamily, registerApiFamilyRoutes } from './utils';
-import { CONNECT_BASE_URI, COMMERCE_BASE_URI } from './connect-base';
+import { CONNECT_BASE_URI, COMMERCE_BASE_URI, GUIDANCE_BASE_URI } from './connect-base';
 
 const COMMUNITIES_NAVIGATION_MENU_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/navigation-menu`,
@@ -23,6 +23,21 @@ const PRODUCT_SEARCH_PATH = new RegExp(
 
 const GET_PRODUCT_PRICE_PATH = new RegExp(
     `${COMMERCE_BASE_URI}/webstores/([A-Z0-9]){15,18}/pricing/products/([A-Z0-9]){15,18}`,
+    'i'
+);
+
+const GET_GUIDANCE_ASSISTANT_PATH = new RegExp(
+    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){2,32}$`,
+    'i'
+);
+
+const GET_GUIDANCE_QUESTIONNAIRE_PATH = new RegExp(
+    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){2,32}/questionnaire/([A-Z0-9_]){2,32}$`,
+    'i'
+);
+
+const GET_GUIDANCE_ACTIVE_QUESTIONNAIRES_PATH = new RegExp(
+    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){2,32}/questionnaires$`,
     'i'
 );
 
@@ -69,4 +84,49 @@ const connect: ApiFamily = {
     },
 };
 
+const guidance: ApiFamily = {
+    getGuidanceAssistant: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_ASSISTANT_PATH.test(path),
+        transport: {
+            controller: 'LightningExperienceAssistantPlatformController.getAssistant',
+        },
+    },
+    saveGuidanceAssistant: {
+        method: 'patch',
+        predicate: (path: string) =>
+            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_ASSISTANT_PATH.test(path),
+        transport: {
+            controller: 'LightningExperienceAssistantPlatformController.saveAssistant',
+        },
+    },
+    getGuidanceActiveQuestionnaires: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(GUIDANCE_BASE_URI) &&
+            GET_GUIDANCE_ACTIVE_QUESTIONNAIRES_PATH.test(path),
+        transport: {
+            controller: 'LightningExperienceAssistantPlatformController.getActiveQuestionnaires',
+        },
+    },
+    getGuidanceQuestionnaire: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_QUESTIONNAIRE_PATH.test(path),
+        transport: {
+            controller: 'LightningExperienceAssistantPlatformController.getQuestionnaire',
+        },
+    },
+    saveGuidanceQuestionnaire: {
+        method: 'patch',
+        predicate: (path: string) =>
+            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_QUESTIONNAIRE_PATH.test(path),
+        transport: {
+            controller: 'LightningExperienceAssistantPlatformController.saveQuestionnaire',
+        },
+    },
+};
+
 registerApiFamilyRoutes(connect);
+registerApiFamilyRoutes(guidance);

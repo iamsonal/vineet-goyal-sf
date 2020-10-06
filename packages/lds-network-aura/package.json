@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-network-aura",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "description": "LDS Network Adapter for Aura Runtime",
     "private": true,
     "license": "MIT",
@@ -15,9 +15,9 @@
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     },
     "devDependencies": {
-        "@salesforce/lds-adapters-uiapi": "1.1.1",
-        "@salesforce/lds-aura-storage": "1.1.1",
-        "@salesforce/lds-environment-settings": "1.1.1",
-        "@salesforce/lds-instrumentation": "1.1.1"
+        "@salesforce/lds-adapters-uiapi": "1.2.0",
+        "@salesforce/lds-aura-storage": "1.2.0",
+        "@salesforce/lds-environment-settings": "1.2.0",
+        "@salesforce/lds-instrumentation": "1.2.0"
     }
 }

@@ -7,6 +7,8 @@ const child_process = require('child_process');
 const spinners = require('cli-spinners');
 const ora = require('ora');
 
+const lernaJson = require('../../lerna.json');
+
 const EMAIL_REGEXP = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
 const LDS_RAML_TEMPLATE_PATH = path.resolve(__dirname, 'templates', 'lds.raml.txt');
@@ -38,6 +40,7 @@ const DESCRIPTION_TAG = '{{DESCRIPTION_TAG}}';
 const PACKAGE_NAME_TAG = '{{PACKAGE_NAME_TAG}}';
 const PACKAGE_NAMESPACE_TAG = '{{PACKAGE_NAMESPACE}}';
 const LDS_VERSION_TAG = '{{LDS_VERSION}}';
+const LDS_LP_VERSION_TAG = '{{LDS_LP_VERSION}}';
 const PACKAGE_CONTRIBUTORS_TAG = '{{PACKAGE_CONTRIBUTORS}}';
 const BUNDLE_NAME_TAG = '{{BUNDLE_NAME}}';
 const ARTIFACT_NAME = '{{ARTIFACT_NAME}}';
@@ -87,6 +90,7 @@ function renderPackageJSON(config) {
         .replace(new RegExp(PACKAGE_NAME_TAG, 'g'), packageName)
         .replace(PACKAGE_NAMESPACE_TAG, getPackageNamespace(cloud))
         .replace(new RegExp(LDS_VERSION_TAG, 'g'), config.engineVersion)
+        .replace(new RegExp(LDS_LP_VERSION_TAG, 'g'), lernaJson.version)
         .replace(PACKAGE_CONTRIBUTORS_TAG, JSON.stringify(config.contacts))
         .replace(new RegExp(ARTIFACT_NAME, 'g'), getLocalName(cloud, family));
 

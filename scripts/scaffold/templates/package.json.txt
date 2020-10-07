@@ -1,6 +1,6 @@
 {
     "name": "{{PACKAGE_NAMESPACE}}/{{PACKAGE_NAME_TAG}}",
-    "version": "0.1.0",
+    "version": "{{LDS_LP_VERSION}}",
     "description": "{{DESCRIPTION_TAG}}",
     "license": "MIT",
     "main": "dist/umd/es2018/{{ARTIFACT_NAME}}.js",
@@ -27,10 +27,14 @@
     "publishConfig": {
         "registry": "https://npm.lwcjs.org"
     },
+    "dependencies": {
+        "@salesforce/lds-bindings": "{{LDS_LP_VERSION}}"
+    },    
     "devDependencies": {
         "@ldsjs/cli": "^{{LDS_VERSION}}",
         "@ldsjs/compiler": "^{{LDS_VERSION}}",
         "@ldsjs/engine": "^{{LDS_VERSION}}",
-        "@ldsjs/lwc-lds": "^{{LDS_VERSION}}"
+        "@ldsjs/lwc-lds": "^{{LDS_VERSION}}",
+        "@salesforce/lds-karma": "{{LDS_LP_VERSION}}"
     }
 }

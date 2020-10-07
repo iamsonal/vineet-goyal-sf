@@ -50,6 +50,9 @@ const connect: ApiFamily = {
             controller: 'NavigationMenuController.getCommunityNavigationMenu',
         },
     },
+};
+
+const commerce: ApiFamily = {
     getProduct: {
         method: 'get',
         predicate: (path: string) =>
@@ -129,4 +132,5 @@ const guidance: ApiFamily = {
 };
 
 registerApiFamilyRoutes(connect);
+registerApiFamilyRoutes(commerce);
 registerApiFamilyRoutes(guidance);

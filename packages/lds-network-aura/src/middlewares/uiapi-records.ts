@@ -40,6 +40,7 @@ enum UiApiRecordController {
     GetRecordCreateDefaults = 'RecordUiController.getRecordCreateDefaults',
     GetRecordUi = 'RecordUiController.getRecordUis',
     GetRecordWithFields = 'RecordUiController.getRecordWithFields',
+    GetRecordsWithFields = 'RecordUiController.getRecordsWithFields',
     GetRecordWithLayouts = 'RecordUiController.getRecordWithLayouts',
     GetObjectInfo = 'RecordUiController.getObjectInfo',
     GetObjectInfos = 'RecordUiController.getObjectInfos',
@@ -54,6 +55,7 @@ enum UiApiRecordController {
 
 const UIAPI_GET_LAYOUT = `${UI_API_BASE_URI}/layout/`;
 const UIAPI_RECORDS_PATH = `${UI_API_BASE_URI}/records`;
+const UIAPI_RECORDS_BATCH_PATH = `${UI_API_BASE_URI}/records/batch/`;
 const UIAPI_RECORD_AVATARS_BASE = `${UI_API_BASE_URI}/record-avatars/`;
 const UIAPI_RECORD_AVATARS_BATCH_PATH = `${UI_API_BASE_URI}/record-avatars/batch/`;
 const UIAPI_RECORD_AVATAR_UPDATE = `/association`;
@@ -319,6 +321,23 @@ function getRecord(resourceRequest: ResourceRequest): Promise<any> {
               }
             : {};
     return dispatchAction(controller, params, actionConfig, instrumentationCallbacks);
+}
+
+function getRecords(resourceRequest: ResourceRequest): Promise<any> {
+    const { urlParams, queryParams } = resourceRequest;
+    const { recordIds } = urlParams;
+    const { fields, optionalFields } = queryParams;
+
+    // Note: in getRecords batch case, we don't use the aggregate UI hack.
+
+    const getRecordsParams = {
+        recordIds,
+        fields,
+        optionalFields,
+    };
+
+    const params = buildUiApiParams(getRecordsParams, resourceRequest);
+    return dispatchAction(UiApiRecordController.GetRecordsWithFields, params, actionConfig);
 }
 
 function createRecord(resourceRequest: ResourceRequest): Promise<any> {
@@ -694,6 +713,7 @@ appRouter.get(
         /picklist-values\/[a-zA-Z\d]+/.test(path) === false,
     getObjectInfo
 );
+appRouter.get((path: string) => path.startsWith(UIAPI_RECORDS_BATCH_PATH), getRecords); // Must be registered before getRecord since they both begin with /records.
 appRouter.get((path: string) => path.startsWith(UIAPI_RECORDS_PATH), getRecord);
 appRouter.get(
     (path: string) => path.startsWith(UIAPI_RECORD_TEMPLATE_CLONE_PATH),

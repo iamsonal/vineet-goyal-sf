@@ -25,6 +25,31 @@
                 "weakEtag": 1600306895000
             },
             "statusCode": 200
+        },
+        {
+            "result": {
+                "apiName": "Case",
+                "childRelationships": {},
+                "eTag": "d1aa9cd8260e9971e8f79f062d2d88e8",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "500T1000000pjaGIAQ"
+                    },
+                    "Status": {
+                        "displayValue": "Closed",
+                        "value": "Closed"
+                    }
+                },
+                "id": "500T1000000pjaGIAQ",
+                "lastModifiedById": "005T1000000DvlhIAC",
+                "lastModifiedDate": "2020-09-17T01:41:35.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-09-17T01:41:35.000Z",
+                "weakEtag": 1600306895000
+            },
+            "statusCode": 200
         }
     ]
 }

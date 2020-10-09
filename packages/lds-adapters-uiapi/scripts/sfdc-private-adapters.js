@@ -8,7 +8,6 @@ module.exports = {
     getMruListUi: true,
     getObjectInfoDirectory: true,
     getSelectedApp: true,
-    getRecords: true, // WIP - Remove after 'Bulk Record Fetch' Epic is implemented
 
     // custom adapters
     updateLayoutUserState: true,

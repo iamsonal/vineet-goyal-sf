@@ -23,6 +23,22 @@ const ADAPTERS_NOT_DEFINED_IN_OVERLAY = [
 const CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER = 'createWireAdapterConstructor';
 const CREATE_LDS_ADAPTER = 'createLDSAdapter';
 
+const RAML_ARTIFACTS = {
+    '/resources/getUiApiRecordsBatchByRecordIds': [
+        'selectChildResourceParams',
+        'ingestSuccessChildResourceParams',
+    ],
+    '/adapters/getRecords': [
+        'GetRecordsConfig',
+        'getRecords_ConfigPropertyNames',
+        'adapterFragment',
+        'createResourceParams',
+        'onResourceResponseSuccess',
+        'typeCheckConfig',
+    ],
+};
+const ramlArtifactsKeys = Object.keys(RAML_ARTIFACTS);
+
 /**
  * @param {string} artifactsDir
  * @param {AdapterInfo[]} generatedAdapterNames
@@ -151,5 +167,27 @@ module.exports = {
 
         // right now LDS cli only supports one plugin, so invoke the offline record plugin from this one
         offlineRecordPlugin(compilerConfig, modelInfo);
+    },
+    /**
+     * @param {string} ramlId
+     * @param {string} identifier
+     * @returns {void | ResolveRamlArtifactResult}
+     */
+    resolveRamlArtifact: (ramlId, identifier) => {
+        for (let i = 0, len = ramlArtifactsKeys.length; i < len; i += 1) {
+            const key = ramlArtifactsKeys[i];
+            const [, folder, file] = key.split('/');
+            if (ramlId.endsWith(key)) {
+                const artifacts = RAML_ARTIFACTS[key];
+                if (artifacts.indexOf(identifier) > -1) {
+                    return {
+                        identifier,
+                        absolutePath: path.resolve(
+                            path.join('src', 'raml-artifacts', folder, file, `${identifier}.ts`)
+                        ),
+                    };
+                }
+            }
+        }
     },
 };

@@ -21,6 +21,7 @@ describe('SFDC exports', () => {
             'getPicklistValues',
             'getPicklistValuesByRecordType',
             'getRecord',
+            'getRecords',
             'getRecordActions',
             'getRecordAvatars',
             'getRecordCreateDefaults',

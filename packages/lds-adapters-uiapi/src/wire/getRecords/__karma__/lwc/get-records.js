@@ -1,5 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getRecords } from 'lds-adapters-uiapi';
+import { getRecords, refresh } from 'lds-adapters-uiapi';
 export default class GetRecords extends LightningElement {
     @api records;
     wirePushCount = -1;
@@ -20,5 +20,8 @@ export default class GetRecords extends LightningElement {
 
     @api pushCount() {
         return this.wirePushCount;
+    }
+    @api refresh() {
+        return refresh(this.recordsObject);
     }
 }

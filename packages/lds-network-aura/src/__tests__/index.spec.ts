@@ -643,6 +643,59 @@ describe('routes', () => {
         );
     });
 
+    describe('get /records/batch/{recordIds}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/records/batch/1234,5678`,
+                urlParams: {
+                    recordIds: ['1234', '5678'],
+                },
+                queryParams: {
+                    fields: ['Id'],
+                    optionalFields: ['Name'],
+                },
+            },
+            [
+                'RecordUiController.getRecordsWithFields',
+                {
+                    recordIds: ['1234', '5678'],
+                    fields: ['Id'],
+                    optionalFields: ['Name'],
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: UI_API_BASE_URI,
+            basePath: `/records/batch/1234,5678`,
+            urlParams: {
+                recordIds: ['1234', '5678'],
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/records/batch/1234,5678`,
+                urlParams: {
+                    recordIds: ['1234', '5678'],
+                },
+            },
+            {
+                hasErrors: false,
+                fields: [
+                    { statusCode: 200, result: {} },
+                    { statusCode: 200, result: {} },
+                ],
+            }
+        );
+    });
+
     describe('get /record-avatars/batch/{recordIds}', () => {
         testControllerInput(
             {

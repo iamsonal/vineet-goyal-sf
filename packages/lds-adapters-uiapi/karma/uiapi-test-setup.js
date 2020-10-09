@@ -1,4 +1,4 @@
-import { clone, stripEtags, stripProperties } from 'test-util';
+import { clone, stripProperties } from 'test-util';
 
 function formatResults(recordIds, results) {
     return results.reduce(function(seed, avatar, index) {
@@ -12,11 +12,10 @@ const matchers = {
     toEqualActionsSnapshot: () => {
         return {
             compare: function(actual, expected) {
-                var striped = clone(expected);
-                stripEtags(striped);
-                stripProperties(striped, ['url', 'links']);
+                var stripped = clone(expected);
+                stripProperties(stripped, ['url', 'links']);
 
-                expect(actual).toEqualSnapshotWithoutEtags(striped);
+                expect(actual).toEqualSnapshotWithoutEtags(stripped);
                 return { pass: true };
             },
         };
@@ -40,11 +39,22 @@ const matchers = {
     toEqualNavItemsSnapShot: () => {
         return {
             compare: function(actual, expected) {
-                var striped = clone(expected);
-                stripEtags(striped);
-                stripProperties(striped, ['currentPageUrl']);
+                var stripped = clone(expected);
+                stripProperties(stripped, ['currentPageUrl']);
 
-                expect(actual).toEqualSnapshotWithoutEtags(striped);
+                expect(actual).toEqualSnapshotWithoutEtags(stripped);
+                return { pass: true };
+            },
+        };
+    },
+
+    toEqualBatchRecordSnapshot: () => {
+        return {
+            compare: function(actual, expected) {
+                var stripped = clone(expected);
+                stripProperties(stripped, ['hasErrors']);
+
+                expect(actual).toEqualSnapshotWithoutEtags(stripped);
                 return { pass: true };
             },
         };

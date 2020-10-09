@@ -7,10 +7,12 @@ import {
     select,
     equals,
     deepFreeze,
-    ingest as generatedIngest,
 } from '../../generated/types/FieldValueRepresentation';
 import { createLink } from '../../generated/types/type-utils';
 import { default as helpers_FieldValueRepresentation_merge_default } from '../../helpers/FieldValueRepresentation/merge';
+import { default as helpers_FieldValueRepresentation_normalize_default } from '../../helpers/FieldValueRepresentation/normalize';
+import { RecordFieldTrie } from '../../util/records';
+import { RecordConflictMap } from '../../helpers/RecordRepresentation/resolveConflict';
 
 export {
     FieldValueRepresentationNormalized,
@@ -22,12 +24,15 @@ export {
     deepFreeze,
 };
 
-export const ingest: typeof generatedIngest = function FieldValueRepresentationIngest(
+export function ingest(
     input: FieldValueRepresentation,
     path: IngestPath,
     lds: LDS,
     store: Store,
-    timestamp: number
+    timestamp: number,
+    fieldsTrie?: RecordFieldTrie,
+    optionalFieldsTrie?: RecordFieldTrie,
+    recordConflictMap?: RecordConflictMap
 ): StoreLink {
     if (process.env.NODE_ENV !== 'production') {
         const validateError = validate(input);
@@ -38,7 +43,7 @@ export const ingest: typeof generatedIngest = function FieldValueRepresentationI
 
     const key = path.fullPath;
 
-    let incomingRecord = normalize(
+    let incomingRecord = helpers_FieldValueRepresentation_normalize_default(
         input,
         store.records[key],
         {
@@ -47,7 +52,10 @@ export const ingest: typeof generatedIngest = function FieldValueRepresentationI
         },
         lds,
         store,
-        timestamp
+        timestamp,
+        fieldsTrie,
+        optionalFieldsTrie,
+        recordConflictMap
     );
     const existingRecord = store.records[key];
 
@@ -63,4 +71,4 @@ export const ingest: typeof generatedIngest = function FieldValueRepresentationI
     }
 
     return createLink(key);
-};
+}

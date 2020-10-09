@@ -141,18 +141,15 @@ function mockGetRecordsNetwork(config, mockData) {
         allFields = [],
         allOptionalFields = [];
     config.records.forEach(rec => {
-        const { recordId = [], fields = [], optionalFields = [] } = rec;
-        allRecordIds.push(...recordId);
+        const { recordIds = [], fields = [], optionalFields = [] } = rec;
+        allRecordIds.push(...recordIds);
         allFields.push(...fields);
         allOptionalFields.push(...optionalFields);
     });
     const paramMatch = sinon.match({
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/records/batch/${allRecordIds.join(
-            ','
-        )}/fields=${allFields.sort().join(',')}&optionalFields=${allOptionalFields
-            .sort()
-            .join(',')}`,
+        basePath: `${URL_BASE}/records/batch/${allRecordIds.join(',')}`,
+        queryParams: { fields: allFields, optionalFields: allOptionalFields },
     });
 
     if (Array.isArray(mockData)) {

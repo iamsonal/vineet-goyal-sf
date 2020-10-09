@@ -12,6 +12,7 @@ import {
     getLookupActionsAdapterFactory,
     getRecordActionsAdapterFactory,
     getRecordEditActionsAdapterFactory,
+    getRecordsAdapterFactory,
     getObjectCreateActionsAdapterFactory,
     getRelatedListsActionsAdapterFactory,
     getRelatedListActionsAdapterFactory,
@@ -119,19 +120,7 @@ export const getPicklistValuesByRecordType = createWireAdapterConstructor(
     getPicklistValuesByRecordTypeAdapterFactory
 );
 
-/**
- *  TODO temporary stub until getRecords adapter factory is implemented
- */
-const GetRecordsMock = () =>
-    function(untrustedConfig) {
-        const config = untrustedConfig;
-        if (config === null) {
-            return null;
-        }
-        return undefined;
-    };
-
-export const getRecords = createWireAdapterConstructor('getRecords', GetRecordsMock);
+export const getRecords = createWireAdapterConstructor('getRecords', getRecordsAdapterFactory);
 export const getRecord = createWireAdapterConstructor('getRecord', getRecordAdapterFactory);
 
 export const getRecordActions = createWireAdapterConstructor(

@@ -8,12 +8,16 @@ import {
     RecordRepresentation,
     RecordRepresentationNormalized,
     TTL as RecordRepresentationTTL,
-    ingest as recordRepresentationIngest,
 } from '../../generated/types/RecordRepresentation';
 import coerceRecordId18 from '../../primitives/RecordId18/coerce';
-import { getTrackedFields, markMissingOptionalFields } from '../../util/records';
+import {
+    getTrackedFields,
+    markMissingOptionalFields,
+    convertFieldsToTrie,
+} from '../../util/records';
 import { getRecordByFields } from './GetRecordFields';
 import { getRecordLayoutType, GetRecordLayoutTypeConfig } from './GetRecordLayoutType';
+import { createRecordIngest } from '../../util/record-ingest';
 
 // Custom adapter config due to `unsupported` items
 const GET_RECORD_ADAPTER_CONFIG: AdapterValidationConfig = {
@@ -93,11 +97,16 @@ export const notifyChangeFactory = (lds: LDS) => {
                 optionalFields
             );
             const existingWeakEtag = representation.weakEtag;
+
+            const fieldTrie = convertFieldsToTrie([], false);
+            const optionalFieldTrie = convertFieldsToTrie(optionalFields, true);
+            const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie);
+
             // dispatch resource request, then ingest and broadcast
             lds.dispatchResourceRequest<RecordRepresentation>(refreshRequest).then(
                 response => {
                     const { body } = response;
-                    lds.storeIngest<RecordRepresentation>(key, recordRepresentationIngest, body);
+                    lds.storeIngest<RecordRepresentation>(key, recordIngest, body);
                     const recordNode = lds.getNode<
                         RecordRepresentationNormalized,
                         RecordRepresentation

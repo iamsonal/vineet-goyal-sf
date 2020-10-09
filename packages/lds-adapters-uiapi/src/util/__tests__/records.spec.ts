@@ -19,6 +19,7 @@ import {
     extractTrackedFields,
     extractTrackedFieldsToTrie,
     convertTrieToFields,
+    convertFieldsToTrie,
     isSuperRecordFieldTrie,
     extractRecordIds,
 } from '../records';
@@ -1069,5 +1070,86 @@ describe('extractRecordIds', () => {
             'UiApi::RecordRepresentation:005000000000000005',
             'UiApi::RecordRepresentation:005xx000001XP3tAAG',
         ]);
+    });
+});
+
+describe('convertFieldsToTrie', () => {
+    it('returns an empty trie when empty fields array is sent', () => {
+        expect(convertFieldsToTrie([], false)).toEqual({
+            name: '',
+            children: {},
+        });
+    });
+    it('returns a trie when passed with a set of optional fields', () => {
+        expect(convertFieldsToTrie(['MOCK_ENTITY.FIELD1', 'MOCK_ENTITY.FIELD2'], true)).toEqual({
+            children: {
+                FIELD1: {
+                    children: {},
+                    name: 'FIELD1',
+                    optional: true,
+                    scalar: true,
+                },
+                FIELD2: {
+                    children: {},
+                    name: 'FIELD2',
+                    optional: true,
+                    scalar: true,
+                },
+            },
+            name: 'MOCK_ENTITY',
+            optional: true,
+            scalar: false,
+        });
+    });
+    it('returns a trie when passed with a set of non-optional fields', () => {
+        expect(convertFieldsToTrie(['MOCK_ENTITY.FIELD1', 'MOCK_ENTITY.FIELD2'], false)).toEqual({
+            children: {
+                FIELD1: {
+                    children: {},
+                    name: 'FIELD1',
+                    optional: false,
+                    scalar: true,
+                },
+                FIELD2: {
+                    children: {},
+                    name: 'FIELD2',
+                    optional: false,
+                    scalar: true,
+                },
+            },
+            name: 'MOCK_ENTITY',
+            optional: false,
+            scalar: false,
+        });
+    });
+    it('returns a trie when passed with a set of multi-level fields', () => {
+        expect(
+            convertFieldsToTrie(['MOCK_ENTITY.FIELD1.FIELD1_1', 'MOCK_ENTITY.FIELD2'], false)
+        ).toEqual({
+            children: {
+                FIELD1: {
+                    children: {
+                        FIELD1_1: {
+                            children: {},
+                            name: 'FIELD1_1',
+                            optional: false,
+                            scalar: true,
+                        },
+                    },
+                    name: 'FIELD1',
+                    optional: false,
+                    scalar: false,
+                },
+                FIELD2: {
+                    children: {},
+                    name: 'FIELD2',
+                    optional: false,
+                    scalar: true,
+                },
+            },
+            name: 'MOCK_ENTITY',
+            optional: false,
+            scalar: false,
+        });
     });
 });

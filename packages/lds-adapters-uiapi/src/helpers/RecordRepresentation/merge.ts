@@ -13,6 +13,7 @@ import {
     isSuperRecordFieldTrie,
 } from '../../util/records';
 import { ObjectKeys } from '../../util/language';
+import { RecordConflictMap } from './resolveConflict';
 
 const INCOMING_WEAKETAG_0_KEY = 'incoming-weaketag-0';
 const EXISTING_WEAKETAG_0_KEY = 'existing-weaketag-0';
@@ -54,7 +55,8 @@ function mergeAndRefreshHigherVersionRecord(
     incoming: RecordRepresentationNormalized,
     existing: RecordRepresentationNormalized,
     incomingTrackedFieldsTrieRoot: RecordFieldTrie,
-    existingTrackedFieldsTrieRoot: RecordFieldTrie
+    existingTrackedFieldsTrieRoot: RecordFieldTrie,
+    recordConflictMap?: RecordConflictMap
 ): RecordRepresentationNormalized {
     // If the higher version (incoming) does not contain a superset of fields as existing
     // then we need to refresh to get updated versions of fields in existing
@@ -67,11 +69,18 @@ function mergeAndRefreshHigherVersionRecord(
         if (isSupportedEntity(incoming.apiName) === false) {
             return mergeRecordFields(incoming, existing);
         }
-
-        getRecordFieldsNetwork(lds, {
-            recordId: incoming.id,
-            optionalFields: convertTrieToFields(incomingTrackedFieldsTrieRoot),
-        });
+        if (recordConflictMap) {
+            // update the conflict map to resolve the record conflict in resolveConflict
+            recordConflictMap[incoming.id] = {
+                recordId: incoming.id,
+                trackedFields: existingTrackedFieldsTrieRoot,
+            };
+        } else {
+            getRecordFieldsNetwork(lds, {
+                recordId: incoming.id,
+                optionalFields: convertTrieToFields(incomingTrackedFieldsTrieRoot),
+            });
+        }
 
         // We want to mark fields in the store as pending
         // Because we don't want to emit any data to components
@@ -89,7 +98,8 @@ function mergeAndRefreshLowerVersionRecord(
     incoming: RecordRepresentationNormalized,
     existing: RecordRepresentationNormalized,
     incomingTrackedFieldsTrieRoot: RecordFieldTrie,
-    existingTrackedFieldsTrieRoot: RecordFieldTrie
+    existingTrackedFieldsTrieRoot: RecordFieldTrie,
+    recordConflictMap?: RecordConflictMap
 ): RecordRepresentationNormalized {
     // If the higher version (existing) does not have a superset of fields as incoming
     // then we need to refresh to get updated versions of fields on incoming
@@ -104,10 +114,20 @@ function mergeAndRefreshLowerVersionRecord(
         }
 
         const merged = mergePendingFields(existing, incoming);
-        getRecordFieldsNetwork(lds, {
-            recordId: incoming.id,
-            optionalFields: convertTrieToFields(incomingTrackedFieldsTrieRoot),
-        });
+
+        // update the conflict map to resolve the record conflict in resolveConflict
+        if (recordConflictMap) {
+            recordConflictMap[incoming.id] = {
+                recordId: incoming.id,
+                trackedFields: incomingTrackedFieldsTrieRoot,
+            };
+        } else {
+            getRecordFieldsNetwork(lds, {
+                recordId: incoming.id,
+                optionalFields: convertTrieToFields(incomingTrackedFieldsTrieRoot),
+            });
+        }
+
         return merged;
     }
 
@@ -117,7 +137,8 @@ function mergeAndRefreshLowerVersionRecord(
 function mergeRecordConflict(
     lds: LDS,
     incoming: RecordRepresentationNormalized,
-    existing: RecordRepresentationNormalized
+    existing: RecordRepresentationNormalized,
+    recordConflictMap?: RecordConflictMap
 ) {
     const incomingNode = lds.wrapNormalizedGraphNode<
         RecordRepresentationNormalized,
@@ -145,7 +166,8 @@ function mergeRecordConflict(
             incoming,
             existing,
             incomingTrackedFieldsTrieRoot,
-            existingTrackedFieldsTrieRoot
+            existingTrackedFieldsTrieRoot,
+            recordConflictMap
         );
     }
 
@@ -154,7 +176,8 @@ function mergeRecordConflict(
         incoming,
         existing,
         incomingTrackedFieldsTrieRoot,
-        existingTrackedFieldsTrieRoot
+        existingTrackedFieldsTrieRoot,
+        recordConflictMap
     );
 }
 
@@ -191,12 +214,12 @@ export default function merge(
     existing: RecordRepresentationNormalized | undefined | StoreRecordError,
     incoming: RecordRepresentationNormalized,
     lds: LDS,
-    _path: IngestPath
+    _path: IngestPath,
+    recordConflictMap?: RecordConflictMap
 ): RecordRepresentationNormalized {
     if (existing === undefined || isErrorEntry(existing)) {
         return incoming;
     }
-
     // recordTypeId may get changed based on record state.
     // Evicts all dependencies from store.
     if (incoming.recordTypeId !== existing.recordTypeId) {
@@ -251,7 +274,7 @@ export default function merge(
     // TODO W-6900085 - UIAPI returns weakEtag=0 when the record is >2 levels nested. For now
     // we treat the record as mergeable.
     if (incomingWeakEtag !== 0 && existingWeakEtag !== 0 && incomingWeakEtag !== existingWeakEtag) {
-        return mergeRecordConflict(lds, incoming, existing);
+        return mergeRecordConflict(lds, incoming, existing, recordConflictMap);
     }
 
     return mergeRecordFields(incoming, existing);

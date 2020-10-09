@@ -34,7 +34,7 @@ describe('deleteRecord - basic', () => {
 
         const config = {
             recordId,
-            fields: ['FiscalYear'],
+            fields: ['Opportunity.FiscalYear'],
         };
         mockGetRecordNetwork(config, [
             mockRecord,

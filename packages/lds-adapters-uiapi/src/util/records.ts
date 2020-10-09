@@ -403,6 +403,9 @@ function isLookupFieldKey(
 export function convertTrieToFields(root: RecordFieldTrie): string[] {
     const childKeys = ObjectKeys(root.children);
     if (childKeys.length === 0) {
+        if (root.name === '') {
+            return [];
+        }
         return [root.name];
     }
 
@@ -416,6 +419,34 @@ export function convertTrieToFields(root: RecordFieldTrie): string[] {
         []
     ) as string[];
 }
+
+export const convertFieldsToTrie = (
+    fields: string[] = [],
+    isOptional: boolean = false
+): RecordFieldTrie => {
+    if (fields.length === 0) {
+        return {
+            name: '',
+            children: {},
+        };
+    }
+    const name = getObjectNameFromField(fields[0]);
+    const fieldsTrie: RecordFieldTrie = {
+        name,
+        children: {},
+        optional: isOptional,
+    };
+    insertFieldsIntoTrie(fieldsTrie, fields, isOptional);
+    return fieldsTrie;
+};
+
+const getObjectNameFromField = (field: string | FieldId): string => {
+    const fieldApiName = getFieldApiName(field);
+    if (fieldApiName === undefined) {
+        return '';
+    }
+    return splitQualifiedFieldApiName(fieldApiName)[0];
+};
 
 // merge all nodes in Trie B into Trie A
 function mergeFieldsTries(rootA: RecordFieldTrie, rootB: RecordFieldTrie) {

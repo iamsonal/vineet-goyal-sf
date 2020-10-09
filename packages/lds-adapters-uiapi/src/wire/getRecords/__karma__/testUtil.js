@@ -5,11 +5,16 @@
  * @returns {string|string[]} - string if index is passed, else array of recordIds
  */
 export function getIdsFromGetRecordsMock(mock, index) {
-    const ids = Object.keys(mock.records);
-    if (index === undefined) {
-        return ids;
+    const outputIds = [];
+    const { results } = mock;
+    for (let index = 0, len = results.length; index < len; index += 1) {
+        const { result: currentResultItem } = results[index];
+        outputIds.push(currentResultItem.id);
     }
-    return ids[index];
+    if (index === undefined) {
+        return outputIds;
+    }
+    return outputIds[index];
 }
 
 /**
@@ -17,10 +22,23 @@ export function getIdsFromGetRecordsMock(mock, index) {
  * @param  {...object} mocks - GetRecord response representation mock object
  * @returns {object} - GetRecords response shape
  */
-export function convertRecordMocktoGetRecordsMockShape(...mocks) {
-    const records = mocks.reduce(function(acc, currentMock) {
-        acc[currentMock.id] = JSON.parse(JSON.stringify(currentMock));
-        return acc;
-    }, {});
-    return { records };
+export function convertRecordMocktoGetRecordsMockShape(mocks) {
+    const results = [];
+    if (Array.isArray(mocks)) {
+        for (let index = 0, len = mocks.length; index < len; index += 1) {
+            results.push({
+                statusCode: 200,
+                result: mocks[index],
+            });
+        }
+    } else {
+        results.push({
+            result: mocks,
+            statusCode: 200,
+        });
+    }
+
+    return {
+        results,
+    };
 }

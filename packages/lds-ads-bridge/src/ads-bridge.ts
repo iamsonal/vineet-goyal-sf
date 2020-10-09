@@ -26,12 +26,11 @@ import {
     ADS_BRIDGE_EVICT_DURATION,
 } from './utils/metric-keys';
 
+import { RECORD_ID_PREFIX, isStoreKeyRecordId } from '@salesforce/lds-uiapi-record-utils';
+
 // No need to pass the actual record key `lds.ingestStore`. The `RecordRepresentation.ts#ingest`
 // function extracts the appropriate record id from the ingested record.
 const INGEST_KEY = '';
-
-const RECORD_ID_PREFIX = 'UiApi::RecordRepresentation:';
-const RECORD_ID_REGEXP = /^UiApi::RecordRepresentation:([a-zA-Z0-9])+$/;
 
 const MASTER_RECORD_TYPE_ID = '012000000000000AAA';
 
@@ -402,7 +401,7 @@ export default class AdsBridge {
             // Exclude all the store record ids not matching with the record id pattern.
             // Note: FieldValueRepresentation have the same prefix than RecordRepresentation so we
             // need to filter them out.
-            if (!storeRecordId.match(RECORD_ID_REGEXP)) {
+            if (!isStoreKeyRecordId(storeRecordId)) {
                 continue;
             }
 

@@ -48,4 +48,6 @@ export {
     getFieldValue,
 } from './uiapi-static-functions';
 
-export { makeDurableRecordAware } from './environments/makeDurableRecordAware';
+// Export "retrievers" so durable environments can properly revive RecordRepresentations
+// from responses before running record merge code
+export { responseRecordRepresentationRetrievers } from './generated/records/retrievers';

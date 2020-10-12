@@ -14,7 +14,7 @@ import {
 import { factory as getListUi } from '../index';
 import { GetListUiByListViewIdConfig } from '../../../generated/adapters/getListUiByListViewId';
 import { GetListUiByApiNameConfig } from '../../../generated/adapters/getListUiByApiName';
-import { makeDurableRecordAware } from '../../../environments/makeDurableRecordAware';
+import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
 
 import response from './data/list-ui-All-Opportunities.json';
 
@@ -43,7 +43,8 @@ describe('getListUi adapter offline', () => {
             configUsingListViewId,
             payload,
             TTL,
-            makeDurableRecordAware
+            undefined,
+            responseRecordRepresentationRetrievers
         );
     });
 
@@ -52,7 +53,8 @@ describe('getListUi adapter offline', () => {
             getListUi,
             configUsingListViewId,
             payload,
-            makeDurableRecordAware
+            undefined,
+            responseRecordRepresentationRetrievers
         );
     });
 

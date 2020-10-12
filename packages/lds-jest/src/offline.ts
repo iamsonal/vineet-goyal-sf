@@ -1,6 +1,11 @@
 import timekeeper from 'timekeeper';
 import { LDS, Store, Environment, NetworkAdapter, AdapterFactory } from '@ldsjs/engine';
-import { makeDurable, makeOffline } from '@ldsjs/environments';
+import {
+    makeDurable,
+    makeOffline,
+    ResponsePropertyRetriever,
+    DurableEnvironment,
+} from '@ldsjs/environments';
 import {
     buildMockNetworkAdapter,
     MockDurableStore,
@@ -12,15 +17,20 @@ export type CustomEnvironmentFactory = (
     environment: Environment,
     durableStore: MockDurableStore,
     store: Store
-) => Environment;
+) => DurableEnvironment;
 
 export function buildOfflineLds(
     durableStore: MockDurableStore,
     network: NetworkAdapter,
-    customEnvironment?: CustomEnvironmentFactory
+    customEnvironment?: CustomEnvironmentFactory,
+    reviveRetrievers?: ResponsePropertyRetriever<any, any>[]
 ) {
     const store = new Store();
-    let env = makeDurable(makeOffline(new Environment(store, network)), durableStore);
+    let env = makeDurable(
+        makeOffline(new Environment(store, network)),
+        durableStore,
+        reviveRetrievers ?? []
+    );
     if (customEnvironment !== undefined) {
         env = customEnvironment(env, durableStore, store);
     }
@@ -57,12 +67,14 @@ export async function testDataEmittedWhenStale<Config, DataType>(
     config: Config,
     payload: MockPayload,
     ttl: number,
-    customEnvironment?: CustomEnvironmentFactory
+    customEnvironment?: CustomEnvironmentFactory,
+    reviveRetrievers?: ResponsePropertyRetriever<any, any>[]
 ) {
     const { lds } = buildOfflineLds(
         new MockDurableStore(),
         buildMockNetworkAdapter([payload]),
-        customEnvironment
+        customEnvironment,
+        reviveRetrievers
     );
     const adapter = adapterFactory(lds);
     const result = await (adapter(config) as Promise<any>);
@@ -76,13 +88,15 @@ export async function testDurableHitDoesNotHitNetwork<Config, DataType>(
     adapterFactory: AdapterFactory<Config, DataType>,
     config: Config,
     payload: MockPayload,
-    customEnvironment?: CustomEnvironmentFactory
+    customEnvironment?: CustomEnvironmentFactory,
+    reviveRetrievers?: ResponsePropertyRetriever<any, any>[]
 ) {
     const durableStore = await populateDurableStore(adapterFactory, config, payload);
     const { lds, network } = buildOfflineLds(
         durableStore,
         buildMockNetworkAdapter([payload]),
-        customEnvironment
+        customEnvironment,
+        reviveRetrievers
     );
     const adapter = adapterFactory(lds);
     const result = await (adapter(config) as Promise<any>);

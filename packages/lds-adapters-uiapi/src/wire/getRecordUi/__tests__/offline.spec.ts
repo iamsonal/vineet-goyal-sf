@@ -8,7 +8,7 @@ import {
 } from '@ldsjs/adapter-test-library';
 
 import { factory as getRecordUiAdapterFactory } from '../index';
-import { makeDurableRecordAware } from '../../../environments/makeDurableRecordAware';
+import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
 
 import recordUiSingleResponse from './data/single-record-Account-layouttypes-Full-modes-View.json';
 import recordUiMultiResponse from './data/multiple-record-Account-layouttypes-Full-modes-View.json';
@@ -55,10 +55,10 @@ function buildLds(ds?: MockDurableStore) {
         multiRecordPayload_Account,
     ]);
     const store = new Store();
-    const env = makeDurableRecordAware(
-        makeDurable(makeOffline(new Environment(store, network)), durableStore),
+    const env = makeDurable(
+        makeOffline(new Environment(store, network)),
         durableStore,
-        store
+        responseRecordRepresentationRetrievers
     );
     const lds = new LDS(env);
     return {

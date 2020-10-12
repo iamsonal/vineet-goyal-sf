@@ -13,7 +13,7 @@ import {
 
 import { factory as getRecordTemplateCreate } from '../index';
 import { GetRecordTemplateCreateConfig } from '../../../generated/adapters/getRecordTemplateCreate';
-import { makeDurableRecordAware } from '../../../environments/makeDurableRecordAware';
+import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
 
 import recordTemplateCreate_Custom from './mockData/record-template-create-Custom_Object__c.json';
 import { TTL } from '../../../generated/types/CreateTemplateRepresentation';
@@ -43,7 +43,8 @@ describe('getRecordTemplateCreate adapter offline', () => {
             configWithRecordTypeId,
             recordPayload,
             TTL,
-            makeDurableRecordAware
+            undefined,
+            responseRecordRepresentationRetrievers
         );
     });
 
@@ -52,7 +53,8 @@ describe('getRecordTemplateCreate adapter offline', () => {
             getRecordTemplateCreate,
             configWithRecordTypeId,
             recordPayload,
-            makeDurableRecordAware
+            undefined,
+            responseRecordRepresentationRetrievers
         );
     });
 

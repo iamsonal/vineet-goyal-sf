@@ -8,7 +8,7 @@ import {
 } from '@ldsjs/adapter-test-library';
 
 import { factory as getRecordAdapterFactory } from '../index';
-import { makeDurableRecordAware } from '../../../environments/makeDurableRecordAware';
+import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
 
 import { makeDurable, makeOffline } from '@ldsjs/environments';
 import {
@@ -36,10 +36,10 @@ const recordPayload_Account: MockPayload = buildSuccessMockPayload(
 function buildLds(durableStore: MockDurableStore, n?: NetworkAdapter) {
     const store = new Store();
     const network = n ?? buildMockNetworkAdapter([recordPayload_Account]);
-    const env = makeDurableRecordAware(
-        makeDurable(makeOffline(new Environment(store, network)), durableStore),
+    const env = makeDurable(
+        makeOffline(new Environment(store, network)),
         durableStore,
-        store
+        responseRecordRepresentationRetrievers
     );
     const lds = new LDS(env);
     return {

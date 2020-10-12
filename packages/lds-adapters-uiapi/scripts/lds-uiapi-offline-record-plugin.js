@@ -15,14 +15,13 @@ const path = require('path');
 const mkdirp = require('mkdirp');
 const dedent = require('dedent');
 
+const RETRIEVER_INTERFACE_NAME = 'ResponsePropertyRetriever';
+const RETRIEVED_TYPE_NAME = 'RetrievedProperty';
 const RECORD_REPRESENTATION = 'RecordRepresentation';
-const REVIVE_RECORDS_FROM_DURABLE_STORE = 'reviveRecordsFromDurableStore';
-const CAN_REVIVE = 'canRevive';
-const REVIVE = 'revive';
+const CAN_RETRIEVE = 'canRetrieve';
+const RETRIEVE = 'retrieve';
 const RESPONSE_FIELD = 'response';
 const REQUEST_FIELD = 'request';
-const STORE_FIELD = 'store';
-const DURABLE_STORE_FIELD = 'durableStore';
 
 /**
  * @param {string} path
@@ -97,7 +96,7 @@ function recursivelyFindRecordReps(shape, modelInfo, currentPath, recordLocation
  * @param {ModelInfo} modelInfo
  * @returns {void}
  */
-function generateRecordRevivalHandlers(compilerConfig, modelInfo) {
+function generateRecordRetrievers(compilerConfig, modelInfo) {
     const resources = modelInfo.resources.filter(resource => resource.adapter !== undefined);
 
     const exports = [];
@@ -129,51 +128,63 @@ function generateRecordRevivalHandlers(compilerConfig, modelInfo) {
             }
 
             const resolvedPath = replacePath(path);
-            const handlerName = `${name}RevivalHandler`;
+            const retrieverName = `${name}${RETRIEVER_INTERFACE_NAME}`;
 
-            exports.push(handlerName);
+            exports.push(retrieverName);
 
             const recordPath = recordPathIds[0];
             const type = recordPaths[recordPath];
-            let revivalCode = '';
+            let retrieveCode = '';
 
             if (type === 'object') {
-                revivalCode = `const record = ${recordPath};
-                        const ids = extractRecordIds(record);
-                        return ${REVIVE_RECORDS_FROM_DURABLE_STORE}(ids, ${STORE_FIELD}, ${DURABLE_STORE_FIELD});`;
+                retrieveCode = `const record = ${recordPath};
+                        if(record === undefined) {
+                            return [];
+                        }
+
+                        const retrieved: ${RETRIEVED_TYPE_NAME}<${RECORD_REPRESENTATION}>[] = [];
+                        retrieveNestedRecords(record, retrieved);
+                        return retrieved;`;
             } else if (type === 'array') {
-                revivalCode = `const records = ${recordPath};
+                retrieveCode = `const records = ${recordPath};
                         if(records === undefined) {
-                            return Promise.resolve();
+                            return [];
                         }
-                        const reviveIds = ObjectCreate(null);
-                        for (let i = 0, len = records.length; i < len; i++) {
+
+                        const retrieved: ${RETRIEVED_TYPE_NAME}<${RECORD_REPRESENTATION}>[] = [];
+                        for(let i=0, len=records.length; i < len; i++){
                             const record = records[i];
-                            Object.assign(reviveIds, extractRecordIds(record));
+                            retrieveNestedRecords(record, retrieved);
                         }
-                        return ${REVIVE_RECORDS_FROM_DURABLE_STORE}(reviveIds, ${STORE_FIELD}, ${DURABLE_STORE_FIELD});`;
+                        return retrieved;`;
             } else if (type === 'map') {
-                revivalCode = `const records = ${recordPath};
+                retrieveCode = `const records = ${recordPath};
                         if(records === undefined) {
-                            return Promise.resolve();
+                            return [];
                         }
                         const ids = ObjectKeys(records);
-                        const reviveIds = ObjectCreate(null);
+                        const recordsArray = [];
                         for (let i = 0, len = ids.length; i < len; i++) {
                             const id = ids[i];
                             const record = records[id];
-                            Object.assign(reviveIds, extractRecordIds(record));
+                            recordsArray.push(record);
                         }
-                        return ${REVIVE_RECORDS_FROM_DURABLE_STORE}(reviveIds, ${STORE_FIELD}, ${DURABLE_STORE_FIELD});`;
+
+                        const retrieved: ${RETRIEVED_TYPE_NAME}<${RECORD_REPRESENTATION}>[] = [];
+                        for(let i=0, len=recordsArray.length; i < len; i++){
+                            const record = recordsArray[i];
+                            retrieveNestedRecords(record, retrieved);
+                        }
+                        return retrieved;`;
             }
             handlers.push(dedent`
-                    const ${handlerName} : RecordRevivalHandler = {
-                    ${CAN_REVIVE}(${REQUEST_FIELD}: ResourceRequest) {
+                    const ${retrieverName} : ${RETRIEVER_INTERFACE_NAME}<unknown, ${RECORD_REPRESENTATION}> = {
+                    ${CAN_RETRIEVE}(${REQUEST_FIELD}: ResourceRequest) {
                         const {basePath, method} = ${REQUEST_FIELD};
                         return method === '${method}' && basePath === ${resolvedPath};
                     },
-                    ${REVIVE}<T>(${RESPONSE_FIELD}: FetchResponse<T>, ${STORE_FIELD}: Store, ${DURABLE_STORE_FIELD}: DurableStore) {
-                        ${revivalCode}
+                    ${RETRIEVE}(${RESPONSE_FIELD}: ResourceResponse<unknown>) {
+                        ${retrieveCode}
                     },
                 };
                 `);
@@ -181,31 +192,40 @@ function generateRecordRevivalHandlers(compilerConfig, modelInfo) {
     }
 
     const imports = [
-        'import { ResourceRequest, FetchResponse, Store, ResourceResponse } from "@ldsjs/engine"',
-        'import { DurableStore } from "@ldsjs/environments"',
-        'import { extractRecordIds } from "../../util/records"',
-        `import { ${REVIVE_RECORDS_FROM_DURABLE_STORE} } from "../../environments/util/revive"`,
-        'import { ObjectCreate, ObjectKeys } from "../../util/language"',
+        'import { ResourceRequest, FetchResponse, ResourceResponse } from "@ldsjs/engine"',
+        `import { ${RETRIEVER_INTERFACE_NAME}, ${RETRIEVED_TYPE_NAME} } from "@ldsjs/environments"`,
+        `import { isSpanningRecord } from "../../selectors/record";`,
+        'import { ObjectKeys } from "../../util/language"',
+        `import { ${RECORD_REPRESENTATION}, keyBuilderFromType } from "../types/${RECORD_REPRESENTATION}"`,
     ].join('\n');
 
-    const interfaceDef = dedent`
-    export interface RecordRevivalHandler {
-        ${CAN_REVIVE}(${REQUEST_FIELD}: ResourceRequest): boolean;
-        ${REVIVE}<T>(
-            ${RESPONSE_FIELD}: ResourceResponse<T>,
-            ${STORE_FIELD}: Store,
-            ${DURABLE_STORE_FIELD}: DurableStore
-        ): Promise<void>;
+    const helperDef = dedent`
+    function retrieveNestedRecords(record: ${RECORD_REPRESENTATION}, retrievedRecords: ${RETRIEVED_TYPE_NAME}<${RECORD_REPRESENTATION}>[]) {
+        // put the passed in record in
+        retrievedRecords.push({data: record, cacheKey: keyBuilderFromType(record)});
+
+        // loop through fields for nested records
+        const fieldNames = ObjectKeys(record.fields);
+        for (let i = 0, len = fieldNames.length; i < len; i++) {
+            const fieldName = fieldNames[i];
+            const { value: fieldValue } = record.fields[fieldName];
+
+            if (isSpanningRecord(fieldValue)) {
+                retrieveNestedRecords(fieldValue, retrievedRecords);
+            }
+        }
     }
     `;
 
-    const handlerExport = dedent`export const handlers =  [${exports.join(',')}]`;
+    const handlerExport = dedent`export const response${RECORD_REPRESENTATION}Retrievers =  [${exports.join(
+        ','
+    )}]`;
     const dir = path.join(compilerConfig.outputDir, 'records');
     mkdirp.sync(dir);
 
-    const code = [imports, interfaceDef, handlers.join('\n\n'), handlerExport].join('\n\n');
+    const code = [imports, helperDef, handlers.join('\n\n'), handlerExport].join('\n\n');
 
-    fs.writeFileSync(path.join(dir, 'revival.ts'), code);
+    fs.writeFileSync(path.join(dir, 'retrievers.ts'), code);
 }
 
-module.exports = generateRecordRevivalHandlers;
+module.exports = generateRecordRetrievers;

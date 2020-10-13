@@ -84,7 +84,7 @@ export function ingestSuccess(
     const fields = config.fields === undefined ? [] : config.fields;
     const optionalFields = config.optionalFields === undefined ? [] : config.optionalFields;
 
-    const fieldTrie = convertFieldsToTrie(config.fields, false);
+    const fieldTrie = convertFieldsToTrie(fields, false);
     const optionalFieldTrie = convertFieldsToTrie(optionalFields, true);
     const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie);
     lds.storeIngest<RecordRepresentation>(key, recordIngest, body);

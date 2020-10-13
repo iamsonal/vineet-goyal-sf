@@ -20,6 +20,7 @@ describe('createRecord', () => {
         },
         allowSaveOnDuplicate: false,
         useDefaultRule: false,
+        triggerOtherEmail: false,
         triggerUserEmail: false,
     };
     it('should make return correct snapshot data', async () => {

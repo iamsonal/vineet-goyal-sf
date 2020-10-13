@@ -339,6 +339,7 @@ describe('routes', () => {
                             fields: [],
                         },
                         useDefaultRule: undefined,
+                        triggerOtherEmail: undefined,
                         triggerUserEmail: true,
                     },
                     { background: false, hotspot: true, longRunning: false },

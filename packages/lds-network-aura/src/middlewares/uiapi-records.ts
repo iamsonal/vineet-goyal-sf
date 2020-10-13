@@ -343,11 +343,12 @@ function getRecords(resourceRequest: ResourceRequest): Promise<any> {
 function createRecord(resourceRequest: ResourceRequest): Promise<any> {
     const {
         body,
-        queryParams: { useDefaultRule, triggerUserEmail },
+        queryParams: { useDefaultRule, triggerUserEmail, triggerOtherEmail },
     } = resourceRequest;
     const params = buildUiApiParams(
         {
             useDefaultRule,
+            triggerOtherEmail,
             triggerUserEmail,
             recordInput: body,
         },
@@ -395,12 +396,13 @@ function updateRecord(resourceRequest: ResourceRequest): Promise<any> {
     const {
         body,
         urlParams,
-        queryParams: { useDefaultRule, triggerUserEmail },
+        queryParams: { useDefaultRule, triggerUserEmail, triggerOtherEmail },
     } = resourceRequest;
 
     const params = buildUiApiParams(
         {
             useDefaultRule,
+            triggerOtherEmail,
             triggerUserEmail,
             recordId: urlParams.recordId,
             recordInput: body,

@@ -1,14 +1,15 @@
-import { IngestPath, LDS, Store } from '@ldsjs/engine';
-import { ObjectKeys } from '../../util/language';
-import { createLink } from '../../generated/types/type-utils';
+import { IngestPath, LDS, Store, StoreLink } from '@ldsjs/engine';
+import { ArrayPrototypePush, ObjectKeys } from '../../util/language';
 import {
     RecordRepresentationNormalized,
     RecordRepresentation,
 } from '../../generated/types/RecordRepresentation';
 import { ingest as RecordCollectionRepresentation_ingest } from '../../generated/types/RecordCollectionRepresentation';
 import { ingest as FieldValueRepresentation_ingest } from '../../overrides/types/FieldValueRepresentation';
-import { RecordFieldTrie } from '../../util/records';
+import { BLANK_RECORD_FIELDS_TRIE, RecordFieldTrie } from '../../util/records';
 import { RecordConflictMap } from './resolveConflict';
+import { convertTrieToFields } from '../../util/records';
+import { dedupe } from '../../validation/utils';
 
 export default function normalize(
     input: RecordRepresentation,
@@ -19,7 +20,7 @@ export default function normalize(
     timestamp: number,
     fieldsTrie: RecordFieldTrie,
     optionalFieldsTrie: RecordFieldTrie,
-    recordConflictMap: RecordConflictMap
+    recordConflictMap?: RecordConflictMap
 ): RecordRepresentationNormalized {
     const input_childRelationships = input.childRelationships;
     if (input_childRelationships) {
@@ -57,16 +58,15 @@ export default function normalize(
         const input_fields_keys = ObjectKeys(input_fields);
         const input_fields_length = input_fields_keys.length;
 
-        const missingOptionalFields = ObjectKeys(optionalFieldsTrie.children);
-
         for (let i = 0; i < input_fields_length; i++) {
             const key = input_fields_keys[i];
             const input_fields_prop = input_fields[key];
             const input_fields_prop_id = input_fields_id + '__' + key;
 
             // Gets the “child” fieldsTrie and optionalFieldsTrie for the current spanning record.
-            const fieldsSubtrie = fieldsTrie.children[key];
-            const optionalFieldsSubtrie = optionalFieldsTrie.children[key];
+            const fieldsSubtrie = fieldsTrie.children[key] || BLANK_RECORD_FIELDS_TRIE;
+            const optionalFieldsSubtrie =
+                optionalFieldsTrie.children[key] || BLANK_RECORD_FIELDS_TRIE;
 
             // Creates a link by calling FieldValueRepresentation ingest.
             // Pass child fieldsTrie, optionalFieldsTrie and recordConflictMap.
@@ -88,35 +88,55 @@ export default function normalize(
                 recordConflictMap
             ) as any;
 
-            // If the field is null, adds data.fields to the field’s link
-            if ((input_fields_prop === null || input_fields_prop.value === null) && fieldsSubtrie) {
-                const fields = ObjectKeys(fieldsSubtrie.children);
-                if (fields) {
-                    fieldValueLink.data = {
-                        fields,
-                    };
-                }
+            // If a relationship field is null, memorize names of subordinate fields.
+            // Spannning fields fields are specified in the dot notation.
+            if (input_fields_prop === null || input_fields_prop.value === null) {
+                addFieldsToStoreLink(fieldsSubtrie, optionalFieldsSubtrie, fieldValueLink);
             }
 
             // Inserts link into the normalized fields map
             input_fields[key] = fieldValueLink;
-
-            // If field name exists in optionalFieldsTrie, remove field name from missingOptionalFields.
-            const index = missingOptionalFields.indexOf(key);
-            if (index !== -1) {
-                missingOptionalFields.splice(index, 1);
-            }
-        }
-
-        // Create missing links for all field names still present in missingOptionalFields
-        for (let i = 0; i < missingOptionalFields.length; i++) {
-            const fieldName = missingOptionalFields[i];
-            const input_fields_prop_id = input_fields_id + '__' + fieldName;
-            const link = createLink(input_fields_prop_id) as any;
-            link.isMissing = true;
-            input_fields[fieldName] = link;
         }
     }
 
     return (input as unknown) as RecordRepresentationNormalized;
+}
+
+/**
+ * Adds fields listed in the two trie parameters into the store link.
+ * Functionally analogous to markNulledOutRequiredFields.
+ * @param fieldsTrie
+ * @param optionalFieldsTrie
+ * @param storeLink
+ */
+function addFieldsToStoreLink(
+    fieldsTrie: RecordFieldTrie,
+    optionalFieldsTrie: RecordFieldTrie,
+    storeLink: StoreLink
+) {
+    let fields: string[] = [];
+    const fieldSubtries = [] as RecordFieldTrie[];
+    if (fieldsTrie) {
+        ArrayPrototypePush.call(fieldSubtries, fieldsTrie);
+    }
+    if (optionalFieldsTrie) {
+        ArrayPrototypePush.call(fieldSubtries, optionalFieldsTrie);
+    }
+    for (let i = 0; i < fieldSubtries.length; i++) {
+        const subtrie = fieldSubtries[i];
+        const fieldNames = ObjectKeys(subtrie.children);
+        for (let i = 0; i < fieldNames.length; i++) {
+            const fieldName = fieldNames[i];
+            const childTrie = subtrie.children[fieldName];
+            if (childTrie) {
+                fields = [...fields, ...convertTrieToFields(childTrie)];
+            }
+        }
+    }
+    fields = dedupe(fields);
+    if (fields.length > 0) {
+        storeLink.data = {
+            fields,
+        };
+    }
 }

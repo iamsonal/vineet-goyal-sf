@@ -23,10 +23,12 @@ export default function normalize(
     const input_value_id = path.fullPath + '__value';
 
     if (input_value !== null && typeof input_value === 'object') {
-        const ingest =
-            fieldsTrie && optionalFieldsTrie
-                ? createRecordIngest(fieldsTrie, optionalFieldsTrie, recordConflictMap)
-                : RecordRepresentation_ingest;
+        let ingest;
+        if (fieldsTrie && optionalFieldsTrie) {
+            ingest = createRecordIngest(fieldsTrie, optionalFieldsTrie, recordConflictMap);
+        } else {
+            ingest = RecordRepresentation_ingest;
+        }
         input.value = ingest(
             input_value,
             {

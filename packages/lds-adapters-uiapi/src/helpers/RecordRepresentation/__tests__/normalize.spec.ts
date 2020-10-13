@@ -111,6 +111,8 @@ describe('normalize', () => {
                 'Account.Owner.LastName',
                 'Account.Owner.FirstName',
                 'Account.Owner.Address',
+                'Account.ParentAccount.Owner.FirstName',
+                'Account.ParentAccount.Owner.LastName',
             ],
             true
         );
@@ -143,25 +145,18 @@ describe('normalize', () => {
             lds,
             store,
             123,
-            { children: {}, name: 'Value', optional: false, scalar: true },
-            undefined,
+            { name: 'Value', children: {}, optional: false, scalar: true },
+            { name: '', children: {} },
             recordConflictMap
         );
 
         expect(output.fields.Code).toStrictEqual({ value: '901' });
 
-        // Optional fields absent in the response are flagged as missing.
-        // Corresponds to markMissingOptionalFields() in getRecord adapter.
-        expect(output.fields.Score).toStrictEqual({
-            __ref: 'some_path__fields__Score',
-            isMissing: true,
-        });
-
         // If the field is null, adds data.fields to the field’s link.
         // Corresponds to markNulledOutRequiredFields() in getRecord adapter.
         expect(output.fields.ParentAccount).toStrictEqual({
             value: null,
-            data: { fields: ['Name', 'Number'] },
+            data: { fields: ['Name', 'Number', 'Owner.FirstName', 'Owner.LastName'] },
         });
 
         expect(output.fields.Owner).toStrictEqual({

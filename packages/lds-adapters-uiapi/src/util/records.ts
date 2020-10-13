@@ -32,6 +32,7 @@ import { MASTER_RECORD_TYPE_ID } from './layout';
 import { UIAPI_SUPPORTED_ENTITY_API_NAMES } from './supported-entities';
 import { MAX_RECORD_DEPTH, insertFieldsIntoTrie, isSpanningRecord } from '../selectors/record';
 import { RecordCreateDefaultRecordRepresentation } from '../generated/types/RecordCreateDefaultRecordRepresentation';
+import { ObjectFreeze } from '../generated/adapters/adapter-utils';
 
 type FieldValueRepresentationValue = FieldValueRepresentation['value'];
 type RecordRepresentationLikeNormalized =
@@ -420,15 +421,17 @@ export function convertTrieToFields(root: RecordFieldTrie): string[] {
     ) as string[];
 }
 
+export const BLANK_RECORD_FIELDS_TRIE = ObjectFreeze({
+    name: '',
+    children: {},
+});
+
 export const convertFieldsToTrie = (
     fields: string[] = [],
     isOptional: boolean = false
 ): RecordFieldTrie => {
     if (fields.length === 0) {
-        return {
-            name: '',
-            children: {},
-        };
+        return BLANK_RECORD_FIELDS_TRIE;
     }
     const name = getObjectNameFromField(fields[0]);
     const fieldsTrie: RecordFieldTrie = {

@@ -1,17 +1,10 @@
 jest.mock('../../overrides/types/RecordRepresentation');
 jest.mock('../../generated/types/type-utils');
 jest.mock('../../helpers/RecordRepresentation/merge');
-// TODO: enable use of the new normalize of RecordRepresentation.
-//jest.mock('../../helpers/RecordRepresentation/normalize');
+jest.mock('../../helpers/RecordRepresentation/normalize');
 
-import {
-    validate,
-    keyBuilderFromType,
-    normalize,
-    equals,
-} from '../../overrides/types/RecordRepresentation';
-// TODO: enable use of the new normalize of RecordRepresentation.
-//import normalize from '../../helpers/RecordRepresentation/normalize';
+import { validate, keyBuilderFromType, equals } from '../../overrides/types/RecordRepresentation';
+import normalize from '../../helpers/RecordRepresentation/normalize';
 import merge from '../../helpers/RecordRepresentation/merge';
 import { createLink } from '../../generated/types/type-utils';
 import { convertFieldsToTrie } from '../records';
@@ -73,11 +66,10 @@ describe('Record Ingest Utils', () => {
                 { fullPath: MOCK_KEY, parent: null },
                 mockLds,
                 mockStore,
-                12345
-                // TODO: enable use of the new normalize of RecordRepresentation.
-                // fields,
-                // optionalFields,
-                // recordConflictMap
+                12345,
+                fields,
+                optionalFields,
+                recordConflictMap
             );
         });
 
@@ -86,7 +78,8 @@ describe('Record Ingest Utils', () => {
                 mockExistingRecord,
                 mockNormalizedRecord,
                 mockLds,
-                mockPath
+                mockPath,
+                recordConflictMap
             );
         });
 

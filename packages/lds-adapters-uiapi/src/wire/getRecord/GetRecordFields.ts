@@ -21,7 +21,6 @@ import {
 import {
     getTrackedFields,
     markMissingOptionalFields,
-    markNulledOutRequiredFields,
     convertFieldsToTrie,
 } from '../../util/records';
 import { buildSelectionFromFields } from '../../selectors/record';
@@ -86,14 +85,11 @@ export function ingestSuccess(
     const optionalFields = config.optionalFields === undefined ? [] : config.optionalFields;
 
     const fieldTrie = convertFieldsToTrie(config.fields, false);
-    const optionalFieldTrie = convertFieldsToTrie(config.optionalFields, true);
+    const optionalFieldTrie = convertFieldsToTrie(optionalFields, true);
     const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie);
-
     lds.storeIngest<RecordRepresentation>(key, recordIngest, body);
 
     const recordNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(key)!;
-
-    markNulledOutRequiredFields(recordNode, [...fields, ...optionalFields]);
     markMissingOptionalFields(recordNode, allTrackedFields);
 
     return lds.storeLookup<RecordRepresentation>(

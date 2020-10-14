@@ -1,9 +1,5 @@
-import path from 'path';
-import fs from 'fs';
 import resolve from 'rollup-plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript2';
-
-const noLwcOutputDir = path.join(__dirname, 'no-lwc');
 
 const PROXY_COMPAT_DISABLE = '/* proxy-compat-disable */';
 const generatedFileBanner = [
@@ -18,7 +14,7 @@ const generatedFileBanner = [
 
 const banner = generatedFileBanner.concat([PROXY_COMPAT_DISABLE]).join('\n');
 
-const bindings = {
+export default {
     input: './src/main.ts',
 
     external: ['lwc', '@salesforce/lds-instrumentation', '@salesforce/lds-runtime-web'],
@@ -40,27 +36,3 @@ const bindings = {
         }),
     ],
 };
-
-const bindingsNoLWC = {
-    ...bindings,
-    input: './src/main-no-lwc.ts',
-    output: {
-        ...bindings.output,
-        file: path.join(noLwcOutputDir, 'index.js'),
-        plugins: [
-            {
-                writeBundle() {
-                    fs.writeFileSync(
-                        path.join(noLwcOutputDir, 'index.d.ts'),
-                        `export * from './main-no-lwc';`
-                    );
-                },
-            },
-        ],
-    },
-    // set tree-shake to ignore side effects of unused external modules (lwc in
-    // this case)
-    treeshake: { moduleSideEffects: 'no-external' },
-};
-
-export default [bindings, bindingsNoLWC];

@@ -7,8 +7,7 @@
     "module": "dist/ldsBindings.js",
     "types": "dist/main.d.ts",
     "files": [
-        "dist",
-        "no-lwc"
+        "dist"
     ],
     "scripts": {
         "prepare": "yarn build",

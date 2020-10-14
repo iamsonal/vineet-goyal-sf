@@ -27,6 +27,10 @@ import { buildSelectionFromFields } from '../../selectors/record';
 import { difference } from '../../validation/utils';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
 import { createRecordIngest } from '../../util/record-ingest';
+import {
+    RecordConflictMap,
+    resolveConflict,
+} from '../../helpers/RecordRepresentation/resolveConflict';
 
 // used by getUiApiRecordsBatchByRecordIds#selectChildResourceParams
 export function buildRecordSelector(
@@ -86,8 +90,11 @@ export function ingestSuccess(
 
     const fieldTrie = convertFieldsToTrie(fields, false);
     const optionalFieldTrie = convertFieldsToTrie(optionalFields, true);
-    const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie);
+    const recordConflict: RecordConflictMap = {} as RecordConflictMap;
+    const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie, recordConflict);
     lds.storeIngest<RecordRepresentation>(key, recordIngest, body);
+
+    resolveConflict(lds, recordConflict);
 
     const recordNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(key)!;
     markMissingOptionalFields(recordNode, allTrackedFields);

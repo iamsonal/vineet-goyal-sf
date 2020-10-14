@@ -1,7 +1,5 @@
-import {
-    buildNetworkSnapshot as getRecordNetwork,
-    GetRecordConfig,
-} from '../../generated/adapters/getRecord';
+import { GetRecordConfig } from '../../generated/adapters/getRecord';
+import { buildNetworkSnapshot as getRecordNetwork } from '../../wire/getRecord/GetRecordFields';
 import { buildNetworkSnapshot as getRecordsNetwork } from '../../generated/adapters/getRecords';
 import {
     GetRecordsConfig,
@@ -33,7 +31,7 @@ export function resolveConflict(lds: LDS, map: RecordConflictMap): void {
     } else {
         const records: GetRecordsEntityConfiguration[] = ArrayPrototypeReduce.call(
             ids,
-            (acc: GetRecordsEntityConfiguration[], id: string) => {
+            (acc, id: string) => {
                 const { trackedFields } = map[id];
                 ArrayPrototypePush.call(acc, {
                     recordIds: [id],
@@ -42,7 +40,7 @@ export function resolveConflict(lds: LDS, map: RecordConflictMap): void {
                 return acc;
             },
             []
-        );
+        ) as GetRecordsEntityConfiguration[];
 
         const config: GetRecordsConfig = { records };
 

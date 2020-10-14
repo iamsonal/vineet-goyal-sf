@@ -1,9 +1,9 @@
 import { Environment, LDS, Store } from '@ldsjs/engine';
-import { buildNetworkSnapshot as getRecordNetwork } from '../../../generated/adapters/getRecord';
+import { buildNetworkSnapshot as getRecordNetwork } from '../../../wire/getRecord/GetRecordFields';
 import { buildNetworkSnapshot as getRecordsNetwork } from '../../../generated/adapters/getRecords';
 import { resolveConflict } from '../resolveConflict';
 
-jest.mock('../../../generated/adapters/getRecord', () => {
+jest.mock('../../../wire/getRecord/GetRecordFields', () => {
     return {
         buildNetworkSnapshot: jest.fn(),
     };

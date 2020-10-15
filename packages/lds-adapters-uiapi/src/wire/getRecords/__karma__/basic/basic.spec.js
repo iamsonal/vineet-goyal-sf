@@ -1,5 +1,5 @@
 import { getMock as globalGetMock, setupElement } from 'test-util';
-import { mockGetRecordsNetwork, mockGetRecordNetwork } from 'uiapi-test-util';
+import { mockGetRecordsNetwork, mockGetRecordNetwork, expireRecords } from 'uiapi-test-util';
 import GetRecords from '../lwc/get-records';
 import RecordFields from '../../../getRecord/__karma__/lwc/record-fields';
 import { getIdsFromGetRecordsMock, convertRecordMocktoGetRecordsMockShape } from '../testUtil';
@@ -11,6 +11,7 @@ function getMock(fileName) {
 
 const ACCOUNT_ID_FIELD_STRING = 'Account.Id';
 const ACCOUNT_NAME_FIELD_STRING = 'Account.Name';
+const ACCOUNT_SITE_FIELD_STRING = 'Account.Site';
 const CASE_ID_FIELD_STRING = 'Case.Id';
 const CASE_STATUS_FIELD_STRING = 'Case.Status';
 
@@ -201,5 +202,188 @@ describe('getRecords LDS adapter', () => {
         expect(el.pushCount()).toBe(1);
         await el.refresh();
         expect(el.pushCount()).toBe(2);
+    });
+    it('returns 200, even with all resources returned having 404', async () => {
+        const mockData = getMock('records-multiple-404errors');
+        const mockDataResult = getMock('records-multiple-404errors');
+        delete mockDataResult.hasErrors;
+        // cant export these due to await in refresh script
+        const errorId1 = '001Z1000002GSZjIAO';
+        const errorId2 = '001X1000002GSZjIAO';
+
+        const config = {
+            records: [
+                {
+                    recordIds: [errorId1, errorId2],
+                    fields: [ACCOUNT_SITE_FIELD_STRING],
+                },
+            ],
+        };
+
+        mockGetRecordsNetwork(config, mockData);
+
+        const element = await setupElement(config, GetRecords);
+
+        const actual = element.getWiredData();
+        const response = {
+            results: [
+                {
+                    statusCode: 404,
+                    result: {
+                        status: 404,
+                        body: [{ errorCode: 'NOT_FOUND', message: 'Resource not found.' }],
+                        ok: false,
+                        statusText: 'Not Found',
+                        headers: {},
+                    },
+                },
+                {
+                    statusCode: 404,
+                    result: {
+                        status: 404,
+                        body: [{ errorCode: 'NOT_FOUND', message: 'Resource not found.' }],
+                        ok: false,
+                        statusText: 'Not Found',
+                        headers: {},
+                    },
+                },
+            ],
+        };
+        expect(actual).toEqualSnapshotWithoutEtags(response);
+    });
+    it('returns mix of 404 and 200 in same order as input', async () => {
+        const mockData = getMock('records-multiple-errors-mix');
+        // hard code for now
+        const errorId1 = '001Z1000002GSZjIAO';
+        const errorId2 = '001X1000002GSZjIAO';
+        const validId = getIdsFromGetRecordsMock(mockData).filter(val => val !== undefined)[0];
+        const config = {
+            records: [
+                {
+                    recordIds: [errorId1, validId, errorId2],
+                    fields: [ACCOUNT_SITE_FIELD_STRING],
+                },
+            ],
+        };
+
+        mockGetRecordsNetwork(config, mockData);
+
+        const element = await setupElement(config, GetRecords);
+        const actual = element.getWiredData();
+        const validResult = mockData.results[1].result;
+        const errorResult = {
+            statusCode: 404,
+            result: {
+                status: 404,
+                body: [{ errorCode: 'NOT_FOUND', message: 'Resource not found.' }],
+                ok: false,
+                statusText: 'Not Found',
+                headers: {},
+            },
+        };
+        const response = {
+            results: [
+                errorResult,
+                {
+                    statusCode: 200,
+                    result: validResult,
+                },
+                errorResult,
+            ],
+        };
+        expect(actual).toEqualSnapshotWithoutEtags(response);
+    });
+    it('refetches all records if two are cached and one is new ', async () => {
+        const recordMock1 = getMock('record-single-record-Account');
+        const recordMock2 = getMock('record-single-record-Account2');
+        const recordMock3 = getMock('record-single-record-Account3');
+        const combinedRecords = getMock('records-multiple-record-Accounts2');
+        const recordId1 = recordMock1.id;
+        const recordId2 = recordMock2.id;
+        const recordId3 = recordMock3.id;
+        const recordConfig1 = {
+            recordId: recordId1,
+            fields: [ACCOUNT_ID_FIELD_STRING, ACCOUNT_NAME_FIELD_STRING],
+        };
+        const recordConfig2 = {
+            recordId: recordId2,
+            fields: [ACCOUNT_ID_FIELD_STRING, ACCOUNT_NAME_FIELD_STRING],
+        };
+
+        mockGetRecordNetwork(recordConfig1, recordMock1);
+        mockGetRecordNetwork(recordConfig2, recordMock2);
+
+        const config = {
+            records: [
+                {
+                    recordIds: [recordId1, recordId2, recordId3],
+                    fields: [ACCOUNT_ID_FIELD_STRING, ACCOUNT_NAME_FIELD_STRING],
+                },
+            ],
+        };
+        mockGetRecordsNetwork(config, combinedRecords);
+        // populate record with getRecord
+        const getRecordWire1 = await setupElement(recordConfig1, RecordFields);
+        const getRecordWire2 = await setupElement(recordConfig2, RecordFields);
+
+        // access it via getRecords
+        const getRecordsWire = await setupElement(config, GetRecords);
+        expect(getRecordWire1.pushCount()).toBe(1); // first record
+        expect(getRecordWire2.pushCount()).toBe(1); // second record
+        expect(getRecordsWire.pushCount()).toBe(1);
+        const getRecordsMock = convertRecordMocktoGetRecordsMockShape([
+            recordMock1,
+            recordMock2,
+            recordMock3,
+        ]);
+        expect(getRecordsWire.getWiredData()).toEqualSnapshotWithoutEtags(getRecordsMock);
+    });
+    // 1. fetch record 1 with getRecord
+    // 2. expire record 1
+    // 3. fetch record 2 with getRecord
+    // 4. fetch record 1 and 2 with getRecords
+    // 5. should result in a networkRequest with 1 and 2
+    it('should refetch record expired due to ttl ', async () => {
+        const recordMock1 = getMock('record-single-record-Account');
+        const recordMock2 = getMock('record-single-record-Account2');
+        const combinedMock = getMock('records-multiple-record-Accounts');
+        // Fetch Record 1
+        const recordId1 = recordMock1.id;
+        const recordId2 = recordMock2.id;
+
+        const recordConfig1 = {
+            recordId: recordId1,
+            fields: [ACCOUNT_ID_FIELD_STRING, ACCOUNT_NAME_FIELD_STRING],
+        };
+
+        const recordConfig2 = {
+            recordId: recordId2,
+            fields: [ACCOUNT_ID_FIELD_STRING, ACCOUNT_NAME_FIELD_STRING],
+        };
+        mockGetRecordNetwork(recordConfig1, recordMock1);
+        const elem = await setupElement(recordConfig1, RecordFields);
+        // expire record 1
+        expireRecords();
+        // fetch record 2
+        mockGetRecordNetwork(recordConfig2, recordMock2);
+        const secondElm = await setupElement(recordConfig2, RecordFields);
+        // get both
+
+        const config = {
+            records: [
+                {
+                    recordIds: [recordId1, recordId2],
+                    fields: [ACCOUNT_ID_FIELD_STRING, ACCOUNT_NAME_FIELD_STRING],
+                },
+            ],
+        };
+        mockGetRecordsNetwork(config, combinedMock);
+        expect(elem.pushCount()).toBe(1);
+        expect(secondElm.pushCount()).toBe(1);
+        const getRecordsWire = await setupElement(config, GetRecords);
+        expect(getRecordsWire.pushCount()).toBe(1);
+        // remove hasErrors property from comparison object
+        delete combinedMock.hasErrors;
+        expect(getRecordsWire.getWiredData()).toEqualSnapshotWithoutEtags(combinedMock);
     });
 });

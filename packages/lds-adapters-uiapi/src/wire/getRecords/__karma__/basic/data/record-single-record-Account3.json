@@ -1,18 +1,18 @@
 {
     "apiName": "Account",
     "childRelationships": {},
-    "eTag": "02980ad03e45739b08edce63998d0120",
+    "eTag": "f6d89873196b7c9e557472389e267ef3",
     "fields": {
         "Id": {
             "displayValue": null,
-            "value": "001T1000002GSZcIAO"
+            "value": "001T1000002GSZmIAO"
         },
         "Name": {
             "displayValue": null,
-            "value": "Edge Communications"
+            "value": "GenePoint"
         }
     },
-    "id": "001T1000002GSZcIAO",
+    "id": "001T1000002GSZmIAO",
     "lastModifiedById": "005T1000000DwbdIAC",
     "lastModifiedDate": "2020-10-12T20:42:25.000Z",
     "recordTypeId": "012000000000000AAA",

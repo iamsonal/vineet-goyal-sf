@@ -1,19 +1,24 @@
 {
-    "hasErrors": false,
+    "hasErrors": true,
     "results": [
+        {
+            "result": [
+                {
+                    "errorCode": "NOT_FOUND",
+                    "message": "Resource not found."
+                }
+            ],
+            "statusCode": 404
+        },
         {
             "result": {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "49484be4ed9a7d214ebfa6db6bfb03c6",
+                "eTag": "54d3e4a4f47a10c17c52c33123ea657f",
                 "fields": {
-                    "Id": {
+                    "Site": {
                         "displayValue": null,
-                        "value": "001T1000002GSZdIAO"
-                    },
-                    "Name": {
-                        "displayValue": null,
-                        "value": "Burlington Textiles Corp of America"
+                        "value": null
                     }
                 },
                 "id": "001T1000002GSZdIAO",
@@ -25,6 +30,15 @@
                 "weakEtag": 1602535345000
             },
             "statusCode": 200
+        },
+        {
+            "result": [
+                {
+                    "errorCode": "NOT_FOUND",
+                    "message": "Resource not found."
+                }
+            ],
+            "statusCode": 404
         }
     ]
 }

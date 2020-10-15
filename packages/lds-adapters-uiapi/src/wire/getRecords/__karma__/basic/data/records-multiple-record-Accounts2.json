@@ -50,6 +50,31 @@
                 "weakEtag": 1602535345000
             },
             "statusCode": 200
+        },
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "f6d89873196b7c9e557472389e267ef3",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "001T1000002GSZmIAO"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "GenePoint"
+                    }
+                },
+                "id": "001T1000002GSZmIAO",
+                "lastModifiedById": "005T1000000DwbdIAC",
+                "lastModifiedDate": "2020-10-12T20:42:25.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-10-12T20:42:25.000Z",
+                "weakEtag": 1602535345000
+            },
+            "statusCode": 200
         }
     ]
 }

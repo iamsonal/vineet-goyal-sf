@@ -1,0 +1,23 @@
+{
+    "hasErrors": true,
+    "results": [
+        {
+            "result": [
+                {
+                    "errorCode": "NOT_FOUND",
+                    "message": "Resource not found."
+                }
+            ],
+            "statusCode": 404
+        },
+        {
+            "result": [
+                {
+                    "errorCode": "NOT_FOUND",
+                    "message": "Resource not found."
+                }
+            ],
+            "statusCode": 404
+        }
+    ]
+}

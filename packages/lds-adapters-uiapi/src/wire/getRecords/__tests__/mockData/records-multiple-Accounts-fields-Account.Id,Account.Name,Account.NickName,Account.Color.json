@@ -1,0 +1,71 @@
+{
+    "hasErrors": false,
+    "results": [
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "14987c9ec451f56582caaecf1d23e9ac",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "001xx000003Gn4WAAS"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Burlington Textiles Corp of America"
+                    },
+                    "NickName": {
+                        "displayValue": null,
+                        "value": "Burly"
+                    },
+                    "Color": {
+                        "displayValue": null,
+                        "value": "Green"
+                    }
+                },
+                "id": "001xx000003Gn4WAAS",
+                "lastModifiedById": "005T1000000DvlhIAC",
+                "lastModifiedDate": "2020-09-17T01:41:35.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-09-17T01:41:35.000Z",
+                "weakEtag": 1600306895000
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "b759c39126c391ad05355950d277aec6",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "001xx000003Gn4WAAT"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Edge Communications"
+                    },
+                    "NickName": {
+                        "displayValue": null,
+                        "value": "Edgy"
+                    },
+                    "Color": {
+                        "displayValue": null,
+                        "value": "Blue"
+                    }
+                },
+                "id": "001xx000003Gn4WAAT",
+                "lastModifiedById": "005T1000000DvlhIAC",
+                "lastModifiedDate": "2020-09-17T01:41:35.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-09-17T01:41:35.000Z",
+                "weakEtag": 1600306895000
+            },
+            "statusCode": 200
+        }
+    ]
+}

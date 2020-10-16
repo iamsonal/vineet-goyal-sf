@@ -7,6 +7,7 @@ import {
     COMMERCE_BASE_URI,
     CONNECT_BASE_URI,
     GUIDANCE_BASE_URI,
+    WAVE_BASE_URI,
 } from '../middlewares/connect-base';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 import { ControllerInvoker } from '../middlewares/utils';
@@ -3435,6 +3436,128 @@ describe('routes', () => {
                     data: 'data',
                 },
             }
+        );
+    });
+
+    describe('get /wave/dataflowjobs', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataflowjobs`,
+            },
+            [
+                'WaveController.getDataflowJobs',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataflowjobs`,
+            },
+            {}
+        );
+    });
+
+    describe('get /wave/dataflowjobs/{dataflowjobId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataflowjobs/03CRM0000006tEf2AI`,
+            },
+            [
+                'WaveController.getDataflowJob',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataflowjobs/03CRM0000006tEf2AI`,
+            },
+            {}
+        );
+    });
+
+    describe('patch /wave/dataflowjobs/{dataflowjobId}', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataflowjobs/03CRM0000006tEf2AI`,
+                body: { command: 'stop' },
+            },
+            [
+                'WaveController.updateDataflowJob',
+                { command: 'stop' },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'patch',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataflowjobs/03CRM0000006tEf2AI`,
+                body: { command: 'stop' },
+            },
+            {}
+        );
+    });
+
+    describe('get /wave/dataflowjobs/{dataflowjobId}/nodes', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataflowjobs/03CRM0000006tEf2AI/nodes`,
+            },
+            [
+                'WaveController.getDataflowJobNodes',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataflowjobs/03CRM0000006tEf2AI/nodes`,
+            },
+            {}
+        );
+    });
+
+    describe('get /wave/dataflowjobs/{dataflowjobId}/nodes/{nodeId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataflowjobs/03CRM0000006tEf2AI/nodes/03LRM000000Bg4P2AS`,
+            },
+            [
+                'WaveController.getDataflowJobNode',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataflowjobs/03CRM0000006tEf2AI/nodes/03LRM000000Bg4P2AS`,
+            },
+            {}
         );
     });
 

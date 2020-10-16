@@ -4,4 +4,34 @@ extends: ./api.raml
 uses:
   lds: lds://annotations.raml
 
-(lds.keyPrefix): 'Wave::'
+(lds.keyPrefix): 'WAVE::'
+
+types:
+  BaseWaveAssetRepresentation:
+    (lds.key):
+      id: id
+
+/wave:
+  /dataflowjobs:
+    get:
+      (lds.adapter):
+        name: getDataflowJobs
+  /dataflowjobs/{dataflowjobId}:
+    get:
+      (lds.adapter):
+        name: getDataflowJob
+      (lds.key):
+        id: urlParams.dataflowjobId
+    patch:
+      (lds.adapter):
+        name: updateDataflowJob
+  /dataflowjobs/{dataflowjobId}/nodes:
+    get:
+      (lds.adapter):
+        name: getDataflowJobNodes
+  /dataflowjobs/{dataflowjobId}/nodes/{nodeId}:
+    get:
+      (lds.adapter):
+        name: getDataflowJobNode
+      (lds.key):
+        id: urlParams.nodeId

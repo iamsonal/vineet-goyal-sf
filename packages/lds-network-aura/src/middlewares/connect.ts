@@ -1,5 +1,10 @@
 import { ApiFamily, registerApiFamilyRoutes } from './utils';
-import { CONNECT_BASE_URI, COMMERCE_BASE_URI, GUIDANCE_BASE_URI } from './connect-base';
+import {
+    CONNECT_BASE_URI,
+    COMMERCE_BASE_URI,
+    GUIDANCE_BASE_URI,
+    WAVE_BASE_URI,
+} from './connect-base';
 
 const COMMUNITIES_NAVIGATION_MENU_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/navigation-menu`,
@@ -38,6 +43,20 @@ const GET_GUIDANCE_QUESTIONNAIRE_PATH = new RegExp(
 
 const GET_GUIDANCE_ACTIVE_QUESTIONNAIRES_PATH = new RegExp(
     `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){2,32}/questionnaires$`,
+    'i'
+);
+
+const DATAFLOW_JOBS_PATH = new RegExp(`${WAVE_BASE_URI}/dataflowjobs$`, 'i');
+
+const DATAFLOW_JOB_PATH = new RegExp(`${WAVE_BASE_URI}/dataflowjobs/([A-Z0-9_]){15,18}$`, 'i');
+
+const DATAFLOW_JOB_NODES_PATH = new RegExp(
+    `${WAVE_BASE_URI}/dataflowjobs/([A-Z0-9_]){15,18}/nodes$`,
+    'i'
+);
+
+const DATAFLOW_JOB_NODE_PATH = new RegExp(
+    `${WAVE_BASE_URI}/dataflowjobs/([A-Z0-9_]){15,18}/nodes/([A-Z0-9_]){15,18}$`,
     'i'
 );
 
@@ -131,6 +150,48 @@ const guidance: ApiFamily = {
     },
 };
 
+const analytics: ApiFamily = {
+    getDataflowJobs: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && DATAFLOW_JOBS_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getDataflowJobs',
+        },
+    },
+    getDataflowJob: {
+        method: 'get',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && DATAFLOW_JOB_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getDataflowJob',
+        },
+    },
+    updateDataflowJob: {
+        method: 'patch',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && DATAFLOW_JOB_PATH.test(path),
+        transport: {
+            controller: 'WaveController.updateDataflowJob',
+        },
+    },
+    getDataflowJobNodes: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && DATAFLOW_JOB_NODES_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getDataflowJobNodes',
+        },
+    },
+    getDataflowJobNode: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && DATAFLOW_JOB_NODE_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getDataflowJobNode',
+        },
+    },
+};
+
 registerApiFamilyRoutes(connect);
 registerApiFamilyRoutes(commerce);
 registerApiFamilyRoutes(guidance);
+registerApiFamilyRoutes(analytics);

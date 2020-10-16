@@ -1,0 +1,30 @@
+{
+    "duration": 0,
+    "id": "03LRM000000Bg4P2AS",
+    "label": "Extract_Root_Table",
+    "message": "",
+    "name": "Extract_Root_Table",
+    "nodeType": "internal",
+    "inputRows": {
+        "failedCount": 0,
+        "processedCount": 706
+    },
+    "outputRows": {
+        "failedCount": 0,
+        "processedCount": 706
+    },
+    "startDate": "2020-10-01T07:00:04.692Z",
+    "status": "success",
+    "type": "dataflowjobnode",
+    "url": "/services/data/v51.0/wave/dataflowjobs/03CRM0000006tEf2AI/nodes/03LRM000000Bg4P2AS",
+    "assetSharingUrl": "https://HOST/analytics/wave/dataflowjobs?assetId=03LRM000000Bg4P2AS&orgId=ORG_ID&loginHost=HOST&urlType=sharing",
+    "description": "",
+    "lastAccessedDate": "",
+    "createdBy": { "id": "", "name": "", "profilePhotoUrl": "" },
+    "lastModifiedBy": { "id": "", "name": "", "profilePhotoUrl": "" },
+    "lastModifiedDate": "",
+    "namespace": "",
+    "permissions": { "create": true, "manage": true, "modify": true, "view": true },
+    "createdDate": "",
+    "errorLogUrl": ""
+}

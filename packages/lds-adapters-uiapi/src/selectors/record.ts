@@ -84,6 +84,17 @@ export const FIELDS_SELECTION: PathSelection = {
     name: 'fields',
 };
 
+// This selection is a client-side only selection and will only
+// be applied to a RecordRepresentation in environments configured with
+// drafts when the record has draft changes applied to it
+// TODO W-8237087 - explore if this selection can only be added in environments where drafts are enabled
+const DRAFTS_SELECTION: PathSelection = {
+    kind: 'Object',
+    opaque: true,
+    name: 'drafts',
+    required: false,
+};
+
 export function isSpanningRecord(
     fieldValue: null | string | number | boolean | RecordRepresentation
 ): fieldValue is RecordRepresentation {
@@ -167,6 +178,7 @@ function convertTrieToSelection(fieldDefinition: RecordFieldTrie): PathSelection
         API_NAME_SELECTION,
         CHILD_RELATIONSHIP_SELECTION,
         ID_SELECTION,
+        DRAFTS_SELECTION,
         LAST_MODIFIED_BY_ID_SELECTION,
         LAST_MODIFIED_BY_DATE_SELECTION,
         RECORD_TYPE_ID_SELECTION,
@@ -244,6 +256,7 @@ export function buildSelectionFromRecord(record: RecordRepresentationLike): Path
         API_NAME_SELECTION,
         CHILD_RELATIONSHIP_SELECTION,
         ID_SELECTION,
+        DRAFTS_SELECTION,
         LAST_MODIFIED_BY_ID_SELECTION,
         LAST_MODIFIED_BY_DATE_SELECTION,
         RECORD_TYPE_ID_SELECTION,

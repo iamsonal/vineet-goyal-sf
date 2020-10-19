@@ -15,6 +15,12 @@ Array [
     "name": "id",
   },
   Object {
+    "kind": "Object",
+    "name": "drafts",
+    "opaque": true,
+    "required": false,
+  },
+  Object {
     "kind": "Scalar",
     "name": "lastModifiedById",
   },
@@ -89,6 +95,12 @@ Array [
                   Object {
                     "kind": "Scalar",
                     "name": "id",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "drafts",
+                    "opaque": true,
+                    "required": false,
                   },
                   Object {
                     "kind": "Scalar",
@@ -209,6 +221,12 @@ Array [
     "name": "id",
   },
   Object {
+    "kind": "Object",
+    "name": "drafts",
+    "opaque": true,
+    "required": false,
+  },
+  Object {
     "kind": "Scalar",
     "name": "lastModifiedById",
   },
@@ -272,6 +290,12 @@ Array [
   Object {
     "kind": "Scalar",
     "name": "id",
+  },
+  Object {
+    "kind": "Object",
+    "name": "drafts",
+    "opaque": true,
+    "required": false,
   },
   Object {
     "kind": "Scalar",
@@ -348,6 +372,12 @@ Array [
                   Object {
                     "kind": "Scalar",
                     "name": "id",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "drafts",
+                    "opaque": true,
+                    "required": false,
                   },
                   Object {
                     "kind": "Scalar",
@@ -468,6 +498,12 @@ Array [
     "name": "id",
   },
   Object {
+    "kind": "Object",
+    "name": "drafts",
+    "opaque": true,
+    "required": false,
+  },
+  Object {
     "kind": "Scalar",
     "name": "lastModifiedById",
   },
@@ -542,6 +578,12 @@ Array [
                   Object {
                     "kind": "Scalar",
                     "name": "id",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "drafts",
+                    "opaque": true,
+                    "required": false,
                   },
                   Object {
                     "kind": "Scalar",
@@ -672,6 +714,12 @@ Array [
                     "name": "id",
                   },
                   Object {
+                    "kind": "Object",
+                    "name": "drafts",
+                    "opaque": true,
+                    "required": false,
+                  },
+                  Object {
                     "kind": "Scalar",
                     "name": "lastModifiedById",
                   },
@@ -790,6 +838,12 @@ Array [
     "name": "id",
   },
   Object {
+    "kind": "Object",
+    "name": "drafts",
+    "opaque": true,
+    "required": false,
+  },
+  Object {
     "kind": "Scalar",
     "name": "lastModifiedById",
   },
@@ -861,6 +915,12 @@ Array [
                   Object {
                     "kind": "Scalar",
                     "name": "id",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "drafts",
+                    "opaque": true,
+                    "required": false,
                   },
                   Object {
                     "kind": "Scalar",
@@ -1024,6 +1084,12 @@ Array [
                   Object {
                     "kind": "Scalar",
                     "name": "id",
+                  },
+                  Object {
+                    "kind": "Object",
+                    "name": "drafts",
+                    "opaque": true,
+                    "required": false,
                   },
                   Object {
                     "kind": "Scalar",

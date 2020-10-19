@@ -7,17 +7,11 @@ uses:
 (lds.keyPrefix): 'CMS::'
 
 types:
-  ManagedContentChannelCollectionRepresentation:
-    (lds.opaque): true
-  ManagedContentVersionCollectionRepresentation:
+  ManagedContentVersionInternalRepresentation:
+    (lds.ttl): 3600000
     (lds.opaque): true
 
-/connect/cms/delivery/channels:
+/connect/communities/{communityId}/managed-content/delivery/contents:
   get:
     (lds.adapter):
-      name: getDeliveryChannels
-/connect/cms/delivery/channels/{channelId}/contents:
-  /query:
-    get:
-      (lds.adapter):
-        name: listContent
+      name: listContentInternal

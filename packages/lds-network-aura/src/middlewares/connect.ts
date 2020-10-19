@@ -60,6 +60,11 @@ const DATAFLOW_JOB_NODE_PATH = new RegExp(
     'i'
 );
 
+const LIST_CONTENT_INTERNAL_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/managed-content/delivery/contents`,
+    'i'
+);
+
 const connect: ApiFamily = {
     getCommunityNavigationMenu: {
         method: 'get',
@@ -67,6 +72,14 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && COMMUNITIES_NAVIGATION_MENU_PATH.test(path),
         transport: {
             controller: 'NavigationMenuController.getCommunityNavigationMenu',
+        },
+    },
+    listContentInternal: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && LIST_CONTENT_INTERNAL_PATH.test(path),
+        transport: {
+            controller: 'ManagedContentController.getPublishedManagedContentListByContentKey',
         },
     },
 };

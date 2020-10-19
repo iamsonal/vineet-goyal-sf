@@ -8,13 +8,17 @@ import {
     keyBuilder as recordRepresentationKeyBuilder,
 } from '../../generated/types/RecordRepresentation';
 import postUiApiRecords from '../../generated/resources/postUiApiRecords';
-import { ingest } from '../../overrides/types/RecordRepresentation';
 import { createResourceParams, CreateRecordConfig } from '../../generated/adapters/createRecord';
+import { BLANK_RECORD_FIELDS_TRIE } from '../../util/records';
+import { createRecordIngest } from '../../util/record-ingest';
 
 export const factory = (lds: LDS) => {
     return function(untrustedConfig: unknown): Promise<Snapshot<RecordRepresentation>> {
         const resourceParams = createResourceParams(untrustedConfig as CreateRecordConfig);
         const request = postUiApiRecords(resourceParams);
+        const fieldTrie = BLANK_RECORD_FIELDS_TRIE;
+        const optionalFieldTrie = BLANK_RECORD_FIELDS_TRIE;
+        const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie);
         return lds.dispatchResourceRequest<RecordRepresentation>(request).then(
             response => {
                 const { body } = response;
@@ -24,7 +28,7 @@ export const factory = (lds: LDS) => {
                     recordId: body.id,
                 });
 
-                lds.storeIngest(key, ingest, body);
+                lds.storeIngest(key, recordIngest, body);
                 lds.storeBroadcast();
 
                 return lds.storeLookup({

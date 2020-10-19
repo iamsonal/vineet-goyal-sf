@@ -15,7 +15,8 @@ import {
 } from '../../generated/adapters/updateRecord';
 import patchUiApiRecordsByRecordId from '../../generated/resources/patchUiApiRecordsByRecordId';
 import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
-import { ingest } from '../../overrides/types/RecordRepresentation';
+import { BLANK_RECORD_FIELDS_TRIE } from '../../util/records';
+import { createRecordIngest } from '../../util/record-ingest';
 
 export interface ClientOptions {
     ifUnmodifiedSince?: string;
@@ -58,6 +59,11 @@ export const factory = (lds: LDS) => {
 
         const resourceParams = createResourceParams({ ...config, ...headers });
         const request = patchUiApiRecordsByRecordId(resourceParams);
+
+        const fieldTrie = BLANK_RECORD_FIELDS_TRIE;
+        const optionalFieldTrie = BLANK_RECORD_FIELDS_TRIE;
+        const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie);
+
         return lds.dispatchResourceRequest<RecordRepresentation>(request).then(
             response => {
                 const { body } = response;
@@ -67,7 +73,7 @@ export const factory = (lds: LDS) => {
                     recordId,
                 });
 
-                lds.storeIngest(key, ingest, body);
+                lds.storeIngest(key, recordIngest, body);
                 lds.storeBroadcast();
 
                 return lds.storeLookup<RecordRepresentation>({

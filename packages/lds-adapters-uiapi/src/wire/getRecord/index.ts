@@ -18,6 +18,10 @@ import {
 import { getRecordByFields } from './GetRecordFields';
 import { getRecordLayoutType, GetRecordLayoutTypeConfig } from './GetRecordLayoutType';
 import { createRecordIngest } from '../../util/record-ingest';
+import {
+    RecordConflictMap,
+    resolveConflict,
+} from '../../helpers/RecordRepresentation/resolveConflict';
 
 // Custom adapter config due to `unsupported` items
 const GET_RECORD_ADAPTER_CONFIG: AdapterValidationConfig = {
@@ -100,13 +104,15 @@ export const notifyChangeFactory = (lds: LDS) => {
 
             const fieldTrie = convertFieldsToTrie([], false);
             const optionalFieldTrie = convertFieldsToTrie(optionalFields, true);
-            const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie);
+            const recordConflict: RecordConflictMap = {} as RecordConflictMap;
+            const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie, recordConflict);
 
             // dispatch resource request, then ingest and broadcast
             lds.dispatchResourceRequest<RecordRepresentation>(refreshRequest).then(
                 response => {
                     const { body } = response;
                     lds.storeIngest<RecordRepresentation>(key, recordIngest, body);
+                    resolveConflict(lds, recordConflict);
                     const recordNode = lds.getNode<
                         RecordRepresentationNormalized,
                         RecordRepresentation

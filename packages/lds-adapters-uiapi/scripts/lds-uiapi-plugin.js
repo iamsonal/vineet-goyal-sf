@@ -28,6 +28,7 @@ const RAML_ARTIFACTS = {
         'selectChildResourceParams',
         'ingestSuccessChildResourceParams',
     ],
+    '/resources/getUiApiRecordsByRecordId': ['createResourceRequest'],
     '/adapters/getRecords': [
         'GetRecordsConfig',
         'getRecords_ConfigPropertyNames',

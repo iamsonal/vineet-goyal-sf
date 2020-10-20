@@ -1,7 +1,7 @@
 import { AdapterFactory, FetchResponse, GraphNode, LDS, Snapshot } from '@ldsjs/engine';
 import { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
 import { GetRecordConfig, validateAdapterConfig } from '../../generated/adapters/getRecord';
-import getUiApiRecordsByRecordId from '../../generated/resources/getUiApiRecordsByRecordId';
+import { createResourceRequest as getUiApiRecordsByRecordId } from '../../raml-artifacts/resources/getUiApiRecordsByRecordId/createResourceRequest';
 import {
     keyBuilder,
     KeyParams,

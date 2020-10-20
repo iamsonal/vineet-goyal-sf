@@ -8,10 +8,8 @@ import {
     ResourceResponse,
 } from '@ldsjs/engine';
 import { GetRecordConfig, createResourceParams } from '../../generated/adapters/getRecord';
-import {
-    keyBuilder,
-    createResourceRequest,
-} from '../../generated/resources/getUiApiRecordsByRecordId';
+import { keyBuilder } from '../../generated/resources/getUiApiRecordsByRecordId';
+import { createResourceRequest } from '../../raml-artifacts/resources/getUiApiRecordsByRecordId/createResourceRequest';
 import { TTL as RecordRepresentationTTL } from '../../generated/types/RecordRepresentation';
 import {
     keyBuilder as recordRepresentationKeyBuilder,

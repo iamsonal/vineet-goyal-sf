@@ -4,11 +4,11 @@ import {
     FieldValueRepresentationNormalized,
 } from '../../../generated/types/FieldValueRepresentation';
 import normalize from '../normalize';
-import { ingest as RecordRepresentation_ingest } from '../../../generated/types/RecordRepresentation';
+import { ingest as RecordRepresentation_ingest } from '../../../raml-artifacts/types/RecordRepresentation/ingest';
 import { createRecordIngest } from '../../../util/record-ingest';
 import { convertFieldsToTrie } from '../../../util/records';
 
-jest.mock('../../../generated/types/RecordRepresentation');
+jest.mock('../../../raml-artifacts/types/RecordRepresentation/ingest');
 jest.mock('../../../util/record-ingest');
 
 function clone<T>(value: T): T {

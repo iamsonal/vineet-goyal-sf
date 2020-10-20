@@ -85,10 +85,8 @@ export {
 
 // This ingestion method needs to be exposed to ingest records coming from the ADS Bridge.
 // TODO W-5971944 - remove the ADS bridge and these exports
-export {
-    ingest as ingestRecord,
-    keyBuilder as keyBuilderRecord,
-} from './generated/types/RecordRepresentation';
+export { keyBuilder as keyBuilderRecord } from './generated/types/RecordRepresentation';
+export { ingest as ingestRecord } from './raml-artifacts/types/RecordRepresentation/ingest';
 export {
     keyBuilder as keyBuilderObjectInfo,
     ingest as ingestObjectInfo,

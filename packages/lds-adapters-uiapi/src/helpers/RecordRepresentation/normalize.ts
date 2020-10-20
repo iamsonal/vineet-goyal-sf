@@ -5,7 +5,7 @@ import {
     RecordRepresentation,
 } from '../../generated/types/RecordRepresentation';
 import { ingest as RecordCollectionRepresentation_ingest } from '../../generated/types/RecordCollectionRepresentation';
-import { ingest as FieldValueRepresentation_ingest } from '../../overrides/types/FieldValueRepresentation';
+import { ingest as FieldValueRepresentation_ingest } from '../../raml-artifacts/types/FieldValueRepresentation/ingest';
 import { BLANK_RECORD_FIELDS_TRIE, RecordFieldTrie } from '../../util/records';
 import { RecordConflictMap } from './resolveConflict';
 import { convertTrieToFields } from '../../util/records';

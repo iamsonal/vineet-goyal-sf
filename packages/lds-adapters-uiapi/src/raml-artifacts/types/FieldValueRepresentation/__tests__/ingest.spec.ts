@@ -1,18 +1,18 @@
 import { LDS, Store, Environment } from '@ldsjs/engine';
-import { ingest } from '../FieldValueRepresentation';
-import { RecordFieldTrie } from '../../../util/records';
+import { ingest } from '../ingest';
+import { RecordFieldTrie } from '../../../../util/records';
 import {
     FieldValueRepresentation,
     FieldValueRepresentationNormalized,
-} from '../../../generated/types/FieldValueRepresentation';
-import { default as normalize } from '../../../helpers/FieldValueRepresentation/normalize';
-import { default as merge } from '../../../helpers/FieldValueRepresentation/merge';
-import { RecordConflictMap } from '../../../helpers/RecordRepresentation/resolveConflict';
+} from '../../../../generated/types/FieldValueRepresentation';
+import { default as normalize } from '../../../../helpers/FieldValueRepresentation/normalize';
+import { default as merge } from '../../../../helpers/FieldValueRepresentation/merge';
+import { RecordConflictMap } from '../../../../helpers/RecordRepresentation/resolveConflict';
 
-jest.mock('../../../helpers/FieldValueRepresentation/merge');
-jest.mock('../../../helpers/FieldValueRepresentation/normalize');
+jest.mock('../../../../helpers/FieldValueRepresentation/merge');
+jest.mock('../../../../helpers/FieldValueRepresentation/normalize');
 
-describe('FieldValueRepresentation', () => {
+describe('ingest', () => {
     let store = new Store();
     let lds = new LDS(new Environment(store, jest.fn()));
 

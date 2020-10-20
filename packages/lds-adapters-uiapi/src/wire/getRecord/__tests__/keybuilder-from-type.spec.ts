@@ -1,7 +1,5 @@
-import {
-    keyBuilderFromType,
-    RecordRepresentation,
-} from '../../../generated/types/RecordRepresentation';
+import { RecordRepresentation } from '../../../generated/types/RecordRepresentation';
+import { keyBuilderFromType } from '../../../raml-artifacts/types/RecordRepresentation/keyBuilderFromType';
 
 describe('keyBuilderFromType', () => {
     it('returns RecordRepresentation key when apiName is not Name', () => {

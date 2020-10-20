@@ -1,9 +1,9 @@
 import { LDS, IngestPath, Store, Environment } from '@ldsjs/engine';
 import normalize from '../normalize';
-import { ingest as FieldValueRepresentation_ingest } from '../../../overrides/types/FieldValueRepresentation';
+import { ingest as FieldValueRepresentation_ingest } from '../../../raml-artifacts/types/FieldValueRepresentation/ingest';
 import { convertFieldsToTrie } from '../../../util/records';
 
-jest.mock('../../../overrides/types/FieldValueRepresentation');
+jest.mock('../../../raml-artifacts/types/FieldValueRepresentation/ingest');
 
 function clone<T>(value: T): T {
     return JSON.parse(JSON.stringify(value));

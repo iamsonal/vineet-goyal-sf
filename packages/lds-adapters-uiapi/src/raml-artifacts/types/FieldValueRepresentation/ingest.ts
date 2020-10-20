@@ -1,28 +1,14 @@
-import { StoreLink, IngestPath, LDS, Store } from '@ldsjs/engine';
+import { IngestPath, LDS, Store, StoreLink } from '@ldsjs/engine';
 import {
-    FieldValueRepresentationNormalized,
+    equals,
     FieldValueRepresentation,
     validate,
-    normalize,
-    select,
-    equals,
-    deepFreeze,
-} from '../../generated/types/FieldValueRepresentation';
-import { createLink } from '../../generated/types/type-utils';
-import { default as helpers_FieldValueRepresentation_merge_default } from '../../helpers/FieldValueRepresentation/merge';
-import { default as helpers_FieldValueRepresentation_normalize_default } from '../../helpers/FieldValueRepresentation/normalize';
-import { RecordFieldTrie } from '../../util/records';
-import { RecordConflictMap } from '../../helpers/RecordRepresentation/resolveConflict';
-
-export {
-    FieldValueRepresentationNormalized,
-    FieldValueRepresentation,
-    validate,
-    normalize,
-    select,
-    equals,
-    deepFreeze,
-};
+} from '../../../generated/types/FieldValueRepresentation';
+import { createLink } from '../../../generated/types/type-utils';
+import { default as helpers_FieldValueRepresentation_merge_default } from '../../../helpers/FieldValueRepresentation/merge';
+import { default as helpers_FieldValueRepresentation_normalize_default } from '../../../helpers/FieldValueRepresentation/normalize';
+import { RecordConflictMap } from '../../../helpers/RecordRepresentation/resolveConflict';
+import { RecordFieldTrie } from '../../../util/records';
 
 export function ingest(
     input: FieldValueRepresentation,

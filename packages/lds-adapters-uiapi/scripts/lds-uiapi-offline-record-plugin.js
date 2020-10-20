@@ -196,7 +196,8 @@ function generateRecordRetrievers(compilerConfig, modelInfo) {
         `import { ${RETRIEVER_INTERFACE_NAME}, ${RETRIEVED_TYPE_NAME} } from "@ldsjs/environments"`,
         `import { isSpanningRecord } from "../../selectors/record";`,
         'import { ObjectKeys } from "../../util/language"',
-        `import { ${RECORD_REPRESENTATION}, keyBuilderFromType } from "../types/${RECORD_REPRESENTATION}"`,
+        `import { ${RECORD_REPRESENTATION} } from "../types/${RECORD_REPRESENTATION}"`,
+        `import { keyBuilderFromType } from "../../raml-artifacts/types/${RECORD_REPRESENTATION}/keyBuilderFromType"`,
     ].join('\n');
 
     const helperDef = dedent`

@@ -3,7 +3,7 @@ import {
     FieldValueRepresentationNormalized,
     FieldValueRepresentation,
 } from '../../generated/types/FieldValueRepresentation';
-import { ingest as RecordRepresentation_ingest } from '../../generated/types/RecordRepresentation';
+import { ingest as RecordRepresentation_ingest } from '../../raml-artifacts/types/RecordRepresentation/ingest';
 import { createRecordIngest } from '../../util/record-ingest';
 import { RecordFieldTrie } from '../../util/records';
 import { RecordConflictMap } from '../RecordRepresentation/resolveConflict';

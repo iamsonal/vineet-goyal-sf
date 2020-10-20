@@ -13,10 +13,10 @@ export { untrustedIsObject } from './generated/adapters/adapter-utils';
 export {
     RecordRepresentation,
     RecordRepresentationNormalized,
-    ingest as ingestRecord,
     keyBuilder as keyBuilderRecord,
     KeyParams as KeyParamsRecord,
 } from './generated/types/RecordRepresentation';
+export { ingest as ingestRecord } from './raml-artifacts/types/RecordRepresentation/ingest';
 export {
     ObjectInfoRepresentation,
     keyBuilder as keyBuilderObjectInfo,

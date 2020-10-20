@@ -37,6 +37,8 @@ const RAML_ARTIFACTS = {
         'onResourceResponseSuccess',
         'typeCheckConfig',
     ],
+    '/types/FieldValueRepresentation': ['ingest'],
+    '/types/RecordRepresentation': ['keyBuilderFromType', 'ingest'],
 };
 const ramlArtifactsKeys = Object.keys(RAML_ARTIFACTS);
 

@@ -1,9 +1,11 @@
-jest.mock('../../overrides/types/RecordRepresentation');
+jest.mock('../../generated/types/RecordRepresentation');
 jest.mock('../../generated/types/type-utils');
 jest.mock('../../helpers/RecordRepresentation/merge');
 jest.mock('../../helpers/RecordRepresentation/normalize');
+jest.mock('../../raml-artifacts/types/RecordRepresentation/keyBuilderFromType');
 
-import { validate, keyBuilderFromType, equals } from '../../overrides/types/RecordRepresentation';
+import { validate, equals } from '../../generated/types/RecordRepresentation';
+import { keyBuilderFromType } from '../../raml-artifacts/types/RecordRepresentation/keyBuilderFromType';
 import normalize from '../../helpers/RecordRepresentation/normalize';
 import merge from '../../helpers/RecordRepresentation/merge';
 import { createLink } from '../../generated/types/type-utils';

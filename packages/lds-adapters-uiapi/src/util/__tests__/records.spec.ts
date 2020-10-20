@@ -2,11 +2,11 @@ import { Store, LDS, Environment } from '@ldsjs/engine';
 
 import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
 import {
-    ingest,
     keyBuilder,
     RecordRepresentation,
     RecordRepresentationNormalized,
-} from '../../overrides/types/RecordRepresentation';
+} from '../../generated/types/RecordRepresentation';
+import { ingest } from '../../raml-artifacts/types/RecordRepresentation/ingest';
 import {
     createRecordInputFilteredByEditedFields,
     generateRecordInputForCreate,

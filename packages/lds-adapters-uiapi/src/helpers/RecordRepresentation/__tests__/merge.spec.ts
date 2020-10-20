@@ -2,8 +2,9 @@ import merge from '../merge';
 import { buildNetworkSnapshot } from '../../../wire/getRecord/GetRecordFields';
 import { LDS, Store, Environment } from '@ldsjs/engine';
 import createRecordData from '../../../../src/util/__tests__/data/createSampleData';
-import { normalize } from '../../../generated/types/RecordRepresentation';
-import { ingest, keyBuilder } from '../../../overrides/types/RecordRepresentation';
+import { normalize, keyBuilder } from '../../../generated/types/RecordRepresentation';
+import { ingest } from '../../../raml-artifacts/types/RecordRepresentation/ingest';
+
 jest.mock('../../../wire/getRecord/GetRecordFields', () => {
     return {
         buildNetworkSnapshot: jest.fn(),

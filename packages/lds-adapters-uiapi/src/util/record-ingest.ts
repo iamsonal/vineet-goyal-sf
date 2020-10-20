@@ -1,10 +1,6 @@
 import { ResourceIngest, IngestPath, LDS, Store, StoreLink } from '@ldsjs/engine';
-import {
-    RecordRepresentation,
-    keyBuilderFromType,
-    validate,
-    equals,
-} from '../overrides/types/RecordRepresentation';
+import { RecordRepresentation, validate, equals } from '../generated/types/RecordRepresentation';
+import { keyBuilderFromType } from '../raml-artifacts/types/RecordRepresentation/keyBuilderFromType';
 import { createLink } from '../generated/types/type-utils';
 import { RecordFieldTrie } from './records';
 import merge from '../helpers/RecordRepresentation/merge';

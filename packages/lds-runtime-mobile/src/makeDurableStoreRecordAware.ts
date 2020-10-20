@@ -1,4 +1,9 @@
-import { DurableStore, DurableStoreEntries, DurableStoreEntry } from '@ldsjs/environments';
+import {
+    DurableStore,
+    DurableStoreEntries,
+    DurableStoreEntry,
+    DefaultDurableSegment,
+} from '@ldsjs/environments';
 import { ObjectCreate, ObjectKeys, ObjectAssign } from './utils/language';
 import {
     isKeyRecordOrRecordField,
@@ -51,7 +56,7 @@ export function makeDurableStoreRecordAware(
         }
 
         return durableStore
-            .getEntries(filteredEntryIds)
+            .getEntries(filteredEntryIds, DefaultDurableSegment)
             .then((durableEntries: DurableStoreEntries | undefined) => {
                 if (durableEntries === undefined) {
                     return undefined;
@@ -113,7 +118,7 @@ export function makeDurableStoreRecordAware(
             putEntries[key] = value;
         }
 
-        return durableStore.setEntries(putEntries);
+        return durableStore.setEntries(putEntries, DefaultDurableSegment);
     };
 
     return ObjectCreate(durableStore, {

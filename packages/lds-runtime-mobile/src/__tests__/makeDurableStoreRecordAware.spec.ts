@@ -1,5 +1,6 @@
-import { NimbusDurableStore } from '../NimbusDurableStore';
 import { Store } from '@ldsjs/engine';
+import { DefaultDurableSegment } from '@ldsjs/environments';
+import { NimbusDurableStore } from '../NimbusDurableStore';
 import { ObjectKeys } from '../utils/language';
 import {
     resetNimbusStoreGlobal,
@@ -42,10 +43,13 @@ describe('nimbus durable store tests', () => {
         };
         mockNimbusStoreGlobal(durableStore);
         const nimbusStore = makeDurableStoreRecordAware(new NimbusDurableStore(), store);
-        nimbusStore.setEntries({
-            [key]: { data: store.records[key] },
-            [nameKey]: { data: store.records[nameKey] },
-        });
+        nimbusStore.setEntries(
+            {
+                [key]: { data: store.records[key] },
+                [nameKey]: { data: store.records[nameKey] },
+            },
+            DefaultDurableSegment
+        );
 
         expect(ObjectKeys(durableStore.kvp).length).toBe(1);
         const data = durableStore.kvp[key];
@@ -58,7 +62,7 @@ describe('nimbus durable store tests', () => {
     it('setValues should denormalize fields', async () => {
         const durableStore = new MockNimbusDurableStore();
         const setEntriesSpy = jest.fn();
-        durableStore.setEntries = setEntriesSpy;
+        durableStore.setEntriesInSegment = setEntriesSpy;
         const key = 'UiApi::RecordRepresentation:foo';
         const nameKey = 'UiApi::RecordRepresentation:foo__fields__Name';
         const nameValue = {
@@ -80,10 +84,13 @@ describe('nimbus durable store tests', () => {
         };
         mockNimbusStoreGlobal(durableStore);
         const nimbusStore = makeDurableStoreRecordAware(new NimbusDurableStore(), store);
-        await nimbusStore.setEntries({
-            [nameKey]: { data: store.records[nameKey] },
-            [key]: { data: store.records[key] },
-        });
+        await nimbusStore.setEntries(
+            {
+                [nameKey]: { data: store.records[nameKey] },
+                [key]: { data: store.records[key] },
+            },
+            DefaultDurableSegment
+        );
 
         const setValue = setEntriesSpy.mock.calls[0][0];
         const setKeys = ObjectKeys(setValue);
@@ -115,12 +122,15 @@ describe('nimbus durable store tests', () => {
         };
         mockNimbusStoreGlobal(durableStore);
         const nimbusStore = makeDurableStoreRecordAware(new NimbusDurableStore(), store);
-        await nimbusStore.setEntries({
-            [key]: { data: store.records[key] },
-            [nameKey]: { data: store.records[nameKey] },
-        });
+        await nimbusStore.setEntries(
+            {
+                [key]: { data: store.records[key] },
+                [nameKey]: { data: store.records[nameKey] },
+            },
+            DefaultDurableSegment
+        );
 
-        const readEntries = await nimbusStore.getEntries([key, nameKey]);
+        const readEntries = await nimbusStore.getEntries([key, nameKey], DefaultDurableSegment);
         expect(ObjectKeys(readEntries).length).toBe(2);
     });
 });

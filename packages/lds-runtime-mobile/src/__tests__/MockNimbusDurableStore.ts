@@ -18,7 +18,7 @@ export function resetNimbusStoreGlobal() {
 export class MockNimbusDurableStore implements DurableStore {
     kvp: { [key: string]: string } = {};
 
-    async getEntries(ids: string[]): Promise<DurableStoreFetchResult> {
+    async getEntriesInSegment(ids: string[], _segment: string): Promise<DurableStoreFetchResult> {
         const result = {};
         let isMissingEntries = false;
         for (const id of ids) {
@@ -36,14 +36,39 @@ export class MockNimbusDurableStore implements DurableStore {
         };
     }
 
-    setEntries(entries: DurableStoreEntries): Promise<void> {
+    async getAllEntriesInSegment(_segment: string): Promise<DurableStoreFetchResult> {
+        const result = {};
+        let isMissingEntries = false;
+        const keys = Object.keys(this.kvp);
+        for (const key of keys) {
+            const val = this.kvp[key];
+            if (val === undefined) {
+                isMissingEntries = true;
+            } else {
+                result[key] = val;
+            }
+        }
+
+        return {
+            entries: result,
+            isMissingEntries,
+        };
+    }
+
+    setEntriesInSegment(entries: DurableStoreEntries, _segment: string): Promise<void> {
         Object.assign(this.kvp, entries);
         return Promise.resolve();
     }
-    evictEntries(ids: string[]): Promise<void> {
+
+    evictEntriesInSegment(ids: string[], _segment: string): Promise<void> {
         for (const id of ids) {
             delete this.kvp[id];
         }
+        return Promise.resolve();
+    }
+
+    registerOnChangedListener() {
+        // no-op
         return Promise.resolve();
     }
 }

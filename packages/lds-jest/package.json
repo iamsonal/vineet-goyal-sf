@@ -11,8 +11,8 @@
         "build": "tsc"
     },
     "devDependencies": {
-        "@ldsjs/adapter-test-library": "^0.17.5",
-        "@ldsjs/engine": "^0.17.5",
-        "@ldsjs/environments": "^0.17.5"
+        "@ldsjs/adapter-test-library": "^0.18.0",
+        "@ldsjs/engine": "^0.18.0",
+        "@ldsjs/environments": "^0.18.0"
     }
 }

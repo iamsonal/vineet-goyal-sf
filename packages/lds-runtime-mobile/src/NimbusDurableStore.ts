@@ -10,14 +10,37 @@ import {
 import { ObjectKeys, ObjectCreate, JSONStringify, JSONParse } from './utils/language';
 
 export class NimbusDurableStore implements DurableStore {
-    getEntries(entryIds: string[]): Promise<DurableStoreEntries | undefined> {
+    getEntries(entryIds: string[], segment: string): Promise<DurableStoreEntries | undefined> {
         if (entryIds.length === 0) {
             return Promise.resolve({});
         }
 
-        return __nimbus.plugins.LdsDurableStore.getEntries(entryIds).then(result => {
+        return __nimbus.plugins.LdsDurableStore.getEntriesInSegment(entryIds, segment).then(
+            result => {
+                const { isMissingEntries, entries } = result;
+
+                if (isMissingEntries) {
+                    return undefined;
+                }
+
+                const returnEntries: DurableStoreEntries = ObjectCreate(null);
+                const keys = ObjectKeys(entries);
+                for (let i = 0, len = keys.length; i < len; i++) {
+                    const key = keys[i];
+                    // values are stored on native side as JSON strings
+                    returnEntries[key] = JSONParse(entries[key]) as DurableStoreEntry;
+                }
+                return returnEntries;
+            }
+        );
+    }
+
+    getAllEntries(segment: string): Promise<DurableStoreEntries | undefined> {
+        return __nimbus.plugins.LdsDurableStore.getAllEntriesInSegment(segment).then(result => {
             const { isMissingEntries, entries } = result;
 
+            // if the segment isn't found then isMissingEntries will be set and
+            // we should return undefined.
             if (isMissingEntries) {
                 return undefined;
             }
@@ -33,7 +56,7 @@ export class NimbusDurableStore implements DurableStore {
         });
     }
 
-    setEntries(entries: DurableStoreEntries): Promise<void> {
+    setEntries(entries: DurableStoreEntries, segment: string): Promise<void> {
         const putEntries = ObjectCreate(null);
         const keys = ObjectKeys(entries);
         for (let i = 0, len = keys.length; i < len; i++) {
@@ -43,11 +66,11 @@ export class NimbusDurableStore implements DurableStore {
             putEntries[key] = JSONStringify(value);
         }
 
-        return __nimbus.plugins.LdsDurableStore.setEntries(putEntries);
+        return __nimbus.plugins.LdsDurableStore.setEntriesInSegment(putEntries, segment);
     }
 
-    evictEntries(entryIds: string[]): Promise<void> {
-        return __nimbus.plugins.LdsDurableStore.evictEntries(entryIds);
+    evictEntries(entryIds: string[], segment: string): Promise<void> {
+        return __nimbus.plugins.LdsDurableStore.evictEntriesInSegment(entryIds, segment);
     }
 
     registerOnChangedListener(_listener: OnDurableStoreChangedListener): void {

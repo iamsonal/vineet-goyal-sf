@@ -21,7 +21,7 @@ export const NimbusNetworkAdapter: NetworkAdapter = (
                 }
             },
             error => {
-                reject(JSON.parse(error) as FetchResponse<any>);
+                reject(`Network error: type: ${error.type}, message: ${error.message}`);
             }
         );
     });

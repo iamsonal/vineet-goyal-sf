@@ -5,6 +5,7 @@ import {
     mockNimbusStoreGlobal,
 } from './MockNimbusDurableStore';
 import { JSONStringify } from '../utils/language';
+import { DefaultDurableSegment } from '@ldsjs/environments';
 describe('nimbus durable store tests', () => {
     afterEach(() => {
         resetNimbusStoreGlobal();
@@ -15,7 +16,7 @@ describe('nimbus durable store tests', () => {
             const nimbusStore = new MockNimbusDurableStore();
             mockNimbusStoreGlobal(nimbusStore);
             const durableStore = new NimbusDurableStore();
-            const result = await durableStore.getEntries(['missing']);
+            const result = await durableStore.getEntries(['missing'], DefaultDurableSegment);
             expect(result).toBeUndefined();
         });
         it('should parse serialized entries', async () => {
@@ -26,7 +27,7 @@ describe('nimbus durable store tests', () => {
             mockNimbusStoreGlobal(nimbusStore);
 
             const durableStore = new NimbusDurableStore();
-            const result = await durableStore.getEntries([recordId]);
+            const result = await durableStore.getEntries([recordId], DefaultDurableSegment);
             const entry = result[recordId];
             expect(entry).toEqual(recordData);
             expect(entry.data['bar']).toBe(true);
@@ -36,7 +37,10 @@ describe('nimbus durable store tests', () => {
             mockNimbusStoreGlobal(nimbusStore);
             const durableStore = new NimbusDurableStore();
             nimbusStore.kvp['present'] = JSONStringify({ data: {} });
-            const result = await durableStore.getEntries(['missing', 'present']);
+            const result = await durableStore.getEntries(
+                ['missing', 'present'],
+                DefaultDurableSegment
+            );
             expect(result).toBeUndefined();
         });
     });
@@ -45,7 +49,7 @@ describe('nimbus durable store tests', () => {
         it('should stringify entries', async () => {
             const nimbusStore = new MockNimbusDurableStore();
             const setSpy = jest.fn();
-            nimbusStore.setEntries = setSpy;
+            nimbusStore.setEntriesInSegment = setSpy;
             const recordId = 'foo';
             const recordData = { data: { bar: true } };
             mockNimbusStoreGlobal(nimbusStore);
@@ -54,7 +58,7 @@ describe('nimbus durable store tests', () => {
             const setData = {
                 [recordId]: recordData,
             };
-            await durableStore.setEntries(setData);
+            await durableStore.setEntries(setData, DefaultDurableSegment);
 
             expect(setSpy.mock.calls[0][0][recordId]).toEqual(JSONStringify(recordData));
         });

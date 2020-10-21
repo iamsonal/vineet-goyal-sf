@@ -1,16 +1,10 @@
-import { Fragment, LDS } from '@ldsjs/engine';
 import {
     ResourceRequestConfig,
     select as generatedSelect,
-    keyBuilder,
-    ingestSuccess,
-    ingestError,
-    createResourceRequest,
-} from '../../generated/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
-import { select as objectInfoRepresentationSelect } from '../../generated/types/ObjectInfoRepresentation';
-import { buildSelectionFromFields } from '../../selectors/recordTemplate';
-
-export { ResourceRequestConfig, keyBuilder, ingestError, ingestSuccess, createResourceRequest };
+} from '../../../generated/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
+import { LDS, Fragment } from '@ldsjs/engine';
+import { select as objectInfoRepresentationSelect } from '../../../generated/types/ObjectInfoRepresentation';
+import { buildSelectionFromFields } from '../../../selectors/recordTemplate';
 
 export const select: typeof generatedSelect = (
     lds: LDS,
@@ -19,8 +13,7 @@ export const select: typeof generatedSelect = (
     const objectInfoSelections = objectInfoRepresentationSelect();
 
     let { optionalFields } = params.queryParams;
-    optionalFields =
-        optionalFields === undefined ? ['.CloneSourceId'] : [...optionalFields, '.CloneSourceId'];
+    optionalFields = optionalFields === undefined ? [] : optionalFields;
     const recordSelections = buildSelectionFromFields(optionalFields);
 
     return {
@@ -45,5 +38,3 @@ export const select: typeof generatedSelect = (
         ],
     };
 };
-
-export default createResourceRequest;

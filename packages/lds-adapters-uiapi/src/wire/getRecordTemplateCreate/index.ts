@@ -21,10 +21,10 @@ import {
 import {
     createResourceRequest,
     keyBuilder,
-    select,
     ingestError,
     ResourceRequestConfig,
 } from '../../generated/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
+import { select } from '../../raml-artifacts/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName/select';
 import {
     RecordDefaultsTemplateCreateRepresentation,
     keyBuilderFromType,

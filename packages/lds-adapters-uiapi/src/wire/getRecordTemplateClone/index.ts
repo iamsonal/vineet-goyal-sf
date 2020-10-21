@@ -15,10 +15,8 @@ import {
     buildNetworkSnapshot as generatedBuildNetworkSnapshot,
     GetRecordTemplateCloneConfig,
 } from '../../generated/adapters/getRecordTemplateClone';
-import {
-    createResourceRequest,
-    select,
-} from '../../generated/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
+import { createResourceRequest } from '../../generated/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
+import { select } from '../../raml-artifacts/resources/getUiApiRecordDefaultsTemplateCloneByRecordId/select';
 import {
     RecordDefaultsTemplateCloneRepresentation,
     TTL,

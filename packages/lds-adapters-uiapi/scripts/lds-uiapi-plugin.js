@@ -25,11 +25,6 @@ const CREATE_LDS_ADAPTER = 'createLDSAdapter';
 
 // TODO: scan raml-artifacts folder and generate this map
 const RAML_ARTIFACTS = {
-    '/resources/getUiApiRecordsBatchByRecordIds': [
-        'selectChildResourceParams',
-        'ingestSuccessChildResourceParams',
-    ],
-    '/resources/getUiApiRecordsByRecordId': ['createResourceRequest'],
     '/adapters/getRecords': [
         'GetRecordsConfig',
         'getRecords_ConfigPropertyNames',
@@ -38,6 +33,13 @@ const RAML_ARTIFACTS = {
         'onResourceResponseSuccess',
         'typeCheckConfig',
     ],
+    '/resources/getUiApiRecordDefaultsTemplateCloneByRecordId': ['select'],
+    '/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName': ['select'],
+    '/resources/getUiApiRecordsBatchByRecordIds': [
+        'selectChildResourceParams',
+        'ingestSuccessChildResourceParams',
+    ],
+    '/resources/getUiApiRecordsByRecordId': ['createResourceRequest'],
     '/types/FieldValueRepresentation': ['ingest'],
     '/types/RecordRepresentation': ['keyBuilderFromType', 'ingest'],
     '/types/RecordAvatarBulkMapRepresentation': ['ingest'],

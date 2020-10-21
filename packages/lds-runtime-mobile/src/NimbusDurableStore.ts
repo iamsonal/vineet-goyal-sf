@@ -73,7 +73,15 @@ export class NimbusDurableStore implements DurableStore {
         return __nimbus.plugins.LdsDurableStore.evictEntriesInSegment(entryIds, segment);
     }
 
-    registerOnChangedListener(_listener: OnDurableStoreChangedListener): void {
-        // no-op for now
+    registerOnChangedListener(listener: OnDurableStoreChangedListener): void {
+        __nimbus.plugins.LdsDurableStore.registerOnChangedListener(
+            (ids: string[], segment: string) => {
+                const map: { [key: string]: true } = {};
+                for (let i = 0, len = ids.length; i < len; i++) {
+                    map[ids[i]] = true;
+                }
+                listener(map, segment);
+            }
+        );
     }
 }

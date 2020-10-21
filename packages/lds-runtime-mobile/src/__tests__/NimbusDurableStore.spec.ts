@@ -63,4 +63,25 @@ describe('nimbus durable store tests', () => {
             expect(setSpy.mock.calls[0][0][recordId]).toEqual(JSONStringify(recordData));
         });
     });
+
+    describe('registerOnChangedListener', () => {
+        it('should call back on change listener', async () => {
+            const durableStore = new NimbusDurableStore();
+            const changedIds = ['1', '2', '3'];
+            const changedSegment = 'random segment';
+            const nimbusStore = new MockNimbusDurableStore();
+            mockNimbusStoreGlobal(nimbusStore);
+            let registeredListener: (ids: string[], segment: string) => void = undefined;
+            nimbusStore.registerOnChangedListener = listener => {
+                registeredListener = listener;
+                return Promise.resolve();
+            };
+            const listenerSpy = jest.fn();
+            durableStore.registerOnChangedListener(listenerSpy);
+            expect(registeredListener).toBeDefined();
+            registeredListener(changedIds, changedSegment);
+            expect(listenerSpy.mock.calls[0][0]).toEqual({ 1: true, 2: true, 3: true });
+            expect(listenerSpy.mock.calls[0][1]).toEqual(changedSegment);
+        });
+    });
 });

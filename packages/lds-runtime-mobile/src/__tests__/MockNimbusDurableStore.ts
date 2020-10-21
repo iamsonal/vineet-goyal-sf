@@ -17,6 +17,7 @@ export function resetNimbusStoreGlobal() {
 
 export class MockNimbusDurableStore implements DurableStore {
     kvp: { [key: string]: string } = {};
+    listenerFunc: (ids: string[], segment: string) => void;
 
     async getEntriesInSegment(ids: string[], _segment: string): Promise<DurableStoreFetchResult> {
         const result = {};
@@ -67,8 +68,8 @@ export class MockNimbusDurableStore implements DurableStore {
         return Promise.resolve();
     }
 
-    registerOnChangedListener() {
-        // no-op
+    registerOnChangedListener(listener: (ids: string[], segment: string) => void): Promise<void> {
+        this.listenerFunc = listener;
         return Promise.resolve();
     }
 }

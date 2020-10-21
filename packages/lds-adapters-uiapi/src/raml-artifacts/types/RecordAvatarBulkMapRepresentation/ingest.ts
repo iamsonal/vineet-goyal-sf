@@ -1,26 +1,13 @@
 import { StoreLink, IngestPath, LDS, Store } from '@ldsjs/engine';
 import {
-    RecordAvatarBulkMapRepresentationNormalized,
     RecordAvatarBulkMapRepresentation,
     validate,
     normalize,
-    select,
     equals,
-    deepFreeze,
     ingest as generatedIngest,
-} from '../../generated/types/RecordAvatarBulkMapRepresentation';
-import { createLink } from '../../generated/types/type-utils';
-import { default as helpers_RecordAvatarBulkRepresentation_merge_default } from '../../helpers/RecordAvatarBulkRepresentation/merge';
-
-export {
-    RecordAvatarBulkMapRepresentationNormalized,
-    RecordAvatarBulkMapRepresentation,
-    validate,
-    normalize,
-    select,
-    equals,
-    deepFreeze,
-};
+} from '../../../generated/types/RecordAvatarBulkMapRepresentation';
+import { createLink } from '../../../generated/types/type-utils';
+import { default as helpers_RecordAvatarBulkRepresentation_merge_default } from '../../../helpers/RecordAvatarBulkRepresentation/merge';
 
 export const ingest: typeof generatedIngest = function RecordAvatarBulkMapRepresentationIngest(
     input: RecordAvatarBulkMapRepresentation,

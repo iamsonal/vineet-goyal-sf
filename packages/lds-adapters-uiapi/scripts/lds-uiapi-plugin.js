@@ -23,6 +23,7 @@ const ADAPTERS_NOT_DEFINED_IN_OVERLAY = [
 const CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER = 'createWireAdapterConstructor';
 const CREATE_LDS_ADAPTER = 'createLDSAdapter';
 
+// TODO: scan raml-artifacts folder and generate this map
 const RAML_ARTIFACTS = {
     '/resources/getUiApiRecordsBatchByRecordIds': [
         'selectChildResourceParams',
@@ -39,6 +40,7 @@ const RAML_ARTIFACTS = {
     ],
     '/types/FieldValueRepresentation': ['ingest'],
     '/types/RecordRepresentation': ['keyBuilderFromType', 'ingest'],
+    '/types/RecordAvatarBulkMapRepresentation': ['ingest'],
 };
 const ramlArtifactsKeys = Object.keys(RAML_ARTIFACTS);
 

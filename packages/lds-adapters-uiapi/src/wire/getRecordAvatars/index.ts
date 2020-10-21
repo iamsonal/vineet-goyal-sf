@@ -18,10 +18,8 @@ import {
     GetRecordAvatarsConfig,
 } from '../../generated/adapters/getRecordAvatars';
 import { keyPrefix } from '../../generated/adapters/adapter-utils';
-import {
-    RecordAvatarBulkMapRepresentation,
-    ingest as recordAvatarBulkMapRepresentationIngest,
-} from '../../generated/types/RecordAvatarBulkMapRepresentation';
+import { RecordAvatarBulkMapRepresentation } from '../../generated/types/RecordAvatarBulkMapRepresentation';
+import { ingest as recordAvatarBulkMapRepresentationIngest } from '../../raml-artifacts/types/RecordAvatarBulkMapRepresentation/ingest';
 import { selectChildren as selectChildrenAbstractRecordAvatarBatchRepresentation } from '../../generated/types/AbstractRecordAvatarBatchRepresentation';
 
 function selectAvatars(recordIds: string[]): PathSelection[] {

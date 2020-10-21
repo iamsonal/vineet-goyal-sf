@@ -274,7 +274,7 @@ async function createSObject(entityName, label, recordTypes = 0) {
         const baseName = entityName.replace(/__c$/, '');
 
         let metadata = [];
-        let profileMetadata = [];
+        let recordTypeVisibilities = [];
         for (let i = 1; i <= recordTypes; ++i) {
             const recordTypeName = `${entityName}.${baseName}_Type_${i}`;
             metadata.push({
@@ -282,16 +282,16 @@ async function createSObject(entityName, label, recordTypes = 0) {
                 active: true,
                 label: `${label} Type ${i}`,
             });
-
-            profileMetadata.push({
-                fullName: 'Admin',
-                recordTypeVisibilities: {
-                    recordType: recordTypeName,
-                    visible: true,
-                    default: i === 1,
-                },
+            recordTypeVisibilities.push({
+                recordType: recordTypeName,
+                visible: true,
+                default: i === 1,
             });
         }
+        let profileMetadata = {
+            fullName: 'Admin',
+            recordTypeVisibilities,
+        };
 
         result = await $conn.metadata.create('RecordType', metadata);
         if (Array.isArray(result)) {

@@ -8,13 +8,13 @@ import {
     RecordRepresentationNormalized,
 } from '../generated/types/RecordRepresentation';
 import {
-    CreateRecordTemplateRepresentationNormalized,
-    CreateRecordTemplateRepresentation,
-} from '../generated/types/CreateRecordTemplateRepresentation';
+    RecordTemplateCreateRepresentationNormalized,
+    RecordTemplateCreateRepresentation,
+} from '../generated/types/RecordTemplateCreateRepresentation';
 import {
-    CloneRecordTemplateRepresentationNormalized,
-    CloneRecordTemplateRepresentation,
-} from '../generated/types/CloneRecordTemplateRepresentation';
+    RecordTemplateCloneRepresentationNormalized,
+    RecordTemplateCloneRepresentation,
+} from '../generated/types/RecordTemplateCloneRepresentation';
 import {
     isGraphNode,
     FieldValueRepresentationLinkState,
@@ -25,11 +25,11 @@ import { ArrayPrototypePush } from './language';
 import { dedupe } from '../validation/utils';
 
 type RecordRepresentationLikeNormalized =
-    | CreateRecordTemplateRepresentationNormalized
-    | CloneRecordTemplateRepresentationNormalized;
+    | RecordTemplateCloneRepresentationNormalized
+    | RecordTemplateCreateRepresentationNormalized;
 type RecordRepresentationLike =
-    | CreateRecordTemplateRepresentation
-    | CloneRecordTemplateRepresentation;
+    | RecordTemplateCreateRepresentation
+    | RecordTemplateCloneRepresentation;
 
 export function extractTrackedFields(
     node: ProxyGraphNode<RecordRepresentationLikeNormalized, RecordRepresentationLike>,

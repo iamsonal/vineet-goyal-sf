@@ -2,14 +2,14 @@ import { Store, LDS, Environment } from '@ldsjs/engine';
 import {
     ingest,
     keyBuilder,
-    CreateRecordTemplateRepresentation,
-} from '../../generated/types/CreateRecordTemplateRepresentation';
+    RecordTemplateCreateRepresentation,
+} from '../../generated/types/RecordTemplateCreateRepresentation';
 
 import { getTrackedFields } from '../recordTemplate';
 
 import recordTemplate from './data/sampleRecordTemplate';
 
-function buildSampleRecordTemplate(): CreateRecordTemplateRepresentation {
+function buildSampleRecordTemplate(): RecordTemplateCreateRepresentation {
     return JSON.parse(JSON.stringify(recordTemplate));
 }
 

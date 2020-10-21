@@ -184,7 +184,7 @@ types:
       - eTag
   RecordDefaultsRepresentation:
     (lds.ttl): 900000
-  CreateTemplateRepresentation:
+  RecordDefaultsTemplateCreateRepresentation:
     (lds.ttl): 900000
     (lds.key):
       objectApiName: record.apiName
@@ -192,12 +192,12 @@ types:
     examples:
       CreateTemplateResponseWithEmptyFields: !include ../mocks/types/CreateTemplateRepresentation/record-template-create-Account.json
       CreateTemplateResponseWithSingleField: !include ../mocks/types/CreateTemplateRepresentation/record-template-create-Account-optionalFields-Name.json
-  CreateRecordTemplateRepresentation:
+  RecordTemplateCreateRepresentation:
     (lds.ttl): 30000
     (lds.key):
       apiName: apiName
       recordTypeId: recordTypeId
-  CloneTemplateRepresentation:
+  RecordDefaultsTemplateCloneRepresentation:
     # This should have a key.
     # Currently, the unique identifier for the response is in the fields object.
     (lds.ttl): 1000

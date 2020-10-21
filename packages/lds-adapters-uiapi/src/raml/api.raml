@@ -2136,8 +2136,9 @@ types:
       record:
         description: Pre-populated record data.
         type: RecordCreateDefaultRecordRepresentation # TODO: hand rolled
-  CreateTemplateRepresentation:
-    description: Record defaults.
+  RecordDefaultsTemplateCloneRepresentation:
+    description: Record defaults template for specifying record clone information
+      and object information
     type: object
     properties:
       objectInfos:
@@ -2148,9 +2149,10 @@ types:
             type: ObjectInfoRepresentation
       record:
         description: Pre-populated record data.
-        type: CreateRecordTemplateRepresentation
-  CloneTemplateRepresentation:
-    description: Record defaults.
+        type: RecordTemplateCloneRepresentation
+  RecordDefaultsTemplateCreateRepresentation:
+    description: Record defaults template for specifying record create information
+      and object information
     type: object
     properties:
       objectInfos:
@@ -2161,7 +2163,7 @@ types:
             type: ObjectInfoRepresentation
       record:
         description: Pre-populated record data.
-        type: CloneRecordTemplateRepresentation
+        type: RecordTemplateCreateRepresentation
   RecordExceptionErrorRepresentation:
     description: Record exception error.
     type: object
@@ -3162,11 +3164,9 @@ types:
     properties:
       //:
         type: AbstractRecordAvatarBatchRepresentation
-
   # TODO: These RecordRepresentationTypes are hand rolled for "getRecordCreateDefaults"
   # The RecordRepresentation returned there should not be normalized and will not appear
   # anywhere else
-
   RecordCreateDefaultRecordRepresentation:
     type: object
     properties:
@@ -3210,36 +3210,6 @@ types:
         description: Record Version like field, readOnly, handy while caching and comparing versions of records.
         type: integer
         (oas-readOnly): true
-  CreateRecordTemplateRepresentation:
-    type: object
-    properties:
-      apiName:
-        description: The record's object API name.
-        type: string
-      fields:
-        description: 'The field data for this record.'
-        type: object
-        properties:
-          //:
-            type: FieldValueRepresentation
-      recordTypeId:
-        description: The RecordTypeId of the record.
-        type: string | nil
-  CloneRecordTemplateRepresentation:
-    type: object
-    properties:
-      apiName:
-        description: The record's object API name.
-        type: string
-      fields:
-        description: 'The field data for this record.'
-        type: object
-        properties:
-          //:
-            type: FieldValueRepresentation
-      recordTypeId:
-        description: The RecordTypeId of the record.
-        type: string | nil
 /ui-api:
   /actions:
     /flexipage/{flexipageNames}:
@@ -5010,7 +4980,7 @@ types:
               description: Success
               body:
                 application/json:
-                  type: CloneTemplateRepresentation
+                  type: RecordDefaultsTemplateCloneRepresentation
           queryParameters:
             optionalFields:
               type: array
@@ -5033,7 +5003,7 @@ types:
               description: Success
               body:
                 application/json:
-                  type: CreateTemplateRepresentation
+                  type: RecordDefaultsTemplateCreateRepresentation
           queryParameters:
             optionalFields:
               type: array

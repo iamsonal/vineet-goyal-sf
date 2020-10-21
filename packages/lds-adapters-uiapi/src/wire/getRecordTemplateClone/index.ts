@@ -20,14 +20,14 @@ import {
     select,
 } from '../../generated/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
 import {
-    CloneTemplateRepresentation,
+    RecordDefaultsTemplateCloneRepresentation,
     TTL,
-    ingest as cloneTemplateRepresentationIngest,
-} from '../../generated/types/CloneTemplateRepresentation';
+    ingest as recordDefaultsTemplateCloneRepresentationIngest,
+} from '../../generated/types/RecordDefaultsTemplateCloneRepresentation';
 import {
-    CloneRecordTemplateRepresentationNormalized,
-    CloneRecordTemplateRepresentation,
-} from '../../generated/types/CloneRecordTemplateRepresentation';
+    RecordTemplateCloneRepresentationNormalized,
+    RecordTemplateCloneRepresentation,
+} from '../../generated/types/RecordTemplateCloneRepresentation';
 import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
 import { markMissingOptionalFields } from '../../util/records';
 import { getTrackedFields } from '../../util/recordTemplate';
@@ -46,7 +46,7 @@ interface GetRecordTemplateCreateMetadata {
 }
 
 function buildMetadataKey(recordId: string) {
-    return `${METADATA_PREFIX}${keyPrefix}CloneTemplateRepresentation::${recordId}`;
+    return `${METADATA_PREFIX}${keyPrefix}RecordDefaultsTemplateCloneRepresentation::${recordId}`;
 }
 
 function getMetadata(lds: LDS, recordId: string) {
@@ -125,73 +125,75 @@ const buildNetworkSnapshot: typeof generatedBuildNetworkSnapshot = (
                   },
               });
 
-    return lds.dispatchResourceRequest<CloneTemplateRepresentation>(request, override).then(
-        response => {
-            const { body } = response;
-            const key = templateKeyBuilderFromType(body);
+    return lds
+        .dispatchResourceRequest<RecordDefaultsTemplateCloneRepresentation>(request, override)
+        .then(
+            response => {
+                const { body } = response;
+                const key = templateKeyBuilderFromType(body);
 
-            const responseRecordTypeId = body.record.recordTypeId;
-            const objectApiName = body.record.apiName;
+                const responseRecordTypeId = body.record.recordTypeId;
+                const objectApiName = body.record.apiName;
 
-            // publish metadata for recordTypeId
-            saveDefaultRecordTypeId(lds, recordId, body.objectInfos[objectApiName]);
+                // publish metadata for recordTypeId
+                saveDefaultRecordTypeId(lds, recordId, body.objectInfos[objectApiName]);
 
-            lds.storeIngest<CloneTemplateRepresentation>(
-                key,
-                cloneTemplateRepresentationIngest,
-                body
-            );
+                lds.storeIngest<RecordDefaultsTemplateCloneRepresentation>(
+                    key,
+                    recordDefaultsTemplateCloneRepresentationIngest,
+                    body
+                );
 
-            // mark missing optionalFields
-            const templateRecordKey = templateRecordKeyBuilder({
-                cloneSourceId: resourceParams.urlParams.recordId,
-                recordTypeId: responseRecordTypeId,
-            });
-            const recordNode = lds.getNode<
-                CloneRecordTemplateRepresentationNormalized,
-                CloneRecordTemplateRepresentation
-            >(templateRecordKey);
-            const allTrackedFields = getTrackedFields(
-                lds,
-                templateRecordKey,
-                resourceParams.queryParams.optionalFields
-            );
-            markMissingOptionalFields(recordNode, allTrackedFields);
+                // mark missing optionalFields
+                const templateRecordKey = templateRecordKeyBuilder({
+                    cloneSourceId: resourceParams.urlParams.recordId,
+                    recordTypeId: responseRecordTypeId,
+                });
+                const recordNode = lds.getNode<
+                    RecordTemplateCloneRepresentationNormalized,
+                    RecordTemplateCloneRepresentation
+                >(templateRecordKey);
+                const allTrackedFields = getTrackedFields(
+                    lds,
+                    templateRecordKey,
+                    resourceParams.queryParams.optionalFields
+                );
+                markMissingOptionalFields(recordNode, allTrackedFields);
 
-            lds.storeBroadcast();
-            const snapshot = buildInMemorySnapshot(lds, {
-                ...config,
-                recordTypeId: responseRecordTypeId as string,
-            });
+                lds.storeBroadcast();
+                const snapshot = buildInMemorySnapshot(lds, {
+                    ...config,
+                    recordTypeId: responseRecordTypeId as string,
+                });
 
-            if (process.env.NODE_ENV !== 'production') {
-                if (snapshot.state !== 'Fulfilled') {
-                    throw new Error(
-                        'Invalid network response. Expected network response to result in Fulfilled snapshot'
-                    );
+                if (process.env.NODE_ENV !== 'production') {
+                    if (snapshot.state !== 'Fulfilled') {
+                        throw new Error(
+                            'Invalid network response. Expected network response to result in Fulfilled snapshot'
+                        );
+                    }
                 }
-            }
 
-            return snapshot as FulfilledSnapshot<CloneTemplateRepresentation, {}>;
-        },
-        (response: FetchResponse<unknown>) => {
-            const key = templateKeyBuilder({
-                cloneSourceId: config.recordId,
-                recordTypeId: config.recordTypeId || null,
-            });
-            lds.storeIngestFetchResponse(key, response, TTL);
-            return lds.errorSnapshot(response, {
-                config,
-                resolve: () => buildNetworkSnapshot(lds, config, snapshotRefreshOptions),
-            });
-        }
-    );
+                return snapshot as FulfilledSnapshot<RecordDefaultsTemplateCloneRepresentation, {}>;
+            },
+            (response: FetchResponse<unknown>) => {
+                const key = templateKeyBuilder({
+                    cloneSourceId: config.recordId,
+                    recordTypeId: config.recordTypeId || null,
+                });
+                lds.storeIngestFetchResponse(key, response, TTL);
+                return lds.errorSnapshot(response, {
+                    config,
+                    resolve: () => buildNetworkSnapshot(lds, config, snapshotRefreshOptions),
+                });
+            }
+        );
 };
 
 export const buildInMemorySnapshot: typeof generatedBuildInMemorySnapshot = (
     lds: LDS,
     config: GetRecordTemplateCloneConfig
-): Snapshot<CloneTemplateRepresentation, any> => {
+): Snapshot<RecordDefaultsTemplateCloneRepresentation, any> => {
     const resourceParams = createResourceParams(config);
     const key = templateKeyBuilder({
         cloneSourceId: config.recordId,
@@ -202,20 +204,21 @@ export const buildInMemorySnapshot: typeof generatedBuildInMemorySnapshot = (
         node: select(lds, resourceParams),
         variables: {},
     };
-    return lds.storeLookup<CloneTemplateRepresentation>(selector, {
+    return lds.storeLookup<RecordDefaultsTemplateCloneRepresentation>(selector, {
         config,
         resolve: () => buildNetworkSnapshot(lds, config, snapshotRefreshOptions),
     });
 };
 
-export const factory: AdapterFactory<GetRecordTemplateCloneConfig, CloneTemplateRepresentation> = (
-    lds: LDS
-) =>
+export const factory: AdapterFactory<
+    GetRecordTemplateCloneConfig,
+    RecordDefaultsTemplateCloneRepresentation
+> = (lds: LDS) =>
     function getRecordDefaultsTemplateForCreate(
         untrustedConfig: unknown
     ):
-        | Promise<Snapshot<CloneTemplateRepresentation, any>>
-        | Snapshot<CloneTemplateRepresentation, any>
+        | Promise<Snapshot<RecordDefaultsTemplateCloneRepresentation, any>>
+        | Snapshot<RecordDefaultsTemplateCloneRepresentation, any>
         | null {
         const config = validateAdapterConfig(
             untrustedConfig,

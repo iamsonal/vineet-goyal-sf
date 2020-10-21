@@ -1,18 +1,18 @@
 {
     "layout": {
-        "eTag": "b94d940f55ed9eb922d803427bc62755",
-        "id": "00hT1000000Fw3KIAS",
+        "eTag": "4848e07f77edb9bc4ee088552c9152d4",
+        "id": "00hxx0000019eo4AAA",
         "layoutType": "Full",
         "mode": "Create",
         "objectApiName": "TestEntity__c",
-        "recordTypeId": "012T10000000EqRIAU",
+        "recordTypeId": "012xx0000005w8yAAA",
         "saveOptions": [],
         "sections": [
             {
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Information",
-                "id": "01BT1000000XgxSMAS",
+                "id": "01Bxx000002CLGkEAO",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -87,7 +87,7 @@
             "defaultRecordTypeId": null,
             "deletable": true,
             "dependentFields": {},
-            "eTag": "de53f8cc5f0967698028bd4bba82f7f8",
+            "eTag": "b809d2b76757a40a5f0caa791176efd3",
             "feedEnabled": false,
             "fields": {
                 "CreatedById": {
@@ -513,7 +513,7 @@
                     "relationshipName": "Related",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": false
@@ -596,7 +596,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "769ED9",
-                "iconUrl": "https://ryan-noodles-2841-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/orders_120.png"
+                "iconUrl": "https://newport-process-2003-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/orders_120.png"
             },
             "updateable": true
         },
@@ -933,7 +933,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "5f9d544d72650efcd1a45aa7ee5aa8f7",
+            "eTag": "8be9efbe5e66db80925dbea4f4a64d09",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -1002,7 +1002,7 @@
                     "relationshipName": "Account",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": false
@@ -1347,7 +1347,7 @@
                     "relationshipName": "Contact",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2125,7 +2125,7 @@
                     "relationshipName": "Individual",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2663,7 +2663,7 @@
                     "relationshipName": "Manager",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -3031,7 +3031,7 @@
                     "relationshipName": "Profile",
                     "required": true,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -7265,7 +7265,7 @@
                     "relationshipName": "UserRole",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -7348,7 +7348,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://ryan-noodles-2841-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://newport-process-2003-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         },
@@ -7942,10 +7942,10 @@
             ],
             "createable": true,
             "custom": true,
-            "defaultRecordTypeId": "012000000000000AAA",
+            "defaultRecordTypeId": "012xx0000005w8yAAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "be5166707c20526ab28fa7c3298532cc",
+            "eTag": "a4584500b56303b6353c8f94b0883001",
             "feedEnabled": false,
             "fields": {
                 "CloneSourceId": {
@@ -8336,7 +8336,7 @@
                     "updateable": false
                 }
             },
-            "keyPrefix": "a01",
+            "keyPrefix": "a06",
             "label": "Test Entity",
             "labelPlural": "Test Entity",
             "layoutable": true,
@@ -8346,24 +8346,24 @@
             "recordTypeInfos": {
                 "012000000000000AAA": {
                     "available": true,
-                    "defaultRecordTypeMapping": true,
+                    "defaultRecordTypeMapping": false,
                     "master": true,
                     "name": "Master",
                     "recordTypeId": "012000000000000AAA"
                 },
-                "012T10000000EqRIAU": {
-                    "available": false,
-                    "defaultRecordTypeMapping": false,
+                "012xx0000005w8yAAA": {
+                    "available": true,
+                    "defaultRecordTypeMapping": true,
                     "master": false,
                     "name": "Test Entity Type 1",
-                    "recordTypeId": "012T10000000EqRIAU"
+                    "recordTypeId": "012xx0000005w8yAAA"
                 },
-                "012T10000000EqSIAU": {
-                    "available": false,
+                "012xx0000005w8zAAA": {
+                    "available": true,
                     "defaultRecordTypeMapping": false,
                     "master": false,
                     "name": "Test Entity Type 2",
-                    "recordTypeId": "012T10000000EqSIAU"
+                    "recordTypeId": "012xx0000005w8zAAA"
                 }
             },
             "searchable": false,
@@ -9012,7 +9012,7 @@
     "record": {
         "apiName": "TestEntity__c",
         "childRelationships": {},
-        "eTag": "bef36a0f1ebf9eba507767c364bb20f8",
+        "eTag": "1ca978bc6e4d171a7b511577c56fd756",
         "fields": {
             "Name": {
                 "displayValue": null,
@@ -9023,18 +9023,18 @@
                 "value": {
                     "apiName": "Name",
                     "childRelationships": {},
-                    "eTag": "3dfd967c8e7cf3c4f548e544be35b239",
+                    "eTag": "35fd3be46085b0e9a58f340f2b6972c5",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "005T1000000DwPcIAK"
+                            "value": "005xx000001XPPNAA4"
                         },
                         "Name": {
                             "displayValue": null,
                             "value": "User User"
                         }
                     },
-                    "id": "005T1000000DwPcIAK",
+                    "id": "005xx000001XPPNAA4",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -9045,25 +9045,25 @@
             },
             "OwnerId": {
                 "displayValue": null,
-                "value": "005T1000000DwPcIAK"
+                "value": "005xx000001XPPNAA4"
             },
             "RecordType": {
                 "displayValue": "Test Entity Type 1",
                 "value": {
                     "apiName": "RecordType",
                     "childRelationships": {},
-                    "eTag": "428cf1b42f6b38e7c71e75f148ec93d2",
+                    "eTag": "9c9f16938893a8051db8c6b0e112a539",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "012T10000000EqRIAU"
+                            "value": "012xx0000005w8yAAA"
                         },
                         "Name": {
                             "displayValue": "Test Entity Type 1",
                             "value": "Test Entity Type 1"
                         }
                     },
-                    "id": "012T10000000EqRIAU",
+                    "id": "012xx0000005w8yAAA",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -9074,19 +9074,19 @@
             },
             "RecordTypeId": {
                 "displayValue": null,
-                "value": "012T10000000EqRIAU"
+                "value": "012xx0000005w8yAAA"
             }
         },
         "id": null,
         "lastModifiedById": null,
         "lastModifiedDate": null,
-        "recordTypeId": "012T10000000EqRIAU",
+        "recordTypeId": "012xx0000005w8yAAA",
         "recordTypeInfo": {
-            "available": false,
-            "defaultRecordTypeMapping": false,
+            "available": true,
+            "defaultRecordTypeMapping": true,
             "master": false,
             "name": "Test Entity Type 1",
-            "recordTypeId": "012T10000000EqRIAU"
+            "recordTypeId": "012xx0000005w8yAAA"
         },
         "systemModstamp": null,
         "weakEtag": 0

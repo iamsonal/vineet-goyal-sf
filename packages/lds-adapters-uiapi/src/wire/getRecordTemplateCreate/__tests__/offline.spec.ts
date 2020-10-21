@@ -16,7 +16,7 @@ import { GetRecordTemplateCreateConfig } from '../../../generated/adapters/getRe
 import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
 
 import recordTemplateCreate_Custom from './mockData/record-template-create-Custom_Object__c.json';
-import { TTL } from '../../../generated/types/CreateTemplateRepresentation';
+import { TTL } from '../../../generated/types/RecordDefaultsTemplateCreateRepresentation';
 
 const requestArgs: MockPayload['networkArgs'] = {
     method: 'get',

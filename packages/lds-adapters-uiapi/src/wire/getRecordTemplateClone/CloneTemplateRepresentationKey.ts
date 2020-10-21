@@ -1,5 +1,5 @@
 import { keyPrefix } from '../../generated/adapters/adapter-utils';
-import { CloneTemplateRepresentation } from '../../generated/types/CloneTemplateRepresentation';
+import { RecordDefaultsTemplateCloneRepresentation } from '../../generated/types/RecordDefaultsTemplateCloneRepresentation';
 
 export interface KeyParams {
     cloneSourceId: string;
@@ -9,14 +9,14 @@ export interface KeyParams {
 export function keyBuilder(config: KeyParams): string {
     return (
         keyPrefix +
-        'CloneTemplateRepresentation:' +
+        'RecordDefaultsTemplateCloneRepresentation:' +
         config.cloneSourceId +
         ':' +
         (config.recordTypeId === null ? '' : config.recordTypeId)
     );
 }
 
-export function keyBuilderFromType(object: CloneTemplateRepresentation): string {
+export function keyBuilderFromType(object: RecordDefaultsTemplateCloneRepresentation): string {
     let value =
         object.record &&
         object.record.fields &&

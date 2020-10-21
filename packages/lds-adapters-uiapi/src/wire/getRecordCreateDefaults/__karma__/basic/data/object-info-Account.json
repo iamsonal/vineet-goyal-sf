@@ -242,6 +242,13 @@
             "relationshipName": "Emails"
         },
         {
+            "childObjectApiName": "Entitlement",
+            "fieldName": "AccountId",
+            "junctionIdListNames": [],
+            "junctionReferenceTo": [],
+            "relationshipName": "Entitlements"
+        },
+        {
             "childObjectApiName": "EntitySubscription",
             "fieldName": "ParentId",
             "junctionIdListNames": [],
@@ -268,6 +275,13 @@
             "junctionIdListNames": [],
             "junctionReferenceTo": [],
             "relationshipName": "MaintenancePlans"
+        },
+        {
+            "childObjectApiName": "MedicationRequest",
+            "fieldName": "PatientId",
+            "junctionIdListNames": [],
+            "junctionReferenceTo": [],
+            "relationshipName": "Medication_Request_Patients"
         },
         {
             "childObjectApiName": "Note",
@@ -438,6 +452,13 @@
             "relationshipName": "ServiceAppointments"
         },
         {
+            "childObjectApiName": "ServiceContract",
+            "fieldName": "AccountId",
+            "junctionIdListNames": [],
+            "junctionReferenceTo": [],
+            "relationshipName": "ServiceContracts"
+        },
+        {
             "childObjectApiName": "ServiceResource",
             "fieldName": "AccountId",
             "junctionIdListNames": [],
@@ -478,7 +499,7 @@
     "defaultRecordTypeId": "012000000000000AAA",
     "deletable": true,
     "dependentFields": {},
-    "eTag": "c213a4e396682c9238269468ed45f6be",
+    "eTag": "c928f9a58467e86c24f30530a951b119",
     "feedEnabled": true,
     "fields": {
         "AccountNumber": {
@@ -1113,7 +1134,7 @@
             "relationshipName": "DandbCompany",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": true,
+            "searchPrefilterable": false,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -1788,7 +1809,7 @@
             "relationshipName": "OperatingHours",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": true,
+            "searchPrefilterable": false,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -1897,7 +1918,7 @@
             "relationshipName": "Parent",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": true,
+            "searchPrefilterable": false,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -2747,7 +2768,7 @@
     "searchable": true,
     "themeInfo": {
         "color": "7F8DE1",
-        "iconUrl": "https://ryan-noodles-2841-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
+        "iconUrl": "https://newport-process-2003-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
     },
     "updateable": true
 }

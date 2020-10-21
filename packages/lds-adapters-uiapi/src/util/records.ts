@@ -12,9 +12,9 @@ import {
     RecordRepresentationNormalized,
 } from '../generated/types/RecordRepresentation';
 import {
-    CreateRecordTemplateRepresentationNormalized,
-    CreateRecordTemplateRepresentation,
-} from '../generated/types/CreateRecordTemplateRepresentation';
+    RecordTemplateCreateRepresentationNormalized,
+    RecordTemplateCreateRepresentation,
+} from '../generated/types/RecordTemplateCreateRepresentation';
 import {
     ArrayPrototypeConcat,
     ArrayPrototypePush,
@@ -37,8 +37,8 @@ import { ObjectFreeze } from '../generated/adapters/adapter-utils';
 type FieldValueRepresentationValue = FieldValueRepresentation['value'];
 type RecordRepresentationLikeNormalized =
     | RecordRepresentationNormalized
-    | CreateRecordTemplateRepresentationNormalized;
-type RecordRepresentationLike = RecordRepresentation | CreateRecordTemplateRepresentation;
+    | RecordTemplateCreateRepresentationNormalized;
+type RecordRepresentationLike = RecordRepresentation | RecordTemplateCreateRepresentation;
 
 interface NodeQueueElement {
     node: ProxyGraphNode<RecordRepresentationNormalized, RecordRepresentation>;

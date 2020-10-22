@@ -6,7 +6,9 @@ import {
 
 export function mockNimbusStoreGlobal(mockNimbusStore: MockNimbusDurableStore) {
     global.__nimbus = {
+        ...(global.__nimbus ?? {}),
         plugins: {
+            ...(global.__nimbus?.plugins ?? {}),
             LdsDurableStore: mockNimbusStore,
         },
     } as any;

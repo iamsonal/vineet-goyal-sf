@@ -14,13 +14,6 @@ export function isStoreKeyRecordField(key: string) {
     return RECORD_FIELD_REGEXP.test(key);
 }
 
-export function isStoreKeyRecordOrRecordField(key: string) {
-    if (key === undefined) {
-        return false;
-    }
-    return key.startsWith(RECORD_ID_PREFIX);
-}
-
 export function extractRecordIdFromStoreKey(key: string) {
     const matches = key.match(RECORD_OR_RECORD_FIELD_REGEXP);
     if (!matches || matches.length !== 2) {

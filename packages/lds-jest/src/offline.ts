@@ -26,7 +26,7 @@ export function buildOfflineLds(
     reviveRetrievers?: ResponsePropertyRetriever<any, any>[]
 ) {
     const store = new Store();
-    let env = makeDurable(
+    let env: Environment = makeDurable(
         makeOffline(new Environment(store, network)),
         durableStore,
         reviveRetrievers ?? []

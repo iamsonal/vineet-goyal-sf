@@ -2,7 +2,6 @@ import {
     extractRecordIdFromStoreKey,
     isStoreKeyRecordField,
     isStoreKeyRecordId,
-    isStoreKeyRecordOrRecordField,
 } from '../store-utils';
 
 const RECORD_ID = '001T1000001nFt5IAE';
@@ -35,24 +34,6 @@ describe('store-utils', () => {
 
         it('returns false for a random key', () => {
             expect(isStoreKeyRecordField(RANDOM_STORE_ID)).toBe(false);
-        });
-    });
-
-    describe('isStoreKeyRecordOrRecordField', () => {
-        it('returns true for a record key', () => {
-            expect(isStoreKeyRecordOrRecordField(RECORD_KEY)).toBe(true);
-        });
-
-        it('returns true for a record field key', () => {
-            expect(isStoreKeyRecordOrRecordField(RECORD_FIELD_KEY)).toBe(true);
-        });
-
-        it('returns false for a random key', () => {
-            expect(isStoreKeyRecordOrRecordField(RANDOM_STORE_ID)).toBe(false);
-        });
-
-        it('undefined returns false', () => {
-            expect(isStoreKeyRecordOrRecordField(undefined)).toBe(false);
         });
     });
 

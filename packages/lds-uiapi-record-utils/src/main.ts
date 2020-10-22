@@ -1,6 +1,7 @@
 export {
     RECORD_ID_PREFIX,
     isStoreKeyRecordField,
-    isStoreKeyRecordOrRecordField,
     isStoreKeyRecordId,
+    extractRecordIdFromStoreKey,
+    buildRecordFieldStoreKey,
 } from './store-utils';

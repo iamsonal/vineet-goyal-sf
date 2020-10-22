@@ -19,7 +19,6 @@ import {
     ArrayPrototypeConcat,
     ArrayPrototypePush,
     ArrayPrototypeReduce,
-    ArrayPrototypeShift,
     ObjectKeys,
     ObjectPrototypeHasOwnProperty,
     StringPrototypeEndsWith,
@@ -39,13 +38,6 @@ type RecordRepresentationLikeNormalized =
     | RecordRepresentationNormalized
     | RecordTemplateCreateRepresentationNormalized;
 type RecordRepresentationLike = RecordRepresentation | RecordTemplateCreateRepresentation;
-
-interface NodeQueueElement {
-    node: ProxyGraphNode<RecordRepresentationNormalized, RecordRepresentation>;
-    depth: number;
-    parentFieldName: string;
-    parentVisitedRecordIds: Record<string, boolean>;
-}
 
 const CUSTOM_API_NAME_SUFFIX = '__c';
 const CUSTOM_RELATIONSHIP_FIELD_SUFFIX = '__r';
@@ -71,141 +63,6 @@ export interface RecordFieldTrie {
 
 export function isGraphNode(node: ProxyGraphNode<unknown>): node is GraphNode<unknown> {
     return node !== null && node.type === 'Node';
-}
-
-export function extractTrackedFieldsBreadthFirst(
-    node: ProxyGraphNode<RecordRepresentationNormalized, RecordRepresentation>,
-    parentFieldName: string,
-    fieldsList: string[] = [],
-    maxFieldStringLength: number
-): string[] {
-    let remainingFieldLength = maxFieldStringLength;
-
-    const nodesQueue: NodeQueueElement[] = [];
-    nodesQueue.push({
-        node,
-        depth: 0,
-        parentFieldName,
-        parentVisitedRecordIds: {},
-    });
-
-    while (nodesQueue.length !== 0 && remainingFieldLength > 0) {
-        const { node, depth, parentFieldName, parentVisitedRecordIds } = ArrayPrototypeShift.call(
-            nodesQueue
-        ) as NodeQueueElement;
-
-        const visitedRecordIds = { ...parentVisitedRecordIds };
-
-        // Filter Error and null nodes
-        if (!isGraphNode(node)) {
-            continue;
-        }
-
-        const recordId = node.data.id;
-
-        // Skip this node if the key has already been visited, since the fields for this record
-        // have already been gathered at this point.
-        if (ObjectPrototypeHasOwnProperty.call(visitedRecordIds, `${recordId}`)) {
-            continue;
-        }
-
-        visitedRecordIds[`${recordId}`] = true;
-
-        const fields = node.object('fields');
-        const keys = fields.keys();
-
-        for (let i = 0, len = keys.length; i < len; i += 1) {
-            const key = keys[i] as string;
-            const fieldValueRep = fields.link<
-                FieldValueRepresentationNormalized,
-                FieldValueRepresentation,
-                FieldValueRepresentationLinkState
-            >(key);
-
-            const fieldName = `${parentFieldName}.${key}`;
-            const calculatedNextRemainingFieldLength = remainingFieldLength - fieldName.length;
-
-            // Add it, but don't go further.  This occurs in the case when there's a field we're tracking, but
-            // we've never actually received a value for from the server.  We still want to track it because we've
-            // been asked, and should still try to request it
-            if (fieldValueRep.isMissing()) {
-                ArrayPrototypePush.call(fieldsList, fieldName);
-                remainingFieldLength = calculatedNextRemainingFieldLength;
-                continue;
-            }
-
-            const field = fieldValueRep.follow();
-
-            // Filter Error and null nodes
-            if (!isGraphNode(field)) {
-                continue;
-            }
-
-            // Spanning record!  Push to the end of the queue, but don't enqueue if we're already at max depth
-            if (field.isScalar('value') === false) {
-                if (depth < MAX_RECORD_DEPTH) {
-                    const spanning = field
-                        .link<RecordRepresentationNormalized, RecordRepresentation>('value')
-                        .follow();
-
-                    const childNode: NodeQueueElement = {
-                        node: spanning,
-                        depth: depth + 1,
-                        parentFieldName: fieldName,
-                        parentVisitedRecordIds: visitedRecordIds,
-                    };
-
-                    ArrayPrototypePush.call(nodesQueue, childNode);
-                    continue;
-                }
-            } else {
-                const state = fieldValueRep.linkData();
-
-                // Null spanning record!  Add its fields, but don't add the node to the queue
-                if (state !== undefined && depth < MAX_RECORD_DEPTH) {
-                    const { fields } = state;
-
-                    for (let j = 0, length = fields.length; j < length; j++) {
-                        const childFieldName = fields[j];
-
-                        const nullSpanningCalculatedRemainingFieldLength =
-                            calculatedNextRemainingFieldLength - childFieldName.length;
-
-                        if (nullSpanningCalculatedRemainingFieldLength > 0) {
-                            ArrayPrototypePush.call(fieldsList, `${fieldName}.${childFieldName}`);
-                            remainingFieldLength = nullSpanningCalculatedRemainingFieldLength;
-                        } else {
-                            // We've hit max length for the overall query, exit
-                            break;
-                        }
-                    }
-                } else {
-                    // Scalar or lookup at max depth
-                    if (
-                        depth === MAX_RECORD_DEPTH &&
-                        field.scalar('value') === null &&
-                        isLookupFieldKey(key, fields) === true
-                    ) {
-                        // When this is max depth and the field's value is null,
-                        // it needs to check the key to see if this is a lookup field.
-                        continue;
-                    }
-
-                    // Regular old field
-                    if (calculatedNextRemainingFieldLength > 0) {
-                        // Don't push a lookup without any children
-                        ArrayPrototypePush.call(fieldsList, fieldName);
-                        remainingFieldLength = calculatedNextRemainingFieldLength;
-                    } else {
-                        // We're done!  We've hit our max length
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    return fieldsList;
 }
 
 export function extractTrackedFields(
@@ -469,8 +326,7 @@ function mergeFieldsTries(rootA: RecordFieldTrie, rootB: RecordFieldTrie) {
 export function getTrackedFields(
     lds: LDS,
     recordId: string,
-    fieldsFromConfig?: string[],
-    maxFieldStringLength?: number
+    fieldsFromConfig?: string[]
 ): string[] {
     const key = recordRepresentationKeyBuilder({
         recordId,
@@ -482,28 +338,21 @@ export function getTrackedFields(
     }
 
     const name = graphNode.scalar('apiName');
+    const root = {
+        name,
+        children: {},
+    };
+    extractTrackedFieldsToTrie(graphNode, root);
 
-    if (typeof maxFieldStringLength === 'number') {
-        return dedupe(
-            extractTrackedFieldsBreadthFirst(graphNode, name, fieldsList, maxFieldStringLength)
-        ).sort();
-    } else {
-        const root = {
-            name,
-            children: {},
-        };
-        extractTrackedFieldsToTrie(graphNode, root);
+    const rootFromConfig = {
+        name,
+        children: {},
+    };
+    insertFieldsIntoTrie(rootFromConfig, fieldsList);
 
-        const rootFromConfig = {
-            name,
-            children: {},
-        };
-        insertFieldsIntoTrie(rootFromConfig, fieldsList);
+    mergeFieldsTries(root, rootFromConfig);
 
-        mergeFieldsTries(root, rootFromConfig);
-
-        return convertTrieToFields(root).sort();
-    }
+    return convertTrieToFields(root).sort();
 }
 
 /**

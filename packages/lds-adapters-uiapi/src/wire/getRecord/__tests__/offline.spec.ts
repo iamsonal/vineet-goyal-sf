@@ -6,6 +6,7 @@ import {
     MockDurableStore,
     getMockNetworkAdapterCallCount,
 } from '@ldsjs/adapter-test-library';
+import { DefaultDurableSegment } from '@ldsjs/environments';
 
 import { factory as getRecordAdapterFactory } from '../index';
 import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
@@ -123,7 +124,7 @@ describe('getRecord with fields offline', () => {
         const record = store.records[recordKey] as RecordRepresentationNormalized;
         expect(ObjectKeys(record.fields)).toEqual(mergedFields);
 
-        const durableRecord = durableStore.entries[recordKey]
+        const durableRecord = durableStore.segments[DefaultDurableSegment][recordKey]
             .data as RecordRepresentationNormalized;
         expect(ObjectKeys(durableRecord.fields)).toEqual(mergedFields);
     });

@@ -1,5 +1,6 @@
 import response from './data/record-User-fields-User.Id,User.Name.json';
 import { buildOfflineLds, populateDurableStore } from '@salesforce/lds-jest';
+import { DefaultDurableSegment } from '@ldsjs/environments';
 import {
     buildMockNetworkAdapter,
     MockPayload,
@@ -41,6 +42,6 @@ describe('deleteRecord offline tests', () => {
         await (adapter(RECORD_ID) as Promise<void>);
         await flushPromises();
         const key = recordKeyBuilder({ recordId: RECORD_ID });
-        expect(durableStore.entries[key]).toBeUndefined();
+        expect(durableStore.segments[DefaultDurableSegment][key]).toBeUndefined();
     });
 });

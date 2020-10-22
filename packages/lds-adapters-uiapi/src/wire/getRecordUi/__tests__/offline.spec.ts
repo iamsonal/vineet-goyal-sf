@@ -6,13 +6,13 @@ import {
     MockDurableStore,
     getMockNetworkAdapterCallCount,
 } from '@ldsjs/adapter-test-library';
+import { DefaultDurableSegment, makeDurable, makeOffline } from '@ldsjs/environments';
 
 import { factory as getRecordUiAdapterFactory } from '../index';
 import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
 
 import recordUiSingleResponse from './data/single-record-Account-layouttypes-Full-modes-View.json';
 import recordUiMultiResponse from './data/multiple-record-Account-layouttypes-Full-modes-View.json';
-import { makeDurable, makeOffline } from '@ldsjs/environments';
 
 const single_recordId = Object.keys(recordUiSingleResponse.records)[0];
 const recordId_Account1 = Object.keys(recordUiMultiResponse.records)[0];
@@ -95,7 +95,7 @@ describe('getRecordUi adapter offline', () => {
         it('selector gets stored in durable store', async () => {
             const { durableStore } = await populateDurableStore([single_recordId]);
             const selector =
-                durableStore.entries[
+                durableStore.segments[DefaultDurableSegment][
                     `UiApi::RecordUiRepresentation:${single_recordId}:Full:View:__selector`
                 ];
             expect(selector).toBeDefined();
@@ -125,7 +125,7 @@ describe('getRecordUi adapter offline', () => {
                 recordId_Account2,
             ]);
             const selector =
-                durableStore.entries[
+                durableStore.segments[DefaultDurableSegment][
                     `UiApi::RecordUiRepresentation:${sortedRecordIdCSV}:Full:View:__selector`
                 ];
             expect(selector).toBeDefined();

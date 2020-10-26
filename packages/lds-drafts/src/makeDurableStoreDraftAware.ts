@@ -4,6 +4,7 @@ import {
     DurableStore,
     DurableStoreEntries,
     DurableStoreEntry,
+    OnDurableStoreChangedListener,
 } from '@ldsjs/environments';
 import {
     RecordRepresentationNormalized,
@@ -20,6 +21,8 @@ import {
     isDraftRecordRepresentationNormalized,
     replayDraftsOnRecord,
     DurableRecordRepresentation,
+    DURABLE_STORE_SEGMENT_DRAFT_ACTIONS,
+    extractRecordKeyFromDraftActionKey,
 } from './utils/records';
 import {
     isStoreKeyRecordId,
@@ -375,8 +378,38 @@ export function makeDurableStoreDraftAware(
         return durableStore.setEntries(putEntries, DefaultDurableSegment);
     };
 
+    /**
+     * Intercepts durable store changes to determine if a change to a draft action was made.
+     * If a DraftAction changes, we need to evict the affected record from the in memory store
+     * So it rebuilds with the new draft action applied to it
+     */
+    const registerOnChangeListener: typeof durableStore['registerOnChangedListener'] = function(
+        listener: OnDurableStoreChangedListener
+    ) {
+        durableStore.registerOnChangedListener(
+            (ids: { [key: string]: boolean }, segment: string) => {
+                if (segment !== DURABLE_STORE_SEGMENT_DRAFT_ACTIONS) {
+                    return listener(ids, segment);
+                }
+                const keys = ObjectKeys(ids);
+                const changedIds: { [key: string]: true } = {};
+                for (let i = 0, len = keys.length; i < len; i++) {
+                    const key = keys[i];
+                    const recordKey = extractRecordKeyFromDraftActionKey(key);
+                    if (recordKey !== undefined) {
+                        changedIds[recordKey] = true;
+                    } else {
+                        changedIds[key] = true;
+                    }
+                }
+                return listener(changedIds, segment);
+            }
+        );
+    };
+
     return ObjectCreate(durableStore, {
         getEntries: { value: getEntries },
         setEntries: { value: setEntries },
+        registerOnChangedListener: { value: registerOnChangeListener },
     });
 }

@@ -49,5 +49,9 @@ describe('store-utils', () => {
         it('returns undefined for random key', () => {
             expect(extractRecordIdFromStoreKey(RANDOM_STORE_ID)).toBe(undefined);
         });
+
+        it('returns undefined for undefined input', () => {
+            expect(extractRecordIdFromStoreKey(undefined)).toBe(undefined);
+        });
     });
 });

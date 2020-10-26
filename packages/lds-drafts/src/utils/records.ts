@@ -18,6 +18,10 @@ interface ScalarFieldRepresentationValue {
     value: RecordInputRepresentation['fields'];
 }
 
+export const DURABLE_STORE_SEGMENT_DRAFT_ACTIONS = 'DRAFT_ACTION_SEGMENT';
+const DRAFT_ACTION_KEY_JUNCTION = '__DraftAction__';
+const DRAFT_ACTION_KEY_REGEXP = new RegExp(`(.*)${DRAFT_ACTION_KEY_JUNCTION}([a-zA-Z0-9]+)$`);
+
 // TODO W-8220618 - remove this once generated RecordRepresentation has drafts node on it
 export interface DraftRecordRepresentation extends RecordRepresentation {
     drafts?: DraftRepresentation;
@@ -293,4 +297,19 @@ export function replayDraftsOnRecord<U extends DraftRecordRepresentation>(
 
     record.drafts.edited = true;
     return replayDraftsOnRecord(record, drafts);
+}
+
+export function buildDraftActionKey(recordKey: string, draftActionId: string) {
+    return `${recordKey}${DRAFT_ACTION_KEY_JUNCTION}${draftActionId}`;
+}
+
+export function extractRecordKeyFromDraftActionKey(key: string) {
+    if (key === undefined) {
+        return undefined;
+    }
+    const matches = key.match(DRAFT_ACTION_KEY_REGEXP);
+    if (!matches || matches.length !== 3) {
+        return undefined;
+    }
+    return matches[1];
 }

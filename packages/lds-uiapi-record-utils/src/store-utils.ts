@@ -15,6 +15,9 @@ export function isStoreKeyRecordField(key: string) {
 }
 
 export function extractRecordIdFromStoreKey(key: string) {
+    if (key === undefined) {
+        return undefined;
+    }
     const matches = key.match(RECORD_OR_RECORD_FIELD_REGEXP);
     if (!matches || matches.length !== 2) {
         return undefined;

@@ -1,10 +1,18 @@
 import { Store } from '@ldsjs/engine';
-import { DefaultDurableSegment, DurableStore } from '@ldsjs/environments';
+import {
+    DefaultDurableSegment,
+    DurableStore,
+    OnDurableStoreChangedListener,
+} from '@ldsjs/environments';
 
 import { ObjectKeys } from '../../../lds-runtime-mobile/src/utils/language';
 import { DraftQueue } from '../DraftQueue';
 import { makeDurableStoreDraftAware } from '../makeDurableStoreDraftAware';
-import { DurableRecordRepresentation } from '../utils/records';
+import {
+    buildDraftActionKey,
+    DurableRecordRepresentation,
+    DURABLE_STORE_SEGMENT_DRAFT_ACTIONS,
+} from '../utils/records';
 import {
     buildDurableRecordRepresentation,
     createDeleteDraftAction,
@@ -539,6 +547,69 @@ describe('makeDurableStoreDraftAware', () => {
                 DefaultDurableSegment
             );
             expect(readEntries).toBeUndefined();
+        });
+    });
+
+    describe('registerOnChangeListener', () => {
+        it('draft action changes notify affected record change', done => {
+            let changeListener;
+            const durableStore: DurableStore = makeDurableStoreDraftAware(
+                {
+                    registerOnChangedListener: listener => (changeListener = listener),
+                } as any,
+                {} as any,
+                {} as any
+            );
+
+            const draftActionKey = buildDraftActionKey(STORE_KEY_RECORD, 'FOO');
+            const baseListener: OnDurableStoreChangedListener = (ids: {
+                [key: string]: boolean;
+            }) => {
+                expect(ids[STORE_KEY_RECORD]).toBe(true);
+                done();
+            };
+            durableStore.registerOnChangedListener(baseListener);
+            changeListener({ [draftActionKey]: true }, DURABLE_STORE_SEGMENT_DRAFT_ACTIONS);
+        });
+
+        it('only changes to draft action segment are parsed', done => {
+            let changeListener;
+            const durableStore: DurableStore = makeDurableStoreDraftAware(
+                {
+                    registerOnChangedListener: listener => (changeListener = listener),
+                } as any,
+                {} as any,
+                {} as any
+            );
+
+            const draftActionKey = buildDraftActionKey(STORE_KEY_RECORD, 'FOO');
+            const baseListener: OnDurableStoreChangedListener = (ids: {
+                [key: string]: boolean;
+            }) => {
+                expect(ids[draftActionKey]).toBe(true);
+                done();
+            };
+            durableStore.registerOnChangedListener(baseListener);
+            changeListener({ [draftActionKey]: true }, 'NOT_DRAFT_SEGMENT');
+        });
+
+        it('only changes to draft action keys in the draft segment are parsed', done => {
+            let changeListener;
+            const durableStore: DurableStore = makeDurableStoreDraftAware(
+                {
+                    registerOnChangedListener: listener => (changeListener = listener),
+                } as any,
+                {} as any,
+                {} as any
+            );
+            const baseListener: OnDurableStoreChangedListener = (ids: {
+                [key: string]: boolean;
+            }) => {
+                expect(ids[STORE_KEY_RECORD]).toBe(true);
+                done();
+            };
+            durableStore.registerOnChangedListener(baseListener);
+            changeListener({ [STORE_KEY_RECORD]: true }, DURABLE_STORE_SEGMENT_DRAFT_ACTIONS);
         });
     });
 });

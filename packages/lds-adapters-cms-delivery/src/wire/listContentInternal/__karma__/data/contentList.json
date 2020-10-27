@@ -30,15 +30,11 @@
             "urlName": "title-value",
             "createdByReference": {
                 "id": "005B0000004tfKY",
-                "url": {
-                    "url": ""
-                }
+                "url": ""
             },
             "lastUpdatedByReference": {
                 "id": "005B0000004tfKY",
-                "url": {
-                    "url": ""
-                }
+                "url": ""
             }
         }
     ],

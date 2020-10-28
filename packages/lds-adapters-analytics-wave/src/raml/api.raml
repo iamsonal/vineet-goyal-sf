@@ -169,6 +169,15 @@ types:
         type: array
         items:
           type: DataflowJobRepresentation
+      nextPageUrl:
+        description: URL to get the next page of jobs in the collection.
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
+      totalSize:
+        description: The total count of the jobs in the collection irrespective of
+          the page.
+        type: integer | nil
+        required: false # TODO Hand-rolled W-8253396
       url:
         description: The URL to get the collection.
         type: string
@@ -271,7 +280,8 @@ types:
         type: integer
       executedDate:
         description: The start date of a job's execution.
-        type: string
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
       jobType:
         description: The type of a job
         type: string
@@ -450,7 +460,7 @@ types:
         format: double
         type: number
       threshold:
-        description: The threshold value for warning
+        description: The threshold value to issue a warning at before reaching max
         # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
         format: double
         type: number

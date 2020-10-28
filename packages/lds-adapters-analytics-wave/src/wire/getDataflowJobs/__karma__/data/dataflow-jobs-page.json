@@ -21,5 +21,7 @@
             "syncDataflows": { "dataflows": [] }
         }
     ],
+    "nextPageUrl": "/services/data/v51.0/wave/dataflowjobs?page=2",
+    "totalSize": 20,
     "url": "/services/data/v51.0/wave/dataflowjobs"
 }

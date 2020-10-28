@@ -3561,6 +3561,58 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/limits', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/limits`,
+            },
+            [
+                'WaveController.getAnalyticsLimits',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/limits`,
+                    queryParams: {
+                        types: ['DatasetQueries', 'DatasetRowCount'],
+                        licenseType: 'Sonic',
+                    },
+                },
+                [
+                    'WaveController.getAnalyticsLimits',
+                    {
+                        types: ['DatasetQueries', 'DatasetRowCount'],
+                        licenseType: 'Sonic',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/limits`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/limits`,
+            },
+            {}
+        );
+    });
+
     describe('get /connect/communities/{communityId}/managed-content/delivery/contents', () => {
         testControllerInput(
             {

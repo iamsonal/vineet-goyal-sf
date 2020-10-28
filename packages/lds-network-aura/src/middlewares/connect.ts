@@ -46,6 +46,8 @@ const GET_GUIDANCE_ACTIVE_QUESTIONNAIRES_PATH = new RegExp(
     'i'
 );
 
+const ANALYTICS_LIMITS_PATH = new RegExp(`${WAVE_BASE_URI}/limits$`, 'i');
+
 const DATAFLOW_JOBS_PATH = new RegExp(`${WAVE_BASE_URI}/dataflowjobs$`, 'i');
 
 const DATAFLOW_JOB_PATH = new RegExp(`${WAVE_BASE_URI}/dataflowjobs/([A-Z0-9_]){15,18}$`, 'i');
@@ -164,6 +166,14 @@ const guidance: ApiFamily = {
 };
 
 const analytics: ApiFamily = {
+    getAnalyticsLimits: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && ANALYTICS_LIMITS_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getAnalyticsLimits',
+        },
+    },
     getDataflowJobs: {
         method: 'get',
         predicate: (path: string) =>

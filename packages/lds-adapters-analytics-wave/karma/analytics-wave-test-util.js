@@ -7,6 +7,37 @@ const API_VERSION = 'v51.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/wave`;
 
+// Analytics Limits
+export function mockGetAnalyticsLimitsNetworkOnce(config, mockData) {
+    const paramMatch = getAnalyticsLimitsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+export function mockGetAnalyticsLimitsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getAnalyticsLimitsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getAnalyticsLimitsMatcher(config) {
+    let { types, licenseType } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/limits`,
+        queryParams: {
+            types,
+            licenseType,
+        },
+    });
+}
+
 // Dataflow Jobs
 export function mockGetDataflowJobsNetworkOnce(mockData) {
     const paramMatch = getDataflowJobsMatcher();

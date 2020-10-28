@@ -346,18 +346,30 @@ types:
       id:
         description: The 18 character asset ID.
         type: string
+  LicenseAttributesRepresentation:
+    description: The analytics license type and other properties
+    type: object
+    properties:
+      type:
+        description: The associated analytics license type
+        type: string
+        enum:
+          - EinsteinAnalytics
+          - Sonic
   NodeRowCountRepresentation:
     description: Row Statistics of a Job.
     type: object
     properties:
       failedCount:
         description: Number of failed rows.
-        #format: int64 # TODO Hand rolled: syntax error TS1110: Type expected
-        type: integer
+        # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        format: double
+        type: number
       processedCount:
         description: Number of processed rows.
-        #format: int64 # TODO Hand rolled: syntax error TS1110: Type expected
-        type: integer
+        # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        format: double
+        type: number
   PermissionsRepresentation:
     description: Permissions of the user on an asset.
     type: object
@@ -375,6 +387,55 @@ types:
       view:
         description: The value which indicates whether the user can view an asset.
         type: boolean
+  WaveAnalyticsLimitCollectionRepresentation:
+    description: A collection of analytics limits
+    type: object
+    properties:
+      limits:
+        description: A collection of analytics limits
+        type: array
+        items:
+          type: WaveAnalyticsLimitRepresentation
+  WaveAnalyticsLimitRepresentation:
+    description: Represents a limit in analytics
+    type: object
+    properties:
+      current:
+        description: Total current used count
+        # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        format: double
+        type: number
+      interval:
+        description: The interval in which the limit is applied
+        type: string
+        enum:
+          - Daily
+          - Hourly
+          - Monthly
+          - None
+          - Weekly
+      licenseAttributes:
+        description: The analytics license type and other properties
+        type: LicenseAttributesRepresentation
+      max:
+        description: Max count that analytics allows
+        # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        format: double
+        type: number
+      threshold:
+        description: The threshold value for warning
+        # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
+        format: double
+        type: number
+      type:
+        description: The type of analytics limit
+        type: string
+        enum:
+          - BatchTransformationHours
+          - DatasetQueries
+          - DatasetRowCount
+          - OutputExternalConnectorRows
+          - OutputLocalConnectorRows
   WaveUserRepresentation:
     description: Information about a user.
     type: object
@@ -469,3 +530,31 @@ types:
       nodeId:
         type: string
         required: true
+  /limits:
+    get:
+      description: Retrieves limits in analytics
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: WaveAnalyticsLimitCollectionRepresentation
+      queryParameters:
+        licenseType:
+          type: string
+          required: false
+          enum:
+            - EinsteinAnalytics
+            - Sonic
+        types:
+          type: array
+          required: false
+          items:
+            type: string
+            enum:
+              - BatchTransformationHours
+              - DatasetQueries
+              - DatasetRowCount
+              - OutputExternalConnectorRows
+              - OutputLocalConnectorRows
+            (oas-collectionFormat): csv

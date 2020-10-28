@@ -1,0 +1,28 @@
+{
+    "limits": [
+        {
+            "type": "BatchTransformationHours",
+            "licenseAttributes": { "type": "Sonic" },
+            "current": 25,
+            "max": 100,
+            "threshold": 0.9,
+            "interval": "Monthly"
+        },
+        {
+            "type": "OutpuLocalConnectorRows",
+            "licenseAttributes": { "type": "Sonic" },
+            "current": 2800000,
+            "max": 100000000,
+            "threshold": 0.75,
+            "interval": "Monthly"
+        },
+        {
+            "type": "OutputExternalConnectorRows",
+            "licenseAttributes": { "type": "Sonic" },
+            "current": 275000,
+            "max": 10000000,
+            "threshold": 0.75,
+            "interval": "Monthly"
+        }
+    ]
+}

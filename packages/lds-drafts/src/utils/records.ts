@@ -313,3 +313,14 @@ export function extractRecordKeyFromDraftActionKey(key: string) {
     }
     return matches[1];
 }
+
+export function extractDraftActionIdFromDraftActionKey(key: string) {
+    if (key === undefined) {
+        return undefined;
+    }
+    const matches = key.match(DRAFT_ACTION_KEY_REGEXP);
+    if (!matches || matches.length !== 3) {
+        return undefined;
+    }
+    return matches[2];
+}

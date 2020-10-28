@@ -20,7 +20,8 @@
         "@ldsjs/environments": "^0.19.1"
     },
     "devDependencies": {
-        "@mobileplatform/nimbus-plugin-lds": "0.9.0",
-        "@salesforce/lds-adapters-uiapi": "1.2.3"
+        "@mobileplatform/nimbus-plugin-lds": "1.0.0",
+        "@salesforce/lds-adapters-uiapi": "1.2.3",
+        "@salesforce/lds-drafts": "1.2.3"
     }
 }

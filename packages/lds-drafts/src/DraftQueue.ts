@@ -52,6 +52,8 @@ export enum ProcessActionResult {
     ACTION_ALREADY_PROCESSING = 2,
 }
 
+export type ObjectAsSet = { [key: string]: true };
+
 export interface DraftQueue {
     /**
      * Enqueues a ResourceRequest into the DraftQueue
@@ -66,7 +68,7 @@ export interface DraftQueue {
      * @param tags A map of tags to get an ordered list of DraftActions for
      * @returns Map of tag name to ordered action array
      */
-    getActionsForTags(tags: { [tag: string]: true }): Promise<DraftActionMap>;
+    getActionsForTags(tags: ObjectAsSet): Promise<DraftActionMap>;
 
     /**
      * Registers a listener to be notified when a DraftAction completes

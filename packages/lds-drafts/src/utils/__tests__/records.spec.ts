@@ -21,8 +21,8 @@ import {
     isDraftId,
     shouldDraftResourceRequest,
     replayDraftsOnRecord,
-    buildDraftActionKey,
-    extractRecordKeyFromDraftActionKey,
+    buildDraftDurableStoreKey,
+    extractRecordKeyFromDraftDurableStoreKey,
 } from '../records';
 
 describe('draft environment record utilities', () => {
@@ -351,7 +351,7 @@ describe('draft environment record utilities', () => {
         it('builds draft action key in expected format', () => {
             const recordKey = 'RANDOM::RECORD';
             const draftActionId = 'draftActionId';
-            expect(buildDraftActionKey(recordKey, draftActionId)).toBe(
+            expect(buildDraftDurableStoreKey(recordKey, draftActionId)).toBe(
                 `${recordKey}__DraftAction__${draftActionId}`
             );
         });
@@ -361,19 +361,19 @@ describe('draft environment record utilities', () => {
         it('extracts record key from draft action key', () => {
             const recordKey = 'RANDOM::RECORD';
             const draftActionId = 'draftActionId';
-            const draftActionKey = buildDraftActionKey(recordKey, draftActionId);
+            const draftActionKey = buildDraftDurableStoreKey(recordKey, draftActionId);
 
-            expect(extractRecordKeyFromDraftActionKey(draftActionKey)).toEqual(recordKey);
+            expect(extractRecordKeyFromDraftDurableStoreKey(draftActionKey)).toEqual(recordKey);
         });
 
         it('returns undefined for unexpected key format', () => {
             expect(
-                extractRecordKeyFromDraftActionKey('UiApi::RecordRepresentation::foo')
+                extractRecordKeyFromDraftDurableStoreKey('UiApi::RecordRepresentation::foo')
             ).toBeUndefined();
         });
 
         it('returns undefined for undefined input', () => {
-            expect(extractRecordKeyFromDraftActionKey(undefined)).toBeUndefined();
+            expect(extractRecordKeyFromDraftDurableStoreKey(undefined)).toBeUndefined();
         });
     });
 });

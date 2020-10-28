@@ -1,6 +1,6 @@
 import { ResourceRequest } from '@ldsjs/engine';
 import { NimbusDraftQueue } from '../NimbusDraftQueue';
-import { DraftQueueProxy } from '@mobileplatform/nimbus-plugin-lds';
+import { DraftQueue as DraftQueueProxy } from '@mobileplatform/nimbus-plugin-lds';
 import { JSONStringify } from '../utils/language';
 import { DraftAction, DraftActionStatus } from '@salesforce/lds-drafts';
 
@@ -8,7 +8,6 @@ export function mockNimbusDraftQueueGlobal() {
     const mock: DraftQueueProxy = {
         enqueue: jest.fn(),
         getActionsForTags: jest.fn(),
-        processNextAction: jest.fn(),
     };
     global.__nimbus = {
         ...(global.__nimbus ?? {}),
@@ -20,6 +19,7 @@ export function mockNimbusDraftQueueGlobal() {
 
     return mock;
 }
+
 export function resetNimbusDraftQueueGlobal() {
     global.__nimbus.plugins.LdsDraftQueue = undefined;
 }
@@ -131,15 +131,11 @@ describe('NimbusDraftQueue', () => {
     });
 
     describe('processNextAction', () => {
-        it('resolves the result', async () => {
-            const nimbusMock = mockNimbusDraftQueueGlobal();
-            const result = 1;
-            nimbusMock.processNextAction = jest.fn().mockImplementation(onResult => {
-                onResult(result);
-            });
+        it('rejects with error', async () => {
             const nimbusQueue = new NimbusDraftQueue();
-            const nimbusResult = await nimbusQueue.processNextAction();
-            expect(nimbusResult).toEqual(result);
+            await expect(nimbusQueue.processNextAction()).rejects.toBe(
+                'Cannot call processNextAction from the NimbusDraftQueue'
+            );
         });
     });
 

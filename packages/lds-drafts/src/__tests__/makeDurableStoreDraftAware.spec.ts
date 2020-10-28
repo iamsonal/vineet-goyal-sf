@@ -9,7 +9,7 @@ import { ObjectKeys } from '../../../lds-runtime-mobile/src/utils/language';
 import { DraftQueue } from '../DraftQueue';
 import { makeDurableStoreDraftAware } from '../makeDurableStoreDraftAware';
 import {
-    buildDraftActionKey,
+    buildDraftDurableStoreKey,
     DurableRecordRepresentation,
     DURABLE_STORE_SEGMENT_DRAFT_ACTIONS,
 } from '../utils/records';
@@ -561,7 +561,7 @@ describe('makeDurableStoreDraftAware', () => {
                 {} as any
             );
 
-            const draftActionKey = buildDraftActionKey(STORE_KEY_RECORD, 'FOO');
+            const draftActionKey = buildDraftDurableStoreKey(STORE_KEY_RECORD, 'FOO');
             const baseListener: OnDurableStoreChangedListener = (ids: {
                 [key: string]: boolean;
             }) => {
@@ -582,7 +582,7 @@ describe('makeDurableStoreDraftAware', () => {
                 {} as any
             );
 
-            const draftActionKey = buildDraftActionKey(STORE_KEY_RECORD, 'FOO');
+            const draftActionKey = buildDraftDurableStoreKey(STORE_KEY_RECORD, 'FOO');
             const baseListener: OnDurableStoreChangedListener = (ids: {
                 [key: string]: boolean;
             }) => {

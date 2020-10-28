@@ -22,7 +22,7 @@ import {
     replayDraftsOnRecord,
     DurableRecordRepresentation,
     DURABLE_STORE_SEGMENT_DRAFT_ACTIONS,
-    extractRecordKeyFromDraftActionKey,
+    extractRecordKeyFromDraftDurableStoreKey,
 } from './utils/records';
 import {
     isStoreKeyRecordId,
@@ -395,7 +395,7 @@ export function makeDurableStoreDraftAware(
                 const changedIds: { [key: string]: true } = {};
                 for (let i = 0, len = keys.length; i < len; i++) {
                     const key = keys[i];
-                    const recordKey = extractRecordKeyFromDraftActionKey(key);
+                    const recordKey = extractRecordKeyFromDraftDurableStoreKey(key);
                     if (recordKey !== undefined) {
                         changedIds[recordKey] = true;
                     } else {

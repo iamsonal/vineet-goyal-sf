@@ -299,11 +299,11 @@ export function replayDraftsOnRecord<U extends DraftRecordRepresentation>(
     return replayDraftsOnRecord(record, drafts);
 }
 
-export function buildDraftActionKey(recordKey: string, draftActionId: string) {
+export function buildDraftDurableStoreKey(recordKey: string, draftActionId: string) {
     return `${recordKey}${DRAFT_ACTION_KEY_JUNCTION}${draftActionId}`;
 }
 
-export function extractRecordKeyFromDraftActionKey(key: string) {
+export function extractRecordKeyFromDraftDurableStoreKey(key: string) {
     if (key === undefined) {
         return undefined;
     }
@@ -312,15 +312,4 @@ export function extractRecordKeyFromDraftActionKey(key: string) {
         return undefined;
     }
     return matches[1];
-}
-
-export function extractDraftActionIdFromDraftActionKey(key: string) {
-    if (key === undefined) {
-        return undefined;
-    }
-    const matches = key.match(DRAFT_ACTION_KEY_REGEXP);
-    if (!matches || matches.length !== 3) {
-        return undefined;
-    }
-    return matches[2];
 }

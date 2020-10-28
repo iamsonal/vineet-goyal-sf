@@ -52,14 +52,10 @@ export class NimbusDraftQueue implements DraftQueue {
     }
     registerDraftQueueCompletedListener(_listener: DraftQueueCompletedListener): void {
         if (process.env.NODE_ENV !== 'production') {
-            throw new Error('Cannot register draft queue listeners through the nimbus proxy');
+            throw new Error('Cannot register draft queue listeners through the NimbusDraftQueue');
         }
     }
     processNextAction(): Promise<ProcessActionResult> {
-        return new Promise(resolve => {
-            __nimbus.plugins.LdsDraftQueue.processNextAction((result: number) => {
-                resolve(result);
-            });
-        });
+        return Promise.reject('Cannot call processNextAction from the NimbusDraftQueue');
     }
 }

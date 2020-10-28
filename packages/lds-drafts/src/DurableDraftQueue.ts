@@ -7,20 +7,38 @@ import {
     DraftActionMap,
     DraftActionStatus,
     ProcessActionResult,
+    ObjectAsSet,
 } from './DraftQueue';
 import { ResourceRequest, NetworkAdapter, FetchResponse } from '@ldsjs/engine';
 import { ObjectKeys } from './utils/language';
 import { DurableStore, DurableStoreEntries, DurableStoreEntry } from '@ldsjs/environments';
-import { buildDraftActionKey, extractDraftActionIdFromDraftActionKey } from './utils/records';
+import { buildDraftDurableStoreKey } from './utils/records';
 
 export const DraftDurableSegment = 'DRAFT';
 
 /**
- * Generates a unique id to associate with a DraftAction
+ * Generates a time-ordered, unique id to associate with a DraftAction. Ensures
+ * no collisions with existing draft action IDs.
  */
-function generateUniqueDraftActionId() {
-    //TODO: This doesn't work if called twice in a millisecond
-    return new Date().getTime().toString();
+function generateUniqueDraftActionId(existingIds: string[]) {
+    // new id in milliseconds with some extra digits for collisions
+    let newId = new Date().getTime() * 100;
+
+    const existingAsNumbers = existingIds.map(id => Number(id));
+
+    let counter = 0;
+    while (existingAsNumbers.includes(newId)) {
+        newId += 1;
+        counter += 1;
+
+        // if the counter is 100+ then somehow this method has been called 100
+        // times in one millisecond
+        if (counter >= 100) {
+            throw new Error('Unable to generate unique new draft ID');
+        }
+    }
+
+    return newId.toString();
 }
 
 export class DurableDraftQueue implements DraftQueue {
@@ -34,13 +52,11 @@ export class DurableDraftQueue implements DraftQueue {
     }
 
     actionsForTag(tag: string, queue: DraftAction<unknown>[]): DraftAction<unknown>[] {
-        return queue.filter(element => element.tag === tag);
+        return queue.filter(action => action.tag === tag);
     }
 
     deleteActionsForTag(tag: string, queue: DraftAction<unknown>[]): DraftAction<unknown>[] {
-        return this.actionsForTag(tag, queue).filter(element => {
-            return element.request.method === 'delete';
-        });
+        return this.actionsForTag(tag, queue).filter(action => action.request.method === 'delete');
     }
 
     private persistedQueue(): Promise<DraftAction<unknown>[]> {
@@ -69,13 +85,8 @@ export class DurableDraftQueue implements DraftQueue {
                 throw new Error('Cannot enqueue a draft action for a deleted record');
             }
 
-            let id = generateUniqueDraftActionId();
-            while (
-                queue.find(element => extractDraftActionIdFromDraftActionKey(element.id) === id)
-            ) {
-                id += 1;
-            }
-            const durableStoreId = buildDraftActionKey(tag, id);
+            const id = generateUniqueDraftActionId(queue.map(a => a.id));
+            const durableStoreId = buildDraftDurableStoreKey(tag, id);
             const action: PendingDraftAction<T> = {
                 id,
                 status: DraftActionStatus.Pending,
@@ -90,7 +101,7 @@ export class DurableDraftQueue implements DraftQueue {
         });
     }
 
-    getActionsForTags(tags: { [tag: string]: true }): Promise<DraftActionMap> {
+    getActionsForTags(tags: ObjectAsSet): Promise<DraftActionMap> {
         return this.persistedQueue().then(queue => {
             const map: DraftActionMap = {};
             const tagKeys = ObjectKeys(tags);
@@ -106,7 +117,6 @@ export class DurableDraftQueue implements DraftQueue {
                     tagArray.push(action);
                 }
             }
-
             return map;
         });
     }
@@ -128,18 +138,18 @@ export class DurableDraftQueue implements DraftQueue {
 
             const uploadingAction = { ...action, status: DraftActionStatus.Uploading };
             const entry: DurableStoreEntry = { data: uploadingAction };
-            const entryId = buildDraftActionKey(uploadingAction.tag, uploadingAction.id);
-            const entries: DurableStoreEntries = { [entryId]: entry };
+            const durableEntryKey = buildDraftDurableStoreKey(
+                uploadingAction.tag,
+                uploadingAction.id
+            );
+            const entries: DurableStoreEntries = { [durableEntryKey]: entry };
             return this.durableStore.setEntries(entries, DraftDurableSegment).then(() => {
                 const { request, id, tag } = action;
 
                 return this.networkAdapter(request)
                     .then((response: FetchResponse<any>) => {
                         return this.durableStore
-                            .evictEntries(
-                                [buildDraftActionKey(action.tag, action.id)],
-                                DraftDurableSegment
-                            )
+                            .evictEntries([durableEntryKey], DraftDurableSegment)
                             .then(() => {
                                 // process action success
                                 for (
@@ -170,8 +180,7 @@ export class DurableDraftQueue implements DraftQueue {
                         };
 
                         const entry: DurableStoreEntry = { data: errorAction };
-                        const entryId = buildDraftActionKey(action.tag, action.id);
-                        const entries: DurableStoreEntries = { [entryId]: entry };
+                        const entries: DurableStoreEntries = { [durableEntryKey]: entry };
                         return this.durableStore
                             .setEntries(entries, DraftDurableSegment)
                             .then(() => {

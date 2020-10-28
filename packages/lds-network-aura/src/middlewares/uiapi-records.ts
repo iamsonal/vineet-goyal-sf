@@ -5,6 +5,7 @@ import {
     incrementGetRecordNormalInvokeCount,
     logCRUDLightningInteraction,
     registerLdsCacheStats,
+    setAggregateUiChunkCountMetric,
 } from '@salesforce/lds-instrumentation';
 import { createStorage } from '@salesforce/lds-aura-storage';
 
@@ -280,6 +281,8 @@ function getRecord(resourceRequest: ResourceRequest): Promise<any> {
                       resolveFn: crudInstrumentationCallbacks.getRecordAggregateResolveFunction,
                   }
                 : {};
+
+        setAggregateUiChunkCountMetric(compositeRequest.length);
 
         return dispatchSplitRecordAggregateUiAction(
             UiApiRecordController.ExecuteAggregateUi,

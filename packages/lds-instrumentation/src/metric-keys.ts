@@ -7,6 +7,16 @@ const METRIC_KEY_OWNER = 'lds';
  */
 
 /**
+ * W-8121791
+ * Number of subqueries used when aggregateUi is invoked for getRecord
+ */
+export const AGGREGATE_UI_CHUNK_COUNT: MetricsKey = {
+    get() {
+        return { owner: METRIC_KEY_OWNER, name: 'aggregate-ui-chunk-count' };
+    },
+};
+
+/**
  * W-6981216
  * Counter for overall LDS cache hits.
  * Note: This is also being recorded in AILTN logging.

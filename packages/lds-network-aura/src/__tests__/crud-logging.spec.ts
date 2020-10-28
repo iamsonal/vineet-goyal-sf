@@ -20,6 +20,7 @@ jest.mock('@salesforce/lds-instrumentation', () => {
     };
 
     return {
+        setAggregateUiChunkCountMetric: () => {},
         incrementGetRecordAggregateInvokeCount: () => {},
         incrementGetRecordNormalInvokeCount: () => {},
         registerLdsCacheStats: () => {},

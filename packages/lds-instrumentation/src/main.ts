@@ -22,6 +22,7 @@ import {
 } from 'instrumentation/service';
 
 import {
+    AGGREGATE_UI_CHUNK_COUNT,
     CACHE_HIT_COUNT,
     CACHE_MISS_COUNT,
     GET_RECORD_AGGREGATE_INVOKE_COUNT,
@@ -107,6 +108,7 @@ const ADAPTER_CACHE_MISS_COUNT_METRIC_NAME = 'cache-miss-count';
 const ADAPTER_CACHE_MISS_DURATION_METRIC_NAME = 'cache-miss-duration';
 const ADAPTER_CACHE_MISS_OUT_OF_TTL_DURATION_METRIC_NAME = 'cache-miss-out-of-ttl-duration';
 const RECORD_API_NAME_CHANGE_COUNT_METRIC_NAME = 'record-api-name-change-count';
+const aggregateUiChunkCountMetric = percentileHistogram(AGGREGATE_UI_CHUNK_COUNT);
 const cacheHitMetric = counter(CACHE_HIT_COUNT);
 const cacheMissMetric = counter(CACHE_MISS_COUNT);
 const getRecordAggregateInvokeMetric = counter(GET_RECORD_AGGREGATE_INVOKE_COUNT);
@@ -559,6 +561,10 @@ export function setupInstrumentation(lds: LDS, store: Store): void {
         storeSnapshotSubscriptionsMetric.update(storeStats.snapshotSubscriptionCount);
         storeWatchSubscriptionsMetric.update(storeStats.watchSubscriptionCount);
     });
+}
+
+export function setAggregateUiChunkCountMetric(chunkCount: number): void {
+    aggregateUiChunkCountMetric.update(chunkCount);
 }
 
 export function incrementGetRecordNormalInvokeCount(): void {

@@ -15,6 +15,47 @@ import { default as appRouter, Route } from '../router';
 import { buildGetRecordByFieldsCompositeRequest } from '../middlewares/execute-aggregate-ui';
 import { buildResourceRequest } from './test-utils';
 
+jest.mock('@salesforce/lds-instrumentation', () => {
+    const spies = {
+        setAggregateUiChunkCountSpy: jest.fn(),
+        logCRUDLightningInteraction: jest.fn(),
+        cacheStatsLogMissesSpy: jest.fn(),
+        cacheStatsLogHitsSpy: jest.fn(),
+    };
+
+    return {
+        setAggregateUiChunkCountMetric: spies.setAggregateUiChunkCountSpy,
+        incrementGetRecordNormalInvokeCount: () => {},
+        incrementGetRecordAggregateInvokeCount: () => {},
+        registerLdsCacheStats: () => ({
+            logMisses: spies.cacheStatsLogMissesSpy,
+            logHits: spies.cacheStatsLogHitsSpy,
+        }),
+        registerCacheStats: () => ({
+            logMisses: spies.cacheStatsLogMissesSpy,
+            logHits: spies.cacheStatsLogHitsSpy,
+        }),
+        logCRUDLightningInteraction: spies.logCRUDLightningInteraction,
+        __spies: spies,
+    };
+});
+
+import { __spies as instrumentationSpies } from '@salesforce/lds-instrumentation';
+
+// Make sure to reset the executeGlobalController mock and the storage between each test.
+beforeEach(() => {
+    if (jest.isMockFunction(aura.executeGlobalController)) {
+        aura.executeGlobalController.mockReset();
+    }
+
+    instrumentationSpies.logCRUDLightningInteraction.mockClear();
+    instrumentationSpies.cacheStatsLogMissesSpy.mockClear();
+    instrumentationSpies.cacheStatsLogHitsSpy.mockClear();
+    instrumentationSpies.setAggregateUiChunkCountSpy.mockClear();
+
+    return auraStorage.__reset();
+});
+
 function testControllerInput(
     request: Partial<ResourceRequest>,
     expectedParams: any[],
@@ -121,15 +162,6 @@ function generateMockedRecordFields(
 
     return fields;
 }
-
-// Make sure to reset the executeGlobalController mock and the storage between each test.
-beforeEach(() => {
-    if (jest.isMockFunction(aura.executeGlobalController)) {
-        aura.executeGlobalController.mockReset();
-    }
-
-    return auraStorage.__reset();
-});
 
 describe('network adapter', () => {
     it('throws an error if no matching invoker is found', () => {

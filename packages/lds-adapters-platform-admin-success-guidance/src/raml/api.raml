@@ -35,6 +35,7 @@ types:
         type: string
         enum:
           - Link
+          - NoAction
           - TlxModule
           - Video
           - Walkthrough
@@ -122,9 +123,13 @@ types:
       iconName:
         description: The icon name for the link action
         type: string
+        # TODO Hand-rolled W-8253396
+        required: false
       label:
         description: The localized link label
         type: string
+        # TODO Hand-rolled W-8253396
+        required: false
       url:
         description: The localized link url
         type: string
@@ -138,6 +143,11 @@ types:
       url:
         description: The localized link url
         type: string
+  LightningAssistantNoActionRepresentation:
+    description: A NoAction Representation
+    discriminatorValue: NoAction
+    type: AbstractLightningAssistantActionRepresentation
+    properties: {}
   LightningAssistantQuestionRepresentation:
     description: A queston from a Lightning Assistant questionnaire
     type: object
@@ -159,6 +169,8 @@ types:
       link:
         description: A localized help link for this question
         type: LightningAssistantLinkRepresentation | nil
+        # TODO Hand-rolled W-8253396
+        required: false
   LightningAssistantQuestionnaireInputRepresentation:
     description: An Input Representation for an answer to question from a Lightning
       Assistant questionnaire.
@@ -270,6 +282,8 @@ types:
       iconName:
         description: The icon name for the Trailhead action
         type: string
+        # TODO Hand-rolled W-8253396
+        required: false
       moduleId:
         description: The module id for the Trailhead in LEX module
         type: string | nil
@@ -302,6 +316,8 @@ types:
       iconName:
         description: The icon name for the video action
         type: string
+        # TODO Hand-rolled W-8253396
+        required: false
       url:
         description: The video action url
         type: string
@@ -313,6 +329,8 @@ types:
       iconName:
         description: The icon name for the walkthrough action
         type: string
+        # TODO Hand-rolled W-8253396
+        required: false
       promptId:
         description: The prompt id for the walkthrough action
         type: string

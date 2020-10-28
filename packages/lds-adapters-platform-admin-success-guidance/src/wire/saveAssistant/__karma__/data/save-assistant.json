@@ -12,11 +12,20 @@
             "id": "best_practice",
             "labels": {
                 "title": "Learn about Our Rollout Recommendations",
-                "meta": "",
                 "description": "Follow our recommendations for rolling out Salesforce to customers."
             },
             "progress": "Completed",
             "steps": [
+                {
+                    "id": "subheading_test",
+                    "labels": {
+                        "title": "Learn about Our Rollout Recommendations"
+                    },
+                    "progress": "NotStarted",
+                    "action": {
+                        "actionType": "NoAction"
+                    }
+                },
                 {
                     "action": {
                         "iconName": "linkIcon",
@@ -26,9 +35,7 @@
                     },
                     "id": "learn_about_salesforce",
                     "labels": {
-                        "title": "Explore Salesforce Setup",
-                        "meta": "",
-                        "description": "Explore Salesforce Setup on your own, where you can refine your users&#39; Salesforce experience."
+                        "title": "Explore Salesforce Setup"
                     },
                     "progress": "Completed"
                 }

@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-commerce-search",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "description": "Wire adapters Community Navigation Menu",
     "license": "MIT",
     "main": "dist/umd/es2018/commerce-search.js",
@@ -27,9 +27,9 @@
         "registry": "https://npm.lwcjs.org"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.2.2"
+        "@salesforce/lds-bindings": "1.2.3"
     },
     "devDependencies": {
-        "@salesforce/lds-karma": "1.2.2"
+        "@salesforce/lds-karma": "1.2.3"
     }
 }

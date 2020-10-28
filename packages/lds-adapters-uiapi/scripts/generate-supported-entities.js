@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 
+const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('yaml');
@@ -16,13 +17,13 @@ const coreApiVersion = parseFloat(/<currentVersion>([\d.]+)<\/currentVersion>/.e
 console.log(`${core} is at API version ${coreApiVersion.toFixed(1)}`);
 
 // read the UI API allow-list, location taken from https://salesforce.quip.com/kub0ARlCCyYs
-const allowListRelativePath = path.join(
+const allowListYaml = path.join(
+    core,
     'ui-services-private',
     'resources',
     'module-config',
     'ui-services-private-object-allow-list.yaml'
 );
-const allowListYaml = path.join(core, allowListRelativePath);
 const allowList = yaml.parse(fs.readFileSync(allowListYaml, { encoding: 'utf8' }));
 
 console.log(`read UIAPI allow list from ${allowListYaml}`);
@@ -45,6 +46,15 @@ Object.entries(
 
 console.log(`found ${Object.keys(supportedEntities).length} supported entities`);
 
+// grab p4 changelist of allow list
+const filelogResult = spawnSync('p4', ['filelog', '-m', '1', allowListYaml]);
+const [
+    ,
+    allowListDepotPath,
+    allowListRevision,
+    allowListChangelist,
+] = /(\/\/app\/.*)\n.*#(\d+) change (\d+)/.exec(filelogResult.stdout.toString());
+
 // generate supported-entities.ts
 const supportedEntitiesTs = path.join('src', 'util', 'supported-entities.ts');
 
@@ -52,7 +62,7 @@ const prolog = `/**
  * A set of the string names of known ui-api supported entities.
  *
  * Generated
- *     from: ${allowListRelativePath}
+ *     from: ${allowListDepotPath}#${allowListRevision} (changelist ${allowListChangelist})
  *     API version: ${coreApiVersion}
  *     at: ${new Date().toUTCString()}
  */

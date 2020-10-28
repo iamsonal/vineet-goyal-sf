@@ -1,0 +1,17 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  lds: lds://annotations.raml
+
+(lds.keyPrefix): 'CommunitiesSeo::'
+
+types:
+  RecordSeoPropertiesRepresentation:
+    (lds.ttl): 3600000
+    (lds.opaque): true
+
+/connect/communities/{communityId}/seo/properties/{recordId}:
+  get:
+    (lds.adapter):
+      name: getRecordSeoProperties

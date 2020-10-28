@@ -3640,6 +3640,33 @@ describe('routes', () => {
         );
     });
 
+    describe('get /connect/communities/{communityId}/seo/properties/{recordId}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/communities/1234567890ABCDE/seo/properties/1234567890ABCDE`,
+            },
+            [
+                'SeoPropertiesController.getRecordSeoProperties',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/communities/1234567890ABCDE/seo/properties/1234567890ABCDE`,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/communities/1234567890ABCDE/seo/properties/1234567890ABCDE`,
+            },
+            {}
+        );
+    });
+
     // [IMPORTANT] this test has to be the last one in the suite to verify all registered routes have corresponding tests
     it.each(Object.keys(testedRoutes).map(key => key.split(':')))(
         '%s %s route tested',

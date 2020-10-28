@@ -1,0 +1,67 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '51.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v51.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  RecordSeoPropertiesRepresentation:
+    description: SEO properties for a record
+    type: object
+    properties:
+      fields:
+        description: Values of the requested fields
+        type: object
+        properties:
+          //:
+            type: string
+      objectName:
+        description: Label name of the object
+        type: string
+      recordId:
+        description: Record ID that was requested
+        type: string
+      recordName:
+        description: Name field value of the record
+        type: string
+/connect/communities/{communityId}/seo/properties/{recordId}:
+  get:
+    description: Returns the values of the requested fields from the record along
+      with the record name and object label name.
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: RecordSeoPropertiesRepresentation
+    queryParameters:
+      fields:
+        type: string
+        required: false
+  uriParameters:
+    communityId:
+      type: string
+      required: true
+    recordId:
+      type: string
+      required: true

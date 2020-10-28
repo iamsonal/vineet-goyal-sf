@@ -1,0 +1,25 @@
+{
+    "dataflowJobs": [
+        {
+            "createdDate": "2020-10-01T07:00:01.000Z",
+            "duration": 26,
+            "executedDate": "2020-10-01T07:00:04.000Z",
+            "id": "03CRM0000006tEf2AI",
+            "jobType": "recipe",
+            "label": "rcp opp ext amt_recipe",
+            "nodesUrl": "/services/data/v51.0/wave/dataflowjobs/03CRM0000006tEf2AI/nodes",
+            "progress": 0.0,
+            "startDate": "2020-10-01T07:00:01.000Z",
+            "status": "Success",
+            "type": "dataflowjob",
+            "url": "/services/data/v51.0/wave/dataflowjobs/03CRM0000006tEf2AI",
+            "createdBy": { "id": "", "name": "", "profilePhotoUrl": "" },
+            "lastModifiedBy": { "id": "", "name": "", "profilePhotoUrl": "" },
+            "lastModifiedDate": "",
+            "permissions": { "create": true, "manage": true, "modify": true, "view": true },
+            "source": { "name": "", "namespace": "", "id": "", "url": "", "label": "" },
+            "syncDataflows": { "dataflows": [] }
+        }
+    ],
+    "url": "/services/data/v51.0/wave/dataflowjobs"
+}

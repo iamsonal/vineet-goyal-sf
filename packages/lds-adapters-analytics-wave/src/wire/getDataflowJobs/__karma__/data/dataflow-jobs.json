@@ -13,17 +13,6 @@
             "status": "Success",
             "type": "dataflowjob",
             "url": "/services/data/v51.0/wave/dataflowjobs/03CRM0000006tEf2AI",
-            "assetSharingUrl": "https://HOST/analytics/wave/dataflowjobs?assetId=03CRM0000006tEf2AI&orgId=ORG_ID&loginHost=HOST&urlType=sharing",
-            "description": "",
-            "lastAccessedDate": "",
-            "createdBy": { "id": "", "name": "", "profilePhotoUrl": "" },
-            "lastModifiedBy": { "id": "", "name": "", "profilePhotoUrl": "" },
-            "lastModifiedDate": "",
-            "name": "",
-            "namespace": "",
-            "permissions": { "create": true, "manage": true, "modify": true, "view": true },
-            "message": "",
-            "source": { "name": "", "namespace": "", "id": "", "url": "", "label": "" },
             "syncDataflows": { "dataflows": [] }
         },
         {

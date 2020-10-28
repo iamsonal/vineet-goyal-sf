@@ -39,8 +39,8 @@ function getAnalyticsLimitsMatcher(config) {
 }
 
 // Dataflow Jobs
-export function mockGetDataflowJobsNetworkOnce(mockData) {
-    const paramMatch = getDataflowJobsMatcher();
+export function mockGetDataflowJobsNetworkOnce(config, mockData) {
+    const paramMatch = getDataflowJobsMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {
@@ -48,19 +48,26 @@ export function mockGetDataflowJobsNetworkOnce(mockData) {
     }
 }
 
-export function mockGetDataflowJobsNetworkErrorOnce(mockData) {
-    const paramMatch = getDataflowJobsMatcher();
+export function mockGetDataflowJobsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDataflowJobsMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-function getDataflowJobsMatcher() {
+function getDataflowJobsMatcher(config) {
+    let { page, pageSize, q, status } = config;
+
     return sinon.match({
         body: null,
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/dataflowjobs`,
-        queryParams: {},
+        queryParams: {
+            page,
+            pageSize,
+            q,
+            status,
+        },
     });
 }
 

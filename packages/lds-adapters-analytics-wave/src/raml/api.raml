@@ -61,6 +61,7 @@ types:
       namespace:
         description: The namespace that qualifies the asset name
         type: string
+        required: false # TODO Hand-rolled W-8253396
       url:
         description: The asset URL.
         type: string
@@ -71,16 +72,19 @@ types:
     properties:
       assetSharingUrl:
         description: Sharing URL for the asset.
-        type: string
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
       createdBy:
         description: Represents asset creator.
         type: WaveUserRepresentation
+        required: false # TODO Hand-rolled W-8253396
       createdDate:
         description: Time the asset was created.
         type: string
       description:
         description: Short description of the asset.
         type: string
+        required: false # TODO Hand-rolled W-8253396
       id:
         description: The 18 character asset ID.
         type: string
@@ -89,22 +93,28 @@ types:
         type: string
       lastAccessedDate:
         description: Last time the asset was accessed.
-        type: string
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
       lastModifiedBy:
         description: The user that last updated the asset.
-        type: WaveUserRepresentation
+        type: WaveUserRepresentation | nil
+        required: false # TODO Hand-rolled W-8253396
       lastModifiedDate:
         description: Last time the asset was modified.
-        type: string
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
       name:
         description: The name of the asset.
         type: string
+        required: false # TODO Hand-rolled W-8253396
       namespace:
         description: The namespace of the Asset.
         type: string
+        required: false # TODO Hand-rolled W-8253396
       permissions:
         description: Represents permissions for the present user.
-        type: PermissionsRepresentation
+        type: PermissionsRepresentation | nil
+        required: false # TODO Hand-rolled W-8253396
       type:
         description: The asset type.
         type: string
@@ -175,7 +185,7 @@ types:
       dataflowId:
         description: Dataflow ID
         type: string
-        required: false # TODO: hand rolled
+        required: false # TODO Hand-rolled W-8253396
   DataflowJobNodeCollectionRepresentation:
     description: A collection of Dataflow Job Nodes.
     type: object
@@ -198,13 +208,16 @@ types:
         type: integer
       errorLogUrl:
         description: Download link for error log blob
-        type: string
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
       inputRows:
         description: The statistics of input rows to a dataflow job node
-        type: NodeRowCountRepresentation
+        type: NodeRowCountRepresentation | nil
+        required: false # TODO Hand-rolled W-8253396
       message:
         description: The error or informational message of a dataflow job node
-        type: string
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
       nodeType:
         description: The error or informational message of a dataflow job node
         type: string
@@ -233,7 +246,8 @@ types:
           - Update
       outputRows:
         description: The statistics of output rows out of a dataflow job node
-        type: NodeRowCountRepresentation
+        type: NodeRowCountRepresentation | nil
+        required: false # TODO Hand-rolled W-8253396
       startDate:
         description: The start date of a dataflow job node
         type: string
@@ -272,7 +286,8 @@ types:
           - User
       message:
         description: The error or informational message of a dataflow job
-        type: string
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
       nodesUrl:
         description: The URL of job nodes
         type: string
@@ -282,7 +297,8 @@ types:
         type: number
       source:
         description: The source of a job
-        type: AssetReferenceRepresentation
+        type: AssetReferenceRepresentation | nil
+        required: false # TODO Hand-rolled W-8253396
       startDate:
         description: The start date of a dataflow job
         type: string
@@ -306,30 +322,35 @@ types:
     properties:
       current:
         description: Current version of dataflow.
-        type: DataflowVersionRepresentation
+        type: DataflowVersionRepresentation | nil
+        required: false # TODO Hand-rolled W-8253396
       definition:
         description: The representation of the dataflow nodes
         type: object
-        properties: # TODO Hand rolled
+        properties: # TODO Hand-rolled W-8252808
           //:
             type: string
       emailNotificationLevel:
         description: Email notification level of dataflow.
-        type: string
+        type: string | nil
         enum:
           - Always
           - Failures
           - Never
           - Warnings
+        required: false # TODO Hand-rolled W-8253396
       historiesUrl:
         description: The URL for the dataflow histories associated with the dataflow.
-        type: string
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
       nextScheduledDate:
         description: Next scheduled run of dataflow.
-        type: string
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
       scheduleAttributes:
         description: Schedule attributes of dataflow.
-        type: string
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
   DataflowVersionRepresentation:
     description: A Wave dataflow version.
     type: object
@@ -365,11 +386,13 @@ types:
         # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
         format: double
         type: number
+        required: false # TODO Hand-rolled W-8253396
       processedCount:
         description: Number of processed rows.
         # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
         format: double
         type: number
+        required: false # TODO Hand-rolled W-8253396
   PermissionsRepresentation:
     description: Permissions of the user on an asset.
     type: object
@@ -377,16 +400,20 @@ types:
       create:
         description: The value which indicates whether the user can create an asset
         type: boolean
+        required: false # TODO Hand-rolled W-8253396
       manage:
         description: The value which indicates whether the user can manage access
           control on an asset
         type: boolean
+        required: false # TODO Hand-rolled W-8253396
       modify:
         description: The value which indicates whether the user can modify an asset
         type: boolean
+        required: false # TODO Hand-rolled W-8253396
       view:
         description: The value which indicates whether the user can view an asset.
         type: boolean
+        required: false # TODO Hand-rolled W-8253396
   WaveAnalyticsLimitCollectionRepresentation:
     description: A collection of analytics limits
     type: object
@@ -446,9 +473,11 @@ types:
       name:
         description: The name of the user.
         type: string
+        required: false # TODO Hand-rolled W-8253396
       profilePhotoUrl:
         description: The Chatter profile photo of the user.
-        type: string
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
 
 /wave:
   /dataflowjobs:
@@ -464,6 +493,25 @@ types:
         dataflowId:
           type: string
           required: false
+        page:
+          type: integer
+          required: false
+        pageSize:
+          type: integer
+          required: false
+        q:
+          type: string
+          required: false
+        status:
+          type: string
+          required: false
+          enum:
+            - Failure
+            - Preprocessing
+            - Queued
+            - Running
+            - Success
+            - Warning
     post:
       description: Start a dataflow job.
       responses:

@@ -15,7 +15,37 @@ describe('basic', () => {
     it('gets dataflow jobs', async () => {
         const mock = getMock('dataflow-jobs');
         const config = {};
-        mockGetDataflowJobsNetworkOnce(mock);
+        mockGetDataflowJobsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetDataflowJobs);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
+    it('gets dataflow jobs in running status', async () => {
+        const mock = getMock('dataflow-jobs-running');
+        const config = { status: 'Running' };
+        mockGetDataflowJobsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetDataflowJobs);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
+    it('gets dataflow jobs with status and search', async () => {
+        const mock = getMock('dataflow-jobs-running');
+        const config = { status: 'Running', q: 'recipe' };
+        mockGetDataflowJobsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetDataflowJobs);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
+    it('gets dataflow jobs with page and pageSize', async () => {
+        const mock = getMock('dataflow-jobs-page');
+        const config = { page: 1, pageSize: 20 };
+        mockGetDataflowJobsNetworkOnce(config, mock);
 
         const el = await setupElement(config, GetDataflowJobs);
         expect(el.pushCount()).toBe(1);
@@ -25,7 +55,7 @@ describe('basic', () => {
     it('does not fetch a second time', async () => {
         const mock = getMock('dataflow-jobs');
         const config = {};
-        mockGetDataflowJobsNetworkOnce(mock);
+        mockGetDataflowJobsNetworkOnce(config, mock);
 
         const el = await setupElement(config, GetDataflowJobs);
         expect(el.pushCount()).toBe(1);
@@ -49,7 +79,7 @@ describe('basic', () => {
             ],
         };
         const config = {};
-        mockGetDataflowJobsNetworkErrorOnce(mock);
+        mockGetDataflowJobsNetworkErrorOnce(config, mock);
 
         const el = await setupElement(config, GetDataflowJobs);
         expect(el.pushCount()).toBe(1);
@@ -69,7 +99,7 @@ describe('basic', () => {
             ],
         };
         const config = {};
-        mockGetDataflowJobsNetworkOnce([
+        mockGetDataflowJobsNetworkOnce(config, [
             {
                 reject: true,
                 status: 404,

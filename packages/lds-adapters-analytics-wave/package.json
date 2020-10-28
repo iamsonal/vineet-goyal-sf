@@ -33,10 +33,10 @@
         "@salesforce/lds-bindings": "1.2.2"
     },
     "devDependencies": {
-        "@ldsjs/cli": "^0.19.0",
-        "@ldsjs/compiler": "^0.19.0",
-        "@ldsjs/engine": "^0.19.0",
-        "@ldsjs/lwc-lds": "^0.19.0",
+        "@ldsjs/cli": "^0.19.1",
+        "@ldsjs/compiler": "^0.19.1",
+        "@ldsjs/engine": "^0.19.1",
+        "@ldsjs/lwc-lds": "^0.19.1",
         "@salesforce/lds-karma": "1.2.2"
     }
 }

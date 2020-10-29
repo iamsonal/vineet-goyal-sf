@@ -18,7 +18,6 @@ interface ScalarFieldRepresentationValue {
     value: RecordInputRepresentation['fields'];
 }
 
-export const DURABLE_STORE_SEGMENT_DRAFT_ACTIONS = 'DRAFT_ACTION_SEGMENT';
 const DRAFT_ACTION_KEY_JUNCTION = '__DraftAction__';
 const DRAFT_ACTION_KEY_REGEXP = new RegExp(`(.*)${DRAFT_ACTION_KEY_JUNCTION}([a-zA-Z0-9]+)$`);
 

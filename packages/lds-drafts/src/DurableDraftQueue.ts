@@ -24,7 +24,9 @@ function generateUniqueDraftActionId(existingIds: string[]) {
     // new id in milliseconds with some extra digits for collisions
     let newId = new Date().getTime() * 100;
 
-    const existingAsNumbers = existingIds.map(id => Number(id));
+    const existingAsNumbers = existingIds
+        .map(id => parseInt(id, 10))
+        .filter(parsed => !isNaN(parsed));
 
     let counter = 0;
     while (existingAsNumbers.includes(newId)) {
@@ -39,6 +41,10 @@ function generateUniqueDraftActionId(existingIds: string[]) {
     }
 
     return newId.toString();
+}
+
+function isErrorFetchResponse<T>(error: unknown): error is FetchResponse<T> {
+    return typeof error === 'object' && error !== null && 'status' in error;
 }
 
 export class DurableDraftQueue implements DraftQueue {
@@ -59,24 +65,37 @@ export class DurableDraftQueue implements DraftQueue {
         return this.actionsForTag(tag, queue).filter(action => action.request.method === 'delete');
     }
 
-    private persistedQueue(): Promise<DraftAction<unknown>[]> {
+    private getQueueActions(): Promise<DraftAction<unknown>[]> {
         return this.durableStore.getAllEntries(DraftDurableSegment).then(durableEntries => {
             const queue: DraftAction<unknown>[] = [];
             if (durableEntries === undefined) {
                 return queue;
             }
-            const keys = ObjectKeys(durableEntries).sort();
+            const keys = ObjectKeys(durableEntries);
             for (let i = 0, len = keys.length; i < len; i++) {
                 const entry = durableEntries[keys[i]];
                 queue.push(entry.data);
             }
 
-            return queue;
+            return queue.sort((a, b) => {
+                const aTime = parseInt(a.id, 10);
+                const bTime = parseInt(b.id, 10);
+
+                // safety check
+                if (isNaN(aTime)) {
+                    return 1;
+                }
+                if (isNaN(bTime)) {
+                    return -1;
+                }
+
+                return aTime - bTime;
+            });
         });
     }
 
     enqueue<T>(request: ResourceRequest, tag: string): Promise<DraftAction<T>> {
-        return this.persistedQueue().then(queue => {
+        return this.getQueueActions().then(queue => {
             if (request.method === 'post' && this.actionsForTag(tag, queue).length > 0) {
                 throw new Error('Cannot enqueue a POST draft action with an existing tag');
             }
@@ -102,7 +121,7 @@ export class DurableDraftQueue implements DraftQueue {
     }
 
     getActionsForTags(tags: ObjectAsSet): Promise<DraftActionMap> {
-        return this.persistedQueue().then(queue => {
+        return this.getQueueActions().then(queue => {
             const map: DraftActionMap = {};
             const tagKeys = ObjectKeys(tags);
             for (let i = 0, tagLen = tagKeys.length; i < tagLen; i++) {
@@ -126,22 +145,25 @@ export class DurableDraftQueue implements DraftQueue {
     }
 
     processNextAction(): Promise<ProcessActionResult> {
-        return this.persistedQueue().then(queue => {
+        return this.getQueueActions().then(queue => {
             const action = queue[0];
             if (action === undefined) {
                 return ProcessActionResult.NO_ACTION_TO_PROCESS;
             }
 
-            if (action.status !== DraftActionStatus.Pending) {
+            const { status, id, tag } = action;
+
+            if (status === DraftActionStatus.Error) {
+                return ProcessActionResult.BLOCKED_ON_ERROR;
+            }
+
+            if (status !== DraftActionStatus.Pending) {
                 return ProcessActionResult.ACTION_ALREADY_PROCESSING;
             }
 
-            const uploadingAction = { ...action, status: DraftActionStatus.Uploading };
-            const entry: DurableStoreEntry = { data: uploadingAction };
-            const durableEntryKey = buildDraftDurableStoreKey(
-                uploadingAction.tag,
-                uploadingAction.id
-            );
+            action.status = DraftActionStatus.Uploading;
+            const entry: DurableStoreEntry = { data: action };
+            const durableEntryKey = buildDraftDurableStoreKey(tag, id);
             const entries: DurableStoreEntries = { [durableEntryKey]: entry };
             return this.durableStore.setEntries(entries, DraftDurableSegment).then(() => {
                 const { request, id, tag } = action;
@@ -170,21 +192,33 @@ export class DurableDraftQueue implements DraftQueue {
                                 return ProcessActionResult.ACTION_SUCCEEDED;
                             });
                     })
-                    .catch((err: any) => {
-                        const errorAction: ErrorDraftAction<unknown> = {
-                            status: DraftActionStatus.Error,
-                            id,
-                            tag,
-                            request,
-                            error: err,
-                        };
+                    .catch((err: unknown) => {
+                        // if the error is a FetchResponse shape then it's a bad request
+                        if (isErrorFetchResponse(err)) {
+                            const errorAction: ErrorDraftAction<unknown> = {
+                                status: DraftActionStatus.Error,
+                                id,
+                                tag,
+                                request,
+                                error: err,
+                            };
 
-                        const entry: DurableStoreEntry = { data: errorAction };
-                        const entries: DurableStoreEntries = { [durableEntryKey]: entry };
+                            const entry: DurableStoreEntry = { data: errorAction };
+                            const entries: DurableStoreEntries = { [durableEntryKey]: entry };
+                            return this.durableStore
+                                .setEntries(entries, DraftDurableSegment)
+                                .then(() => {
+                                    return ProcessActionResult.ACTION_ERRORED;
+                                });
+                        }
+
+                        // if we got here then it's a network error, set it back
+                        // to pending and return response
+                        action.status = DraftActionStatus.Pending;
                         return this.durableStore
                             .setEntries(entries, DraftDurableSegment)
                             .then(() => {
-                                return ProcessActionResult.ACTION_ERRORED;
+                                return ProcessActionResult.NETWORK_ERROR;
                             });
                     });
             });

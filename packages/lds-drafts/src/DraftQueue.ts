@@ -46,10 +46,23 @@ export type DraftQueueCompletedListener = (completed: CompletedDraftAction<unkno
 export type DraftActionMap = { [tag: string]: Readonly<DraftAction<unknown>>[] };
 
 export enum ProcessActionResult {
-    ACTION_ERRORED = -1,
-    ACTION_SUCCEEDED = 0,
-    NO_ACTION_TO_PROCESS = 1,
-    ACTION_ALREADY_PROCESSING = 2,
+    // non-2xx network error, requires user intervention
+    ACTION_ERRORED = 'ERROR',
+
+    // upload succeeded
+    ACTION_SUCCEEDED = 'SUCCESS',
+
+    // queue is empty
+    NO_ACTION_TO_PROCESS = 'NO_ACTION_TO_PROCESS',
+
+    // network request is in flight
+    ACTION_ALREADY_PROCESSING = 'ACTION_ALREADY_PROCESSING',
+
+    // network call failed (offline)
+    NETWORK_ERROR = 'NETWORK_ERROR',
+
+    // queue is blocked on an error that requires user intervention
+    BLOCKED_ON_ERROR = 'BLOCKED_ON_ERROR',
 }
 
 export type ObjectAsSet = { [key: string]: true };

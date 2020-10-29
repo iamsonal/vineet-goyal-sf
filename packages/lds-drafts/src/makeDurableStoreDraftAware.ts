@@ -21,9 +21,9 @@ import {
     isDraftRecordRepresentationNormalized,
     replayDraftsOnRecord,
     DurableRecordRepresentation,
-    DURABLE_STORE_SEGMENT_DRAFT_ACTIONS,
     extractRecordKeyFromDraftDurableStoreKey,
 } from './utils/records';
+import { DraftDurableSegment } from './DurableDraftQueue';
 import {
     isStoreKeyRecordId,
     extractRecordIdFromStoreKey,
@@ -388,7 +388,7 @@ export function makeDurableStoreDraftAware(
     ) {
         durableStore.registerOnChangedListener(
             (ids: { [key: string]: boolean }, segment: string) => {
-                if (segment !== DURABLE_STORE_SEGMENT_DRAFT_ACTIONS) {
+                if (segment !== DraftDurableSegment) {
                     return listener(ids, segment);
                 }
                 const keys = ObjectKeys(ids);

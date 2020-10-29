@@ -8,11 +8,8 @@ import {
 import { ObjectKeys } from '../../../lds-runtime-mobile/src/utils/language';
 import { DraftQueue } from '../DraftQueue';
 import { makeDurableStoreDraftAware } from '../makeDurableStoreDraftAware';
-import {
-    buildDraftDurableStoreKey,
-    DurableRecordRepresentation,
-    DURABLE_STORE_SEGMENT_DRAFT_ACTIONS,
-} from '../utils/records';
+import { buildDraftDurableStoreKey, DurableRecordRepresentation } from '../utils/records';
+import { DraftDurableSegment } from '../DurableDraftQueue';
 import {
     buildDurableRecordRepresentation,
     createDeleteDraftAction,
@@ -569,7 +566,7 @@ describe('makeDurableStoreDraftAware', () => {
                 done();
             };
             durableStore.registerOnChangedListener(baseListener);
-            changeListener({ [draftActionKey]: true }, DURABLE_STORE_SEGMENT_DRAFT_ACTIONS);
+            changeListener({ [draftActionKey]: true }, DraftDurableSegment);
         });
 
         it('only changes to draft action segment are parsed', done => {
@@ -609,7 +606,7 @@ describe('makeDurableStoreDraftAware', () => {
                 done();
             };
             durableStore.registerOnChangedListener(baseListener);
-            changeListener({ [STORE_KEY_RECORD]: true }, DURABLE_STORE_SEGMENT_DRAFT_ACTIONS);
+            changeListener({ [STORE_KEY_RECORD]: true }, DraftDurableSegment);
         });
     });
 });

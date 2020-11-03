@@ -32,7 +32,7 @@ describe('createResourceParams', () => {
         expect(createResourceParams(inputConfig)).toStrictEqual({
             queryParams: {
                 fields: [...fieldsForEntity1, ...fieldsForEntity2],
-                optionalFields: [],
+                optionalFields: undefined,
             },
             urlParams: {
                 recordIds: ['mockRecordId1', 'mockRecordId2', 'mockRecordId3'],
@@ -55,7 +55,7 @@ describe('createResourceParams', () => {
         };
         expect(createResourceParams(inputConfig)).toStrictEqual({
             queryParams: {
-                fields: [],
+                fields: undefined,
                 optionalFields: [...optionalFieldsForEntity1, ...optionalFieldsForEntity2],
             },
             urlParams: {

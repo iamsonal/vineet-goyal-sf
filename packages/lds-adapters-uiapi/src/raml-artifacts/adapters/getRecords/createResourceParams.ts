@@ -19,13 +19,15 @@ export function createResourceParams(config: GetRecordsConfig): ResourceRequestC
             ArrayPrototypePush.call(resourceConfigOptionalFields, ...optionalFields);
         }
     }
+
     return {
         urlParams: {
             recordIds,
         },
         queryParams: {
-            fields: resourceConfigFields,
-            optionalFields: resourceConfigOptionalFields,
+            fields: resourceConfigFields.length > 0 ? resourceConfigFields : undefined,
+            optionalFields:
+                resourceConfigOptionalFields.length > 0 ? resourceConfigOptionalFields : undefined,
         },
     };
 }

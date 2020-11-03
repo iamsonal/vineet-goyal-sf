@@ -149,7 +149,10 @@ function mockGetRecordsNetwork(config, mockData) {
     const paramMatch = sinon.match({
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/records/batch/${allRecordIds.join(',')}`,
-        queryParams: { fields: allFields, optionalFields: allOptionalFields },
+        queryParams: {
+            fields: allFields.length > 0 ? allFields : undefined,
+            optionalFields: allOptionalFields.length > 0 ? allOptionalFields : undefined,
+        },
     });
 
     if (Array.isArray(mockData)) {

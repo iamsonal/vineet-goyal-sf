@@ -140,9 +140,14 @@ describe('NimbusDraftQueue', () => {
     });
 
     describe('registerDraftQueueCompletedListener', () => {
-        it('throws error', async () => {
+        it('no-ops', async () => {
             const nimbusQueue = new NimbusDraftQueue();
-            expect(nimbusQueue.registerDraftQueueCompletedListener).toThrow();
+            const listener = jest.fn();
+
+            const result = nimbusQueue.registerDraftQueueCompletedListener(listener);
+
+            expect(result).toBeUndefined();
+            expect(listener).toHaveBeenCalledTimes(0);
         });
     });
 });

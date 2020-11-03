@@ -2,6 +2,7 @@ import { NetworkAdapter, ResourceRequest } from '@ldsjs/engine';
 import { ResponsePropertyRetriever, RetrievedProperty } from '@ldsjs/environments';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { DraftAction, DraftQueue } from './main';
+import { ObjectKeys } from './utils/language';
 import { replayDraftsOnRecord } from './utils/records';
 
 /**
@@ -22,11 +23,12 @@ function applyDraftsToResponse(
     }
 
     return draftQueue.getActionsForTags(retrievedRecordKeys).then(actions => {
-        for (let j = 0, len = retrievedRecordsLength; j < len; j++) {
+        const retrievedKeys = ObjectKeys(retrievedRecordKeys);
+        for (let j = 0, len = retrievedKeys.length; j < len; j++) {
             const { cacheKey, data } = records[j];
             const drafts = actions[cacheKey] as Readonly<DraftAction<RecordRepresentation>[]>;
 
-            if (drafts !== undefined) {
+            if (drafts !== undefined && drafts.length > 0) {
                 records[j].data = replayDraftsOnRecord(data, [...drafts]);
             }
         }

@@ -1,8 +1,7 @@
-import { Store } from '@ldsjs/engine';
 import { DurableStore } from '@ldsjs/environments';
 import { DurableDraftQueue } from '@salesforce/lds-drafts';
 
-import { configureLdsDraftQueue } from '../DraftQueueFactory';
+import { buildLdsDraftQueue } from '../DraftQueueFactory';
 import { NimbusDraftQueue } from '../NimbusDraftQueue';
 import { mockNimbusDraftQueueGlobal, resetNimbusDraftQueueGlobal } from './NimbusDraftQueue.spec';
 
@@ -11,12 +10,7 @@ describe('configureLdsDraftQueue', () => {
         // define the nimbus plugin
         mockNimbusDraftQueueGlobal();
 
-        const draftQueue = configureLdsDraftQueue(
-            jest.fn(),
-            (jest.fn() as unknown) as DurableStore,
-            () => undefined,
-            (jest.fn() as unknown) as Store
-        );
+        const draftQueue = buildLdsDraftQueue(jest.fn(), (jest.fn() as unknown) as DurableStore);
 
         expect(draftQueue).toBeInstanceOf(NimbusDraftQueue);
     });
@@ -25,12 +19,7 @@ describe('configureLdsDraftQueue', () => {
         // ensure nimbus plugin not defined
         resetNimbusDraftQueueGlobal();
 
-        const draftQueue = configureLdsDraftQueue(
-            jest.fn(),
-            (jest.fn() as unknown) as DurableStore,
-            () => undefined,
-            (jest.fn() as unknown) as Store
-        );
+        const draftQueue = buildLdsDraftQueue(jest.fn(), (jest.fn() as unknown) as DurableStore);
 
         expect(draftQueue).toBeInstanceOf(DurableDraftQueue);
     });

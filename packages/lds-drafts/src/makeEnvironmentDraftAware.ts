@@ -1,4 +1,4 @@
-import { Environment, ResourceRequest, Store } from '@ldsjs/engine';
+import { Environment, IngestPath, ResourceRequest, Store } from '@ldsjs/engine';
 import { DurableEnvironment } from '@ldsjs/environments';
 import { ObjectCreate } from './utils/language';
 
@@ -18,12 +18,19 @@ import {
     createOkResponse,
 } from './DraftFetchResponse';
 import { clone } from './utils/clone';
-import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 
 export function makeEnvironmentDraftAware(
     env: DurableEnvironment,
     store: Store,
-    draftQueue: DraftQueue
+    draftQueue: DraftQueue,
+    // TODO - W-8291468 - have ingest get called a different way somehow
+    ingestFunc: (
+        record: RecordRepresentation,
+        path: IngestPath,
+        store: Store,
+        timeStamp: number
+    ) => void
 ): Environment {
     const draftDeleteSet = new Set<string>();
 
@@ -113,8 +120,30 @@ export function makeEnvironmentDraftAware(
             store.evict(key);
             return;
         }
+
         env.storeEvict(key);
     };
+
+    // register for when the draft queue completes an upload so we can properly
+    // update subscribers
+    draftQueue.registerDraftQueueCompletedListener(action => {
+        const { request, tag } = action;
+
+        if (request.method === 'delete') {
+            env.storeEvict(tag);
+            env.storeBroadcast(env.rebuildSnapshot);
+        } else {
+            const record = action.response.body as RecordRepresentation;
+            const key = keyBuilderRecord({ recordId: record.id });
+            const path = {
+                fullPath: key,
+                parent: null,
+            };
+
+            ingestFunc(record, path, store, Date.now());
+            env.storeBroadcast(env.rebuildSnapshot);
+        }
+    });
 
     return ObjectCreate(env, {
         dispatchResourceRequest: {

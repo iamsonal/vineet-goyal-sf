@@ -35,6 +35,7 @@ export class NimbusDraftQueue implements DraftQueue {
             );
         });
     }
+
     getActionsForTags(tags: { [tag: string]: true }): Promise<DraftActionMap> {
         const keys = ObjectKeys(tags);
         return new Promise((resolve, reject) => {
@@ -50,11 +51,12 @@ export class NimbusDraftQueue implements DraftQueue {
             );
         });
     }
+
     registerDraftQueueCompletedListener(_listener: DraftQueueCompletedListener): void {
-        if (process.env.NODE_ENV !== 'production') {
-            throw new Error('Cannot register draft queue listeners through the NimbusDraftQueue');
-        }
+        // no-op here because any changes to durable store as a result of an upload
+        // will already get processed by the durable store notify change listener
     }
+
     processNextAction(): Promise<ProcessActionResult> {
         return Promise.reject('Cannot call processNextAction from the NimbusDraftQueue');
     }

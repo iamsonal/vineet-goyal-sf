@@ -18,14 +18,22 @@ export function resetNimbusStoreGlobal() {
 }
 
 export class MockNimbusDurableStore implements DurableStore {
-    kvp: { [key: string]: string } = {};
+    kvp: { [segment: string]: { [key: string]: string } } = {};
     listenerFunc: (ids: string[], segment: string) => void;
 
-    async getEntriesInSegment(ids: string[], _segment: string): Promise<DurableStoreFetchResult> {
+    async getEntriesInSegment(ids: string[], segment: string): Promise<DurableStoreFetchResult> {
         const result = {};
+        const storeSegment = this.kvp[segment];
+        if (storeSegment === undefined) {
+            return {
+                isMissingEntries: true,
+                entries: result,
+            };
+        }
+
         let isMissingEntries = false;
         for (const id of ids) {
-            const val = this.kvp[id];
+            const val = storeSegment[id];
             if (val === undefined) {
                 isMissingEntries = true;
             } else {
@@ -39,12 +47,20 @@ export class MockNimbusDurableStore implements DurableStore {
         };
     }
 
-    async getAllEntriesInSegment(_segment: string): Promise<DurableStoreFetchResult> {
+    async getAllEntriesInSegment(segment: string): Promise<DurableStoreFetchResult> {
         const result = {};
+        const storeSegment = this.kvp[segment];
+        if (storeSegment === undefined) {
+            return {
+                isMissingEntries: true,
+                entries: result,
+            };
+        }
+
         let isMissingEntries = false;
-        const keys = Object.keys(this.kvp);
+        const keys = Object.keys(storeSegment);
         for (const key of keys) {
-            const val = this.kvp[key];
+            const val = storeSegment[key];
             if (val === undefined) {
                 isMissingEntries = true;
             } else {
@@ -58,14 +74,25 @@ export class MockNimbusDurableStore implements DurableStore {
         };
     }
 
-    setEntriesInSegment(entries: DurableStoreEntries, _segment: string): Promise<void> {
-        Object.assign(this.kvp, entries);
+    setEntriesInSegment(entries: DurableStoreEntries, segment: string): Promise<void> {
+        let storeSegment = this.kvp[segment];
+        if (storeSegment === undefined) {
+            storeSegment = {};
+            this.kvp[segment] = storeSegment;
+        }
+
+        Object.assign(storeSegment, entries);
         return Promise.resolve();
     }
 
-    evictEntriesInSegment(ids: string[], _segment: string): Promise<void> {
+    evictEntriesInSegment(ids: string[], segment: string): Promise<void> {
+        let storeSegment = this.kvp[segment];
+        if (storeSegment === undefined) {
+            return Promise.resolve();
+        }
+
         for (const id of ids) {
-            delete this.kvp[id];
+            delete storeSegment[id];
         }
         return Promise.resolve();
     }

@@ -23,7 +23,11 @@ describe('nimbus durable store tests', () => {
             const recordId = 'foo';
             const recordData = { data: { bar: true } };
             const nimbusStore = new MockNimbusDurableStore();
-            nimbusStore.kvp[recordId] = JSONStringify(recordData);
+            nimbusStore.kvp = {
+                [DefaultDurableSegment]: {
+                    [recordId]: JSONStringify(recordData),
+                },
+            };
             mockNimbusStoreGlobal(nimbusStore);
 
             const durableStore = new NimbusDurableStore();
@@ -36,7 +40,11 @@ describe('nimbus durable store tests', () => {
             const nimbusStore = new MockNimbusDurableStore();
             mockNimbusStoreGlobal(nimbusStore);
             const durableStore = new NimbusDurableStore();
-            nimbusStore.kvp['present'] = JSONStringify({ data: {} });
+            nimbusStore.kvp = {
+                [DefaultDurableSegment]: {
+                    ['present']: JSONStringify({ data: {} }),
+                },
+            };
             const result = await durableStore.getEntries(
                 ['missing', 'present'],
                 DefaultDurableSegment

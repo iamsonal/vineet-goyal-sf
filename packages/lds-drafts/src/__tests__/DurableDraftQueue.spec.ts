@@ -34,44 +34,16 @@ describe('DurableDraftQueue', () => {
             const draftQueue = new DurableDraftQueue(durableStore, network);
             const draftId = 'fooId';
 
-            await draftQueue.enqueue(
-                {
-                    method: 'post',
-                    basePath: 'blah',
-                    baseUri: 'blahuri',
-                    body: null,
-                    queryParams: {},
-                    urlParams: {},
-                    headers: {},
-                },
-                draftId
-            );
+            await draftQueue.enqueue(DEFAULT_REQUEST, draftId);
 
-            // TODO: Clean up this test structure to use expect
-            let caughtError = undefined;
-            try {
-                await draftQueue.enqueue(
-                    {
-                        method: 'post',
-                        basePath: 'blah',
-                        baseUri: 'blahuri',
-                        body: null,
-                        queryParams: {},
-                        urlParams: {},
-                        headers: {},
-                    },
-                    draftId
-                );
-            } catch (e) {
-                caughtError = e;
-            }
-            expect(caughtError).toBeDefined();
+            await expect(draftQueue.enqueue(DEFAULT_REQUEST, draftId)).rejects.toEqual(
+                Error('Cannot enqueue a POST draft action with an existing tag')
+            );
         });
         it('cannot publish draft action after a delete action is added', async () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftQueue = new DurableDraftQueue(durableStore, network);
-            // const draftNamePatch = 'Updated Name Field';
             const draftId = 'fooId';
 
             await draftQueue.enqueue(
@@ -100,10 +72,8 @@ describe('DurableDraftQueue', () => {
                 draftId
             );
 
-            // TODO: Clean up this test structure to use expect
-            var caughtError = undefined;
-            try {
-                await draftQueue.enqueue(
+            await expect(
+                draftQueue.enqueue(
                     {
                         method: 'patch',
                         basePath: 'blah',
@@ -114,11 +84,8 @@ describe('DurableDraftQueue', () => {
                         headers: {},
                     },
                     draftId
-                );
-            } catch (e) {
-                caughtError = e;
-            }
-            expect(caughtError).toBeDefined();
+                )
+            ).rejects.toEqual(Error('Cannot enqueue a draft action for a deleted record'));
         });
 
         it('calls the durable store when enqueuing', async () => {
@@ -126,9 +93,30 @@ describe('DurableDraftQueue', () => {
             const durableStore = new MockDurableStore();
             const draftQueue = new DurableDraftQueue(durableStore, network);
 
-            await draftQueue.enqueue(createPatchRequest(), 'testTag');
+            await draftQueue.enqueue(createPatchRequest(), DEFAULT_TAG);
             const allEntries = await durableStore.getAllEntries(DraftDurableSegment);
             expect(ObjectKeys(allEntries).length).toEqual(1);
+        });
+
+        it('creates two draft actions when editing the same record', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftStore = new DurableDraftQueue(durableStore, network);
+
+            await draftStore.enqueue(createPatchRequest(), DEFAULT_TAG);
+            const secondPatch = createPatchRequest();
+            secondPatch.body.fields.Name = 'Acme 2';
+            await draftStore.enqueue(secondPatch, DEFAULT_TAG);
+            const allEntries = await durableStore.getAllEntries(DraftDurableSegment);
+            expect(ObjectKeys(allEntries).length).toEqual(2);
+
+            const allActions = await draftStore.getActionsForTags({ [DEFAULT_TAG]: true });
+            expect(allActions[DEFAULT_TAG].length).toEqual(2);
+            const firstAction = allActions[DEFAULT_TAG][0];
+            const secondAction = allActions[DEFAULT_TAG][1];
+            expect(firstAction.status).toEqual(DraftActionStatus.Pending);
+            expect(secondAction.status).toEqual(DraftActionStatus.Pending);
+            expect(parseInt(firstAction.id)).toBeLessThan(parseInt(secondAction.id));
         });
     });
 
@@ -139,12 +127,15 @@ describe('DurableDraftQueue', () => {
             const draftQueue = new DurableDraftQueue(durableStore, network);
             setNetworkConnectivity(network, ConnectivityState.Offline);
 
-            await draftQueue.enqueue(createPostRequest(), 'testTag');
+            await draftQueue.enqueue(createPostRequest(), DEFAULT_TAG);
             await draftQueue.enqueue(createPostRequest(), 'testTagTwo');
 
-            const actions = await draftQueue.getActionsForTags({ testTag: true, testTagTwo: true });
+            const actions = await draftQueue.getActionsForTags({
+                [DEFAULT_TAG]: true,
+                testTagTwo: true,
+            });
             expect(actions['testTagTwo'].length).toEqual(1);
-            expect(actions['testTag'].length).toEqual(1);
+            expect(actions[DEFAULT_TAG].length).toEqual(1);
         });
 
         it('rehydrates queue from durable store', async () => {
@@ -294,7 +285,7 @@ describe('DurableDraftQueue', () => {
             const durableStore = new MockDurableStore();
             const draftQueue = new DurableDraftQueue(durableStore, network);
 
-            await draftQueue.enqueue(request, 'testTag');
+            await draftQueue.enqueue(request, DEFAULT_TAG);
             const result = await draftQueue.processNextAction();
 
             expect(result).toEqual(ProcessActionResult.ACTION_ERRORED);

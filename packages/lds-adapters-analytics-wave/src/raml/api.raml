@@ -55,9 +55,11 @@ types:
       label:
         description: The asset label.
         type: string
+        required: false # TODO Hand-rolled W-8253396
       name:
         description: The asset developer name.
         type: string
+        required: false # TODO Hand-rolled W-8253396
       namespace:
         description: The namespace that qualifies the asset name
         type: string
@@ -65,6 +67,7 @@ types:
       url:
         description: The asset URL.
         type: string
+        required: false # TODO Hand-rolled W-8253396
   BaseWaveAssetRepresentation:
     description: Base Wave asset representation.
     discriminator: type
@@ -81,6 +84,7 @@ types:
       createdDate:
         description: Time the asset was created.
         type: string
+        required: false # TODO Hand-rolled W-8253396
       description:
         description: Short description of the asset.
         type: string
@@ -91,6 +95,7 @@ types:
       label:
         description: The label of the asset.
         type: string
+        required: false # TODO Hand-rolled W-8253396
       lastAccessedDate:
         description: Last time the asset was accessed.
         type: string | nil
@@ -181,6 +186,13 @@ types:
       url:
         description: The URL to get the collection.
         type: string
+  DataflowJobInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for dataflow job input representation
+    type: object
+    properties:
+      dataflowJob:
+        type: DataflowJobInputRepresentation
+        description: Dataflow job input representation
   DataflowJobInputRepresentation:
     description: DataflowJob input representation
     type: object # TODO Hand rolled: multiple level inheritance fix
@@ -215,6 +227,7 @@ types:
       duration:
         description: The runtime in seconds of a dataflow job node
         type: integer
+        required: false # TODO Hand-rolled W-8253396
       errorLogUrl:
         description: Download link for error log blob
         type: string | nil
@@ -260,6 +273,7 @@ types:
       startDate:
         description: The start date of a dataflow job node
         type: string
+        required: false # TODO Hand-rolled W-8253396
       status:
         description: The runtime status of a dataflow job node
         type: string
@@ -278,6 +292,7 @@ types:
       duration:
         description: The runtime in seconds of a dataflow job
         type: integer
+        required: false # TODO Hand-rolled W-8253396
       executedDate:
         description: The start date of a job's execution.
         type: string | nil
@@ -312,6 +327,7 @@ types:
       startDate:
         description: The start date of a dataflow job
         type: string
+        required: false # TODO Hand-rolled W-8253396
       status:
         description: The runtime status of a dataflow job
         type: string
@@ -454,6 +470,7 @@ types:
       licenseAttributes:
         description: The analytics license type and other properties
         type: LicenseAttributesRepresentation
+        required: false # TODO Hand-rolled W-8253396
       max:
         description: Max count that analytics allows
         # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
@@ -464,6 +481,7 @@ types:
         # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
         format: double
         type: number
+        required: false # TODO Hand-rolled W-8253396
       type:
         description: The type of analytics limit
         type: string
@@ -532,7 +550,7 @@ types:
               type: DataflowJobRepresentation
       body:
         application/json:
-          type: DataflowJobInputRepresentation
+          type: DataflowJobInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: DataflowJobInputRepresentation
           (oas-body-name): dataflowJob
   /dataflowjobs/{dataflowjobId}:
     get:
@@ -553,7 +571,7 @@ types:
               type: DataflowJobRepresentation
       body:
         application/json:
-          type: DataflowJobInputRepresentation
+          type: DataflowJobInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: DataflowJobInputRepresentation
           (oas-body-name): dataflowJob
     uriParameters:
       dataflowjobId:

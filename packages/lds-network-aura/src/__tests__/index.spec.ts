@@ -3525,11 +3525,11 @@ describe('routes', () => {
                 method: 'patch',
                 baseUri: WAVE_BASE_URI,
                 basePath: `/dataflowjobs/03CRM0000006tEf2AI`,
-                body: { command: 'stop' },
+                body: { dataflowJob: { command: 'stop' } },
             },
             [
                 'WaveController.updateDataflowJob',
-                { command: 'stop' },
+                { dataflowJob: { command: 'stop' } },
                 { background: false, hotspot: true, longRunning: false },
             ]
         );
@@ -3539,7 +3539,7 @@ describe('routes', () => {
                 method: 'patch',
                 baseUri: WAVE_BASE_URI,
                 basePath: `/dataflowjobs/03CRM0000006tEf2AI`,
-                body: { command: 'stop' },
+                body: { dataflowJob: { command: 'stop' } },
             },
             {}
         );

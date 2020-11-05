@@ -21,13 +21,13 @@ describe('basic', () => {
         const mock = getMock('dataflow-job');
         const config = {
             dataflowjobId: mock.id,
-            command: 'stop',
+            dataflowJob: { command: 'stop' },
         };
         mockUpdateDataflowJobNetworkOnce(config, mock);
 
         const setupConfig = {
             jobId: mock.id,
-            command: 'stop',
+            dataflowJob: { command: 'stop' },
         };
         const el = await setupElement(setupConfig, UpdateDataflowJob);
         el.invokeUpdateDataflowJob(config);
@@ -39,13 +39,13 @@ describe('basic', () => {
         const mock = getMock('dataflow-job');
         const config = {
             dataflowjobId: mock.id,
-            command: 'stop',
+            dataflowJob: { command: 'stop' },
         };
         mockUpdateDataflowJobNetworkOnce(config, mock);
 
         const setupConfig = {
             jobId: mock.id,
-            command: 'stop',
+            dataflowJob: { command: 'stop' },
         };
         const el = await setupElement(setupConfig, UpdateDataflowJob);
         el.invokeUpdateDataflowJob(config);
@@ -71,13 +71,13 @@ describe('basic', () => {
         };
         const config = {
             dataflowjobId: mock.id,
-            command: 'stop',
+            dataflowJob: { command: 'stop' },
         };
         mockUpdateDataflowJobNetworkErrorOnce(config, mock);
 
         const setupConfig = {
             jobId: mock.id,
-            command: 'stop',
+            dataflowJob: { command: 'stop' },
         };
         const el = await setupElement(setupConfig, UpdateDataflowJob);
         el.invokeUpdateDataflowJob(config);

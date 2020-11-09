@@ -62,11 +62,25 @@ function isStatusOk(status: number): boolean {
     return status >= 200 && status <= 299;
 }
 
+function stringifyIfPresent(value: any | null): string | null {
+    if (value === undefined || value === null) {
+        return null;
+    }
+    return JSON.stringify(value);
+}
+
+function parseIfPresent(value: string | null): any | null {
+    if (value === undefined || value === null) {
+        return null;
+    }
+    return JSON.parse(value);
+}
+
 export function buildNimbusNetworkPluginRequest(resourceRequest: ResourceRequest): Request {
     const { basePath, baseUri, method, headers, queryParams, body } = resourceRequest;
     return {
         method: methodFromResourceRequestMethod(method),
-        body: body ? JSON.stringify(body) : null,
+        body: stringifyIfPresent(body),
         headers,
         queryParams: ldsParamsToString(queryParams),
         path: `${baseUri}${basePath}`,
@@ -81,7 +95,7 @@ export function buildLdsResponse(response: Response): FetchResponse<any> {
     return {
         statusText,
         status,
-        body: responseBody === null ? null : JSON.parse(responseBody),
+        body: parseIfPresent(responseBody),
         headers,
         ok: isStatusOk(status),
     };

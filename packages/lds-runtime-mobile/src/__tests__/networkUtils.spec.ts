@@ -137,5 +137,23 @@ describe('networkUtils', () => {
                 body: null,
             });
         });
+
+        it('handles undefined body', () => {
+            const response: Response = {
+                status: 404,
+                headers: {},
+                body: undefined,
+            };
+
+            const fetchResponse = buildLdsResponse(response);
+
+            expect(fetchResponse).toEqual({
+                ok: false,
+                status: 404,
+                statusText: 'Not Found',
+                headers: {},
+                body: null,
+            });
+        });
     });
 });

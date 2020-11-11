@@ -1,4 +1,4 @@
-import { LDS, Store, Environment, IngestPath } from '@ldsjs/engine';
+import { LDS, Store, Environment, IngestPath, NetworkAdapter } from '@ldsjs/engine';
 import { makeOffline, makeDurable } from '@ldsjs/environments';
 
 import { NimbusNetworkAdapter } from './NimbusNetworkAdapter';
@@ -35,10 +35,11 @@ const durableStore = new NimbusDurableStore();
 const networkAdapter = NimbusNetworkAdapter;
 
 // draft queue
-const draftQueue = buildLdsDraftQueue(networkAdapter, durableStore);
+let draftAwareNetworkAdapter: NetworkAdapter;
+const draftQueue = buildLdsDraftQueue(request => draftAwareNetworkAdapter(request), durableStore);
 
 // make network and durable draft aware
-const draftAwareNetworkAdapter = makeNetworkAdapterDraftAware(
+draftAwareNetworkAdapter = makeNetworkAdapterDraftAware(
     networkAdapter,
     draftQueue,
     responseRecordRepresentationRetrievers

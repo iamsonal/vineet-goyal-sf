@@ -51,3 +51,7 @@ export function timer() {
         addDuration() {},
     };
 }
+
+export function registerPeriodicLogger() {}
+
+export function interaction() {}

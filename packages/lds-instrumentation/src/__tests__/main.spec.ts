@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { Instrumentation } from '../main';
+import { Instrumentation, refreshApiEvent } from '../main';
 import { getRecordConfigKey } from '../config-key-functions';
 import timekeeper from 'timekeeper';
 
@@ -11,6 +11,7 @@ jest.mock('instrumentation/service', () => {
         cacheStatsLogHitsSpy: jest.fn(),
         cacheStatsLogMissesSpy: jest.fn(),
         counterIncrementSpy: jest.fn(),
+        interaction: jest.fn(),
         percentileUpdateSpy: jest.fn(),
         perfEnd: jest.fn(),
         perfStart: jest.fn(),
@@ -21,6 +22,7 @@ jest.mock('instrumentation/service', () => {
         counter: () => ({
             increment: spies.counterIncrementSpy,
         }),
+        interaction: spies.interaction,
         percentileHistogram: () => ({
             update: spies.percentileUpdateSpy,
         }),
@@ -45,6 +47,8 @@ const instrumentation = new Instrumentation();
 
 const instrumentationSpies = {
     aggregateWeakETagEvents: jest.spyOn(instrumentation, 'aggregateWeakETagEvents'),
+    aggregateRefreshAdapterEvents: jest.spyOn(instrumentation, 'aggregateRefreshAdapterEvents'),
+    handleRefreshApiCall: jest.spyOn(instrumentation, 'handleRefreshApiCall'),
     incrementRecordApiNameChangeEvents: jest.spyOn(
         instrumentation,
         'incrementRecordApiNameChangeCount'
@@ -57,11 +61,15 @@ const instrumentationSpies = {
 
 beforeEach(() => {
     instrumentationSpies.aggregateWeakETagEvents.mockClear();
+    instrumentationSpies.aggregateRefreshAdapterEvents.mockClear();
+    instrumentationSpies.handleRefreshApiCall.mockClear();
     instrumentationSpies.incrementRecordApiNameChangeEvents.mockClear();
     instrumentationSpies.logAdapterCacheMissOutOfTtlDuration.mockClear();
     instrumentationServiceSpies.perfEnd.mockClear();
     instrumentationServiceSpies.perfStart.mockClear();
     instrumentationServiceSpies.timerAddDurationSpy.mockClear();
+
+    (instrumentation as any).resetRefreshStats();
 });
 
 describe('instrumentation', () => {
@@ -247,6 +255,82 @@ describe('instrumentation', () => {
             );
             expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(1);
             expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('refresh call events', () => {
+        const REFRESH_ADAPTER_EVENT = 'refresh-adapter-event';
+        const REFRESH_APEX_KEY = 'refreshApex';
+        const REFRESH_UIAPI_KEY = 'refreshUiApi';
+        const SUPPORTED_KEY = 'refreshSupported';
+        const UNSUPPORTED_KEY = 'refreshUnsupported';
+        const APEX_ADAPTER_NAME = 'getApex';
+        const uiApiAdapterRefreshEvent = {
+            [REFRESH_ADAPTER_EVENT]: true,
+            adapterName: 'getRecord',
+        };
+        const apexAdapterRefreshEvent = {
+            [REFRESH_ADAPTER_EVENT]: true,
+            adapterName: 'getApex__ContactController_getContactList_false',
+        };
+        it('should increment refreshApex call count, and set lastRefreshApiCall', () => {
+            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_APEX_KEY)());
+            expect(instrumentationSpies.handleRefreshApiCall).toHaveBeenCalledTimes(1);
+            expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(0);
+            expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(0);
+            expect((instrumentation as any).refreshApiCallEventStats[REFRESH_APEX_KEY]).toEqual(1);
+            expect((instrumentation as any).lastRefreshApiCall).toEqual(REFRESH_APEX_KEY);
+        });
+        it('should increment refreshUiApi call count, and set lastRefreshApiCall', () => {
+            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_UIAPI_KEY)());
+            expect(instrumentationSpies.handleRefreshApiCall).toHaveBeenCalledTimes(1);
+            expect((instrumentation as any).refreshApiCallEventStats[REFRESH_UIAPI_KEY]).toEqual(1);
+            expect((instrumentation as any).lastRefreshApiCall).toEqual(REFRESH_UIAPI_KEY);
+        });
+        it('should increment supported and per adapter counts for apex adapter', () => {
+            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_APEX_KEY)());
+            instrumentation.instrumentNetwork(apexAdapterRefreshEvent);
+            expect(instrumentationSpies.aggregateRefreshAdapterEvents).toHaveBeenCalledTimes(1);
+            expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(0);
+            expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(0);
+            expect((instrumentation as any).refreshAdapterEvents[APEX_ADAPTER_NAME]).toEqual(1);
+            expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(1);
+            expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(0);
+        });
+        it('should increment unsupported and per adapter counts for non-apex adapter', () => {
+            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_APEX_KEY)());
+            instrumentation.instrumentNetwork(uiApiAdapterRefreshEvent);
+            expect(instrumentationSpies.aggregateRefreshAdapterEvents).toHaveBeenCalledTimes(1);
+            expect(
+                (instrumentation as any).refreshAdapterEvents[uiApiAdapterRefreshEvent.adapterName]
+            ).toEqual(1);
+            expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(0);
+            expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(1);
+        });
+        it('should increment unsupported and per adapter counts for non-apex adapter when refreshUiApi is called', () => {
+            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_UIAPI_KEY)());
+            instrumentation.instrumentNetwork(uiApiAdapterRefreshEvent);
+            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_UIAPI_KEY)());
+            instrumentation.instrumentNetwork(apexAdapterRefreshEvent);
+            expect(instrumentationSpies.aggregateRefreshAdapterEvents).toHaveBeenCalledTimes(2);
+            expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(0);
+            expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(2);
+        });
+        it('should reset stat trackers after call to logRefreshStats', () => {
+            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_APEX_KEY)());
+            instrumentation.instrumentNetwork(apexAdapterRefreshEvent);
+            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_UIAPI_KEY)());
+            instrumentation.instrumentNetwork(uiApiAdapterRefreshEvent);
+            expect((instrumentation as any).refreshAdapterEvents[APEX_ADAPTER_NAME]).toEqual(1);
+            expect(
+                (instrumentation as any).refreshAdapterEvents[uiApiAdapterRefreshEvent.adapterName]
+            ).toEqual(1);
+            expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(1);
+            expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(1);
+            (instrumentation as any).logRefreshStats();
+            expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(0);
+            expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(0);
+            expect((instrumentation as any).refreshAdapterEvents).toEqual({});
         });
     });
 });

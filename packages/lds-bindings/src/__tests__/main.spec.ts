@@ -2,7 +2,9 @@ import { createWireAdapterConstructor, createLDSAdapter, refresh } from '../main
 
 jest.mock('@salesforce/lds-runtime-web', () => {
     return {
-        lds: {},
+        lds: {
+            instrument: jest.fn(),
+        },
     };
 });
 
@@ -22,11 +24,11 @@ jest.mock('@salesforce/lds-instrumentation', () => {
     const spies = {
         instrumentAdapter: jest.fn(),
     };
-
     return {
         instrumentation: {
             instrumentAdapter: spies.instrumentAdapter,
         },
+        refreshApiEvent: () => {},
         __spies: spies,
     };
 });
@@ -76,7 +78,7 @@ describe('createLDSAdapter', () => {
 describe('refresh', () => {
     it('should call function returned by bindWireRefresh', async () => {
         const data = {};
-        await refresh(data);
+        await refresh(data, 'refreshUiApi');
         expect(lwcLdsSpies.bindWireRefreshSpy).toHaveBeenCalledWith(data);
     });
 });

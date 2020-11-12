@@ -5,7 +5,7 @@ import {
 } from '@ldsjs/lwc-lds';
 import { WireAdapterConstructor } from '@lwc/engine-core';
 import { lds } from '@salesforce/lds-runtime-web';
-import { instrumentation } from '@salesforce/lds-instrumentation';
+import { instrumentation, refreshApiEvent, refreshApiNames } from '@salesforce/lds-instrumentation';
 
 export function createWireAdapterConstructor<C, D>(
     name: string,
@@ -19,4 +19,8 @@ export function createLDSAdapter<T>(name: string, factory: (lds: LDS) => T): T {
     return factory(lds);
 }
 
-export const refresh = bindWireRefresh(lds);
+const wireRefresh = bindWireRefresh(lds);
+export function refresh(data: any, apiFamily: keyof refreshApiNames) {
+    lds.instrument(refreshApiEvent(apiFamily));
+    return wireRefresh(data);
+}

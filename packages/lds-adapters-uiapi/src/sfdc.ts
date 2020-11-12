@@ -1,4 +1,4 @@
-import { createLDSAdapter } from '@salesforce/lds-bindings';
+import { createLDSAdapter, refresh as refreshUiApi } from '@salesforce/lds-bindings';
 
 import {
     incrementGetRecordNotifyChangeAllowCount,
@@ -16,7 +16,10 @@ import {
 export { MRU } from './wire/getListUi';
 export * from './generated/artifacts/sfdc';
 
-export { refresh } from '@salesforce/lds-bindings';
+const REFRESH_UIAPI = 'refreshUiApi';
+export const refresh = function<D>(data: D) {
+    refreshUiApi(data, REFRESH_UIAPI);
+};
 
 /** Custom adapters */
 // updateLayoutUserState adapter should always return undefined

@@ -23,7 +23,7 @@ describe('basic', () => {
 
         const element = await setupElement(config, RelatedListsActions);
 
-        expect(element.getWiredData()).toEqualActionsSnapshot(mockData);
+        expect(element.getWiredData()).toEqualActionsBatchSnapshot(mockData);
     });
 });
 
@@ -45,7 +45,7 @@ describe('caching', () => {
         // second component should have the cached data without hitting network
         const element = await setupElement(config, RelatedListsActions);
 
-        expect(element.getWiredData()).toEqualActionsSnapshot(mockData);
+        expect(element.getWiredData()).toEqualActionsBatchSnapshot(mockData);
     });
 
     it('retrieves data from network when cached data is expired', async () => {
@@ -71,7 +71,7 @@ describe('caching', () => {
         // second component should retrieve from network with updated data
         const element = await setupElement(config, RelatedListsActions);
 
-        expect(element.getWiredData()).toEqualActionsSnapshot(updatedData);
+        expect(element.getWiredData()).toEqualActionsBatchSnapshot(updatedData);
     });
 });
 
@@ -97,7 +97,7 @@ describe('data emit', () => {
         await setupElement(config, RelatedListsActions);
 
         expect(element.pushCount()).toBe(2);
-        expect(element.getWiredData()).toEqualActionsSnapshot(updatedData);
+        expect(element.getWiredData()).toEqualActionsBatchSnapshot(updatedData);
     });
 
     it('should not emit data to wires if data from network is same', async () => {

@@ -405,6 +405,7 @@ describe('getLookupRecords', () => {
                     pageParam: 1,
                     pageSize: 25,
                     sourceRecordId: '',
+                    q: 'test',
                 },
             };
 

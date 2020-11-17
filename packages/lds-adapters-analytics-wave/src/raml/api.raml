@@ -309,6 +309,10 @@ types:
           - Report
           - Restore
           - User
+      licenseAttributes:
+        description: The analytics license type and other properties
+        type: LicenseAttributesRepresentation | nil
+        required: false # TODO Hand-rolled W-8253396
       message:
         description: The error or informational message of a dataflow job
         type: string | nil
@@ -489,8 +493,8 @@ types:
           - BatchTransformationHours
           - DatasetQueries
           - DatasetRowCount
-          - OutputExternalConnectorRows
-          - OutputLocalConnectorRows
+          - OutputExternalConnectorVolume
+          - OutputLocalConnectorVolume
   WaveUserRepresentation:
     description: Information about a user.
     type: object
@@ -521,6 +525,12 @@ types:
         dataflowId:
           type: string
           required: false
+        licenseType:
+          type: string
+          required: false
+          enum:
+            - EinsteinAnalytics
+            - Sonic
         page:
           type: integer
           required: false
@@ -631,6 +641,6 @@ types:
               - BatchTransformationHours
               - DatasetQueries
               - DatasetRowCount
-              - OutputExternalConnectorRows
-              - OutputLocalConnectorRows
+              - OutputExternalConnectorVolume
+              - OutputLocalConnectorVolume
             (oas-collectionFormat): csv

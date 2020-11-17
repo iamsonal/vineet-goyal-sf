@@ -5,7 +5,7 @@
             "licenseAttributes": { "type": "Sonic" },
             "current": 75200000,
             "max": 100000000,
-            "threshold": 0.75,
+            "threshold": 75,
             "interval": "None"
         },
         {
@@ -13,7 +13,7 @@
             "licenseAttributes": { "type": "Sonic" },
             "current": 25,
             "max": 100,
-            "threshold": 0.9,
+            "threshold": 90,
             "interval": "Monthly"
         },
         {
@@ -21,23 +21,23 @@
             "licenseAttributes": { "type": "Sonic" },
             "current": 187000,
             "max": 250000,
-            "threshold": 0.75,
+            "threshold": 75,
             "interval": "Monthly"
         },
         {
-            "type": "OutpuLocalConnectorRows",
+            "type": "OutpuLocalConnectorVolume",
             "licenseAttributes": { "type": "Sonic" },
             "current": 2800000,
             "max": 100000000,
-            "threshold": 0.75,
+            "threshold": 75,
             "interval": "Monthly"
         },
         {
-            "type": "OutputExternalConnectorRows",
+            "type": "OutputExternalConnectorVolume",
             "licenseAttributes": { "type": "Sonic" },
             "current": 275000,
             "max": 10000000,
-            "threshold": 0.8,
+            "threshold": 80,
             "interval": "Monthly"
         },
         {
@@ -45,7 +45,7 @@
             "licenseAttributes": { "type": "EinsteinAnalytics" },
             "current": 752000000,
             "max": 10000000000,
-            "threshold": 0.9,
+            "threshold": 90,
             "interval": "None"
         },
         {
@@ -53,7 +53,7 @@
             "licenseAttributes": { "type": "EinsteinAnalytics" },
             "current": 25,
             "max": 100,
-            "threshold": 0.9,
+            "threshold": 90,
             "interval": "Monthly"
         },
         {
@@ -61,23 +61,23 @@
             "licenseAttributes": { "type": "EinsteinAnalytics" },
             "current": 1870000,
             "max": 25000000,
-            "threshold": 0.9,
+            "threshold": 90,
             "interval": "Monthly"
         },
         {
-            "type": "OutpuLocalConnectorRows",
+            "type": "OutputLocalConnectorVolume",
             "licenseAttributes": { "type": "EinsteinAnalytics" },
             "current": 28000000,
             "max": 10000000000,
-            "threshold": 0.75,
+            "threshold": 75,
             "interval": "Monthly"
         },
         {
-            "type": "OutputExternalConnectorRows",
+            "type": "OutputExternalConnectorVolume",
             "licenseAttributes": { "type": "EinsteinAnalytics" },
             "current": 2750000,
             "max": 1000000000,
-            "threshold": 0.9,
+            "threshold": 90,
             "interval": "Monthly"
         }
     ]

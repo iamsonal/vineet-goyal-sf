@@ -41,8 +41,8 @@ describe('basic', () => {
         const config = {
             types: [
                 'BatchTransformationHours',
-                'OutpuLocalConnectorRows',
-                'OutputExternalConnectorRows',
+                'OutpuLocalConnectorVolume',
+                'OutputExternalConnectorVolume',
             ],
             licenseType: 'Sonic',
         };

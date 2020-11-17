@@ -18,7 +18,8 @@
             "lastModifiedDate": "",
             "permissions": { "create": true, "manage": true, "modify": true, "view": true },
             "source": { "name": "", "namespace": "", "id": "", "url": "", "label": "" },
-            "syncDataflows": { "dataflows": [] }
+            "syncDataflows": { "dataflows": [] },
+            "licenseAttributes": { "type": "Sonic" }
         }
     ],
     "nextPageUrl": "/services/data/v51.0/wave/dataflowjobs?page=2",

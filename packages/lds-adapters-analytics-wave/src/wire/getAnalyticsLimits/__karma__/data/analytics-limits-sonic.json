@@ -5,23 +5,23 @@
             "licenseAttributes": { "type": "Sonic" },
             "current": 25,
             "max": 100,
-            "threshold": 0.9,
+            "threshold": 90,
             "interval": "Monthly"
         },
         {
-            "type": "OutpuLocalConnectorRows",
+            "type": "OutpuLocalConnectorVolume",
             "licenseAttributes": { "type": "Sonic" },
             "current": 2800000,
             "max": 100000000,
-            "threshold": 0.75,
+            "threshold": 75,
             "interval": "Monthly"
         },
         {
-            "type": "OutputExternalConnectorRows",
+            "type": "OutputExternalConnectorVolume",
             "licenseAttributes": { "type": "Sonic" },
             "current": 275000,
             "max": 10000000,
-            "threshold": 0.75,
+            "threshold": 75,
             "interval": "Monthly"
         }
     ]

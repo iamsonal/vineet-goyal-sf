@@ -42,9 +42,9 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
-    it('gets dataflow jobs with page and pageSize', async () => {
+    it('gets dataflow jobs with licenseType, page, and pageSize', async () => {
         const mock = getMock('dataflow-jobs-page');
-        const config = { page: 1, pageSize: 20 };
+        const config = { licenseType: 'Sonic', page: 1, pageSize: 20 };
         mockGetDataflowJobsNetworkOnce(config, mock);
 
         const el = await setupElement(config, GetDataflowJobs);

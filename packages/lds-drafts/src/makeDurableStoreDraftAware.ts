@@ -22,6 +22,7 @@ import {
     replayDraftsOnRecord,
     DurableRecordRepresentation,
     extractRecordKeyFromDraftDurableStoreKey,
+    isStoreRecordError,
 } from './utils/records';
 import { DraftDurableSegment } from './DurableDraftQueue';
 import {
@@ -360,6 +361,12 @@ export function makeDurableStoreDraftAware(
                 }
 
                 putRecords[recordId] = true;
+
+                if (isStoreRecordError(record)) {
+                    putEntries[recordKey] = value;
+                    continue;
+                }
+
                 const denormalizedValue = denormalizeRecordFields(
                     {
                         expiration: store.recordExpirations[recordKey],
@@ -402,7 +409,7 @@ export function makeDurableStoreDraftAware(
                         changedIds[key] = true;
                     }
                 }
-                return listener(changedIds, segment);
+                return listener(changedIds, DefaultDurableSegment);
             }
         );
     };

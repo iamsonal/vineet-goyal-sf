@@ -90,6 +90,7 @@ describe('makeDurableStoreDraftAware', () => {
                 },
             });
         });
+
         it('should filter out pending record fields', () => {
             const record = {
                 id: RECORD_ID,
@@ -351,6 +352,42 @@ describe('makeDurableStoreDraftAware', () => {
             const durableRecord = entry.data as DurableRecordRepresentation;
             expect(durableRecord.drafts).toBe(undefined);
         });
+
+        it('handles when record is a 404', async () => {
+            const record404 = {
+                __type: 'error',
+                status: 404,
+                error: {
+                    statusText: 'Not Found',
+                    status: 404,
+                    body: null,
+                    headers: {},
+                    ok: false,
+                },
+            };
+
+            const storeRecords = {
+                [STORE_KEY_RECORD]: record404,
+            };
+
+            const { durableStore, baseDurableStore } = setupDraftStore(storeRecords);
+
+            // set just the name field
+            durableStore.setEntries(
+                {
+                    [STORE_KEY_RECORD]: { data: record404 },
+                },
+                DefaultDurableSegment
+            );
+
+            expect(baseDurableStore.setEntries).toBeCalledTimes(1);
+            const entries = (baseDurableStore.setEntries as jest.Mock).mock.calls[0][0];
+
+            // only the denormalized record should be put
+            expect(ObjectKeys(entries).length).toBe(1);
+            const entry = entries[STORE_KEY_RECORD];
+            expect(entry.data).toStrictEqual(record404);
+        });
     });
 
     describe('getValues', () => {
@@ -559,10 +596,14 @@ describe('makeDurableStoreDraftAware', () => {
             );
 
             const draftActionKey = buildDraftDurableStoreKey(STORE_KEY_RECORD, 'FOO');
-            const baseListener: OnDurableStoreChangedListener = (ids: {
-                [key: string]: boolean;
-            }) => {
+            const baseListener: OnDurableStoreChangedListener = (
+                ids: {
+                    [key: string]: boolean;
+                },
+                segment: string
+            ) => {
                 expect(ids[STORE_KEY_RECORD]).toBe(true);
+                expect(segment).toBe(DefaultDurableSegment);
                 done();
             };
             durableStore.registerOnChangedListener(baseListener);

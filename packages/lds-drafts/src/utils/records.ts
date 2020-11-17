@@ -1,4 +1,11 @@
-import { ResourceRequest, ProxyGraphNode, GraphNode, Environment, StoreLink } from '@ldsjs/engine';
+import {
+    ResourceRequest,
+    ProxyGraphNode,
+    GraphNode,
+    Environment,
+    StoreLink,
+    StoreRecordError,
+} from '@ldsjs/engine';
 import {
     RecordRepresentation,
     keyBuilderRecord,
@@ -311,4 +318,8 @@ export function extractRecordKeyFromDraftDurableStoreKey(key: string) {
         return undefined;
     }
     return matches[1];
+}
+
+export function isStoreRecordError(storeRecord: unknown): storeRecord is StoreRecordError {
+    return (storeRecord as StoreRecordError).__type === 'error';
 }

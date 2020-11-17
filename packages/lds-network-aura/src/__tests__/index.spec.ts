@@ -3676,7 +3676,7 @@ describe('routes', () => {
         testControllerInput(
             {
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/communities/1234567890ABCDE/seo/properties/1234567890ABCDE`,
+                basePath: `/communities/1234567890ABCDE/seo/properties/1234567890-ABCDE-xyz`,
             },
             [
                 'SeoPropertiesController.getRecordSeoProperties',
@@ -3687,13 +3687,13 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             baseUri: CONNECT_BASE_URI,
-            basePath: `/communities/1234567890ABCDE/seo/properties/1234567890ABCDE`,
+            basePath: `/communities/1234567890ABCDE/seo/properties/1234567890-ABCDE-xyz`,
         });
 
         testResolveResponse(
             {
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/communities/1234567890ABCDE/seo/properties/1234567890ABCDE`,
+                basePath: `/communities/1234567890ABCDE/seo/properties/1234567890-ABCDE-xyz`,
             },
             {}
         );

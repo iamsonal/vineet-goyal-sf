@@ -68,7 +68,7 @@ const LIST_CONTENT_INTERNAL_PATH = new RegExp(
 );
 
 const RECORD_SEO_PROPERTIES_PATH = new RegExp(
-    `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/seo/properties/([A-Z0-9]){15,18}`,
+    `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/seo/properties/([^\\s]){1,128}`,
     'i'
 );
 

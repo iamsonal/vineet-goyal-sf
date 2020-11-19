@@ -13,16 +13,16 @@
     ],
     "contributors": {{PACKAGE_CONTRIBUTORS}},
     "scripts": {
-        "clean": "rm -rf dist sfdc src/generated karma/dist",
         "build": "yarn build:raml && yarn build:services && yarn build:karma",
         "build:karma": "rollup --config rollup.config.karma.js",
         "build:raml": "lds generate src/raml/lds.raml src/generated -p '../lds-compiler-plugins'",
         "build:services": "rollup --config rollup.config.js",
-        "test:unit": "jest",
+        "clean": "rm -rf dist sfdc src/generated karma/dist",
+        {{RELEASE_CORE}}
         "start": "karma start",
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat",
-        "release:core": "../../scripts/release/core.js --adapter={{PACKAGE_NAME_TAG}}"
+        "test:unit": "jest"
     },
     "publishConfig": {
         "registry": "https://npm.lwcjs.org"

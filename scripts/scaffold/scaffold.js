@@ -44,6 +44,9 @@ const LDS_LP_VERSION_TAG = '{{LDS_LP_VERSION}}';
 const PACKAGE_CONTRIBUTORS_TAG = '{{PACKAGE_CONTRIBUTORS}}';
 const BUNDLE_NAME_TAG = '{{BUNDLE_NAME}}';
 const ARTIFACT_NAME = '{{ARTIFACT_NAME}}';
+const RELEASE_CORE_TAG = '{{RELEASE_CORE}}';
+const RELEASE_CORE =
+    '"release:core": "../../scripts/release/core.js --adapter={{PACKAGE_NAME_TAG}}",';
 
 function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -84,9 +87,10 @@ function renderRollupConfig(cloud, family) {
 }
 
 function renderPackageJSON(config) {
-    const { description, packageName, cloud, family } = config;
+    const { description, packageName, cloud, family, releaseToCore } = config;
     const formatted = ldsPackageJSONTemplate
         .replace(DESCRIPTION_TAG, description)
+        .replace(RELEASE_CORE_TAG, releaseToCore ? RELEASE_CORE : '')
         .replace(new RegExp(PACKAGE_NAME_TAG, 'g'), packageName)
         .replace(PACKAGE_NAMESPACE_TAG, getPackageNamespace(cloud))
         .replace(new RegExp(LDS_VERSION_TAG, 'g'), config.engineVersion)
@@ -157,7 +161,7 @@ async function collectOwners(emails) {
         {
             type: 'input',
             name: 'email',
-            message: 'Contact E-mail Address',
+            message: 'Contact E-mail Address:',
             validate(input) {
                 if (input === '' && emailsCount > 0) {
                     return true;
@@ -215,7 +219,15 @@ module.exports = class CreateApiFamily extends Command {
             {
                 type: 'input',
                 name: 'description',
-                message: 'Describe your API Family',
+                message: 'Describe your API Family:',
+            },
+            {
+                type: 'list',
+                name: 'releaseToCore',
+                message:
+                    'Do you plan to use your adapter package in core (if the answer is yes, please create core module beforehand)?',
+                choices: ['yes', 'no'],
+                filter: val => val === 'yes',
             },
         ]);
 

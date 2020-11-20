@@ -1,8 +1,8 @@
 {
     "count": 8,
     "currentPageToken": "0",
-    "currentPageUrl": "/services/data/v50.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?fields=Id%2CName&pageSize=50&pageToken=0",
-    "fields": ["Id", "Name"],
+    "currentPageUrl": "/services/data/v50.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?fields=Id&optionalFields=Name&pageSize=50&pageToken=0",
+    "fields": ["Id"],
     "listInfoETag": null,
     "listReference": {
         "id": null,
@@ -16,7 +16,7 @@
     },
     "nextPageToken": null,
     "nextPageUrl": null,
-    "optionalFields": [],
+    "optionalFields": ["Name"],
     "pageSize": 50,
     "previousPageToken": null,
     "previousPageUrl": null,
@@ -29,10 +29,6 @@
                 "Id": {
                     "displayValue": null,
                     "value": "a01RM000000vPOBYA2"
-                },
-                "Name": {
-                    "displayValue": null,
-                    "value": "TestIt"
                 }
             },
             "id": "a01RM000000vPOBYA2",
@@ -51,10 +47,6 @@
                 "Id": {
                     "displayValue": null,
                     "value": "a01RM000000qecDYAQ"
-                },
-                "Name": {
-                    "displayValue": null,
-                    "value": "c01.00"
                 }
             },
             "id": "a01RM000000qecDYAQ",
@@ -73,10 +65,6 @@
                 "Id": {
                     "displayValue": null,
                     "value": "a01RM000000v7ThYAI"
-                },
-                "Name": {
-                    "displayValue": null,
-                    "value": "c01.01"
                 }
             },
             "id": "a01RM000000v7ThYAI",
@@ -95,10 +83,6 @@
                 "Id": {
                     "displayValue": null,
                     "value": "a01RM000000v7TmYAI"
-                },
-                "Name": {
-                    "displayValue": null,
-                    "value": "c01.02"
                 }
             },
             "id": "a01RM000000v7TmYAI",
@@ -117,10 +101,6 @@
                 "Id": {
                     "displayValue": null,
                     "value": "a01RM000000v7TrYAI"
-                },
-                "Name": {
-                    "displayValue": null,
-                    "value": "c01.03"
                 }
             },
             "id": "a01RM000000v7TrYAI",
@@ -139,10 +119,6 @@
                 "Id": {
                     "displayValue": null,
                     "value": "a01RM000000v7TsYAI"
-                },
-                "Name": {
-                    "displayValue": null,
-                    "value": "c01.04"
                 }
             },
             "id": "a01RM000000v7TsYAI",
@@ -161,10 +137,6 @@
                 "Id": {
                     "displayValue": null,
                     "value": "a01RM000000v7TwYAI"
-                },
-                "Name": {
-                    "displayValue": null,
-                    "value": "c01.05"
                 }
             },
             "id": "a01RM000000v7TwYAI",
@@ -183,10 +155,6 @@
                 "Id": {
                     "displayValue": null,
                     "value": "a01RM000000v7U1YAI"
-                },
-                "Name": {
-                    "displayValue": null,
-                    "value": "c01.06"
                 }
             },
             "id": "a01RM000000v7U1YAI",

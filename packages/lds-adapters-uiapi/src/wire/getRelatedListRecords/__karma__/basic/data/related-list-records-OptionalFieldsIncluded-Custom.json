@@ -1,8 +1,8 @@
 {
     "count": 8,
     "currentPageToken": "0",
-    "currentPageUrl": "/services/data/v50.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?fields=Id%2CName&pageSize=50&pageToken=0",
-    "fields": ["Id", "Name"],
+    "currentPageUrl": "/services/data/v50.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?fields=Id&optionalFields=Name&pageSize=50&pageToken=0",
+    "fields": ["Id"],
     "listInfoETag": null,
     "listReference": {
         "id": null,
@@ -16,7 +16,7 @@
     },
     "nextPageToken": null,
     "nextPageUrl": null,
-    "optionalFields": [],
+    "optionalFields": ["Name"],
     "pageSize": 50,
     "previousPageToken": null,
     "previousPageUrl": null,

@@ -7,7 +7,14 @@ import {
     ingestError,
     createResourceRequest,
 } from './../../generated/resources/getUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
-import { LDS, SnapshotRefresh, Fragment, FulfilledSnapshot, ResourceResponse } from '@ldsjs/engine';
+import {
+    LDS,
+    SnapshotRefresh,
+    Fragment,
+    FulfilledSnapshot,
+    ResourceResponse,
+    StoreLink,
+} from '@ldsjs/engine';
 import { select as RelatedListReferenceRepresentation_select } from '../../generated/types/RelatedListReferenceRepresentation';
 import { buildSelectionFromFields } from '../../selectors/record';
 import {
@@ -16,12 +23,17 @@ import {
     url as ListRecordCollectionRepresentation_reader_url,
 } from '../../helpers/ListRecordCollectionRepresentation/readers';
 import { staticValuePathSelection } from '../../util/pagination';
+import { markMissingOptionalFields, isGraphNode } from '../../util/records';
 import {
     paginationKeyBuilder as RelatedListRecordCollection_paginationKeyBuilder,
     RelatedListRecordCollectionRepresentation,
     ingest as types_RelatedListRecordCollectionRepresentation_ingest,
 } from '../../generated/types/RelatedListRecordCollectionRepresentation';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
+import {
+    RecordRepresentation,
+    RecordRepresentationNormalized,
+} from '../../generated/types/RecordRepresentation';
 
 export { keyBuilder, ingestError, ResourceRequestConfig, createResourceRequest };
 
@@ -42,10 +54,8 @@ export const select: typeof generatedSelect = (
         pageSize = DEFAULT_PAGE_SIZE,
     } = queryParams;
 
-    // TODO - records code needs to be updated to support optional & required fields, this should be changed before ga
-    fields = fields.concat(optionalFields).map(field => {
-        return `${relatedListId}.${field}`;
-    });
+    fields = prependApiNameToFields(fields, relatedListId);
+    optionalFields = prependApiNameToFields(optionalFields, relatedListId);
 
     return {
         kind: 'Fragment',
@@ -140,11 +150,17 @@ export const ingestSuccess: typeof generatedIngestSuccess = (
     const { body } = resp;
 
     const key = generatedKeyBuilder(resourceRequestConfig);
+
     lds.storeIngest<RelatedListRecordCollectionRepresentation>(
         key,
         types_RelatedListRecordCollectionRepresentation_ingest,
         body
     );
+
+    if (body.optionalFields && body.optionalFields.length > 0) {
+        markMissingOptionalRecordFieldsMissing(<StoreLink[]>body.records, body.optionalFields, lds);
+    }
+
     const snapshot = lds.storeLookup<RelatedListRecordCollectionRepresentation>(
         {
             recordId: key,
@@ -165,3 +181,32 @@ export const ingestSuccess: typeof generatedIngestSuccess = (
     return snapshot as FulfilledSnapshot<RelatedListRecordCollectionRepresentation, any>;
 };
 export default createResourceRequest;
+
+function markMissingOptionalRecordFieldsMissing(
+    returnedRecords: StoreLink[],
+    optionalFields: string[],
+    lds: LDS
+) {
+    for (let i = 0; i < returnedRecords.length; i++) {
+        const record = returnedRecords[i];
+        const recordKey = record.__ref;
+        if (recordKey) {
+            const node = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(
+                recordKey
+            );
+            if (isGraphNode(node)) {
+                const recordOptionalFields = prependApiNameToFields(
+                    optionalFields,
+                    node.data.apiName
+                );
+                markMissingOptionalFields(node, recordOptionalFields);
+            }
+        }
+    }
+}
+
+function prependApiNameToFields(fields: string[], apiName: string) {
+    return fields.map(field => {
+        return `${apiName}.${field}`;
+    });
+}

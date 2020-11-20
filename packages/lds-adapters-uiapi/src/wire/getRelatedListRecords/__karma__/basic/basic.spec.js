@@ -13,19 +13,6 @@ function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
 }
 
-// TODO: Remove this code once extra fields aren't returned from uiapi (test only issue since they're stripped out at runtime by lds)
-function stripExtraFields(mockData) {
-    mockData.records.forEach(record => {
-        Object.keys(record.fields).forEach(key => {
-            const requestedFields = mockData.fields.concat(mockData.optionalFields);
-            if (!(requestedFields.indexOf(key) > -1)) {
-                delete record.fields[key];
-            }
-        });
-    });
-    return mockData;
-}
-
 describe('basic', () => {
     it('gets data with valid parentRecordId and relatedListId', async () => {
         const mockData = getMock('related-list-records-Custom');
@@ -42,7 +29,47 @@ describe('basic', () => {
             fields: mockData.fields,
         };
         const element = await setupElement(props, RelatedListBasic);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripExtraFields(mockData));
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+    });
+
+    it('gets data when specifying optionalFields and they are NOT returned', async () => {
+        const mockData = getMock('related-list-records-OptionalFields-Custom');
+        const resourceConfig = {
+            parentRecordId: mockData.listReference.inContextOfRecordId,
+            relatedListId: mockData.listReference.relatedListId,
+            fields: mockData.fields,
+            optionalFields: mockData.optionalFields,
+        };
+        mockGetRelatedListRecordsNetwork(resourceConfig, mockData);
+
+        const props = {
+            parentRecordId: mockData.listReference.inContextOfRecordId,
+            relatedListId: mockData.listReference.relatedListId,
+            fields: mockData.fields,
+            optionalFields: mockData.optionalFields,
+        };
+        const element = await setupElement(props, RelatedListBasic);
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+    });
+
+    it('gets data when specifying optionalFields and they are returned', async () => {
+        const mockData = getMock('related-list-records-OptionalFieldsIncluded-Custom');
+        const resourceConfig = {
+            parentRecordId: mockData.listReference.inContextOfRecordId,
+            relatedListId: mockData.listReference.relatedListId,
+            fields: mockData.fields,
+            optionalFields: mockData.optionalFields,
+        };
+        mockGetRelatedListRecordsNetwork(resourceConfig, mockData);
+
+        const props = {
+            parentRecordId: mockData.listReference.inContextOfRecordId,
+            relatedListId: mockData.listReference.relatedListId,
+            fields: mockData.fields,
+            optionalFields: mockData.optionalFields,
+        };
+        const element = await setupElement(props, RelatedListBasic);
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
     });
 
     it('gets data with no records', async () => {
@@ -61,7 +88,7 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripExtraFields(mockData));
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
     });
 
     it('refreshes related list records', async () => {
@@ -87,14 +114,12 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripExtraFields(mockData));
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
         expect(element.pushCount()).toBe(1);
 
         await element.refresh();
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFields(refreshedMockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(refreshedMockData);
         expect(element.pushCount()).toBe(2);
     });
 
@@ -119,16 +144,14 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripExtraFields(mockData));
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
         expect(element.pushCount()).toBe(1);
 
         // Delete the record from lds, our component should refresh automatically
         mockDeleteRecordNetwork(recordId);
         await deleteRecord(recordId);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFields(refreshedMockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(refreshedMockData);
         expect(element.pushCount()).toBe(2);
     });
 
@@ -152,14 +175,12 @@ describe('basic', () => {
         };
         const element = await setupElement(props, RelatedListBasic);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(stripExtraFields(mockData));
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
         expect(element.pushCount()).toBe(1);
 
         await element.refresh();
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFields(refreshedMockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(refreshedMockData);
         expect(element.pushCount()).toBe(2);
     });
 });

@@ -5,7 +5,7 @@ import {
     mockNimbusStoreGlobal,
 } from './MockNimbusDurableStore';
 import { JSONStringify } from '../utils/language';
-import { DefaultDurableSegment } from '@ldsjs/environments';
+import { DefaultDurableSegment } from '@luvio/environments';
 describe('nimbus durable store tests', () => {
     afterEach(() => {
         resetNimbusStoreGlobal();

@@ -1,4 +1,4 @@
-import { LDS, Store, Environment } from '@ldsjs/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import { ingestRecord } from '@salesforce/lds-adapters-uiapi';
 import mockRecord from '@salesforce/lds-adapters-uiapi/src/__benchmarks__/mocks/custom-proto-medium-record';
 
@@ -18,7 +18,7 @@ export default {
     maximum: 600000,
     before: () => {
         const store = new Store();
-        const lds = new LDS(new Environment(store, rejectNetworkAdapter));
+        const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
         const timestamp = Date.now();
         ingestRecord(JSON.parse(mockRecord), 'recordId', lds, store, timestamp);
         return { store, lds, timestamp };

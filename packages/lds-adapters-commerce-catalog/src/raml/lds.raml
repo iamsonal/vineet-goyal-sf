@@ -2,21 +2,21 @@
 extends: ./api.raml
 
 uses:
-  lds: lds://annotations.raml
+  luvio: luvio://annotations.raml
 
-(lds.keyPrefix): 'Commerce::'
+(luvio.keyPrefix): 'Commerce::'
 
 types:
   ProductDetailRepresentation:
-    (lds.opaque): true
+    (luvio.opaque): true
   ProductCategoryPathRepresentation:
-    (lds.opaque): true
+    (luvio.opaque): true
 
 /commerce/webstores/{webstoreId}/products/{productId}:
   get:
-    (lds.adapter):
+    (luvio.adapter):
       name: getProduct
 /commerce/webstores/{webstoreId}/product-category-path/product-categories/{productCategoryId}:
   get:
-    (lds.adapter):
+    (luvio.adapter):
       name: getProductCategoryPath

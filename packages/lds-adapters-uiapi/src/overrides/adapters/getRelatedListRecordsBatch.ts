@@ -11,7 +11,7 @@ import {
     buildNetworkSnapshot,
     GetRelatedListRecordsBatchConfig as GeneratedGetRelatedListRecordBatchConfig,
 } from '../../generated/adapters/getRelatedListRecordsBatch';
-import { LDS, Snapshot, AdapterFactory } from '@ldsjs/engine';
+import { Luvio, Snapshot, AdapterFactory } from '@luvio/engine';
 import { RelatedListRecordCollectionBatchRepresentation } from '../../generated/types/RelatedListRecordCollectionBatchRepresentation';
 
 export { adapterName } from '../../generated/adapters/getRelatedListRecordsBatch';
@@ -173,7 +173,7 @@ export function typeCheckConfig(
 export const getRelatedListRecordsBatchAdapterFactory: AdapterFactory<
     GetRelatedListRecordsBatchConfig,
     RelatedListRecordCollectionBatchRepresentation
-> = (lds: LDS) =>
+> = (lds: Luvio) =>
     function getRelatedListRecordsBatch(
         untrustedConfig: unknown
     ):

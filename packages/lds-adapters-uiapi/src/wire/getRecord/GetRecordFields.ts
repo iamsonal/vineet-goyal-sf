@@ -1,12 +1,12 @@
 import {
-    LDS,
+    Luvio,
     Selector,
     Snapshot,
     FetchResponse,
     SnapshotRefresh,
     UnfulfilledSnapshot,
     ResourceResponse,
-} from '@ldsjs/engine';
+} from '@luvio/engine';
 import { GetRecordConfig, createResourceParams } from '../../generated/adapters/getRecord';
 import { keyBuilder } from '../../generated/resources/getUiApiRecordsByRecordId';
 import { createResourceRequest } from '../../raml-artifacts/resources/getUiApiRecordsByRecordId/createResourceRequest';
@@ -48,7 +48,7 @@ export function buildRecordSelector(
 }
 
 function buildSnapshotRefresh(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordConfig
 ): SnapshotRefresh<RecordRepresentation> {
     return {
@@ -57,7 +57,7 @@ function buildSnapshotRefresh(
     };
 }
 
-function prepareRequest(lds: LDS, config: GetRecordConfig) {
+function prepareRequest(lds: Luvio, config: GetRecordConfig) {
     const { recordId, fields } = config;
 
     // Should this go into the coersion logic?
@@ -76,7 +76,7 @@ function prepareRequest(lds: LDS, config: GetRecordConfig) {
 }
 
 export function ingestSuccess(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordConfig,
     key: string,
     allTrackedFields: string[],
@@ -104,7 +104,7 @@ export function ingestSuccess(
 }
 
 function onResourceSuccess(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordConfig,
     key: string,
     allTrackedFields: string[],
@@ -116,7 +116,7 @@ function onResourceSuccess(
 }
 
 export function ingestError(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordConfig,
     key: string,
     err: FetchResponse<unknown>
@@ -126,7 +126,7 @@ export function ingestError(
 }
 
 function onResourceError(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordConfig,
     key: string,
     err: FetchResponse<unknown>
@@ -136,7 +136,7 @@ function onResourceError(
     return errorSnapshot;
 }
 
-export function buildNetworkSnapshot(lds: LDS, config: GetRecordConfig) {
+export function buildNetworkSnapshot(lds: Luvio, config: GetRecordConfig) {
     const { request, key, allTrackedFields } = prepareRequest(lds, config);
 
     return lds.dispatchResourceRequest<RecordRepresentation>(request).then(
@@ -150,7 +150,7 @@ export function buildNetworkSnapshot(lds: LDS, config: GetRecordConfig) {
 }
 
 export function resolveUnfulfilledSnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordConfig,
     snapshot: UnfulfilledSnapshot<RecordRepresentation, any>
 ) {
@@ -168,7 +168,7 @@ export function resolveUnfulfilledSnapshot(
 
 // used by getRecordLayoutType#refresh
 export function buildInMemorySnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordConfig,
     refresh?: SnapshotRefresh<RecordRepresentation>
 ) {
@@ -183,7 +183,7 @@ export function buildInMemorySnapshot(
 }
 
 export function getRecordByFields(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordConfig
 ): Snapshot<RecordRepresentation> | Promise<Snapshot<RecordRepresentation>> {
     const snapshot = buildInMemorySnapshot(lds, config);

@@ -3,7 +3,7 @@ import {
     MockPayload,
     buildMockNetworkAdapter,
     getMockNetworkAdapterCallCount,
-} from '@ldsjs/adapter-test-library';
+} from '@luvio/adapter-test-library';
 import {
     testDataEmittedWhenStale,
     testDurableHitDoesNotHitNetwork,

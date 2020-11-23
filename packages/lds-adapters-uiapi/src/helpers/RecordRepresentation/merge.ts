@@ -1,4 +1,4 @@
-import { LDS, IngestPath, StoreRecordError } from '@ldsjs/engine';
+import { Luvio, IngestPath, StoreRecordError } from '@luvio/engine';
 import {
     RecordRepresentationNormalized,
     RecordRepresentation,
@@ -51,7 +51,7 @@ function mergePendingFields(
 // when incoming record has a higher version
 // than the record that is currently in the store
 function mergeAndRefreshHigherVersionRecord(
-    lds: LDS,
+    lds: Luvio,
     incoming: RecordRepresentationNormalized,
     existing: RecordRepresentationNormalized,
     incomingTrackedFieldsTrieRoot: RecordFieldTrie,
@@ -94,7 +94,7 @@ function mergeAndRefreshHigherVersionRecord(
 // when incoming record has a lower version
 // than the record that is currently in the store
 function mergeAndRefreshLowerVersionRecord(
-    lds: LDS,
+    lds: Luvio,
     incoming: RecordRepresentationNormalized,
     existing: RecordRepresentationNormalized,
     incomingTrackedFieldsTrieRoot: RecordFieldTrie,
@@ -135,7 +135,7 @@ function mergeAndRefreshLowerVersionRecord(
 }
 
 function mergeRecordConflict(
-    lds: LDS,
+    lds: Luvio,
     incoming: RecordRepresentationNormalized,
     existing: RecordRepresentationNormalized,
     recordConflictMap?: RecordConflictMap
@@ -213,7 +213,7 @@ function isErrorEntry(
 export default function merge(
     existing: RecordRepresentationNormalized | undefined | StoreRecordError,
     incoming: RecordRepresentationNormalized,
-    lds: LDS,
+    lds: Luvio,
     _path: IngestPath,
     recordConflictMap?: RecordConflictMap
 ): RecordRepresentationNormalized {

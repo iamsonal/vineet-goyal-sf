@@ -1,4 +1,4 @@
-import { LDS, Store, Environment } from '@ldsjs/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import { ingestRecordUi } from '@salesforce/lds-adapters-uiapi';
 
 import mockRecordUI from './mocks/custom-proto-medium-record-ui';
@@ -10,7 +10,7 @@ const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
     const store = new Store();
-    const lds = new LDS(new Environment(store, rejectNetworkAdapter));
+    const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
     const data = JSON.parse(mockRecordUI);
     ingestRecordUi(data, RECORD_ID, lds, store);
 }
@@ -27,7 +27,7 @@ describe('addRecordUi tests', () => {
         before(() => {
             i--;
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRecordUi(data[i], RECORD_ID, lds, store);
         });
 
@@ -60,7 +60,7 @@ describe('addRecordUi tests', () => {
         before(() => {
             i--;
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRecordUi(data[i], RECORD_ID, lds, store);
         });
 

@@ -1,4 +1,4 @@
-import { DurableStore } from '@ldsjs/environments';
+import { DurableStore } from '@luvio/environments';
 import { DurableDraftQueue } from '@salesforce/lds-drafts';
 
 import { buildLdsDraftQueue } from '../DraftQueueFactory';

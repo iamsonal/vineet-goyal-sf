@@ -1,6 +1,6 @@
 /**
- * @typedef {import("@ldsjs/compiler").CompilerConfig} CompilerConfig
- * @typedef {import("@ldsjs/compiler").ModelInfo} ModelInfo
+ * @typedef {import("@luvio/compiler").CompilerConfig} CompilerConfig
+ * @typedef {import("@luvio/compiler").ModelInfo} ModelInfo
  * @typedef { { name: string, method: string } } AdapterInfo
  */
 

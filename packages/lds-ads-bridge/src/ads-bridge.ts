@@ -1,4 +1,4 @@
-import { LDS, ProxyGraphNode, GraphNode } from '@ldsjs/engine';
+import { Luvio, ProxyGraphNode, GraphNode } from '@luvio/engine';
 import {
     ingestRecord,
     keyBuilderRecord,
@@ -95,7 +95,7 @@ function isSpanningRecord(
  * a RecordRepresentation with no field if the value if a spanning record.
  * It returns null if the record contains any pending field.
  */
-function getShallowRecord(lds: LDS, storeRecordId: string): RecordRepresentation | null {
+function getShallowRecord(lds: Luvio, storeRecordId: string): RecordRepresentation | null {
     const recordNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(
         storeRecordId
     );
@@ -170,7 +170,7 @@ function getShallowRecord(lds: LDS, storeRecordId: string): RecordRepresentation
 /**
  * Returns the ADS object metadata representation for a specific record.
  */
-function getObjectMetadata(lds: LDS, record: RecordRepresentation): ObjectMetadata {
+function getObjectMetadata(lds: Luvio, record: RecordRepresentation): ObjectMetadata {
     const { data: objectInfo } = lds.storeLookup<ObjectInfoRepresentation>({
         recordId: keyBuilderObjectInfo({ apiName: record.apiName }),
         node: {
@@ -212,10 +212,10 @@ function getObjectMetadata(lds: LDS, record: RecordRepresentation): ObjectMetada
  * incoming ADS record type information with what we already have in the store when it
  * occurs.
  *
- * @param lds LDS
+ * @param lds Luvio
  * @param record record from ADS, will be fixed in situ
  */
-function fixRecordTypes(lds: LDS, record: RecordRepresentation): void {
+function fixRecordTypes(lds: Luvio, record: RecordRepresentation): void {
     // non-master record types should always be correct
     if (record.recordTypeId === MASTER_RECORD_TYPE_ID) {
         const key = keyBuilderRecord({ recordId: record.id });
@@ -249,10 +249,10 @@ export default class AdsBridge {
     private evictTimerMetric = timer(ADS_BRIDGE_EVICT_DURATION);
     private emitRecordChangedTimerMetric = timer(ADS_BRIDGE_EMIT_RECORD_CHANGED_DURATION);
 
-    constructor(private lds: LDS) {}
+    constructor(private lds: Luvio) {}
 
     /**
-     * This setter invoked by recordLibrary to listen for records ingested by LDS. The passed method
+     * This setter invoked by recordLibrary to listen for records ingested by Luvio. The passed method
      * is invoked whenever a record is ingested. It may be via getRecord, getRecordUi, getListUi, ...
      */
     public set receiveFromLdsCallback(callback: LdsRecordChangedCallback | undefined) {
@@ -277,7 +277,7 @@ export default class AdsBridge {
      * This method is invoked when a record has been ingested by ADS.
      *
      * ADS may invoke this method with records that are not UIAPI allowlisted so not refreshable by
-     * LDS. LDS filters the provided list so it ingests only UIAPI allowlisted records.
+     * Luvio. Luvio filters the provided list so it ingests only UIAPI allowlisted records.
      */
     public addRecords(
         records: RecordRepresentation[],
@@ -335,10 +335,10 @@ export default class AdsBridge {
     }
 
     /**
-     * Gets the list of fields of a record that LDS has in its store. The field list doesn't
+     * Gets the list of fields of a record that Luvio has in its store. The field list doesn't
      * contains the spanning record fields. ADS uses this list when it loads a record from the
      * server. This is an optimization to make a single roundtrip it queries for all fields required
-     * by ADS and LDS.
+     * by ADS and Luvio.
      */
     public getTrackedFieldsForRecord(recordId: string): Promise<string[]> {
         const { lds } = this;
@@ -366,7 +366,7 @@ export default class AdsBridge {
 
     /**
      * Prevents the bridge to emit record change during the execution of the callback.
-     * This methods should wrap all the LDS store mutation done by the bridge. It prevents LDS store
+     * This methods should wrap all the Luvio store mutation done by the bridge. It prevents Luvio store
      * mutations triggered by ADS to be emit back to ADS.
      */
     private lockLdsRecordEmit<T>(callback: () => T): T {
@@ -382,7 +382,7 @@ export default class AdsBridge {
     /**
      * This method retrieves queries the store with with passed record ids to retrieve their
      * associated records and object info. Note that the passed ids are not Salesforce record id
-     * but rather LDS internals store ids.
+     * but rather Luvio internals store ids.
      */
     private emitRecordChanged(
         updatedEntries: { id: string }[],

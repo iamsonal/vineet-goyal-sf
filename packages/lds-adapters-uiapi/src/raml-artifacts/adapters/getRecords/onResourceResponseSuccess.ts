@@ -1,4 +1,4 @@
-import { FulfilledSnapshot, LDS, ResourceResponse } from '@ldsjs/engine';
+import { FulfilledSnapshot, Luvio, ResourceResponse } from '@luvio/engine';
 import { buildNetworkSnapshot } from '../../../generated/adapters/getRecords';
 import { snapshotRefreshOptions } from '../../../generated/adapters/adapter-utils';
 import {
@@ -12,7 +12,7 @@ import { adapterFragment } from './adapterFragment';
 import { createChildResourceParams } from './createChildResourceParams';
 
 export function onResourceResponseSuccess(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordsConfig,
     resourceParams: ResourceRequestConfig,
     response: ResourceResponse<BatchRepresentation>

@@ -1,4 +1,4 @@
-import { Fragment, LDS } from '@ldsjs/engine';
+import { Fragment, Luvio } from '@luvio/engine';
 import {
     ResourceRequestConfig,
     select as generatedSelect,
@@ -7,7 +7,7 @@ import { select as objectInfoRepresentationSelect } from '../../../generated/typ
 import { buildSelectionFromFields } from '../../../selectors/recordTemplate';
 
 export const select: typeof generatedSelect = (
-    lds: LDS,
+    lds: Luvio,
     params: ResourceRequestConfig
 ): Fragment => {
     const objectInfoSelections = objectInfoRepresentationSelect();

@@ -1,4 +1,4 @@
-import { LDS, FetchResponse, Snapshot } from '@ldsjs/engine';
+import { Luvio, FetchResponse, Snapshot } from '@luvio/engine';
 
 import { deepFreeze } from '../../util/deep-freeze';
 import { buildSelectionFromRecord } from '../../selectors/record';
@@ -12,7 +12,7 @@ import { createResourceParams, CreateRecordConfig } from '../../generated/adapte
 import { BLANK_RECORD_FIELDS_TRIE } from '../../util/records';
 import { createRecordIngest } from '../../util/record-ingest';
 
-export const factory = (lds: LDS) => {
+export const factory = (lds: Luvio) => {
     return function(untrustedConfig: unknown): Promise<Snapshot<RecordRepresentation>> {
         const resourceParams = createResourceParams(untrustedConfig as CreateRecordConfig);
         const request = postUiApiRecords(resourceParams);

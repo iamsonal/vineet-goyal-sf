@@ -1,5 +1,5 @@
-import { Environment, IngestPath, ResourceRequest, Store } from '@ldsjs/engine';
-import { DurableEnvironment } from '@ldsjs/environments';
+import { Environment, IngestPath, ResourceRequest, Store } from '@luvio/engine';
+import { DurableEnvironment } from '@luvio/environments';
 import { ObjectCreate } from './utils/language';
 
 import {

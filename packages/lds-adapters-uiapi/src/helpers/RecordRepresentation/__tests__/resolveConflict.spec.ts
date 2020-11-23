@@ -1,4 +1,4 @@
-import { Environment, LDS, Store } from '@ldsjs/engine';
+import { Environment, Luvio, Store } from '@luvio/engine';
 import { buildNetworkSnapshot as getRecordNetwork } from '../../../wire/getRecord/GetRecordFields';
 import { buildNetworkSnapshot as getRecordsNetwork } from '../../../generated/adapters/getRecords';
 import { resolveConflict } from '../resolveConflict';
@@ -49,11 +49,11 @@ const trie2 = {
 
 describe('resolve conflict ', () => {
     it('returns void', () => {
-        const mockLDS = new LDS(new Environment(new Store(), jest.fn()));
+        const mockLDS = new Luvio(new Environment(new Store(), jest.fn()));
         expect(resolveConflict(mockLDS, {})).toBe(undefined);
     });
     it('makes no network call when there is no conflict', () => {
-        const mockLDS = new LDS(new Environment(new Store(), jest.fn()));
+        const mockLDS = new Luvio(new Environment(new Store(), jest.fn()));
         const singleRecordConflictMap = {};
         resolveConflict(mockLDS, singleRecordConflictMap);
         return Promise.resolve().then(() => {
@@ -62,7 +62,7 @@ describe('resolve conflict ', () => {
         });
     });
     it('calls getRecordNetwork when a single record exists in recordConflictMap', () => {
-        const mockLDS = new LDS(new Environment(new Store(), jest.fn()));
+        const mockLDS = new Luvio(new Environment(new Store(), jest.fn()));
         const singleRecordConflictMap = {
             a: { recordId: 'a', trackedFields: trie1 },
         };
@@ -73,7 +73,7 @@ describe('resolve conflict ', () => {
         });
     });
     it('calls getRecordsNetwork when multiple records exist in recordConflictMap', () => {
-        const mockLDS = new LDS(new Environment(new Store(), jest.fn()));
+        const mockLDS = new Luvio(new Environment(new Store(), jest.fn()));
         const singleRecordConflictMap = {
             a: { recordId: 'a', trackedFields: trie1 },
             test2: { recordId: 'test2', trackedFields: trie2 },

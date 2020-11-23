@@ -1,4 +1,4 @@
-import { ResourceRequest } from '@ldsjs/engine';
+import { ResourceRequest } from '@luvio/engine';
 import { Response } from '@mobileplatform/nimbus-plugin-lds';
 
 import { buildNimbusNetworkPluginRequest, buildLdsResponse } from '../networkUtils';

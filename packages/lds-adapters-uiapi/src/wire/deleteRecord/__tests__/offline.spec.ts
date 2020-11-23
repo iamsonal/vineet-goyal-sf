@@ -1,11 +1,11 @@
 import response from './data/record-User-fields-User.Id,User.Name.json';
 import { buildOfflineLds, populateDurableStore } from '@salesforce/lds-jest';
-import { DefaultDurableSegment } from '@ldsjs/environments';
+import { DefaultDurableSegment } from '@luvio/environments';
 import {
     buildMockNetworkAdapter,
     MockPayload,
     buildSuccessMockPayload,
-} from '@ldsjs/adapter-test-library';
+} from '@luvio/adapter-test-library';
 import { factory as deleteRecordFactory } from '../index';
 import { factory as getRecordFactory } from '../../getRecord/index';
 import { keyBuilder as recordKeyBuilder } from '../../../generated/types/RecordRepresentation';

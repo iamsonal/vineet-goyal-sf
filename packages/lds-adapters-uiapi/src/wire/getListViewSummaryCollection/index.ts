@@ -1,14 +1,14 @@
 import {
     AdapterFactory,
     Fragment,
-    LDS,
+    Luvio,
     Snapshot,
     Selector,
     FetchResponse,
     SnapshotRefresh,
     ResourceResponse,
     UnfulfilledSnapshot,
-} from '@ldsjs/engine';
+} from '@luvio/engine';
 
 import {
     GetListViewSummaryCollectionConfig,
@@ -79,7 +79,7 @@ function buildListViewSummaryCollectionFragment(
 }
 
 function buildRefreshSnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetListViewSummaryCollectionConfig
 ): SnapshotRefresh<ListViewSummaryCollectionRepresentation> {
     return {
@@ -88,7 +88,7 @@ function buildRefreshSnapshot(
     };
 }
 export function buildInMemorySnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetListViewSummaryCollectionConfig
 ): Snapshot<ListViewSummaryCollectionRepresentation> {
     const selector: Selector = {
@@ -104,7 +104,7 @@ export function buildInMemorySnapshot(
 }
 
 function prepareRequest(
-    lds: LDS,
+    lds: Luvio,
     config: GetListViewSummaryCollectionConfig,
     resourceParams: ResourceRequestConfig,
     snapshot?: Snapshot<ListViewSummaryCollectionRepresentation>
@@ -141,7 +141,7 @@ function prepareRequest(
 }
 
 function onResourceSuccess(
-    lds: LDS,
+    lds: Luvio,
     config: GetListViewSummaryCollectionConfig,
     key: string,
     response: ResourceResponse<ListViewSummaryCollectionRepresentation>
@@ -157,7 +157,7 @@ function onResourceSuccess(
 }
 
 function onResourceError(
-    lds: LDS,
+    lds: Luvio,
     config: GetListViewSummaryCollectionConfig,
     key: string,
     error: FetchResponse<unknown>
@@ -168,7 +168,7 @@ function onResourceError(
 }
 
 function resolveUnfulfilledSnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetListViewSummaryCollectionConfig,
     snapshot: UnfulfilledSnapshot<ListViewSummaryCollectionRepresentation, any>
 ) {
@@ -189,7 +189,7 @@ function resolveUnfulfilledSnapshot(
 }
 
 export function buildNetworkSnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetListViewSummaryCollectionConfig,
     snapshot?: Snapshot<ListViewSummaryCollectionRepresentation>
 ) {
@@ -210,7 +210,7 @@ export function buildNetworkSnapshot(
 export const factory: AdapterFactory<
     GetListViewSummaryCollectionConfig,
     ListViewSummaryCollectionRepresentation
-> = (lds: LDS) =>
+> = (lds: Luvio) =>
     function getListViewSummaryCollection(
         untrustedConfig: unknown
     ):

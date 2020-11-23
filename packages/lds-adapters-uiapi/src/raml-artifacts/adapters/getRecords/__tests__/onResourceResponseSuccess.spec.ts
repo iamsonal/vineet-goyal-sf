@@ -1,5 +1,5 @@
 import { onResourceResponseSuccess } from '../onResourceResponseSuccess';
-import { LDS, Store, Environment, ResourceResponse } from '@ldsjs/engine';
+import { Luvio, Store, Environment, ResourceResponse } from '@luvio/engine';
 import { GetRecordsConfig } from '../GetRecordsConfig';
 import * as createChildResourceParamObject from '../createChildResourceParams';
 import { ingestSuccessChildResourceParams } from '../../../resources/getUiApiRecordsBatchByRecordIds/ingestSuccessChildResourceParams';
@@ -65,7 +65,7 @@ describe('onResourceResponseSuccess', () => {
         },
     };
     const store = new Store();
-    const lds = new LDS(new Environment(store, jest.fn()));
+    const lds = new Luvio(new Environment(store, jest.fn()));
 
     it('returns snapshot with state fulfilled', () => {
         const result = onResourceResponseSuccess(

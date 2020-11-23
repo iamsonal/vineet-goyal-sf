@@ -1,4 +1,4 @@
-import { buildSuccessMockPayload, MockPayload } from '@ldsjs/adapter-test-library';
+import { buildSuccessMockPayload, MockPayload } from '@luvio/adapter-test-library';
 
 import { factory as getListViewSummaryCollection } from '../index';
 import listUiOpportunity from './mockData/list-ui-Opportunity.json';

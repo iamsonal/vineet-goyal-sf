@@ -9,9 +9,9 @@ import {
     ProcessActionResult,
     ObjectAsSet,
 } from './DraftQueue';
-import { ResourceRequest, NetworkAdapter, FetchResponse } from '@ldsjs/engine';
+import { ResourceRequest, NetworkAdapter, FetchResponse } from '@luvio/engine';
 import { ObjectKeys } from './utils/language';
-import { DurableStore, DurableStoreEntries, DurableStoreEntry } from '@ldsjs/environments';
+import { DurableStore, DurableStoreEntries, DurableStoreEntry } from '@luvio/environments';
 import { buildDraftDurableStoreKey } from './utils/records';
 
 export const DraftDurableSegment = 'DRAFT';

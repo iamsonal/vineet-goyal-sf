@@ -1,4 +1,4 @@
-import { LDS, Store, Environment } from '@ldsjs/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import { ingestRelatedListSummaryInfoCollection } from '@salesforce/lds-adapters-uiapi';
 
 import mockRelatedListInfoCollection from './mocks/cwccustom00__c-related-list-info-collection';
@@ -13,7 +13,7 @@ function clone(data) {
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
     const store = new Store();
-    const lds = new LDS(new Environment(store, rejectNetworkAdapter));
+    const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
     ingestRelatedListSummaryInfoCollection(
         JSON.parse(mockRelatedListInfoCollection),
         'warmupKey',
@@ -29,7 +29,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListSummaryInfoCollection(
                 clone(mockRelatedListInfoCollection),
                 'key',
@@ -54,7 +54,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListSummaryInfoCollection(
                 clone(mockRelatedListInfoCollection),
                 'key',
@@ -87,7 +87,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListSummaryInfoCollection(
                 clone(mockRelatedListInfoCollection),
                 'key',
@@ -122,7 +122,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListSummaryInfoCollection(
                 clone(mockRelatedListInfoCollection),
                 'key',

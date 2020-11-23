@@ -1,4 +1,4 @@
-import { LDS, PathSelection, AdapterContext, Snapshot, ResourceResponse } from '@ldsjs/engine';
+import { Luvio, PathSelection, AdapterContext, Snapshot, ResourceResponse } from '@luvio/engine';
 import {
     keyBuilder as ListInfoRepresentation_keyBuilder,
     ListInfoRepresentation,
@@ -47,7 +47,7 @@ export function addListReference(
  * Returns a list reference from the store if it's present.
  *
  * @param query list view to look for
- * @param lds LDS
+ * @param lds Luvio
  */
 export function getListReference(
     query: ListReferenceQuery,
@@ -83,11 +83,11 @@ const LIST_INFO_SELECTIONS_ETAG: PathSelection[] = [
  * reference from the store.
  *
  * @param listRef list reference
- * @param lds LDS
+ * @param lds Luvio
  */
 export function getListInfo(
     listRef: ListReferenceRepresentation,
-    lds: LDS
+    lds: Luvio
 ): Snapshot<ListInfoRepresentation> {
     const key = ListInfoRepresentation_keyBuilder(listRef);
     return lds.storeLookup<ListInfoRepresentation>({
@@ -102,7 +102,7 @@ export function getListInfo(
 // track of default values that we've seen the server supply for past
 // requests so that we can guess what those values will be on future requests.
 
-// TODO - look at generalizing this so we can declaratively tell LDS to remember
+// TODO - look at generalizing this so we can declaratively tell Luvio to remember
 // default values from the server.
 
 export interface ServerDefaultable {
@@ -237,7 +237,7 @@ interface DefaultServerFieldStatus {
 }
 
 export function listFields(
-    lds: LDS,
+    lds: Luvio,
     {
         fields = [],
         optionalFields = [],

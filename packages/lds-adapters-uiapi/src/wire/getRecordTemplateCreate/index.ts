@@ -1,6 +1,6 @@
 import {
     AdapterFactory,
-    LDS,
+    Luvio,
     Snapshot,
     FulfilledSnapshot,
     ResourceRequestOverride,
@@ -10,7 +10,7 @@ import {
     ResourceRequest,
     UnfulfilledSnapshot,
     AdapterContext,
-} from '@ldsjs/engine';
+} from '@luvio/engine';
 import {
     validateAdapterConfig,
     getRecordTemplateCreate_ConfigPropertyNames,
@@ -64,7 +64,11 @@ function getRecordTypeId(
     return saved;
 }
 
-function prepareRequest(lds: LDS, context: AdapterContext, config: GetRecordTemplateCreateConfig) {
+function prepareRequest(
+    lds: Luvio,
+    context: AdapterContext,
+    config: GetRecordTemplateCreateConfig
+) {
     const resourceParams = createResourceParams(config);
     const recordTypeId = getRecordTypeId(context, config);
     const { objectApiName } = config;
@@ -89,7 +93,7 @@ function prepareRequest(lds: LDS, context: AdapterContext, config: GetRecordTemp
 }
 
 function onResourceResponseSuccess(
-    lds: LDS,
+    lds: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCreateConfig,
     request: ResourceRequest,
@@ -145,7 +149,7 @@ function onResourceResponseSuccess(
 }
 
 function onResourceResponseError(
-    lds: LDS,
+    lds: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCreateConfig,
     resourceParams: ResourceRequestConfig,
@@ -160,7 +164,7 @@ function onResourceResponseError(
 }
 
 function buildNetworkSnapshot(
-    lds: LDS,
+    lds: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCreateConfig,
     override?: ResourceRequestOverride
@@ -188,7 +192,7 @@ function buildNetworkSnapshot(
 }
 
 function resolveUnfulfilledSnapshot(
-    lds: LDS,
+    lds: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCreateConfig,
     snapshot: UnfulfilledSnapshot<RecordDefaultsTemplateCreateRepresentation, unknown>
@@ -214,7 +218,7 @@ function resolveUnfulfilledSnapshot(
 }
 
 function buildInMemorySnapshot(
-    lds: LDS,
+    lds: Luvio,
     context: AdapterContext,
     config: GetRecordTemplateCreateConfig
 ): Snapshot<RecordDefaultsTemplateCreateRepresentation, any> {
@@ -233,7 +237,7 @@ function buildInMemorySnapshot(
 export const factory: AdapterFactory<
     GetRecordTemplateCreateConfig,
     RecordDefaultsTemplateCreateRepresentation
-> = (lds: LDS) => {
+> = (lds: Luvio) => {
     return lds.withContext(function UiApi__getRecordDefaultsTemplateForCreate(
         untrustedConfig: unknown,
         context: AdapterContext

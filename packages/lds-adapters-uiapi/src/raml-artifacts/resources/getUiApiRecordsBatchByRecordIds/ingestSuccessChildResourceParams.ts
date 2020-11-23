@@ -1,4 +1,4 @@
-import { LDS, FulfilledSnapshot } from '@ldsjs/engine';
+import { Luvio, FulfilledSnapshot } from '@luvio/engine';
 import {
     ObjectFreeze,
     getFetchResponseStatusText,
@@ -16,7 +16,7 @@ import {
 } from '../../../wire/getRecord/GetRecordFields';
 
 export function ingestSuccessChildResourceParams(
-    lds: LDS,
+    lds: Luvio,
     childResourceParamsArray: getUiApiRecordsByRecordId_ResourceRequestConfig[],
     childEnvelopes: BatchResultRepresentation[]
 ): { childSnapshotData: BatchRepresentation; seenRecords: { [key: string]: boolean } } {

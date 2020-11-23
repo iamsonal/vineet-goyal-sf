@@ -1,4 +1,4 @@
-import { LDS, Store, Adapter, Snapshot } from '@ldsjs/engine';
+import { Luvio, Store, Adapter, Snapshot } from '@luvio/engine';
 import {
     CacheStatsLogger,
     Counter,
@@ -694,7 +694,7 @@ export function registerLdsCacheStats(name: string): CacheStatsLogger {
  * @param lds The LDS to instrument.
  * @param store The Store to instrument.
  */
-export function setupInstrumentation(lds: LDS, store: Store): void {
+export function setupInstrumentation(lds: Luvio, store: Store): void {
     registerPlugin({
         name: NAMESPACE,
         plugin: markAggregatorPlugin,

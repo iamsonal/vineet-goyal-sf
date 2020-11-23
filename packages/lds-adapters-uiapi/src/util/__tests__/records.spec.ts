@@ -1,4 +1,4 @@
-import { Store, LDS, Environment } from '@ldsjs/engine';
+import { Store, Luvio, Environment } from '@luvio/engine';
 
 import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
 import {
@@ -57,7 +57,7 @@ function buildDeepRecord(): RecordRepresentation {
 describe('getTrackedFields', () => {
     it('should return correct tracked fields', () => {
         const store = new Store();
-        const lds = new LDS(new Environment(store, () => Promise.reject()));
+        const lds = new Luvio(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildSampleRecord(),
@@ -79,7 +79,7 @@ describe('getTrackedFields', () => {
 
     it('should include fields passed to getTrackedFields', () => {
         const store = new Store();
-        const lds = new LDS(new Environment(store, () => Promise.reject()));
+        const lds = new Luvio(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildSampleRecord(),
@@ -102,7 +102,7 @@ describe('getTrackedFields', () => {
 
     it('should dedupe fields passed to getTrackedFields', () => {
         const store = new Store();
-        const lds = new LDS(new Environment(store, () => Promise.reject()));
+        const lds = new Luvio(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildSampleRecord(),
@@ -124,7 +124,7 @@ describe('getTrackedFields', () => {
 
     it('should resolve tracked fields on records with circular reference', () => {
         const store = new Store();
-        const lds = new LDS(new Environment(store, () => Promise.reject()));
+        const lds = new Luvio(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildRecursiveRecord(),
@@ -140,7 +140,7 @@ describe('getTrackedFields', () => {
 
     it('should resolve tracked fields on record with circular reference on a per-path basis', () => {
         const store = new Store();
-        const lds = new LDS(new Environment(store, () => Promise.reject()));
+        const lds = new Luvio(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildRecursiveRecordDifferentPaths(),
@@ -169,7 +169,7 @@ describe('getTrackedFields', () => {
         const record = buildDeepRecord();
 
         const store = new Store();
-        const lds = new LDS(new Environment(store, () => Promise.reject()));
+        const lds = new Luvio(new Environment(store, () => Promise.reject()));
 
         ingest(
             record,
@@ -199,7 +199,7 @@ describe('getTrackedFields', () => {
     it('should not include 6 levels deep custom relationship field', () => {
         const store = new Store();
         store.records = storeRecordsWith6LevelRefsCustom;
-        const lds = new LDS(new Environment(store, () => Promise.reject()));
+        const lds = new Luvio(new Environment(store, () => Promise.reject()));
 
         const expectedFields = [
             'Department__c.Id',
@@ -236,7 +236,7 @@ describe('getTrackedFields', () => {
     it('should not include 6 levels deep relationship field', () => {
         const store = new Store();
         store.records = storeRecordsWith6LevelRefsAccount;
-        const lds = new LDS(new Environment(store, () => Promise.reject()));
+        const lds = new Luvio(new Environment(store, () => Promise.reject()));
 
         const expectedFields = [
             'Department__c.Id',
@@ -271,7 +271,7 @@ describe('extractTrackedFields', () => {
         const record = buildDeepRecord();
 
         const store = new Store();
-        const lds = new LDS(new Environment(store, () => Promise.reject()));
+        const lds = new Luvio(new Environment(store, () => Promise.reject()));
         const recordKey = keyBuilder({ recordId: record.id });
         ingest(record, { fullPath: recordKey, parent: null }, lds, store, 0);
 
@@ -300,7 +300,7 @@ describe('extractTrackedFieldsToTrie', () => {
         const record = buildDeepRecord();
 
         const store = new Store();
-        const lds = new LDS(new Environment(store, () => Promise.reject()));
+        const lds = new Luvio(new Environment(store, () => Promise.reject()));
         const recordKey = keyBuilder({ recordId: record.id });
         ingest(record, { fullPath: recordKey, parent: null }, lds, store, 0);
 

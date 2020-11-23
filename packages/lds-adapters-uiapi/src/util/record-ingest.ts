@@ -1,4 +1,4 @@
-import { ResourceIngest, IngestPath, LDS, Store, StoreLink } from '@ldsjs/engine';
+import { ResourceIngest, IngestPath, Luvio, Store, StoreLink } from '@luvio/engine';
 import { RecordRepresentation, validate, equals } from '../generated/types/RecordRepresentation';
 import { keyBuilderFromType } from '../raml-artifacts/types/RecordRepresentation/keyBuilderFromType';
 import { createLink } from '../generated/types/type-utils';
@@ -15,7 +15,7 @@ export const createRecordIngest = (
     return (
         input: RecordRepresentation,
         path: IngestPath,
-        lds: LDS,
+        lds: Luvio,
         store: Store,
         timestamp: number
     ): StoreLink => {

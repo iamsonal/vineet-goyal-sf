@@ -1,4 +1,4 @@
-import { LDS } from '@ldsjs/engine';
+import { Luvio } from '@luvio/engine';
 
 import { mark } from '@salesforce/lds-instrumentation';
 import { clearStorages } from '@salesforce/lds-aura-storage';
@@ -11,9 +11,9 @@ const STORAGE_DROP_MARK_CONTEXT = {
 };
 
 /**
- * Watch an LDS instance for metadata changes.
+ * Watch an Luvio instance for metadata changes.
  */
-export function setupMetadataWatcher(lds: LDS): void {
+export function setupMetadataWatcher(lds: Luvio): void {
     // Watch for object info changes. Since we don't have enough information to understand to which
     // extent an object info change may impact the application the only thing we do is to clear all
     // the  persistent storages.

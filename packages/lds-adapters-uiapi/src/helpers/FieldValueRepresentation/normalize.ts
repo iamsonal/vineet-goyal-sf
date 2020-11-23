@@ -1,4 +1,4 @@
-import { IngestPath, LDS, Store } from '@ldsjs/engine';
+import { IngestPath, Luvio, Store } from '@luvio/engine';
 import {
     FieldValueRepresentationNormalized,
     FieldValueRepresentation,
@@ -12,7 +12,7 @@ export default function normalize(
     input: FieldValueRepresentation,
     existing: FieldValueRepresentationNormalized,
     path: IngestPath,
-    lds: LDS,
+    lds: Luvio,
     store: Store,
     timestamp: number,
     fieldsTrie?: RecordFieldTrie,

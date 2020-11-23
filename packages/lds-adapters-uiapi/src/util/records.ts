@@ -1,4 +1,4 @@
-import { LDS, ProxyGraphNode, GraphNode, StoreLink } from '@ldsjs/engine';
+import { Luvio, ProxyGraphNode, GraphNode, StoreLink } from '@luvio/engine';
 import { FieldRepresentation } from '../generated/types/FieldRepresentation';
 import {
     FieldValueRepresentation,
@@ -324,7 +324,7 @@ function mergeFieldsTries(rootA: RecordFieldTrie, rootB: RecordFieldTrie) {
 }
 
 export function getTrackedFields(
-    lds: LDS,
+    lds: Luvio,
     recordId: string,
     fieldsFromConfig?: string[]
 ): string[] {
@@ -716,7 +716,7 @@ function _markMissingPath(
 
 /**
  * Tells you if an objectApiName is supported by UI API or not.
- * Note: LDS does not currently support all the entities, the list is limited to UI API supported entities
+ * Note: Luvio does not currently support all the entities, the list is limited to UI API supported entities
  * @param objectApiName the object API name from a record.
  * @return True if the provided objectApiName is supported in UI API.
  */

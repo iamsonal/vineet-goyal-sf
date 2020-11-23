@@ -1,5 +1,5 @@
 import { validate } from '../validation';
-import { ShapeTypes } from '@ldsjs/compiler';
+import { ShapeTypes } from '@luvio/compiler';
 
 describe('validation plugin', () => {
     it('validates eTag property is annotated with (lds.private)', async () => {

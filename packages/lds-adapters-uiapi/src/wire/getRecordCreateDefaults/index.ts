@@ -1,11 +1,11 @@
 import {
     AdapterFactory,
-    LDS,
+    Luvio,
     PathSelection,
     Selector,
     FetchResponse,
     SnapshotRefresh,
-} from '@ldsjs/engine';
+} from '@luvio/engine';
 import { validateAdapterConfig } from '../../generated/adapters/getRecordCreateDefaults';
 import getUiApiRecordDefaultsCreateByObjectApiName, {
     ResourceRequestConfig,
@@ -61,7 +61,7 @@ function buildSelector(resp: RecordDefaultsRepresentation): PathSelection[] {
 type GetRecordCreateDefaultsConfigWithDefaults = Required<GetRecordCreateDefaultsConfig>;
 
 function buildSnapshotRefresh(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordCreateDefaultsConfigWithDefaults
 ): SnapshotRefresh<RecordDefaultsRepresentation> {
     return {
@@ -70,7 +70,10 @@ function buildSnapshotRefresh(
     };
 }
 
-export function buildNetworkSnapshot(lds: LDS, config: GetRecordCreateDefaultsConfigWithDefaults) {
+export function buildNetworkSnapshot(
+    lds: Luvio,
+    config: GetRecordCreateDefaultsConfigWithDefaults
+) {
     const params: ResourceRequestConfig = createResourceParams(config);
     const request = getUiApiRecordDefaultsCreateByObjectApiName(params);
 
@@ -135,7 +138,10 @@ function coerceConfigWithDefaults(
     };
 }
 
-export function buildInMemorySnapshot(lds: LDS, config: GetRecordCreateDefaultsConfigWithDefaults) {
+export function buildInMemorySnapshot(
+    lds: Luvio,
+    config: GetRecordCreateDefaultsConfigWithDefaults
+) {
     const params: ResourceRequestConfig = createResourceParams(config);
     const key = keyBuilder(params);
 
@@ -180,7 +186,7 @@ export function buildInMemorySnapshot(lds: LDS, config: GetRecordCreateDefaultsC
 export const factory: AdapterFactory<
     GetRecordCreateDefaultsConfig,
     RecordDefaultsRepresentation
-> = (lds: LDS) =>
+> = (lds: Luvio) =>
     function getRecordCreateDefaults(untrusted: unknown) {
         const config = coerceConfigWithDefaults(untrusted);
         if (config === null) {

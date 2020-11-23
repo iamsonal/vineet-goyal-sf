@@ -1,4 +1,4 @@
-import { LDS, Store, Environment } from '@ldsjs/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import { ingestRecord, ingestRecordUi } from '@salesforce/lds-adapters-uiapi';
 import mockRecord from '@salesforce/lds-adapters-uiapi/src/__benchmarks__/mocks/custom-proto-medium-record';
 import mockRecordUI from '@salesforce/lds-adapters-uiapi/src/__benchmarks__/mocks/custom-proto-medium-record-ui';
@@ -12,7 +12,7 @@ export default {
     func: () => {
         for (let i = 0; i < ITERATION_COUNT; i++) {
             const store = new Store();
-            const lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRecord(JSON.parse(mockRecord), 'record', lds, store);
             ingestRecordUi(JSON.parse(mockRecordUI), 'record', lds, store);
         }

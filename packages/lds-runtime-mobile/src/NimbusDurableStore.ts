@@ -6,7 +6,7 @@ import {
     DurableStoreEntries,
     DurableStoreEntry,
     OnDurableStoreChangedListener,
-} from '@ldsjs/environments';
+} from '@luvio/environments';
 import { ObjectKeys, ObjectCreate, JSONStringify, JSONParse } from './utils/language';
 
 export class NimbusDurableStore implements DurableStore {

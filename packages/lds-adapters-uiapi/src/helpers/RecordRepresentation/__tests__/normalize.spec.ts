@@ -1,4 +1,4 @@
-import { LDS, IngestPath, Store, Environment } from '@ldsjs/engine';
+import { Luvio, IngestPath, Store, Environment } from '@luvio/engine';
 import normalize from '../normalize';
 import { ingest as FieldValueRepresentation_ingest } from '../../../raml-artifacts/types/FieldValueRepresentation/ingest';
 import { convertFieldsToTrie } from '../../../util/records';
@@ -11,7 +11,7 @@ function clone<T>(value: T): T {
 
 describe('normalize', () => {
     const store = new Store();
-    const lds = new LDS(new Environment(store, jest.fn()));
+    const lds = new Luvio(new Environment(store, jest.fn()));
 
     const path: IngestPath = {
         fullPath: 'some_path',

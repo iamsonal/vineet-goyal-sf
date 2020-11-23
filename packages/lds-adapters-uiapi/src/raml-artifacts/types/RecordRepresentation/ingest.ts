@@ -1,4 +1,4 @@
-import { IngestPath, LDS, Store, StoreLink } from '@ldsjs/engine';
+import { IngestPath, Luvio, Store, StoreLink } from '@luvio/engine';
 import {
     equals,
     ingest as generatedIngest,
@@ -13,7 +13,7 @@ import { keyBuilderFromType } from './keyBuilderFromType';
 export const ingest: typeof generatedIngest = function RecordRepresentationIngest(
     input: RecordRepresentation,
     path: IngestPath,
-    lds: LDS,
+    lds: Luvio,
     store: Store,
     timestamp: number
 ): StoreLink {

@@ -1,5 +1,5 @@
 import {
-    LDS,
+    Luvio,
     Fragment,
     Reader,
     ResourceRequest,
@@ -7,7 +7,7 @@ import {
     SnapshotRefresh,
     FulfilledSnapshot,
     ErrorSnapshot,
-} from '@ldsjs/engine';
+} from '@luvio/engine';
 import {
     ResourceRequestConfig,
     createChildResourceParams as generatedCreateChildResourceParams,
@@ -91,7 +91,7 @@ function extractSingleResourceParamsFromBatchParamString(
 // HUGE BLOCK OF COPY PASTED CODE:
 // WE NEED TO DO THIS SO THAT THE ADAPTER CAN USE ONLY OUR OVERRIDE FILE
 // PLEASE DO NOT CHANGE ANYTHING HERE...
-export function select(lds: LDS, resourceParams: ResourceRequestConfig): Fragment {
+export function select(lds: Luvio, resourceParams: ResourceRequestConfig): Fragment {
     const childResources = createChildResourceParams(resourceParams);
     const envelopeBodyPath = 'result';
     const envelopeStatusCodePath = 'statusCode';
@@ -196,7 +196,7 @@ export function keyBuilder(params: ResourceRequestConfig): string {
 }
 
 export function ingestSuccess(
-    lds: LDS,
+    lds: Luvio,
     resourceParams: ResourceRequestConfig,
     response: FetchResponse<RelatedListRecordCollectionBatchRepresentation>,
     _snapshotRefresh?: SnapshotRefresh<RelatedListRecordCollectionBatchRepresentation>
@@ -297,7 +297,7 @@ export function ingestSuccess(
 }
 
 export function ingestError(
-    lds: LDS,
+    lds: Luvio,
     params: ResourceRequestConfig,
     error: FetchResponse<unknown>,
     snapshotRefresh?: SnapshotRefresh<RelatedListRecordCollectionBatchRepresentation>

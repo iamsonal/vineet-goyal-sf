@@ -1,4 +1,4 @@
-import { CompilerPlugin } from '@ldsjs/compiler';
+import { CompilerPlugin } from '@luvio/compiler';
 import { validate } from './validation';
 import { afterGenerate } from './after-generate';
 

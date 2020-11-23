@@ -1,4 +1,4 @@
-import { ResponsePropertyRetriever } from '@ldsjs/environments';
+import { ResponsePropertyRetriever } from '@luvio/environments';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { DraftQueue } from '../DraftQueue';
 import { makeNetworkAdapterDraftAware } from '../makeNetworkAdapterDraftAware';

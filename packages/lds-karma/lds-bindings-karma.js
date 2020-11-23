@@ -1,7 +1,7 @@
 import {
     createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor,
     bindWireRefresh,
-} from '@ldsjs/lwc-lds';
+} from '@luvio/lwc-luvio';
 import { lds } from 'lds-engine';
 
 export function createWireAdapterConstructor(name, factory) {

@@ -1,4 +1,4 @@
-import { PathSelection } from '@ldsjs/engine';
+import { PathSelection } from '@luvio/engine';
 import { ArrayPrototypeFilter } from '../util/language';
 import {
     buildSelectionFromFields as record_buildSelectionFromFields,

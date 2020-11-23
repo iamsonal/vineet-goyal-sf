@@ -1,11 +1,11 @@
 import { FieldValueRepresentationNormalized } from '../../generated/types/FieldValueRepresentation';
-import { LDS, IngestPath } from '@ldsjs/engine';
+import { Luvio, IngestPath } from '@luvio/engine';
 import { RecordRepresentationNormalized } from '../../generated/types/RecordRepresentation';
 
 export default function merge(
     existing: FieldValueRepresentationNormalized | undefined,
     incoming: FieldValueRepresentationNormalized,
-    _lds: LDS,
+    _lds: Luvio,
     path: IngestPath
 ): FieldValueRepresentationNormalized {
     if (existing === undefined) {

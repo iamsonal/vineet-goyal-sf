@@ -5,7 +5,7 @@ import {
     MockPayload,
     buildSuccessMockPayload,
     getMockNetworkAdapterCallCount,
-} from '@ldsjs/adapter-test-library';
+} from '@luvio/adapter-test-library';
 
 const createArgs: MockPayload['networkArgs'] = {
     method: 'post',
@@ -28,7 +28,7 @@ const OPPORTUNITY_ID = '006xx000001a6JAAAY';
 import { factory as createRecordFactory } from '../index';
 import { factory as getRecordFactory } from '../../getRecord/index';
 import { RecordRepresentation } from '../../../generated/types/RecordRepresentation';
-import { Snapshot } from '@ldsjs/engine';
+import { Snapshot } from '@luvio/engine';
 
 describe('createRecord offline tests', () => {
     it('getRecord is fullfilled when offline after a createRecord is invoked online', async () => {

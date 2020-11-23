@@ -1,13 +1,13 @@
 import {
     AdapterFactory,
-    LDS,
+    Luvio,
     PathSelection,
     Snapshot,
     UnfulfilledSnapshot,
     FetchResponse,
     SnapshotRefresh,
     ResourceResponse,
-} from '@ldsjs/engine';
+} from '@luvio/engine';
 import { ObjectKeys } from '../../util/language';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
 import { RecordAvatarBulkRepresentation } from '../../generated/types/RecordAvatarBulkRepresentation';
@@ -36,7 +36,7 @@ function selectAvatars(recordIds: string[]): PathSelection[] {
 // the same top level object
 const KEY = `${keyPrefix}RecordAvatarsBulk`;
 
-export function buildInMemorySnapshot(lds: LDS, config: GetRecordAvatarsConfig) {
+export function buildInMemorySnapshot(lds: Luvio, config: GetRecordAvatarsConfig) {
     const { recordIds } = config;
     const sel = selectAvatars(recordIds);
     return lds.storeLookup<RecordAvatarBulkMapRepresentation>(
@@ -54,7 +54,7 @@ export function buildInMemorySnapshot(lds: LDS, config: GetRecordAvatarsConfig) 
 }
 
 function buildSnapshotRefresh(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordAvatarsConfig,
     recordIds: string[]
 ): SnapshotRefresh<RecordAvatarBulkMapRepresentation> {
@@ -81,7 +81,7 @@ function isRecordAvatarBulkMapRepresentation(
 }
 
 function onResponseSuccess(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordAvatarsConfig,
     recordIds: string[],
     response: ResourceResponse<RecordAvatarBulkRepresentation | RecordAvatarBulkMapRepresentation>
@@ -112,7 +112,7 @@ function onResponseSuccess(
 }
 
 function onResponseError(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordAvatarsConfig,
     recordIds: string[],
     err: FetchResponse<unknown>
@@ -123,7 +123,7 @@ function onResponseError(
 }
 
 function resolveUnfulfilledSnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordAvatarsConfig,
     recordIds: string[],
     snapshot: UnfulfilledSnapshot<RecordAvatarBulkMapRepresentation, any>
@@ -147,7 +147,7 @@ function resolveUnfulfilledSnapshot(
  *
  */
 export function buildNetworkSnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordAvatarsConfig,
     recordIds: string[]
 ): Promise<Snapshot<RecordAvatarBulkMapRepresentation>> {
@@ -181,7 +181,7 @@ function getRecordIds(config: GetRecordAvatarsConfig, snapshot: Snapshot<unknown
 }
 
 export const factory: AdapterFactory<GetRecordAvatarsConfig, RecordAvatarBulkMapRepresentation> = (
-    lds: LDS
+    lds: Luvio
 ) =>
     function getRecordAvatars(unknown: unknown) {
         const config = validateAdapterConfig(unknown, getRecordAvatars_ConfigPropertyNames);

@@ -1,13 +1,13 @@
 import {
     AdapterFactory,
-    LDS,
+    Luvio,
     Snapshot,
     ResourceRequestOverride,
     FetchResponse,
     SnapshotRefresh,
     ResourceResponse,
     UnfulfilledSnapshot,
-} from '@ldsjs/engine';
+} from '@luvio/engine';
 import {
     AdapterValidationConfig,
     snapshotRefreshOptions,
@@ -37,7 +37,7 @@ const getLayout_ConfigPropertyNames: AdapterValidationConfig = {
 };
 
 function buildSnapshotRefresh(
-    lds: LDS,
+    lds: Luvio,
     config: GetLayoutConfigWithDefaults
 ): SnapshotRefresh<RecordLayoutRepresentation> {
     return {
@@ -70,7 +70,7 @@ function buildRequestAndKey(config: GetLayoutConfigWithDefaults) {
 }
 
 function onResourceResponseSuccess(
-    lds: LDS,
+    lds: Luvio,
     config: GetLayoutConfigWithDefaults,
     key: string,
     response: ResourceResponse<RecordLayoutRepresentation>
@@ -90,7 +90,7 @@ function onResourceResponseSuccess(
 }
 
 function onResourceResponseError(
-    lds: LDS,
+    lds: Luvio,
     config: GetLayoutConfigWithDefaults,
     key: string,
     error: FetchResponse<unknown>
@@ -101,7 +101,7 @@ function onResourceResponseError(
 }
 
 export function buildNetworkSnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetLayoutConfigWithDefaults,
     requestOverride?: ResourceRequestOverride
 ): Promise<Snapshot<RecordLayoutRepresentation>> {
@@ -118,7 +118,7 @@ export function buildNetworkSnapshot(
 }
 
 export function resolveUnfulfilledSnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetLayoutConfigWithDefaults,
     snapshot: UnfulfilledSnapshot<RecordLayoutRepresentation, unknown>
 ): Promise<Snapshot<RecordLayoutRepresentation>> {
@@ -134,7 +134,7 @@ export function resolveUnfulfilledSnapshot(
     );
 }
 
-export function buildInMemorySnapshot(lds: LDS, config: GetLayoutConfigWithDefaults) {
+export function buildInMemorySnapshot(lds: Luvio, config: GetLayoutConfigWithDefaults) {
     const { recordTypeId, layoutType, mode } = config;
     const key = recordLayoutRepresentationKeyBuilder({
         objectApiName: config.objectApiName,
@@ -179,7 +179,7 @@ function coerceConfigWithDefaults(untrusted: unknown): GetLayoutConfigWithDefaul
     };
 }
 
-export const factory: AdapterFactory<GetLayoutConfig, RecordLayoutRepresentation> = (lds: LDS) =>
+export const factory: AdapterFactory<GetLayoutConfig, RecordLayoutRepresentation> = (lds: Luvio) =>
     function getLayout(untrusted: unknown) {
         const config = coerceConfigWithDefaults(untrusted);
         if (config === null) {

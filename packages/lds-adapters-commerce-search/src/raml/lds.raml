@@ -2,28 +2,28 @@
 extends: ./api.raml
 
 uses:
-  lds: lds://annotations.raml
+  luvio: luvio://annotations.raml
 
-(lds.keyPrefix): 'Commerce::'
+(luvio.keyPrefix): 'Commerce::'
 
 types:
   ProductSearchResultsRepresentation:
-    (lds.opaque): true
+    (luvio.opaque): true
   ProductSearchSuggestionsResultsRepresentation:
-    (lds.opaque): true
+    (luvio.opaque): true
     examples:
       validResponse: !include ../mocks/types/ProductSearchSuggestionsResultsRepresentation/validResponse.json
       validResponseEmpty: !include ../mocks/types/ProductSearchSuggestionsResultsRepresentation/validResponseEmpty.json
 
 /commerce/webstores/{webstoreId}/search/product-search:
   post:
-    (lds.method): get
-    (lds.adapter):
+    (luvio.method): get
+    (luvio.adapter):
       name: productSearch
 
 /commerce/webstores/{webstoreId}/search/suggestions:
   get:
-    (lds.adapter):
+    (luvio.adapter):
       name: getSuggestions
       tests:
         expectedResponses:

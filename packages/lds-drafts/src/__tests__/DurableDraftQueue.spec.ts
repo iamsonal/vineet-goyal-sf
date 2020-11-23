@@ -9,11 +9,11 @@ import {
     buildErrorMockPayload,
     setNetworkConnectivity,
     ConnectivityState,
-} from '@ldsjs/adapter-test-library';
+} from '@luvio/adapter-test-library';
 import { ObjectKeys } from '../utils/language';
-import { DurableStoreEntry, DurableStoreEntries } from '@ldsjs/environments';
+import { DurableStoreEntry, DurableStoreEntries } from '@luvio/environments';
 import { createPatchRequest, createPostRequest } from './test-utils';
-import { ResourceRequest } from '@ldsjs/engine';
+import { ResourceRequest } from '@luvio/engine';
 
 const DEFAULT_REQUEST: ResourceRequest = {
     method: 'post',

@@ -1,4 +1,4 @@
-import { ResourceRequest, HttpStatusCode } from '@ldsjs/engine';
+import { ResourceRequest, HttpStatusCode } from '@luvio/engine';
 import { UiApiParams, DispatchActionConfig } from './utils';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 import { executeGlobalController } from 'aura';

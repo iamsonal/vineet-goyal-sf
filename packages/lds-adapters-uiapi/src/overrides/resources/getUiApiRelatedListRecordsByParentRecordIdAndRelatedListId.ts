@@ -8,13 +8,13 @@ import {
     createResourceRequest,
 } from './../../generated/resources/getUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
 import {
-    LDS,
+    Luvio,
     SnapshotRefresh,
     Fragment,
     FulfilledSnapshot,
     ResourceResponse,
     StoreLink,
-} from '@ldsjs/engine';
+} from '@luvio/engine';
 import { select as RelatedListReferenceRepresentation_select } from '../../generated/types/RelatedListReferenceRepresentation';
 import { buildSelectionFromFields } from '../../selectors/record';
 import {
@@ -41,7 +41,7 @@ const DEFAULT_PAGE_SIZE = 50;
 const RELATED_LIST_REFERENCE_SELECTIONS = RelatedListReferenceRepresentation_select().selections;
 
 export const select: typeof generatedSelect = (
-    lds: LDS,
+    lds: Luvio,
     params: ResourceRequestConfig
 ): Fragment => {
     const { queryParams, urlParams } = params;
@@ -142,7 +142,7 @@ export const select: typeof generatedSelect = (
 };
 
 export const ingestSuccess: typeof generatedIngestSuccess = (
-    lds: LDS,
+    lds: Luvio,
     resourceRequestConfig: ResourceRequestConfig,
     resp: ResourceResponse<RelatedListRecordCollectionRepresentation>,
     snapshotRefresh?: SnapshotRefresh<RelatedListRecordCollectionRepresentation>
@@ -185,7 +185,7 @@ export default createResourceRequest;
 function markMissingOptionalRecordFieldsMissing(
     returnedRecords: StoreLink[],
     optionalFields: string[],
-    lds: LDS
+    lds: Luvio
 ) {
     for (let i = 0; i < returnedRecords.length; i++) {
         const record = returnedRecords[i];

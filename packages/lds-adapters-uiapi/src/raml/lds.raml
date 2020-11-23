@@ -2,32 +2,32 @@
 extends: ./api.raml
 
 uses:
-  lds: lds://annotations.raml
+  luvio: luvio://annotations.raml
 
-(lds.keyPrefix): 'UiApi::'
+(luvio.keyPrefix): 'UiApi::'
 
 types:
   ActionRepresentation:
-    (lds.ttl): 300000
-    (lds.private):
+    (luvio.ttl): 300000
+    (luvio.private):
       - eTag
       - url
   AppRepresentation:
-    (lds.private):
+    (luvio.private):
       - eTag
   AppsRepresentation:
-    (lds.private):
+    (luvio.private):
       - eTag
   EntityActionRepresentation:
-    (lds.key):
+    (luvio.key):
       url: url
-    (lds.private):
+    (luvio.private):
       - links
       - url
   PlatformActionRepresentation:
-    (lds.private):
+    (luvio.private):
       - id # This id is transient and changes on each request; let's not surface it to consumers since it is not consistent
-    (lds.key):
+    (luvio.key):
       # The externalId contains: the orgId, the sourceObject, the actionListContext, the formFactor (which is
       # not otherwise in the response), the type, and the apiName. This makes up the bulk of what is needed
       # to uniquely identify this action.
@@ -35,258 +35,258 @@ types:
       relatedSourceObject: relatedSourceObject # Used in Related List, Related List Record Actions
       relatedListRecordId: relatedListRecordId # Used in Related List Record Actions
   ListInfoRepresentation:
-    (lds.key):
+    (luvio.key):
       listViewApiName: listReference.listViewApiName
       objectApiName: listReference.objectApiName
       type: listReference.type
-    (lds.integrity):
+    (luvio.integrity):
       - eTag
-    (lds.private):
+    (luvio.private):
       - eTag
   ListReferenceRepresentation:
-    (lds.key):
+    (luvio.key):
       id: id
   ListRecordCollectionRepresentation:
     # TODO: This is a complete complete hack, UISDK needs to add the list view id on the list record
     # collection. Using the list info etag for now as a work around for now to get the identity of
     # the list.
-    (lds.key):
+    (luvio.key):
       listViewId: listInfoETag
       sortBy: sortBy
-    (lds.paginated): records
+    (luvio.paginated): records
   ListViewSummaryCollectionRepresentation:
-    (lds.private):
+    (luvio.private):
       - eTag
-    (lds.key):
+    (luvio.key):
       objectApiName: objectApiName
       queryString: queryString
       recentListsOnly: recentListsOnly
-    (lds.paginated): lists
+    (luvio.paginated): lists
   NavItemsRepresentation:
     examples:
       getNavItemsResponse1: !include ../mocks/types/NavItemsRepresentation/response1.json
       getNavItemsResponseT1T2: !include ../mocks/types/NavItemsRepresentation/responseT1T2.json
       getNavItemsResponseEmptyPageRef: !include ../mocks/types/NavItemsRepresentation/responseEmptyPageRef.json
-    (lds.ttl): 120000
-    (lds.private):
+    (luvio.ttl): 120000
+    (luvio.private):
       - eTag
       - currentPageUrl
   NavItemRepresentation:
-    (lds.ttl): 120000
-    (lds.key):
+    (luvio.ttl): 120000
+    (luvio.key):
       developerName: developerName
   RelatedListRecordCollectionRepresentation:
-    (lds.key):
+    (luvio.key):
       sortBy: sortBy
       parentRecordId: listReference.inContextOfRecordId
       relatedListId: listReference.relatedListId
-    (lds.paginated): records
+    (luvio.paginated): records
   RecordCollectionRepresentation:
-    (lds.ttl): 120000
+    (luvio.ttl): 120000
   PhotoRecordAvatarRepresentation:
-    (lds.private):
+    (luvio.private):
       - eTag
   ThemeRecordAvatarRepresentation:
-    (lds.private):
+    (luvio.private):
       - eTag
   ListUiRepresentation:
-    (lds.private):
+    (luvio.private):
       - eTag
-    (lds.key):
+    (luvio.key):
       listViewApiName: info.listReference.listViewApiName
       objectApiName: info.listReference.objectApiName
       type: info.listReference.type
       sortBy: records.sortBy
   RelatedListSummaryInfoCollectionRepresentation:
-    (lds.key):
+    (luvio.key):
       parentObjectApiName: parentObjectApiName
       recordTypeId: parentRecordTypeId
-    (lds.opaque): true
-    (lds.integrity):
+    (luvio.opaque): true
+    (luvio.integrity):
       - eTag
-    (lds.private):
+    (luvio.private):
       - eTag
   ObjectInfoDirectoryEntryRepresentation:
-    (lds.key):
+    (luvio.key):
       objectInfoUrl: objectInfoUrl
   ObjectInfoRepresentation:
-    (lds.ttl): 900000
-    (lds.key):
+    (luvio.ttl): 900000
+    (luvio.key):
       apiName: apiName
-    (lds.opaque): true
-    (lds.integrity):
+    (luvio.opaque): true
+    (luvio.integrity):
       - eTag
-    (lds.private):
+    (luvio.private):
       - eTag
   PageReferenceRepresentation:
-    (lds.opaque): true
+    (luvio.opaque): true
   AbstractRecordAvatarBatchRepresentation:
-    (lds.ttl): 300000
+    (luvio.ttl): 300000
   RecordLayoutRepresentation:
-    (lds.integrity):
+    (luvio.integrity):
       - eTag
-    (lds.ttl): 900000
-    (lds.key):
+    (luvio.ttl): 900000
+    (luvio.key):
       recordTypeId: recordTypeId
       objectApiName: objectApiName
       layoutType: layoutType
       mode: mode
-    (lds.opaque): true
-    (lds.private):
+    (luvio.opaque): true
+    (luvio.private):
       - eTag
   RecordLayoutUserStateRepresentation:
-    (lds.opaque): true
-    (lds.ttl): 900000
-    (lds.key):
+    (luvio.opaque): true
+    (luvio.ttl): 900000
+    (luvio.key):
       recordTypeId: recordTypeId
       apiName: apiName
       layoutType: layoutType
       mode: mode
-    (lds.private):
+    (luvio.private):
       - apiName
       - recordTypeId
       - layoutType
       - mode
   RecordRepresentation:
-    (lds.private):
+    (luvio.private):
       - eTag
       - weakEtag
-    (lds.ttl): 30000
-    (lds.key):
+    (luvio.ttl): 30000
+    (luvio.key):
       recordId: id
   RecordAvatarRepresentation:
-    (lds.ttl): 300000
+    (luvio.ttl): 300000
   AbstractRecordAvatarRepresentation:
-    (lds.key):
+    (luvio.key):
       recordId: recordId
   RecordUiRepresentation:
-    (lds.private):
+    (luvio.private):
       - eTag
-    (lds.ttl): 900000
+    (luvio.ttl): 900000
   RelatedListInfoRepresentation:
-    (lds.key):
+    (luvio.key):
       parentObjectApiName: listReference.parentObjectApiName
       recordTypeId: listReference.recordTypeId
       relatedListId: listReference.relatedListId
-    (lds.ttl): 900000
-    (lds.opaque): true
-    (lds.integrity):
+    (luvio.ttl): 900000
+    (luvio.opaque): true
+    (luvio.integrity):
       - eTag
-    (lds.private):
+    (luvio.private):
       - eTag
   RelatedListRecordCountRepresentation:
-    (lds.private):
+    (luvio.private):
       - eTag
-    (lds.key):
+    (luvio.key):
       parentRecordId: listReference.inContextOfRecordId
       relatedListName: listReference.relatedListId
   PicklistValuesRepresentation:
-    (lds.ttl): 300000
-    (lds.integrity):
+    (luvio.ttl): 300000
+    (luvio.integrity):
       - eTag
-    (lds.key):
+    (luvio.key):
       id: url
-    (lds.private):
+    (luvio.private):
       - eTag
   PicklistValuesCollectionRepresentation:
-    (lds.ttl): 300000
-    (lds.private):
+    (luvio.ttl): 300000
+    (luvio.private):
       - eTag
   RecordDefaultsRepresentation:
-    (lds.ttl): 900000
+    (luvio.ttl): 900000
   RecordDefaultsTemplateCreateRepresentation:
-    (lds.ttl): 900000
-    (lds.key):
+    (luvio.ttl): 900000
+    (luvio.key):
       objectApiName: record.apiName
       recordTypeId: record.recordTypeId
     examples:
       CreateTemplateResponseWithEmptyFields: !include ../mocks/types/CreateTemplateRepresentation/record-template-create-Account.json
       CreateTemplateResponseWithSingleField: !include ../mocks/types/CreateTemplateRepresentation/record-template-create-Account-optionalFields-Name.json
   RecordTemplateCreateRepresentation:
-    (lds.ttl): 30000
-    (lds.key):
+    (luvio.ttl): 30000
+    (luvio.key):
       apiName: apiName
       recordTypeId: recordTypeId
   RecordDefaultsTemplateCloneRepresentation:
     # This should have a key.
     # Currently, the unique identifier for the response is in the fields object.
-    (lds.ttl): 1000
+    (luvio.ttl): 1000
     examples:
       CloneTemplateResponseWithSourceField: !include ../mocks/types/CloneTemplateRepresentation/record-template-clone-Account.json
       CloneTemplateResponseWithMultipleFields: !include ../mocks/types/CloneTemplateRepresentation/record-template-clone-Account-optionalFields-Name.json
   SalesforceObjectId:
-    (lds.coerceFunction): ../primitives/ObjectId/coerce
+    (luvio.coerceFunction): ../primitives/ObjectId/coerce
   SalesforceObjectIdArray:
-    (lds.coerceFunction): ../primitives/ObjectIdArray/coerce
+    (luvio.coerceFunction): ../primitives/ObjectIdArray/coerce
   SalesforceSortedObjectIdArray:
-    (lds.coerceFunction): ../primitives/SortedObjectIdArray/coerce
+    (luvio.coerceFunction): ../primitives/SortedObjectIdArray/coerce
   SalesforceFieldId:
-    (lds.coerceFunction): ../primitives/FieldId/coerce
+    (luvio.coerceFunction): ../primitives/FieldId/coerce
   SortedStringArray:
-    (lds.coerceFunction): ../primitives/SortedStringArray/coerce
+    (luvio.coerceFunction): ../primitives/SortedStringArray/coerce
   SortedStringArrayAllowEmpty:
-    (lds.coerceFunction): ../primitives/SortedStringArrayAllowEmpty/coerce
+    (luvio.coerceFunction): ../primitives/SortedStringArrayAllowEmpty/coerce
   SalesforceFieldIdArray:
-    (lds.coerceFunction): ../primitives/FieldIdArray/coerce
+    (luvio.coerceFunction): ../primitives/FieldIdArray/coerce
   SalesforceRecordId18:
-    (lds.coerceFunction): ../primitives/RecordId18/coerce
+    (luvio.coerceFunction): ../primitives/RecordId18/coerce
   SalesforceRecordId18Array:
-    (lds.coerceFunction): ../primitives/RecordId18Array/coerce
+    (luvio.coerceFunction): ../primitives/RecordId18Array/coerce
   SalesforceLayoutType:
-    (lds.coerceFunction): ../primitives/LayoutType/coerce
+    (luvio.coerceFunction): ../primitives/LayoutType/coerce
   SalesforceLayoutTypeArray:
-    (lds.coerceFunction): ../primitives/LayoutTypeArray/coerce
+    (luvio.coerceFunction): ../primitives/LayoutTypeArray/coerce
   SalesforceLayoutMode:
-    (lds.coerceFunction): ../primitives/LayoutMode/coerce
+    (luvio.coerceFunction): ../primitives/LayoutMode/coerce
   SalesforceLayoutModeArray:
-    (lds.coerceFunction): ../primitives/LayoutModeArray/coerce
+    (luvio.coerceFunction): ../primitives/LayoutModeArray/coerce
   SalesforceFormFactor:
-    (lds.coerceFunction): ../primitives/FormFactor/coerce
+    (luvio.coerceFunction): ../primitives/FormFactor/coerce
   DuplicatesRepresentation:
-    (lds.ttl): 30000
-    (lds.opaque): true
+    (luvio.ttl): 30000
+    (luvio.opaque): true
     examples:
       getDuplicatesResponse1: !include ../mocks/types/DuplicatesRepresentation/validResponse.json
   DuplicatesConfigurationRepresentation:
-    (lds.ttl): 900000
-    (lds.private):
+    (luvio.ttl): 900000
+    (luvio.private):
       - eTag
-    (lds.key):
+    (luvio.key):
       apiName: apiName
-    (lds.integrity):
+    (luvio.integrity):
       - eTag
     examples:
       getDuplicateConfigurationResponse1: !include ../mocks/types/DuplicatesConfigurationRepresentation/validResponse.json
   DuplicateRuleRepresentation:
-    (lds.ttl): 900000
-    (lds.private):
+    (luvio.ttl): 900000
+    (luvio.private):
       - eTag
-    (lds.integrity):
+    (luvio.integrity):
       - eTag
   DuplicateRuleFilterRepresentation:
-    (lds.ttl): 900000
-    (lds.private):
+    (luvio.ttl): 900000
+    (luvio.private):
       - eTag
-    (lds.integrity):
+    (luvio.integrity):
       - eTag
   DuplicateRuleFilterItemRepresentation:
-    (lds.ttl): 900000
-    (lds.private):
+    (luvio.ttl): 900000
+    (luvio.private):
       - eTag
-    (lds.integrity):
+    (luvio.integrity):
       - eTag
   MatchRuleRepresentation:
-    (lds.ttl): 900000
-    (lds.private):
+    (luvio.ttl): 900000
+    (luvio.private):
       - eTag
-    (lds.integrity):
+    (luvio.integrity):
       - eTag
 
 /ui-api:
   /actions:
     '/lookup/{objectApiNames}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getLookupActions
           coercedParams:
             objectApiNames: SalesforceSortedObjectIdArray
@@ -295,7 +295,7 @@ types:
             sections: SortedStringArray
     '/object/{objectApiName}/record-create':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getObjectCreateActions
           coercedParams:
             apiNames: SortedStringArray
@@ -304,7 +304,7 @@ types:
             sections: SortedStringArray
     '/record/{recordIds}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getRecordActions
           coercedParams:
             apiNames: SortedStringArrayAllowEmpty
@@ -316,7 +316,7 @@ types:
             - apiNames
       /record-edit:
         get:
-          (lds.adapter):
+          (luvio.adapter):
             name: getRecordEditActions
             coercedParams:
               apiNames: SortedStringArray
@@ -325,14 +325,14 @@ types:
               sections: SortedStringArray
       /related-list/batch/{relatedListIds}:
         get:
-          (lds.adapter):
+          (luvio.adapter):
             name: getRelatedListsActions
             coercedParams:
               recordIds: SalesforceRecordId18Array
               relatedListIds: SortedStringArray
               formFactor: SalesforceFormFactor
               sections: SortedStringArray
-          (lds.composite):
+          (luvio.composite):
             resource: /ui-api/actions/record/{recordIds}/related-list/{relatedListId}
             uriParameters:
               recordIds: recordIds
@@ -347,7 +347,7 @@ types:
               body: result
       /related-list/{relatedListId}:
         get:
-          (lds.adapter):
+          (luvio.adapter):
             name: getRelatedListActions
             coercedParams:
               recordIds: SalesforceRecordId18Array
@@ -355,7 +355,7 @@ types:
               sections: SortedStringArray
       '/related-list-record/{relatedListRecordIds}':
         get:
-          (lds.adapter):
+          (luvio.adapter):
             name: getRelatedListRecordActions
             coercedParams:
               recordIds: SalesforceRecordId18Array
@@ -365,15 +365,15 @@ types:
               sections: SortedStringArray
   /apps:
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getApps
     /selected:
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getSelectedApp
   /layout/{objectApiName}:
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getLayout
         coercedParams:
           objectApiName: SalesforceObjectId
@@ -382,7 +382,7 @@ types:
           recordTypeId: SalesforceRecordId18
   /layout/{objectApiName}/user-state:
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getLayoutUserState
         coercedParams:
           objectApiName: SalesforceObjectId
@@ -390,40 +390,40 @@ types:
           mode: SalesforceLayoutMode
           recordTypeId: SalesforceRecordId18
     patch:
-      (lds.adapter):
+      (luvio.adapter):
         name: updateLayoutUserState
   /list-info:
     '/{listViewId}':
       get:
-        (lds.key):
+        (luvio.key):
           listViewId: urlParams.listViewId
   /list-records:
     '/{listViewId}':
       get:
-        (lds.key):
+        (luvio.key):
           listViewId: urlParams.listViewId
           sortBy: queryParams.sortBy || null
   /list-ui:
     '/{objectApiName}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getListViewSummaryCollection
           coercedParams:
             objectApiName: SalesforceObjectId
-        (lds.key):
+        (luvio.key):
           objectApiName: urlParams.objectApiName
           queryString: queryParams.q || null
           recentListsOnly: queryParams.recentListsOnly || false
     '/{objectApiName}/{listViewApiName}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getListUiByApiName
           coercedParams:
             objectApiName: SalesforceObjectId
             fields: SalesforceFieldIdArray
             optionalFields: SalesforceFieldIdArray
             sortBy: SalesforceFieldIdArray
-        (lds.key):
+        (luvio.key):
           listViewApiName: urlParams.listViewApiName
           objectApiName: urlParams.objectApiName
           type: '"listView"'
@@ -433,7 +433,7 @@ types:
       # we have to use custom code to construct that key from the cached
       # ListReferenceRepresentation records
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getListUiByListViewId
           coercedParams:
             fields: SalesforceFieldIdArray
@@ -441,7 +441,7 @@ types:
             sortBy: SalesforceFieldIdArray
   '/lookups/{objectApiName}/{fieldApiName}/{targetApiName}':
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getLookupRecords
         coercedParams:
           fieldApiName: SalesforceFieldId
@@ -453,7 +453,7 @@ types:
           examples:
             getNavItemsResponseEmptyPageRef: ['Today']
             getNavItemsResponseT1T2: ['T1', 'T2']
-      (lds.adapter):
+      (luvio.adapter):
         name: getNavItems
         coercedParams:
           formFactor: SalesforceFormFactor
@@ -478,24 +478,24 @@ types:
   /record-avatars:
     '/batch/{recordIds}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getRecordAvatars
           coercedParams:
             recordIds: SalesforceRecordId18Array
             formFactor: SalesforceFormFactor
     '/{recordId}/association':
       post:
-        (lds.adapter):
+        (luvio.adapter):
           name: updateRecordAvatar
   /records:
     post:
-      (lds.adapter):
+      (luvio.adapter):
         name: createRecord
     '/batch/{recordIds}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getRecords
-        (lds.composite):
+        (luvio.composite):
           resource: /ui-api/records/{recordId}
           uriParameters:
             recordId: recordIds
@@ -508,7 +508,7 @@ types:
             body: result
     '/{recordId}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getRecord
           coercedParams:
             recordId: SalesforceRecordId18
@@ -520,23 +520,23 @@ types:
             - layoutTypes
             - fields
             - optionalFields
-        (lds.key):
+        (luvio.key):
           recordId: urlParams.recordId
       patch:
-        (lds.adapter):
+        (luvio.adapter):
           name: updateRecord
           coercedParams:
             recordId: SalesforceRecordId18
       delete:
-        (lds.adapter):
+        (luvio.adapter):
           name: deleteRecord
           coercedParams:
             recordId: SalesforceRecordId18
-        (lds.key):
+        (luvio.key):
           recordId: urlParams.recordId
   '/record-ui/{recordIds}':
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getRecordUi
         coercedParams:
           recordIds: SalesforceRecordId18Array
@@ -545,15 +545,15 @@ types:
           optionalFields: SalesforceFieldIdArray
   /object-info:
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getObjectInfoDirectory
     '/batch/{objectApiNames}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getObjectInfos
           coercedParams:
             objectApiNames: SalesforceObjectIdArray
-        (lds.composite):
+        (luvio.composite):
           resource: /ui-api/object-info/{objectApiName}
           uriParameters:
             objectApiName: objectApiNames
@@ -563,36 +563,36 @@ types:
             body: result
     '/{objectApiName}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getObjectInfo
           coercedParams:
             objectApiName: SalesforceObjectId
-        (lds.key):
+        (luvio.key):
           apiName: urlParams.objectApiName
       '/picklist-values/{recordTypeId}':
         get:
-          (lds.adapter):
+          (luvio.adapter):
             name: getPicklistValuesByRecordType
             coercedParams:
               objectApiName: SalesforceObjectId
               recordTypeId: SalesforceRecordId18
       '/picklist-values/{recordTypeId}/{fieldApiName}':
         get:
-          (lds.adapter):
+          (luvio.adapter):
             name: getPicklistValues
             coercedParams:
               recordTypeId: SalesforceRecordId18
               fieldApiName: SalesforceFieldId
   '/mru-list-ui/{objectApiName}':
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getMruListUi
         coercedParams:
           objectApiName: SalesforceObjectId
           fields: SalesforceFieldIdArray
           optionalFields: SalesforceFieldIdArray
           sortBy: SalesforceFieldIdArray
-      (lds.key):
+      (luvio.key):
         listViewApiName: 'null'
         objectApiName: urlParams.objectApiName
         type: '"mru"'
@@ -600,7 +600,7 @@ types:
   '/record-defaults':
     '/create/{objectApiName}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getRecordCreateDefaults
           coercedParams:
             objectApiName: SalesforceObjectId
@@ -623,7 +623,7 @@ types:
               examples:
                 CreateTemplateResponseWithSingleField: |
                   ["Account.Name"]
-          (lds.adapter):
+          (luvio.adapter):
             name: getRecordTemplateCreate
             coercedParams:
               objectApiName: SalesforceObjectId
@@ -656,7 +656,7 @@ types:
                   {
                     "objectApiName": null
                   }
-          (lds.key):
+          (luvio.key):
             objectApiName: urlParams.objectApiName
             recordTypeId: queryParams.recordTypeId || null
       '/clone/{recordId}':
@@ -674,7 +674,7 @@ types:
               examples:
                 CloneTemplateResponseWithMultipleFields: |
                   ["Account.Name"]
-          (lds.adapter):
+          (luvio.adapter):
             name: getRecordTemplateClone
             coercedParams:
               recordId: SalesforceRecordId18
@@ -710,11 +710,11 @@ types:
   '/related-list-count':
     '/batch/{parentRecordId}/{relatedListNames}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getRelatedListsCount
           coercedParams:
             relatedListNames: SalesforceFieldIdArray
-        (lds.composite):
+        (luvio.composite):
           resource: /ui-api/related-list-count/{parentRecordId}/{relatedListName}
           uriParameters:
             parentRecordId: parentRecordId
@@ -727,24 +727,24 @@ types:
             body: result
     '/{parentRecordId}/{relatedListName}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getRelatedListCount
-        (lds.key):
+        (luvio.key):
           parentRecordId: urlParams.parentRecordId
           relatedListName: urlParams.relatedListName
   '/related-list-info':
     '/{parentObjectApiName}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getRelatedListsInfo
-        (lds.key):
+        (luvio.key):
           parentObjectApiName: urlParams.parentObjectApiName
           recordTypeId: queryParams.recordTypeId || null
     '/batch/{parentObjectApiName}/{relatedListNames}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getRelatedListInfoBatch
-        (lds.composite):
+        (luvio.composite):
           resource: /ui-api/related-list-info/{parentObjectApiName}/{relatedListId}
           uriParameters:
             parentObjectApiName: parentObjectApiName
@@ -757,28 +757,28 @@ types:
             body: result
     '/{parentObjectApiName}/{relatedListId}':
       get:
-        (lds.adapter):
+        (luvio.adapter):
           name: getRelatedListInfo
-        (lds.key):
+        (luvio.key):
           parentObjectApiName: urlParams.parentObjectApiName
           relatedListId: urlParams.relatedListId
           recordTypeId: queryParams.recordTypeId || null
       patch:
-        (lds.adapter):
+        (luvio.adapter):
           name: updateRelatedListInfo
   '/related-list-records/{parentRecordId}/{relatedListId}':
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getRelatedListRecords
-      (lds.key):
+      (luvio.key):
         sortBy: queryParams.sortBy || []
         parentRecordId: urlParams.parentRecordId
         relatedListId: urlParams.relatedListId
   '/related-list-records/batch/{parentRecordId}/{relatedListIds}':
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getRelatedListRecordsBatch
-      (lds.composite):
+      (luvio.composite):
         resource: /ui-api/related-list-records/{parentRecordId}/{relatedListId}
         envelope:
           path: results
@@ -794,8 +794,8 @@ types:
           pageSize: pageSize
   /predupe:
     post:
-      (lds.method): get
-      (lds.adapter):
+      (luvio.method): get
+      (luvio.adapter):
         name: getDuplicates
         tests:
           expectedResponses:
@@ -843,7 +843,7 @@ types:
               }
   /duplicates/{objectApiName}:
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getDuplicateConfiguration
         tests:
           expectedResponses:
@@ -867,5 +867,5 @@ types:
                     "name": "Lead"
                   }
               }
-      (lds.key):
+      (luvio.key):
         apiName: urlParams.objectApiName

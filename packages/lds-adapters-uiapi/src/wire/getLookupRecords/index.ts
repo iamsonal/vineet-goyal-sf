@@ -1,4 +1,4 @@
-import { AdapterFactory, LDS, FetchResponse, FulfilledSnapshot } from '@ldsjs/engine';
+import { AdapterFactory, Luvio, FetchResponse, FulfilledSnapshot } from '@luvio/engine';
 
 import { RecordCollectionRepresentation } from '../../generated/types/RecordCollectionRepresentation';
 import {
@@ -113,7 +113,7 @@ function removeEtags(recordRep: RecordRepresentation) {
     });
 }
 
-export function buildNetworkSnapshot(lds: LDS, config: GetLookupRecordsConfig) {
+export function buildNetworkSnapshot(lds: Luvio, config: GetLookupRecordsConfig) {
     const { objectApiName, fieldApiName, targetApiName } = config;
     const resourceParams: ResourceRequestConfig = {
         urlParams: {
@@ -165,7 +165,7 @@ export function buildNetworkSnapshot(lds: LDS, config: GetLookupRecordsConfig) {
 }
 
 export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRepresentation> = (
-    lds: LDS
+    lds: Luvio
 ) => {
     return refreshable(
         function(untrusted: unknown) {

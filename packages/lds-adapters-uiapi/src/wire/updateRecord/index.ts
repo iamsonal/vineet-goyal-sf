@@ -1,4 +1,4 @@
-import { LDS, Snapshot, FetchResponse } from '@ldsjs/engine';
+import { Luvio, Snapshot, FetchResponse } from '@luvio/engine';
 
 import { deepFreeze } from '../../util/deep-freeze';
 import { buildSelectionFromRecord } from '../../selectors/record';
@@ -33,7 +33,7 @@ function getHeaders(clientOptions: unknown) {
     return headers;
 }
 
-export const factory = (lds: LDS) => {
+export const factory = (lds: Luvio) => {
     return (
         untrusted: unknown,
         clientOptions?: unknown

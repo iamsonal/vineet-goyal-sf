@@ -1,4 +1,4 @@
-import { ResourceRequest, FetchResponse } from '@ldsjs/engine';
+import { ResourceRequest, FetchResponse } from '@luvio/engine';
 
 export enum DraftActionStatus {
     Pending = 'pending',

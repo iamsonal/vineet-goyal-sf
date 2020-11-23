@@ -1,6 +1,6 @@
 import merge from '../merge';
 import { buildNetworkSnapshot } from '../../../wire/getRecord/GetRecordFields';
-import { LDS, Store, Environment } from '@ldsjs/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import createRecordData from '../../../../src/util/__tests__/data/createSampleData';
 import { normalize, keyBuilder } from '../../../generated/types/RecordRepresentation';
 import { ingest } from '../../../raml-artifacts/types/RecordRepresentation/ingest';
@@ -24,7 +24,7 @@ describe('merge', () => {
             // make a change to the incoming since it's etag is greater
             delete incoming.fields['CreatedDate'];
             const store = new Store();
-            const lds = new LDS(new Environment(store, jest.fn()));
+            const lds = new Luvio(new Environment(store, jest.fn()));
             const key = keyBuilder({ recordId: exampleRecordOne.id });
             const path = {
                 fullPath: key,
@@ -86,7 +86,7 @@ describe('merge', () => {
             // need to make existing not a superset so let's delete existings CreatedDate
             delete existing.fields['CreatedDate'];
             const store = new Store();
-            const lds = new LDS(new Environment(store, jest.fn()));
+            const lds = new Luvio(new Environment(store, jest.fn()));
             const key = keyBuilder({ recordId: exampleRecordTwo.id });
             const path = {
                 fullPath: key,
@@ -150,7 +150,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new LDS(new Environment(store, jest.fn()));
+            const lds = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -180,7 +180,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new LDS(new Environment(store, jest.fn()));
+            const lds = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -235,7 +235,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new LDS(new Environment(store, jest.fn()));
+            const lds = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -290,7 +290,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new LDS(new Environment(store, jest.fn()));
+            const lds = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -319,7 +319,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new LDS(new Environment(store, jest.fn()));
+            const lds = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -348,7 +348,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new LDS(new Environment(store, jest.fn()));
+            const lds = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -403,7 +403,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new LDS(new Environment(store, jest.fn()));
+            const lds = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -457,7 +457,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new LDS(new Environment(store, jest.fn()));
+            const lds = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -486,7 +486,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new LDS(new Environment(store, jest.fn()));
+            const lds = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -544,7 +544,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new LDS(new Environment(store, jest.fn()));
+            const lds = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -599,7 +599,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new LDS(new Environment(store, jest.fn()));
+            const lds = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {

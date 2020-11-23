@@ -2,16 +2,16 @@
 extends: ./api.raml
 
 uses:
-  lds: lds://annotations.raml
+  luvio: luvio://annotations.raml
 
-(lds.keyPrefix): 'CommunitiesSeo::'
+(luvio.keyPrefix): 'CommunitiesSeo::'
 
 types:
   RecordSeoPropertiesRepresentation:
-    (lds.ttl): 3600000
-    (lds.opaque): true
+    (luvio.ttl): 3600000
+    (luvio.opaque): true
 
 /connect/communities/{communityId}/seo/properties/{recordId}:
   get:
-    (lds.adapter):
+    (luvio.adapter):
       name: getRecordSeoProperties

@@ -2,15 +2,15 @@
 extends: ./api.raml
 
 uses:
-  lds: lds://annotations.raml
+  luvio: luvio://annotations.raml
 
-(lds.keyPrefix): 'CommunityNavigation::'
+(luvio.keyPrefix): 'CommunityNavigation::'
 
 types:
   NavigationMenuItemCollectionRepresentation:
-    (lds.opaque): true
+    (luvio.opaque): true
 
 /connect/communities/{communityId}/navigation-menu/navigation-menu-items:
   get:
-    (lds.adapter):
+    (luvio.adapter):
       name: getCommunityNavigationMenu

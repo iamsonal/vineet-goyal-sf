@@ -1,5 +1,5 @@
 import merge from '../merge';
-import { LDS, IngestPath, Store, Environment } from '@ldsjs/engine';
+import { Luvio, IngestPath, Store, Environment } from '@luvio/engine';
 import { FieldValueRepresentationNormalized } from '../../../generated/types/FieldValueRepresentation';
 
 describe('displayValue', () => {
@@ -13,7 +13,7 @@ describe('displayValue', () => {
             value: { __ref: 'ref' },
         };
 
-        const mockLDS = new LDS(new Environment(new Store(), jest.fn()));
+        const mockLDS = new Luvio(new Environment(new Store(), jest.fn()));
         const mockIgestPath: IngestPath = {
             fullPath: '',
             parent: {
@@ -37,7 +37,7 @@ describe('displayValue', () => {
             value: { __ref: 'ref' },
         };
 
-        const mockLDS = new LDS(new Environment(new Store(), jest.fn()));
+        const mockLDS = new Luvio(new Environment(new Store(), jest.fn()));
         const mockIgestPath: IngestPath = {
             fullPath: '',
             parent: {

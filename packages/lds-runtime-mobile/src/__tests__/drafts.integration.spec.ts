@@ -1,4 +1,4 @@
-import { LDS, Snapshot } from '@ldsjs/engine';
+import { Luvio, Snapshot } from '@luvio/engine';
 import {
     createRecordAdapterFactory,
     getRecordAdapterFactory,
@@ -39,7 +39,7 @@ function createTestRecord(
 }
 
 describe('lds drafts integration tests', () => {
-    let lds: LDS;
+    let lds: Luvio;
     let draftQueue: DraftQueue;
     let networkAdapter: MockNimbusAdapter;
     let durableStore: MockNimbusDurableStore;

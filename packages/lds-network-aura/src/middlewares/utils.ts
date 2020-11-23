@@ -2,7 +2,7 @@ import { executeGlobalController, ActionConfig } from 'aura';
 import { AuraStorage } from 'aura-storage';
 import { CacheStatsLogger } from 'instrumentation/service';
 
-import { HttpStatusCode, ResourceRequest } from '@ldsjs/engine';
+import { HttpStatusCode, ResourceRequest } from '@luvio/engine';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 
 import appRouter from '../router';

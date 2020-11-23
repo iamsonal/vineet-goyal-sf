@@ -2,7 +2,7 @@ import { testDurableHitDoesNotHitNetwork } from '@salesforce/lds-jest';
 import { factory as getRecordAvatarsFactory } from '../index';
 
 import data from './data/avatar-001xx0000000003AAA-001xx0000000004AAA-001xx0000000005AAA.json';
-import { MockPayload, buildSuccessMockPayload } from '@ldsjs/adapter-test-library';
+import { MockPayload, buildSuccessMockPayload } from '@luvio/adapter-test-library';
 
 const requestArgs: MockPayload['networkArgs'] = {
     method: 'get',

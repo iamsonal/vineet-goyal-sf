@@ -1,4 +1,4 @@
-import { Store, LDS, Environment } from '@ldsjs/engine';
+import { Store, Luvio, Environment } from '@luvio/engine';
 
 import { setupMetadataWatcher } from '../metadata';
 import { createObjectInfo, addObjectInfo } from './test-utils';
@@ -8,7 +8,7 @@ import * as ldsStorage from '@salesforce/lds-aura-storage';
 function createMetadataWatcher() {
     const store = new Store();
     const environment = new Environment(store, () => Promise.resolve());
-    const lds = new LDS(environment);
+    const lds = new Luvio(environment);
 
     setupMetadataWatcher(lds);
 

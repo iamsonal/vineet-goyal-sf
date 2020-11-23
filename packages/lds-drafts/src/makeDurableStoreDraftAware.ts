@@ -1,11 +1,11 @@
-import { StoreLink, Store } from '@ldsjs/engine';
+import { StoreLink, Store } from '@luvio/engine';
 import {
     DefaultDurableSegment,
     DurableStore,
     DurableStoreEntries,
     DurableStoreEntry,
     OnDurableStoreChangedListener,
-} from '@ldsjs/environments';
+} from '@luvio/environments';
 import {
     RecordRepresentationNormalized,
     RecordRepresentation,

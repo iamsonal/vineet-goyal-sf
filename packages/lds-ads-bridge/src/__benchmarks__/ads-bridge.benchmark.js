@@ -1,4 +1,4 @@
-import { LDS, Store, Environment } from '@ldsjs/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import AdsBridge from '../../dist/ads-bridge-perf';
 import { ingestRecord, ingestObjectInfo } from '@salesforce/lds-adapters-uiapi';
 
@@ -23,13 +23,13 @@ function cloneRecord(data) {
     return copy;
 }
 
-describe('LDS to ADS bridge', () => {
+describe('Luvio to ADS bridge', () => {
     benchmark('emitting single record without object info', () => {
         let lds;
         let adsBridge;
         before(() => {
             const store = new Store();
-            lds = new LDS(new Environment(store, () => new Promise(() => {})));
+            lds = new Luvio(new Environment(store, () => new Promise(() => {})));
             adsBridge = new AdsBridge(lds);
             const time = Date.now();
 
@@ -54,7 +54,7 @@ describe('LDS to ADS bridge', () => {
         let adsBridge;
         before(() => {
             const store = new Store();
-            lds = new LDS(new Environment(store, () => new Promise(() => {})));
+            lds = new Luvio(new Environment(store, () => new Promise(() => {})));
             adsBridge = new AdsBridge(lds);
             const time = Date.now();
 

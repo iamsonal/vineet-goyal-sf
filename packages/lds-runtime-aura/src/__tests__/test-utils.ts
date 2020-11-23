@@ -1,4 +1,4 @@
-import { LDS } from '@ldsjs/engine';
+import { Luvio } from '@luvio/engine';
 import { ingestObjectInfo } from '@salesforce/lds-adapters-uiapi';
 
 export function createObjectInfo(config: any = {}) {
@@ -30,7 +30,7 @@ export function createObjectInfo(config: any = {}) {
     };
 }
 
-export function addObjectInfo(lds: LDS, data: any) {
+export function addObjectInfo(lds: Luvio, data: any) {
     lds.storeIngest('', ingestObjectInfo, data);
     lds.storeBroadcast();
 }

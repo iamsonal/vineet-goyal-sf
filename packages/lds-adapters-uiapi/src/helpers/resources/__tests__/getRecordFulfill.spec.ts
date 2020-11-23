@@ -1,4 +1,4 @@
-import { ResourceRequest } from '@ldsjs/engine';
+import { ResourceRequest } from '@luvio/engine';
 import fulfill from '../getRecordFulfill';
 
 function buildResourceRequest(resourceRequest: Partial<ResourceRequest>): ResourceRequest {

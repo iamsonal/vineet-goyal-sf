@@ -1,10 +1,10 @@
 import { RecordAvatarBulkMapRepresentationNormalized } from '../../generated/types/RecordAvatarBulkMapRepresentation';
-import { LDS, IngestPath } from '@ldsjs/engine';
+import { Luvio, IngestPath } from '@luvio/engine';
 
 export default function merge(
     existing: RecordAvatarBulkMapRepresentationNormalized | undefined,
     incoming: RecordAvatarBulkMapRepresentationNormalized,
-    _lds: LDS,
+    _lds: Luvio,
     _path: IngestPath
 ): RecordAvatarBulkMapRepresentationNormalized {
     if (existing === undefined) {

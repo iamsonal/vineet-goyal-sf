@@ -1,4 +1,4 @@
-import { StoreLink, IngestPath, LDS, Store } from '@ldsjs/engine';
+import { StoreLink, IngestPath, Luvio, Store } from '@luvio/engine';
 import {
     RecordAvatarBulkMapRepresentation,
     validate,
@@ -12,7 +12,7 @@ import { default as helpers_RecordAvatarBulkRepresentation_merge_default } from 
 export const ingest: typeof generatedIngest = function RecordAvatarBulkMapRepresentationIngest(
     input: RecordAvatarBulkMapRepresentation,
     path: IngestPath,
-    lds: LDS,
+    lds: Luvio,
     store: Store,
     timestamp: number
 ): StoreLink {

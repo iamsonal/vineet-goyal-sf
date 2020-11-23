@@ -2,12 +2,12 @@ import {
     ResourceRequestConfig,
     select as generatedSelect,
 } from '../../../generated/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
-import { LDS, Fragment } from '@ldsjs/engine';
+import { Luvio, Fragment } from '@luvio/engine';
 import { select as objectInfoRepresentationSelect } from '../../../generated/types/ObjectInfoRepresentation';
 import { buildSelectionFromFields } from '../../../selectors/recordTemplate';
 
 export const select: typeof generatedSelect = (
-    lds: LDS,
+    lds: Luvio,
     params: ResourceRequestConfig
 ): Fragment => {
     const objectInfoSelections = objectInfoRepresentationSelect();

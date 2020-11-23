@@ -1,4 +1,4 @@
-import { LDS, Store, Environment } from '@ldsjs/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import { ingestRelatedListSummaryInfoCollection } from '@salesforce/lds-adapters-uiapi';
 
 import mockRelatedListInfoCollection from './mocks/cwccustom00__c-related-list-info-collection';
@@ -24,7 +24,7 @@ function populate(count, lds, store) {
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
     const store = new Store();
-    const lds = new LDS(new Environment(store, rejectNetworkAdapter));
+    const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
     ingestRelatedListSummaryInfoCollection(
         JSON.parse(mockRelatedListInfoCollection),
         DEFAULT_STORE_ID,
@@ -41,7 +41,7 @@ describe('O(n) ingestion time for n relatedListInfo', () => {
         const number = 1000;
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             populate(10, lds, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
@@ -70,7 +70,7 @@ describe('O(n) ingestion time for n relatedListInfo', () => {
         const number = 100;
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             populate(10, lds, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
@@ -99,7 +99,7 @@ describe('O(n) ingestion time for n relatedListInfo', () => {
         const number = 10;
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             populate(10, lds, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
@@ -128,7 +128,7 @@ describe('O(n) ingestion time for n relatedListInfo', () => {
         const number = 1;
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             populate(10, lds, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
@@ -158,7 +158,7 @@ describe('Constant time', () => {
         let next;
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             populate(1000, lds, store);
             next = clone(mockRelatedListInfoCollection);
         });
@@ -174,7 +174,7 @@ describe('Constant time', () => {
         let next;
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             populate(100, lds, store);
             next = clone(mockRelatedListInfoCollection);
         });
@@ -190,7 +190,7 @@ describe('Constant time', () => {
         let next;
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             populate(10, lds, store);
             next = clone(mockRelatedListInfoCollection);
         });
@@ -206,7 +206,7 @@ describe('Constant time', () => {
         let next;
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             populate(1, lds, store);
             next = clone(mockRelatedListInfoCollection);
         });
@@ -222,7 +222,7 @@ describe('Constant time', () => {
         let next;
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             next = clone(mockRelatedListInfoCollection);
         });
 

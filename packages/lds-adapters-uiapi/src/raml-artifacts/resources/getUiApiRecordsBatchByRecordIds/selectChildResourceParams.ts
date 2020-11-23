@@ -1,4 +1,4 @@
-import { Fragment, LDS, Reader } from '@ldsjs/engine';
+import { Fragment, Luvio, Reader } from '@luvio/engine';
 import { ArrayPrototypePush, ObjectFreeze } from '../../../generated/adapters/adapter-utils';
 import {
     keyBuilder as getUiApiRecordsByRecordId_keyBuilder,
@@ -10,7 +10,7 @@ import { RecordRepresentation } from '../../../generated/types/RecordRepresentat
 import { buildRecordSelector } from '../../../wire/getRecord/GetRecordFields';
 
 export function selectChildResourceParams(
-    lds: LDS,
+    lds: Luvio,
     childResources: getUiApiRecordsByRecordId_ResourceRequestConfig[]
 ): Fragment {
     const envelopeBodyPath = 'result';

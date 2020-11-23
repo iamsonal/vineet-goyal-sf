@@ -1,4 +1,4 @@
-import { LDS, Store, Environment } from '@ldsjs/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import { ingestObjectInfo } from '@salesforce/lds-adapters-uiapi';
 
 import mockObjectInfo from './mocks/custom-proto-medium-object-info';
@@ -10,7 +10,7 @@ const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
     const store = new Store();
-    const lds = new LDS(new Environment(store, rejectNetworkAdapter));
+    const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
     const data = JSON.parse(mockObjectInfo);
     ingestObjectInfo(data, RECORD_ID, lds, store);
 }
@@ -27,7 +27,7 @@ describe('addObjectInfo tests', () => {
         before(() => {
             i--;
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestObjectInfo(data[i], RECORD_ID, lds, store);
         });
 
@@ -55,7 +55,7 @@ describe('addObjectInfo tests', () => {
         before(() => {
             i--;
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestObjectInfo(data[i], RECORD_ID, lds, store);
         });
 

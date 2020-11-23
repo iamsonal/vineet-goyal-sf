@@ -1,4 +1,4 @@
-import { LDS, PathSelection, Snapshot, SnapshotRefresh } from '@ldsjs/engine';
+import { Luvio, PathSelection, Snapshot, SnapshotRefresh } from '@luvio/engine';
 import { buildInMemorySnapshot as getObjectInfoCache } from '../../generated/adapters/getObjectInfo';
 import { GetRecordUiConfig } from '../../generated/adapters/getRecordUi';
 import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
@@ -40,7 +40,7 @@ export interface GetRecordLayoutTypeConfig {
 }
 
 function buildSnapshotRefresh(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordLayoutTypeConfig
 ): SnapshotRefresh<RecordRepresentation> {
     return {
@@ -50,7 +50,7 @@ function buildSnapshotRefresh(
 }
 
 function refresh(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordLayoutTypeConfig
 ): Promise<Snapshot<RecordRepresentation>> {
     const {
@@ -98,7 +98,7 @@ function refresh(
 
 // Makes a request directly to /record-ui/{recordIds}
 function fetchRecordLayout(
-    lds: LDS,
+    lds: Luvio,
     refresh: SnapshotRefresh<RecordRepresentation>,
     recordId: string,
     layoutTypes: LayoutType[],
@@ -144,7 +144,7 @@ function getLayoutMapAndObjectInfo(recordId: string, data: RecordUiRepresentatio
 }
 
 function processRecordUiRepresentation(
-    lds: LDS,
+    lds: Luvio,
     refresh: SnapshotRefresh<RecordRepresentation>,
     recordId: string,
     modes: LayoutMode[],
@@ -169,7 +169,7 @@ function isPromise<D>(value: D | Promise<D> | null): value is Promise<D> {
     return value !== null && (value as any).then !== undefined;
 }
 
-function lookupObjectInfo(lds: LDS, apiName: string): ObjectInfoRepresentation | null {
+function lookupObjectInfo(lds: Luvio, apiName: string): ObjectInfoRepresentation | null {
     const snapshot = getObjectInfoCache(lds, { objectApiName: apiName });
     if (lds.snapshotDataAvailable(snapshot)) {
         if (!isErrorSnapshot(snapshot) && snapshot.data !== undefined) {
@@ -186,7 +186,7 @@ interface RecordLayoutRepresentationMap {
 }
 
 function lookupLayouts(
-    lds: LDS,
+    lds: Luvio,
     apiName: string,
     recordTypeId: string,
     layoutTypes: LayoutType[],
@@ -260,7 +260,7 @@ function getFieldsFromLayoutMap(
 }
 
 function getRecord(
-    lds: LDS,
+    lds: Luvio,
     refresh: SnapshotRefresh<RecordRepresentation>,
     recordId: string,
     layoutMap: RecordLayoutRepresentationMap,
@@ -289,7 +289,7 @@ function getRecord(
 }
 
 export function getRecordLayoutType(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordLayoutTypeConfig
 ): Snapshot<RecordRepresentation> | Promise<Snapshot<RecordRepresentation>> {
     const { recordId, layoutTypes, modes: configModes, optionalFields } = config;

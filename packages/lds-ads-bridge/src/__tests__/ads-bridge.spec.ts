@@ -1,4 +1,4 @@
-import { LDS, Store, Environment } from '@ldsjs/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import { ingestRecord } from '@salesforce/lds-adapters-uiapi';
 
@@ -8,7 +8,7 @@ import { addObjectInfo, addRecord, createObjectInfo, createRecord } from './test
 function createBridge() {
     const store = new Store();
     const environment = new Environment(store, () => Promise.resolve());
-    const lds = new LDS(environment);
+    const lds = new Luvio(environment);
     const bridge = new AdsBridge(lds);
 
     return { store, lds, bridge };
@@ -34,7 +34,7 @@ const nonMasterRecordTypeInfo = {
     recordTypeId: 'non-master',
 };
 
-function queryRecord(lds: LDS, { recordId }: { recordId: string }): any {
+function queryRecord(lds: Luvio, { recordId }: { recordId: string }): any {
     return lds.storeLookup({
         recordId: keyBuilderRecord({ recordId }),
         node: {

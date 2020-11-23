@@ -1,4 +1,4 @@
-import { IngestPath, LDS, Store, StoreLink } from '@ldsjs/engine';
+import { IngestPath, Luvio, Store, StoreLink } from '@luvio/engine';
 import {
     equals,
     FieldValueRepresentation,
@@ -13,7 +13,7 @@ import { RecordFieldTrie } from '../../../util/records';
 export function ingest(
     input: FieldValueRepresentation,
     path: IngestPath,
-    lds: LDS,
+    lds: Luvio,
     store: Store,
     timestamp: number,
     fieldsTrie?: RecordFieldTrie,

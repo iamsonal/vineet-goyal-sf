@@ -3233,50 +3233,6 @@
   dependencies:
     core-js "^2.5.7"
 
-"@ldsjs/adapter-test-library@^0.19.1":
-  version "0.19.1"
-  resolved "http://npm.lwcjs.org/@ldsjs/adapter-test-library/-/@ldsjs/adapter-test-library-0.19.1/31ab2cb6401fdf05b9f928e88b618f261b928bd1.tgz#31ab2cb6401fdf05b9f928e88b618f261b928bd1"
-  integrity sha512-7nA+Cs5FEecrSVZfu5C3rZjOuDUGItLCMu00Fo6iuZjAABm1ycVwZjrnUypyNU3qv7bvKv6mxkdhJsFjjQfZ5w==
-  dependencies:
-    sinon "^7.5.0"
-
-"@ldsjs/cli@^0.19.1":
-  version "0.19.1"
-  resolved "http://npm.lwcjs.org/@ldsjs/cli/-/@ldsjs/cli-0.19.1/3952eb1635595308343300666e85bccefa734f79.tgz#3952eb1635595308343300666e85bccefa734f79"
-  integrity sha512-5sVl9DAvdEbHiNuefYWD58n4f7r13msmN8yvRIg15EpTdZloCTD3usSlucWfqlYE2WZBH5kSF/+UfaoqZCZJEA==
-  dependencies:
-    "@ldsjs/compiler" "0.19.1"
-    "@oclif/command" "^1.5.19"
-    "@oclif/config" "^1.13.3"
-    "@oclif/plugin-help" "^2.2.1"
-    chalk "^4.0.0"
-    strip-ansi "^6.0.0"
-    text-table "^0.2.0"
-
-"@ldsjs/compiler@0.19.1", "@ldsjs/compiler@^0.19.1":
-  version "0.19.1"
-  resolved "http://npm.lwcjs.org/@ldsjs/compiler/-/@ldsjs/compiler-0.19.1/ea8716710d88fcccfd6c759d07ff838744da271f.tgz#ea8716710d88fcccfd6c759d07ff838744da271f"
-  integrity sha512-QwDq+sIvVe2kDxUByddzjYlNqjNLq/CsYFgj3Y7H/x8Q5jzvOvtqip8lnlo2GB3IngYbbiLQSJmxzIWhKjaw5A==
-  dependencies:
-    amf-client-js "4.2.0"
-
-"@ldsjs/engine@0.19.1", "@ldsjs/engine@^0.19.1":
-  version "0.19.1"
-  resolved "http://npm.lwcjs.org/@ldsjs/engine/-/@ldsjs/engine-0.19.1/05e4eb436124b452bef87af25cb82dabb9cbeb47.tgz#05e4eb436124b452bef87af25cb82dabb9cbeb47"
-  integrity sha512-SBM9wurW5xtEVndoH4+cbp8gZIfEOeuODUCmrv1IjVyKf/2WHeUlgfe4NcEpW0D2BvQICqF5PuhPAn49Zf3Z/w==
-
-"@ldsjs/environments@^0.19.1":
-  version "0.19.1"
-  resolved "http://npm.lwcjs.org/@ldsjs/environments/-/@ldsjs/environments-0.19.1/d88b8a39611d30e8949f3fd29ae96bd5ffb87605.tgz#d88b8a39611d30e8949f3fd29ae96bd5ffb87605"
-  integrity sha512-sNtyUN8Lf9ZSnZwxvFyqJObMe+l+6hj/r2ubF4iFMrDwoCmW1HW89wAQ61Tbnr9t4SEKfFn8SGbarwZe8Shw+Q==
-
-"@ldsjs/lwc-lds@^0.19.1":
-  version "0.19.1"
-  resolved "http://npm.lwcjs.org/@ldsjs/lwc-lds/-/@ldsjs/lwc-lds-0.19.1/1b99957b981c34eeede9460091285e340a1c2fae.tgz#1b99957b981c34eeede9460091285e340a1c2fae"
-  integrity sha512-cFl+Zsj3dFCfS6HWASxcwBY6mRILrPoejnuYb114ORPu2s1HJnvj8oksl/Tm68WUCNdyby8aN/PjRdaMiTr0Pg==
-  dependencies:
-    "@ldsjs/engine" "0.19.1"
-
 "@lerna/add@3.21.0":
   version "3.21.0"
   resolved "http://npm.lwcjs.org/@lerna/add/-/add-3.21.0/27007bde71cc7b0a2969ab3c2f0ae41578b4577b.tgz#27007bde71cc7b0a2969ab3c2f0ae41578b4577b"
@@ -3961,6 +3917,50 @@
   dependencies:
     npmlog "^4.1.2"
     write-file-atomic "^2.3.0"
+
+"@luvio/adapter-test-library@^0.20.0":
+  version "0.20.0"
+  resolved "http://npm.lwcjs.org/@luvio/adapter-test-library/-/@luvio/adapter-test-library-0.20.0/d795a08b472f1aa346fc774f378e41798bd1173f.tgz#d795a08b472f1aa346fc774f378e41798bd1173f"
+  integrity sha512-Kg7Xr6oN4NbAjz/X5oo0Zt8w2Z6Ht+mSRpz+DunNUKxQuYJaxUN58YF9UxYiqfFizfiLK1lElO4YUnIUvZt8qg==
+  dependencies:
+    sinon "^7.5.0"
+
+"@luvio/cli@^0.20.0":
+  version "0.20.0"
+  resolved "http://npm.lwcjs.org/@luvio/cli/-/@luvio/cli-0.20.0/81c4aa8e7df24eae0c68f78afdac999d9a5ef3a9.tgz#81c4aa8e7df24eae0c68f78afdac999d9a5ef3a9"
+  integrity sha512-r8Cx6yiY4nrjU5RzPbkB4muZ/O4AC/brjJWpiFMaP5JeAen2TL1m4M6NEaDNJ4B3kirCwEnLmn74hgEyb5KOng==
+  dependencies:
+    "@luvio/compiler" "0.20.0"
+    "@oclif/command" "^1.5.19"
+    "@oclif/config" "^1.13.3"
+    "@oclif/plugin-help" "^2.2.1"
+    chalk "^4.0.0"
+    strip-ansi "^6.0.0"
+    text-table "^0.2.0"
+
+"@luvio/compiler@0.20.0", "@luvio/compiler@^0.20.0":
+  version "0.20.0"
+  resolved "http://npm.lwcjs.org/@luvio/compiler/-/@luvio/compiler-0.20.0/b3d21bc1192a8d850918011a6ce915499a85e78d.tgz#b3d21bc1192a8d850918011a6ce915499a85e78d"
+  integrity sha512-SZFreBZjjmFc8OxiVYWA712zIkdg8REE6eUaLxpIQcHijX/nWfBFwVHhjPUivPSLHU+Ib62xzpkVK+taV8FcqQ==
+  dependencies:
+    amf-client-js "4.2.0"
+
+"@luvio/engine@0.20.0", "@luvio/engine@^0.20.0":
+  version "0.20.0"
+  resolved "http://npm.lwcjs.org/@luvio/engine/-/@luvio/engine-0.20.0/04fd47c0d9c11c82ad7417294428a35cb1149722.tgz#04fd47c0d9c11c82ad7417294428a35cb1149722"
+  integrity sha512-FtCVwEMmGSshLKSCN3kNQwWYUdU2TDfhsl0MQ9/nVa20bxfUQhjnoXv0Bv7o/1CSGTfgHFNQXx6vwrFIBfv1pA==
+
+"@luvio/environments@^0.20.0":
+  version "0.20.0"
+  resolved "http://npm.lwcjs.org/@luvio/environments/-/@luvio/environments-0.20.0/08ab94a27ba67e25082ae23befb390a6e1daf327.tgz#08ab94a27ba67e25082ae23befb390a6e1daf327"
+  integrity sha512-F+kQTDdZS68jTZhMsPsJTUpkNhSbt/azIPneF/72mEy+c3C5kHD9QHo5MjeWlXJNUN8HnxQGodvXiZBiqMQ6sA==
+
+"@luvio/lwc-luvio@^0.20.0":
+  version "0.20.0"
+  resolved "http://npm.lwcjs.org/@luvio/lwc-luvio/-/@luvio/lwc-luvio-0.20.0/4978291489b81d0b14fa8a64650625c92d25f590.tgz#4978291489b81d0b14fa8a64650625c92d25f590"
+  integrity sha512-gGHlqOVCGh1xAVklkiRv1bJsFqVsIfp+9PlTXscHOzIC2EeKohkqGBLq14zqr/4Rvz2HxVvGQNOCn1sYRRDTWw==
+  dependencies:
+    "@luvio/engine" "0.20.0"
 
 "@lwc/babel-plugin-component@1.7.12":
   version "1.7.12"

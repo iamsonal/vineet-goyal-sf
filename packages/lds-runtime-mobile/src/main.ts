@@ -1,5 +1,5 @@
-import { LDS, Store, Environment, IngestPath, NetworkAdapter } from '@ldsjs/engine';
-import { makeOffline, makeDurable } from '@ldsjs/environments';
+import { Luvio, Store, Environment, IngestPath, NetworkAdapter } from '@luvio/engine';
+import { makeOffline, makeDurable } from '@luvio/environments';
 
 import { NimbusNetworkAdapter } from './NimbusNetworkAdapter';
 import { NimbusDurableStore } from './NimbusDurableStore';
@@ -15,7 +15,7 @@ import {
 } from '@salesforce/lds-drafts';
 import { buildLdsDraftQueue } from './DraftQueueFactory';
 
-let lds: LDS;
+let lds: Luvio;
 
 // TODO - W-8291468 - have ingest get called a different way somehow
 const recordIngestFunc = (
@@ -58,6 +58,6 @@ const env = makeEnvironmentDraftAware(
     recordIngestFunc
 );
 
-lds = new LDS(env);
+lds = new Luvio(env);
 
 export { lds, draftQueue };

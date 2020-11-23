@@ -1,15 +1,15 @@
-import { LDS, Store, Environment, NetworkAdapter } from '@ldsjs/engine';
+import { Luvio, Store, Environment, NetworkAdapter } from '@luvio/engine';
 import {
     buildMockNetworkAdapter,
     buildSuccessMockPayload,
     MockPayload,
     MockDurableStore,
     getMockNetworkAdapterCallCount,
-} from '@ldsjs/adapter-test-library';
+} from '@luvio/adapter-test-library';
 
 import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
 
-import { makeDurable, makeOffline } from '@ldsjs/environments';
+import { makeDurable, makeOffline } from '@luvio/environments';
 import {
     keyBuilder,
     RecordRepresentationNormalized,
@@ -47,7 +47,7 @@ function buildLds(durableStore: MockDurableStore, n?: NetworkAdapter) {
         responseRecordRepresentationRetrievers
     );
 
-    const lds = new LDS(env);
+    const lds = new Luvio(env);
     return {
         lds,
         durableStore,

@@ -1,4 +1,4 @@
-import { LDS, Store, Environment } from '@ldsjs/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import { ingestDuplicatesRepresentation } from '@salesforce/lds-adapters-uiapi';
 
 import mockDuplicates from './mocks/duplicates-Lead';
@@ -13,7 +13,7 @@ function clone(data) {
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
     const store = new Store();
-    const lds = new LDS(new Environment(store, rejectNetworkAdapter));
+    const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
     ingestDuplicatesRepresentation(JSON.parse(mockDuplicates), 'warmupKey', lds, store);
 }
 
@@ -24,7 +24,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestDuplicatesRepresentation(clone(mockDuplicates), 'key', lds, store, TIMESTAMP);
         });
 
@@ -43,7 +43,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestDuplicatesRepresentation(clone(mockDuplicates), 'key', lds, store, TIMESTAMP);
 
             const snapshot = lds.storeLookup({
@@ -70,7 +70,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestDuplicatesRepresentation(clone(mockDuplicates), 'key', lds, store, TIMESTAMP);
 
             const snapshot = lds.storeLookup({
@@ -99,7 +99,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestDuplicatesRepresentation(clone(mockDuplicates), 'key', lds, store, TIMESTAMP);
 
             const snapshot = lds.storeLookup({

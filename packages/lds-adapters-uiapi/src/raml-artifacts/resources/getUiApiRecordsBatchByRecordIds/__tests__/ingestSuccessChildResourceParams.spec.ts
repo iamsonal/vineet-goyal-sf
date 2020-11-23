@@ -1,4 +1,4 @@
-import { LDS, Store, Environment } from '@ldsjs/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import { ingestSuccessChildResourceParams } from '../ingestSuccessChildResourceParams';
 import { RecordRepresentation } from '../../../../generated/types/RecordRepresentation';
 import { BatchResultRepresentation } from '../../../../generated/types/BatchResultRepresentation';
@@ -19,7 +19,7 @@ function buildSampleRecord(): RecordRepresentation {
 }
 
 describe('ingestSuccessChildResourceParams', () => {
-    const lds = new LDS(new Environment(new Store(), jest.fn()));
+    const lds = new Luvio(new Environment(new Store(), jest.fn()));
 
     const newRecord = buildSampleRecord();
     const recordId = newRecord.id;

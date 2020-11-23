@@ -1,4 +1,4 @@
-import { ResourceRequest, HttpStatusCode } from '@ldsjs/engine';
+import { ResourceRequest, HttpStatusCode } from '@luvio/engine';
 import * as aura from 'aura';
 import auraStorage from 'aura-storage';
 import { AuraFetchResponse } from '../AuraFetchResponse';

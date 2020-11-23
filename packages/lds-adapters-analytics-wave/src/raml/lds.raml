@@ -2,40 +2,40 @@
 extends: ./api.raml
 
 uses:
-  lds: lds://annotations.raml
+  luvio: luvio://annotations.raml
 
-(lds.keyPrefix): 'WAVE::'
+(luvio.keyPrefix): 'WAVE::'
 
 types:
   BaseWaveAssetRepresentation:
-    (lds.key):
+    (luvio.key):
       id: id
 
 /wave:
   /dataflowjobs:
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getDataflowJobs
   /dataflowjobs/{dataflowjobId}:
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getDataflowJob
-      (lds.key):
+      (luvio.key):
         id: urlParams.dataflowjobId
     patch:
-      (lds.adapter):
+      (luvio.adapter):
         name: updateDataflowJob
   /dataflowjobs/{dataflowjobId}/nodes:
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getDataflowJobNodes
   /dataflowjobs/{dataflowjobId}/nodes/{nodeId}:
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getDataflowJobNode
-      (lds.key):
+      (luvio.key):
         id: urlParams.nodeId
   /limits:
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getAnalyticsLimits

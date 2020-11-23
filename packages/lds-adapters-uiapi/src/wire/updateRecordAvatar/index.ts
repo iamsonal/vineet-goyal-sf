@@ -1,5 +1,5 @@
 import { deepFreeze } from '../../util/deep-freeze';
-import { LDS, Snapshot, FetchResponse } from '@ldsjs/engine';
+import { Luvio, Snapshot, FetchResponse } from '@luvio/engine';
 import {
     updateRecordAvatar_ConfigPropertyNames as updateRecordAvatarConfigProperties,
     validateAdapterConfig,
@@ -22,7 +22,7 @@ import {
     ingest as themeIngest,
 } from '../../generated/types/ThemeRecordAvatarRepresentation';
 
-export const factory = (lds: LDS) => {
+export const factory = (lds: Luvio) => {
     return (untrustedConfig: unknown): Promise<Snapshot<AbstractRecordAvatarRepresentation>> => {
         const config = validateAdapterConfig(untrustedConfig, updateRecordAvatarConfigProperties);
         if (config === null) {

@@ -1,6 +1,6 @@
 import {
     AdapterFactory,
-    LDS,
+    Luvio,
     Snapshot,
     Selector,
     FetchResponse,
@@ -8,7 +8,7 @@ import {
     ErrorSnapshot,
     SnapshotRefresh,
     UnfulfilledSnapshot,
-} from '@ldsjs/engine';
+} from '@luvio/engine';
 import { AdapterValidationConfig, keyPrefix } from '../../generated/adapters/adapter-utils';
 import { GetRecordUiConfig, validateAdapterConfig } from '../../generated/adapters/getRecordUi';
 import getUiApiRecordUiByRecordIds from '../../generated/resources/getUiApiRecordUiByRecordIds';
@@ -129,7 +129,7 @@ function keyBuilder(
 }
 
 function buildSnapshotRefresh(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordUiConfigWithDefaults
 ): SnapshotRefresh<RecordUiRepresentation> {
     return {
@@ -139,7 +139,7 @@ function buildSnapshotRefresh(
 }
 
 export function buildInMemorySnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordUiConfigWithDefaults
 ):
     | Snapshot<RecordUiRepresentation>
@@ -219,7 +219,7 @@ function markRecordUiOptionalFields(
     }
 }
 
-function prepareRequest(lds: LDS, config: GetRecordUiConfigWithDefaults) {
+function prepareRequest(lds: Luvio, config: GetRecordUiConfigWithDefaults) {
     const { recordIds, layoutTypes, modes, optionalFields } = config;
 
     const key = keyBuilder(
@@ -245,7 +245,7 @@ function prepareRequest(lds: LDS, config: GetRecordUiConfigWithDefaults) {
 }
 
 function onResourceResponseSuccess(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordUiConfigWithDefaults,
     selectorKey: string,
     key: string,
@@ -314,7 +314,7 @@ function onResourceResponseSuccess(
 }
 
 function onResourceResponseError(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordUiConfigWithDefaults,
     selectorKey: string,
     key: string,
@@ -349,7 +349,7 @@ function isSelector(data: Selector | RecordUiRepresentation): data is Selector {
 }
 
 function resolveUnfulfilledSnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordUiConfigWithDefaults,
     snapshot: UnfulfilledSnapshot<Selector | RecordUiRepresentation, any>
 ): Promise<Snapshot<RecordUiRepresentation>> {
@@ -395,7 +395,7 @@ function resolveUnfulfilledSnapshot(
 }
 
 export function buildNetworkSnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordUiConfigWithDefaults
 ): Promise<Snapshot<RecordUiRepresentation>> {
     const { key, resourceRequest, selectorKey } = prepareRequest(lds, config);
@@ -410,7 +410,7 @@ export function buildNetworkSnapshot(
     );
 }
 
-function publishDependencies(lds: LDS, recordIds: string[], depKeys: string[]) {
+function publishDependencies(lds: Luvio, recordIds: string[], depKeys: string[]) {
     for (let i = 0, len = recordIds.length; i < len; i += 1) {
         const recordDepKey = recordRepresentationDependencyKeyBuilder({ recordId: recordIds[i] });
 
@@ -451,7 +451,7 @@ export function coerceConfigWithDefaults(
     };
 }
 
-export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> = (lds: LDS) =>
+export const factory: AdapterFactory<GetRecordUiConfig, RecordUiRepresentation> = (lds: Luvio) =>
     function UiApi__getRecordUi(
         untrustedConfig: unknown
     ): Promise<Snapshot<RecordUiRepresentation>> | Snapshot<RecordUiRepresentation> | null {

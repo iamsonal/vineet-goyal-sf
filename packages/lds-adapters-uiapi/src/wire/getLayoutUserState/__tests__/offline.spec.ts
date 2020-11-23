@@ -1,4 +1,4 @@
-import { buildSuccessMockPayload, MockPayload } from '@ldsjs/adapter-test-library';
+import { buildSuccessMockPayload, MockPayload } from '@luvio/adapter-test-library';
 import { testDataEmittedWhenStale, testDurableHitDoesNotHitNetwork } from '@salesforce/lds-jest';
 
 import { factory as getLayoutUserState } from '../index';

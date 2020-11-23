@@ -1,4 +1,4 @@
-import { LDS, Store, Environment } from '@ldsjs/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import { ingestRecord, getRecordAdapterFactory } from '@salesforce/lds-adapters-uiapi';
 
 import { WARM_UP_ITERATION_COUNT } from './shared';
@@ -56,7 +56,7 @@ function createRecord(maxDepth, maxBreadth, recordIdPrefix, depth = 0) {
 const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
 
 const store = new Store();
-const lds = new LDS(new Environment(store, rejectNetworkAdapter));
+const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
 const getRecord = getRecordAdapterFactory(lds);
 
 const deepRecord = createRecord(5, 3, 'deep'); // 729 fields

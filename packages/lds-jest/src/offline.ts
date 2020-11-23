@@ -1,17 +1,17 @@
 import timekeeper from 'timekeeper';
-import { LDS, Store, Environment, NetworkAdapter, AdapterFactory } from '@ldsjs/engine';
+import { Luvio, Store, Environment, NetworkAdapter, AdapterFactory } from '@luvio/engine';
 import {
     makeDurable,
     makeOffline,
     ResponsePropertyRetriever,
     DurableEnvironment,
-} from '@ldsjs/environments';
+} from '@luvio/environments';
 import {
     buildMockNetworkAdapter,
     MockDurableStore,
     getMockNetworkAdapterCallCount,
     MockPayload,
-} from '@ldsjs/adapter-test-library';
+} from '@luvio/adapter-test-library';
 
 export type CustomEnvironmentFactory = (
     environment: Environment,
@@ -34,7 +34,7 @@ export function buildOfflineLds(
     if (customEnvironment !== undefined) {
         env = customEnvironment(env, durableStore, store);
     }
-    const lds = new LDS(env);
+    const lds = new Luvio(env);
     return {
         lds,
         durableStore,

@@ -1,4 +1,4 @@
-import { LDS, Store, Environment, isReaderFragment, Reader, ReaderFragment } from '@ldsjs/engine';
+import { Luvio, Store, Environment, isReaderFragment, Reader, ReaderFragment } from '@luvio/engine';
 import { selectChildResourceParams } from '../selectChildResourceParams';
 import { buildRecordSelector } from '../../../../wire/getRecord/GetRecordFields';
 import { keyBuilder } from '../../../../generated/resources/getUiApiRecordsByRecordId';
@@ -28,7 +28,7 @@ function assertIsFragment(fragment) {
 }
 
 describe('selectChildResourceParams', () => {
-    const lds = new LDS(new Environment(new Store(), jest.fn()));
+    const lds = new Luvio(new Environment(new Store(), jest.fn()));
     let reader: Reader<any>;
 
     const fields = ['a', 'b', 'c'];

@@ -1,9 +1,9 @@
-import { Store } from '@ldsjs/engine';
+import { Store } from '@luvio/engine';
 import {
     DefaultDurableSegment,
     DurableStore,
     OnDurableStoreChangedListener,
-} from '@ldsjs/environments';
+} from '@luvio/environments';
 
 import { ObjectKeys } from '../../../lds-runtime-mobile/src/utils/language';
 import { DraftQueue } from '../DraftQueue';

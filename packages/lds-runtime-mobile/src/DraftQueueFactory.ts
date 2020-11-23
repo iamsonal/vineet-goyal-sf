@@ -1,8 +1,8 @@
 // so eslint doesn't complain about nimbus
 /* global __nimbus */
 
-import { NetworkAdapter } from '@ldsjs/engine';
-import { DurableStore } from '@ldsjs/environments';
+import { NetworkAdapter } from '@luvio/engine';
+import { DurableStore } from '@luvio/environments';
 import { DraftQueue, DurableDraftQueue } from '@salesforce/lds-drafts';
 import { NimbusDraftQueue } from './NimbusDraftQueue';
 

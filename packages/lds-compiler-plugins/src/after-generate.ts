@@ -1,4 +1,4 @@
-import { CompilerConfig, ModelInfo } from '@ldsjs/compiler';
+import { CompilerConfig, ModelInfo } from '@luvio/compiler';
 import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';

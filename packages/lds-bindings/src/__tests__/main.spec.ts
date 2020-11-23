@@ -8,7 +8,7 @@ jest.mock('@salesforce/lds-runtime-web', () => {
     };
 });
 
-jest.mock('@ldsjs/lwc-lds', () => {
+jest.mock('@luvio/lwc-luvio', () => {
     const spies = {
         createWireAdapterConstructor: jest.fn(),
         bindWireRefreshSpy: jest.fn(),
@@ -35,8 +35,8 @@ jest.mock('@salesforce/lds-instrumentation', () => {
 
 import { lds } from '@salesforce/lds-runtime-web';
 import { __spies as instrumentationSpies } from '@salesforce/lds-instrumentation';
-import { createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor } from '@ldsjs/lwc-lds';
-import { __spies as lwcLdsSpies } from '@ldsjs/lwc-lds';
+import { createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor } from '@luvio/lwc-luvio';
+import { __spies as lwcLdsSpies } from '@luvio/lwc-luvio';
 
 beforeEach(() => {
     instrumentationSpies.instrumentAdapter.mockClear();

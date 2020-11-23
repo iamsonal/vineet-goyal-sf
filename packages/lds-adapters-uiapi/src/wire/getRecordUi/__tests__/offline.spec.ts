@@ -1,12 +1,12 @@
-import { LDS, Store, isFulfilledSnapshot, Environment } from '@ldsjs/engine';
+import { Luvio, Store, isFulfilledSnapshot, Environment } from '@luvio/engine';
 import {
     buildMockNetworkAdapter,
     buildSuccessMockPayload,
     MockPayload,
     MockDurableStore,
     getMockNetworkAdapterCallCount,
-} from '@ldsjs/adapter-test-library';
-import { DefaultDurableSegment, makeDurable, makeOffline } from '@ldsjs/environments';
+} from '@luvio/adapter-test-library';
+import { DefaultDurableSegment, makeDurable, makeOffline } from '@luvio/environments';
 
 import { factory as getRecordUiAdapterFactory } from '../index';
 import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
@@ -60,7 +60,7 @@ function buildLds(ds?: MockDurableStore) {
         durableStore,
         responseRecordRepresentationRetrievers
     );
-    const lds = new LDS(env);
+    const lds = new Luvio(env);
     return {
         lds,
         durableStore,

@@ -1,4 +1,4 @@
-import { ResourceRequest } from '@ldsjs/engine';
+import { ResourceRequest } from '@luvio/engine';
 
 import { ControllerInvoker } from './middlewares/utils';
 import { ObjectCreate } from './utils/language';

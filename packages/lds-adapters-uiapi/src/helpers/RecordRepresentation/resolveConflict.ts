@@ -8,7 +8,7 @@ import {
 
 import { ArrayPrototypePush, ArrayPrototypeReduce, ObjectKeys } from '../../util/language';
 import { RecordFieldTrie, convertTrieToFields } from '../../util/records';
-import { LDS } from '@ldsjs/engine';
+import { Luvio } from '@luvio/engine';
 
 export interface RecordConflict {
     recordId: string;
@@ -17,7 +17,7 @@ export interface RecordConflict {
 export type RecordConflictMap = Record<string, RecordConflict>;
 
 // iterate through the map to build configs for network calls
-export function resolveConflict(lds: LDS, map: RecordConflictMap): void {
+export function resolveConflict(lds: Luvio, map: RecordConflictMap): void {
     const ids = ObjectKeys(map) as string[];
     if (ids.length === 0) return;
 

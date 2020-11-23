@@ -1,4 +1,4 @@
-import { buildSuccessMockPayload, MockPayload } from '@ldsjs/adapter-test-library';
+import { buildSuccessMockPayload, MockPayload } from '@luvio/adapter-test-library';
 
 import { factory as getLayoutAdapterFactory } from '../index';
 import layoutOpportunityFull from './mockData/layout-Opportunity-Full.json';

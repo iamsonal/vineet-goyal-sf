@@ -1,4 +1,4 @@
-import { Snapshot, ErrorSnapshot, FulfilledSnapshot, UnfulfilledSnapshot } from '@ldsjs/engine';
+import { Snapshot, ErrorSnapshot, FulfilledSnapshot, UnfulfilledSnapshot } from '@luvio/engine';
 
 export function isFulfilledSnapshot<T, U>(
     snapshot: Snapshot<T, U>

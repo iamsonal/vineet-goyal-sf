@@ -1,4 +1,4 @@
-import { Environment, Store } from '@ldsjs/engine';
+import { Environment, Store } from '@luvio/engine';
 import {
     buildDurableRecordRepresentation,
     createDeleteRequest,

@@ -1,4 +1,4 @@
-import { IngestPath, LDS, Store, StoreLink } from '@ldsjs/engine';
+import { IngestPath, Luvio, Store, StoreLink } from '@luvio/engine';
 import { ArrayPrototypePush, ObjectKeys } from '../../util/language';
 import {
     RecordRepresentationNormalized,
@@ -15,7 +15,7 @@ export default function normalize(
     input: RecordRepresentation,
     existing: RecordRepresentationNormalized,
     path: IngestPath,
-    lds: LDS,
+    lds: Luvio,
     store: Store,
     timestamp: number,
     fieldsTrie: RecordFieldTrie,

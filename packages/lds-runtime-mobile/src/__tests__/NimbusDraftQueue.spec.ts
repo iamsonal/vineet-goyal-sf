@@ -1,4 +1,4 @@
-import { ResourceRequest } from '@ldsjs/engine';
+import { ResourceRequest } from '@luvio/engine';
 import { NimbusDraftQueue } from '../NimbusDraftQueue';
 import { DraftQueue as DraftQueueProxy } from '@mobileplatform/nimbus-plugin-lds';
 import { JSONStringify } from '../utils/language';

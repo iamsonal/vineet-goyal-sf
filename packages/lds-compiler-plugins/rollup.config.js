@@ -3,11 +3,11 @@ import typescript from 'rollup-plugin-typescript2';
 export default {
     input: './src/main.ts',
 
-    external: ['@ldsjs/compiler'],
+    external: ['@luvio/compiler'],
 
     output: {
         file: 'dist/plugin.js',
-        // @ldsjs/cli currently supports only cjs imports
+        // @luvio/cli currently supports only cjs imports
         format: 'cjs',
     },
 

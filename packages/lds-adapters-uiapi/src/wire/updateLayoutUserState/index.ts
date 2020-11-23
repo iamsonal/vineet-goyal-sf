@@ -1,5 +1,5 @@
 import { deepFreeze } from '../../util/deep-freeze';
-import { Snapshot, LDS, FetchResponse, ResourceRequest } from '@ldsjs/engine';
+import { Snapshot, Luvio, FetchResponse, ResourceRequest } from '@luvio/engine';
 import { RecordLayoutUserStateInputRepresentation } from '../../generated/types/RecordLayoutUserStateInputRepresentation';
 import {
     buildInMemorySnapshot as cacheLookupGetLayoutUserState,
@@ -33,7 +33,7 @@ function addAdditionalFieldsForNorming(
 }
 
 function updateLayoutUserState(
-    lds: LDS,
+    lds: Luvio,
     config: GetLayoutUserStateConfigWithDefaults,
     key: string,
     updateRequest: ResourceRequest
@@ -50,7 +50,7 @@ function updateLayoutUserState(
 }
 
 function ingestAndBroadcast(
-    lds: LDS,
+    lds: Luvio,
     key: string,
     config: GetLayoutUserStateConfigWithDefaults,
     body: RecordLayoutUserStateRepresentation
@@ -163,7 +163,7 @@ function coerceConfigWithDefaults(
     };
 }
 
-export const factory = (lds: LDS): UpdateLayoutUserStateAdapter => {
+export const factory = (lds: Luvio): UpdateLayoutUserStateAdapter => {
     return (
         untrustedObjectApiName: unknown,
         untrustedRecordTypeId: unknown,

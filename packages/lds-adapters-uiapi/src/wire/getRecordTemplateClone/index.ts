@@ -1,12 +1,12 @@
 import {
     AdapterFactory,
-    LDS,
+    Luvio,
     Snapshot,
     FulfilledSnapshot,
     ResourceRequestOverride,
     Selector,
     FetchResponse,
-} from '@ldsjs/engine';
+} from '@luvio/engine';
 import {
     validateAdapterConfig,
     getRecordTemplateClone_ConfigPropertyNames,
@@ -47,7 +47,7 @@ function buildMetadataKey(recordId: string) {
     return `${METADATA_PREFIX}${keyPrefix}RecordDefaultsTemplateCloneRepresentation::${recordId}`;
 }
 
-function getMetadata(lds: LDS, recordId: string) {
+function getMetadata(lds: Luvio, recordId: string) {
     const metadataKey = buildMetadataKey(recordId);
     return lds.storeLookup<GetRecordTemplateCreateMetadata>({
         recordId: metadataKey,
@@ -65,7 +65,11 @@ function getMetadata(lds: LDS, recordId: string) {
     });
 }
 
-function saveDefaultRecordTypeId(lds: LDS, recordId: string, objectInfo: ObjectInfoRepresentation) {
+function saveDefaultRecordTypeId(
+    lds: Luvio,
+    recordId: string,
+    objectInfo: ObjectInfoRepresentation
+) {
     const metadataKey = buildMetadataKey(recordId);
     lds.storePublish<GetRecordTemplateCreateMetadata>(metadataKey, {
         recordTypeId: objectInfo.defaultRecordTypeId,
@@ -73,7 +77,7 @@ function saveDefaultRecordTypeId(lds: LDS, recordId: string, objectInfo: ObjectI
 }
 
 function getRecordTypeId(
-    lds: LDS,
+    lds: Luvio,
     adapterConfig: GetRecordTemplateCloneConfig
 ): string | undefined {
     const config = createResourceParams(adapterConfig);
@@ -96,7 +100,7 @@ function getRecordTypeId(
 }
 
 const buildNetworkSnapshot: typeof generatedBuildNetworkSnapshot = (
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordTemplateCloneConfig,
     override?: ResourceRequestOverride
 ) => {
@@ -189,7 +193,7 @@ const buildNetworkSnapshot: typeof generatedBuildNetworkSnapshot = (
 };
 
 export const buildInMemorySnapshot: typeof generatedBuildInMemorySnapshot = (
-    lds: LDS,
+    lds: Luvio,
     config: GetRecordTemplateCloneConfig
 ): Snapshot<RecordDefaultsTemplateCloneRepresentation, any> => {
     const resourceParams = createResourceParams(config);
@@ -211,7 +215,7 @@ export const buildInMemorySnapshot: typeof generatedBuildInMemorySnapshot = (
 export const factory: AdapterFactory<
     GetRecordTemplateCloneConfig,
     RecordDefaultsTemplateCloneRepresentation
-> = (lds: LDS) =>
+> = (lds: Luvio) =>
     function getRecordDefaultsTemplateForCreate(
         untrustedConfig: unknown
     ):

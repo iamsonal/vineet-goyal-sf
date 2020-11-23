@@ -1,4 +1,4 @@
-import { LDS, Store, Environment } from '@ldsjs/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import { ingestRelatedListInfoBatch } from '@salesforce/lds-adapters-uiapi';
 
 import mockRelatedListInfoBatch from './mocks/customcwc001s-related-list-info-batch';
@@ -13,7 +13,7 @@ function clone(data) {
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
     const store = new Store();
-    const lds = new LDS(new Environment(store, rejectNetworkAdapter));
+    const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
     ingestRelatedListInfoBatch(JSON.parse(mockRelatedListInfoBatch), 'warmupKey', lds, store);
 }
 
@@ -24,7 +24,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListInfoBatch(
                 clone(mockRelatedListInfoBatch),
                 'key',
@@ -49,7 +49,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListInfoBatch(
                 clone(mockRelatedListInfoBatch),
                 'key',
@@ -82,7 +82,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListInfoBatch(
                 clone(mockRelatedListInfoBatch),
                 'key',
@@ -117,7 +117,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         before(() => {
             store = new Store();
-            lds = new LDS(new Environment(store, rejectNetworkAdapter));
+            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListInfoBatch(
                 clone(mockRelatedListInfoBatch),
                 'key',

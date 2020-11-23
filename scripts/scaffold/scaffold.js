@@ -145,7 +145,7 @@ function getPackageName(cloud, family) {
 
 async function getEngineVersion() {
     return new Promise((resolve, reject) => {
-        child_process.exec('npm show @ldsjs/engine version', (err, data) => {
+        child_process.exec('npm show @luvio/engine version', (err, data) => {
             if (err !== null) {
                 reject(err);
                 return;

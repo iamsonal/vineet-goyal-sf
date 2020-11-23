@@ -1,12 +1,12 @@
 import {
     AdapterFactory,
-    LDS,
+    Luvio,
     FetchResponse,
     Snapshot,
     SnapshotRefresh,
     UnfulfilledSnapshot,
     ResourceResponse,
-} from '@ldsjs/engine';
+} from '@luvio/engine';
 import {
     GetLayoutUserStateConfig,
     validateAdapterConfig,
@@ -78,7 +78,7 @@ export function coerceConfigWithDefaults(
 }
 
 function buildSnapshotRefresh(
-    lds: LDS,
+    lds: Luvio,
     config: GetLayoutUserStateConfigWithDefaults
 ): SnapshotRefresh<RecordLayoutUserStateRepresentation> {
     return {
@@ -87,7 +87,7 @@ function buildSnapshotRefresh(
     };
 }
 
-export function buildInMemorySnapshot(lds: LDS, config: GetLayoutUserStateConfigWithDefaults) {
+export function buildInMemorySnapshot(lds: Luvio, config: GetLayoutUserStateConfigWithDefaults) {
     const { objectApiName, recordTypeId, layoutType, mode } = config;
     const key = keyBuilder({
         apiName: objectApiName,
@@ -107,7 +107,7 @@ export function buildInMemorySnapshot(lds: LDS, config: GetLayoutUserStateConfig
 }
 
 export function buildNetworkSnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetLayoutUserStateConfigWithDefaults
 ): Promise<Snapshot<RecordLayoutUserStateRepresentation>> {
     const { request, key } = prepareRequest(config);
@@ -123,7 +123,7 @@ export function buildNetworkSnapshot(
 }
 
 function resolveUnfulfilledSnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetLayoutUserStateConfigWithDefaults,
     snapshot: UnfulfilledSnapshot<RecordLayoutUserStateRepresentation, any>
 ) {
@@ -142,7 +142,7 @@ function resolveUnfulfilledSnapshot(
 }
 
 function onResourceResponseSuccess(
-    lds: LDS,
+    lds: Luvio,
     config: GetLayoutUserStateConfigWithDefaults,
     key: string,
     response: ResourceResponse<RecordLayoutUserStateRepresentation>
@@ -164,7 +164,7 @@ function onResourceResponseSuccess(
 }
 
 function onResourceResponseError(
-    lds: LDS,
+    lds: Luvio,
     config: GetLayoutUserStateConfigWithDefaults,
     key: string,
     error: FetchResponse<unknown>
@@ -198,7 +198,7 @@ function prepareRequest(config: GetLayoutUserStateConfigWithDefaults) {
 export const factory: AdapterFactory<
     GetLayoutUserStateConfig,
     RecordLayoutUserStateRepresentation
-> = (lds: LDS) =>
+> = (lds: Luvio) =>
     function getLayoutUserState(untrustedConfig: unknown) {
         const config = coerceConfigWithDefaults(untrustedConfig);
         if (config === null) {

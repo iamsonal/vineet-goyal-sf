@@ -1,4 +1,4 @@
-import { LDS, Store, Environment } from '@ldsjs/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import { ingest } from '../ingest';
 import { RecordFieldTrie } from '../../../../util/records';
 import {
@@ -14,7 +14,7 @@ jest.mock('../../../../helpers/FieldValueRepresentation/normalize');
 
 describe('ingest', () => {
     let store = new Store();
-    let lds = new LDS(new Environment(store, jest.fn()));
+    let lds = new Luvio(new Environment(store, jest.fn()));
 
     it('invokes normalize when ingesting', () => {
         const input: FieldValueRepresentation = {

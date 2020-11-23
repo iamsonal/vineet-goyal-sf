@@ -1,4 +1,4 @@
-import { LDS, IngestPath, Store, StoreLink, Environment } from '@ldsjs/engine';
+import { Luvio, IngestPath, Store, StoreLink, Environment } from '@luvio/engine';
 import {
     FieldValueRepresentation,
     FieldValueRepresentationNormalized,
@@ -17,7 +17,7 @@ function clone<T>(value: T): T {
 
 describe('normalize', () => {
     const store = new Store();
-    const lds = new LDS(new Environment(store, jest.fn()));
+    const lds = new Luvio(new Environment(store, jest.fn()));
 
     const path: IngestPath = {
         fullPath: 'some_path',
@@ -109,7 +109,7 @@ describe('normalize', () => {
                 {
                     fullPath: 'some_path__value',
                     parent: {
-                        data: input /* originalInput would have been better, but 
+                        data: input /* originalInput would have been better, but
                                        jest does not clone function arguments
                                        so mock arguments at this stage are referring
                                        to the new value set in normalize(). */,

@@ -29,7 +29,7 @@ export {
 
 export * from './generated/artifacts/main';
 
-// Exposing those ingestion methods method "@ldsjs/engine" performance tests.
+// Exposing those ingestion methods method "@luvio/engine" performance tests.
 // TODO W-6900152 - Explore other solutions to see how we can avoid exposing the types out of the module.
 export { ingest as ingestRecordUi } from './generated/types/RecordUiRepresentation';
 export { ingest as ingestRelatedListInfo } from './generated/types/RelatedListInfoRepresentation';

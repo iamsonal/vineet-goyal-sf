@@ -2,12 +2,12 @@ import {
     Adapter,
     FulfilledSnapshot,
     IngestPath,
-    LDS,
+    Luvio,
     ResourceIngest,
     Selector,
     Snapshot,
     FetchResponse,
-} from '@ldsjs/engine';
+} from '@luvio/engine';
 import { stableJSONStringify } from '../../util/utils';
 import { default as getApexRequest } from '../../generated/resources/postApex';
 import { refreshable, untrustedIsObject } from '../../generated/adapters/adapter-utils';
@@ -25,7 +25,7 @@ interface ApexInvokerParams extends ApexScopedModuleParams {
 }
 
 function cache(
-    lds: LDS,
+    lds: Luvio,
     config: unknown,
     namespace: string,
     classname: string,
@@ -121,7 +121,7 @@ export function validateAdapterConfig(untrustedConfig?: unknown): boolean {
 }
 
 function network(
-    lds: LDS,
+    lds: Luvio,
     config: any,
     namespace: string,
     classname: string,
@@ -174,7 +174,7 @@ function network(
     );
 }
 
-export const factory = (lds: LDS, invokerParams: ApexInvokerParams): Adapter<any, any> => {
+export const factory = (lds: Luvio, invokerParams: ApexInvokerParams): Adapter<any, any> => {
     const { namespace, classname, method, isContinuation } = invokerParams;
     const adapter = getLdsAdapterFactory(lds, namespace, classname, method, isContinuation, true);
 
@@ -207,7 +207,7 @@ export const factory = (lds: LDS, invokerParams: ApexInvokerParams): Adapter<any
     );
 };
 
-export const invoker = (lds: LDS, invokerParams: ApexInvokerParams) => {
+export const invoker = (lds: Luvio, invokerParams: ApexInvokerParams) => {
     const { namespace, classname, method, isContinuation } = invokerParams;
     const ldsAdapter = getLdsAdapterFactory(
         lds,
@@ -271,7 +271,7 @@ export function getApexId(
 }
 
 function getLdsAdapterFactory(
-    lds: LDS,
+    lds: Luvio,
     namespace: string,
     classname: string,
     method: string,

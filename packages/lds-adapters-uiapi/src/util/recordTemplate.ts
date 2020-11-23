@@ -1,4 +1,4 @@
-import { LDS, ProxyGraphNode } from '@ldsjs/engine';
+import { Luvio, ProxyGraphNode } from '@luvio/engine';
 import {
     FieldValueRepresentation,
     FieldValueRepresentationNormalized,
@@ -94,7 +94,7 @@ export function extractTrackedFields(
     return fieldsList;
 }
 
-export function getTrackedFields(lds: LDS, key: string, fieldsFromConfig?: string[]): string[] {
+export function getTrackedFields(lds: Luvio, key: string, fieldsFromConfig?: string[]): string[] {
     const fieldsList = fieldsFromConfig === undefined ? [] : [...fieldsFromConfig];
 
     const graphNode = lds.getNode<RecordRepresentationLikeNormalized, RecordRepresentationLike>(

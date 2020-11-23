@@ -1,7 +1,7 @@
-import { LDS } from '@ldsjs/engine';
+import { Luvio } from '@luvio/engine';
 import { deleteRecordAdapterFactory } from '../../generated/adapters/deleteRecord';
 
-export const factory = (lds: LDS) => {
+export const factory = (lds: Luvio) => {
     const deleteRecordAdapterInstance = deleteRecordAdapterFactory(lds);
     return (recordId: unknown) => deleteRecordAdapterInstance({ recordId: recordId as string });
 };

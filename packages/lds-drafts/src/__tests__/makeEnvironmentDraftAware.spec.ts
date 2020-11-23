@@ -1,5 +1,5 @@
-import { Environment, Store } from '@ldsjs/engine';
-import { DurableStore, makeDurable } from '@ldsjs/environments';
+import { Environment, Store } from '@luvio/engine';
+import { DurableStore, makeDurable } from '@luvio/environments';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import {
     buildRecordFieldStoreKey,

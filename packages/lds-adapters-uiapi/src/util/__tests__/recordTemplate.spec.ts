@@ -1,4 +1,4 @@
-import { Store, LDS, Environment } from '@ldsjs/engine';
+import { Store, Luvio, Environment } from '@luvio/engine';
 import {
     ingest,
     keyBuilder,
@@ -16,7 +16,7 @@ function buildSampleRecordTemplate(): RecordTemplateCreateRepresentation {
 describe('getTrackedFields', () => {
     it('should return correct tracked fields 1 level deep', () => {
         const store = new Store();
-        const lds = new LDS(new Environment(store, () => Promise.reject()));
+        const lds = new Luvio(new Environment(store, () => Promise.reject()));
 
         const key = keyBuilder({
             apiName: 'Account',
@@ -36,7 +36,7 @@ describe('getTrackedFields', () => {
 
     it('should include fields passed to getTrackedFields', () => {
         const store = new Store();
-        const lds = new LDS(new Environment(store, () => Promise.reject()));
+        const lds = new Luvio(new Environment(store, () => Promise.reject()));
 
         const key = keyBuilder({
             apiName: 'Account',
@@ -57,7 +57,7 @@ describe('getTrackedFields', () => {
 
     it('should dedupe fields passed to getTrackedFields', () => {
         const store = new Store();
-        const lds = new LDS(new Environment(store, () => Promise.reject()));
+        const lds = new Luvio(new Environment(store, () => Promise.reject()));
 
         const key = keyBuilder({
             apiName: 'Account',

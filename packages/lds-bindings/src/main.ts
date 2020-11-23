@@ -1,8 +1,8 @@
-import { Adapter, AdapterFactory, LDS } from '@ldsjs/engine';
+import { Adapter, AdapterFactory, Luvio } from '@luvio/engine';
 import {
     createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor,
     bindWireRefresh,
-} from '@ldsjs/lwc-lds';
+} from '@luvio/lwc-luvio';
 import { WireAdapterConstructor } from '@lwc/engine-core';
 import { lds } from '@salesforce/lds-runtime-web';
 import { instrumentation, refreshApiEvent, refreshApiNames } from '@salesforce/lds-instrumentation';
@@ -15,7 +15,7 @@ export function createWireAdapterConstructor<C, D>(
     return lwcLdsCreateWireAdapterConstructor(adapter as Adapter<unknown, unknown>, name, lds);
 }
 
-export function createLDSAdapter<T>(name: string, factory: (lds: LDS) => T): T {
+export function createLDSAdapter<T>(name: string, factory: (lds: Luvio) => T): T {
     return factory(lds);
 }
 

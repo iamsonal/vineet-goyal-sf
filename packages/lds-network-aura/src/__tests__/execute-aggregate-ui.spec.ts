@@ -7,7 +7,7 @@ import {
 } from '../middlewares/execute-aggregate-ui';
 import * as aura from 'aura';
 import { AuraFetchResponse } from '../AuraFetchResponse';
-import { HttpStatusCode, ResourceRequest } from '@ldsjs/engine';
+import { HttpStatusCode, ResourceRequest } from '@luvio/engine';
 import { UiApiParams } from '../middlewares/utils';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 

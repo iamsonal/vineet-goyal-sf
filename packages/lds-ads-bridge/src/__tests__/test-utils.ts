@@ -1,4 +1,4 @@
-import { LDS } from '@ldsjs/engine';
+import { Luvio } from '@luvio/engine';
 import { ingestRecord, ingestObjectInfo } from '@salesforce/lds-adapters-uiapi';
 
 export function createRecord(config: any = {}) {
@@ -46,12 +46,12 @@ export function createObjectInfo(config: any = {}) {
     };
 }
 
-export function addRecord(lds: LDS, data: any) {
+export function addRecord(lds: Luvio, data: any) {
     lds.storeIngest('', ingestRecord, data);
     lds.storeBroadcast();
 }
 
-export function addObjectInfo(lds: LDS, data: any) {
+export function addObjectInfo(lds: Luvio, data: any) {
     lds.storeIngest('', ingestObjectInfo, data);
     lds.storeBroadcast();
 }

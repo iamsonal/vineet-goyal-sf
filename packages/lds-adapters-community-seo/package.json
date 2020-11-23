@@ -18,7 +18,7 @@
         "clean": "rm -rf dist sfdc src/generated karma/dist",
         "build": "yarn build:raml && yarn build:services && yarn build:karma",
         "build:karma": "rollup --config rollup.config.karma.js",
-        "build:raml": "lds generate src/raml/lds.raml src/generated -p '../lds-compiler-plugins'",
+        "build:raml": "luvio generate src/raml/lds.raml src/generated -p '../lds-compiler-plugins'",
         "build:services": "rollup --config rollup.config.js",
         "start": "karma start",
         "test": "karma start --single-run",
@@ -32,10 +32,10 @@
         "@salesforce/lds-bindings": "1.2.4"
     },
     "devDependencies": {
-        "@ldsjs/cli": "^0.19.1",
-        "@ldsjs/compiler": "^0.19.1",
-        "@ldsjs/engine": "^0.19.1",
-        "@ldsjs/lwc-lds": "^0.19.1",
+        "@luvio/cli": "^0.20.0",
+        "@luvio/compiler": "^0.20.0",
+        "@luvio/engine": "^0.20.0",
+        "@luvio/lwc-luvio": "^0.20.0",
         "@salesforce/lds-karma": "1.2.4"
     }
 }

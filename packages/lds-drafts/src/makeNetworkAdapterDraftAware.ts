@@ -1,5 +1,5 @@
-import { NetworkAdapter, ResourceRequest } from '@ldsjs/engine';
-import { ResponsePropertyRetriever, RetrievedProperty } from '@ldsjs/environments';
+import { NetworkAdapter, ResourceRequest } from '@luvio/engine';
+import { ResponsePropertyRetriever, RetrievedProperty } from '@luvio/environments';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { DraftAction, DraftQueue } from './main';
 import { ObjectKeys } from './utils/language';

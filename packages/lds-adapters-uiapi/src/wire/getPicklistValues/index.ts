@@ -1,12 +1,12 @@
 import {
     AdapterFactory,
-    LDS,
+    Luvio,
     FetchResponse,
     Snapshot,
     SnapshotRefresh,
     ResourceResponse,
     UnfulfilledSnapshot,
-} from '@ldsjs/engine';
+} from '@luvio/engine';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
 import {
     adapterName as getPicklistValuesAdapterName,
@@ -29,7 +29,7 @@ export interface GetPicklistValuesConfig {
 const path = picklistValuesRepresentationSelect().selections;
 
 function buildSnapshotRefresh(
-    lds: LDS,
+    lds: Luvio,
     config: GetPicklistValuesConfig
 ): SnapshotRefresh<PicklistValuesRepresentation> {
     return {
@@ -54,7 +54,7 @@ function buildRequestAndKey(config: GetPicklistValuesConfig) {
 }
 
 function onResponseSuccess(
-    lds: LDS,
+    lds: Luvio,
     config: GetPicklistValuesConfig,
     key: string,
     response: ResourceResponse<PicklistValuesRepresentation>
@@ -66,7 +66,7 @@ function onResponseSuccess(
 }
 
 function onResponseError(
-    lds: LDS,
+    lds: Luvio,
     config: GetPicklistValuesConfig,
     key: string,
     err: FetchResponse<unknown>
@@ -77,7 +77,7 @@ function onResponseError(
 }
 
 export function buildNetworkSnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetPicklistValuesConfig
 ): Promise<Snapshot<PicklistValuesRepresentation>> {
     const { request, key } = buildRequestAndKey(config);
@@ -93,7 +93,7 @@ export function buildNetworkSnapshot(
 }
 
 export function resolveUnfulfilledSnapshot(
-    lds: LDS,
+    lds: Luvio,
     config: GetPicklistValuesConfig,
     snapshot: UnfulfilledSnapshot<PicklistValuesRepresentation, any>
 ): Promise<Snapshot<PicklistValuesRepresentation>> {
@@ -109,7 +109,7 @@ export function resolveUnfulfilledSnapshot(
     );
 }
 
-export function buildInMemorySnapshot(lds: LDS, config: GetPicklistValuesConfig) {
+export function buildInMemorySnapshot(lds: Luvio, config: GetPicklistValuesConfig) {
     const fieldNames = getFieldId(config.fieldApiName);
     const request = getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName({
         urlParams: {
@@ -144,7 +144,7 @@ const picklistValuesConfigPropertyNames = {
 };
 
 export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepresentation> = (
-    lds: LDS
+    lds: Luvio
 ) =>
     function getPicklistValues(untrusted: unknown) {
         const config = validateAdapterConfig(untrusted, picklistValuesConfigPropertyNames);

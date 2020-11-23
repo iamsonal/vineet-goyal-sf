@@ -2,40 +2,40 @@
 extends: ./api.raml
 
 uses:
-  lds: lds://annotations.raml
+  luvio: luvio://annotations.raml
 
-(lds.keyPrefix): 'LEAP::'
+(luvio.keyPrefix): 'LEAP::'
 
 types:
   LightningAssistantRepresentation:
-    (lds.key):
+    (luvio.key):
       assistant_group_id: assistantGroup
 
   LightningAssistantQuestionnaireRepresentation:
-    (lds.key):
+    (luvio.key):
       assistant_group_id: assistantGroup
       questionnaire_id: id
 
 /guidance/assistant/{assistantGroup}:
   get:
-    (lds.adapter):
+    (luvio.adapter):
       name: getAssistant
-    (lds.key):
+    (luvio.key):
       assistant_group_id: urlParams.assistantGroup
   patch:
-    (lds.adapter):
+    (luvio.adapter):
       name: saveAssistant
   /questionnaire/{questionnaireId}:
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getQuestionnaire
-      (lds.key):
+      (luvio.key):
         assistant_group_id: urlParams.assistantGroup
         questionnaire_id: urlParams.questionnaireId
     patch:
-      (lds.adapter):
+      (luvio.adapter):
         name: saveQuestionnaire
   /questionnaires:
     get:
-      (lds.adapter):
+      (luvio.adapter):
         name: getActiveQuestionnaires

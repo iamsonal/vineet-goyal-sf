@@ -1,7 +1,7 @@
 // so eslint doesn't complain about nimbus
 /* global __nimbus */
 
-import { ResourceRequest } from '@ldsjs/engine';
+import { ResourceRequest } from '@luvio/engine';
 import {
     DraftAction,
     DraftQueue,

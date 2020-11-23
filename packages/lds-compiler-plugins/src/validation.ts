@@ -8,7 +8,7 @@ import {
     ShapePrivate,
     ArrayShapeDefinition,
     UnionShapeDefinition,
-} from '@ldsjs/compiler';
+} from '@luvio/compiler';
 
 function validateUnion(
     node: UnionShapeDefinition,

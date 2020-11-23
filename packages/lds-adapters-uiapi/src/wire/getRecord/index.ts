@@ -1,4 +1,4 @@
-import { AdapterFactory, FetchResponse, GraphNode, LDS, Snapshot } from '@ldsjs/engine';
+import { AdapterFactory, FetchResponse, GraphNode, Luvio, Snapshot } from '@luvio/engine';
 import { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
 import { GetRecordConfig, validateAdapterConfig } from '../../generated/adapters/getRecord';
 import { createResourceRequest as getUiApiRecordsByRecordId } from '../../raml-artifacts/resources/getUiApiRecordsByRecordId/createResourceRequest';
@@ -80,7 +80,7 @@ const notifyChangeNetworkRejectInstrumentParamBuilder = () => {
     };
 };
 
-export const notifyChangeFactory = (lds: LDS) => {
+export const notifyChangeFactory = (lds: Luvio) => {
     return function getUiApiRecordsByRecordIdNotifyChange(configs: KeyParams[]): void {
         for (let i = 0, len = configs.length; i < len; i++) {
             // build key from input
@@ -137,7 +137,7 @@ export const notifyChangeFactory = (lds: LDS) => {
     };
 };
 
-export const factory: AdapterFactory<GetRecordConfig, RecordRepresentation> = (lds: LDS) =>
+export const factory: AdapterFactory<GetRecordConfig, RecordRepresentation> = (lds: Luvio) =>
     function getRecord(
         untrustedConfig: unknown
     ): Promise<Snapshot<RecordRepresentation>> | Snapshot<RecordRepresentation> | null {

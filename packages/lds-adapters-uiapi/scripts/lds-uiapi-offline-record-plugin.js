@@ -1,11 +1,11 @@
 // @ts-check
 
 /**
- * @typedef {import("@ldsjs/compiler").CompilerConfig} CompilerConfig
- * @typedef {import("@ldsjs/compiler").ShapeDefinition} ShapeDefinition
- * @typedef {import("@ldsjs/compiler").ArrayShapeDefinition} ArrayShapeDefinition
- * @typedef {import("@ldsjs/compiler").NodeShapeDefinition} NodeShapeDefinition
- * @typedef {import("@ldsjs/compiler").ModelInfo} ModelInfo
+ * @typedef {import("@luvio/compiler").CompilerConfig} CompilerConfig
+ * @typedef {import("@luvio/compiler").ShapeDefinition} ShapeDefinition
+ * @typedef {import("@luvio/compiler").ArrayShapeDefinition} ArrayShapeDefinition
+ * @typedef {import("@luvio/compiler").NodeShapeDefinition} NodeShapeDefinition
+ * @typedef {import("@luvio/compiler").ModelInfo} ModelInfo
  * @typedef {{name: string, method: string}} AdapterInfo
  * @typedef {{[key:string]: "object" | "map" | "array"}} RecordPathMap
  */
@@ -192,8 +192,8 @@ function generateRecordRetrievers(compilerConfig, modelInfo) {
     }
 
     const imports = [
-        'import { ResourceRequest, FetchResponse, ResourceResponse } from "@ldsjs/engine"',
-        `import { ${RETRIEVER_INTERFACE_NAME}, ${RETRIEVED_TYPE_NAME} } from "@ldsjs/environments"`,
+        'import { ResourceRequest, FetchResponse, ResourceResponse } from "@luvio/engine"',
+        `import { ${RETRIEVER_INTERFACE_NAME}, ${RETRIEVED_TYPE_NAME} } from "@luvio/environments"`,
         `import { isSpanningRecord } from "../../selectors/record";`,
         'import { ObjectKeys } from "../../util/language"',
         `import { ${RECORD_REPRESENTATION} } from "../types/${RECORD_REPRESENTATION}"`,

@@ -1,11 +1,11 @@
-import { PathSelection } from '@ldsjs/engine';
+import { PathSelection } from '@luvio/engine';
 
 import { ObjectKeys, ArrayPrototypePush } from '../util/language';
 import { RecordFieldTrie } from '../util/records';
 
 import { RecordRepresentation } from '../generated/types/RecordRepresentation';
 import { RecordCreateDefaultRecordRepresentation } from '../generated/types/RecordCreateDefaultRecordRepresentation';
-import { LinkSelection } from '@ldsjs/engine/dist/es/es2018/Select';
+import { LinkSelection } from '@luvio/engine/dist/es/es2018/Select';
 
 type RecordRepresentationLike = RecordRepresentation | RecordCreateDefaultRecordRepresentation;
 

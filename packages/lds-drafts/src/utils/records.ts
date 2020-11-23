@@ -5,7 +5,7 @@ import {
     Environment,
     StoreLink,
     StoreRecordError,
-} from '@ldsjs/engine';
+} from '@luvio/engine';
 import {
     RecordRepresentation,
     keyBuilderRecord,
@@ -14,7 +14,7 @@ import {
     RecordRepresentationNormalized,
 } from '@salesforce/lds-adapters-uiapi';
 import { ArrayPrototypeShift, ObjectKeys } from './language';
-import { Selector, PathSelection } from '@ldsjs/engine';
+import { Selector, PathSelection } from '@luvio/engine';
 import { DraftAction } from '../main';
 import { RecordInputRepresentation } from '@salesforce/lds-adapters-uiapi/dist/types/src/generated/types/RecordInputRepresentation';
 

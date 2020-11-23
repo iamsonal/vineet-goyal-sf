@@ -1,4 +1,4 @@
-import { Selector, PathSelection } from '@ldsjs/engine';
+import { Selector, PathSelection } from '@luvio/engine';
 
 import { ArrayPrototypePush } from '../../util/language';
 import { extractRecordFields, buildSelectionFromFields } from '../../selectors/record';

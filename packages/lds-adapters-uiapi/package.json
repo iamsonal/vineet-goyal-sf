@@ -15,7 +15,7 @@
         "clean": "rm -rf dist sfdc src/generated karma/dist",
         "build": "yarn build:raml && yarn build:services && yarn build:karma",
         "build:karma": "rollup --config rollup.config.karma.js",
-        "build:raml": "lds generate src/raml/lds.raml src/generated -p './scripts/lds-uiapi-plugin.js'",
+        "build:raml": "luvio generate src/raml/lds.raml src/generated -p './scripts/lds-uiapi-plugin.js'",
         "build:services": "rollup --config rollup.config.js",
         "build:supported-entities": "node ./scripts/generate-supported-entities.js",
         "start": "karma start",

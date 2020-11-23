@@ -1,15 +1,15 @@
 #%RAML 1.0 Overlay
 extends: ./api.raml
 uses:
-  lds: lds://annotations.raml
+  luvio: luvio://annotations.raml
 
-(lds.keyPrefix): 'Commerce::'
+(luvio.keyPrefix): 'Commerce::'
 
 types:
   ProductPriceRepresentation:
-    (lds.opaque): true
+    (luvio.opaque): true
 
 /commerce/webstores/{webstoreId}/pricing/products/{productId}:
   get:
-    (lds.adapter):
+    (luvio.adapter):
       name: getProductPrice

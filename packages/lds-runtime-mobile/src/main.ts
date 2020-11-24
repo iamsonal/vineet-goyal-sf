@@ -1,4 +1,4 @@
-import { Luvio, Store, Environment, IngestPath, NetworkAdapter } from '@luvio/engine';
+import { Luvio, Store, Environment, IngestPath } from '@luvio/engine';
 import { makeOffline, makeDurable } from '@luvio/environments';
 
 import { NimbusNetworkAdapter } from './NimbusNetworkAdapter';
@@ -35,11 +35,10 @@ const durableStore = new NimbusDurableStore();
 const networkAdapter = NimbusNetworkAdapter;
 
 // draft queue
-let draftAwareNetworkAdapter: NetworkAdapter;
-const draftQueue = buildLdsDraftQueue(request => draftAwareNetworkAdapter(request), durableStore);
+const draftQueue = buildLdsDraftQueue(networkAdapter, durableStore);
 
 // make network and durable draft aware
-draftAwareNetworkAdapter = makeNetworkAdapterDraftAware(
+const draftAwareNetworkAdapter = makeNetworkAdapterDraftAware(
     networkAdapter,
     draftQueue,
     responseRecordRepresentationRetrievers
@@ -55,7 +54,8 @@ const env = makeEnvironmentDraftAware(
     ),
     store,
     draftQueue,
-    recordIngestFunc
+    recordIngestFunc,
+    responseRecordRepresentationRetrievers
 );
 
 lds = new Luvio(env);

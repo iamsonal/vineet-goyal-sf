@@ -70,7 +70,7 @@ function stringifyIfPresent(value: any | null): string | null {
 }
 
 function parseIfPresent(value: string | null): any | null {
-    if (value === undefined || value === null) {
+    if (value === undefined || value === null || value === '') {
         return null;
     }
     return JSON.parse(value);

@@ -9,6 +9,7 @@ import { DraftQueue, DraftRecordRepresentation } from '@salesforce/lds-drafts';
 import { JSONStringify } from '../utils/language';
 import { MockNimbusDurableStore, mockNimbusStoreGlobal } from './MockNimbusDurableStore';
 import { MockNimbusAdapter, mockNimbusNetworkGlobal } from './MockNimbusNetworkAdapter';
+import { flushPromises } from './testUtils';
 const RECORD_ID = '005xx000001XL1tAAG';
 const API_NAME = 'Account';
 
@@ -154,6 +155,9 @@ describe('lds drafts integration tests', () => {
 
         await draftQueue.processNextAction();
 
+        // the draft queue completed listener asynchronously ingests so have to flush promises
+        await flushPromises();
+
         expect(getRecordCallbackSpy).toBeCalledTimes(3);
 
         // should still contain the second draft data
@@ -165,5 +169,54 @@ describe('lds drafts integration tests', () => {
         expect(getRecordCallbackSpy.mock.calls[2][0].data.drafts.serverValues.Name.value).toBe(
             draftOneNameValue
         );
+    });
+
+    it('drafts property removed after upload succeeded', async () => {
+        const originalNameValue = 'Justin';
+        const updatedNameValue = 'Jason';
+
+        networkAdapter.setMockResponse({
+            status: 200,
+            headers: {},
+            body: JSONStringify(
+                createTestRecord(RECORD_ID, originalNameValue, originalNameValue, 1)
+            ),
+        });
+
+        const snapshot = await getRecord({ recordId: RECORD_ID, fields: ['Account.Name'] });
+        expect(snapshot.state).toBe('Fulfilled');
+
+        const getRecordCallbackSpy = jest.fn();
+        lds.storeSubscribe(snapshot, getRecordCallbackSpy);
+
+        await updateRecord({
+            recordId: RECORD_ID,
+            fields: { Name: updatedNameValue },
+        });
+
+        // before upload we should get back the optimistic response with drafts property
+        expect(getRecordCallbackSpy).toBeCalledTimes(1);
+        expect(getRecordCallbackSpy.mock.calls[0][0].data.fields.Name.value).toBe(updatedNameValue);
+        expect(getRecordCallbackSpy.mock.calls[0][0].data.drafts.edited).toBe(true);
+        expect(getRecordCallbackSpy.mock.calls[0][0].data.drafts.serverValues.Name.value).toBe(
+            originalNameValue
+        );
+
+        networkAdapter.setMockResponse({
+            status: 200,
+            headers: {},
+            body: JSONStringify(createTestRecord(RECORD_ID, updatedNameValue, updatedNameValue, 2)),
+        });
+
+        await draftQueue.processNextAction();
+
+        // the draft queue completed listener asynchronously ingests so have to flush promises
+        await flushPromises();
+
+        expect(getRecordCallbackSpy).toBeCalledTimes(2);
+
+        // second callback should not be a draft anymore
+        expect(getRecordCallbackSpy.mock.calls[1][0].data.fields.Name.value).toBe(updatedNameValue);
+        expect(getRecordCallbackSpy.mock.calls[1][0].data.drafts).toBeUndefined();
     });
 });

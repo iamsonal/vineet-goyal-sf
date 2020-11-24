@@ -1,5 +1,5 @@
 import { Environment, IngestPath, ResourceRequest, Store } from '@luvio/engine';
-import { DurableEnvironment } from '@luvio/environments';
+import { DurableEnvironment, ResponsePropertyRetriever } from '@luvio/environments';
 import { ObjectCreate } from './utils/language';
 
 import {
@@ -19,6 +19,7 @@ import {
 } from './DraftFetchResponse';
 import { clone } from './utils/clone';
 import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import { draftAwareHandleResponse } from './makeNetworkAdapterDraftAware';
 
 export function makeEnvironmentDraftAware(
     env: DurableEnvironment,
@@ -30,7 +31,8 @@ export function makeEnvironmentDraftAware(
         path: IngestPath,
         store: Store,
         timeStamp: number
-    ) => void
+    ) => void,
+    recordResponseRetrievers: ResponsePropertyRetriever<unknown, RecordRepresentation>[] = []
 ): Environment {
     const draftDeleteSet = new Set<string>();
 
@@ -133,15 +135,22 @@ export function makeEnvironmentDraftAware(
             env.storeEvict(tag);
             env.storeBroadcast(env.rebuildSnapshot);
         } else {
-            const record = action.response.body as RecordRepresentation;
-            const key = keyBuilderRecord({ recordId: record.id });
-            const path = {
-                fullPath: key,
-                parent: null,
-            };
+            draftAwareHandleResponse(
+                request,
+                action.response,
+                draftQueue,
+                recordResponseRetrievers
+            ).then(response => {
+                const record = response.body as RecordRepresentation;
+                const key = keyBuilderRecord({ recordId: record.id });
+                const path = {
+                    fullPath: key,
+                    parent: null,
+                };
 
-            ingestFunc(record, path, store, Date.now());
-            env.storeBroadcast(env.rebuildSnapshot);
+                ingestFunc(record, path, store, Date.now());
+                env.storeBroadcast(env.rebuildSnapshot);
+            });
         }
     });
 

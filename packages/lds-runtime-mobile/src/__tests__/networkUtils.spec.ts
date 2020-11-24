@@ -14,7 +14,6 @@ describe('networkUtils', () => {
                 headers: { 'Foo-Header': 'Bar' },
                 queryParams: { q1: 'q1Value', q2: 'q2Value' },
                 urlParams: { id: '123' },
-                ingest: null,
             };
 
             const result = buildNimbusNetworkPluginRequest(resourceRequest);
@@ -37,7 +36,6 @@ describe('networkUtils', () => {
                 headers: {},
                 queryParams: { qArray: ['test1', 'test2'] },
                 urlParams: {},
-                ingest: null,
             };
 
             const result = buildNimbusNetworkPluginRequest(resourceRequest);
@@ -60,7 +58,6 @@ describe('networkUtils', () => {
                 headers: {},
                 queryParams: { qArray: ['test1', 'test2'], uValue: undefined },
                 urlParams: {},
-                ingest: null,
             };
 
             const result = buildNimbusNetworkPluginRequest(resourceRequest);
@@ -84,7 +81,6 @@ describe('networkUtils', () => {
                 headers: {},
                 queryParams: {},
                 urlParams: {},
-                ingest: null,
             };
 
             const result = buildNimbusNetworkPluginRequest(resourceRequest);
@@ -143,6 +139,42 @@ describe('networkUtils', () => {
                 status: 404,
                 headers: {},
                 body: undefined,
+            };
+
+            const fetchResponse = buildLdsResponse(response);
+
+            expect(fetchResponse).toEqual({
+                ok: false,
+                status: 404,
+                statusText: 'Not Found',
+                headers: {},
+                body: null,
+            });
+        });
+
+        it('handles null body', () => {
+            const response: Response = {
+                status: 404,
+                headers: {},
+                body: null,
+            };
+
+            const fetchResponse = buildLdsResponse(response);
+
+            expect(fetchResponse).toEqual({
+                ok: false,
+                status: 404,
+                statusText: 'Not Found',
+                headers: {},
+                body: null,
+            });
+        });
+
+        it('handles empty string body', () => {
+            const response: Response = {
+                status: 404,
+                headers: {},
+                body: '',
             };
 
             const fetchResponse = buildLdsResponse(response);

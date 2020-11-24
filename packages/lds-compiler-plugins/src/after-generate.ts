@@ -6,6 +6,7 @@ import mkdirp from 'mkdirp';
 type AdapterInfo = {
     name: string;
     method: string;
+    refreshable: boolean;
 };
 
 const CREATE_WIRE_ADAPTER_CONSTRUCTOR = 'createWireAdapterConstructor';
@@ -42,6 +43,18 @@ function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
                     : `export const ${name} = ${CREATE_LDS_ADAPTER}(${adapterNameIdentifier}, ${factoryIdentifier});`;
             seed.exports.push(adapterExport);
 
+            if (adapter.refreshable) {
+                const notifyChangeNameIdentifier = `${name}NotifyChange`;
+                const notifyChangeFactoryIdentifier = `${name}__notifyChangeFactory`;
+
+                seed.imports.push(
+                    `import { notifyChangeFactory as ${notifyChangeFactoryIdentifier} } from '../adapters/${name}';`
+                );
+
+                const notifyChangeExport = `export const ${notifyChangeNameIdentifier} = ${CREATE_LDS_ADAPTER}('${notifyChangeNameIdentifier}', ${notifyChangeFactoryIdentifier});`;
+                seed.exports.push(notifyChangeExport);
+            }
+
             return seed;
         },
         {
@@ -67,6 +80,7 @@ export function afterGenerate(config: CompilerConfig, modelInfo: ModelInfo) {
                 name: resource.adapter!.name,
                 // using (lds.method) annotation if defined
                 method: resource.alternativeMethod || resource.method,
+                refreshable: resource.refresheable === true && resource.returnShape !== undefined,
             };
         });
 

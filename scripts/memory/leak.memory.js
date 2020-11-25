@@ -18,10 +18,10 @@ export default {
     maximum: 600000,
     before: () => {
         const store = new Store();
-        const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
+        const luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
         const timestamp = Date.now();
-        ingestRecord(JSON.parse(mockRecord), 'recordId', lds, store, timestamp);
-        return { store, lds, timestamp };
+        ingestRecord(JSON.parse(mockRecord), 'recordId', luvio, store, timestamp);
+        return { store, lds: luvio, timestamp };
     },
     func: ({ store, lds, timestamp }) => {
         const snapshot = lds.storeLookup({

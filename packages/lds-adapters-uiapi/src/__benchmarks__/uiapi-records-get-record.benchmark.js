@@ -56,16 +56,16 @@ function createRecord(maxDepth, maxBreadth, recordIdPrefix, depth = 0) {
 const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
 
 const store = new Store();
-const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-const getRecord = getRecordAdapterFactory(lds);
+const luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+const getRecord = getRecordAdapterFactory(luvio);
 
 const deepRecord = createRecord(5, 3, 'deep'); // 729 fields
 const wideRecord = createRecord(0, 500, 'wide'); // 500 fields
 const balancedRecord = createRecord(3, 10, 'balanced'); // 10000 fields
 
-ingestRecord(deepRecord.data, deepRecord.data.id, lds, store);
-ingestRecord(wideRecord.data, wideRecord.data.id, lds, store);
-ingestRecord(balancedRecord.data, balancedRecord.data.id, lds, store);
+ingestRecord(deepRecord.data, deepRecord.data.id, luvio, store);
+ingestRecord(wideRecord.data, wideRecord.data.id, luvio, store);
+ingestRecord(balancedRecord.data, balancedRecord.data.id, luvio, store);
 
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {

@@ -57,16 +57,16 @@ function buildDeepRecord(): RecordRepresentation {
 describe('getTrackedFields', () => {
     it('should return correct tracked fields', () => {
         const store = new Store();
-        const lds = new Luvio(new Environment(store, () => Promise.reject()));
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildSampleRecord(),
             { fullPath: keyBuilder({ recordId: record.id }), parent: null },
-            lds,
+            luvio,
             store,
             0
         );
-        const fields = getTrackedFields(lds, record.id, []);
+        const fields = getTrackedFields(luvio, record.id, []);
         expect(fields).toEqual([
             'Account.CreatedDate',
             'Account.Name',
@@ -79,16 +79,16 @@ describe('getTrackedFields', () => {
 
     it('should include fields passed to getTrackedFields', () => {
         const store = new Store();
-        const lds = new Luvio(new Environment(store, () => Promise.reject()));
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildSampleRecord(),
             { fullPath: keyBuilder({ recordId: record.id }), parent: null },
-            lds,
+            luvio,
             store,
             0
         );
-        const fields = getTrackedFields(lds, record.id, ['Account.Foo']);
+        const fields = getTrackedFields(luvio, record.id, ['Account.Foo']);
         expect(fields).toEqual([
             'Account.CreatedDate',
             'Account.Foo',
@@ -102,16 +102,16 @@ describe('getTrackedFields', () => {
 
     it('should dedupe fields passed to getTrackedFields', () => {
         const store = new Store();
-        const lds = new Luvio(new Environment(store, () => Promise.reject()));
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildSampleRecord(),
             { fullPath: keyBuilder({ recordId: record.id }), parent: null },
-            lds,
+            luvio,
             store,
             0
         );
-        const fields = getTrackedFields(lds, record.id, ['Account.Name']);
+        const fields = getTrackedFields(luvio, record.id, ['Account.Name']);
         expect(fields).toEqual([
             'Account.CreatedDate',
             'Account.Name',
@@ -124,33 +124,33 @@ describe('getTrackedFields', () => {
 
     it('should resolve tracked fields on records with circular reference', () => {
         const store = new Store();
-        const lds = new Luvio(new Environment(store, () => Promise.reject()));
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildRecursiveRecord(),
             { fullPath: keyBuilder({ recordId: record.id }), parent: null },
-            lds,
+            luvio,
             store,
             0
         );
 
-        const fields = getTrackedFields(lds, recursiveRecord.id, []);
+        const fields = getTrackedFields(luvio, recursiveRecord.id, []);
         expect(fields).toEqual(['User.CreatedById', 'User.Email', 'User.Id', 'User.Name']);
     });
 
     it('should resolve tracked fields on record with circular reference on a per-path basis', () => {
         const store = new Store();
-        const lds = new Luvio(new Environment(store, () => Promise.reject()));
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
 
         ingest(
             buildRecursiveRecordDifferentPaths(),
             { fullPath: keyBuilder({ recordId: record.id }), parent: null },
-            lds,
+            luvio,
             store,
             0
         );
 
-        const fields = getTrackedFields(lds, recursiveRecordDifferentPaths.id, []);
+        const fields = getTrackedFields(luvio, recursiveRecordDifferentPaths.id, []);
         expect(fields).toEqual([
             'User.CreatedBy.CreatedById',
             'User.CreatedBy.Id',
@@ -169,17 +169,17 @@ describe('getTrackedFields', () => {
         const record = buildDeepRecord();
 
         const store = new Store();
-        const lds = new Luvio(new Environment(store, () => Promise.reject()));
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
 
         ingest(
             record,
             { fullPath: keyBuilder({ recordId: record.id }), parent: null },
-            lds,
+            luvio,
             store,
             0
         );
 
-        const fields = getTrackedFields(lds, record.id, []);
+        const fields = getTrackedFields(luvio, record.id, []);
         expect(fields).toEqual([
             'TestD__c.TestC__c',
             'TestD__c.TestC__r.Id',
@@ -199,7 +199,7 @@ describe('getTrackedFields', () => {
     it('should not include 6 levels deep custom relationship field', () => {
         const store = new Store();
         store.records = storeRecordsWith6LevelRefsCustom;
-        const lds = new Luvio(new Environment(store, () => Promise.reject()));
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
 
         const expectedFields = [
             'Department__c.Id',
@@ -224,19 +224,19 @@ describe('getTrackedFields', () => {
 
         // Record with 6 depth relationship field (boundary value)
         // Name: Dep6, RecordId: a00xx000000bnVlAAI
-        const dep6Fields = getTrackedFields(lds, 'a00xx000000bnVlAAI', []);
+        const dep6Fields = getTrackedFields(luvio, 'a00xx000000bnVlAAI', []);
         expect(dep6Fields).toEqual(expectedFields);
 
         // Record with 7 depth relationship field
         // Name: Dep7, RecordId: a00xx000000bnXNAAY
-        const dep7Fields = getTrackedFields(lds, 'a00xx000000bnXNAAY', []);
+        const dep7Fields = getTrackedFields(luvio, 'a00xx000000bnXNAAY', []);
         expect(dep7Fields).toEqual(expectedFields);
     });
 
     it('should not include 6 levels deep relationship field', () => {
         const store = new Store();
         store.records = storeRecordsWith6LevelRefsAccount;
-        const lds = new Luvio(new Environment(store, () => Promise.reject()));
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
 
         const expectedFields = [
             'Department__c.Id',
@@ -261,7 +261,7 @@ describe('getTrackedFields', () => {
 
         // Record with 6 depth relationship field (boundary value)
         // Name: Dep6, RecordId: a00xx000000bnVlAAI
-        const dep6Fields = getTrackedFields(lds, 'a00xx000000bnVlAAI', []);
+        const dep6Fields = getTrackedFields(luvio, 'a00xx000000bnVlAAI', []);
         expect(dep6Fields).toEqual(expectedFields);
     });
 });
@@ -271,11 +271,11 @@ describe('extractTrackedFields', () => {
         const record = buildDeepRecord();
 
         const store = new Store();
-        const lds = new Luvio(new Environment(store, () => Promise.reject()));
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
         const recordKey = keyBuilder({ recordId: record.id });
-        ingest(record, { fullPath: recordKey, parent: null }, lds, store, 0);
+        ingest(record, { fullPath: recordKey, parent: null }, luvio, store, 0);
 
-        const node = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(recordKey);
+        const node = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(recordKey);
 
         const fields = extractTrackedFields(node, record.apiName);
         expect(fields).toEqual([
@@ -300,11 +300,11 @@ describe('extractTrackedFieldsToTrie', () => {
         const record = buildDeepRecord();
 
         const store = new Store();
-        const lds = new Luvio(new Environment(store, () => Promise.reject()));
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
         const recordKey = keyBuilder({ recordId: record.id });
-        ingest(record, { fullPath: recordKey, parent: null }, lds, store, 0);
+        ingest(record, { fullPath: recordKey, parent: null }, luvio, store, 0);
 
-        const node = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(recordKey);
+        const node = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(recordKey);
 
         const root = {
             name: record.apiName,

@@ -47,9 +47,9 @@ function buildLds(durableStore: MockDurableStore, n?: NetworkAdapter) {
         responseRecordRepresentationRetrievers
     );
 
-    const lds = new Luvio(env);
+    const luvio = new Luvio(env);
     return {
-        lds,
+        lds: luvio,
         durableStore,
         network,
         store,

@@ -17,7 +17,7 @@ function clone<T>(value: T): T {
 
 describe('normalize', () => {
     const store = new Store();
-    const lds = new Luvio(new Environment(store, jest.fn()));
+    const luvio = new Luvio(new Environment(store, jest.fn()));
 
     const path: IngestPath = {
         fullPath: 'some_path',
@@ -90,7 +90,7 @@ describe('normalize', () => {
                 input,
                 existing,
                 path,
-                lds,
+                luvio,
                 store,
                 123,
                 fieldsTrie,
@@ -117,7 +117,7 @@ describe('normalize', () => {
                         existing,
                     },
                 },
-                lds,
+                luvio,
                 store,
                 123
             );
@@ -125,7 +125,7 @@ describe('normalize', () => {
         });
 
         it("invokes generated record representation's ingestion if fields are not supplied", () => {
-            const output = normalize(input, existing, path, lds, store, 123);
+            const output = normalize(input, existing, path, luvio, store, 123);
             expect(output).toBe(input);
             expect(output.value).toBe(staticIngestValue);
             expect(mockCreateIngest).toHaveBeenCalledTimes(0);
@@ -140,7 +140,7 @@ describe('normalize', () => {
                         existing,
                     },
                 },
-                lds,
+                luvio,
                 store,
                 123
             );
@@ -158,7 +158,7 @@ describe('normalize', () => {
                 displayValue: 'a',
                 value: 'a',
             };
-            const output = normalize(input, existing, path, lds, store, 123);
+            const output = normalize(input, existing, path, luvio, store, 123);
             expect(output).toBe(input);
             expect(output.value).toBe('a');
             expect(mockCreateIngest).toHaveBeenCalledTimes(0);
@@ -171,7 +171,7 @@ describe('normalize', () => {
                 displayValue: null,
                 value: null,
             };
-            const output = normalize(input, existing, path, lds, store, 123);
+            const output = normalize(input, existing, path, luvio, store, 123);
             expect(output).toBe(input);
             expect(output.value).toBe(null);
             expect(mockCreateIngest).toHaveBeenCalledTimes(0);

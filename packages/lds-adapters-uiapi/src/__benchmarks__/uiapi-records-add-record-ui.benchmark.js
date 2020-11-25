@@ -10,9 +10,9 @@ const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
     const store = new Store();
-    const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
+    const luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
     const data = JSON.parse(mockRecordUI);
-    ingestRecordUi(data, RECORD_ID, lds, store);
+    ingestRecordUi(data, RECORD_ID, luvio, store);
 }
 
 describe('addRecordUi tests', () => {

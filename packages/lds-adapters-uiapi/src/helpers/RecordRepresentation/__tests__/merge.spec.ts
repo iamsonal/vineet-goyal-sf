@@ -24,17 +24,17 @@ describe('merge', () => {
             // make a change to the incoming since it's etag is greater
             delete incoming.fields['CreatedDate'];
             const store = new Store();
-            const lds = new Luvio(new Environment(store, jest.fn()));
+            const luvio = new Luvio(new Environment(store, jest.fn()));
             const key = keyBuilder({ recordId: exampleRecordOne.id });
             const path = {
                 fullPath: key,
                 parent: null,
             };
-            ingest(existing, path, lds, store, 0);
+            ingest(existing, path, luvio, store, 0);
             const existingRecord = store.records[key];
-            const incomingNormalized = normalize(incoming, existingRecord, path, lds, store, 0);
+            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
             const conflictMap = {};
-            merge(existingRecord, incomingNormalized, lds, path, conflictMap);
+            merge(existingRecord, incomingNormalized, luvio, path, conflictMap);
             expect(conflictMap[incomingNormalized.id]).toStrictEqual({
                 recordId: incomingNormalized.id,
                 trackedFields: {
@@ -86,17 +86,17 @@ describe('merge', () => {
             // need to make existing not a superset so let's delete existings CreatedDate
             delete existing.fields['CreatedDate'];
             const store = new Store();
-            const lds = new Luvio(new Environment(store, jest.fn()));
+            const luvio = new Luvio(new Environment(store, jest.fn()));
             const key = keyBuilder({ recordId: exampleRecordTwo.id });
             const path = {
                 fullPath: key,
                 parent: null,
             };
-            ingest(existing, path, lds, store, 0);
+            ingest(existing, path, luvio, store, 0);
             const existingRecord = store.records[key];
-            const incomingNormalized = normalize(incoming, existingRecord, path, lds, store, 0);
+            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
             const conflictMap = {};
-            merge(existingRecord, incomingNormalized, lds, path, conflictMap);
+            merge(existingRecord, incomingNormalized, luvio, path, conflictMap);
             expect(conflictMap[incomingNormalized.id]).toStrictEqual({
                 recordId: incomingNormalized.id,
                 trackedFields: {
@@ -150,7 +150,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new Luvio(new Environment(store, jest.fn()));
+            const luvio = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -158,15 +158,15 @@ describe('merge', () => {
                 parent: null,
             };
 
-            ingest(existing, path, lds, store, 0);
+            ingest(existing, path, luvio, store, 0);
 
             const existingRecord = store.records[key];
 
-            const incomingNormalized = normalize(incoming, existingRecord, path, lds, store, 0);
+            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
 
             const conflictMap = {};
 
-            merge(existingRecord, incomingNormalized, lds, path, conflictMap);
+            merge(existingRecord, incomingNormalized, luvio, path, conflictMap);
             expect(spy).not.toHaveBeenCalled();
         });
         it('makes a network request as a fallback ', () => {
@@ -180,7 +180,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new Luvio(new Environment(store, jest.fn()));
+            const luvio = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -188,13 +188,13 @@ describe('merge', () => {
                 parent: null,
             };
 
-            ingest(existing, path, lds, store, 0);
+            ingest(existing, path, luvio, store, 0);
 
             const existingRecord = store.records[key];
 
-            const incomingNormalized = normalize(incoming, existingRecord, path, lds, store, 0);
+            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
 
-            merge(existingRecord, incomingNormalized, lds, path);
+            merge(existingRecord, incomingNormalized, luvio, path);
             expect(spy).toHaveBeenCalled();
         });
         it('sets incoming fields that arent on existing fields to undefined (CreateDate should have undefined ref)', () => {
@@ -235,7 +235,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new Luvio(new Environment(store, jest.fn()));
+            const luvio = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -243,14 +243,20 @@ describe('merge', () => {
                 parent: null,
             };
 
-            ingest(existing, path, lds, store, 0);
+            ingest(existing, path, luvio, store, 0);
 
             const existingRecord = store.records[key];
 
-            const incomingNormalized = normalize(incoming, existingRecord, path, lds, store, 0);
+            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
             const conflictMap = {};
 
-            const mergedFields = merge(existingRecord, incomingNormalized, lds, path, conflictMap);
+            const mergedFields = merge(
+                existingRecord,
+                incomingNormalized,
+                luvio,
+                path,
+                conflictMap
+            );
 
             expect(mergedFields).toEqual(expectedMergedFields);
         });
@@ -290,7 +296,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new Luvio(new Environment(store, jest.fn()));
+            const luvio = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -298,14 +304,20 @@ describe('merge', () => {
                 parent: null,
             };
 
-            ingest(existing, path, lds, store, 0);
+            ingest(existing, path, luvio, store, 0);
 
             const existingRecord = store.records[key];
 
-            const incomingNormalized = normalize(incoming, existingRecord, path, lds, store, 0);
+            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
             const conflictMap = {};
 
-            const mergedFields = merge(existingRecord, incomingNormalized, lds, path, conflictMap);
+            const mergedFields = merge(
+                existingRecord,
+                incomingNormalized,
+                luvio,
+                path,
+                conflictMap
+            );
 
             expect(mergedFields).toEqual(expectedMergedFields);
         });
@@ -319,7 +331,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new Luvio(new Environment(store, jest.fn()));
+            const luvio = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -327,15 +339,15 @@ describe('merge', () => {
                 parent: null,
             };
 
-            ingest(existing, path, lds, store, 0);
+            ingest(existing, path, luvio, store, 0);
 
             const existingRecord = store.records[key];
 
-            const incomingNormalized = normalize(incoming, existingRecord, path, lds, store, 0);
+            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
 
             const conflictMap = {};
 
-            merge(existingRecord, incomingNormalized, lds, path, conflictMap);
+            merge(existingRecord, incomingNormalized, luvio, path, conflictMap);
             expect(spy).not.toHaveBeenCalled();
         });
         it('should make a network request as a fallback ', () => {
@@ -348,7 +360,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new Luvio(new Environment(store, jest.fn()));
+            const luvio = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -356,13 +368,13 @@ describe('merge', () => {
                 parent: null,
             };
 
-            ingest(existing, path, lds, store, 0);
+            ingest(existing, path, luvio, store, 0);
 
             const existingRecord = store.records[key];
 
-            const incomingNormalized = normalize(incoming, existingRecord, path, lds, store, 0);
+            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
 
-            merge(existingRecord, incomingNormalized, lds, path);
+            merge(existingRecord, incomingNormalized, luvio, path);
             expect(spy).toHaveBeenCalled();
         });
         it('sets incoming fields that arent on existing fields to undefined (CreateDate should have undefined ref)', () => {
@@ -403,7 +415,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new Luvio(new Environment(store, jest.fn()));
+            const luvio = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -411,14 +423,20 @@ describe('merge', () => {
                 parent: null,
             };
 
-            ingest(existing, path, lds, store, 0);
+            ingest(existing, path, luvio, store, 0);
 
             const existingRecord = store.records[key];
 
-            const incomingNormalized = normalize(incoming, existingRecord, path, lds, store, 0);
+            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
             const conflictMap = {};
 
-            const mergedFields = merge(existingRecord, incomingNormalized, lds, path, conflictMap);
+            const mergedFields = merge(
+                existingRecord,
+                incomingNormalized,
+                luvio,
+                path,
+                conflictMap
+            );
 
             expect(mergedFields).toEqual(expectedMergedFields);
         });
@@ -457,7 +475,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new Luvio(new Environment(store, jest.fn()));
+            const luvio = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -465,14 +483,20 @@ describe('merge', () => {
                 parent: null,
             };
 
-            ingest(existing, path, lds, store, 0);
+            ingest(existing, path, luvio, store, 0);
 
             const existingRecord = store.records[key];
 
-            const incomingNormalized = normalize(incoming, existingRecord, path, lds, store, 0);
+            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
             const conflictMap = {};
 
-            const mergedFields = merge(existingRecord, incomingNormalized, lds, path, conflictMap);
+            const mergedFields = merge(
+                existingRecord,
+                incomingNormalized,
+                luvio,
+                path,
+                conflictMap
+            );
 
             expect(mergedFields).toEqual(expectedMergedFields);
         });
@@ -486,7 +510,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new Luvio(new Environment(store, jest.fn()));
+            const luvio = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -494,15 +518,15 @@ describe('merge', () => {
                 parent: null,
             };
 
-            ingest(existing, path, lds, store, 0);
+            ingest(existing, path, luvio, store, 0);
 
             const existingRecord = store.records[key];
 
-            const incomingNormalized = normalize(incoming, existingRecord, path, lds, store, 0);
+            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
 
             const conflictMap = {};
 
-            merge(existingRecord, incomingNormalized, lds, path, conflictMap);
+            merge(existingRecord, incomingNormalized, luvio, path, conflictMap);
             expect(spy).not.toHaveBeenCalled();
         });
         it('should merge the two sets of fields if fields are missing on either end', () => {
@@ -544,7 +568,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new Luvio(new Environment(store, jest.fn()));
+            const luvio = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -552,14 +576,20 @@ describe('merge', () => {
                 parent: null,
             };
 
-            ingest(existing, path, lds, store, 0);
+            ingest(existing, path, luvio, store, 0);
 
             const existingRecord = store.records[key];
 
-            const incomingNormalized = normalize(incoming, existingRecord, path, lds, store, 0);
+            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
             const conflictMap = {};
 
-            const mergedFields = merge(existingRecord, incomingNormalized, lds, path, conflictMap);
+            const mergedFields = merge(
+                existingRecord,
+                incomingNormalized,
+                luvio,
+                path,
+                conflictMap
+            );
 
             expect(mergedFields).toEqual(expectedMergedFields);
         });
@@ -599,7 +629,7 @@ describe('merge', () => {
             incoming = JSON.parse(JSON.stringify(incoming));
 
             const store = new Store();
-            const lds = new Luvio(new Environment(store, jest.fn()));
+            const luvio = new Luvio(new Environment(store, jest.fn()));
 
             const key = keyBuilder({ recordId: existing.id });
             const path = {
@@ -607,14 +637,20 @@ describe('merge', () => {
                 parent: null,
             };
 
-            ingest(existing, path, lds, store, 0);
+            ingest(existing, path, luvio, store, 0);
 
             const existingRecord = store.records[key];
 
-            const incomingNormalized = normalize(incoming, existingRecord, path, lds, store, 0);
+            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
             const conflictMap = {};
 
-            const mergedFields = merge(existingRecord, incomingNormalized, lds, path, conflictMap);
+            const mergedFields = merge(
+                existingRecord,
+                incomingNormalized,
+                luvio,
+                path,
+                conflictMap
+            );
 
             expect(mergedFields).toEqual(expectedMergedFields);
         });

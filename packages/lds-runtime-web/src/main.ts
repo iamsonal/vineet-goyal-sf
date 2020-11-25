@@ -6,10 +6,10 @@ import { instrumentation, setupInstrumentation } from '@salesforce/lds-instrumen
 const store = new Store();
 const environment = new Environment(store, networkAdapter);
 
-const lds = new Luvio(environment, {
+const luvio = new Luvio(environment, {
     instrument: instrumentation.instrumentNetwork.bind(instrumentation),
 });
 
-setupInstrumentation(lds, store);
+setupInstrumentation(luvio, store);
 
-export { lds };
+export { luvio as lds };

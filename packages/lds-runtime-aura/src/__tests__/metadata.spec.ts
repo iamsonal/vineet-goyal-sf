@@ -8,11 +8,11 @@ import * as ldsStorage from '@salesforce/lds-aura-storage';
 function createMetadataWatcher() {
     const store = new Store();
     const environment = new Environment(store, () => Promise.resolve());
-    const lds = new Luvio(environment);
+    const luvio = new Luvio(environment);
 
-    setupMetadataWatcher(lds);
+    setupMetadataWatcher(luvio);
 
-    return { lds };
+    return { lds: luvio };
 }
 
 describe('setupMetadataWatcher', () => {

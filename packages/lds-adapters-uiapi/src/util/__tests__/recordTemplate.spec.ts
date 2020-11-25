@@ -16,15 +16,15 @@ function buildSampleRecordTemplate(): RecordTemplateCreateRepresentation {
 describe('getTrackedFields', () => {
     it('should return correct tracked fields 1 level deep', () => {
         const store = new Store();
-        const lds = new Luvio(new Environment(store, () => Promise.reject()));
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
 
         const key = keyBuilder({
             apiName: 'Account',
             recordTypeId: '012000000000000AAA',
         });
 
-        ingest(buildSampleRecordTemplate(), { fullPath: key, parent: null }, lds, store, 0);
-        const fields = getTrackedFields(lds, key, []);
+        ingest(buildSampleRecordTemplate(), { fullPath: key, parent: null }, luvio, store, 0);
+        const fields = getTrackedFields(luvio, key, []);
         expect(fields).toEqual([
             'Account.CreatedDate',
             'Account.Name',
@@ -36,15 +36,15 @@ describe('getTrackedFields', () => {
 
     it('should include fields passed to getTrackedFields', () => {
         const store = new Store();
-        const lds = new Luvio(new Environment(store, () => Promise.reject()));
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
 
         const key = keyBuilder({
             apiName: 'Account',
             recordTypeId: '012000000000000AAA',
         });
 
-        ingest(buildSampleRecordTemplate(), { fullPath: key, parent: null }, lds, store, 0);
-        const fields = getTrackedFields(lds, key, ['Account.Foo']);
+        ingest(buildSampleRecordTemplate(), { fullPath: key, parent: null }, luvio, store, 0);
+        const fields = getTrackedFields(luvio, key, ['Account.Foo']);
         expect(fields).toEqual([
             'Account.CreatedDate',
             'Account.Foo',
@@ -57,15 +57,15 @@ describe('getTrackedFields', () => {
 
     it('should dedupe fields passed to getTrackedFields', () => {
         const store = new Store();
-        const lds = new Luvio(new Environment(store, () => Promise.reject()));
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
 
         const key = keyBuilder({
             apiName: 'Account',
             recordTypeId: '012000000000000AAA',
         });
 
-        ingest(buildSampleRecordTemplate(), { fullPath: key, parent: null }, lds, store, 0);
-        const fields = getTrackedFields(lds, key, ['Account.Name']);
+        ingest(buildSampleRecordTemplate(), { fullPath: key, parent: null }, luvio, store, 0);
+        const fields = getTrackedFields(luvio, key, ['Account.Name']);
         expect(fields).toEqual([
             'Account.CreatedDate',
             'Account.Name',

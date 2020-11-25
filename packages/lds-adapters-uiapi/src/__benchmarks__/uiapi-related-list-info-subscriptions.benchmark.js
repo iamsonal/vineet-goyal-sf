@@ -13,8 +13,8 @@ function clone(data) {
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
     const store = new Store();
-    const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-    ingestRelatedListInfo(JSON.parse(mockRelatedListInfo), 'warmupKey', lds, store);
+    const luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+    ingestRelatedListInfo(JSON.parse(mockRelatedListInfo), 'warmupKey', luvio, store);
 }
 
 describe('O(n) emit time as subscription count(n) grows', () => {

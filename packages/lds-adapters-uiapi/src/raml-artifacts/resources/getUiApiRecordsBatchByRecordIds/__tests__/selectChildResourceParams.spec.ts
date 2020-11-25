@@ -28,7 +28,7 @@ function assertIsFragment(fragment) {
 }
 
 describe('selectChildResourceParams', () => {
-    const lds = new Luvio(new Environment(new Store(), jest.fn()));
+    const luvio = new Luvio(new Environment(new Store(), jest.fn()));
     let reader: Reader<any>;
 
     const fields = ['a', 'b', 'c'];
@@ -105,7 +105,7 @@ describe('selectChildResourceParams', () => {
     ])('selects %s record', (stateName, inputRecord, expectedRecord) => {
         reader.read = jest.fn().mockImplementation(() => inputRecord);
         const params = makeParams('record1');
-        const fragment = selectChildResourceParams(lds, [params]) as ReaderFragment;
+        const fragment = selectChildResourceParams(luvio, [params]) as ReaderFragment;
         assertIsFragment(fragment);
         const result = fragment.read(reader);
         expect(Object.isFrozen(result)).toEqual(true);
@@ -128,7 +128,7 @@ describe('selectChildResourceParams', () => {
         reader.read = jest.fn().mockImplementation(selector => records[selector.recordId]);
         const recordIds = ['record1', 'record2', 'errored', 'unfulfilled', 'pending', 'stale'];
         const params = recordIds.map(recordId => makeParams(recordId));
-        const fragment = selectChildResourceParams(lds, params) as ReaderFragment;
+        const fragment = selectChildResourceParams(luvio, params) as ReaderFragment;
         assertIsFragment(fragment);
         const result = fragment.read(reader);
         expect(Object.isFrozen(result)).toEqual(true);

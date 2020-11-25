@@ -13,11 +13,11 @@ function clone(data) {
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
     const store = new Store();
-    const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
+    const luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
     ingestRelatedListSummaryInfoCollection(
         JSON.parse(mockRelatedListInfoCollection),
         'warmupKey',
-        lds,
+        luvio,
         store
     );
 }

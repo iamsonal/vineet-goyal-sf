@@ -34,9 +34,9 @@ export function buildOfflineLds(
     if (customEnvironment !== undefined) {
         env = customEnvironment(env, durableStore, store);
     }
-    const lds = new Luvio(env);
+    const luvio = new Luvio(env);
     return {
-        lds,
+        lds: luvio,
         durableStore,
         network,
         store,

@@ -15,7 +15,7 @@ import {
 } from '@salesforce/lds-drafts';
 import { buildLdsDraftQueue } from './DraftQueueFactory';
 
-let lds: Luvio;
+let luvio: Luvio;
 
 // TODO - W-8291468 - have ingest get called a different way somehow
 const recordIngestFunc = (
@@ -24,8 +24,8 @@ const recordIngestFunc = (
     store: Store,
     timeStamp: number
 ) => {
-    if (lds !== undefined) {
-        ingestRecord(record, path, lds, store, timeStamp);
+    if (luvio !== undefined) {
+        ingestRecord(record, path, luvio, store, timeStamp);
     }
 };
 
@@ -58,6 +58,6 @@ const env = makeEnvironmentDraftAware(
     responseRecordRepresentationRetrievers
 );
 
-lds = new Luvio(env);
+luvio = new Luvio(env);
 
-export { lds, draftQueue };
+export { luvio as lds, draftQueue };

@@ -8,10 +8,10 @@ import { addObjectInfo, addRecord, createObjectInfo, createRecord } from './test
 function createBridge() {
     const store = new Store();
     const environment = new Environment(store, () => Promise.resolve());
-    const lds = new Luvio(environment);
-    const bridge = new AdsBridge(lds);
+    const luvio = new Luvio(environment);
+    const bridge = new AdsBridge(luvio);
 
-    return { store, lds, bridge };
+    return { store, lds: luvio, bridge };
 }
 
 jest.mock('@salesforce/lds-instrumentation', () => {

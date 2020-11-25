@@ -19,7 +19,7 @@ function buildSampleRecord(): RecordRepresentation {
 }
 
 describe('ingestSuccessChildResourceParams', () => {
-    const lds = new Luvio(new Environment(new Store(), jest.fn()));
+    const luvio = new Luvio(new Environment(new Store(), jest.fn()));
 
     const newRecord = buildSampleRecord();
     const recordId = newRecord.id;
@@ -49,7 +49,7 @@ describe('ingestSuccessChildResourceParams', () => {
 
     it('ingestSuccess', () => {
         const params = makeParams(recordId);
-        const ingestResult = ingestSuccessChildResourceParams(lds, [params], [successResult]);
+        const ingestResult = ingestSuccessChildResourceParams(luvio, [params], [successResult]);
         expect(Object.isFrozen(ingestResult.childSnapshotData)).toEqual(true);
         expect(ingestSuccess).toHaveBeenCalledTimes(1);
         expect(ingestResult.childSnapshotData.results[0].statusCode).toEqual(200);
@@ -57,7 +57,7 @@ describe('ingestSuccessChildResourceParams', () => {
 
     it('ingestError', () => {
         const params = makeParams(recordId);
-        const ingestResult = ingestSuccessChildResourceParams(lds, [params], [errorResult]);
+        const ingestResult = ingestSuccessChildResourceParams(luvio, [params], [errorResult]);
         expect(Object.isFrozen(ingestResult.childSnapshotData)).toEqual(true);
         expect(ingestError).toHaveBeenCalledTimes(1);
         expect(ingestResult.childSnapshotData.results[0].statusCode).toEqual(404);

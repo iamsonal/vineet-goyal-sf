@@ -11,7 +11,7 @@ function clone<T>(value: T): T {
 
 describe('normalize', () => {
     const store = new Store();
-    const lds = new Luvio(new Environment(store, jest.fn()));
+    const luvio = new Luvio(new Environment(store, jest.fn()));
 
     const path: IngestPath = {
         fullPath: 'some_path',
@@ -122,7 +122,7 @@ describe('normalize', () => {
             input,
             existing,
             path,
-            lds,
+            luvio,
             store,
             123,
             fieldsTrie,
@@ -142,7 +142,7 @@ describe('normalize', () => {
                 fullPath: 'some_path__fields__Value',
                 parent: { data: input, key: 'some_path', existing },
             },
-            lds,
+            luvio,
             store,
             123,
             { name: 'Value', children: {}, optional: false, scalar: true },
@@ -172,7 +172,7 @@ describe('normalize', () => {
                 fullPath: 'some_path__fields__Owner',
                 parent: { data: input, key: 'some_path', existing },
             },
-            lds,
+            luvio,
             store,
             123,
             {

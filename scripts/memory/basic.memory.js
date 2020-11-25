@@ -12,9 +12,9 @@ export default {
     func: () => {
         for (let i = 0; i < ITERATION_COUNT; i++) {
             const store = new Store();
-            const lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            ingestRecord(JSON.parse(mockRecord), 'record', lds, store);
-            ingestRecordUi(JSON.parse(mockRecordUI), 'record', lds, store);
+            const luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            ingestRecord(JSON.parse(mockRecord), 'record', luvio, store);
+            ingestRecordUi(JSON.parse(mockRecordUI), 'record', luvio, store);
         }
     },
 };

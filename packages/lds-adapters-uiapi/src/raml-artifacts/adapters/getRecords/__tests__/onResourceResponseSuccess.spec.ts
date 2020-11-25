@@ -65,11 +65,11 @@ describe('onResourceResponseSuccess', () => {
         },
     };
     const store = new Store();
-    const lds = new Luvio(new Environment(store, jest.fn()));
+    const luvio = new Luvio(new Environment(store, jest.fn()));
 
     it('returns snapshot with state fulfilled', () => {
         const result = onResourceResponseSuccess(
-            lds,
+            luvio,
             inputGetRecordsConfig,
             resourceParams,
             mockResponse
@@ -82,12 +82,12 @@ describe('onResourceResponseSuccess', () => {
             createChildResourceParamObject,
             'createChildResourceParams'
         );
-        onResourceResponseSuccess(lds, inputGetRecordsConfig, resourceParams, mockResponse);
+        onResourceResponseSuccess(luvio, inputGetRecordsConfig, resourceParams, mockResponse);
         expect(createChildResourceParamsSpy).toHaveBeenCalledWith(inputGetRecordsConfig);
     });
 
     it('calls ingestSuccessChildResourceParams with the right arguments', () => {
-        onResourceResponseSuccess(lds, inputGetRecordsConfig, resourceParams, mockResponse);
+        onResourceResponseSuccess(luvio, inputGetRecordsConfig, resourceParams, mockResponse);
         const childResourceParam = {
             urlParams: {
                 recordId: mockRecordId,
@@ -97,20 +97,20 @@ describe('onResourceResponseSuccess', () => {
             },
         };
         expect(ingestSuccessChildResourceParams).toHaveBeenCalledWith(
-            lds,
+            luvio,
             [childResourceParam],
             mockResponse.body.results
         );
     });
 
     it('calls adapterFragment with lds and GetRecordsConfig input', () => {
-        onResourceResponseSuccess(lds, inputGetRecordsConfig, resourceParams, mockResponse);
-        expect(adapterFragment).toHaveBeenCalledWith(lds, inputGetRecordsConfig);
+        onResourceResponseSuccess(luvio, inputGetRecordsConfig, resourceParams, mockResponse);
+        expect(adapterFragment).toHaveBeenCalledWith(luvio, inputGetRecordsConfig);
     });
 
     it('calls lds.storeBroadcast once', () => {
-        const ldsBroadcastSpy = jest.spyOn(lds, 'storeBroadcast');
-        onResourceResponseSuccess(lds, inputGetRecordsConfig, resourceParams, mockResponse);
+        const ldsBroadcastSpy = jest.spyOn(luvio, 'storeBroadcast');
+        onResourceResponseSuccess(luvio, inputGetRecordsConfig, resourceParams, mockResponse);
         expect(ldsBroadcastSpy).toHaveBeenCalledTimes(1);
     });
 });

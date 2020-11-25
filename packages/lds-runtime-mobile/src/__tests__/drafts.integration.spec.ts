@@ -1,3 +1,4 @@
+import timekeeper from 'timekeeper';
 import { Luvio, Snapshot } from '@luvio/engine';
 import {
     createRecordAdapterFactory,
@@ -6,6 +7,8 @@ import {
     updateRecordAdapterFactory,
 } from '@salesforce/lds-adapters-uiapi';
 import { DraftQueue, DraftRecordRepresentation, DurableDraftQueue } from '@salesforce/lds-drafts';
+import { RECORD_TTL } from '@salesforce/lds-adapters-uiapi/karma/dist/uiapi-constants';
+
 import { NimbusDurableStore } from '../NimbusDurableStore';
 import { NimbusNetworkAdapter } from '../NimbusNetworkAdapter';
 import { JSONStringify } from '../utils/language';
@@ -79,6 +82,18 @@ describe('lds drafts integration tests', () => {
             expect(networkSpy).toHaveBeenCalledTimes(0);
             expect(record.drafts.created).toBe(true);
         });
+
+        it('synthetic record responds with null fields it does not know about', async () => {
+            const snapshot = await createRecord({ apiName: API_NAME, fields: { Name: 'Justin' } });
+            expect(snapshot.state).toBe('Fulfilled');
+            const record = (snapshot.data as unknown) as DraftRecordRepresentation;
+
+            const getRecordSnapshot = (await getRecord({
+                recordId: record.id,
+                fields: ['Account.Name', 'Account.BillingCity'],
+            })) as Snapshot<RecordRepresentation>;
+            expect(getRecordSnapshot.state).toBe('Fulfilled');
+        });
     });
 
     describe('updateRecord', () => {
@@ -112,6 +127,41 @@ describe('lds drafts integration tests', () => {
             expect(callbackSpy.mock.calls[0][0].data.drafts.serverValues.Name.value).toBe(
                 orginalName
             );
+        });
+
+        it('getRecord includes draft overlay on stale response', async () => {
+            const originalNameValue = 'Justin';
+            const draftOneNameValue = 'Jason';
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(
+                    createTestRecord(RECORD_ID, originalNameValue, originalNameValue, 1)
+                ),
+            });
+
+            const snapshot = await getRecord({ recordId: RECORD_ID, fields: ['Account.Name'] });
+            expect(snapshot.state).toBe('Fulfilled');
+
+            // create a draft edit
+            await updateRecord({
+                recordId: RECORD_ID,
+                fields: { Name: draftOneNameValue },
+            });
+
+            // let record TTL expire
+            timekeeper.travel(Date.now() + RECORD_TTL + 1);
+
+            const staleSnapshot = await getRecord({
+                recordId: RECORD_ID,
+                fields: ['Account.Name'],
+            });
+            expect(staleSnapshot.state).toBe('Stale');
+            expect(staleSnapshot.data.drafts.edited).toBe(true);
+            expect(staleSnapshot.data.fields['Name']).toStrictEqual({
+                value: draftOneNameValue,
+                displayValue: draftOneNameValue,
+            });
         });
 
         it('serverValues get updated on network response', async () => {

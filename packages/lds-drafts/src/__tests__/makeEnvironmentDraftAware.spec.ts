@@ -135,7 +135,7 @@ describe('makeEnvironmentDraftAware', () => {
                 );
                 rejects.toMatchObject({
                     body: {
-                        message: 'apiName was missing',
+                        message: 'apiName missing from request body.',
                     },
                     headers: {},
                     status: 400,

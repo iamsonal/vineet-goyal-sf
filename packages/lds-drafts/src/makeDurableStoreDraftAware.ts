@@ -271,7 +271,7 @@ export function makeDurableStoreDraftAware(
             return Promise.resolve({});
         }
 
-        // filtered list of entry ids that exludes draft-created records
+        // filtered list of entry ids that excludes draft-created records
         const filteredEntryIds: string[] = [];
         // all requested entry keys that are records
         const allRecordKeys: { [key: string]: true } = {};

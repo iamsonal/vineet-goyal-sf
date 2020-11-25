@@ -1,6 +1,7 @@
 const { keys, create, assign } = Object;
 const { stringify, parse } = JSON;
 const { shift } = Array.prototype;
+const { isArray } = Array;
 export {
     // Object
     keys as ObjectKeys,
@@ -11,4 +12,5 @@ export {
     parse as JSONParse,
     // Array
     shift as ArrayPrototypeShift,
+    isArray as ArrayIsArray,
 };

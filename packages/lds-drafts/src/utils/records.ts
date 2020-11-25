@@ -13,7 +13,7 @@ import {
     buildSelectionFromFields,
     RecordRepresentationNormalized,
 } from '@salesforce/lds-adapters-uiapi';
-import { ArrayPrototypeShift, ObjectKeys } from './language';
+import { ArrayIsArray, ArrayPrototypeShift, ObjectKeys } from './language';
 import { Selector, PathSelection } from '@luvio/engine';
 import { DraftAction } from '../main';
 import { RecordInputRepresentation } from '@salesforce/lds-adapters-uiapi/dist/types/src/generated/types/RecordInputRepresentation';
@@ -172,10 +172,20 @@ export function shouldDraftResourceRequest(request: ResourceRequest) {
     );
 }
 
+export function isRequestForDraftGetRecord(request: ResourceRequest) {
+    const { basePath, method } = request;
+    if (RECORD_ENDPOINT_REGEX.test(basePath) && method === 'get') {
+        const id = request.urlParams['recordId'];
+        return typeof id === 'string' && isDraftId(id);
+    }
+
+    return false;
+}
+
 /**
- * Extracts a record id from a record CUD ResourceRequest. This method parses out the
- * recordId from the request path in the case of an update and delete. In the case of a
- * post, we generate a temporary client-side id
+ * Extracts a record id from a record ResourceRequest. This method parses out the
+ * recordId from the request path in the case of get, update, and delete. In the
+ * case of a post, we generate a temporary client-side id
  * @param request The ResourceRequest to extract the record id from
  */
 export function getRecordIdFromRecordRequest(request: ResourceRequest): string | undefined {
@@ -186,6 +196,7 @@ export function getRecordIdFromRecordRequest(request: ResourceRequest): string |
 
     let recordId = '';
     switch (method) {
+        case 'get':
         case 'patch':
         case 'delete': {
             const matches = basePath.match(RECORD_ENDPOINT_REGEX);
@@ -219,17 +230,37 @@ export function getRecordKeyForId(recordId: string) {
     return keyBuilderRecord({ recordId });
 }
 
+export function getRecordKeyFromRecordRequest(resourceRequest: ResourceRequest) {
+    const id = getRecordIdFromRecordRequest(resourceRequest);
+    if (id === undefined) {
+        return undefined;
+    }
+
+    return getRecordKeyForId(id);
+}
+
 /**
- * Extracts the record fields from a record PATCH or POST ResourceRequest body
- * @param request The patch or post resource request
+ * Extracts the record fields from a record PATCH or POST ResourceRequest body or
+ * a GET ResourceRequest params.  This will return the fields without the apiName
+ * prepended, so "Name" instead of "Account.Name".
+ * @param request The resource request
  */
-export function getRecordFieldsFromRecordRequest(request: ResourceRequest) {
+export function getRecordFieldsFromRecordRequest(request: ResourceRequest): string[] | undefined {
     const { method, body } = request;
     if (method === 'patch' || method === 'post') {
         if (body === undefined) {
             return undefined;
         }
         return ObjectKeys(body.fields);
+    }
+
+    if (method === 'get') {
+        const fieldsParam = request.queryParams['fields'];
+        const fields = ArrayIsArray(fieldsParam) ? fieldsParam : [];
+        const optionalFieldsParam = request.queryParams['optionalFields'] || [];
+        const optionalFields = ArrayIsArray(optionalFieldsParam) ? optionalFieldsParam : [];
+        const allFields = [...fields, ...optionalFields] as string[];
+        return allFields.map(f => f.substring(f.indexOf('.') + 1));
     }
     return undefined;
 }

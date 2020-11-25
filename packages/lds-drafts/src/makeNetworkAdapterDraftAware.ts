@@ -2,7 +2,6 @@ import { FetchResponse, NetworkAdapter, ResourceRequest } from '@luvio/engine';
 import { ResponsePropertyRetriever, RetrievedProperty } from '@luvio/environments';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { DraftAction, DraftQueue } from './main';
-import { ObjectKeys } from './utils/language';
 import { replayDraftsOnRecord } from './utils/records';
 
 /**
@@ -17,14 +16,15 @@ function applyDraftsToResponse(
     const { length: retrievedRecordsLength } = records;
     const retrievedRecordKeys: { [key: string]: true } = {};
 
-    for (let j = 0, len = retrievedRecordsLength; j < len; j++) {
+    for (let j = 0; j < retrievedRecordsLength; j++) {
         const { cacheKey } = records[j];
         retrievedRecordKeys[cacheKey] = true;
     }
 
     return draftQueue.getActionsForTags(retrievedRecordKeys).then(actions => {
-        const retrievedKeys = ObjectKeys(retrievedRecordKeys);
-        for (let j = 0, len = retrievedKeys.length; j < len; j++) {
+        // even though some might be duplicate record IDs, we have to loop through
+        // each record because it sits at a different spot in memory
+        for (let j = 0; j < retrievedRecordsLength; j++) {
             const { cacheKey, data } = records[j];
             const drafts = actions[cacheKey] as Readonly<DraftAction<RecordRepresentation>[]>;
 

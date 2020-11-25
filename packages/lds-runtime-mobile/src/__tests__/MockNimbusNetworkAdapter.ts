@@ -1,4 +1,4 @@
-import { NetworkAdapter, Request, Response } from '@mobileplatform/nimbus-plugin-lds';
+import { NetworkAdapter, NetworkError, Request, Response } from '@mobileplatform/nimbus-plugin-lds';
 
 export function mockNimbusNetworkGlobal(adapter: MockNimbusAdapter) {
     global.__nimbus = {
@@ -11,19 +11,30 @@ export function mockNimbusNetworkGlobal(adapter: MockNimbusAdapter) {
 }
 
 export class MockNimbusAdapter implements NetworkAdapter {
-    mockResponse: Response;
+    private mockResponses: Response[] = [];
 
     setMockResponse(mockResponse: Response) {
-        this.mockResponse = mockResponse;
+        this.mockResponses = [mockResponse];
     }
+
+    setMockResponses(mockResponses: Response[]) {
+        this.mockResponses = mockResponses;
+    }
+
     sendRequest(
-        request: Request,
+        _request: Request,
         onResponse: (response: Response) => void,
-        _onError: (error: string) => void
+        onError: (error: NetworkError) => void
     ): Promise<string> {
-        onResponse(this.mockResponse);
+        const mockResponse = this.mockResponses.shift();
+        if (mockResponse === undefined) {
+            onError({ type: 'unspecified', message: 'response not set' });
+        } else {
+            onResponse(mockResponse);
+        }
         return Promise.resolve('mocked cancel token');
     }
+
     cancelRequest(_token: string): void {
         throw new Error('Method not implemented.');
     }

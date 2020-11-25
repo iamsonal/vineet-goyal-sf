@@ -17,9 +17,17 @@ export function resetNimbusStoreGlobal() {
     global.__nimbus = undefined;
 }
 
+// since MockNimbusDurableStore is likely to be re-instantiated before each test
+// we hoist the registered listeners since that happens when the lds instance
+// is created
+let listenerFunc: (ids: string[], segment: string) => void;
+
 export class MockNimbusDurableStore implements DurableStore {
     kvp: { [segment: string]: { [key: string]: string } } = {};
-    listenerFunc: (ids: string[], segment: string) => void;
+
+    // native apps prevent DurableStore OnChanged listener events from being raised
+    // against their own DurableStore instance, so we simulate that here
+    public raiseOnChangedEvent = false;
 
     async getEntriesInSegment(ids: string[], segment: string): Promise<DurableStoreFetchResult> {
         const result = {};
@@ -82,6 +90,11 @@ export class MockNimbusDurableStore implements DurableStore {
         }
 
         Object.assign(storeSegment, entries);
+
+        if (listenerFunc !== undefined && this.raiseOnChangedEvent) {
+            listenerFunc(Object.keys(entries), segment);
+        }
+
         return Promise.resolve();
     }
 
@@ -94,11 +107,16 @@ export class MockNimbusDurableStore implements DurableStore {
         for (const id of ids) {
             delete storeSegment[id];
         }
+
+        if (listenerFunc !== undefined && this.raiseOnChangedEvent) {
+            listenerFunc(ids, segment);
+        }
+
         return Promise.resolve();
     }
 
     registerOnChangedListener(listener: (ids: string[], segment: string) => void): Promise<void> {
-        this.listenerFunc = listener;
+        listenerFunc = listener;
         return Promise.resolve();
     }
 }

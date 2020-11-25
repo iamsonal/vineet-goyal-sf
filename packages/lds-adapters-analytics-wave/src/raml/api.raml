@@ -531,8 +531,8 @@ types:
           enum:
             - EinsteinAnalytics
             - Sonic
-        page:
-          type: integer
+        pageParam: # TODO Hand-rolled from 'page' due to W-7518038
+          type: string
           required: false
         pageSize:
           type: integer

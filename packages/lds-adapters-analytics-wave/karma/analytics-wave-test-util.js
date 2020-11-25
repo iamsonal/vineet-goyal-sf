@@ -54,7 +54,7 @@ export function mockGetDataflowJobsNetworkErrorOnce(config, mockData) {
 }
 
 function getDataflowJobsMatcher(config) {
-    let { licenseType, page, pageSize, q, status } = config;
+    let { licenseType, pageParam, pageSize, q, status } = config;
 
     return sinon.match({
         body: null,
@@ -64,7 +64,7 @@ function getDataflowJobsMatcher(config) {
         basePath: `${URL_BASE}/dataflowjobs`,
         queryParams: {
             licenseType,
-            page,
+            pageParam,
             pageSize,
             q,
             status,

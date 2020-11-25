@@ -22,7 +22,7 @@
             "licenseAttributes": { "type": "Sonic" }
         }
     ],
-    "nextPageUrl": "/services/data/v51.0/wave/dataflowjobs?page=2",
+    "nextPageUrl": "/services/data/v51.0/wave/dataflowjobs?page=eyJwYWdlU3",
     "totalSize": 20,
     "url": "/services/data/v51.0/wave/dataflowjobs"
 }

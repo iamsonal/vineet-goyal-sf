@@ -38,16 +38,6 @@ export interface DurableRecordRepresentation extends DraftRecordRepresentation {
 }
 
 /**
- * Generates a temporary draft id for a record
- * @param apiName API name of the record needing a draft id
- */
-function generateDraftId(_apiName: string) {
-    // TODO: [W-8194915] Draft-created records should have realistic temporary ids assigned
-    const now = new Date().getTime().toString();
-    return `DRAFT` + now.substr(now.length - 13);
-}
-
-/**
  * Formats the display value for a draft field
  * @param value the value to format
  */
@@ -90,15 +80,6 @@ export function isDraftRecordRepresentationNormalized(
     record: RecordRepresentationNormalized
 ): record is DraftRecordRepresentationNormalized {
     return (record as any).drafts !== undefined;
-}
-
-export function isDraftId(recordId: string) {
-    // TODO: [W-8194915] Draft-created records should have realistic temporary ids assigned
-    // this should be updated to use the record id library to determine if the id is client generated
-    if (recordId === undefined || !recordId.startsWith('DRA')) {
-        return false;
-    }
-    return true;
 }
 
 /**
@@ -172,7 +153,10 @@ export function shouldDraftResourceRequest(request: ResourceRequest) {
     );
 }
 
-export function isRequestForDraftGetRecord(request: ResourceRequest) {
+export function isRequestForDraftGetRecord(
+    request: ResourceRequest,
+    isDraftId: (id: string) => boolean
+) {
     const { basePath, method } = request;
     if (RECORD_ENDPOINT_REGEX.test(basePath) && method === 'get') {
         const id = request.urlParams['recordId'];
@@ -188,7 +172,10 @@ export function isRequestForDraftGetRecord(request: ResourceRequest) {
  * case of a post, we generate a temporary client-side id
  * @param request The ResourceRequest to extract the record id from
  */
-export function getRecordIdFromRecordRequest(request: ResourceRequest): string | undefined {
+export function getRecordIdFromRecordRequest(
+    request: ResourceRequest,
+    idGeneratorFunc: (prefix: string) => string
+): string | undefined {
     const { method, basePath } = request;
     if (basePath === undefined) {
         return undefined;
@@ -208,11 +195,10 @@ export function getRecordIdFromRecordRequest(request: ResourceRequest): string |
         }
         case 'post': {
             const apiName = request.body.apiName;
-            if (apiName === undefined) {
+            if (apiName === undefined || apiName === null || apiName.length < 3) {
                 return undefined;
             }
-
-            recordId = generateDraftId(apiName);
+            recordId = idGeneratorFunc(apiName.slice(0, 3));
             break;
         }
         default: {
@@ -230,8 +216,11 @@ export function getRecordKeyForId(recordId: string) {
     return keyBuilderRecord({ recordId });
 }
 
-export function getRecordKeyFromRecordRequest(resourceRequest: ResourceRequest) {
-    const id = getRecordIdFromRecordRequest(resourceRequest);
+export function getRecordKeyFromRecordRequest(
+    resourceRequest: ResourceRequest,
+    idGeneratorFunc: (prefix: string) => string
+) {
+    const id = getRecordIdFromRecordRequest(resourceRequest, idGeneratorFunc);
     if (id === undefined) {
         return undefined;
     }

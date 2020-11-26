@@ -43,7 +43,14 @@ function setupDraftStore(storeRecords: any = {}) {
     const store = new Store();
     store.records = storeRecords;
 
-    const durableStore = makeDurableStoreDraftAware(baseDurableStore, draftQueue, store);
+    const durableStore = makeDurableStoreDraftAware(
+        baseDurableStore,
+        draftQueue,
+        store,
+        (id: string) => {
+            return id === DRAFT_RECORD_ID;
+        }
+    );
 
     return { durableStore, baseDurableStore, draftQueue };
 }

@@ -17,11 +17,13 @@
     },
     "dependencies": {
         "@luvio/engine": "^0.20.0",
-        "@luvio/environments": "^0.20.0"
+        "@luvio/environments": "^0.20.0",
+        "@mobileplatform/record-id-generator": "0.0.1"
     },
     "devDependencies": {
         "@mobileplatform/nimbus-plugin-lds": "1.0.0",
         "@salesforce/lds-adapters-uiapi": "1.2.4",
-        "@salesforce/lds-drafts": "1.2.4"
+        "@salesforce/lds-drafts": "1.2.4",
+        "@salesforce/user": "0.0.12"
     }
 }

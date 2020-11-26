@@ -13,4 +13,6 @@ module.exports = {
             lines: 50,
         },
     },
+    transformIgnorePatterns: ['../node_modules/@salesforce/user/(.*)'],
+    setupFilesAfterEnv: ['./jest.setup.js'],
 };

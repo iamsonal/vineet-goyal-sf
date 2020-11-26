@@ -1,8 +1,6 @@
 import { Luvio, Store, Environment, IngestPath } from '@luvio/engine';
 import { makeOffline, makeDurable } from '@luvio/environments';
 
-import { NimbusNetworkAdapter } from './NimbusNetworkAdapter';
-import { NimbusDurableStore } from './NimbusDurableStore';
 import {
     RecordRepresentation,
     responseRecordRepresentationRetrievers,
@@ -13,6 +11,12 @@ import {
     makeEnvironmentDraftAware,
     makeNetworkAdapterDraftAware,
 } from '@salesforce/lds-drafts';
+
+import Id from '@salesforce/user/Id';
+import { RecordIdGenerator } from '@mobileplatform/record-id-generator';
+
+import { NimbusNetworkAdapter } from './NimbusNetworkAdapter';
+import { NimbusDurableStore } from './NimbusDurableStore';
 import { buildLdsDraftQueue } from './DraftQueueFactory';
 
 let luvio: Luvio;
@@ -34,6 +38,9 @@ const store = new Store();
 const durableStore = new NimbusDurableStore();
 const networkAdapter = NimbusNetworkAdapter;
 
+// user id centric record ID generator
+const recordIdGenerator = new RecordIdGenerator(Id);
+
 // draft queue
 const draftQueue = buildLdsDraftQueue(networkAdapter, durableStore);
 
@@ -43,7 +50,14 @@ const draftAwareNetworkAdapter = makeNetworkAdapterDraftAware(
     draftQueue,
     responseRecordRepresentationRetrievers
 );
-const draftAwareDurableStore = makeDurableStoreDraftAware(durableStore, draftQueue, store);
+const draftAwareDurableStore = makeDurableStoreDraftAware(
+    durableStore,
+    draftQueue,
+    store,
+    (id: string) => {
+        return recordIdGenerator.isGenerated(id);
+    }
+);
 
 // build environment
 const env = makeEnvironmentDraftAware(
@@ -55,6 +69,12 @@ const env = makeEnvironmentDraftAware(
     store,
     draftQueue,
     recordIngestFunc,
+    (id: string) => {
+        return recordIdGenerator.newRecordId(id);
+    },
+    (id: string) => {
+        return recordIdGenerator.isGenerated(id);
+    },
     responseRecordRepresentationRetrievers
 );
 

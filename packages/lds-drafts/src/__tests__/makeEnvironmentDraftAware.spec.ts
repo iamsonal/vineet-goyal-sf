@@ -42,7 +42,15 @@ function setup(
     };
 
     const baseEnvironment = makeDurable(new Environment(store, network), durableStore);
-    const draftEnvironment = makeEnvironmentDraftAware(baseEnvironment, store, draftQueue);
+    const draftEnvironment = makeEnvironmentDraftAware(
+        baseEnvironment,
+        store,
+        draftQueue,
+        (_record: any, _path: any, _store: any, _timestamp: any) => {},
+        (_prefix: string) => {
+            return 'generatedId';
+        }
+    );
     return {
         store,
         network,

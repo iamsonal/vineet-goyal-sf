@@ -4072,6 +4072,11 @@
   dependencies:
     nimbus-types "^2.0.0-alpha1"
 
+"@mobileplatform/record-id-generator@0.0.1":
+  version "0.0.1"
+  resolved "http://npm.lwcjs.org/@mobileplatform/record-id-generator/-/@mobileplatform/record-id-generator-0.0.1/e0401e50ca4ab82e483c9dc37bbf9822af1b5921.tgz#e0401e50ca4ab82e483c9dc37bbf9822af1b5921"
+  integrity sha512-/yqyRmWI290dOT2sz0qKLA6AiU+wm8mdD/P4C6o133vCgcGl4MaReO1MDy7YSYaVhk+/9ydxTw0NT2aEId4gJQ==
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "http://npm.lwcjs.org/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1/524af240d1a360527b730475ecfa1344aa540dde.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -4326,6 +4331,11 @@
     "@types/estree" "0.0.39"
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
+
+"@salesforce/user@0.0.12":
+  version "0.0.12"
+  resolved "http://npm.lwcjs.org/@salesforce/user/-/user-0.0.12/5099762b3c68d6a188a10cdbf865545bcd15a63d.tgz#5099762b3c68d6a188a10cdbf865545bcd15a63d"
+  integrity sha512-FjI8Zf+MAPwWu+ViXurGk2Ka3H7QDzLUqGulu22ONzmiidz63Lp3N2uzDQ/p7RAsIpC27ZLxomRlje4WhOjuXg==
 
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.1"

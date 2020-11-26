@@ -1,13 +1,21 @@
 import timekeeper from 'timekeeper';
 import { Luvio, Snapshot } from '@luvio/engine';
+import { DefaultDurableSegment } from '@luvio/environments';
 import {
     createRecordAdapterFactory,
     getRecordAdapterFactory,
     RecordRepresentation,
     updateRecordAdapterFactory,
 } from '@salesforce/lds-adapters-uiapi';
-import { DraftQueue, DraftRecordRepresentation, DurableDraftQueue } from '@salesforce/lds-drafts';
+import {
+    DraftQueue,
+    DraftRecordRepresentation,
+    DraftDurableSegment,
+    DurableDraftQueue,
+} from '@salesforce/lds-drafts';
 import { RECORD_TTL } from '@salesforce/lds-adapters-uiapi/karma/dist/uiapi-constants';
+import { RecordIdGenerator } from '@mobileplatform/record-id-generator';
+import Id from '@salesforce/user/Id';
 
 import { NimbusDurableStore } from '../NimbusDurableStore';
 import { NimbusNetworkAdapter } from '../NimbusNetworkAdapter';
@@ -16,6 +24,7 @@ import { MockNimbusDurableStore, mockNimbusStoreGlobal } from './MockNimbusDurab
 import { MockNimbusAdapter, mockNimbusNetworkGlobal } from './MockNimbusNetworkAdapter';
 import { flushPromises } from './testUtils';
 
+const recordIdGenerator = new RecordIdGenerator(Id);
 const RECORD_ID = '005xx000001XL1tAAG';
 const STORE_KEY_RECORD = `UiApi::RecordRepresentation:${RECORD_ID}`;
 const API_NAME = 'Account';
@@ -93,6 +102,36 @@ describe('lds drafts integration tests', () => {
                 fields: ['Account.Name', 'Account.BillingCity'],
             })) as Snapshot<RecordRepresentation>;
             expect(getRecordSnapshot.state).toBe('Fulfilled');
+        });
+
+        it('record with generated ID does not get stored in default durable segment', async () => {
+            const orginalName = 'Justin';
+
+            // create a synthetic record
+            const snapshot = await createRecord({
+                apiName: API_NAME,
+                fields: { Name: orginalName },
+            });
+            const record = snapshot.data;
+            const recordId = record.id;
+            const isGeneratedRecordId = recordIdGenerator.isGenerated(recordId);
+            expect(isGeneratedRecordId).toBe(true);
+
+            const entriesInDefaultSegment = await durableStore.getAllEntriesInSegment(
+                DefaultDurableSegment
+            );
+            expect(Object.keys(entriesInDefaultSegment.entries).length).toBe(0);
+
+            const entriesInDraftSegment = await durableStore.getAllEntriesInSegment(
+                DraftDurableSegment
+            );
+            expect(Object.keys(entriesInDraftSegment.entries).length).toBe(1);
+
+            const value = Object.values(entriesInDraftSegment.entries)[0];
+            const parsedValue = JSON.parse(value);
+            const tag = parsedValue['data']['tag'];
+            const formattedTagWithRecordId = `UiApi::RecordRepresentation:${recordId}`;
+            expect(tag).toBe(formattedTagWithRecordId);
         });
     });
 

@@ -18,32 +18,16 @@ import {
     getRecordFieldsFromRecordRequest,
     getRecordIdFromRecordRequest,
     getRecordKeyForId,
-    isDraftId,
     shouldDraftResourceRequest,
     replayDraftsOnRecord,
     buildDraftDurableStoreKey,
     extractRecordKeyFromDraftDurableStoreKey,
 } from '../records';
 
+function generateId(prefix: string): string {
+    return prefix + `DRAFT`;
+}
 describe('draft environment record utilities', () => {
-    describe('isDraftId', () => {
-        it('returns true for draft id prefixes', () => {
-            expect(isDraftId(DRAFT_RECORD_ID)).toBe(true);
-        });
-
-        it('returns false for record ids without draft prefix', () => {
-            expect(isDraftId(RECORD_ID)).toBe(false);
-        });
-
-        it('returns false for undefined', () => {
-            expect(isDraftId(undefined)).toBe(false);
-        });
-
-        it('returns false for random id', () => {
-            expect(isDraftId('IMNOTARECORD')).toBe(false);
-        });
-    });
-
     describe('buildRecordFieldValueRepresentationsFromDraftFields', () => {
         it('converts DraftFields into FieldValueRepresentations', () => {
             const fields = buildRecordFieldValueRepresentationsFromDraftFields({
@@ -101,26 +85,26 @@ describe('draft environment record utilities', () => {
     describe('getRecordIdFromRequest', () => {
         it('creates a draft record id for a post request', () => {
             const request = createPostRequest();
-            const id = getRecordIdFromRecordRequest(request);
-            expect(isDraftId(id)).toBe(true);
+            const id = getRecordIdFromRecordRequest(request, generateId);
+            expect(id).toBe('AccDRAFT');
         });
 
         it('returns undefined if apiName is not in post request', () => {
             const request = createPostRequest();
             delete request.body.apiName;
-            const id = getRecordIdFromRecordRequest(request);
+            const id = getRecordIdFromRecordRequest(request, generateId);
             expect(id).toBe(undefined);
         });
 
         it('gets record id from patch request', () => {
             const request = createPatchRequest();
-            const id = getRecordIdFromRecordRequest(request);
+            const id = getRecordIdFromRecordRequest(request, generateId);
             expect(id).toBe(RECORD_ID);
         });
 
         it('gets record id from a delete request', () => {
             const request = createDeleteRequest();
-            const id = getRecordIdFromRecordRequest(request);
+            const id = getRecordIdFromRecordRequest(request, generateId);
             expect(id).toBe(RECORD_ID);
         });
 
@@ -138,7 +122,7 @@ describe('draft environment record utilities', () => {
                 queryParams: {},
                 headers: {},
             };
-            const id = getRecordIdFromRecordRequest(request);
+            const id = getRecordIdFromRecordRequest(request, generateId);
             expect(id).toBeUndefined();
         });
 
@@ -152,7 +136,7 @@ describe('draft environment record utilities', () => {
                 queryParams: {},
                 headers: {},
             };
-            const id = getRecordIdFromRecordRequest(request);
+            const id = getRecordIdFromRecordRequest(request, generateId);
             expect(id).toBeUndefined();
         });
 
@@ -166,7 +150,7 @@ describe('draft environment record utilities', () => {
                 queryParams: {},
                 headers: {},
             };
-            const id = getRecordIdFromRecordRequest(request);
+            const id = getRecordIdFromRecordRequest(request, generateId);
             expect(id).toBeUndefined();
         });
     });

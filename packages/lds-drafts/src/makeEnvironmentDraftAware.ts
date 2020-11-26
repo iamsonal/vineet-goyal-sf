@@ -39,6 +39,8 @@ export function makeEnvironmentDraftAware(
         store: Store,
         timeStamp: number
     ) => void,
+    generateId: (id: string) => string,
+    isDraftId: (id: string) => boolean,
     recordResponseRetrievers: ResponsePropertyRetriever<unknown, RecordRepresentation>[] = []
 ): Environment {
     const draftDeleteSet = new Set<string>();
@@ -75,7 +77,7 @@ export function makeEnvironmentDraftAware(
     }
 
     function buildDraftCreatedGetResponse(resourceRequest: ResourceRequest) {
-        const key = getRecordKeyFromRecordRequest(resourceRequest);
+        const key = getRecordKeyFromRecordRequest(resourceRequest, generateId);
 
         if (key === undefined) {
             return Promise.reject(
@@ -115,7 +117,7 @@ export function makeEnvironmentDraftAware(
         request: ResourceRequest,
         snapshot: UnfulfilledSnapshot<T, unknown>
     ): Promise<ResourceResponse<T>> {
-        if (isRequestForDraftGetRecord(request) === true) {
+        if (isRequestForDraftGetRecord(request, isDraftId) === true) {
             return buildDraftCreatedGetResponse(request) as any;
         }
 
@@ -131,7 +133,7 @@ export function makeEnvironmentDraftAware(
         resourceRequest: ResourceRequest
     ) {
         if (shouldDraftResourceRequest(resourceRequest) === false) {
-            if (isRequestForDraftGetRecord(resourceRequest) === true) {
+            if (isRequestForDraftGetRecord(resourceRequest, isDraftId) === true) {
                 return buildDraftCreatedGetResponse(resourceRequest);
             }
 
@@ -141,7 +143,7 @@ export function makeEnvironmentDraftAware(
         const { method } = resourceRequest;
 
         // we tag the resource request with the store key for the affected request
-        const key = getRecordKeyFromRecordRequest(resourceRequest);
+        const key = getRecordKeyFromRecordRequest(resourceRequest, generateId);
         if (key === undefined) {
             return Promise.reject(
                 createBadRequestResponse({

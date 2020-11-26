@@ -17,7 +17,6 @@ import { ObjectCreate, ObjectKeys, ObjectAssign, ArrayPrototypeShift } from './u
 import {
     buildSyntheticRecordRepresentation,
     DraftRecordRepresentationNormalized,
-    isDraftId,
     isDraftRecordRepresentationNormalized,
     replayDraftsOnRecord,
     DurableRecordRepresentation,
@@ -256,7 +255,8 @@ function getSyntheticRecordEntries(draftRecordKeys: string[], draftActionMap: Dr
 export function makeDurableStoreDraftAware(
     durableStore: DurableStore,
     draftQueue: DraftQueue,
-    store: Store
+    store: Store,
+    isDraftId: (id: string) => boolean
 ): DurableStore {
     // overrides getEntries to check if any of the requested entries is a record or a record field
     // since we are storing record fields denormalized in the durable store, we will request the record
@@ -354,7 +354,6 @@ export function makeDurableStoreDraftAware(
                     continue;
                 }
                 const record = store.records[recordKey];
-
                 if (isDraftId(record.id)) {
                     // don't put draft created items to durable store
                     continue;

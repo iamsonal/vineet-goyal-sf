@@ -12,4 +12,4 @@ const luvio = new Luvio(environment, {
 
 setupInstrumentation(luvio, store);
 
-export { luvio as lds };
+export { luvio };

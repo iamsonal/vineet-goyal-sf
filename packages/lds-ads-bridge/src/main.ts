@@ -1,4 +1,4 @@
 import AdsBridge from './ads-bridge';
-import { lds } from '@salesforce/lds-runtime-aura';
+import { luvio } from '@salesforce/lds-runtime-aura';
 
-export const adsBridge = new AdsBridge(lds);
+export const adsBridge = new AdsBridge(luvio);

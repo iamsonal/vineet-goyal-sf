@@ -8,4 +8,4 @@ const karmaNetworkAdapter = sinon.stub().rejects();
 const store = new Store();
 const luvio = new Luvio(makeEnvironmentResettable(new Environment(store, karmaNetworkAdapter)));
 
-export { karmaNetworkAdapter, luvio as lds, store, resetAllAdapterContexts };
+export { karmaNetworkAdapter, luvio, store, resetAllAdapterContexts };

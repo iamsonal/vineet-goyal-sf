@@ -4,7 +4,7 @@ import {
     bindWireRefresh,
 } from '@luvio/lwc-luvio';
 import { WireAdapterConstructor } from '@lwc/engine-core';
-import { lds } from '@salesforce/lds-runtime-web';
+import { luvio } from '@salesforce/lds-runtime-web';
 import { instrumentation, refreshApiEvent, refreshApiNames } from '@salesforce/lds-instrumentation';
 
 export function createWireAdapterConstructor<C, D>(
@@ -12,15 +12,15 @@ export function createWireAdapterConstructor<C, D>(
     factory: AdapterFactory<C, D>
 ): WireAdapterConstructor {
     const adapter = instrumentation.instrumentAdapter(name, createLDSAdapter(name, factory));
-    return lwcLdsCreateWireAdapterConstructor(adapter as Adapter<unknown, unknown>, name, lds);
+    return lwcLdsCreateWireAdapterConstructor(adapter as Adapter<unknown, unknown>, name, luvio);
 }
 
-export function createLDSAdapter<T>(name: string, factory: (lds: Luvio) => T): T {
-    return factory(lds);
+export function createLDSAdapter<T>(name: string, factory: (luvio: Luvio) => T): T {
+    return factory(luvio);
 }
 
-const wireRefresh = bindWireRefresh(lds);
+const wireRefresh = bindWireRefresh(luvio);
 export function refresh(data: any, apiFamily: keyof refreshApiNames) {
-    lds.instrument(refreshApiEvent(apiFamily));
+    luvio.instrument(refreshApiEvent(apiFamily));
     return wireRefresh(data);
 }

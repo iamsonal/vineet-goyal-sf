@@ -1,7 +1,7 @@
-import { lds } from '@salesforce/lds-runtime-web';
+import { luvio } from '@salesforce/lds-runtime-web';
 
 import { setupMetadataWatcher } from './metadata';
 
-setupMetadataWatcher(lds);
+setupMetadataWatcher(luvio);
 
-export { lds };
+export { luvio };

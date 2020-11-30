@@ -80,4 +80,4 @@ const env = makeEnvironmentDraftAware(
 
 luvio = new Luvio(env);
 
-export { luvio as lds, draftQueue };
+export { luvio, draftQueue };

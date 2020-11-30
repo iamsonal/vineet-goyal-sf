@@ -2,7 +2,7 @@ import { createWireAdapterConstructor, createLDSAdapter, refresh } from '../main
 
 jest.mock('@salesforce/lds-runtime-web', () => {
     return {
-        lds: {
+        luvio: {
             instrument: jest.fn(),
         },
     };
@@ -33,10 +33,10 @@ jest.mock('@salesforce/lds-instrumentation', () => {
     };
 });
 
-import { lds } from '@salesforce/lds-runtime-web';
+import { luvio } from '@salesforce/lds-runtime-web';
 import { __spies as instrumentationSpies } from '@salesforce/lds-instrumentation';
 import { createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor } from '@luvio/lwc-luvio';
-import { __spies as lwcLdsSpies } from '@luvio/lwc-luvio';
+import { __spies as lwcLuvioSpies } from '@luvio/lwc-luvio';
 
 beforeEach(() => {
     instrumentationSpies.instrumentAdapter.mockClear();
@@ -58,7 +58,7 @@ describe('createWireAdapterConstructor', () => {
         expect(lwcLdsCreateWireAdapterConstructor).toHaveBeenCalledWith(
             mockInstrumented,
             'foo',
-            lds
+            luvio
         );
         expect(value).toBe(mockWire);
     });
@@ -70,7 +70,7 @@ describe('createLDSAdapter', () => {
         const factory = jest.fn().mockReturnValue(mockAdapter);
 
         const value = createLDSAdapter('foo', factory);
-        expect(factory).toHaveBeenCalledWith(lds);
+        expect(factory).toHaveBeenCalledWith(luvio);
         expect(value).toBe(mockAdapter);
     });
 });
@@ -79,6 +79,6 @@ describe('refresh', () => {
     it('should call function returned by bindWireRefresh', async () => {
         const data = {};
         await refresh(data, 'refreshUiApi');
-        expect(lwcLdsSpies.bindWireRefreshSpy).toHaveBeenCalledWith(data);
+        expect(lwcLuvioSpies.bindWireRefreshSpy).toHaveBeenCalledWith(data);
     });
 });

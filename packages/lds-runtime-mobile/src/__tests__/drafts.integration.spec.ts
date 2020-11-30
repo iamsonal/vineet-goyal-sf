@@ -56,7 +56,7 @@ function createTestRecord(
 }
 
 describe('lds drafts integration tests', () => {
-    let lds: Luvio;
+    let luvio: Luvio;
     let draftQueue: DraftQueue;
     let networkAdapter: MockNimbusAdapter;
     let durableStore: MockNimbusDurableStore;
@@ -72,13 +72,13 @@ describe('lds drafts integration tests', () => {
         mockNimbusNetworkGlobal(networkAdapter);
 
         const runtime = await import('../main');
-        lds = runtime.lds;
+        luvio = runtime.luvio;
         draftQueue = runtime.draftQueue;
-        (lds as any).environment.store.reset();
+        (luvio as any).environment.store.reset();
 
-        createRecord = createRecordAdapterFactory(lds);
-        updateRecord = updateRecordAdapterFactory(lds);
-        getRecord = getRecordAdapterFactory(lds);
+        createRecord = createRecordAdapterFactory(luvio);
+        updateRecord = updateRecordAdapterFactory(luvio);
+        getRecord = getRecordAdapterFactory(luvio);
     });
 
     describe('createRecord', () => {
@@ -154,7 +154,7 @@ describe('lds drafts integration tests', () => {
             expect(getRecordSnapshot.state).toBe('Fulfilled');
             const callbackSpy = jest.fn();
             // subscribe to getRecord snapshot
-            lds.storeSubscribe(getRecordSnapshot, callbackSpy);
+            luvio.storeSubscribe(getRecordSnapshot, callbackSpy);
 
             // update the synthetic record
             await updateRecord({ recordId, fields: { Name: updatedName } });
@@ -220,7 +220,7 @@ describe('lds drafts integration tests', () => {
             expect(snapshot.state).toBe('Fulfilled');
 
             const getRecordCallbackSpy = jest.fn();
-            lds.storeSubscribe(snapshot, getRecordCallbackSpy);
+            luvio.storeSubscribe(snapshot, getRecordCallbackSpy);
 
             await updateRecord({
                 recordId: RECORD_ID,
@@ -288,7 +288,7 @@ describe('lds drafts integration tests', () => {
             expect(snapshot.state).toBe('Fulfilled');
 
             const getRecordCallbackSpy = jest.fn();
-            lds.storeSubscribe(snapshot, getRecordCallbackSpy);
+            luvio.storeSubscribe(snapshot, getRecordCallbackSpy);
 
             await updateRecord({
                 recordId: RECORD_ID,
@@ -341,7 +341,7 @@ describe('lds drafts integration tests', () => {
             expect(snapshot.state).toBe('Fulfilled');
 
             const getRecordCallbackSpy = jest.fn();
-            lds.storeSubscribe(snapshot, getRecordCallbackSpy);
+            luvio.storeSubscribe(snapshot, getRecordCallbackSpy);
 
             // simulate another draft queue enqueuing a delete (which will modify
             // durable store)

@@ -1,3 +1,3 @@
-export const lds = {
+export const luvio = {
     withContext: jest.fn(),
 };

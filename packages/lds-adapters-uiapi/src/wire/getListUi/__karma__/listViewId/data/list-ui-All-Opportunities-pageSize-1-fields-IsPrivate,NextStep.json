@@ -78,7 +78,7 @@
     "records": {
         "count": 1,
         "currentPageToken": "0",
-        "currentPageUrl": "/services/data/v51.0/ui-api/list-records/00Bxx0000029g33EAA?fields=IsPrivate%2CNextStep&pageSize=1&pageToken=0",
+        "currentPageUrl": "/services/data/v52.0/ui-api/list-records/00Bxx0000029g33EAA?fields=IsPrivate%2CNextStep&pageSize=1&pageToken=0",
         "fields": ["IsPrivate", "NextStep"],
         "listInfoETag": "509e644fe0b983dc7f31bbef604e1ce4",
         "listReference": {
@@ -88,7 +88,7 @@
             "type": "listView"
         },
         "nextPageToken": "1",
-        "nextPageUrl": "/services/data/v51.0/ui-api/list-records/00Bxx0000029g33EAA?fields=IsPrivate%2CNextStep&pageSize=1&pageToken=1",
+        "nextPageUrl": "/services/data/v52.0/ui-api/list-records/00Bxx0000029g33EAA?fields=IsPrivate%2CNextStep&pageSize=1&pageToken=1",
         "optionalFields": [],
         "pageSize": 1,
         "previousPageToken": null,

@@ -24,7 +24,7 @@
                 }
             ],
             "links": [],
-            "url": "/services/data/v51.0/ui-api/actions/lookup/Opportunity"
+            "url": "/services/data/v52.0/ui-api/actions/lookup/Opportunity"
         },
         "Lead": {
             "actions": [
@@ -50,9 +50,9 @@
                 }
             ],
             "links": [],
-            "url": "/services/data/v51.0/ui-api/actions/lookup/Lead"
+            "url": "/services/data/v52.0/ui-api/actions/lookup/Lead"
         }
     },
     "eTag": "f47e0c1cad8d93a339e5ca87c29beb99",
-    "url": "/services/data/v51.0/ui-api/actions/lookup/Lead,Opportunity"
+    "url": "/services/data/v52.0/ui-api/actions/lookup/Lead,Opportunity"
 }

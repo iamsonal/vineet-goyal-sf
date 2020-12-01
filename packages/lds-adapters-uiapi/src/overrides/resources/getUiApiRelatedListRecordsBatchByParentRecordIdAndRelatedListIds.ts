@@ -311,7 +311,7 @@ export function createResourceRequest(config: ResourceRequestConfig): ResourceRe
     const headers: { [key: string]: string } = {};
 
     return {
-        baseUri: '/services/data/v51.0',
+        baseUri: '/services/data/v52.0',
         basePath:
             '/ui-api/related-list-records/batch/' +
             config.urlParams.parentRecordId +

@@ -24,9 +24,9 @@
                 }
             ],
             "links": [],
-            "url": "/services/data/v51.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
+            "url": "/services/data/v52.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
         }
     },
     "eTag": "f75ed276a61514f89642df2f51f260d7",
-    "url": "/services/data/v51.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
+    "url": "/services/data/v52.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
 }

@@ -1,7 +1,7 @@
 {
     "count": 3,
     "currentPageToken": "3",
-    "currentPageUrl": "/services/data/v51.0/ui-api/list-records/Account/AllAccounts?pageSize=3&pageToken=3",
+    "currentPageUrl": "/services/data/v52.0/ui-api/list-records/Account/AllAccounts?pageSize=3&pageToken=3",
     "fields": [],
     "listInfoETag": "48f985547346b4f1b0d3e07ea24dc9e0",
     "listReference": {
@@ -11,11 +11,11 @@
         "type": "listView"
     },
     "nextPageToken": "6",
-    "nextPageUrl": "/services/data/v51.0/ui-api/list-records/Account/AllAccounts?pageSize=3&pageToken=6",
+    "nextPageUrl": "/services/data/v52.0/ui-api/list-records/Account/AllAccounts?pageSize=3&pageToken=6",
     "optionalFields": [],
     "pageSize": 3,
     "previousPageToken": "0",
-    "previousPageUrl": "/services/data/v51.0/ui-api/list-records/Account/AllAccounts?pageSize=3&pageToken=0",
+    "previousPageUrl": "/services/data/v52.0/ui-api/list-records/Account/AllAccounts?pageSize=3&pageToken=0",
     "records": [
         {
             "apiName": "Account",

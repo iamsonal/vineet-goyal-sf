@@ -1,7 +1,7 @@
 {
     "count": 5,
     "currentPageToken": null,
-    "currentPageUrl": "/services/data/v51.0/ui-api/lookups/Case/AccountId/Account?q=test&searchType=TypeAhead&page=1&pageSize=25",
+    "currentPageUrl": "/services/data/v52.0/ui-api/lookups/Case/AccountId/Account?q=test&searchType=TypeAhead&page=1&pageSize=25",
     "nextPageToken": null,
     "nextPageUrl": null,
     "previousPageToken": null,

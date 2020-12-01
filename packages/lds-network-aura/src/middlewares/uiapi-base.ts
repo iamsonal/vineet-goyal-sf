@@ -1,6 +1,6 @@
 import { DispatchActionConfig } from './utils';
 
-export const UI_API_BASE_URI = '/services/data/v51.0/ui-api';
+export const UI_API_BASE_URI = '/services/data/v52.0/ui-api';
 
 const ACTION_CONFIG = {
     background: false,

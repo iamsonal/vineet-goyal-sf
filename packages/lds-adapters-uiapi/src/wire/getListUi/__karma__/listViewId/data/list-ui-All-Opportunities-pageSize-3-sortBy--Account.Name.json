@@ -78,7 +78,7 @@
     "records": {
         "count": 3,
         "currentPageToken": "0",
-        "currentPageUrl": "/services/data/v51.0/ui-api/list-records/00Bxx0000029g33EAA?pageSize=3&pageToken=0&sortBy=-Account.Name",
+        "currentPageUrl": "/services/data/v52.0/ui-api/list-records/00Bxx0000029g33EAA?pageSize=3&pageToken=0&sortBy=-Account.Name",
         "fields": [],
         "listInfoETag": "509e644fe0b983dc7f31bbef604e1ce4",
         "listReference": {
@@ -88,7 +88,7 @@
             "type": "listView"
         },
         "nextPageToken": "3",
-        "nextPageUrl": "/services/data/v51.0/ui-api/list-records/00Bxx0000029g33EAA?pageSize=3&pageToken=3&sortBy=-Account.Name",
+        "nextPageUrl": "/services/data/v52.0/ui-api/list-records/00Bxx0000029g33EAA?pageSize=3&pageToken=3&sortBy=-Account.Name",
         "optionalFields": [],
         "pageSize": 3,
         "previousPageToken": null,

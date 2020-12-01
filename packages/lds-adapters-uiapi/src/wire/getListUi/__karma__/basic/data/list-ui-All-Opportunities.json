@@ -78,7 +78,7 @@
     "records": {
         "count": 31,
         "currentPageToken": "0",
-        "currentPageUrl": "/services/data/v51.0/ui-api/list-records/00Bxx0000029foXEAQ?pageSize=50&pageToken=0",
+        "currentPageUrl": "/services/data/v52.0/ui-api/list-records/00Bxx0000029foXEAQ?pageSize=50&pageToken=0",
         "fields": [],
         "listInfoETag": "adddf5862f258169114c9e3324cebfb4",
         "listReference": {

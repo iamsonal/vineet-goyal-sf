@@ -2,11 +2,11 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '51.0'
+version: '52.0'
 mediaType: application/json
 protocols:
   - https
-baseUri: /services/data/v51.0
+baseUri: /services/data/v52.0
 securitySchemes:
   OAuth2:
     type: OAuth 2.0
@@ -65,11 +65,13 @@ types:
           - Theme
   AbstractRecordLayoutComponentRepresentation:
     description: Record layout component.
-    discriminator: componentType # TODO Hand rolled
+    discriminator: componentType
     type: object
     properties:
       apiName:
-        description: The API name of the field powering this component, if there is one. The API name of the field if the componentType is Field. The API name of the canvas app if the componentType is Canvas.
+        description: The API name of the field powering this component, if there is
+          one. The API name of the field if the componentType is Field. The API name
+          of the canvas app if the componentType is Canvas.
         type: string | nil
       componentType:
         description: Component type.
@@ -304,25 +306,31 @@ types:
     type: AbstractPicklistValueAttributesRepresentation
     properties:
       closed:
-        description: True if this status is a closed status, otherwise false. For more info, see the doc for the CaseStatus standard object.
+        description: True if this status is a closed status, otherwise false. For
+          more info, see the doc for the CaseStatus standard object.
         type: boolean
   ChildRelationshipRepresentation:
     description: Child Relationship.
     type: object
     properties:
       childObjectApiName:
-        description: The token of the child Object on which there is a foreign key back to the parent Object.
+        description: The token of the child Object on which there is a foreign key
+          back to the parent Object.
         type: string
       fieldName:
-        description: The token of the field that has a foreign key back to the parent Object.
+        description: The token of the field that has a foreign key back to the parent
+          Object.
         type: string
       junctionIdListNames:
-        description: If this relationship uses a junction ID list, this contains a list of potentially polymorphic types to which the IDs in this relationship's junction ID list can resolve.
+        description: If this relationship uses a junction ID list, this contains a
+          list of potentially polymorphic types to which the IDs in this relationship's
+          junction ID list can resolve.
         type: array
         items:
           type: string
       junctionReferenceTo:
-        description: A list of zero or more query-able junction ID list names this relationship may use. These names can be queried like field.
+        description: A list of zero or more query-able junction ID list names this
+          relationship may use. These names can be queried like field.
         type: array
         items:
           type: string
@@ -447,7 +455,8 @@ types:
         description: Name of Duplicate rule.
         type: string
       operationsOnInsert:
-        description: Operations on insert, either or both of alert and report for dedupe rule.
+        description: Operations on insert, either or both of alert and report for
+          dedupe rule.
         type: array
         items:
           type: string
@@ -455,7 +464,8 @@ types:
             - Alert
             - Report
       operationsOnUpdate:
-        description: Operations on update, either or both of alert and report for dedupe rule.
+        description: Operations on update, either or both of alert and report for
+          dedupe rule.
         type: array
         items:
           type: string
@@ -721,10 +731,12 @@ types:
         description: The number of times this favorite has been used.
         type: integer
       iconColor:
-        description: The color of the icon for this favorite, usually the related entity's color.
+        description: The color of the icon for this favorite, usually the related
+          entity's color.
         type: string
       iconUrl:
-        description: The URL of the icon for the favorite, usually the related entity's icon.
+        description: The URL of the icon for the favorite, usually the related entity's
+          icon.
         type: string
       id:
         description: ID of the favorite.
@@ -736,13 +748,15 @@ types:
         description: The name of the favorite.
         type: string
       objectType:
-        description: The developer name of the entity associated with this favorite, if any.
+        description: The developer name of the entity associated with this favorite,
+          if any.
         type: string
       sortOrder:
         description: The sort order of the favorite, from 1 to N.
         type: integer
       subtitle:
-        description: Subtitle of the favorite, usually the entity's label. Provides additional information about the type of record or content being favorited.
+        description: Subtitle of the favorite, usually the entity's label. Provides
+          additional information about the type of record or content being favorited.
         type: string
       target:
         description: The record, API name, or content being favorited.
@@ -757,8 +771,8 @@ types:
           - Tab
   FieldFormSubitemRepresentation:
     description: Field form subitem.
-    discriminatorValue: Field
-    type: AbstractFormSubitemRepresentation # TODO: Hand Rolled
+    discriminatorValue: Field # TODO: Hand Rolled
+    type: AbstractFormSubitemRepresentation
     properties:
       apiName:
         description: 'The API name of the field powering this component '
@@ -782,17 +796,27 @@ types:
         description: Indicates whether the field is a custom formula field (?).
         type: boolean
       compound:
-        description: Indicates whether the field is a top level compound field (or in the case of switchable_personname, might be a compound field). This is calculated based on whether other accessible fields in the object refer to this field as their compoundFieldName. This value will typically be false for LOCATION, because of the odd way locations are handled in describes.
+        description: Indicates whether the field is a top level compound field (or
+          in the case of switchable_personname, might be a compound field). This is
+          calculated based on whether other accessible fields in the object refer
+          to this field as their compoundFieldName. This value will typically be false
+          for LOCATION, because of the odd way locations are handled in describes.
         type: boolean
       compoundComponentName:
-        description: When this field is a component of a compound field, this is the normalized component name otherwise this will be null. For example, this will return "Street" if the field represents "BillingStreet" of an Address compound field.
+        description: When this field is a component of a compound field, this is the
+          normalized component name otherwise this will be null. For example, this
+          will return "Street" if the field represents "BillingStreet" of an Address
+          compound field.
         type: string | nil
       compoundFieldName:
-        description: When this field is an individual component field of a compound field, this indicates which field is the top level compound field. This will be null when the field does not represent a component field of a compound field.
+        description: When this field is an individual component field of a compound
+          field, this indicates which field is the top level compound field. This
+          will be null when the field does not represent a component field of a compound
+          field.
         type: string | nil
       controllerName:
         description: The name of the field that controls the values of this picklist.
-        type: string | nil # TODO: "nil" union hand rolled
+        type: string | nil
       controllingFields:
         description: 'A list of fields that the current field depends on. '
         type: array
@@ -844,57 +868,74 @@ types:
           - RichTextArea
           - SwitchablePersonName
       filterable:
-        description: Indicates whether the field is filterable. If true, then this field can be specified in the WHERE clause of a SOQL statement.
+        description: Indicates whether the field is filterable. If true, then this
+          field can be specified in the WHERE clause of a SOQL statement.
         type: boolean
       filteredLookupInfo:
-        description: If the field is a reference field type with a lookup filter, this contains the lookup information.
+        description: If the field is a reference field type with a lookup filter,
+          this contains the lookup information.
         type: FilteredLookupInfoRepresentation | nil
       highScaleNumber:
-        description: Indicates whether the field stores numbers to 8 decimal places regardless of what's specified in the field details.
+        description: Indicates whether the field stores numbers to 8 decimal places
+          regardless of what's specified in the field details.
         type: boolean
       htmlFormatted:
-        description: Indicates whether the field has been formatted for HTML and should be encoded for display in HTML. Also indicates whether a field is a custom formula field that has an IMAGE text function.
+        description: Indicates whether the field has been formatted for HTML and should
+          be encoded for display in HTML. Also indicates whether a field is a custom
+          formula field that has an IMAGE text function.
         type: boolean
       inlineHelpText:
-        description: The text that displays in the field-level help hover text for this field.
+        description: The text that displays in the field-level help hover text for
+          this field.
         type: string | nil
       label:
-        description: Text label that is displayed next to the field in the Salesforce user interface. This label may be localized.
+        description: Text label that is displayed next to the field in the Salesforce
+          user interface. This label may be localized.
         type: string
       length:
-        description: For string fields, the maximum size of the field in number of Unicode characters (not bytes).
+        description: For string fields, the maximum size of the field in number of
+          Unicode characters (not bytes).
         type: integer
       nameField:
         description: Indicates whether the field is a name field.
         type: boolean
       polymorphicForeignKey:
-        description: Indicates whether the field is a foreign key over a domain of multiple entities.
+        description: Indicates whether the field is a foreign key over a domain of
+          multiple entities.
         type: boolean
       precision:
-        description: For double fields, indicates the maximum number of digits that can be stored, on both sides of the decimal point.
+        description: For double fields, indicates the maximum number of digits that
+          can be stored, on both sides of the decimal point.
         type: integer
       reference:
-        description: Indicates whether the field is a foreign key reference to another record.
+        description: Indicates whether the field is a foreign key reference to another
+          record.
         type: boolean
       referenceTargetField:
-        description: For indirect lookup relationships on external objects, the target custom field of the referenced object.
+        description: For indirect lookup relationships on external objects, the target
+          custom field of the referenced object.
         type: string | nil
       referenceToInfos:
-        description: For fields that refer to other objects, this list includes information about the object types and name fields of the referenced objects.
+        description: For fields that refer to other objects, this list includes information
+          about the object types and name fields of the referenced objects.
         type: array
         items:
           type: ReferenceToInfoRepresentation
       relationshipName:
-        description: The name of the relationship, if this is a master-detail relationship field.
+        description: The name of the relationship, if this is a master-detail relationship
+          field.
         type: string | nil
       required:
         description: Indicates whether the field is required on create or update.
         type: boolean
       scale:
-        description: For double fields, indicates the number of digits to the right of the decimal point.
+        description: For double fields, indicates the number of digits to the right
+          of the decimal point.
         type: integer
       searchPrefilterable:
-        description: Indicates whether a foreign key can be included in prefiltering (true) or not (false) when used in a SOSL WHERE clause. Prefiltering means to filter by a specific field value before executing the full search query.
+        description: Indicates whether a foreign key can be included in prefiltering
+          (true) or not (false) when used in a SOSL WHERE clause. Prefiltering means
+          to filter by a specific field value before executing the full search query.
         type: boolean
       sortable:
         description: Indicates whether a query can sort on this field.
@@ -906,26 +947,34 @@ types:
         description: Indicates whether the field can be updated.
         type: boolean
   FieldValueRepresentation:
-    description: Contains both the raw and displayable field values for a field in a Record.
+    description: Contains both the raw and displayable field values for a field in
+      a Record.
     type: object
     properties:
       displayValue:
-        description: The displayable value for a field. For a date, this will be a value familiar to users rather than an ISO 8601 formatted date value, which is what the raw value would be. Similarly, currency values will also have a formatted display value. For data that can be localized to the context user's language using the toLabel() function, that value will also be displayed here.
-        type: string | nil
+        description: The displayable value for a field. For a date, this will be a
+          value familiar to users rather than an ISO 8601 formatted date value, which
+          is what the raw value would be. Similarly, currency values will also have
+          a formatted display value. For data that can be localized to the context
+          user's language using the toLabel() function, that value will also be displayed
+          here.
+        type: string | nil # TODO: nil union hand rolled
       value:
         description: The value of a field in its raw data form.
-        type: RecordRepresentation | boolean | number | string | nil
+        type: RecordRepresentation | boolean | number | string | nil # TODO: integer -> number hand rolled
   FilteredLookupInfoRepresentation:
     description: Filtered lookup info.
     type: object
     properties:
       controllingFields:
-        description: Controlling fields when the lookup filter is dependent on the source object.
+        description: Controlling fields when the lookup filter is dependent on the
+          source object.
         type: array
         items:
           type: string
       dependent:
-        description: Indicates whether the lookup filter is dependent on the source object.
+        description: Indicates whether the lookup filter is dependent on the source
+          object.
         type: boolean
       optionalFilter:
         description: Indicates whether the lookup filter is optional.
@@ -966,7 +1015,8 @@ types:
     type: object
     properties:
       formItems:
-        description: The items in this row, from left to right. Might not extend to the last column.
+        description: The items in this row, from left to right. Might not extend to
+          the last column.
         type: array
         items:
           type: FormItemRepresentation
@@ -1052,7 +1102,8 @@ types:
     type: AbstractPicklistValueAttributesRepresentation
     properties:
       converted:
-        description: True if this status indicates the lead has been converted, otherwise false. For more info, see the doc for the LeadStatus standard object.
+        description: True if this status indicates the lead has been converted, otherwise
+          false. For more info, see the doc for the LeadStatus standard object.
         type: boolean
   ListColumnRepresentation:
     description: ListColumnRepresentation
@@ -1118,7 +1169,8 @@ types:
         description: Indicates whether the listview can be cloned.
         type: boolean
       createable:
-        description: Indicates whether a new listview for this listview's SObject can be created.
+        description: Indicates whether a new listview for this listview's SObject
+          can be created.
         type: boolean
       deletable:
         description: Indicates whether the listview can be deleted.
@@ -1133,7 +1185,8 @@ types:
         type: string
         (oas-readOnly): true
       filterLogicString:
-        description: This is the filter logic such as "(1 OR 2) and 3".  Indexes are 1-based.
+        description: This is the filter logic such as "(1 OR 2) and 3".  Indexes are
+          1-based.
         type: string | nil
       filteredByInfo:
         description: Describes how the list view is filtered.
@@ -1221,7 +1274,8 @@ types:
         description: The URL of the next page of records
         type: string | nil
       optionalFields:
-        description: The list of optional fields requested when these records were fetched.
+        description: The list of optional fields requested when these records were
+          fetched.
         type: array
         items:
           type: string
@@ -1296,7 +1350,8 @@ types:
           //:
             type: integer
       columnWrap:
-        description: Column wrapping preferences.  True indicates text wrapping is enabled.
+        description: Column wrapping preferences.  True indicates text wrapping is
+          enabled.
         type: object
         properties:
           //:
@@ -1349,7 +1404,8 @@ types:
         description: The objectApiName given in the URL.
         type: string
       pageSize:
-        description: The pageSize given in the query parameter.  If no pageSize is provided, this contains the default value used.
+        description: The pageSize given in the query parameter.  If no pageSize is
+          provided, this contains the default value used.
         type: integer
       previousPageToken:
         description: The pageToken of the previous page of list views.
@@ -1358,10 +1414,12 @@ types:
         description: The URL of the previous page of list views.
         type: string | nil
       queryString:
-        description: The queryString given in the query parameter.  If no queryString is provided, this returns null.
+        description: The queryString given in the query parameter.  If no queryString
+          is provided, this returns null.
         type: string | nil
       recentListsOnly:
-        description: The recentListsOnly value from the query parameter.  If recentListsOnly is not provided, this returns the default value used (false).
+        description: The recentListsOnly value from the query parameter.  If recentListsOnly
+          is not provided, this returns the default value used (false).
         type: boolean
   ListViewSummaryRepresentation:
     description: List View Summary Representation
@@ -1384,11 +1442,13 @@ types:
     type: object
     properties:
       latitude:
-        description: Gets the latitude of the location. This value maybe null if both latitude and longitude are null.
+        description: Gets the latitude of the location. This value maybe null if both
+          latitude and longitude are null.
         format: double
         type: number
       longitude:
-        description: Gets the longitude of the location. This value maybe null if both latitude and longitude are null.
+        description: Gets the longitude of the location. This value maybe null if
+          both latitude and longitude are null.
         format: double
         type: number
   LookupValuesRepresentation:
@@ -1439,7 +1499,8 @@ types:
         description: Object API name.
         type: string
       isAllowSave:
-        description: Indicates whether the duplicate rule will allow a duplicate to be saved.
+        description: Indicates whether the duplicate rule will allow a duplicate to
+          be saved.
         type: boolean
       matchRecordIds:
         description: IDs of the matching records.
@@ -1469,6 +1530,9 @@ types:
       matchEngine:
         description: Name of Matching Engine.
         type: string
+        enum:
+          - ExactMatchEngine
+          - FuzzyMatchEngine
       matchFields:
         description: Fields used for current MatchRule.
         type: array
@@ -1579,7 +1643,7 @@ types:
         type: string
       keyPrefix:
         description: The key prefix for IDs of this object.
-        type: string | nil # TODO: hand rolled nil union (W-8067992)
+        type: string | nil
       label:
         description: The label of the object info corresponding to this entry.
         type: string
@@ -1587,19 +1651,23 @@ types:
         description: The plural label of the object info corresponding to this entry.
         type: string
       nameFields:
-        description: List of the API names of the fields used to identify the name field for standard and custom objects. Typically there is one name field per object, except where FirstName and LastName fields are used.
+        description: List of the API names of the fields used to identify the name
+          field for standard and custom objects. Typically there is one name field
+          per object, except where FirstName and LastName fields are used.
         type: array
         items:
           type: string
       objectInfoUrl:
-        description: The URL to retrieve the full object info corresponding to this entry.
+        description: The URL to retrieve the full object info corresponding to this
+          entry.
         type: string
   ObjectInfoDirectoryRepresentation:
     description: Directory of objects that can be used within UI API end-points.
     type: object
     properties:
       objects:
-        description: The object info entries corresponding to the objects that can be used within UI API.
+        description: The object info entries corresponding to the objects that can
+          be used within UI API.
         type: object
         properties:
           //:
@@ -1612,11 +1680,13 @@ types:
         description: The object API name.
         type: string
       associateEntityType:
-        description: If an associated entity type, the type of that association, otherwise null.
-        type: string | nil # TODO: hand rolled nil union (W-7643258)
+        description: If an associated entity type, the type of that association, otherwise
+          null.
+        type: string | nil
       associateParentEntity:
-        description: If an associated entity type, the entity to which it is associated, otherwise null.
-        type: string | nil # TODO: hand rolled nil union (W-7643258)
+        description: If an associated entity type, the entity to which it is associated,
+          otherwise null.
+        type: string | nil
       childRelationships:
         description: Child relationships for the object.
         type: array
@@ -1629,13 +1699,15 @@ types:
         description: Indicates whether the object is custom.
         type: boolean
       defaultRecordTypeId:
-        description: The ID for the default record type for this object, if any. Null if there is none, or only a master type.
+        description: The ID for the default record type for this object, if any. Null
+          if there is none, or only a master type.
         type: string | nil
       deletable:
         description: Indicates whether the object can be deleted.
         type: boolean
       dependentFields:
-        description: This is a nested map of field and its dependents. Fields that neither have any controllers nor dependents are not a part of this map
+        description: This is a nested map of field and its dependents. Fields that
+          neither have any controllers nor dependents are not a part of this map
         type: object
         properties:
           //:
@@ -1648,7 +1720,8 @@ types:
         description: Indicates whether the object may have feeds.
         type: boolean
       fields:
-        description: A map of field API name to information about the field. This map only contains fields relevant to the requested layout and mode.
+        description: A map of field API name to information about the field. This
+          map only contains fields relevant to the requested layout and mode.
         type: object
         properties:
           //:
@@ -1666,10 +1739,13 @@ types:
         description: Indicates whether the object can have a layout.
         type: boolean
       mruEnabled:
-        description: Indicates whether the object may appear in Most Recently Used lists.
+        description: Indicates whether the object may appear in Most Recently Used
+          lists.
         type: boolean
       nameFields:
-        description: List of the API names of the fields used to identify the name field for standard and custom objects. Typically there is one name field per object, except where FirstName and LastName fields are used.
+        description: List of the API names of the fields used to identify the name
+          field for standard and custom objects. Typically there is one name field
+          per object, except where FirstName and LastName fields are used.
         type: array
         items:
           type: string
@@ -1677,7 +1753,9 @@ types:
         description: Indicates whether the object can be queried by the context user.
         type: boolean
       recordTypeInfos:
-        description: A map of record type IDs to information about the record type. The user need not have access to all the returned record types to see them here.
+        description: A map of record type IDs to information about the record type.
+          The user need not have access to all the returned record types to see them
+          here.
         type: object
         properties:
           //:
@@ -1735,17 +1813,26 @@ types:
     type: AbstractPicklistValueAttributesRepresentation
     properties:
       closed:
-        description: Indicates whether this opportunity stage value represents a closed opportunity. Multiple opportunity stage values can represent a closed opportunity. For more info, see the doc for the OpportunityStage standard object.
+        description: Indicates whether this opportunity stage value represents a closed
+          opportunity. Multiple opportunity stage values can represent a closed opportunity.
+          For more info, see the doc for the OpportunityStage standard object.
         type: boolean
       defaultProbability:
-        description: The default percentage estimate of the confidence in closing a specific opportunity for this opportunity stage value. May be null if forecasting is not enabled for the org. For more info, see the doc for the OpportunityStage standard object.
+        description: The default percentage estimate of the confidence in closing
+          a specific opportunity for this opportunity stage value. May be null if
+          forecasting is not enabled for the org. For more info, see the doc for the
+          OpportunityStage standard object.
         format: double
         type: number
       forecastCategoryName:
-        description: The default forecast category value for this opportunity stage value. May be null if forecasting is not enabled for the org. For more info, see the doc for the OpportunityStage standard object.
+        description: The default forecast category value for this opportunity stage
+          value. May be null if forecasting is not enabled for the org. For more info,
+          see the doc for the OpportunityStage standard object.
         type: string
       won:
-        description: Indicates whether this opportunity stage value represents a won opportunity. Multiple opportunity stage values can represent a won opportunity. For more info, see the doc for the OpportunityStage standard object.
+        description: Indicates whether this opportunity stage value represents a won
+          opportunity. Multiple opportunity stage values can represent a won opportunity.
+          For more info, see the doc for the OpportunityStage standard object.
         type: boolean
   OrderedByExpressionRepresentation:
     description: Einstein orderedBy expression.
@@ -1787,7 +1874,8 @@ types:
           //:
             type: any # TODO: "any" hand rolled
       state:
-        description: Optional additional parameters that are not integral to the resolution of the reference.
+        description: Optional additional parameters that are not integral to the resolution
+          of the reference.
         type: object
         properties:
           //:
@@ -1811,14 +1899,16 @@ types:
     type: AbstractRecordAvatarRepresentation
     properties:
       backgroundColor:
-        description: Retrieve the background color for the photo, if known, otherwise this will be null.
+        description: Retrieve the background color for the photo, if known, otherwise
+          this will be null.
         type: string | nil
       eTag:
         description: ETag like field, readOnly, handy while caching.
         type: string
         (oas-readOnly): true
       height:
-        description: Retrieve the height of the photo in pixels, if known, otherwise this will be null.
+        description: Retrieve the height of the photo in pixels, if known, otherwise
+          this will be null.
         type: integer | nil
       photoMetadata:
         description: The photo metadata for the image
@@ -1830,20 +1920,27 @@ types:
         description: The provider of the image
         type: string | nil
       width:
-        description: Retrieve the width of the photo in pixels, if known, otherwise this will be null.
+        description: Retrieve the width of the photo in pixels, if known, otherwise
+          this will be null.
         type: integer | nil
   PicklistValueRepresentation:
     description: A single picklist value.
     type: object
     properties:
       attributes:
-        description: For picklist values representing the status of a lead or an opportunity's stage, this value will contain additional attributes to help consumers understand the meaning of the value. Depending on the PicklistValueType this could be populated with information about a LeadStatus or an OpportunityStage. For any other PicklistValueType this property will be null.
+        description: For picklist values representing the status of a lead or an opportunity's
+          stage, this value will contain additional attributes to help consumers understand
+          the meaning of the value. Depending on the PicklistValueType this could
+          be populated with information about a LeadStatus or an OpportunityStage.
+          For any other PicklistValueType this property will be null.
         type: AbstractPicklistValueAttributesRepresentation | nil
       label:
         description: The displayable value of the picklist to use in a UI.
         type: string
       validFor:
-        description: If this picklist is a dependent picklist, this will be the controlling value indexes for which this value is valid. If this is an independent picklist, this list will be empty.
+        description: If this picklist is a dependent picklist, this will be the controlling
+          value indexes for which this value is valid. If this is an independent picklist,
+          this list will be empty.
         type: array
         items:
           type: integer
@@ -1851,7 +1948,8 @@ types:
         description: The value of the picklist to use in the API.
         type: string
   PicklistValuesCollectionRepresentation:
-    description: Picklist values for multiple picklist fields and scoped to a record type.
+    description: Picklist values for multiple picklist fields and scoped to a record
+      type.
     type: object
     properties:
       eTag:
@@ -1859,7 +1957,9 @@ types:
         type: string
         (oas-readOnly): true
       picklistFieldValues:
-        description: This contains a map of fieldName to PicklistValuesRepresentation for all picklist fields. There would be no entry for non picklistFields in this map
+        description: This contains a map of fieldName to PicklistValuesRepresentation
+          for all picklist fields. There would be no entry for non picklistFields
+          in this map
         type: object
         properties:
           //:
@@ -1889,10 +1989,12 @@ types:
         type: string
         (oas-readOnly): true
       url:
-        description: A self-reference URL back to the API that can be used to retrieve this payload.
+        description: A self-reference URL back to the API that can be used to retrieve
+          this payload.
         type: string
       values:
-        description: A list of the applicable values for this object-record-type-field combination.
+        description: A list of the applicable values for this object-record-type-field
+          combination.
         type: array
         items:
           type: PicklistValueRepresentation
@@ -1904,10 +2006,16 @@ types:
         description: PlatformActionContextEnum
         type: string
       actionTarget:
-        description: The URL to invoke or describe the action when the action is invoked. If the action is a standard button overridden by a Visualforce page, the ActionTarget returns the URL of the Visualforce page, such as /apex/pagename.
+        description: The URL to invoke or describe the action when the action is invoked.
+          If the action is a standard button overridden by a Visualforce page, the
+          ActionTarget returns the URL of the Visualforce page, such as /apex/pagename.
         type: string | nil
       actionTargetType:
-        description: The type of the target when this action is triggered. Valid values are:Describe -- applies to actions with a user interface, such as quick actionsInvoke -- applies to actions with no user interface, such as action links or invocable actionsVisualforce -- applies to standard buttons overridden by a Visualforce page
+        description: The type of the target when this action is triggered. Valid values
+          are:Describe -- applies to actions with a user interface, such as quick
+          actionsInvoke -- applies to actions with no user interface, such as action
+          links or invocable actionsVisualforce -- applies to standard buttons overridden
+          by a Visualforce page
         type: string | nil
       apiName:
         description: The action's object API name.
@@ -1937,17 +2045,23 @@ types:
         description: Represents the ID of a record in an object’s related list.
         type: string | nil
       relatedSourceObject:
-        description: When the ActionListContext is RelatedList or RelatedListRecord, this field represents the API name of the related list to which the action belongs.
+        description: When the ActionListContext is RelatedList or RelatedListRecord,
+          this field represents the API name of the related list to which the action
+          belongs.
         type: string | nil
       section:
         description: 'Which section the action appears in a page. The value can be:
           Page, ActivityComposer, CollaborateComposer, SingleActionLinks'
         type: string | nil
       sourceObject:
-        description: The object the action belongs to, either EntityApiName or recordId depending on the endpoints.
+        description: The object the action belongs to, either EntityApiName or recordId
+          depending on the endpoints.
         type: string
       subtype:
-        description: The subtype of the action. For quick actions, the subtype is QuickActionType Enum value. For custom buttons, the subtype is WebLinkTypeEnum. For action links, subtypes are Api, ApiAsync, Download, and Ui. Standard buttons and productivity actions have no subtype.
+        description: The subtype of the action. For quick actions, the subtype is
+          QuickActionType Enum value. For custom buttons, the subtype is WebLinkTypeEnum.
+          For action links, subtypes are Api, ApiAsync, Download, and Ui. Standard
+          buttons and productivity actions have no subtype.
         type: string | nil
       targetObject:
         description: Target Object for the action
@@ -1958,37 +2072,6 @@ types:
       type:
         description: The type of the action defined in PlatformActionTypeEnum
         type: string
-  PrimingComponentsRepresentation:
-    description: Priming Components Representation.
-    type: object
-    properties:
-      componentDefs:
-        description: server generated component definitions
-        type: array
-        items:
-          type: string
-      componentDescs:
-        description: 'component descriptor : uid map'
-        type: object
-        properties:
-          //:
-            type: string
-      gvpValues:
-        description: GVP values (Global and Label)
-        type: object
-        properties:
-          //:
-            type: object
-      moduleDefs:
-        description: server generated module definitions
-        type: array
-        items:
-          type: string
-      wireData:
-        description: wire data.
-        type: array
-        items:
-          type: WireDataRepresentation
   PrimingGeneratedModuleRepresentation:
     description: Priming generated module information.
     type: object
@@ -2004,7 +2087,8 @@ types:
     type: object
     properties:
       primingRecords:
-        description: Collection of PrimingRecordRepresentations. Keyed on objectApiName and then record type ID.
+        description: Collection of PrimingRecordRepresentations. Keyed on objectApiName
+          and then record type ID.
         type: object
         properties:
           //:
@@ -2059,7 +2143,8 @@ types:
     type: object
     properties:
       flexipageRoutes:
-        description: Collection of Routes. Keyed on objectApiName and then record type ID.
+        description: Collection of Routes. Keyed on objectApiName and then record
+          type ID.
         type: object
         properties:
           //:
@@ -2075,7 +2160,7 @@ types:
         description: RuleId which encountered error during execution
         type: string
   RecommendedResultRepresentation:
-    description: Recommended result.
+    description: Retrieve the recommended result with it's search Layout metadata.
     type: object
     properties:
       record:
@@ -2116,7 +2201,8 @@ types:
         description: The URL of the previous page of records.
         type: string | nil
       records:
-        description: Collection  of RecordRepresentations which the relation resolves to
+        description: Collection  of RecordRepresentations which the relation resolves
+          to
         type: array
         items:
           type: RecordRepresentation
@@ -2169,10 +2255,13 @@ types:
     type: object
     properties:
       constituentField:
-        description: Constituent field API name. May be null if no field applies. Usually matches field name but for compound fields will be the constituent field name.
+        description: Constituent field API name. May be null if no field applies.
+          Usually matches field name but for compound fields will be the constituent
+          field name.
         type: string
       duplicateRecordError:
-        description: Information about possible duplicate records. May be populated when the status code is DUPLICATES_DETECTED.
+        description: Information about possible duplicate records. May be populated
+          when the status code is DUPLICATES_DETECTED.
         type: DuplicateRecordErrorRepresentation
       errorCode:
         description: Error status code.
@@ -2208,26 +2297,30 @@ types:
     type: object
     properties:
       allowSaveOnDuplicate:
-        description: Set allowSaveOnDuplicate param.
+        description: Set allowSaveOnDuplicate param
         type: boolean
-        # This property is actually optional.
+        # TODO: hand rolled. This property is actually optional.
         required: false
       apiName:
         description: Object API name.
         type: string
-        # Inline edit takes advantage of the fact that the UI API doesn't check if the apiName
+        # TODO: hand rolled. Inline edit takes advantage of the fact that the UI API doesn't check if the apiName
         # is set properly.
         # https://codesearch.data.sfdc.net/source/xref/app_main_core/app/main/core/ui-force-components/modules/force/recordUiUtils/recordDraft.class.js#136
         required: false
       fields:
-        description: Field values. When this representation is deserialized from JSON, the values will be typed as JsonNode, delaying full deserialization until the resource executes, which knows the expected data types. In the case of invocation through CiJ directly, the field values should be typed as the expected data types.
+        description: Field values. When this representation is deserialized from JSON,
+          the values will be typed as JsonNode, delaying full deserialization until
+          the resource executes, which knows the expected data types. In the case
+          of invocation through CiJ directly, the field values should be typed as
+          the expected data types.
         type: object
         properties:
           //:
             type: string | number | nil | boolean # TODO: hand rolled
   RecordLayoutComponentRepresentation:
     description: Concrete record layout component.
-    discriminatorValue: EmptySpace
+    discriminatorValue: EmptySpace # TODO hand rolled
     type: AbstractRecordLayoutComponentRepresentation
     properties: {}
   RecordLayoutItemRepresentation:
@@ -2292,7 +2385,7 @@ types:
         type: string
       saveOptions:
         description: Layout save options.
-        type: array
+        type: array # TODO: remove nil union hand rolled
         items:
           type: RecordLayoutSaveOptionRepresentation
       sections:
@@ -2305,7 +2398,8 @@ types:
     type: object
     properties:
       layoutItems:
-        description: The items in this row, from left to right. Might not extend to the last column.
+        description: The items in this row, from left to right. Might not extend to
+          the last column.
         type: array
         items:
           type: RecordLayoutItemRepresentation
@@ -2370,7 +2464,8 @@ types:
     type: object
     properties:
       collapsed:
-        description: Indicates whether the section should initially be displayed as collapsed.
+        description: Indicates whether the section should initially be displayed as
+          collapsed.
         type: boolean
       id:
         description: Section ID.
@@ -2426,7 +2521,8 @@ types:
         type: string
         (oas-readOnly): true
       fields:
-        description: The field data for this record, matching the requested layout and mode.
+        description: The field data for this record, matching the requested layout
+          and mode.
         type: object
         properties:
           //:
@@ -2450,7 +2546,8 @@ types:
         description: The systemModstamp of the record.
         type: string | nil
       weakEtag:
-        description: Record Version like field, readOnly, handy while caching and comparing versions of records.
+        description: Record Version like field, readOnly, handy while caching and
+          comparing versions of records.
         type: integer
         (oas-readOnly): true
   RecordTemplateCloneRepresentation:
@@ -2494,13 +2591,17 @@ types:
     type: object
     properties:
       available:
-        description: Indicates whether this record type is available to the context user when creating a new record.
+        description: Indicates whether this record type is available to the context
+          user when creating a new record.
         type: boolean
       defaultRecordTypeMapping:
-        description: Indicates whether this is the default record type mapping for the associated object.
+        description: Indicates whether this is the default record type mapping for
+          the associated object.
         type: boolean
       master:
-        description: Whether this is the master record type. The master record type is the default record type that’s used when a record has no custom record type associated with it.
+        description: Whether this is the master record type. The master record type
+          is the default record type that’s used when a record has no custom record
+          type associated with it.
         type: boolean
       name:
         description: The record's object API name.
@@ -2550,14 +2651,18 @@ types:
           //:
             type: RecordRepresentation
   ReferenceToInfoRepresentation:
-    description: Information about a reference field's referenced types and the name field names of those types.
+    description: Information about a reference field's referenced types and the name
+      field names of those types.
     type: object
     properties:
       apiName:
         description: The object API name of a type being referenced in a relationship.
         type: string
       nameFields:
-        description: The names of the name fields for this object type. Combined with the relationship name, you can determine how to query this type's name fields, e.g. Parent.Name. Typically there is one name field per object, except where FirstName and LastName fields are used.
+        description: The names of the name fields for this object type. Combined with
+          the relationship name, you can determine how to query this type's name fields,
+          e.g. Parent.Name. Typically there is one name field per object, except where
+          FirstName and LastName fields are used.
         type: array
         items:
           type: string
@@ -2572,12 +2677,13 @@ types:
         description: Label of the field.
         type: string
       lookupId:
-        description: The lookupId for the column when the field is a reference, otherwise null.
+        description: The lookupId for the column when the field is a reference, otherwise
+          null.
         type: string | nil
       sortable:
         description: Whether the list column is sortable.
         type: boolean
-  RelatedListInfoBatchRepresentation: #TODO: Handrolled
+  RelatedListInfoBatchRepresentation: # TODO: Handrolled
     description: RelatedListInfoBatchRepresentation
     type: object
     properties:
@@ -2586,7 +2692,7 @@ types:
         type: array
         items:
           type: SimpleRelatedListInfoResultRepresentation
-  SimpleRelatedListInfoResultRepresentation: #TODO: Handrolled
+  SimpleRelatedListInfoResultRepresentation: # TODO: Handrolled
     type: object
     properties:
       statusCode:
@@ -2663,7 +2769,7 @@ types:
       visibilityEditable:
         description: Indicates whether the visibility of the listview can be edited.
         type: boolean
-  RelatedListRecordCollectionBatchRepresentation: #TODO: Handrolled
+  RelatedListRecordCollectionBatchRepresentation: # TODO: Handrolled
     description: RelatedListRecordCollectionBatchRepresentation
     type: object
     properties:
@@ -2672,7 +2778,7 @@ types:
         type: array
         items:
           type: CompositeRelatedListRecordCollectionResultRepresentation
-  CompositeRelatedListRecordCollectionResultRepresentation: #TODO: Handrolled
+  CompositeRelatedListRecordCollectionResultRepresentation: # TODO: Handrolled
     type: object
     properties:
       statusCode:
@@ -2711,7 +2817,8 @@ types:
         description: The URL of the next page of records
         type: string | nil
       optionalFields:
-        description: The list of optional fields requested when these records were fetched.
+        description: The list of optional fields requested when these records were
+          fetched.
         type: array
         items:
           type: string
@@ -2734,7 +2841,7 @@ types:
         type: array
         items:
           type: string
-  BatchRelatedListCountRepresentation: #TODO: Handrolled
+  BatchRelatedListCountRepresentation: # TODO: Handrolled
     description: BatchRelatedListCountRepresentation
     type: object
     properties:
@@ -2743,7 +2850,7 @@ types:
         type: array
         items:
           type: SimpleRelatedListCountBatchRepresentation
-  SimpleRelatedListCountBatchRepresentation: #TODO: Handrolled
+  SimpleRelatedListCountBatchRepresentation: # TODO: Handrolled
     type: object
     properties:
       statusCode:
@@ -2799,7 +2906,8 @@ types:
         description: The parent record for a related list.
         type: string | nil
       listViewApiName:
-        description: The list view or related list api name.  E.g. "AllAccounts" for a listview or "Contacts" for a related list.
+        description: The list view or related list api name.  E.g. "AllAccounts" for
+          a listview or "Contacts" for a related list.
         type: string | nil
       objectApiName:
         description: Entity API name for list view.
@@ -2817,7 +2925,8 @@ types:
         description: Type of the list view.
         type: string
   RelatedListSummaryInfoCollectionRepresentation:
-    description: Information about a collection of related lists that all have the same parent type.
+    description: Information about a collection of related lists that all have the
+      same parent type.
     type: object
     properties:
       eTag:
@@ -2846,11 +2955,13 @@ types:
         description: The plural label for this related list's entity.
         type: string
       fieldApiName:
-        description: The API name of the field in the child entity that links to the parent entity.
+        description: The API name of the field in the child entity that links to the
+          parent entity.
         type: string
       keyPrefix:
-        description: The key prefix for IDs of the object that populates the list.  This can be null for some related lists.
-        type: string | nil # TODO: "nil" union hand rolled - W-7730185
+        description: The key prefix for IDs of the object that populates the list.  This
+          can be null for some related lists.
+        type: string | nil
       label:
         description: The label for the related list.
         type: string
@@ -2868,10 +2979,10 @@ types:
         type: string | nil
       themeInfo:
         description: The theme info for this related list's entity.
-        type: ThemeInfoRepresentation | nil #TODO: nil union hand rolled - W-7730185
+        type: ThemeInfoRepresentation | nil
   ReportLayoutComponentRepresentation:
     description: Report record layout component.
-    discriminatorValue: ReportChart
+    discriminatorValue: ReportChart # TODO: hand rolled
     type: AbstractRecordLayoutComponentRepresentation
     properties:
       cacheData:
@@ -2923,7 +3034,11 @@ types:
         description: Name.
         type: string
   SimplifiedBatchRepresentation:
-    description: Result of an entire batch request operation. Results are ordered in the same order in which the requests were given. Results may either be a successful result with a response body, a successful result without a response body, or an error result without a response body. Success and error are determined by the status code in each result.
+    description: Result of an entire batch request operation. Results are ordered
+      in the same order in which the requests were given. Results may either be a
+      successful result with a response body, a successful result without a response
+      body, or an error result without a response body. Success and error are determined
+      by the status code in each result.
     type: object
     properties:
       results:
@@ -2974,7 +3089,8 @@ types:
     type: AbstractRecordAvatarRepresentation
     properties:
       backgroundColor:
-        description: Retrieve the background color for the theme as a six-letter hexidecimal value.
+        description: Retrieve the background color for the theme as a six-letter hexidecimal
+          value.
         type: string | nil
       eTag:
         description: ETag like field, readOnly, handy while caching.
@@ -3308,7 +3424,8 @@ types:
           required: true
     /list-view-chart/{objectApiNames}:
       get:
-        description: Retrieve presentation-ready action data about specific list-view-chart objectApiNames.
+        description: Retrieve presentation-ready action data about specific list-view-chart
+          objectApiNames.
         responses:
           '200':
             description: Success
@@ -3396,7 +3513,8 @@ types:
             (oas-collectionFormat): csv
     /list-view/{listViewIds}:
       get:
-        description: Retrieve presentation-ready action data about specific list-view listViewIds.
+        description: Retrieve presentation-ready action data about specific list-view
+          listViewIds.
         responses:
           '200':
             description: Success
@@ -3440,7 +3558,8 @@ types:
             (oas-collectionFormat): csv
     /lookup/{objectApiNames}:
       get:
-        description: Retrieve presentation-ready action data about specific lookup objectApiNames.
+        description: Retrieve presentation-ready action data about specific lookup
+          objectApiNames.
         responses:
           '200':
             description: Success
@@ -3484,7 +3603,8 @@ types:
             (oas-collectionFormat): csv
     /mru-list/{objectApiNames}:
       get:
-        description: Retrieve presentation-ready action data about specific mru-list objectApiNames.
+        description: Retrieve presentation-ready action data about specific mru-list
+          objectApiNames.
         responses:
           '200':
             description: Success
@@ -3670,7 +3790,8 @@ types:
             (oas-collectionFormat): csv
       /record-edit:
         get:
-          description: Retrieve presentation-ready action data about specific recordId under the RecordEdit subcontext.
+          description: Retrieve presentation-ready action data about specific recordId
+            under the RecordEdit subcontext.
           responses:
             '200':
               description: Success
@@ -3714,7 +3835,8 @@ types:
               (oas-collectionFormat): csv
       /related-list:
         get:
-          description: Retrieve presentation-ready action data about specific recordId for the RelatedList subcontexts relatedListIds.
+          description: Retrieve presentation-ready action data about specific recordId
+            for the RelatedList subcontexts relatedListIds.
           responses:
             '200':
               description: Success
@@ -3758,13 +3880,15 @@ types:
               (oas-collectionFormat): csv
         /batch/{relatedListIds}:
           get:
-            description: Retrieve presentation-ready action data about specific recordId for the RelatedList subcontexts relatedListIds but returned in the manner LDS expects for batching.
+            description: Retrieve presentation-ready action data about specific
+              recordId for the RelatedList subcontexts relatedListIds but returned
+              in the manner LDS expects for batching.
             responses:
               '200':
                 description: Success
                 body:
                   application/json:
-                    type: ActionBatchRepresentation
+                    type: ActionBatchRepresentation # TODO: hand rolled
             queryParameters:
               actionTypes:
                 type: array
@@ -3808,7 +3932,8 @@ types:
                 (oas-collectionFormat): csv
         /{relatedListId}:
           get:
-            description: Retrieve presentation-ready action data about specific recordId for the RelatedList subcontexts relatedListIds.
+            description: Retrieve presentation-ready action data about specific
+              recordId for the RelatedList subcontexts relatedListIds.
             responses:
               '200':
                 description: Success
@@ -3855,7 +3980,8 @@ types:
               required: true
       /related-list-record/{relatedListRecordIds}:
         get:
-          description: Retrieve presentation-ready action data about specific recordId under the related-list-record relatedListRecordIds.
+          description: Retrieve presentation-ready action data about specific recordId
+            under the related-list-record relatedListRecordIds.
           responses:
             '200':
               description: Success
@@ -3950,7 +4076,8 @@ types:
           required: false
     /selected:
       get:
-        description: Retrieves an app current user last selected or should see by default
+        description: Retrieves an app current user last selected or should see by
+          default
         responses:
           '200':
             description: Success
@@ -3981,7 +4108,8 @@ types:
             type: boolean
             required: false
       patch:
-        description: Returns the app metadata for the given App id and also saves this app as Last accessed app for the user
+        description: Returns the app metadata for the given App id and also saves
+          this app as Last accessed app for the user
         responses:
           '200':
             description: Success
@@ -4030,7 +4158,8 @@ types:
           required: true
   /duplicates/{objectApiName}:
     get:
-      description: Get duplicate management configuration for a specific entity object
+      description: Get duplicate management configuration for a specific entity
+        object
       responses:
         '200':
           description: Success
@@ -4041,7 +4170,7 @@ types:
       objectApiName:
         type: string
         required: true
-        examples:
+        examples: # TODO: hand rolled
           getDuplicateConfigurationResponse1: 'Lead'
   /favorites:
     get:
@@ -4084,7 +4213,9 @@ types:
           (oas-body-name): favorite
     /batch:
       put:
-        description: Updates all favorites at once. Sort order is updated to the given relative ordering and any favorites missing from the input payload are deleted.
+        description: Updates all favorites at once. Sort order is updated to the
+          given relative ordering and any favorites missing from the input payload
+          are deleted.
         responses:
           '200':
             description: Success
@@ -4134,7 +4265,8 @@ types:
           required: true
     /{favoriteId}/usage:
       patch:
-        description: Increments the accessCount and sets the lastAccessDate to the current system time.
+        description: Increments the accessCount and sets the lastAccessDate to the
+          current system time.
         responses:
           '200':
             description: Success
@@ -4158,19 +4290,6 @@ types:
       apiName:
         type: string
         required: true
-  /graphql:
-    post:
-      description: Execute a GraphQL query.
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: GraphQLRepresentation
-      body:
-        application/json:
-          type: GraphQLInputRepresentation
-          (oas-body-name): queryInput
   /layout/{objectApiName}:
     get:
       description: Retrieve a specific layout.
@@ -4796,7 +4915,7 @@ types:
         application/json:
           type: RecordInputRepresentation
           (oas-body-name): recordInput
-          examples:
+          examples: # TODO hand rolled
             getDuplicatesResponse1: |
               {
                 "apiName": "Lead",
@@ -4805,30 +4924,10 @@ types:
                   "LastName": "Steele"
                 }
               }
-  /priming-components:
-    get:
-      description: Retrieve dynamic components, wire data, dependent component list, and labels for priming flexipages.
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: PrimingComponentsRepresentation
-      queryParameters:
-        adg:
-          description: Indicates whether ADG should be returned (true), or pre-evaluated wires (false, default)
-          type: boolean
-          required: false
-        pageDescs:
-          description: list of PageDevName,ObjectApiName,RecordTypeId,RecordId,RecordId:...
-          type: array
-          required: false
-          items:
-            type: string
-            (oas-collectionFormat): csv
   /priming-records:
     get:
-      description: Retrieve list of records to prime for the context user.
+      description: relayToken to continue aggregating records from where it was
+        left off in previous request
       responses:
         '200':
           description: Success
@@ -4836,15 +4935,9 @@ types:
             application/json:
               type: PrimingRecordCollectionRepresentation
       queryParameters:
-        customAppId:
+        relayToken:
           type: string
           required: false
-        objectApiNames:
-          type: array
-          required: false
-          items:
-            type: string
-            (oas-collectionFormat): csv
   /priming-routes:
     get:
       description: Retrieve list of flexipage routes to prime for the context user.
@@ -4873,17 +4966,19 @@ types:
             description: Success
             body:
               application/json:
-                type: RecordAvatarBulkMapRepresentation #TODO: hand rolled
+                type: RecordAvatarBulkMapRepresentation # TODO: hand rolled
         queryParameters:
           formFactor:
             type: string
             required: false
+            default: Large
       uriParameters:
         recordIds:
-          type: array # TODO: generated RAML document has this as a string, not string[]
+          type: array
+          required: true
           items:
             type: string
-          required: true
+            (oas-collectionFormat): csv
     /{recordId}:
       get:
         description: Retrieve avatar information about specific records.
@@ -4897,6 +4992,7 @@ types:
           formFactor:
             type: string
             required: false
+            default: Large
       uriParameters:
         recordId:
           type: string
@@ -4921,7 +5017,8 @@ types:
   /record-defaults:
     /clone/{recordId}:
       get:
-        description: Retrieve default values for fields for cloning a record with optional record type.
+        description: Retrieve default values for fields for cloning a record with
+          optional record type.
         responses:
           '200':
             description: Success
@@ -4932,9 +5029,11 @@ types:
           formFactor:
             type: string
             required: false
+            default: Large
           optionalFields:
             type: array
             required: false
+            default: []
             items:
               type: string
               (oas-collectionFormat): csv
@@ -4947,7 +5046,8 @@ types:
           required: true
     /create/{objectApiName}:
       get:
-        description: Retrieve default values for fields for a new record of a particular object and optional record type.
+        description: Retrieve default values for fields for a new record of a particular
+          object and optional record type.
         responses:
           '200':
             description: Success
@@ -4958,9 +5058,11 @@ types:
           formFactor:
             type: string
             required: false
+            default: Large
           optionalFields:
             type: array
             required: false
+            default: []
             items:
               type: string
               (oas-collectionFormat): csv
@@ -4974,7 +5076,9 @@ types:
     /template:
       /clone/{recordId}:
         get:
-          description: Retrieve default values for fields for cloning a record with optional record type.
+          description: Retrieve default values for fields for cloning a record with
+            optional record type without layout information, and specifying only
+            requested fields and object infos.
           responses:
             '200':
               description: Success
@@ -4997,7 +5101,9 @@ types:
             required: true
       /create/{objectApiName}:
         get:
-          description: Retrieve default values for fields for a new record of a particular object and optional record type without layouts.
+          description: Retrieve default values for fields for creating a new record
+            of a particular object without layout information, and specifying only
+            requested fields and object infos.
           responses:
             '200':
               description: Success
@@ -5020,7 +5126,8 @@ types:
             required: true
   /record-ui/{recordIds}:
     get:
-      description: Retrieve presentation-ready metadata and data about specific records.
+      description: Retrieve presentation-ready metadata and data about specific
+        records.
       responses:
         '200':
           description: Success
@@ -5031,15 +5138,19 @@ types:
         childRelationships:
           type: array
           required: false
+          default: []
           items:
             type: string
             (oas-collectionFormat): csv
         formFactor:
           type: string
           required: false
+          default: Large
         layoutTypes:
           type: array
           required: false
+          default:
+            - Full
           items:
             type: string
             enum:
@@ -5051,6 +5162,8 @@ types:
         modes:
           type: array
           required: false
+          default:
+            - View
           items:
             type: string
             enum:
@@ -5062,6 +5175,7 @@ types:
         optionalFields:
           type: array
           required: false
+          default: []
           items:
             type: string
             (oas-collectionFormat): csv
@@ -5075,7 +5189,7 @@ types:
           default: false
     uriParameters:
       recordIds:
-        type: array # TODO manually changed to string[]. relies on Array.toString() to generate CSV
+        type: array
         required: true
         items:
           type: string
@@ -5095,15 +5209,18 @@ types:
       #    type: boolean
       #    required: false
       queryParameters:
-        useDefaultRule: # TODO: hand rolled
+        triggerOtherEmail:
           type: boolean
           required: false
-        triggerOtherEmail: # TODO: hand rolled
+          default: false
+        triggerUserEmail:
           type: boolean
           required: false
-        triggerUserEmail: # TODO: hand rolled
+          default: false
+        useDefaultRule:
           type: boolean
           required: false
+          default: false
       body:
         application/json:
           type: RecordInputRepresentation
@@ -5112,7 +5229,7 @@ types:
           properties:
             binaryInputList:
               type: file
-              required: false # TODO 'false' converted to false
+              required: false
     /batch/{recordIds}:
       get:
         description: Retrieve record data for a list of recordIds.
@@ -5126,18 +5243,21 @@ types:
           childRelationships:
             type: array
             required: false
+            default: []
             items:
               type: string
               (oas-collectionFormat): csv
           fields:
             type: array
             required: false
+            default: []
             items:
               type: string
               (oas-collectionFormat): csv
           layoutTypes:
             type: array
             required: false
+            default: []
             items:
               type: string
               enum:
@@ -5149,6 +5269,7 @@ types:
           modes:
             type: array
             required: false
+            default: []
             items:
               type: string
               enum:
@@ -5160,18 +5281,21 @@ types:
           optionalFields:
             type: array
             required: false
+            default: []
             items:
               type: string
               (oas-collectionFormat): csv
           pageSize:
             type: integer
             required: false
+            default: 5
           updateMru:
             type: boolean
             required: false
+            default: false
       uriParameters:
         recordIds:
-          type: array # TODO: hand rolled Type changed from string to array
+          type: array
           required: true
           items:
             type: string
@@ -5194,12 +5318,14 @@ types:
           childRelationships:
             type: array
             required: false
+            default: []
             items:
               type: string
               (oas-collectionFormat): csv
           fields:
             type: array
             required: false
+            default: []
             items:
               type: string
               (oas-collectionFormat): csv
@@ -5212,19 +5338,23 @@ types:
           layoutTypes:
             type: array
             required: false
+            default: []
             items:
               type: string
               enum:
                 - Compact
                 - Full
                 - Mdp
+                - Search
               (oas-collectionFormat): csv
           modes:
             type: array
             required: false
+            default: []
             items:
               type: string
               enum:
+                - Clone
                 - Create
                 - Edit
                 - View
@@ -5232,15 +5362,18 @@ types:
           optionalFields:
             type: array
             required: false
+            default: []
             items:
               type: string
               (oas-collectionFormat): csv
           pageSize:
             type: integer
             required: false
+            default: 5
           updateMru:
             type: boolean
             required: false
+            default: false
       patch:
         description: Update an existing record.
         responses:
@@ -5255,15 +5388,18 @@ types:
         #    type: boolean
         #    required: false
         queryParameters:
-          useDefaultRule: # TODO: hand rolled
+          triggerOtherEmail:
             type: boolean
             required: false
-          triggerOtherEmail: # TODO: hand rolled
+            default: false
+          triggerUserEmail:
             type: boolean
             required: false
-          triggerUserEmail: # TODO: hand rolled
+            default: false
+          useDefaultRule:
             type: boolean
             required: false
+            default: false
         body:
           application/json:
             type: RecordInputRepresentation
@@ -5272,7 +5408,7 @@ types:
             properties:
               binaryInputList:
                 type: file
-                required: false # TODO 'false' converted to false
+                required: false
         headers:
           # TODO manually changed, needs follow up with UIAPI
           'If-Unmodified-Since':
@@ -5295,12 +5431,14 @@ types:
           fields:
             type: array
             required: false
+            default: []
             items:
               type: string
               (oas-collectionFormat): csv
           optionalFields:
             type: array
             required: false
+            default: []
             items:
               type: string
               (oas-collectionFormat): csv
@@ -5310,6 +5448,7 @@ types:
           pageSize:
             type: integer
             required: false
+            default: 5
           pageToken:
             type: string
             required: false
@@ -5329,7 +5468,7 @@ types:
             description: Success
             body:
               application/json:
-                type: BatchRelatedListCountRepresentation #TODO: Handrolled
+                type: BatchRelatedListCountRepresentation # TODO: Handrolled
         queryParameters:
           maxCount:
             type: integer
@@ -5373,7 +5512,7 @@ types:
             description: Success
             body:
               application/json:
-                type: RelatedListInfoBatchRepresentation
+                type: RelatedListInfoBatchRepresentation # TODO: hand rolled
         queryParameters:
           recordTypeId:
             type: string
@@ -5480,13 +5619,14 @@ types:
   /related-list-records:
     /batch/{parentRecordId}/{relatedListIds}:
       get:
-        description: Returns a batch of record data to populate several related list.
+        description: Returns a batch of record data to populate several related
+          list.
         responses:
           '200':
             description: Success
             body:
               application/json:
-                type: RelatedListRecordCollectionBatchRepresentation
+                type: RelatedListRecordCollectionBatchRepresentation # TODO: hand rolled
         queryParameters:
           fields:
             type: string

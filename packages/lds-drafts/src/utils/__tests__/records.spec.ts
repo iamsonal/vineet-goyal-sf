@@ -110,7 +110,7 @@ describe('draft environment record utilities', () => {
 
         it('returns undefined if method not recognized', () => {
             const request = {
-                baseUri: '/services/data/v51.0',
+                baseUri: '/services/data/v52.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'put',
                 body: {
@@ -128,7 +128,7 @@ describe('draft environment record utilities', () => {
 
         it('returns undefined if not record cud endpoint', () => {
             const request = {
-                baseUri: '/services/data/v51.0',
+                baseUri: '/services/data/v52.0',
                 basePath: `/ui-api/records/somethingelse/${RECORD_ID}`,
                 method: 'delete',
                 body: {},
@@ -142,7 +142,7 @@ describe('draft environment record utilities', () => {
 
         it('returns undefined if base path is unexpected', () => {
             const request = {
-                baseUri: '/services/data/v51.0',
+                baseUri: '/services/data/v52.0',
                 basePath: `/ui-api/records/${RECORD_ID}/something`,
                 method: 'delete',
                 body: {},

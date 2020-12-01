@@ -97,7 +97,7 @@ describe('makeEnvironmentDraftAware', () => {
         it('does not intercept non record endpoints', async () => {
             const { draftEnvironment, network } = setup();
             await draftEnvironment.dispatchResourceRequest({
-                baseUri: '/services/data/v51.0',
+                baseUri: '/services/data/v52.0',
                 basePath: `/ui-api/not-record-endpoint`,
                 method: 'patch',
                 body: {},
@@ -110,7 +110,7 @@ describe('makeEnvironmentDraftAware', () => {
         it('does not intercept record get endpoint', () => {
             const { draftEnvironment, network } = setup();
             draftEnvironment.dispatchResourceRequest({
-                baseUri: '/services/data/v51.0',
+                baseUri: '/services/data/v52.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'get',
                 body: {},
@@ -128,7 +128,7 @@ describe('makeEnvironmentDraftAware', () => {
                 const { draftEnvironment } = setup();
                 const { rejects } = await expect(
                     draftEnvironment.dispatchResourceRequest({
-                        baseUri: '/services/data/v51.0',
+                        baseUri: '/services/data/v52.0',
                         basePath: `/ui-api/records/${RECORD_ID}`,
                         method: 'post',
                         body: {
@@ -187,7 +187,7 @@ describe('makeEnvironmentDraftAware', () => {
                     });
                 });
                 const request = {
-                    baseUri: '/services/data/v51.0',
+                    baseUri: '/services/data/v52.0',
                     basePath: `/ui-api/records/${RECORD_ID}`,
                     method: 'post',
                     body: {
@@ -211,7 +211,7 @@ describe('makeEnvironmentDraftAware', () => {
 
                 durableStore.getEntries = jest.fn().mockResolvedValue(undefined);
                 const request = {
-                    baseUri: '/services/data/v51.0',
+                    baseUri: '/services/data/v52.0',
                     basePath: `/ui-api/records/${RECORD_ID}`,
                     method: 'post',
                     body: {
@@ -269,7 +269,7 @@ describe('makeEnvironmentDraftAware', () => {
                     });
                 });
                 const request = {
-                    baseUri: '/services/data/v51.0',
+                    baseUri: '/services/data/v52.0',
                     basePath: `/ui-api/records`,
                     method: 'post',
                     body: {

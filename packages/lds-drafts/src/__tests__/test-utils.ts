@@ -56,7 +56,7 @@ export function buildDurableRecordRepresentation(
 
 export function createGetRequest() {
     return {
-        baseUri: '/services/data/v51.0',
+        baseUri: '/services/data/v52.0',
         basePath: `/ui-api/records/${RECORD_ID}`,
         method: 'get',
         body: {},
@@ -68,7 +68,7 @@ export function createGetRequest() {
 
 export function createPatchRequest() {
     return {
-        baseUri: '/services/data/v51.0',
+        baseUri: '/services/data/v52.0',
         basePath: `/ui-api/records/${RECORD_ID}`,
         method: 'patch',
         body: {
@@ -84,7 +84,7 @@ export function createPatchRequest() {
 
 export function createPostRequest() {
     return {
-        baseUri: '/services/data/v51.0',
+        baseUri: '/services/data/v52.0',
         basePath: `/ui-api/records/`,
         method: 'post',
         body: {
@@ -101,7 +101,7 @@ export function createPostRequest() {
 
 export function createDeleteRequest() {
     return {
-        baseUri: '/services/data/v51.0',
+        baseUri: '/services/data/v52.0',
         basePath: `/ui-api/records/${RECORD_ID}`,
         method: 'delete',
         body: {},
@@ -121,7 +121,7 @@ export function createEditDraftAction(
         status: DraftActionStatus.Pending,
         tag: recordKey,
         request: {
-            baseUri: '/services/data/v51.0',
+            baseUri: '/services/data/v52.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'patch',
             body: { fields: { Name: nameValue } },
@@ -142,7 +142,7 @@ export function createPostDraftAction(
         status: DraftActionStatus.Pending,
         tag: recordKey,
         request: {
-            baseUri: '/services/data/v51.0',
+            baseUri: '/services/data/v52.0',
             basePath: `/ui-api/records`,
             method: 'post',
             body: { fields: { Name: nameValue }, apiName },
@@ -162,7 +162,7 @@ export function createDeleteDraftAction(
         status: DraftActionStatus.Pending,
         tag: recordKey,
         request: {
-            baseUri: '/services/data/v51.0',
+            baseUri: '/services/data/v52.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'delete',
             body: {},

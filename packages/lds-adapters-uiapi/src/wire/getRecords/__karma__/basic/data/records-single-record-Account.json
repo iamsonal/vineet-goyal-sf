@@ -5,24 +5,24 @@
             "result": {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "49484be4ed9a7d214ebfa6db6bfb03c6",
+                "eTag": "4c1b884a2c3a3e68fe952479395b727a",
                 "fields": {
                     "Id": {
                         "displayValue": null,
-                        "value": "001T1000002GSZdIAO"
+                        "value": "001T1000002GXfyIAG"
                     },
                     "Name": {
                         "displayValue": null,
                         "value": "Burlington Textiles Corp of America"
                     }
                 },
-                "id": "001T1000002GSZdIAO",
-                "lastModifiedById": "005T1000000DwbdIAC",
-                "lastModifiedDate": "2020-10-12T20:42:25.000Z",
+                "id": "001T1000002GXfyIAG",
+                "lastModifiedById": "005T1000000HsOgIAK",
+                "lastModifiedDate": "2020-12-01T19:34:04.000Z",
                 "recordTypeId": "012000000000000AAA",
                 "recordTypeInfo": null,
-                "systemModstamp": "2020-10-12T20:42:25.000Z",
-                "weakEtag": 1602535345000
+                "systemModstamp": "2020-12-01T19:34:04.000Z",
+                "weakEtag": 1606851244000
             },
             "statusCode": 200
         }

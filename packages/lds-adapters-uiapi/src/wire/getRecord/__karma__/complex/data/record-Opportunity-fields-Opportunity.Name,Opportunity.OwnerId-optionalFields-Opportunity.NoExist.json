@@ -1,7 +1,7 @@
 {
     "apiName": "Opportunity",
     "childRelationships": {},
-    "eTag": "bf8ec4a10cb7e1791d4152f01a2e2cf0",
+    "eTag": "72c0c662890f0a37be8f62e0d014999e",
     "fields": {
         "Name": {
             "displayValue": null,
@@ -9,14 +9,14 @@
         },
         "OwnerId": {
             "displayValue": null,
-            "value": "005T1000000DwPcIAK"
+            "value": "005T1000000HsOgIAK"
         }
     },
-    "id": "006T10000023SCdIAM",
-    "lastModifiedById": "005T1000000DwPcIAK",
-    "lastModifiedDate": "2020-09-29T09:28:23.000Z",
+    "id": "006T10000023V6FIAU",
+    "lastModifiedById": "005T1000000HsOgIAK",
+    "lastModifiedDate": "2020-12-01T19:34:04.000Z",
     "recordTypeId": "012000000000000AAA",
     "recordTypeInfo": null,
-    "systemModstamp": "2020-09-29T09:28:23.000Z",
-    "weakEtag": 1601371703000
+    "systemModstamp": "2020-12-01T19:34:04.000Z",
+    "weakEtag": 1606851244000
 }

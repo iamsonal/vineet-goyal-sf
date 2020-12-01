@@ -1,5 +1,5 @@
 {
-    "eTag": "adfc230cb8a308eff2508f6d2ef10c22",
+    "eTag": "ef3de7706aa65d8899b7b06d3333b23e",
     "info": {
         "cloneable": true,
         "createable": true,
@@ -36,12 +36,12 @@
                 "sortable": true
             }
         ],
-        "eTag": "48f985547346b4f1b0d3e07ea24dc9e0",
+        "eTag": "d70b880f1a794f36146fc181c7834806",
         "filterLogicString": null,
         "filteredByInfo": [],
         "label": "All Accounts",
         "listReference": {
-            "id": "00Bxx0000029foGEAQ",
+            "id": "00BT1000000t91kMAA",
             "listViewApiName": "AllAccounts",
             "objectApiName": "Account",
             "type": "listView"
@@ -80,9 +80,9 @@
         "currentPageToken": "0",
         "currentPageUrl": "/services/data/v52.0/ui-api/list-records/Account/AllAccounts?pageSize=3&pageToken=0",
         "fields": [],
-        "listInfoETag": "48f985547346b4f1b0d3e07ea24dc9e0",
+        "listInfoETag": "d70b880f1a794f36146fc181c7834806",
         "listReference": {
-            "id": "00Bxx0000029foGEAQ",
+            "id": "00BT1000000t91kMAA",
             "listViewApiName": "AllAccounts",
             "objectApiName": "Account",
             "type": "listView"
@@ -97,7 +97,7 @@
             {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "93b5a867a9ca396f8b3fce244a746a7e",
+                "eTag": "0a0b99e1f35ba33eb9a9ba8e75c4dffb",
                 "fields": {
                     "BillingState": {
                         "displayValue": null,
@@ -105,19 +105,19 @@
                     },
                     "CreatedDate": {
                         "displayValue": null,
-                        "value": "2020-08-17T18:55:35.000Z"
+                        "value": "2020-12-01T19:34:04.000Z"
                     },
                     "Id": {
                         "displayValue": null,
-                        "value": "001xx000003Gl1cAAC"
+                        "value": "001T1000002GXfyIAG"
                     },
                     "LastModifiedById": {
                         "displayValue": null,
-                        "value": "005xx000001XN4DAAW"
+                        "value": "005T1000000HsOgIAK"
                     },
                     "LastModifiedDate": {
                         "displayValue": null,
-                        "value": "2020-08-17T18:55:35.000Z"
+                        "value": "2020-12-01T19:34:04.000Z"
                     },
                     "Name": {
                         "displayValue": null,
@@ -128,7 +128,7 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "fdffe8fb7ecac027b21ead28badafa69",
+                            "eTag": "7687d250a6e4b9c6f983d531122f7f2e",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
@@ -136,19 +136,19 @@
                                 },
                                 "CreatedDate": {
                                     "displayValue": null,
-                                    "value": "2020-08-17T18:55:35.000Z"
+                                    "value": "2020-12-01T19:34:04.000Z"
                                 },
                                 "Id": {
                                     "displayValue": null,
-                                    "value": "005xx000001XN4DAAW"
+                                    "value": "005T1000000HsOgIAK"
                                 },
                                 "LastModifiedById": {
                                     "displayValue": null,
-                                    "value": "005xx000001XN4DAAW"
+                                    "value": "005T1000000HsOgIAK"
                                 },
                                 "LastModifiedDate": {
                                     "displayValue": null,
-                                    "value": "2020-08-17T18:55:35.000Z"
+                                    "value": "2020-12-01T19:34:04.000Z"
                                 },
                                 "Name": {
                                     "displayValue": null,
@@ -156,21 +156,21 @@
                                 },
                                 "SystemModstamp": {
                                     "displayValue": null,
-                                    "value": "2020-08-17T19:08:48.000Z"
+                                    "value": "2020-12-01T20:07:40.000Z"
                                 }
                             },
-                            "id": "005xx000001XN4DAAW",
-                            "lastModifiedById": "005xx000001XN4DAAW",
-                            "lastModifiedDate": "2020-08-17T18:55:35.000Z",
+                            "id": "005T1000000HsOgIAK",
+                            "lastModifiedById": "005T1000000HsOgIAK",
+                            "lastModifiedDate": "2020-12-01T19:34:04.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2020-08-17T19:08:48.000Z",
-                            "weakEtag": 1597691328000
+                            "systemModstamp": "2020-12-01T20:07:40.000Z",
+                            "weakEtag": 1606853260000
                         }
                     },
                     "OwnerId": {
                         "displayValue": null,
-                        "value": "005xx000001XN4DAAW"
+                        "value": "005T1000000HsOgIAK"
                     },
                     "Phone": {
                         "displayValue": null,
@@ -182,25 +182,25 @@
                     },
                     "SystemModstamp": {
                         "displayValue": null,
-                        "value": "2020-08-17T18:55:35.000Z"
+                        "value": "2020-12-01T19:34:04.000Z"
                     },
                     "Type": {
                         "displayValue": "Customer - Direct",
                         "value": "Customer - Direct"
                     }
                 },
-                "id": "001xx000003Gl1cAAC",
-                "lastModifiedById": "005xx000001XN4DAAW",
-                "lastModifiedDate": "2020-08-17T18:55:35.000Z",
+                "id": "001T1000002GXfyIAG",
+                "lastModifiedById": "005T1000000HsOgIAK",
+                "lastModifiedDate": "2020-12-01T19:34:04.000Z",
                 "recordTypeId": "012000000000000AAA",
                 "recordTypeInfo": null,
-                "systemModstamp": "2020-08-17T18:55:35.000Z",
-                "weakEtag": 1597690535000
+                "systemModstamp": "2020-12-01T19:34:04.000Z",
+                "weakEtag": 1606851244000
             },
             {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "744b8311033947e25ec116082dde1260",
+                "eTag": "69b5e4ad7f289e71b032a581983be3ee",
                 "fields": {
                     "BillingState": {
                         "displayValue": null,
@@ -208,19 +208,19 @@
                     },
                     "CreatedDate": {
                         "displayValue": null,
-                        "value": "2020-08-17T18:55:35.000Z"
+                        "value": "2020-12-01T19:34:04.000Z"
                     },
                     "Id": {
                         "displayValue": null,
-                        "value": "001xx000003Gl1eAAC"
+                        "value": "001T1000002GXg0IAG"
                     },
                     "LastModifiedById": {
                         "displayValue": null,
-                        "value": "005xx000001XN4DAAW"
+                        "value": "005T1000000HsOgIAK"
                     },
                     "LastModifiedDate": {
                         "displayValue": null,
-                        "value": "2020-08-17T18:55:35.000Z"
+                        "value": "2020-12-01T19:34:04.000Z"
                     },
                     "Name": {
                         "displayValue": null,
@@ -231,7 +231,7 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "fdffe8fb7ecac027b21ead28badafa69",
+                            "eTag": "7687d250a6e4b9c6f983d531122f7f2e",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
@@ -239,19 +239,19 @@
                                 },
                                 "CreatedDate": {
                                     "displayValue": null,
-                                    "value": "2020-08-17T18:55:35.000Z"
+                                    "value": "2020-12-01T19:34:04.000Z"
                                 },
                                 "Id": {
                                     "displayValue": null,
-                                    "value": "005xx000001XN4DAAW"
+                                    "value": "005T1000000HsOgIAK"
                                 },
                                 "LastModifiedById": {
                                     "displayValue": null,
-                                    "value": "005xx000001XN4DAAW"
+                                    "value": "005T1000000HsOgIAK"
                                 },
                                 "LastModifiedDate": {
                                     "displayValue": null,
-                                    "value": "2020-08-17T18:55:35.000Z"
+                                    "value": "2020-12-01T19:34:04.000Z"
                                 },
                                 "Name": {
                                     "displayValue": null,
@@ -259,21 +259,21 @@
                                 },
                                 "SystemModstamp": {
                                     "displayValue": null,
-                                    "value": "2020-08-17T19:08:48.000Z"
+                                    "value": "2020-12-01T20:07:40.000Z"
                                 }
                             },
-                            "id": "005xx000001XN4DAAW",
-                            "lastModifiedById": "005xx000001XN4DAAW",
-                            "lastModifiedDate": "2020-08-17T18:55:35.000Z",
+                            "id": "005T1000000HsOgIAK",
+                            "lastModifiedById": "005T1000000HsOgIAK",
+                            "lastModifiedDate": "2020-12-01T19:34:04.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2020-08-17T19:08:48.000Z",
-                            "weakEtag": 1597691328000
+                            "systemModstamp": "2020-12-01T20:07:40.000Z",
+                            "weakEtag": 1606853260000
                         }
                     },
                     "OwnerId": {
                         "displayValue": null,
-                        "value": "005xx000001XN4DAAW"
+                        "value": "005T1000000HsOgIAK"
                     },
                     "Phone": {
                         "displayValue": null,
@@ -285,25 +285,25 @@
                     },
                     "SystemModstamp": {
                         "displayValue": null,
-                        "value": "2020-08-17T18:55:35.000Z"
+                        "value": "2020-12-01T19:34:04.000Z"
                     },
                     "Type": {
                         "displayValue": "Customer - Channel",
                         "value": "Customer - Channel"
                     }
                 },
-                "id": "001xx000003Gl1eAAC",
-                "lastModifiedById": "005xx000001XN4DAAW",
-                "lastModifiedDate": "2020-08-17T18:55:35.000Z",
+                "id": "001T1000002GXg0IAG",
+                "lastModifiedById": "005T1000000HsOgIAK",
+                "lastModifiedDate": "2020-12-01T19:34:04.000Z",
                 "recordTypeId": "012000000000000AAA",
                 "recordTypeInfo": null,
-                "systemModstamp": "2020-08-17T18:55:35.000Z",
-                "weakEtag": 1597690535000
+                "systemModstamp": "2020-12-01T19:34:04.000Z",
+                "weakEtag": 1606851244000
             },
             {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "ed7760181fede4f5f7d42fcfbc0ac91c",
+                "eTag": "b740c7b38873eaaf8163f2582825ed7a",
                 "fields": {
                     "BillingState": {
                         "displayValue": null,
@@ -311,19 +311,19 @@
                     },
                     "CreatedDate": {
                         "displayValue": null,
-                        "value": "2020-08-17T18:55:35.000Z"
+                        "value": "2020-12-01T19:34:04.000Z"
                     },
                     "Id": {
                         "displayValue": null,
-                        "value": "001xx000003Gl1bAAC"
+                        "value": "001T1000002GXfxIAG"
                     },
                     "LastModifiedById": {
                         "displayValue": null,
-                        "value": "005xx000001XN4DAAW"
+                        "value": "005T1000000HsOgIAK"
                     },
                     "LastModifiedDate": {
                         "displayValue": null,
-                        "value": "2020-08-17T18:55:35.000Z"
+                        "value": "2020-12-01T19:34:04.000Z"
                     },
                     "Name": {
                         "displayValue": null,
@@ -334,7 +334,7 @@
                         "value": {
                             "apiName": "User",
                             "childRelationships": {},
-                            "eTag": "fdffe8fb7ecac027b21ead28badafa69",
+                            "eTag": "7687d250a6e4b9c6f983d531122f7f2e",
                             "fields": {
                                 "Alias": {
                                     "displayValue": null,
@@ -342,19 +342,19 @@
                                 },
                                 "CreatedDate": {
                                     "displayValue": null,
-                                    "value": "2020-08-17T18:55:35.000Z"
+                                    "value": "2020-12-01T19:34:04.000Z"
                                 },
                                 "Id": {
                                     "displayValue": null,
-                                    "value": "005xx000001XN4DAAW"
+                                    "value": "005T1000000HsOgIAK"
                                 },
                                 "LastModifiedById": {
                                     "displayValue": null,
-                                    "value": "005xx000001XN4DAAW"
+                                    "value": "005T1000000HsOgIAK"
                                 },
                                 "LastModifiedDate": {
                                     "displayValue": null,
-                                    "value": "2020-08-17T18:55:35.000Z"
+                                    "value": "2020-12-01T19:34:04.000Z"
                                 },
                                 "Name": {
                                     "displayValue": null,
@@ -362,21 +362,21 @@
                                 },
                                 "SystemModstamp": {
                                     "displayValue": null,
-                                    "value": "2020-08-17T19:08:48.000Z"
+                                    "value": "2020-12-01T20:07:40.000Z"
                                 }
                             },
-                            "id": "005xx000001XN4DAAW",
-                            "lastModifiedById": "005xx000001XN4DAAW",
-                            "lastModifiedDate": "2020-08-17T18:55:35.000Z",
+                            "id": "005T1000000HsOgIAK",
+                            "lastModifiedById": "005T1000000HsOgIAK",
+                            "lastModifiedDate": "2020-12-01T19:34:04.000Z",
                             "recordTypeId": null,
                             "recordTypeInfo": null,
-                            "systemModstamp": "2020-08-17T19:08:48.000Z",
-                            "weakEtag": 1597691328000
+                            "systemModstamp": "2020-12-01T20:07:40.000Z",
+                            "weakEtag": 1606853260000
                         }
                     },
                     "OwnerId": {
                         "displayValue": null,
-                        "value": "005xx000001XN4DAAW"
+                        "value": "005T1000000HsOgIAK"
                     },
                     "Phone": {
                         "displayValue": null,
@@ -388,20 +388,20 @@
                     },
                     "SystemModstamp": {
                         "displayValue": null,
-                        "value": "2020-08-17T18:55:35.000Z"
+                        "value": "2020-12-01T19:34:04.000Z"
                     },
                     "Type": {
                         "displayValue": "Customer - Direct",
                         "value": "Customer - Direct"
                     }
                 },
-                "id": "001xx000003Gl1bAAC",
-                "lastModifiedById": "005xx000001XN4DAAW",
-                "lastModifiedDate": "2020-08-17T18:55:35.000Z",
+                "id": "001T1000002GXfxIAG",
+                "lastModifiedById": "005T1000000HsOgIAK",
+                "lastModifiedDate": "2020-12-01T19:34:04.000Z",
                 "recordTypeId": "012000000000000AAA",
                 "recordTypeInfo": null,
-                "systemModstamp": "2020-08-17T18:55:35.000Z",
-                "weakEtag": 1597690535000
+                "systemModstamp": "2020-12-01T19:34:04.000Z",
+                "weakEtag": 1606851244000
             }
         ],
         "sortBy": "Name,Id"

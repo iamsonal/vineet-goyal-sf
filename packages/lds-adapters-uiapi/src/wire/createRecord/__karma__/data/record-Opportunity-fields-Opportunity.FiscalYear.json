@@ -1,18 +1,18 @@
 {
     "apiName": "Opportunity",
     "childRelationships": {},
-    "eTag": "47c98ac0e5473addb604f8eb08a583b7",
+    "eTag": "a237dd870232382b73b095960a0c23be",
     "fields": {
         "FiscalYear": {
             "displayValue": null,
             "value": 2020
         }
     },
-    "id": "006xx000001a8WGAAY",
-    "lastModifiedById": "005xx000001XN4DAAW",
-    "lastModifiedDate": "2020-08-17T19:08:41.000Z",
+    "id": "006T1000001rGQJIA2",
+    "lastModifiedById": "005T1000000HsOgIAK",
+    "lastModifiedDate": "2020-12-01T20:05:36.000Z",
     "recordTypeId": "012000000000000AAA",
     "recordTypeInfo": null,
-    "systemModstamp": "2020-08-17T19:08:41.000Z",
-    "weakEtag": 1597691321000
+    "systemModstamp": "2020-12-01T20:05:37.000Z",
+    "weakEtag": 1606853137000
 }

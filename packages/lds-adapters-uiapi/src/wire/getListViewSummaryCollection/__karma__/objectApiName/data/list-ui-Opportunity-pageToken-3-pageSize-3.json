@@ -2,23 +2,23 @@
     "count": 3,
     "currentPageToken": "3",
     "currentPageUrl": "/services/data/v52.0/ui-api/list-ui/Opportunity?pageSize=3&pageToken=3",
-    "eTag": "0d1494e122126e7f34b59ba5ceac0c6d",
+    "eTag": "16f967aa370d4b4b3b0f097b9af5ac57",
     "lists": [
         {
             "apiName": "MyOpportunities",
-            "id": "00Bxx0000029fouEAA",
+            "id": "00BT1000000t92OMAQ",
             "label": "My Opportunities",
             "listUiUrl": "/services/data/v52.0/ui-api/list-ui/Opportunity/MyOpportunities"
         },
         {
             "apiName": "NewLastWeek",
-            "id": "00Bxx0000029foNEAQ",
+            "id": "00BT1000000t91rMAA",
             "label": "New Last Week",
             "listUiUrl": "/services/data/v52.0/ui-api/list-ui/Opportunity/NewLastWeek"
         },
         {
             "apiName": "NewThisWeek",
-            "id": "00Bxx0000029fomEAA",
+            "id": "00BT1000000t92GMAQ",
             "label": "New This Week",
             "listUiUrl": "/services/data/v52.0/ui-api/list-ui/Opportunity/NewThisWeek"
         }

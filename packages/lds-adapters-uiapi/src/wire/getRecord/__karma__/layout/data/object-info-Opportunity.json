@@ -219,7 +219,7 @@
     "defaultRecordTypeId": "012000000000000AAA",
     "deletable": true,
     "dependentFields": {},
-    "eTag": "0d966889f98e217bf2261f433533cf66",
+    "eTag": "b18785655e81b319432004c0a8a0190f",
     "feedEnabled": true,
     "fields": {
         "AccountId": {
@@ -1772,7 +1772,7 @@
     "searchable": true,
     "themeInfo": {
         "color": "FCB95B",
-        "iconUrl": "https://ryan-noodles-2841-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/opportunity_120.png"
+        "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/opportunity_120.png"
     },
     "updateable": true
 }

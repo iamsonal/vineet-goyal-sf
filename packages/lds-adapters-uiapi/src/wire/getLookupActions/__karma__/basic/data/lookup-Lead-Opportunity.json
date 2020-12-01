@@ -7,9 +7,9 @@
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "CreateFromLookup",
-                    "externalId": "00Dxx0000006TGp:Opportunity::Lookup:Desktop:StandardButton:CreateFromLookup",
-                    "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_120.png",
-                    "id": "0JVxx0000000186GAA",
+                    "externalId": "00DT10000000jeU:Opportunity::Lookup:Desktop:StandardButton:CreateFromLookup",
+                    "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_120.png",
+                    "id": "0JVT10000000013OAA",
                     "isMassAction": "false",
                     "label": "New",
                     "primaryColor": "33BCE7",
@@ -33,9 +33,9 @@
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "CreateFromLookup",
-                    "externalId": "00Dxx0000006TGp:Lead::Lookup:Desktop:StandardButton:CreateFromLookup",
-                    "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_120.png",
-                    "id": "0JVxx0000000187GAA",
+                    "externalId": "00DT10000000jeU:Lead::Lookup:Desktop:StandardButton:CreateFromLookup",
+                    "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_120.png",
+                    "id": "0JVT10000000014OAA",
                     "isMassAction": "false",
                     "label": "New",
                     "primaryColor": "33BCE7",
@@ -53,6 +53,6 @@
             "url": "/services/data/v52.0/ui-api/actions/lookup/Lead"
         }
     },
-    "eTag": "f47e0c1cad8d93a339e5ca87c29beb99",
+    "eTag": "e59121b9cb5d21e8289b71b7f1a15efe",
     "url": "/services/data/v52.0/ui-api/actions/lookup/Lead,Opportunity"
 }

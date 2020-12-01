@@ -1,7 +1,7 @@
 {
     "layout": {
-        "eTag": "83e94f5bc326b4b9b96ff33d4f9f58a7",
-        "id": "00hxx0000019ebDAAQ",
+        "eTag": "a1da461584b413c1c2c9919f78205382",
+        "id": "00hT1000000G6iHIAS",
         "layoutType": "Full",
         "mode": "Create",
         "objectApiName": "Account",
@@ -21,7 +21,7 @@
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Account Information",
-                "id": "01Bxx000002CKudEAG",
+                "id": "01BT1000000YRklMAG",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -303,7 +303,7 @@
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Address Information",
-                "id": "01Bxx000002CKuhEAG",
+                "id": "01BT1000000YRkpMAG",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -387,7 +387,7 @@
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Additional Information",
-                "id": "01Bxx000002CKueEAG",
+                "id": "01BT1000000YRkmMAG",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -532,7 +532,7 @@
                 "collapsible": false,
                 "columns": 1,
                 "heading": "Description Information",
-                "id": "01Bxx000002CKuiEAG",
+                "id": "01BT1000000YRkqMAG",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -832,18 +832,25 @@
                     "relationshipName": "Expenses"
                 },
                 {
+                    "childObjectApiName": "FinanceBalanceSnapshot",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceBalanceSnapshots"
+                },
+                {
+                    "childObjectApiName": "FinanceTransaction",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceTransactions"
+                },
+                {
                     "childObjectApiName": "MaintenancePlan",
                     "fieldName": "AccountId",
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "MaintenancePlans"
-                },
-                {
-                    "childObjectApiName": "MedicationRequest",
-                    "fieldName": "PatientId",
-                    "junctionIdListNames": [],
-                    "junctionReferenceTo": [],
-                    "relationshipName": "Medication_Request_Patients"
                 },
                 {
                     "childObjectApiName": "Note",
@@ -1061,7 +1068,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "c928f9a58467e86c24f30530a951b119",
+            "eTag": "31561fa701b9884937f7e3074d745758",
             "feedEnabled": true,
             "fields": {
                 "AccountNumber": {
@@ -1696,7 +1703,7 @@
                     "relationshipName": "DandbCompany",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2371,7 +2378,7 @@
                     "relationshipName": "OperatingHours",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2480,7 +2487,7 @@
                     "relationshipName": "Parent",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -3330,7 +3337,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://newport-process-2003-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
@@ -3667,7 +3674,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "8be9efbe5e66db80925dbea4f4a64d09",
+            "eTag": "ba6599de890e85bc13a93c6389b3627d",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -3736,7 +3743,7 @@
                     "relationshipName": "Account",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": false
@@ -4081,7 +4088,7 @@
                     "relationshipName": "Contact",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -4859,7 +4866,7 @@
                     "relationshipName": "Individual",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -5397,7 +5404,7 @@
                     "relationshipName": "Manager",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -5765,7 +5772,7 @@
                     "relationshipName": "Profile",
                     "required": true,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -8910,6 +8917,39 @@
                     "unique": false,
                     "updateable": true
                 },
+                "UserPreferencesSendListEmailThroughExternalService": {
+                    "apiName": "UserPreferencesSendListEmailThroughExternalService",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "SendListEmailThroughExternalService",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
                 "UserPreferencesSendViaInternalEmailService": {
                     "apiName": "UserPreferencesSendViaInternalEmailService",
                     "calculated": false,
@@ -9999,7 +10039,7 @@
                     "relationshipName": "UserRole",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": false,
+                    "searchPrefilterable": true,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -10082,7 +10122,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://newport-process-2003-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         }
@@ -10090,7 +10130,7 @@
     "record": {
         "apiName": "Account",
         "childRelationships": {},
-        "eTag": "dbd8c79bf7a061f9bee76d1f93e9e917",
+        "eTag": "51b21a14a9c1283e6f977551a9c549a4",
         "fields": {
             "AccountNumber": {
                 "displayValue": null,
@@ -10157,18 +10197,18 @@
                 "value": {
                     "apiName": "User",
                     "childRelationships": {},
-                    "eTag": "76c6459e4d3b18c9181487ea176bdde2",
+                    "eTag": "9030d322da3fbcde3ec9bcc1a5cc8299",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "005xx000001XPPNAA4"
+                            "value": "005T1000000HsOgIAK"
                         },
                         "Name": {
                             "displayValue": null,
                             "value": "User User"
                         }
                     },
-                    "id": "005xx000001XPPNAA4",
+                    "id": "005T1000000HsOgIAK",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -10179,7 +10219,7 @@
             },
             "OwnerId": {
                 "displayValue": null,
-                "value": "005xx000001XPPNAA4"
+                "value": "005T1000000HsOgIAK"
             },
             "Ownership": {
                 "displayValue": null,

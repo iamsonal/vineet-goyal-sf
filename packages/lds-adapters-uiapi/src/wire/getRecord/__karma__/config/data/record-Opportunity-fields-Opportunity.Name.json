@@ -1,18 +1,18 @@
 {
     "apiName": "Opportunity",
     "childRelationships": {},
-    "eTag": "a234a147488bef1b13c3f4e644cdaa75",
+    "eTag": "730f6d7f4ad8dc27163564d3e814718e",
     "fields": {
         "Name": {
             "displayValue": null,
             "value": "Burlington Textiles Weaving Plant Generator"
         }
     },
-    "id": "006T10000023SCdIAM",
-    "lastModifiedById": "005T1000000DwPcIAK",
-    "lastModifiedDate": "2020-09-29T09:28:23.000Z",
+    "id": "006T10000023V6FIAU",
+    "lastModifiedById": "005T1000000HsOgIAK",
+    "lastModifiedDate": "2020-12-01T19:34:04.000Z",
     "recordTypeId": "012000000000000AAA",
     "recordTypeInfo": null,
-    "systemModstamp": "2020-09-29T09:28:23.000Z",
-    "weakEtag": 1601371703000
+    "systemModstamp": "2020-12-01T19:34:04.000Z",
+    "weakEtag": 1606851244000
 }

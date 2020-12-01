@@ -1,12 +1,12 @@
 {
-    "eTag": "9d87c5b34d1f2ca85c5a7244f683e602",
+    "eTag": "194096f22e6af469b5cf01045f27677b",
     "layoutUserStates": {},
     "layouts": {
         "Account": {
             "012000000000000AAA": {
                 "Compact": {
                     "Create": {
-                        "eTag": "68be3a740233fa123417ae76916162ee",
+                        "eTag": "b9d8d7cffddf4b4d564fbcd4cd82487a",
                         "id": null,
                         "layoutType": "Compact",
                         "mode": "Create",
@@ -237,7 +237,7 @@
                         ]
                     },
                     "Edit": {
-                        "eTag": "6e5156117589c8454b429a554e5eb01a",
+                        "eTag": "5ea6dd4985027705d344b182485c26b4",
                         "id": null,
                         "layoutType": "Compact",
                         "mode": "Edit",
@@ -468,7 +468,7 @@
                         ]
                     },
                     "View": {
-                        "eTag": "1ff7b90bcc6876f78918dea71959b961",
+                        "eTag": "4a1626a619fa9e2624233b747f62cc85",
                         "id": null,
                         "layoutType": "Compact",
                         "mode": "View",
@@ -947,6 +947,13 @@
                     "relationshipName": "Emails"
                 },
                 {
+                    "childObjectApiName": "Entitlement",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "Entitlements"
+                },
+                {
                     "childObjectApiName": "EntitySubscription",
                     "fieldName": "ParentId",
                     "junctionIdListNames": [],
@@ -966,6 +973,20 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "Expenses"
+                },
+                {
+                    "childObjectApiName": "FinanceBalanceSnapshot",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceBalanceSnapshots"
+                },
+                {
+                    "childObjectApiName": "FinanceTransaction",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceTransactions"
                 },
                 {
                     "childObjectApiName": "MaintenancePlan",
@@ -1143,6 +1164,13 @@
                     "relationshipName": "ServiceAppointments"
                 },
                 {
+                    "childObjectApiName": "ServiceContract",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "ServiceContracts"
+                },
+                {
                     "childObjectApiName": "ServiceResource",
                     "fieldName": "AccountId",
                     "junctionIdListNames": [],
@@ -1183,7 +1211,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "c213a4e396682c9238269468ed45f6be",
+            "eTag": "31561fa701b9884937f7e3074d745758",
             "feedEnabled": true,
             "fields": {
                 "AccountNumber": {
@@ -3452,7 +3480,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://ryan-noodles-2841-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
@@ -3789,7 +3817,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "5f9d544d72650efcd1a45aa7ee5aa8f7",
+            "eTag": "ba6599de890e85bc13a93c6389b3627d",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -9032,6 +9060,39 @@
                     "unique": false,
                     "updateable": true
                 },
+                "UserPreferencesSendListEmailThroughExternalService": {
+                    "apiName": "UserPreferencesSendListEmailThroughExternalService",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "SendListEmailThroughExternalService",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
                 "UserPreferencesSendViaInternalEmailService": {
                     "apiName": "UserPreferencesSendViaInternalEmailService",
                     "calculated": false,
@@ -10204,16 +10265,16 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://ryan-noodles-2841-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         }
     },
     "records": {
-        "001T1000002GSPDIA4": {
+        "001T1000002GXfyIAG": {
             "apiName": "Account",
             "childRelationships": {},
-            "eTag": "23d568283951a27cf28746ec861e6332",
+            "eTag": "4c2fa38fafd30678863d7a11e629f21f",
             "fields": {
                 "AnnualRevenue": {
                     "displayValue": "$350,000,000",
@@ -10252,29 +10313,29 @@
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "0316917a01244951eccffbcd11c5b0cd",
+                        "eTag": "26f999301a0a6342fe69c9a12c7b8bb4",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005T1000000DwPcIAK"
+                                "value": "005T1000000HsOgIAK"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005T1000000DwPcIAK",
-                        "lastModifiedById": "005T1000000DwPcIAK",
-                        "lastModifiedDate": "2020-09-29T09:28:23.000Z",
+                        "id": "005T1000000HsOgIAK",
+                        "lastModifiedById": "005T1000000HsOgIAK",
+                        "lastModifiedDate": "2020-12-01T20:09:40.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-09-29T18:19:13.000Z",
-                        "weakEtag": 1601403553000
+                        "systemModstamp": "2020-12-01T20:09:40.000Z",
+                        "weakEtag": 1606853380000
                     }
                 },
                 "OwnerId": {
                     "displayValue": null,
-                    "value": "005T1000000DwPcIAK"
+                    "value": "005T1000000HsOgIAK"
                 },
                 "Parent": {
                     "displayValue": null,
@@ -10290,7 +10351,7 @@
                 },
                 "PhotoUrl": {
                     "displayValue": null,
-                    "value": "/services/images/photo/001T1000002GSPDIA4"
+                    "value": "/services/images/photo/001T1000002GXfyIAG"
                 },
                 "Site": {
                     "displayValue": null,
@@ -10305,13 +10366,13 @@
                     "value": "www.burlington.com"
                 }
             },
-            "id": "001T1000002GSPDIA4",
-            "lastModifiedById": "005T1000000DwPcIAK",
-            "lastModifiedDate": "2020-09-29T09:28:23.000Z",
+            "id": "001T1000002GXfyIAG",
+            "lastModifiedById": "005T1000000HsOgIAK",
+            "lastModifiedDate": "2020-12-01T19:34:04.000Z",
             "recordTypeId": "012000000000000AAA",
             "recordTypeInfo": null,
-            "systemModstamp": "2020-09-29T09:28:23.000Z",
-            "weakEtag": 1601371703000
+            "systemModstamp": "2020-12-01T19:34:04.000Z",
+            "weakEtag": 1606851244000
         }
     }
 }

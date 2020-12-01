@@ -1,23 +1,23 @@
 {
     "actions": {
-        "001xx000003Gl1cAAC": {
+        "001T1000002GXfyIAG": {
             "actions": [
                 {
                     "actionListContext": "RecordEdit",
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "SaveEdit",
-                    "externalId": "00Dxx0000006TGp:001xx000003Gl1cAAC::RecordEdit:Desktop:StandardButton:SaveEdit",
-                    "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_custom19_120.png",
-                    "id": "0JVxx0000000221GAA",
+                    "externalId": "00DT10000000jeU:001T1000002GXfyIAG::RecordEdit:Desktop:StandardButton:SaveEdit",
+                    "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_custom19_120.png",
+                    "id": "0JVT10000000218OAA",
                     "isMassAction": "false",
                     "label": "Save",
                     "primaryColor": null,
                     "relatedListRecordId": null,
                     "relatedSourceObject": null,
                     "section": "Page",
-                    "sourceObject": "001xx000003Gl1cAAC",
-                    "subtype": null,
+                    "sourceObject": "001T1000002GXfyIAG",
+                    "subtype": "LightningWebComponent_Action",
                     "targetObject": "Account",
                     "targetUrl": null,
                     "type": "StandardButton"
@@ -27,17 +27,17 @@
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "SaveAndNew",
-                    "externalId": "00Dxx0000006TGp:001xx000003Gl1cAAC::RecordEdit:Desktop:StandardButton:SaveAndNew",
-                    "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_custom19_120.png",
-                    "id": "0JVxx0000000222GAA",
+                    "externalId": "00DT10000000jeU:001T1000002GXfyIAG::RecordEdit:Desktop:StandardButton:SaveAndNew",
+                    "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_custom19_120.png",
+                    "id": "0JVT10000000219OAA",
                     "isMassAction": "false",
                     "label": "Save &amp; New",
                     "primaryColor": null,
                     "relatedListRecordId": null,
                     "relatedSourceObject": null,
                     "section": "Page",
-                    "sourceObject": "001xx000003Gl1cAAC",
-                    "subtype": null,
+                    "sourceObject": "001T1000002GXfyIAG",
+                    "subtype": "LightningWebComponent_Action",
                     "targetObject": "Account",
                     "targetUrl": null,
                     "type": "StandardButton"
@@ -47,26 +47,26 @@
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "CancelEdit",
-                    "externalId": "00Dxx0000006TGp:001xx000003Gl1cAAC::RecordEdit:Desktop:StandardButton:CancelEdit",
-                    "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_custom19_120.png",
-                    "id": "0JVxx0000000223GAA",
+                    "externalId": "00DT10000000jeU:001T1000002GXfyIAG::RecordEdit:Desktop:StandardButton:CancelEdit",
+                    "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_custom19_120.png",
+                    "id": "0JVT10000000220OAA",
                     "isMassAction": "false",
                     "label": "Cancel",
                     "primaryColor": null,
                     "relatedListRecordId": null,
                     "relatedSourceObject": null,
                     "section": "Page",
-                    "sourceObject": "001xx000003Gl1cAAC",
-                    "subtype": null,
+                    "sourceObject": "001T1000002GXfyIAG",
+                    "subtype": "LightningWebComponent_Action",
                     "targetObject": "Account",
                     "targetUrl": null,
                     "type": "StandardButton"
                 }
             ],
             "links": [],
-            "url": "/services/data/v52.0/ui-api/actions/record/001xx000003Gl1cAAC/record-edit"
+            "url": "/services/data/v52.0/ui-api/actions/record/001T1000002GXfyIAG/record-edit"
         }
     },
-    "eTag": "c2c285dde06d928b08feb6b700b77d83",
-    "url": "/services/data/v52.0/ui-api/actions/record/001xx000003Gl1cAAC/record-edit"
+    "eTag": "a60f24eda1bc4967a9c94df7264d411f",
+    "url": "/services/data/v52.0/ui-api/actions/record/001T1000002GXfyIAG/record-edit"
 }

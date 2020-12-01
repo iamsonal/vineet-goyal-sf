@@ -222,7 +222,7 @@
                 "defaultRecordTypeId": "012000000000000AAA",
                 "deletable": true,
                 "dependentFields": {},
-                "eTag": "157342764ee421fe62d28dd7bcf8dab4",
+                "eTag": "b18785655e81b319432004c0a8a0190f",
                 "feedEnabled": true,
                 "fields": {
                     "AccountId": {
@@ -258,7 +258,7 @@
                         "relationshipName": "Account",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": false,
+                        "searchPrefilterable": true,
                         "sortable": true,
                         "unique": false,
                         "updateable": true
@@ -329,7 +329,7 @@
                         "relationshipName": "Campaign",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": false,
+                        "searchPrefilterable": true,
                         "sortable": true,
                         "unique": false,
                         "updateable": true
@@ -1136,7 +1136,7 @@
                         "relationshipName": "LastAmountChangedHistory",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": false,
+                        "searchPrefilterable": true,
                         "sortable": true,
                         "unique": false,
                         "updateable": false
@@ -1174,7 +1174,7 @@
                         "relationshipName": "LastCloseDateChangedHistory",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": false,
+                        "searchPrefilterable": true,
                         "sortable": true,
                         "unique": false,
                         "updateable": false
@@ -1552,7 +1552,7 @@
                         "relationshipName": "Pricebook2",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": false,
+                        "searchPrefilterable": true,
                         "sortable": true,
                         "unique": false,
                         "updateable": true
@@ -1775,7 +1775,7 @@
                 "searchable": true,
                 "themeInfo": {
                     "color": "FCB95B",
-                    "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/opportunity_120.png"
+                    "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/opportunity_120.png"
                 },
                 "updateable": true
             },
@@ -1849,6 +1849,13 @@
                         "junctionIdListNames": [],
                         "junctionReferenceTo": [],
                         "relationshipName": "ActivityHistories"
+                    },
+                    {
+                        "childObjectApiName": "AlternativePaymentMethod",
+                        "fieldName": "AccountId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "AlternativePaymentMethods"
                     },
                     {
                         "childObjectApiName": "Asset",
@@ -2019,6 +2026,13 @@
                         "relationshipName": "Emails"
                     },
                     {
+                        "childObjectApiName": "Entitlement",
+                        "fieldName": "AccountId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "Entitlements"
+                    },
+                    {
                         "childObjectApiName": "EntitySubscription",
                         "fieldName": "ParentId",
                         "junctionIdListNames": [],
@@ -2038,6 +2052,20 @@
                         "junctionIdListNames": [],
                         "junctionReferenceTo": [],
                         "relationshipName": "Expenses"
+                    },
+                    {
+                        "childObjectApiName": "FinanceBalanceSnapshot",
+                        "fieldName": "AccountId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "FinanceBalanceSnapshots"
+                    },
+                    {
+                        "childObjectApiName": "FinanceTransaction",
+                        "fieldName": "AccountId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "FinanceTransactions"
                     },
                     {
                         "childObjectApiName": "MaintenancePlan",
@@ -2108,6 +2136,13 @@
                         "junctionIdListNames": [],
                         "junctionReferenceTo": [],
                         "relationshipName": "Payments"
+                    },
+                    {
+                        "childObjectApiName": "PaymentAuthAdjustment",
+                        "fieldName": "AccountId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "PaymentAuthAdjustments"
                     },
                     {
                         "childObjectApiName": "PaymentAuthorization",
@@ -2208,6 +2243,13 @@
                         "relationshipName": "ServiceAppointments"
                     },
                     {
+                        "childObjectApiName": "ServiceContract",
+                        "fieldName": "AccountId",
+                        "junctionIdListNames": [],
+                        "junctionReferenceTo": [],
+                        "relationshipName": "ServiceContracts"
+                    },
+                    {
                         "childObjectApiName": "ServiceResource",
                         "fieldName": "AccountId",
                         "junctionIdListNames": [],
@@ -2220,13 +2262,6 @@
                         "junctionIdListNames": [],
                         "junctionReferenceTo": [],
                         "relationshipName": "Tasks"
-                    },
-                    {
-                        "childObjectApiName": "TaxCertificate",
-                        "fieldName": "AccountId",
-                        "junctionIdListNames": [],
-                        "junctionReferenceTo": [],
-                        "relationshipName": "TaxCertificates"
                     },
                     {
                         "childObjectApiName": "TopicAssignment",
@@ -2255,7 +2290,7 @@
                 "defaultRecordTypeId": "012000000000000AAA",
                 "deletable": true,
                 "dependentFields": {},
-                "eTag": "696b95373dbf09d45ab61fa721643a07",
+                "eTag": "31561fa701b9884937f7e3074d745758",
                 "feedEnabled": true,
                 "fields": {
                     "AccountNumber": {
@@ -2890,7 +2925,7 @@
                         "relationshipName": "DandbCompany",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": false,
+                        "searchPrefilterable": true,
                         "sortable": true,
                         "unique": false,
                         "updateable": true
@@ -3565,7 +3600,7 @@
                         "relationshipName": "OperatingHours",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": false,
+                        "searchPrefilterable": true,
                         "sortable": true,
                         "unique": false,
                         "updateable": true
@@ -3674,7 +3709,7 @@
                         "relationshipName": "Parent",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": false,
+                        "searchPrefilterable": true,
                         "sortable": true,
                         "unique": false,
                         "updateable": true
@@ -4524,7 +4559,7 @@
                 "searchable": true,
                 "themeInfo": {
                     "color": "7F8DE1",
-                    "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
+                    "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
                 },
                 "updateable": true
             },

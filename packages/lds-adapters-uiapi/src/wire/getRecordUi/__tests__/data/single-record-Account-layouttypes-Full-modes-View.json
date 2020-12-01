@@ -1,32 +1,32 @@
 {
-    "eTag": "8c7ca110b41fbcf7a49256cf5a5ac1e6",
+    "eTag": "56c99c22fbcfeb054c4c06410f82ac60",
     "layoutUserStates": {
-        "00hT1000000FvxKIAS": {
-            "id": "00hT1000000FvxKIAS",
+        "00hT1000000G6iHIAS": {
+            "id": "00hT1000000G6iHIAS",
             "sectionUserStates": {
-                "01BT1000000XgZ5MAK": {
+                "01BT1000000YRkkMAG": {
                     "collapsed": false,
-                    "id": "01BT1000000XgZ5MAK"
+                    "id": "01BT1000000YRkkMAG"
                 },
-                "01BT1000000XgZ6MAK": {
+                "01BT1000000YRklMAG": {
                     "collapsed": false,
-                    "id": "01BT1000000XgZ6MAK"
+                    "id": "01BT1000000YRklMAG"
                 },
-                "01BT1000000XgZ7MAK": {
+                "01BT1000000YRkmMAG": {
                     "collapsed": false,
-                    "id": "01BT1000000XgZ7MAK"
+                    "id": "01BT1000000YRkmMAG"
                 },
-                "01BT1000000XgZ9MAK": {
+                "01BT1000000YRkoMAG": {
                     "collapsed": false,
-                    "id": "01BT1000000XgZ9MAK"
+                    "id": "01BT1000000YRkoMAG"
                 },
-                "01BT1000000XgZAMA0": {
+                "01BT1000000YRkpMAG": {
                     "collapsed": false,
-                    "id": "01BT1000000XgZAMA0"
+                    "id": "01BT1000000YRkpMAG"
                 },
-                "01BT1000000XgZBMA0": {
+                "01BT1000000YRkqMAG": {
                     "collapsed": false,
-                    "id": "01BT1000000XgZBMA0"
+                    "id": "01BT1000000YRkqMAG"
                 }
             }
         }
@@ -36,8 +36,8 @@
             "012000000000000AAA": {
                 "Full": {
                     "View": {
-                        "eTag": "635bd322944933dce301d10923365d52",
-                        "id": "00hT1000000FvxKIAS",
+                        "eTag": "47da02ba539d45e70281a6e4b496e0eb",
+                        "id": "00hT1000000G6iHIAS",
                         "layoutType": "Full",
                         "mode": "View",
                         "objectApiName": "Account",
@@ -57,7 +57,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "Account Information",
-                                "id": "01BT1000000XgZ6MAK",
+                                "id": "01BT1000000YRklMAG",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -339,7 +339,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "Address Information",
-                                "id": "01BT1000000XgZAMA0",
+                                "id": "01BT1000000YRkpMAG",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -423,7 +423,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "Additional Information",
-                                "id": "01BT1000000XgZ7MAK",
+                                "id": "01BT1000000YRkmMAG",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -568,7 +568,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "System Information",
-                                "id": "01BT1000000XgZ9MAK",
+                                "id": "01BT1000000YRkoMAG",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -622,7 +622,7 @@
                                 "collapsible": false,
                                 "columns": 1,
                                 "heading": "Description Information",
-                                "id": "01BT1000000XgZBMA0",
+                                "id": "01BT1000000YRkqMAG",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -651,7 +651,7 @@
                                 "collapsible": false,
                                 "columns": 3,
                                 "heading": "Custom Links",
-                                "id": "01BT1000000XgZ5MAK",
+                                "id": "01BT1000000YRkkMAG",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -664,7 +664,7 @@
                                                         "apiName": "Billing",
                                                         "behavior": "NewWindow",
                                                         "componentType": "CustomLink",
-                                                        "customLinkUrl": "/servlet/servlet.Integration?lid=00bT1000000QSS0&eid=ENTITY_ID&ic=1",
+                                                        "customLinkUrl": "/servlet/servlet.Integration?lid=00bT1000000QTmf&eid=ENTITY_ID&ic=1",
                                                         "label": "Billing"
                                                     }
                                                 ],
@@ -957,6 +957,13 @@
                     "relationshipName": "Emails"
                 },
                 {
+                    "childObjectApiName": "Entitlement",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "Entitlements"
+                },
+                {
                     "childObjectApiName": "EntitySubscription",
                     "fieldName": "ParentId",
                     "junctionIdListNames": [],
@@ -976,6 +983,20 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "Expenses"
+                },
+                {
+                    "childObjectApiName": "FinanceBalanceSnapshot",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceBalanceSnapshots"
+                },
+                {
+                    "childObjectApiName": "FinanceTransaction",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceTransactions"
                 },
                 {
                     "childObjectApiName": "MaintenancePlan",
@@ -1153,6 +1174,13 @@
                     "relationshipName": "ServiceAppointments"
                 },
                 {
+                    "childObjectApiName": "ServiceContract",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "ServiceContracts"
+                },
+                {
                     "childObjectApiName": "ServiceResource",
                     "fieldName": "AccountId",
                     "junctionIdListNames": [],
@@ -1193,7 +1221,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "c213a4e396682c9238269468ed45f6be",
+            "eTag": "31561fa701b9884937f7e3074d745758",
             "feedEnabled": true,
             "fields": {
                 "AccountNumber": {
@@ -3462,7 +3490,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://ryan-noodles-2841-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
@@ -3799,7 +3827,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "5f9d544d72650efcd1a45aa7ee5aa8f7",
+            "eTag": "ba6599de890e85bc13a93c6389b3627d",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -9042,6 +9070,39 @@
                     "unique": false,
                     "updateable": true
                 },
+                "UserPreferencesSendListEmailThroughExternalService": {
+                    "apiName": "UserPreferencesSendListEmailThroughExternalService",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "SendListEmailThroughExternalService",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
                 "UserPreferencesSendViaInternalEmailService": {
                     "apiName": "UserPreferencesSendViaInternalEmailService",
                     "calculated": false,
@@ -10214,16 +10275,16 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://ryan-noodles-2841-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         }
     },
     "records": {
-        "001T1000002GSPDIA4": {
+        "001T1000002GXfyIAG": {
             "apiName": "Account",
             "childRelationships": {},
-            "eTag": "00fcd208f79610d090a1dea35af08e66",
+            "eTag": "20947f8b6af2b19303b6518026c39791",
             "fields": {
                 "AccountNumber": {
                     "displayValue": null,
@@ -10262,33 +10323,33 @@
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "0316917a01244951eccffbcd11c5b0cd",
+                        "eTag": "26f999301a0a6342fe69c9a12c7b8bb4",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005T1000000DwPcIAK"
+                                "value": "005T1000000HsOgIAK"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005T1000000DwPcIAK",
-                        "lastModifiedById": "005T1000000DwPcIAK",
-                        "lastModifiedDate": "2020-09-29T09:28:23.000Z",
+                        "id": "005T1000000HsOgIAK",
+                        "lastModifiedById": "005T1000000HsOgIAK",
+                        "lastModifiedDate": "2020-12-01T20:09:40.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-09-29T18:19:13.000Z",
-                        "weakEtag": 1601403553000
+                        "systemModstamp": "2020-12-01T20:09:40.000Z",
+                        "weakEtag": 1606853380000
                     }
                 },
                 "CreatedById": {
                     "displayValue": null,
-                    "value": "005T1000000DwPcIAK"
+                    "value": "005T1000000HsOgIAK"
                 },
                 "CreatedDate": {
-                    "displayValue": "9/29/2020, 2:28 AM",
-                    "value": "2020-09-29T09:28:23.000Z"
+                    "displayValue": "12/1/2020, 11:34 AM",
+                    "value": "2020-12-01T19:34:04.000Z"
                 },
                 "CustomerPriority__c": {
                     "displayValue": null,
@@ -10311,33 +10372,33 @@
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "0316917a01244951eccffbcd11c5b0cd",
+                        "eTag": "26f999301a0a6342fe69c9a12c7b8bb4",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005T1000000DwPcIAK"
+                                "value": "005T1000000HsOgIAK"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005T1000000DwPcIAK",
-                        "lastModifiedById": "005T1000000DwPcIAK",
-                        "lastModifiedDate": "2020-09-29T09:28:23.000Z",
+                        "id": "005T1000000HsOgIAK",
+                        "lastModifiedById": "005T1000000HsOgIAK",
+                        "lastModifiedDate": "2020-12-01T20:09:40.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-09-29T18:19:13.000Z",
-                        "weakEtag": 1601403553000
+                        "systemModstamp": "2020-12-01T20:09:40.000Z",
+                        "weakEtag": 1606853380000
                     }
                 },
                 "LastModifiedById": {
                     "displayValue": null,
-                    "value": "005T1000000DwPcIAK"
+                    "value": "005T1000000HsOgIAK"
                 },
                 "LastModifiedDate": {
-                    "displayValue": "9/29/2020, 2:28 AM",
-                    "value": "2020-09-29T09:28:23.000Z"
+                    "displayValue": "12/1/2020, 11:34 AM",
+                    "value": "2020-12-01T19:34:04.000Z"
                 },
                 "Name": {
                     "displayValue": null,
@@ -10356,29 +10417,29 @@
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "0316917a01244951eccffbcd11c5b0cd",
+                        "eTag": "26f999301a0a6342fe69c9a12c7b8bb4",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005T1000000DwPcIAK"
+                                "value": "005T1000000HsOgIAK"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005T1000000DwPcIAK",
-                        "lastModifiedById": "005T1000000DwPcIAK",
-                        "lastModifiedDate": "2020-09-29T09:28:23.000Z",
+                        "id": "005T1000000HsOgIAK",
+                        "lastModifiedById": "005T1000000HsOgIAK",
+                        "lastModifiedDate": "2020-12-01T20:09:40.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-09-29T18:19:13.000Z",
-                        "weakEtag": 1601403553000
+                        "systemModstamp": "2020-12-01T20:09:40.000Z",
+                        "weakEtag": 1606853380000
                     }
                 },
                 "OwnerId": {
                     "displayValue": null,
-                    "value": "005T1000000DwPcIAK"
+                    "value": "005T1000000HsOgIAK"
                 },
                 "Ownership": {
                     "displayValue": "Public",
@@ -10401,8 +10462,8 @@
                     "value": "Warm"
                 },
                 "SLAExpirationDate__c": {
-                    "displayValue": "10/25/2019",
-                    "value": "2019-10-25"
+                    "displayValue": "12/28/2019",
+                    "value": "2019-12-28"
                 },
                 "SLASerialNumber__c": {
                     "displayValue": null,
@@ -10457,13 +10518,13 @@
                     "value": "www.burlington.com"
                 }
             },
-            "id": "001T1000002GSPDIA4",
-            "lastModifiedById": "005T1000000DwPcIAK",
-            "lastModifiedDate": "2020-09-29T09:28:23.000Z",
+            "id": "001T1000002GXfyIAG",
+            "lastModifiedById": "005T1000000HsOgIAK",
+            "lastModifiedDate": "2020-12-01T19:34:04.000Z",
             "recordTypeId": "012000000000000AAA",
             "recordTypeInfo": null,
-            "systemModstamp": "2020-09-29T09:28:23.000Z",
-            "weakEtag": 1601371703000
+            "systemModstamp": "2020-12-01T19:34:04.000Z",
+            "weakEtag": 1606851244000
         }
     }
 }

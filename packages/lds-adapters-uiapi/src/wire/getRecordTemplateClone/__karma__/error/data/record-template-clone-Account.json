@@ -69,6 +69,13 @@
                     "relationshipName": "ActivityHistories"
                 },
                 {
+                    "childObjectApiName": "AlternativePaymentMethod",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "AlternativePaymentMethods"
+                },
+                {
                     "childObjectApiName": "Asset",
                     "fieldName": "AccountId",
                     "junctionIdListNames": [],
@@ -237,6 +244,13 @@
                     "relationshipName": "Emails"
                 },
                 {
+                    "childObjectApiName": "Entitlement",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "Entitlements"
+                },
+                {
                     "childObjectApiName": "EntitySubscription",
                     "fieldName": "ParentId",
                     "junctionIdListNames": [],
@@ -256,6 +270,20 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "Expenses"
+                },
+                {
+                    "childObjectApiName": "FinanceBalanceSnapshot",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceBalanceSnapshots"
+                },
+                {
+                    "childObjectApiName": "FinanceTransaction",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceTransactions"
                 },
                 {
                     "childObjectApiName": "MaintenancePlan",
@@ -326,6 +354,13 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "Payments"
+                },
+                {
+                    "childObjectApiName": "PaymentAuthAdjustment",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "PaymentAuthAdjustments"
                 },
                 {
                     "childObjectApiName": "PaymentAuthorization",
@@ -426,6 +461,13 @@
                     "relationshipName": "ServiceAppointments"
                 },
                 {
+                    "childObjectApiName": "ServiceContract",
+                    "fieldName": "AccountId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "ServiceContracts"
+                },
+                {
                     "childObjectApiName": "ServiceResource",
                     "fieldName": "AccountId",
                     "junctionIdListNames": [],
@@ -438,13 +480,6 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "Tasks"
-                },
-                {
-                    "childObjectApiName": "TaxCertificate",
-                    "fieldName": "AccountId",
-                    "junctionIdListNames": [],
-                    "junctionReferenceTo": [],
-                    "relationshipName": "TaxCertificates"
                 },
                 {
                     "childObjectApiName": "TopicAssignment",
@@ -473,7 +508,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "f7bdb267709e93f1398283d750776699",
+            "eTag": "31561fa701b9884937f7e3074d745758",
             "feedEnabled": true,
             "fields": {
                 "AccountNumber": {
@@ -2742,7 +2777,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://trusted-espresso-4722-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         }
@@ -2752,7 +2787,7 @@
         "fields": {
             "CloneSourceId": {
                 "displayValue": null,
-                "value": "001T1000002GRP7IAO"
+                "value": "001T1000002GXfyIAG"
             }
         },
         "recordTypeId": "012000000000000AAA"

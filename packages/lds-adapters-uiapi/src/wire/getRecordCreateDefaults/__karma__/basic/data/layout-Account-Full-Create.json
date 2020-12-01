@@ -1,6 +1,6 @@
 {
-    "eTag": "83e94f5bc326b4b9b96ff33d4f9f58a7",
-    "id": "00hxx0000019ebDAAQ",
+    "eTag": "a1da461584b413c1c2c9919f78205382",
+    "id": "00hT1000000G6iHIAS",
     "layoutType": "Full",
     "mode": "Create",
     "objectApiName": "Account",
@@ -20,7 +20,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Account Information",
-            "id": "01Bxx000002CKudEAG",
+            "id": "01BT1000000YRklMAG",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -302,7 +302,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Address Information",
-            "id": "01Bxx000002CKuhEAG",
+            "id": "01BT1000000YRkpMAG",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -386,7 +386,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Additional Information",
-            "id": "01Bxx000002CKueEAG",
+            "id": "01BT1000000YRkmMAG",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -531,7 +531,7 @@
             "collapsible": false,
             "columns": 1,
             "heading": "Description Information",
-            "id": "01Bxx000002CKuiEAG",
+            "id": "01BT1000000YRkqMAG",
             "layoutRows": [
                 {
                     "layoutItems": [

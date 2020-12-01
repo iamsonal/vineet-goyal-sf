@@ -7,9 +7,9 @@
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "CreateFromLookup",
-                    "externalId": "00Dxx0000006TGp:Opportunity::Lookup:Tablet:StandardButton:CreateFromLookup",
-                    "iconUrl": "https://newport-noodles-6025-dev-ed.localhost.internal.salesforce.com:6101/img/icon/t4v35/action/new_120.png",
-                    "id": "0JVxx0000000188GAA",
+                    "externalId": "00DT10000000jeU:Opportunity::Lookup:Tablet:StandardButton:CreateFromLookup",
+                    "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_120.png",
+                    "id": "0JVT10000000012OAA",
                     "isMassAction": "false",
                     "label": "New",
                     "primaryColor": "33BCE7",
@@ -27,6 +27,6 @@
             "url": "/services/data/v52.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
         }
     },
-    "eTag": "f75ed276a61514f89642df2f51f260d7",
+    "eTag": "5fa2c1c505cfe0f2dff46a67e985a45f",
     "url": "/services/data/v52.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
 }

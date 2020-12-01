@@ -4072,10 +4072,10 @@
   dependencies:
     nimbus-types "^2.0.0-alpha1"
 
-"@mobileplatform/record-id-generator@0.0.1":
-  version "0.0.1"
-  resolved "http://npm.lwcjs.org/@mobileplatform/record-id-generator/-/@mobileplatform/record-id-generator-0.0.1/e0401e50ca4ab82e483c9dc37bbf9822af1b5921.tgz#e0401e50ca4ab82e483c9dc37bbf9822af1b5921"
-  integrity sha512-/yqyRmWI290dOT2sz0qKLA6AiU+wm8mdD/P4C6o133vCgcGl4MaReO1MDy7YSYaVhk+/9ydxTw0NT2aEId4gJQ==
+"@mobileplatform/record-id-generator@1.0.0":
+  version "1.0.0"
+  resolved "http://npm.lwcjs.org/@mobileplatform/record-id-generator/-/@mobileplatform/record-id-generator-1.0.0/440f88a26395a247f3fb289b1c3d674830b9e7ae.tgz#440f88a26395a247f3fb289b1c3d674830b9e7ae"
+  integrity sha512-/moUhJ1zwPiKpuT25S3nEU4GD5H9CdmZ615xpdORsmLRHqILfMU0xDAwyYjYe/3LGDC7kmzlCHNkG+yIZF7rug==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"

@@ -25,7 +25,7 @@ import {
 } from '../records';
 
 function generateId(prefix: string): string {
-    return prefix + `DRAFT`;
+    return prefix.substr(0, 3) + `DRAFT`;
 }
 describe('draft environment record utilities', () => {
     describe('buildRecordFieldValueRepresentationsFromDraftFields', () => {

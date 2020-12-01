@@ -195,10 +195,10 @@ export function getRecordIdFromRecordRequest(
         }
         case 'post': {
             const apiName = request.body.apiName;
-            if (apiName === undefined || apiName === null || apiName.length < 3) {
+            if (apiName === undefined || apiName === null) {
                 return undefined;
             }
-            recordId = idGeneratorFunc(apiName.slice(0, 3));
+            recordId = idGeneratorFunc(apiName);
             break;
         }
         default: {

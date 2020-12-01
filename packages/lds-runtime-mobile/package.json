@@ -18,7 +18,7 @@
     "dependencies": {
         "@luvio/engine": "^0.20.0",
         "@luvio/environments": "^0.20.0",
-        "@mobileplatform/record-id-generator": "0.0.1"
+        "@mobileplatform/record-id-generator": "1.0.0"
     },
     "devDependencies": {
         "@mobileplatform/nimbus-plugin-lds": "1.0.0",

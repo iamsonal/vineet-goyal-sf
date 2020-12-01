@@ -13,7 +13,7 @@ import {
 } from '@salesforce/lds-drafts';
 
 import Id from '@salesforce/user/Id';
-import { RecordIdGenerator } from '@mobileplatform/record-id-generator';
+import { recordIdGenerator } from '@mobileplatform/record-id-generator';
 
 import { NimbusNetworkAdapter } from './NimbusNetworkAdapter';
 import { NimbusDurableStore } from './NimbusDurableStore';
@@ -39,7 +39,7 @@ const durableStore = new NimbusDurableStore();
 const networkAdapter = NimbusNetworkAdapter;
 
 // user id centric record ID generator
-const recordIdGenerator = new RecordIdGenerator(Id);
+const { newRecordId, isGenerated } = recordIdGenerator(Id);
 
 // draft queue
 const draftQueue = buildLdsDraftQueue(networkAdapter, durableStore);
@@ -54,9 +54,7 @@ const draftAwareDurableStore = makeDurableStoreDraftAware(
     durableStore,
     draftQueue,
     store,
-    (id: string) => {
-        return recordIdGenerator.isGenerated(id);
-    }
+    isGenerated
 );
 
 // build environment
@@ -69,12 +67,8 @@ const env = makeEnvironmentDraftAware(
     store,
     draftQueue,
     recordIngestFunc,
-    (id: string) => {
-        return recordIdGenerator.newRecordId(id);
-    },
-    (id: string) => {
-        return recordIdGenerator.isGenerated(id);
-    },
+    newRecordId,
+    isGenerated,
     responseRecordRepresentationRetrievers
 );
 

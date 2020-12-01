@@ -14,7 +14,7 @@ import {
     DurableDraftQueue,
 } from '@salesforce/lds-drafts';
 import { RECORD_TTL } from '@salesforce/lds-adapters-uiapi/karma/dist/uiapi-constants';
-import { RecordIdGenerator } from '@mobileplatform/record-id-generator';
+import { recordIdGenerator } from '@mobileplatform/record-id-generator';
 import Id from '@salesforce/user/Id';
 
 import { NimbusDurableStore } from '../NimbusDurableStore';
@@ -24,7 +24,7 @@ import { MockNimbusDurableStore, mockNimbusStoreGlobal } from './MockNimbusDurab
 import { MockNimbusAdapter, mockNimbusNetworkGlobal } from './MockNimbusNetworkAdapter';
 import { flushPromises } from './testUtils';
 
-const recordIdGenerator = new RecordIdGenerator(Id);
+const { isGenerated } = recordIdGenerator(Id);
 const RECORD_ID = '005xx000001XL1tAAG';
 const STORE_KEY_RECORD = `UiApi::RecordRepresentation:${RECORD_ID}`;
 const API_NAME = 'Account';
@@ -114,7 +114,7 @@ describe('lds drafts integration tests', () => {
             });
             const record = snapshot.data;
             const recordId = record.id;
-            const isGeneratedRecordId = recordIdGenerator.isGenerated(recordId);
+            const isGeneratedRecordId = isGenerated(recordId);
             expect(isGeneratedRecordId).toBe(true);
 
             const entriesInDefaultSegment = await durableStore.getAllEntriesInSegment(

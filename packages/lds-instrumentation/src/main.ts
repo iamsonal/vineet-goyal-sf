@@ -1,4 +1,5 @@
 import { Luvio, Store, Adapter, Snapshot } from '@luvio/engine';
+import { REFRESH_ADAPTER_EVENT } from '@luvio/lwc-luvio';
 import {
     CacheStatsLogger,
     Counter,
@@ -66,8 +67,7 @@ interface RecordApiNameChangeEvent {
     existingApiName: string;
     incomingApiName: string;
 }
-
-const REFRESH_ADAPTER_EVENT = 'refresh-adapter-event';
+// Event comes in from lwc-luvio package
 interface RefreshAdapterEvent {
     [REFRESH_ADAPTER_EVENT]: boolean;
     adapterName: string;
@@ -78,8 +78,8 @@ interface RefreshAdapterEvents {
     [adapterName: string]: number;
 }
 
-const REFRESH_APEX_KEY = 'refreshApex';
-const REFRESH_UIAPI_KEY = 'refreshUiApi';
+export const REFRESH_APEX_KEY = 'refreshApex';
+export const REFRESH_UIAPI_KEY = 'refreshUiApi';
 const SUPPORTED_KEY = 'refreshSupported';
 const UNSUPPORTED_KEY = 'refreshUnsupported';
 

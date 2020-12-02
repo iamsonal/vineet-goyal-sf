@@ -1,10 +1,10 @@
 import { GetApexInvoker, GenerateGetApexWireAdapter } from './main';
+import { REFRESH_APEX_KEY } from '@salesforce/lds-instrumentation';
 import { createWireAdapterConstructor, createLDSAdapter, refresh } from '@salesforce/lds-bindings';
 
 // export for @salesforce/apex
-const REFRESH_APEX = 'refreshApex';
-export const refreshApex = function<D>(data: D) {
-    refresh(data, REFRESH_APEX);
+export const refreshApex: typeof refresh = function<D>(data: D) {
+    return refresh(data, REFRESH_APEX_KEY);
 };
 
 /**

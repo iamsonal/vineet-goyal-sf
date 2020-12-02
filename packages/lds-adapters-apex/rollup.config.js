@@ -21,7 +21,10 @@ const config = {
  */
 export default function(args) {
     const sfdcConfigurations = sfdcConfiguration(config, {
-        external: ['./lds-apex-static-utils'],
+        external: ['./lds-apex-static-utils', '@salesforce/lds-instrumentation'],
+        outputPaths: {
+            '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
+        },
     });
     const localConfigurations = localConfiguration(args, config);
 

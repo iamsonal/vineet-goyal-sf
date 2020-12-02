@@ -3,6 +3,7 @@ import { createLDSAdapter, refresh as refreshUiApi } from '@salesforce/lds-bindi
 import {
     incrementGetRecordNotifyChangeAllowCount,
     incrementGetRecordNotifyChangeDropCount,
+    REFRESH_UIAPI_KEY,
 } from '@salesforce/lds-instrumentation';
 
 import { throttle } from './sfdc-util/throttle';
@@ -16,9 +17,8 @@ import {
 export { MRU } from './wire/getListUi';
 export * from './generated/artifacts/sfdc';
 
-const REFRESH_UIAPI = 'refreshUiApi';
-export const refresh = function<D>(data: D) {
-    refreshUiApi(data, REFRESH_UIAPI);
+export const refresh: typeof refreshUiApi = function<D>(data: D) {
+    return refreshUiApi(data, REFRESH_UIAPI_KEY);
 };
 
 /** Custom adapters */

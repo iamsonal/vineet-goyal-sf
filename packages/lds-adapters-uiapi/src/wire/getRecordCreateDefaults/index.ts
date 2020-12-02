@@ -61,17 +61,17 @@ function buildSelector(resp: RecordDefaultsRepresentation): PathSelection[] {
 type GetRecordCreateDefaultsConfigWithDefaults = Required<GetRecordCreateDefaultsConfig>;
 
 function buildSnapshotRefresh(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetRecordCreateDefaultsConfigWithDefaults
 ): SnapshotRefresh<RecordDefaultsRepresentation> {
     return {
         config,
-        resolve: () => buildNetworkSnapshot(lds, config),
+        resolve: () => buildNetworkSnapshot(luvio, config),
     };
 }
 
 export function buildNetworkSnapshot(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetRecordCreateDefaultsConfigWithDefaults
 ) {
     const params: ResourceRequestConfig = createResourceParams(config);
@@ -80,7 +80,7 @@ export function buildNetworkSnapshot(
     const key = keyBuilder(params);
     const selectorKey = `${key}__selector`;
 
-    return lds.dispatchResourceRequest<RecordDefaultsRepresentation>(request).then(
+    return luvio.dispatchResourceRequest<RecordDefaultsRepresentation>(request).then(
         response => {
             const { body } = response;
             const cacheSelector: Selector = {
@@ -93,18 +93,18 @@ export function buildNetworkSnapshot(
                 variables: {},
             };
 
-            lds.storePublish(selectorKey, cacheSelector);
-            lds.storeIngest(key, ingest, body);
-            lds.storeBroadcast();
-            return lds.storeLookup<RecordDefaultsRepresentation>(
+            luvio.storePublish(selectorKey, cacheSelector);
+            luvio.storeIngest(key, ingest, body);
+            luvio.storeBroadcast();
+            return luvio.storeLookup<RecordDefaultsRepresentation>(
                 cacheSelector,
-                buildSnapshotRefresh(lds, config)
+                buildSnapshotRefresh(luvio, config)
             );
         },
         (err: FetchResponse<unknown>) => {
-            lds.storeIngestFetchResponse(key, err);
-            lds.storeBroadcast();
-            return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+            luvio.storeIngestFetchResponse(key, err);
+            luvio.storeBroadcast();
+            return luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
         }
     );
 }
@@ -139,7 +139,7 @@ function coerceConfigWithDefaults(
 }
 
 export function buildInMemorySnapshot(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetRecordCreateDefaultsConfigWithDefaults
 ) {
     const params: ResourceRequestConfig = createResourceParams(config);
@@ -157,7 +157,7 @@ export function buildInMemorySnapshot(
      * cacheSnapshot is the cached selector from a previous request. It is just
      * a stashed selector
      */
-    const cacheSnapshot = lds.storeLookup<Selector>({
+    const cacheSnapshot = luvio.storeLookup<Selector>({
         recordId: selectorKey,
         node: {
             kind: 'Fragment',
@@ -169,13 +169,13 @@ export function buildInMemorySnapshot(
 
     // We've seen this request before
     if (isFulfilledSnapshot(cacheSnapshot)) {
-        const snapshot = lds.storeLookup<RecordDefaultsRepresentation>(
+        const snapshot = luvio.storeLookup<RecordDefaultsRepresentation>(
             cacheSnapshot.data,
-            buildSnapshotRefresh(lds, config)
+            buildSnapshotRefresh(luvio, config)
         );
 
         // Cache hit
-        if (lds.snapshotDataAvailable(snapshot)) {
+        if (luvio.snapshotDataAvailable(snapshot)) {
             return snapshot;
         }
     }
@@ -186,16 +186,16 @@ export function buildInMemorySnapshot(
 export const factory: AdapterFactory<
     GetRecordCreateDefaultsConfig,
     RecordDefaultsRepresentation
-> = (lds: Luvio) =>
+> = (luvio: Luvio) =>
     function getRecordCreateDefaults(untrusted: unknown) {
         const config = coerceConfigWithDefaults(untrusted);
         if (config === null) {
             return null;
         }
 
-        const snapshot = buildInMemorySnapshot(lds, config);
+        const snapshot = buildInMemorySnapshot(luvio, config);
         if (snapshot !== null) {
             return snapshot;
         }
-        return buildNetworkSnapshot(lds, config);
+        return buildNetworkSnapshot(luvio, config);
     };

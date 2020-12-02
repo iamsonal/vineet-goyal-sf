@@ -25,7 +25,7 @@ interface ApexInvokerParams extends ApexScopedModuleParams {
 }
 
 function cache(
-    lds: Luvio,
+    luvio: Luvio,
     config: unknown,
     namespace: string,
     classname: string,
@@ -33,7 +33,7 @@ function cache(
     isContinuation: boolean
 ): Snapshot<any> | null {
     const recordId = getApexId(namespace, classname, method, isContinuation, config);
-    const cacheableSnap = lds.storeLookup<{ cacheable: boolean }>({
+    const cacheableSnap = luvio.storeLookup<{ cacheable: boolean }>({
         recordId: recordId + '_cacheable',
         node: {
             kind: 'Fragment',
@@ -53,7 +53,7 @@ function cache(
         return null;
     }
 
-    const snap = lds.storeLookup<any>({
+    const snap = luvio.storeLookup<any>({
         recordId,
         node: { kind: 'Fragment', opaque: true, private: [] },
         variables: {},
@@ -121,7 +121,7 @@ export function validateAdapterConfig(untrustedConfig?: unknown): boolean {
 }
 
 function network(
-    lds: Luvio,
+    luvio: Luvio,
     config: any,
     namespace: string,
     classname: string,
@@ -147,15 +147,15 @@ function network(
 
     const request = getApexRequest(requestConfig);
 
-    return lds.dispatchResourceRequest<any>(request).then(
+    return luvio.dispatchResourceRequest<any>(request).then(
         resp => {
             const { cacheable } = resp.headers;
             if (((cacheable as unknown) as boolean) === true) {
-                lds.storePublish(recordId + '_cacheable', resp.headers);
-                lds.storeIngest(recordId, apexResponseIngest, resp.body);
-                lds.storeBroadcast();
+                luvio.storePublish(recordId + '_cacheable', resp.headers);
+                luvio.storeIngest(recordId, apexResponseIngest, resp.body);
+                luvio.storeBroadcast();
 
-                return lds.storeLookup<any>(select);
+                return luvio.storeLookup<any>(select);
             }
 
             // if cacheable is not set or set to false, return a synthetic snapshot
@@ -169,14 +169,14 @@ function network(
             } as FulfilledSnapshot<any, any>;
         },
         (err: FetchResponse<unknown>) => {
-            return lds.errorSnapshot(err);
+            return luvio.errorSnapshot(err);
         }
     );
 }
 
-export const factory = (lds: Luvio, invokerParams: ApexInvokerParams): Adapter<any, any> => {
+export const factory = (luvio: Luvio, invokerParams: ApexInvokerParams): Adapter<any, any> => {
     const { namespace, classname, method, isContinuation } = invokerParams;
-    const adapter = getLdsAdapterFactory(lds, namespace, classname, method, isContinuation, true);
+    const adapter = getLdsAdapterFactory(luvio, namespace, classname, method, isContinuation, true);
 
     return refreshable<any, any, any>(
         function apexWireAdapter(untrustedConfig: unknown) {
@@ -195,7 +195,7 @@ export const factory = (lds: Luvio, invokerParams: ApexInvokerParams): Adapter<a
             }
 
             return network(
-                lds,
+                luvio,
                 untrustedConfig,
                 namespace,
                 classname,
@@ -207,10 +207,10 @@ export const factory = (lds: Luvio, invokerParams: ApexInvokerParams): Adapter<a
     );
 };
 
-export const invoker = (lds: Luvio, invokerParams: ApexInvokerParams) => {
+export const invoker = (luvio: Luvio, invokerParams: ApexInvokerParams) => {
     const { namespace, classname, method, isContinuation } = invokerParams;
     const ldsAdapter = getLdsAdapterFactory(
-        lds,
+        luvio,
         namespace,
         classname,
         method,
@@ -271,7 +271,7 @@ export function getApexId(
 }
 
 function getLdsAdapterFactory(
-    lds: Luvio,
+    luvio: Luvio,
     namespace: string,
     classname: string,
     method: string,
@@ -279,10 +279,10 @@ function getLdsAdapterFactory(
     cacheable: boolean
 ): Adapter<any, any> {
     return (config: unknown) => {
-        const snap = cache(lds, config, namespace, classname, method, isContinuation);
+        const snap = cache(luvio, config, namespace, classname, method, isContinuation);
         if (snap !== null) {
             return snap;
         }
-        return network(lds, config, namespace, classname, method, isContinuation, cacheable);
+        return network(luvio, config, namespace, classname, method, isContinuation, cacheable);
     };
 }

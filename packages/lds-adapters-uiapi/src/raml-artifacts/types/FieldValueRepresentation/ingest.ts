@@ -13,7 +13,7 @@ import { RecordFieldTrie } from '../../../util/records';
 export function ingest(
     input: FieldValueRepresentation,
     path: IngestPath,
-    lds: Luvio,
+    luvio: Luvio,
     store: Store,
     timestamp: number,
     fieldsTrie?: RecordFieldTrie,
@@ -36,7 +36,7 @@ export function ingest(
             fullPath: key,
             parent: path.parent,
         },
-        lds,
+        luvio,
         store,
         timestamp,
         fieldsTrie,
@@ -48,12 +48,12 @@ export function ingest(
     incomingRecord = helpers_FieldValueRepresentation_merge_default(
         existingRecord,
         incomingRecord,
-        lds,
+        luvio,
         path
     );
 
     if (existingRecord === undefined || equals(existingRecord, incomingRecord) === false) {
-        lds.storePublish(key, incomingRecord);
+        luvio.storePublish(key, incomingRecord);
     }
 
     return createLink(key);

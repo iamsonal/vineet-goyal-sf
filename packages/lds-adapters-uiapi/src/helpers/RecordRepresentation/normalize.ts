@@ -15,7 +15,7 @@ export default function normalize(
     input: RecordRepresentation,
     existing: RecordRepresentationNormalized,
     path: IngestPath,
-    lds: Luvio,
+    luvio: Luvio,
     store: Store,
     timestamp: number,
     fieldsTrie: RecordFieldTrie,
@@ -44,7 +44,7 @@ export default function normalize(
                         existing,
                     },
                 },
-                lds,
+                luvio,
                 store,
                 timestamp
             ) as any;
@@ -80,7 +80,7 @@ export default function normalize(
                         existing,
                     },
                 },
-                lds,
+                luvio,
                 store,
                 timestamp,
                 fieldsSubtrie,

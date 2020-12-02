@@ -1,5 +1,5 @@
 import response from './data/record-Opportunity-new.json';
-import { buildOfflineLds, populateDurableStore } from '@salesforce/lds-jest';
+import { buildOfflineLuvio, populateDurableStore } from '@salesforce/lds-jest';
 import {
     buildMockNetworkAdapter,
     MockPayload,
@@ -34,8 +34,8 @@ describe('createRecord offline tests', () => {
     it('getRecord is fullfilled when offline after a createRecord is invoked online', async () => {
         const durableStore = await populateDurableStore(createRecordFactory, config, createPayload);
         const network = buildMockNetworkAdapter([]);
-        const { lds } = buildOfflineLds(durableStore, network);
-        const adapter = getRecordFactory(lds);
+        const { luvio } = buildOfflineLuvio(durableStore, network);
+        const adapter = getRecordFactory(luvio);
         const snapshot = await (adapter({
             recordId: OPPORTUNITY_ID,
             fields: [

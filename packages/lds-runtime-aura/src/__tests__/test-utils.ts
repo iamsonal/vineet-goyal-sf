@@ -30,7 +30,7 @@ export function createObjectInfo(config: any = {}) {
     };
 }
 
-export function addObjectInfo(lds: Luvio, data: any) {
-    lds.storeIngest('', ingestObjectInfo, data);
-    lds.storeBroadcast();
+export function addObjectInfo(luvio: Luvio, data: any) {
+    luvio.storeIngest('', ingestObjectInfo, data);
+    luvio.storeBroadcast();
 }

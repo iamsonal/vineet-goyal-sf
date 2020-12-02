@@ -94,10 +94,10 @@ export function extractTrackedFields(
     return fieldsList;
 }
 
-export function getTrackedFields(lds: Luvio, key: string, fieldsFromConfig?: string[]): string[] {
+export function getTrackedFields(luvio: Luvio, key: string, fieldsFromConfig?: string[]): string[] {
     const fieldsList = fieldsFromConfig === undefined ? [] : [...fieldsFromConfig];
 
-    const graphNode = lds.getNode<RecordRepresentationLikeNormalized, RecordRepresentationLike>(
+    const graphNode = luvio.getNode<RecordRepresentationLikeNormalized, RecordRepresentationLike>(
         key
     );
     if (!isGraphNode(graphNode)) {

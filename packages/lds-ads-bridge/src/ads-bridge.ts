@@ -28,7 +28,7 @@ import {
 
 import { RECORD_ID_PREFIX, isStoreKeyRecordId } from '@salesforce/lds-uiapi-record-utils';
 
-// No need to pass the actual record key `lds.ingestStore`. The `RecordRepresentation.ts#ingest`
+// No need to pass the actual record key `luvio.ingestStore`. The `RecordRepresentation.ts#ingest`
 // function extracts the appropriate record id from the ingested record.
 const INGEST_KEY = '';
 
@@ -95,8 +95,8 @@ function isSpanningRecord(
  * a RecordRepresentation with no field if the value if a spanning record.
  * It returns null if the record contains any pending field.
  */
-function getShallowRecord(lds: Luvio, storeRecordId: string): RecordRepresentation | null {
-    const recordNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(
+function getShallowRecord(luvio: Luvio, storeRecordId: string): RecordRepresentation | null {
+    const recordNode = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(
         storeRecordId
     );
 
@@ -170,8 +170,8 @@ function getShallowRecord(lds: Luvio, storeRecordId: string): RecordRepresentati
 /**
  * Returns the ADS object metadata representation for a specific record.
  */
-function getObjectMetadata(lds: Luvio, record: RecordRepresentation): ObjectMetadata {
-    const { data: objectInfo } = lds.storeLookup<ObjectInfoRepresentation>({
+function getObjectMetadata(luvio: Luvio, record: RecordRepresentation): ObjectMetadata {
+    const { data: objectInfo } = luvio.storeLookup<ObjectInfoRepresentation>({
         recordId: keyBuilderObjectInfo({ apiName: record.apiName }),
         node: {
             kind: 'Fragment',
@@ -212,14 +212,14 @@ function getObjectMetadata(lds: Luvio, record: RecordRepresentation): ObjectMeta
  * incoming ADS record type information with what we already have in the store when it
  * occurs.
  *
- * @param lds Luvio
+ * @param luvio Luvio
  * @param record record from ADS, will be fixed in situ
  */
-function fixRecordTypes(lds: Luvio, record: RecordRepresentation): void {
+function fixRecordTypes(luvio: Luvio, record: RecordRepresentation): void {
     // non-master record types should always be correct
     if (record.recordTypeId === MASTER_RECORD_TYPE_ID) {
         const key = keyBuilderRecord({ recordId: record.id });
-        const recordNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(key);
+        const recordNode = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(key);
 
         if (
             isGraphNode(recordNode) &&
@@ -237,7 +237,7 @@ function fixRecordTypes(lds: Luvio, record: RecordRepresentation): void {
     for (let i = 0; i < fieldKeysLen; ++i) {
         const fieldValue = record.fields[fieldKeys[i]].value;
         if (isSpanningRecord(fieldValue)) {
-            fixRecordTypes(lds, fieldValue);
+            fixRecordTypes(luvio, fieldValue);
         }
     }
 }
@@ -249,7 +249,7 @@ export default class AdsBridge {
     private evictTimerMetric = timer(ADS_BRIDGE_EVICT_DURATION);
     private emitRecordChangedTimerMetric = timer(ADS_BRIDGE_EMIT_RECORD_CHANGED_DURATION);
 
-    constructor(private lds: Luvio) {}
+    constructor(private luvio: Luvio) {}
 
     /**
      * This setter invoked by recordLibrary to listen for records ingested by Luvio. The passed method
@@ -263,7 +263,7 @@ export default class AdsBridge {
         }
 
         if (callback !== undefined) {
-            this.watchUnsubscribe = this.lds.storeWatch(RECORD_ID_PREFIX, entries => {
+            this.watchUnsubscribe = this.luvio.storeWatch(RECORD_ID_PREFIX, entries => {
                 if (this.isRecordEmitLocked === true) {
                     return;
                 }
@@ -286,7 +286,7 @@ export default class AdsBridge {
         }
     ): void {
         const startTime = Date.now();
-        const { lds } = this;
+        const { luvio } = this;
         let didIngestRecord = false;
         return this.lockLdsRecordEmit(() => {
             for (let i = 0; i < records.length; i++) {
@@ -306,14 +306,14 @@ export default class AdsBridge {
 
                     // Don't let incorrect ADS/RecordGVP recordTypeIds replace a valid record type in our store
                     // with the master record type. See W-7302870 for details.
-                    fixRecordTypes(lds, recordCopy);
+                    fixRecordTypes(luvio, recordCopy);
 
-                    lds.storeIngest(INGEST_KEY, ingestRecord, recordCopy);
+                    luvio.storeIngest(INGEST_KEY, ingestRecord, recordCopy);
                 }
             }
 
             if (didIngestRecord === true) {
-                lds.storeBroadcast();
+                luvio.storeBroadcast();
             }
             timerMetricAddDuration(this.addRecordsTimerMetric, Date.now() - startTime);
         });
@@ -324,11 +324,11 @@ export default class AdsBridge {
      */
     public evict(recordId: string): Promise<void> {
         const startTime = Date.now();
-        const { lds } = this;
+        const { luvio } = this;
         const key = keyBuilderRecord({ recordId });
         return this.lockLdsRecordEmit(() => {
-            lds.storeEvict(key);
-            lds.storeBroadcast();
+            luvio.storeEvict(key);
+            luvio.storeBroadcast();
             timerMetricAddDuration(this.evictTimerMetric, Date.now() - startTime);
             return Promise.resolve();
         });
@@ -341,10 +341,10 @@ export default class AdsBridge {
      * by ADS and Luvio.
      */
     public getTrackedFieldsForRecord(recordId: string): Promise<string[]> {
-        const { lds } = this;
+        const { luvio } = this;
         const storeRecordId = keyBuilderRecord({ recordId });
 
-        const recordNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(
+        const recordNode = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(
             storeRecordId
         );
 
@@ -389,7 +389,7 @@ export default class AdsBridge {
         callback: LdsRecordChangedCallback
     ): void {
         const startTime = Date.now();
-        const { lds } = this;
+        const { luvio } = this;
         let shouldEmit = false;
 
         const adsRecordMap: AdsRecordMap = {};
@@ -405,7 +405,7 @@ export default class AdsBridge {
                 continue;
             }
 
-            const record = getShallowRecord(lds, storeRecordId);
+            const record = getShallowRecord(luvio, storeRecordId);
             if (record === null) {
                 continue;
             }
@@ -422,7 +422,7 @@ export default class AdsBridge {
 
             // Extract and add the object metadata to the map if not already present.
             if (!ObjectPrototypeHasOwnProperty.call(adsObjectMap, apiName)) {
-                adsObjectMap[apiName] = getObjectMetadata(lds, record);
+                adsObjectMap[apiName] = getObjectMetadata(luvio, record);
             }
         }
 

@@ -13,10 +13,10 @@ function clone(data, iteration) {
     return copy;
 }
 
-function populate(count, lds, store) {
+function populate(count, luvio, store) {
     for (let i = 0; i < count; i += 1) {
         const copy = clone(mockDuplicates, i);
-        ingestDuplicatesRepresentation(copy, DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+        ingestDuplicatesRepresentation(copy, DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
     }
 }
 
@@ -29,14 +29,14 @@ for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
 
 describe('O(n) ingestion time for n duplicatesRepresentations', () => {
     benchmark('O(n) - ingest 1000 duplicate results when store has 10 results', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         const number = 1000;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(10, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(10, luvio, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
                 const copy = clone(mockDuplicates, i);
@@ -46,20 +46,20 @@ describe('O(n) ingestion time for n duplicatesRepresentations', () => {
 
         run(() => {
             for (let i = 0; i < number; i += 1) {
-                ingestDuplicatesRepresentation(next[i], DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+                ingestDuplicatesRepresentation(next[i], DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
             }
         });
     });
 
     benchmark('O(n) - ingest 100 duplicate results when store has 10 results', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         const number = 100;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(10, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(10, luvio, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
                 const copy = clone(mockDuplicates, i);
@@ -69,20 +69,20 @@ describe('O(n) ingestion time for n duplicatesRepresentations', () => {
 
         run(() => {
             for (let i = 0; i < number; i += 1) {
-                ingestDuplicatesRepresentation(next[i], DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+                ingestDuplicatesRepresentation(next[i], DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
             }
         });
     });
 
     benchmark('O(n) - ingest 10 duplicate results when store has 10 results', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         const number = 10;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(10, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(10, luvio, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
                 const copy = clone(mockDuplicates, i);
@@ -92,20 +92,20 @@ describe('O(n) ingestion time for n duplicatesRepresentations', () => {
 
         run(() => {
             for (let i = 0; i < number; i += 1) {
-                ingestDuplicatesRepresentation(next[i], DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+                ingestDuplicatesRepresentation(next[i], DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
             }
         });
     });
 
     benchmark('O(n) - ingest 1 duplicate result when store has 10 results', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         const number = 1;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(10, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(10, luvio, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
                 const copy = clone(mockDuplicates, i);
@@ -115,7 +115,7 @@ describe('O(n) ingestion time for n duplicatesRepresentations', () => {
 
         run(() => {
             for (let i = 0; i < number; i += 1) {
-                ingestDuplicatesRepresentation(next[i], DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+                ingestDuplicatesRepresentation(next[i], DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
             }
         });
     });
@@ -123,81 +123,81 @@ describe('O(n) ingestion time for n duplicatesRepresentations', () => {
 
 describe('Constant time', () => {
     benchmark('O(1) - ingest 1 duplicate result when store has 1000 duplicate results', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(1000, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(1000, luvio, store);
             next = clone(mockDuplicates);
         });
 
         run(() => {
-            ingestDuplicatesRepresentation(next, DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+            ingestDuplicatesRepresentation(next, DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
         });
     });
 
     benchmark('O(1) - ingest 1 duplicate result when store has 100 results', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(100, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(100, luvio, store);
             next = clone(mockDuplicates);
         });
 
         run(() => {
-            ingestDuplicatesRepresentation(next, DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+            ingestDuplicatesRepresentation(next, DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
         });
     });
 
     benchmark('O(1) - ingest 1 duplicate result when store has 10 results', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(10, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(10, luvio, store);
             next = clone(mockDuplicates);
         });
 
         run(() => {
-            ingestDuplicatesRepresentation(next, DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+            ingestDuplicatesRepresentation(next, DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
         });
     });
 
     benchmark('O(1) - ingest 1 duplicate result when store has 1 result', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(1, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(1, luvio, store);
             next = clone(mockDuplicates);
         });
 
         run(() => {
-            ingestDuplicatesRepresentation(next, DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+            ingestDuplicatesRepresentation(next, DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
         });
     });
 
     benchmark('O(1) - ingest 1 duplicate result when store has 0 results', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
             next = clone(mockDuplicates);
         });
 
         run(() => {
-            ingestDuplicatesRepresentation(next, DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+            ingestDuplicatesRepresentation(next, DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
         });
     });
 });

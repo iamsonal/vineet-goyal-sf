@@ -143,17 +143,17 @@ function buildListUiFragment(
 }
 
 function buildSnapshotRefresh(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetMruListUiConfig
 ): SnapshotRefresh<ListUiRepresentation> {
     return {
         config,
-        resolve: () => buildNetworkSnapshot_getMruListUi(lds, config),
+        resolve: () => buildNetworkSnapshot_getMruListUi(luvio, config),
     };
 }
 
 function onResourceSuccess_getMruListUi(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetMruListUiConfig,
     response: ResourceResponse<ListUiRepresentation>
 ) {
@@ -172,40 +172,40 @@ function onResourceSuccess_getMruListUi(
     });
 
     // grab relevant bits before ingest destroys the structure
-    const fields = listFields(lds, config, listInfo);
+    const fields = listFields(luvio, config, listInfo);
     fields.processRecords(body.records.records);
 
     // build the selector while the list info is still easily accessible
     const fragment = buildListUiFragment(config, listInfo, fields);
 
-    lds.storeIngest(listUiKey, types_ListUiRepresentation_ingest, body);
-    lds.storeBroadcast();
+    luvio.storeIngest(listUiKey, types_ListUiRepresentation_ingest, body);
+    luvio.storeBroadcast();
 
-    return lds.storeLookup<ListUiRepresentation>(
+    return luvio.storeLookup<ListUiRepresentation>(
         {
             recordId: listUiKey,
             node: fragment,
             variables: {},
         },
-        buildSnapshotRefresh(lds, config)
+        buildSnapshotRefresh(luvio, config)
     );
 }
 
 function onResourceError_getMruListUi(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetMruListUiConfig,
     err: FetchResponse<unknown>
 ) {
-    return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+    return luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
 }
 
 export function buildInMemorySnapshot(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetMruListUiConfig,
     listInfo: ListInfoRepresentation,
     fields?: ListFields
 ): Snapshot<ListUiRepresentation> {
-    const listFields_ = fields || listFields(lds, config, listInfo);
+    const listFields_ = fields || listFields(luvio, config, listInfo);
     const resourceParams = createMruListUiResourceParams(config);
     const selector: Selector = {
         recordId: keyBuilder(resourceParams),
@@ -213,23 +213,23 @@ export function buildInMemorySnapshot(
         variables: {},
     };
 
-    return lds.storeLookup<ListUiRepresentation>(selector, buildSnapshotRefresh(lds, config));
+    return luvio.storeLookup<ListUiRepresentation>(selector, buildSnapshotRefresh(luvio, config));
 }
 
 function resolveUnfulfilledSnapshot_getMruListUi(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetMruListUiConfig,
     snapshot: UnfulfilledSnapshot<ListUiRepresentation, any>
 ) {
     const params = createMruListUiResourceParams(config);
     const request = createMruListUiResourceRequest(params);
 
-    return lds.resolveUnfulfilledSnapshot<ListUiRepresentation>(request, snapshot).then(
+    return luvio.resolveUnfulfilledSnapshot<ListUiRepresentation>(request, snapshot).then(
         response => {
-            return onResourceSuccess_getMruListUi(lds, config, response);
+            return onResourceSuccess_getMruListUi(luvio, config, response);
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceError_getMruListUi(lds, config, err);
+            return onResourceError_getMruListUi(luvio, config, err);
         }
     );
 }
@@ -238,28 +238,28 @@ function resolveUnfulfilledSnapshot_getMruListUi(
  * Builds, sends, and processes the result of a mru-list-ui request, ignoring any cached
  * data for the list.
  *
- * @param lds Luvio engine
+ * @param luvio Luvio engine
  * @param config wire config
  */
 function buildNetworkSnapshot_getMruListUi(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetMruListUiConfig
 ): Promise<Snapshot<ListUiRepresentation>> {
     const params = createMruListUiResourceParams(config);
     const request = createMruListUiResourceRequest(params);
 
-    return lds.dispatchResourceRequest<ListUiRepresentation>(request).then(
+    return luvio.dispatchResourceRequest<ListUiRepresentation>(request).then(
         response => {
-            return onResourceSuccess_getMruListUi(lds, config, response);
+            return onResourceSuccess_getMruListUi(luvio, config, response);
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceError_getMruListUi(lds, config, err);
+            return onResourceError_getMruListUi(luvio, config, err);
         }
     );
 }
 
 function prepareRequest_getMruListRecords(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetMruListUiConfig,
     listInfo: ListInfoRepresentation,
     snapshot?: Snapshot<ListUiRepresentation>
@@ -287,7 +287,7 @@ function prepareRequest_getMruListRecords(
             name: 'records',
             pageSize: config.pageSize || DEFAULT_PAGE_SIZE,
             pageToken: config.pageToken,
-            pagination: lds.pagination(
+            pagination: luvio.pagination(
                 ListRecordCollection_paginationKeyBuilder({
                     listViewId: listInfo.eTag,
                     sortBy: config.sortBy === undefined ? null : config.sortBy,
@@ -308,7 +308,7 @@ function prepareRequest_getMruListRecords(
 }
 
 function onResourceSuccess_getMruListRecords(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetMruListUiConfig,
     listInfo: ListInfoRepresentation,
     response: ResourceResponse<ListRecordCollectionRepresentation>
@@ -318,7 +318,7 @@ function onResourceSuccess_getMruListRecords(
 
     // fall back to mru-list-ui if list view has changed
     if (listInfoETag !== listInfo.eTag) {
-        return buildNetworkSnapshot_getMruListUi(lds, config);
+        return buildNetworkSnapshot_getMruListUi(luvio, config);
     }
 
     // server returns sortBy in csv format
@@ -326,9 +326,9 @@ function onResourceSuccess_getMruListRecords(
         body.sortBy = ((body.sortBy as unknown) as string).split(',');
     }
 
-    const fields = listFields(lds, config, listInfo).processRecords(body.records);
+    const fields = listFields(luvio, config, listInfo).processRecords(body.records);
 
-    lds.storeIngest(
+    luvio.storeIngest(
         ListRecordCollectionRepresentation_keyBuilder({
             listViewId: listInfoETag,
             sortBy: body.sortBy,
@@ -336,89 +336,89 @@ function onResourceSuccess_getMruListRecords(
         types_ListRecordCollectionRepresentation_ingest,
         body
     );
-    lds.storeBroadcast();
+    luvio.storeBroadcast();
 
-    return buildInMemorySnapshot(lds, config, listInfo, fields);
+    return buildInMemorySnapshot(luvio, config, listInfo, fields);
 }
 
 function onResourceError_getMruListRecords(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetMruListUiConfig,
     listInfo: ListInfoRepresentation,
     err: FetchResponse<unknown>
 ) {
-    lds.storeIngestFetchResponse(
+    luvio.storeIngestFetchResponse(
         listUiRepresentation_keyBuilder({
             ...listInfo.listReference,
             sortBy: config.sortBy === undefined ? null : config.sortBy,
         }),
         err
     );
-    lds.storeBroadcast();
-    return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+    luvio.storeBroadcast();
+    return luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
 }
 
 function resolveUnfulfilledSnapshot_getMruListRecords(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetMruListUiConfig,
     listInfo: ListInfoRepresentation,
     snapshot: UnfulfilledSnapshot<ListUiRepresentation, any>
 ): Promise<Snapshot<ListUiRepresentation>> {
-    const request = prepareRequest_getMruListRecords(lds, config, listInfo, snapshot);
+    const request = prepareRequest_getMruListRecords(luvio, config, listInfo, snapshot);
 
-    return lds
+    return luvio
         .resolveUnfulfilledSnapshot<ListRecordCollectionRepresentation>(
             request,
             (snapshot as unknown) as UnfulfilledSnapshot<ListRecordCollectionRepresentation, any>
         )
         .then(
             response => {
-                return onResourceSuccess_getMruListRecords(lds, config, listInfo, response);
+                return onResourceSuccess_getMruListRecords(luvio, config, listInfo, response);
             },
             (err: FetchResponse<unknown>) => {
-                return onResourceError_getMruListRecords(lds, config, listInfo, err);
+                return onResourceError_getMruListRecords(luvio, config, listInfo, err);
             }
         );
 }
 
 function buildNetworkSnapshot_getMruListRecords(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetMruListUiConfig,
     listInfo: ListInfoRepresentation,
     snapshot?: Snapshot<ListUiRepresentation>
 ): Promise<Snapshot<ListUiRepresentation>> {
-    const request = prepareRequest_getMruListRecords(lds, config, listInfo, snapshot);
+    const request = prepareRequest_getMruListRecords(luvio, config, listInfo, snapshot);
 
-    return lds.dispatchResourceRequest<ListRecordCollectionRepresentation>(request).then(
+    return luvio.dispatchResourceRequest<ListRecordCollectionRepresentation>(request).then(
         response => {
-            return onResourceSuccess_getMruListRecords(lds, config, listInfo, response);
+            return onResourceSuccess_getMruListRecords(luvio, config, listInfo, response);
         },
         (err: FetchResponse<unknown>) => {
-            return onResourceError_getMruListRecords(lds, config, listInfo, err);
+            return onResourceError_getMruListRecords(luvio, config, listInfo, err);
         }
     );
 }
 
 function getMruListUiSnapshotFromListInfo(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetMruListUiConfig,
     listInfo: ListInfoRepresentation
 ) {
     // with the list info we can construct the full selector and try to get the
     // list ui from the store
-    const snapshot = buildInMemorySnapshot(lds, config, listInfo);
+    const snapshot = buildInMemorySnapshot(luvio, config, listInfo);
 
     // if the list ui was not found in the store then
     // make a full list-ui request
     if (!snapshot.data) {
         if (isUnfulfilledSnapshot(snapshot)) {
-            return resolveUnfulfilledSnapshot_getMruListUi(lds, config, snapshot);
+            return resolveUnfulfilledSnapshot_getMruListUi(luvio, config, snapshot);
         }
 
-        return buildNetworkSnapshot_getMruListUi(lds, config);
+        return buildNetworkSnapshot_getMruListUi(luvio, config);
     }
 
-    if (lds.snapshotDataAvailable(snapshot)) {
+    if (luvio.snapshotDataAvailable(snapshot)) {
         // cache hit :partyparrot:
         return snapshot;
     }
@@ -426,13 +426,13 @@ function getMruListUiSnapshotFromListInfo(
     // we *should* only be missing records and/or tokens at this point; send a list-records
     // request to fill them in
     if (isUnfulfilledSnapshot(snapshot)) {
-        return resolveUnfulfilledSnapshot_getMruListRecords(lds, config, listInfo, snapshot);
+        return resolveUnfulfilledSnapshot_getMruListRecords(luvio, config, listInfo, snapshot);
     }
 
-    return buildNetworkSnapshot_getMruListRecords(lds, config, listInfo, snapshot);
+    return buildNetworkSnapshot_getMruListRecords(luvio, config, listInfo, snapshot);
 }
 
-export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> = (lds: Luvio) =>
+export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> = (luvio: Luvio) =>
     function getMruListUi(untrustedConfig: unknown) {
         const config = validateAdapterConfig(
             untrustedConfig,
@@ -452,12 +452,12 @@ export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> =
                 objectApiName: config.objectApiName,
                 type: 'mru',
             },
-            lds
+            luvio
         );
 
         // if we have list info then build a snapshot from that
         if (isFulfilledSnapshot(listInfoSnapshot)) {
-            return getMruListUiSnapshotFromListInfo(lds, config, listInfoSnapshot.data);
+            return getMruListUiSnapshotFromListInfo(luvio, config, listInfoSnapshot.data);
         }
 
         // if listInfoSnapshot is unfulfilled then we can try to resolve it
@@ -476,22 +476,24 @@ export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> =
             // calls with list-info, list-records, and mru-list-ui), and so our use of resolveUnfulfilledSnapshot
             // is special (polymorphic response, could either be a list-info representation or a
             // list-ui representation).
-            return lds.resolveUnfulfilledSnapshot(mruListUiResourceRequest, listInfoSnapshot).then(
-                response => {
-                    // if result came from cache we know it's a listinfo, otherwise
-                    // it's a full list-ui response
-                    if (isResultListInfoRepresentation(response)) {
-                        return getMruListUiSnapshotFromListInfo(lds, config, response.body);
-                    } else {
-                        return onResourceSuccess_getMruListUi(lds, config, response);
+            return luvio
+                .resolveUnfulfilledSnapshot(mruListUiResourceRequest, listInfoSnapshot)
+                .then(
+                    response => {
+                        // if result came from cache we know it's a listinfo, otherwise
+                        // it's a full list-ui response
+                        if (isResultListInfoRepresentation(response)) {
+                            return getMruListUiSnapshotFromListInfo(luvio, config, response.body);
+                        } else {
+                            return onResourceSuccess_getMruListUi(luvio, config, response);
+                        }
+                    },
+                    (err: FetchResponse<unknown>) => {
+                        return onResourceError_getMruListUi(luvio, config, err);
                     }
-                },
-                (err: FetchResponse<unknown>) => {
-                    return onResourceError_getMruListUi(lds, config, err);
-                }
-            );
+                );
         }
 
         // if listInfoSnapshot in any other state then we make a full mru-list-ui request
-        return buildNetworkSnapshot_getMruListUi(lds, config);
+        return buildNetworkSnapshot_getMruListUi(luvio, config);
     };

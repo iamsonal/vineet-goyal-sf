@@ -17,7 +17,7 @@ export interface RecordConflict {
 export type RecordConflictMap = Record<string, RecordConflict>;
 
 // iterate through the map to build configs for network calls
-export function resolveConflict(lds: Luvio, map: RecordConflictMap): void {
+export function resolveConflict(luvio: Luvio, map: RecordConflictMap): void {
     const ids = ObjectKeys(map) as string[];
     if (ids.length === 0) return;
 
@@ -27,7 +27,7 @@ export function resolveConflict(lds: Luvio, map: RecordConflictMap): void {
             recordId,
             optionalFields: convertTrieToFields(map[recordId].trackedFields),
         };
-        getRecordNetwork(lds, config);
+        getRecordNetwork(luvio, config);
     } else {
         const records: GetRecordsEntityConfiguration[] = ArrayPrototypeReduce.call(
             ids,
@@ -44,6 +44,6 @@ export function resolveConflict(lds: Luvio, map: RecordConflictMap): void {
 
         const config: GetRecordsConfig = { records };
 
-        getRecordsNetwork(lds, config);
+        getRecordsNetwork(luvio, config);
     }
 }

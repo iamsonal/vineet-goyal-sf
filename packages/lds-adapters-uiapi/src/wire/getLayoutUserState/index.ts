@@ -78,16 +78,16 @@ export function coerceConfigWithDefaults(
 }
 
 function buildSnapshotRefresh(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetLayoutUserStateConfigWithDefaults
 ): SnapshotRefresh<RecordLayoutUserStateRepresentation> {
     return {
         config,
-        resolve: () => buildNetworkSnapshot(lds, config),
+        resolve: () => buildNetworkSnapshot(luvio, config),
     };
 }
 
-export function buildInMemorySnapshot(lds: Luvio, config: GetLayoutUserStateConfigWithDefaults) {
+export function buildInMemorySnapshot(luvio: Luvio, config: GetLayoutUserStateConfigWithDefaults) {
     const { objectApiName, recordTypeId, layoutType, mode } = config;
     const key = keyBuilder({
         apiName: objectApiName,
@@ -96,53 +96,53 @@ export function buildInMemorySnapshot(lds: Luvio, config: GetLayoutUserStateConf
         mode,
     });
 
-    return lds.storeLookup<RecordLayoutUserStateRepresentation>(
+    return luvio.storeLookup<RecordLayoutUserStateRepresentation>(
         {
             recordId: key,
             node: recordLayoutSelect,
             variables: {},
         },
-        buildSnapshotRefresh(lds, config)
+        buildSnapshotRefresh(luvio, config)
     );
 }
 
 export function buildNetworkSnapshot(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetLayoutUserStateConfigWithDefaults
 ): Promise<Snapshot<RecordLayoutUserStateRepresentation>> {
     const { request, key } = prepareRequest(config);
 
-    return lds.dispatchResourceRequest<RecordLayoutUserStateRepresentation>(request).then(
+    return luvio.dispatchResourceRequest<RecordLayoutUserStateRepresentation>(request).then(
         response => {
-            return onResourceResponseSuccess(lds, config, key, response);
+            return onResourceResponseSuccess(luvio, config, key, response);
         },
         (error: FetchResponse<unknown>) => {
-            return onResourceResponseError(lds, config, key, error);
+            return onResourceResponseError(luvio, config, key, error);
         }
     );
 }
 
 function resolveUnfulfilledSnapshot(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetLayoutUserStateConfigWithDefaults,
     snapshot: UnfulfilledSnapshot<RecordLayoutUserStateRepresentation, any>
 ) {
     const { request, key } = prepareRequest(config);
 
-    return lds
+    return luvio
         .resolveUnfulfilledSnapshot<RecordLayoutUserStateRepresentation>(request, snapshot)
         .then(
             response => {
-                return onResourceResponseSuccess(lds, config, key, response);
+                return onResourceResponseSuccess(luvio, config, key, response);
             },
             (error: FetchResponse<unknown>) => {
-                return onResourceResponseError(lds, config, key, error);
+                return onResourceResponseError(luvio, config, key, error);
             }
         );
 }
 
 function onResourceResponseSuccess(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetLayoutUserStateConfigWithDefaults,
     key: string,
     response: ResourceResponse<RecordLayoutUserStateRepresentation>
@@ -154,24 +154,24 @@ function onResourceResponseSuccess(
     body.recordTypeId = recordTypeId;
     body.layoutType = layoutType;
     body.mode = mode;
-    lds.storeIngest<RecordLayoutUserStateRepresentation>(
+    luvio.storeIngest<RecordLayoutUserStateRepresentation>(
         key,
         recordLayoutUserStateRepresentationIngest,
         body
     );
-    lds.storeBroadcast();
-    return buildInMemorySnapshot(lds, config);
+    luvio.storeBroadcast();
+    return buildInMemorySnapshot(luvio, config);
 }
 
 function onResourceResponseError(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetLayoutUserStateConfigWithDefaults,
     key: string,
     error: FetchResponse<unknown>
 ) {
-    lds.storeIngestFetchResponse(key, error);
-    lds.storeBroadcast();
-    return lds.errorSnapshot(error, buildSnapshotRefresh(lds, config));
+    luvio.storeIngestFetchResponse(key, error);
+    luvio.storeBroadcast();
+    return luvio.errorSnapshot(error, buildSnapshotRefresh(luvio, config));
 }
 
 function prepareRequest(config: GetLayoutUserStateConfigWithDefaults) {
@@ -198,22 +198,22 @@ function prepareRequest(config: GetLayoutUserStateConfigWithDefaults) {
 export const factory: AdapterFactory<
     GetLayoutUserStateConfig,
     RecordLayoutUserStateRepresentation
-> = (lds: Luvio) =>
+> = (luvio: Luvio) =>
     function getLayoutUserState(untrustedConfig: unknown) {
         const config = coerceConfigWithDefaults(untrustedConfig);
         if (config === null) {
             return null;
         }
 
-        const cacheSnapshot = buildInMemorySnapshot(lds, config);
+        const cacheSnapshot = buildInMemorySnapshot(luvio, config);
         // Cache Hit
-        if (lds.snapshotDataAvailable(cacheSnapshot)) {
+        if (luvio.snapshotDataAvailable(cacheSnapshot)) {
             return cacheSnapshot;
         }
 
         if (isUnfulfilledSnapshot(cacheSnapshot)) {
-            return resolveUnfulfilledSnapshot(lds, config, cacheSnapshot);
+            return resolveUnfulfilledSnapshot(luvio, config, cacheSnapshot);
         }
 
-        return buildNetworkSnapshot(lds, config);
+        return buildNetworkSnapshot(luvio, config);
     };

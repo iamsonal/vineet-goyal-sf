@@ -16,7 +16,7 @@ import {
 } from '../../../wire/getRecord/GetRecordFields';
 
 export function ingestSuccessChildResourceParams(
-    lds: Luvio,
+    luvio: Luvio,
     childResourceParamsArray: getUiApiRecordsByRecordId_ResourceRequestConfig[],
     childEnvelopes: BatchResultRepresentation[]
 ): { childSnapshotData: BatchRepresentation; seenRecords: { [key: string]: boolean } } {
@@ -36,7 +36,7 @@ export function ingestSuccessChildResourceParams(
                 headers: {},
             };
             const childSnapshot = getRecord_onResourceSuccess(
-                lds,
+                luvio,
                 {
                     recordId: childResourceParams.urlParams.recordId,
                     fields: childResourceParams.queryParams.fields,
@@ -67,7 +67,7 @@ export function ingestSuccessChildResourceParams(
                 headers: {},
             };
             const childErrorSnapshot = getRecord_onResourceError(
-                lds,
+                luvio,
                 {
                     recordId: childResourceParams.urlParams.recordId,
                     fields: childResourceParams.queryParams.fields,

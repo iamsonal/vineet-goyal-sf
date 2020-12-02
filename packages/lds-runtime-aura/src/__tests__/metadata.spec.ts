@@ -12,27 +12,27 @@ function createMetadataWatcher() {
 
     setupMetadataWatcher(luvio);
 
-    return { lds: luvio };
+    return { luvio };
 }
 
 describe('setupMetadataWatcher', () => {
     it('should not do anything when ingesting twice the same object info', () => {
-        const { lds } = createMetadataWatcher();
+        const { luvio } = createMetadataWatcher();
 
         jest.spyOn(ldsStorage, 'clearStorages');
 
-        addObjectInfo(lds, createObjectInfo());
-        addObjectInfo(lds, createObjectInfo());
+        addObjectInfo(luvio, createObjectInfo());
+        addObjectInfo(luvio, createObjectInfo());
         expect(ldsStorage.clearStorages).not.toHaveBeenCalled();
     });
 
     it('should clear existing storage when an object info change is detected', () => {
-        const { lds } = createMetadataWatcher();
+        const { luvio } = createMetadataWatcher();
 
         jest.spyOn(ldsStorage, 'clearStorages');
 
-        addObjectInfo(lds, createObjectInfo());
-        addObjectInfo(lds, createObjectInfo({ label: 'updated', eTag: 'updated' }));
+        addObjectInfo(luvio, createObjectInfo());
+        addObjectInfo(luvio, createObjectInfo({ label: 'updated', eTag: 'updated' }));
         expect(ldsStorage.clearStorages).toHaveBeenCalled();
     });
 });

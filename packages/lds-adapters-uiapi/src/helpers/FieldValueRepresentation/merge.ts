@@ -5,7 +5,7 @@ import { RecordRepresentationNormalized } from '../../generated/types/RecordRepr
 export default function merge(
     existing: FieldValueRepresentationNormalized | undefined,
     incoming: FieldValueRepresentationNormalized,
-    _lds: Luvio,
+    _luvio: Luvio,
     path: IngestPath
 ): FieldValueRepresentationNormalized {
     if (existing === undefined) {

@@ -7,7 +7,7 @@ import { select as objectInfoRepresentationSelect } from '../../../generated/typ
 import { buildSelectionFromFields } from '../../../selectors/recordTemplate';
 
 export const select: typeof generatedSelect = (
-    lds: Luvio,
+    _luvio: Luvio,
     params: ResourceRequestConfig
 ): Fragment => {
     const objectInfoSelections = objectInfoRepresentationSelect();

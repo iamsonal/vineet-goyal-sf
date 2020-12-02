@@ -324,7 +324,7 @@ function mergeFieldsTries(rootA: RecordFieldTrie, rootB: RecordFieldTrie) {
 }
 
 export function getTrackedFields(
-    lds: Luvio,
+    luvio: Luvio,
     recordId: string,
     fieldsFromConfig?: string[]
 ): string[] {
@@ -332,7 +332,7 @@ export function getTrackedFields(
         recordId,
     });
     const fieldsList = fieldsFromConfig === undefined ? [] : [...fieldsFromConfig];
-    const graphNode = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(key);
+    const graphNode = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(key);
     if (!isGraphNode(graphNode)) {
         return fieldsList;
     }

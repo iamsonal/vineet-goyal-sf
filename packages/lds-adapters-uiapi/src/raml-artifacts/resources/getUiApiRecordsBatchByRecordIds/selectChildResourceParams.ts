@@ -10,7 +10,7 @@ import { RecordRepresentation } from '../../../generated/types/RecordRepresentat
 import { buildRecordSelector } from '../../../wire/getRecord/GetRecordFields';
 
 export function selectChildResourceParams(
-    lds: Luvio,
+    _luvio: Luvio,
     childResources: getUiApiRecordsByRecordId_ResourceRequestConfig[]
 ): Fragment {
     const envelopeBodyPath = 'result';

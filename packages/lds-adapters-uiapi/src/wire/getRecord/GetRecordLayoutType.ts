@@ -40,17 +40,17 @@ export interface GetRecordLayoutTypeConfig {
 }
 
 function buildSnapshotRefresh(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetRecordLayoutTypeConfig
 ): SnapshotRefresh<RecordRepresentation> {
     return {
         config,
-        resolve: () => refresh(lds, config),
+        resolve: () => refresh(luvio, config),
     };
 }
 
 function refresh(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetRecordLayoutTypeConfig
 ): Promise<Snapshot<RecordRepresentation>> {
     const {
@@ -68,10 +68,10 @@ function refresh(
         optionalFields,
     };
 
-    return getRecordUiNetwork(lds, recordUiConfig).then(snapshot => {
-        const refresh = buildSnapshotRefresh(lds, config);
+    return getRecordUiNetwork(luvio, recordUiConfig).then(snapshot => {
+        const refresh = buildSnapshotRefresh(luvio, config);
         if (isErrorSnapshot(snapshot)) {
-            return lds.errorSnapshot(snapshot.error, refresh);
+            return luvio.errorSnapshot(snapshot.error, refresh);
         }
 
         if (isUnfulfilledSnapshot(snapshot)) {
@@ -85,7 +85,7 @@ function refresh(
         const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, snapshot.data);
         const fields = getFieldsFromLayoutMap(layoutMap, objectInfo);
         return getRecordByFieldsCache(
-            lds,
+            luvio,
             {
                 recordId,
                 fields,
@@ -98,7 +98,7 @@ function refresh(
 
 // Makes a request directly to /record-ui/{recordIds}
 function fetchRecordLayout(
-    lds: Luvio,
+    luvio: Luvio,
     refresh: SnapshotRefresh<RecordRepresentation>,
     recordId: string,
     layoutTypes: LayoutType[],
@@ -111,11 +111,11 @@ function fetchRecordLayout(
         modes,
         optionalFields,
     };
-    const recordUiAdapter = getRecordUiFactory(lds);
+    const recordUiAdapter = getRecordUiFactory(luvio);
     const recordUiSnapshotOrPromise = recordUiAdapter(recordUiConfig);
     if (isPromise(recordUiSnapshotOrPromise)) {
         return recordUiSnapshotOrPromise.then(snapshot => {
-            return processRecordUiRepresentation(lds, refresh, recordId, modes, snapshot);
+            return processRecordUiRepresentation(luvio, refresh, recordId, modes, snapshot);
         });
     }
 
@@ -125,7 +125,13 @@ function fetchRecordLayout(
         }
     }
 
-    return processRecordUiRepresentation(lds, refresh, recordId, modes, recordUiSnapshotOrPromise!);
+    return processRecordUiRepresentation(
+        luvio,
+        refresh,
+        recordId,
+        modes,
+        recordUiSnapshotOrPromise!
+    );
 }
 
 function getLayoutMapAndObjectInfo(recordId: string, data: RecordUiRepresentation) {
@@ -144,14 +150,14 @@ function getLayoutMapAndObjectInfo(recordId: string, data: RecordUiRepresentatio
 }
 
 function processRecordUiRepresentation(
-    lds: Luvio,
+    luvio: Luvio,
     refresh: SnapshotRefresh<RecordRepresentation>,
     recordId: string,
     modes: LayoutMode[],
     snapshot: Snapshot<RecordUiRepresentation>
 ) {
     if (isErrorSnapshot(snapshot)) {
-        return lds.errorSnapshot(snapshot.error, refresh);
+        return luvio.errorSnapshot(snapshot.error, refresh);
     }
     if (isUnfulfilledSnapshot(snapshot)) {
         throw new Error(
@@ -161,7 +167,7 @@ function processRecordUiRepresentation(
         );
     }
     const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, snapshot.data);
-    return getRecord(lds, refresh, recordId, layoutMap, objectInfo);
+    return getRecord(luvio, refresh, recordId, layoutMap, objectInfo);
 }
 
 function isPromise<D>(value: D | Promise<D> | null): value is Promise<D> {
@@ -169,9 +175,9 @@ function isPromise<D>(value: D | Promise<D> | null): value is Promise<D> {
     return value !== null && (value as any).then !== undefined;
 }
 
-function lookupObjectInfo(lds: Luvio, apiName: string): ObjectInfoRepresentation | null {
-    const snapshot = getObjectInfoCache(lds, { objectApiName: apiName });
-    if (lds.snapshotDataAvailable(snapshot)) {
+function lookupObjectInfo(luvio: Luvio, apiName: string): ObjectInfoRepresentation | null {
+    const snapshot = getObjectInfoCache(luvio, { objectApiName: apiName });
+    if (luvio.snapshotDataAvailable(snapshot)) {
         if (!isErrorSnapshot(snapshot) && snapshot.data !== undefined) {
             return snapshot.data;
         }
@@ -186,7 +192,7 @@ interface RecordLayoutRepresentationMap {
 }
 
 function lookupLayouts(
-    lds: Luvio,
+    luvio: Luvio,
     apiName: string,
     recordTypeId: string,
     layoutTypes: LayoutType[],
@@ -211,14 +217,14 @@ function lookupLayouts(
                 mode,
             });
 
-            const snapshot = lds.storeLookup<RecordLayoutRepresentation>({
+            const snapshot = luvio.storeLookup<RecordLayoutRepresentation>({
                 recordId: key,
                 node: layoutSelections,
                 variables: {},
             });
 
             // Cache hit
-            if (lds.snapshotDataAvailable(snapshot) && !isErrorSnapshot(snapshot)) {
+            if (luvio.snapshotDataAvailable(snapshot) && !isErrorSnapshot(snapshot)) {
                 layoutMap[mode] = snapshot.data!;
             } else {
                 return null;
@@ -260,7 +266,7 @@ function getFieldsFromLayoutMap(
 }
 
 function getRecord(
-    lds: Luvio,
+    luvio: Luvio,
     refresh: SnapshotRefresh<RecordRepresentation>,
     recordId: string,
     layoutMap: RecordLayoutRepresentationMap,
@@ -270,7 +276,7 @@ function getRecord(
 
     // We know what fields we need so delegate to getRecordByFields
     // This should be a cache hit because we just fetched the record-ui
-    const recordSnapshotOrPromise = getRecordByFields(lds, {
+    const recordSnapshotOrPromise = getRecordByFields(luvio, {
         recordId,
         fields,
     });
@@ -289,13 +295,13 @@ function getRecord(
 }
 
 export function getRecordLayoutType(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetRecordLayoutTypeConfig
 ): Snapshot<RecordRepresentation> | Promise<Snapshot<RecordRepresentation>> {
     const { recordId, layoutTypes, modes: configModes, optionalFields } = config;
     const modes = configModes === undefined ? [DEFAULT_MODE] : configModes;
     const storeKey = recordRepresentationKeyBuilder({ recordId });
-    const recordSnapshot = lds.storeLookup<RecordLayoutFragment>({
+    const recordSnapshot = luvio.storeLookup<RecordLayoutFragment>({
         recordId: storeKey,
         node: {
             kind: 'Fragment',
@@ -304,27 +310,27 @@ export function getRecordLayoutType(
         },
         variables: {},
     });
-    const refresh = buildSnapshotRefresh(lds, config);
+    const refresh = buildSnapshotRefresh(luvio, config);
     // If we haven't seen the record then go to the server
-    if (!lds.snapshotDataAvailable(recordSnapshot) || recordSnapshot.data === undefined) {
-        return fetchRecordLayout(lds, refresh, recordId, layoutTypes, modes, optionalFields);
+    if (!luvio.snapshotDataAvailable(recordSnapshot) || recordSnapshot.data === undefined) {
+        return fetchRecordLayout(luvio, refresh, recordId, layoutTypes, modes, optionalFields);
     }
 
     const record = recordSnapshot.data;
     const { apiName } = record;
-    const objectInfo = lookupObjectInfo(lds, apiName);
+    const objectInfo = lookupObjectInfo(luvio, apiName);
     // If we do not have object info in cache, call record-ui endpoint directly
     if (objectInfo === null) {
-        return fetchRecordLayout(lds, refresh, recordId, layoutTypes, modes, optionalFields);
+        return fetchRecordLayout(luvio, refresh, recordId, layoutTypes, modes, optionalFields);
     }
 
     const recordTypeId = getRecordTypeId(record);
-    const layoutMap = lookupLayouts(lds, apiName, recordTypeId, layoutTypes, modes);
+    const layoutMap = lookupLayouts(luvio, apiName, recordTypeId, layoutTypes, modes);
     // It takes one xhr per layout to load so if there are missing layouts
     // give up and call record-ui endpoint directly
     if (layoutMap === null) {
-        return fetchRecordLayout(lds, refresh, recordId, layoutTypes, modes, optionalFields);
+        return fetchRecordLayout(luvio, refresh, recordId, layoutTypes, modes, optionalFields);
     }
 
-    return getRecord(lds, refresh, recordId, layoutMap, objectInfo);
+    return getRecord(luvio, refresh, recordId, layoutMap, objectInfo);
 }

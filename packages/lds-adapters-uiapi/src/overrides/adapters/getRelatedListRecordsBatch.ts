@@ -173,7 +173,7 @@ export function typeCheckConfig(
 export const getRelatedListRecordsBatchAdapterFactory: AdapterFactory<
     GetRelatedListRecordsBatchConfig,
     RelatedListRecordCollectionBatchRepresentation
-> = (lds: Luvio) =>
+> = (luvio: Luvio) =>
     function getRelatedListRecordsBatch(
         untrustedConfig: unknown
     ):
@@ -192,14 +192,14 @@ export const getRelatedListRecordsBatchAdapterFactory: AdapterFactory<
 
         const coercedConfig = coerceActualAdapterConfigToGeneratedRepresentation(config);
 
-        const cacheSnapshot = buildInMemorySnapshot(lds, coercedConfig);
+        const cacheSnapshot = buildInMemorySnapshot(luvio, coercedConfig);
 
         // Cache Hit
-        if (lds.snapshotDataAvailable(cacheSnapshot) === true) {
+        if (luvio.snapshotDataAvailable(cacheSnapshot) === true) {
             return cacheSnapshot;
         }
 
-        return buildNetworkSnapshot(lds, coercedConfig);
+        return buildNetworkSnapshot(luvio, coercedConfig);
     };
 
 // HUGE BLOCK OF COPY PASTED CODE:

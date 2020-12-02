@@ -103,14 +103,14 @@ describe('onResourceResponseSuccess', () => {
         );
     });
 
-    it('calls adapterFragment with lds and GetRecordsConfig input', () => {
+    it('calls adapterFragment with luvio and GetRecordsConfig input', () => {
         onResourceResponseSuccess(luvio, inputGetRecordsConfig, resourceParams, mockResponse);
         expect(adapterFragment).toHaveBeenCalledWith(luvio, inputGetRecordsConfig);
     });
 
-    it('calls lds.storeBroadcast once', () => {
-        const ldsBroadcastSpy = jest.spyOn(luvio, 'storeBroadcast');
+    it('calls luvio.storeBroadcast once', () => {
+        const luvioBroadcastSpy = jest.spyOn(luvio, 'storeBroadcast');
         onResourceResponseSuccess(luvio, inputGetRecordsConfig, resourceParams, mockResponse);
-        expect(ldsBroadcastSpy).toHaveBeenCalledTimes(1);
+        expect(luvioBroadcastSpy).toHaveBeenCalledTimes(1);
     });
 });

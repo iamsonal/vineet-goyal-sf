@@ -47,9 +47,9 @@ function buildMetadataKey(recordId: string) {
     return `${METADATA_PREFIX}${keyPrefix}RecordDefaultsTemplateCloneRepresentation::${recordId}`;
 }
 
-function getMetadata(lds: Luvio, recordId: string) {
+function getMetadata(luvio: Luvio, recordId: string) {
     const metadataKey = buildMetadataKey(recordId);
-    return lds.storeLookup<GetRecordTemplateCreateMetadata>({
+    return luvio.storeLookup<GetRecordTemplateCreateMetadata>({
         recordId: metadataKey,
         node: {
             kind: 'Fragment',
@@ -66,18 +66,18 @@ function getMetadata(lds: Luvio, recordId: string) {
 }
 
 function saveDefaultRecordTypeId(
-    lds: Luvio,
+    luvio: Luvio,
     recordId: string,
     objectInfo: ObjectInfoRepresentation
 ) {
     const metadataKey = buildMetadataKey(recordId);
-    lds.storePublish<GetRecordTemplateCreateMetadata>(metadataKey, {
+    luvio.storePublish<GetRecordTemplateCreateMetadata>(metadataKey, {
         recordTypeId: objectInfo.defaultRecordTypeId,
     });
 }
 
 function getRecordTypeId(
-    lds: Luvio,
+    luvio: Luvio,
     adapterConfig: GetRecordTemplateCloneConfig
 ): string | undefined {
     const config = createResourceParams(adapterConfig);
@@ -86,7 +86,7 @@ function getRecordTypeId(
         return recordTypeId;
     }
 
-    const metadataSnapshot = getMetadata(lds, config.urlParams.recordId);
+    const metadataSnapshot = getMetadata(luvio, config.urlParams.recordId);
 
     if (isFulfilledSnapshot(metadataSnapshot)) {
         const { recordTypeId } = metadataSnapshot.data;
@@ -100,12 +100,12 @@ function getRecordTypeId(
 }
 
 const buildNetworkSnapshot: typeof generatedBuildNetworkSnapshot = (
-    lds: Luvio,
+    luvio: Luvio,
     config: GetRecordTemplateCloneConfig,
     override?: ResourceRequestOverride
 ) => {
     const resourceParams = createResourceParams(config);
-    const recordTypeId = getRecordTypeId(lds, config);
+    const recordTypeId = getRecordTypeId(luvio, config);
     const { recordId } = config;
     const resourceRequest = createResourceRequest(resourceParams);
 
@@ -117,7 +117,7 @@ const buildNetworkSnapshot: typeof generatedBuildNetworkSnapshot = (
                   queryParams: {
                       ...resourceRequest.queryParams,
                       optionalFields: getTrackedFields(
-                          lds,
+                          luvio,
                           templateRecordKeyBuilder({
                               cloneSourceId: recordId,
                               recordTypeId: recordTypeId,
@@ -127,7 +127,7 @@ const buildNetworkSnapshot: typeof generatedBuildNetworkSnapshot = (
                   },
               });
 
-    return lds
+    return luvio
         .dispatchResourceRequest<RecordDefaultsTemplateCloneRepresentation>(request, override)
         .then(
             response => {
@@ -138,9 +138,9 @@ const buildNetworkSnapshot: typeof generatedBuildNetworkSnapshot = (
                 const objectApiName = body.record.apiName;
 
                 // publish metadata for recordTypeId
-                saveDefaultRecordTypeId(lds, recordId, body.objectInfos[objectApiName]);
+                saveDefaultRecordTypeId(luvio, recordId, body.objectInfos[objectApiName]);
 
-                lds.storeIngest<RecordDefaultsTemplateCloneRepresentation>(
+                luvio.storeIngest<RecordDefaultsTemplateCloneRepresentation>(
                     key,
                     recordDefaultsTemplateCloneRepresentationIngest,
                     body
@@ -151,19 +151,19 @@ const buildNetworkSnapshot: typeof generatedBuildNetworkSnapshot = (
                     cloneSourceId: resourceParams.urlParams.recordId,
                     recordTypeId: responseRecordTypeId,
                 });
-                const recordNode = lds.getNode<
+                const recordNode = luvio.getNode<
                     RecordTemplateCloneRepresentationNormalized,
                     RecordTemplateCloneRepresentation
                 >(templateRecordKey);
                 const allTrackedFields = getTrackedFields(
-                    lds,
+                    luvio,
                     templateRecordKey,
                     resourceParams.queryParams.optionalFields
                 );
                 markMissingOptionalFields(recordNode, allTrackedFields);
 
-                lds.storeBroadcast();
-                const snapshot = buildInMemorySnapshot(lds, {
+                luvio.storeBroadcast();
+                const snapshot = buildInMemorySnapshot(luvio, {
                     ...config,
                     recordTypeId: responseRecordTypeId as string,
                 });
@@ -183,17 +183,17 @@ const buildNetworkSnapshot: typeof generatedBuildNetworkSnapshot = (
                     cloneSourceId: config.recordId,
                     recordTypeId: config.recordTypeId || null,
                 });
-                lds.storeIngestFetchResponse(key, response, TTL);
-                return lds.errorSnapshot(response, {
+                luvio.storeIngestFetchResponse(key, response, TTL);
+                return luvio.errorSnapshot(response, {
                     config,
-                    resolve: () => buildNetworkSnapshot(lds, config, snapshotRefreshOptions),
+                    resolve: () => buildNetworkSnapshot(luvio, config, snapshotRefreshOptions),
                 });
             }
         );
 };
 
 export const buildInMemorySnapshot: typeof generatedBuildInMemorySnapshot = (
-    lds: Luvio,
+    luvio: Luvio,
     config: GetRecordTemplateCloneConfig
 ): Snapshot<RecordDefaultsTemplateCloneRepresentation, any> => {
     const resourceParams = createResourceParams(config);
@@ -203,19 +203,19 @@ export const buildInMemorySnapshot: typeof generatedBuildInMemorySnapshot = (
     });
     const selector: Selector = {
         recordId: key,
-        node: select(lds, resourceParams),
+        node: select(luvio, resourceParams),
         variables: {},
     };
-    return lds.storeLookup<RecordDefaultsTemplateCloneRepresentation>(selector, {
+    return luvio.storeLookup<RecordDefaultsTemplateCloneRepresentation>(selector, {
         config,
-        resolve: () => buildNetworkSnapshot(lds, config, snapshotRefreshOptions),
+        resolve: () => buildNetworkSnapshot(luvio, config, snapshotRefreshOptions),
     });
 };
 
 export const factory: AdapterFactory<
     GetRecordTemplateCloneConfig,
     RecordDefaultsTemplateCloneRepresentation
-> = (lds: Luvio) =>
+> = (luvio: Luvio) =>
     function getRecordDefaultsTemplateForCreate(
         untrustedConfig: unknown
     ):
@@ -232,17 +232,17 @@ export const factory: AdapterFactory<
             return null;
         }
 
-        const recordTypeId = getRecordTypeId(lds, config);
+        const recordTypeId = getRecordTypeId(luvio, config);
 
-        const cacheSnapshot = buildInMemorySnapshot(lds, {
+        const cacheSnapshot = buildInMemorySnapshot(luvio, {
             ...config,
             recordTypeId,
         });
 
         // Cache Hit
-        if (lds.snapshotDataAvailable(cacheSnapshot) === true) {
+        if (luvio.snapshotDataAvailable(cacheSnapshot) === true) {
             return cacheSnapshot;
         }
 
-        return buildNetworkSnapshot(lds, config);
+        return buildNetworkSnapshot(luvio, config);
     };

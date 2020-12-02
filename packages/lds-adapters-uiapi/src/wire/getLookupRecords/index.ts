@@ -113,7 +113,7 @@ function removeEtags(recordRep: RecordRepresentation) {
     });
 }
 
-export function buildNetworkSnapshot(lds: Luvio, config: GetLookupRecordsConfig) {
+export function buildNetworkSnapshot(luvio: Luvio, config: GetLookupRecordsConfig) {
     const { objectApiName, fieldApiName, targetApiName } = config;
     const resourceParams: ResourceRequestConfig = {
         urlParams: {
@@ -132,7 +132,7 @@ export function buildNetworkSnapshot(lds: Luvio, config: GetLookupRecordsConfig)
     };
     const request = getLookupRecordsResourceRequest(resourceParams);
 
-    return lds.dispatchResourceRequest<RecordCollectionRepresentation>(request).then(
+    return luvio.dispatchResourceRequest<RecordCollectionRepresentation>(request).then(
         response => {
             // TODO W-7235112 - remove this hack to never ingest lookup responses that
             // avoids issues caused by them not being real RecordRepresentations
@@ -159,13 +159,13 @@ export function buildNetworkSnapshot(lds: Luvio, config: GetLookupRecordsConfig)
             } as FulfilledSnapshot<RecordCollectionRepresentation, {}>;
         },
         (err: FetchResponse<unknown>) => {
-            return lds.errorSnapshot(err);
+            return luvio.errorSnapshot(err);
         }
     );
 }
 
 export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRepresentation> = (
-    lds: Luvio
+    luvio: Luvio
 ) => {
     return refreshable(
         function(untrusted: unknown) {
@@ -173,14 +173,14 @@ export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRep
             if (config === null) {
                 return null;
             }
-            return buildNetworkSnapshot(lds, config);
+            return buildNetworkSnapshot(luvio, config);
         },
         (untrusted: unknown) => {
             const config = coerceConfigWithDefaults(untrusted);
             if (config === null) {
                 throw new Error('Refresh should not be called with partial configuration');
             }
-            return buildNetworkSnapshot(lds, config);
+            return buildNetworkSnapshot(luvio, config);
         }
     );
 };

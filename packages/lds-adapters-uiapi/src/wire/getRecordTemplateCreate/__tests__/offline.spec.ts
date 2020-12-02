@@ -8,7 +8,7 @@ import {
     testDataEmittedWhenStale,
     testDurableHitDoesNotHitNetwork,
     populateDurableStore,
-    buildOfflineLds,
+    buildOfflineLuvio,
 } from '@salesforce/lds-jest';
 
 import { factory as getRecordTemplateCreate } from '../index';
@@ -67,11 +67,11 @@ describe('getRecordTemplateCreate adapter offline', () => {
         );
 
         // instantiate new LDS instance with durable environment
-        const { lds, network } = buildOfflineLds(
+        const { luvio, network } = buildOfflineLuvio(
             durableStore,
             buildMockNetworkAdapter([recordPayload])
         );
-        const adapter = getRecordTemplateCreate(lds);
+        const adapter = getRecordTemplateCreate(luvio);
 
         // call adapter without rtId set
         const result = await (adapter(configNoRecordTypeId) as Promise<any>);

@@ -13,7 +13,7 @@ import { keyBuilderFromType } from './keyBuilderFromType';
 export const ingest: typeof generatedIngest = function RecordRepresentationIngest(
     input: RecordRepresentation,
     path: IngestPath,
-    lds: Luvio,
+    luvio: Luvio,
     store: Store,
     timestamp: number
 ): StoreLink {
@@ -33,7 +33,7 @@ export const ingest: typeof generatedIngest = function RecordRepresentationInges
             fullPath: key,
             parent: path.parent,
         },
-        lds,
+        luvio,
         store,
         timestamp
     );
@@ -42,15 +42,15 @@ export const ingest: typeof generatedIngest = function RecordRepresentationInges
     incomingRecord = helpers_RecordRepresentation_merge_default(
         existingRecord,
         incomingRecord,
-        lds,
+        luvio,
         path
     );
 
     if (existingRecord === undefined || equals(existingRecord, incomingRecord) === false) {
-        lds.storePublish(key, incomingRecord);
+        luvio.storePublish(key, incomingRecord);
     }
 
-    lds.storeSetExpiration(key, timestamp + 30000);
+    luvio.storeSetExpiration(key, timestamp + 30000);
 
     return createLink(key);
 };

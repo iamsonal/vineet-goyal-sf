@@ -146,7 +146,7 @@ module.exports = {
             .map(resource => {
                 return {
                     name: resource.adapter.name,
-                    // using (lds.method) annotation if defined
+                    // using (luvio.method) annotation if defined
                     method: resource.alternativeMethod || resource.method,
                 };
             });

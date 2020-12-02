@@ -19,23 +19,23 @@ for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
 
 describe('O(n) emit time as subscription count(n) grows', () => {
     benchmark('O(n) - single snapshot', () => {
-        let lds;
+        let luvio;
         let store;
 
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListRecords(
                 clone(mockRelatedListRecords),
                 'relatedListRecords',
-                lds,
+                luvio,
                 store,
                 TIMESTAMP
             );
         });
 
         run(() => {
-            lds.storeLookup({
+            luvio.storeLookup({
                 relatedListRecords: 'RelatedListRecords:CwcCustom00__c::CwcCustom01s__r',
                 node: {},
                 variables: {},
@@ -44,21 +44,21 @@ describe('O(n) emit time as subscription count(n) grows', () => {
     });
 
     benchmark('O(n) - 1 subscription notification when dependency changes', () => {
-        let lds;
+        let luvio;
         let store;
 
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListRecords(
                 clone(mockRelatedListRecords),
                 'relatedListRecords',
-                lds,
+                luvio,
                 store,
                 TIMESTAMP
             );
 
-            const snapshot = lds.storeLookup({
+            const snapshot = luvio.storeLookup({
                 relatedListRecords: 'RelatedListRecords:CwcCustom00__c::CwcCustom01s__r',
                 node: {},
                 variables: {},
@@ -66,32 +66,32 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             const copy = clone(mockRelatedListRecords);
             copy.listReference.relatedListId = 'CustomObject02__r';
 
-            ingestRelatedListRecords(copy, 'relatedListRecords', lds, store, TIMESTAMP);
+            ingestRelatedListRecords(copy, 'relatedListRecords', luvio, store, TIMESTAMP);
 
             store.subscribe(snapshot, () => {});
         });
 
         run(() => {
-            lds.storeBroadcast();
+            luvio.storeBroadcast();
         });
     });
 
     benchmark('O(n) - 10 subscription notifications when dependency changes', () => {
-        let lds;
+        let luvio;
         let store;
 
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListRecords(
                 clone(mockRelatedListRecords),
                 'relatedListRecords',
-                lds,
+                luvio,
                 store,
                 TIMESTAMP
             );
 
-            const snapshot = lds.storeLookup({
+            const snapshot = luvio.storeLookup({
                 relatedListRecords: 'RelatedListRecords:CwcCustom00__c::CwcCustom01s__r',
                 node: {},
                 variables: {},
@@ -99,7 +99,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             const copy = clone(mockRelatedListRecords);
             copy.listReference.relatedListId = 'CustomObject02__r';
 
-            ingestRelatedListRecords(copy, 'relatedListRecords', lds, store, TIMESTAMP);
+            ingestRelatedListRecords(copy, 'relatedListRecords', luvio, store, TIMESTAMP);
 
             for (let i = 0; i < 10; i += 1) {
                 store.subscribe(snapshot, () => {});
@@ -107,26 +107,26 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            lds.storeBroadcast();
+            luvio.storeBroadcast();
         });
     });
 
     benchmark('O(n) - 100 subscription notifications when dependency changes', () => {
-        let lds;
+        let luvio;
         let store;
 
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListRecords(
                 clone(mockRelatedListRecords),
                 'relatedListRecords',
-                lds,
+                luvio,
                 store,
                 TIMESTAMP
             );
 
-            const snapshot = lds.storeLookup({
+            const snapshot = luvio.storeLookup({
                 relatedListRecords: 'RelatedListRecords:CwcCustom00__c::CwcCustom01s__r',
                 node: {},
                 variables: {},
@@ -134,7 +134,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             const copy = clone(mockRelatedListRecords);
             copy.listReference.relatedListId = 'CustomObject02__r';
 
-            ingestRelatedListRecords(copy, 'relatedListRecords', lds, store, TIMESTAMP);
+            ingestRelatedListRecords(copy, 'relatedListRecords', luvio, store, TIMESTAMP);
 
             for (let i = 0; i < 100; i += 1) {
                 store.subscribe(snapshot, () => {});
@@ -142,7 +142,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            lds.storeBroadcast();
+            luvio.storeBroadcast();
         });
     });
 });

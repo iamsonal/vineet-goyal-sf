@@ -18,7 +18,7 @@ for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
 describe('addObjectInfo tests', () => {
     benchmark('addObjectInfo with identical object info', () => {
         let i = ITERATION_COUNT;
-        let lds;
+        let luvio;
         let store;
 
         const data = new Array(ITERATION_COUNT).fill().map(() => JSON.parse(mockObjectInfo));
@@ -27,18 +27,18 @@ describe('addObjectInfo tests', () => {
         before(() => {
             i--;
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            ingestObjectInfo(data[i], RECORD_ID, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            ingestObjectInfo(data[i], RECORD_ID, luvio, store);
         });
 
         run(() => {
-            ingestObjectInfo(next[i], RECORD_ID, lds, store);
+            ingestObjectInfo(next[i], RECORD_ID, luvio, store);
         });
     });
 
     benchmark('addObjectInfo with changed object info', () => {
         let i = ITERATION_COUNT;
-        let lds;
+        let luvio;
         let store;
 
         const data = new Array(ITERATION_COUNT).fill().map(() => JSON.parse(mockObjectInfo));
@@ -55,12 +55,12 @@ describe('addObjectInfo tests', () => {
         before(() => {
             i--;
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            ingestObjectInfo(data[i], RECORD_ID, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            ingestObjectInfo(data[i], RECORD_ID, luvio, store);
         });
 
         run(() => {
-            ingestObjectInfo(next[i], RECORD_ID, lds, store);
+            ingestObjectInfo(next[i], RECORD_ID, luvio, store);
         });
     });
 });

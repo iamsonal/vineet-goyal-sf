@@ -79,16 +79,16 @@ function buildListViewSummaryCollectionFragment(
 }
 
 function buildRefreshSnapshot(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetListViewSummaryCollectionConfig
 ): SnapshotRefresh<ListViewSummaryCollectionRepresentation> {
     return {
         config,
-        resolve: () => buildNetworkSnapshot(lds, config),
+        resolve: () => buildNetworkSnapshot(luvio, config),
     };
 }
 export function buildInMemorySnapshot(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetListViewSummaryCollectionConfig
 ): Snapshot<ListViewSummaryCollectionRepresentation> {
     const selector: Selector = {
@@ -97,14 +97,14 @@ export function buildInMemorySnapshot(
         variables: {},
     };
 
-    return lds.storeLookup<ListViewSummaryCollectionRepresentation>(
+    return luvio.storeLookup<ListViewSummaryCollectionRepresentation>(
         selector,
-        buildRefreshSnapshot(lds, config)
+        buildRefreshSnapshot(luvio, config)
     );
 }
 
 function prepareRequest(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetListViewSummaryCollectionConfig,
     resourceParams: ResourceRequestConfig,
     snapshot?: Snapshot<ListViewSummaryCollectionRepresentation>
@@ -118,7 +118,7 @@ function prepareRequest(
             name: 'lists',
             pageSize: config.pageSize || DEFAULT_PAGE_SIZE,
             pageToken: config.pageToken,
-            pagination: lds.pagination(
+            pagination: luvio.pagination(
                 paginationKeyBuilder({
                     objectApiName: config.objectApiName,
                     queryString: config.q === undefined ? null : config.q,
@@ -141,68 +141,68 @@ function prepareRequest(
 }
 
 function onResourceSuccess(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetListViewSummaryCollectionConfig,
     key: string,
     response: ResourceResponse<ListViewSummaryCollectionRepresentation>
 ) {
     const { body } = response;
-    lds.storeIngest<ListViewSummaryCollectionRepresentation>(
+    luvio.storeIngest<ListViewSummaryCollectionRepresentation>(
         key,
         listViewSummaryCollectionRepresentationIngest,
         body
     );
-    lds.storeBroadcast();
-    return buildInMemorySnapshot(lds, config);
+    luvio.storeBroadcast();
+    return buildInMemorySnapshot(luvio, config);
 }
 
 function onResourceError(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetListViewSummaryCollectionConfig,
     key: string,
     error: FetchResponse<unknown>
 ) {
-    lds.storeIngestFetchResponse(key, error);
-    lds.storeBroadcast();
-    return lds.errorSnapshot(error, buildRefreshSnapshot(lds, config));
+    luvio.storeIngestFetchResponse(key, error);
+    luvio.storeBroadcast();
+    return luvio.errorSnapshot(error, buildRefreshSnapshot(luvio, config));
 }
 
 function resolveUnfulfilledSnapshot(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetListViewSummaryCollectionConfig,
     snapshot: UnfulfilledSnapshot<ListViewSummaryCollectionRepresentation, any>
 ) {
     const resourceParams = createResourceParams(config);
     const key = keyBuilder(resourceParams);
-    const request = prepareRequest(lds, config, resourceParams, snapshot);
+    const request = prepareRequest(luvio, config, resourceParams, snapshot);
 
-    return lds
+    return luvio
         .resolveUnfulfilledSnapshot<ListViewSummaryCollectionRepresentation>(request, snapshot)
         .then(
             (resp: ResourceResponse<ListViewSummaryCollectionRepresentation>) => {
-                return onResourceSuccess(lds, config, key, resp);
+                return onResourceSuccess(luvio, config, key, resp);
             },
             (error: FetchResponse<unknown>) => {
-                return onResourceError(lds, config, key, error);
+                return onResourceError(luvio, config, key, error);
             }
         );
 }
 
 export function buildNetworkSnapshot(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetListViewSummaryCollectionConfig,
     snapshot?: Snapshot<ListViewSummaryCollectionRepresentation>
 ) {
     const resourceParams = createResourceParams(config);
     const key = keyBuilder(resourceParams);
-    const request = prepareRequest(lds, config, resourceParams, snapshot);
+    const request = prepareRequest(luvio, config, resourceParams, snapshot);
 
-    return lds.dispatchResourceRequest<ListViewSummaryCollectionRepresentation>(request).then(
+    return luvio.dispatchResourceRequest<ListViewSummaryCollectionRepresentation>(request).then(
         (resp: FetchResponse<ListViewSummaryCollectionRepresentation>) => {
-            return onResourceSuccess(lds, config, key, resp);
+            return onResourceSuccess(luvio, config, key, resp);
         },
         (error: FetchResponse<unknown>) => {
-            return onResourceError(lds, config, key, error);
+            return onResourceError(luvio, config, key, error);
         }
     );
 }
@@ -210,7 +210,7 @@ export function buildNetworkSnapshot(
 export const factory: AdapterFactory<
     GetListViewSummaryCollectionConfig,
     ListViewSummaryCollectionRepresentation
-> = (lds: Luvio) =>
+> = (luvio: Luvio) =>
     function getListViewSummaryCollection(
         untrustedConfig: unknown
     ):
@@ -227,16 +227,16 @@ export const factory: AdapterFactory<
             return null;
         }
 
-        const cacheSnapshot = buildInMemorySnapshot(lds, config);
+        const cacheSnapshot = buildInMemorySnapshot(luvio, config);
 
         // Cache Hit
-        if (lds.snapshotDataAvailable(cacheSnapshot)) {
+        if (luvio.snapshotDataAvailable(cacheSnapshot)) {
             return cacheSnapshot;
         }
 
         if (isUnfulfilledSnapshot(cacheSnapshot)) {
-            return resolveUnfulfilledSnapshot(lds, config, cacheSnapshot);
+            return resolveUnfulfilledSnapshot(luvio, config, cacheSnapshot);
         }
 
-        return buildNetworkSnapshot(lds, config, cacheSnapshot);
+        return buildNetworkSnapshot(luvio, config, cacheSnapshot);
     };

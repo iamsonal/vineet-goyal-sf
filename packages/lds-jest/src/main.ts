@@ -1,6 +1,6 @@
 export {
     testDataEmittedWhenStale,
     testDurableHitDoesNotHitNetwork,
-    buildOfflineLds,
+    buildOfflineLuvio,
     populateDurableStore,
 } from './offline';

@@ -19,7 +19,7 @@ export type CustomEnvironmentFactory = (
     store: Store
 ) => DurableEnvironment;
 
-export function buildOfflineLds(
+export function buildOfflineLuvio(
     durableStore: MockDurableStore,
     network: NetworkAdapter,
     customEnvironment?: CustomEnvironmentFactory,
@@ -36,7 +36,7 @@ export function buildOfflineLds(
     }
     const luvio = new Luvio(env);
     return {
-        lds: luvio,
+        luvio,
         durableStore,
         network,
         store,
@@ -50,11 +50,11 @@ export async function populateDurableStore<Config, DataType>(
     config: Config,
     payload: MockPayload
 ) {
-    const { durableStore, lds, network } = buildOfflineLds(
+    const { durableStore, luvio, network } = buildOfflineLuvio(
         new MockDurableStore(),
         buildMockNetworkAdapter([payload])
     );
-    const adapter = adapterFactory(lds);
+    const adapter = adapterFactory(luvio);
     const result = await (adapter(config) as Promise<any>);
     expect(result.state).toBe('Fulfilled');
     const callCount = getMockNetworkAdapterCallCount(network);
@@ -70,13 +70,13 @@ export async function testDataEmittedWhenStale<Config, DataType>(
     customEnvironment?: CustomEnvironmentFactory,
     reviveRetrievers?: ResponsePropertyRetriever<any, any>[]
 ) {
-    const { lds } = buildOfflineLds(
+    const { luvio } = buildOfflineLuvio(
         new MockDurableStore(),
         buildMockNetworkAdapter([payload]),
         customEnvironment,
         reviveRetrievers
     );
-    const adapter = adapterFactory(lds);
+    const adapter = adapterFactory(luvio);
     const result = await (adapter(config) as Promise<any>);
     expect(result.state).toBe('Fulfilled');
     timekeeper.travel(Date.now() + ttl + 1);
@@ -92,13 +92,13 @@ export async function testDurableHitDoesNotHitNetwork<Config, DataType>(
     reviveRetrievers?: ResponsePropertyRetriever<any, any>[]
 ) {
     const durableStore = await populateDurableStore(adapterFactory, config, payload);
-    const { lds, network } = buildOfflineLds(
+    const { luvio, network } = buildOfflineLuvio(
         durableStore,
         buildMockNetworkAdapter([payload]),
         customEnvironment,
         reviveRetrievers
     );
-    const adapter = adapterFactory(lds);
+    const adapter = adapterFactory(luvio);
     const result = await (adapter(config) as Promise<any>);
     expect(result.state).toBe('Fulfilled');
     const callCount = getMockNetworkAdapterCallCount(network);

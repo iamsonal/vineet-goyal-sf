@@ -17,16 +17,16 @@ export const getApexInvoker = function(
     isContinuation: boolean
 ) {
     const adapterName = `getApex_${namespace}_${classname}_${method}_${isContinuation}`;
-    const invokeApexImperative: any = createLDSAdapter(adapterName, lds =>
-        GetApexInvoker(lds, {
+    const invokeApexImperative: any = createLDSAdapter(adapterName, luvio =>
+        GetApexInvoker(luvio, {
             namespace,
             classname,
             method,
             isContinuation,
         })
     );
-    invokeApexImperative.adapter = createWireAdapterConstructor(adapterName, lds =>
-        GenerateGetApexWireAdapter(lds, { namespace, classname, method, isContinuation })
+    invokeApexImperative.adapter = createWireAdapterConstructor(adapterName, luvio =>
+        GenerateGetApexWireAdapter(luvio, { namespace, classname, method, isContinuation })
     );
     return invokeApexImperative;
 };

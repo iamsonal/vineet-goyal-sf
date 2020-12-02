@@ -80,14 +80,14 @@ const notifyChangeNetworkRejectInstrumentParamBuilder = () => {
     };
 };
 
-export const notifyChangeFactory = (lds: Luvio) => {
+export const notifyChangeFactory = (luvio: Luvio) => {
     return function getUiApiRecordsByRecordIdNotifyChange(configs: KeyParams[]): void {
         for (let i = 0, len = configs.length; i < len; i++) {
             // build key from input
             const coercedConfig = coerceKeyParams(configs[i]);
             const key = keyBuilder(coercedConfig);
             // lookup GraphNode from store
-            const node = lds.getNode<RecordRepresentation, RecordRepresentation>(key);
+            const node = luvio.getNode<RecordRepresentation, RecordRepresentation>(key);
             if (node === null || node.type === 'Error') {
                 continue;
             }
@@ -95,7 +95,7 @@ export const notifyChangeFactory = (lds: Luvio) => {
             const representation: RecordRepresentation = (node as GraphNode<
                 RecordRepresentation
             >).retrieve();
-            const optionalFields = getTrackedFields(lds, representation.id);
+            const optionalFields = getTrackedFields(luvio, representation.id);
             const refreshRequest = createResourceRequestFromRepresentation(
                 representation,
                 optionalFields
@@ -108,36 +108,36 @@ export const notifyChangeFactory = (lds: Luvio) => {
             const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie, recordConflict);
 
             // dispatch resource request, then ingest and broadcast
-            lds.dispatchResourceRequest<RecordRepresentation>(refreshRequest).then(
+            luvio.dispatchResourceRequest<RecordRepresentation>(refreshRequest).then(
                 response => {
                     const { body } = response;
-                    lds.storeIngest<RecordRepresentation>(key, recordIngest, body);
-                    resolveConflict(lds, recordConflict);
-                    const recordNode = lds.getNode<
+                    luvio.storeIngest<RecordRepresentation>(key, recordIngest, body);
+                    resolveConflict(luvio, recordConflict);
+                    const recordNode = luvio.getNode<
                         RecordRepresentationNormalized,
                         RecordRepresentation
                     >(key)!;
                     markMissingOptionalFields(recordNode, optionalFields);
-                    lds.storeBroadcast();
+                    luvio.storeBroadcast();
                     const notifyChangeNetworkResolveInstrumentParamBuilder = () => {
                         return {
                             [NOTIFY_CHANGE_NETWORK_KEY]:
                                 existingWeakEtag !== (body as RecordRepresentation).weakEtag,
                         };
                     };
-                    lds.instrument(notifyChangeNetworkResolveInstrumentParamBuilder);
+                    luvio.instrument(notifyChangeNetworkResolveInstrumentParamBuilder);
                 },
                 (error: FetchResponse<unknown>) => {
-                    lds.storeIngestFetchResponse(key, error, RecordRepresentationTTL);
-                    lds.storeBroadcast();
-                    lds.instrument(notifyChangeNetworkRejectInstrumentParamBuilder);
+                    luvio.storeIngestFetchResponse(key, error, RecordRepresentationTTL);
+                    luvio.storeBroadcast();
+                    luvio.instrument(notifyChangeNetworkRejectInstrumentParamBuilder);
                 }
             );
         }
     };
 };
 
-export const factory: AdapterFactory<GetRecordConfig, RecordRepresentation> = (lds: Luvio) =>
+export const factory: AdapterFactory<GetRecordConfig, RecordRepresentation> = (luvio: Luvio) =>
     function getRecord(
         untrustedConfig: unknown
     ): Promise<Snapshot<RecordRepresentation>> | Snapshot<RecordRepresentation> | null {
@@ -148,9 +148,9 @@ export const factory: AdapterFactory<GetRecordConfig, RecordRepresentation> = (l
         }
 
         if (hasLayoutTypes(config)) {
-            return getRecordLayoutType(lds, config);
+            return getRecordLayoutType(luvio, config);
         } else if (hasFieldsOrOptionalFields(config)) {
-            return getRecordByFields(lds, config);
+            return getRecordByFields(luvio, config);
         }
 
         return null;

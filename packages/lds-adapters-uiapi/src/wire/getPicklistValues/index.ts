@@ -29,12 +29,12 @@ export interface GetPicklistValuesConfig {
 const path = picklistValuesRepresentationSelect().selections;
 
 function buildSnapshotRefresh(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetPicklistValuesConfig
 ): SnapshotRefresh<PicklistValuesRepresentation> {
     return {
         config,
-        resolve: () => buildNetworkSnapshot(lds, config),
+        resolve: () => buildNetworkSnapshot(luvio, config),
     };
 }
 
@@ -54,62 +54,62 @@ function buildRequestAndKey(config: GetPicklistValuesConfig) {
 }
 
 function onResponseSuccess(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetPicklistValuesConfig,
     key: string,
     response: ResourceResponse<PicklistValuesRepresentation>
 ) {
     const { body } = response;
-    lds.storeIngest(key, picklistValuesRepresentationIngest, body);
-    lds.storeBroadcast();
-    return buildInMemorySnapshot(lds, config);
+    luvio.storeIngest(key, picklistValuesRepresentationIngest, body);
+    luvio.storeBroadcast();
+    return buildInMemorySnapshot(luvio, config);
 }
 
 function onResponseError(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetPicklistValuesConfig,
     key: string,
     err: FetchResponse<unknown>
 ) {
-    lds.storeIngestFetchResponse(key, err);
-    lds.storeBroadcast();
-    return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config));
+    luvio.storeIngestFetchResponse(key, err);
+    luvio.storeBroadcast();
+    return luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
 }
 
 export function buildNetworkSnapshot(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetPicklistValuesConfig
 ): Promise<Snapshot<PicklistValuesRepresentation>> {
     const { request, key } = buildRequestAndKey(config);
 
-    return lds.dispatchResourceRequest<PicklistValuesRepresentation>(request).then(
+    return luvio.dispatchResourceRequest<PicklistValuesRepresentation>(request).then(
         response => {
-            return onResponseSuccess(lds, config, key, response);
+            return onResponseSuccess(luvio, config, key, response);
         },
         (err: FetchResponse<unknown>) => {
-            return onResponseError(lds, config, key, err);
+            return onResponseError(luvio, config, key, err);
         }
     );
 }
 
 export function resolveUnfulfilledSnapshot(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetPicklistValuesConfig,
     snapshot: UnfulfilledSnapshot<PicklistValuesRepresentation, any>
 ): Promise<Snapshot<PicklistValuesRepresentation>> {
     const { request, key } = buildRequestAndKey(config);
 
-    return lds.resolveUnfulfilledSnapshot<PicklistValuesRepresentation>(request, snapshot).then(
+    return luvio.resolveUnfulfilledSnapshot<PicklistValuesRepresentation>(request, snapshot).then(
         response => {
-            return onResponseSuccess(lds, config, key, response);
+            return onResponseSuccess(luvio, config, key, response);
         },
         (err: FetchResponse<unknown>) => {
-            return onResponseError(lds, config, key, err);
+            return onResponseError(luvio, config, key, err);
         }
     );
 }
 
-export function buildInMemorySnapshot(lds: Luvio, config: GetPicklistValuesConfig) {
+export function buildInMemorySnapshot(luvio: Luvio, config: GetPicklistValuesConfig) {
     const fieldNames = getFieldId(config.fieldApiName);
     const request = getUiApiObjectInfoPicklistValuesByObjectApiNameAndRecordTypeIdAndFieldApiName({
         urlParams: {
@@ -121,7 +121,7 @@ export function buildInMemorySnapshot(lds: Luvio, config: GetPicklistValuesConfi
 
     const key = picklistValuesKeyBuilder({ id: `${request.baseUri}${request.basePath}` });
 
-    return lds.storeLookup<PicklistValuesRepresentation>(
+    return luvio.storeLookup<PicklistValuesRepresentation>(
         {
             recordId: key,
             node: {
@@ -131,7 +131,7 @@ export function buildInMemorySnapshot(lds: Luvio, config: GetPicklistValuesConfi
             },
             variables: {},
         },
-        buildSnapshotRefresh(lds, config)
+        buildSnapshotRefresh(luvio, config)
     );
 }
 
@@ -144,7 +144,7 @@ const picklistValuesConfigPropertyNames = {
 };
 
 export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepresentation> = (
-    lds: Luvio
+    luvio: Luvio
 ) =>
     function getPicklistValues(untrusted: unknown) {
         const config = validateAdapterConfig(untrusted, picklistValuesConfigPropertyNames);
@@ -152,14 +152,14 @@ export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepr
             return null;
         }
 
-        const snapshot = buildInMemorySnapshot(lds, config);
-        if (lds.snapshotDataAvailable(snapshot)) {
+        const snapshot = buildInMemorySnapshot(luvio, config);
+        if (luvio.snapshotDataAvailable(snapshot)) {
             return snapshot;
         }
 
         if (isUnfulfilledSnapshot(snapshot)) {
-            return resolveUnfulfilledSnapshot(lds, config, snapshot);
+            return resolveUnfulfilledSnapshot(luvio, config, snapshot);
         }
 
-        return buildNetworkSnapshot(lds, config);
+        return buildNetworkSnapshot(luvio, config);
     };

@@ -25,18 +25,18 @@ function cloneRecord(data) {
 
 describe('Luvio to ADS bridge', () => {
     benchmark('emitting single record without object info', () => {
-        let lds;
+        let luvio;
         let adsBridge;
         before(() => {
             const store = new Store();
-            lds = new Luvio(new Environment(store, () => new Promise(() => {})));
-            adsBridge = new AdsBridge(lds);
+            luvio = new Luvio(new Environment(store, () => new Promise(() => {})));
+            adsBridge = new AdsBridge(luvio);
             const time = Date.now();
 
             ingestRecord(
                 cloneRecord(mockRecord),
                 { fullPath: 'record', parent: null },
-                lds,
+                luvio,
                 store,
                 time
             );
@@ -45,30 +45,30 @@ describe('Luvio to ADS bridge', () => {
         });
 
         run(() => {
-            lds.storeBroadcast();
+            luvio.storeBroadcast();
         });
     });
 
     benchmark('emitting single record with object info', () => {
-        let lds;
+        let luvio;
         let adsBridge;
         before(() => {
             const store = new Store();
-            lds = new Luvio(new Environment(store, () => new Promise(() => {})));
-            adsBridge = new AdsBridge(lds);
+            luvio = new Luvio(new Environment(store, () => new Promise(() => {})));
+            adsBridge = new AdsBridge(luvio);
             const time = Date.now();
 
             ingestObjectInfo(
                 cloneObjectInfo(mockObjectInfo),
                 { fullPath: 'object-info', parent: null },
-                lds,
+                luvio,
                 store,
                 time
             );
             ingestRecord(
                 cloneRecord(mockRecord),
                 { fullPath: 'record', parent: null },
-                lds,
+                luvio,
                 store,
                 time
             );
@@ -77,7 +77,7 @@ describe('Luvio to ADS bridge', () => {
         });
 
         run(() => {
-            lds.storeBroadcast();
+            luvio.storeBroadcast();
         });
     });
 });

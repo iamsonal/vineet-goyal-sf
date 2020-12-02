@@ -12,14 +12,14 @@ import { createResourceParams, CreateRecordConfig } from '../../generated/adapte
 import { BLANK_RECORD_FIELDS_TRIE } from '../../util/records';
 import { createRecordIngest } from '../../util/record-ingest';
 
-export const factory = (lds: Luvio) => {
+export const factory = (luvio: Luvio) => {
     return function(untrustedConfig: unknown): Promise<Snapshot<RecordRepresentation>> {
         const resourceParams = createResourceParams(untrustedConfig as CreateRecordConfig);
         const request = postUiApiRecords(resourceParams);
         const fieldTrie = BLANK_RECORD_FIELDS_TRIE;
         const optionalFieldTrie = BLANK_RECORD_FIELDS_TRIE;
         const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie);
-        return lds.dispatchResourceRequest<RecordRepresentation>(request).then(
+        return luvio.dispatchResourceRequest<RecordRepresentation>(request).then(
             response => {
                 const { body } = response;
 
@@ -28,10 +28,10 @@ export const factory = (lds: Luvio) => {
                     recordId: body.id,
                 });
 
-                lds.storeIngest(key, recordIngest, body);
-                lds.storeBroadcast();
+                luvio.storeIngest(key, recordIngest, body);
+                luvio.storeBroadcast();
 
-                return lds.storeLookup({
+                return luvio.storeLookup({
                     recordId: key,
                     node: {
                         kind: 'Fragment',

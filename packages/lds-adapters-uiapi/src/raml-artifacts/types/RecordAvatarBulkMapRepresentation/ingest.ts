@@ -12,7 +12,7 @@ import { default as helpers_RecordAvatarBulkRepresentation_merge_default } from 
 export const ingest: typeof generatedIngest = function RecordAvatarBulkMapRepresentationIngest(
     input: RecordAvatarBulkMapRepresentation,
     path: IngestPath,
-    lds: Luvio,
+    luvio: Luvio,
     store: Store,
     timestamp: number
 ): StoreLink {
@@ -32,7 +32,7 @@ export const ingest: typeof generatedIngest = function RecordAvatarBulkMapRepres
             fullPath: key,
             parent: path.parent,
         },
-        lds,
+        luvio,
         store,
         timestamp
     );
@@ -41,12 +41,12 @@ export const ingest: typeof generatedIngest = function RecordAvatarBulkMapRepres
     incomingRecord = helpers_RecordAvatarBulkRepresentation_merge_default(
         existingRecord,
         incomingRecord,
-        lds,
+        luvio,
         path
     );
 
     if (existingRecord === undefined || equals(existingRecord, incomingRecord) === false) {
-        lds.storePublish(key, incomingRecord);
+        luvio.storePublish(key, incomingRecord);
     }
 
     return createLink(key);

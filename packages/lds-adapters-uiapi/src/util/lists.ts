@@ -47,7 +47,7 @@ export function addListReference(
  * Returns a list reference from the store if it's present.
  *
  * @param query list view to look for
- * @param lds Luvio
+ * @param luvio Luvio
  */
 export function getListReference(
     query: ListReferenceQuery,
@@ -83,14 +83,14 @@ const LIST_INFO_SELECTIONS_ETAG: PathSelection[] = [
  * reference from the store.
  *
  * @param listRef list reference
- * @param lds Luvio
+ * @param luvio Luvio
  */
 export function getListInfo(
     listRef: ListReferenceRepresentation,
-    lds: Luvio
+    luvio: Luvio
 ): Snapshot<ListInfoRepresentation> {
     const key = ListInfoRepresentation_keyBuilder(listRef);
-    return lds.storeLookup<ListInfoRepresentation>({
+    return luvio.storeLookup<ListInfoRepresentation>({
         recordId: key,
         node: { kind: 'Fragment', selections: LIST_INFO_SELECTIONS_ETAG, private: [] },
         variables: {},
@@ -237,7 +237,7 @@ interface DefaultServerFieldStatus {
 }
 
 export function listFields(
-    lds: Luvio,
+    luvio: Luvio,
     {
         fields = [],
         optionalFields = [],
@@ -292,7 +292,7 @@ export function listFields(
             listViewId: listInfo.eTag,
             sortBy: sortBy || null,
         }) + '__fieldstatus';
-    const node = lds.getNode<DefaultServerFieldStatus>(key);
+    const node = luvio.getNode<DefaultServerFieldStatus>(key);
     const defaultServerFieldStatus = isGraphNode(node)
         ? node.retrieve()
         : { missingFields: { ...defaultFields_ } };
@@ -328,7 +328,7 @@ export function listFields(
                 }
             }
 
-            lds.storePublish(key, defaultServerFieldStatus);
+            luvio.storePublish(key, defaultServerFieldStatus);
             // snapshots do not subscribe to this key, so no need to broadcast
 
             return this;

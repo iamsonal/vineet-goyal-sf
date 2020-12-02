@@ -4,7 +4,7 @@ import { Luvio, IngestPath } from '@luvio/engine';
 export default function merge(
     existing: RecordAvatarBulkMapRepresentationNormalized | undefined,
     incoming: RecordAvatarBulkMapRepresentationNormalized,
-    _lds: Luvio,
+    _luvio: Luvio,
     _path: IngestPath
 ): RecordAvatarBulkMapRepresentationNormalized {
     if (existing === undefined) {

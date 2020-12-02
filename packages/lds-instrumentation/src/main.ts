@@ -86,7 +86,7 @@ const UNSUPPORTED_KEY = 'refreshUnsupported';
 const REFRESH_EVENTSOURCE = 'lds-refresh-summary';
 const REFRESH_EVENTTYPE = 'system';
 const REFRESH_PAYLOAD_TARGET = 'adapters';
-const REFRESH_PAYLOAD_SCOPE = 'lds';
+const REFRESH_PAYLOAD_SCOPE = 'luvio';
 
 interface RefreshApiCallEventStats {
     [REFRESH_APEX_KEY]: number;
@@ -134,7 +134,7 @@ interface wireAdapterMetricConfigs {
     };
 }
 
-const NAMESPACE = 'lds';
+const NAMESPACE = 'luvio';
 const STORE_STATS_MARK_NAME = 'store-stats';
 const RUNTIME_PERF_MARK_NAME = 'runtime-perf';
 const NETWORK_TRANSACTION_NAME = 'lds-network';
@@ -691,16 +691,16 @@ export function registerLdsCacheStats(name: string): CacheStatsLogger {
 /**
  * Initialize the instrumentation and instrument the LDS instance and the Store.
  *
- * @param lds The LDS to instrument.
+ * @param luvio The Luvio instance to instrument.
  * @param store The Store to instrument.
  */
-export function setupInstrumentation(lds: Luvio, store: Store): void {
+export function setupInstrumentation(luvio: Luvio, store: Store): void {
     registerPlugin({
         name: NAMESPACE,
         plugin: markAggregatorPlugin,
     });
 
-    instrumentMethod(lds, [
+    instrumentMethod(luvio, [
         { methodName: 'storeBroadcast', metricKey: STORE_BROADCAST_DURATION },
         { methodName: 'storeIngest', metricKey: STORE_INGEST_DURATION },
         { methodName: 'storeLookup', metricKey: STORE_LOOKUP_DURATION },
@@ -745,7 +745,7 @@ export function logCRUDLightningInteraction(eventSource: string, attributes: obj
     interaction(eventSource, 'force_record', null, eventSource, 'crud', attributes);
 }
 
-// TODO: export these types from lds/engine
+// TODO: export these types from luvio/engine
 type Instrument = (params: unknown) => void;
 type InstrumentParamsBuilder = () => Parameters<Instrument>[0];
 /**

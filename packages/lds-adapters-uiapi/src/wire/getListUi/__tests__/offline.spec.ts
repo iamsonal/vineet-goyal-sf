@@ -8,7 +8,7 @@ import {
     testDataEmittedWhenStale,
     testDurableHitDoesNotHitNetwork,
     populateDurableStore,
-    buildOfflineLds,
+    buildOfflineLuvio,
 } from '@salesforce/lds-jest';
 
 import { factory as getListUi } from '../index';
@@ -63,8 +63,11 @@ describe('getListUi adapter offline', () => {
         const durableStore = await populateDurableStore(getListUi, configUsingListViewId, payload);
 
         // instantiate new LDS instance with durable environment
-        const { lds, network } = buildOfflineLds(durableStore, buildMockNetworkAdapter([payload]));
-        const adapter = getListUi(lds);
+        const { luvio, network } = buildOfflineLuvio(
+            durableStore,
+            buildMockNetworkAdapter([payload])
+        );
+        const adapter = getListUi(luvio);
 
         // call adapter without rtId set
         const result = await (adapter(configUsingApiName) as Promise<any>);

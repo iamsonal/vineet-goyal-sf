@@ -11,7 +11,7 @@ function createBridge() {
     const luvio = new Luvio(environment);
     const bridge = new AdsBridge(luvio);
 
-    return { store, lds: luvio, bridge };
+    return { store, luvio, bridge };
 }
 
 jest.mock('@salesforce/lds-instrumentation', () => {
@@ -34,8 +34,8 @@ const nonMasterRecordTypeInfo = {
     recordTypeId: 'non-master',
 };
 
-function queryRecord(lds: Luvio, { recordId }: { recordId: string }): any {
-    return lds.storeLookup({
+function queryRecord(luvio: Luvio, { recordId }: { recordId: string }): any {
+    return luvio.storeLookup({
         recordId: keyBuilderRecord({ recordId }),
         node: {
             kind: 'Fragment',
@@ -52,7 +52,7 @@ beforeEach(() => {
 describe('AdsBridge', () => {
     describe('addRecords', () => {
         it('ingests all the records if no allowlist is provided', () => {
-            const { lds, bridge } = createBridge();
+            const { luvio, bridge } = createBridge();
 
             bridge.addRecords([
                 createRecord({
@@ -65,15 +65,15 @@ describe('AdsBridge', () => {
                 }),
             ]);
 
-            const { data: publicRecord } = queryRecord(lds, { recordId: '123' });
+            const { data: publicRecord } = queryRecord(luvio, { recordId: '123' });
             expect(publicRecord.id).toBe('123');
-            const { data: secretRecord } = queryRecord(lds, { recordId: '456' });
+            const { data: secretRecord } = queryRecord(luvio, { recordId: '456' });
             expect(secretRecord.id).toBe('456');
             expect(timerMetricAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('ingests the records unless they are explicitly not allowlisted', () => {
-            const { lds, bridge } = createBridge();
+            const { luvio, bridge } = createBridge();
 
             bridge.addRecords(
                 [
@@ -91,9 +91,9 @@ describe('AdsBridge', () => {
                 }
             );
 
-            const { data: publicRecord } = queryRecord(lds, { recordId: '123' });
+            const { data: publicRecord } = queryRecord(luvio, { recordId: '123' });
             expect(publicRecord.id).toBe('123');
-            const { data: secretRecord } = queryRecord(lds, { recordId: '456' });
+            const { data: secretRecord } = queryRecord(luvio, { recordId: '456' });
             expect(secretRecord).toBe(undefined);
             expect(timerMetricAddDurationSpy).toHaveBeenCalledTimes(1);
         });
@@ -142,10 +142,10 @@ describe('AdsBridge', () => {
         });
 
         it('does not let master record type overwrite non-master record type', () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123',
                     recordTypeId: nonMasterRecordTypeInfo.recordTypeId,
@@ -161,7 +161,7 @@ describe('AdsBridge', () => {
                 }),
             ]);
 
-            expect(queryRecord(lds, { recordId: '123' })).toMatchObject({
+            expect(queryRecord(luvio, { recordId: '123' })).toMatchObject({
                 data: {
                     recordTypeId: nonMasterRecordTypeInfo.recordTypeId,
                     recordTypeInfo: nonMasterRecordTypeInfo,
@@ -170,10 +170,10 @@ describe('AdsBridge', () => {
         });
 
         it('lets non-master record type overwrie master record type', () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123',
                     recordTypeId: MASTER_RECORD_TYPE_ID,
@@ -189,7 +189,7 @@ describe('AdsBridge', () => {
                 }),
             ]);
 
-            expect(queryRecord(lds, { recordId: '123' })).toMatchObject({
+            expect(queryRecord(luvio, { recordId: '123' })).toMatchObject({
                 data: {
                     recordTypeId: nonMasterRecordTypeInfo.recordTypeId,
                     recordTypeInfo: nonMasterRecordTypeInfo,
@@ -198,10 +198,10 @@ describe('AdsBridge', () => {
         });
 
         it('recurses over nested records when checking record types', () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123',
                     recordTypeId: MASTER_RECORD_TYPE_ID,
@@ -238,7 +238,7 @@ describe('AdsBridge', () => {
                 }),
             ]);
 
-            expect(queryRecord(lds, { recordId: '123' })).toMatchObject({
+            expect(queryRecord(luvio, { recordId: '123' })).toMatchObject({
                 data: {
                     recordTypeId: MASTER_RECORD_TYPE_ID,
                     recordTypeInfo: null,
@@ -257,26 +257,26 @@ describe('AdsBridge', () => {
 
     describe('evict', () => {
         it('should remove an existing record if there is one', async () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123',
                 })
             );
 
-            expect(queryRecord(lds, { recordId: '123' })).toMatchObject({ state: 'Fulfilled' });
+            expect(queryRecord(luvio, { recordId: '123' })).toMatchObject({ state: 'Fulfilled' });
             await bridge.evict('123');
-            expect(queryRecord(lds, { recordId: '123' })).toMatchObject({ state: 'Unfulfilled' });
+            expect(queryRecord(luvio, { recordId: '123' })).toMatchObject({ state: 'Unfulfilled' });
             expect(timerMetricAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
         it('should not emit when a record has been deleted via the bridge', async () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123',
                 })
@@ -345,13 +345,13 @@ describe('AdsBridge', () => {
 
     describe('receiveFromLdsCallback', () => {
         it('emits when a record is ingested', () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             const fn = jest.fn();
             bridge.receiveFromLdsCallback = fn;
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123456',
                     apiName: 'Test__c',
@@ -382,14 +382,14 @@ describe('AdsBridge', () => {
             expect(timerMetricAddDurationSpy).toHaveBeenCalledTimes(1);
         });
 
-        it('does not emit when a record is evicted from lds', () => {
-            const { bridge, lds } = createBridge();
+        it('does not emit when a record is evicted from luvio', () => {
+            const { bridge, luvio } = createBridge();
 
             const fn = jest.fn();
             bridge.receiveFromLdsCallback = fn;
             const mockRecordId = '123456';
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: mockRecordId,
                     apiName: 'Test__c',
@@ -399,15 +399,15 @@ describe('AdsBridge', () => {
                 })
             );
 
-            lds.storeEvict(keyBuilderRecord({ recordId: mockRecordId }));
-            lds.storeBroadcast();
+            luvio.storeEvict(keyBuilderRecord({ recordId: mockRecordId }));
+            luvio.storeBroadcast();
 
             // verify mocked callback only called once for addRecord
             expect(fn).toHaveBeenCalledTimes(1);
         });
 
         it('does not emit when a record is ingested then evicted prior to broadcast', () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             const fn = jest.fn();
             bridge.receiveFromLdsCallback = fn;
@@ -420,18 +420,18 @@ describe('AdsBridge', () => {
                 },
             });
 
-            lds.storeIngest('', ingestRecord, mockRecord);
-            lds.storeEvict(keyBuilderRecord({ recordId: mockRecordId }));
-            lds.storeBroadcast();
+            luvio.storeIngest('', ingestRecord, mockRecord);
+            luvio.storeEvict(keyBuilderRecord({ recordId: mockRecordId }));
+            luvio.storeBroadcast();
 
             expect(fn).toHaveBeenCalledTimes(0);
         });
 
         it('emits a new field ingested into an existed record', () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123456',
                     apiName: 'Test__c',
@@ -445,7 +445,7 @@ describe('AdsBridge', () => {
             bridge.receiveFromLdsCallback = fn;
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123456',
                     apiName: 'Test__c',
@@ -478,13 +478,13 @@ describe('AdsBridge', () => {
         });
 
         it('emits all the ingested records', () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             const fn = jest.fn();
             bridge.receiveFromLdsCallback = fn;
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123',
                     fields: {
@@ -544,13 +544,13 @@ describe('AdsBridge', () => {
         });
 
         it('emits records with circular dependencies stripped out', () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             const fn = jest.fn();
             bridge.receiveFromLdsCallback = fn;
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123456',
                     fields: {
@@ -597,10 +597,10 @@ describe('AdsBridge', () => {
         });
 
         it('emits stripped down spanning records when spanning record value is not present', () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123456',
                     apiName: 'Opportunity',
@@ -619,12 +619,12 @@ describe('AdsBridge', () => {
                 })
             );
 
-            lds.storeEvict(keyBuilderRecord({ recordId: '789' }));
+            luvio.storeEvict(keyBuilderRecord({ recordId: '789' }));
             const fn = jest.fn();
             bridge.receiveFromLdsCallback = fn;
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123456',
                     apiName: 'Opportunity',
@@ -656,10 +656,10 @@ describe('AdsBridge', () => {
         });
 
         it('does not emit data when spanning record value is pending', () => {
-            const { bridge, lds, store } = createBridge();
+            const { bridge, luvio, store } = createBridge();
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123',
                     apiName: 'Opportunity',
@@ -677,7 +677,7 @@ describe('AdsBridge', () => {
             );
 
             // Mark the ingested record in the store as pending.
-            const accountLinkNode = lds
+            const accountLinkNode = luvio
                 .getNode(keyBuilderRecord({ recordId: '123' }))
                 .object('fields')
                 .link('Account');
@@ -695,7 +695,7 @@ describe('AdsBridge', () => {
             // Trigger the bridge emit flow once on the record with the pending field by adding a
             // new field to the same record.
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123',
                     apiName: 'Opportunity',
@@ -710,10 +710,10 @@ describe('AdsBridge', () => {
         });
 
         it('does not emit data when record has a pending field', () => {
-            const { bridge, lds, store } = createBridge();
+            const { bridge, luvio, store } = createBridge();
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123',
                     apiName: 'Opportunity',
@@ -738,7 +738,7 @@ describe('AdsBridge', () => {
 
             // add a new record to trigger the bridge emit flow
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123',
                     apiName: 'Opportunity',
@@ -753,10 +753,10 @@ describe('AdsBridge', () => {
         });
 
         it('emits stripped down spanning records when spanning record value is isMissing', () => {
-            const { bridge, lds, store } = createBridge();
+            const { bridge, luvio, store } = createBridge();
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123',
                     apiName: 'Opportunity',
@@ -774,7 +774,7 @@ describe('AdsBridge', () => {
             );
 
             // Mark the ingested record in the store as missing.
-            const accountLinkNode = lds
+            const accountLinkNode = luvio
                 .getNode(keyBuilderRecord({ recordId: '123' }))
                 .object('fields')
                 .link('Account');
@@ -792,7 +792,7 @@ describe('AdsBridge', () => {
             // Trigger the bridge emit flow once on the record with the missing field by adding a
             // new field to the same record.
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123',
                     apiName: 'Opportunity',
@@ -823,13 +823,13 @@ describe('AdsBridge', () => {
         });
 
         it('extracts the object metadata from the record if the object info is missing', () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             const fn = jest.fn();
             bridge.receiveFromLdsCallback = fn;
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123456',
                     apiName: 'Test__c',
@@ -848,10 +848,10 @@ describe('AdsBridge', () => {
         });
 
         it('passes null keyPrefix from the record if the object info keyPrefix is null', () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             addObjectInfo(
-                lds,
+                luvio,
                 createObjectInfo({
                     apiName: 'User',
                     associateEntityType: null,
@@ -866,7 +866,7 @@ describe('AdsBridge', () => {
             bridge.receiveFromLdsCallback = fn;
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123456',
                     apiName: 'User',
@@ -885,10 +885,10 @@ describe('AdsBridge', () => {
         });
 
         it('extracts the object metadata from the object info if present', () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             addObjectInfo(
-                lds,
+                luvio,
                 createObjectInfo({
                     apiName: 'Test__c',
                     associateEntityType: null,
@@ -903,7 +903,7 @@ describe('AdsBridge', () => {
             bridge.receiveFromLdsCallback = fn;
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123456',
                     apiName: 'Test__c',
@@ -922,10 +922,10 @@ describe('AdsBridge', () => {
         });
 
         it('extracts the first field name if multiple are provided', () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             addObjectInfo(
-                lds,
+                luvio,
                 createObjectInfo({
                     apiName: 'Test__c',
                     associateEntityType: null,
@@ -940,7 +940,7 @@ describe('AdsBridge', () => {
             bridge.receiveFromLdsCallback = fn;
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123456',
                     apiName: 'Test__c',
@@ -959,14 +959,14 @@ describe('AdsBridge', () => {
         });
 
         it('stops emitting if the function is replaced with undefined', () => {
-            const { bridge, lds } = createBridge();
+            const { bridge, luvio } = createBridge();
 
             const fn = jest.fn();
             bridge.receiveFromLdsCallback = fn;
             bridge.receiveFromLdsCallback = undefined;
 
             addRecord(
-                lds,
+                luvio,
                 createRecord({
                     id: '123',
                     apiName: 'Test__c',

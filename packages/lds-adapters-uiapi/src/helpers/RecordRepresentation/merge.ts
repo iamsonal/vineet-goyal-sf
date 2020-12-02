@@ -51,7 +51,7 @@ function mergePendingFields(
 // when incoming record has a higher version
 // than the record that is currently in the store
 function mergeAndRefreshHigherVersionRecord(
-    lds: Luvio,
+    luvio: Luvio,
     incoming: RecordRepresentationNormalized,
     existing: RecordRepresentationNormalized,
     incomingTrackedFieldsTrieRoot: RecordFieldTrie,
@@ -76,7 +76,7 @@ function mergeAndRefreshHigherVersionRecord(
                 trackedFields: existingTrackedFieldsTrieRoot,
             };
         } else {
-            getRecordFieldsNetwork(lds, {
+            getRecordFieldsNetwork(luvio, {
                 recordId: incoming.id,
                 optionalFields: convertTrieToFields(incomingTrackedFieldsTrieRoot),
             });
@@ -94,7 +94,7 @@ function mergeAndRefreshHigherVersionRecord(
 // when incoming record has a lower version
 // than the record that is currently in the store
 function mergeAndRefreshLowerVersionRecord(
-    lds: Luvio,
+    luvio: Luvio,
     incoming: RecordRepresentationNormalized,
     existing: RecordRepresentationNormalized,
     incomingTrackedFieldsTrieRoot: RecordFieldTrie,
@@ -122,7 +122,7 @@ function mergeAndRefreshLowerVersionRecord(
                 trackedFields: incomingTrackedFieldsTrieRoot,
             };
         } else {
-            getRecordFieldsNetwork(lds, {
+            getRecordFieldsNetwork(luvio, {
                 recordId: incoming.id,
                 optionalFields: convertTrieToFields(incomingTrackedFieldsTrieRoot),
             });
@@ -135,16 +135,16 @@ function mergeAndRefreshLowerVersionRecord(
 }
 
 function mergeRecordConflict(
-    lds: Luvio,
+    luvio: Luvio,
     incoming: RecordRepresentationNormalized,
     existing: RecordRepresentationNormalized,
     recordConflictMap?: RecordConflictMap
 ) {
-    const incomingNode = lds.wrapNormalizedGraphNode<
+    const incomingNode = luvio.wrapNormalizedGraphNode<
         RecordRepresentationNormalized,
         RecordRepresentation
     >(incoming);
-    const existingNode = lds.wrapNormalizedGraphNode<
+    const existingNode = luvio.wrapNormalizedGraphNode<
         RecordRepresentationNormalized,
         RecordRepresentation
     >(existing);
@@ -162,7 +162,7 @@ function mergeRecordConflict(
 
     if (incoming.weakEtag > existing.weakEtag) {
         return mergeAndRefreshHigherVersionRecord(
-            lds,
+            luvio,
             incoming,
             existing,
             incomingTrackedFieldsTrieRoot,
@@ -172,7 +172,7 @@ function mergeRecordConflict(
     }
 
     return mergeAndRefreshLowerVersionRecord(
-        lds,
+        luvio,
         incoming,
         existing,
         incomingTrackedFieldsTrieRoot,
@@ -213,7 +213,7 @@ function isErrorEntry(
 export default function merge(
     existing: RecordRepresentationNormalized | undefined | StoreRecordError,
     incoming: RecordRepresentationNormalized,
-    lds: Luvio,
+    luvio: Luvio,
     _path: IngestPath,
     recordConflictMap?: RecordConflictMap
 ): RecordRepresentationNormalized {
@@ -224,13 +224,13 @@ export default function merge(
     // Evicts all dependencies from store.
     if (incoming.recordTypeId !== existing.recordTypeId) {
         const recordDepKey = depenpendencyKeyBuilder({ recordId: existing.id });
-        const node = lds.getNode<{ [key: string]: true }, any>(recordDepKey);
+        const node = luvio.getNode<{ [key: string]: true }, any>(recordDepKey);
         if (isGraphNode(node)) {
             const dependencies = node.retrieve();
             if (dependencies !== null) {
                 const depKeys = ObjectKeys(dependencies);
                 for (let i = 0, len = depKeys.length; i < len; i++) {
-                    lds.storeEvict(depKeys[i]);
+                    luvio.storeEvict(depKeys[i]);
                 }
             }
         }
@@ -253,7 +253,7 @@ export default function merge(
                 incomingApiName: incoming.apiName,
             };
         };
-        lds.instrument(paramsBuilder);
+        luvio.instrument(paramsBuilder);
     }
 
     const incomingWeakEtag = incoming.weakEtag;
@@ -268,13 +268,13 @@ export default function merge(
             };
         };
 
-        lds.instrument(paramsBuilder);
+        luvio.instrument(paramsBuilder);
     }
 
     // TODO W-6900085 - UIAPI returns weakEtag=0 when the record is >2 levels nested. For now
     // we treat the record as mergeable.
     if (incomingWeakEtag !== 0 && existingWeakEtag !== 0 && incomingWeakEtag !== existingWeakEtag) {
-        return mergeRecordConflict(lds, incoming, existing, recordConflictMap);
+        return mergeRecordConflict(luvio, incoming, existing, recordConflictMap);
     }
 
     return mergeRecordFields(incoming, existing);

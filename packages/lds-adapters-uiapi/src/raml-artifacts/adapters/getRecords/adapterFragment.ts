@@ -3,7 +3,7 @@ import { selectChildResourceParams } from '../../resources/getUiApiRecordsBatchB
 import { GetRecordsConfig } from './GetRecordsConfig';
 import { createChildResourceParams } from './createChildResourceParams';
 
-export function adapterFragment(lds: Luvio, config: GetRecordsConfig): Fragment {
+export function adapterFragment(luvio: Luvio, config: GetRecordsConfig): Fragment {
     const childResources = createChildResourceParams(config);
-    return selectChildResourceParams(lds, childResources);
+    return selectChildResourceParams(luvio, childResources);
 }

@@ -36,10 +36,10 @@ function selectAvatars(recordIds: string[]): PathSelection[] {
 // the same top level object
 const KEY = `${keyPrefix}RecordAvatarsBulk`;
 
-export function buildInMemorySnapshot(lds: Luvio, config: GetRecordAvatarsConfig) {
+export function buildInMemorySnapshot(luvio: Luvio, config: GetRecordAvatarsConfig) {
     const { recordIds } = config;
     const sel = selectAvatars(recordIds);
-    return lds.storeLookup<RecordAvatarBulkMapRepresentation>(
+    return luvio.storeLookup<RecordAvatarBulkMapRepresentation>(
         {
             recordId: KEY,
             node: {
@@ -49,18 +49,18 @@ export function buildInMemorySnapshot(lds: Luvio, config: GetRecordAvatarsConfig
             },
             variables: {},
         },
-        buildSnapshotRefresh(lds, config, recordIds)
+        buildSnapshotRefresh(luvio, config, recordIds)
     );
 }
 
 function buildSnapshotRefresh(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetRecordAvatarsConfig,
     recordIds: string[]
 ): SnapshotRefresh<RecordAvatarBulkMapRepresentation> {
     return {
         config,
-        resolve: () => buildNetworkSnapshot(lds, config, recordIds),
+        resolve: () => buildNetworkSnapshot(luvio, config, recordIds),
     };
 }
 
@@ -81,7 +81,7 @@ function isRecordAvatarBulkMapRepresentation(
 }
 
 function onResponseSuccess(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetRecordAvatarsConfig,
     recordIds: string[],
     response: ResourceResponse<RecordAvatarBulkRepresentation | RecordAvatarBulkMapRepresentation>
@@ -102,39 +102,39 @@ function onResponseSuccess(
         }, {} as RecordAvatarBulkMapRepresentation);
     }
 
-    lds.storeIngest<RecordAvatarBulkMapRepresentation>(
+    luvio.storeIngest<RecordAvatarBulkMapRepresentation>(
         KEY,
         recordAvatarBulkMapRepresentationIngest,
         formatted
     );
-    lds.storeBroadcast();
-    return buildInMemorySnapshot(lds, config);
+    luvio.storeBroadcast();
+    return buildInMemorySnapshot(luvio, config);
 }
 
 function onResponseError(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetRecordAvatarsConfig,
     recordIds: string[],
     err: FetchResponse<unknown>
 ) {
-    lds.storeIngestFetchResponse(KEY, err);
-    lds.storeBroadcast();
-    return lds.errorSnapshot(err, buildSnapshotRefresh(lds, config, recordIds));
+    luvio.storeIngestFetchResponse(KEY, err);
+    luvio.storeBroadcast();
+    return luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config, recordIds));
 }
 
 function resolveUnfulfilledSnapshot(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetRecordAvatarsConfig,
     recordIds: string[],
     snapshot: UnfulfilledSnapshot<RecordAvatarBulkMapRepresentation, any>
 ) {
     const resourceRequest = buildRequest(recordIds);
-    return lds.resolveUnfulfilledSnapshot(resourceRequest, snapshot).then(
+    return luvio.resolveUnfulfilledSnapshot(resourceRequest, snapshot).then(
         response => {
-            return onResponseSuccess(lds, config, recordIds, response);
+            return onResponseSuccess(luvio, config, recordIds, response);
         },
         (err: FetchResponse<unknown>) => {
-            return onResponseError(lds, config, recordIds, err);
+            return onResponseError(luvio, config, recordIds, err);
         }
     );
 }
@@ -147,18 +147,18 @@ function resolveUnfulfilledSnapshot(
  *
  */
 export function buildNetworkSnapshot(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetRecordAvatarsConfig,
     recordIds: string[]
 ): Promise<Snapshot<RecordAvatarBulkMapRepresentation>> {
     const resourceRequest = buildRequest(recordIds);
 
-    return lds.dispatchResourceRequest<RecordAvatarBulkRepresentation>(resourceRequest).then(
+    return luvio.dispatchResourceRequest<RecordAvatarBulkRepresentation>(resourceRequest).then(
         response => {
-            return onResponseSuccess(lds, config, recordIds, response);
+            return onResponseSuccess(luvio, config, recordIds, response);
         },
         (err: FetchResponse<unknown>) => {
-            return onResponseError(lds, config, recordIds, err);
+            return onResponseError(luvio, config, recordIds, err);
         }
     );
 }
@@ -181,17 +181,17 @@ function getRecordIds(config: GetRecordAvatarsConfig, snapshot: Snapshot<unknown
 }
 
 export const factory: AdapterFactory<GetRecordAvatarsConfig, RecordAvatarBulkMapRepresentation> = (
-    lds: Luvio
+    luvio: Luvio
 ) =>
     function getRecordAvatars(unknown: unknown) {
         const config = validateAdapterConfig(unknown, getRecordAvatars_ConfigPropertyNames);
         if (config === null) {
             return null;
         }
-        const cacheLookup = buildInMemorySnapshot(lds, config);
+        const cacheLookup = buildInMemorySnapshot(luvio, config);
 
         // CACHE HIT
-        if (lds.snapshotDataAvailable(cacheLookup)) {
+        if (luvio.snapshotDataAvailable(cacheLookup)) {
             return cacheLookup;
         }
 
@@ -200,8 +200,8 @@ export const factory: AdapterFactory<GetRecordAvatarsConfig, RecordAvatarBulkMap
         const recordIds = getRecordIds(config, cacheLookup);
 
         if (isUnfulfilledSnapshot(cacheLookup)) {
-            return resolveUnfulfilledSnapshot(lds, config, recordIds, cacheLookup);
+            return resolveUnfulfilledSnapshot(luvio, config, recordIds, cacheLookup);
         }
 
-        return buildNetworkSnapshot(lds, config, recordIds);
+        return buildNetworkSnapshot(luvio, config, recordIds);
     };

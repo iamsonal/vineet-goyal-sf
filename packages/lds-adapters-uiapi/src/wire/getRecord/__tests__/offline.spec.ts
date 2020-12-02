@@ -44,7 +44,7 @@ function buildLds(durableStore: MockDurableStore, n?: NetworkAdapter) {
     );
     const luvio = new Luvio(env);
     return {
-        lds: luvio,
+        luvio,
         durableStore,
         network,
         store,
@@ -53,12 +53,12 @@ function buildLds(durableStore: MockDurableStore, n?: NetworkAdapter) {
 }
 
 async function populateDurableStore() {
-    const { durableStore, lds, network } = buildLds(
+    const { durableStore, luvio, network } = buildLds(
         new MockDurableStore(),
         buildMockNetworkAdapter([recordPayload_Account])
     );
 
-    const adapter = getRecordAdapterFactory(lds);
+    const adapter = getRecordAdapterFactory(luvio);
     const snapshotOrPromise = adapter({
         recordId: recordId_Account,
         fields: recordFields_Account,
@@ -106,11 +106,11 @@ describe('getRecord with fields offline', () => {
         );
 
         const network = buildMockNetworkAdapter([payload]);
-        const { lds, store } = buildLds(durableStore, network);
+        const { luvio, store } = buildLds(durableStore, network);
         // test the record doesn't exist in memory
         expect(store.records[recordKey]).toBeUndefined();
 
-        const adapter = getRecordAdapterFactory(lds);
+        const adapter = getRecordAdapterFactory(luvio);
         const result = await (adapter({
             recordId: recordId_Account,
             fields: ['Account.Id', 'Account.NickName', 'Account.Color'],

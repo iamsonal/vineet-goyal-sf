@@ -21,10 +21,10 @@ export default {
         const luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
         const timestamp = Date.now();
         ingestRecord(JSON.parse(mockRecord), 'recordId', luvio, store, timestamp);
-        return { store, lds: luvio, timestamp };
+        return { store, luvio, timestamp };
     },
-    func: ({ store, lds, timestamp }) => {
-        const snapshot = lds.storeLookup({
+    func: ({ store, luvio, timestamp }) => {
+        const snapshot = luvio.storeLookup({
             recordId: 'RecordRepresentation:aJGx00000000001GAA',
             node: {},
             variables: {},
@@ -39,7 +39,7 @@ export default {
         const modifiedRecord = JSON.parse(mockRecord);
         modifiedRecord.lastModifiedDate = '2018-02-09T06:19:03.000Z'; // change one field
 
-        ingestRecord(modifiedRecord, 'recordId', lds, store, timestamp);
+        ingestRecord(modifiedRecord, 'recordId', luvio, store, timestamp);
 
         for (const unsubscribeFunc of unsubscribeFuncs) {
             unsubscribeFunc();

@@ -15,7 +15,7 @@ export const createRecordIngest = (
     return (
         input: RecordRepresentation,
         path: IngestPath,
-        lds: Luvio,
+        luvio: Luvio,
         store: Store,
         timestamp: number
     ): StoreLink => {
@@ -33,7 +33,7 @@ export const createRecordIngest = (
             input,
             store.records[key],
             recordPath,
-            lds,
+            luvio,
             store,
             timestamp,
             fieldsTrie,
@@ -43,13 +43,13 @@ export const createRecordIngest = (
 
         const existingRecord = store.records[key];
 
-        incomingRecord = merge(existingRecord, incomingRecord, lds, path, recordConflictMap);
+        incomingRecord = merge(existingRecord, incomingRecord, luvio, path, recordConflictMap);
 
         if (existingRecord === undefined || equals(existingRecord, incomingRecord) === false) {
-            lds.storePublish(key, incomingRecord);
+            luvio.storePublish(key, incomingRecord);
         }
 
-        lds.storeSetExpiration(key, timestamp + 30000);
+        luvio.storeSetExpiration(key, timestamp + 30000);
 
         return createLink(key);
     };

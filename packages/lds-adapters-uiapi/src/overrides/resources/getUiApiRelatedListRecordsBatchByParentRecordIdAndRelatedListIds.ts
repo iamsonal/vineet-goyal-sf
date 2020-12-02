@@ -91,7 +91,7 @@ function extractSingleResourceParamsFromBatchParamString(
 // HUGE BLOCK OF COPY PASTED CODE:
 // WE NEED TO DO THIS SO THAT THE ADAPTER CAN USE ONLY OUR OVERRIDE FILE
 // PLEASE DO NOT CHANGE ANYTHING HERE...
-export function select(lds: Luvio, resourceParams: ResourceRequestConfig): Fragment {
+export function select(luvio: Luvio, resourceParams: ResourceRequestConfig): Fragment {
     const childResources = createChildResourceParams(resourceParams);
     const envelopeBodyPath = 'result';
     const envelopeStatusCodePath = 'statusCode';
@@ -109,7 +109,7 @@ export function select(lds: Luvio, resourceParams: ResourceRequestConfig): Fragm
                 reader.enterPath(i);
                 const childResource = childResources[i];
                 const childKey = singleWireKeyBuilder(childResource);
-                const childFragment = singleWireSelect(lds, childResource);
+                const childFragment = singleWireSelect(luvio, childResource);
                 const childSnapshot = reader.read<RelatedListRecordCollectionRepresentation>({
                     recordId: childKey,
                     node: childFragment,
@@ -196,7 +196,7 @@ export function keyBuilder(params: ResourceRequestConfig): string {
 }
 
 export function ingestSuccess(
-    lds: Luvio,
+    luvio: Luvio,
     resourceParams: ResourceRequestConfig,
     response: FetchResponse<RelatedListRecordCollectionBatchRepresentation>,
     _snapshotRefresh?: SnapshotRefresh<RelatedListRecordCollectionBatchRepresentation>
@@ -237,7 +237,11 @@ export function ingestSuccess(
                 headers: {},
             };
 
-            const childSnapshot = sinlgeWireIngestSuccess(lds, childResourceParams, childResponse);
+            const childSnapshot = sinlgeWireIngestSuccess(
+                luvio,
+                childResourceParams,
+                childResponse
+            );
             seenRecords = {
                 ...seenRecords,
                 ...childSnapshot.seenRecords,
@@ -259,7 +263,7 @@ export function ingestSuccess(
                 statusText: childStatusCodeText,
                 headers: {},
             };
-            singleWireIngestError(lds, childResourceParams, childResponse);
+            singleWireIngestError(luvio, childResourceParams, childResponse);
             seenRecords = {
                 ...seenRecords,
                 [singleWireKeyBuilder(childResourceParams)]: true,
@@ -289,7 +293,7 @@ export function ingestSuccess(
         seenRecords: seenRecords,
         select: {
             recordId: key,
-            node: select(lds, resourceParams),
+            node: select(luvio, resourceParams),
             variables: {},
         },
         variables: {},
@@ -297,14 +301,14 @@ export function ingestSuccess(
 }
 
 export function ingestError(
-    lds: Luvio,
+    luvio: Luvio,
     params: ResourceRequestConfig,
     error: FetchResponse<unknown>,
     snapshotRefresh?: SnapshotRefresh<RelatedListRecordCollectionBatchRepresentation>
 ): ErrorSnapshot {
     const key = keyBuilder(params);
-    lds.storeIngestFetchResponse(key, error);
-    return lds.errorSnapshot(error, snapshotRefresh);
+    luvio.storeIngestFetchResponse(key, error);
+    return luvio.errorSnapshot(error, snapshotRefresh);
 }
 
 export function createResourceRequest(config: ResourceRequestConfig): ResourceRequest {

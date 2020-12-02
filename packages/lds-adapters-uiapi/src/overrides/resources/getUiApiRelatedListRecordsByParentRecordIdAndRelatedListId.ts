@@ -41,7 +41,7 @@ const DEFAULT_PAGE_SIZE = 50;
 const RELATED_LIST_REFERENCE_SELECTIONS = RelatedListReferenceRepresentation_select().selections;
 
 export const select: typeof generatedSelect = (
-    lds: Luvio,
+    _luvio: Luvio,
     params: ResourceRequestConfig
 ): Fragment => {
     const { queryParams, urlParams } = params;
@@ -142,7 +142,7 @@ export const select: typeof generatedSelect = (
 };
 
 export const ingestSuccess: typeof generatedIngestSuccess = (
-    lds: Luvio,
+    luvio: Luvio,
     resourceRequestConfig: ResourceRequestConfig,
     resp: ResourceResponse<RelatedListRecordCollectionRepresentation>,
     snapshotRefresh?: SnapshotRefresh<RelatedListRecordCollectionRepresentation>
@@ -151,20 +151,24 @@ export const ingestSuccess: typeof generatedIngestSuccess = (
 
     const key = generatedKeyBuilder(resourceRequestConfig);
 
-    lds.storeIngest<RelatedListRecordCollectionRepresentation>(
+    luvio.storeIngest<RelatedListRecordCollectionRepresentation>(
         key,
         types_RelatedListRecordCollectionRepresentation_ingest,
         body
     );
 
     if (body.optionalFields && body.optionalFields.length > 0) {
-        markMissingOptionalRecordFieldsMissing(<StoreLink[]>body.records, body.optionalFields, lds);
+        markMissingOptionalRecordFieldsMissing(
+            <StoreLink[]>body.records,
+            body.optionalFields,
+            luvio
+        );
     }
 
-    const snapshot = lds.storeLookup<RelatedListRecordCollectionRepresentation>(
+    const snapshot = luvio.storeLookup<RelatedListRecordCollectionRepresentation>(
         {
             recordId: key,
-            node: select(lds, resourceRequestConfig),
+            node: select(luvio, resourceRequestConfig),
             variables: {},
         },
         snapshotRefresh
@@ -185,13 +189,13 @@ export default createResourceRequest;
 function markMissingOptionalRecordFieldsMissing(
     returnedRecords: StoreLink[],
     optionalFields: string[],
-    lds: Luvio
+    luvio: Luvio
 ) {
     for (let i = 0; i < returnedRecords.length; i++) {
         const record = returnedRecords[i];
         const recordKey = record.__ref;
         if (recordKey) {
-            const node = lds.getNode<RecordRepresentationNormalized, RecordRepresentation>(
+            const node = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(
                 recordKey
             );
             if (isGraphNode(node)) {

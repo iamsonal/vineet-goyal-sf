@@ -14,7 +14,7 @@ jest.mock('../../../../helpers/FieldValueRepresentation/normalize');
 
 describe('ingest', () => {
     let store = new Store();
-    let lds = new Luvio(new Environment(store, jest.fn()));
+    let luvio = new Luvio(new Environment(store, jest.fn()));
 
     it('invokes normalize when ingesting', () => {
         const input: FieldValueRepresentation = {
@@ -42,7 +42,7 @@ describe('ingest', () => {
                 fullPath: 'abc',
                 parent: null,
             },
-            lds,
+            luvio,
             store,
             123,
             fieldsTrie,
@@ -62,7 +62,7 @@ describe('ingest', () => {
                 fullPath: 'abc',
                 parent: null,
             },
-            lds,
+            luvio,
             store,
             123,
             fieldsTrie,

@@ -46,12 +46,12 @@ export function createObjectInfo(config: any = {}) {
     };
 }
 
-export function addRecord(lds: Luvio, data: any) {
-    lds.storeIngest('', ingestRecord, data);
-    lds.storeBroadcast();
+export function addRecord(luvio: Luvio, data: any) {
+    luvio.storeIngest('', ingestRecord, data);
+    luvio.storeBroadcast();
 }
 
-export function addObjectInfo(lds: Luvio, data: any) {
-    lds.storeIngest('', ingestObjectInfo, data);
-    lds.storeBroadcast();
+export function addObjectInfo(luvio: Luvio, data: any) {
+    luvio.storeIngest('', ingestObjectInfo, data);
+    luvio.storeBroadcast();
 }

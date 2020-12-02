@@ -14,10 +14,10 @@ function clone(data, iteration) {
     return copy;
 }
 
-function populate(count, lds, store) {
+function populate(count, luvio, store) {
     for (let i = 0; i < count; i += 1) {
         const copy = clone(mockDuplicateConfiguration, i);
-        ingestDuplicateConfiguration(copy, DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+        ingestDuplicateConfiguration(copy, DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
     }
 }
 
@@ -35,14 +35,14 @@ for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
 
 describe('O(n) ingestion time for n duplicateConfigurations', () => {
     benchmark('O(n) - ingest 1000 configs when store has 10 configs', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         const number = 1000;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(10, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(10, luvio, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
                 const copy = clone(mockDuplicateConfiguration, i);
@@ -52,20 +52,20 @@ describe('O(n) ingestion time for n duplicateConfigurations', () => {
 
         run(() => {
             for (let i = 0; i < number; i += 1) {
-                ingestDuplicateConfiguration(next[i], DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+                ingestDuplicateConfiguration(next[i], DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
             }
         });
     });
 
     benchmark('O(n) - ingest 100 configs when store has 10 configs', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         const number = 100;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(10, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(10, luvio, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
                 const copy = clone(mockDuplicateConfiguration, i);
@@ -75,20 +75,20 @@ describe('O(n) ingestion time for n duplicateConfigurations', () => {
 
         run(() => {
             for (let i = 0; i < number; i += 1) {
-                ingestDuplicateConfiguration(next[i], DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+                ingestDuplicateConfiguration(next[i], DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
             }
         });
     });
 
     benchmark('O(n) - ingest 10 configs when store has 10 configs', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         const number = 10;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(10, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(10, luvio, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
                 const copy = clone(mockDuplicateConfiguration, i);
@@ -98,20 +98,20 @@ describe('O(n) ingestion time for n duplicateConfigurations', () => {
 
         run(() => {
             for (let i = 0; i < number; i += 1) {
-                ingestDuplicateConfiguration(next[i], DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+                ingestDuplicateConfiguration(next[i], DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
             }
         });
     });
 
     benchmark('O(n) - ingest 1 config when store has 10 configs', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         const number = 1;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(10, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(10, luvio, store);
             next = [];
             for (let i = 0; i < number; i += 1) {
                 const copy = clone(mockDuplicateConfiguration, i);
@@ -121,7 +121,7 @@ describe('O(n) ingestion time for n duplicateConfigurations', () => {
 
         run(() => {
             for (let i = 0; i < number; i += 1) {
-                ingestDuplicateConfiguration(next[i], DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+                ingestDuplicateConfiguration(next[i], DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
             }
         });
     });
@@ -129,81 +129,81 @@ describe('O(n) ingestion time for n duplicateConfigurations', () => {
 
 describe('Constant time', () => {
     benchmark('O(1) - ingest 1 config when store has 1000 configs', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(1000, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(1000, luvio, store);
             next = clone(mockDuplicateConfiguration);
         });
 
         run(() => {
-            ingestDuplicateConfiguration(next, DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+            ingestDuplicateConfiguration(next, DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
         });
     });
 
     benchmark('O(1) - ingest 1 config when store has 100 configs', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(100, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(100, luvio, store);
             next = clone(mockDuplicateConfiguration);
         });
 
         run(() => {
-            ingestDuplicateConfiguration(next, DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+            ingestDuplicateConfiguration(next, DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
         });
     });
 
     benchmark('O(1) - ingest 1 config when store has 10 configs', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(10, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(10, luvio, store);
             next = clone(mockDuplicateConfiguration);
         });
 
         run(() => {
-            ingestDuplicateConfiguration(next, DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+            ingestDuplicateConfiguration(next, DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
         });
     });
 
     benchmark('O(1) - ingest 1 config when store has 1 config', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            populate(1, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            populate(1, luvio, store);
             next = clone(mockDuplicateConfiguration);
         });
 
         run(() => {
-            ingestDuplicateConfiguration(next, DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+            ingestDuplicateConfiguration(next, DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
         });
     });
 
     benchmark('O(1) - ingest 1 config when store has 0 configs', () => {
-        let lds;
+        let luvio;
         let store;
         let next;
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
             next = clone(mockDuplicateConfiguration);
         });
 
         run(() => {
-            ingestDuplicateConfiguration(next, DEFAULT_STORE_ID, lds, store, TIMESTAMP);
+            ingestDuplicateConfiguration(next, DEFAULT_STORE_ID, luvio, store, TIMESTAMP);
         });
     });
 });

@@ -62,7 +62,7 @@ function buildLds(ds?: MockDurableStore) {
     );
     const luvio = new Luvio(env);
     return {
-        lds: luvio,
+        luvio,
         durableStore,
         network,
         store,
@@ -71,9 +71,9 @@ function buildLds(ds?: MockDurableStore) {
 }
 
 async function populateDurableStore(recordIds: string[]) {
-    const { durableStore, lds, network } = buildLds();
+    const { durableStore, luvio, network } = buildLds();
 
-    const adapter = getRecordUiAdapterFactory(lds);
+    const adapter = getRecordUiAdapterFactory(luvio);
     const snapshotOrPromise = adapter({
         recordIds,
         layoutTypes: ['Full'],
@@ -103,8 +103,8 @@ describe('getRecordUi adapter offline', () => {
 
         it('durable cache hit does not hit network', async () => {
             const { durableStore } = await populateDurableStore([single_recordId]);
-            const { lds, network } = buildLds(durableStore);
-            const adapter = getRecordUiAdapterFactory(lds);
+            const { luvio, network } = buildLds(durableStore);
+            const adapter = getRecordUiAdapterFactory(luvio);
             const snapshotOrPromise = adapter({
                 recordIds: [single_recordId],
                 layoutTypes: ['Full'],
@@ -136,8 +136,8 @@ describe('getRecordUi adapter offline', () => {
                 recordId_Account1,
                 recordId_Account2,
             ]);
-            const { lds, network } = buildLds(durableStore);
-            const adapter = getRecordUiAdapterFactory(lds);
+            const { luvio, network } = buildLds(durableStore);
+            const adapter = getRecordUiAdapterFactory(luvio);
             const snapshotOrPromise = adapter({
                 recordIds: [recordId_Account1, recordId_Account2],
                 layoutTypes: ['Full'],

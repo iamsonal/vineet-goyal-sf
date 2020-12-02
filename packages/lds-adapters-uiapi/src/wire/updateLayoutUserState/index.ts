@@ -33,14 +33,14 @@ function addAdditionalFieldsForNorming(
 }
 
 function updateLayoutUserState(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetLayoutUserStateConfigWithDefaults,
     key: string,
     updateRequest: ResourceRequest
 ) {
-    return lds.dispatchResourceRequest<RecordLayoutUserStateRepresentation>(updateRequest).then(
+    return luvio.dispatchResourceRequest<RecordLayoutUserStateRepresentation>(updateRequest).then(
         response => {
-            return ingestAndBroadcast(lds, key, config, response.body);
+            return ingestAndBroadcast(luvio, key, config, response.body);
         },
         (err: FetchResponse<{ error: string }>) => {
             deepFreeze(err);
@@ -50,7 +50,7 @@ function updateLayoutUserState(
 }
 
 function ingestAndBroadcast(
-    lds: Luvio,
+    luvio: Luvio,
     key: string,
     config: GetLayoutUserStateConfigWithDefaults,
     body: RecordLayoutUserStateRepresentation
@@ -63,9 +63,9 @@ function ingestAndBroadcast(
         config.mode
     );
 
-    lds.storeIngest(key, ingest, body);
-    lds.storeBroadcast();
-    return cacheLookupGetLayoutUserState(lds, config);
+    luvio.storeIngest(key, ingest, body);
+    luvio.storeBroadcast();
+    return cacheLookupGetLayoutUserState(luvio, config);
 }
 
 function clone(
@@ -163,7 +163,7 @@ function coerceConfigWithDefaults(
     };
 }
 
-export const factory = (lds: Luvio): UpdateLayoutUserStateAdapter => {
+export const factory = (luvio: Luvio): UpdateLayoutUserStateAdapter => {
     return (
         untrustedObjectApiName: unknown,
         untrustedRecordTypeId: unknown,
@@ -205,7 +205,7 @@ export const factory = (lds: Luvio): UpdateLayoutUserStateAdapter => {
             mode,
         });
 
-        const cacheSnapshot = cacheLookupGetLayoutUserState(lds, config);
+        const cacheSnapshot = cacheLookupGetLayoutUserState(luvio, config);
         if (isFulfilledSnapshot(cacheSnapshot)) {
             // Create an optimistic update if we can
             const updatedLayoutUserState = optimisticUpdate(
@@ -214,10 +214,10 @@ export const factory = (lds: Luvio): UpdateLayoutUserStateAdapter => {
             );
             if (updatedLayoutUserState !== null) {
                 // Ingest optimistic update done client side
-                ingestAndBroadcast(lds, key, config, updatedLayoutUserState);
+                ingestAndBroadcast(luvio, key, config, updatedLayoutUserState);
             }
         }
 
-        return updateLayoutUserState(lds, config, key, updateRequest);
+        return updateLayoutUserState(luvio, config, key, updateRequest);
     };
 };

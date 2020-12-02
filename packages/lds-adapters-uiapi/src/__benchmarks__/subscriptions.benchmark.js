@@ -19,17 +19,17 @@ for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
 
 describe('O(n) emit time as subscription count(n) grows', () => {
     benchmark('O(n) - single snapshot', () => {
-        let lds;
+        let luvio;
         let store;
 
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            ingestRecord(clone(mockRecord), 'recordId', lds, store, TIMESTAMP);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            ingestRecord(clone(mockRecord), 'recordId', luvio, store, TIMESTAMP);
         });
 
         run(() => {
-            lds.storeLookup({
+            luvio.storeLookup({
                 recordId: 'RecordRepresentation:aJGx00000000001GAA',
                 node: {},
                 variables: {},
@@ -38,15 +38,15 @@ describe('O(n) emit time as subscription count(n) grows', () => {
     });
 
     benchmark('O(n) - 1 subscription notification when dependency changes', () => {
-        let lds;
+        let luvio;
         let store;
 
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            ingestRecord(clone(mockRecord), 'recordId', lds, store, TIMESTAMP);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            ingestRecord(clone(mockRecord), 'recordId', luvio, store, TIMESTAMP);
 
-            const snapshot = lds.storeLookup({
+            const snapshot = luvio.storeLookup({
                 recordId: 'RecordRepresentation:aJGx00000000001GAA',
                 node: {},
                 variables: {},
@@ -54,26 +54,26 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             const copy = clone(mockRecord);
             copy.apiName = 'asd';
 
-            ingestRecord(copy, 'recordId', lds, store, TIMESTAMP);
+            ingestRecord(copy, 'recordId', luvio, store, TIMESTAMP);
 
             store.subscribe(snapshot, () => {});
         });
 
         run(() => {
-            lds.storeBroadcast();
+            luvio.storeBroadcast();
         });
     });
 
     benchmark('O(n) - 10 subscription notifications when dependency changes', () => {
-        let lds;
+        let luvio;
         let store;
 
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            ingestRecord(clone(mockRecord), 'recordId', lds, store, TIMESTAMP);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            ingestRecord(clone(mockRecord), 'recordId', luvio, store, TIMESTAMP);
 
-            const snapshot = lds.storeLookup({
+            const snapshot = luvio.storeLookup({
                 recordId: 'RecordRepresentation:aJGx00000000001GAA',
                 node: {},
                 variables: {},
@@ -81,7 +81,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             const copy = clone(mockRecord);
             copy.apiName = 'asd';
 
-            ingestRecord(copy, 'recordId', lds, store, TIMESTAMP);
+            ingestRecord(copy, 'recordId', luvio, store, TIMESTAMP);
 
             for (let i = 0; i < 10; i += 1) {
                 store.subscribe(snapshot, () => {});
@@ -89,20 +89,20 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            lds.storeBroadcast();
+            luvio.storeBroadcast();
         });
     });
 
     benchmark('O(n) - 100 subscription notifications when dependency changes', () => {
-        let lds;
+        let luvio;
         let store;
 
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            ingestRecord(clone(mockRecord), 'recordId', lds, store, TIMESTAMP);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            ingestRecord(clone(mockRecord), 'recordId', luvio, store, TIMESTAMP);
 
-            const snapshot = lds.storeLookup({
+            const snapshot = luvio.storeLookup({
                 recordId: 'RecordRepresentation:aJGx00000000001GAA',
                 node: {},
                 variables: {},
@@ -110,7 +110,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             const copy = clone(mockRecord);
             copy.apiName = 'asd';
 
-            ingestRecord(copy, 'recordId', lds, store, TIMESTAMP);
+            ingestRecord(copy, 'recordId', luvio, store, TIMESTAMP);
 
             for (let i = 0; i < 100; i += 1) {
                 store.subscribe(snapshot, () => {});
@@ -118,7 +118,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            lds.storeBroadcast();
+            luvio.storeBroadcast();
         });
     });
 });

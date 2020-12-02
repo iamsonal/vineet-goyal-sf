@@ -1,5 +1,5 @@
 import response from './data/record-User-fields-User.Id,User.Name.json';
-import { buildOfflineLds, populateDurableStore } from '@salesforce/lds-jest';
+import { buildOfflineLuvio, populateDurableStore } from '@salesforce/lds-jest';
 import { DefaultDurableSegment } from '@luvio/environments';
 import {
     buildMockNetworkAdapter,
@@ -37,8 +37,8 @@ function flushPromises() {
 describe('deleteRecord offline tests', () => {
     it('evicts the entry in durable store', async () => {
         const durableStore = await populateDurableStore(getRecordFactory, getConfig, getPayload);
-        const { lds } = buildOfflineLds(durableStore, buildMockNetworkAdapter([deletePayload]));
-        const adapter = deleteRecordFactory(lds);
+        const { luvio } = buildOfflineLuvio(durableStore, buildMockNetworkAdapter([deletePayload]));
+        const adapter = deleteRecordFactory(luvio);
         await (adapter(RECORD_ID) as Promise<void>);
         await flushPromises();
         const key = recordKeyBuilder({ recordId: RECORD_ID });

@@ -18,7 +18,7 @@ for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
 describe('addRecordUi tests', () => {
     benchmark('addRecordUi with identical record ui', () => {
         let i = ITERATION_COUNT;
-        let lds;
+        let luvio;
         let store;
 
         const data = new Array(ITERATION_COUNT).fill().map(() => JSON.parse(mockRecordUI));
@@ -27,18 +27,18 @@ describe('addRecordUi tests', () => {
         before(() => {
             i--;
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            ingestRecordUi(data[i], RECORD_ID, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            ingestRecordUi(data[i], RECORD_ID, luvio, store);
         });
 
         run(() => {
-            ingestRecordUi(next[i], RECORD_ID, lds, store);
+            ingestRecordUi(next[i], RECORD_ID, luvio, store);
         });
     });
 
     benchmark('addRecordUi with changed record ui', () => {
         let i = ITERATION_COUNT;
-        let lds;
+        let luvio;
         let store;
 
         const data = new Array(ITERATION_COUNT).fill().map(() => JSON.parse(mockRecordUI));
@@ -60,12 +60,12 @@ describe('addRecordUi tests', () => {
         before(() => {
             i--;
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
-            ingestRecordUi(data[i], RECORD_ID, lds, store);
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
+            ingestRecordUi(data[i], RECORD_ID, luvio, store);
         });
 
         run(() => {
-            ingestRecordUi(next[i], RECORD_ID, lds, store);
+            ingestRecordUi(next[i], RECORD_ID, luvio, store);
         });
     });
 });

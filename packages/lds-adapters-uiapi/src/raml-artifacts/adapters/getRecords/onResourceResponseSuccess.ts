@@ -12,7 +12,7 @@ import { adapterFragment } from './adapterFragment';
 import { createChildResourceParams } from './createChildResourceParams';
 
 export function onResourceResponseSuccess(
-    lds: Luvio,
+    luvio: Luvio,
     config: GetRecordsConfig,
     resourceParams: ResourceRequestConfig,
     response: ResourceResponse<BatchRepresentation>
@@ -32,7 +32,7 @@ export function onResourceResponseSuccess(
     const snapshotStateFulfilled = 'Fulfilled';
     const key = keyBuilder(resourceParams);
     const { childSnapshotData, seenRecords } = ingestSuccessChildResourceParams(
-        lds,
+        luvio,
         childResourceParamsArray,
         childEnvelopes
     );
@@ -43,16 +43,16 @@ export function onResourceResponseSuccess(
         seenRecords: seenRecords,
         select: {
             recordId: key,
-            node: adapterFragment(lds, config),
+            node: adapterFragment(luvio, config),
             variables: {},
         },
         refresh: {
             config,
-            resolve: () => buildNetworkSnapshot(lds, config, snapshotRefreshOptions),
+            resolve: () => buildNetworkSnapshot(luvio, config, snapshotRefreshOptions),
         },
         variables: {},
     } as FulfilledSnapshot<BatchRepresentation, any>;
 
-    lds.storeBroadcast();
+    luvio.storeBroadcast();
     return snapshot;
 }

@@ -19,23 +19,23 @@ for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
 
 describe('O(n) emit time as subscription count(n) grows', () => {
     benchmark('O(n) - single snapshot', () => {
-        let lds;
+        let luvio;
         let store;
 
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListInfoBatch(
                 clone(mockRelatedListInfoBatch),
                 'key',
-                lds,
+                luvio,
                 store,
                 TIMESTAMP
             );
         });
 
         run(() => {
-            lds.storeLookup({
+            luvio.storeLookup({
                 key: 'key',
                 node: {},
                 variables: {},
@@ -44,21 +44,21 @@ describe('O(n) emit time as subscription count(n) grows', () => {
     });
 
     benchmark('O(n) - 1 subscription notification when dependency changes', () => {
-        let lds;
+        let luvio;
         let store;
 
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListInfoBatch(
                 clone(mockRelatedListInfoBatch),
                 'key',
-                lds,
+                luvio,
                 store,
                 TIMESTAMP
             );
 
-            const snapshot = lds.storeLookup({
+            const snapshot = luvio.storeLookup({
                 key: 'key',
                 node: {},
                 variables: {},
@@ -66,32 +66,32 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             const copy = clone(mockRelatedListInfoBatch);
             copy.results[0].result.listReference.relatedListId = 'CustomObject03__r';
 
-            ingestRelatedListInfoBatch(copy, 'key', lds, store, TIMESTAMP);
+            ingestRelatedListInfoBatch(copy, 'key', luvio, store, TIMESTAMP);
 
             store.subscribe(snapshot, () => {});
         });
 
         run(() => {
-            lds.storeBroadcast();
+            luvio.storeBroadcast();
         });
     });
 
     benchmark('O(n) - 10 subscription notifications when dependency changes', () => {
-        let lds;
+        let luvio;
         let store;
 
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListInfoBatch(
                 clone(mockRelatedListInfoBatch),
                 'key',
-                lds,
+                luvio,
                 store,
                 TIMESTAMP
             );
 
-            const snapshot = lds.storeLookup({
+            const snapshot = luvio.storeLookup({
                 key: 'key',
                 node: {},
                 variables: {},
@@ -99,7 +99,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             const copy = clone(mockRelatedListInfoBatch);
             copy.results[0].result.listReference.relatedListId = 'CustomObject03__r';
 
-            ingestRelatedListInfoBatch(copy, 'key', lds, store, TIMESTAMP);
+            ingestRelatedListInfoBatch(copy, 'key', luvio, store, TIMESTAMP);
 
             for (let i = 0; i < 10; i += 1) {
                 store.subscribe(snapshot, () => {});
@@ -107,26 +107,26 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            lds.storeBroadcast();
+            luvio.storeBroadcast();
         });
     });
 
     benchmark('O(n) - 100 subscription notifications when dependency changes', () => {
-        let lds;
+        let luvio;
         let store;
 
         before(() => {
             store = new Store();
-            lds = new Luvio(new Environment(store, rejectNetworkAdapter));
+            luvio = new Luvio(new Environment(store, rejectNetworkAdapter));
             ingestRelatedListInfoBatch(
                 clone(mockRelatedListInfoBatch),
                 'key',
-                lds,
+                luvio,
                 store,
                 TIMESTAMP
             );
 
-            const snapshot = lds.storeLookup({
+            const snapshot = luvio.storeLookup({
                 key: 'key',
                 node: {},
                 variables: {},
@@ -134,7 +134,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             const copy = clone(mockRelatedListInfoBatch);
             copy.results[0].result.listReference.relatedListId = 'CustomObject03__r';
 
-            ingestRelatedListInfoBatch(copy, 'key', lds, store, TIMESTAMP);
+            ingestRelatedListInfoBatch(copy, 'key', luvio, store, TIMESTAMP);
 
             for (let i = 0; i < 100; i += 1) {
                 store.subscribe(snapshot, () => {});
@@ -142,7 +142,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
         });
 
         run(() => {
-            lds.storeBroadcast();
+            luvio.storeBroadcast();
         });
     });
 });

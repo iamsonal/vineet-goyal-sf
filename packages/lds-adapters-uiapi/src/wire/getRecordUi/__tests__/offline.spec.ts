@@ -1,4 +1,4 @@
-import { Luvio, Store, isFulfilledSnapshot, Environment } from '@luvio/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import {
     buildMockNetworkAdapter,
     buildSuccessMockPayload,
@@ -10,6 +10,7 @@ import { DefaultDurableSegment, makeDurable, makeOffline } from '@luvio/environm
 
 import { factory as getRecordUiAdapterFactory } from '../index';
 import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
+import { isFulfilledSnapshot } from '../../../util/snapshot';
 
 import recordUiSingleResponse from './data/single-record-Account-layouttypes-Full-modes-View.json';
 import recordUiMultiResponse from './data/multiple-record-Account-layouttypes-Full-modes-View.json';

@@ -1,4 +1,4 @@
-import { Luvio, Store, Environment, isReaderFragment, Reader, ReaderFragment } from '@luvio/engine';
+import { Luvio, Store, Environment, Reader, ReaderFragment } from '@luvio/engine';
 import { selectChildResourceParams } from '../selectChildResourceParams';
 import { buildRecordSelector } from '../../../../wire/getRecord/GetRecordFields';
 import { keyBuilder } from '../../../../generated/resources/getUiApiRecordsByRecordId';
@@ -20,9 +20,9 @@ jest.mock('../../../../generated/resources/getUiApiRecordsByRecordId', () => {
 });
 
 function assertIsFragment(fragment) {
-    expect(isReaderFragment(fragment)).toEqual(true);
+    expect(fragment.reader).toBe(true);
     expect(fragment.kind).toEqual('Fragment');
-    expect(fragment.synthetic).toEqual(true);
+    expect(fragment.synthetic).toBe(true);
     expect(fragment.read).toBeDefined();
     expect(typeof fragment.read).toEqual('function');
 }

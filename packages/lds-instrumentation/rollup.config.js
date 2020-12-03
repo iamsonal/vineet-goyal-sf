@@ -17,7 +17,7 @@ const banner = generatedFileBanner.concat([PROXY_COMPAT_DISABLE]).join('\n');
 const ldsInstrumentation = {
     input: './src/main.ts',
 
-    external: ['instrumentation/service'],
+    external: ['lwc', 'instrumentation/service'],
 
     output: {
         file: 'dist/ldsInstrumentation.js',

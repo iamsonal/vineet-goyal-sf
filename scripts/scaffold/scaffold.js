@@ -11,7 +11,7 @@ const lernaJson = require('../../lerna.json');
 
 const EMAIL_REGEXP = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
-const LDS_RAML_TEMPLATE_PATH = path.resolve(__dirname, 'templates', 'lds.raml.txt');
+const LDS_RAML_TEMPLATE_PATH = path.resolve(__dirname, 'templates', 'luvio.raml.txt');
 const LDS_PACKAGE_JSON_TEMPLATE_PATH = path.resolve(__dirname, 'templates', 'package.json.txt');
 const LDS_TS_CONFIG_TEMPLATE_PATH = path.resolve(__dirname, 'templates', 'tsconfig.json.txt');
 const LDS_ROLLUP_TEMPLATE_PATH = path.resolve(__dirname, 'templates', 'rollup.config.js.txt');
@@ -106,7 +106,7 @@ function generate(config) {
     const localName = getLocalName(cloud, family);
     const packagePath = path.resolve(__dirname, '../../packages', packageName);
     const packageRamlPath = path.resolve(packagePath, 'src', 'raml');
-    const ldsRamlPath = path.resolve(packageRamlPath, 'lds.raml');
+    const ldsRamlPath = path.resolve(packageRamlPath, 'luvio.raml');
     const apiRamlPath = path.resolve(packageRamlPath, 'api.raml');
     const packageJsonPath = path.resolve(packagePath, 'package.json');
     const tsConfigPath = path.resolve(packagePath, 'tsconfig.json');

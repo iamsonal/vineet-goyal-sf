@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-platform-admin-success-guidance",
-    "version": "1.2.4",
+    "version": "1.2.5",
     "description": "Guidance Center Questionnaire and Assistant APIs",
     "license": "MIT",
     "main": "dist/umd/es2018/platform-admin-success-guidance.js",
@@ -31,9 +31,9 @@
         "registry": "https://npm.lwcjs.org"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.2.4"
+        "@salesforce/lds-bindings": "1.2.5"
     },
     "devDependencies": {
-        "@salesforce/lds-karma": "1.2.4"
+        "@salesforce/lds-karma": "1.2.5"
     }
 }

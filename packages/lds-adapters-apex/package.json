@@ -14,7 +14,7 @@
     "scripts": {
         "clean": "rm -rf dist sfdc src/generated karma/dist",
         "build": "yarn build:raml && yarn build:services && yarn build:karma",
-        "build:raml": "luvio generate src/raml/lds.raml src/generated",
+        "build:raml": "luvio generate src/raml/luvio.raml src/generated",
         "build:services": "rollup --config rollup.config.js",
         "build:karma": "rollup --config rollup.config.karma.js",
         "start": "karma start",

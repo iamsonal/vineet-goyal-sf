@@ -9,7 +9,7 @@ const camelCase = require('camelcase');
 const { execSync } = require('child_process');
 
 const REPO_ROOT_PARENT = path.resolve(__dirname, '../../..');
-const RELATIVE_LDS_REPO_ROOT = path.resolve(REPO_ROOT_PARENT, 'lds');
+const RELATIVE_LUVIO_REPO_ROOT = path.resolve(REPO_ROOT_PARENT, 'luvio');
 const REPO_ROOT = path.resolve(__dirname, '../../');
 
 const REPO_LDS_BINDINGS_PATH = path.resolve(REPO_ROOT, 'packages/lds-bindings/dist/ldsBindings.js');
@@ -204,7 +204,7 @@ function build() {
 }
 
 function printCommits(corePath) {
-    if (fs.existsSync(RELATIVE_LDS_REPO_ROOT)) {
+    if (fs.existsSync(RELATIVE_LUVIO_REPO_ROOT)) {
         console.log('* Include LDS engine commits:');
         const hash = execSync(`grep '// engine version: ' ${corePath}`)
             .toString()
@@ -212,7 +212,7 @@ function printCommits(corePath) {
             .split('-')[1];
 
         const commits = execSync(
-            `cd ${RELATIVE_LDS_REPO_ROOT}; git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative ${hash}...HEAD`
+            `cd ${RELATIVE_LUVIO_REPO_ROOT}; git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative ${hash}...HEAD`
         )
             .toString()
             .trim();
@@ -298,17 +298,14 @@ function deployAdapterPackage() {
         return;
     }
 
-    // main (228) only modules
-    if (CORE_BRANCH === MAIN_BRANCH) {
-        checkCore(CORE_LDS_ENGINE_RUNTIME_AURA_PATH);
-        checkCore(CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH);
-        checkCore(CORE_LDS_NETWORK_PATH);
-        checkCore(CORE_LDS_STORAGE_PATH);
-        checkCore(CORE_LDS_INSTRUMENTATION_PATH);
-        checkCore(CORE_LDS_BINDINGS_PATH);
-        checkCore(CORE_ADS_BRIDGE_PATH);
-        checkCore(CORE_LDS_ENVIRONMENT_SETTINGS_PATH);
-    }
+    checkCore(CORE_LDS_ENGINE_RUNTIME_AURA_PATH);
+    checkCore(CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH);
+    checkCore(CORE_LDS_NETWORK_PATH);
+    checkCore(CORE_LDS_STORAGE_PATH);
+    checkCore(CORE_LDS_INSTRUMENTATION_PATH);
+    checkCore(CORE_LDS_BINDINGS_PATH);
+    checkCore(CORE_ADS_BRIDGE_PATH);
+    checkCore(CORE_LDS_ENVIRONMENT_SETTINGS_PATH);
 
     if (!argv['skip-git-check']) {
         checkGitStatus();
@@ -322,17 +319,19 @@ function deployAdapterPackage() {
         build();
     }
 
-    printCommits(CORE_LDS_ENGINE_RUNTIME_AURA_PATH);
-
-    // main (228) only modules
-    if (CORE_BRANCH === MAIN_BRANCH) {
-        copyArtifacts(REPO_LDS_ENGINE_RUNTIME_AURA_PATH, CORE_LDS_ENGINE_RUNTIME_AURA_PATH);
-        copyArtifacts(REPO_LDS_ENGINE_RUNTIME_MOBILE_PATH, CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH);
-        copyArtifacts(REPO_LDS_NETWORK_PATH, CORE_LDS_NETWORK_PATH);
-        copyArtifacts(REPO_LDS_STORAGE_PATH, CORE_LDS_STORAGE_PATH);
-        copyArtifacts(REPO_LDS_INSTRUMENTATION_PATH, CORE_LDS_INSTRUMENTATION_PATH);
-        copyArtifacts(REPO_LDS_BINDINGS_PATH, CORE_LDS_BINDINGS_PATH);
-        copyArtifacts(REPO_ADS_BRIDGE_PATH, CORE_ADS_BRIDGE_PATH);
-        copyArtifacts(REPO_LDS_ENVIRONMENT_SETTINGS_PATH, CORE_LDS_ENVIRONMENT_SETTINGS_PATH);
+    try {
+        printCommits(CORE_LDS_ENGINE_RUNTIME_AURA_PATH);
+    } catch (e) {
+        // log it but do not fail the whole process
+        console.log(e);
     }
+
+    copyArtifacts(REPO_LDS_ENGINE_RUNTIME_AURA_PATH, CORE_LDS_ENGINE_RUNTIME_AURA_PATH);
+    copyArtifacts(REPO_LDS_ENGINE_RUNTIME_MOBILE_PATH, CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH);
+    copyArtifacts(REPO_LDS_NETWORK_PATH, CORE_LDS_NETWORK_PATH);
+    copyArtifacts(REPO_LDS_STORAGE_PATH, CORE_LDS_STORAGE_PATH);
+    copyArtifacts(REPO_LDS_INSTRUMENTATION_PATH, CORE_LDS_INSTRUMENTATION_PATH);
+    copyArtifacts(REPO_LDS_BINDINGS_PATH, CORE_LDS_BINDINGS_PATH);
+    copyArtifacts(REPO_ADS_BRIDGE_PATH, CORE_ADS_BRIDGE_PATH);
+    copyArtifacts(REPO_LDS_ENVIRONMENT_SETTINGS_PATH, CORE_LDS_ENVIRONMENT_SETTINGS_PATH);
 })();

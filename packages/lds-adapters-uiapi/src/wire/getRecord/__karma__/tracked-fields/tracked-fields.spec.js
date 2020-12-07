@@ -122,6 +122,77 @@ describe('tracked fields', () => {
         expect(elm.getWiredData()).toEqualSnapshotWithoutEtags(expected);
     });
 
+    it('should not add external lookups to the request from tracked fields', async () => {
+        const caseMock12 = getMock('record-Case-fields-ExternalLookup-1-2');
+        const caseMock34 = getMock('record-Case-fields-ExternalLookup-3-4');
+
+        const caseConfig12 = {
+            recordId: caseMock12.id,
+            fields: [
+                'Case.External_Object_1__c',
+                'Case.External_Object_1__r.ExternalId',
+                'Case.External_Object_1__r.Id',
+                'Case.External_Object_2__c',
+                'Case.External_Object_2__r.ExternalId',
+                'Case.External_Object_2__r.Id',
+            ],
+        };
+
+        const caseConfig34 = {
+            recordId: caseMock34.id,
+            fields: [
+                'Case.External_Object_3__c',
+                'Case.External_Object_3__r.ExternalId',
+                'Case.External_Object_3__r.Id',
+                'Case.External_Object_4__c',
+                'Case.External_Object_4__r.ExternalId',
+                'Case.External_Object_4__r.Id',
+            ],
+        };
+
+        const caseNetworkParams34 = {
+            ...caseConfig34,
+            optionalFields: ['Case.External_Object_1__c', 'Case.External_Object_2__c'],
+        };
+
+        mockGetRecordNetwork(caseConfig12, caseMock12);
+        mockGetRecordNetwork(caseNetworkParams34, caseMock34);
+
+        // Load the related list first, which references three external lookups on the Case object
+        const elm1 = await setupElement(caseConfig12, RecordFields);
+        const elm2 = await setupElement(caseConfig34, RecordFields);
+        const elm3 = await setupElement(caseConfig12, RecordFields);
+
+        expect(elm1.getWiredData()).toEqualSnapshotWithoutEtags(caseMock12);
+        expect(elm2.getWiredData()).toEqualSnapshotWithoutEtags(caseMock34);
+        expect(elm3.getWiredData()).toEqualSnapshotWithoutEtags(caseMock12);
+    });
+
+    it('should return external lookups during a cache hit', async () => {
+        const caseMock12 = getMock('record-Case-fields-ExternalLookup-1-2');
+
+        const caseConfig12 = {
+            recordId: caseMock12.id,
+            fields: [
+                'Case.External_Object_1__c',
+                'Case.External_Object_1__r.ExternalId',
+                'Case.External_Object_1__r.Id',
+                'Case.External_Object_2__c',
+                'Case.External_Object_2__r.ExternalId',
+                'Case.External_Object_2__r.Id',
+            ],
+        };
+
+        mockGetRecordNetwork(caseConfig12, caseMock12);
+
+        // Load the related list first, which references three external lookups on the Case object
+        const elm1 = await setupElement(caseConfig12, RecordFields);
+        const elm2 = await setupElement(caseConfig12, RecordFields);
+
+        expect(elm1.getWiredData()).toEqualSnapshotWithoutEtags(caseMock12);
+        expect(elm2.getWiredData()).toEqualSnapshotWithoutEtags(caseMock12);
+    });
+
     it('should not fetch record fields more than 6 levels deep', async () => {
         // using getRecord() twice to create entries in the store that go greater than 6 levels deep
         // first getRecord() does 5 levels: TestD__c.TestC__r.TestA__r.Opportunity__r.Account.Name

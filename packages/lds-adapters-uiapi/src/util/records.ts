@@ -17,6 +17,7 @@ import {
 } from '../generated/types/RecordTemplateCreateRepresentation';
 import {
     ArrayPrototypeConcat,
+    ArrayPrototypeIncludes,
     ArrayPrototypePush,
     ArrayPrototypeReduce,
     ObjectKeys,
@@ -41,6 +42,7 @@ type RecordRepresentationLike = RecordRepresentation | RecordTemplateCreateRepre
 
 const CUSTOM_API_NAME_SUFFIX = '__c';
 const CUSTOM_RELATIONSHIP_FIELD_SUFFIX = '__r';
+const CUSTOM_EXTERNAL_OBJECT_FIELD_SUFFIX = '__x';
 
 export interface FieldValueRepresentationLinkState {
     fields: string[];
@@ -209,7 +211,13 @@ export function extractTrackedFieldsToTrie(
                     .link<RecordRepresentationNormalized, RecordRepresentation>('value')
                     .follow();
 
-                extractTrackedFieldsToTrie(spanning, next, spanningVisitedRecordIds, depth + 1);
+                // W-8058425, do not include external lookups added by getTrackedFields
+                if (isExternalLookupFieldKey(spanning)) {
+                    continue;
+                } else {
+                    extractTrackedFieldsToTrie(spanning, next, spanningVisitedRecordIds, depth + 1);
+                }
+
                 if (ObjectKeys(next.children).length > 0) {
                     current.children[key] = next;
                 } else {
@@ -219,6 +227,12 @@ export function extractTrackedFieldsToTrie(
                 const state = fieldValueRep.linkData();
                 if (state !== undefined) {
                     const { fields } = state;
+
+                    // W-8058425, do not include external lookups added by getTrackedFields
+                    if (ArrayPrototypeIncludes.call(fields, 'ExternalId')) {
+                        continue;
+                    }
+
                     for (let s = 0, len = fields.length; s < len; s += 1) {
                         const childFieldName = fields[s];
                         next.children[childFieldName] = {
@@ -255,6 +269,23 @@ function isLookupFieldKey(
         StringPrototypeEndsWith.call(key, CUSTOM_RELATIONSHIP_FIELD_SUFFIX) ||
         (StringPrototypeEndsWith.call(key, CUSTOM_API_NAME_SUFFIX) === false &&
             fields.data[`${key}Id`] !== undefined)
+    );
+}
+
+function isExternalLookupFieldKey(
+    spanningNode: ProxyGraphNode<RecordRepresentationNormalized, RecordRepresentation>
+): boolean {
+    // The only way to know if a record is an external lookup is to look into its fields
+    // list and find an "ExternalId" field.
+
+    // Filter Error and null nodes
+    if (!isGraphNode(spanningNode) || !spanningNode.isScalar('apiName')) {
+        return false;
+    }
+
+    return StringPrototypeEndsWith.call(
+        spanningNode.scalar('apiName'),
+        CUSTOM_EXTERNAL_OBJECT_FIELD_SUFFIX
     );
 }
 

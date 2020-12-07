@@ -764,6 +764,68 @@ function extractRecordFields(record, options) {
     return fields;
 }
 
+function convertRelatedListsBatchParamsToResourceParams(parameters) {
+    var relatedListIds = [];
+    var fields = [];
+    var optionalFields = [];
+    var pageSize = [];
+    var sortBy = [];
+    parameters.relatedLists.forEach(relatedList => {
+        relatedListIds.push(relatedList.relatedListId);
+        if (relatedList.fields && relatedList.fields.length) {
+            fields.push(relatedList.relatedListId + ':' + relatedList.fields.join());
+        }
+        if (relatedList.optionalFields && relatedList.optionalFields.length) {
+            optionalFields.push(
+                relatedList.relatedListId + ':' + relatedList.optionalFields.join()
+            );
+        }
+        if (relatedList.pageSize) {
+            pageSize.push(relatedList.relatedListId + ':' + relatedList.pageSize);
+        }
+        if (!!relatedList.sortBy && relatedList.sortBy.length) {
+            sortBy.push(relatedList.relatedListId + ':' + relatedList.sortBy.join());
+        }
+    });
+    const fieldsParam = fields.join(';');
+    const optionalFieldsParam = optionalFields.join(';');
+    const pageSizeParam = pageSize.join(';');
+    const sortByParam = sortBy.join(';');
+
+    return {
+        parentRecordId: parameters.parentRecordId,
+        relatedListIds: relatedListIds,
+        fields: fieldsParam,
+        optionalFields: optionalFieldsParam,
+        pageSize: pageSizeParam,
+        sortBy: sortByParam,
+    };
+}
+
+function extractRelatedListsBatchParamsFromMockData(mockData) {
+    if (mockData.results && mockData.results.length > 0) {
+        const parentRecordId = mockData.results.find(item => item.result.listReference).result
+            .listReference.inContextOfRecordId;
+        const relatedLists = mockData.results
+            .filter(result => result.result.listReference)
+            .map(item => {
+                return {
+                    relatedListId: item.result.listReference.relatedListId,
+                    fields: item.result.fields,
+                    optionalFields: item.result.optionalFields,
+                    pageSize: item.result.pageSize,
+                    sortBy: item.result.sortBy,
+                };
+            });
+        return {
+            parentRecordId: parentRecordId,
+            relatedLists: relatedLists,
+        };
+    } else {
+        return {};
+    }
+}
+
 export {
     // constants
     FormFactor,
@@ -823,4 +885,6 @@ export {
     mockGetDuplicatesNetwork,
     // mock data utils
     extractRecordFields,
+    convertRelatedListsBatchParamsToResourceParams,
+    extractRelatedListsBatchParamsFromMockData,
 };

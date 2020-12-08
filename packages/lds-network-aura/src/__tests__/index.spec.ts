@@ -27,6 +27,7 @@ jest.mock('@salesforce/lds-instrumentation', () => {
         setAggregateUiChunkCountMetric: spies.setAggregateUiChunkCountSpy,
         incrementGetRecordNormalInvokeCount: () => {},
         incrementGetRecordAggregateInvokeCount: () => {},
+        incrementNetworkRateLimitExceededCount: () => {},
         registerLdsCacheStats: () => ({
             logMisses: spies.cacheStatsLogMissesSpy,
             logHits: spies.cacheStatsLogHitsSpy,

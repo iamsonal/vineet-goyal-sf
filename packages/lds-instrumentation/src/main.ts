@@ -30,6 +30,7 @@ import {
     GET_RECORD_NORMAL_INVOKE_COUNT,
     GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT,
     GET_RECORD_NOTIFY_CHANGE_DROP_COUNT,
+    NETWORK_RATE_LIMIT_EXCEEDED_COUNT,
     STORE_BROADCAST_DURATION,
     STORE_INGEST_DURATION,
     STORE_LOOKUP_DURATION,
@@ -152,6 +153,7 @@ const getRecordAggregateInvokeMetric = counter(GET_RECORD_AGGREGATE_INVOKE_COUNT
 const getRecordNormalInvokeMetric = counter(GET_RECORD_NORMAL_INVOKE_COUNT);
 const getRecordNotifyChangeAllowMetric = counter(GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT);
 const getRecordNotifyChangeDropMetric = counter(GET_RECORD_NOTIFY_CHANGE_DROP_COUNT);
+const networkRateLimitExceededCountMetric = counter(NETWORK_RATE_LIMIT_EXCEEDED_COUNT);
 const storeSizeMetric = percentileHistogram(STORE_SIZE_COUNT);
 const storeWatchSubscriptionsMetric = percentileHistogram(STORE_WATCH_SUBSCRIPTIONS_COUNT);
 const storeSnapshotSubscriptionsMetric = percentileHistogram(STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT);
@@ -733,6 +735,10 @@ export function incrementGetRecordNotifyChangeAllowCount(): void {
 
 export function incrementGetRecordNotifyChangeDropCount(): void {
     getRecordNotifyChangeDropMetric.increment(1);
+}
+
+export function incrementNetworkRateLimitExceededCount(): void {
+    networkRateLimitExceededCountMetric.increment(1);
 }
 
 /**

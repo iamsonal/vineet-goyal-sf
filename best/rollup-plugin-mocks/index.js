@@ -5,7 +5,11 @@ const path = require('path');
 const SRC_DIR = path.join(__dirname, '../');
 
 const EXTERNALS = {
+    aura: path.join(SRC_DIR, '/mocks/aura.js'),
     'instrumentation/service': path.join(SRC_DIR, '../best/mocks/auraInstrumentation.js'),
+    'force/ldsInstrumentation': path.join(SRC_DIR, '/mocks/ldsInstrumentation.js'),
+    'force/ldsStorage': path.join(SRC_DIR, '/mocks/ldsStorage.js'),
+    'force/ldsEnvironmentSettings': path.join(SRC_DIR, '/mocks/ldsEnvironmentSettings.js'),
 };
 
 module.exports = function() {

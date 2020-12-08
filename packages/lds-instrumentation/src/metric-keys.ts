@@ -82,6 +82,16 @@ export const GET_RECORD_NOTIFY_CHANGE_DROP_COUNT: MetricsKey = {
 };
 
 /**
+ * W-8278006
+ * Counter for rate limiting telemetry. Is updated whenever the network adapter hits the specified limit.
+ */
+export const NETWORK_RATE_LIMIT_EXCEEDED_COUNT: MetricsKey = {
+    get() {
+        return { owner: METRIC_KEY_OWNER, name: 'network-rate-limit-exceeded-count' };
+    },
+};
+
+/**
  * W-6981216
  * Timer to measure performance for LDS.storeBroadcast() method.
  */

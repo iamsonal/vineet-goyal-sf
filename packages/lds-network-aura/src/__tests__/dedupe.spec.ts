@@ -1,8 +1,7 @@
-import * as aura from 'aura';
 import { ResourceRequest } from '@luvio/engine';
-
-import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
+import * as aura from 'aura';
 import networkAdapter from '../main';
+import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 
 function buildResourceRequest(resourceRequest: Partial<ResourceRequest>): ResourceRequest {
     return {

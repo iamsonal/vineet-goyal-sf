@@ -391,8 +391,8 @@ export function makeDurableStoreDraftAware(
      */
     const registerOnChangeListener: typeof durableStore['registerOnChangedListener'] = function(
         listener: OnDurableStoreChangedListener
-    ) {
-        durableStore.registerOnChangedListener(
+    ): () => Promise<void> {
+        return durableStore.registerOnChangedListener(
             (ids: { [key: string]: boolean }, segment: string) => {
                 if (segment !== DraftDurableSegment) {
                     return listener(ids, segment);

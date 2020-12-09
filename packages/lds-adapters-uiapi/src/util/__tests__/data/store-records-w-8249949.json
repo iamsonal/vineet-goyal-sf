@@ -1,0 +1,432 @@
+{
+    "UiApi::RecordRepresentation:a1nxx000001hGmbAAE__fields__Id": {
+        "displayValue": null,
+        "value": "a1nxx000001hGmbAAE"
+    },
+    "UiApi::RecordRepresentation:a1nxx000001hGmbAAE": {
+        "apiName": "Milestone1_Project__c",
+        "childRelationships": {},
+        "eTag": "2589d27df5d62c46f1ecd038868c15cf",
+        "fields": {
+            "Id": {
+                "__ref": "UiApi::RecordRepresentation:a1nxx000001hGmbAAE__fields__Id"
+            },
+            "Name": {
+                "__ref": "UiApi::RecordRepresentation:a1nxx000001hGmbAAE__fields__Name"
+            },
+            "SystemModstamp": {
+                "__ref": "UiApi::RecordRepresentation:a1nxx000001hGmbAAE__fields__SystemModstamp"
+            },
+            "Opportunity__r": {
+                "__ref": "UiApi::RecordRepresentation:a1nxx000001hGmbAAE__fields__Opportunity__r"
+            },
+            "Service__r": {
+                "__ref": "UiApi::RecordRepresentation:a1nxx000001hGmbAAE__fields__Service__r"
+            }
+        },
+        "id": "a1nxx000001hGmbAAE",
+        "lastModifiedById": "005xx000001X8kcAAC",
+        "lastModifiedDate": "2020-12-03T19:26:48.000Z",
+        "recordTypeId": "0121M0000010r8YQAQ",
+        "recordTypeInfo": {
+            "available": true,
+            "defaultRecordTypeMapping": false,
+            "master": false,
+            "name": "Structural",
+            "recordTypeId": "0121M0000010r8YQAQ"
+        },
+        "systemModstamp": "2020-12-03T19:26:49.000Z",
+        "weakEtag": 1607023609000
+    },
+    "UiApi::RecordRepresentation:a1nxx000001hGmbAAE__fields__Name": {
+        "displayValue": null,
+        "value": "SP-5089528"
+    },
+    "UiApi::RecordRepresentation:a1nxx000001hGmbAAE__fields__SystemModstamp": {
+        "displayValue": "12/3/2020 12:26 PM",
+        "value": "2020-12-03T19:26:49.000Z"
+    },
+    "UiApi::RecordRepresentation:001xx000003GYS3AAO__fields__Id": {
+        "displayValue": null,
+        "value": "001xx000003GYS3AAO"
+    },
+    "UiApi::RecordRepresentation:001xx000003GYS3AAO__fields__Name": {
+        "displayValue": null,
+        "value": "A-11157397"
+    },
+    "UiApi::RecordRepresentation:001xx000003GYS3AAO": {
+        "apiName": "Account",
+        "childRelationships": {},
+        "eTag": "557542dbf8ae464742145c2b86cad2ed",
+        "fields": {
+            "Id": {
+                "__ref": "UiApi::RecordRepresentation:001xx000003GYS3AAO__fields__Id"
+            },
+            "Name": {
+                "__ref": "UiApi::RecordRepresentation:001xx000003GYS3AAO__fields__Name"
+            },
+            "RecordTypeId": {
+                "__ref": "UiApi::RecordRepresentation:001xx000003GYS3AAO__fields__RecordTypeId"
+            },
+            "SystemModstamp": {
+                "__ref": "UiApi::RecordRepresentation:001xx000003GYS3AAO__fields__SystemModstamp"
+            },
+            "Primary_Contact__r": {
+                "__ref": "UiApi::RecordRepresentation:001xx000003GYS3AAO__fields__Primary_Contact__r"
+            }
+        },
+        "id": "001xx000003GYS3AAO",
+        "lastModifiedById": "005xx000001X8kcAAC",
+        "lastModifiedDate": "2020-11-17T20:54:13.000Z",
+        "recordTypeId": "01241000001IDcmAAG",
+        "recordTypeInfo": {
+            "available": true,
+            "defaultRecordTypeMapping": true,
+            "master": false,
+            "name": "Solar",
+            "recordTypeId": "01241000001IDcmAAG"
+        },
+        "systemModstamp": "2020-11-17T20:54:13.000Z",
+        "weakEtag": 1605646453000
+    },
+    "UiApi::RecordRepresentation:006xx000001a332AAA__fields__Id": {
+        "displayValue": null,
+        "value": "006xx000001a332AAA"
+    },
+    "UiApi::RecordRepresentation:006xx000001a332AAA__fields__Name": {
+        "displayValue": null,
+        "value": "O-10840588"
+    },
+    "UiApi::RecordRepresentation:006xx000001a332AAA": {
+        "apiName": "Opportunity",
+        "childRelationships": {},
+        "eTag": "f59758c4de5e4b8c630b07d8faeea271",
+        "fields": {
+            "Id": {
+                "__ref": "UiApi::RecordRepresentation:006xx000001a332AAA__fields__Id"
+            },
+            "Name": {
+                "__ref": "UiApi::RecordRepresentation:006xx000001a332AAA__fields__Name"
+            },
+            "SystemModstamp": {
+                "__ref": "UiApi::RecordRepresentation:006xx000001a332AAA__fields__SystemModstamp"
+            },
+            "Account": {
+                "__ref": "UiApi::RecordRepresentation:006xx000001a332AAA__fields__Account"
+            },
+            "Contract_Signer__r": {
+                "__ref": "UiApi::RecordRepresentation:006xx000001a332AAA__fields__Contract_Signer__r"
+            },
+            "Service__r": {
+                "__ref": "UiApi::RecordRepresentation:006xx000001a332AAA__fields__Service__r"
+            }
+        },
+        "id": "006xx000001a332AAA",
+        "lastModifiedById": "005xx000001X8kcAAC",
+        "lastModifiedDate": "2020-11-17T20:54:14.000Z",
+        "recordTypeId": "01241000001IDfAAAW",
+        "recordTypeInfo": {
+            "available": true,
+            "defaultRecordTypeMapping": false,
+            "master": false,
+            "name": "Solar: New Sale",
+            "recordTypeId": "01241000001IDfAAAW"
+        },
+        "systemModstamp": "2020-11-17T20:54:14.000Z",
+        "weakEtag": 1605646454000
+    },
+    "UiApi::RecordRepresentation:a1nxx000001hGmbAAE__fields__Opportunity__r": {
+        "displayValue": "O-10840588",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:006xx000001a332AAA"
+        }
+    },
+    "UiApi::RecordRepresentation:a2Exx0000004CKKEA2__fields__Id": {
+        "displayValue": null,
+        "value": "a2Exx0000004CKKEA2"
+    },
+    "UiApi::RecordRepresentation:a2Exx0000004CKKEA2__fields__Name": {
+        "displayValue": null,
+        "value": "S-6509402"
+    },
+    "UiApi::RecordRepresentation:a2Exx0000004CKKEA2": {
+        "apiName": "Service__c",
+        "childRelationships": {},
+        "eTag": "74d8ae7c694001ef6183f80094cc6c39",
+        "fields": {
+            "Id": {
+                "__ref": "UiApi::RecordRepresentation:a2Exx0000004CKKEA2__fields__Id"
+            },
+            "Name": {
+                "__ref": "UiApi::RecordRepresentation:a2Exx0000004CKKEA2__fields__Name"
+            },
+            "SystemModstamp": {
+                "__ref": "UiApi::RecordRepresentation:a2Exx0000004CKKEA2__fields__SystemModstamp"
+            },
+            "Account__r": {
+                "__ref": "UiApi::RecordRepresentation:a2Exx0000004CKKEA2__fields__Account__r"
+            },
+            "Initial_Opportunity__r": {
+                "__ref": "UiApi::RecordRepresentation:a2Exx0000004CKKEA2__fields__Initial_Opportunity__r"
+            }
+        },
+        "id": "a2Exx0000004CKKEA2",
+        "lastModifiedById": "005xx000001X8kcAAC",
+        "lastModifiedDate": "2020-11-17T20:48:44.000Z",
+        "recordTypeId": "01241000001IDfUAAW",
+        "recordTypeInfo": {
+            "available": true,
+            "defaultRecordTypeMapping": false,
+            "master": false,
+            "name": "Solar Service",
+            "recordTypeId": "01241000001IDfUAAW"
+        },
+        "systemModstamp": "2020-11-17T20:48:44.000Z",
+        "weakEtag": 1605646124000
+    },
+    "UiApi::RecordRepresentation:a1nxx000001hGmbAAE__fields__Service__r": {
+        "displayValue": "S-6509402",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:a2Exx0000004CKKEA2"
+        }
+    },
+    "UiApi::RecordRepresentation:001xx000003GYS3AAO__fields__SystemModstamp": {
+        "displayValue": "11/17/2020 1:54 PM",
+        "value": "2020-11-17T20:54:13.000Z"
+    },
+    "UiApi::RecordRepresentation:003xx000004Wj9YAAS__fields__Id": {
+        "displayValue": null,
+        "value": "003xx000004Wj9YAAS"
+    },
+    "UiApi::RecordRepresentation:003xx000004Wj9YAAS__fields__Name": {
+        "displayValue": null,
+        "value": "Ciaran Hannigan"
+    },
+    "UiApi::RecordRepresentation:003xx000004Wj9YAAS": {
+        "apiName": "Contact",
+        "childRelationships": {},
+        "eTag": "21b6e792babcc7472ed03d7693b57273",
+        "fields": {
+            "Id": {
+                "__ref": "UiApi::RecordRepresentation:003xx000004Wj9YAAS__fields__Id"
+            },
+            "Name": {
+                "__ref": "UiApi::RecordRepresentation:003xx000004Wj9YAAS__fields__Name"
+            },
+            "SystemModstamp": {
+                "__ref": "UiApi::RecordRepresentation:003xx000004Wj9YAAS__fields__SystemModstamp"
+            },
+            "Highest_Credit_Report__r": {
+                "__ref": "UiApi::RecordRepresentation:003xx000004Wj9YAAS__fields__Highest_Credit_Report__r"
+            }
+        },
+        "id": "003xx000004Wj9YAAS",
+        "lastModifiedById": "005xx000001X8kcAAC",
+        "lastModifiedDate": "2020-11-17T02:29:04.000Z",
+        "recordTypeId": "01241000001IDeJAAW",
+        "recordTypeInfo": {
+            "available": true,
+            "defaultRecordTypeMapping": true,
+            "master": false,
+            "name": "Solar",
+            "recordTypeId": "01241000001IDeJAAW"
+        },
+        "systemModstamp": "2020-11-17T02:29:04.000Z",
+        "weakEtag": 1605580144000
+    },
+    "UiApi::RecordRepresentation:001xx000003GYS3AAO__fields__Primary_Contact__r": {
+        "displayValue": "Ciaran Hannigan",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:003xx000004Wj9YAAS"
+        }
+    },
+    "UiApi::RecordRepresentation:003xx000004WjBAAA0__fields__Id": {
+        "displayValue": null,
+        "value": "003xx000004WjBAAA0"
+    },
+    "UiApi::RecordRepresentation:003xx000004WjBAAA0__fields__Name": {
+        "displayValue": null,
+        "value": "Hubert Farnsworth"
+    },
+    "UiApi::RecordRepresentation:003xx000004WjBAAA0": {
+        "apiName": "Contact",
+        "childRelationships": {},
+        "eTag": "ddc873b66fa081ef0d178ff026a8e320",
+        "fields": {
+            "Id": {
+                "__ref": "UiApi::RecordRepresentation:003xx000004WjBAAA0__fields__Id"
+            },
+            "Name": {
+                "__ref": "UiApi::RecordRepresentation:003xx000004WjBAAA0__fields__Name"
+            }
+        },
+        "id": "003xx000004WjBAAA0",
+        "lastModifiedById": "005xx000001X8kcAAC",
+        "lastModifiedDate": "2020-11-16T16:17:33.000Z",
+        "recordTypeId": "01241000001IDeJAAW",
+        "recordTypeInfo": {
+            "available": true,
+            "defaultRecordTypeMapping": true,
+            "master": false,
+            "name": "Solar",
+            "recordTypeId": "01241000001IDeJAAW"
+        },
+        "systemModstamp": "2020-11-16T16:17:33.000Z",
+        "weakEtag": 1605543453000
+    },
+    "UiApi::RecordRepresentation:006xx000001a332AAA__fields__Account": {
+        "displayValue": "A-11157397",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:001xx000003GYS3AAO"
+        }
+    },
+    "UiApi::RecordRepresentation:006xx000001a332AAA__fields__Contract_Signer__r": {
+        "displayValue": "Ciaran Hannigan",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:003xx000004Wj9YAAS"
+        }
+    },
+    "UiApi::RecordRepresentation:a1Nxx0000004FWlEAM__fields__Id": {
+        "displayValue": null,
+        "value": "a1Nxx0000004FWlEAM"
+    },
+    "UiApi::RecordRepresentation:a1Nxx0000004FWlEAM__fields__Name": {
+        "displayValue": null,
+        "value": "Ciaran Hannigan"
+    },
+    "UiApi::RecordRepresentation:a1Nxx0000004FWlEAM": {
+        "apiName": "Credit_Report__c",
+        "childRelationships": {},
+        "eTag": "ba2130bcfee6ee8e992e8a0fc6888244",
+        "fields": {
+            "Id": {
+                "__ref": "UiApi::RecordRepresentation:a1Nxx0000004FWlEAM__fields__Id"
+            },
+            "Name": {
+                "__ref": "UiApi::RecordRepresentation:a1Nxx0000004FWlEAM__fields__Name"
+            },
+            "Office__r": {
+                "__ref": "UiApi::RecordRepresentation:a1Nxx0000004FWlEAM__fields__Office__r",
+                "data": {
+                    "fields": ["Id", "Name"]
+                }
+            }
+        },
+        "id": "a1Nxx0000004FWlEAM",
+        "lastModifiedById": "005xx000001X8kcAAC",
+        "lastModifiedDate": "2020-11-16T16:17:51.000Z",
+        "recordTypeId": "012000000000000AAA",
+        "recordTypeInfo": null,
+        "systemModstamp": "2020-11-16T16:17:51.000Z",
+        "weakEtag": 1605543471000
+    },
+    "UiApi::RecordRepresentation:006xx000001a332AAA__fields__Service__r": {
+        "displayValue": "S-6509402",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:a2Exx0000004CKKEA2"
+        }
+    },
+    "UiApi::RecordRepresentation:003xx000004Wj9YAAS__fields__SystemModstamp": {
+        "displayValue": "11/16/2020 7:29 PM",
+        "value": "2020-11-17T02:29:04.000Z"
+    },
+    "UiApi::RecordRepresentation:003xx000004Wj9YAAS__fields__Highest_Credit_Report__r": {
+        "displayValue": "Ciaran Hannigan",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:a1Nxx0000004FWlEAM"
+        }
+    },
+    "UiApi::RecordRepresentation:a2Exx0000004CKKEA2__fields__SystemModstamp": {
+        "displayValue": "11/17/2020 1:48 PM",
+        "value": "2020-11-17T20:48:44.000Z"
+    },
+    "UiApi::RecordRepresentation:a2Exx0000004CKKEA2__fields__Account__r": {
+        "displayValue": "A-11157397",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:001xx000003GYS3AAO"
+        }
+    },
+    "UiApi::RecordRepresentation:006xx000001a2uyAAA__fields__Id": {
+        "displayValue": null,
+        "value": "006xx000001a2uyAAA"
+    },
+    "UiApi::RecordRepresentation:006xx000001a2uyAAA__fields__Name": {
+        "displayValue": null,
+        "value": "O-10840584"
+    },
+    "UiApi::RecordRepresentation:006xx000001a2uyAAA": {
+        "apiName": "Opportunity",
+        "childRelationships": {},
+        "eTag": "3c03d3182947fa3f653388e94fdb6513",
+        "fields": {
+            "Id": {
+                "__ref": "UiApi::RecordRepresentation:006xx000001a2uyAAA__fields__Id"
+            },
+            "Name": {
+                "__ref": "UiApi::RecordRepresentation:006xx000001a2uyAAA__fields__Name"
+            },
+            "SystemModstamp": {
+                "__ref": "UiApi::RecordRepresentation:006xx000001a2uyAAA__fields__SystemModstamp"
+            },
+            "Account": {
+                "__ref": "UiApi::RecordRepresentation:006xx000001a2uyAAA__fields__Account"
+            },
+            "Contract_Signer__r": {
+                "__ref": "UiApi::RecordRepresentation:006xx000001a2uyAAA__fields__Contract_Signer__r"
+            },
+            "Service__r": {
+                "__ref": "UiApi::RecordRepresentation:006xx000001a2uyAAA__fields__Service__r",
+                "data": {
+                    "fields": ["Id", "Name"]
+                }
+            }
+        },
+        "id": "006xx000001a2uyAAA",
+        "lastModifiedById": "005xx000001X8kcAAC",
+        "lastModifiedDate": "2020-11-16T20:08:51.000Z",
+        "recordTypeId": "0121M000001lBV9QAM",
+        "recordTypeInfo": {
+            "available": true,
+            "defaultRecordTypeMapping": true,
+            "master": false,
+            "name": "Solar: Basic Sale",
+            "recordTypeId": "0121M000001lBV9QAM"
+        },
+        "systemModstamp": "2020-11-16T20:08:51.000Z",
+        "weakEtag": 1605557331000
+    },
+    "UiApi::RecordRepresentation:a2Exx0000004CKKEA2__fields__Initial_Opportunity__r": {
+        "displayValue": "O-10840584",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:006xx000001a2uyAAA"
+        }
+    },
+    "UiApi::RecordRepresentation:006xx000001a2uyAAA__fields__SystemModstamp": {
+        "displayValue": "11/16/2020 1:08 PM",
+        "value": "2020-11-16T20:08:51.000Z"
+    },
+    "UiApi::RecordRepresentation:006xx000001a2uyAAA__fields__Account": {
+        "displayValue": "A-11157397",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:001xx000003GYS3AAO"
+        }
+    },
+    "UiApi::RecordRepresentation:006xx000001a2uyAAA__fields__Contract_Signer__r": {
+        "displayValue": "Ciaran Hannigan",
+        "value": {
+            "__ref": "UiApi::RecordRepresentation:003xx000004Wj9YAAS"
+        }
+    },
+    "UiApi::RecordRepresentation:006xx000001a2uyAAA__fields__Service__r": {
+        "displayValue": null,
+        "value": null
+    },
+    "UiApi::RecordRepresentation:a1Nxx0000004FWlEAM__fields__SystemModstamp": {
+        "displayValue": "11/16/2020 9:17 AM",
+        "value": "2020-11-16T16:17:51.000Z"
+    },
+    "UiApi::RecordRepresentation:a1Nxx0000004FWlEAM__fields__Office__r": {
+        "displayValue": null,
+        "value": null
+    }
+}

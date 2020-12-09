@@ -224,6 +224,15 @@ export function extractTrackedFieldsToTrie(
                     continue;
                 }
             } else {
+                if (
+                    depth === MAX_RECORD_DEPTH &&
+                    field.scalar('value') === null &&
+                    isLookupFieldKey(key, fields) === true
+                ) {
+                    // When this is max depth and the field's value is null,
+                    // it needs to check the key to see if this is a lookup field.
+                    continue;
+                }
                 const state = fieldValueRep.linkData();
                 if (state !== undefined) {
                     const { fields } = state;
@@ -240,14 +249,6 @@ export function extractTrackedFieldsToTrie(
                             children: {},
                         };
                     }
-                } else if (
-                    depth === MAX_RECORD_DEPTH &&
-                    field.scalar('value') === null &&
-                    isLookupFieldKey(key, fields) === true
-                ) {
-                    // When this is max depth and the field's value is null,
-                    // it needs to check the key to see if this is a lookup field.
-                    continue;
                 }
             }
 

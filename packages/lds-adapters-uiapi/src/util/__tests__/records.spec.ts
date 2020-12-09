@@ -31,6 +31,7 @@ import objectInfo from './data/sampleObjectInfo';
 import deepRecord from './data/sampleRecordDeep';
 import storeRecordsWith6LevelRefsCustom from './data/store-records-6-level-refs-custom.json';
 import storeRecordsWith6LevelRefsAccount from './data/store-records-6-level-refs-account.json';
+import storeRecordsW8249949 from './data/store-records-w-8249949.json';
 
 import { ObjectKeys } from '../language';
 
@@ -231,6 +232,18 @@ describe('getTrackedFields', () => {
         // Name: Dep7, RecordId: a00xx000000bnXNAAY
         const dep7Fields = getTrackedFields(luvio, 'a00xx000000bnXNAAY', []);
         expect(dep7Fields).toEqual(expectedFields);
+    });
+
+    it('should not include 6 levels deep null relationship fields', () => {
+        const store = new Store();
+        store.records = storeRecordsW8249949;
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
+
+        // Record with 7 depth relationship fields
+        // Name: Dep6, RecordId: a1nxx000001hGmbAAE
+        const dep6Fields = getTrackedFields(luvio, 'a1nxx000001hGmbAAE', []);
+        const violators = dep6Fields.filter(field => field.split('.').length > 7); // root + 6
+        expect(violators.length).toEqual(0);
     });
 
     it('should not include 6 levels deep relationship field', () => {

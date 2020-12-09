@@ -87,7 +87,7 @@ const UNSUPPORTED_KEY = 'refreshUnsupported';
 const REFRESH_EVENTSOURCE = 'lds-refresh-summary';
 const REFRESH_EVENTTYPE = 'system';
 const REFRESH_PAYLOAD_TARGET = 'adapters';
-const REFRESH_PAYLOAD_SCOPE = 'luvio';
+const REFRESH_PAYLOAD_SCOPE = 'lds';
 
 interface RefreshApiCallEventStats {
     [REFRESH_APEX_KEY]: number;
@@ -135,7 +135,7 @@ interface wireAdapterMetricConfigs {
     };
 }
 
-const NAMESPACE = 'luvio';
+const NAMESPACE = 'lds';
 const STORE_STATS_MARK_NAME = 'store-stats';
 const RUNTIME_PERF_MARK_NAME = 'runtime-perf';
 const NETWORK_TRANSACTION_NAME = 'lds-network';

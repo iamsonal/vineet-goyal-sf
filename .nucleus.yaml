@@ -1,0 +1,4 @@
+steps:
+  node-unit-tests:
+    run:
+      command: yarn test:unit:coverage --runInBand --ci

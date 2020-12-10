@@ -74,6 +74,7 @@ export class NimbusDurableStore implements DurableStore {
     }
 
     registerOnChangedListener(listener: OnDurableStoreChangedListener): () => Promise<void> {
+        let uuid: string | undefined = undefined;
         __nimbus.plugins.LdsDurableStore.registerOnChangedListener(
             (ids: string[], segment: string) => {
                 const map: { [key: string]: true } = {};
@@ -82,9 +83,17 @@ export class NimbusDurableStore implements DurableStore {
                 }
                 listener(map, segment);
             }
-        );
-
+        ).then(id => {
+            uuid = id;
+        });
         return () => {
+            if (
+                uuid !== undefined &&
+                uuid.length > 0 &&
+                __nimbus.plugins.LdsDurableStore.unsubscribeOnChangedListener !== undefined
+            ) {
+                __nimbus.plugins.LdsDurableStore.unsubscribeOnChangedListener(uuid);
+            }
             return Promise.resolve();
         };
     }

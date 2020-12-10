@@ -82,7 +82,7 @@ describe('nimbus durable store tests', () => {
             let registeredListener: (ids: string[], segment: string) => void = undefined;
             nimbusStore.registerOnChangedListener = listener => {
                 registeredListener = listener;
-                return Promise.resolve();
+                return Promise.resolve('1234');
             };
             const listenerSpy = jest.fn();
             durableStore.registerOnChangedListener(listenerSpy);
@@ -90,6 +90,31 @@ describe('nimbus durable store tests', () => {
             registeredListener(changedIds, changedSegment);
             expect(listenerSpy.mock.calls[0][0]).toEqual({ 1: true, 2: true, 3: true });
             expect(listenerSpy.mock.calls[0][1]).toEqual(changedSegment);
+        });
+        it('should unsubscribe on change listener', async () => {
+            const durableStore = new NimbusDurableStore();
+            const changedIds = ['1', '2', '3'];
+            const changedSegment = 'random segment';
+            const nimbusStore = new MockNimbusDurableStore();
+            mockNimbusStoreGlobal(nimbusStore);
+            let registeredListener: (ids: string[], segment: string) => void = undefined;
+            nimbusStore.registerOnChangedListener = listener => {
+                registeredListener = listener;
+                return Promise.resolve('1234');
+            };
+            nimbusStore.unsubscribeOnChangedListener = _id => {
+                registeredListener = undefined;
+                return Promise.resolve();
+            };
+            const listenerSpy = jest.fn();
+            const unsubscribe = await durableStore.registerOnChangedListener(listenerSpy);
+            expect(registeredListener).toBeDefined();
+            registeredListener(changedIds, changedSegment);
+            expect(listenerSpy.mock.calls[0][0]).toEqual({ 1: true, 2: true, 3: true });
+            expect(listenerSpy.mock.calls[0][1]).toEqual(changedSegment);
+
+            await unsubscribe();
+            expect(registeredListener).toBeUndefined();
         });
     });
 });

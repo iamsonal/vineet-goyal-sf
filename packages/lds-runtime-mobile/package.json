@@ -21,7 +21,7 @@
         "@mobileplatform/record-id-generator": "1.0.0"
     },
     "devDependencies": {
-        "@mobileplatform/nimbus-plugin-lds": "1.0.0",
+        "@mobileplatform/nimbus-plugin-lds": "1.1.0",
         "@salesforce/lds-adapters-uiapi": "1.3.0",
         "@salesforce/lds-drafts": "1.3.0",
         "@salesforce/user": "0.0.12"

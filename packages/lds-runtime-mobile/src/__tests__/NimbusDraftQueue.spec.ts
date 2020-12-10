@@ -10,9 +10,9 @@ export function mockNimbusDraftQueueGlobal() {
         getActionsForTags: jest.fn(),
     };
     global.__nimbus = {
-        ...(global.__nimbus ?? {}),
+        ...(global.__nimbus || {}),
         plugins: {
-            ...(global.__nimbus?.plugins ?? {}),
+            ...(global.__nimbus?.plugins || {}),
             LdsDraftQueue: mock,
         },
     } as any;

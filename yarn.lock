@@ -4065,10 +4065,10 @@
   resolved "http://npm.lwcjs.org/@lwc/wire-service/-/wire-service-1.7.12/f63b66791af4b76fa7402f464627e2ed7eb5d211.tgz#f63b66791af4b76fa7402f464627e2ed7eb5d211"
   integrity sha512-oAuqwrFeVes5UMH9Pdfo92blu74ZQkACT8ue8/DhKF8uXklVxE+Qy76JKXX6zS8J+ZF3S40HuuBjZVSL1MNkDA==
 
-"@mobileplatform/nimbus-plugin-lds@1.0.0":
-  version "1.0.0"
-  resolved "http://npm.lwcjs.org/@mobileplatform/nimbus-plugin-lds/-/@mobileplatform/nimbus-plugin-lds-1.0.0/c6ce3978f5e09cda8cbbce2837145d4235dd0855.tgz#c6ce3978f5e09cda8cbbce2837145d4235dd0855"
-  integrity sha512-lRz3c+uHzzhu9fYMNXRasgyBI2xAKCvkUqf1NBjV3UV9/05enXfnRdhrA+86ORaxYeg7vaoa/9AxRwL4snvCPw==
+"@mobileplatform/nimbus-plugin-lds@1.1.0":
+  version "1.1.0"
+  resolved "http://npm.lwcjs.org/@mobileplatform/nimbus-plugin-lds/-/@mobileplatform/nimbus-plugin-lds-1.1.0/40c1b075c17167db92c1340a3ea387499a03c547.tgz#40c1b075c17167db92c1340a3ea387499a03c547"
+  integrity sha512-3O6e2wfrNLpBDu+flza8Rs1iuQ0XJvlzY5dux2VaUWdy300jApbvPeC0pp/ZrUPfVEqDcciBKthON1rK1iA8fg==
   dependencies:
     nimbus-types "^2.0.0-alpha1"
 
@@ -12616,7 +12616,7 @@ nice-try@^1.0.4:
 
 nimbus-types@^2.0.0-alpha1:
   version "2.0.0-alpha1"
-  resolved "http://npm.lwcjs.org/nimbus-types/-/nimbus-types-2.0.0-alpha1/15ed35d67c9e835a3968c9babf109cff56303f79.tgz#15ed35d67c9e835a3968c9babf109cff56303f79"
+  resolved "https://registry.yarnpkg.com/nimbus-types/-/nimbus-types-2.0.0-alpha1.tgz#15ed35d67c9e835a3968c9babf109cff56303f79"
   integrity sha512-fDwPpg7xgXH7IgY3XiBYeu9aOb4rifv64zXjsJSAKz+zezzB5O0nxeY2bSFHs6KGoY4u78D2htrq1Q7iFucMBw==
 
 nise@^1.5.2:

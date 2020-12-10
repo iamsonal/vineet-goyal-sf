@@ -8,7 +8,7 @@ export function mockNimbusStoreGlobal(mockNimbusStore: MockNimbusDurableStore) {
     global.__nimbus = {
         ...(global.__nimbus ?? {}),
         plugins: {
-            ...(global.__nimbus?.plugins ?? {}),
+            ...(global.__nimbus?.plugins || {}),
             LdsDurableStore: mockNimbusStore,
         },
     } as any;
@@ -115,8 +115,13 @@ export class MockNimbusDurableStore implements DurableStore {
         return Promise.resolve();
     }
 
-    registerOnChangedListener(listener: (ids: string[], segment: string) => void): Promise<void> {
+    registerOnChangedListener(listener: (ids: string[], segment: string) => void): Promise<string> {
         listenerFunc = listener;
+        return Promise.resolve('1234');
+    }
+
+    unsubscribeOnChangedListener(_id: string): Promise<void> {
+        listenerFunc = undefined;
         return Promise.resolve();
     }
 }

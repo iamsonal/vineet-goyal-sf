@@ -2,9 +2,9 @@ import { NetworkAdapter, NetworkError, Request, Response } from '@mobileplatform
 
 export function mockNimbusNetworkGlobal(adapter: MockNimbusAdapter) {
     global.__nimbus = {
-        ...(global.__nimbus ?? {}),
+        ...(global.__nimbus || {}),
         plugins: {
-            ...(global.__nimbus?.plugins ?? {}),
+            ...(global.__nimbus?.plugins || {}),
             LdsNetworkAdapter: adapter,
         },
     } as any;

@@ -44,24 +44,6 @@ async function createSingleComponentsFromBatchData(mockData) {
     }
 }
 
-function stripExtraFieldsAndPageUrl(mockData) {
-    mockData.results.forEach(singleResult => {
-        if (singleResult.result.records && singleResult.result.records.length > 0) {
-            const requestedFields = singleResult.result.fields.concat(
-                singleResult.result.optionalFields
-            );
-            singleResult.result.records.forEach(record => {
-                Object.keys(record.fields).forEach(key => {
-                    if (!(requestedFields.indexOf(key) > -1)) {
-                        delete record.fields[key];
-                    }
-                });
-            });
-        }
-    });
-    return mockData;
-}
-
 describe('basic', () => {
     it('gets data with valid parentRecordId and relatedListIds', async () => {
         const mockData = getMock('related-list-records-standard-defaults-Custom');
@@ -72,9 +54,7 @@ describe('basic', () => {
 
         const element = await setupElement(params, RelatedListRecordsBatch);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
     });
 
     it('gets data with valid parameters', async () => {
@@ -86,7 +66,7 @@ describe('basic', () => {
         const element = await setupElement(params, RelatedListRecordsBatch);
 
         const wireData = element.getWiredData();
-        expect(wireData).toEqualSnapshotWithoutEtags(stripExtraFieldsAndPageUrl(mockData));
+        expect(wireData).toEqualSnapshotWithoutEtags(mockData);
     });
 });
 
@@ -101,9 +81,7 @@ describe('batching', () => {
         await setupElement(params, RelatedListRecordsBatch);
         // second component should have the cached data without hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
         expect(element.getWiredData()).toBeImmutable();
     });
 
@@ -123,9 +101,7 @@ describe('batching', () => {
         expireRecords();
         // second component should have the updated data by hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
         expect(element.getWiredData()).toBeImmutable();
     });
 
@@ -141,9 +117,7 @@ describe('batching', () => {
 
         // // second component should have the cached data without hitting network
         const element = await setupElement(batchComponentParams, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
         expect(element.getWiredData()).toBeImmutable();
     });
 
@@ -163,9 +137,7 @@ describe('batching', () => {
 
         mockGetRelatedListRecordsBatchNetwork(batchResourceConfig, mockData);
         const element = await setupElement(batchComponentParams, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(stripExtraFieldsAndPageUrl(mockData))
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
         expect(element.getWiredData()).toBeImmutable();
     });
 });
@@ -182,9 +154,7 @@ describe('error cases', () => {
         mockGetRelatedListRecordsBatchNetwork(resourceConfig, mockData);
         const element = await setupElement(params, RelatedListRecordsBatch);
 
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
     });
 
     it("emits to component twice with error data - 400 status doesn't cache", async () => {
@@ -196,16 +166,12 @@ describe('error cases', () => {
 
         // Get data into the cache
         const errorElement = await setupElement(params, RelatedListRecordsBatch);
-        expect(errorElement.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(mockErrorData)
-        );
+        expect(errorElement.getWiredData()).toEqualSnapshotWithoutEtags(mockErrorData);
         expect(errorElement.getWiredData()).toBeImmutable();
 
         // Network is mocked only once, should still retrieve data here.
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(mockFullData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockFullData);
         expect(element.getWiredData()).toBeImmutable();
     });
 
@@ -218,9 +184,7 @@ describe('error cases', () => {
 
         // Get error data into the cache
         const errorElement = await setupElement(params, RelatedListRecordsBatch);
-        expect(errorElement.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(mockError)
-        );
+        expect(errorElement.getWiredData()).toEqualSnapshotWithoutEtags(mockError);
         expect(errorElement.getWiredData()).toBeImmutable();
 
         // Cache bust
@@ -228,9 +192,7 @@ describe('error cases', () => {
 
         // Should get the real data now
         const element = await setupElement(params, RelatedListRecordsBatch);
-        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(
-            stripExtraFieldsAndPageUrl(mockData)
-        );
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
         expect(element.getWiredData()).toBeImmutable();
     });
 });

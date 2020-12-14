@@ -72,6 +72,48 @@ describe('basic', () => {
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
     });
 
+    it('gets data when specifying fields + optionalFields with entity prefix', async () => {
+        const mockData = getMock('related-list-records-prefixed-fields');
+        const resourceConfig = {
+            parentRecordId: mockData.listReference.inContextOfRecordId,
+            relatedListId: mockData.listReference.relatedListId,
+            fields: mockData.fields,
+            optionalFields: mockData.optionalFields,
+        };
+        mockGetRelatedListRecordsNetwork(resourceConfig, mockData);
+
+        const props = {
+            parentRecordId: mockData.listReference.inContextOfRecordId,
+            relatedListId: mockData.listReference.relatedListId,
+            fields: mockData.fields,
+            optionalFields: mockData.optionalFields,
+        };
+        const element = await setupElement(props, RelatedListBasic);
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+    });
+
+    it('gets data when specifying junction object fields', async () => {
+        const mockData = getMock('related-list-records-junction-object-fields');
+        const resourceConfig = {
+            parentRecordId: mockData.listReference.inContextOfRecordId,
+            relatedListId: mockData.listReference.relatedListId,
+            fields: mockData.fields,
+            optionalFields: mockData.optionalFields,
+            pageSize: mockData.pageSize,
+        };
+        mockGetRelatedListRecordsNetwork(resourceConfig, mockData);
+
+        const props = {
+            parentRecordId: mockData.listReference.inContextOfRecordId,
+            relatedListId: mockData.listReference.relatedListId,
+            fields: mockData.fields,
+            optionalFields: mockData.optionalFields,
+            pageSize: mockData.pageSize,
+        };
+        const element = await setupElement(props, RelatedListBasic);
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+    });
+
     it('gets data with no records', async () => {
         const mockData = getMock('related-list-records-empty-Custom');
         const resourceConfig = {

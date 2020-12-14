@@ -4,7 +4,7 @@
             "result": {
                 "count": 0,
                 "currentPageToken": "0",
-                "currentPageUrl": null,
+                "currentPageUrl": "/services/data/v52.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom02s__r?pageSize=50&pageToken=0",
                 "fields": [],
                 "listInfoETag": null,
                 "listReference": {
@@ -32,7 +32,7 @@
             "result": {
                 "count": 8,
                 "currentPageToken": "0",
-                "currentPageUrl": null,
+                "currentPageUrl": "/services/data/v52.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?pageSize=50&pageToken=0",
                 "fields": [],
                 "listInfoETag": null,
                 "listReference": {
@@ -55,45 +55,21 @@
                     {
                         "apiName": "CwcCustom01__c",
                         "childRelationships": {},
-                        "eTag": "a190d28bb04e8cd541cc2c9c8433db35",
-                        "fields": {
-                            "CreatedDate": {
-                                "displayValue": null,
-                                "value": "2018-11-12T16:13:11.000Z"
-                            },
-                            "CurrencyIsoCode": {
-                                "displayValue": null,
-                                "value": "USD"
-                            },
-                            "CwcCustom00__c": {
-                                "displayValue": null,
-                                "value": "a00RM0000004aVwYAI"
-                            },
-                            "Decimal__c": {
-                                "displayValue": null,
-                                "value": null
-                            },
-                            "Id": {
-                                "displayValue": null,
-                                "value": "a01RM000000qecDYAQ"
-                            },
-                            "LastModifiedById": {
-                                "displayValue": null,
-                                "value": "005RM000001a3zXYAQ"
-                            },
-                            "LastModifiedDate": {
-                                "displayValue": null,
-                                "value": "2019-10-08T15:45:38.000Z"
-                            },
-                            "Name": {
-                                "displayValue": null,
-                                "value": "c01.00"
-                            },
-                            "SystemModstamp": {
-                                "displayValue": null,
-                                "value": "2019-10-08T15:45:42.000Z"
-                            }
-                        },
+                        "eTag": "85c515df26da980869a5765e752e7ae5",
+                        "fields": {},
+                        "id": "a01RM000000vPOBYA2",
+                        "lastModifiedById": "005RM000001a3zXYAQ",
+                        "lastModifiedDate": "2020-02-27T21:08:42.000Z",
+                        "recordTypeId": "012000000000000AAA",
+                        "recordTypeInfo": null,
+                        "systemModstamp": "2020-02-27T21:08:42.000Z",
+                        "weakEtag": 1582837722000
+                    },
+                    {
+                        "apiName": "CwcCustom01__c",
+                        "childRelationships": {},
+                        "eTag": "4eeb73800e805c99c89e1b116f018152",
+                        "fields": {},
                         "id": "a01RM000000qecDYAQ",
                         "lastModifiedById": "005RM000001a3zXYAQ",
                         "lastModifiedDate": "2019-10-08T15:45:38.000Z",
@@ -105,45 +81,8 @@
                     {
                         "apiName": "CwcCustom01__c",
                         "childRelationships": {},
-                        "eTag": "3d4844feac2c4a33a14fab3aa01545d3",
-                        "fields": {
-                            "CreatedDate": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:29:38.000Z"
-                            },
-                            "CurrencyIsoCode": {
-                                "displayValue": null,
-                                "value": "USD"
-                            },
-                            "CwcCustom00__c": {
-                                "displayValue": null,
-                                "value": "a00RM0000004aVwYAI"
-                            },
-                            "Decimal__c": {
-                                "displayValue": null,
-                                "value": null
-                            },
-                            "Id": {
-                                "displayValue": null,
-                                "value": "a01RM000000v7ThYAI"
-                            },
-                            "LastModifiedById": {
-                                "displayValue": null,
-                                "value": "005RM000001a3zXYAQ"
-                            },
-                            "LastModifiedDate": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:29:38.000Z"
-                            },
-                            "Name": {
-                                "displayValue": null,
-                                "value": "c01.01"
-                            },
-                            "SystemModstamp": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:29:40.000Z"
-                            }
-                        },
+                        "eTag": "806595d125a12489f9e2d1ec7e57845c",
+                        "fields": {},
                         "id": "a01RM000000v7ThYAI",
                         "lastModifiedById": "005RM000001a3zXYAQ",
                         "lastModifiedDate": "2019-10-07T15:29:38.000Z",
@@ -155,45 +94,8 @@
                     {
                         "apiName": "CwcCustom01__c",
                         "childRelationships": {},
-                        "eTag": "6358610b7f3630df2f7888115e21dd6f",
-                        "fields": {
-                            "CreatedDate": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:29:52.000Z"
-                            },
-                            "CurrencyIsoCode": {
-                                "displayValue": null,
-                                "value": "USD"
-                            },
-                            "CwcCustom00__c": {
-                                "displayValue": null,
-                                "value": "a00RM0000004aVwYAI"
-                            },
-                            "Decimal__c": {
-                                "displayValue": null,
-                                "value": null
-                            },
-                            "Id": {
-                                "displayValue": null,
-                                "value": "a01RM000000v7TmYAI"
-                            },
-                            "LastModifiedById": {
-                                "displayValue": null,
-                                "value": "005RM000001a3zXYAQ"
-                            },
-                            "LastModifiedDate": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:29:52.000Z"
-                            },
-                            "Name": {
-                                "displayValue": null,
-                                "value": "c01.02"
-                            },
-                            "SystemModstamp": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:29:52.000Z"
-                            }
-                        },
+                        "eTag": "920bb5c87517065b0e48eac8aafbcce9",
+                        "fields": {},
                         "id": "a01RM000000v7TmYAI",
                         "lastModifiedById": "005RM000001a3zXYAQ",
                         "lastModifiedDate": "2019-10-07T15:29:52.000Z",
@@ -205,95 +107,21 @@
                     {
                         "apiName": "CwcCustom01__c",
                         "childRelationships": {},
-                        "eTag": "7b54480613ec266d2960e14af0647d21",
-                        "fields": {
-                            "CreatedDate": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:30:03.000Z"
-                            },
-                            "CurrencyIsoCode": {
-                                "displayValue": null,
-                                "value": "USD"
-                            },
-                            "CwcCustom00__c": {
-                                "displayValue": null,
-                                "value": "a00RM0000004aVwYAI"
-                            },
-                            "Decimal__c": {
-                                "displayValue": null,
-                                "value": null
-                            },
-                            "Id": {
-                                "displayValue": null,
-                                "value": "a01RM000000v7TrYAI"
-                            },
-                            "LastModifiedById": {
-                                "displayValue": null,
-                                "value": "005RM000001a3zXYAQ"
-                            },
-                            "LastModifiedDate": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:30:03.000Z"
-                            },
-                            "Name": {
-                                "displayValue": null,
-                                "value": "c01.03"
-                            },
-                            "SystemModstamp": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:30:03.000Z"
-                            }
-                        },
+                        "eTag": "9533172fe1cbed791859b04ebdf8f116",
+                        "fields": {},
                         "id": "a01RM000000v7TrYAI",
                         "lastModifiedById": "005RM000001a3zXYAQ",
-                        "lastModifiedDate": "2019-10-07T15:30:03.000Z",
+                        "lastModifiedDate": "2020-04-27T14:16:46.000Z",
                         "recordTypeId": "012000000000000AAA",
                         "recordTypeInfo": null,
-                        "systemModstamp": "2019-10-07T15:30:03.000Z",
-                        "weakEtag": 1570462203000
+                        "systemModstamp": "2020-04-27T14:17:48.000Z",
+                        "weakEtag": 1587997068000
                     },
                     {
                         "apiName": "CwcCustom01__c",
                         "childRelationships": {},
-                        "eTag": "9a5b94587daffe3cf84001ac018bdb3e",
-                        "fields": {
-                            "CreatedDate": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:30:10.000Z"
-                            },
-                            "CurrencyIsoCode": {
-                                "displayValue": null,
-                                "value": "USD"
-                            },
-                            "CwcCustom00__c": {
-                                "displayValue": null,
-                                "value": "a00RM0000004aVwYAI"
-                            },
-                            "Decimal__c": {
-                                "displayValue": null,
-                                "value": null
-                            },
-                            "Id": {
-                                "displayValue": null,
-                                "value": "a01RM000000v7TsYAI"
-                            },
-                            "LastModifiedById": {
-                                "displayValue": null,
-                                "value": "005RM000001a3zXYAQ"
-                            },
-                            "LastModifiedDate": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:30:10.000Z"
-                            },
-                            "Name": {
-                                "displayValue": null,
-                                "value": "c01.04"
-                            },
-                            "SystemModstamp": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:30:10.000Z"
-                            }
-                        },
+                        "eTag": "3cd4c9ad76670aa159e6eb286affcc67",
+                        "fields": {},
                         "id": "a01RM000000v7TsYAI",
                         "lastModifiedById": "005RM000001a3zXYAQ",
                         "lastModifiedDate": "2019-10-07T15:30:10.000Z",
@@ -305,45 +133,8 @@
                     {
                         "apiName": "CwcCustom01__c",
                         "childRelationships": {},
-                        "eTag": "adbd93c72d83cebc48d4ae72c5991fca",
-                        "fields": {
-                            "CreatedDate": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:30:15.000Z"
-                            },
-                            "CurrencyIsoCode": {
-                                "displayValue": null,
-                                "value": "USD"
-                            },
-                            "CwcCustom00__c": {
-                                "displayValue": null,
-                                "value": "a00RM0000004aVwYAI"
-                            },
-                            "Decimal__c": {
-                                "displayValue": null,
-                                "value": null
-                            },
-                            "Id": {
-                                "displayValue": null,
-                                "value": "a01RM000000v7TwYAI"
-                            },
-                            "LastModifiedById": {
-                                "displayValue": null,
-                                "value": "005RM000001a3zXYAQ"
-                            },
-                            "LastModifiedDate": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:30:15.000Z"
-                            },
-                            "Name": {
-                                "displayValue": null,
-                                "value": "c01.05"
-                            },
-                            "SystemModstamp": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:30:15.000Z"
-                            }
-                        },
+                        "eTag": "bb363a719c7d0e6aa624cd9e083a2bf4",
+                        "fields": {},
                         "id": "a01RM000000v7TwYAI",
                         "lastModifiedById": "005RM000001a3zXYAQ",
                         "lastModifiedDate": "2019-10-07T15:30:15.000Z",
@@ -355,45 +146,8 @@
                     {
                         "apiName": "CwcCustom01__c",
                         "childRelationships": {},
-                        "eTag": "efa57f9ea8bcacd8879908897b14d54b",
-                        "fields": {
-                            "CreatedDate": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:30:20.000Z"
-                            },
-                            "CurrencyIsoCode": {
-                                "displayValue": null,
-                                "value": "USD"
-                            },
-                            "CwcCustom00__c": {
-                                "displayValue": null,
-                                "value": "a00RM0000004aVwYAI"
-                            },
-                            "Decimal__c": {
-                                "displayValue": null,
-                                "value": null
-                            },
-                            "Id": {
-                                "displayValue": null,
-                                "value": "a01RM000000v7U1YAI"
-                            },
-                            "LastModifiedById": {
-                                "displayValue": null,
-                                "value": "005RM000001a3zXYAQ"
-                            },
-                            "LastModifiedDate": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:30:20.000Z"
-                            },
-                            "Name": {
-                                "displayValue": null,
-                                "value": "c01.06"
-                            },
-                            "SystemModstamp": {
-                                "displayValue": null,
-                                "value": "2019-10-07T15:30:20.000Z"
-                            }
-                        },
+                        "eTag": "0f691d559c458428ddeefbbf93217d53",
+                        "fields": {},
                         "id": "a01RM000000v7U1YAI",
                         "lastModifiedById": "005RM000001a3zXYAQ",
                         "lastModifiedDate": "2019-10-07T15:30:20.000Z",
@@ -401,56 +155,6 @@
                         "recordTypeInfo": null,
                         "systemModstamp": "2019-10-07T15:30:20.000Z",
                         "weakEtag": 1570462220000
-                    },
-                    {
-                        "apiName": "CwcCustom01__c",
-                        "childRelationships": {},
-                        "eTag": "5f992e52ee777f941bd49d0751f3e66a",
-                        "fields": {
-                            "CreatedDate": {
-                                "displayValue": null,
-                                "value": "2020-02-27T21:08:42.000Z"
-                            },
-                            "CurrencyIsoCode": {
-                                "displayValue": null,
-                                "value": "USD"
-                            },
-                            "CwcCustom00__c": {
-                                "displayValue": null,
-                                "value": "a00RM0000004aVwYAI"
-                            },
-                            "Decimal__c": {
-                                "displayValue": null,
-                                "value": 1.0
-                            },
-                            "Id": {
-                                "displayValue": null,
-                                "value": "a01RM000000vPOBYA2"
-                            },
-                            "LastModifiedById": {
-                                "displayValue": null,
-                                "value": "005RM000001a3zXYAQ"
-                            },
-                            "LastModifiedDate": {
-                                "displayValue": null,
-                                "value": "2020-02-27T21:08:42.000Z"
-                            },
-                            "Name": {
-                                "displayValue": null,
-                                "value": "TestIt"
-                            },
-                            "SystemModstamp": {
-                                "displayValue": null,
-                                "value": "2020-02-27T21:08:42.000Z"
-                            }
-                        },
-                        "id": "a01RM000000vPOBYA2",
-                        "lastModifiedById": "005RM000001a3zXYAQ",
-                        "lastModifiedDate": "2020-02-27T21:08:42.000Z",
-                        "recordTypeId": "012000000000000AAA",
-                        "recordTypeInfo": null,
-                        "systemModstamp": "2020-02-27T21:08:42.000Z",
-                        "weakEtag": 1582837722000
                     }
                 ],
                 "sortBy": []

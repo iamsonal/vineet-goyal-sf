@@ -2,7 +2,7 @@
     "count": 8,
     "currentPageToken": "0",
     "currentPageUrl": "/services/data/v50.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?fields=Id%2CName&pageSize=50&pageToken=0",
-    "fields": ["Id", "Name"],
+    "fields": ["CwcCustom01__c.Id", "CwcCustom01__c.Name"],
     "listInfoETag": null,
     "listReference": {
         "id": null,

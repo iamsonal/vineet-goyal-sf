@@ -1,0 +1,108 @@
+{
+    "count": 1,
+    "currentPageToken": "0",
+    "currentPageUrl": "/services/data/v52.0/ui-api/related-list-records/a01RM000000ATMYYA4/Junction_Objects__r?fields=barley__r.RichTextArea__c%2Cbarley__r.Id%2Cbarley__r.LongTextArea__c%2CId%2Cbarley__r.TextArea__c%2Cbarley__r.Text__c%2Cbarley__r.Url__c%2CName%2Cbarley__r.Name%2Cbarley__r.Picklist__c&pageSize=10&pageToken=0",
+    "fields": [
+        "Junction_Object__c.barley__r.RichTextArea__c",
+        "Junction_Object__c.barley__r.Id",
+        "Junction_Object__c.barley__r.LongTextArea__c",
+        "Junction_Object__c.Id",
+        "Junction_Object__c.barley__r.TextArea__c",
+        "Junction_Object__c.barley__r.Text__c",
+        "Junction_Object__c.barley__r.Url__c",
+        "Junction_Object__c.Name",
+        "Junction_Object__c.barley__r.Name",
+        "Junction_Object__c.barley__r.Picklist__c"
+    ],
+    "listInfoETag": null,
+    "listReference": {
+        "id": null,
+        "inContextOfRecordId": "a01RM000000ATMYYA4",
+        "listViewApiName": null,
+        "objectApiName": null,
+        "parentObjectApiName": "hop__c",
+        "recordTypeId": null,
+        "relatedListId": "Junction_Objects__r",
+        "type": "relatedList"
+    },
+    "nextPageToken": null,
+    "nextPageUrl": null,
+    "optionalFields": [],
+    "pageSize": 10,
+    "previousPageToken": null,
+    "previousPageUrl": null,
+    "records": [
+        {
+            "apiName": "Junction_Object__c",
+            "childRelationships": {},
+            "eTag": "01fbbc1b53fdd208a352750a6612d9a3",
+            "fields": {
+                "Id": {
+                    "displayValue": null,
+                    "value": "a03RM0000009AA5YAM"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "test"
+                },
+                "barley__r": {
+                    "displayValue": "test",
+                    "value": {
+                        "apiName": "barley__c",
+                        "childRelationships": {},
+                        "eTag": "5ff31343db6a6452f54abe44e69c3daa",
+                        "fields": {
+                            "Id": {
+                                "displayValue": null,
+                                "value": "a02RM000000DW4yYAG"
+                            },
+                            "LongTextArea__c": {
+                                "displayValue": null,
+                                "value": "Is is text in a really really long area."
+                            },
+                            "Name": {
+                                "displayValue": null,
+                                "value": "test"
+                            },
+                            "Picklist__c": {
+                                "displayValue": "first",
+                                "value": "first"
+                            },
+                            "RichTextArea__c": {
+                                "displayValue": null,
+                                "value": "<p><b>this is bold rich text</b></p>"
+                            },
+                            "TextArea__c": {
+                                "displayValue": null,
+                                "value": "This is some regular text, but in an area."
+                            },
+                            "Text__c": {
+                                "displayValue": null,
+                                "value": "This is regular text"
+                            },
+                            "Url__c": {
+                                "displayValue": null,
+                                "value": "www.google.com"
+                            }
+                        },
+                        "id": "a02RM000000DW4yYAG",
+                        "lastModifiedById": "005RM0000021aTuYAI",
+                        "lastModifiedDate": "2020-12-07T16:29:57.000Z",
+                        "recordTypeId": "012000000000000AAA",
+                        "recordTypeInfo": null,
+                        "systemModstamp": "2020-12-07T16:29:57.000Z",
+                        "weakEtag": 1607358597000
+                    }
+                }
+            },
+            "id": "a03RM0000009AA5YAM",
+            "lastModifiedById": "005RM0000021aTuYAI",
+            "lastModifiedDate": "2020-10-14T16:42:22.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2020-10-14T16:42:22.000Z",
+            "weakEtag": 1602693742000
+        }
+    ],
+    "sortBy": []
+}

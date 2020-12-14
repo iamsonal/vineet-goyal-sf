@@ -4,8 +4,8 @@
             "result": {
                 "count": 5,
                 "currentPageToken": "0",
-                "currentPageUrl": "/services/data/v50.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?fields=Name&optionalFields=CwcCustom00__c&pageSize=5&pageToken=0&sortBy=Name",
-                "fields": ["Name"],
+                "currentPageUrl": "/services/data/v52.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?fields=CwcCustom01__c.Name&optionalFields=CwcCustom01__c.CwcCustom00__c&pageSize=5&pageToken=0&sortBy=CwcCustom01__c.Name",
+                "fields": ["CwcCustom01__c.Name"],
                 "listInfoETag": null,
                 "listReference": {
                     "id": null,
@@ -18,8 +18,8 @@
                     "type": "relatedList"
                 },
                 "nextPageToken": "5",
-                "nextPageUrl": "/services/data/v50.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?fields=Name&optionalFields=CwcCustom00__c&pageSize=5&pageToken=5&sortBy=Name",
-                "optionalFields": ["CwcCustom00__c"],
+                "nextPageUrl": "/services/data/v52.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?fields=CwcCustom01__c.Name&optionalFields=CwcCustom01__c.CwcCustom00__c&pageSize=5&pageToken=5&sortBy=CwcCustom01__c.Name",
+                "optionalFields": ["CwcCustom01__c.CwcCustom00__c"],
                 "pageSize": 5,
                 "previousPageToken": null,
                 "previousPageUrl": null,
@@ -27,8 +27,12 @@
                     {
                         "apiName": "CwcCustom01__c",
                         "childRelationships": {},
-                        "eTag": "5caae8ccdee8e926d3e63bc13e10dab3",
+                        "eTag": "33f99fd969583cd3a1b31ed8b5121e61",
                         "fields": {
+                            "CwcCustom00__c": {
+                                "displayValue": null,
+                                "value": "a00RM0000004aVwYAI"
+                            },
                             "Name": {
                                 "displayValue": null,
                                 "value": "c01.00"
@@ -45,8 +49,12 @@
                     {
                         "apiName": "CwcCustom01__c",
                         "childRelationships": {},
-                        "eTag": "df8eb97f11a9a2884fae581fdf8347fc",
+                        "eTag": "7109a37f69aa34435b4f6ef0600602de",
                         "fields": {
+                            "CwcCustom00__c": {
+                                "displayValue": null,
+                                "value": "a00RM0000004aVwYAI"
+                            },
                             "Name": {
                                 "displayValue": null,
                                 "value": "c01.01"
@@ -63,8 +71,12 @@
                     {
                         "apiName": "CwcCustom01__c",
                         "childRelationships": {},
-                        "eTag": "0d6c70457f9f7de71440f1692ecd5e0b",
+                        "eTag": "d2ae309af3174230e695c57eb1cf7967",
                         "fields": {
+                            "CwcCustom00__c": {
+                                "displayValue": null,
+                                "value": "a00RM0000004aVwYAI"
+                            },
                             "Name": {
                                 "displayValue": null,
                                 "value": "c01.02"
@@ -81,8 +93,12 @@
                     {
                         "apiName": "CwcCustom01__c",
                         "childRelationships": {},
-                        "eTag": "c39419fe7361e305c45427385d747af8",
+                        "eTag": "3e5d1fa2e9945625157ced7dcd9d3346",
                         "fields": {
+                            "CwcCustom00__c": {
+                                "displayValue": null,
+                                "value": "a00RM0000004aVwYAI"
+                            },
                             "Name": {
                                 "displayValue": null,
                                 "value": "c01.03"
@@ -99,8 +115,12 @@
                     {
                         "apiName": "CwcCustom01__c",
                         "childRelationships": {},
-                        "eTag": "84646ba70a87ac44a39f81ec8972f3bb",
+                        "eTag": "3de4723921f949df8ddd4f7931b2d3d7",
                         "fields": {
+                            "CwcCustom00__c": {
+                                "displayValue": null,
+                                "value": "a00RM0000004aVwYAI"
+                            },
                             "Name": {
                                 "displayValue": null,
                                 "value": "c01.04"
@@ -115,7 +135,7 @@
                         "weakEtag": 1570462210000
                     }
                 ],
-                "sortBy": ["Name"]
+                "sortBy": ["CwcCustom01__c.Name"]
             },
             "statusCode": 200
         },
@@ -123,8 +143,8 @@
             "result": {
                 "count": 0,
                 "currentPageToken": "0",
-                "currentPageUrl": "/services/data/v50.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom02s__r?fields=Id%2CName&pageSize=50&pageToken=0",
-                "fields": ["Id", "Name"],
+                "currentPageUrl": "/services/data/v52.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom02s__r?fields=CwcCustom02__c.Id%2CCwcCustom02__c.Name&pageSize=50&pageToken=0",
+                "fields": ["CwcCustom02__c.Id", "CwcCustom02__c.Name"],
                 "listInfoETag": null,
                 "listReference": {
                     "id": null,

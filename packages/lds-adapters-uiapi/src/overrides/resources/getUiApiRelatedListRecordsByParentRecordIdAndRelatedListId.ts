@@ -54,9 +54,6 @@ export const select: typeof generatedSelect = (
         pageSize = DEFAULT_PAGE_SIZE,
     } = queryParams;
 
-    fields = prependApiNameToFields(fields, relatedListId);
-    optionalFields = prependApiNameToFields(optionalFields, relatedListId);
-
     return {
         kind: 'Fragment',
         private: ['eTag'],
@@ -199,18 +196,8 @@ function markMissingOptionalRecordFieldsMissing(
                 recordKey
             );
             if (isGraphNode(node)) {
-                const recordOptionalFields = prependApiNameToFields(
-                    optionalFields,
-                    node.data.apiName
-                );
-                markMissingOptionalFields(node, recordOptionalFields);
+                markMissingOptionalFields(node, optionalFields);
             }
         }
     }
-}
-
-function prependApiNameToFields(fields: string[], apiName: string) {
-    return fields.map(field => {
-        return `${apiName}.${field}`;
-    });
 }

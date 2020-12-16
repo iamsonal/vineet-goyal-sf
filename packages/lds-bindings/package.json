@@ -19,10 +19,10 @@
         "registry": "https://npm.lwcjs.org"
     },
     "dependencies": {
-        "@luvio/lwc-luvio": "^0.22.0"
+        "@luvio/lwc-luvio": "^0.23.0"
     },
     "devDependencies": {
-        "@luvio/engine": "^0.22.0",
+        "@luvio/engine": "^0.23.0",
         "@lwc/engine-core": "~1.7.5",
         "@salesforce/lds-runtime-web": "1.4.0"
     }

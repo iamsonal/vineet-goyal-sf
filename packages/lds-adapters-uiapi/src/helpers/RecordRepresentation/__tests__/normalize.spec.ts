@@ -141,6 +141,7 @@ describe('normalize', () => {
             {
                 fullPath: 'some_path__fields__Value',
                 parent: { data: input, key: 'some_path', existing },
+                propertyName: 'Value',
             },
             luvio,
             store,
@@ -171,6 +172,7 @@ describe('normalize', () => {
             {
                 fullPath: 'some_path__fields__Owner',
                 parent: { data: input, key: 'some_path', existing },
+                propertyName: 'Owner',
             },
             luvio,
             store,

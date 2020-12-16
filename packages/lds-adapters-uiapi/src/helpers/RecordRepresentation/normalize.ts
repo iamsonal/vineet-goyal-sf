@@ -38,6 +38,7 @@ export default function normalize(
                 input_childRelationships_prop,
                 {
                     fullPath: input_childRelationships_prop_id,
+                    propertyName: key,
                     parent: {
                         data: input,
                         key: path.fullPath,
@@ -74,6 +75,7 @@ export default function normalize(
                 input_fields_prop,
                 {
                     fullPath: input_fields_prop_id,
+                    propertyName: key,
                     parent: {
                         data: input,
                         key: path.fullPath,

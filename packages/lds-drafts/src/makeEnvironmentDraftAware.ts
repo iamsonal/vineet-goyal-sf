@@ -213,6 +213,7 @@ export function makeEnvironmentDraftAware(
                 const path = {
                     fullPath: key,
                     parent: null,
+                    propertyName: null,
                 };
 
                 ingestFunc(record, path, store, Date.now());

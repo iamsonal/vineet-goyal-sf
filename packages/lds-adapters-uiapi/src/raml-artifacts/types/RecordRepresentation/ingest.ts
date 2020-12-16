@@ -31,8 +31,9 @@ export const ingest: typeof generatedIngest = function RecordRepresentationInges
         store.records[key],
         {
             fullPath: key,
+            propertyName: path.propertyName,
             parent: path.parent,
-        },
+        } as IngestPath,
         luvio,
         store,
         timestamp

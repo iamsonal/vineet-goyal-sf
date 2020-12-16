@@ -33,6 +33,7 @@ export default function normalize(
             input_value,
             {
                 fullPath: input_value_id,
+                propertyName: 'value',
                 parent: {
                     data: input,
                     key: path.fullPath,

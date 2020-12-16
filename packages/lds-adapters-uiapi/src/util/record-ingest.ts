@@ -27,7 +27,11 @@ export const createRecordIngest = (
         }
 
         const key = keyBuilderFromType(input);
-        const recordPath = { fullPath: key, parent: path.parent };
+        const recordPath = {
+            fullPath: key,
+            parent: path.parent,
+            propertyName: path.propertyName,
+        } as IngestPath;
 
         let incomingRecord = helpers_RecordRepresentation_normalize_default(
             input,

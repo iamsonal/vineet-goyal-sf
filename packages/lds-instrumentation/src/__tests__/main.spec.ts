@@ -57,6 +57,8 @@ const instrumentationSpies = {
         instrumentation,
         'logAdapterCacheMissOutOfTtlDuration'
     ),
+    incrementAdapterRequestMetric: jest.spyOn(instrumentation, 'incrementAdapterRequestMetric'),
+    incrementAdapterErrorMetric: jest.spyOn(instrumentation, 'incrementAdapterErrorMetric'),
 };
 
 beforeEach(() => {
@@ -65,6 +67,8 @@ beforeEach(() => {
     instrumentationSpies.handleRefreshApiCall.mockClear();
     instrumentationSpies.incrementRecordApiNameChangeEvents.mockClear();
     instrumentationSpies.logAdapterCacheMissOutOfTtlDuration.mockClear();
+    instrumentationSpies.incrementAdapterRequestMetric.mockClear();
+    instrumentationSpies.incrementAdapterErrorMetric.mockClear();
     instrumentationServiceSpies.perfEnd.mockClear();
     instrumentationServiceSpies.perfStart.mockClear();
     instrumentationServiceSpies.timerAddDurationSpy.mockClear();
@@ -331,6 +335,75 @@ describe('instrumentation', () => {
             expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(0);
             expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(0);
             expect((instrumentation as any).refreshAdapterEvents).toEqual({});
+        });
+    });
+
+    describe('Observability metrics', () => {
+        it('should instrument error when UnfulfilledSnapshot is returned to the adapter', () => {
+            const mockGetRecordAdapter = () => {
+                return new Promise(resolve => {
+                    setTimeout(() => resolve({ state: 'Unfulfilled' }));
+                });
+            };
+            const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(
+                'getRecord',
+                mockGetRecordAdapter
+            );
+            const getRecordConfig = {
+                recordId: '00x000000000000017',
+                optionalFields: ['Account.Name', 'Account.Id'],
+            };
+
+            var now = Date.now();
+            timekeeper.freeze(now);
+            return instrumentedAdapter(getRecordConfig).then(_result => {
+                expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
+                expect(instrumentationSpies.incrementAdapterErrorMetric).toHaveBeenCalledTimes(1);
+            });
+        });
+
+        it('should not instrument error when an invalid config is provided', () => {
+            const mockGetRecordAdapter = () => {
+                return null;
+            };
+            const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(
+                'getRecord',
+                mockGetRecordAdapter
+            );
+            const getRecordConfig = {
+                recordId: 'not a valid id',
+                optionalFields: 'also invalid',
+            };
+
+            var now = Date.now();
+            timekeeper.freeze(now);
+            instrumentedAdapter(getRecordConfig);
+
+            expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
+            expect(instrumentationSpies.incrementAdapterErrorMetric).toHaveBeenCalledTimes(0);
+        });
+
+        it('should not instrument error when a non UnfulfilledSnapshot Promise is returned to the adapter', () => {
+            const mockGetRecordAdapter = () => {
+                return new Promise(resolve => {
+                    setTimeout(() => resolve({}));
+                });
+            };
+            const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(
+                'getRecord',
+                mockGetRecordAdapter
+            );
+            const getRecordConfig = {
+                recordId: '00x000000000000017',
+                optionalFields: ['Account.Name', 'Account.Id'],
+            };
+
+            var now = Date.now();
+            timekeeper.freeze(now);
+            return instrumentedAdapter(getRecordConfig).then(_result => {
+                expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
+                expect(instrumentationSpies.incrementAdapterErrorMetric).toHaveBeenCalledTimes(0);
+            });
         });
     });
 });

@@ -1,4 +1,4 @@
-import { Luvio, Store, Adapter, Snapshot } from '@luvio/engine';
+import { Luvio, Store, Adapter, Snapshot, UnfulfilledSnapshot } from '@luvio/engine';
 import { REFRESH_ADAPTER_EVENT } from '@luvio/lwc-luvio';
 import {
     CacheStatsLogger,
@@ -38,6 +38,12 @@ import {
     STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT,
     STORE_WATCH_SUBSCRIPTIONS_COUNT,
 } from './metric-keys';
+
+import {
+    OBSERVABILITY_NAMESPACE,
+    ADAPTER_INVOCATION_COUNT_METRIC_NAME,
+    ADAPTER_ERROR_COUNT_METRIC_NAME,
+} from './utils/observability';
 
 import { ObjectKeys } from './utils/language';
 import { LRUCache } from './utils/lru-cache';
@@ -243,6 +249,23 @@ export class Instrumentation {
      */
     public instrumentAdapter<C, D>(name: string, adapter: Adapter<C, D>): Adapter<C, D> {
         const stats = registerLdsCacheStats(name);
+
+        /**
+         * W-8076905
+         * Dynamically generated metric. Simple counter for all requests made by this adapter.
+         */
+        const wireAdapterRequestMetric = counter(
+            createMetricsKey(OBSERVABILITY_NAMESPACE, ADAPTER_INVOCATION_COUNT_METRIC_NAME, name)
+        );
+
+        /**
+         * W-8076905
+         * Dynamically generated metric.  Simple counter for all UnfulfilledSnapshot responses sent to the adapter.
+         */
+        const wireAdapterErrorMetric = counter(
+            createMetricsKey(OBSERVABILITY_NAMESPACE, ADAPTER_ERROR_COUNT_METRIC_NAME, name)
+        );
+
         /**
          * W-6981216
          * Dynamically generated metric. Simple counter for cache hits by adapter name.
@@ -296,13 +319,14 @@ export class Instrumentation {
 
         const instrumentedAdapter = (config: C) => {
             const startTime = Date.now();
+            this.incrementAdapterRequestMetric(wireAdapterRequestMetric);
             const result = adapter(config);
             // In the case where the adapter returns a Snapshot it is constructed out of the store
             // (cache hit) whereas a Promise<Snapshot> indicates a network request (cache miss).
             //
             // Note: we can't do a plain instanceof check for a promise here since the Promise may
             // originate from another javascript realm (for example: in jest test). Instead we use a
-            // duck-typing approach by checking is the result has a then property.
+            // duck-typing approach by checking if the result has a then property.
             //
             // For adapters without persistent store:
             //  - total cache hit ratio:
@@ -320,6 +344,10 @@ export class Instrumentation {
                         cacheMissDurationByAdapterMetric,
                         Date.now() - startTime
                     );
+
+                    if (this.resultIsUnfulfilledSnapshot(_snapshot)) {
+                        this.incrementAdapterErrorMetric(wireAdapterErrorMetric);
+                    }
                 });
                 stats.logMisses();
                 cacheMissMetric.increment(1);
@@ -339,12 +367,35 @@ export class Instrumentation {
                 cacheHitMetric.increment(1);
                 cacheHitCountByAdapterMetric.increment(1);
                 timerMetricAddDuration(cacheHitDurationByAdapterMetric, Date.now() - startTime);
+
+                if (this.resultIsUnfulfilledSnapshot(result)) {
+                    this.incrementAdapterErrorMetric(wireAdapterErrorMetric);
+                }
             }
+
             return result;
         };
         // Set the name property on the function for debugging purposes.
         Object.defineProperty(instrumentedAdapter, 'name', { value: name + '__instrumented' });
         return instrumentedAdapter;
+    }
+
+    /**
+     * Verify if result is of type UnfulfilledSnapshot
+     * @param result !null | Snapshot
+     */
+    private resultIsUnfulfilledSnapshot<T, U>(
+        result: Snapshot<T, U> | Promise<Snapshot<T, U>>
+    ): result is UnfulfilledSnapshot<T, U> {
+        return 'state' in result && result.state === 'Unfulfilled';
+    }
+
+    private incrementAdapterRequestMetric(wireRequestCounter: Counter) {
+        wireRequestCounter.increment(1);
+    }
+
+    private incrementAdapterErrorMetric(wireErrorCounter: Counter) {
+        wireErrorCounter.increment(1);
     }
 
     /**

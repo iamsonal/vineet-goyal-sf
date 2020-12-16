@@ -1,4 +1,4 @@
-import { Luvio, ProxyGraphNode, GraphNode, StoreLink } from '@luvio/engine';
+import { ProxyGraphNode, GraphNode, StoreLink } from '@luvio/engine';
 import { FieldRepresentation } from '../generated/types/FieldRepresentation';
 import {
     FieldValueRepresentation,
@@ -11,10 +11,6 @@ import {
     RecordRepresentation,
     RecordRepresentationNormalized,
 } from '../generated/types/RecordRepresentation';
-import {
-    RecordTemplateCreateRepresentationNormalized,
-    RecordTemplateCreateRepresentation,
-} from '../generated/types/RecordTemplateCreateRepresentation';
 import {
     ArrayPrototypeConcat,
     ArrayPrototypeIncludes,
@@ -35,10 +31,18 @@ import { RecordCreateDefaultRecordRepresentation } from '../generated/types/Reco
 import { ObjectFreeze } from '../generated/adapters/adapter-utils';
 
 type FieldValueRepresentationValue = FieldValueRepresentation['value'];
-type RecordRepresentationLikeNormalized =
-    | RecordRepresentationNormalized
-    | RecordTemplateCreateRepresentationNormalized;
-type RecordRepresentationLike = RecordRepresentation | RecordTemplateCreateRepresentation;
+export type RecordRepresentationLikeNormalized = {
+    apiName: string;
+    fields: {
+        [key: string]: StoreLink;
+    };
+};
+export type RecordRepresentationLike = {
+    apiName: string;
+    fields: {
+        [key: string]: FieldValueRepresentation;
+    };
+};
 
 const CUSTOM_API_NAME_SUFFIX = '__c';
 const CUSTOM_RELATIONSHIP_FIELD_SUFFIX = '__r';
@@ -148,7 +152,8 @@ export function extractTrackedFields(
 }
 
 export function extractTrackedFieldsToTrie(
-    node: ProxyGraphNode<RecordRepresentationNormalized, RecordRepresentation>,
+    recordId: string,
+    node: ProxyGraphNode<RecordRepresentationLikeNormalized, RecordRepresentationLike>,
     root: RecordFieldTrie,
     visitedRecordIds: Record<string, boolean> = {},
     depth: number = 0
@@ -157,8 +162,6 @@ export function extractTrackedFieldsToTrie(
     if (!isGraphNode(node)) {
         return;
     }
-
-    const recordId = node.data.id;
 
     // Stop the traversal if the key has already been visited, since the fields for this record
     // have already been gathered at this point.
@@ -207,17 +210,25 @@ export function extractTrackedFieldsToTrie(
                     continue;
                 }
 
-                const spanning = field
-                    .link<RecordRepresentationNormalized, RecordRepresentation>('value')
-                    .follow();
+                const spanningLink = field.link<
+                    RecordRepresentationNormalized,
+                    RecordRepresentation
+                >('value');
+
+                const spanning = spanningLink.follow();
 
                 // W-8058425, do not include external lookups added by getTrackedFields
                 if (isExternalLookupFieldKey(spanning)) {
                     continue;
-                } else {
-                    extractTrackedFieldsToTrie(spanning, next, spanningVisitedRecordIds, depth + 1);
                 }
 
+                extractTrackedFieldsToTrie(
+                    spanningLink.data.__ref!,
+                    spanning,
+                    next,
+                    spanningVisitedRecordIds,
+                    depth + 1
+                );
                 if (ObjectKeys(next.children).length > 0) {
                     current.children[key] = next;
                 } else {
@@ -356,15 +367,11 @@ function mergeFieldsTries(rootA: RecordFieldTrie, rootB: RecordFieldTrie) {
 }
 
 export function getTrackedFields(
-    luvio: Luvio,
-    recordId: string,
+    key: string,
+    graphNode: ProxyGraphNode<RecordRepresentationLikeNormalized, RecordRepresentationLike>,
     fieldsFromConfig?: string[]
 ): string[] {
-    const key = recordRepresentationKeyBuilder({
-        recordId,
-    });
     const fieldsList = fieldsFromConfig === undefined ? [] : [...fieldsFromConfig];
-    const graphNode = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(key);
     if (!isGraphNode(graphNode)) {
         return fieldsList;
     }
@@ -374,7 +381,7 @@ export function getTrackedFields(
         name,
         children: {},
     };
-    extractTrackedFieldsToTrie(graphNode, root);
+    extractTrackedFieldsToTrie(key, graphNode, root);
 
     const rootFromConfig = {
         name,

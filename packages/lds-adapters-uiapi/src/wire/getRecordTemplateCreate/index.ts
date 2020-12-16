@@ -25,21 +25,18 @@ import {
     ResourceRequestConfig,
 } from '../../generated/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
 import { select } from '../../raml-artifacts/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName/select';
+import { RecordDefaultsTemplateCreateRepresentation } from '../../generated/types/RecordDefaultsTemplateCreateRepresentation';
+import { keyBuilder as recordTemplateKeyBuilder } from '../../generated/types/RecordTemplateCreateRepresentation';
 import {
-    RecordDefaultsTemplateCreateRepresentation,
-    keyBuilderFromType,
-    ingest as createTemplateRepresentationIngest,
-} from '../../generated/types/RecordDefaultsTemplateCreateRepresentation';
-import {
-    keyBuilder as recordTemplateKeyBuilder,
-    RecordTemplateCreateRepresentationNormalized,
-    RecordTemplateCreateRepresentation,
-} from '../../generated/types/RecordTemplateCreateRepresentation';
-import { markMissingOptionalFields } from '../../util/records';
-import { getTrackedFields } from '../../util/recordTemplate';
+    BLANK_RECORD_FIELDS_TRIE,
+    convertFieldsToTrie,
+    getTrackedFields,
+} from '../../util/records';
 import { snapshotRefreshOptions } from '../../generated/adapters/adapter-utils';
-
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
+
+import { keyBuilderFromType } from '../../generated/types/RecordDefaultsTemplateCreateRepresentation';
+import { createFieldsIngest as resourceCreateFieldsIngest } from '../../FieldValueRepresentation/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
 
 function buildRecordTypeIdContextKey(objectApiName: string): string {
     return `DEFAULTS::recordTypeId:${objectApiName}`;
@@ -73,23 +70,25 @@ function prepareRequest(
     const recordTypeId = getRecordTypeId(context, config);
     const { objectApiName } = config;
     const resourceRequest = createResourceRequest(resourceParams);
+    if (recordTypeId === undefined) {
+        return resourceRequest;
+    }
+    const recordTemplateKey = recordTemplateKeyBuilder({
+        apiName: objectApiName,
+        recordTypeId: recordTypeId,
+    });
 
-    return recordTypeId === undefined
-        ? resourceRequest
-        : createResourceRequest({
-              ...resourceParams,
-              queryParams: {
-                  ...resourceRequest.queryParams,
-                  optionalFields: getTrackedFields(
-                      luvio,
-                      recordTemplateKeyBuilder({
-                          apiName: objectApiName,
-                          recordTypeId: recordTypeId,
-                      }),
-                      config.optionalFields
-                  ),
-              },
-          });
+    return createResourceRequest({
+        ...resourceParams,
+        queryParams: {
+            ...resourceRequest.queryParams,
+            optionalFields: getTrackedFields(
+                recordTemplateKey,
+                luvio.getNode(recordTemplateKey),
+                config.optionalFields
+            ),
+        },
+    });
 }
 
 function onResourceResponseSuccess(
@@ -113,23 +112,26 @@ function onResourceResponseSuccess(
     const recordTypeId = body.objectInfos[objectApiName].defaultRecordTypeId;
     context.set(buildRecordTypeIdContextKey(objectApiName), recordTypeId);
 
-    luvio.storeIngest<RecordDefaultsTemplateCreateRepresentation>(
-        key,
-        createTemplateRepresentationIngest,
-        body
-    );
-
     // mark missing optionalFields
     const templateRecordKey = recordTemplateKeyBuilder({
         apiName: objectApiName,
         recordTypeId: responseRecordTypeId,
     });
-    const recordNode = luvio.getNode<
-        RecordTemplateCreateRepresentationNormalized,
-        RecordTemplateCreateRepresentation
-    >(templateRecordKey);
-    const allTrackedFields = getTrackedFields(luvio, templateRecordKey, optionalFields);
-    markMissingOptionalFields(recordNode, allTrackedFields);
+
+    const allTrackedFields = getTrackedFields(
+        templateRecordKey,
+        luvio.getNode(templateRecordKey),
+        optionalFields
+    );
+    const allTrackedFieldsTrie = convertFieldsToTrie(allTrackedFields, true);
+
+    const ingest = resourceCreateFieldsIngest({
+        fields: BLANK_RECORD_FIELDS_TRIE,
+        optionalFields: allTrackedFieldsTrie,
+        trackedFields: allTrackedFieldsTrie,
+    });
+
+    luvio.storeIngest<RecordDefaultsTemplateCreateRepresentation>(key, ingest, body);
 
     luvio.storeBroadcast();
     const snapshot = buildInMemorySnapshot(luvio, context, {

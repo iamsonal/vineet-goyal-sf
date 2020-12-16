@@ -4,9 +4,13 @@ jest.mock('../../helpers/RecordRepresentation/merge');
 jest.mock('../../helpers/RecordRepresentation/normalize');
 jest.mock('../../raml-artifacts/types/RecordRepresentation/keyBuilderFromType');
 
-import { validate, equals } from '../../generated/types/RecordRepresentation';
+import {
+    validate,
+    equals,
+    normalize,
+    dynamicNormalize,
+} from '../../generated/types/RecordRepresentation';
 import { keyBuilderFromType } from '../../raml-artifacts/types/RecordRepresentation/keyBuilderFromType';
-import normalize from '../../helpers/RecordRepresentation/normalize';
 import merge from '../../helpers/RecordRepresentation/merge';
 import { createLink } from '../../generated/types/type-utils';
 import { convertFieldsToTrie } from '../records';
@@ -46,6 +50,7 @@ describe('Record Ingest Utils', () => {
         validate.mockReturnValueOnce(null);
         createLink.mockReturnValueOnce(mockLink);
         merge.mockReturnValueOnce(mockMergedRecord);
+        dynamicNormalize.mockReturnValueOnce(normalize);
 
         const fields = convertFieldsToTrie(['ENTITY.FIELD', 'ENTITY.SUB.FIELD'], false);
         const optionalFields = convertFieldsToTrie(
@@ -68,10 +73,7 @@ describe('Record Ingest Utils', () => {
                 { fullPath: MOCK_KEY, parent: null },
                 mockLds,
                 mockStore,
-                12345,
-                fields,
-                optionalFields,
-                recordConflictMap
+                12345
             );
         });
 

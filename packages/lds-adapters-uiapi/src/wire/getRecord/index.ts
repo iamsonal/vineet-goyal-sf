@@ -6,22 +6,13 @@ import {
     keyBuilder,
     KeyParams,
     RecordRepresentation,
-    RecordRepresentationNormalized,
     TTL as RecordRepresentationTTL,
 } from '../../generated/types/RecordRepresentation';
 import coerceRecordId18 from '../../primitives/RecordId18/coerce';
-import {
-    getTrackedFields,
-    markMissingOptionalFields,
-    convertFieldsToTrie,
-} from '../../util/records';
+import { getTrackedFields, convertFieldsToTrie } from '../../util/records';
 import { getRecordByFields } from './GetRecordFields';
 import { getRecordLayoutType, GetRecordLayoutTypeConfig } from './GetRecordLayoutType';
-import { createRecordIngest } from '../../util/record-ingest';
-import {
-    RecordConflictMap,
-    resolveConflict,
-} from '../../helpers/RecordRepresentation/resolveConflict';
+import { createFieldsIngest as getRecordsResourceIngest } from '../../FieldValueRepresentation/resources/getUiApiRecordsByRecordId';
 
 // Custom adapter config due to `unsupported` items
 const GET_RECORD_ADAPTER_CONFIG: AdapterValidationConfig = {
@@ -95,7 +86,7 @@ export const notifyChangeFactory = (luvio: Luvio) => {
             const representation: RecordRepresentation = (node as GraphNode<
                 RecordRepresentation
             >).retrieve();
-            const optionalFields = getTrackedFields(luvio, representation.id);
+            const optionalFields = getTrackedFields(key, luvio.getNode(key));
             const refreshRequest = createResourceRequestFromRepresentation(
                 representation,
                 optionalFields
@@ -104,20 +95,20 @@ export const notifyChangeFactory = (luvio: Luvio) => {
 
             const fieldTrie = convertFieldsToTrie([], false);
             const optionalFieldTrie = convertFieldsToTrie(optionalFields, true);
-            const recordConflict: RecordConflictMap = {} as RecordConflictMap;
-            const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie, recordConflict);
 
             // dispatch resource request, then ingest and broadcast
             luvio.dispatchResourceRequest<RecordRepresentation>(refreshRequest).then(
                 response => {
                     const { body } = response;
-                    luvio.storeIngest<RecordRepresentation>(key, recordIngest, body);
-                    resolveConflict(luvio, recordConflict);
-                    const recordNode = luvio.getNode<
-                        RecordRepresentationNormalized,
-                        RecordRepresentation
-                    >(key)!;
-                    markMissingOptionalFields(recordNode, optionalFields);
+                    luvio.storeIngest<RecordRepresentation>(
+                        key,
+                        getRecordsResourceIngest({
+                            fields: fieldTrie,
+                            optionalFields: optionalFieldTrie,
+                            trackedFields: optionalFieldTrie,
+                        }),
+                        body
+                    );
                     luvio.storeBroadcast();
                     const notifyChangeNetworkResolveInstrumentParamBuilder = () => {
                         return {

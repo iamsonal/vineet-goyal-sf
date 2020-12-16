@@ -6,7 +6,7 @@ import {
 import normalize from '../normalize';
 import { ingest as RecordRepresentation_ingest } from '../../../raml-artifacts/types/RecordRepresentation/ingest';
 import { createRecordIngest } from '../../../util/record-ingest';
-import { convertFieldsToTrie } from '../../../util/records';
+import { BLANK_RECORD_FIELDS_TRIE, convertFieldsToTrie } from '../../../util/records';
 
 jest.mock('../../../raml-artifacts/types/RecordRepresentation/ingest');
 jest.mock('../../../util/record-ingest');
@@ -37,8 +37,8 @@ describe('normalize', () => {
         value: { __ref: 'ref' },
     };
 
-    const mockDynamicIngest = jest.fn().mockReturnValueOnce(dynamicIngestValue);
-    const mockCreateIngest = createRecordIngest.mockReturnValueOnce(mockDynamicIngest);
+    const mockDynamicIngest = jest.fn().mockReturnValue(dynamicIngestValue);
+    const mockCreateIngest = createRecordIngest.mockReturnValue(mockDynamicIngest);
     const mockStaticIngest = RecordRepresentation_ingest.mockReturnValueOnce(staticIngestValue);
 
     afterEach(() => {
@@ -126,12 +126,22 @@ describe('normalize', () => {
         });
 
         it("invokes generated record representation's ingestion if fields are not supplied", () => {
-            const output = normalize(input, existing, path, luvio, store, 123);
+            const output = normalize(
+                input,
+                existing,
+                path,
+                luvio,
+                store,
+                123,
+                BLANK_RECORD_FIELDS_TRIE,
+                BLANK_RECORD_FIELDS_TRIE,
+                {}
+            );
             expect(output).toBe(input);
-            expect(output.value).toBe(staticIngestValue);
-            expect(mockCreateIngest).toHaveBeenCalledTimes(0);
-            expect(mockDynamicIngest).toHaveBeenCalledTimes(0);
-            expect(mockStaticIngest).toHaveBeenLastCalledWith(
+            expect(output.value).toBe(dynamicIngestValue);
+            expect(mockCreateIngest).toHaveBeenCalledTimes(1);
+            expect(mockDynamicIngest).toHaveBeenCalledTimes(1);
+            expect(mockDynamicIngest).toHaveBeenLastCalledWith(
                 inputValue,
                 {
                     fullPath: 'some_path__value',

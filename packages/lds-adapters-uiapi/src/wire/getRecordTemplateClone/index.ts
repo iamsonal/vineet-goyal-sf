@@ -21,21 +21,19 @@ import { select } from '../../raml-artifacts/resources/getUiApiRecordDefaultsTem
 import {
     RecordDefaultsTemplateCloneRepresentation,
     TTL,
-    ingest as recordDefaultsTemplateCloneRepresentationIngest,
 } from '../../generated/types/RecordDefaultsTemplateCloneRepresentation';
-import {
-    RecordTemplateCloneRepresentationNormalized,
-    RecordTemplateCloneRepresentation,
-} from '../../generated/types/RecordTemplateCloneRepresentation';
 import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
-import { markMissingOptionalFields } from '../../util/records';
-import { getTrackedFields } from '../../util/recordTemplate';
-import { snapshotRefreshOptions } from '../../generated/adapters/adapter-utils';
-import {
-    keyBuilder as templateKeyBuilder,
-    keyBuilderFromType as templateKeyBuilderFromType,
-} from './CloneTemplateRepresentationKey';
 import { keyBuilder as templateRecordKeyBuilder } from './CloneRecordTemplateRepresentationKey';
+import {
+    BLANK_RECORD_FIELDS_TRIE,
+    convertFieldsToTrie,
+    getTrackedFields,
+} from '../../util/records';
+import { snapshotRefreshOptions } from '../../generated/adapters/adapter-utils';
+import { keyBuilder as templateKeyBuilder } from './CloneTemplateRepresentationKey';
+
+import { keyBuilderFromType as templateKeyBuilderFromType } from './CloneTemplateRepresentationKey';
+import { createFieldsIngest as resourceCreateFieldsIngest } from '../../FieldValueRepresentation/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
 
 const DEFAULT_RECORD_TYPE_ID_KEY = 'defaultRecordTypeId';
 
@@ -76,6 +74,11 @@ const buildNetworkSnapshot: (
     const recordTypeId = getRecordTypeId(config, context);
     const { recordId } = config;
     const resourceRequest = createResourceRequest(resourceParams);
+    const coercedRecordTypeId = recordTypeId === undefined ? null : recordTypeId;
+    const templateRecordKey = templateRecordKeyBuilder({
+        cloneSourceId: recordId,
+        recordTypeId: coercedRecordTypeId,
+    });
 
     const request =
         recordTypeId === undefined
@@ -85,11 +88,8 @@ const buildNetworkSnapshot: (
                   queryParams: {
                       ...resourceRequest.queryParams,
                       optionalFields: getTrackedFields(
-                          luvio,
-                          templateRecordKeyBuilder({
-                              cloneSourceId: recordId,
-                              recordTypeId: recordTypeId,
-                          }),
+                          templateRecordKey,
+                          luvio.getNode(templateRecordKey),
                           config.optionalFields
                       ),
                   },
@@ -104,31 +104,21 @@ const buildNetworkSnapshot: (
 
                 const responseRecordTypeId = body.record.recordTypeId;
                 const objectApiName = body.record.apiName;
-
                 // publish metadata for recordTypeId
                 saveDefaultRecordTypeId(context, body.objectInfos[objectApiName]);
 
-                luvio.storeIngest<RecordDefaultsTemplateCloneRepresentation>(
-                    key,
-                    recordDefaultsTemplateCloneRepresentationIngest,
-                    body
-                );
-
-                // mark missing optionalFields
-                const templateRecordKey = templateRecordKeyBuilder({
-                    cloneSourceId: resourceParams.urlParams.recordId,
-                    recordTypeId: responseRecordTypeId,
-                });
-                const recordNode = luvio.getNode<
-                    RecordTemplateCloneRepresentationNormalized,
-                    RecordTemplateCloneRepresentation
-                >(templateRecordKey);
-                const allTrackedFields = getTrackedFields(
-                    luvio,
-                    templateRecordKey,
+                const optionalFieldsTrie = convertFieldsToTrie(
                     resourceParams.queryParams.optionalFields
                 );
-                markMissingOptionalFields(recordNode, allTrackedFields);
+                luvio.storeIngest<RecordDefaultsTemplateCloneRepresentation>(
+                    key,
+                    resourceCreateFieldsIngest({
+                        fields: BLANK_RECORD_FIELDS_TRIE,
+                        optionalFields: optionalFieldsTrie,
+                        trackedFields: optionalFieldsTrie,
+                    }),
+                    body
+                );
 
                 luvio.storeBroadcast();
                 const snapshot = buildInMemorySnapshot(luvio, context, {

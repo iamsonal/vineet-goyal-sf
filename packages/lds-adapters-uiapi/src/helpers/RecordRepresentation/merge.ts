@@ -2,6 +2,7 @@ import { Luvio, IngestPath, StoreRecordError } from '@luvio/engine';
 import {
     RecordRepresentationNormalized,
     RecordRepresentation,
+    keyBuilder as recordRepKeyBuilder,
 } from '../../generated/types/RecordRepresentation';
 import { buildNetworkSnapshot as getRecordFieldsNetwork } from '../../wire/getRecord/GetRecordFields';
 import {
@@ -157,8 +158,11 @@ function mergeRecordConflict(
         children: {},
     };
 
-    extractTrackedFieldsToTrie(incomingNode, incomingTrackedFieldsTrieRoot);
-    extractTrackedFieldsToTrie(existingNode, existingTrackedFieldsTrieRoot);
+    const recordKey = recordRepKeyBuilder({
+        recordId: incoming.id,
+    });
+    extractTrackedFieldsToTrie(recordKey, incomingNode, incomingTrackedFieldsTrieRoot);
+    extractTrackedFieldsToTrie(recordKey, existingNode, existingTrackedFieldsTrieRoot);
 
     if (incoming.weakEtag > existing.weakEtag) {
         return mergeAndRefreshHigherVersionRecord(

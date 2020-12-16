@@ -1,5 +1,5 @@
 import { Luvio, Store, Environment } from '@luvio/engine';
-import { ingest } from '../ingest';
+import { makeIngest } from '../ingest';
 import { RecordFieldTrie } from '../../../../util/records';
 import {
     FieldValueRepresentation,
@@ -36,7 +36,7 @@ describe('ingest', () => {
             children: {},
         };
         const recordConflictMap: RecordConflictMap = {};
-        const output = ingest(
+        const output = makeIngest(fieldsTrie, optionalFieldsTrie, recordConflictMap)(
             input,
             {
                 fullPath: 'abc',
@@ -44,10 +44,7 @@ describe('ingest', () => {
             },
             luvio,
             store,
-            123,
-            fieldsTrie,
-            optionalFieldsTrie,
-            recordConflictMap
+            123
         );
         expect(output).toEqual({ __ref: 'abc' });
         expect(mockNormalize).toHaveBeenCalledTimes(1);

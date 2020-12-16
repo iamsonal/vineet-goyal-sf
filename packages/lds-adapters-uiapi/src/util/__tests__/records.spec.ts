@@ -67,7 +67,8 @@ describe('getTrackedFields', () => {
             store,
             0
         );
-        const fields = getTrackedFields(luvio, record.id, []);
+        const key = keyBuilder({ recordId: record.id });
+        const fields = getTrackedFields(key, luvio.getNode(key), []);
         expect(fields).toEqual([
             'Account.CreatedDate',
             'Account.Name',
@@ -89,7 +90,8 @@ describe('getTrackedFields', () => {
             store,
             0
         );
-        const fields = getTrackedFields(luvio, record.id, ['Account.Foo']);
+        const key = keyBuilder({ recordId: record.id });
+        const fields = getTrackedFields(key, luvio.getNode(key), ['Account.Foo']);
         expect(fields).toEqual([
             'Account.CreatedDate',
             'Account.Foo',
@@ -112,7 +114,8 @@ describe('getTrackedFields', () => {
             store,
             0
         );
-        const fields = getTrackedFields(luvio, record.id, ['Account.Name']);
+        const key = keyBuilder({ recordId: record.id });
+        const fields = getTrackedFields(key, luvio.getNode(key), ['Account.Name']);
         expect(fields).toEqual([
             'Account.CreatedDate',
             'Account.Name',
@@ -135,7 +138,8 @@ describe('getTrackedFields', () => {
             0
         );
 
-        const fields = getTrackedFields(luvio, recursiveRecord.id, []);
+        const key = keyBuilder({ recordId: recursiveRecord.id });
+        const fields = getTrackedFields(key, luvio.getNode(key), []);
         expect(fields).toEqual(['User.CreatedById', 'User.Email', 'User.Id', 'User.Name']);
     });
 
@@ -151,7 +155,8 @@ describe('getTrackedFields', () => {
             0
         );
 
-        const fields = getTrackedFields(luvio, recursiveRecordDifferentPaths.id, []);
+        const key = keyBuilder({ recordId: recursiveRecordDifferentPaths.id });
+        const fields = getTrackedFields(key, luvio.getNode(key), []);
         expect(fields).toEqual([
             'User.CreatedBy.CreatedById',
             'User.CreatedBy.Id',
@@ -180,7 +185,8 @@ describe('getTrackedFields', () => {
             0
         );
 
-        const fields = getTrackedFields(luvio, record.id, []);
+        const key = keyBuilder({ recordId: record.id });
+        const fields = getTrackedFields(key, luvio.getNode(key), []);
         expect(fields).toEqual([
             'TestD__c.TestC__c',
             'TestD__c.TestC__r.Id',
@@ -225,12 +231,14 @@ describe('getTrackedFields', () => {
 
         // Record with 6 depth relationship field (boundary value)
         // Name: Dep6, RecordId: a00xx000000bnVlAAI
-        const dep6Fields = getTrackedFields(luvio, 'a00xx000000bnVlAAI', []);
+        const dep6Key = keyBuilder({ recordId: 'a00xx000000bnVlAAI' });
+        const dep6Fields = getTrackedFields(dep6Key, luvio.getNode(dep6Key), []);
         expect(dep6Fields).toEqual(expectedFields);
 
         // Record with 7 depth relationship field
         // Name: Dep7, RecordId: a00xx000000bnXNAAY
-        const dep7Fields = getTrackedFields(luvio, 'a00xx000000bnXNAAY', []);
+        const dep7key = keyBuilder({ recordId: 'a00xx000000bnXNAAY' });
+        const dep7Fields = getTrackedFields(dep7key, luvio.getNode(dep7key), []);
         expect(dep7Fields).toEqual(expectedFields);
     });
 
@@ -274,7 +282,8 @@ describe('getTrackedFields', () => {
 
         // Record with 6 depth relationship field (boundary value)
         // Name: Dep6, RecordId: a00xx000000bnVlAAI
-        const dep6Fields = getTrackedFields(luvio, 'a00xx000000bnVlAAI', []);
+        const dep6key = keyBuilder({ recordId: 'a00xx000000bnVlAAI' });
+        const dep6Fields = getTrackedFields(dep6key, luvio.getNode(dep6key), []);
         expect(dep6Fields).toEqual(expectedFields);
     });
 });
@@ -324,7 +333,7 @@ describe('extractTrackedFieldsToTrie', () => {
             children: {},
         };
 
-        extractTrackedFieldsToTrie(node, root);
+        extractTrackedFieldsToTrie(recordKey, node, root);
 
         const fields = convertTrieToFields(root);
         expect(fields).toEqual([

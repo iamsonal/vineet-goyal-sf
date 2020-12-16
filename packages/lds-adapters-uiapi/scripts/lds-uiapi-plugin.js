@@ -40,7 +40,6 @@ const RAML_ARTIFACTS = {
         'ingestSuccessChildResourceParams',
     ],
     '/resources/getUiApiRecordsByRecordId': ['createResourceRequest'],
-    '/types/FieldValueRepresentation': ['ingest'],
     '/types/RecordRepresentation': ['keyBuilderFromType', 'ingest'],
     '/types/RecordAvatarBulkMapRepresentation': ['ingest'],
 };

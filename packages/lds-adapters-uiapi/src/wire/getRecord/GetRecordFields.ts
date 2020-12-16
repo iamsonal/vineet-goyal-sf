@@ -14,21 +14,12 @@ import { TTL as RecordRepresentationTTL } from '../../generated/types/RecordRepr
 import {
     keyBuilder as recordRepresentationKeyBuilder,
     RecordRepresentation,
-    RecordRepresentationNormalized,
 } from '../../generated/types/RecordRepresentation';
-import {
-    getTrackedFields,
-    markMissingOptionalFields,
-    convertFieldsToTrie,
-} from '../../util/records';
+import { getTrackedFields, convertFieldsToTrie } from '../../util/records';
 import { buildSelectionFromFields } from '../../selectors/record';
 import { difference } from '../../validation/utils';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
-import { createRecordIngest } from '../../util/record-ingest';
-import {
-    RecordConflictMap,
-    resolveConflict,
-} from '../../helpers/RecordRepresentation/resolveConflict';
+import { createFieldsIngest as getRecordsResourceIngest } from '../../FieldValueRepresentation/resources/getUiApiRecordsByRecordId';
 
 // used by getUiApiRecordsBatchByRecordIds#selectChildResourceParams
 export function buildRecordSelector(
@@ -61,7 +52,8 @@ function prepareRequest(luvio: Luvio, config: GetRecordConfig) {
     const { recordId, fields } = config;
 
     // Should this go into the coersion logic?
-    const allTrackedFields = getTrackedFields(luvio, recordId, config.optionalFields);
+    const key = keyBuilder(createResourceParams(config));
+    const allTrackedFields = getTrackedFields(key, luvio.getNode(key), config.optionalFields);
     const optionalFields =
         fields === undefined ? allTrackedFields : difference(allTrackedFields, fields);
     const params = createResourceParams({
@@ -70,7 +62,6 @@ function prepareRequest(luvio: Luvio, config: GetRecordConfig) {
         optionalFields: optionalFields.length > 0 ? optionalFields : undefined,
     });
     const request = createResourceRequest(params);
-    const key = keyBuilder(params);
 
     return { request, key, allTrackedFields };
 }
@@ -87,15 +78,15 @@ export function ingestSuccess(
     const optionalFields = config.optionalFields === undefined ? [] : config.optionalFields;
 
     const fieldTrie = convertFieldsToTrie(fields, false);
-    const optionalFieldTrie = convertFieldsToTrie(optionalFields, true);
-    const recordConflict: RecordConflictMap = {} as RecordConflictMap;
-    const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie, recordConflict);
-    luvio.storeIngest<RecordRepresentation>(key, recordIngest, body);
-
-    resolveConflict(luvio, recordConflict);
-
-    const recordNode = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(key)!;
-    markMissingOptionalFields(recordNode, allTrackedFields);
+    luvio.storeIngest<RecordRepresentation>(
+        key,
+        getRecordsResourceIngest({
+            fields: fieldTrie,
+            optionalFields: convertFieldsToTrie(optionalFields, true),
+            trackedFields: convertFieldsToTrie(allTrackedFields, true),
+        }),
+        body
+    );
 
     return luvio.storeLookup<RecordRepresentation>(
         buildRecordSelector(config.recordId, fields, optionalFields),

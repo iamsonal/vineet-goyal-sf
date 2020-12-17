@@ -1,0 +1,22 @@
+{
+    "apiName": "User",
+    "childRelationships": {},
+    "eTag": "ee059ce13748d7f5d80266c19e5eb687",
+    "fields": {
+        "Id": {
+            "displayValue": null,
+            "value": "005xx000001XL1tAAG"
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "User Edited"
+        }
+    },
+    "id": "005xx000001XL1tAAG",
+    "lastModifiedById": "005xx000001XL1tAAG",
+    "lastModifiedDate": "2020-05-28T14:25:40.000Z",
+    "recordTypeId": null,
+    "recordTypeInfo": null,
+    "systemModstamp": "2020-05-28T14:25:40.000Z",
+    "weakEtag": 1590675930001
+}

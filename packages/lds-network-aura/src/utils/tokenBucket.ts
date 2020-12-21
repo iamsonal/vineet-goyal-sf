@@ -3,17 +3,16 @@ interface RateLimitConfig {
     fillsPerSecond: number;
 }
 
-const RATE_LIMIT_CONFIG: RateLimitConfig = {
+export const RATE_LIMIT_CONFIG: RateLimitConfig = {
     bucketCapacity: 100,
     fillsPerSecond: 100,
 };
 
-class TokenBucket {
-    readonly bucketCapacity: number;
+export class TokenBucket {
+    public bucketCapacity: number;
     readonly refillTokensPerMilliSecond: number;
-    private tokens: number;
+    public tokens: number;
     private lastRefillTime: number;
-    private static instance: TokenBucket;
 
     /**
      * Constructs an instance of Token Bucket for rate limiting

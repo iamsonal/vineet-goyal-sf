@@ -19,8 +19,8 @@
         "registry": "https://npm.lwcjs.org"
     },
     "dependencies": {
-        "@luvio/engine": "^0.24.0",
-        "@luvio/environments": "^0.24.0"
+        "@luvio/engine": "^0.24.2",
+        "@luvio/environments": "^0.24.2"
     },
     "devDependencies": {
         "@salesforce/lds-adapters-uiapi": "1.4.0",

@@ -10,6 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
 const dedent = require('dedent');
+const fieldsPlugin = require('./plugin/fields-support');
 
 const SFDC_PRIVATE_ADAPTERS = require('./sfdc-private-adapters');
 
@@ -133,13 +134,16 @@ function generateAdapterFactoryExport(artifactsDir, generatedAdapterNames, imper
 }
 
 module.exports = {
-    validate: plugin.validate,
+    validate: modelInfo => {
+        fieldsPlugin.validate(modelInfo);
+        return plugin.validate(modelInfo);
+    },
     /**
      * @param {CompilerConfig} compilerConfig
      * @param {ModelInfo} modelInfo
      * @returns {void}
      */
-    afterGenerate: (compilerConfig, modelInfo) => {
+    afterGenerate: (compilerConfig, modelInfo, createGenerationContext) => {
         const adapters = modelInfo.resources
             .filter(resource => resource.adapter !== undefined)
             .map(resource => {
@@ -173,6 +177,7 @@ module.exports = {
 
         // right now LDS cli only supports one plugin, so invoke the offline record plugin from this one
         offlineRecordPlugin(compilerConfig, modelInfo);
+        fieldsPlugin.afterGenerate(compilerConfig, modelInfo, createGenerationContext);
     },
     /**
      * @param {string} ramlId

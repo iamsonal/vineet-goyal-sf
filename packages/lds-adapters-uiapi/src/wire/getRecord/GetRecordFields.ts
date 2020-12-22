@@ -19,7 +19,7 @@ import { getTrackedFields, convertFieldsToTrie } from '../../util/records';
 import { buildSelectionFromFields } from '../../selectors/record';
 import { difference } from '../../validation/utils';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
-import { createFieldsIngest as getRecordsResourceIngest } from '../../FieldValueRepresentation/resources/getUiApiRecordsByRecordId';
+import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
 
 // used by getUiApiRecordsBatchByRecordIds#selectChildResourceParams
 export function buildRecordSelector(

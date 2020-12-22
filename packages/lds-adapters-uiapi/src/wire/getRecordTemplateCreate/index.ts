@@ -36,7 +36,7 @@ import { snapshotRefreshOptions } from '../../generated/adapters/adapter-utils';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
 import { keyBuilderFromType } from '../../generated/types/RecordDefaultsTemplateCreateRepresentation';
-import { createFieldsIngest as resourceCreateFieldsIngest } from '../../FieldValueRepresentation/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
+import { createFieldsIngestSuccess as resourceCreateFieldsIngest } from '../../generated/fields/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
 
 function buildRecordTypeIdContextKey(objectApiName: string): string {
     return `DEFAULTS::recordTypeId:${objectApiName}`;

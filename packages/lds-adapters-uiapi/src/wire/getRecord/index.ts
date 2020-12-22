@@ -12,7 +12,7 @@ import coerceRecordId18 from '../../primitives/RecordId18/coerce';
 import { getTrackedFields, convertFieldsToTrie } from '../../util/records';
 import { getRecordByFields } from './GetRecordFields';
 import { getRecordLayoutType, GetRecordLayoutTypeConfig } from './GetRecordLayoutType';
-import { createFieldsIngest as getRecordsResourceIngest } from '../../FieldValueRepresentation/resources/getUiApiRecordsByRecordId';
+import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
 
 // Custom adapter config due to `unsupported` items
 const GET_RECORD_ADAPTER_CONFIG: AdapterValidationConfig = {

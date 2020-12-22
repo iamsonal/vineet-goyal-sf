@@ -33,7 +33,7 @@ import { snapshotRefreshOptions } from '../../generated/adapters/adapter-utils';
 import { keyBuilder as templateKeyBuilder } from './CloneTemplateRepresentationKey';
 
 import { keyBuilderFromType as templateKeyBuilderFromType } from './CloneTemplateRepresentationKey';
-import { createFieldsIngest as resourceCreateFieldsIngest } from '../../FieldValueRepresentation/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
+import { createFieldsIngestSuccess as resourceCreateFieldsIngest } from '../../generated/fields/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
 
 const DEFAULT_RECORD_TYPE_ID_KEY = 'defaultRecordTypeId';
 

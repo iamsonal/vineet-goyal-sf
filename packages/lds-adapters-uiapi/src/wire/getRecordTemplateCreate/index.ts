@@ -24,7 +24,7 @@ import {
     ingestError,
     ResourceRequestConfig,
 } from '../../generated/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
-import { select } from '../../raml-artifacts/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName/select';
+import { adapterFragment } from '../../generated/fields/adapters/getRecordTemplateCreate';
 import { RecordDefaultsTemplateCreateRepresentation } from '../../generated/types/RecordDefaultsTemplateCreateRepresentation';
 import { keyBuilder as recordTemplateKeyBuilder } from '../../generated/types/RecordTemplateCreateRepresentation';
 import {
@@ -227,7 +227,7 @@ function buildInMemorySnapshot(
     const resourceParams = createResourceParams(config);
     const selector: Selector = {
         recordId: keyBuilder(resourceParams),
-        node: select(luvio, resourceParams),
+        node: adapterFragment(luvio, config),
         variables: {},
     };
     return luvio.storeLookup<RecordDefaultsTemplateCreateRepresentation>(selector, {

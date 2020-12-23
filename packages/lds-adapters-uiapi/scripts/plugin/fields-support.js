@@ -106,9 +106,68 @@ function generateAdapter(adapter, resource, def, outputDir, createGenerationCont
     adapterContext.write(code.join('\n\n'));
 }
 
+function getSuffix(id) {
+    const split = id.split('#');
+    return split[1].replace('/luvio', '');
+}
+
+function linkFieldImports(fieldsAst, addImportOverride) {
+    const { resourcesWithFields } = fieldsAst;
+    Object.keys(resourcesWithFields).forEach(resourceId => {
+        const resource = resourcesWithFields[resourceId];
+        const { adapter } = resource;
+        if (adapter === undefined) {
+            return;
+        }
+
+        const def = adaptersWithFieldDefinitions[adapter.name];
+        if (def === undefined) {
+            return;
+        }
+        const resourceSuffix = getSuffix(resourceId);
+        [
+            {
+                generatedIdentifier: 'select',
+                targetIdentifier: 'selectFields',
+            },
+        ].forEach(({ generatedIdentifier, targetIdentifier }) => {
+            addImportOverride(
+                resourceSuffix,
+                path.resolve('src', 'generated', 'fields', 'resources', resource.name),
+                generatedIdentifier,
+                targetIdentifier
+            );
+        });
+
+        const adapterSuffix = getSuffix(adapter.id);
+        [
+            {
+                generatedIdentifier: 'adapterFragment',
+                targetIdentifier: 'adapterFragment',
+            },
+            {
+                generatedIdentifier: 'buildNetworkSnapshot',
+                targetIdentifier: 'buildNetworkSnapshot',
+            },
+            {
+                generatedIdentifier: 'resolveUnfulfilledSnapshot',
+                targetIdentifier: 'resolveUnfulfilledSnapshot',
+            },
+        ].forEach(({ generatedIdentifier, targetIdentifier }) => {
+            addImportOverride(
+                adapterSuffix,
+                path.resolve('src', 'generated', 'fields', 'adapters', adapter.name),
+                generatedIdentifier,
+                targetIdentifier
+            );
+        });
+    });
+}
+
 module.exports = {
-    validate: modelInfo => {
+    validate: (modelInfo, addImportOverride) => {
         fieldsAst = parse(modelInfo);
+        linkFieldImports(fieldsAst, addImportOverride);
     },
 
     afterGenerate: (compilerConfig, modelInfo, createGenerationContext) => {

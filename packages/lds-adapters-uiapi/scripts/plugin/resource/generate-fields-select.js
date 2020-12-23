@@ -7,7 +7,7 @@ function generateResourceFieldsSelect(resource, state) {
     const { generationContext, importsMap, def } = state;
     const { importContext, deindent } = generationContext;
     const { namedImport, importRamlArtifact } = importContext;
-    const { CREATE_TRIE_FROM_FIELDS } = importsMap;
+    const { CREATE_TRIE_FROM_FIELDS, LUVIO_IMPORT } = importsMap;
 
     const { optionalFields: optionalFieldsDef, fields: fieldsDef } = def;
     const shapeDynamicSelect = namedImport(`../types/${returnShape.name}`, SELECT_FIELDS);
@@ -20,7 +20,7 @@ function generateResourceFieldsSelect(resource, state) {
         fieldsDef === null ? '[] as string[]' : `params.queryParams.${fieldsDef.configName} || []`;
 
     return deindent`
-        export function ${RESOURCE_SELECT_FIELDS}(params: ${resourceParamsInterface}) {
+        export function ${RESOURCE_SELECT_FIELDS}(luvio: ${LUVIO_IMPORT}, params: ${resourceParamsInterface}) {
             const optionalFields = ${optionalFieldsStatement};
             const fields = ${fieldsStatement};
             const trie = ${CREATE_TRIE_FROM_FIELDS}(fields, optionalFields);

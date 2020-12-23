@@ -35,7 +35,6 @@ const RAML_ARTIFACTS = {
         'typeCheckConfig',
     ],
     '/resources/getUiApiRecordDefaultsTemplateCloneByRecordId': ['select'],
-    '/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName': ['select'],
     '/resources/getUiApiRecordsBatchByRecordIds': [
         'selectChildResourceParams',
         'ingestSuccessChildResourceParams',
@@ -44,7 +43,6 @@ const RAML_ARTIFACTS = {
     '/types/RecordRepresentation': ['keyBuilderFromType', 'ingest'],
     '/types/RecordAvatarBulkMapRepresentation': ['ingest'],
 };
-const ramlArtifactsKeys = Object.keys(RAML_ARTIFACTS);
 
 /**
  * @param {string} artifactsDir
@@ -135,7 +133,17 @@ function generateAdapterFactoryExport(artifactsDir, generatedAdapterNames, imper
 
 module.exports = {
     validate: modelInfo => {
-        fieldsPlugin.validate(modelInfo);
+        fieldsPlugin.validate(modelInfo, (artifactSuffix, path, identifier, targetIdentifier) => {
+            let entry = RAML_ARTIFACTS[artifactSuffix];
+            if (entry === undefined) {
+                entry = RAML_ARTIFACTS[artifactSuffix] = [];
+            }
+            entry.push({
+                path,
+                identifier,
+                targetIdentifier,
+            });
+        });
         return plugin.validate(modelInfo);
     },
     /**
@@ -185,17 +193,31 @@ module.exports = {
      * @returns {void | ResolveRamlArtifactResult}
      */
     resolveRamlArtifact: (ramlId, identifier) => {
+        const ramlArtifactsKeys = Object.keys(RAML_ARTIFACTS);
         for (let i = 0, len = ramlArtifactsKeys.length; i < len; i += 1) {
             const key = ramlArtifactsKeys[i];
             const [, folder, file] = key.split('/');
             if (ramlId.endsWith(key)) {
                 const artifacts = RAML_ARTIFACTS[key];
-                if (artifacts.indexOf(identifier) > -1) {
+                const match = artifacts.find(item => {
+                    if (typeof item === 'string') {
+                        return item === identifier;
+                    }
+                    return item.identifier === identifier;
+                });
+
+                if (match !== undefined) {
+                    if (typeof match === 'string') {
+                        return {
+                            identifier,
+                            absolutePath: path.resolve(
+                                path.join('src', 'raml-artifacts', folder, file, `${identifier}.ts`)
+                            ),
+                        };
+                    }
                     return {
-                        identifier,
-                        absolutePath: path.resolve(
-                            path.join('src', 'raml-artifacts', folder, file, `${identifier}.ts`)
-                        ),
+                        identifier: match.targetIdentifier,
+                        absolutePath: match.path,
                     };
                 }
             }

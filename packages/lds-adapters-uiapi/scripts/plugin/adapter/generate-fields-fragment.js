@@ -13,7 +13,7 @@ function generateFieldsAdapterFragment(adapter, resource, def, state) {
     return deindent`
       export function adapterFragment(luvio: ${LUVIO_IMPORT}, config: ${adapterConfigImport}): ${FRAGMENT_IMPORT} {
         const resourceParams = ${resourceParams}(config);
-        return ${resourceFieldsSelect}(resourceParams);
+        return ${resourceFieldsSelect}(luvio, resourceParams);
       }
   `;
 }

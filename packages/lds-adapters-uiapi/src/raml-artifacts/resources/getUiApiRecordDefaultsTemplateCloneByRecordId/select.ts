@@ -6,14 +6,14 @@ import {
 import { selectFields } from '../../../generated/fields/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
 
 export const select: typeof generatedSelect = (
-    _luvio: Luvio,
+    luvio: Luvio,
     params: ResourceRequestConfig
 ): Fragment => {
     let { optionalFields } = params.queryParams;
     optionalFields =
         optionalFields === undefined ? ['.CloneSourceId'] : [...optionalFields, '.CloneSourceId'];
 
-    return selectFields({
+    return selectFields(luvio, {
         ...params,
         queryParams: {
             ...params.queryParams,

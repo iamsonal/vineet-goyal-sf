@@ -56,17 +56,10 @@ export function convertRecordFieldsArrayToTrie(
     return root;
 }
 
-/**
- * Convert a list of fields and optional fields into FieldValueRepresentation PathSelection
- */
-export function createPathSelectionFromFieldsArray(
-    fields: string[],
-    optionalFields: string[] = []
+export function createPathSelection(
+    propertyName: string,
+    fieldDefinition: RecordFieldTrie
 ): PathSelection {
-    return createPathSelection(convertRecordFieldsArrayToTrie(fields, optionalFields));
-}
-
-export function createPathSelection(fieldDefinition: RecordFieldTrie): PathSelection {
     const fieldsSelection: PathSelection[] = [];
 
     const { children } = fieldDefinition;
@@ -106,7 +99,7 @@ export function createPathSelection(fieldDefinition: RecordFieldTrie): PathSelec
 
     return {
         kind: 'Object',
-        name: FIELDS_SELECTION.name,
+        name: propertyName,
         selections: fieldsSelection,
     };
 }

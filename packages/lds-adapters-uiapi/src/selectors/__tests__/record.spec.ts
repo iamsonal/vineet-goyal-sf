@@ -1,6 +1,7 @@
+import { RecordRepresentation } from '../../generated/types/RecordRepresentation';
 import { buildSelectionFromFields, buildSelectionFromRecord } from '../record';
 
-const record = {
+const record: RecordRepresentation = {
     apiName: 'Opportunity',
     childRelationships: {},
     eTag: '7f6eb86a91a64f470a43741c9cd6dd07',
@@ -36,6 +37,8 @@ const record = {
                     recordTypeId: '0123000000009GvAAI',
                 },
                 systemModstamp: '2019-06-12T12:20:33.000Z',
+                weakEtag: 0,
+                recordTypeId: null,
             },
         },
         AccountId: {
@@ -69,6 +72,8 @@ const record = {
                     recordTypeId: '01230000000010MAAQ',
                 },
                 systemModstamp: '2019-06-17T04:29:27.000Z',
+                weakEtag: 0,
+                recordTypeId: null,
             },
         },
         IsDeleted: {
@@ -91,6 +96,8 @@ const record = {
         recordTypeId: '01230000000010MAAQ',
     },
     systemModstamp: '2018-02-06T12:02:25.000Z',
+    weakEtag: 0,
+    recordTypeId: null,
 };
 
 describe('buildSelectionFromFields', () => {

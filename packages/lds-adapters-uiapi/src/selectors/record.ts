@@ -35,7 +35,7 @@ export function isSpanningRecord(
 export function createRecordSelection(fieldDefinition: RecordFieldTrie): PathSelection[] {
     const sel = dynamicSelect({
         childRelationships: CHILD_RELATIONSHIP_SELECTION,
-        fields: createPathSelection(fieldDefinition),
+        fields: createPathSelection('fields', fieldDefinition),
     });
     return [...sel.selections, DRAFTS_SELECTION];
 }

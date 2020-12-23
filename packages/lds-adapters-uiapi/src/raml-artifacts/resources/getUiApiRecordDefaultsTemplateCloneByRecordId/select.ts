@@ -3,9 +3,7 @@ import {
     ResourceRequestConfig,
     select as generatedSelect,
 } from '../../../generated/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
-import { dynamicSelect } from '../../../generated/types/RecordDefaultsTemplateCloneRepresentation';
-import { dynamicSelect as dynamicSelect__RecordTemplateCloneRepresentation } from '../../../generated/types/RecordTemplateCloneRepresentation';
-import { createPathSelectionFromFieldsArray } from '../../../util/fields';
+import { selectFields } from '../../../generated/fields/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
 
 export const select: typeof generatedSelect = (
     _luvio: Luvio,
@@ -15,13 +13,11 @@ export const select: typeof generatedSelect = (
     optionalFields =
         optionalFields === undefined ? ['.CloneSourceId'] : [...optionalFields, '.CloneSourceId'];
 
-    return dynamicSelect({
-        record: {
-            kind: 'Link',
-            name: 'record',
-            fragment: dynamicSelect__RecordTemplateCloneRepresentation({
-                fields: createPathSelectionFromFieldsArray([], optionalFields),
-            }),
+    return selectFields({
+        ...params,
+        queryParams: {
+            ...params.queryParams,
+            optionalFields,
         },
     });
 };

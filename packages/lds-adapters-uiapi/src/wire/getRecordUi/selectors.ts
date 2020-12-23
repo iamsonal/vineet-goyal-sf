@@ -1,7 +1,8 @@
 import { Selector, PathSelection } from '@luvio/engine';
 
 import { ArrayPrototypePush } from '../../util/language';
-import { extractRecordFields, buildSelectionFromFields } from '../../selectors/record';
+import { buildSelectionFromFields } from '../../selectors/record';
+import { extractFields } from '../../util/fields';
 
 import { RecordRepresentation } from '../../generated/types/RecordRepresentation';
 import { select as objectInfoSelect } from '../../generated/types/ObjectInfoRepresentation';
@@ -62,7 +63,7 @@ export function buildRecordUiSelector(
             selections: layoutTypeSelections,
         });
         const optionalFields = recordOptionalFields[recordId];
-        const fields = extractRecordFields(recordData);
+        const fields = extractFields(recordData);
         ArrayPrototypePush.call(recordSelections, {
             kind: 'Link',
             name: recordId,

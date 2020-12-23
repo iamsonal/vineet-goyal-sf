@@ -2,39 +2,24 @@ import {
     ResourceRequestConfig,
     select as generatedSelect,
 } from '../../../generated/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
+import { dynamicSelect } from '../../../generated/types/RecordDefaultsTemplateCreateRepresentation';
+import { dynamicSelect as dynamicSelect__RecordTemplateCreateRepresentation } from '../../../generated/types/RecordTemplateCreateRepresentation';
+import { createPathSelectionFromFieldsArray } from '../../../util/fields';
 import { Luvio, Fragment } from '@luvio/engine';
-import { select as objectInfoRepresentationSelect } from '../../../generated/types/ObjectInfoRepresentation';
-import { buildSelectionFromFields } from '../../../selectors/recordTemplate';
-
 export const select: typeof generatedSelect = (
     _luvio: Luvio,
     params: ResourceRequestConfig
 ): Fragment => {
-    const objectInfoSelections = objectInfoRepresentationSelect();
-
     let { optionalFields } = params.queryParams;
     optionalFields = optionalFields === undefined ? [] : optionalFields;
-    const recordSelections = buildSelectionFromFields(optionalFields);
 
-    return {
-        kind: 'Fragment',
-        private: [],
-        selections: [
-            {
-                kind: 'Link',
-                name: 'objectInfos',
-                map: true,
-                fragment: objectInfoSelections,
-            },
-            {
-                kind: 'Link',
-                name: 'record',
-                fragment: {
-                    kind: 'Fragment',
-                    private: [],
-                    selections: recordSelections,
-                },
-            },
-        ],
-    };
+    return dynamicSelect({
+        record: {
+            kind: 'Link',
+            name: 'record',
+            fragment: dynamicSelect__RecordTemplateCreateRepresentation({
+                fields: createPathSelectionFromFieldsArray([], optionalFields),
+            }),
+        },
+    });
 };

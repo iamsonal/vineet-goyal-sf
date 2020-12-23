@@ -1,6 +1,7 @@
-import { buildSelectionFromFields, buildSelectionFromRecord } from '../record';
+import { RecordRepresentation } from '../../generated/types/RecordRepresentation';
+import { extractFields } from '../fields';
 
-const record = {
+const record: RecordRepresentation = {
     apiName: 'Opportunity',
     childRelationships: {},
     eTag: '7f6eb86a91a64f470a43741c9cd6dd07',
@@ -36,6 +37,8 @@ const record = {
                     recordTypeId: '0123000000009GvAAI',
                 },
                 systemModstamp: '2019-06-12T12:20:33.000Z',
+                weakEtag: 0,
+                recordTypeId: null,
             },
         },
         AccountId: {
@@ -69,6 +72,8 @@ const record = {
                     recordTypeId: '01230000000010MAAQ',
                 },
                 systemModstamp: '2019-06-17T04:29:27.000Z',
+                weakEtag: 0,
+                recordTypeId: null,
             },
         },
         IsDeleted: {
@@ -91,44 +96,22 @@ const record = {
         recordTypeId: '01230000000010MAAQ',
     },
     systemModstamp: '2018-02-06T12:02:25.000Z',
+    weakEtag: 0,
+    recordTypeId: null,
 };
 
-describe('buildSelectionFromFields', () => {
-    it('should return correct selector from empty fields array', () => {
-        const selection = buildSelectionFromFields([]);
-        expect(selection).toMatchSnapshot();
-    });
-
-    it('should return correct selector from fields array', () => {
-        const selection = buildSelectionFromFields([
-            'Opportunity.Account.Name',
-            'Opportunity.Account.Id',
-        ]);
-        expect(selection).toMatchSnapshot();
-    });
-
-    it('should return correct selector from fields array when multiple spanning api names are present', () => {
-        const selection = buildSelectionFromFields([
-            'Opportunity.Account.Name',
-            'Opportunity.Account.Id',
-            'Opportunity.CreatedBy.Id',
-            'Opportunity.IsDeleted',
-        ]);
-        expect(selection).toMatchSnapshot();
-    });
-
-    it('should build optional field selections correctly', () => {
-        const selection = buildSelectionFromFields(
-            ['Opportunity.Account.Name'],
-            ['Opportunity.Account.Id']
-        );
-        expect(selection).toMatchSnapshot();
-    });
-});
-
-describe('buildSelectionFromRecord', () => {
+describe('extractRecordFields', () => {
     it('should return the correct fields from the passed RecordRepresentation', () => {
-        const selection = buildSelectionFromRecord(record);
-        expect(selection).toMatchSnapshot();
+        const fields = extractFields(record);
+        expect(fields).toEqual([
+            'Opportunity.Account.Id',
+            'Opportunity.Account.Name',
+            'Opportunity.Account.RecordTypeId',
+            'Opportunity.AccountId',
+            'Opportunity.CreatedBy.Id',
+            'Opportunity.CreatedBy.Name',
+            'Opportunity.IsDeleted',
+            'Opportunity.IsPremier_Attached__c',
+        ]);
     });
 });

@@ -12,8 +12,8 @@ function generateFieldsClosure(shape, state) {
         INGEST_PATH_IMPORT,
         LUVIO_IMPORT,
         STORE_IMPORT,
-        RECORD_REPRESENTATION_LIKE_IMPORT,
-        RECORD_REPRESENTATION_LIKE_NORMALIZED_IMPORT,
+        FIELD_MAP_REPRESENTATION_IMPORT,
+        FIELD_MAP_REPRESENTATION_NORMALIZED_IMPORT,
         CONVERT_TRIE_TO_FIELDS_IMPORT,
         MARK_MISSING_OPTIONAL_FIELDS_IMPORT,
     } = importsMap;
@@ -25,7 +25,7 @@ function generateFieldsClosure(shape, state) {
         const ingest = ${dynamicIngestImport}(${generateShapeFieldsIngest(shape, state)});
 
         return (
-            data: ${RECORD_REPRESENTATION_LIKE_IMPORT},
+            data: ${FIELD_MAP_REPRESENTATION_IMPORT},
             path: ${INGEST_PATH_IMPORT},
             luvio: ${LUVIO_IMPORT},
             store: ${STORE_IMPORT},
@@ -33,8 +33,8 @@ function generateFieldsClosure(shape, state) {
         ) => {
             const link = ingest(data, path, luvio, store, timestamp);
             const recordNode = luvio.getNode<
-                ${RECORD_REPRESENTATION_LIKE_NORMALIZED_IMPORT},
-                ${RECORD_REPRESENTATION_LIKE_IMPORT}
+                ${FIELD_MAP_REPRESENTATION_NORMALIZED_IMPORT},
+                ${FIELD_MAP_REPRESENTATION_IMPORT}
             >(link.__ref!);
             ${MARK_MISSING_OPTIONAL_FIELDS_IMPORT}(recordNode, ${CONVERT_TRIE_TO_FIELDS_IMPORT}(trackedFields));
             return link;
@@ -141,9 +141,9 @@ function generateResourceIngestSuccess(resource, state) {
     const { namedImport } = importContext;
     const {
         RECORD_INGEST,
-        RECORD_REPRESENTATION_LIKE_IMPORT,
+        FIELD_MAP_REPRESENTATION_IMPORT,
         RESOLVE_RECORD_CONFLICT_MAP,
-        RECORD_REPRESENTATION_LIKE_NORMALIZED_IMPORT,
+        FIELD_MAP_REPRESENTATION_NORMALIZED_IMPORT,
         MARK_MISSING_OPTIONAL_FIELDS_IMPORT,
         CONVERT_TRIE_TO_FIELDS_IMPORT,
         RECORD_FIELD_TRIE,
@@ -165,7 +165,7 @@ function generateResourceIngestSuccess(resource, state) {
 
     const resourceIngestFunction = deindent`
     return (
-      data: ${RECORD_REPRESENTATION_LIKE_IMPORT},
+      data: ${FIELD_MAP_REPRESENTATION_IMPORT},
       path: ${INGEST_PATH_IMPORT},
       luvio: ${LUVIO_IMPORT},
       store: ${STORE_IMPORT},
@@ -174,8 +174,8 @@ function generateResourceIngestSuccess(resource, state) {
       const link = ingest(data, path, luvio, store, timestamp);
       ${RESOLVE_RECORD_CONFLICT_MAP}(luvio, recordConflictMap);
       const recordNode = luvio.getNode<
-          ${RECORD_REPRESENTATION_LIKE_NORMALIZED_IMPORT},
-          ${RECORD_REPRESENTATION_LIKE_IMPORT}
+          ${FIELD_MAP_REPRESENTATION_NORMALIZED_IMPORT},
+          ${FIELD_MAP_REPRESENTATION_IMPORT}
       >(link.__ref!);
       ${MARK_MISSING_OPTIONAL_FIELDS_IMPORT}(recordNode, ${CONVERT_TRIE_TO_FIELDS_IMPORT}(trackedFields));
       return link;

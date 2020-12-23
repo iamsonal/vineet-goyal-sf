@@ -26,23 +26,17 @@ import getFieldApiName from '../primitives/FieldId/coerce';
 import { dedupe } from '../validation/utils';
 import { MASTER_RECORD_TYPE_ID } from './layout';
 import { UIAPI_SUPPORTED_ENTITY_API_NAMES } from './supported-entities';
-import { MAX_RECORD_DEPTH, insertFieldsIntoTrie, isSpanningRecord } from '../selectors/record';
+import { isSpanningRecord } from '../selectors/record';
 import { RecordCreateDefaultRecordRepresentation } from '../generated/types/RecordCreateDefaultRecordRepresentation';
 import { ObjectFreeze } from '../generated/adapters/adapter-utils';
+import {
+    FieldMapRepresentation,
+    insertFieldsIntoTrie,
+    MAX_RECORD_DEPTH,
+    FieldMapRepresentationNormalized,
+} from './fields';
 
 type FieldValueRepresentationValue = FieldValueRepresentation['value'];
-export type RecordRepresentationLikeNormalized = {
-    apiName: string;
-    fields: {
-        [key: string]: StoreLink;
-    };
-};
-export type RecordRepresentationLike = {
-    apiName: string;
-    fields: {
-        [key: string]: FieldValueRepresentation;
-    };
-};
 
 const CUSTOM_API_NAME_SUFFIX = '__c';
 const CUSTOM_RELATIONSHIP_FIELD_SUFFIX = '__r';
@@ -153,7 +147,7 @@ export function extractTrackedFields(
 
 export function extractTrackedFieldsToTrie(
     recordId: string,
-    node: ProxyGraphNode<RecordRepresentationLikeNormalized, RecordRepresentationLike>,
+    node: ProxyGraphNode<FieldMapRepresentationNormalized, FieldMapRepresentation>,
     root: RecordFieldTrie,
     visitedRecordIds: Record<string, boolean> = {},
     depth: number = 0
@@ -368,7 +362,7 @@ function mergeFieldsTries(rootA: RecordFieldTrie, rootB: RecordFieldTrie) {
 
 export function getTrackedFields(
     key: string,
-    graphNode: ProxyGraphNode<RecordRepresentationLikeNormalized, RecordRepresentationLike>,
+    graphNode: ProxyGraphNode<FieldMapRepresentationNormalized, FieldMapRepresentation>,
     fieldsFromConfig?: string[]
 ): string[] {
     const fieldsList = fieldsFromConfig === undefined ? [] : [...fieldsFromConfig];
@@ -635,7 +629,7 @@ export function getRecordTypeId(record: RecordRepresentation | RecordLayoutFragm
 // This function traverses through a record and marks missing
 // optional fields as "missing"
 export function markMissingOptionalFields(
-    record: ProxyGraphNode<RecordRepresentationLikeNormalized, RecordRepresentationLike>,
+    record: ProxyGraphNode<FieldMapRepresentationNormalized, FieldMapRepresentation>,
     optionalFields: string[]
 ): void {
     if (!isGraphNode(record)) {
@@ -700,7 +694,7 @@ export function markNulledOutRequiredFields(
 }
 
 function _markMissingPath(
-    record: ProxyGraphNode<RecordRepresentationLikeNormalized, RecordRepresentationLike>,
+    record: ProxyGraphNode<FieldMapRepresentationNormalized, FieldMapRepresentation>,
     path: string[]
 ): void {
     // Filter out Error and null nodes

@@ -1,6 +1,7 @@
 const path = require('path');
 const cwd = process.cwd();
 
+const src_util_fields = path.join(cwd, 'src', 'util', 'fields');
 const src_util_records = path.join(cwd, 'src', 'util', 'records');
 const src_util_record_ingest = path.join(cwd, 'src', 'util', 'record-ingest');
 const src_helpers_RecordRepresentation_resolveConflict = path.join(
@@ -14,13 +15,10 @@ const src_helpers_RecordRepresentation_resolveConflict = path.join(
 function createImportsMap(importContext) {
     const { namedImport, importAbsolutePath } = importContext;
     return {
-        RECORD_REPRESENTATION_LIKE_IMPORT: namedImport(
-            src_util_records,
-            'RecordRepresentationLike'
-        ),
-        RECORD_REPRESENTATION_LIKE_NORMALIZED_IMPORT: namedImport(
-            src_util_records,
-            'RecordRepresentationLikeNormalized'
+        FIELD_MAP_REPRESENTATION_IMPORT: namedImport(src_util_fields, 'FieldMapRepresentation'),
+        FIELD_MAP_REPRESENTATION_NORMALIZED_IMPORT: namedImport(
+            src_util_fields,
+            'FieldMapRepresentationNormalized'
         ),
         CONVERT_TRIE_TO_FIELDS_IMPORT: namedImport(src_util_records, 'convertTrieToFields'),
         MARK_MISSING_OPTIONAL_FIELDS_IMPORT: namedImport(

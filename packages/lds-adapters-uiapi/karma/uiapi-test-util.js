@@ -178,6 +178,21 @@ function mockGetRecordActionsNetwork(config, mockData) {
     }
 }
 
+function mockGetGlobalActionsNetwork(config, mockData) {
+    const { ...queryParams } = config;
+    const basePath = `${URL_BASE}/actions/global`;
+    const paramMatch = sinon.match({
+        baseUri: BASE_URI,
+        basePath,
+        queryParams,
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
 function mockGetRelatedListActionsNetwork(config, mockData) {
     const { recordIds, relatedListId, ...queryParams } = config;
     const basePath = `${URL_BASE}/actions/record/${recordIds
@@ -865,6 +880,7 @@ export {
     mockGetRecordNetwork,
     mockGetRecordsNetwork,
     mockGetRecordActionsNetwork,
+    mockGetGlobalActionsNetwork,
     mockGetRecordEditActionsNetwork,
     mockGetObjectCreateActionsNetwork,
     mockGetRecordCreateDefaultsNetwork,

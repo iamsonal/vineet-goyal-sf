@@ -1,0 +1,52 @@
+{
+    "actions": {
+        "Global": {
+            "actions": [
+                {
+                    "actionListContext": "Dockable",
+                    "actionTarget": "/services/data/v52.0/quickActions/NewEvent/describe",
+                    "actionTargetType": "Describe",
+                    "apiName": "Global.NewEvent",
+                    "externalId": "00Dxx0000006GVz:Global::Dockable:Desktop:09Dxx0000004CKb",
+                    "iconUrl": "http://heyyy-dev-ed.localhost.internal.salesforce.com:6109/img/icon/t4v35/action/new_event_120.png",
+                    "id": "0JVxx0000001474GAA",
+                    "isMassAction": "false",
+                    "label": "New Event",
+                    "primaryColor": "EB7092",
+                    "relatedListRecordId": null,
+                    "relatedSourceObject": null,
+                    "section": null,
+                    "sourceObject": "Global",
+                    "subtype": "Create",
+                    "targetObject": "Event",
+                    "targetUrl": null,
+                    "type": "QuickAction"
+                },
+                {
+                    "actionListContext": "Dockable",
+                    "actionTarget": "/services/data/v52.0/quickActions/NewContact/describe",
+                    "actionTargetType": "Describe",
+                    "apiName": "Global.NewContact",
+                    "externalId": "00Dxx0000006GVz:Global::Dockable:Desktop:09Dxx0000004CKQ",
+                    "iconUrl": "http://heyyy-dev-ed.localhost.internal.salesforce.com:6109/img/icon/t4v35/action/new_contact_120.png",
+                    "id": "0JVxx0000001476GAA",
+                    "isMassAction": "false",
+                    "label": "New Contact",
+                    "primaryColor": "A094ED",
+                    "relatedListRecordId": null,
+                    "relatedSourceObject": null,
+                    "section": null,
+                    "sourceObject": "Global",
+                    "subtype": "Create",
+                    "targetObject": "Contact",
+                    "targetUrl": null,
+                    "type": "QuickAction"
+                }
+            ],
+            "links": [],
+            "url": "/services/data/v52.0/ui-api/actions/global?retrievalMode=pagelayout&amp;apiNames=Global.NewEvent,Global.NewContact"
+        }
+    },
+    "eTag": "da8c1e7ec9f1cce2c6093d0c97b07068",
+    "url": "/services/data/v52.0/ui-api/actions/global?retrievalMode=pagelayout&amp;apiNames=Global.NewEvent,Global.NewContact"
+}

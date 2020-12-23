@@ -23,6 +23,7 @@ describe('SFDC exports', () => {
             'getRecord',
             'getRecords',
             'getRecordActions',
+            'getGlobalActions',
             'getRecordAvatars',
             'getRecordCreateDefaults',
             'getRecordTemplateClone',

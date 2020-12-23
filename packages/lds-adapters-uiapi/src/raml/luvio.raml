@@ -302,6 +302,14 @@ types:
             objectApiName: SalesforceObjectId
             formFactor: SalesforceFormFactor
             sections: SortedStringArray
+    '/global':
+      get:
+        (luvio.adapter):
+          name: getGlobalActions
+          coercedParams:
+            apiNames: SortedStringArrayAllowEmpty
+            formFactor: SalesforceFormFactor
+            sections: SortedStringArray
     '/record/{recordIds}':
       get:
         (luvio.adapter):

@@ -11,6 +11,7 @@ import {
     getLayoutAdapterFactory,
     getLookupActionsAdapterFactory,
     getRecordActionsAdapterFactory,
+    getGlobalActionsAdapterFactory,
     getRecordEditActionsAdapterFactory,
     getRecordsAdapterFactory,
     getObjectCreateActionsAdapterFactory,
@@ -215,4 +216,9 @@ export const getDuplicates = createWireAdapterConstructor(
 export const getObjectCreateActions = createWireAdapterConstructor(
     'getObjectCreateActions',
     getObjectCreateActionsAdapterFactory
+);
+
+export const getGlobalActions = createWireAdapterConstructor(
+    'getGlobalActions',
+    getGlobalActionsAdapterFactory
 );

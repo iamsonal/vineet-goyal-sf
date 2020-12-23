@@ -3374,7 +3374,7 @@ types:
             (oas-collectionFormat): csv
     /global:
       get:
-        description: Retrieve presentation-ready action data for Global contetx.
+        description: Retrieve presentation-ready action data for Global context.
         responses:
           '200':
             description: Success
@@ -3395,9 +3395,21 @@ types:
                 - QuickAction
                 - StandardButton
               (oas-collectionFormat): csv
+          apiNames:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
           formFactor:
             type: string
             required: false
+          retrievalMode:
+            type: string
+            required: false
+            enum:
+              - All
+              - PageLayout
           sections:
             type: array
             required: false

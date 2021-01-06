@@ -14,14 +14,15 @@ const basicResourceRequestConfig: ResourceRequestConfig = {
 const standardResourceRequestConfig: ResourceRequestConfig = {
     urlParams: {
         parentRecordId: 'aParentRecordId',
-        relatedListIds: ['relatedList1', 'relatedList2'],
+        relatedListIds: ['relatedList1__r', 'relatedList2', 'relatedList1'],
     },
     queryParams: {
         fields:
-            'relatedList1:Opportunity.Name,Opportunity.Id;relatedList2:Account.Name,Account.Revenue',
-        optionalFields: 'relatedList1:Opportunity.AccountName;relatedList2:Account.Id',
-        pageSize: 'relatedList1:10;relatedList2:10',
-        sortBy: 'relatedList1:Name;relatedList2:Id',
+            'relatedList1__r:Opportunity.Name,Opportunity.Id;relatedList2:Account.Name,Account.Revenue;relatedList1:Account.Name',
+        optionalFields:
+            'relatedList1__r:Opportunity.AccountName;relatedList2:Account.Id;relatedList1:Account.Id',
+        pageSize: 'relatedList1__r:10;relatedList2:10;relatedList1:15',
+        sortBy: 'relatedList1__r:Name;relatedList2:Id;relatedList1:Account.Name',
     },
 };
 
@@ -50,7 +51,7 @@ describe('createChildResourceParams', () => {
             {
                 urlParams: {
                     parentRecordId: 'aParentRecordId',
-                    relatedListId: 'relatedList1',
+                    relatedListId: 'relatedList1__r',
                 },
                 queryParams: {
                     fields: ['Opportunity.Name', 'Opportunity.Id'],
@@ -69,6 +70,18 @@ describe('createChildResourceParams', () => {
                     optionalFields: ['Account.Id'],
                     pageSize: 10,
                     sortBy: ['Id'],
+                },
+            },
+            {
+                urlParams: {
+                    parentRecordId: 'aParentRecordId',
+                    relatedListId: 'relatedList1',
+                },
+                queryParams: {
+                    fields: ['Account.Name'],
+                    optionalFields: ['Account.Id'],
+                    pageSize: 15,
+                    sortBy: ['Account.Name'],
                 },
             },
         ]);

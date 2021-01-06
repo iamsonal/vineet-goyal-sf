@@ -84,7 +84,7 @@ function extractSingleResourceParamsFromBatchParamString(
 ): string | undefined {
     return batchParamString
         ?.split(';')
-        .find(field => field.startsWith(relatedListId))
+        .find(fieldString => fieldString.split(':')[0] === relatedListId)
         ?.slice(relatedListId.length + 1);
 }
 

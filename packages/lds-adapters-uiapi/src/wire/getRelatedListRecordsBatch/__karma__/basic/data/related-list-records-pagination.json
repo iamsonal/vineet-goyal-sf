@@ -1,0 +1,80 @@
+{
+    "results": [
+        {
+            "result": {
+                "count": 0,
+                "currentPageToken": "0",
+                "currentPageUrl": "/services/data/v51.0/ui-api/related-list-records/0033J00000DAiq9QAD/Opportunities4__r?fields=Opportunity_Community__c%2COwner.Name%2CStageName%2CJob_No__r.Name%2CJob_No__c%2CId%2COwner.Id%2CName%2COpportunity_Community__r.Name&pageSize=10&pageToken=0",
+                "fields": [
+                    "Opportunity_Community__c",
+                    "Owner.Name",
+                    "StageName",
+                    "Job_No__r.Name",
+                    "Job_No__c",
+                    "Id",
+                    "Owner.Id",
+                    "Name",
+                    "Opportunity_Community__r.Name"
+                ],
+                "listInfoETag": null,
+                "listReference": {
+                    "id": null,
+                    "inContextOfRecordId": "0033J00000DAiq9QAD",
+                    "listViewApiName": null,
+                    "objectApiName": null,
+                    "parentObjectApiName": "Contact",
+                    "recordTypeId": "012360000011lFiAAI",
+                    "relatedListId": "Opportunities4__r",
+                    "type": "relatedList"
+                },
+                "nextPageToken": null,
+                "nextPageUrl": null,
+                "optionalFields": [],
+                "pageSize": 10,
+                "previousPageToken": null,
+                "previousPageUrl": null,
+                "records": [],
+                "sortBy": []
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "count": 0,
+                "currentPageToken": "0",
+                "currentPageUrl": "/services/data/v51.0/ui-api/related-list-records/0033J00000DAiq9QAD/Opportunities?fields=Opportunity_Community__c%2COwner.Name%2CStageName%2CJob_No__r.Name%2CJob_No__c%2CId%2COwner.Id%2CName%2COpportunity_Community__r.Name&pageSize=10&pageToken=0&sortBy=-CloseDate",
+                "fields": [
+                    "Opportunity_Community__c",
+                    "Owner.Name",
+                    "StageName",
+                    "Job_No__r.Name",
+                    "Job_No__c",
+                    "Id",
+                    "Owner.Id",
+                    "Name",
+                    "Opportunity_Community__r.Name"
+                ],
+                "listInfoETag": null,
+                "listReference": {
+                    "id": null,
+                    "inContextOfRecordId": "0033J00000DAiq9QAD",
+                    "listViewApiName": null,
+                    "objectApiName": null,
+                    "parentObjectApiName": "Contact",
+                    "recordTypeId": "012360000011lFiAAI",
+                    "relatedListId": "Opportunities",
+                    "type": "relatedList"
+                },
+                "nextPageToken": null,
+                "nextPageUrl": null,
+                "optionalFields": [],
+                "pageSize": 10,
+                "previousPageToken": null,
+                "previousPageUrl": null,
+                "records": [],
+                "sortBy": ["-CloseDate"]
+            },
+            "statusCode": 200
+        }
+    ]
+}

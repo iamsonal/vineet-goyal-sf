@@ -195,4 +195,18 @@ describe('error cases', () => {
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
         expect(element.getWiredData()).toBeImmutable();
     });
+
+    describe('gack cases', () => {
+        it('gets data with valid parameters', async () => {
+            const mockData = getMock('related-list-records-pagination');
+            const params = extractRelatedListsBatchParamsFromMockData(mockData);
+            const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
+
+            mockGetRelatedListRecordsBatchNetwork(resourceConfig, mockData);
+            const element = await setupElement(params, RelatedListRecordsBatch);
+
+            const wireData = element.getWiredData();
+            expect(wireData).toEqualSnapshotWithoutEtags(mockData);
+        });
+    });
 });

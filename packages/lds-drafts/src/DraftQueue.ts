@@ -11,6 +11,8 @@ interface BaseDraftAction<T> {
     id: string;
     tag: string;
     request: ResourceRequest;
+    /** Timestamp as unix epoch time */
+    timestamp: number;
 }
 
 export interface CompletedDraftAction<T> extends BaseDraftAction<T> {

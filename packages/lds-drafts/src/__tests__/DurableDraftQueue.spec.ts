@@ -14,6 +14,7 @@ import { ObjectKeys } from '../utils/language';
 import { DurableStoreEntry, DurableStoreEntries } from '@luvio/environments';
 import { createPatchRequest, createPostRequest } from './test-utils';
 import { ResourceRequest } from '@luvio/engine';
+import { buildDraftDurableStoreKey } from '../utils/records';
 
 const DEFAULT_REQUEST: ResourceRequest = {
     method: 'post',
@@ -28,6 +29,21 @@ const DEFAULT_TAG = 'test-tag1';
 
 describe('DurableDraftQueue', () => {
     describe('enqueue', () => {
+        it('creates timestamp in the draft action when created', async () => {
+            jest.spyOn(global.Date, 'now').mockImplementationOnce(() => {
+                return 12345;
+            });
+
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            const draftId = 'fooId';
+
+            const action = await draftQueue.enqueue(DEFAULT_REQUEST, draftId);
+
+            expect(action.timestamp).toEqual(12345);
+        });
+
         it('cannot create post action on record that already exists', async () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
@@ -121,6 +137,26 @@ describe('DurableDraftQueue', () => {
     });
 
     describe('getActionsForTags', () => {
+        it('fetches the original timestamp from when created enqueue', async () => {
+            jest.spyOn(global.Date, 'now').mockImplementationOnce(() => {
+                return 12345;
+            });
+
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            setNetworkConnectivity(network, ConnectivityState.Offline);
+
+            await draftQueue.enqueue(createPostRequest(), DEFAULT_TAG);
+
+            const actions = await draftQueue.getActionsForTags({
+                [DEFAULT_TAG]: true,
+            });
+            expect(actions).toMatchObject({
+                [DEFAULT_TAG]: [{ timestamp: 12345 }],
+            });
+        });
+
         it('can enqueue multiple draft actions', async () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
@@ -299,6 +335,42 @@ describe('DurableDraftQueue', () => {
             await expect(draftQueue.processNextAction()).resolves.toBe(
                 ProcessActionResult.BLOCKED_ON_ERROR
             );
+        });
+
+        it('action is errored but retains original timestamp', async () => {
+            jest.spyOn(global.Date, 'now').mockImplementationOnce(() => {
+                return 12345;
+            });
+
+            const request = {
+                method: 'post',
+                basePath: '/blah',
+                baseUri: 'blahuri',
+                body: null,
+                queryParams: {},
+                urlParams: {},
+                headers: {},
+            };
+
+            const errorPayload: MockPayload = buildErrorMockPayload(
+                request,
+                {},
+                400,
+                'BAD_REQUEST'
+            );
+            const network = buildMockNetworkAdapter([errorPayload]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+
+            const { id } = await draftQueue.enqueue(request, DEFAULT_TAG);
+            const result = await draftQueue.processNextAction();
+            const entryId = buildDraftDurableStoreKey(DEFAULT_TAG, id);
+
+            expect(result).toEqual(ProcessActionResult.ACTION_ERRORED);
+            const draft = await durableStore.getEntries([entryId], DraftDurableSegment);
+            expect(draft[entryId]).toMatchObject({
+                data: { timestamp: 12345 },
+            });
         });
 
         it('network error puts action back in pending', async () => {

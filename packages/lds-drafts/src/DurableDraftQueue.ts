@@ -111,6 +111,7 @@ export class DurableDraftQueue implements DraftQueue {
                 status: DraftActionStatus.Pending,
                 request,
                 tag,
+                timestamp: Date.now(),
             };
             const entry: DurableStoreEntry = { data: action };
             const entries: DurableStoreEntries = { [durableStoreId]: entry };
@@ -151,7 +152,7 @@ export class DurableDraftQueue implements DraftQueue {
                 return ProcessActionResult.NO_ACTION_TO_PROCESS;
             }
 
-            const { status, id, tag } = action;
+            const { status, id, tag, timestamp } = action;
 
             if (status === DraftActionStatus.Error) {
                 return ProcessActionResult.BLOCKED_ON_ERROR;
@@ -186,6 +187,7 @@ export class DurableDraftQueue implements DraftQueue {
                                         tag,
                                         request,
                                         response,
+                                        timestamp,
                                     });
                                 }
 
@@ -201,6 +203,7 @@ export class DurableDraftQueue implements DraftQueue {
                                 tag,
                                 request,
                                 error: err,
+                                timestamp,
                             };
 
                             const entry: DurableStoreEntry = { data: errorAction };

@@ -215,7 +215,7 @@ function printCommits(corePath) {
         // Sample Main branch version: // engine version: 0.19.4-13cdff7d
         // Sample Patch branch version: // engine version: 0.19.4-230.2-758e836
         // When we split the branch at the end of the release, for the first patch release we will get the main branch version
-        if (MAIN_BRANCH.endsWith('/patch') && version[2]) {
+        if (CORE_BRANCH.endsWith('/patch') && version[2]) {
             hash = version[2];
         } else {
             hash = version[1];
@@ -231,10 +231,17 @@ function printCommits(corePath) {
     }
 
     console.log('* Include commits:');
-    const hash = execSync(`tail -n 1 ${corePath}`)
+    let hash;
+    const version = execSync(`tail -n 1 ${corePath}`)
         .toString()
         .trim()
-        .split('-')[1];
+        .split('-');
+
+    if (CORE_BRANCH.endsWith('/patch') && version[2]) {
+        hash = version[2];
+    } else {
+        hash = version[1];
+    }
 
     const commits = execSync(
         `git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative ${hash}...HEAD`

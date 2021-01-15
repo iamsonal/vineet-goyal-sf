@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-apex",
-    "version": "1.7.1",
+    "version": "1.7.2",
     "description": "Wire adapters for Apex",
     "license": "MIT",
     "main": "dist/umd/es2018/apex-service.js",
@@ -32,9 +32,9 @@
         "registry": "https://npm.lwcjs.org"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.7.1"
+        "@salesforce/lds-bindings": "1.7.2"
     },
     "devDependencies": {
-        "@salesforce/lds-karma": "1.7.1"
+        "@salesforce/lds-karma": "1.7.2"
     }
 }

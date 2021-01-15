@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-uiapi-record-utils",
-    "version": "1.7.1",
+    "version": "1.7.2",
     "description": "LDS Record Utilities",
     "license": "MIT",
     "main": "dist/ldsRecordUtils.js",

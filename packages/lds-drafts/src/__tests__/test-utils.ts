@@ -5,7 +5,7 @@ import {
 } from '@salesforce/lds-adapters-uiapi';
 import { buildRecordFieldStoreKey } from '@salesforce/lds-uiapi-record-utils';
 
-import { DraftAction, DraftActionStatus } from '../DraftQueue';
+import { DraftAction, DraftActionStatus, ErrorDraftAction } from '../DraftQueue';
 import { ObjectKeys } from '../utils/language';
 import { DurableRecordRepresentation } from '../utils/records';
 
@@ -17,6 +17,7 @@ export const STORE_KEY_FIELD__NAME = `UiApi::RecordRepresentation:${RECORD_ID}__
 export const DRAFT_STORE_KEY_FIELD__NAME = `UiApi::RecordRepresentation:${DRAFT_RECORD_ID}__fields__Name`;
 export const DEFAULT_API_NAME = 'Account';
 export const DEFAULT_NAME_FIELD_VALUE = 'Acme';
+export const DEFAULT_TIME_STAMP = 12345;
 
 export const NAME_VALUE = {
     displayValue: null,
@@ -38,7 +39,7 @@ export function buildDurableRecordRepresentation(
     });
     const record: DurableRecordRepresentation = {
         id,
-        apiName: 'Account',
+        apiName: DEFAULT_API_NAME,
         childRelationships: {},
         eTag: '',
         weakEtag: 0,
@@ -114,12 +115,14 @@ export function createDeleteRequest() {
 export function createEditDraftAction(
     recordId: string,
     recordKey: string,
-    nameValue: string = DEFAULT_NAME_FIELD_VALUE
+    nameValue: string = DEFAULT_NAME_FIELD_VALUE,
+    timestamp: number = DEFAULT_TIME_STAMP
 ): DraftAction<RecordRepresentation> {
     return {
         id: new Date().getUTCMilliseconds().toString(),
         status: DraftActionStatus.Pending,
         tag: recordKey,
+        timestamp: timestamp,
         request: {
             baseUri: '/services/data/v52.0',
             basePath: `/ui-api/records/${recordId}`,
@@ -135,12 +138,14 @@ export function createEditDraftAction(
 export function createPostDraftAction(
     recordKey: string,
     nameValue: string = DEFAULT_NAME_FIELD_VALUE,
-    apiName: string = 'Account'
+    apiName: string = DEFAULT_API_NAME,
+    timestamp: number = DEFAULT_TIME_STAMP
 ): DraftAction<RecordRepresentation> {
     return {
         id: new Date().getUTCMilliseconds().toString(),
         status: DraftActionStatus.Pending,
         tag: recordKey,
+        timestamp: timestamp,
         request: {
             baseUri: '/services/data/v52.0',
             basePath: `/ui-api/records`,
@@ -155,16 +160,63 @@ export function createPostDraftAction(
 
 export function createDeleteDraftAction(
     recordId: string,
-    recordKey: string
+    recordKey: string,
+    timestamp: number = DEFAULT_TIME_STAMP
 ): DraftAction<RecordRepresentation> {
     return {
         id: new Date().getUTCMilliseconds().toString(),
         status: DraftActionStatus.Pending,
         tag: recordKey,
+        timestamp: timestamp,
         request: {
             baseUri: '/services/data/v52.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'delete',
+            body: {},
+            urlParams: {},
+            queryParams: {},
+            headers: {},
+        },
+    };
+}
+
+export function createErrorDraftAction(
+    recordId: string,
+    recordKey: string,
+    timestamp: number = DEFAULT_TIME_STAMP
+): ErrorDraftAction<RecordRepresentation> {
+    return {
+        id: new Date().getUTCMilliseconds().toString(),
+        status: DraftActionStatus.Error,
+        error: 'SOMETHING WENT WRONG',
+        tag: recordKey,
+        timestamp: timestamp,
+        request: {
+            baseUri: '/services/data/v52.0',
+            basePath: `/ui-api/records/${recordId}`,
+            method: 'delete',
+            body: {},
+            urlParams: {},
+            queryParams: {},
+            headers: {},
+        },
+    };
+}
+
+export function createUnsupportedRequestDraftAction(
+    recordId: string,
+    recordKey: string,
+    timestamp: number = DEFAULT_TIME_STAMP
+): DraftAction<RecordRepresentation> {
+    return {
+        id: new Date().getUTCMilliseconds().toString(),
+        status: DraftActionStatus.Pending,
+        tag: recordKey,
+        timestamp: timestamp,
+        request: {
+            baseUri: '/services/data/v52.0',
+            basePath: `/ui-api/records/${recordId}`,
+            method: 'get',
             body: {},
             urlParams: {},
             queryParams: {},

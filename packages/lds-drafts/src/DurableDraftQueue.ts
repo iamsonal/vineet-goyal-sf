@@ -8,6 +8,7 @@ import {
     DraftActionStatus,
     ProcessActionResult,
     ObjectAsSet,
+    DraftQueueState,
 } from './DraftQueue';
 import { ResourceRequest, NetworkAdapter, FetchResponse } from '@luvio/engine';
 import { ObjectKeys } from './utils/language';
@@ -51,10 +52,15 @@ export class DurableDraftQueue implements DraftQueue {
     private durableStore: DurableStore;
     private networkAdapter: NetworkAdapter;
     private draftQueueCompletedListeners: DraftQueueCompletedListener[] = [];
+    private state = DraftQueueState.Stopped;
 
     constructor(store: DurableStore, network: NetworkAdapter) {
         this.durableStore = store;
         this.networkAdapter = network;
+    }
+
+    getQueueState(): DraftQueueState {
+        return this.state;
     }
 
     actionsForTag(tag: string, queue: DraftAction<unknown>[]): DraftAction<unknown>[] {
@@ -65,7 +71,7 @@ export class DurableDraftQueue implements DraftQueue {
         return this.actionsForTag(tag, queue).filter(action => action.request.method === 'delete');
     }
 
-    private getQueueActions(): Promise<DraftAction<unknown>[]> {
+    getQueueActions(): Promise<DraftAction<unknown>[]> {
         return this.durableStore.getAllEntries(DraftDurableSegment).then(durableEntries => {
             const queue: DraftAction<unknown>[] = [];
             if (durableEntries === undefined) {
@@ -149,16 +155,20 @@ export class DurableDraftQueue implements DraftQueue {
         return this.getQueueActions().then(queue => {
             const action = queue[0];
             if (action === undefined) {
+                //TODO: once we have startDraftQueue/stopDraftQueue implemented this will need to be set to the last user defined state.
+                this.state = DraftQueueState.Started;
                 return ProcessActionResult.NO_ACTION_TO_PROCESS;
             }
 
             const { status, id, tag, timestamp } = action;
 
             if (status === DraftActionStatus.Error) {
+                this.state = DraftQueueState.Error;
                 return ProcessActionResult.BLOCKED_ON_ERROR;
             }
 
             if (status !== DraftActionStatus.Pending) {
+                this.state = DraftQueueState.Started;
                 return ProcessActionResult.ACTION_ALREADY_PROCESSING;
             }
 
@@ -191,6 +201,7 @@ export class DurableDraftQueue implements DraftQueue {
                                     });
                                 }
 
+                                this.state = DraftQueueState.Started;
                                 return ProcessActionResult.ACTION_SUCCEEDED;
                             });
                     })
@@ -211,6 +222,7 @@ export class DurableDraftQueue implements DraftQueue {
                             return this.durableStore
                                 .setEntries(entries, DraftDurableSegment)
                                 .then(() => {
+                                    this.state = DraftQueueState.Error;
                                     return ProcessActionResult.ACTION_ERRORED;
                                 });
                         }
@@ -221,6 +233,7 @@ export class DurableDraftQueue implements DraftQueue {
                         return this.durableStore
                             .setEntries(entries, DraftDurableSegment)
                             .then(() => {
+                                this.state = DraftQueueState.Waiting;
                                 return ProcessActionResult.NETWORK_ERROR;
                             });
                     });

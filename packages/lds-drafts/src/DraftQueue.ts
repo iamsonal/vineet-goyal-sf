@@ -37,6 +37,10 @@ export function isDraftCompleted<T>(draft: BaseDraftAction<T>): draft is Complet
     return draft.status === DraftActionStatus.Completed;
 }
 
+export function isDraftError<T>(draft: BaseDraftAction<T>): draft is ErrorDraftAction<T> {
+    return draft.status === DraftActionStatus.Error;
+}
+
 export type DraftAction<T> =
     | CompletedDraftAction<T>
     | PendingDraftAction<T>
@@ -69,6 +73,26 @@ export enum ProcessActionResult {
 
 export type ObjectAsSet = { [key: string]: true };
 
+export enum DraftQueueState {
+    /** Currently processing an item in the queue or queue is empty and waiting to process the next item. */
+    Started = 'started',
+    /**
+     * The queue is stopped and will not attempt to upload any drafts until startDraftQueue() is called.
+     * This is the initial state when the DraftQueue gets instantiated.
+     */
+    Stopped = 'stopped',
+    /**
+     * The queue is stopped due to a blocking error from the last upload attempt.
+     * The queue will not run again until startDraftQueue() is called.
+     */
+    Error = 'error',
+    /**
+     * There was a network error and the queue will attempt to upload again shortly.
+     * To attempt to force an upload now call startDraftQueue().
+     */
+    Waiting = 'waiting',
+}
+
 export interface DraftQueue {
     /**
      * Enqueues a ResourceRequest into the DraftQueue
@@ -95,4 +119,12 @@ export interface DraftQueue {
      * Processes the next action in the draft queue
      */
     processNextAction(): Promise<ProcessActionResult>;
+
+    /**
+     * Get the current list of draft actions in queue
+     */
+    getQueueActions(): Promise<DraftAction<unknown>[]>;
+
+    /** The current state of the DraftQueue */
+    getQueueState(): DraftQueueState;
 }

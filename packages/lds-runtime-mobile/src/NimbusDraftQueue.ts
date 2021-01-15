@@ -8,6 +8,7 @@ import {
     DraftActionMap,
     DraftQueueCompletedListener,
     ProcessActionResult,
+    DraftQueueState,
 } from '@salesforce/lds-drafts';
 import { JSONParse, JSONStringify, ObjectKeys } from './utils/language';
 
@@ -59,5 +60,13 @@ export class NimbusDraftQueue implements DraftQueue {
 
     processNextAction(): Promise<ProcessActionResult> {
         return Promise.reject('Cannot call processNextAction from the NimbusDraftQueue');
+    }
+
+    getQueueActions(): Promise<DraftAction<unknown>[]> {
+        return Promise.reject('Cannot call getQueueActions from the NimbusDraftQueue');
+    }
+
+    getQueueState(): DraftQueueState {
+        throw new Error('Cannot call getQueueState from the NimbusDraftQueue');
     }
 }

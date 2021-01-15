@@ -13,6 +13,8 @@ import {
     DraftRecordRepresentation,
     DraftDurableSegment,
     DurableDraftQueue,
+    DraftManager,
+    DraftActionOperationType,
 } from '@salesforce/lds-drafts';
 import { RECORD_TTL } from '@salesforce/lds-adapters-uiapi/karma/dist/uiapi-constants';
 import { recordIdGenerator } from '@mobileplatform/record-id-generator';
@@ -59,6 +61,7 @@ function createTestRecord(
 describe('lds drafts integration tests', () => {
     let luvio: Luvio;
     let draftQueue: DraftQueue;
+    let draftManager: DraftManager;
     let networkAdapter: MockNimbusAdapter;
     let durableStore: MockNimbusDurableStore;
     let createRecord;
@@ -76,6 +79,7 @@ describe('lds drafts integration tests', () => {
         const runtime = await import('../main');
         luvio = runtime.luvio;
         draftQueue = runtime.draftQueue;
+        draftManager = runtime.draftManager;
         (luvio as any).environment.store.reset();
 
         createRecord = createRecordAdapterFactory(luvio);
@@ -135,6 +139,15 @@ describe('lds drafts integration tests', () => {
             const tag = parsedValue['data']['tag'];
             const formattedTagWithRecordId = `UiApi::RecordRepresentation:${recordId}`;
             expect(tag).toBe(formattedTagWithRecordId);
+        });
+
+        it('creates a create item in queue visible by draft manager', async () => {
+            await createRecord({ apiName: API_NAME, fields: { Name: 'Justin' } });
+            const subject = await draftManager.getQueue();
+            expect(subject.items.length).toBe(1);
+            expect(subject.items[0]).toMatchObject({
+                operationType: DraftActionOperationType.Create,
+            });
         });
     });
 
@@ -329,6 +342,31 @@ describe('lds drafts integration tests', () => {
             );
             expect(getRecordCallbackSpy.mock.calls[1][0].data.drafts).toBeUndefined();
         });
+
+        it('creates update item in queue visible by draft manager', async () => {
+            const originalNameValue = 'Justin';
+            const draftOneNameValue = 'Jason';
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(
+                    createTestRecord(RECORD_ID, originalNameValue, originalNameValue, 1)
+                ),
+            });
+
+            await getRecord({ recordId: RECORD_ID, fields: ['Account.Name'] });
+            // create a draft edit
+            await updateRecord({
+                recordId: RECORD_ID,
+                fields: { Name: draftOneNameValue },
+            });
+
+            const subject = await draftManager.getQueue();
+            expect(subject.items.length).toBe(1);
+            expect(subject.items[0]).toMatchObject({
+                operationType: DraftActionOperationType.Update,
+            });
+        });
     });
 
     describe('deleteRecord', () => {
@@ -359,6 +397,24 @@ describe('lds drafts integration tests', () => {
 
             const deletedRecord = (getRecordSnapshot.data as unknown) as DraftRecordRepresentation;
             expect(deletedRecord.drafts.deleted).toBe(true);
+        });
+
+        it('creates delete item in queue visible by draft manager', async () => {
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(createTestRecord(RECORD_ID, 'Mock', 'Mock', 1)),
+            });
+
+            await getRecord({ recordId: RECORD_ID, fields: ['Account.Name'] });
+            // delete the record
+            await deleteRecord(RECORD_ID);
+
+            const subject = await draftManager.getQueue();
+            expect(subject.items.length).toBe(1);
+            expect(subject.items[0]).toMatchObject({
+                operationType: DraftActionOperationType.Delete,
+            });
         });
     });
 

@@ -71,7 +71,7 @@ export class DraftManager {
      * Get the current state of each of the DraftActions in the DraftQueue
      * @returns A promise of an array of the state of each item in the DraftQueue
      */
-    getCurrentDraftQueueState(): Promise<DraftQueueManager> {
+    getQueue(): Promise<DraftQueueManager> {
         return this.draftQueue
             .getQueueActions()
             .then(queueActions => {

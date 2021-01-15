@@ -6,6 +6,7 @@ import {
     getRecordAdapterFactory,
     RecordRepresentation,
     updateRecordAdapterFactory,
+    deleteRecordAdapterFactory,
 } from '@salesforce/lds-adapters-uiapi';
 import {
     DraftQueue,
@@ -62,6 +63,7 @@ describe('lds drafts integration tests', () => {
     let durableStore: MockNimbusDurableStore;
     let createRecord;
     let updateRecord;
+    let deleteRecord;
     let getRecord;
 
     beforeEach(async () => {
@@ -78,6 +80,7 @@ describe('lds drafts integration tests', () => {
 
         createRecord = createRecordAdapterFactory(luvio);
         updateRecord = updateRecordAdapterFactory(luvio);
+        deleteRecord = deleteRecordAdapterFactory(luvio);
         getRecord = getRecordAdapterFactory(luvio);
     });
 
@@ -325,6 +328,37 @@ describe('lds drafts integration tests', () => {
                 updatedNameValue
             );
             expect(getRecordCallbackSpy.mock.calls[1][0].data.drafts).toBeUndefined();
+        });
+    });
+
+    describe('deleteRecord', () => {
+        it('deleteRecord sets draft deleted to true', async () => {
+            const snapshot = await createRecord({
+                apiName: API_NAME,
+                fields: { Name: 'TestRecord' },
+            });
+
+            const createdRecord = (snapshot.data as unknown) as DraftRecordRepresentation;
+            expect(snapshot.data.drafts.deleted).toBe(false);
+
+            const getNewRecordSnapshot = (await getRecord({
+                recordId: createdRecord.id,
+                fields: ['Account.Name'],
+            })) as Snapshot<RecordRepresentation>;
+
+            const newRecord = (getNewRecordSnapshot.data as unknown) as DraftRecordRepresentation;
+            expect(newRecord.drafts.deleted).toBe(false);
+
+            // delete the record
+            await deleteRecord(newRecord.id);
+
+            const getRecordSnapshot = (await getRecord({
+                recordId: newRecord.id,
+                fields: ['Account.Name'],
+            })) as Snapshot<RecordRepresentation>;
+
+            const deletedRecord = (getRecordSnapshot.data as unknown) as DraftRecordRepresentation;
+            expect(deletedRecord.drafts.deleted).toBe(true);
         });
     });
 

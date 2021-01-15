@@ -10,6 +10,7 @@ import {
     makeDurableStoreDraftAware,
     makeEnvironmentDraftAware,
     makeNetworkAdapterDraftAware,
+    DraftManager,
 } from '@salesforce/lds-drafts';
 
 import Id from '@salesforce/user/Id';
@@ -44,6 +45,9 @@ const { newRecordId, isGenerated } = recordIdGenerator(Id);
 // draft queue
 const draftQueue = buildLdsDraftQueue(networkAdapter, durableStore);
 
+// draft manager
+const draftManager = new DraftManager(draftQueue);
+
 // make network and durable draft aware
 const draftAwareNetworkAdapter = makeNetworkAdapterDraftAware(
     networkAdapter,
@@ -74,4 +78,4 @@ const env = makeEnvironmentDraftAware(
 
 luvio = new Luvio(env);
 
-export { luvio, draftQueue };
+export { luvio, draftQueue, draftManager };

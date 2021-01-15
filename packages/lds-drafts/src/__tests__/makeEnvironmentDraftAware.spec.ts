@@ -1,19 +1,29 @@
-import { Environment, Store } from '@luvio/engine';
+import { Environment, FetchResponse, Store } from '@luvio/engine';
 import { DurableStore, makeDurable } from '@luvio/environments';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import {
     buildRecordFieldStoreKey,
     extractRecordIdFromStoreKey,
 } from '@salesforce/lds-uiapi-record-utils';
-import { DraftQueue } from '../DraftQueue';
+import {
+    CompletedDraftAction,
+    DraftActionStatus,
+    DraftQueue,
+    DraftQueueCompletedListener,
+} from '../DraftQueue';
 import { makeEnvironmentDraftAware } from '../makeEnvironmentDraftAware';
 import {
     createDeleteRequest,
     createPatchRequest,
+    createPostDraftAction,
+    createPostRequest,
+    createTestRecord,
     DEFAULT_NAME_FIELD_VALUE,
     RECORD_ID,
+    STORE_KEY_DRAFT_RECORD,
     STORE_KEY_FIELD__NAME,
     STORE_KEY_RECORD,
+    flushPromises,
 } from './test-utils';
 
 const DEFAULT_API_NAME = 'Account';
@@ -46,6 +56,7 @@ function setup(
         baseEnvironment,
         store,
         draftQueue,
+        durableStore,
         (_record: any, _path: any, _store: any, _timestamp: any) => {},
         (_prefix: string) => {
             return 'generatedId';
@@ -131,7 +142,7 @@ describe('makeEnvironmentDraftAware', () => {
                 const { rejects } = await expect(
                     draftEnvironment.dispatchResourceRequest({
                         baseUri: '/services/data/v52.0',
-                        basePath: `/ui-api/records/${RECORD_ID}`,
+                        basePath: `/ui-api/records/`,
                         method: 'post',
                         body: {
                             fields: {
@@ -270,21 +281,7 @@ describe('makeEnvironmentDraftAware', () => {
                         },
                     });
                 });
-                const request = {
-                    baseUri: '/services/data/v52.0',
-                    basePath: `/ui-api/records`,
-                    method: 'post',
-                    body: {
-                        apiName: DEFAULT_API_NAME,
-                        fields: {
-                            Name: DEFAULT_NAME_FIELD_VALUE,
-                        },
-                    },
-                    urlParams: {},
-                    queryParams: {},
-                    headers: {},
-                };
-
+                const request = createPostRequest();
                 const result = await draftEnvironment.dispatchResourceRequest<RecordRepresentation>(
                     request
                 );
@@ -362,6 +359,74 @@ describe('makeEnvironmentDraftAware', () => {
             draftEnvironment.storeEvict(STORE_KEY_RECORD);
             expect(store.records[STORE_KEY_RECORD]).toBeUndefined();
             expect(durableStore.evictEntries).toBeCalledTimes(0);
+        });
+    });
+
+    describe('draftQueueCompletedListener', () => {
+        it('draft id redirects get configured after a post action completes', async () => {
+            const store = new Store();
+            const network = jest.fn();
+            let registeredListener: DraftQueueCompletedListener = undefined;
+            const durableStore: DurableStore = {
+                setEntries: jest.fn(),
+                getEntries: jest.fn(),
+                getAllEntries: jest.fn(),
+                evictEntries: jest.fn(),
+                registerOnChangedListener: jest.fn(),
+            };
+            const draftQueue: DraftQueue = {
+                enqueue: jest.fn().mockResolvedValue(undefined),
+                getActionsForTags: jest.fn(),
+                registerDraftQueueCompletedListener: listener => (registeredListener = listener),
+                processNextAction: jest.fn(),
+            };
+
+            const baseEnvironment = makeDurable(new Environment(store, network), durableStore);
+            makeEnvironmentDraftAware(
+                baseEnvironment,
+                store,
+                draftQueue,
+                durableStore,
+                (_record: any, _path: any, _store: any, _timestamp: any) => {},
+                (_prefix: string) => {
+                    return 'generatedId';
+                },
+                _id => true,
+                undefined
+            );
+
+            expect(registeredListener).toBeDefined();
+
+            const response: FetchResponse<RecordRepresentation> = {
+                body: createTestRecord(RECORD_ID, DEFAULT_NAME_FIELD_VALUE, 'Justin', 1),
+                status: 201,
+                statusText: 'ok',
+                ok: true,
+                headers: {},
+            };
+
+            const action = {
+                ...createPostDraftAction(STORE_KEY_DRAFT_RECORD, 'Justin', 'Account'),
+                status: DraftActionStatus.Completed,
+                response,
+            } as CompletedDraftAction<RecordRepresentation>;
+
+            registeredListener(action);
+
+            await flushPromises();
+
+            const setSpy = durableStore.setEntries as jest.Mock;
+
+            expect(durableStore.setEntries).toBeCalledTimes(1);
+            const durableEntry = setSpy.mock.calls[0][0];
+            const mapping = durableEntry[STORE_KEY_DRAFT_RECORD].data;
+            const expiration = durableEntry[STORE_KEY_DRAFT_RECORD].expiration;
+            expect(mapping).toEqual({
+                draftKey: STORE_KEY_DRAFT_RECORD,
+                canonicalKey: STORE_KEY_RECORD,
+            });
+            expect(expiration).toBeDefined();
+            expect(setSpy.mock.calls[0][1]).toBe('DRAFT_ID_MAPPINGS');
         });
     });
 });

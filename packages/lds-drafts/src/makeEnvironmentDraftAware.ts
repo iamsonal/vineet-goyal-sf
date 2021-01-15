@@ -6,7 +6,7 @@ import {
     Store,
     UnfulfilledSnapshot,
 } from '@luvio/engine';
-import { DurableEnvironment, ResponsePropertyRetriever } from '@luvio/environments';
+import { DurableEnvironment, DurableStore, ResponsePropertyRetriever } from '@luvio/environments';
 import { ObjectCreate } from './utils/language';
 
 import {
@@ -28,10 +28,20 @@ import { clone } from './utils/clone';
 import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { draftAwareHandleResponse } from './makeNetworkAdapterDraftAware';
 
+export interface DraftIdMappingEntry {
+    draftKey: string;
+    canonicalKey: string;
+}
+
+const DRAFT_ID_MAPPINGS_SEGMENT = 'DRAFT_ID_MAPPINGS';
+// retain draft id mappings for 30 days
+const MAPPING_TTL = 30 * 24 * 60 * 60 * 1000;
+
 export function makeEnvironmentDraftAware(
     env: DurableEnvironment,
     store: Store,
     draftQueue: DraftQueue,
+    durableStore: DurableStore,
     // TODO - W-8291468 - have ingest get called a different way somehow
     ingestFunc: (
         record: RecordRepresentation,
@@ -218,6 +228,27 @@ export function makeEnvironmentDraftAware(
 
                 ingestFunc(record, path, store, Date.now());
                 env.storeBroadcast(env.rebuildSnapshot);
+
+                if (request.method === 'post') {
+                    const draftKey = action.tag;
+                    const { id } = response.body;
+                    const canonicalKey = keyBuilderRecord({ recordId: id });
+
+                    const expiration = new Date().getMilliseconds() + MAPPING_TTL;
+                    const entry: DraftIdMappingEntry = {
+                        draftKey,
+                        canonicalKey,
+                    };
+                    return durableStore.setEntries(
+                        {
+                            [draftKey]: {
+                                data: entry,
+                                expiration: { fresh: expiration, stale: expiration },
+                            },
+                        },
+                        DRAFT_ID_MAPPINGS_SEGMENT
+                    );
+                }
             });
         }
     });

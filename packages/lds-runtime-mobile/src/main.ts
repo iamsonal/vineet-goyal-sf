@@ -70,6 +70,7 @@ const env = makeEnvironmentDraftAware(
     ),
     store,
     draftQueue,
+    draftAwareDurableStore,
     recordIngestFunc,
     newRecordId,
     isGenerated,

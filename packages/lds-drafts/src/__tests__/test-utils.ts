@@ -203,6 +203,35 @@ export function createErrorDraftAction(
     };
 }
 
+export function createTestRecord(
+    id: string,
+    nameValue: string,
+    nameDisplayValue: string,
+    weakEtag: number
+): RecordRepresentation {
+    return {
+        apiName: DEFAULT_API_NAME,
+        childRelationships: {},
+        eTag: '7bac4baab876b2a4e32d8e8690135f9d',
+        fields: {
+            Name: {
+                displayValue: nameDisplayValue,
+                value: nameValue,
+            },
+        },
+        id: id,
+        lastModifiedById: '00530000004tNS4AAM',
+        lastModifiedDate: '2019-10-16T11:52:48.000Z',
+        recordTypeId: '012000000000000AAA',
+        recordTypeInfo: null,
+        systemModstamp: '2019-10-21T14:52:51.000Z',
+        weakEtag: weakEtag,
+    };
+}
+
+export function flushPromises() {
+    return new Promise(resolve => setImmediate(resolve));
+}
 export function createUnsupportedRequestDraftAction(
     recordId: string,
     recordKey: string,

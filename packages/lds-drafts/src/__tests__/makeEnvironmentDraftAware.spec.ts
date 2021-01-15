@@ -49,7 +49,9 @@ function setup(
         (_record: any, _path: any, _store: any, _timestamp: any) => {},
         (_prefix: string) => {
             return 'generatedId';
-        }
+        },
+        _id => true,
+        undefined
     );
     return {
         store,

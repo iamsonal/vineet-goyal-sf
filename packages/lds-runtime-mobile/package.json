@@ -16,8 +16,8 @@
         "registry": "https://npm.lwcjs.org"
     },
     "dependencies": {
-        "@luvio/engine": "^0.24.2",
-        "@luvio/environments": "^0.24.2",
+        "@luvio/engine": "^0.24.3",
+        "@luvio/environments": "^0.24.3",
         "@mobileplatform/record-id-generator": "1.0.0"
     },
     "devDependencies": {

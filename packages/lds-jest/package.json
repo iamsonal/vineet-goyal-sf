@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-jest",
-    "version": "1.7.3",
+    "version": "1.7.4",
     "description": "Jest test library for lds adapters",
     "main": "dist/main.js",
     "types": "dist/main.d.ts",
@@ -11,8 +11,8 @@
         "build": "tsc"
     },
     "devDependencies": {
-        "@luvio/adapter-test-library": "^0.24.3",
-        "@luvio/engine": "^0.24.3",
-        "@luvio/environments": "^0.24.3"
+        "@luvio/adapter-test-library": "^0.24.4",
+        "@luvio/engine": "^0.24.4",
+        "@luvio/environments": "^0.24.4"
     }
 }

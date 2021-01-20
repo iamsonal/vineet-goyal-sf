@@ -2980,6 +2980,9 @@ types:
       themeInfo:
         description: The theme info for this related list's entity.
         type: ThemeInfoRepresentation | nil
+      uiApiEnabledLayout:
+        description: True if the elements in the layout are supported in UI API.
+        type: boolean
   ReportLayoutComponentRepresentation:
     description: Report record layout component.
     discriminatorValue: ReportChart # TODO: hand rolled

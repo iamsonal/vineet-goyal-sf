@@ -1,10 +1,10 @@
 {
-    "eTag": "40c3d922de3a5e231ffd48d6b07b2f44",
+    "eTag": "30cfe0cd7e83af0a954b6447933212ac",
     "parentObjectApiName": "CwcCustom00__c",
     "parentRecordTypeId": "012000000000000AAA",
     "relatedLists": [
         {
-            "eTag": "e7590304a721b4fd4f046666c94cc8d3",
+            "eTag": "6b47af1bac0755bf5f9fb9b30966c27f",
             "entityLabel": "Note, Attachment, Google Doc And File",
             "entityPluralLabel": "Notes, Attachments, Google Docs And Files",
             "fieldApiName": "ParentId",
@@ -17,10 +17,11 @@
             "themeInfo": {
                 "color": "b19f7e",
                 "iconUrl": "https://na44.stmfa.stm.salesforce.com/img/icon/t4v35/standard/file_120.png"
-            }
+            },
+            "uiApiEnabledLayout": false
         },
         {
-            "eTag": "0ce609e8be05d8f594f8b7e412558bf4",
+            "eTag": "e7590304a721b4fd4f046666c94cc8d3",
             "entityLabel": "CwcCustom01",
             "entityPluralLabel": "CwcCustom01s",
             "fieldApiName": "CwcCustom00__c",
@@ -29,14 +30,15 @@
             "objectApiName": "CwcCustom01__c",
             "parentFieldApiName": "Id",
             "relatedListId": "CwcCustom01s__r",
-            "relatedListInfoUrl": "/services/data/v50.0/ui-api/related-list-info/CwcCustom00__c/CwcCustom01s__r?recordTypeId=012000000000000AAA",
+            "relatedListInfoUrl": "/services/data/v52.0/ui-api/related-list-info/CwcCustom00__c/CwcCustom01s__r",
             "themeInfo": {
                 "color": "e46fbe",
                 "iconUrl": "https://na44.stmfa.stm.salesforce.com/img/icon/t4v35/custom/custom25_120.png"
-            }
+            },
+            "uiApiEnabledLayout": true
         },
         {
-            "eTag": "6b47af1bac0755bf5f9fb9b30966c27f",
+            "eTag": "0ce609e8be05d8f594f8b7e412558bf4",
             "entityLabel": "CwcCustom02",
             "entityPluralLabel": "CwcCustom02s",
             "fieldApiName": "CwcCustom00__c",
@@ -45,11 +47,12 @@
             "objectApiName": "CwcCustom02__c",
             "parentFieldApiName": "Id",
             "relatedListId": "CwcCustom02s__r",
-            "relatedListInfoUrl": "/services/data/v50.0/ui-api/related-list-info/CwcCustom00__c/CwcCustom02s__r?recordTypeId=012000000000000AAA",
+            "relatedListInfoUrl": "/services/data/v52.0/ui-api/related-list-info/CwcCustom00__c/CwcCustom02s__r",
             "themeInfo": {
                 "color": "d8c760",
                 "iconUrl": "https://na44.stmfa.stm.salesforce.com/img/icon/t4v35/custom/custom51_120.png"
-            }
+            },
+            "uiApiEnabledLayout": true
         }
     ]
 }

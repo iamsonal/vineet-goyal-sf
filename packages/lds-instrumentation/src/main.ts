@@ -150,7 +150,9 @@ const ADAPTER_CACHE_HIT_COUNT_METRIC_NAME = 'cache-hit-count';
 const ADAPTER_CACHE_HIT_DURATION_METRIC_NAME = 'cache-hit-duration';
 const ADAPTER_CACHE_MISS_COUNT_METRIC_NAME = 'cache-miss-count';
 const ADAPTER_CACHE_MISS_DURATION_METRIC_NAME = 'cache-miss-duration';
+const ADAPTER_CACHE_MISS_OUT_OF_TTL_COUNT_METRIC_NAME = 'cache-miss-out-of-ttl-count';
 const ADAPTER_CACHE_MISS_OUT_OF_TTL_DURATION_METRIC_NAME = 'cache-miss-out-of-ttl-duration';
+const CACHE_STATS_OUT_OF_TTL_MISS_POSTFIX = 'out-of-ttl-miss';
 const RECORD_API_NAME_CHANGE_COUNT_METRIC_NAME = 'record-api-name-change-count';
 const aggregateUiChunkCountMetric = percentileHistogram(AGGREGATE_UI_CHUNK_COUNT);
 const cacheHitMetric = counter(CACHE_HIT_COUNT);
@@ -249,6 +251,9 @@ export class Instrumentation {
      */
     public instrumentAdapter<C, D>(name: string, adapter: Adapter<C, D>): Adapter<C, D> {
         const stats = registerLdsCacheStats(name);
+        const ttlMissStats = registerLdsCacheStats(
+            name + ':' + CACHE_STATS_OUT_OF_TTL_MISS_POSTFIX
+        );
 
         /**
          * W-8076905
@@ -317,6 +322,17 @@ export class Instrumentation {
                   )
                 : undefined;
 
+        const cacheMissOutOfTtlCountByAdapterMetric: Counter | undefined =
+            (wireAdapterMetricConfig && wireAdapterMetricConfig.ttl) !== undefined
+                ? counter(
+                      createMetricsKey(
+                          NAMESPACE,
+                          ADAPTER_CACHE_MISS_OUT_OF_TTL_COUNT_METRIC_NAME,
+                          name
+                      )
+                  )
+                : undefined;
+
         const instrumentedAdapter = (config: C) => {
             const startTime = Date.now();
             this.incrementAdapterRequestMetric(wireAdapterRequestMetric);
@@ -353,10 +369,15 @@ export class Instrumentation {
                 cacheMissMetric.increment(1);
                 cacheMissCountByAdapterMetric.increment(1);
 
-                if (cacheMissOutOfTtlDurationByAdapterMetric !== undefined) {
+                if (
+                    cacheMissOutOfTtlDurationByAdapterMetric !== undefined &&
+                    cacheMissOutOfTtlCountByAdapterMetric !== undefined
+                ) {
                     this.logAdapterCacheMissOutOfTtlDuration(
                         config,
                         cacheMissOutOfTtlDurationByAdapterMetric,
+                        cacheMissOutOfTtlCountByAdapterMetric,
+                        ttlMissStats,
                         Date.now(),
                         wireAdapterMetricConfig.ttl,
                         wireAdapterMetricConfig.wireConfigKeyFn
@@ -399,18 +420,22 @@ export class Instrumentation {
     }
 
     /**
-     * Logs when adapter requests come in. If we have subsequent cache misses on a given config, above its TTL then log the duration to metrics.
+     * Logs when adapter requests come in. If we have subsequent cache misses on a given config, beyond its TTL then log the duration to metrics.
      * Backed by an LRU Cache implementation to prevent too many record entries from being stored in-memory.
      * @param config The config passed into wire adapter.
      * @param name The wire adapter name.
-     * @param metric The argus timer metric for tracking cache miss durations.
+     * @param durationMetric The argus timer metric for tracking cache miss durations.
+     * @param counterMetric The argus counter metric for tracking cache misses out of TTL.
+     * @param ttlMissStats CacheStatsLogger to log misses out of TTL.
      * @param currentCacheMissTimestamp Timestamp for when the request was made.
      * @param ttl TTL for the wire adapter.
      * @param wireConfigKeyFn Optional function to transform wire configs to a unique key. Otherwise, defaults to use stableJSONStringify().
      */
     private logAdapterCacheMissOutOfTtlDuration(
         config: unknown,
-        metric: Timer,
+        durationMetric: Timer,
+        counterMetric: Counter,
+        ttlMissStats: CacheStatsLogger,
         currentCacheMissTimestamp: number,
         ttl: number,
         wireConfigKeyFn: (config: any) => string
@@ -423,7 +448,9 @@ export class Instrumentation {
         if (existingCacheMissTimestamp !== undefined) {
             const duration = currentCacheMissTimestamp - existingCacheMissTimestamp;
             if (duration > ttl) {
-                metric.addDuration(duration);
+                durationMetric.addDuration(duration);
+                counterMetric.increment(1);
+                ttlMissStats.logMisses();
             }
         }
     }

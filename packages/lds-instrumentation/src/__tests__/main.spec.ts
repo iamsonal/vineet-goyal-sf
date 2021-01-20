@@ -4,6 +4,7 @@
 
 import { Instrumentation, refreshApiEvent } from '../main';
 import { getRecordConfigKey } from '../config-key-functions';
+import { LRUCache } from '../utils/lru-cache';
 import timekeeper from 'timekeeper';
 
 jest.mock('instrumentation/service', () => {
@@ -71,14 +72,26 @@ beforeEach(() => {
     instrumentationSpies.incrementAdapterErrorMetric.mockClear();
     instrumentationServiceSpies.perfEnd.mockClear();
     instrumentationServiceSpies.perfStart.mockClear();
+    instrumentationServiceSpies.cacheStatsLogHitsSpy.mockClear();
+    instrumentationServiceSpies.cacheStatsLogMissesSpy.mockClear();
+    instrumentationServiceSpies.counterIncrementSpy.mockClear();
     instrumentationServiceSpies.timerAddDurationSpy.mockClear();
-
+    (instrumentation as any).adapterCacheMisses = new LRUCache(250);
     (instrumentation as any).resetRefreshStats();
 });
 
+afterEach(() => {
+    timekeeper.reset();
+});
+
+// Number of metric counter invocations that happen during a normal cache hit or miss flow, without
+// any of the TTL specific code path happening. To be incremented if additional counters are added for either scenario.
+const baseCacheHitCounterIncrement = 3;
+const baseCacheMissCounterIncrement = 3;
+
 describe('instrumentation', () => {
     describe('instrumentGetRecordAdapter', () => {
-        it('should not log metrics when getRecord adapter has a cache hit on existing value out of TTL', () => {
+        it('should not log metrics when getRecord adapter has a cache hit on existing value within TTL', () => {
             const mockGetRecordAdapter = config => {
                 if (config.cacheHit) {
                     return {};
@@ -102,24 +115,38 @@ describe('instrumentation', () => {
                 cacheHit: true,
             };
 
+            const recordKey = getRecordConfigKey(getRecordConfig);
+
             // Cache Miss #1
-            var now = Date.now();
+            const now = Date.now();
             timekeeper.freeze(now);
             instrumentedAdapter(getRecordConfig);
+
+            expect(instrumentationServiceSpies.cacheStatsLogHitsSpy).toHaveBeenCalledTimes(0);
+            expect(instrumentationServiceSpies.cacheStatsLogMissesSpy).toHaveBeenCalledTimes(1);
             expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
                 1
             );
             expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(0);
-
-            // Fast forward out of TTL for record
-            timekeeper.travel(now + 30001);
+            expect((instrumentation as any).adapterCacheMisses.size).toEqual(1);
+            expect((instrumentation as any).adapterCacheMisses.get(recordKey)).toEqual(now);
 
             // Cache Hit
+            // Expected: Increment of cacheStatsLogHits, all cache miss metrics stay unchanged.
             instrumentedAdapter(getRecordConfigCacheHit);
+
+            expect(instrumentationServiceSpies.cacheStatsLogHitsSpy).toHaveBeenCalledTimes(1);
+            expect(instrumentationServiceSpies.cacheStatsLogMissesSpy).toHaveBeenCalledTimes(1);
             expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
                 1
             );
             expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
+            expect((instrumentation as any).adapterCacheMisses.size).toEqual(1);
+            expect((instrumentation as any).adapterCacheMisses.get(recordKey)).toEqual(now);
+
+            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(
+                baseCacheMissCounterIncrement + baseCacheHitCounterIncrement
+            );
         });
 
         it('should not log metrics when adapter with no TTL defined has a cache miss on existing value out of TTL', () => {
@@ -137,7 +164,7 @@ describe('instrumentation', () => {
             };
 
             // Cache Miss #1
-            var now = Date.now();
+            const now = Date.now();
             timekeeper.freeze(now);
             instrumentedAdapter(adapterConfig);
             expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
@@ -171,13 +198,17 @@ describe('instrumentation', () => {
             const recordKey = getRecordConfigKey(getRecordConfig);
 
             // Cache Miss #1
-            var now = Date.now();
+            const now = Date.now();
             timekeeper.freeze(now);
             instrumentedAdapter(getRecordConfig);
+
+            expect(instrumentationServiceSpies.cacheStatsLogHitsSpy).toHaveBeenCalledTimes(0);
+            expect(instrumentationServiceSpies.cacheStatsLogMissesSpy).toHaveBeenCalledTimes(1);
             expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
                 1
             );
             expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(0);
+            expect((instrumentation as any).adapterCacheMisses.size).toEqual(1);
             expect((instrumentation as any).adapterCacheMisses.get(recordKey)).toEqual(now);
 
             // Fast forward out of TTL for record
@@ -185,14 +216,25 @@ describe('instrumentation', () => {
 
             // Cache Miss #2, outside of TTL
             instrumentedAdapter(getRecordConfig);
+
+            expect(instrumentationServiceSpies.cacheStatsLogHitsSpy).toHaveBeenCalledTimes(0);
+            // 2 calls from regular cache stat misses logging, 1 from logAdapterCacheMissOutOfTtlDuration
+            expect(instrumentationServiceSpies.cacheStatsLogMissesSpy).toHaveBeenCalledTimes(3);
             expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
                 2
             );
             expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
             expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenLastCalledWith(30001);
             const updatedTimestamp = now + 30001;
+
+            expect((instrumentation as any).adapterCacheMisses.size).toEqual(1);
             expect((instrumentation as any).adapterCacheMisses.get(recordKey)).toEqual(
                 updatedTimestamp
+            );
+
+            // + 1 from logAdapterCacheMissOutOfTtlDuration
+            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(
+                baseCacheMissCounterIncrement + baseCacheHitCounterIncrement + 1
             );
         });
     });

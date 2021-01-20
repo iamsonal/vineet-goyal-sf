@@ -393,9 +393,9 @@ export function makeDurableStoreDraftAware(
         listener: OnDurableStoreChangedListener
     ): () => Promise<void> {
         return durableStore.registerOnChangedListener(
-            (ids: { [key: string]: boolean }, segment: string) => {
+            (ids: { [key: string]: boolean }, segment: string, isExternalChange?: boolean) => {
                 if (segment !== DraftDurableSegment) {
-                    return listener(ids, segment);
+                    return listener(ids, segment, isExternalChange);
                 }
                 const keys = ObjectKeys(ids);
                 const changedIds: { [key: string]: true } = {};
@@ -408,7 +408,7 @@ export function makeDurableStoreDraftAware(
                         changedIds[key] = true;
                     }
                 }
-                return listener(changedIds, DefaultDurableSegment);
+                return listener(changedIds, DefaultDurableSegment, true);
             }
         );
     };

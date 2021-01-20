@@ -81,7 +81,7 @@ export class NimbusDurableStore implements DurableStore {
                 for (let i = 0, len = ids.length; i < len; i++) {
                     map[ids[i]] = true;
                 }
-                listener(map, segment);
+                listener(map, segment, true);
             }
         ).then(id => {
             uuid = id;

@@ -1959,6 +1959,38 @@ describe('routes', () => {
         });
     });
 
+    describe('get /actions/global', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/actions/global`,
+            },
+            ['ActionsController.getGlobalActions', {}, undefined]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: UI_API_BASE_URI,
+            basePath: `/actions/global`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/actions/global`,
+            },
+            {
+                actions: {
+                    Account: {
+                        actions: [],
+                    },
+                },
+            }
+        );
+    });
+
     describe('get /related-list-info', () => {
         describe('/{parentObjectApiName}/{relatedListId}', () => {
             testControllerInput(

@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-bindings",
-    "version": "1.7.5",
+    "version": "1.7.6",
     "description": "LDS Bindings for SFDC",
     "license": "MIT",
     "main": "dist/ldsBindings.js",
@@ -24,6 +24,6 @@
     "devDependencies": {
         "@luvio/engine": "^0.25.2",
         "@lwc/engine-core": "~1.7.5",
-        "@salesforce/lds-runtime-web": "1.7.5"
+        "@salesforce/lds-runtime-web": "1.7.6"
     }
 }

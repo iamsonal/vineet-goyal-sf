@@ -6,9 +6,50 @@ import {
 } from './MockNimbusDurableStore';
 import { JSONStringify } from '../utils/language';
 import { DefaultDurableSegment } from '@luvio/environments';
+import { DurableStoreChangedInfo } from '@mobileplatform/nimbus-plugin-lds';
+
+const testSegment = 'testSegment';
 describe('nimbus durable store tests', () => {
     afterEach(() => {
         resetNimbusStoreGlobal();
+    });
+
+    describe('plugin signature backward compatibility', () => {
+        it('should use the old setEntries if new doesnt exist', async () => {
+            const setEntriesSpy = jest.fn();
+            const mock = { setEntriesInSegment: setEntriesSpy };
+            mockNimbusStoreGlobal((mock as any) as MockNimbusDurableStore);
+            const durableStore = new NimbusDurableStore();
+            const recordId = 'foo';
+            const recordData = { data: { bar: true } };
+            const setData = {
+                [recordId]: recordData,
+            };
+            await durableStore.setEntries(setData, testSegment);
+            expect(setEntriesSpy).toBeCalledTimes(1);
+            expect(setEntriesSpy.mock.calls[0][0]).toBeDefined();
+            expect(setEntriesSpy.mock.calls[0][1]).toEqual(testSegment);
+        });
+
+        it('should use the old evictEntries if new doesnt exist', async () => {
+            const evictEntriesSpy = jest.fn();
+            const mock = { evictEntriesInSegment: evictEntriesSpy };
+            mockNimbusStoreGlobal((mock as any) as MockNimbusDurableStore);
+            const durableStore = new NimbusDurableStore();
+            await durableStore.evictEntries(['1'], testSegment);
+            expect(evictEntriesSpy).toBeCalledTimes(1);
+            expect(evictEntriesSpy.mock.calls[0][0]).toEqual(['1']);
+            expect(evictEntriesSpy.mock.calls[0][1]).toEqual(testSegment);
+        });
+
+        it('should use the old register listener if new doesnt exist', async () => {
+            const registerListenerSpy = jest.fn().mockResolvedValue('1234');
+            const mock = { registerOnChangedListener: registerListenerSpy };
+            mockNimbusStoreGlobal((mock as any) as MockNimbusDurableStore);
+            const durableStore = new NimbusDurableStore();
+            await durableStore.registerOnChangedListener(jest.fn());
+            expect(registerListenerSpy).toHaveBeenCalledTimes(1);
+        });
     });
 
     describe('getEntries', () => {
@@ -57,7 +98,7 @@ describe('nimbus durable store tests', () => {
         it('should stringify entries', async () => {
             const nimbusStore = new MockNimbusDurableStore();
             const setSpy = jest.fn();
-            nimbusStore.setEntriesInSegment = setSpy;
+            nimbusStore.setEntriesInSegmentWithSender = setSpy;
             const recordId = 'foo';
             const recordData = { data: { bar: true } };
             mockNimbusStoreGlobal(nimbusStore);
@@ -79,15 +120,16 @@ describe('nimbus durable store tests', () => {
             const changedSegment = 'random segment';
             const nimbusStore = new MockNimbusDurableStore();
             mockNimbusStoreGlobal(nimbusStore);
-            let registeredListener: (ids: string[], segment: string) => void = undefined;
-            nimbusStore.registerOnChangedListener = listener => {
+            let registeredListener: (info: DurableStoreChangedInfo) => void = undefined;
+            nimbusStore.registerOnChangedListenerWithInfo = listener => {
                 registeredListener = listener;
                 return Promise.resolve('1234');
             };
             const listenerSpy = jest.fn();
             durableStore.registerOnChangedListener(listenerSpy);
             expect(registeredListener).toBeDefined();
-            registeredListener(changedIds, changedSegment);
+            const info = { ids: changedIds, segment: changedSegment, sender: '' };
+            registeredListener(info);
             expect(listenerSpy.mock.calls[0][0]).toEqual({ 1: true, 2: true, 3: true });
             expect(listenerSpy.mock.calls[0][1]).toEqual(changedSegment);
         });
@@ -97,8 +139,8 @@ describe('nimbus durable store tests', () => {
             const changedSegment = 'random segment';
             const nimbusStore = new MockNimbusDurableStore();
             mockNimbusStoreGlobal(nimbusStore);
-            let registeredListener: (ids: string[], segment: string) => void = undefined;
-            nimbusStore.registerOnChangedListener = listener => {
+            let registeredListener: (info: DurableStoreChangedInfo) => void = undefined;
+            nimbusStore.registerOnChangedListenerWithInfo = listener => {
                 registeredListener = listener;
                 return Promise.resolve('1234');
             };
@@ -109,12 +151,48 @@ describe('nimbus durable store tests', () => {
             const listenerSpy = jest.fn();
             const unsubscribe = await durableStore.registerOnChangedListener(listenerSpy);
             expect(registeredListener).toBeDefined();
-            registeredListener(changedIds, changedSegment);
+            const info = { ids: changedIds, segment: changedSegment, sender: '' };
+            registeredListener(info);
             expect(listenerSpy.mock.calls[0][0]).toEqual({ 1: true, 2: true, 3: true });
             expect(listenerSpy.mock.calls[0][1]).toEqual(changedSegment);
 
             await unsubscribe();
             expect(registeredListener).toBeUndefined();
+        });
+    });
+
+    describe('change listener', () => {
+        it('should send external when not sent by self', async () => {
+            expect.assertions(3);
+            const durableStore = new NimbusDurableStore();
+            const nimbusStore = new MockNimbusDurableStore();
+            let callCount = 0;
+            mockNimbusStoreGlobal(nimbusStore);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            durableStore.registerOnChangedListener((ids, segment, isExternal) => {
+                callCount += 1;
+                expect(isExternal).toEqual(true);
+            });
+            expect(callCount).toEqual(0);
+            const secondDurableStore = new NimbusDurableStore();
+            secondDurableStore.evictEntries(['1'], DefaultDurableSegment);
+            expect(callCount).toEqual(1);
+        });
+
+        it('should not send external when  sent by self', async () => {
+            expect.assertions(3);
+            const durableStore = new NimbusDurableStore();
+            const nimbusStore = new MockNimbusDurableStore();
+            let callCount = 0;
+            mockNimbusStoreGlobal(nimbusStore);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            durableStore.registerOnChangedListener((ids, segment, isExternal) => {
+                callCount += 1;
+                expect(isExternal).toEqual(false);
+            });
+            expect(callCount).toEqual(0);
+            durableStore.evictEntries(['1'], DefaultDurableSegment);
+            expect(callCount).toEqual(1);
         });
     });
 });

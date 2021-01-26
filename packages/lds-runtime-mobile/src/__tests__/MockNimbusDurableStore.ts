@@ -2,6 +2,7 @@ import {
     DurableStore,
     DurableStoreFetchResult,
     DurableStoreEntries,
+    DurableStoreChangedInfo,
 } from '@mobileplatform/nimbus-plugin-lds';
 
 export function mockNimbusStoreGlobal(mockNimbusStore: MockNimbusDurableStore) {
@@ -20,14 +21,11 @@ export function resetNimbusStoreGlobal() {
 // since MockNimbusDurableStore is likely to be re-instantiated before each test
 // we hoist the registered listeners since that happens when the lds instance
 // is created
-let listenerFunc: (ids: string[], segment: string) => void;
+let listenerFunc: (info: DurableStoreChangedInfo) => void;
+const changedId = '1234';
 
 export class MockNimbusDurableStore implements DurableStore {
     kvp: { [segment: string]: { [key: string]: string } } = {};
-
-    // native apps prevent DurableStore OnChanged listener events from being raised
-    // against their own DurableStore instance, so we simulate that here
-    public raiseOnChangedEvent = false;
 
     async getEntriesInSegment(ids: string[], segment: string): Promise<DurableStoreFetchResult> {
         const result = {};
@@ -83,6 +81,14 @@ export class MockNimbusDurableStore implements DurableStore {
     }
 
     setEntriesInSegment(entries: DurableStoreEntries, segment: string): Promise<void> {
+        return this.setEntriesInSegmentWithSender(entries, segment, '');
+    }
+
+    setEntriesInSegmentWithSender(
+        entries: DurableStoreEntries,
+        segment: string,
+        sender: string
+    ): Promise<void> {
         let storeSegment = this.kvp[segment];
         if (storeSegment === undefined) {
             storeSegment = {};
@@ -91,33 +97,46 @@ export class MockNimbusDurableStore implements DurableStore {
 
         Object.assign(storeSegment, entries);
 
-        if (listenerFunc !== undefined && this.raiseOnChangedEvent) {
-            listenerFunc(Object.keys(entries), segment);
+        if (listenerFunc !== undefined) {
+            const info = { ids: Object.keys(entries), segment: segment, sender: sender };
+            listenerFunc(info);
         }
 
         return Promise.resolve();
     }
 
     evictEntriesInSegment(ids: string[], segment: string): Promise<void> {
+        return this.evictEntriesInSegmentWithSender(ids, segment, '');
+    }
+
+    evictEntriesInSegmentWithSender(ids: string[], segment: string, sender: string): Promise<void> {
         let storeSegment = this.kvp[segment];
         if (storeSegment === undefined) {
-            return Promise.resolve();
+            storeSegment = {};
         }
 
         for (const id of ids) {
             delete storeSegment[id];
         }
 
-        if (listenerFunc !== undefined && this.raiseOnChangedEvent) {
-            listenerFunc(ids, segment);
+        if (listenerFunc !== undefined) {
+            const info = { ids: ids, segment: segment, sender: sender };
+            listenerFunc(info);
         }
 
         return Promise.resolve();
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     registerOnChangedListener(listener: (ids: string[], segment: string) => void): Promise<string> {
+        return Promise.resolve(changedId);
+    }
+
+    registerOnChangedListenerWithInfo(
+        listener: (info: DurableStoreChangedInfo) => void
+    ): Promise<string> {
         listenerFunc = listener;
-        return Promise.resolve('1234');
+        return Promise.resolve(changedId);
     }
 
     unsubscribeOnChangedListener(_id: string): Promise<void> {

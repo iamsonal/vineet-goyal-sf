@@ -7,9 +7,17 @@ import {
     DurableStoreEntry,
     OnDurableStoreChangedListener,
 } from '@luvio/environments';
+import { DurableStoreChangedInfo } from '@mobileplatform/nimbus-plugin-lds';
 import { ObjectKeys, ObjectCreate, JSONStringify, JSONParse } from './utils/language';
 
 export class NimbusDurableStore implements DurableStore {
+    senderId: string = this.generateSenderId();
+
+    private generateSenderId(): string {
+        const random = Math.floor(Math.random() * 1000000000);
+        return random.toString();
+    }
+
     getEntries(entryIds: string[], segment: string): Promise<DurableStoreEntries | undefined> {
         if (entryIds.length === 0) {
             return Promise.resolve({});
@@ -66,22 +74,67 @@ export class NimbusDurableStore implements DurableStore {
             putEntries[key] = JSONStringify(value);
         }
 
+        if (__nimbus.plugins.LdsDurableStore.setEntriesInSegmentWithSender !== undefined) {
+            return __nimbus.plugins.LdsDurableStore.setEntriesInSegmentWithSender(
+                putEntries,
+                segment,
+                this.senderId
+            );
+        }
         return __nimbus.plugins.LdsDurableStore.setEntriesInSegment(putEntries, segment);
     }
 
     evictEntries(entryIds: string[], segment: string): Promise<void> {
+        if (__nimbus.plugins.LdsDurableStore.evictEntriesInSegmentWithSender !== undefined) {
+            return __nimbus.plugins.LdsDurableStore.evictEntriesInSegmentWithSender(
+                entryIds,
+                segment,
+                this.senderId
+            );
+        }
         return __nimbus.plugins.LdsDurableStore.evictEntriesInSegment(entryIds, segment);
     }
 
-    registerOnChangedListener(listener: OnDurableStoreChangedListener): () => Promise<void> {
+    private registerOldChangedListener(
+        listener: OnDurableStoreChangedListener
+    ): () => Promise<void> {
         let uuid: string | undefined = undefined;
-        __nimbus.plugins.LdsDurableStore.registerOnChangedListener(
-            (ids: string[], segment: string) => {
+        __nimbus.plugins.LdsDurableStore.registerOnChangedListener((ids, segment) => {
+            const map: { [key: string]: true } = {};
+            for (let i = 0, len = ids.length; i < len; i++) {
+                map[ids[i]] = true;
+            }
+            // external is inferred to be true here because the old behavior
+            // doesn't raise changed events to itself
+            listener(map, segment, true);
+        }).then(id => {
+            uuid = id;
+        });
+        return () => {
+            if (
+                uuid !== undefined &&
+                uuid.length > 0 &&
+                __nimbus.plugins.LdsDurableStore.unsubscribeOnChangedListener !== undefined
+            ) {
+                __nimbus.plugins.LdsDurableStore.unsubscribeOnChangedListener(uuid);
+            }
+            return Promise.resolve();
+        };
+    }
+
+    registerOnChangedListener(listener: OnDurableStoreChangedListener): () => Promise<void> {
+        if (__nimbus.plugins.LdsDurableStore.registerOnChangedListenerWithInfo === undefined) {
+            return this.registerOldChangedListener(listener);
+        }
+        let uuid: string | undefined = undefined;
+        __nimbus.plugins.LdsDurableStore.registerOnChangedListenerWithInfo(
+            (info: DurableStoreChangedInfo) => {
                 const map: { [key: string]: true } = {};
-                for (let i = 0, len = ids.length; i < len; i++) {
-                    map[ids[i]] = true;
+                for (let i = 0, len = info.ids.length; i < len; i++) {
+                    map[info.ids[i]] = true;
                 }
-                listener(map, segment, true);
+                const isExternal = info.sender !== this.senderId;
+                listener(map, info.segment, isExternal);
             }
         ).then(id => {
             uuid = id;

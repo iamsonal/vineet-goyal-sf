@@ -599,6 +599,7 @@ describe('makeDurableStoreDraftAware', () => {
                     registerOnChangedListener: listener => (changeListener = listener),
                 } as any,
                 {} as any,
+                {} as any,
                 {} as any
             );
 
@@ -624,18 +625,25 @@ describe('makeDurableStoreDraftAware', () => {
                     registerOnChangedListener: listener => (changeListener = listener),
                 } as any,
                 {} as any,
+                {} as any,
                 {} as any
             );
 
             const draftActionKey = buildDraftDurableStoreKey(STORE_KEY_RECORD, 'FOO');
-            const baseListener: OnDurableStoreChangedListener = (ids: {
-                [key: string]: boolean;
-            }) => {
+            const baseListener: OnDurableStoreChangedListener = (
+                ids: {
+                    [key: string]: boolean;
+                },
+                segment: string,
+                external: boolean
+            ) => {
                 expect(ids[draftActionKey]).toBe(true);
+                expect(segment).toEqual('NOT_DRAFT_SEGMENT');
+                expect(external).toEqual(false);
                 done();
             };
             durableStore.registerOnChangedListener(baseListener);
-            changeListener({ [draftActionKey]: true }, 'NOT_DRAFT_SEGMENT');
+            changeListener({ [draftActionKey]: true }, 'NOT_DRAFT_SEGMENT', false);
         });
 
         it('only changes to draft action keys in the draft segment are parsed', done => {
@@ -644,6 +652,7 @@ describe('makeDurableStoreDraftAware', () => {
                 {
                     registerOnChangedListener: listener => (changeListener = listener),
                 } as any,
+                {} as any,
                 {} as any,
                 {} as any
             );

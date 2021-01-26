@@ -437,7 +437,6 @@ describe('lds drafts integration tests', () => {
             // durable store)
             const nimbusDurableStore2 = new NimbusDurableStore();
             const queue = new DurableDraftQueue(nimbusDurableStore2, NimbusNetworkAdapter);
-            durableStore.raiseOnChangedEvent = true;
             await queue.enqueue(
                 {
                     method: 'delete',
@@ -452,7 +451,6 @@ describe('lds drafts integration tests', () => {
             );
 
             await flushPromises();
-            durableStore.raiseOnChangedEvent = false;
 
             // before upload we should get back the optimistic response with drafts property
             expect(getRecordCallbackSpy).toBeCalledTimes(1);

@@ -408,7 +408,7 @@ export function makeDurableStoreDraftAware(
                         changedIds[key] = true;
                     }
                 }
-                return listener(changedIds, DefaultDurableSegment, true);
+                return listener(changedIds, DefaultDurableSegment, isExternalChange);
             }
         );
     };

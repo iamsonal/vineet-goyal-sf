@@ -1,13 +1,21 @@
-import { DraftActionStatus, DraftQueue, DraftQueueState } from '../DraftQueue';
+import {
+    DraftActionStatus,
+    DraftQueue,
+    DraftQueueChangeListener,
+    DraftQueueState,
+} from '../DraftQueue';
 import { DraftActionOperationType, DraftManager } from '../DraftManager';
 import {
     createDeleteDraftAction,
+    createCompletedDraftAction,
     createEditDraftAction,
     createErrorDraftAction,
     createPostDraftAction,
     createUnsupportedRequestDraftAction,
     DEFAULT_TIME_STAMP,
 } from './test-utils';
+
+let globalDraftQueueListener: DraftQueueChangeListener;
 
 describe('DraftManager', () => {
     let mockDraftQueue: DraftQueue;
@@ -106,6 +114,63 @@ describe('DraftManager', () => {
             }
         });
     });
+
+    describe('listener', () => {
+        let mockDraftQueue: DraftQueue;
+        let manager: DraftManager;
+        beforeEach(() => {
+            mockDraftQueue = MockDraftQueue();
+            manager = new DraftManager(mockDraftQueue);
+            const editAction = createEditDraftAction('mock123', 'mockKey', 'hi', 12355);
+            mockDraftQueue.getQueueActions = () => Promise.resolve([editAction]);
+            mockDraftQueue.getQueueState = () => DraftQueueState.Waiting;
+        });
+
+        it('calls subscribed listener', async () => {
+            expect.assertions(2);
+            manager.registerDraftQueueChangedListener((state, completed) => {
+                expect(state).toBeDefined();
+                expect(completed).toBeUndefined();
+            });
+            await globalDraftQueueListener();
+        });
+
+        it('calls multiple subscribed listeners', async () => {
+            expect.assertions(4);
+            manager.registerDraftQueueChangedListener((state, completed) => {
+                expect(state).toBeDefined();
+                expect(completed).toBeUndefined();
+            });
+
+            manager.registerDraftQueueChangedListener((state, completed) => {
+                expect(state).toBeDefined();
+                expect(completed).toBeUndefined();
+            });
+
+            await globalDraftQueueListener();
+        });
+
+        it('does not call unsubscribed listeners', async () => {
+            expect.assertions(2);
+            const unsub = manager.registerDraftQueueChangedListener((state, completed) => {
+                expect(state).toBeDefined();
+                expect(completed).toBeUndefined();
+            });
+            await globalDraftQueueListener();
+            unsub();
+            await globalDraftQueueListener();
+        });
+
+        it('sends a completed draft action to listeners', async () => {
+            expect.assertions(2);
+            manager.registerDraftQueueChangedListener((state, completed) => {
+                expect(state).toBeDefined();
+                expect(completed).toBeDefined();
+            });
+            const completedAction = createCompletedDraftAction('mock123', 'mockKey', 1);
+            await globalDraftQueueListener(completedAction);
+        });
+    });
 });
 
 const MockDraftQueue = jest.fn(
@@ -113,9 +178,16 @@ const MockDraftQueue = jest.fn(
         ({
             enqueue: jest.fn(),
             getActionsForTags: jest.fn(),
-            registerDraftQueueCompletedListener: jest.fn(),
             processNextAction: jest.fn(),
             getQueueActions: jest.fn(),
             getQueueState: jest.fn(),
+            registerOnChangedListener: jest.fn((listener: DraftQueueChangeListener): (() => Promise<
+                void
+            >) => {
+                globalDraftQueueListener = listener;
+                return () => {
+                    return Promise.resolve();
+                };
+            }),
         } as DraftQueue)
 );

@@ -144,9 +144,8 @@ describe('NimbusDraftQueue', () => {
             const nimbusQueue = new NimbusDraftQueue();
             const listener = jest.fn();
 
-            const result = nimbusQueue.registerDraftQueueCompletedListener(listener);
+            nimbusQueue.registerOnChangedListener(listener);
 
-            expect(result).toBeUndefined();
             expect(listener).toHaveBeenCalledTimes(0);
         });
     });

@@ -9,7 +9,7 @@ import {
     CompletedDraftAction,
     DraftActionStatus,
     DraftQueue,
-    DraftQueueCompletedListener,
+    DraftQueueChangeListener,
 } from '../DraftQueue';
 import { makeEnvironmentDraftAware } from '../makeEnvironmentDraftAware';
 import {
@@ -47,8 +47,10 @@ function setup(
     const draftQueue: DraftQueue = {
         enqueue: jest.fn().mockResolvedValue(undefined),
         getActionsForTags: jest.fn(),
-        registerDraftQueueCompletedListener: jest.fn(),
         processNextAction: jest.fn(),
+        registerOnChangedListener: jest.fn(),
+        getQueueActions: jest.fn(),
+        getQueueState: jest.fn(),
     };
 
     const baseEnvironment = makeDurable(new Environment(store, network), durableStore);
@@ -366,7 +368,7 @@ describe('makeEnvironmentDraftAware', () => {
         it('draft id redirects get configured after a post action completes', async () => {
             const store = new Store();
             const network = jest.fn();
-            let registeredListener: DraftQueueCompletedListener = undefined;
+            let registeredListener: DraftQueueChangeListener = undefined;
             const durableStore: DurableStore = {
                 setEntries: jest.fn(),
                 getEntries: jest.fn(),
@@ -377,8 +379,10 @@ describe('makeEnvironmentDraftAware', () => {
             const draftQueue: DraftQueue = {
                 enqueue: jest.fn().mockResolvedValue(undefined),
                 getActionsForTags: jest.fn(),
-                registerDraftQueueCompletedListener: listener => (registeredListener = listener),
+                registerOnChangedListener: listener => (registeredListener = listener),
                 processNextAction: jest.fn(),
+                getQueueActions: jest.fn(),
+                getQueueState: jest.fn(),
             };
 
             const baseEnvironment = makeDurable(new Environment(store, network), durableStore);

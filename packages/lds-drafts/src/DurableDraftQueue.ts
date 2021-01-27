@@ -1,7 +1,7 @@
 import {
     DraftQueue,
     DraftAction,
-    DraftQueueCompletedListener,
+    CompletedDraftAction,
     PendingDraftAction,
     ErrorDraftAction,
     DraftActionMap,
@@ -9,6 +9,7 @@ import {
     ProcessActionResult,
     ObjectAsSet,
     DraftQueueState,
+    DraftQueueChangeListener,
 } from './DraftQueue';
 import { ResourceRequest, NetworkAdapter, FetchResponse } from '@luvio/engine';
 import { ObjectKeys } from './utils/language';
@@ -51,7 +52,7 @@ function isErrorFetchResponse<T>(error: unknown): error is FetchResponse<T> {
 export class DurableDraftQueue implements DraftQueue {
     private durableStore: DurableStore;
     private networkAdapter: NetworkAdapter;
-    private draftQueueCompletedListeners: DraftQueueCompletedListener[] = [];
+    private draftQueueChangedListeners: DraftQueueChangeListener[] = [];
     private state = DraftQueueState.Stopped;
 
     constructor(store: DurableStore, network: NetworkAdapter) {
@@ -122,6 +123,7 @@ export class DurableDraftQueue implements DraftQueue {
             const entry: DurableStoreEntry = { data: action };
             const entries: DurableStoreEntries = { [durableStoreId]: entry };
             return this.durableStore.setEntries(entries, DraftDurableSegment).then(() => {
+                this.notifyChangedListeners();
                 return action;
             });
         });
@@ -147,8 +149,14 @@ export class DurableDraftQueue implements DraftQueue {
         });
     }
 
-    registerDraftQueueCompletedListener(listener: DraftQueueCompletedListener): void {
-        this.draftQueueCompletedListeners.push(listener);
+    registerOnChangedListener(listener: DraftQueueChangeListener): () => Promise<void> {
+        this.draftQueueChangedListeners.push(listener);
+        return () => {
+            this.draftQueueChangedListeners = this.draftQueueChangedListeners.filter(l => {
+                return l !== listener;
+            });
+            return Promise.resolve();
+        };
     }
 
     processNextAction(): Promise<ProcessActionResult> {
@@ -185,21 +193,14 @@ export class DurableDraftQueue implements DraftQueue {
                             .evictEntries([durableEntryKey], DraftDurableSegment)
                             .then(() => {
                                 // process action success
-                                for (
-                                    let i = 0, queueLen = this.draftQueueCompletedListeners.length;
-                                    i < queueLen;
-                                    i++
-                                ) {
-                                    const listener = this.draftQueueCompletedListeners[i];
-                                    listener({
-                                        status: DraftActionStatus.Completed,
-                                        id,
-                                        tag,
-                                        request,
-                                        response,
-                                        timestamp,
-                                    });
-                                }
+                                this.notifyChangedListeners({
+                                    status: DraftActionStatus.Completed,
+                                    id,
+                                    tag,
+                                    request,
+                                    response,
+                                    timestamp,
+                                });
 
                                 this.state = DraftQueueState.Started;
                                 return ProcessActionResult.ACTION_SUCCEEDED;
@@ -239,5 +240,12 @@ export class DurableDraftQueue implements DraftQueue {
                     });
             });
         });
+    }
+
+    private notifyChangedListeners(completed?: CompletedDraftAction<unknown>) {
+        for (let i = 0, queueLen = this.draftQueueChangedListeners.length; i < queueLen; i++) {
+            const listener = this.draftQueueChangedListeners[i];
+            listener(completed);
+        }
     }
 }

@@ -413,4 +413,47 @@ describe('DurableDraftQueue', () => {
             expect(network).toBeCalledWith(secondRequest);
         });
     });
+
+    describe('queue change listener', () => {
+        it('is called when item added', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            const listener = jest.fn();
+            draftQueue.registerOnChangedListener(listener);
+            const draftId = 'fooId';
+            await draftQueue.enqueue(DEFAULT_REQUEST, draftId);
+            expect(listener).toBeCalledTimes(1);
+        });
+
+        it('is called when item removed', async () => {
+            // TODO: Add this test when remove item logic is added
+        });
+
+        it('is called when item completes', async () => {
+            const network = jest.fn().mockResolvedValue({});
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            const listener = jest.fn();
+            draftQueue.registerOnChangedListener(listener);
+            const firstRequest = { ...DEFAULT_REQUEST, basePath: '/z' };
+            await draftQueue.enqueue(firstRequest, 'z');
+            await draftQueue.processNextAction();
+            expect(listener).toBeCalledTimes(2);
+        });
+
+        it('passes completed action when appropriate', async () => {
+            const completedSpy = jest.fn();
+            const network = jest.fn().mockResolvedValue({});
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            draftQueue.registerOnChangedListener(completedSpy);
+            const firstRequest = { ...DEFAULT_REQUEST, basePath: '/z' };
+            await draftQueue.enqueue(firstRequest, 'z');
+            await draftQueue.processNextAction();
+            expect(completedSpy).toBeCalledTimes(2);
+            expect(completedSpy.mock.calls[0][0]).toBeUndefined();
+            expect(completedSpy.mock.calls[1][0]).toBeDefined();
+        });
+    });
 });

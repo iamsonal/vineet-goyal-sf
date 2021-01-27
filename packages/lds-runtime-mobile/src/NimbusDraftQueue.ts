@@ -6,9 +6,9 @@ import {
     DraftAction,
     DraftQueue,
     DraftActionMap,
-    DraftQueueCompletedListener,
     ProcessActionResult,
     DraftQueueState,
+    DraftQueueChangeListener,
 } from '@salesforce/lds-drafts';
 import { JSONParse, JSONStringify, ObjectKeys } from './utils/language';
 
@@ -53,9 +53,10 @@ export class NimbusDraftQueue implements DraftQueue {
         });
     }
 
-    registerDraftQueueCompletedListener(_listener: DraftQueueCompletedListener): void {
+    registerOnChangedListener(_listener: DraftQueueChangeListener): () => Promise<void> {
         // no-op here because any changes to durable store as a result of an upload
         // will already get processed by the durable store notify change listener
+        return Promise.resolve;
     }
 
     processNextAction(): Promise<ProcessActionResult> {

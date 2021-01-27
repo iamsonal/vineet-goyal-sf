@@ -17,7 +17,7 @@ import {
     isRequestForDraftGetRecord,
     getRecordKeyFromRecordRequest,
 } from './utils/records';
-import { DraftQueue } from './DraftQueue';
+import { CompletedDraftAction, DraftQueue } from './DraftQueue';
 import {
     createBadRequestResponse,
     createDeletedResponse,
@@ -205,14 +205,20 @@ export function makeEnvironmentDraftAware(
 
     // register for when the draft queue completes an upload so we can properly
     // update subscribers
-    draftQueue.registerDraftQueueCompletedListener(action => {
-        const { request, tag } = action;
+    draftQueue.registerOnChangedListener(
+        (action?: CompletedDraftAction<unknown>): Promise<void> => {
+            if (action === undefined) {
+                return Promise.resolve();
+            }
 
-        if (request.method === 'delete') {
-            env.storeEvict(tag);
-            env.storeBroadcast(env.rebuildSnapshot);
-        } else {
-            draftAwareHandleResponse(
+            const { request, tag } = action;
+
+            if (request.method === 'delete') {
+                env.storeEvict(tag);
+                env.storeBroadcast(env.rebuildSnapshot);
+                return Promise.resolve();
+            }
+            return draftAwareHandleResponse(
                 request,
                 action.response,
                 draftQueue,
@@ -251,7 +257,7 @@ export function makeEnvironmentDraftAware(
                 }
             });
         }
-    });
+    );
 
     return ObjectCreate(env, {
         resolveUnfulfilledSnapshot: { value: resolveUnfulfilledSnapshot },

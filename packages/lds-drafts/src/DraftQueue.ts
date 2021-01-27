@@ -47,7 +47,7 @@ export type DraftAction<T> =
     | ErrorDraftAction<T>
     | UploadingDraftAction<T>;
 
-export type DraftQueueCompletedListener = (completed: CompletedDraftAction<unknown>) => void;
+export type DraftQueueChangeListener = (completed?: CompletedDraftAction<unknown>) => Promise<void>;
 
 export type DraftActionMap = { [tag: string]: Readonly<DraftAction<unknown>>[] };
 
@@ -110,10 +110,11 @@ export interface DraftQueue {
     getActionsForTags(tags: ObjectAsSet): Promise<DraftActionMap>;
 
     /**
-     * Registers a listener to be notified when a DraftAction completes
-     * @param listener Listener to notify when a DraftAction is completed
+     * Registers a listener to be notified when the Draft Queue changes
+     * @param listener Listener to notify when the draft queue changes, with an optional parameter
+     * for a completed DraftAction that triggered the change.
      */
-    registerDraftQueueCompletedListener(listener: DraftQueueCompletedListener): void;
+    registerOnChangedListener(listener: DraftQueueChangeListener): () => Promise<void>;
 
     /**
      * Processes the next action in the draft queue

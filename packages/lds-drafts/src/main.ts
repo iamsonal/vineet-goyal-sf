@@ -5,16 +5,16 @@ export {
     DraftQueueState,
     DraftAction,
     DraftActionStatus,
-    DraftQueueCompletedListener,
     ProcessActionResult,
     DraftActionMap,
+    DraftQueueChangeListener,
 } from './DraftQueue';
 export { makeNetworkAdapterDraftAware } from './makeNetworkAdapterDraftAware';
 export { DraftRecordRepresentation } from './utils/records';
 export { DurableDraftQueue, DraftDurableSegment } from './DurableDraftQueue';
 export {
     DraftManager,
-    DraftQueueManager,
+    DraftManagerState,
     DraftActionOperationType,
     DraftQueueItem,
 } from './DraftManager';

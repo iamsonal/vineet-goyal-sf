@@ -1,3 +1,4 @@
+import { HttpStatusCode } from '@luvio/engine';
 import {
     FieldValueRepresentation,
     keyBuilderRecord,
@@ -5,7 +6,12 @@ import {
 } from '@salesforce/lds-adapters-uiapi';
 import { buildRecordFieldStoreKey } from '@salesforce/lds-uiapi-record-utils';
 
-import { DraftAction, DraftActionStatus, ErrorDraftAction } from '../DraftQueue';
+import {
+    DraftAction,
+    DraftActionStatus,
+    ErrorDraftAction,
+    CompletedDraftAction,
+} from '../DraftQueue';
 import { ObjectKeys } from '../utils/language';
 import { DurableRecordRepresentation } from '../utils/records';
 
@@ -189,6 +195,35 @@ export function createErrorDraftAction(
         id: new Date().getUTCMilliseconds().toString(),
         status: DraftActionStatus.Error,
         error: 'SOMETHING WENT WRONG',
+        tag: recordKey,
+        timestamp: timestamp,
+        request: {
+            baseUri: '/services/data/v52.0',
+            basePath: `/ui-api/records/${recordId}`,
+            method: 'delete',
+            body: {},
+            urlParams: {},
+            queryParams: {},
+            headers: {},
+        },
+    };
+}
+
+export function createCompletedDraftAction(
+    recordId: string,
+    recordKey: string,
+    timestamp: number = DEFAULT_TIME_STAMP
+): CompletedDraftAction<RecordRepresentation> {
+    return {
+        id: Date.now().toString(),
+        status: DraftActionStatus.Completed,
+        response: {
+            status: HttpStatusCode.Ok,
+            body: createTestRecord(recordId, recordId, recordId, 1),
+            statusText: '',
+            ok: true,
+            headers: {},
+        },
         tag: recordKey,
         timestamp: timestamp,
         request: {

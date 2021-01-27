@@ -13,6 +13,7 @@ import {
     DraftRecordRepresentation,
     DraftDurableSegment,
     DurableDraftQueue,
+    ProcessActionResult,
     DraftManager,
     DraftActionOperationType,
 } from '@salesforce/lds-drafts';
@@ -26,9 +27,10 @@ import { JSONStringify } from '../utils/language';
 import { MockNimbusDurableStore, mockNimbusStoreGlobal } from './MockNimbusDurableStore';
 import { MockNimbusAdapter, mockNimbusNetworkGlobal } from './MockNimbusNetworkAdapter';
 import { flushPromises } from './testUtils';
+import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 
 const { isGenerated } = recordIdGenerator(Id);
-const RECORD_ID = '005xx000001XL1tAAG';
+const RECORD_ID = mockAccount.id;
 const STORE_KEY_RECORD = `UiApi::RecordRepresentation:${RECORD_ID}`;
 const API_NAME = 'Account';
 
@@ -141,6 +143,41 @@ describe('lds drafts integration tests', () => {
             expect(tag).toBe(formattedTagWithRecordId);
         });
 
+        it('created record is still obervable after draft is uploaded', async () => {
+            const orginalName = 'Justin';
+            // create a synthetic record
+            const snapshot = await createRecord({
+                apiName: API_NAME,
+                fields: { Name: orginalName },
+            });
+            const record = snapshot.data;
+            const recordId = record.id;
+            // call getRecord with synthetic record id
+            const getRecordSnapshot = (await getRecord({
+                recordId: recordId,
+                fields: ['Account.Name', 'Account.Id'],
+            })) as Snapshot<RecordRepresentation>;
+            expect(getRecordSnapshot.state).toBe('Fulfilled');
+            const callbackSpy = jest.fn();
+            // subscribe to getRecord snapshot
+            luvio.storeSubscribe(getRecordSnapshot, callbackSpy);
+
+            networkAdapter.setMockResponse({
+                status: 201,
+                headers: {},
+                body: JSONStringify(mockAccount),
+            });
+
+            // upload the draft and respond with a record with more fields and a new id
+            const result = await draftQueue.processNextAction();
+            await flushPromises();
+            expect(result).toBe(ProcessActionResult.ACTION_SUCCEEDED);
+
+            // make sure getRecord callback was called
+            expect(callbackSpy).toBeCalledTimes(1);
+            // ensure the callback id value has the updated canonical server id
+            expect(callbackSpy.mock.calls[0][0].data.fields.Id.value).toBe(RECORD_ID);
+        });
         it('creates a create item in queue visible by draft manager', async () => {
             await createRecord({ apiName: API_NAME, fields: { Name: 'Justin' } });
             const subject = await draftManager.getQueue();

@@ -18,6 +18,7 @@ import {
     DEFAULT_NAME_FIELD_VALUE,
     DRAFT_RECORD_ID,
     DRAFT_STORE_KEY_FIELD__NAME,
+    flushPromises,
     NAME_VALUE,
     RECORD_ID,
     STORE_KEY_DRAFT_RECORD,
@@ -38,6 +39,8 @@ function setupDraftStore(storeRecords: any = {}) {
         getActionsForTags: jest.fn(),
         registerDraftQueueCompletedListener: jest.fn(),
         processNextAction: jest.fn(),
+        getQueueActions: jest.fn(),
+        getQueueState: jest.fn(),
     };
 
     const store = new Store();
@@ -49,7 +52,8 @@ function setupDraftStore(storeRecords: any = {}) {
         store,
         (id: string) => {
             return id === DRAFT_RECORD_ID;
-        }
+        },
+        (_draftKey: string, _canonicalKey: string) => {}
     );
 
     return { durableStore, baseDurableStore, draftQueue };
@@ -600,7 +604,8 @@ describe('makeDurableStoreDraftAware', () => {
                 } as any,
                 {} as any,
                 {} as any,
-                {} as any
+                () => false,
+                (_draftKey: string, _canonicalKey: string) => {}
             );
 
             const draftActionKey = buildDraftDurableStoreKey(STORE_KEY_RECORD, 'FOO');
@@ -626,7 +631,8 @@ describe('makeDurableStoreDraftAware', () => {
                 } as any,
                 {} as any,
                 {} as any,
-                {} as any
+                () => false,
+                (_draftKey: string, _canonicalKey: string) => {}
             );
 
             const draftActionKey = buildDraftDurableStoreKey(STORE_KEY_RECORD, 'FOO');
@@ -654,7 +660,8 @@ describe('makeDurableStoreDraftAware', () => {
                 } as any,
                 {} as any,
                 {} as any,
-                {} as any
+                () => false,
+                (_draftKey: string, _canonicalKey: string) => {}
             );
             const baseListener: OnDurableStoreChangedListener = (ids: {
                 [key: string]: boolean;
@@ -664,6 +671,46 @@ describe('makeDurableStoreDraftAware', () => {
             };
             durableStore.registerOnChangedListener(baseListener);
             changeListener({ [STORE_KEY_RECORD]: true }, DraftDurableSegment);
+        });
+
+        it('redirect entries added to the durable store invokes the injected mapping function', async () => {
+            let changeListener;
+            const callbackSpy = jest.fn();
+            const durableStore: DurableStore = makeDurableStoreDraftAware(
+                {
+                    registerOnChangedListener: listener => (changeListener = listener),
+                    getEntries: () =>
+                        Promise.resolve({
+                            [STORE_KEY_RECORD]: {
+                                data: {
+                                    draftKey: STORE_KEY_DRAFT_RECORD,
+                                    canonicalKey: STORE_KEY_RECORD,
+                                },
+                            },
+                        }),
+                } as any,
+                {} as any,
+                {} as any,
+                () => false,
+                callbackSpy
+            );
+
+            durableStore.registerOnChangedListener(() => {});
+            changeListener(
+                {
+                    [STORE_KEY_RECORD]: {
+                        draftKey: STORE_KEY_DRAFT_RECORD,
+                        canonicalKey: STORE_KEY_RECORD,
+                    },
+                },
+                'DRAFT_ID_MAPPINGS'
+            );
+
+            await flushPromises();
+
+            expect(callbackSpy).toBeCalledTimes(1);
+            expect(callbackSpy.mock.calls[0][1]).toEqual(STORE_KEY_RECORD);
+            expect(callbackSpy.mock.calls[0][0]).toEqual(STORE_KEY_DRAFT_RECORD);
         });
     });
 });

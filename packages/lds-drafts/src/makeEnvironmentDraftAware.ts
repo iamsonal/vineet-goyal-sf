@@ -33,9 +33,14 @@ export interface DraftIdMappingEntry {
     canonicalKey: string;
 }
 
-const DRAFT_ID_MAPPINGS_SEGMENT = 'DRAFT_ID_MAPPINGS';
+export const DRAFT_ID_MAPPINGS_SEGMENT = 'DRAFT_ID_MAPPINGS';
+
 // retain draft id mappings for 30 days
 const MAPPING_TTL = 30 * 24 * 60 * 60 * 1000;
+
+function createDraftMappingEntryKey(draftKey: string, canonicalKey: string) {
+    return `DraftIdMapping::${draftKey}::${canonicalKey}`;
+}
 
 export function makeEnvironmentDraftAware(
     env: DurableEnvironment,
@@ -245,9 +250,10 @@ export function makeEnvironmentDraftAware(
                         draftKey,
                         canonicalKey,
                     };
+                    const entryKey = createDraftMappingEntryKey(draftKey, canonicalKey);
                     return durableStore.setEntries(
                         {
-                            [draftKey]: {
+                            [entryKey]: {
                                 data: entry,
                                 expiration: { fresh: expiration, stale: expiration },
                             },

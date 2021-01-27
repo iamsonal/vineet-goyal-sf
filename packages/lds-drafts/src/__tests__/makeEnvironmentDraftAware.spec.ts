@@ -423,8 +423,9 @@ describe('makeEnvironmentDraftAware', () => {
 
             expect(durableStore.setEntries).toBeCalledTimes(1);
             const durableEntry = setSpy.mock.calls[0][0];
-            const mapping = durableEntry[STORE_KEY_DRAFT_RECORD].data;
-            const expiration = durableEntry[STORE_KEY_DRAFT_RECORD].expiration;
+            const mappingKey = `DraftIdMapping::${STORE_KEY_DRAFT_RECORD}::${STORE_KEY_RECORD}`;
+            const mapping = durableEntry[mappingKey].data;
+            const expiration = durableEntry[mappingKey].expiration;
             expect(mapping).toEqual({
                 draftKey: STORE_KEY_DRAFT_RECORD,
                 canonicalKey: STORE_KEY_RECORD,

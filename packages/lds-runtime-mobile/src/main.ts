@@ -34,6 +34,13 @@ const recordIngestFunc = (
     }
 };
 
+const registerDraftMapping = (draftKey: string, canonicalKey: string) => {
+    if (luvio !== undefined) {
+        luvio.storeRedirect(draftKey, canonicalKey);
+        luvio.storeBroadcast();
+    }
+};
+
 // non-draft-aware base services
 const store = new Store();
 const durableStore = new NimbusDurableStore();
@@ -58,7 +65,8 @@ const draftAwareDurableStore = makeDurableStoreDraftAware(
     durableStore,
     draftQueue,
     store,
-    isGenerated
+    isGenerated,
+    registerDraftMapping
 );
 
 // build environment
@@ -70,7 +78,9 @@ const env = makeEnvironmentDraftAware(
     ),
     store,
     draftQueue,
-    draftAwareDurableStore,
+    // W-8794366: replace with draftAwareDurableStore once resolved
+    // draftAwareDurableStore,
+    durableStore,
     recordIngestFunc,
     newRecordId,
     isGenerated,

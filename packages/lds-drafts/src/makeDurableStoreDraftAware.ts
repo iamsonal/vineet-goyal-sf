@@ -29,6 +29,7 @@ import {
     extractRecordIdFromStoreKey,
     buildRecordFieldStoreKey,
 } from '@salesforce/lds-uiapi-record-utils';
+import { DraftIdMappingEntry, DRAFT_ID_MAPPINGS_SEGMENT } from './makeEnvironmentDraftAware';
 
 /**
  * This method denormalizes field links so that a record can be looked up with all its fields in one
@@ -256,7 +257,8 @@ export function makeDurableStoreDraftAware(
     durableStore: DurableStore,
     draftQueue: DraftQueue,
     store: Store,
-    isDraftId: (id: string) => boolean
+    isDraftId: (id: string) => boolean,
+    registerDraftKeyMapping: (draftKey: string, canonicalKey: string) => void
 ): DurableStore {
     // overrides getEntries to check if any of the requested entries is a record or a record field
     // since we are storing record fields denormalized in the durable store, we will request the record
@@ -394,6 +396,24 @@ export function makeDurableStoreDraftAware(
     ): () => Promise<void> {
         return durableStore.registerOnChangedListener(
             (ids: { [key: string]: boolean }, segment: string, isExternalChange?: boolean) => {
+                if (segment === DRAFT_ID_MAPPINGS_SEGMENT) {
+                    durableStore
+                        .getEntries(ObjectKeys(ids), DRAFT_ID_MAPPINGS_SEGMENT)
+                        .then(mappingEntries => {
+                            if (mappingEntries === undefined) {
+                                return;
+                            }
+                            const keys = ObjectKeys(mappingEntries);
+                            for (const key of keys) {
+                                const entry = mappingEntries[key] as DurableStoreEntry<
+                                    DraftIdMappingEntry
+                                >;
+                                const { draftKey, canonicalKey } = entry.data;
+                                registerDraftKeyMapping(draftKey, canonicalKey);
+                            }
+                        });
+                }
+
                 if (segment !== DraftDurableSegment) {
                     return listener(ids, segment, isExternalChange);
                 }

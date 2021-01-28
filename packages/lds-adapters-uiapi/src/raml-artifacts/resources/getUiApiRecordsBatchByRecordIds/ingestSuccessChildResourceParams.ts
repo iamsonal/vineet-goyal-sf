@@ -1,4 +1,4 @@
-import { Luvio, FulfilledSnapshot } from '@luvio/engine';
+import { Luvio, FulfilledSnapshot, ResourceResponse, StaleSnapshot } from '@luvio/engine';
 import {
     ObjectFreeze,
     getFetchResponseStatusText,
@@ -19,21 +19,25 @@ export function ingestSuccessChildResourceParams(
     luvio: Luvio,
     childResourceParamsArray: getUiApiRecordsByRecordId_ResourceRequestConfig[],
     childEnvelopes: BatchResultRepresentation[]
-): { childSnapshotData: BatchRepresentation; seenRecords: { [key: string]: boolean } } {
+): {
+    childSnapshotData: BatchRepresentation;
+    seenRecords: { [key: string]: boolean };
+    snapshotState: string;
+} {
     const childSnapshotDataResponses: BatchRepresentation['results'] = [];
     let seenRecords: FulfilledSnapshot<BatchRepresentation, {}>['seenRecords'] = {};
+    let snapshotState = 'Fulfilled';
     for (let index = 0, len = childResourceParamsArray.length; index < len; index += 1) {
         const childResourceParams = childResourceParamsArray[index];
         const result = childEnvelopes[index];
-        const childStatusCodeText = getFetchResponseStatusText(result.statusCode);
         if (result.statusCode === 200) {
             const { statusCode: childStatusCode, result: childBody } = result;
-            const childResponse = {
+            const childResponse: ResourceResponse<RecordRepresentation> = {
                 status: childStatusCode,
                 body: childBody,
                 ok: true,
-                statusText: childStatusCodeText,
-                headers: {},
+                statusText: 'OK',
+                headers: undefined,
             };
             const childSnapshot = getRecord_onResourceSuccess(
                 luvio,
@@ -45,7 +49,12 @@ export function ingestSuccessChildResourceParams(
                 getUiApiRecordsByRecordId_keyBuilder(childResourceParams),
                 [],
                 childResponse
-            ) as FulfilledSnapshot<RecordRepresentation, {}>;
+            ) as
+                | FulfilledSnapshot<RecordRepresentation, {}>
+                | StaleSnapshot<RecordRepresentation, {}>;
+            if (childSnapshot.state === 'Stale') {
+                snapshotState = 'Stale';
+            }
             seenRecords = {
                 ...seenRecords,
                 ...childSnapshot.seenRecords,
@@ -59,6 +68,7 @@ export function ingestSuccessChildResourceParams(
             childSnapshotDataResponses.push(childValue);
         } else if (result.statusCode === 404) {
             const { statusCode: childStatusCode, result: childBody } = result;
+            const childStatusCodeText = getFetchResponseStatusText(result.statusCode);
             const childResponse = {
                 status: childStatusCode,
                 body: childBody,
@@ -94,5 +104,5 @@ export function ingestSuccessChildResourceParams(
         results: childSnapshotDataResponses,
     };
 
-    return { childSnapshotData: ObjectFreeze(childSnapshotData), seenRecords };
+    return { childSnapshotData: ObjectFreeze(childSnapshotData), seenRecords, snapshotState };
 }

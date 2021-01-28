@@ -10,7 +10,7 @@
         "build": "rollup --config rollup.config.js"
     },
     "dependencies": {
-        "@luvio/engine": "^0.25.2",
-        "@luvio/lwc-luvio": "^0.25.2"
+        "@luvio/engine": "^0.26.0",
+        "@luvio/lwc-luvio": "^0.26.0"
     }
 }

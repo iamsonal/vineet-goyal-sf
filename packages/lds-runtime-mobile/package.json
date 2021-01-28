@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-runtime-mobile",
-    "version": "1.7.6",
+    "version": "1.7.7",
     "description": "LDS engine instance for mobile/hybrid runtimes.",
     "license": "MIT",
     "main": "dist/ldsEngineRuntimeMobile.js",
@@ -22,8 +22,8 @@
     },
     "devDependencies": {
         "@mobileplatform/nimbus-plugin-lds": "1.3.0",
-        "@salesforce/lds-adapters-uiapi": "1.7.6",
-        "@salesforce/lds-drafts": "1.7.6",
+        "@salesforce/lds-adapters-uiapi": "1.7.7",
+        "@salesforce/lds-drafts": "1.7.7",
         "@salesforce/user": "0.0.12"
     }
 }

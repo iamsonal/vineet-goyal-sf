@@ -27,6 +27,11 @@ interface ScalarFieldRepresentationValue {
 
 const DRAFT_ACTION_KEY_JUNCTION = '__DraftAction__';
 const DRAFT_ACTION_KEY_REGEXP = new RegExp(`(.*)${DRAFT_ACTION_KEY_JUNCTION}([a-zA-Z0-9]+)$`);
+const DEFAULT_FIELD_CREATED_BY_ID = 'CreatedById';
+const DEFAULT_FIELD_CREATED_DATE = 'CreatedDate';
+const DEFAULT_FIELD_LAST_MODIFIED_BY_ID = 'LastModifiedById';
+const DEFAULT_FIELD_LAST_MODIFIED_DATE = 'LastModifiedDate';
+const DEFAULT_FIELD_OWNER_ID = 'OwnerId';
 
 // TODO W-8220618 - remove this once generated RecordRepresentation has drafts node on it
 export interface DraftRecordRepresentation extends RecordRepresentation {
@@ -102,29 +107,40 @@ export function buildRecordFieldValueRepresentationsFromDraftFields(fields: Draf
 
 /**
  * Creates a synthetic record based on information included in a draft create operation
+ * @param userId The current user id, will be the record created by id
  * @param draftId The client-side id representing the record
  * @param apiName The api-name of the record
- * @param userId The user id of the user who created the record
- * @param fields List of fields included in the create request
+ * @param draftFields List of fields included in the create request
  */
 export function buildSyntheticRecordRepresentation(
+    userId: string,
     draftId: string,
     apiName: string,
-    fields: DraftFields
+    draftFields: DraftFields
 ): RecordRepresentation {
+    const now = new Date().toISOString();
+
+    const fields = buildRecordFieldValueRepresentationsFromDraftFields(draftFields);
+
+    // add default fields
+    fields[DEFAULT_FIELD_CREATED_BY_ID] = { value: userId, displayValue: null };
+    fields[DEFAULT_FIELD_CREATED_DATE] = { value: now, displayValue: null };
+    fields[DEFAULT_FIELD_LAST_MODIFIED_BY_ID] = { value: userId, displayValue: null };
+    fields[DEFAULT_FIELD_LAST_MODIFIED_DATE] = { value: now, displayValue: null };
+    fields[DEFAULT_FIELD_OWNER_ID] = { value: userId, displayValue: null };
+
     return {
         id: draftId,
         apiName,
         childRelationships: {},
         eTag: '',
-        // TODO: [W-8195422]: Draft created/updated records should have lastModifiedBy set to the logged in user id
-        lastModifiedById: null,
-        lastModifiedDate: new Date().toISOString(),
+        lastModifiedById: userId,
+        lastModifiedDate: now,
         recordTypeId: null,
         recordTypeInfo: null,
-        systemModstamp: new Date().toISOString(),
+        systemModstamp: now,
         weakEtag: -1,
-        fields: buildRecordFieldValueRepresentationsFromDraftFields(fields),
+        fields: fields,
     };
 }
 

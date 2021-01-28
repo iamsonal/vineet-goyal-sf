@@ -10,6 +10,7 @@ import {
     DRAFT_RECORD_ID,
     RECORD_ID,
     STORE_KEY_RECORD,
+    CURRENT_USER_ID,
 } from '../../__tests__/test-utils';
 import {
     buildRecordFieldValueRepresentationsFromDraftFields,
@@ -56,6 +57,7 @@ describe('draft environment record utilities', () => {
     describe('buildSyntheticRecordRepresentation', () => {
         it('builds sythetic record with fields', () => {
             const syntheticRecord = buildSyntheticRecordRepresentation(
+                CURRENT_USER_ID,
                 DRAFT_RECORD_ID,
                 DEFAULT_API_NAME,
                 { Name: DEFAULT_NAME_FIELD_VALUE }
@@ -66,7 +68,7 @@ describe('draft environment record utilities', () => {
                 apiName: DEFAULT_API_NAME,
                 childRelationships: {},
                 eTag: '',
-                lastModifiedById: null,
+                lastModifiedById: CURRENT_USER_ID,
                 lastModifiedDate: expect.any(String),
                 recordTypeId: null,
                 recordTypeInfo: null,
@@ -76,6 +78,26 @@ describe('draft environment record utilities', () => {
                     Name: {
                         value: DEFAULT_NAME_FIELD_VALUE,
                         displayValue: DEFAULT_NAME_FIELD_VALUE,
+                    },
+                    CreatedById: {
+                        value: CURRENT_USER_ID,
+                        displayValue: null,
+                    },
+                    CreatedDate: {
+                        value: expect.any(String),
+                        displayValue: null,
+                    },
+                    LastModifiedById: {
+                        value: CURRENT_USER_ID,
+                        displayValue: null,
+                    },
+                    LastModifiedDate: {
+                        value: expect.any(String),
+                        displayValue: null,
+                    },
+                    OwnerId: {
+                        value: CURRENT_USER_ID,
+                        displayValue: null,
                     },
                 },
             });

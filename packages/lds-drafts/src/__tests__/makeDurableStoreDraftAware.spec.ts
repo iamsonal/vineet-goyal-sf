@@ -24,6 +24,7 @@ import {
     STORE_KEY_DRAFT_RECORD,
     STORE_KEY_FIELD__NAME,
     STORE_KEY_RECORD,
+    CURRENT_USER_ID,
 } from './test-utils';
 
 function setupDraftStore(storeRecords: any = {}) {
@@ -53,7 +54,8 @@ function setupDraftStore(storeRecords: any = {}) {
         (id: string) => {
             return id === DRAFT_RECORD_ID;
         },
-        (_draftKey: string, _canonicalKey: string) => {}
+        (_draftKey: string, _canonicalKey: string) => {},
+        CURRENT_USER_ID
     );
 
     return { durableStore, baseDurableStore, draftQueue };
@@ -454,7 +456,7 @@ describe('makeDurableStoreDraftAware', () => {
                 [STORE_KEY_DRAFT_RECORD],
                 DefaultDurableSegment
             );
-            expect(ObjectKeys(readEntries).length).toBe(2);
+            expect(ObjectKeys(readEntries).length).toBe(7);
             const nameField = readEntries[DRAFT_STORE_KEY_FIELD__NAME].data;
             const readRecord = readEntries[STORE_KEY_DRAFT_RECORD].data;
 
@@ -501,7 +503,7 @@ describe('makeDurableStoreDraftAware', () => {
                 [STORE_KEY_DRAFT_RECORD],
                 DefaultDurableSegment
             );
-            expect(ObjectKeys(readEntries).length).toBe(2);
+            expect(ObjectKeys(readEntries).length).toBe(7);
             const nameField = readEntries[DRAFT_STORE_KEY_FIELD__NAME].data;
             const readRecord = readEntries[STORE_KEY_DRAFT_RECORD].data;
 

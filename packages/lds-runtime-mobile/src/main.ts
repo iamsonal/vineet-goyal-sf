@@ -13,7 +13,7 @@ import {
     DraftManager,
 } from '@salesforce/lds-drafts';
 
-import Id from '@salesforce/user/Id';
+import userId from '@salesforce/user/Id';
 import { recordIdGenerator } from '@mobileplatform/record-id-generator';
 
 import { NimbusNetworkAdapter } from './NimbusNetworkAdapter';
@@ -47,7 +47,7 @@ const durableStore = new NimbusDurableStore();
 const networkAdapter = NimbusNetworkAdapter;
 
 // user id centric record ID generator
-const { newRecordId, isGenerated } = recordIdGenerator(Id);
+const { newRecordId, isGenerated } = recordIdGenerator(userId);
 
 // draft queue
 const draftQueue = buildLdsDraftQueue(networkAdapter, durableStore);
@@ -66,7 +66,8 @@ const draftAwareDurableStore = makeDurableStoreDraftAware(
     draftQueue,
     store,
     isGenerated,
-    registerDraftMapping
+    registerDraftMapping,
+    userId
 );
 
 // build environment

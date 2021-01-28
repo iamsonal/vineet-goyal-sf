@@ -139,10 +139,12 @@ function normalizeRecordFields(
  * Creates a synthetic record out of the information contained in a DraftAction
  * Note that the passed in DraftAction's method must be 'post'
  *
+ * @param currentUserId the current login user id
  * @param {DraftAction<RecordRepresentation>} draft
  * @returns {DurableStoreEntry<DurableRecordRepresentation>}
  */
 function createSyntheticRecord(
+    currentUserId: string,
     draft: DraftAction<RecordRepresentation>
 ): DurableStoreEntry<DurableRecordRepresentation> | undefined {
     const { body, method } = draft.request;
@@ -171,10 +173,10 @@ function createSyntheticRecord(
         }
         return undefined;
     }
-    const draftRecord = buildSyntheticRecordRepresentation(draftId, apiName, fields);
+    const draftRecord = buildSyntheticRecordRepresentation(currentUserId, draftId, apiName, fields);
 
     const links: { [key: string]: StoreLink } = {};
-    const keys = ObjectKeys(fields);
+    const keys = ObjectKeys(draftRecord.fields);
     for (let i = 0, len = keys.length; i < len; i++) {
         const key = keys[i];
         links[key] = {
@@ -227,7 +229,11 @@ function getRecordEntriesWithDraftOverlays(
     return returnEntries;
 }
 
-function getSyntheticRecordEntries(draftRecordKeys: string[], draftActionMap: DraftActionMap) {
+function getSyntheticRecordEntries(
+    draftRecordKeys: string[],
+    draftActionMap: DraftActionMap,
+    currentUserId: string
+) {
     const returnEntries: DurableStoreEntries = ObjectCreate(null);
     for (let i = 0, len = draftRecordKeys.length; i < len; i++) {
         const draftKey = draftRecordKeys[i];
@@ -242,7 +248,7 @@ function getSyntheticRecordEntries(draftRecordKeys: string[], draftActionMap: Dr
         if (postDraft === undefined) {
             return undefined;
         }
-        const record = createSyntheticRecord(postDraft);
+        const record = createSyntheticRecord(currentUserId, postDraft);
         if (record === undefined) {
             // we failed to create a synthetic record likely due to a corrupt DraftAction
             // return undefined for the entire request
@@ -258,7 +264,8 @@ export function makeDurableStoreDraftAware(
     draftQueue: DraftQueue,
     store: Store,
     isDraftId: (id: string) => boolean,
-    registerDraftKeyMapping: (draftKey: string, canonicalKey: string) => void
+    registerDraftKeyMapping: (draftKey: string, canonicalKey: string) => void,
+    currentUserId: string
 ): DurableStore {
     // overrides getEntries to check if any of the requested entries is a record or a record field
     // since we are storing record fields denormalized in the durable store, we will request the record
@@ -324,7 +331,8 @@ export function makeDurableStoreDraftAware(
                     if (draftRecordKeys.length > 0) {
                         const syntheticRecordEntries = getSyntheticRecordEntries(
                             draftRecordKeys,
-                            draftActionMap
+                            draftActionMap,
+                            currentUserId
                         );
                         ObjectAssign(returnEntries, syntheticRecordEntries);
                     }

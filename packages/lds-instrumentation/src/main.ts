@@ -1,5 +1,5 @@
 import { Luvio, Store, Adapter, Snapshot, UnfulfilledSnapshot } from '@luvio/engine';
-import { REFRESH_ADAPTER_EVENT } from '@luvio/lwc-luvio';
+import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
 import {
     CacheStatsLogger,
     Counter,
@@ -68,6 +68,10 @@ interface RecordApiNameChangeCounters {
     [apiName: string]: Counter;
 }
 
+interface AdapterUnfulfilledErrorCounters {
+    [apiName: string]: Counter;
+}
+
 const RECORD_API_NAME_CHANGE_EVENT = 'record-api-name-change-event';
 interface RecordApiNameChangeEvent {
     [RECORD_API_NAME_CHANGE_EVENT]: boolean;
@@ -78,6 +82,12 @@ interface RecordApiNameChangeEvent {
 interface RefreshAdapterEvent {
     [REFRESH_ADAPTER_EVENT]: boolean;
     adapterName: string;
+}
+interface AdapterUnfulfilledError {
+    [ADAPTER_UNFULFILLED_ERROR]: boolean;
+    adapterName: string;
+    missingPaths: UnfulfilledSnapshot<any, any>['missingPaths'];
+    missingLinks: UnfulfilledSnapshot<any, any>['missingLinks'];
 }
 
 const APEX_ADAPTER_NAME = 'getApex';
@@ -219,6 +229,7 @@ const wireAdapterMetricConfigs: wireAdapterMetricConfigs = {
 
 export class Instrumentation {
     private recordApiNameChangeCounters: RecordApiNameChangeCounters = {};
+    private adapterUnfulfilledErrorCounters: AdapterUnfulfilledErrorCounters = {};
     private refreshAdapterEvents: RefreshAdapterEvents = {};
     private refreshApiCallEventStats: RefreshApiCallEventStats = {
         [REFRESH_APEX_KEY]: 0,
@@ -261,14 +272,6 @@ export class Instrumentation {
          */
         const wireAdapterRequestMetric = counter(
             createMetricsKey(OBSERVABILITY_NAMESPACE, ADAPTER_INVOCATION_COUNT_METRIC_NAME, name)
-        );
-
-        /**
-         * W-8076905
-         * Dynamically generated metric.  Simple counter for all UnfulfilledSnapshot responses sent to the adapter.
-         */
-        const wireAdapterErrorMetric = counter(
-            createMetricsKey(OBSERVABILITY_NAMESPACE, ADAPTER_ERROR_COUNT_METRIC_NAME, name)
         );
 
         /**
@@ -360,10 +363,6 @@ export class Instrumentation {
                         cacheMissDurationByAdapterMetric,
                         Date.now() - startTime
                     );
-
-                    if (this.resultIsUnfulfilledSnapshot(_snapshot)) {
-                        this.incrementAdapterErrorMetric(wireAdapterErrorMetric);
-                    }
                 });
                 stats.logMisses();
                 cacheMissMetric.increment(1);
@@ -388,10 +387,6 @@ export class Instrumentation {
                 cacheHitMetric.increment(1);
                 cacheHitCountByAdapterMetric.increment(1);
                 timerMetricAddDuration(cacheHitDurationByAdapterMetric, Date.now() - startTime);
-
-                if (this.resultIsUnfulfilledSnapshot(result)) {
-                    this.incrementAdapterErrorMetric(wireAdapterErrorMetric);
-                }
             }
 
             return result;
@@ -399,16 +394,6 @@ export class Instrumentation {
         // Set the name property on the function for debugging purposes.
         Object.defineProperty(instrumentedAdapter, 'name', { value: name + '__instrumented' });
         return instrumentedAdapter;
-    }
-
-    /**
-     * Verify if result is of type UnfulfilledSnapshot
-     * @param result !null | Snapshot
-     */
-    private resultIsUnfulfilledSnapshot<T, U>(
-        result: Snapshot<T, U> | Promise<Snapshot<T, U>>
-    ): result is UnfulfilledSnapshot<T, U> {
-        return 'state' in result && result.state === 'Unfulfilled';
     }
 
     private incrementAdapterRequestMetric(wireRequestCounter: Counter) {
@@ -471,6 +456,8 @@ export class Instrumentation {
             this.incrementRecordApiNameChangeCount(context);
         } else if (this.isRefreshApiEvent(context)) {
             this.handleRefreshApiCall(context);
+        } else if (this.isAdapterUnfulfilledError(context)) {
+            this.incrementAdapterRequestErrorCount(context);
         } else {
             perfStart(NETWORK_TRANSACTION_NAME);
             perfEnd(NETWORK_TRANSACTION_NAME, context);
@@ -493,6 +480,15 @@ export class Instrumentation {
      */
     private isRefreshAdapterEvent(context: unknown): context is RefreshAdapterEvent {
         return (context as RefreshAdapterEvent)[REFRESH_ADAPTER_EVENT] === true;
+    }
+
+    /**
+     * Returns whether or not this is an AdapterUnfulfilledError.
+     * @param context The transaction context.
+     * @returns Whether or not this is an AdapterUnfulfilledError.
+     */
+    private isAdapterUnfulfilledError(context: unknown): context is AdapterUnfulfilledError {
+        return (context as AdapterUnfulfilledError)[ADAPTER_UNFULFILLED_ERROR] === true;
     }
 
     /**
@@ -640,6 +636,28 @@ export class Instrumentation {
             this.recordApiNameChangeCounters[apiName] = apiNameChangeCounter;
         }
         apiNameChangeCounter.increment(1);
+    }
+
+    /**
+     * W-8620679
+     * Increment the counter for an UnfulfilledSnapshotError coming from luvio
+     *
+     * @param context The transaction context.
+     */
+    private incrementAdapterRequestErrorCount(context: AdapterUnfulfilledError): void {
+        const { adapterName } = context;
+        let adapterRequestErrorCounter = this.adapterUnfulfilledErrorCounters[adapterName];
+        if (adapterRequestErrorCounter === undefined) {
+            adapterRequestErrorCounter = counter(
+                createMetricsKey(
+                    OBSERVABILITY_NAMESPACE,
+                    ADAPTER_ERROR_COUNT_METRIC_NAME,
+                    adapterName
+                )
+            );
+            this.adapterUnfulfilledErrorCounters[adapterName] = adapterRequestErrorCounter;
+        }
+        adapterRequestErrorCounter.increment(1);
     }
 }
 /**

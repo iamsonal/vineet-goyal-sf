@@ -400,7 +400,6 @@ describe('instrumentation', () => {
             timekeeper.freeze(now);
             return instrumentedAdapter(getRecordConfig).then(_result => {
                 expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
-                expect(instrumentationSpies.incrementAdapterErrorMetric).toHaveBeenCalledTimes(1);
             });
         });
 
@@ -422,7 +421,6 @@ describe('instrumentation', () => {
             instrumentedAdapter(getRecordConfig);
 
             expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
-            expect(instrumentationSpies.incrementAdapterErrorMetric).toHaveBeenCalledTimes(0);
         });
 
         it('should not instrument error when a non UnfulfilledSnapshot Promise is returned to the adapter', () => {
@@ -444,7 +442,6 @@ describe('instrumentation', () => {
             timekeeper.freeze(now);
             return instrumentedAdapter(getRecordConfig).then(_result => {
                 expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
-                expect(instrumentationSpies.incrementAdapterErrorMetric).toHaveBeenCalledTimes(0);
             });
         });
     });

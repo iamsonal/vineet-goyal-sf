@@ -1,22 +1,22 @@
 {
     "apiName": "RecordType",
     "childRelationships": {},
-    "eTag": "b2b53261989294b35ba537356d3ccb29",
+    "eTag": "ea512f572c5fb30acb9f4239682e1efe",
     "fields": {
         "Id": {
             "displayValue": null,
-            "value": "012T10000000EEDIA2"
+            "value": "012xx0000005sT2AAI"
         },
         "Name": {
             "displayValue": null,
             "value": "Custom Object 2 Type 1"
         }
     },
-    "id": "012T10000000EEDIA2",
-    "lastModifiedById": "005T1000000DvJnIAK",
-    "lastModifiedDate": "2020-08-14T21:19:22.000Z",
+    "id": "012xx0000005sT2AAI",
+    "lastModifiedById": "005xx000001XC6fAAG",
+    "lastModifiedDate": "2021-01-28T15:16:50.000Z",
     "recordTypeId": null,
     "recordTypeInfo": null,
-    "systemModstamp": "2020-08-14T21:19:22.000Z",
-    "weakEtag": 1597439962000
+    "systemModstamp": "2021-01-28T15:16:50.000Z",
+    "weakEtag": 1611847010000
 }

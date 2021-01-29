@@ -23,16 +23,17 @@ import {
     TTL,
 } from '../../generated/types/RecordDefaultsTemplateCloneRepresentation';
 import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
-import { keyBuilder as templateRecordKeyBuilder } from './CloneRecordTemplateRepresentationKey';
+import { keyBuilder as templateRecordKeyBuilder } from '../../generated/types/RecordTemplateCloneRepresentation';
 import {
     BLANK_RECORD_FIELDS_TRIE,
     convertFieldsToTrie,
     getTrackedFields,
 } from '../../util/records';
 import { snapshotRefreshOptions } from '../../generated/adapters/adapter-utils';
-import { keyBuilder as templateKeyBuilder } from './CloneTemplateRepresentationKey';
-
-import { keyBuilderFromType as templateKeyBuilderFromType } from './CloneTemplateRepresentationKey';
+import {
+    keyBuilder as templateKeyBuilder,
+    keyBuilderFromType as templateKeyBuilderFromType,
+} from '../../generated/types/RecordDefaultsTemplateCloneRepresentation';
 import { createFieldsIngestSuccess as resourceCreateFieldsIngest } from '../../generated/fields/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
 
 const DEFAULT_RECORD_TYPE_ID_KEY = 'defaultRecordTypeId';

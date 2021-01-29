@@ -58,7 +58,7 @@ describe('getRecordTemplateClone errors', () => {
     it('should refetch recordTemplateClone when ingested template error TTLs out', async () => {
         const errorMock = getMock('record-template-clone-recordIdInvalid');
         const validMock = getMock('record-template-clone-Account');
-        const recordId = validMock.record.fields.CloneSourceId.value;
+        const recordId = validMock.record.cloneSourceId;
 
         const config = {
             recordId, // 1st time: invalid, 2nd time: valid

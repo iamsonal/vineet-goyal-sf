@@ -69,6 +69,55 @@
                     "relationshipName": "FeedSubscriptionsForEntity"
                 },
                 {
+                    "childObjectApiName": "FinanceBalanceSnapshot",
+                    "fieldName": "LegalEntityId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceBalanceSnapshots"
+                },
+                {
+                    "childObjectApiName": "FinanceBalanceSnapshot",
+                    "fieldName": "ReferenceEntityId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceBalanceSnapshots"
+                },
+                {
+                    "childObjectApiName": "FinanceTransaction",
+                    "fieldName": "DestinationEntityId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "DestinationFinanceTransactions"
+                },
+                {
+                    "childObjectApiName": "FinanceTransaction",
+                    "fieldName": "LegalEntityId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceTransactions"
+                },
+                {
+                    "childObjectApiName": "FinanceTransaction",
+                    "fieldName": "ParentReferenceEntityId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "ParentFinanceTransactions"
+                },
+                {
+                    "childObjectApiName": "FinanceTransaction",
+                    "fieldName": "ReferenceEntityId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "FinanceTransactions"
+                },
+                {
+                    "childObjectApiName": "FinanceTransaction",
+                    "fieldName": "SourceEntityId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "SourceFinanceTransactions"
+                },
+                {
                     "childObjectApiName": "Note",
                     "fieldName": "ParentId",
                     "junctionIdListNames": [],
@@ -81,6 +130,13 @@
                     "junctionIdListNames": [],
                     "junctionReferenceTo": [],
                     "relationshipName": "NotesAndAttachments"
+                },
+                {
+                    "childObjectApiName": "ProcessException",
+                    "fieldName": "AttachedToId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "ProcessExceptions"
                 },
                 {
                     "childObjectApiName": "ProcessInstance",
@@ -120,10 +176,10 @@
             ],
             "createable": true,
             "custom": true,
-            "defaultRecordTypeId": "012T10000004L4jIAE",
+            "defaultRecordTypeId": "012xx0000005shYAAQ",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "d7930ee12f09a89d4a2941468a2bb9d1",
+            "eTag": "53115be25d627fa322c2084164c8b4af",
             "feedEnabled": false,
             "fields": {
                 "CloneSourceId": {
@@ -547,7 +603,7 @@
                     "updateable": false
                 }
             },
-            "keyPrefix": "a00",
+            "keyPrefix": "a01",
             "label": "Custom Object 2",
             "labelPlural": "Custom Object 2",
             "layoutable": true,
@@ -562,12 +618,12 @@
                     "name": "Master",
                     "recordTypeId": "012000000000000AAA"
                 },
-                "012T10000004L4jIAE": {
+                "012xx0000005shYAAQ": {
                     "available": true,
                     "defaultRecordTypeMapping": true,
                     "master": false,
                     "name": "Custom Object 2 Type 1",
-                    "recordTypeId": "012T10000004L4jIAE"
+                    "recordTypeId": "012xx0000005shYAAQ"
                 }
             },
             "searchable": false,
@@ -580,16 +636,17 @@
     },
     "record": {
         "apiName": "Custom_Object_2__c",
+        "cloneSourceId": "a01xx000003GdOVAA0",
         "fields": {
             "CloneSourceId": {
                 "displayValue": null,
-                "value": "a00T1000000iZSAIA2"
+                "value": "a01xx000003GdOVAA0"
             },
             "Number__c": {
                 "displayValue": null,
                 "value": 5
             }
         },
-        "recordTypeId": "012T10000004L4jIAE"
+        "recordTypeId": "012xx0000005shYAAQ"
     }
 }

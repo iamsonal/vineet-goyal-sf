@@ -480,7 +480,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "ad0a7c433967e713cf3a8483c3af089f",
+            "eTag": "1e1fc50ab61cf36b16a7408871343b31",
             "feedEnabled": true,
             "fields": {
                 "AccountNumber": {
@@ -2749,7 +2749,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://coldbrew-littledipper-7203-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://tonkatsu-roasted-7982-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
@@ -2873,10 +2873,10 @@
             ],
             "createable": true,
             "custom": true,
-            "defaultRecordTypeId": "012T10000000EEDIA2",
+            "defaultRecordTypeId": "012xx0000005sT2AAI",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "b16f931b4ad7c36e79873b0febb92d71",
+            "eTag": "83a41777dda34ab4b036f1ef2c81b5b3",
             "feedEnabled": false,
             "fields": {
                 "Account__c": {
@@ -3353,12 +3353,12 @@
                     "name": "Master",
                     "recordTypeId": "012000000000000AAA"
                 },
-                "012T10000000EEDIA2": {
+                "012xx0000005sT2AAI": {
                     "available": true,
                     "defaultRecordTypeMapping": true,
                     "master": false,
                     "name": "Custom Object 2 Type 1",
-                    "recordTypeId": "012T10000000EEDIA2"
+                    "recordTypeId": "012xx0000005sT2AAI"
                 }
             },
             "searchable": false,
@@ -3371,45 +3371,46 @@
     },
     "record": {
         "apiName": "Custom_Object_2__c",
+        "cloneSourceId": "a01xx000003GdDDAA0",
         "fields": {
             "Account__c": {
                 "displayValue": null,
-                "value": "001T1000002GRPLIA4"
+                "value": "001xx000003GdA0AAK"
             },
             "Account__r": {
                 "displayValue": "Burlington Textiles Corp of America",
                 "value": {
                     "apiName": "Account",
                     "childRelationships": {},
-                    "eTag": "8f71b2e94abb76e20130b8ccc4255d7b",
+                    "eTag": "c6851c5a4d2745411aae88daabcdc2ae",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "001T1000002GRPLIA4"
+                            "value": "001xx000003GdA0AAK"
                         },
                         "Name": {
                             "displayValue": null,
                             "value": "Burlington Textiles Corp of America"
                         }
                     },
-                    "id": "001T1000002GRPLIA4",
-                    "lastModifiedById": "005T1000000DvJnIAK",
-                    "lastModifiedDate": "2020-08-14T21:15:15.000Z",
+                    "id": "001xx000003GdA0AAK",
+                    "lastModifiedById": "005xx000001XC6fAAG",
+                    "lastModifiedDate": "2021-01-28T14:59:53.000Z",
                     "recordTypeId": "012000000000000AAA",
                     "recordTypeInfo": null,
-                    "systemModstamp": "2020-08-14T21:15:15.000Z",
-                    "weakEtag": 1597439715000
+                    "systemModstamp": "2021-01-28T14:59:53.000Z",
+                    "weakEtag": 1611845993000
                 }
             },
             "CloneSourceId": {
                 "displayValue": null,
-                "value": "a01T1000000LnLVIA0"
+                "value": "a01xx000003GdDDAA0"
             },
             "Number__c": {
                 "displayValue": null,
                 "value": 5
             }
         },
-        "recordTypeId": "012T10000000EEDIA2"
+        "recordTypeId": "012xx0000005sT2AAI"
     }
 }

@@ -208,12 +208,18 @@ types:
       apiName: apiName
       recordTypeId: recordTypeId
   RecordDefaultsTemplateCloneRepresentation:
-    # This should have a key.
-    # Currently, the unique identifier for the response is in the fields object.
+    (luvio.key):
+      cloneSourceId: record.cloneSourceId
+      recordTypeId: record.recordTypeId
     (luvio.ttl): 1000
     examples:
       CloneTemplateResponseWithSourceField: !include ../mocks/types/CloneTemplateRepresentation/record-template-clone-Account.json
       CloneTemplateResponseWithMultipleFields: !include ../mocks/types/CloneTemplateRepresentation/record-template-clone-Account-optionalFields-Name.json
+  RecordTemplateCloneRepresentation:
+    (luvio.ttl): 1000
+    (luvio.key):
+      cloneSourceId: cloneSourceId
+      recordTypeId: recordTypeId
   SalesforceObjectId:
     (luvio.coerceFunction): ../primitives/ObjectId/coerce
   SalesforceObjectIdArray:
@@ -715,6 +721,9 @@ types:
                   {
                     "recordId": null
                   }
+          (luvio.key):
+            cloneSourceId: urlParams.recordId
+            recordTypeId: queryParams.recordTypeId || null
   '/related-list-count':
     '/batch/{parentRecordId}/{relatedListNames}':
       get:

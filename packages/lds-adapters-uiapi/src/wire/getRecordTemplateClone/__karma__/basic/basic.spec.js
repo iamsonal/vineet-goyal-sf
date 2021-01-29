@@ -20,7 +20,7 @@ function getMock(filename) {
 describe('GetRecordTemplateClone', () => {
     it('should make HTTP request when recordTypeId param is undefined and response contains master rtId', async () => {
         const mock = getMock('record-template-clone-Custom_Object__c');
-        const recordId = mock.record.fields.CloneSourceId.value;
+        const recordId = mock.record.cloneSourceId;
         const config = {
             recordId,
             recordTypeId: undefined,
@@ -35,7 +35,7 @@ describe('GetRecordTemplateClone', () => {
 
     it('should not make another HTTP request when master recordTypeId is also the default recordTypeId', async () => {
         const mock = getMock('record-template-clone-Custom_Object__c');
-        const recordId = mock.record.fields.CloneSourceId.value;
+        const recordId = mock.record.cloneSourceId;
         const recordTypeId = mock.record.recordTypeId;
         const config = {
             recordId,
@@ -60,7 +60,7 @@ describe('GetRecordTemplateClone', () => {
 
     it('should not make another HTTP request when config is the same', async () => {
         const mock = getMock('record-template-clone-Custom_Object_2__c-optionalField-Number');
-        const recordId = mock.record.fields.CloneSourceId.value;
+        const recordId = mock.record.cloneSourceId;
         const recordTypeId = mock.record.recordTypeId;
         const apiName = mock.record.apiName;
         const config = {
@@ -87,13 +87,13 @@ describe('GetRecordTemplateClone', () => {
 
     it('should make another HTTP request when optionalFields of 2nd request is superset', async () => {
         const numberMock = getMock('record-template-clone-Custom_Object_2__c-optionalField-Number');
-        const numberMockRecordId = numberMock.record.fields.CloneSourceId.value;
+        const numberMockRecordId = numberMock.record.cloneSourceId;
         const numberMockRecordTypeId = numberMock.record.recordTypeId;
         const numberMockApiName = numberMock.record.apiName;
         const lookupNumberMock = getMock(
             'record-template-clone-Custom_Object_2__c-optionalField-Lookup-Number'
         );
-        const lookupNumberMockRecordId = lookupNumberMock.record.fields.CloneSourceId.value;
+        const lookupNumberMockRecordId = lookupNumberMock.record.cloneSourceId;
         const lookupNumberMockRecordTypeId = lookupNumberMock.record.recordTypeId;
         const lookupNumberMockApiName = lookupNumberMock.record.apiName;
 
@@ -144,19 +144,19 @@ describe('GetRecordTemplateClone', () => {
 
     it('should make another HTTP request when optionalFields for both wires are not the same set', async () => {
         const numberMock = getMock('record-template-clone-Custom_Object_2__c-optionalField-Number');
-        const numberMockRecordId = numberMock.record.fields.CloneSourceId.value;
+        const numberMockRecordId = numberMock.record.cloneSourceId;
         const numberMockRecordTypeId = numberMock.record.recordTypeId;
         const numberMockApiName = numberMock.record.apiName;
 
         const lookupMock = getMock('record-template-clone-Custom_Object_2__c-optionalField-Lookup');
-        const lookupMockRecordId = lookupMock.record.fields.CloneSourceId.value;
+        const lookupMockRecordId = lookupMock.record.cloneSourceId;
         const lookupMockRecordTypeId = lookupMock.record.recordTypeId;
         const lookupMockApiName = lookupMock.record.apiName;
 
         const lookupNumberMock = getMock(
             'record-template-clone-Custom_Object_2__c-optionalField-Lookup-Number'
         );
-        const lookupNumberMockRecordId = lookupNumberMock.record.fields.CloneSourceId.value;
+        const lookupNumberMockRecordId = lookupNumberMock.record.cloneSourceId;
         const lookupNumberMockRecordTypeId = lookupNumberMock.record.recordTypeId;
         const lookupNumberMockApiName = lookupNumberMock.record.apiName;
 
@@ -209,20 +209,20 @@ describe('GetRecordTemplateClone', () => {
             const numberMock = getMock(
                 'record-template-clone-Custom_Object_2__c-optionalField-Number'
             );
-            const numberMockRecordId = numberMock.record.fields.CloneSourceId.value;
+            const numberMockRecordId = numberMock.record.cloneSourceId;
             const numberMockRecordTypeId = numberMock.record.recordTypeId;
             const numberMockApiName = numberMock.record.apiName;
 
             const lookupMock = getMock(
                 'record-template-clone-Custom_Object_2__c-optionalField-Lookup'
             );
-            const lookupMockRecordId = lookupMock.record.fields.CloneSourceId.value;
+            const lookupMockRecordId = lookupMock.record.cloneSourceId;
             const lookupMockApiName = lookupMock.record.apiName;
 
             const lookupNumberMock = getMock(
                 'record-template-clone-Custom_Object_2__c-optionalField-Lookup-Number'
             );
-            const lookupNumberMockRecordId = lookupNumberMock.record.fields.CloneSourceId.value;
+            const lookupNumberMockRecordId = lookupNumberMock.record.cloneSourceId;
             const lookupNumberMockApiName = lookupNumberMock.record.apiName;
 
             const numberConfig = {
@@ -275,7 +275,7 @@ describe('GetRecordTemplateClone', () => {
             const numberMock = getMock(
                 'record-template-clone-Custom_Object_2__c-optionalField-Number'
             );
-            const numberMockRecordId = numberMock.record.fields.CloneSourceId.value;
+            const numberMockRecordId = numberMock.record.cloneSourceId;
             const numberMockRecordTypeId = numberMock.record.recordTypeId;
             const numberMockApiName = numberMock.record.apiName;
 
@@ -316,7 +316,7 @@ describe('GetRecordTemplateClone', () => {
 
     it('should make HTTP request when clone defaults have expired', async () => {
         const mock = getMock('record-template-clone-Custom_Object_2__c-optionalField-Number');
-        const recordId = mock.record.fields.CloneSourceId.value;
+        const recordId = mock.record.cloneSourceId;
         const recordTypeId = mock.record.recordTypeId;
         const apiName = mock.record.apiName;
 
@@ -354,7 +354,7 @@ describe('GetRecordTemplateClone', () => {
         const mockRecordCloneDefaults = getMock(
             'record-template-clone-Custom_Object_2__c-optionalField-Number'
         );
-        const recordId = mockRecordCloneDefaults.record.fields.CloneSourceId.value;
+        const recordId = mockRecordCloneDefaults.record.cloneSourceId;
         const recordTypeId = mockRecordCloneDefaults.record.recordTypeId;
         const cloneDefaultsApiName = mockRecordCloneDefaults.record.apiName;
 
@@ -392,7 +392,7 @@ describe('getRecordTemplateClone refreshes', () => {
         const mockRecordCloneDefaults = getMock(
             'record-template-clone-Custom_Object_2__c-optionalField-Number'
         );
-        const recordId = mockRecordCloneDefaults.record.fields.CloneSourceId.value;
+        const recordId = mockRecordCloneDefaults.record.cloneSourceId;
         const recordTypeId = mockRecordCloneDefaults.record.recordTypeId;
         const cloneDefaultsApiName = mockRecordCloneDefaults.record.apiName;
 
@@ -430,7 +430,7 @@ describe('getRecordTemplateClone refreshes', () => {
         const mockRecordCloneDefaults = getMock(
             'record-template-clone-Custom_Object_2__c-optionalField-RecordType-Owner'
         );
-        const templateRecordId = mockRecordCloneDefaults.record.fields.CloneSourceId.value;
+        const templateRecordId = mockRecordCloneDefaults.record.cloneSourceId;
         const templateRecordTypeId = mockRecordCloneDefaults.record.recordTypeId;
         const templateApiName = mockRecordCloneDefaults.record.apiName;
 
@@ -482,7 +482,7 @@ describe('related wire', () => {
         const mockRecordCloneDefaults = getMock(
             'record-template-clone-Custom_Object_2__c-optionalField-Number'
         );
-        const recordId = mockRecordCloneDefaults.record.fields.CloneSourceId.value;
+        const recordId = mockRecordCloneDefaults.record.cloneSourceId;
         const recordTypeId = mockRecordCloneDefaults.record.recordTypeId;
         const cloneDefaultsApiName = mockRecordCloneDefaults.record.recordTypeId;
 
@@ -511,7 +511,7 @@ describe('related wire', () => {
 
     it('does not refresh when GetRecordTemplateClone requests invalid optional field', async () => {
         const mockRecordCloneDefaults = getMock('record-template-clone-Custom_Object__c');
-        const recordId = mockRecordCloneDefaults.record.fields.CloneSourceId.value;
+        const recordId = mockRecordCloneDefaults.record.cloneSourceId;
         const recordTypeId = mockRecordCloneDefaults.record.recordTypeId;
         const apiName = mockRecordCloneDefaults.record.apiName;
 
@@ -534,7 +534,7 @@ describe('related wire', () => {
         const mockRecordCloneDefaults = getMock(
             'record-template-clone-Custom_Object_2__c-optionalField-Number'
         );
-        const recordId = mockRecordCloneDefaults.record.fields.CloneSourceId.value;
+        const recordId = mockRecordCloneDefaults.record.cloneSourceId;
         const recordTypeId = mockRecordCloneDefaults.record.recordTypeId;
         const cloneDefaultsApiName = mockRecordCloneDefaults.record.apiName;
 
@@ -567,7 +567,7 @@ describe('related wire', () => {
         const mockRecordCloneDefaults = getMock(
             'record-template-clone-Custom_Object_2__c-optionalField-RecordType-Owner'
         );
-        const templateRecordId = mockRecordCloneDefaults.record.fields.CloneSourceId.value;
+        const templateRecordId = mockRecordCloneDefaults.record.cloneSourceId;
         const templateRecordTypeId = mockRecordCloneDefaults.record.recordTypeId;
         const templateApiName = mockRecordCloneDefaults.record.apiName;
         const recordTypeName =
@@ -611,7 +611,7 @@ describe('related wire', () => {
 describe('refresh', () => {
     it('should refresh get record clone defaults', async () => {
         const mock = getMock('record-template-clone-Custom_Object_2__c-optionalField-Number');
-        const recordId = mock.record.fields.CloneSourceId.value;
+        const recordId = mock.record.cloneSourceId;
         const recordTypeId = mock.record.recordTypeId;
         const apiName = mock.record.apiName;
 

@@ -508,7 +508,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "31561fa701b9884937f7e3074d745758",
+            "eTag": "7d21e8085c883df258939187eb365aea",
             "feedEnabled": true,
             "fields": {
                 "AccountNumber": {
@@ -1143,7 +1143,7 @@
                     "relationshipName": "DandbCompany",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -1818,7 +1818,7 @@
                     "relationshipName": "OperatingHours",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -1927,7 +1927,7 @@
                     "relationshipName": "Parent",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2777,17 +2777,18 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://miso-sagittarius-1887-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         }
     },
     "record": {
         "apiName": "Account",
+        "cloneSourceId": "001xx000003GdLIAA0",
         "fields": {
             "CloneSourceId": {
                 "displayValue": null,
-                "value": "001T1000002GXfyIAG"
+                "value": "001xx000003GdLIAA0"
             }
         },
         "recordTypeId": "012000000000000AAA"

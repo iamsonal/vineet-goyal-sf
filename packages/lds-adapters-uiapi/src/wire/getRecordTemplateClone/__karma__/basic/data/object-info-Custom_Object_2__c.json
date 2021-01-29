@@ -118,10 +118,10 @@
     ],
     "createable": true,
     "custom": true,
-    "defaultRecordTypeId": "012T10000000EEDIA2",
+    "defaultRecordTypeId": "012xx0000005sT2AAI",
     "deletable": true,
     "dependentFields": {},
-    "eTag": "b16f931b4ad7c36e79873b0febb92d71",
+    "eTag": "83a41777dda34ab4b036f1ef2c81b5b3",
     "feedEnabled": false,
     "fields": {
         "Account__c": {
@@ -598,12 +598,12 @@
             "name": "Master",
             "recordTypeId": "012000000000000AAA"
         },
-        "012T10000000EEDIA2": {
+        "012xx0000005sT2AAI": {
             "available": true,
             "defaultRecordTypeMapping": true,
             "master": false,
             "name": "Custom Object 2 Type 1",
-            "recordTypeId": "012T10000000EEDIA2"
+            "recordTypeId": "012xx0000005sT2AAI"
         }
     },
     "searchable": false,

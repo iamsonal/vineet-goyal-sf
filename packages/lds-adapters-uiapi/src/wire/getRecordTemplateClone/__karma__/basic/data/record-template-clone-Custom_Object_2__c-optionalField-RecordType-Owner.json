@@ -541,7 +541,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "769ED9",
-                "iconUrl": "https://coldbrew-littledipper-7203-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/orders_120.png"
+                "iconUrl": "https://tonkatsu-roasted-7982-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/standard/orders_120.png"
             },
             "updateable": true
         },
@@ -7293,7 +7293,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://coldbrew-littledipper-7203-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://tonkatsu-roasted-7982-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         },
@@ -7887,10 +7887,10 @@
             ],
             "createable": true,
             "custom": true,
-            "defaultRecordTypeId": "012T10000000EEDIA2",
+            "defaultRecordTypeId": "012xx0000005sT2AAI",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "b16f931b4ad7c36e79873b0febb92d71",
+            "eTag": "83a41777dda34ab4b036f1ef2c81b5b3",
             "feedEnabled": false,
             "fields": {
                 "Account__c": {
@@ -8367,12 +8367,12 @@
                     "name": "Master",
                     "recordTypeId": "012000000000000AAA"
                 },
-                "012T10000000EEDIA2": {
+                "012xx0000005sT2AAI": {
                     "available": true,
                     "defaultRecordTypeMapping": true,
                     "master": false,
                     "name": "Custom Object 2 Type 1",
-                    "recordTypeId": "012T10000000EEDIA2"
+                    "recordTypeId": "012xx0000005sT2AAI"
                 }
             },
             "searchable": false,
@@ -9020,28 +9020,29 @@
     },
     "record": {
         "apiName": "Custom_Object_2__c",
+        "cloneSourceId": "a01xx000003GdDDAA0",
         "fields": {
             "CloneSourceId": {
                 "displayValue": null,
-                "value": "a01T1000000LnLVIA0"
+                "value": "a01xx000003GdDDAA0"
             },
             "Owner": {
                 "displayValue": "User User",
                 "value": {
                     "apiName": "Name",
                     "childRelationships": {},
-                    "eTag": "6b50c7892433d5fe86b18e69ccdf865d",
+                    "eTag": "e9f1d28ae6b24d3435c7f529a36a4c69",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "005T1000000DvJnIAK"
+                            "value": "005xx000001XC6fAAG"
                         },
                         "Name": {
                             "displayValue": null,
                             "value": "User User"
                         }
                     },
-                    "id": "005T1000000DvJnIAK",
+                    "id": "005xx000001XC6fAAG",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -9052,38 +9053,38 @@
             },
             "OwnerId": {
                 "displayValue": null,
-                "value": "005T1000000DvJnIAK"
+                "value": "005xx000001XC6fAAG"
             },
             "RecordType": {
                 "displayValue": "Custom Object 2 Type 1",
                 "value": {
                     "apiName": "RecordType",
                     "childRelationships": {},
-                    "eTag": "545385ea5d95afae30e9704aaff30fda",
+                    "eTag": "ea512f572c5fb30acb9f4239682e1efe",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "012T10000000EEDIA2"
+                            "value": "012xx0000005sT2AAI"
                         },
                         "Name": {
                             "displayValue": "Custom Object 2 Type 1",
                             "value": "Custom Object 2 Type 1"
                         }
                     },
-                    "id": "012T10000000EEDIA2",
-                    "lastModifiedById": "005T1000000DvJnIAK",
-                    "lastModifiedDate": "2020-08-14T21:19:22.000Z",
+                    "id": "012xx0000005sT2AAI",
+                    "lastModifiedById": "005xx000001XC6fAAG",
+                    "lastModifiedDate": "2021-01-28T15:16:50.000Z",
                     "recordTypeId": null,
                     "recordTypeInfo": null,
-                    "systemModstamp": "2020-08-14T21:19:22.000Z",
-                    "weakEtag": 1597439962000
+                    "systemModstamp": "2021-01-28T15:16:50.000Z",
+                    "weakEtag": 1611847010000
                 }
             },
             "RecordTypeId": {
                 "displayValue": null,
-                "value": "012T10000000EEDIA2"
+                "value": "012xx0000005sT2AAI"
             }
         },
-        "recordTypeId": "012T10000000EEDIA2"
+        "recordTypeId": "012xx0000005sT2AAI"
     }
 }

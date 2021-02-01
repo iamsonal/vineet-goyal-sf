@@ -161,6 +161,12 @@ export function buildRecordSelector(recordKey: string, fields: string[]): Select
     };
 }
 
+/**
+ * Checks if a provided resource request is a POST/PATCH/DELETE operation on the record
+ * endpoint. If so, it returns true indicating that the request should be enqueued instead of
+ * hitting the network.
+ * @param request the resource request
+ */
 export function shouldDraftResourceRequest(request: ResourceRequest) {
     const { basePath, method } = request;
     return (
@@ -169,17 +175,41 @@ export function shouldDraftResourceRequest(request: ResourceRequest) {
     );
 }
 
+/**
+ * Checks if a resource request is a GET method on the record endpoint and
+ * contains a draft record id in its request
+ * @param request the resource request
+ * @param isDraftId function to determine if a record id is a draft id
+ */
 export function isRequestForDraftGetRecord(
     request: ResourceRequest,
     isDraftId: (id: string) => boolean
 ) {
-    const { basePath, method } = request;
-    if (RECORD_ENDPOINT_REGEX.test(basePath) && method === 'get') {
-        const id = request.urlParams['recordId'];
-        return typeof id === 'string' && isDraftId(id);
+    if (isRequestForGetRecord(request)) {
+        const id = extractRecordIdFromRequestParams(request);
+        if (id !== undefined) {
+            return isDraftId(id);
+        }
     }
 
     return false;
+}
+
+export function extractRecordIdFromRequestParams(request: ResourceRequest) {
+    const id = request.urlParams['recordId'];
+    if (typeof id !== 'string') {
+        return undefined;
+    }
+    return id;
+}
+
+/**
+ * Checks if a resource request is a GET method on the record endpoint
+ * @param request the resource request
+ */
+export function isRequestForGetRecord(request: ResourceRequest) {
+    const { basePath, method } = request;
+    return RECORD_ENDPOINT_REGEX.test(basePath) && method === 'get';
 }
 
 /**

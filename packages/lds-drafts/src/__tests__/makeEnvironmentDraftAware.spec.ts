@@ -24,6 +24,7 @@ import {
     STORE_KEY_FIELD__NAME,
     STORE_KEY_RECORD,
     flushPromises,
+    DRAFT_RECORD_ID,
 } from './test-utils';
 
 const DEFAULT_API_NAME = 'Account';
@@ -122,7 +123,7 @@ describe('makeEnvironmentDraftAware', () => {
             });
             expect(network).toBeCalledTimes(1);
         });
-        it('does not intercept record get endpoint', () => {
+        it('does not intercept record get endpoint on non-draft id', () => {
             const { draftEnvironment, network } = setup();
             draftEnvironment.dispatchResourceRequest({
                 baseUri: '/services/data/v52.0',
@@ -134,6 +135,24 @@ describe('makeEnvironmentDraftAware', () => {
                 headers: {},
             });
             expect(network).toBeCalledTimes(1);
+        });
+
+        it('replaces draft id with canonical id in get requests', () => {
+            const { draftEnvironment, network } = setup();
+            draftEnvironment.storeRedirect(STORE_KEY_DRAFT_RECORD, STORE_KEY_RECORD);
+            draftEnvironment.dispatchResourceRequest({
+                baseUri: '/services/data/v52.0',
+                basePath: `/ui-api/records/${DRAFT_RECORD_ID}`,
+                method: 'get',
+                body: {},
+                urlParams: {
+                    recordId: DRAFT_RECORD_ID,
+                },
+                queryParams: {},
+                headers: {},
+            });
+            expect(network).toBeCalledTimes(1);
+            expect(network.mock.calls[0][0].basePath).toBe(`/ui-api/records/${RECORD_ID}`);
         });
     });
 

@@ -16,6 +16,7 @@ import {
     shouldDraftResourceRequest,
     isRequestForDraftGetRecord,
     getRecordKeyFromRecordRequest,
+    extractRecordIdFromRequestParams,
 } from './utils/records';
 import { CompletedDraftAction, DraftQueue } from './DraftQueue';
 import {
@@ -27,6 +28,7 @@ import {
 import { clone } from './utils/clone';
 import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { draftAwareHandleResponse } from './makeNetworkAdapterDraftAware';
+import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
 
 export interface DraftIdMappingEntry {
     draftKey: string;
@@ -60,7 +62,7 @@ export function makeEnvironmentDraftAware(
 ): Environment {
     const draftDeleteSet = new Set<string>();
 
-    function createOptimisticRecordResponse(
+    function createSyntheticRecordResponse(
         key: string,
         fields: string[],
         allowUnfulfilledResponse: boolean
@@ -91,7 +93,12 @@ export function makeEnvironmentDraftAware(
         return createOkResponse(mutableData);
     }
 
-    function buildDraftCreatedGetResponse(resourceRequest: ResourceRequest) {
+    /**
+     * Creates a synthetic response for a call to the getRecord endpoint if the
+     * record is a draft record and has not been created yet
+     * @param resourceRequest
+     */
+    function createSyntheticGetRecordResponse(resourceRequest: ResourceRequest) {
         const key = getRecordKeyFromRecordRequest(resourceRequest, generateId);
 
         if (key === undefined) {
@@ -109,7 +116,7 @@ export function makeEnvironmentDraftAware(
 
         // revive the modified record to the in-memory store
         return env.reviveRecordsToStore([key]).then(() => {
-            const response = createOptimisticRecordResponse(key, fields, true);
+            const response = createSyntheticRecordResponse(key, fields, true);
 
             // the getRecord request might include fields that aren't set, instead of letting
             // the Reader think the snapshot is missing those fields and causing a network request
@@ -126,6 +133,35 @@ export function makeEnvironmentDraftAware(
         });
     }
 
+    /**
+     * Creates a ResourceRequest containing canonical record ids from a ResourceRequest containing draft record ids
+     * @param request ResourceRequest containing draft id
+     * @returns a new ResourceRequest which replaces draft id references with canonical id references. undefined if no canonical
+     * key exists
+     */
+    function createRequestWithCanonicalRecordId(request: ResourceRequest) {
+        const recordId = extractRecordIdFromRequestParams(request);
+        if (recordId === undefined) {
+            return undefined;
+        }
+        const recordKey = keyBuilderRecord({ recordId });
+        const canonicalKey = env.storeGetCanonicalKey(recordKey);
+
+        if (canonicalKey === recordKey) {
+            // no mapping exists
+            return undefined;
+        }
+        const canonicalId = extractRecordIdFromStoreKey(canonicalKey);
+        if (canonicalId === undefined) {
+            return undefined;
+        }
+        return {
+            ...request,
+            basePath: request.basePath.replace(recordId, canonicalId),
+            urlParams: { ...request.urlParams, recordId: canonicalId },
+        };
+    }
+
     const resolveUnfulfilledSnapshot: DurableEnvironment['resolveUnfulfilledSnapshot'] = function<
         T
     >(
@@ -133,7 +169,11 @@ export function makeEnvironmentDraftAware(
         snapshot: UnfulfilledSnapshot<T, unknown>
     ): Promise<ResourceResponse<T>> {
         if (isRequestForDraftGetRecord(request, isDraftId) === true) {
-            return buildDraftCreatedGetResponse(request) as any;
+            const canonicalRequest = createRequestWithCanonicalRecordId(request);
+            if (canonicalRequest !== undefined) {
+                return env.resolveUnfulfilledSnapshot(canonicalRequest, snapshot);
+            }
+            return createSyntheticGetRecordResponse(request) as any;
         }
 
         return env.resolveUnfulfilledSnapshot(request, snapshot);
@@ -141,17 +181,21 @@ export function makeEnvironmentDraftAware(
 
     /**
      * Overrides the base environment's dispatchResourceRequest method only for calls to the record CUD endpoints
-     * Instead of hitting the network, this environment delegates the mutation to the DraftQueue and optimistically returns its result
+     * Instead of hitting the network, this environment delegates the mutation to the DraftQueue and returns an optimistic synthetic result
      * @param resourceRequest The resource request to fetch
      */
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function<T>(
         resourceRequest: ResourceRequest
     ) {
-        if (shouldDraftResourceRequest(resourceRequest) === false) {
-            if (isRequestForDraftGetRecord(resourceRequest, isDraftId) === true) {
-                return buildDraftCreatedGetResponse(resourceRequest);
+        if (isRequestForDraftGetRecord(resourceRequest, isDraftId) === true) {
+            const canonicalRequest = createRequestWithCanonicalRecordId(resourceRequest);
+            if (canonicalRequest !== undefined) {
+                return env.dispatchResourceRequest(canonicalRequest);
             }
+            return createSyntheticGetRecordResponse(resourceRequest);
+        }
 
+        if (shouldDraftResourceRequest(resourceRequest) === false) {
             return env.dispatchResourceRequest(resourceRequest);
         }
 
@@ -190,7 +234,7 @@ export function makeEnvironmentDraftAware(
 
             // revive the modified record to the in-memory store
             return env.reviveRecordsToStore([key]).then(() => {
-                return createOptimisticRecordResponse(key, fields, false);
+                return createSyntheticRecordResponse(key, fields, false);
             });
         });
     };

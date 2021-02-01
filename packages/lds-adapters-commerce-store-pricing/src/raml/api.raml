@@ -2,7 +2,7 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '51.0'
+version: '52.0'
 mediaType: application/json
 protocols:
   - https
@@ -62,13 +62,6 @@ types:
       upperBound:
         description: Represents the upper bound of the tier
         type: string
-  PricingInputLineItemRepresentation:
-    description: Representation of the Line Item portion the request for multiple products pricing
-    type: object
-    properties:
-      productId:
-        description: The product ID to be priced in the request
-        type: string
   PricingInputRepresentation:
     description: Representation of the request for multiple products pricing
     type: object
@@ -78,8 +71,26 @@ types:
         type: array
         items:
           type: object
+  PricingLineItemInputRepresentation:
+    description: Representation of the Line Item portion the request for multiple
+      products pricing
+    type: object
+    properties:
+      productId:
+        description: The product ID to be priced in the request
+        type: string
+  PricingLineItemInputRepresentationList:
+    description: Wraps a list of Pricing Line Items for Apex
+    type: object
+    properties:
+      pricingLineItemInputList:
+        description: Pricing line Items
+        type: array
+        items:
+          type: object
   PricingResultLineItemRepresentation:
-    description: Representation of the Line Item portion of the response for multiple products pricing
+    description: Representation of the Line Item portion of the response for multiple
+      products pricing
     type: object
     properties:
       # Error Response representation did not get created
@@ -155,6 +166,8 @@ types:
     body:
       application/json:
         type: PricingInputRepresentation
+        # TODO : HAND ROLLED, required not supported
+        # required: false
         (oas-body-name): pricingInput
   uriParameters:
     webstoreId:
@@ -162,7 +175,8 @@ types:
       required: true
 /commerce/webstores/{webstoreId}/pricing/products/{productId}:
   get:
-    description: Get the list price and buyer price for a product in the context of a Web Store for the given account and currency
+    description: Get the list price and buyer price for a product in the context of
+      a Web Store for the given account and currency
     responses:
       '200':
         description: Success
@@ -172,7 +186,7 @@ types:
     queryParameters:
       effectiveAccountId:
         type: string
-        required: true
+        required: false
   uriParameters:
     productId:
       type: string

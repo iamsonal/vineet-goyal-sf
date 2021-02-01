@@ -2,7 +2,7 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '51.0'
+version: '52.0'
 mediaType: application/json
 protocols:
   - https
@@ -190,7 +190,7 @@ types:
         properties:
           //:
             type: object
-  # Hand Rolled 'QuestionnaireData'
+  # TODO Hand Rolled 'QuestionnaireData'
   QuestionnaireData:
     description: A Wrapper around the LightningAssistantQuestionnaireInputRepresentation
     type: object
@@ -300,7 +300,7 @@ types:
         properties:
           //:
             type: object
-  # Hand Rolled 'assistantData'
+  # TODO Hand Rolled 'assistantData'
   AssistantData:
     description: The LightningAssistantUpdateInputRepresentation wrapper
     type: object
@@ -353,7 +353,7 @@ types:
             type: LightningAssistantRepresentation
     body:
       application/json:
-        # Hand rolled 'type' to provide a wrapper that uses the oas-body-name
+        # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
         type: AssistantData
         # TODO: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
         (oas-body-name): assistantData
@@ -380,7 +380,7 @@ types:
               type: LightningAssistantQuestionnaireRepresentation
       body:
         application/json:
-          # Hand rolled 'type' to provide a wrapper that uses the oas-body-name
+          # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
           type: QuestionnaireData
           # TODO: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
           (oas-body-name): questionnaireData

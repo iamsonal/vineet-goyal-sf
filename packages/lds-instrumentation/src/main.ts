@@ -43,6 +43,8 @@ import {
     OBSERVABILITY_NAMESPACE,
     ADAPTER_INVOCATION_COUNT_METRIC_NAME,
     ADAPTER_ERROR_COUNT_METRIC_NAME,
+    TOTAL_ADAPTER_ERROR_COUNT,
+    TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT,
 } from './utils/observability';
 
 import { ObjectKeys } from './utils/language';
@@ -175,6 +177,8 @@ const networkRateLimitExceededCountMetric = counter(NETWORK_RATE_LIMIT_EXCEEDED_
 const storeSizeMetric = percentileHistogram(STORE_SIZE_COUNT);
 const storeWatchSubscriptionsMetric = percentileHistogram(STORE_WATCH_SUBSCRIPTIONS_COUNT);
 const storeSnapshotSubscriptionsMetric = percentileHistogram(STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT);
+const totalAdapterRequestSuccessMetric = counter(TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT);
+const totalAdapterErrorMetric = counter(TOTAL_ADAPTER_ERROR_COUNT);
 
 const wireAdapterMetricConfigs: wireAdapterMetricConfigs = {
     getLayout: {
@@ -398,10 +402,7 @@ export class Instrumentation {
 
     private incrementAdapterRequestMetric(wireRequestCounter: Counter) {
         wireRequestCounter.increment(1);
-    }
-
-    private incrementAdapterErrorMetric(wireErrorCounter: Counter) {
-        wireErrorCounter.increment(1);
+        totalAdapterRequestSuccessMetric.increment(1);
     }
 
     /**
@@ -658,6 +659,7 @@ export class Instrumentation {
             this.adapterUnfulfilledErrorCounters[adapterName] = adapterRequestErrorCounter;
         }
         adapterRequestErrorCounter.increment(1);
+        totalAdapterErrorMetric.increment(1);
     }
 }
 /**

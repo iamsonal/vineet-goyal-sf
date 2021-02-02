@@ -59,7 +59,6 @@ const instrumentationSpies = {
         'logAdapterCacheMissOutOfTtlDuration'
     ),
     incrementAdapterRequestMetric: jest.spyOn(instrumentation, 'incrementAdapterRequestMetric'),
-    incrementAdapterErrorMetric: jest.spyOn(instrumentation, 'incrementAdapterErrorMetric'),
 };
 
 beforeEach(() => {
@@ -69,7 +68,6 @@ beforeEach(() => {
     instrumentationSpies.incrementRecordApiNameChangeEvents.mockClear();
     instrumentationSpies.logAdapterCacheMissOutOfTtlDuration.mockClear();
     instrumentationSpies.incrementAdapterRequestMetric.mockClear();
-    instrumentationSpies.incrementAdapterErrorMetric.mockClear();
     instrumentationServiceSpies.perfEnd.mockClear();
     instrumentationServiceSpies.perfStart.mockClear();
     instrumentationServiceSpies.cacheStatsLogHitsSpy.mockClear();
@@ -86,8 +84,13 @@ afterEach(() => {
 
 // Number of metric counter invocations that happen during a normal cache hit or miss flow, without
 // any of the TTL specific code path happening. To be incremented if additional counters are added for either scenario.
-const baseCacheHitCounterIncrement = 3;
-const baseCacheMissCounterIncrement = 3;
+// The counters being hit are:
+// - cacheHitMetric or cacheMissMetric
+// - cacheHitCountByAdapterMetric or cacheMissCountByAdapterMetric
+// - wireRequestCounter
+// - totalAdapterRequestSuccessMetric
+const baseCacheHitCounterIncrement = 4;
+const baseCacheMissCounterIncrement = 4;
 
 describe('instrumentation', () => {
     describe('instrumentGetRecordAdapter', () => {

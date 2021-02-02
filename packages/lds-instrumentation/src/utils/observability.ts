@@ -10,6 +10,28 @@
  * [2] https://salesforce.quip.com/1dFvAba1b0eq
  */
 
+import { MetricsKey } from 'instrumentation/service';
+
 export const OBSERVABILITY_NAMESPACE = 'LIGHTNING.lds.service';
 export const ADAPTER_INVOCATION_COUNT_METRIC_NAME = 'request';
 export const ADAPTER_ERROR_COUNT_METRIC_NAME = 'error';
+
+/**
+ * W-8828410
+ * Counter for the number of UnfulfilledSnapshotErrors the luvio engine has.
+ */
+export const TOTAL_ADAPTER_ERROR_COUNT: MetricsKey = {
+    get() {
+        return { owner: OBSERVABILITY_NAMESPACE, name: ADAPTER_ERROR_COUNT_METRIC_NAME };
+    },
+};
+
+/**
+ * W-8828410
+ * Counter for the number of invocations made into LDS by a wire adapter.
+ */
+export const TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT: MetricsKey = {
+    get() {
+        return { owner: OBSERVABILITY_NAMESPACE, name: ADAPTER_INVOCATION_COUNT_METRIC_NAME };
+    },
+};

@@ -62,6 +62,8 @@ const DATAFLOW_JOB_NODE_PATH = new RegExp(
     'i'
 );
 
+const RECIPES_PATH = new RegExp(`${WAVE_BASE_URI}/recipes$`, 'i');
+
 const LIST_CONTENT_INTERNAL_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/managed-content/delivery/contents`,
     'i'
@@ -223,6 +225,13 @@ const analytics: ApiFamily = {
             path.startsWith(WAVE_BASE_URI) && DATAFLOW_JOB_NODE_PATH.test(path),
         transport: {
             controller: 'WaveController.getDataflowJobNode',
+        },
+    },
+    getRecipes: {
+        method: 'get',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && RECIPES_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getRecipes',
         },
     },
 };

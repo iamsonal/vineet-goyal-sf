@@ -178,3 +178,38 @@ function getDataflowJobNodeMatcher(config) {
         queryParams: {},
     });
 }
+
+// Recipes
+export function mockGetRecipesNetworkOnce(config, mockData) {
+    const paramMatch = getRecipesMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+export function mockGetRecipesNetworkErrorOnce(config, mockData) {
+    const paramMatch = getRecipesMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getRecipesMatcher(config) {
+    let { format, licenseType, page, pageSize, q, sort } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/recipes`,
+        queryParams: {
+            format,
+            licenseType,
+            page,
+            pageSize,
+            q,
+            sort,
+        },
+    });
+}

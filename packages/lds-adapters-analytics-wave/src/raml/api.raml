@@ -444,6 +444,322 @@ types:
         description: The value which indicates whether the user can view an asset.
         type: boolean
         required: false # TODO Hand-rolled W-8253396
+  RecipeCollectionRepresentation:
+    description: A collection of Data Prep recipes.
+    type: object
+    properties:
+      nextPageUrl:
+        description: URL to get the next page of contents in the collection.
+        type: string | nil
+      recipes:
+        description: A list of recipes.
+        type: array
+        items:
+          type: RecipeRepresentation
+      totalSize:
+        description: Gets the total count of the elements in the collection irrespective
+          of the page.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      url:
+        description: URL to get the collection.
+        type: string
+  RecipeDefinitionRepresentation:
+    description: Representation of 3.0 Recipe Definition
+    type: object
+    properties:
+      name:
+        description: Recipe name
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      nodes:
+        description: Recipe nodes
+        type: object
+        properties:
+          //:
+            type: RecipeNodeRepresentation
+      ui:
+        description: Recipe ui metadata
+        type: object
+        properties: # TODO Hand-rolled W-8252808
+          //:
+            type: any
+      version:
+        description: Recipe version
+        type: string
+  RecipeNodeRepresentation:
+    description: Representation of Recipe Node
+    discriminator: action
+    type: object
+    properties:
+      action:
+        description: Node type
+        type: string
+        enum:
+          - Aggregate
+          - Append
+          - Append_V2
+          - Bucket
+          - Clustering
+          - ComputeRelative
+          - DateFormatConversion
+          - DetectSentiment
+          - DiscoveryPredict
+          - Export
+          - Extract
+          - Filter
+          - Flatten
+          - Formula
+          - Join
+          - Load
+          - OutputExternal
+          - PredictMissingValues
+          - Save
+          - Schema
+          - Split
+          - SqlFilter
+          - TimeSeries
+          - TypeCast
+      schema:
+        description: Schema changes to output
+        type: SchemaParametersRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      sources:
+        description: Input nodes
+        type: array
+        items:
+          type: string
+  RecipeRepresentation:
+    description: A Data Prep recipe.
+    discriminatorValue: recipe
+    type: BaseWaveAssetRepresentation
+    properties:
+      conversionDetails:
+        description: The upconversion details when converting dataflow to R3
+        type: array
+        items:
+          type: RecipeValidationDetailRepresentation
+      dataflowLastUpdate:
+        description: Last dataflow update.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      dataset:
+        description: Target Dataset
+        type: AssetReferenceRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      fileUrl:
+        description: URL to get the recipe's file content.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      format:
+        description: The format of the recipe
+        type: string
+        enum:
+          - R2
+          - R3
+        required: false # TODO Hand-rolled W-8253396
+      historiesUrl:
+        description: The URL for the version histories associated with the recipe.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      licenseAttributes:
+        description: The analytics license attributes associated with the recipe.
+        type: LicenseAttributesRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      nextScheduledDate:
+        description: The next scheduled run of this recipe.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      publishingTarget:
+        description: The target format or system to publish to. Dataset, DataPool,
+          or IoT.
+        type: string
+        enum:
+          - DataPool
+          - Dataset
+          - IoT
+        required: false # TODO Hand-rolled W-8253396
+      recipeDefinition:
+        description: Recipe definition for 3.0 format
+        type: RecipeDefinitionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      rowLevelSecurityPredicate:
+        description: The security predicate of the target dataset
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      schedule:
+        description: The schedule cron expression current dataflow.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      scheduleType:
+        description: The schedule type of the recipe
+        type: string
+        enum:
+          - EventDriven
+          - TimeDriven
+        required: false # TODO Hand-rolled W-8253396
+      sourceDataflow:
+        description: dataflow from which the current recipe was upconverted to or
+          was reverted from.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      sourceRecipe:
+        description: Recipe from which the current recipe was upconverted to or was
+          reverted from.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      targetDataflowId:
+        description: Target Dataflow ID.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      validationDetails:
+        description: The validation details for the recipe 3.0
+        type: array
+        items:
+          type: RecipeValidationDetailRepresentation
+  RecipeValidationDetailRepresentation:
+    description: Validation detail on recipe graph or recipe node
+    type: object
+    properties:
+      message:
+        description: Message
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      nodeName:
+        description: Node name
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      nodeType:
+        description: Node type
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      severity:
+        description: Severity
+        type: string
+        enum:
+          - Error
+          - Fatal
+          - Warning
+        required: false # TODO Hand-rolled W-8253396
+      validationAction:
+        description: Validation action
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      validationCode:
+        description: Validation code
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+  SchemaFieldFormatSymbolsRepresentation:
+    description: Representation of Schema Node Fieldformat symbols
+    type: object
+    properties:
+      currencySymbol:
+        description: Field currency symbol
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      decimalSymbol:
+        description: Field decimal symbol
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      groupingSymbol:
+        description: Field grouping symbol
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+  SchemaFieldNewPropertiesRepresentation:
+    description: Representation of Schema Node New Field Properties
+    type: object
+    properties:
+      label:
+        description: Field label
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: Field name
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      typeProperties:
+        description: New property values
+        type: SchemaFieldTypePropertiesRepresentation
+        required: false # TODO Hand-rolled W-8253396
+  SchemaFieldRepresentation:
+    description: Representation of Schema Node Field
+    type: object
+    properties:
+      errorValue:
+        description: Value to output on error
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: Field name
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      newProperties:
+        description: New property values
+        type: SchemaFieldNewPropertiesRepresentation
+        required: false # TODO Hand-rolled W-8253396
+  SchemaFieldTypePropertiesRepresentation:
+    description: Representation of Schema Node Field type
+    type: object
+    properties:
+      format:
+        description: Field format
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      length:
+        description: Field length
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      precision:
+        description: Field precision
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      scale:
+        description: Field scale
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      symbols:
+        description: Field symbols
+        type: SchemaFieldFormatSymbolsRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      type:
+        description: Field type
+        type: string
+        enum:
+          - DateOnly
+          - DateTime
+          - Number
+          - Text
+        required: false # TODO Hand-rolled W-8253396
+  SchemaParametersRepresentation:
+    description: Representation of Schema Node
+    type: object
+    properties:
+      fields:
+        description: Fields to edit
+        type: array
+        items:
+          type: SchemaFieldRepresentation
+      slice:
+        description: Which fields to keep or drop
+        type: SchemaSliceRepresentation
+        required: false # TODO Hand-rolled W-8253396
+  SchemaSliceRepresentation:
+    description: Representation of Schema Node Slice
+    type: object
+    properties:
+      fields:
+        description: Fields to select/drop
+        type: array
+        items:
+          type: string
+      ignoreMissingFields:
+        description: Whether or not to ignore missing fields
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      mode:
+        description: Select or drop fields
+        type: string
+        required: false # TODO Hand-rolled W-8253396
   WaveAnalyticsLimitCollectionRepresentation:
     description: A collection of analytics limits
     type: object
@@ -644,3 +960,42 @@ types:
               - OutputExternalConnectorVolume
               - OutputLocalConnectorVolume
             (oas-collectionFormat): csv
+  /recipes:
+    get:
+      description: Get a listing of all recipes.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: RecipeCollectionRepresentation
+      queryParameters:
+        format:
+          type: string
+          required: false
+          enum:
+            - R2
+            - R3
+        licenseType:
+          type: string
+          required: false
+          enum:
+            - EinsteinAnalytics
+            - Sonic
+        page:
+          type: string
+          required: false
+        pageSize:
+          type: integer
+          required: false
+        q:
+          type: string
+          required: false
+        sort:
+          type: string
+          required: false
+          enum:
+            - LastModified
+            - LastModifiedBy
+            - Mru
+            - Name

@@ -1,0 +1,234 @@
+{
+    "nextPageUrl": null,
+    "recipes": [
+        {
+            "conversionDetails": [],
+            "createdBy": {
+                "id": "005RM000002Fb9YYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-11-16T19:48:57.000Z",
+            "dataflowLastUpdate": "2021-01-13T00:13:37.000Z",
+            "fileUrl": "/services/data/v52.0/wave/recipes/05vRM0000000324YAA/file",
+            "format": "R3",
+            "historiesUrl": "/services/data/v52.0/wave/recipes/05vRM0000000324YAA/histories",
+            "id": "05vRM0000000324YAA",
+            "label": "Test Local Opp",
+            "lastModifiedBy": {
+                "id": "005RM000002Fb9YYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-11-16T19:55:36.000Z",
+            "name": "Test_Local_Opp",
+            "publishingTarget": "Dataset",
+            "scheduleType": "eventdriven",
+            "targetDataflowId": "02KRM0000002UY32AM",
+            "type": "recipe",
+            "url": "/services/data/v52.0/wave/recipes/05vRM0000000324YAA?format=R3",
+            "validationDetails": []
+        },
+        {
+            "conversionDetails": [],
+            "createdBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-11-26T19:46:43.000Z",
+            "dataflowLastUpdate": "2021-01-22T21:44:15.000Z",
+            "dataset": {
+                "id": "0FbRM00000027q30AA",
+                "name": "r2y_extract1",
+                "url": "/services/data/v52.0/wave/datasets/0FbRM00000027q30AA"
+            },
+            "fileUrl": "/services/data/v52.0/wave/recipes/05vRM00000003OwYAI/file",
+            "historiesUrl": "/services/data/v52.0/wave/recipes/05vRM00000003OwYAI/histories",
+            "id": "05vRM00000003OwYAI",
+            "label": "r2y_extract",
+            "lastModifiedBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-11-26T19:46:43.000Z",
+            "name": "r2y_extract1",
+            "nextScheduledDate": "2021-01-25T08:00:00.000Z",
+            "publishingTarget": "Dataset",
+            "schedule": "0 0 0 ? * 2,5",
+            "scheduleType": "timedriven",
+            "targetDataflowId": "02KRM0000002XSl2AM",
+            "type": "recipe",
+            "url": "/services/data/v52.0/wave/recipes/05vRM00000003OwYAI",
+            "validationDetails": []
+        },
+        {
+            "conversionDetails": [],
+            "createdBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-12-02T21:05:15.000Z",
+            "dataflowLastUpdate": "2020-12-02T21:05:15.000Z",
+            "fileUrl": "/services/data/v52.0/wave/recipes/05vRM00000003QnYAI/file",
+            "format": "R3",
+            "historiesUrl": "/services/data/v52.0/wave/recipes/05vRM00000003QnYAI/histories",
+            "id": "05vRM00000003QnYAI",
+            "label": "r3y EA 1",
+            "lastModifiedBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-12-02T21:05:15.000Z",
+            "name": "r3y_EA_1",
+            "publishingTarget": "Dataset",
+            "targetDataflowId": "02KRM0000002YXg2AM",
+            "type": "recipe",
+            "url": "/services/data/v52.0/wave/recipes/05vRM00000003QnYAI?format=R3",
+            "validationDetails": []
+        },
+        {
+            "conversionDetails": [],
+            "createdBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-11-25T00:09:23.000Z",
+            "dataflowLastUpdate": "2020-11-27T16:52:34.000Z",
+            "fileUrl": "/services/data/v52.0/wave/recipes/05vRM00000003O3YAI/file",
+            "format": "R3",
+            "historiesUrl": "/services/data/v52.0/wave/recipes/05vRM00000003O3YAI/histories",
+            "id": "05vRM00000003O3YAI",
+            "label": "r3y_basic_sonic",
+            "lastModifiedBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-11-27T16:52:34.000Z",
+            "name": "r3y_basic_sonic",
+            "publishingTarget": "Dataset",
+            "targetDataflowId": "02KRM0000002X9s2AE",
+            "type": "recipe",
+            "url": "/services/data/v52.0/wave/recipes/05vRM00000003O3YAI?format=R3",
+            "validationDetails": []
+        },
+        {
+            "conversionDetails": [],
+            "createdBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-11-26T16:37:27.000Z",
+            "dataflowLastUpdate": "2020-11-26T18:09:09.000Z",
+            "dataset": {
+                "id": "0FbRM00000027oq0AA",
+                "name": "r2y_round1",
+                "url": "/services/data/v52.0/wave/datasets/0FbRM00000027oq0AA"
+            },
+            "fileUrl": "/services/data/v52.0/wave/recipes/05vRM00000003OhYAI/file",
+            "format": "R3",
+            "historiesUrl": "/services/data/v52.0/wave/recipes/05vRM00000003OhYAI/histories",
+            "id": "05vRM00000003OhYAI",
+            "label": "r2y_round",
+            "lastModifiedBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-11-26T18:09:09.000Z",
+            "name": "r2y_round",
+            "publishingTarget": "Dataset",
+            "sourceRecipe": "05vRM00000003OrYAI",
+            "targetDataflowId": "02KRM0000002XRH2A2",
+            "type": "recipe",
+            "url": "/services/data/v52.0/wave/recipes/05vRM00000003OhYAI?format=R3",
+            "validationDetails": []
+        },
+        {
+            "conversionDetails": [],
+            "createdBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-11-23T17:24:11.000Z",
+            "fileUrl": "/services/data/v52.0/wave/recipes/05vRM00000003MbYAI/file",
+            "historiesUrl": "/services/data/v52.0/wave/recipes/05vRM00000003MbYAI/histories",
+            "id": "05vRM00000003MbYAI",
+            "label": "r2y_multi",
+            "lastModifiedBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-11-23T17:24:34.000Z",
+            "name": "r2y_multi",
+            "publishingTarget": "Dataset",
+            "type": "recipe",
+            "url": "/services/data/v52.0/wave/recipes/05vRM00000003MbYAI",
+            "validationDetails": []
+        },
+        {
+            "conversionDetails": [],
+            "createdBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-10-25T23:18:06.000Z",
+            "dataflowLastUpdate": "2020-10-25T23:18:06.000Z",
+            "fileUrl": "/services/data/v52.0/wave/recipes/05vRM00000002d9YAA/file",
+            "format": "R3",
+            "historiesUrl": "/services/data/v52.0/wave/recipes/05vRM00000002d9YAA/histories",
+            "id": "05vRM00000002d9YAA",
+            "label": "r2y basic",
+            "lastModifiedBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-10-25T23:18:06.000Z",
+            "name": "r2y_basic",
+            "publishingTarget": "Dataset",
+            "targetDataflowId": "02KRM0000002Ocl2AE",
+            "type": "recipe",
+            "url": "/services/data/v52.0/wave/recipes/05vRM00000002d9YAA?format=R3",
+            "validationDetails": []
+        },
+        {
+            "conversionDetails": [],
+            "createdBy": {
+                "id": "005RM000002Fb9YYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-11-02T18:45:48.000Z",
+            "dataflowLastUpdate": "2020-11-02T18:45:48.000Z",
+            "fileUrl": "/services/data/v52.0/wave/recipes/05vRM00000002grYAA/file",
+            "format": "R3",
+            "historiesUrl": "/services/data/v52.0/wave/recipes/05vRM00000002grYAA/histories",
+            "id": "05vRM00000002grYAA",
+            "label": "Empty Recipe",
+            "lastModifiedBy": {
+                "id": "005RM000002Fb9YYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-11-02T18:45:48.000Z",
+            "name": "Empty_Recipe",
+            "publishingTarget": "Dataset",
+            "targetDataflowId": "02KRM0000002QqE2AU",
+            "type": "recipe",
+            "url": "/services/data/v52.0/wave/recipes/05vRM00000002grYAA?format=R3",
+            "validationDetails": []
+        }
+    ],
+    "totalSize": 8,
+    "url": "/services/data/v52.0/wave/recipes"
+}

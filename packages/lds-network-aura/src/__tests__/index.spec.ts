@@ -3678,6 +3678,66 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/recipes', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/recipes`,
+            },
+            [
+                'WaveController.getRecipes',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/recipes`,
+                    queryParams: {
+                        format: 'R3',
+                        licenseType: 'Sonic',
+                        pageParam: 'eyJwYWdlU2',
+                        pageSize: 10,
+                        q: 'rcp 3',
+                        sortParam: 'Name',
+                    },
+                },
+                [
+                    'WaveController.getRecipes',
+                    {
+                        format: 'R3',
+                        licenseType: 'Sonic',
+                        pageParam: 'eyJwYWdlU2',
+                        pageSize: 10,
+                        q: 'rcp 3',
+                        sortParam: 'Name',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/recipes`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/recipes`,
+            },
+            {}
+        );
+    });
+
     describe('get /connect/communities/{communityId}/managed-content/delivery/contents', () => {
         testControllerInput(
             {

@@ -1,0 +1,35 @@
+{
+    "nextPageUrl": null,
+    "recipes": [
+        {
+            "conversionDetails": [],
+            "createdBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-11-25T00:09:23.000Z",
+            "dataflowLastUpdate": "2020-11-27T16:52:34.000Z",
+            "fileUrl": "/services/data/v52.0/wave/recipes/05vRM00000003O3YAI/file",
+            "format": "R3",
+            "historiesUrl": "/services/data/v52.0/wave/recipes/05vRM00000003O3YAI/histories",
+            "id": "05vRM00000003O3YAI",
+            "label": "r3y_basic_sonic",
+            "lastModifiedBy": {
+                "id": "005RM000002Fb6AYAS",
+                "name": "Salesforce User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-11-27T16:52:34.000Z",
+            "licenseAttributes": { "type": "Sonic" },
+            "name": "r3y_basic_sonic",
+            "publishingTarget": "Dataset",
+            "targetDataflowId": "02KRM0000002X9s2AE",
+            "type": "recipe",
+            "url": "/services/data/v52.0/wave/recipes/05vRM00000003O3YAI?format=R3",
+            "validationDetails": []
+        }
+    ],
+    "totalSize": 1,
+    "url": "/services/data/v52.0/wave/recipes?q=r3y_basic_sonic"
+}

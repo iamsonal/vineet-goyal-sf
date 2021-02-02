@@ -140,6 +140,50 @@ describe('makeDurableStoreDraftAware', () => {
             expect(durableRecord.fields['Birthday']).toBeUndefined();
         });
 
+        it('includes missing nodes with the record', () => {
+            const record = {
+                id: RECORD_ID,
+                weakEtag: 1,
+                fields: {
+                    Name: {
+                        __ref: STORE_KEY_FIELD__NAME,
+                    },
+                    Birthday: {
+                        __ref: undefined,
+                        isMissing: true,
+                    },
+                },
+            };
+
+            const storeRecords = {
+                [STORE_KEY_RECORD]: record,
+                [STORE_KEY_FIELD__NAME]: NAME_VALUE,
+            };
+
+            const { durableStore, baseDurableStore } = setupDraftStore(storeRecords);
+            durableStore.setEntries(
+                {
+                    [STORE_KEY_RECORD]: { data: record },
+                    [STORE_KEY_FIELD__NAME]: { data: NAME_VALUE },
+                },
+                DefaultDurableSegment
+            );
+
+            expect(baseDurableStore.setEntries).toBeCalledTimes(1);
+            const entries = (baseDurableStore.setEntries as jest.Mock).mock.calls[0][0];
+            const entry = entries[STORE_KEY_RECORD];
+            const durableRecord = entry.data as DurableRecordRepresentation;
+            expect(durableRecord.fields['Name'].value).toEqual(NAME_VALUE.value);
+            expect(durableRecord.fields['Birthday']).toBeUndefined();
+            expect(durableRecord.links['Name']).toEqual({
+                __ref: 'UiApi::RecordRepresentation:005xx000001XL1tAAG__fields__Name',
+            });
+            expect(durableRecord.links['Birthday']).toEqual({
+                __ref: undefined,
+                isMissing: true,
+            });
+        });
+
         it('writes the entire denormalized record when setting a single field', () => {
             const record = {
                 id: RECORD_ID,
@@ -418,6 +462,32 @@ describe('makeDurableStoreDraftAware', () => {
                 DefaultDurableSegment
             );
             expect(ObjectKeys(readEntries).length).toBe(2);
+        });
+
+        it('should restore missing link markers', async () => {
+            const durableRecord = buildDurableRecordRepresentation(RECORD_ID, { Name: NAME_VALUE });
+            durableRecord.links['Birthday'] = {
+                isMissing: true,
+            };
+
+            const { durableStore, baseDurableStore, draftQueue } = setupDraftStore({});
+            draftQueue.getActionsForTags = jest.fn().mockResolvedValue({ [STORE_KEY_RECORD]: [] });
+            baseDurableStore.getEntries = jest
+                .fn()
+                .mockResolvedValue({ [STORE_KEY_RECORD]: { data: durableRecord } });
+
+            const readEntries = await durableStore.getEntries(
+                [STORE_KEY_RECORD],
+                DefaultDurableSegment
+            );
+            expect(ObjectKeys(readEntries).length).toBe(2);
+            const missingField =
+                readEntries['UiApi::RecordRepresentation:005xx000001XL1tAAG'].data.fields[
+                    'Birthday'
+                ];
+            expect(missingField).toBeDefined();
+            expect(missingField.isMissing).toBe(true);
+            expect(Object.prototype.hasOwnProperty.call(missingField, '__ref')).toBe(true);
         });
 
         it('should overlay draft edits', async () => {

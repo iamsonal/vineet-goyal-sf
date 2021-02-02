@@ -65,30 +65,36 @@ function denormalizeRecordFields(
         const field = fields[fieldName];
 
         // pending fields get filtered out of the durable store
-        // only pick up fields that contain references (i.e. they are not missing)
-        const { pending, __ref } = field;
-        if (pending !== true && __ref !== undefined) {
-            let ref = records[__ref];
-            // there is a dangling field reference, do not persist a
-            // record if there's a field reference missing
-            if (ref === undefined) {
-                if (process.env.NODE_ENV !== 'production') {
-                    throw new Error('failed to find normalized field reference');
-                }
-                return undefined;
-            }
+        const { pending } = field;
+        if (pending !== true) {
+            const { isMissing, __ref } = field;
 
-            // write back original field values so that draft values
-            // do not make their way into the durable store
-            if (drafts !== undefined) {
-                const originalField = drafts.serverValues[fieldName];
-                if (originalField !== undefined) {
-                    ref = originalField;
+            if (__ref !== undefined) {
+                let ref = records[__ref];
+                // there is a dangling field reference, do not persist a
+                // record if there's a field reference missing
+                if (ref === undefined) {
+                    if (process.env.NODE_ENV !== 'production') {
+                        throw new Error('failed to find normalized field reference');
+                    }
+                    return undefined;
                 }
-            }
 
-            filteredFields[fieldName] = ref;
-            links[fieldName] = field;
+                // write back original field values so that draft values
+                // do not make their way into the durable store
+                if (drafts !== undefined) {
+                    const originalField = drafts.serverValues[fieldName];
+                    if (originalField !== undefined) {
+                        ref = originalField;
+                    }
+                }
+
+                filteredFields[fieldName] = ref;
+                links[fieldName] = field;
+            } else if (isMissing) {
+                // persist missing links
+                links[fieldName] = field;
+            }
         }
     }
 
@@ -114,19 +120,29 @@ function normalizeRecordFields(
     const record = replayDraftsOnRecord(entry.data, drafts);
     const { fields, links } = record;
 
-    const fieldNames = ObjectKeys(fields);
+    const linkNames = ObjectKeys(links);
     const normalizedFields: {
         [key: string]: StoreLink<unknown>;
     } = {};
     const returnEntries: DurableStoreEntries = {};
 
-    for (let i = 0, len = fieldNames.length; i < len; i++) {
-        const fieldName = fieldNames[i];
+    for (let i = 0, len = linkNames.length; i < len; i++) {
+        const fieldName = linkNames[i];
         const field = fields[fieldName];
         const link = links[fieldName];
-        const fieldKey = buildRecordFieldStoreKey(key, fieldName);
-        returnEntries[fieldKey] = { data: field };
-        normalizedFields[fieldName] = link;
+        // field is undefined for missing links
+        if (field !== undefined) {
+            const fieldKey = buildRecordFieldStoreKey(key, fieldName);
+            returnEntries[fieldKey] = { data: field };
+        }
+
+        // we need to restore the undefined __ref node as it is
+        // lost during serialization
+        if (link.isMissing === true) {
+            normalizedFields[fieldName] = { ...link, __ref: undefined };
+        } else {
+            normalizedFields[fieldName] = link;
+        }
     }
     returnEntries[key] = {
         data: ObjectAssign(record, { fields: normalizedFields }),

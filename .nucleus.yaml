@@ -1,4 +1,6 @@
+core-deploy:
+  enable: true
 steps:
-  node-unit-tests:
+  node-pre-release-tests:
     run:
-      command: yarn test:unit:coverage --runInBand --ci
+      command: yarn test:unit:coverage

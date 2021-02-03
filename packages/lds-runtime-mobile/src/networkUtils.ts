@@ -1,10 +1,11 @@
 import { Request, Response } from '@mobileplatform/nimbus-plugin-lds';
 import { ResourceRequest, FetchResponse, HttpStatusCode } from '@luvio/engine';
+import { ArrayIsArray, ObjectKeys, ObjectCreate, JSONParse, JSONStringify } from './utils/language';
 
 function ldsParamsToString(params: ResourceRequest['queryParams']): Request['queryParams'] {
-    const returnParams = Object.create(null);
+    const returnParams = ObjectCreate(null);
 
-    const keys = Object.keys(params);
+    const keys = ObjectKeys(params);
     for (let i = 0, len = keys.length; i < len; i++) {
         const key = keys[i];
         const value = params[key];
@@ -14,8 +15,11 @@ function ldsParamsToString(params: ResourceRequest['queryParams']): Request['que
             continue;
         }
 
-        if (Array.isArray(value)) {
-            returnParams[key] = value.join(',');
+        if (ArrayIsArray(value)) {
+            // filter out empty arrays
+            if (value.length > 0) {
+                returnParams[key] = value.join(',');
+            }
         } else {
             returnParams[key] = `${value}`;
         }
@@ -66,14 +70,14 @@ function stringifyIfPresent(value: any | null): string | null {
     if (value === undefined || value === null) {
         return null;
     }
-    return JSON.stringify(value);
+    return JSONStringify(value);
 }
 
 function parseIfPresent(value: string | null): any | null {
     if (value === undefined || value === null || value === '') {
         return null;
     }
-    return JSON.parse(value);
+    return JSONParse(value);
 }
 
 export function buildNimbusNetworkPluginRequest(resourceRequest: ResourceRequest): Request {

@@ -158,4 +158,15 @@ export class DraftManager {
             }
         });
     }
+
+    /**
+     * Removes the draft action identified by actionId from the draft queue.
+     *
+     * @param actionId The action identifier
+     *
+     * @returns The current state of the draft queue
+     */
+    removeDraftAction(actionId: string): Promise<DraftManagerState> {
+        return this.draftQueue.removeDraftAction(actionId).then(() => this.getQueue());
+    }
 }

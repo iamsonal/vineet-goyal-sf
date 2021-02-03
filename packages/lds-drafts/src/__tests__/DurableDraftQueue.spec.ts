@@ -1,4 +1,10 @@
-import { DraftAction, DraftActionStatus, ProcessActionResult } from '../DraftQueue';
+import {
+    DraftAction,
+    DraftActionStatus,
+    PendingDraftAction,
+    ProcessActionResult,
+    UploadingDraftAction,
+} from '../DraftQueue';
 import { DurableDraftQueue, DraftDurableSegment } from '../DurableDraftQueue';
 import {
     MockDurableStore,
@@ -427,7 +433,16 @@ describe('DurableDraftQueue', () => {
         });
 
         it('is called when item removed', async () => {
-            // TODO: Add this test when remove item logic is added
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            const draftAction = await draftQueue.enqueue(DEFAULT_REQUEST, DEFAULT_TAG);
+
+            const listener = jest.fn();
+            draftQueue.registerOnChangedListener(listener);
+
+            await draftQueue.removeDraftAction(draftAction.id);
+            expect(listener).toBeCalledTimes(1);
         });
 
         it('is called when item completes', async () => {
@@ -454,6 +469,60 @@ describe('DurableDraftQueue', () => {
             expect(completedSpy).toBeCalledTimes(2);
             expect(completedSpy.mock.calls[0][0]).toBeUndefined();
             expect(completedSpy.mock.calls[1][0]).toBeDefined();
+        });
+    });
+
+    describe('removeDraftAction', () => {
+        const baseAction = {
+            id: '123456',
+            tag: 'testActionTag',
+            request: DEFAULT_REQUEST,
+            timestamp: 2,
+        };
+
+        const setup = (testAction: DraftAction<unknown> | undefined = undefined) => {
+            const durableStore = new MockDurableStore();
+            const evictSpy = jest.spyOn(durableStore, 'evictEntries');
+
+            const draftQueue = new DurableDraftQueue(durableStore, buildMockNetworkAdapter([]));
+
+            if (testAction !== undefined) {
+                durableStore.segments[DraftDurableSegment] = {
+                    [testAction.id]: { data: testAction },
+                };
+            }
+
+            return { draftQueue, evictSpy };
+        };
+
+        it('throws an error if no draft action with the ID exists', async () => {
+            const { draftQueue } = setup();
+            await expect(draftQueue.removeDraftAction('noSuchId')).rejects.toThrowError(
+                'No removable action with id noSuchId'
+            );
+        });
+
+        it('throws an error if the removed action is uploading', async () => {
+            const testAction: UploadingDraftAction<unknown> = {
+                ...baseAction,
+                status: DraftActionStatus.Uploading,
+            };
+
+            const { draftQueue } = setup(testAction);
+            await expect(draftQueue.removeDraftAction(testAction.id)).rejects.toThrowError(
+                'Cannot remove an uploading draft action with ID 123456'
+            );
+        });
+
+        it('calls evict entries with correct durable store key', async () => {
+            const testAction: PendingDraftAction<unknown> = {
+                ...baseAction,
+                status: DraftActionStatus.Pending,
+            };
+
+            const { draftQueue, evictSpy } = setup(testAction);
+            await draftQueue.removeDraftAction(testAction.id);
+            expect(evictSpy).toBeCalledWith(['testActionTag__DraftAction__123456'], 'DRAFT');
         });
     });
 });

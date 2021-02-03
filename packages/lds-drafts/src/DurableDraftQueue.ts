@@ -248,4 +248,27 @@ export class DurableDraftQueue implements DraftQueue {
             listener(completed);
         }
     }
+
+    removeDraftAction(actionId: string): Promise<void> {
+        return this.getQueueActions().then(queue => {
+            //Get the store key for the removed action
+            const actions = queue.filter(action => action.id === actionId);
+            if (actions.length === 0) {
+                throw new Error(`No removable action with id ${actionId}`);
+            }
+
+            const action = actions[0];
+            if (action.status === DraftActionStatus.Uploading) {
+                throw new Error(`Cannot remove an uploading draft action with ID ${actionId}`);
+            }
+
+            let durableStoreKey = buildDraftDurableStoreKey(action.tag, action.id);
+
+            return this.durableStore
+                .evictEntries([durableStoreKey], DraftDurableSegment)
+                .then(() => {
+                    this.notifyChangedListeners();
+                });
+        });
+    }
 }

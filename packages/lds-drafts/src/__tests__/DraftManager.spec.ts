@@ -171,6 +171,27 @@ describe('DraftManager', () => {
             await globalDraftQueueListener(completedAction);
         });
     });
+
+    describe('removeDraftAction', () => {
+        it('returns the draft queue after removing the draft action', async () => {
+            const actionID = 'abc';
+            const removeSpy = jest.fn().mockReturnValue(Promise.resolve());
+            const deleteAction = createDeleteDraftAction('1234', 'mock');
+            mockDraftQueue.getQueueActions = () => Promise.resolve([deleteAction]);
+            mockDraftQueue.removeDraftAction = removeSpy;
+
+            const subject = await manager.removeDraftAction(actionID);
+            expect(subject.items.length).toEqual(1);
+            expect(subject.items[0]).toEqual({
+                id: deleteAction.id,
+                operationType: DraftActionOperationType.Delete,
+                state: DraftActionStatus.Pending,
+                timestamp: DEFAULT_TIME_STAMP,
+            });
+
+            expect(removeSpy).toBeCalledWith(actionID);
+        });
+    });
 });
 
 const MockDraftQueue = jest.fn(
@@ -181,6 +202,7 @@ const MockDraftQueue = jest.fn(
             processNextAction: jest.fn(),
             getQueueActions: jest.fn(),
             getQueueState: jest.fn(),
+            removeDraftAction: jest.fn(),
             registerOnChangedListener: jest.fn((listener: DraftQueueChangeListener): (() => Promise<
                 void
             >) => {

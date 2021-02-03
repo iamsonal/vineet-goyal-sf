@@ -128,4 +128,11 @@ export interface DraftQueue {
 
     /** The current state of the DraftQueue */
     getQueueState(): DraftQueueState;
+
+    /**
+     * Removes the draft action identified by actionId from the draft queue.
+     *
+     * @param actionId The action identifier
+     */
+    removeDraftAction(actionId: string): Promise<void>;
 }

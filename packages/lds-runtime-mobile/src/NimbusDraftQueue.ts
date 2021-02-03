@@ -70,4 +70,8 @@ export class NimbusDraftQueue implements DraftQueue {
     getQueueState(): DraftQueueState {
         throw new Error('Cannot call getQueueState from the NimbusDraftQueue');
     }
+
+    removeDraftAction(_actionId: string): Promise<void> {
+        throw new Error('Cannot call removeDraftAction from the NimbusDraftQueue');
+    }
 }

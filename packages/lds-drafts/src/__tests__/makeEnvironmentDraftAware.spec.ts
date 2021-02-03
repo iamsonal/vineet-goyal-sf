@@ -54,7 +54,7 @@ function setup(
         getQueueState: jest.fn(),
     };
 
-    const baseEnvironment = makeDurable(new Environment(store, network), durableStore);
+    const baseEnvironment = makeDurable(new Environment(store, network), { durableStore });
     const draftEnvironment = makeEnvironmentDraftAware(
         baseEnvironment,
         store,
@@ -404,7 +404,7 @@ describe('makeEnvironmentDraftAware', () => {
                 getQueueState: jest.fn(),
             };
 
-            const baseEnvironment = makeDurable(new Environment(store, network), durableStore);
+            const baseEnvironment = makeDurable(new Environment(store, network), { durableStore });
             makeEnvironmentDraftAware(
                 baseEnvironment,
                 store,

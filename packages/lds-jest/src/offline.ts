@@ -26,11 +26,10 @@ export function buildOfflineLuvio(
     reviveRetrievers?: ResponsePropertyRetriever<any, any>[]
 ) {
     const store = new Store();
-    let env: Environment = makeDurable(
-        makeOffline(new Environment(store, network)),
+    let env: Environment = makeDurable(makeOffline(new Environment(store, network)), {
         durableStore,
-        reviveRetrievers ?? []
-    );
+        reviveRetrievers: reviveRetrievers || [],
+    });
     if (customEnvironment !== undefined) {
         env = customEnvironment(env, durableStore, store);
     }

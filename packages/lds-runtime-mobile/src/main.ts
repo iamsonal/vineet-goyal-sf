@@ -72,11 +72,10 @@ const draftAwareDurableStore = makeDurableStoreDraftAware(
 
 // build environment
 const env = makeEnvironmentDraftAware(
-    makeDurable(
-        makeOffline(new Environment(store, draftAwareNetworkAdapter)),
-        draftAwareDurableStore,
-        responseRecordRepresentationRetrievers
-    ),
+    makeDurable(makeOffline(new Environment(store, draftAwareNetworkAdapter)), {
+        durableStore: draftAwareDurableStore,
+        reviveRetrievers: responseRecordRepresentationRetrievers,
+    }),
     store,
     draftQueue,
     // W-8794366: replace with draftAwareDurableStore once resolved

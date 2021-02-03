@@ -56,11 +56,10 @@ function buildLds(ds?: MockDurableStore) {
         multiRecordPayload_Account,
     ]);
     const store = new Store();
-    const env = makeDurable(
-        makeOffline(new Environment(store, network)),
+    const env = makeDurable(makeOffline(new Environment(store, network)), {
         durableStore,
-        responseRecordRepresentationRetrievers
-    );
+        reviveRetrievers: responseRecordRepresentationRetrievers,
+    });
     const luvio = new Luvio(env);
     return {
         luvio,

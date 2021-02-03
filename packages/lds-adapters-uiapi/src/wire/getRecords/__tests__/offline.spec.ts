@@ -41,11 +41,10 @@ function buildLds(durableStore: MockDurableStore, n?: NetworkAdapter) {
     const store = new Store();
     const network = n ?? buildMockNetworkAdapter([recordPayload_Account]);
 
-    const env = makeDurable(
-        makeOffline(new Environment(store, network)),
+    const env = makeDurable(makeOffline(new Environment(store, network)), {
         durableStore,
-        responseRecordRepresentationRetrievers
-    );
+        reviveRetrievers: responseRecordRepresentationRetrievers,
+    });
 
     const luvio = new Luvio(env);
     return {

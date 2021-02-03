@@ -16,7 +16,7 @@ export function records(
             plural: true,
             fragment: {
                 kind: 'Fragment',
-                private: [],
+                private: ['eTag', 'weakEtag'],
                 selections: selection.selections,
             },
             pageToken: selection.pageToken,

@@ -56,7 +56,7 @@ export const select: typeof generatedSelect = (
 
     return {
         kind: 'Fragment',
-        private: ['eTag'],
+        private: [],
         selections: [
             {
                 kind: 'Custom',

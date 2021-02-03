@@ -21,6 +21,7 @@ function paginatedDataCustomReader(
         nonCustomSelection.fragment = {
             kind: 'Fragment',
             selections: selection.selections,
+            private: selection.private,
         };
         reader.readPluralLink(key, nonCustomSelection, record, data);
     } else {

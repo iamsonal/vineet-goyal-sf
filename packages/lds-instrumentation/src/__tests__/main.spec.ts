@@ -20,23 +20,27 @@ jest.mock('instrumentation/service', () => {
     };
 
     return {
-        counter: () => ({
+        counter: metricKey => ({
             increment: spies.counterIncrementSpy,
+            __metricKey: metricKey,
         }),
         interaction: spies.interaction,
-        percentileHistogram: () => ({
+        percentileHistogram: metricKey => ({
             update: spies.percentileUpdateSpy,
+            __metricKey: metricKey,
         }),
         perfEnd: spies.perfEnd,
         perfStart: spies.perfStart,
-        registerCacheStats: () => ({
+        registerCacheStats: name => ({
             logHits: spies.cacheStatsLogHitsSpy,
             logMisses: spies.cacheStatsLogMissesSpy,
+            __name: name,
         }),
         registerPeriodicLogger: jest.fn(),
         registerPlugin: jest.fn(),
-        timer: () => ({
+        timer: metricKey => ({
             addDuration: spies.timerAddDurationSpy,
+            __metricKey: metricKey,
         }),
         __spies: spies,
     };
@@ -81,6 +85,18 @@ beforeEach(() => {
 afterEach(() => {
     timekeeper.reset();
 });
+
+/**
+ * Helper method to test metric calls for a metric spy.
+ * @param spy The metric spy.
+ * @param expectedCalls List of Metric Keys to test.
+ */
+function testMetricInvocations(metricSpy: any, expectedCalls: any) {
+    const actualCalls = metricSpy.mock.instances.map((instance: any) => {
+        return instance.__metricKey.get();
+    });
+    expect(actualCalls).toEqual(expectedCalls);
+}
 
 // Number of metric counter invocations that happen during a normal cache hit or miss flow, without
 // any of the TTL specific code path happening. To be incremented if additional counters are added for either scenario.
@@ -322,6 +338,7 @@ describe('instrumentation', () => {
             [REFRESH_ADAPTER_EVENT]: true,
             adapterName: 'getApex__ContactController_getContactList_false',
         };
+
         it('should increment refreshApex call count, and set lastRefreshApiCall', () => {
             instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_APEX_KEY)());
             expect(instrumentationSpies.handleRefreshApiCall).toHaveBeenCalledTimes(1);
@@ -330,12 +347,14 @@ describe('instrumentation', () => {
             expect((instrumentation as any).refreshApiCallEventStats[REFRESH_APEX_KEY]).toEqual(1);
             expect((instrumentation as any).lastRefreshApiCall).toEqual(REFRESH_APEX_KEY);
         });
+
         it('should increment refreshUiApi call count, and set lastRefreshApiCall', () => {
             instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_UIAPI_KEY)());
             expect(instrumentationSpies.handleRefreshApiCall).toHaveBeenCalledTimes(1);
             expect((instrumentation as any).refreshApiCallEventStats[REFRESH_UIAPI_KEY]).toEqual(1);
             expect((instrumentation as any).lastRefreshApiCall).toEqual(REFRESH_UIAPI_KEY);
         });
+
         it('should increment supported and per adapter counts for apex adapter', () => {
             instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_APEX_KEY)());
             instrumentation.instrumentNetwork(apexAdapterRefreshEvent);
@@ -346,6 +365,7 @@ describe('instrumentation', () => {
             expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(1);
             expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(0);
         });
+
         it('should increment unsupported and per adapter counts for non-apex adapter', () => {
             instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_APEX_KEY)());
             instrumentation.instrumentNetwork(uiApiAdapterRefreshEvent);
@@ -356,6 +376,7 @@ describe('instrumentation', () => {
             expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(0);
             expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(1);
         });
+
         it('should increment unsupported and per adapter counts for non-apex adapter when refreshUiApi is called', () => {
             instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_UIAPI_KEY)());
             instrumentation.instrumentNetwork(uiApiAdapterRefreshEvent);
@@ -365,6 +386,7 @@ describe('instrumentation', () => {
             expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(0);
             expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(2);
         });
+
         it('should reset stat trackers after call to logRefreshStats', () => {
             instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_APEX_KEY)());
             instrumentation.instrumentNetwork(apexAdapterRefreshEvent);
@@ -446,6 +468,65 @@ describe('instrumentation', () => {
             return instrumentedAdapter(getRecordConfig).then(_result => {
                 expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
             });
+        });
+    });
+
+    describe('getApex cardinality', () => {
+        it('should aggregate all dynamic metrics under getApex', () => {
+            const mockGetApexAdapter = () => {
+                return new Promise(resolve => {
+                    setTimeout(() => resolve({}));
+                });
+            };
+
+            const instrumentedGetApexAdapterOne = (instrumentation.instrumentAdapter as any)(
+                'getApex__ContactController_getContactList_false',
+                mockGetApexAdapter
+            );
+            const instrumentedGetApexAdapterTwo = (instrumentation.instrumentAdapter as any)(
+                'getApex__AccountController_getAccountList_true',
+                mockGetApexAdapter
+            );
+
+            expect(instrumentedGetApexAdapterOne.name).toEqual(
+                'getApex__ContactController_getContactList_false__instrumented'
+            );
+            expect(instrumentedGetApexAdapterTwo.name).toEqual(
+                'getApex__AccountController_getAccountList_true__instrumented'
+            );
+
+            instrumentedGetApexAdapterOne({ name: 'LDS', foo: 'bar' });
+            instrumentedGetApexAdapterTwo({ name: 'LDS', foo: 'baz' });
+
+            expect(instrumentationServiceSpies.cacheStatsLogHitsSpy).toHaveBeenCalledTimes(0);
+            expect(instrumentationServiceSpies.cacheStatsLogMissesSpy).toHaveBeenCalledTimes(2);
+            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(
+                baseCacheMissCounterIncrement + baseCacheHitCounterIncrement
+            );
+
+            // Verify Metric Calls
+            const expectedMetricCalls = [
+                { owner: 'LIGHTNING.lds.service', name: 'request.getApex' },
+                { owner: 'LIGHTNING.lds.service', name: 'request' },
+                { owner: 'lds', name: 'cache-miss-count' },
+                { owner: 'lds', name: 'cache-miss-count.getApex' },
+                { owner: 'LIGHTNING.lds.service', name: 'request.getApex' },
+                { owner: 'LIGHTNING.lds.service', name: 'request' },
+                { owner: 'lds', name: 'cache-miss-count' },
+                { owner: 'lds', name: 'cache-miss-count.getApex' },
+            ];
+            testMetricInvocations(
+                instrumentationServiceSpies.counterIncrementSpy,
+                expectedMetricCalls
+            );
+
+            // Verify Cache Stats Calls
+            const expectedCacheStatsCalls = ['lds:getApex', 'lds:getApex'];
+            expect(
+                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(instance => {
+                    return instance.__name;
+                })
+            ).toEqual(expectedCacheStatsCalls);
         });
     });
 });

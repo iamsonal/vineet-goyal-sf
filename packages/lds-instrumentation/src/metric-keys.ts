@@ -1,6 +1,14 @@
 import { MetricsKey } from 'instrumentation/service';
+import { APEX_ADAPTER_NAME } from './main';
 
+export const ADAPTER_CACHE_HIT_COUNT_METRIC_NAME = 'cache-hit-count';
+export const ADAPTER_CACHE_HIT_DURATION_METRIC_NAME = 'cache-hit-duration';
+export const ADAPTER_CACHE_MISS_COUNT_METRIC_NAME = 'cache-miss-count';
+export const ADAPTER_CACHE_MISS_DURATION_METRIC_NAME = 'cache-miss-duration';
+export const ADAPTER_CACHE_MISS_OUT_OF_TTL_COUNT_METRIC_NAME = 'cache-miss-out-of-ttl-count';
+export const ADAPTER_CACHE_MISS_OUT_OF_TTL_DURATION_METRIC_NAME = 'cache-miss-out-of-ttl-duration';
 const METRIC_KEY_OWNER = 'lds';
+
 /**
  * Note: This implementation of Metric Keys is a workaround due to @salesforce imports not currently working within LDS context.
  * To be changed in the future if that is fixed. Approved by @relango from Instrumentation team.
@@ -23,7 +31,7 @@ export const AGGREGATE_UI_CHUNK_COUNT: MetricsKey = {
  */
 export const CACHE_HIT_COUNT: MetricsKey = {
     get() {
-        return { owner: METRIC_KEY_OWNER, name: 'cache-hit-count' };
+        return { owner: METRIC_KEY_OWNER, name: ADAPTER_CACHE_HIT_COUNT_METRIC_NAME };
     },
 };
 
@@ -34,7 +42,59 @@ export const CACHE_HIT_COUNT: MetricsKey = {
  */
 export const CACHE_MISS_COUNT: MetricsKey = {
     get() {
-        return { owner: METRIC_KEY_OWNER, name: 'cache-miss-count' };
+        return { owner: METRIC_KEY_OWNER, name: ADAPTER_CACHE_MISS_COUNT_METRIC_NAME };
+    },
+};
+
+/**
+ * W-8379680
+ * Counter for number of getApex requests.
+ */
+export const GET_APEX_CACHE_HIT_COUNT: MetricsKey = {
+    get() {
+        return {
+            owner: METRIC_KEY_OWNER,
+            name: ADAPTER_CACHE_HIT_COUNT_METRIC_NAME + '.' + APEX_ADAPTER_NAME,
+        };
+    },
+};
+
+/**
+ * W-8379680
+ * Counter for number of getApex errors.
+ */
+export const GET_APEX_CACHE_HIT_DURATION: MetricsKey = {
+    get() {
+        return {
+            owner: METRIC_KEY_OWNER,
+            name: ADAPTER_CACHE_HIT_DURATION_METRIC_NAME + '.' + APEX_ADAPTER_NAME,
+        };
+    },
+};
+
+/**
+ * W-8379680
+ * Counter for number of getApex cache misses.
+ */
+export const GET_APEX_CACHE_MISS_COUNT: MetricsKey = {
+    get() {
+        return {
+            owner: METRIC_KEY_OWNER,
+            name: ADAPTER_CACHE_MISS_COUNT_METRIC_NAME + '.' + APEX_ADAPTER_NAME,
+        };
+    },
+};
+
+/**
+ * W-8379680
+ * Timer for duration of getApex cache misses.
+ */
+export const GET_APEX_CACHE_MISS_DURATION: MetricsKey = {
+    get() {
+        return {
+            owner: METRIC_KEY_OWNER,
+            name: ADAPTER_CACHE_MISS_DURATION_METRIC_NAME + '.' + APEX_ADAPTER_NAME,
+        };
     },
 };
 

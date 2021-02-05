@@ -11,10 +11,37 @@
  */
 
 import { MetricsKey } from 'instrumentation/service';
+import { APEX_ADAPTER_NAME } from '../main';
 
 export const OBSERVABILITY_NAMESPACE = 'LIGHTNING.lds.service';
 export const ADAPTER_INVOCATION_COUNT_METRIC_NAME = 'request';
 export const ADAPTER_ERROR_COUNT_METRIC_NAME = 'error';
+
+/**
+ * W-8379680
+ * Counter for number of getApex requests.
+ */
+export const GET_APEX_REQUEST_COUNT: MetricsKey = {
+    get() {
+        return {
+            owner: OBSERVABILITY_NAMESPACE,
+            name: ADAPTER_INVOCATION_COUNT_METRIC_NAME + '.' + APEX_ADAPTER_NAME,
+        };
+    },
+};
+
+/**
+ * W-8379680
+ * Counter for number of getApex errors.
+ */
+export const GET_APEX_ERROR_COUNT: MetricsKey = {
+    get() {
+        return {
+            owner: OBSERVABILITY_NAMESPACE,
+            name: ADAPTER_ERROR_COUNT_METRIC_NAME + '.' + APEX_ADAPTER_NAME,
+        };
+    },
+};
 
 /**
  * W-8828410

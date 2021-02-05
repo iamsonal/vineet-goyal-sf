@@ -23,9 +23,19 @@ import {
 } from 'instrumentation/service';
 
 import {
+    ADAPTER_CACHE_HIT_COUNT_METRIC_NAME,
+    ADAPTER_CACHE_HIT_DURATION_METRIC_NAME,
+    ADAPTER_CACHE_MISS_COUNT_METRIC_NAME,
+    ADAPTER_CACHE_MISS_DURATION_METRIC_NAME,
+    ADAPTER_CACHE_MISS_OUT_OF_TTL_COUNT_METRIC_NAME,
+    ADAPTER_CACHE_MISS_OUT_OF_TTL_DURATION_METRIC_NAME,
     AGGREGATE_UI_CHUNK_COUNT,
     CACHE_HIT_COUNT,
     CACHE_MISS_COUNT,
+    GET_APEX_CACHE_HIT_COUNT,
+    GET_APEX_CACHE_HIT_DURATION,
+    GET_APEX_CACHE_MISS_COUNT,
+    GET_APEX_CACHE_MISS_DURATION,
     GET_RECORD_AGGREGATE_INVOKE_COUNT,
     GET_RECORD_NORMAL_INVOKE_COUNT,
     GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT,
@@ -43,6 +53,7 @@ import {
     OBSERVABILITY_NAMESPACE,
     ADAPTER_INVOCATION_COUNT_METRIC_NAME,
     ADAPTER_ERROR_COUNT_METRIC_NAME,
+    GET_APEX_REQUEST_COUNT,
     TOTAL_ADAPTER_ERROR_COUNT,
     TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT,
 } from './utils/observability';
@@ -92,7 +103,7 @@ interface AdapterUnfulfilledError {
     missingLinks: UnfulfilledSnapshot<any, any>['missingLinks'];
 }
 
-const APEX_ADAPTER_NAME = 'getApex';
+export const APEX_ADAPTER_NAME = 'getApex';
 interface RefreshAdapterEvents {
     [adapterName: string]: number;
 }
@@ -158,12 +169,6 @@ const STORE_STATS_MARK_NAME = 'store-stats';
 const RUNTIME_PERF_MARK_NAME = 'runtime-perf';
 const NETWORK_TRANSACTION_NAME = 'lds-network';
 
-const ADAPTER_CACHE_HIT_COUNT_METRIC_NAME = 'cache-hit-count';
-const ADAPTER_CACHE_HIT_DURATION_METRIC_NAME = 'cache-hit-duration';
-const ADAPTER_CACHE_MISS_COUNT_METRIC_NAME = 'cache-miss-count';
-const ADAPTER_CACHE_MISS_DURATION_METRIC_NAME = 'cache-miss-duration';
-const ADAPTER_CACHE_MISS_OUT_OF_TTL_COUNT_METRIC_NAME = 'cache-miss-out-of-ttl-count';
-const ADAPTER_CACHE_MISS_OUT_OF_TTL_DURATION_METRIC_NAME = 'cache-miss-out-of-ttl-duration';
 const CACHE_STATS_OUT_OF_TTL_MISS_POSTFIX = 'out-of-ttl-miss';
 const RECORD_API_NAME_CHANGE_COUNT_METRIC_NAME = 'record-api-name-change-count';
 const aggregateUiChunkCountMetric = percentileHistogram(AGGREGATE_UI_CHUNK_COUNT);
@@ -177,6 +182,16 @@ const networkRateLimitExceededCountMetric = counter(NETWORK_RATE_LIMIT_EXCEEDED_
 const storeSizeMetric = percentileHistogram(STORE_SIZE_COUNT);
 const storeWatchSubscriptionsMetric = percentileHistogram(STORE_WATCH_SUBSCRIPTIONS_COUNT);
 const storeSnapshotSubscriptionsMetric = percentileHistogram(STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT);
+// Aggregate Cache Stats and Metrics for all getApex invocations
+const getApexCacheStats = registerLdsCacheStats(APEX_ADAPTER_NAME);
+const getApexTtlCacheStats = registerLdsCacheStats(
+    APEX_ADAPTER_NAME + ':' + CACHE_STATS_OUT_OF_TTL_MISS_POSTFIX
+);
+const getApexRequestCountMetric = counter(GET_APEX_REQUEST_COUNT);
+const getApexCacheHitCountMetric = counter(GET_APEX_CACHE_HIT_COUNT);
+const getApexCacheHitDurationMetric = timer(GET_APEX_CACHE_HIT_DURATION);
+const getApexCacheMissCountMetric = counter(GET_APEX_CACHE_MISS_COUNT);
+const getApexCacheMissDurationMetric = timer(GET_APEX_CACHE_MISS_DURATION);
 const totalAdapterRequestSuccessMetric = counter(TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT);
 const totalAdapterErrorMetric = counter(TOTAL_ADAPTER_ERROR_COUNT);
 
@@ -265,66 +280,83 @@ export class Instrumentation {
      * @returns The wrapped adapter.
      */
     public instrumentAdapter<C, D>(name: string, adapter: Adapter<C, D>): Adapter<C, D> {
-        const stats = registerLdsCacheStats(name);
-        const ttlMissStats = registerLdsCacheStats(
-            name + ':' + CACHE_STATS_OUT_OF_TTL_MISS_POSTFIX
-        );
+        // We are consolidating all apex adapter instrumentation calls under a single key
+        const adapterName = normalizeAdapterName(name);
+        const isGetApexAdapter = isApexAdapter(name);
+
+        const stats = isGetApexAdapter ? getApexCacheStats : registerLdsCacheStats(adapterName);
+        const ttlMissStats = isGetApexAdapter
+            ? getApexTtlCacheStats
+            : registerLdsCacheStats(adapterName + ':' + CACHE_STATS_OUT_OF_TTL_MISS_POSTFIX);
 
         /**
          * W-8076905
          * Dynamically generated metric. Simple counter for all requests made by this adapter.
          */
-        const wireAdapterRequestMetric = counter(
-            createMetricsKey(OBSERVABILITY_NAMESPACE, ADAPTER_INVOCATION_COUNT_METRIC_NAME, name)
-        );
+        const wireAdapterRequestMetric = isGetApexAdapter
+            ? getApexRequestCountMetric
+            : counter(
+                  createMetricsKey(
+                      OBSERVABILITY_NAMESPACE,
+                      ADAPTER_INVOCATION_COUNT_METRIC_NAME,
+                      adapterName
+                  )
+              );
 
         /**
          * W-6981216
          * Dynamically generated metric. Simple counter for cache hits by adapter name.
          */
-        const cacheHitCountByAdapterMetric = counter(
-            createMetricsKey(NAMESPACE, ADAPTER_CACHE_HIT_COUNT_METRIC_NAME, name)
-        );
+        const cacheHitCountByAdapterMetric = isGetApexAdapter
+            ? getApexCacheHitCountMetric
+            : counter(
+                  createMetricsKey(NAMESPACE, ADAPTER_CACHE_HIT_COUNT_METRIC_NAME, adapterName)
+              );
 
         /**
          * W-7404607
          * Dynamically generated metric. Timer for cache hits by adapter name.
          */
-        const cacheHitDurationByAdapterMetric = timer(
-            createMetricsKey(NAMESPACE, ADAPTER_CACHE_HIT_DURATION_METRIC_NAME, name)
-        );
+        const cacheHitDurationByAdapterMetric = isGetApexAdapter
+            ? getApexCacheHitDurationMetric
+            : timer(
+                  createMetricsKey(NAMESPACE, ADAPTER_CACHE_HIT_DURATION_METRIC_NAME, adapterName)
+              );
 
         /**
          * W-6981216
          * Dynamically generated metric. Simple counter for cache misses by adapter name.
          */
-        const cacheMissCountByAdapterMetric = counter(
-            createMetricsKey(NAMESPACE, ADAPTER_CACHE_MISS_COUNT_METRIC_NAME, name)
-        );
+        const cacheMissCountByAdapterMetric = isGetApexAdapter
+            ? getApexCacheMissCountMetric
+            : counter(
+                  createMetricsKey(NAMESPACE, ADAPTER_CACHE_MISS_COUNT_METRIC_NAME, adapterName)
+              );
 
         /**
          * W-7404607
          * Dynamically generated metric. Timer for cache hits by adapter name.
          */
-        const cacheMissDurationByAdapterMetric = timer(
-            createMetricsKey(NAMESPACE, ADAPTER_CACHE_MISS_DURATION_METRIC_NAME, name)
-        );
+        const cacheMissDurationByAdapterMetric = isGetApexAdapter
+            ? getApexCacheMissDurationMetric
+            : timer(
+                  createMetricsKey(NAMESPACE, ADAPTER_CACHE_MISS_DURATION_METRIC_NAME, adapterName)
+              );
 
         /**
          * W-7376275
          * Dynamically generated metric. Measures the amount of time it takes for LDS to get another cache miss on
          * a request we've made in the past.
-         *
          * Request Record 1 -> Record 2 -> Back to Record 1 outside of TTL is an example of when this metric will fire.
          */
-        const wireAdapterMetricConfig = wireAdapterMetricConfigs[name];
+        const wireAdapterMetricConfig = wireAdapterMetricConfigs[adapterName];
         const cacheMissOutOfTtlDurationByAdapterMetric: Timer | undefined =
             (wireAdapterMetricConfig && wireAdapterMetricConfig.ttl) !== undefined
                 ? timer(
                       createMetricsKey(
                           NAMESPACE,
                           ADAPTER_CACHE_MISS_OUT_OF_TTL_DURATION_METRIC_NAME,
-                          name
+                          adapterName
                       )
                   )
                 : undefined;
@@ -396,7 +428,9 @@ export class Instrumentation {
             return result;
         };
         // Set the name property on the function for debugging purposes.
-        Object.defineProperty(instrumentedAdapter, 'name', { value: name + '__instrumented' });
+        Object.defineProperty(instrumentedAdapter, 'name', {
+            value: name + '__instrumented',
+        });
         return instrumentedAdapter;
     }
 
@@ -545,11 +579,9 @@ export class Instrumentation {
      * @param context The refresh adapter event.
      */
     private aggregateRefreshAdapterEvents(context: RefreshAdapterEvent): void {
-        let { adapterName } = context;
-        // We are consolidating all apex adapter refresh calls under a single key
-        if (this.isApexAdapter(adapterName)) {
-            adapterName = APEX_ADAPTER_NAME;
-        }
+        // We are consolidating all apex adapter instrumentation calls under a single key
+        // Adding additional logging that getApex adapters can invoke? Read normalizeAdapterName ts-doc.
+        const adapterName = normalizeAdapterName(context.adapterName);
         if (this.lastRefreshApiCall === REFRESH_APEX_KEY) {
             if (adapterName === APEX_ADAPTER_NAME) {
                 this.refreshApiCallEventStats[SUPPORTED_KEY] += 1;
@@ -597,14 +629,6 @@ export class Instrumentation {
     }
 
     /**
-     * Returns whether the refresh event is on a supported adapter or not.
-     * @param adapterName The name of the adapter refresh was called on.
-     */
-    private isApexAdapter(adapterName: string): boolean {
-        return adapterName.indexOf(APEX_ADAPTER_NAME) === 0;
-    }
-
-    /**
      * Resets the stat trackers for refresh call events.
      */
     private resetRefreshStats(): void {
@@ -646,7 +670,8 @@ export class Instrumentation {
      * @param context The transaction context.
      */
     private incrementAdapterRequestErrorCount(context: AdapterUnfulfilledError): void {
-        const { adapterName } = context;
+        // We are consolidating all apex adapter instrumentation calls under a single key
+        const adapterName = normalizeAdapterName(context.adapterName);
         let adapterRequestErrorCounter = this.adapterUnfulfilledErrorCounters[adapterName];
         if (adapterRequestErrorCounter === undefined) {
             adapterRequestErrorCounter = counter(
@@ -767,6 +792,31 @@ function getStoreStats(store: Store): LdsStatsReport {
         snapshotSubscriptionCount,
         watchSubscriptionCount,
     };
+}
+
+/**
+ * Returns whether adapter is an Apex one or not.
+ * @param adapterName The name of the adapter.
+ */
+function isApexAdapter(adapterName: string): boolean {
+    return adapterName.indexOf(APEX_ADAPTER_NAME) === 0;
+}
+
+/**
+ * Returns 'getApex' if it is a getApex adapter, otherwise uses the actual name.
+ *
+ * Note: If you are adding additional logging that can come from getApex adapter contexts that provide
+ * the full getApex adapter name (i.e. getApex_[namespace]_[class]_[function]_[continuation]),
+ * ensure to call this method to normalize all logging to 'getApex'. This
+ * is because Argus has a 50k key cardinality limit. More context: W-8379680.
+ *
+ * @param adapterName The name of the adapter.
+ */
+function normalizeAdapterName(adapterName: string): string {
+    if (isApexAdapter(adapterName)) {
+        return APEX_ADAPTER_NAME;
+    }
+    return adapterName;
 }
 
 /**

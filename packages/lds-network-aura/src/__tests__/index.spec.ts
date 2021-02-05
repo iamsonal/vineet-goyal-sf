@@ -3356,7 +3356,7 @@ describe('routes', () => {
                 'AppsController.getNavItems',
                 {
                     formFactor: 'Small',
-                    page: 0,
+                    pageParam: 0,
                     pageSize: 20,
                     navItemNames: ['t1', 't2'],
                 },

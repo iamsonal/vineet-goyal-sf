@@ -189,6 +189,8 @@ export function buildUiApiParams(
     params: UiApiParams,
     resourceRequest: ResourceRequest
 ): UiApiParams {
+    const fixedParams = fixParamsForAuraController(params);
+
     const ifModifiedSince = resourceRequest.headers['If-Modified-Since'];
     const ifUnmodifiedSince = resourceRequest.headers['If-Unmodified-Since'];
 
@@ -203,8 +205,36 @@ export function buildUiApiParams(
     }
 
     return ObjectKeys(clientOptions).length > 0
-        ? { ...params, clientOptions: clientOptions }
-        : params;
+        ? { ...fixedParams, clientOptions: clientOptions }
+        : fixedParams;
+}
+
+// parameters that need a "Param" suffix appended
+const SUFFIXED_PARAMETERS = ['desc', 'page', 'sort'];
+const SUFFIX = 'Param';
+
+/**
+ * The connect generation code appends a "Param" suffix to certain parameter names when
+ * generating Aura controllers. This function accepts a set of UiApiParams and returns
+ * an equivalent UiApiParams suitable for passing to an Aura controller.
+ */
+export function fixParamsForAuraController(params: UiApiParams): UiApiParams {
+    let updatedParams = params;
+
+    for (let i = 0; i < SUFFIXED_PARAMETERS.length; ++i) {
+        const param = SUFFIXED_PARAMETERS[i];
+
+        if (updatedParams[param] !== undefined) {
+            if (updatedParams === params) {
+                updatedParams = { ...params };
+            }
+
+            updatedParams[param + SUFFIX] = updatedParams[param];
+            delete updatedParams[param];
+        }
+    }
+
+    return updatedParams;
 }
 
 /** Returns true if an action should ignore the network cache data. */
@@ -227,7 +257,11 @@ export function registerApiFamilyRoutes(apiFamily: ApiFamily) {
                     };
 
                     const { urlParams, queryParams, body } = resourceRequest;
-                    const params = { ...body, ...urlParams, ...queryParams };
+                    const params = {
+                        ...body,
+                        ...fixParamsForAuraController(urlParams),
+                        ...fixParamsForAuraController(queryParams),
+                    };
 
                     return dispatchAction(transport.controller, params, actionConfig, {});
                 },

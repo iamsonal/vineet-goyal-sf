@@ -1,1 +1,2 @@
-export function executeGlobalController() {}
+const executeGlobalController = jest.fn();
+export { executeGlobalController };

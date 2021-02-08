@@ -135,4 +135,10 @@ export interface DraftQueue {
      * @param actionId The action identifier
      */
     removeDraftAction(actionId: string): Promise<void>;
+
+    /** Set the draft queue state to Started and process the next item */
+    startQueue(): Promise<void>;
+
+    /** Set the draft queue state to Stopped and don't let another item begin */
+    stopQueue(): Promise<void>;
 }

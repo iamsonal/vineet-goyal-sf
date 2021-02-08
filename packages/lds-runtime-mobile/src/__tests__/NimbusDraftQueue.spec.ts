@@ -39,6 +39,7 @@ const draftAction: DraftAction<any> = {
     id: 'foo',
     tag: 'foo',
     request: resourceRequest,
+    timestamp: 12345,
 };
 
 describe('NimbusDraftQueue', () => {
@@ -148,5 +149,25 @@ describe('NimbusDraftQueue', () => {
 
             expect(listener).toHaveBeenCalledTimes(0);
         });
+    });
+
+    it('rejects on removeDraftAction', async () => {
+        const nimbusQueue = new NimbusDraftQueue();
+        await expect(nimbusQueue.removeDraftAction('1')).rejects.toEqual(
+            'Cannot call removeDraftAction from the NimbusDraftQueue'
+        );
+    });
+    it('rejects on startQueue', async () => {
+        const nimbusQueue = new NimbusDraftQueue();
+        await expect(nimbusQueue.startQueue()).rejects.toEqual(
+            'Cannot call startQueue from the NimbusDraftQueue'
+        );
+    });
+
+    it('rejects on stopQueue', async () => {
+        const nimbusQueue = new NimbusDraftQueue();
+        await expect(nimbusQueue.stopQueue()).rejects.toEqual(
+            'Cannot call stopQueue from the NimbusDraftQueue'
+        );
     });
 });

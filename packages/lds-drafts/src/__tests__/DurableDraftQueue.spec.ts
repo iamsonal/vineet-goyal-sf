@@ -1,9 +1,11 @@
 import {
+    CompletedDraftAction,
     DraftAction,
     DraftActionStatus,
     PendingDraftAction,
-    ProcessActionResult,
     UploadingDraftAction,
+    DraftQueueState,
+    ProcessActionResult,
 } from '../DraftQueue';
 import { DurableDraftQueue, DraftDurableSegment } from '../DurableDraftQueue';
 import {
@@ -34,6 +36,152 @@ const DEFAULT_REQUEST: ResourceRequest = {
 const DEFAULT_TAG = 'test-tag1';
 
 describe('DurableDraftQueue', () => {
+    describe('state', () => {
+        it('begins in Stopped state', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            const state = draftQueue.getQueueState();
+            expect(state).toEqual(DraftQueueState.Stopped);
+        });
+
+        it('changes when start and stop called', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            expect(draftQueue.getQueueState()).toEqual(DraftQueueState.Stopped);
+            await draftQueue.startQueue();
+            expect(draftQueue.getQueueState()).toEqual(DraftQueueState.Started);
+        });
+
+        it('starts a new action when added to the queue in started state', async done => {
+            const network = jest.fn().mockResolvedValue({});
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            draftQueue.startQueue();
+            let changedCount = 0;
+            const listener = (completed?: CompletedDraftAction<unknown>): Promise<void> => {
+                changedCount += 1;
+                if (changedCount > 1) {
+                    expect(completed).toBeDefined();
+                    done();
+                }
+                return Promise.resolve();
+            };
+            draftQueue.registerOnChangedListener(listener);
+            const draftId = 'fooId';
+
+            await draftQueue.enqueue(DEFAULT_REQUEST, draftId);
+        });
+
+        it('starts a new action when one completes when in started state', async done => {
+            const network = jest.fn().mockResolvedValue({});
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            let changedCount = 0;
+            const listener = (completed?: CompletedDraftAction<unknown>): Promise<void> => {
+                changedCount += 1;
+                if (changedCount > 3) {
+                    expect(completed).toBeDefined();
+                    done();
+                }
+                return Promise.resolve();
+            };
+            draftQueue.registerOnChangedListener(listener);
+            const draftId = 'fooId';
+            const draftIdTwo = 'barId';
+
+            await draftQueue.enqueue(DEFAULT_REQUEST, draftId);
+            await draftQueue.enqueue(DEFAULT_REQUEST, draftIdTwo);
+            draftQueue.startQueue();
+        });
+
+        it('retries an item that encounteres a network error', async done => {
+            const request = {
+                method: 'post',
+                basePath: '/blah',
+                baseUri: 'blahuri',
+                body: null,
+                queryParams: {},
+                urlParams: {},
+                headers: {},
+            };
+
+            const network = buildMockNetworkAdapter([]);
+            setNetworkConnectivity(network, ConnectivityState.Offline);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            const anyDraftQueue = draftQueue as any;
+            anyDraftQueue.retryIntervalMilliseconds = 1;
+            draftQueue.startQueue();
+            let changedCount = 0;
+            const listener = async (completed?: CompletedDraftAction<unknown>): Promise<void> => {
+                changedCount += 1;
+                if (changedCount === 1) {
+                    const state = draftQueue.getQueueState();
+                    expect(state).toEqual(DraftQueueState.Started);
+                    expect(completed).toBeUndefined();
+                }
+                if (changedCount === 2) {
+                    const state = draftQueue.getQueueState();
+                    expect(state).toEqual(DraftQueueState.Waiting);
+                    expect(completed).toBeUndefined();
+                    setNetworkConnectivity(network, ConnectivityState.Online);
+                }
+                if (changedCount === 3) {
+                    const state = draftQueue.getQueueState();
+                    expect(state).toEqual(DraftQueueState.Started);
+                    expect(completed).toBeUndefined();
+                    draftQueue.stopQueue();
+                    done();
+                }
+
+                return Promise.resolve();
+            };
+            draftQueue.registerOnChangedListener(listener);
+
+            await draftQueue.enqueue(request, DEFAULT_TAG);
+        });
+    });
+
+    describe('retry', () => {
+        it('interval goes to zero on startQueue', async () => {
+            const network = buildMockNetworkAdapter([]);
+            setNetworkConnectivity(network, ConnectivityState.Offline);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            const anyDraftQueue = draftQueue as any;
+            anyDraftQueue.retryIntervalMilliseconds = 10000000;
+            await draftQueue.startQueue();
+            expect(anyDraftQueue.retryIntervalMilliseconds).toEqual(0);
+        });
+
+        it('interval goes to zero on success', async done => {
+            const createArgs: MockPayload['networkArgs'] = {
+                method: 'post',
+                basePath: '/blah',
+            };
+            const successPayload: MockPayload = buildSuccessMockPayload(createArgs, {});
+            const network = buildMockNetworkAdapter([successPayload]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            const anyDraftQueue = draftQueue as any;
+            await draftQueue.startQueue();
+            anyDraftQueue.retryIntervalMilliseconds = 10000;
+            const listener = (completed?: CompletedDraftAction<unknown>): Promise<void> => {
+                if (completed !== undefined) {
+                    expect(anyDraftQueue.retryIntervalMilliseconds).toEqual(0);
+                    done();
+                }
+                return Promise.resolve();
+            };
+            draftQueue.registerOnChangedListener(listener);
+            const draftId = 'fooId';
+
+            await draftQueue.enqueue(DEFAULT_REQUEST, draftId);
+        });
+    });
+
     describe('enqueue', () => {
         it('creates timestamp in the draft action when created', async () => {
             jest.spyOn(global.Date, 'now').mockImplementationOnce(() => {
@@ -469,6 +617,21 @@ describe('DurableDraftQueue', () => {
             expect(completedSpy).toBeCalledTimes(2);
             expect(completedSpy.mock.calls[0][0]).toBeUndefined();
             expect(completedSpy.mock.calls[1][0]).toBeDefined();
+        });
+
+        it('is called when item errors', async () => {
+            const completedSpy = jest.fn();
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            draftQueue.registerOnChangedListener(completedSpy);
+            const firstRequest = { ...DEFAULT_REQUEST, basePath: '/z' };
+            await draftQueue.enqueue(firstRequest, 'z');
+            await draftQueue.startQueue();
+            expect(completedSpy).toBeCalledTimes(2);
+            expect(completedSpy.mock.calls[0][0]).toBeUndefined();
+            expect(completedSpy.mock.calls[1][0]).toBeUndefined();
+            await draftQueue.stopQueue();
         });
     });
 

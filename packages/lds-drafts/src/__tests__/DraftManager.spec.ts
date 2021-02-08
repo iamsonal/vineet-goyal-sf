@@ -192,6 +192,18 @@ describe('DraftManager', () => {
             expect(removeSpy).toBeCalledWith(actionID);
         });
     });
+
+    describe('queue', () => {
+        it('starts when startQueue is called', async () => {
+            manager.startQueue();
+            expect(mockDraftQueue.startQueue).toBeCalledTimes(1);
+        });
+
+        it('stops when stopQueue is called', async () => {
+            manager.stopQueue();
+            expect(mockDraftQueue.stopQueue).toBeCalledTimes(1);
+        });
+    });
 });
 
 const MockDraftQueue = jest.fn(
@@ -203,6 +215,8 @@ const MockDraftQueue = jest.fn(
             getQueueActions: jest.fn(),
             getQueueState: jest.fn(),
             removeDraftAction: jest.fn(),
+            startQueue: jest.fn(),
+            stopQueue: jest.fn(),
             registerOnChangedListener: jest.fn((listener: DraftQueueChangeListener): (() => Promise<
                 void
             >) => {

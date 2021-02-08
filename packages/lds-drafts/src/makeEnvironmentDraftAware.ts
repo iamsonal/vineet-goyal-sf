@@ -62,6 +62,7 @@ export function makeEnvironmentDraftAware(
 ): Environment {
     const draftDeleteSet = new Set<string>();
 
+    draftQueue.startQueue();
     function createSyntheticRecordResponse(
         key: string,
         fields: string[],

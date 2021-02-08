@@ -81,6 +81,7 @@ describe('lds drafts integration tests', () => {
         const runtime = await import('../main');
         luvio = runtime.luvio;
         draftQueue = runtime.draftQueue;
+        draftQueue.stopQueue();
         draftManager = runtime.draftManager;
         (luvio as any).environment.store.reset();
 

@@ -50,10 +50,14 @@ function isErrorFetchResponse<T>(error: unknown): error is FetchResponse<T> {
 }
 
 export class DurableDraftQueue implements DraftQueue {
+    private retryIntervalMilliseconds: number = 0;
+    private minimumRetryInterval: number = 250;
+    private maximumRetryInterval: number = 32000;
     private durableStore: DurableStore;
     private networkAdapter: NetworkAdapter;
     private draftQueueChangedListeners: DraftQueueChangeListener[] = [];
     private state = DraftQueueState.Stopped;
+    private processingAction?: Promise<ProcessActionResult>;
 
     constructor(store: DurableStore, network: NetworkAdapter) {
         this.durableStore = store;
@@ -62,6 +66,29 @@ export class DurableDraftQueue implements DraftQueue {
 
     getQueueState(): DraftQueueState {
         return this.state;
+    }
+
+    startQueue(): Promise<void> {
+        if (this.state === DraftQueueState.Started) {
+            return Promise.resolve();
+        }
+        this.state = DraftQueueState.Started;
+        this.retryIntervalMilliseconds = 0;
+        return this.processNextAction().then(result => {
+            switch (result) {
+                case ProcessActionResult.BLOCKED_ON_ERROR:
+                    this.state = DraftQueueState.Error;
+                    return Promise.reject();
+
+                default:
+                    return Promise.resolve();
+            }
+        });
+    }
+
+    stopQueue(): Promise<void> {
+        this.state = DraftQueueState.Stopped;
+        return Promise.resolve();
     }
 
     actionsForTag(tag: string, queue: DraftAction<unknown>[]): DraftAction<unknown>[] {
@@ -124,6 +151,9 @@ export class DurableDraftQueue implements DraftQueue {
             const entries: DurableStoreEntries = { [durableStoreId]: entry };
             return this.durableStore.setEntries(entries, DraftDurableSegment).then(() => {
                 this.notifyChangedListeners();
+                if (this.state === DraftQueueState.Started) {
+                    this.processNextAction();
+                }
                 return action;
             });
         });
@@ -160,11 +190,13 @@ export class DurableDraftQueue implements DraftQueue {
     }
 
     processNextAction(): Promise<ProcessActionResult> {
-        return this.getQueueActions().then(queue => {
+        if (this.processingAction !== undefined) {
+            return this.processingAction;
+        }
+        this.processingAction = this.getQueueActions().then(queue => {
             const action = queue[0];
             if (action === undefined) {
-                //TODO: once we have startDraftQueue/stopDraftQueue implemented this will need to be set to the last user defined state.
-                this.state = DraftQueueState.Started;
+                this.processingAction = undefined;
                 return ProcessActionResult.NO_ACTION_TO_PROCESS;
             }
 
@@ -172,11 +204,13 @@ export class DurableDraftQueue implements DraftQueue {
 
             if (status === DraftActionStatus.Error) {
                 this.state = DraftQueueState.Error;
+                this.processingAction = undefined;
                 return ProcessActionResult.BLOCKED_ON_ERROR;
             }
 
             if (status !== DraftActionStatus.Pending) {
                 this.state = DraftQueueState.Started;
+                this.processingAction = undefined;
                 return ProcessActionResult.ACTION_ALREADY_PROCESSING;
             }
 
@@ -185,25 +219,33 @@ export class DurableDraftQueue implements DraftQueue {
             const durableEntryKey = buildDraftDurableStoreKey(tag, id);
             const entries: DurableStoreEntries = { [durableEntryKey]: entry };
             return this.durableStore.setEntries(entries, DraftDurableSegment).then(() => {
+                this.processingAction = undefined;
                 const { request, id, tag } = action;
 
+                if (this.state === DraftQueueState.Waiting) {
+                    this.state = DraftQueueState.Started;
+                    this.notifyChangedListeners();
+                }
                 return this.networkAdapter(request)
                     .then((response: FetchResponse<any>) => {
                         return this.durableStore
                             .evictEntries([durableEntryKey], DraftDurableSegment)
                             .then(() => {
+                                this.retryIntervalMilliseconds = 0;
                                 // process action success
-                                this.notifyChangedListeners({
+                                return this.notifyChangedListeners({
                                     status: DraftActionStatus.Completed,
                                     id,
                                     tag,
                                     request,
                                     response,
                                     timestamp,
+                                }).then(() => {
+                                    if (this.state === DraftQueueState.Started) {
+                                        this.processNextAction();
+                                    }
+                                    return ProcessActionResult.ACTION_SUCCEEDED;
                                 });
-
-                                this.state = DraftQueueState.Started;
-                                return ProcessActionResult.ACTION_SUCCEEDED;
                             });
                     })
                     .catch((err: unknown) => {
@@ -224,7 +266,10 @@ export class DurableDraftQueue implements DraftQueue {
                                 .setEntries(entries, DraftDurableSegment)
                                 .then(() => {
                                     this.state = DraftQueueState.Error;
-                                    return ProcessActionResult.ACTION_ERRORED;
+                                    return this.notifyChangedListeners().then(() => {
+                                        this.notifyChangedListeners();
+                                        return ProcessActionResult.ACTION_ERRORED;
+                                    });
                                 });
                         }
 
@@ -234,19 +279,30 @@ export class DurableDraftQueue implements DraftQueue {
                         return this.durableStore
                             .setEntries(entries, DraftDurableSegment)
                             .then(() => {
+                                if (this.state === DraftQueueState.Stopped) {
+                                    return ProcessActionResult.NETWORK_ERROR;
+                                }
                                 this.state = DraftQueueState.Waiting;
-                                return ProcessActionResult.NETWORK_ERROR;
+                                return this.notifyChangedListeners().then(() => {
+                                    this.scheduleRetry();
+                                    return ProcessActionResult.NETWORK_ERROR;
+                                });
                             });
                     });
             });
         });
+        return this.processingAction;
     }
 
-    private notifyChangedListeners(completed?: CompletedDraftAction<unknown>) {
+    private notifyChangedListeners(completed?: CompletedDraftAction<unknown>): Promise<void> {
+        var results: Promise<void>[] = [];
         for (let i = 0, queueLen = this.draftQueueChangedListeners.length; i < queueLen; i++) {
             const listener = this.draftQueueChangedListeners[i];
-            listener(completed);
+            results.push(listener(completed));
         }
+        return Promise.all(results).then(() => {
+            return Promise.resolve();
+        });
     }
 
     removeDraftAction(actionId: string): Promise<void> {
@@ -270,5 +326,16 @@ export class DurableDraftQueue implements DraftQueue {
                     this.notifyChangedListeners();
                 });
         });
+    }
+
+    private scheduleRetry() {
+        const newInterval = this.retryIntervalMilliseconds * 2;
+        this.retryIntervalMilliseconds = Math.min(
+            Math.max(newInterval, this.minimumRetryInterval),
+            this.maximumRetryInterval
+        );
+        setTimeout((): void => {
+            this.processNextAction();
+        }, this.retryIntervalMilliseconds);
     }
 }

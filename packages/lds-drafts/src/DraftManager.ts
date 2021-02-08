@@ -114,6 +114,21 @@ export class DraftManager {
     }
 
     /**
+     * Starts the draft queue and begins processing the first item in the queue.
+     */
+    startQueue(): void {
+        this.draftQueue.startQueue();
+    }
+
+    /**
+     * Stops the draft queue from processing more draft items after any current
+     * in progress items are finished.
+     */
+    stopQueue(): void {
+        this.draftQueue.stopQueue();
+    }
+
+    /**
      * Subscribes the listener to changes to the draft queue.
      *
      * Returns a closure to invoke in order to unsubscribe the listener

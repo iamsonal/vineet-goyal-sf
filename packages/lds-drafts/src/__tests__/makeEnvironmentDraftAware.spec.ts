@@ -52,6 +52,9 @@ function setup(
         registerOnChangedListener: jest.fn(),
         getQueueActions: jest.fn(),
         getQueueState: jest.fn(),
+        retryIntervalSeconds: 1,
+        startQueue: jest.fn(),
+        stopQueue: jest.fn(),
     };
 
     const baseEnvironment = makeDurable(new Environment(store, network), { durableStore });
@@ -109,6 +112,11 @@ function mockDurableStoreResponse(durableStore: DurableStore) {
 }
 
 describe('makeEnvironmentDraftAware', () => {
+    it('starts the draft queue', async () => {
+        const { draftQueue } = setup();
+        expect(draftQueue.startQueue).toBeCalledTimes(1);
+    });
+
     describe('dispatchResourceRequest', () => {
         it('does not intercept non record endpoints', async () => {
             const { draftEnvironment, network } = setup();
@@ -402,6 +410,9 @@ describe('makeEnvironmentDraftAware', () => {
                 processNextAction: jest.fn(),
                 getQueueActions: jest.fn(),
                 getQueueState: jest.fn(),
+                retryIntervalSeconds: 1,
+                startQueue: jest.fn(),
+                stopQueue: jest.fn(),
             };
 
             const baseEnvironment = makeDurable(new Environment(store, network), { durableStore });

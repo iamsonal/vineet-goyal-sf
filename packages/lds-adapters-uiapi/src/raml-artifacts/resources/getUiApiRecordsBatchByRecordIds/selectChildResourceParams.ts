@@ -63,7 +63,11 @@ export function selectChildResourceParams(
                         reader.exitPath();
                         break;
                     case 'Unfulfilled':
-                        reader.markMissing();
+                        if (childSnapshot.data === undefined) {
+                            reader.markMissingLink(childKey);
+                        } else {
+                            reader.markMissing();
+                        }
                         break;
                     case 'Pending':
                         reader.markPending();

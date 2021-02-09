@@ -87,9 +87,8 @@ function flushPromises() {
     return new Promise(resolve => setImmediate(resolve));
 }
 
-// TODO: W-8207118
 describe('getRecords with fields offline', () => {
-    xit('does not hit the network when all fields are in durable store', async () => {
+    it('does not hit the network when all fields are in durable store', async () => {
         const config = {
             records: [
                 {

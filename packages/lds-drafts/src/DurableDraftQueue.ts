@@ -10,6 +10,9 @@ import {
     ObjectAsSet,
     DraftQueueState,
     DraftQueueChangeListener,
+    DraftQueueEvent,
+    DraftQueueEventType,
+    UploadingDraftAction,
 } from './DraftQueue';
 import { ResourceRequest, NetworkAdapter, FetchResponse } from '@luvio/engine';
 import { ObjectKeys } from './utils/language';
@@ -149,8 +152,15 @@ export class DurableDraftQueue implements DraftQueue {
             };
             const entry: DurableStoreEntry = { data: action };
             const entries: DurableStoreEntries = { [durableStoreId]: entry };
+            this.notifyChangedListeners({
+                type: DraftQueueEventType.ActionAdding,
+                action: action,
+            });
             return this.durableStore.setEntries(entries, DraftDurableSegment).then(() => {
-                this.notifyChangedListeners();
+                this.notifyChangedListeners({
+                    type: DraftQueueEventType.ActionAdded,
+                    action: action,
+                });
                 if (this.state === DraftQueueState.Started) {
                     this.processNextAction();
                 }
@@ -224,29 +234,45 @@ export class DurableDraftQueue implements DraftQueue {
 
                 if (this.state === DraftQueueState.Waiting) {
                     this.state = DraftQueueState.Started;
-                    this.notifyChangedListeners();
                 }
+
+                this.notifyChangedListeners({
+                    type: DraftQueueEventType.ActionRunning,
+                    action: action as UploadingDraftAction<unknown>,
+                });
+
                 return this.networkAdapter(request)
                     .then((response: FetchResponse<any>) => {
-                        return this.durableStore
-                            .evictEntries([durableEntryKey], DraftDurableSegment)
-                            .then(() => {
-                                this.retryIntervalMilliseconds = 0;
-                                // process action success
-                                return this.notifyChangedListeners({
-                                    status: DraftActionStatus.Completed,
-                                    id,
-                                    tag,
-                                    request,
-                                    response,
-                                    timestamp,
-                                }).then(() => {
-                                    if (this.state === DraftQueueState.Started) {
-                                        this.processNextAction();
-                                    }
-                                    return ProcessActionResult.ACTION_SUCCEEDED;
+                        const completedAction: CompletedDraftAction<unknown> = {
+                            status: DraftActionStatus.Completed,
+                            id,
+                            tag,
+                            request,
+                            response,
+                            timestamp,
+                        };
+
+                        // notify that consumers that this action is completed and about to be removed from the draft queue
+                        return this.notifyChangedListeners({
+                            type: DraftQueueEventType.ActionCompleting,
+                            action: completedAction,
+                        }).then(() => {
+                            return this.durableStore
+                                .evictEntries([durableEntryKey], DraftDurableSegment)
+                                .then(() => {
+                                    this.retryIntervalMilliseconds = 0;
+                                    // process action success
+                                    return this.notifyChangedListeners({
+                                        type: DraftQueueEventType.ActionCompleted,
+                                        action: completedAction,
+                                    }).then(() => {
+                                        if (this.state === DraftQueueState.Started) {
+                                            this.processNextAction();
+                                        }
+                                        return ProcessActionResult.ACTION_SUCCEEDED;
+                                    });
                                 });
-                            });
+                        });
                     })
                     .catch((err: unknown) => {
                         // if the error is a FetchResponse shape then it's a bad request
@@ -266,8 +292,10 @@ export class DurableDraftQueue implements DraftQueue {
                                 .setEntries(entries, DraftDurableSegment)
                                 .then(() => {
                                     this.state = DraftQueueState.Error;
-                                    return this.notifyChangedListeners().then(() => {
-                                        this.notifyChangedListeners();
+                                    return this.notifyChangedListeners({
+                                        type: DraftQueueEventType.ActionFailed,
+                                        action: errorAction,
+                                    }).then(() => {
                                         return ProcessActionResult.ACTION_ERRORED;
                                     });
                                 });
@@ -283,7 +311,10 @@ export class DurableDraftQueue implements DraftQueue {
                                     return ProcessActionResult.NETWORK_ERROR;
                                 }
                                 this.state = DraftQueueState.Waiting;
-                                return this.notifyChangedListeners().then(() => {
+                                return this.notifyChangedListeners({
+                                    type: DraftQueueEventType.ActionRetrying,
+                                    action: action as PendingDraftAction<unknown>,
+                                }).then(() => {
                                     this.scheduleRetry();
                                     return ProcessActionResult.NETWORK_ERROR;
                                 });
@@ -294,11 +325,13 @@ export class DurableDraftQueue implements DraftQueue {
         return this.processingAction;
     }
 
-    private notifyChangedListeners(completed?: CompletedDraftAction<unknown>): Promise<void> {
+    private notifyChangedListeners(event: DraftQueueEvent) {
         var results: Promise<void>[] = [];
-        for (let i = 0, queueLen = this.draftQueueChangedListeners.length; i < queueLen; i++) {
-            const listener = this.draftQueueChangedListeners[i];
-            results.push(listener(completed));
+        const { draftQueueChangedListeners } = this;
+        const { length: draftQueueLen } = draftQueueChangedListeners;
+        for (let i = 0; i < draftQueueLen; i++) {
+            const listener = draftQueueChangedListeners[i];
+            results.push(listener(event));
         }
         return Promise.all(results).then(() => {
             return Promise.resolve();
@@ -323,7 +356,10 @@ export class DurableDraftQueue implements DraftQueue {
             return this.durableStore
                 .evictEntries([durableStoreKey], DraftDurableSegment)
                 .then(() => {
-                    this.notifyChangedListeners();
+                    this.notifyChangedListeners({
+                        type: DraftQueueEventType.ActionDeleted,
+                        action,
+                    });
                 });
         });
     }

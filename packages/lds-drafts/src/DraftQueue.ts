@@ -47,7 +47,7 @@ export type DraftAction<T> =
     | ErrorDraftAction<T>
     | UploadingDraftAction<T>;
 
-export type DraftQueueChangeListener = (completed?: CompletedDraftAction<unknown>) => Promise<void>;
+export type DraftQueueChangeListener = (event: DraftQueueEvent) => Promise<void>;
 
 export type DraftActionMap = { [tag: string]: Readonly<DraftAction<unknown>>[] };
 
@@ -92,6 +92,83 @@ export enum DraftQueueState {
      */
     Waiting = 'waiting',
 }
+
+export enum DraftQueueEventType {
+    /**
+     * Triggered before an action is added to the queue
+     */
+    ActionAdding = 'adding',
+    /**
+     * Triggered after an action had been added to the queue
+     */
+    ActionAdded = 'added',
+    /**
+     * Triggered once an action starts running
+     */
+    ActionRunning = 'running',
+    /**
+     * Triggered once an action failed
+     */
+    ActionFailed = 'failed',
+    /**
+     * Triggered after a network failure and the action has been scheduled to retry
+     */
+    ActionRetrying = 'retrying',
+    /**
+     * Triggered before an action is deleted from the queue
+     */
+    ActionDeleting = 'deleting',
+    /**
+     * Triggered after an action has been deleted from the queue
+     */
+    ActionDeleted = 'deleted',
+    /**
+     * Triggered after an action has been completed but before it has been removed from the queue
+     */
+    ActionCompleting = 'completing',
+    /**
+     * Triggered after an action has been completed and after it has been removed from the queue
+     */
+    ActionCompleted = 'completed',
+}
+
+export interface DraftQueueAddEvent {
+    type: DraftQueueEventType.ActionAdded | DraftQueueEventType.ActionAdding;
+    action: PendingDraftAction<unknown>;
+}
+
+export interface DraftQueueDeleteEvent {
+    type: DraftQueueEventType.ActionDeleted | DraftQueueEventType.ActionDeleting;
+    action: DraftAction<unknown>;
+}
+
+export interface DraftQueueCompleteEvent {
+    type: DraftQueueEventType.ActionCompleting | DraftQueueEventType.ActionCompleted;
+    action: CompletedDraftAction<unknown>;
+}
+
+export interface DraftQueueAcionRunningEvent {
+    type: DraftQueueEventType.ActionRunning;
+    action: UploadingDraftAction<unknown>;
+}
+
+export interface DraftQueueAcionFailedEvent {
+    type: DraftQueueEventType.ActionFailed;
+    action: ErrorDraftAction<unknown>;
+}
+
+export interface DraftQueueActionRetryEvent {
+    type: DraftQueueEventType.ActionRetrying;
+    action: PendingDraftAction<unknown>;
+}
+
+export type DraftQueueEvent =
+    | DraftQueueAddEvent
+    | DraftQueueCompleteEvent
+    | DraftQueueDeleteEvent
+    | DraftQueueAcionRunningEvent
+    | DraftQueueActionRetryEvent
+    | DraftQueueAcionFailedEvent;
 
 export interface DraftQueue {
     /**

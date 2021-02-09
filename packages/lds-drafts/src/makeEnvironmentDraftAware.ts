@@ -18,7 +18,7 @@ import {
     getRecordKeyFromRecordRequest,
     extractRecordIdFromRequestParams,
 } from './utils/records';
-import { CompletedDraftAction, DraftQueue } from './DraftQueue';
+import { DraftQueue, DraftQueueEvent, DraftQueueEventType } from './DraftQueue';
 import {
     createBadRequestResponse,
     createDeletedResponse,
@@ -256,11 +256,11 @@ export function makeEnvironmentDraftAware(
     // register for when the draft queue completes an upload so we can properly
     // update subscribers
     draftQueue.registerOnChangedListener(
-        (action?: CompletedDraftAction<unknown>): Promise<void> => {
-            if (action === undefined) {
+        (event: DraftQueueEvent): Promise<void> => {
+            if (event.type !== DraftQueueEventType.ActionCompleted) {
                 return Promise.resolve();
             }
-
+            const { action } = event;
             const { request, tag } = action;
 
             if (request.method === 'delete') {

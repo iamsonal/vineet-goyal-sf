@@ -4,7 +4,8 @@ import {
     DraftAction,
     isDraftError,
     DraftQueueState,
-    CompletedDraftAction,
+    DraftQueueEvent,
+    DraftQueueEventType,
 } from './DraftQueue';
 
 /**
@@ -41,17 +42,21 @@ export enum DraftActionOperationType {
     Delete = 'delete',
 }
 
+export enum DraftQueueOperationType {
+    ItemAdded = 'added',
+    ItemDeleted = 'deleted',
+    ItemCompleted = 'completed',
+    ItemFailed = 'failed',
+}
+
 /**
  * A closure that draft queue change listeners pass to
  * receive updates when the draft queue changes.
- *
- * Includes the current state of the draft queue and the
- * DraftQueueItem that was removed from the queue if the
- * current change is a draft action that completed.
  */
 export declare type DraftQueueListener = (
     state: DraftManagerState,
-    completed?: DraftQueueItem
+    operationType: DraftQueueOperationType,
+    queueItem: DraftQueueItem
 ) => void;
 
 /**
@@ -94,10 +99,38 @@ export class DraftManager {
         this.draftQueue = draftQueue;
 
         draftQueue.registerOnChangedListener(
-            (completed?: CompletedDraftAction<unknown>): Promise<void> => {
-                return this.callListeners(completed);
+            (event: DraftQueueEvent): Promise<void> => {
+                if (this.shouldEmitDraftEvent(event)) {
+                    return this.callListeners(event);
+                }
+                return Promise.resolve();
             }
         );
+    }
+
+    private shouldEmitDraftEvent(event: DraftQueueEvent) {
+        const { type } = event;
+        return (
+            type === DraftQueueEventType.ActionAdded ||
+            type === DraftQueueEventType.ActionCompleted ||
+            type === DraftQueueEventType.ActionDeleted ||
+            type === DraftQueueEventType.ActionFailed
+        );
+    }
+
+    private draftQueueEventTypeToOperationType(type: DraftQueueEventType): DraftQueueOperationType {
+        switch (type) {
+            case DraftQueueEventType.ActionAdded:
+                return DraftQueueOperationType.ItemAdded;
+            case DraftQueueEventType.ActionCompleted:
+                return DraftQueueOperationType.ItemCompleted;
+            case DraftQueueEventType.ActionDeleted:
+                return DraftQueueOperationType.ItemDeleted;
+            case DraftQueueEventType.ActionFailed:
+                return DraftQueueOperationType.ItemFailed;
+            default:
+                throw Error('Unsupported event type');
+        }
     }
 
     /**
@@ -161,15 +194,14 @@ export class DraftManager {
         return item;
     }
 
-    private callListeners(completed?: CompletedDraftAction<unknown>): Promise<void> {
+    private callListeners(event: DraftQueueEvent): Promise<void> {
         return this.getQueue().then(queueState => {
-            let item: DraftQueueItem | undefined;
-            if (completed !== undefined) {
-                item = this.buildDraftQueueItem(completed);
-            }
+            const { action, type } = event;
+            const item = this.buildDraftQueueItem(action);
+            const operationType = this.draftQueueEventTypeToOperationType(type);
             for (let i = 0, len = this.listeners.length; i < len; i++) {
                 const listener = this.listeners[i];
-                listener(queueState, item);
+                listener(queueState, operationType, item);
             }
         });
     }

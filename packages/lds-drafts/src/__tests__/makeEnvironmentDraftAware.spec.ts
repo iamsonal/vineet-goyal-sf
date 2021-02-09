@@ -10,6 +10,7 @@ import {
     DraftActionStatus,
     DraftQueue,
     DraftQueueChangeListener,
+    DraftQueueEventType,
 } from '../DraftQueue';
 import { makeEnvironmentDraftAware } from '../makeEnvironmentDraftAware';
 import {
@@ -395,7 +396,7 @@ describe('makeEnvironmentDraftAware', () => {
         it('draft id redirects get configured after a post action completes', async () => {
             const store = new Store();
             const network = jest.fn();
-            let registeredListener: DraftQueueChangeListener = undefined;
+            let registeredListener: DraftQueueChangeListener;
             const durableStore: DurableStore = {
                 setEntries: jest.fn(),
                 getEntries: jest.fn(),
@@ -406,7 +407,12 @@ describe('makeEnvironmentDraftAware', () => {
             const draftQueue: DraftQueue = {
                 enqueue: jest.fn().mockResolvedValue(undefined),
                 getActionsForTags: jest.fn(),
-                registerOnChangedListener: listener => (registeredListener = listener),
+                registerOnChangedListener: listener => {
+                    registeredListener = listener;
+                    return () => {
+                        return Promise.resolve();
+                    };
+                },
                 processNextAction: jest.fn(),
                 getQueueActions: jest.fn(),
                 getQueueState: jest.fn(),
@@ -445,7 +451,10 @@ describe('makeEnvironmentDraftAware', () => {
                 response,
             } as CompletedDraftAction<RecordRepresentation>;
 
-            registeredListener(action);
+            registeredListener({
+                type: DraftQueueEventType.ActionCompleted,
+                action,
+            });
 
             await flushPromises();
 

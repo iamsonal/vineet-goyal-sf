@@ -11,6 +11,7 @@ import {
     DraftActionStatus,
     ErrorDraftAction,
     CompletedDraftAction,
+    PendingDraftAction,
 } from '../DraftQueue';
 import { ObjectKeys } from '../utils/language';
 import { DurableRecordRepresentation } from '../utils/records';
@@ -124,7 +125,7 @@ export function createEditDraftAction(
     recordKey: string,
     nameValue: string = DEFAULT_NAME_FIELD_VALUE,
     timestamp: number = DEFAULT_TIME_STAMP
-): DraftAction<RecordRepresentation> {
+): PendingDraftAction<RecordRepresentation> {
     return {
         id: new Date().getUTCMilliseconds().toString(),
         status: DraftActionStatus.Pending,

@@ -2,9 +2,10 @@ import {
     DraftActionStatus,
     DraftQueue,
     DraftQueueChangeListener,
+    DraftQueueEventType,
     DraftQueueState,
 } from '../DraftQueue';
-import { DraftActionOperationType, DraftManager } from '../DraftManager';
+import { DraftActionOperationType, DraftManager, DraftQueueOperationType } from '../DraftManager';
 import {
     createDeleteDraftAction,
     createCompletedDraftAction,
@@ -127,48 +128,84 @@ describe('DraftManager', () => {
         });
 
         it('calls subscribed listener', async () => {
-            expect.assertions(2);
-            manager.registerDraftQueueChangedListener((state, completed) => {
+            expect.assertions(3);
+            const action = createEditDraftAction('mock123', 'mockKey', 'hi', 12355);
+            manager.registerDraftQueueChangedListener((state, type, queueItem) => {
                 expect(state).toBeDefined();
-                expect(completed).toBeUndefined();
+                expect(type).toBe(DraftQueueOperationType.ItemAdded);
+                expect(queueItem).toBeDefined();
             });
-            await globalDraftQueueListener();
+            await globalDraftQueueListener({
+                type: DraftQueueEventType.ActionAdded,
+                action,
+            });
         });
 
         it('calls multiple subscribed listeners', async () => {
-            expect.assertions(4);
-            manager.registerDraftQueueChangedListener((state, completed) => {
+            expect.assertions(6);
+            const action = createEditDraftAction('mock123', 'mockKey', 'hi', 12355);
+            manager.registerDraftQueueChangedListener((state, type, queueItem) => {
                 expect(state).toBeDefined();
-                expect(completed).toBeUndefined();
+                expect(type).toBe(DraftQueueOperationType.ItemAdded);
+                expect(queueItem).toBeDefined();
             });
 
-            manager.registerDraftQueueChangedListener((state, completed) => {
+            manager.registerDraftQueueChangedListener((state, type, queueItem) => {
                 expect(state).toBeDefined();
-                expect(completed).toBeUndefined();
+                expect(type).toBe(DraftQueueOperationType.ItemAdded);
+                expect(queueItem).toBeDefined();
             });
 
-            await globalDraftQueueListener();
+            await globalDraftQueueListener({
+                type: DraftQueueEventType.ActionAdded,
+                action,
+            });
         });
 
         it('does not call unsubscribed listeners', async () => {
-            expect.assertions(2);
-            const unsub = manager.registerDraftQueueChangedListener((state, completed) => {
+            expect.assertions(3);
+            const action = createEditDraftAction('mock123', 'mockKey', 'hi', 12355);
+            const unsub = manager.registerDraftQueueChangedListener((state, type, queueItem) => {
                 expect(state).toBeDefined();
-                expect(completed).toBeUndefined();
+                expect(type).toBe(DraftQueueOperationType.ItemAdded);
+                expect(queueItem).toBeDefined();
             });
-            await globalDraftQueueListener();
+            await globalDraftQueueListener({
+                type: DraftQueueEventType.ActionAdded,
+                action,
+            });
             unsub();
-            await globalDraftQueueListener();
+            await globalDraftQueueListener({
+                type: DraftQueueEventType.ActionAdded,
+                action,
+            });
         });
 
         it('sends a completed draft action to listeners', async () => {
-            expect.assertions(2);
-            manager.registerDraftQueueChangedListener((state, completed) => {
+            expect.assertions(3);
+            manager.registerDraftQueueChangedListener((state, type, queueItem) => {
                 expect(state).toBeDefined();
-                expect(completed).toBeDefined();
+                expect(type).toBe(DraftQueueOperationType.ItemCompleted);
+                expect(queueItem).toBeDefined();
             });
             const completedAction = createCompletedDraftAction('mock123', 'mockKey', 1);
-            await globalDraftQueueListener(completedAction);
+            await globalDraftQueueListener({
+                type: DraftQueueEventType.ActionCompleted,
+                action: completedAction,
+            });
+        });
+
+        it('sends a failed draft action to listeners', async () => {
+            manager.registerDraftQueueChangedListener((state, type, queueItem) => {
+                expect(state).toBeDefined();
+                expect(type).toBe(DraftQueueOperationType.ItemFailed);
+                expect(queueItem).toBeDefined();
+            });
+            const errorAction = createErrorDraftAction('mock123', 'mockKey', 1);
+            await globalDraftQueueListener({
+                type: DraftQueueEventType.ActionFailed,
+                action: errorAction,
+            });
         });
     });
 

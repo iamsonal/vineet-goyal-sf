@@ -1,11 +1,12 @@
 import {
-    CompletedDraftAction,
     DraftAction,
     DraftActionStatus,
     PendingDraftAction,
     UploadingDraftAction,
     DraftQueueState,
     ProcessActionResult,
+    DraftQueueEventType,
+    DraftQueueEvent,
 } from '../DraftQueue';
 import { DurableDraftQueue, DraftDurableSegment } from '../DurableDraftQueue';
 import {
@@ -60,10 +61,11 @@ describe('DurableDraftQueue', () => {
             const draftQueue = new DurableDraftQueue(durableStore, network);
             draftQueue.startQueue();
             let changedCount = 0;
-            const listener = (completed?: CompletedDraftAction<unknown>): Promise<void> => {
+            const listener = (event: DraftQueueEvent): Promise<void> => {
                 changedCount += 1;
-                if (changedCount > 1) {
-                    expect(completed).toBeDefined();
+                if (changedCount === 2) {
+                    expect(event.type).toBe(DraftQueueEventType.ActionAdded);
+                    draftQueue.stopQueue();
                     done();
                 }
                 return Promise.resolve();
@@ -78,11 +80,8 @@ describe('DurableDraftQueue', () => {
             const network = jest.fn().mockResolvedValue({});
             const durableStore = new MockDurableStore();
             const draftQueue = new DurableDraftQueue(durableStore, network);
-            let changedCount = 0;
-            const listener = (completed?: CompletedDraftAction<unknown>): Promise<void> => {
-                changedCount += 1;
-                if (changedCount > 3) {
-                    expect(completed).toBeDefined();
+            const listener = (event: DraftQueueEvent): Promise<void> => {
+                if (event.type === DraftQueueEventType.ActionCompleted) {
                     done();
                 }
                 return Promise.resolve();
@@ -115,27 +114,38 @@ describe('DurableDraftQueue', () => {
             anyDraftQueue.retryIntervalMilliseconds = 1;
             draftQueue.startQueue();
             let changedCount = 0;
-            const listener = async (completed?: CompletedDraftAction<unknown>): Promise<void> => {
+            const listener = async (event: DraftQueueEvent): Promise<void> => {
+                const { type } = event;
+                const state = draftQueue.getQueueState();
+
                 changedCount += 1;
+                // Adding
+                // Added
+                // Running
+                // Retrying
+                // Running
                 if (changedCount === 1) {
-                    const state = draftQueue.getQueueState();
+                    expect(type).toBe(DraftQueueEventType.ActionAdding);
                     expect(state).toEqual(DraftQueueState.Started);
-                    expect(completed).toBeUndefined();
                 }
                 if (changedCount === 2) {
-                    const state = draftQueue.getQueueState();
-                    expect(state).toEqual(DraftQueueState.Waiting);
-                    expect(completed).toBeUndefined();
-                    setNetworkConnectivity(network, ConnectivityState.Online);
+                    expect(type).toBe(DraftQueueEventType.ActionAdded);
+                    expect(state).toEqual(DraftQueueState.Started);
                 }
                 if (changedCount === 3) {
-                    const state = draftQueue.getQueueState();
+                    expect(type).toBe(DraftQueueEventType.ActionRunning);
                     expect(state).toEqual(DraftQueueState.Started);
-                    expect(completed).toBeUndefined();
+                }
+                if (changedCount === 4) {
+                    expect(type).toBe(DraftQueueEventType.ActionRetrying);
+                    expect(state).toEqual(DraftQueueState.Waiting);
+                    setNetworkConnectivity(network, ConnectivityState.Online);
+                }
+                if (changedCount === 5) {
+                    expect(type).toBe(DraftQueueEventType.ActionRunning);
                     draftQueue.stopQueue();
                     done();
                 }
-
                 return Promise.resolve();
             };
             draftQueue.registerOnChangedListener(listener);
@@ -168,8 +178,8 @@ describe('DurableDraftQueue', () => {
             const anyDraftQueue = draftQueue as any;
             await draftQueue.startQueue();
             anyDraftQueue.retryIntervalMilliseconds = 10000;
-            const listener = (completed?: CompletedDraftAction<unknown>): Promise<void> => {
-                if (completed !== undefined) {
+            const listener = (event: DraftQueueEvent): Promise<void> => {
+                if (event.type === DraftQueueEventType.ActionCompleted) {
                     expect(anyDraftQueue.retryIntervalMilliseconds).toEqual(0);
                     done();
                 }
@@ -577,7 +587,9 @@ describe('DurableDraftQueue', () => {
             draftQueue.registerOnChangedListener(listener);
             const draftId = 'fooId';
             await draftQueue.enqueue(DEFAULT_REQUEST, draftId);
-            expect(listener).toBeCalledTimes(1);
+            expect(listener).toBeCalledTimes(2);
+            expect(listener.mock.calls[0][0].type).toBe(DraftQueueEventType.ActionAdding);
+            expect(listener.mock.calls[1][0].type).toBe(DraftQueueEventType.ActionAdded);
         });
 
         it('is called when item removed', async () => {
@@ -602,21 +614,12 @@ describe('DurableDraftQueue', () => {
             const firstRequest = { ...DEFAULT_REQUEST, basePath: '/z' };
             await draftQueue.enqueue(firstRequest, 'z');
             await draftQueue.processNextAction();
-            expect(listener).toBeCalledTimes(2);
-        });
-
-        it('passes completed action when appropriate', async () => {
-            const completedSpy = jest.fn();
-            const network = jest.fn().mockResolvedValue({});
-            const durableStore = new MockDurableStore();
-            const draftQueue = new DurableDraftQueue(durableStore, network);
-            draftQueue.registerOnChangedListener(completedSpy);
-            const firstRequest = { ...DEFAULT_REQUEST, basePath: '/z' };
-            await draftQueue.enqueue(firstRequest, 'z');
-            await draftQueue.processNextAction();
-            expect(completedSpy).toBeCalledTimes(2);
-            expect(completedSpy.mock.calls[0][0]).toBeUndefined();
-            expect(completedSpy.mock.calls[1][0]).toBeDefined();
+            expect(listener).toBeCalledTimes(5);
+            expect(listener.mock.calls[0][0].type).toBe(DraftQueueEventType.ActionAdding);
+            expect(listener.mock.calls[1][0].type).toBe(DraftQueueEventType.ActionAdded);
+            expect(listener.mock.calls[2][0].type).toBe(DraftQueueEventType.ActionRunning);
+            expect(listener.mock.calls[3][0].type).toBe(DraftQueueEventType.ActionCompleting);
+            expect(listener.mock.calls[4][0].type).toBe(DraftQueueEventType.ActionCompleted);
         });
 
         it('is called when item errors', async () => {
@@ -628,9 +631,11 @@ describe('DurableDraftQueue', () => {
             const firstRequest = { ...DEFAULT_REQUEST, basePath: '/z' };
             await draftQueue.enqueue(firstRequest, 'z');
             await draftQueue.startQueue();
-            expect(completedSpy).toBeCalledTimes(2);
-            expect(completedSpy.mock.calls[0][0]).toBeUndefined();
-            expect(completedSpy.mock.calls[1][0]).toBeUndefined();
+            expect(completedSpy).toBeCalledTimes(4);
+            expect(completedSpy.mock.calls[0][0].type).toBe(DraftQueueEventType.ActionAdding);
+            expect(completedSpy.mock.calls[1][0].type).toBe(DraftQueueEventType.ActionAdded);
+            expect(completedSpy.mock.calls[2][0].type).toBe(DraftQueueEventType.ActionRunning);
+            expect(completedSpy.mock.calls[3][0].type).toBe(DraftQueueEventType.ActionRetrying);
             await draftQueue.stopQueue();
         });
     });

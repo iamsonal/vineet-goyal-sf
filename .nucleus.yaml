@@ -1,5 +1,5 @@
 core-deploy:
-  enable: true
+  enabled: true
 steps:
   node-pre-release-tests:
     run:

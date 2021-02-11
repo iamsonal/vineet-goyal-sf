@@ -1,0 +1,77 @@
+{
+    "datasets": [
+        {
+            "createdBy": {
+                "id": "005xx000001XCD8AAO",
+                "name": "Automated Process",
+                "profilePhotoUrl": "/profilephoto/005/T"
+            },
+            "createdDate": "2021-01-20T18:57:06.000Z",
+            "dataRefreshDate": "2021-01-20T18:57:06.000Z",
+            "datasetType": "default",
+            "folder": {
+                "id": "00lxx000000j9TBAAY",
+                "label": "Learning Adventure",
+                "name": "Learning_Adventure",
+                "url": "/services/data/v52.0/wave/folders/00lxx000000j9TBAAY"
+            },
+            "id": "0Fbxx0000004Cx4CAE",
+            "label": "OpportunitiesRegion",
+            "lastModifiedBy": {
+                "id": "005xx000001XCD8AAO",
+                "name": "Automated Process",
+                "profilePhotoUrl": "/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2021-01-20T18:57:06.000Z",
+            "name": "OpportunitiesRegion",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "type": "dataset",
+            "url": "/services/data/v52.0/wave/datasets/0Fbxx0000004Cx4CAE",
+            "versionsUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004Cx4CAE/versions",
+            "visibility": "All"
+        },
+        {
+            "createdBy": {
+                "id": "005xx000001XCD8AAO",
+                "name": "Automated Process",
+                "profilePhotoUrl": "/profilephoto/005/T"
+            },
+            "createdDate": "2021-01-20T18:57:07.000Z",
+            "dataRefreshDate": "2021-01-20T18:57:07.000Z",
+            "datasetType": "default",
+            "folder": {
+                "id": "00lxx000000j9TBAAY",
+                "label": "Learning Adventure",
+                "name": "Learning_Adventure",
+                "url": "/services/data/v52.0/wave/folders/00lxx000000j9TBAAY"
+            },
+            "id": "0Fbxx0000004Cx5CAE",
+            "label": "Quota_Region",
+            "lastModifiedBy": {
+                "id": "005xx000001XCD8AAO",
+                "name": "Automated Process",
+                "profilePhotoUrl": "/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2021-01-20T18:57:07.000Z",
+            "name": "Quota_Region",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "type": "dataset",
+            "url": "/services/data/v52.0/wave/datasets/0Fbxx0000004Cx5CAE",
+            "versionsUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004Cx5CAE/versions",
+            "visibility": "All"
+        }
+    ],
+    "nextPageUrl": "/services/data/v52.0/wave/datasets?page=eyJwYWdlU2l6ZSI6MiwibGFzdElkIjoiMEZieHgwMDAwMDA0Q3g1Q0FFIiwibGFzdE5hbWUiOiJRdW90YV9SZWdpb24iLCJmb2xkZXJJZCI6IjAwbHh4MDAwMDAwajlUQkFBWSIsIm90aGVyUGFyYW1ldGVycyI6eyJoYXNDdXJyZW50T25seSI6ImZhbHNlIn0sImRhdGFzZXRTb3J0T3JkZXIiOiJNUlUifQ%3D%3D",
+    "totalSize": 5,
+    "url": "/services/data/v52.0/wave/datasets?page=eyJwYWdlU2l6ZSI6MiwibGFzdElkIjoiMEZieHgwMDAwMDA0Q3gzQ0FFIiwibGFzdE5hbWUiOiJEVENfT3Bwb3J0dW5pdHlfU0FNUExFIiwiZm9sZGVySWQiOiIwMGx4eDAwMDAwMGo5VEJBQVkiLCJvdGhlclBhcmFtZXRlcnMiOnsiaGFzQ3VycmVudE9ubHkiOiJmYWxzZSJ9LCJkYXRhc2V0U29ydE9yZGVyIjoiTVJVIn0%3D"
+}

@@ -64,6 +64,15 @@ const DATAFLOW_JOB_NODE_PATH = new RegExp(
 
 const RECIPES_PATH = new RegExp(`${WAVE_BASE_URI}/recipes$`, 'i');
 
+const DATASETS_PATH = new RegExp(`${WAVE_BASE_URI}/datasets$`, 'i');
+
+const DATASET_PATH = new RegExp(`${WAVE_BASE_URI}/datasets/([A-Z0-9_]){1,80}$`, 'i');
+
+const XMD_PATH = new RegExp(
+    `${WAVE_BASE_URI}/datasets/([A-Z0-9_]){1,80}/versions/([A-Z0-9_]){15,18}/xmds/[A-Z]+$`,
+    'i'
+);
+
 const LIST_CONTENT_INTERNAL_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/managed-content/delivery/contents`,
     'i'
@@ -232,6 +241,27 @@ const analytics: ApiFamily = {
         predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && RECIPES_PATH.test(path),
         transport: {
             controller: 'WaveController.getRecipes',
+        },
+    },
+    getDataset: {
+        method: 'get',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && DATASET_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getDataset',
+        },
+    },
+    getDatasets: {
+        method: 'get',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && DATASETS_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getDatasets',
+        },
+    },
+    getXmd: {
+        method: 'get',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && XMD_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getXmd',
         },
     },
 };

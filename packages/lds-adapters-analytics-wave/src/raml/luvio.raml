@@ -35,6 +35,20 @@ types:
         name: getDataflowJobNode
       (luvio.key):
         id: urlParams.nodeId
+  /datasets:
+    get:
+      (luvio.adapter):
+        name: getDatasets
+  /datasets/{datasetIdOrApiName}:
+    get:
+      (luvio.adapter):
+        name: getDataset
+      (luvio.key):
+        id: urlParams.datasetIdOrApiName
+  /datasets/{datasetIdOrApiName}/versions/{versionId}/xmds/{xmdType}:
+    get:
+      (luvio.adapter):
+        name: getXmd
   /limits:
     get:
       (luvio.adapter):

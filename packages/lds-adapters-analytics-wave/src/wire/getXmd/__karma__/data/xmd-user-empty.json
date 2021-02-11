@@ -1,0 +1,25 @@
+{
+    "createdBy": {
+        "id": "005xx000001XCGLAA4",
+        "name": "Integration User",
+        "profilePhotoUrl": "/profilephoto/005/T"
+    },
+    "createdDate": "2021-01-20T20:08:13.000Z",
+    "dataset": {},
+    "dates": [],
+    "derivedDimensions": [],
+    "derivedMeasures": [],
+    "dimensions": [],
+    "language": "en_US",
+    "lastModifiedBy": {
+        "id": "005xx000001XCGLAA4",
+        "name": "Integration User",
+        "profilePhotoUrl": "/profilephoto/005/T"
+    },
+    "lastModifiedDate": "2021-01-20T20:08:13.000Z",
+    "measures": [],
+    "organizations": [],
+    "showDetailsDefaultFields": [],
+    "type": "user",
+    "url": "/services/data/v52.0/wave/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU/xmds/user"
+}

@@ -3626,6 +3626,129 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/datasets', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets`,
+            },
+            [
+                'WaveController.getDatasets',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets`,
+            },
+            {}
+        );
+    });
+
+    describe('get /wave/datasets/{datasetIdOrApiName}', () => {
+        describe('with dataset id', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/datasets/0Fbxx0000004Cx3CAE`,
+                },
+                [
+                    'WaveController.getDataset',
+                    {},
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+
+            testResolveResponse(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/datasets/0Fbxx0000004Cx3CAE`,
+                },
+                {}
+            );
+        });
+
+        describe('with dataset name', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/datasets/DTC_Opportunity_SAMPLE`,
+                },
+                [
+                    'WaveController.getDataset',
+                    {},
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+
+            testResolveResponse(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/datasets/DTC_Opportunity_SAMPLE`,
+                },
+                {}
+            );
+        });
+    });
+
+    describe('get /wave/datasets/{datasetIdOrApiName}/versions/{versionId}/xmds/{xmdType}', () => {
+        describe('with dataset id', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU/xmds/Asset`,
+                },
+                [
+                    'WaveController.getXmd',
+                    {},
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+
+            testResolveResponse(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU/xmds/Main`,
+                },
+                {}
+            );
+        });
+        describe('with dataset name', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/datasets/ABCWidgetSales2017/versions/0Fcxx0000004CsCCAU/xmds/System`,
+                },
+                [
+                    'WaveController.getXmd',
+                    {},
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+
+            testResolveResponse(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/datasets/ABCWidgetSales2017/versions/0Fcxx0000004CsCCAU/xmds/User`,
+                },
+                {}
+            );
+        });
+    });
+
     describe('get /wave/limits', () => {
         testControllerInput(
             {

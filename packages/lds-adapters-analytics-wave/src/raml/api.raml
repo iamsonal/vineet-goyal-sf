@@ -146,6 +146,31 @@ types:
       url:
         description: URL to get the definition of the asset.
         type: string
+  ConditionalFormattingPropertyRepresentation:
+    description: Extended metadata for property in conditional formatting linked to
+      a Dimension / Measure.
+    type: object
+    properties:
+      parameters:
+        description: Parameters for different types.
+        type: object
+        properties: # TODO Hand-rolled W-8252808
+          //:
+            type: any
+      referenceField:
+        description: Conditional Formatting based on Reference field if any.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      type:
+        description: Conditional Formatting type
+        type: string
+        enum:
+          - Categories
+          - Gradient
+          - Multiple
+          - Raw
+          - Single
+          - Static
   DataflowCollectionRepresentation:
     description: A collection of Dataflows.
     type: object
@@ -397,6 +422,102 @@ types:
       id:
         description: The 18 character asset ID.
         type: string
+  DatasetCollectionRepresentation:
+    description: A collection of Wave Datasets.
+    type: object
+    properties:
+      datasets:
+        description: List of datasets available to the current user.
+        type: array
+        items:
+          type: DatasetRepresentation
+      nextPageUrl:
+        description: URL to get the next page of contents in the collection.
+        type: string | nil
+      totalSize:
+        description: Gets the total count of the elements in the collection irrespective
+          of the page.
+        type: integer
+      url:
+        description: URL to get the collection.
+        type: string
+  DatasetRepresentation:
+    description: A Wave dataset.
+    discriminatorValue: Dataset
+    type: BaseWaveAssetRepresentation
+    properties:
+      clientShardsUrl:
+        description: The URL for dataset shards.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      currentVersionCreatedBy:
+        description: User that created the current version.
+        type: WaveUserRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      currentVersionCreatedDate:
+        description: Date on which the current version was created.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      currentVersionId:
+        description: The 18 character ID of the current DatasetVersion.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      currentVersionLastModifiedBy:
+        description: User that last modified the current version.
+        type: WaveUserRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      currentVersionLastModifiedDate:
+        description: Date on which the current version was last modified.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      currentVersionTotalRows:
+        description: Total row count of this dataset.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      currentVersionUrl:
+        description: The URL for the current DatasetVersion.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      dataRefreshDate:
+        description: Date/time when this dataset was last updated by a dataflow.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      datasetType:
+        description: The type of the dataset.
+        type: string
+        enum:
+          - Default
+          - Live
+          - Trended
+      folder:
+        description: A reference to the folder in which this dataset is stored.
+        type: AssetReferenceRepresentation
+      lastMetadataChangedDate:
+        description: Date/time when the metadata(Edgemart's Folder, MasterLabel, Current,
+          EdgemartData's Sharing and security predicate) of dataset was last changed.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      lastQueriedDate:
+        description: Date/time when this dataset was last queried.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      liveConnection:
+        description: Live connection details.
+        type: LiveConnectionRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      userXmd:
+        description: Reference to the associated user xmd (if any).
+        type: XmdRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      versionsUrl:
+        description: The URL for dataset versions.
+        type: string
+      visibility:
+        description: If dataset should be hidden from users with view access
+        type: string
+        enum:
+          - All
+          - Limited
   LicenseAttributesRepresentation:
     description: The analytics license type and other properties
     type: object
@@ -407,6 +528,19 @@ types:
         enum:
           - EinsteinAnalytics
           - Sonic
+  LiveConnectionRepresentation:
+    description: Connection details of a live dataset
+    type: object
+    properties:
+      connectionLabel:
+        description: The label of the connection
+        type: string
+      connectionName:
+        description: The developer name of the connection
+        type: string
+      sourceObjectName:
+        description: The source object name from the connection
+        type: string
   NodeRowCountRepresentation:
     description: Row Statistics of a Job.
     type: object
@@ -422,6 +556,18 @@ types:
         # TODO: Hand-rolled from "format: int64, type: integer" due to W-8274943
         format: double
         type: number
+        required: false # TODO Hand-rolled W-8253396
+  NumericSeparatorsRepresentation:
+    description: Thousands and decimal numeric separators
+    type: object
+    properties:
+      decimal:
+        description: Decimal separator
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      thousands:
+        description: Thousand separator
+        type: string
         required: false # TODO Hand-rolled W-8253396
   PermissionsRepresentation:
     description: Permissions of the user on an asset.
@@ -826,6 +972,506 @@ types:
         description: The Chatter profile photo of the user.
         type: string | nil
         required: false # TODO Hand-rolled W-8253396
+  XmdDatasetRepresentation:
+    description: Extended metadata for the dataset
+    type: object
+    properties:
+      connector:
+        description: Connector source for the dataset
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      description:
+        description: Description of the dataset.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fullyQualifiedName:
+        description: Fully qualified name of the dataset version.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      origin:
+        description: Origin representing where this dataset version comes from.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+  XmdDateFieldRepresentation:
+    description: Extended metadata for the formatting of a Date Field in a Dataset.
+    type: object
+    properties:
+      day:
+        description: day field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      epochDay:
+        description: epochDay field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      epochSecond:
+        description: epochSecond field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fiscalMonth:
+        description: fiscalMonth field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fiscalQuarter:
+        description: fiscalQuarter field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fiscalWeek:
+        description: fiscalWeek field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fiscalYear:
+        description: fiscalYear field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fullField:
+        description: fullField field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      hour:
+        description: hour field
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      minute:
+        description: minute field
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      month:
+        description: month field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      quarter:
+        description: quarter field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      second:
+        description: second field
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      week:
+        description: week field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      year:
+        description: year field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+  XmdDateRepresentation:
+    description: Extended metadata for a date
+    type: object
+    properties:
+      alias:
+        description: Alias of the Date column.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      compact:
+        description: Whether or not the Date should be displayed as compact.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      description:
+        description: Description of the Date column.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fields:
+        description: Formatting information for the date fields.
+        type: XmdDateFieldRepresentation
+      firstDayOfWeek:
+        description: What the first day of the week is.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      fiscalMonthOffset:
+        description: Offset number of months for the fiscal year in relation to the
+          calendar year.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      fullyQualifiedName:
+        description: Fully qualified name of the date.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      isConvertedDateTime:
+        description: If the DateTime type is from timezone auto conversion.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      isYearEndFiscalYear:
+        description: If the Year End is the Fiscal year.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: Label of the Date column.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      showInExplorer:
+        description: Whether or not the Date should be show in the explorer.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      type:
+        description: Date type of the Date column.
+        type: string
+        enum:
+          - Date
+          - DateOnly
+          - DateTime
+        required: false # TODO Hand-rolled W-8253396
+  XmdDimensionBaseActionRepresentation:
+    description: Base Action Representation for a Dimension in an Xmd.
+    discriminator: name
+    type: object
+    properties:
+      enabled:
+        description: If Action is enabled for a specific dimension.
+        type: boolean
+      name:
+        description: Name of the action.
+        type: string
+  XmdDimensionCustomActionRepresentation:
+    description: Custom Action Representation for a Dimension in an Xmd.
+    type: XmdDimensionBaseActionRepresentation
+    properties:
+      icon:
+        description: icon for the action.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      method:
+        description: method for the action.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      target:
+        description: target for the action.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      tooltip:
+        description: tooltip for the action.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      url:
+        description: Url for the action.
+        type: string
+  XmdDimensionMemberRepresentation:
+    description: Extended metadata a Member linked to a Dimension in a Dataset.
+    type: object
+    properties:
+      color:
+        description: Color for the member.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: Label for the member.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      member:
+        description: Member value.
+        type: string
+  XmdDimensionRepresentation:
+    description: Extended metadata a Dimension in a Dataset.
+    type: object
+    properties:
+      conditionalFormatting:
+        description: Conditional formatting for a Dimension.
+        type: object
+        properties:
+          //:
+            type: any # TODO Hand-rolled W-8863405
+            # Setting this to the real type causes the snapshot to reject with:
+            # 'Invalid resource response. Expected resource response to result in Fulfilled or Stale snapshot'
+            # (with no errors about the type, even on empty {} value). Using type: any gets past it for now.
+            # type: ConditionalFormattingPropertyRepresentation
+      customActions:
+        description: Custom Actions linked to this Dimension.
+        type: array
+        items:
+          type: XmdDimensionCustomActionRepresentation
+      customActionsEnabled:
+        description: Whether the Dimension has custom actions enabled.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      dateFormat:
+        description: Date format to be used for a Date that is a dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      defaultAction:
+        description: Default action for the dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      description:
+        description: Description of the Dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      field:
+        description: Field name of the Dimension (used in queries).
+        type: string
+      fullyQualifiedName:
+        description: Fully qualified name of the dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      imageTemplate:
+        description: Image template.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      isMultiValue:
+        description: Whether the Dimension is multi-value.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: Label for the Dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      linkTemplate:
+        description: Template for formatting a Link.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      linkTemplateEnabled:
+        description: Whether the Dimension has link templates enabled.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      linkTooltip:
+        description: Tooltip to be displayed for links.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      members:
+        description: Member overrides for a Dimension.
+        type: array
+        items:
+          type: XmdDimensionMemberRepresentation
+      origin:
+        description: Origin of this dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      recordDisplayFields:
+        description: Ordered list of Dimensions and Measures. Represents the default
+          order to show them in the UI.
+        type: array
+        items:
+          type: string
+      recordIdField:
+        description: Record Id for this dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      recordOrganizationIdField:
+        description: Record Organization Id for this dimension.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      salesforceActions:
+        description: Salesfoce Actions linked to this Dimension.
+        type: array
+        items:
+          type: XmdDimensionSalesforceActionRepresentation
+      salesforceActionsEnabled:
+        description: Whether the Dimension has salesforce actions enabled.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      showInExplorer:
+        description: Whether the Dimension should be shown in the Explorer.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+  XmdDimensionSalesforceActionRepresentation:
+    description: Salesforce Action Representation for a Dimension in an Xmd.
+    type: XmdDimensionBaseActionRepresentation
+    properties: {}
+  XmdMeasureFormatRepresentation:
+    description: Format for a Measure in a Dataset.
+    type: object
+    properties:
+      customFormat:
+        description: displays the original xmd 1.1 format array as a String.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      decimalDigits:
+        description: Number of digits to be displayed after the decimal place.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      delimiters:
+        description: Thousands and decimal numeric separators.
+        type: NumericSeparatorsRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      negativeParentheses:
+        description: displays negative numbers with parenthesis or not minus sign
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      prefix:
+        description: Prefix to be placed before the field value.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      suffix:
+        description: Suffix to be places after the field value.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      unit:
+        description: Unit string for the measure. (eg. 'cm')
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      unitMultiplier:
+        description: Multiplier for the unit.
+        format: double
+        type: number
+        required: false # TODO Hand-rolled W-8253396
+  XmdMeasureRepresentation:
+    description: Extended metadata for a Measure in a Dataset.
+    type: object
+    properties:
+      conditionalFormatting:
+        description: Conditional formatting for a Measure.
+        type: object
+        properties:
+          //:
+            type: any # TODO Hand-rolled W-8863405
+            # Setting this to the real type causes the snapshot to reject with:
+            # 'Invalid resource response. Expected resource response to result in Fulfilled or Stale snapshot'
+            # (with no errors about the type, even on empty {} value). Using type: any gets past it for now.
+            # type: ConditionalFormattingPropertyRepresentation
+      dateFormat:
+        description: Date format to be used for a Date that is a measure.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      description:
+        description: Description of the Measure.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      field:
+        description: Field name of the Measure (used in queries).
+        type: string
+      format:
+        description: Format details for the Measure.
+        type: XmdMeasureFormatRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      fullyQualifiedName:
+        description: Fully qualified name of the Measure.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: Label for the Measure.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      origin:
+        description: Origin of this measure.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      showInExplorer:
+        description: Whether the Measure should be shown in the Explorer.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+  XmdOrganizationRepresentation:
+    description: Extended metadata for an organization
+    type: object
+    properties:
+      id:
+        description: id of the organization
+        type: string
+      instanceUrl:
+        description: Instance Url for an organization.
+        type: string
+      label:
+        description: Label for an organization.
+        type: string
+  XmdRepresentation:
+    description: Extended Metadata (Xmd) for a Dataset Version
+    type: object
+    properties:
+      createdBy:
+        description: Represents the creator of this Xmd
+        type: WaveUserRepresentation
+      createdDate:
+        description: Time the Xmd was created
+        type: string
+      dataset:
+        description: Locale specific information about the Dataset represented by
+          this xmd.
+        type: XmdDatasetRepresentation
+      dates:
+        description: List of dates with formatting information.
+        type: array
+        items:
+          type: XmdDateRepresentation
+      derivedDimensions:
+        description: List of derived dimensions with formatting information.
+        type: array
+        items:
+          type: XmdDimensionRepresentation
+      derivedMeasures:
+        description: List of derived measures with formatting information.
+        type: array
+        items:
+          type: XmdMeasureRepresentation
+      dimensions:
+        description: List of dimensions with formatting information.
+        type: array
+        items:
+          type: XmdDimensionRepresentation
+      errorMessage:
+        description: Message if there was error copying forward the current version's
+          user xmd to the newly created version.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      language:
+        description: The type of language this xmd is localized for
+        type: string
+        enum:
+          - Bulgarian
+          - ChineseSimplified
+          - ChineseTraditional
+          - Croatian
+          - Czech
+          - Danish
+          - Dutch
+          - English
+          - EnglishUnitedKingdom
+          - Finnish
+          - French
+          - German
+          - Greek
+          - Hungarian
+          - Indonesian
+          - Italian
+          - Japanese
+          - Korean
+          - Norwegian
+          - Polish
+          - Portuguese
+          - PortugueseBrazil
+          - Romanian
+          - Russian
+          - Slovak
+          - Slovenian
+          - Spanish
+          - SpanishMexico
+          - Swedish
+          - Thai
+          - Turkish
+          - Ukrainian
+          - Vietnamese
+      lastModifiedBy:
+        description: Represents the user who last modified this Xmd
+        type: WaveUserRepresentation
+      lastModifiedDate:
+        description: Time the Xmd was last modified
+        type: string
+      measures:
+        description: List of measures with formatting information.
+        type: array
+        items:
+          type: XmdMeasureRepresentation
+      organizations:
+        description: List of organizations for multi organization support.
+        type: array
+        items:
+          type: XmdOrganizationRepresentation
+      showDetailsDefaultFields:
+        description: Ordered list of Dimensions and Measures. Represents the default
+          order to show them in the UI.
+        type: array
+        items:
+          type: string
+      type:
+        description: The type of Xmd (Main, User, System)
+        type: string
+        enum:
+          - Asset
+          - Main
+          - System
+          - User
+      url:
+        description: Location where this XMD is stored.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
 
 /wave:
   /dataflowjobs:
@@ -932,6 +1578,106 @@ types:
       nodeId:
         type: string
         required: true
+  /datasets:
+    get:
+      description: Get a collection of dataset resource representations.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DatasetCollectionRepresentation
+      queryParameters:
+        datasetTypes:
+          type: array
+          required: false
+          items:
+            type: string
+            enum:
+              - Default
+              - Live
+              - Trended
+            (oas-collectionFormat): csv
+        folderId:
+          type: string
+          required: false
+        hasCurrentOnly:
+          type: boolean
+          required: false
+        order:
+          type: string
+          required: false
+          enum:
+            - Ascending
+            - Descending
+        page:
+          type: string
+          required: false
+        pageSize:
+          type: integer
+          required: false
+        q:
+          type: string
+          required: false
+        scope:
+          type: string
+          required: false
+          enum:
+            - CreatedByMe
+            - Favorites
+            - IncludeAllPrivate
+            - Mru
+            - SharedWithMe
+        sort:
+          type: string
+          required: false
+          enum:
+            - CreatedBy
+            - CreatedDate
+            - LastModified
+            - LastQueried
+            - LastRefreshed
+            - Mru
+            - Name
+            - TotalRows
+  /datasets/{datasetIdOrApiName}:
+    get:
+      description: Get a dataset resource representation.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DatasetRepresentation
+    uriParameters:
+      datasetIdOrApiName:
+        type: string
+        required: true
+    /versions/{versionId}/xmds/{xmdType}:
+      get:
+        description: Get the extended metadata of the given type for the given
+          dataset version.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: XmdRepresentation
+      uriParameters:
+        datasetIdOrApiName:
+          type: string
+          required: true
+        versionId:
+          type: string
+          required: true
+        xmdType:
+          type: string
+          required: true
+          enum:
+            - Asset
+            - Main
+            - System
+            - User
   /limits:
     get:
       description: Retrieves limits in analytics

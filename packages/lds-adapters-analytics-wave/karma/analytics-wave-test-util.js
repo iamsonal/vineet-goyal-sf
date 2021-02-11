@@ -179,6 +179,67 @@ function getDataflowJobNodeMatcher(config) {
     });
 }
 
+// Dataset
+export function mockGetDatasetNetworkOnce(config, mockData) {
+    const paramMatch = getDatasetMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+export function mockGetDatasetNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDatasetMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDatasetMatcher(config) {
+    let { datasetIdOrApiName } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/datasets/${datasetIdOrApiName}`,
+        queryParams: {},
+    });
+}
+
+// Datasets
+export function mockGetDatasetsNetworkOnce(config, mockData) {
+    const paramMatch = getDatasetsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+export function mockGetDatasetsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDatasetsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDatasetsMatcher(config) {
+    let { folderId, page, pageSize, q, scope } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        basePath: `${URL_BASE}/datasets`,
+        queryParams: {
+            folderId,
+            page,
+            pageSize,
+            q,
+            scope,
+        },
+    });
+}
+
 // Recipes
 export function mockGetRecipesNetworkOnce(config, mockData) {
     const paramMatch = getRecipesMatcher(config);
@@ -211,5 +272,33 @@ function getRecipesMatcher(config) {
             q,
             sort,
         },
+    });
+}
+
+// XMD
+export function mockGetXmdNetworkOnce(config, mockData) {
+    const paramMatch = getXmdMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+export function mockGetXmdNetworkErrorOnce(config, mockData) {
+    const paramMatch = getXmdMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getXmdMatcher(config) {
+    let { datasetIdOrApiName, versionId, xmdType } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/datasets/${datasetIdOrApiName}/versions/${versionId}/xmds/${xmdType}`,
+        queryParams: {},
     });
 }

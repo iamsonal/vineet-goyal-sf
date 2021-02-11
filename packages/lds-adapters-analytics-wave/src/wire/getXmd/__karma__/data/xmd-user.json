@@ -1,0 +1,71 @@
+{
+    "createdBy": {
+        "id": "005xx000001XCD7AAO",
+        "name": "User User",
+        "profilePhotoUrl": "/profilephoto/005/T"
+    },
+    "createdDate": "2021-02-01T16:58:10.000Z",
+    "dataset": {},
+    "dates": [],
+    "derivedDimensions": [],
+    "derivedMeasures": [],
+    "dimensions": [
+        {
+            "conditionalFormatting": {
+                "chartColor": {
+                    "parameters": {
+                        "values": [
+                            {
+                                "formatValue": "#7D98B3",
+                                "value": "AK"
+                            },
+                            {
+                                "formatValue": "#98B1FF",
+                                "value": "AL"
+                            },
+                            {
+                                "formatValue": "#B3B400",
+                                "value": "CO"
+                            },
+                            {
+                                "formatValue": "#B56200",
+                                "value": "AZ"
+                            }
+                        ]
+                    },
+                    "referenceField": "State",
+                    "type": "categories"
+                }
+            },
+            "customActions": [],
+            "field": "State",
+            "members": [],
+            "recordDisplayFields": [],
+            "salesforceActions": []
+        }
+    ],
+    "language": "en_US",
+    "lastModifiedBy": {
+        "id": "005xx000001XCD7AAO",
+        "name": "User User",
+        "profilePhotoUrl": "/profilephoto/005/T"
+    },
+    "lastModifiedDate": "2021-02-01T16:58:10.000Z",
+    "measures": [
+        {
+            "conditionalFormatting": {},
+            "field": "Sales",
+            "format": {
+                "customFormat": "[\"#,##0.00\",1]",
+                "delimiters": {
+                    "decimal": ".",
+                    "thousands": ","
+                }
+            }
+        }
+    ],
+    "organizations": [],
+    "showDetailsDefaultFields": [],
+    "type": "user",
+    "url": "/services/data/v52.0/wave/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU/xmds/user"
+}

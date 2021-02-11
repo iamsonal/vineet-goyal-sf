@@ -1,21 +1,21 @@
 {
-    "name": "@salesforce/lds-uiapi-record-utils",
-    "version": "1.8.0",
-    "description": "LDS Record Utilities",
-    "license": "MIT",
-    "main": "dist/ldsRecordUtils.js",
-    "module": "dist/ldsRecordUtils.js",
-    "types": "dist/main.d.ts",
-    "files": [
-        "dist"
-    ],
-    "scripts": {
-        "prepare": "yarn build",
-        "build": "rollup --config rollup.config.js",
-        "clean": "rm -rf dist",
-        "test:unit": "jest"
-    },
-    "publishConfig": {
-        "registry": "https://npm.lwcjs.org"
-    }
+  "name": "@salesforce/lds-uiapi-record-utils",
+  "version": "1.8.1",
+  "description": "LDS Record Utilities",
+  "license": "MIT",
+  "main": "dist/ldsRecordUtils.js",
+  "module": "dist/ldsRecordUtils.js",
+  "types": "dist/main.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepare": "yarn build",
+    "build": "rollup --config rollup.config.js",
+    "clean": "rm -rf dist",
+    "test:unit": "jest"
+  },
+  "publishConfig": {
+    "registry": "https://npm.lwcjs.org"
+  }
 }

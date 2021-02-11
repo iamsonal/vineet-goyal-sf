@@ -1,29 +1,29 @@
 {
-    "name": "@salesforce/lds-drafts",
-    "version": "1.8.0",
-    "description": "LDS Drafts",
-    "license": "MIT",
-    "main": "dist/ldsDrafts.js",
-    "module": "dist/ldsDrafts.js",
-    "types": "dist/main.d.ts",
-    "files": [
-        "dist"
-    ],
-    "scripts": {
-        "prepare": "yarn build",
-        "build": "rollup --config rollup.config.js",
-        "clean": "rm -rf dist",
-        "test:unit": "jest"
-    },
-    "publishConfig": {
-        "registry": "https://npm.lwcjs.org"
-    },
-    "dependencies": {
-        "@luvio/engine": "^0.27.1",
-        "@luvio/environments": "^0.27.1"
-    },
-    "devDependencies": {
-        "@salesforce/lds-adapters-uiapi": "1.8.0",
-        "@salesforce/lds-uiapi-record-utils": "1.8.0"
-    }
+  "name": "@salesforce/lds-drafts",
+  "version": "1.8.1",
+  "description": "LDS Drafts",
+  "license": "MIT",
+  "main": "dist/ldsDrafts.js",
+  "module": "dist/ldsDrafts.js",
+  "types": "dist/main.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepare": "yarn build",
+    "build": "rollup --config rollup.config.js",
+    "clean": "rm -rf dist",
+    "test:unit": "jest"
+  },
+  "publishConfig": {
+    "registry": "https://npm.lwcjs.org"
+  },
+  "dependencies": {
+    "@luvio/engine": "^0.27.1",
+    "@luvio/environments": "^0.27.1"
+  },
+  "devDependencies": {
+    "@salesforce/lds-adapters-uiapi": "1.8.0",
+    "@salesforce/lds-uiapi-record-utils": "1.8.0"
+  }
 }

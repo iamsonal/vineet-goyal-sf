@@ -1,22 +1,22 @@
 {
-    "name": "@salesforce/lds-ads-bridge",
-    "version": "1.8.0",
-    "description": "Bridge to sync data between LDS and ADS",
-    "license": "MIT",
-    "private": true,
-    "main": "dist/adsBridge.js",
-    "module": "dist/adsBridge.js",
-    "types": "dist/main.d.ts",
-    "scripts": {
-        "prepare": "yarn build",
-        "build": "rollup --config rollup.config.js",
-        "clean": "rm -rf dist",
-        "test:unit": "jest"
-    },
-    "devDependencies": {
-        "@salesforce/lds-adapters-uiapi": "1.8.0",
-        "@salesforce/lds-instrumentation": "1.8.0",
-        "@salesforce/lds-runtime-aura": "1.8.0",
-        "@salesforce/lds-uiapi-record-utils": "1.8.0"
-    }
+  "name": "@salesforce/lds-ads-bridge",
+  "version": "1.8.1",
+  "description": "Bridge to sync data between LDS and ADS",
+  "license": "MIT",
+  "private": true,
+  "main": "dist/adsBridge.js",
+  "module": "dist/adsBridge.js",
+  "types": "dist/main.d.ts",
+  "scripts": {
+    "prepare": "yarn build",
+    "build": "rollup --config rollup.config.js",
+    "clean": "rm -rf dist",
+    "test:unit": "jest"
+  },
+  "devDependencies": {
+    "@salesforce/lds-adapters-uiapi": "1.8.0",
+    "@salesforce/lds-instrumentation": "1.8.0",
+    "@salesforce/lds-runtime-aura": "1.8.0",
+    "@salesforce/lds-uiapi-record-utils": "1.8.0"
+  }
 }

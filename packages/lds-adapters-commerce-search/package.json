@@ -1,35 +1,35 @@
 {
-    "name": "@salesforce/lds-adapters-commerce-search",
-    "version": "1.8.0",
-    "description": "Wire adapters Community Navigation Menu",
-    "license": "MIT",
-    "main": "dist/umd/es2018/commerce-search.js",
-    "module": "dist/es/es2018/commerce-search.js",
-    "types": "dist/types/src/generated/artifacts/main.d.ts",
-    "files": [
-        "dist",
-        "sfdc",
-        "src/raml/*"
-    ],
-    "scripts": {
-        "clean": "rm -rf dist sfdc src/generated karma/dist",
-        "build": "yarn build:raml && yarn build:services && yarn build:karma",
-        "build:karma": "rollup --config rollup.config.karma.js",
-        "build:raml": "luvio generate src/raml/luvio.raml src/generated -p '../lds-compiler-plugins'",
-        "build:services": "rollup --config rollup.config.js",
-        "start": "karma start",
-        "test": "karma start --single-run",
-        "test:unit": "jest",
-        "test:compat": "karma start --single-run --compat",
-        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-commerce-search"
-    },
-    "publishConfig": {
-        "registry": "https://npm.lwcjs.org"
-    },
-    "dependencies": {
-        "@salesforce/lds-bindings": "1.8.0"
-    },
-    "devDependencies": {
-        "@salesforce/lds-karma": "1.8.0"
-    }
+  "name": "@salesforce/lds-adapters-commerce-search",
+  "version": "1.8.1",
+  "description": "Wire adapters Community Navigation Menu",
+  "license": "MIT",
+  "main": "dist/umd/es2018/commerce-search.js",
+  "module": "dist/es/es2018/commerce-search.js",
+  "types": "dist/types/src/generated/artifacts/main.d.ts",
+  "files": [
+    "dist",
+    "sfdc",
+    "src/raml/*"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist sfdc src/generated karma/dist",
+    "build": "yarn build:raml && yarn build:services && yarn build:karma",
+    "build:karma": "rollup --config rollup.config.karma.js",
+    "build:raml": "luvio generate src/raml/luvio.raml src/generated -p '../lds-compiler-plugins'",
+    "build:services": "rollup --config rollup.config.js",
+    "start": "karma start",
+    "test": "karma start --single-run",
+    "test:unit": "jest",
+    "test:compat": "karma start --single-run --compat",
+    "release:core": "../../scripts/release/core.js --adapter=lds-adapters-commerce-search"
+  },
+  "publishConfig": {
+    "registry": "https://npm.lwcjs.org"
+  },
+  "dependencies": {
+    "@salesforce/lds-bindings": "1.8.0"
+  },
+  "devDependencies": {
+    "@salesforce/lds-karma": "1.8.0"
+  }
 }

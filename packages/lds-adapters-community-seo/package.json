@@ -1,41 +1,41 @@
 {
-    "name": "@salesforce/lds-adapters-community-seo",
-    "version": "1.8.0",
-    "description": "APIs for various SEO features in experiences",
-    "license": "MIT",
-    "main": "dist/umd/es2018/community-seo.js",
-    "module": "dist/es/es2018/community-seo.js",
-    "types": "dist/types/src/generated/artifacts/main.d.ts",
-    "files": [
-        "dist",
-        "sfdc",
-        "src/raml/*"
-    ],
-    "contributors": [
-        "kartik.saxena@salesforce.com"
-    ],
-    "scripts": {
-        "clean": "rm -rf dist sfdc src/generated karma/dist",
-        "build": "yarn build:raml && yarn build:services && yarn build:karma",
-        "build:karma": "rollup --config rollup.config.karma.js",
-        "build:raml": "luvio generate src/raml/luvio.raml src/generated -p '../lds-compiler-plugins'",
-        "build:services": "rollup --config rollup.config.js",
-        "start": "karma start",
-        "test": "karma start --single-run",
-        "test:compat": "karma start --single-run --compat",
-        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-community-seo"
-    },
-    "publishConfig": {
-        "registry": "https://npm.lwcjs.org"
-    },
-    "dependencies": {
-        "@salesforce/lds-bindings": "1.8.0"
-    },
-    "devDependencies": {
-        "@luvio/cli": "^0.27.1",
-        "@luvio/compiler": "^0.27.1",
-        "@luvio/engine": "^0.27.1",
-        "@luvio/lwc-luvio": "^0.27.1",
-        "@salesforce/lds-karma": "1.8.0"
-    }
+  "name": "@salesforce/lds-adapters-community-seo",
+  "version": "1.8.1",
+  "description": "APIs for various SEO features in experiences",
+  "license": "MIT",
+  "main": "dist/umd/es2018/community-seo.js",
+  "module": "dist/es/es2018/community-seo.js",
+  "types": "dist/types/src/generated/artifacts/main.d.ts",
+  "files": [
+    "dist",
+    "sfdc",
+    "src/raml/*"
+  ],
+  "contributors": [
+    "kartik.saxena@salesforce.com"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist sfdc src/generated karma/dist",
+    "build": "yarn build:raml && yarn build:services && yarn build:karma",
+    "build:karma": "rollup --config rollup.config.karma.js",
+    "build:raml": "luvio generate src/raml/luvio.raml src/generated -p '../lds-compiler-plugins'",
+    "build:services": "rollup --config rollup.config.js",
+    "start": "karma start",
+    "test": "karma start --single-run",
+    "test:compat": "karma start --single-run --compat",
+    "release:core": "../../scripts/release/core.js --adapter=lds-adapters-community-seo"
+  },
+  "publishConfig": {
+    "registry": "https://npm.lwcjs.org"
+  },
+  "dependencies": {
+    "@salesforce/lds-bindings": "1.8.0"
+  },
+  "devDependencies": {
+    "@luvio/cli": "^0.27.1",
+    "@luvio/compiler": "^0.27.1",
+    "@luvio/engine": "^0.27.1",
+    "@luvio/lwc-luvio": "^0.27.1",
+    "@salesforce/lds-karma": "1.8.0"
+  }
 }

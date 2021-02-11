@@ -1,17 +1,17 @@
 {
-    "name": "@salesforce/lds-aura-storage",
-    "version": "1.8.0",
-    "description": "LDS Network Adapter for Aura Runtime",
-    "private": true,
-    "license": "MIT",
-    "main": "dist/ldsStorage.js",
-    "module": "dist/ldsStorage.js",
-    "types": "dist/main.d.ts",
-    "scripts": {
-        "prepare": "yarn build",
-        "build": "rollup --config rollup.config.js",
-        "clean": "rm -rf dist",
-        "test:unit": "jest",
-        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
-    }
+  "name": "@salesforce/lds-aura-storage",
+  "version": "1.8.1",
+  "description": "LDS Network Adapter for Aura Runtime",
+  "private": true,
+  "license": "MIT",
+  "main": "dist/ldsStorage.js",
+  "module": "dist/ldsStorage.js",
+  "types": "dist/main.d.ts",
+  "scripts": {
+    "prepare": "yarn build",
+    "build": "rollup --config rollup.config.js",
+    "clean": "rm -rf dist",
+    "test:unit": "jest",
+    "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
+  }
 }

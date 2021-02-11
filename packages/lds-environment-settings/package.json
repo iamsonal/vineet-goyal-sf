@@ -1,15 +1,15 @@
 {
-    "name": "@salesforce/lds-environment-settings",
-    "version": "1.8.0",
-    "description": "Environment Settings for LDS",
-    "main": "dist/main.js",
-    "types": "dist/main.d.ts",
-    "license": "MIT",
-    "private": true,
-    "scripts": {
-        "clean": "rm -rf dist",
-        "build": "rollup --config rollup.config.js",
-        "test:unit": "jest",
-        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
-    }
+  "name": "@salesforce/lds-environment-settings",
+  "version": "1.8.1",
+  "description": "Environment Settings for LDS",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "rollup --config rollup.config.js",
+    "test:unit": "jest",
+    "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
+  }
 }

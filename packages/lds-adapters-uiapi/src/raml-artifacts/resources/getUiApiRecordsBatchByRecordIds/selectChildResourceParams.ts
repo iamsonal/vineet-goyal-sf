@@ -65,8 +65,6 @@ export function selectChildResourceParams(
                     case 'Unfulfilled':
                         if (childSnapshot.data === undefined) {
                             reader.markMissingLink(childKey);
-                        } else {
-                            reader.markMissing();
                         }
                         break;
                     case 'Pending':

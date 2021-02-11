@@ -104,8 +104,7 @@ describe('getRecords with fields offline', () => {
         );
     });
 
-    // TODO: W-8207118
-    xit('merges with fields that are in durable store', async () => {
+    it('merges with fields that are in durable store', async () => {
         const durableStore = await populateDurableStore();
 
         const request: MockPayload['networkArgs'] = {
@@ -127,7 +126,7 @@ describe('getRecords with fields offline', () => {
         const result = await (adapter({
             records: [
                 {
-                    recordIds: [recordId_Account1],
+                    recordIds: [recordId_Account1, recordId_Account2],
                     fields: ['Account.Id', 'Account.NickName', 'Account.Color'],
                 },
             ],
@@ -141,8 +140,9 @@ describe('getRecords with fields offline', () => {
         const record = store.records[recordKey1] as RecordRepresentationNormalized;
         expect(ObjectKeys(record.fields)).toEqual(mergedFields);
 
-        const durableRecord = durableStore.entries[recordKey1]
-            .data as RecordRepresentationNormalized;
+        const durableEntries = await durableStore.getEntries([recordKey1], 'DEFAULT');
+        const durableRecord = durableEntries[recordKey1].data as RecordRepresentationNormalized;
+
         expect(ObjectKeys(durableRecord.fields)).toEqual(mergedFields);
     });
 });

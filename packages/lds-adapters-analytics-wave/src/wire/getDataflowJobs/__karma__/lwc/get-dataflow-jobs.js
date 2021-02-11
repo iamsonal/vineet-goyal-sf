@@ -5,14 +5,14 @@ export default class GetDataflowJobs extends LightningElement {
     wirePushCount = -1;
 
     @api licenseType;
-    @api pageParam;
+    @api page;
     @api pageSize;
     @api q;
     @api status;
 
     @wire(getDataflowJobs, {
         licenseType: '$licenseType',
-        pageParam: '$pageParam',
+        page: '$page',
         pageSize: '$pageSize',
         q: '$q',
         status: '$status',

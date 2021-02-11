@@ -6,18 +6,18 @@ export default class GetRecipes extends LightningElement {
 
     @api format;
     @api licenseType;
-    @api pageParam;
+    @api page;
     @api pageSize;
     @api q;
-    @api sortParam;
+    @api sort;
 
     @wire(getRecipes, {
         format: '$format',
         licenseType: '$licenseType',
-        page: '$pageParam',
+        page: '$page',
         pageSize: '$pageSize',
         q: '$q',
-        sort: '$sortParam',
+        sort: '$sort',
     })
     onGetRecipes({ data, error }) {
         this.data = data;

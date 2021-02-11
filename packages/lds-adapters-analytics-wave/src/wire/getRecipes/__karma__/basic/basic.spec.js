@@ -37,9 +37,7 @@ describe('basic', () => {
         const config = { q: 'r3y', sort: 'Name' };
         mockGetRecipesNetworkOnce(config, mock);
 
-        // TODO: Change setupConfig to be identical to config after W-7518038 is fixed
-        const setupConfig = { q: 'r3y', sortParam: 'Name' };
-        const el = await setupElement(setupConfig, GetRecipes);
+        const el = await setupElement(config, GetRecipes);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredData()).toEqual(mock);
     });
@@ -49,9 +47,7 @@ describe('basic', () => {
         const config = { licenseType: 'Sonic', page: 'eyJwYWdlU2', pageSize: 20 };
         mockGetRecipesNetworkOnce(config, mock);
 
-        // TODO: Change setupConfig to be identical to config after W-7518038 is fixed
-        const setupConfig = { licenseType: 'Sonic', pageParam: 'eyJwYWdlU2', pageSize: 20 };
-        const el = await setupElement(setupConfig, GetRecipes);
+        const el = await setupElement(config, GetRecipes);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredData()).toEqual(mock);
     });

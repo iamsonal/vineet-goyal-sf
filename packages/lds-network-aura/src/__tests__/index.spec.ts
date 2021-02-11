@@ -3518,6 +3518,36 @@ describe('routes', () => {
             ]
         );
 
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/dataflowjobs`,
+                    queryParams: {
+                        dataflowId: '02KRM0000002YXg2AM',
+                        licenseType: 'Sonic',
+                        page: 'eyJwYWdlU2',
+                        pageSize: 10,
+                        q: 'rcp 3',
+                        status: 'Running',
+                    },
+                },
+                [
+                    'WaveController.getDataflowJobs',
+                    {
+                        dataflowId: '02KRM0000002YXg2AM',
+                        licenseType: 'Sonic',
+                        pageParam: 'eyJwYWdlU2',
+                        pageSize: 10,
+                        q: 'rcp 3',
+                        status: 'Running',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
         testResolveResponse(
             {
                 method: 'get',
@@ -3824,10 +3854,10 @@ describe('routes', () => {
                     queryParams: {
                         format: 'R3',
                         licenseType: 'Sonic',
-                        pageParam: 'eyJwYWdlU2',
+                        page: 'eyJwYWdlU2',
                         pageSize: 10,
                         q: 'rcp 3',
-                        sortParam: 'Name',
+                        sort: 'Name',
                     },
                 },
                 [

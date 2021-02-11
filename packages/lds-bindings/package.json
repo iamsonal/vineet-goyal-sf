@@ -1,29 +1,29 @@
 {
-  "name": "@salesforce/lds-bindings",
-  "version": "1.8.1",
-  "description": "LDS Bindings for SFDC",
-  "license": "MIT",
-  "main": "dist/ldsBindings.js",
-  "module": "dist/ldsBindings.js",
-  "types": "dist/main.d.ts",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "prepare": "yarn build",
-    "build": "rollup --config rollup.config.js",
-    "clean": "rm -rf dist",
-    "test:unit": "jest"
-  },
-  "publishConfig": {
-    "registry": "https://npm.lwcjs.org"
-  },
-  "dependencies": {
-    "@luvio/lwc-luvio": "^0.27.1"
-  },
-  "devDependencies": {
-    "@luvio/engine": "^0.27.1",
-    "@lwc/engine-core": "~1.7.5",
-    "@salesforce/lds-runtime-web": "1.8.0"
-  }
+    "name": "@salesforce/lds-bindings",
+    "version": "1.8.2",
+    "description": "LDS Bindings for SFDC",
+    "license": "MIT",
+    "main": "dist/ldsBindings.js",
+    "module": "dist/ldsBindings.js",
+    "types": "dist/main.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "prepare": "yarn build",
+        "build": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist",
+        "test:unit": "jest"
+    },
+    "publishConfig": {
+        "registry": "https://npm.lwcjs.org"
+    },
+    "dependencies": {
+        "@luvio/lwc-luvio": "^0.27.1"
+    },
+    "devDependencies": {
+        "@luvio/engine": "^0.27.1",
+        "@lwc/engine-core": "~1.7.5",
+        "@salesforce/lds-runtime-web": "1.8.2"
+    }
 }

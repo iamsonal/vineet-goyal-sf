@@ -1,23 +1,23 @@
 {
-  "name": "@salesforce/lds-network-aura",
-  "version": "1.8.1",
-  "description": "LDS Network Adapter for Aura Runtime",
-  "private": true,
-  "license": "MIT",
-  "main": "dist/ldsNetwork.js",
-  "module": "dist/ldsNetwork.js",
-  "types": "dist/main.d.ts",
-  "scripts": {
-    "prepare": "yarn build",
-    "build": "rollup --config rollup.config.js",
-    "clean": "rm -rf dist",
-    "test:unit": "jest",
-    "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
-  },
-  "devDependencies": {
-    "@salesforce/lds-adapters-uiapi": "1.8.0",
-    "@salesforce/lds-aura-storage": "1.8.0",
-    "@salesforce/lds-environment-settings": "1.8.0",
-    "@salesforce/lds-instrumentation": "1.8.0"
-  }
+    "name": "@salesforce/lds-network-aura",
+    "version": "1.8.2",
+    "description": "LDS Network Adapter for Aura Runtime",
+    "private": true,
+    "license": "MIT",
+    "main": "dist/ldsNetwork.js",
+    "module": "dist/ldsNetwork.js",
+    "types": "dist/main.d.ts",
+    "scripts": {
+        "prepare": "yarn build",
+        "build": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist",
+        "test:unit": "jest",
+        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
+    },
+    "devDependencies": {
+        "@salesforce/lds-adapters-uiapi": "1.8.2",
+        "@salesforce/lds-aura-storage": "1.8.2",
+        "@salesforce/lds-environment-settings": "1.8.2",
+        "@salesforce/lds-instrumentation": "1.8.2"
+    }
 }

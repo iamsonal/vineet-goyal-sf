@@ -1,18 +1,18 @@
 {
-  "name": "@salesforce/lds-jest",
-  "version": "1.8.1",
-  "description": "Jest test library for lds adapters",
-  "main": "dist/main.js",
-  "types": "dist/main.d.ts",
-  "license": "MIT",
-  "private": true,
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "tsc"
-  },
-  "devDependencies": {
-    "@luvio/adapter-test-library": "^0.27.1",
-    "@luvio/engine": "^0.27.1",
-    "@luvio/environments": "^0.27.1"
-  }
+    "name": "@salesforce/lds-jest",
+    "version": "1.8.2",
+    "description": "Jest test library for lds adapters",
+    "main": "dist/main.js",
+    "types": "dist/main.d.ts",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+        "clean": "rm -rf dist",
+        "build": "tsc"
+    },
+    "devDependencies": {
+        "@luvio/adapter-test-library": "^0.27.1",
+        "@luvio/engine": "^0.27.1",
+        "@luvio/environments": "^0.27.1"
+    }
 }

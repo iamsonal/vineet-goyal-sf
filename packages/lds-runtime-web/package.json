@@ -1,20 +1,20 @@
 {
-  "name": "@salesforce/lds-runtime-web",
-  "version": "1.8.1",
-  "description": "LDS engine for Lightning Web Runtime",
-  "license": "MIT",
-  "main": "dist/ldsEngineWebRuntime.js",
-  "module": "dist/ldsEngineWebRuntime.js",
-  "types": "dist/main.d.ts",
-  "scripts": {
-    "prepare": "yarn build",
-    "build": "rollup --config rollup.config.js",
-    "clean": "rm -rf dist"
-  },
-  "publishConfig": {
-    "registry": "https://npm.lwcjs.org"
-  },
-  "devDependencies": {
-    "@salesforce/lds-instrumentation": "1.8.0"
-  }
+    "name": "@salesforce/lds-runtime-web",
+    "version": "1.8.2",
+    "description": "LDS engine for Lightning Web Runtime",
+    "license": "MIT",
+    "main": "dist/ldsEngineWebRuntime.js",
+    "module": "dist/ldsEngineWebRuntime.js",
+    "types": "dist/main.d.ts",
+    "scripts": {
+        "prepare": "yarn build",
+        "build": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist"
+    },
+    "publishConfig": {
+        "registry": "https://npm.lwcjs.org"
+    },
+    "devDependencies": {
+        "@salesforce/lds-instrumentation": "1.8.2"
+    }
 }

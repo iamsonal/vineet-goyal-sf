@@ -1,17 +1,17 @@
 {
-  "name": "@salesforce/lds-compiler-plugins",
-  "version": "1.8.1",
-  "description": "Plugins for LDS compiler",
-  "private": true,
-  "license": "MIT",
-  "main": "dist/plugin.js",
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "rollup --config rollup.config.js",
-    "test:unit": "jest",
-    "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
-  },
-  "devDependencies": {
-    "@luvio/compiler": "^0.27.1"
-  }
+    "name": "@salesforce/lds-compiler-plugins",
+    "version": "1.8.2",
+    "description": "Plugins for LDS compiler",
+    "private": true,
+    "license": "MIT",
+    "main": "dist/plugin.js",
+    "scripts": {
+        "clean": "rm -rf dist",
+        "build": "rollup --config rollup.config.js",
+        "test:unit": "jest",
+        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
+    },
+    "devDependencies": {
+        "@luvio/compiler": "^0.27.1"
+    }
 }

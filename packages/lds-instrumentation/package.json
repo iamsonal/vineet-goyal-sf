@@ -1,16 +1,16 @@
 {
-  "name": "@salesforce/lds-instrumentation",
-  "version": "1.8.1",
-  "description": "Instrumentation utils for Lightning Data Service",
-  "license": "MIT",
-  "main": "dist/ldsInstrumentation.js",
-  "module": "dist/ldsInstrumentation.js",
-  "types": "dist/main.d.ts",
-  "scripts": {
-    "prepare": "yarn build",
-    "build": "rollup --config rollup.config.js",
-    "clean": "rm -rf dist",
-    "test:unit": "jest",
-    "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
-  }
+    "name": "@salesforce/lds-instrumentation",
+    "version": "1.8.2",
+    "description": "Instrumentation utils for Lightning Data Service",
+    "license": "MIT",
+    "main": "dist/ldsInstrumentation.js",
+    "module": "dist/ldsInstrumentation.js",
+    "types": "dist/main.d.ts",
+    "scripts": {
+        "prepare": "yarn build",
+        "build": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist",
+        "test:unit": "jest",
+        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
+    }
 }

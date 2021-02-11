@@ -2854,6 +2854,28 @@ describe('routes', () => {
         );
     });
 
+    describe('get /list-info/{objectApiName}/{listViewApiName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/list-info/Account/AllAccounts`,
+                urlParams: {
+                    objectApiName: 'Account',
+                    listViewApiName: 'AllAccounts',
+                },
+            },
+            [
+                'ListUiController.getListInfoByName',
+                {
+                    objectApiName: 'Account',
+                    listViewApiName: 'AllAccounts',
+                },
+                undefined,
+            ]
+        );
+    });
+
     describe('get /mru-list-records/{objectApiName}', () => {
         testControllerInput(
             {

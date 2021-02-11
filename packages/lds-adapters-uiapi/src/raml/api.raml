@@ -1195,7 +1195,7 @@ types:
           type: ListFilterByInfoRepresentation
       label:
         description: The list view's display label.  E.g. "All Accounts".
-        type: string
+        type: string | nil # TODO: hand rolled
       listReference:
         description: An object representing the identity of the list.
         type: ListReferenceRepresentation

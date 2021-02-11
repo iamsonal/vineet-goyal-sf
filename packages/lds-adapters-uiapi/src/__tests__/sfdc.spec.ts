@@ -14,6 +14,7 @@ describe('SFDC exports', () => {
             'getLayout',
             'getLayoutUserState',
             'getListUi',
+            'getListInfoByName',
             'getLookupActions',
             'getLookupRecords',
             'getObjectInfo',

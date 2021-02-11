@@ -16,6 +16,7 @@ import {
     CLONE_TEMPLATE_REPRESENTATION_TTL,
     LAYOUT_TTL,
     LAYOUT_USER_STATE_TTL,
+    LIST_INFO_TTL,
     RECORD_TTL,
     RECORD_AVATAR_TTL,
     RECORD_DEFAULTS_REPRESENTATION_TTL,
@@ -113,6 +114,23 @@ function mockGetLayoutUserStateNetwork(config, mockData) {
         queryParams,
     });
 
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetListInfoByNameNetwork(config, mockData) {
+    const { objectApiName, listViewApiName } = config;
+    const queryParams = { ...config };
+    delete queryParams.objectApiName;
+    delete queryParams.listViewApiName;
+
+    const paramMatch = sinon.match({
+        basePath: `${URL_BASE}/list-info/${objectApiName}/${listViewApiName}`,
+        queryParams,
+    });
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {
@@ -623,6 +641,14 @@ function expireListUi() {
 }
 
 /**
+ * Force a cache expiration for list-info by fast-forwarding time past the
+ * standard list TTL.
+ */
+function expireListInfo() {
+    timekeeper.travel(Date.now() + LIST_INFO_TTL + 1);
+}
+
+/**
  * Force a cache expiration for getPicklistValues by fast-forwarding time past the
  * standard picklist values TTL.
  */
@@ -853,6 +879,7 @@ export {
     expireLayout,
     expireLayoutUserState,
     expireListUi,
+    expireListInfo,
     expireLookupRecords,
     expirePicklistValues,
     expirePicklistValuesCollection,
@@ -874,6 +901,7 @@ export {
     mockGetAvatarsNetwork,
     mockGetLayoutNetwork,
     mockGetLayoutUserStateNetwork,
+    mockGetListInfoByNameNetwork,
     mockGetObjectInfoNetwork,
     mockGetObjectInfosNetwork,
     mockGetPicklistValuesNetwork,

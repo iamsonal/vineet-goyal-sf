@@ -8,11 +8,13 @@ enum UiApiListsController {
     GetListUiById = 'ListUiController.getListUiById',
     GetListRecordsById = 'ListUiController.getListRecordsById',
     GetListUiByName = 'ListUiController.getListUiByName',
+    GetListInfoByName = 'ListUiController.getListInfoByName',
     GetListRecordsByName = 'ListUiController.getListRecordsByName',
 }
 
 const UIAPI_LIST_RECORDS_PATH = `${UI_API_BASE_URI}/list-records/`;
 const UIAPI_LIST_UI_PATH = `${UI_API_BASE_URI}/list-ui/`;
+const UIAPI_LIST_INFO_PATH = `${UI_API_BASE_URI}/list-info/`;
 
 function getListRecordsByName(resourceRequest: ResourceRequest): Promise<any> {
     const {
@@ -100,6 +102,22 @@ function getListUiById(resourceRequest: ResourceRequest): Promise<any> {
     return dispatchAction(UiApiListsController.GetListUiById, params);
 }
 
+function getListInfoByName(resourceRequest: ResourceRequest): Promise<any> {
+    const {
+        urlParams: { objectApiName, listViewApiName },
+    } = resourceRequest;
+
+    const params = buildUiApiParams(
+        {
+            objectApiName,
+            listViewApiName,
+        },
+        resourceRequest
+    );
+
+    return dispatchAction(UiApiListsController.GetListInfoByName, params);
+}
+
 function getListsByObjectName(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { objectApiName },
@@ -148,4 +166,10 @@ appRouter.get(
         /list-ui\/.*\//.test(path) === false &&
         /00B[a-zA-Z\d]{15}$/.test(path) === false,
     getListsByObjectName
+);
+
+// .../list-info/${objectApiName}/${listViewApiName}
+appRouter.get(
+    (path: string) => path.startsWith(UIAPI_LIST_INFO_PATH) && /list-info\/.*\//.test(path),
+    getListInfoByName
 );

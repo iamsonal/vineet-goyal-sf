@@ -41,6 +41,7 @@ types:
       type: listReference.type
     (luvio.integrity):
       - eTag
+    (luvio.ttl): 900000
     (luvio.private):
       - eTag
   ListReferenceRepresentation:
@@ -411,6 +412,14 @@ types:
       get:
         (luvio.key):
           listViewId: urlParams.listViewId
+    '/{objectApiName}/{listViewApiName}':
+      get:
+        (luvio.adapter):
+          name: getListInfoByName
+        (luvio.key):
+          objectApiName: urlParams.objectApiName
+          listViewApiName: urlParams.listViewApiName
+          type: '"listView"'
   /list-records:
     '/{listViewId}':
       get:

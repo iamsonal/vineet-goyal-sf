@@ -1,0 +1,48 @@
+{
+    "cloneable": false,
+    "createable": false,
+    "deletable": false,
+    "displayColumns": [
+        {
+            "fieldApiName": "Name",
+            "label": "Account Name",
+            "sortable": true
+        },
+        {
+            "fieldApiName": "Phone",
+            "label": "Phone",
+            "sortable": true
+        },
+        {
+            "fieldApiName": "Owner.Alias",
+            "label": "Account Owner Alias",
+            "sortable": true
+        }
+    ],
+    "eTag": "6f9262d835ab5b42f058ec35fef79067",
+    "filterLogicString": null,
+    "filteredByInfo": [],
+    "label": null,
+    "listReference": {
+        "id": null,
+        "listViewApiName": "__SearchResult",
+        "objectApiName": "Account",
+        "type": "listView"
+    },
+    "orderedByInfo": [],
+    "updateable": false,
+    "userPreferences": {
+        "columnWidths": {
+            "Owner.Alias": -1,
+            "Phone": -1,
+            "Name": -1
+        },
+        "columnWrap": {
+            "Owner.Alias": false,
+            "Phone": false,
+            "Name": false
+        }
+    },
+    "visibility": "Public",
+    "visibilityEditable": false
+}

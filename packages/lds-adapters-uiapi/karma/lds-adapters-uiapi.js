@@ -20,6 +20,7 @@ import {
     getRelatedListRecordActionsAdapterFactory,
     getLayoutUserStateAdapterFactory,
     getListUiAdapterFactory,
+    getListInfoByNameAdapterFactory,
     getLookupRecordsAdapterFactory,
     getRecordCreateDefaultsAdapterFactory,
     getRecordTemplateCloneAdapterFactory,
@@ -85,6 +86,11 @@ export const getLayoutUserState = createWireAdapterConstructor(
 );
 
 export const getListUi = createWireAdapterConstructor('getListUi', getListUiAdapterFactory);
+
+export const getListInfoByName = createWireAdapterConstructor(
+    'getListInfoByName',
+    getListInfoByNameAdapterFactory
+);
 
 export const getLookupActions = createWireAdapterConstructor(
     'getLookupActions',

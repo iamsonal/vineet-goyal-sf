@@ -57,3 +57,9 @@ types:
     get:
       (luvio.adapter):
         name: getRecipes
+  /recipes/{id}:
+    get:
+      (luvio.adapter):
+        name: getRecipe
+      (luvio.key):
+        id: urlParams.id

@@ -64,6 +64,8 @@ const DATAFLOW_JOB_NODE_PATH = new RegExp(
 
 const RECIPES_PATH = new RegExp(`${WAVE_BASE_URI}/recipes$`, 'i');
 
+const RECIPE_PATH = new RegExp(`${WAVE_BASE_URI}/recipes/([A-Z0-9_]){15,18}$`, 'i');
+
 const DATASETS_PATH = new RegExp(`${WAVE_BASE_URI}/datasets$`, 'i');
 
 const DATASET_PATH = new RegExp(`${WAVE_BASE_URI}/datasets/([A-Z0-9_]){1,80}$`, 'i');
@@ -234,6 +236,13 @@ const analytics: ApiFamily = {
             path.startsWith(WAVE_BASE_URI) && DATAFLOW_JOB_NODE_PATH.test(path),
         transport: {
             controller: 'WaveController.getDataflowJobNode',
+        },
+    },
+    getRecipe: {
+        method: 'get',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && RECIPE_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getRecipe',
         },
     },
     getRecipes: {

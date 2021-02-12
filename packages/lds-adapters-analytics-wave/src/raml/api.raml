@@ -610,6 +610,22 @@ types:
       url:
         description: URL to get the collection.
         type: string
+  RecipeConversionDetailRepresentation:
+    description: recipe conversion details during upconversion
+    type: object
+    properties:
+      message:
+        description: Message
+        type: string
+      nodeName:
+        description: Node name
+        type: string
+      severity:
+        description: Severity
+        type: string
+        enum:
+          - UserInfo
+          - Warning
   RecipeDefinitionRepresentation:
     description: Representation of 3.0 Recipe Definition
     type: object
@@ -684,7 +700,7 @@ types:
         description: The upconversion details when converting dataflow to R3
         type: array
         items:
-          type: RecipeValidationDetailRepresentation
+          type: RecipeConversionDetailRepresentation
       dataflowLastUpdate:
         description: Last dataflow update.
         type: string
@@ -1745,3 +1761,19 @@ types:
             - LastModifiedBy
             - Mru
             - Name
+  /recipes/{id}:
+    get:
+      description: Get a recipe by ID.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: RecipeRepresentation
+      queryParameters:
+        format:
+          type: string
+          required: false
+          enum:
+            - R2
+            - R3

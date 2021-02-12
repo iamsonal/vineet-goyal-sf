@@ -3913,6 +3913,51 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/recipes/{id}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/recipes/05vRM00000003rZYAQ`,
+                urlParams: {
+                    id: '05vRM00000003rZYAQ',
+                },
+                queryParams: {
+                    format: 'R3',
+                },
+            },
+            [
+                'WaveController.getRecipe',
+                {
+                    format: 'R3',
+                    id: '05vRM00000003rZYAQ',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/recipes/05vRM00000003rZYAQ`,
+            urlParams: {
+                id: '05vRM00000003rZYAQ',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/recipes/05vRM00000003rZYAQ`,
+                urlParams: {
+                    id: '05vRM00000003rZYAQ',
+                },
+            },
+            {}
+        );
+    });
+
     describe('get /connect/communities/{communityId}/managed-content/delivery/contents', () => {
         testControllerInput(
             {

@@ -28,9 +28,6 @@
         "test:unit": "jest",
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-analytics-wave"
     },
-    "publishConfig": {
-        "registry": "https://npm.lwcjs.org"
-    },
     "dependencies": {
         "@salesforce/lds-bindings": "1.8.2"
     },

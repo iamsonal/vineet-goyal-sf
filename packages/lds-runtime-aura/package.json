@@ -14,9 +14,6 @@
         "test:unit": "jest",
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     },
-    "publishConfig": {
-        "registry": "https://npm.lwcjs.org"
-    },
     "devDependencies": {
         "@salesforce/lds-aura-storage": "1.8.2",
         "@salesforce/lds-instrumentation": "1.8.2",

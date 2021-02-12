@@ -22,9 +22,6 @@
         "test:compat": "karma start --single-run --compat",
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-commerce-catalog"
     },
-    "publishConfig": {
-        "registry": "https://npm.lwcjs.org"
-    },
     "dependencies": {
         "@salesforce/lds-bindings": "1.8.2"
     },

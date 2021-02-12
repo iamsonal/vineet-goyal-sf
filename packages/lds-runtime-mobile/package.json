@@ -12,9 +12,6 @@
         "test:unit": "jest",
         "clean": "rm -rf dist"
     },
-    "publishConfig": {
-        "registry": "https://npm.lwcjs.org"
-    },
     "dependencies": {
         "@luvio/engine": "^0.27.1",
         "@luvio/environments": "^0.27.1",

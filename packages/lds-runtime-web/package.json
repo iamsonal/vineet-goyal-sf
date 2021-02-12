@@ -11,9 +11,6 @@
         "build": "rollup --config rollup.config.js",
         "clean": "rm -rf dist"
     },
-    "publishConfig": {
-        "registry": "https://npm.lwcjs.org"
-    },
     "devDependencies": {
         "@salesforce/lds-instrumentation": "1.8.2"
     }

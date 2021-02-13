@@ -19,15 +19,11 @@ import {
     getRecordFieldsFromRecordRequest,
     getRecordIdFromRecordRequest,
     getRecordKeyForId,
-    shouldDraftResourceRequest,
     replayDraftsOnRecord,
     buildDraftDurableStoreKey,
     extractRecordKeyFromDraftDurableStoreKey,
 } from '../records';
 
-function generateId(prefix: string): string {
-    return prefix.substr(0, 3) + `DRAFT`;
-}
 describe('draft environment record utilities', () => {
     describe('buildRecordFieldValueRepresentationsFromDraftFields', () => {
         it('converts DraftFields into FieldValueRepresentations', () => {
@@ -105,28 +101,22 @@ describe('draft environment record utilities', () => {
     });
 
     describe('getRecordIdFromRequest', () => {
-        it('creates a draft record id for a post request', () => {
-            const request = createPostRequest();
-            const id = getRecordIdFromRecordRequest(request, generateId);
-            expect(id).toBe('AccDRAFT');
-        });
-
         it('returns undefined if apiName is not in post request', () => {
             const request = createPostRequest();
             delete request.body.apiName;
-            const id = getRecordIdFromRecordRequest(request, generateId);
+            const id = getRecordIdFromRecordRequest(request);
             expect(id).toBe(undefined);
         });
 
         it('gets record id from patch request', () => {
             const request = createPatchRequest();
-            const id = getRecordIdFromRecordRequest(request, generateId);
+            const id = getRecordIdFromRecordRequest(request);
             expect(id).toBe(RECORD_ID);
         });
 
         it('gets record id from a delete request', () => {
             const request = createDeleteRequest();
-            const id = getRecordIdFromRecordRequest(request, generateId);
+            const id = getRecordIdFromRecordRequest(request);
             expect(id).toBe(RECORD_ID);
         });
 
@@ -144,7 +134,7 @@ describe('draft environment record utilities', () => {
                 queryParams: {},
                 headers: {},
             };
-            const id = getRecordIdFromRecordRequest(request, generateId);
+            const id = getRecordIdFromRecordRequest(request);
             expect(id).toBeUndefined();
         });
 
@@ -158,7 +148,7 @@ describe('draft environment record utilities', () => {
                 queryParams: {},
                 headers: {},
             };
-            const id = getRecordIdFromRecordRequest(request, generateId);
+            const id = getRecordIdFromRecordRequest(request);
             expect(id).toBeUndefined();
         });
 
@@ -172,7 +162,7 @@ describe('draft environment record utilities', () => {
                 queryParams: {},
                 headers: {},
             };
-            const id = getRecordIdFromRecordRequest(request, generateId);
+            const id = getRecordIdFromRecordRequest(request);
             expect(id).toBeUndefined();
         });
     });
@@ -223,32 +213,6 @@ describe('draft environment record utilities', () => {
                 new Environment(store, jest.fn())
             );
             expect(apiName).toBeUndefined();
-        });
-    });
-
-    describe('shouldDraftResourceRequest', () => {
-        it('returns true for valid post request', () => {
-            expect(shouldDraftResourceRequest(createPostRequest())).toBe(true);
-        });
-
-        it('returns true for valid patch request', () => {
-            expect(shouldDraftResourceRequest(createPatchRequest())).toBe(true);
-        });
-
-        it('returns true for valid delete request', () => {
-            expect(shouldDraftResourceRequest(createDeleteRequest())).toBe(true);
-        });
-
-        it('returns false for non record endpoint', () => {
-            const request = createPostRequest();
-            request.basePath = '/ui-api/records-ui/';
-            expect(shouldDraftResourceRequest(request)).toBe(false);
-        });
-
-        it('returns false for non supported method', () => {
-            const request = createPostRequest();
-            request.method = 'put';
-            expect(shouldDraftResourceRequest(request)).toBe(false);
         });
     });
 

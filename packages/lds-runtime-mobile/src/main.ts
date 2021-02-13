@@ -76,15 +76,17 @@ const env = makeEnvironmentDraftAware(
         durableStore: draftAwareDurableStore,
         reviveRetrievers: responseRecordRepresentationRetrievers,
     }),
-    store,
-    draftQueue,
-    // W-8794366: replace with draftAwareDurableStore once resolved
-    // draftAwareDurableStore,
-    durableStore,
-    recordIngestFunc,
-    newRecordId,
-    isGenerated,
-    responseRecordRepresentationRetrievers
+    {
+        store,
+        draftQueue,
+        // W-8794366: replace with draftAwareDurableStore once resolved
+        // draftAwareDurableStore,
+        durableStore,
+        ingestFunc: recordIngestFunc,
+        generateId: newRecordId,
+        isDraftId: isGenerated,
+        recordResponseRetrievers: responseRecordRepresentationRetrievers,
+    }
 );
 
 luvio = new Luvio(env);

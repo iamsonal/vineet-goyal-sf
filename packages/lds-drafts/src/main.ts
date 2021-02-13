@@ -1,4 +1,4 @@
-export { makeEnvironmentDraftAware } from './makeEnvironmentDraftAware';
+export { makeEnvironmentDraftAware } from './environment/makeEnvironmentDraftAware';
 export { makeDurableStoreDraftAware } from './makeDurableStoreDraftAware';
 export {
     DraftQueue,

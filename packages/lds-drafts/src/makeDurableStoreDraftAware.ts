@@ -29,7 +29,10 @@ import {
     extractRecordIdFromStoreKey,
     buildRecordFieldStoreKey,
 } from '@salesforce/lds-uiapi-record-utils';
-import { DraftIdMappingEntry, DRAFT_ID_MAPPINGS_SEGMENT } from './makeEnvironmentDraftAware';
+import {
+    DraftIdMappingEntry,
+    DRAFT_ID_MAPPINGS_SEGMENT,
+} from './environment/makeEnvironmentDraftAware';
 
 /**
  * This method denormalizes field links so that a record can be looked up with all its fields in one

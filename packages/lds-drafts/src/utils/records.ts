@@ -162,40 +162,10 @@ export function buildRecordSelector(recordKey: string, fields: string[]): Select
 }
 
 /**
- * Checks if a provided resource request is a POST/PATCH/DELETE operation on the record
- * endpoint. If so, it returns true indicating that the request should be enqueued instead of
- * hitting the network.
- * @param request the resource request
+ * Extracts the recordId from a request's urlParams. If the id does not exist, undefined returned
+ * @param request Resource request
  */
-export function shouldDraftResourceRequest(request: ResourceRequest) {
-    const { basePath, method } = request;
-    return (
-        RECORD_ENDPOINT_REGEX.test(basePath) &&
-        (method === 'post' || method === 'patch' || method === 'delete')
-    );
-}
-
-/**
- * Checks if a resource request is a GET method on the record endpoint and
- * contains a draft record id in its request
- * @param request the resource request
- * @param isDraftId function to determine if a record id is a draft id
- */
-export function isRequestForDraftGetRecord(
-    request: ResourceRequest,
-    isDraftId: (id: string) => boolean
-) {
-    if (isRequestForGetRecord(request)) {
-        const id = extractRecordIdFromRequestParams(request);
-        if (id !== undefined) {
-            return isDraftId(id);
-        }
-    }
-
-    return false;
-}
-
-export function extractRecordIdFromRequestParams(request: ResourceRequest) {
+export function extractRecordIdFromResourceRequest(request: ResourceRequest): string | undefined {
     const id = request.urlParams['recordId'];
     if (typeof id !== 'string') {
         return undefined;
@@ -204,24 +174,24 @@ export function extractRecordIdFromRequestParams(request: ResourceRequest) {
 }
 
 /**
- * Checks if a resource request is a GET method on the record endpoint
- * @param request the resource request
+ * Extracts record id from a ResourceRequest and returns it's corresponding store key
+ * If a record id is not found, undefined is returned
+ * @param request Resource request containing a record id in it's urlParams
  */
-export function isRequestForGetRecord(request: ResourceRequest) {
-    const { basePath, method } = request;
-    return RECORD_ENDPOINT_REGEX.test(basePath) && method === 'get';
+export function getRecordKeyFromResourceRequest(request: ResourceRequest): string | undefined {
+    const recordId = extractRecordIdFromResourceRequest(request);
+    if (recordId === undefined) {
+        return undefined;
+    }
+    return keyBuilderRecord({ recordId });
 }
 
 /**
  * Extracts a record id from a record ResourceRequest. This method parses out the
- * recordId from the request path in the case of get, update, and delete. In the
- * case of a post, we generate a temporary client-side id
+ * recordId from the request path in the case of get, update, and delete.
  * @param request The ResourceRequest to extract the record id from
  */
-export function getRecordIdFromRecordRequest(
-    request: ResourceRequest,
-    idGeneratorFunc: (prefix: string) => string
-): string | undefined {
+export function getRecordIdFromRecordRequest(request: ResourceRequest): string | undefined {
     const { method, basePath } = request;
     if (basePath === undefined) {
         return undefined;
@@ -239,14 +209,6 @@ export function getRecordIdFromRecordRequest(
             recordId = matches[2];
             break;
         }
-        case 'post': {
-            const apiName = request.body.apiName;
-            if (apiName === undefined || apiName === null) {
-                return undefined;
-            }
-            recordId = idGeneratorFunc(apiName);
-            break;
-        }
         default: {
             return undefined;
         }
@@ -262,11 +224,12 @@ export function getRecordKeyForId(recordId: string) {
     return keyBuilderRecord({ recordId });
 }
 
-export function getRecordKeyFromRecordRequest(
-    resourceRequest: ResourceRequest,
-    idGeneratorFunc: (prefix: string) => string
-) {
-    const id = getRecordIdFromRecordRequest(resourceRequest, idGeneratorFunc);
+/**
+ * Gets the store key for the record id that a POST/PATCH/DELETE record request targets
+ * @param resourceRequest
+ */
+export function getRecordKeyFromRecordRequest(resourceRequest: ResourceRequest) {
+    const id = getRecordIdFromRecordRequest(resourceRequest);
     if (id === undefined) {
         return undefined;
     }

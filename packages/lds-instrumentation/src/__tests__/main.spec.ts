@@ -166,6 +166,35 @@ describe('instrumentation', () => {
             expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(
                 baseCacheMissCounterIncrement + baseCacheHitCounterIncrement
             );
+
+            // Verify Metric Calls
+            const expectedMetricCalls = [
+                { owner: 'LIGHTNING.lds.service', name: 'request.getRecord' },
+                { owner: 'LIGHTNING.lds.service', name: 'request' },
+                { owner: 'lds', name: 'cache-miss-count' },
+                { owner: 'lds', name: 'cache-miss-count.getRecord' },
+                { owner: 'LIGHTNING.lds.service', name: 'request.getRecord' },
+                { owner: 'LIGHTNING.lds.service', name: 'request' },
+                { owner: 'lds', name: 'cache-hit-count' },
+                { owner: 'lds', name: 'cache-hit-count.getRecord' },
+            ];
+            testMetricInvocations(
+                instrumentationServiceSpies.counterIncrementSpy,
+                expectedMetricCalls
+            );
+
+            // Verify Cache Stats Calls
+            const expectedCacheStatsCalls = ['lds:getRecord'];
+            expect(
+                instrumentationServiceSpies.cacheStatsLogHitsSpy.mock.instances.map(instance => {
+                    return instance.__name;
+                })
+            ).toEqual(expectedCacheStatsCalls);
+            expect(
+                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(instance => {
+                    return instance.__name;
+                })
+            ).toEqual(expectedCacheStatsCalls);
         });
 
         it('should not log metrics when adapter with no TTL defined has a cache miss on existing value out of TTL', () => {
@@ -197,6 +226,30 @@ describe('instrumentation', () => {
                 0
             );
             expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(0);
+
+            // Verify Metric Calls
+            const expectedMetricCalls = [
+                { owner: 'LIGHTNING.lds.service', name: 'request.unknownAdapter' },
+                { owner: 'LIGHTNING.lds.service', name: 'request' },
+                { owner: 'lds', name: 'cache-miss-count' },
+                { owner: 'lds', name: 'cache-miss-count.unknownAdapter' },
+                { owner: 'LIGHTNING.lds.service', name: 'request.unknownAdapter' },
+                { owner: 'LIGHTNING.lds.service', name: 'request' },
+                { owner: 'lds', name: 'cache-miss-count' },
+                { owner: 'lds', name: 'cache-miss-count.unknownAdapter' },
+            ];
+            testMetricInvocations(
+                instrumentationServiceSpies.counterIncrementSpy,
+                expectedMetricCalls
+            );
+
+            // Verify Cache Stats Calls
+            const expectedCacheStatsCalls = ['lds:unknownAdapter', 'lds:unknownAdapter'];
+            expect(
+                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(instance => {
+                    return instance.__name;
+                })
+            ).toEqual(expectedCacheStatsCalls);
         });
 
         it('should log metrics when getRecord adapter has a cache miss on existing value out of TTL', () => {
@@ -255,6 +308,35 @@ describe('instrumentation', () => {
             expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(
                 baseCacheMissCounterIncrement + baseCacheHitCounterIncrement + 1
             );
+
+            // Verify Metric Calls
+            const expectedMetricCalls = [
+                { owner: 'LIGHTNING.lds.service', name: 'request.getRecord' },
+                { owner: 'LIGHTNING.lds.service', name: 'request' },
+                { owner: 'lds', name: 'cache-miss-count' },
+                { owner: 'lds', name: 'cache-miss-count.getRecord' },
+                { owner: 'LIGHTNING.lds.service', name: 'request.getRecord' },
+                { owner: 'LIGHTNING.lds.service', name: 'request' },
+                { owner: 'lds', name: 'cache-miss-count' },
+                { owner: 'lds', name: 'cache-miss-count.getRecord' },
+                { owner: 'lds', name: 'cache-miss-out-of-ttl-count.getRecord' },
+            ];
+            testMetricInvocations(
+                instrumentationServiceSpies.counterIncrementSpy,
+                expectedMetricCalls
+            );
+
+            // Verify Cache Stats Calls
+            const expectedCacheStatsCalls = [
+                'lds:getRecord',
+                'lds:getRecord',
+                'lds:getRecord:out-of-ttl-miss',
+            ];
+            expect(
+                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(instance => {
+                    return instance.__name;
+                })
+            ).toEqual(expectedCacheStatsCalls);
         });
     });
 
@@ -425,6 +507,34 @@ describe('instrumentation', () => {
             timekeeper.freeze(now);
             return instrumentedAdapter(getRecordConfig).then(_result => {
                 expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
+
+                // Verify Metric Calls
+                const expectedMetricCalls = [
+                    { owner: 'LIGHTNING.lds.service', name: 'request.getRecord' },
+                    { owner: 'LIGHTNING.lds.service', name: 'request' },
+                    { owner: 'lds', name: 'cache-miss-count' },
+                    { owner: 'lds', name: 'cache-miss-count.getRecord' },
+                ];
+                testMetricInvocations(
+                    instrumentationServiceSpies.counterIncrementSpy,
+                    expectedMetricCalls
+                );
+
+                // Verify Cache Stats Calls
+                expect(
+                    instrumentationServiceSpies.cacheStatsLogHitsSpy.mock.instances.map(
+                        instance => {
+                            return instance.__name;
+                        }
+                    )
+                ).toEqual([]);
+                expect(
+                    instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(
+                        instance => {
+                            return instance.__name;
+                        }
+                    )
+                ).toEqual(['lds:getRecord']);
             });
         });
 
@@ -446,6 +556,29 @@ describe('instrumentation', () => {
             instrumentedAdapter(getRecordConfig);
 
             expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
+
+            // Verify Metric Calls
+            const expectedMetricCalls = [
+                { owner: 'LIGHTNING.lds.service', name: 'request.getRecord' },
+                { owner: 'LIGHTNING.lds.service', name: 'request' },
+            ];
+            testMetricInvocations(
+                instrumentationServiceSpies.counterIncrementSpy,
+                expectedMetricCalls
+            );
+
+            // Verify Cache Stats Calls
+            const expectedCacheStatsCalls = [];
+            expect(
+                instrumentationServiceSpies.cacheStatsLogHitsSpy.mock.instances.map(instance => {
+                    return instance.__name;
+                })
+            ).toEqual(expectedCacheStatsCalls);
+            expect(
+                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(instance => {
+                    return instance.__name;
+                })
+            ).toEqual(expectedCacheStatsCalls);
         });
 
         it('should not instrument error when a non UnfulfilledSnapshot Promise is returned to the adapter', () => {
@@ -467,6 +600,34 @@ describe('instrumentation', () => {
             timekeeper.freeze(now);
             return instrumentedAdapter(getRecordConfig).then(_result => {
                 expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
+
+                // Verify Metric Calls
+                const expectedMetricCalls = [
+                    { owner: 'LIGHTNING.lds.service', name: 'request.getRecord' },
+                    { owner: 'LIGHTNING.lds.service', name: 'request' },
+                    { owner: 'lds', name: 'cache-miss-count' },
+                    { owner: 'lds', name: 'cache-miss-count.getRecord' },
+                ];
+                testMetricInvocations(
+                    instrumentationServiceSpies.counterIncrementSpy,
+                    expectedMetricCalls
+                );
+
+                // Verify Cache Stats Calls
+                expect(
+                    instrumentationServiceSpies.cacheStatsLogHitsSpy.mock.instances.map(
+                        instance => {
+                            return instance.__name;
+                        }
+                    )
+                ).toEqual([]);
+                expect(
+                    instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(
+                        instance => {
+                            return instance.__name;
+                        }
+                    )
+                ).toEqual(['lds:getRecord']);
             });
         });
     });

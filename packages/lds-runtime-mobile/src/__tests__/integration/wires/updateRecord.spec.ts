@@ -1,37 +1,20 @@
 import timekeeper from 'timekeeper';
 import { Luvio, Snapshot } from '@luvio/engine';
-import { DefaultDurableSegment } from '@luvio/environments';
 import {
     createRecordAdapterFactory,
     getRecordAdapterFactory,
-    RecordRepresentation,
     updateRecordAdapterFactory,
-    deleteRecordAdapterFactory,
+    RecordRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
-import {
-    DraftQueue,
-    DraftRecordRepresentation,
-    DraftDurableSegment,
-    DurableDraftQueue,
-    ProcessActionResult,
-    DraftManager,
-    DraftActionOperationType,
-} from '@salesforce/lds-drafts';
-import { RECORD_TTL } from '@salesforce/lds-adapters-uiapi/karma/dist/uiapi-constants';
-import { recordIdGenerator } from '@mobileplatform/record-id-generator';
-import Id from '@salesforce/user/Id';
-
-import { NimbusDurableStore } from '../NimbusDurableStore';
-import { NimbusNetworkAdapter } from '../NimbusNetworkAdapter';
-import { JSONStringify } from '../utils/language';
-import { MockNimbusDurableStore, mockNimbusStoreGlobal } from './MockNimbusDurableStore';
-import { MockNimbusAdapter, mockNimbusNetworkGlobal } from './MockNimbusNetworkAdapter';
-import { flushPromises } from './testUtils';
+import { DraftManager, DraftQueue, DraftActionOperationType } from '@salesforce/lds-drafts';
+import { JSONStringify } from '../../../utils/language';
+import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusDurableStore';
+import { MockNimbusAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
+import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
+import { RECORD_TTL } from '@salesforce/lds-adapters-uiapi/karma/dist/uiapi-constants';
 
-const { isGenerated } = recordIdGenerator(Id);
 const RECORD_ID = mockAccount.id;
-const STORE_KEY_RECORD = `UiApi::RecordRepresentation:${RECORD_ID}`;
 const API_NAME = 'Account';
 
 function createTestRecord(
@@ -60,7 +43,7 @@ function createTestRecord(
     };
 }
 
-describe('lds drafts integration tests', () => {
+describe('mobile runtime integration tests', () => {
     let luvio: Luvio;
     let draftQueue: DraftQueue;
     let draftManager: DraftManager;
@@ -68,7 +51,6 @@ describe('lds drafts integration tests', () => {
     let durableStore: MockNimbusDurableStore;
     let createRecord;
     let updateRecord;
-    let deleteRecord;
     let getRecord;
 
     beforeEach(async () => {
@@ -78,7 +60,7 @@ describe('lds drafts integration tests', () => {
         networkAdapter = new MockNimbusAdapter();
         mockNimbusNetworkGlobal(networkAdapter);
 
-        const runtime = await import('../main');
+        const runtime = await import('../../../main');
         luvio = runtime.luvio;
         draftQueue = runtime.draftQueue;
         draftQueue.stopQueue();
@@ -86,107 +68,8 @@ describe('lds drafts integration tests', () => {
         (luvio as any).environment.store.reset();
 
         createRecord = createRecordAdapterFactory(luvio);
-        updateRecord = updateRecordAdapterFactory(luvio);
-        deleteRecord = deleteRecordAdapterFactory(luvio);
         getRecord = getRecordAdapterFactory(luvio);
-    });
-
-    describe('createRecord', () => {
-        it('createRecord returns synthetic record', async () => {
-            const networkSpy = jest.fn();
-            networkAdapter.sendRequest = networkSpy;
-            const snapshot = await createRecord({ apiName: API_NAME, fields: { Name: 'Justin' } });
-            expect(snapshot.state).toBe('Fulfilled');
-            const record = (snapshot.data as unknown) as DraftRecordRepresentation;
-            expect(networkSpy).toHaveBeenCalledTimes(0);
-            expect(record.drafts.created).toBe(true);
-        });
-
-        it('synthetic record responds with null fields it does not know about', async () => {
-            const snapshot = await createRecord({ apiName: API_NAME, fields: { Name: 'Justin' } });
-            expect(snapshot.state).toBe('Fulfilled');
-            const record = (snapshot.data as unknown) as DraftRecordRepresentation;
-
-            const getRecordSnapshot = (await getRecord({
-                recordId: record.id,
-                fields: ['Account.Name', 'Account.BillingCity'],
-            })) as Snapshot<RecordRepresentation>;
-            expect(getRecordSnapshot.state).toBe('Fulfilled');
-        });
-
-        it('record with generated ID does not get stored in default durable segment', async () => {
-            const orginalName = 'Justin';
-
-            // create a synthetic record
-            const snapshot = await createRecord({
-                apiName: API_NAME,
-                fields: { Name: orginalName },
-            });
-            const record = snapshot.data;
-            const recordId = record.id;
-            const isGeneratedRecordId = isGenerated(recordId);
-            expect(isGeneratedRecordId).toBe(true);
-
-            const entriesInDefaultSegment = await durableStore.getAllEntriesInSegment(
-                DefaultDurableSegment
-            );
-            expect(Object.keys(entriesInDefaultSegment.entries).length).toBe(0);
-
-            const entriesInDraftSegment = await durableStore.getAllEntriesInSegment(
-                DraftDurableSegment
-            );
-            expect(Object.keys(entriesInDraftSegment.entries).length).toBe(1);
-
-            const value = Object.values(entriesInDraftSegment.entries)[0];
-            const parsedValue = JSON.parse(value);
-            const tag = parsedValue['data']['tag'];
-            const formattedTagWithRecordId = `UiApi::RecordRepresentation:${recordId}`;
-            expect(tag).toBe(formattedTagWithRecordId);
-        });
-
-        it('created record is still obervable after draft is uploaded', async () => {
-            const orginalName = 'Justin';
-            // create a synthetic record
-            const snapshot = await createRecord({
-                apiName: API_NAME,
-                fields: { Name: orginalName },
-            });
-            const record = snapshot.data;
-            const recordId = record.id;
-            // call getRecord with synthetic record id
-            const getRecordSnapshot = (await getRecord({
-                recordId: recordId,
-                fields: ['Account.Name', 'Account.Id'],
-            })) as Snapshot<RecordRepresentation>;
-            expect(getRecordSnapshot.state).toBe('Fulfilled');
-            const callbackSpy = jest.fn();
-            // subscribe to getRecord snapshot
-            luvio.storeSubscribe(getRecordSnapshot, callbackSpy);
-
-            networkAdapter.setMockResponse({
-                status: 201,
-                headers: {},
-                body: JSONStringify(mockAccount),
-            });
-
-            // upload the draft and respond with a record with more fields and a new id
-            const result = await draftQueue.processNextAction();
-            await flushPromises();
-            expect(result).toBe(ProcessActionResult.ACTION_SUCCEEDED);
-
-            // make sure getRecord callback was called
-            expect(callbackSpy).toBeCalledTimes(1);
-            // ensure the callback id value has the updated canonical server id
-            expect(callbackSpy.mock.calls[0][0].data.fields.Id.value).toBe(RECORD_ID);
-        });
-        it('creates a create item in queue visible by draft manager', async () => {
-            await createRecord({ apiName: API_NAME, fields: { Name: 'Justin' } });
-            const subject = await draftManager.getQueue();
-            expect(subject.items.length).toBe(1);
-            expect(subject.items[0]).toMatchObject({
-                operationType: DraftActionOperationType.Create,
-            });
-        });
+        updateRecord = updateRecordAdapterFactory(luvio);
     });
 
     describe('updateRecord', () => {
@@ -404,120 +287,6 @@ describe('lds drafts integration tests', () => {
             expect(subject.items[0]).toMatchObject({
                 operationType: DraftActionOperationType.Update,
             });
-        });
-    });
-
-    describe('deleteRecord', () => {
-        it('deleteRecord sets draft deleted to true', async () => {
-            const snapshot = await createRecord({
-                apiName: API_NAME,
-                fields: { Name: 'TestRecord' },
-            });
-
-            const createdRecord = (snapshot.data as unknown) as DraftRecordRepresentation;
-            expect(snapshot.data.drafts.deleted).toBe(false);
-
-            const getNewRecordSnapshot = (await getRecord({
-                recordId: createdRecord.id,
-                fields: ['Account.Name'],
-            })) as Snapshot<RecordRepresentation>;
-
-            const newRecord = (getNewRecordSnapshot.data as unknown) as DraftRecordRepresentation;
-            expect(newRecord.drafts.deleted).toBe(false);
-
-            // delete the record
-            await deleteRecord(newRecord.id);
-
-            const getRecordSnapshot = (await getRecord({
-                recordId: newRecord.id,
-                fields: ['Account.Name'],
-            })) as Snapshot<RecordRepresentation>;
-
-            const deletedRecord = (getRecordSnapshot.data as unknown) as DraftRecordRepresentation;
-            expect(deletedRecord.drafts.deleted).toBe(true);
-        });
-
-        it('creates delete item in queue visible by draft manager', async () => {
-            networkAdapter.setMockResponse({
-                status: 200,
-                headers: {},
-                body: JSONStringify(createTestRecord(RECORD_ID, 'Mock', 'Mock', 1)),
-            });
-
-            await getRecord({ recordId: RECORD_ID, fields: ['Account.Name'] });
-            // delete the record
-            await deleteRecord(RECORD_ID);
-
-            const subject = await draftManager.getQueue();
-            expect(subject.items.length).toBe(1);
-            expect(subject.items[0]).toMatchObject({
-                operationType: DraftActionOperationType.Delete,
-            });
-        });
-    });
-
-    describe('registerOnChangedListener', () => {
-        it('getRecord subscription notified when delete DRAFT enters durable store', async () => {
-            const fieldName = 'foo';
-            networkAdapter.setMockResponse({
-                status: 200,
-                headers: {},
-                body: JSONStringify(createTestRecord(RECORD_ID, fieldName, fieldName, 1)),
-            });
-
-            const snapshot = await getRecord({ recordId: RECORD_ID, fields: ['Account.Name'] });
-            expect(snapshot.state).toBe('Fulfilled');
-
-            const getRecordCallbackSpy = jest.fn();
-            luvio.storeSubscribe(snapshot, getRecordCallbackSpy);
-
-            // simulate another draft queue enqueuing a delete (which will modify
-            // durable store)
-            const nimbusDurableStore2 = new NimbusDurableStore();
-            const queue = new DurableDraftQueue(nimbusDurableStore2, NimbusNetworkAdapter);
-            await queue.enqueue(
-                {
-                    method: 'delete',
-                    urlParams: { recordId: RECORD_ID },
-                    queryParams: {},
-                    basePath: '',
-                    baseUri: '',
-                    body: null,
-                    headers: {},
-                },
-                STORE_KEY_RECORD
-            );
-
-            await flushPromises();
-
-            // before upload we should get back the optimistic response with drafts property
-            expect(getRecordCallbackSpy).toBeCalledTimes(1);
-            expect(getRecordCallbackSpy.mock.calls[0][0].data.drafts.deleted).toBe(true);
-
-            networkAdapter.setMockResponses([
-                {
-                    status: 204,
-                    headers: {},
-                    body: null,
-                },
-                {
-                    status: 404,
-                    headers: {},
-                    body: JSON.stringify({}),
-                },
-            ]);
-
-            // now have our main queue upload the action
-            await draftQueue.processNextAction();
-
-            // the draft queue completed listener asynchronously ingests so have to flush promises
-            await flushPromises();
-
-            expect(getRecordCallbackSpy).toBeCalledTimes(2);
-
-            // second callback should emit a 404
-            expect(getRecordCallbackSpy.mock.calls[1][0].data).toBeUndefined();
-            expect(getRecordCallbackSpy.mock.calls[1][0].error.status).toBe(404);
         });
     });
 });

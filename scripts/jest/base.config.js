@@ -6,7 +6,7 @@ module.exports = {
 
     // Narrow down testMatch to only match against jest unit test files.
     // https://jestjs.io/docs/en/configuration#testmatch-array-string
-    testMatch: ['<rootDir>/**/__tests__/*.spec.(js|ts)'],
+    testMatch: ['<rootDir>/**/__tests__/**/*.spec.(js|ts)'],
 
     coverageThreshold: {
         global: {

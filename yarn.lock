@@ -4105,17 +4105,17 @@
   resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@lwc/wire-service/-/wire-service-1.7.14.tgz#281ae3003e2f53808335ea140f4dec7d980afbf9"
   integrity sha512-yWk2p9kBbRgE2qeQLkn7Ip56T7CGoJUAY67N8vqHhnZwYpLCabOcbteoJeY+al5qzSu7r0v8oSDvzYA/5K+zXg==
 
-"@mobileplatform/nimbus-plugin-lds@1.3.0":
-  version "1.3.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@mobileplatform/nimbus-plugin-lds/-/b04f2f5b6eb69dbc3c15bff2a2bd917fa91407b9.tgz#b04f2f5b6eb69dbc3c15bff2a2bd917fa91407b9"
-  integrity sha512-ru8JfEAT99KxcOzAUzZAPWxUVBUfeNIT4RoAsnK7jRO/+8cxfZMq9CqGikBug4y70q4XsryDsWfXbFP8UPrUMg==
+"@mobileplatform/nimbus-plugin-lds@1.3.2":
+  version "1.3.2"
+  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@mobileplatform/nimbus-plugin-lds/-/nimbus-plugin-lds-1.3.2.tgz#b8c24e9b6130995904fd273c3ca0a55e3227f593"
+  integrity sha512-7/p/GPajMEOx7AMsLyEYub1BqTGTyxWiEluU/mqrqNgbW3bQwjFCc82tJ40pOZiXfhspjtRazdigUyLXtbuWWA==
   dependencies:
     nimbus-types "^2.0.0-alpha1"
 
-"@mobileplatform/record-id-generator@1.0.0":
-  version "1.0.0"
-  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@mobileplatform/record-id-generator/-/440f88a26395a247f3fb289b1c3d674830b9e7ae.tgz#440f88a26395a247f3fb289b1c3d674830b9e7ae"
-  integrity sha512-/moUhJ1zwPiKpuT25S3nEU4GD5H9CdmZ615xpdORsmLRHqILfMU0xDAwyYjYe/3LGDC7kmzlCHNkG+yIZF7rug==
+"@mobileplatform/record-id-generator@1.0.1":
+  version "1.0.1"
+  resolved "https://nexus.soma.salesforce.com/nexus/content/groups/npm-all/@mobileplatform/record-id-generator/-/record-id-generator-1.0.1.tgz#c41ea7f023fd1ed3a2cf6c4bb70041bb1bc4469b"
+  integrity sha512-/iEK25H9pgV7L7ECs2EJ9sNOzNd73ALz+7Re/8aRUC88quV7YoalYroe/iVS81aj2LRDwcgHBd8ykFs+34SAiQ==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"

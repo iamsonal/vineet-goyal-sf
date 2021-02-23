@@ -17,7 +17,7 @@ import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusD
 import { MockNimbusAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
 import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
-import { recordIdGenerator } from '@mobileplatform/record-id-generator';
+import { recordIdGenerator } from '../../../RecordIdGenerator';
 import { DefaultDurableSegment } from '@luvio/environments';
 import Id from '@salesforce/user/Id';
 

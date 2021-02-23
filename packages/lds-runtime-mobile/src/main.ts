@@ -14,7 +14,7 @@ import {
 } from '@salesforce/lds-drafts';
 
 import userId from '@salesforce/user/Id';
-import { recordIdGenerator } from '@mobileplatform/record-id-generator';
+import { recordIdGenerator } from './RecordIdGenerator';
 
 import { NimbusNetworkAdapter } from './NimbusNetworkAdapter';
 import { NimbusDurableStore } from './NimbusDurableStore';

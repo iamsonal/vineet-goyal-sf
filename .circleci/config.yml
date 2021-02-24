@@ -240,6 +240,6 @@ workflows:
       - test_mobile:
           requires:
             - build_and_test
-      - perf_and_compare:
-          requires:
-            - build_and_test
+#      - perf_and_compare:
+#          requires:
+#            - build_and_test

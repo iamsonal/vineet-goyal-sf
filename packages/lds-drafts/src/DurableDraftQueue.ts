@@ -25,7 +25,7 @@ export const DraftDurableSegment = 'DRAFT';
  * Generates a time-ordered, unique id to associate with a DraftAction. Ensures
  * no collisions with existing draft action IDs.
  */
-function generateUniqueDraftActionId(existingIds: string[]) {
+export function generateUniqueDraftActionId(existingIds: string[]) {
     // new id in milliseconds with some extra digits for collisions
     let newId = new Date().getTime() * 100;
 
@@ -61,6 +61,8 @@ export class DurableDraftQueue implements DraftQueue {
     private draftQueueChangedListeners: DraftQueueChangeListener[] = [];
     private state = DraftQueueState.Stopped;
     private processingAction?: Promise<ProcessActionResult>;
+    private replacingAction?: Promise<DraftAction<unknown>>;
+    private stopCalledDuringReplace: Boolean = false;
 
     constructor(store: DurableStore, network: NetworkAdapter) {
         this.durableStore = store;
@@ -74,6 +76,13 @@ export class DurableDraftQueue implements DraftQueue {
     startQueue(): Promise<void> {
         if (this.state === DraftQueueState.Started) {
             return Promise.resolve();
+        }
+        if (this.replacingAction !== undefined) {
+            // If we're replacing an action, wait until we are done
+            // then start the queue
+            return this.replacingAction.then(() => {
+                return this.startQueue();
+            });
         }
         this.state = DraftQueueState.Started;
         this.retryIntervalMilliseconds = 0;
@@ -91,6 +100,9 @@ export class DurableDraftQueue implements DraftQueue {
 
     stopQueue(): Promise<void> {
         this.state = DraftQueueState.Stopped;
+        if (this.replacingAction !== undefined) {
+            this.stopCalledDuringReplace = true;
+        }
         return Promise.resolve();
     }
 
@@ -352,15 +364,105 @@ export class DurableDraftQueue implements DraftQueue {
             }
 
             let durableStoreKey = buildDraftDurableStoreKey(action.tag, action.id);
+            return this.notifyChangedListeners({
+                type: DraftQueueEventType.ActionDeleting,
+                action,
+            }).then(() => {
+                return this.durableStore
+                    .evictEntries([durableStoreKey], DraftDurableSegment)
+                    .then(() => {
+                        this.notifyChangedListeners({
+                            type: DraftQueueEventType.ActionDeleted,
+                            action,
+                        });
+                    });
+            });
+        });
+    }
 
-            return this.durableStore
-                .evictEntries([durableStoreKey], DraftDurableSegment)
-                .then(() => {
-                    this.notifyChangedListeners({
-                        type: DraftQueueEventType.ActionDeleted,
-                        action,
+    replaceAction(actionId: string, withActionId: string): Promise<DraftAction<unknown>> {
+        // ids must be unique
+        if (actionId === withActionId) {
+            return Promise.reject('Swapped and swapping action ids cannot be the same');
+        }
+        // cannot have a replace action already in progress
+        if (this.replacingAction !== undefined) {
+            return Promise.reject('Cannot replace actions while a replace action is in progress');
+        }
+        const initialQueueState = this.getQueueState();
+        return this.stopQueue().then(() => {
+            const replacing = this.getQueueActions().then(actions => {
+                // get the action to replace
+                const actionToReplace = actions.filter(action => action.id === actionId)[0];
+                // get the replacing action
+                const replacingAction = actions.filter(action => action.id === withActionId)[0];
+                // reject if either action is undefined
+                if (actionToReplace === undefined || replacingAction === undefined) {
+                    return Promise.reject('One or both actions does not exist');
+                }
+                // reject if either action is uploading
+                if (
+                    actionToReplace.status === DraftActionStatus.Uploading ||
+                    replacingAction.status === DraftActionStatus.Uploading
+                ) {
+                    return Promise.reject('Cannot replace an draft action that is uploading');
+                }
+                // reject if these two draft actions aren't acting on the same target
+                if (actionToReplace.tag !== replacingAction.tag) {
+                    return Promise.reject('Cannot swap actions targeting different targets');
+                }
+                // reject if the replacing action is not pending
+                if (replacingAction.status !== DraftActionStatus.Pending) {
+                    return Promise.reject('Cannot replace with a non-pending action');
+                }
+                const actionToReplaceCopy: PendingDraftAction<unknown> = {
+                    ...actionToReplace,
+                    status: DraftActionStatus.Pending,
+                };
+
+                actionToReplace.request = replacingAction.request;
+                actionToReplace.status = DraftActionStatus.Pending;
+                // TODO: W-8873834 - Will add batching support to durable store
+                // we should use that here to remove and set both actions in one operation
+                return this.removeDraftAction(replacingAction.id).then(() => {
+                    const entry: DurableStoreEntry = { data: actionToReplace };
+                    const durableEntryKey = buildDraftDurableStoreKey(
+                        actionToReplace.tag,
+                        actionToReplace.id
+                    );
+                    const entries: DurableStoreEntries = { [durableEntryKey]: entry };
+                    return this.notifyChangedListeners({
+                        type: DraftQueueEventType.ActionUpdating,
+                        action: actionToReplaceCopy,
+                    }).then(() => {
+                        return this.durableStore
+                            .setEntries(entries, DraftDurableSegment)
+                            .then(() => {
+                                return this.notifyChangedListeners({
+                                    type: DraftQueueEventType.ActionUpdated,
+                                    action: actionToReplace,
+                                }).then(() => {
+                                    if (
+                                        initialQueueState === DraftQueueState.Started &&
+                                        this.stopCalledDuringReplace === false
+                                    ) {
+                                        return this.startQueue().then(() => {
+                                            this.replacingAction = undefined;
+                                            this.stopCalledDuringReplace = false;
+                                            return actionToReplace;
+                                        });
+                                    } else {
+                                        this.replacingAction = undefined;
+                                        this.stopCalledDuringReplace = false;
+                                        return actionToReplace;
+                                    }
+                                });
+                            });
                     });
                 });
+            });
+            this.replacingAction = replacing;
+            return replacing;
         });
     }
 

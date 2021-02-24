@@ -170,4 +170,11 @@ describe('NimbusDraftQueue', () => {
             'Cannot call stopQueue from the NimbusDraftQueue'
         );
     });
+
+    it('rejects on replaceAction', async () => {
+        const nimbusQueue = new NimbusDraftQueue();
+        await expect(nimbusQueue.replaceAction('1', '2')).rejects.toEqual(
+            'Cannot call replaceAction from the NimbusDraftQueue'
+        );
+    });
 });

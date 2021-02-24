@@ -7,8 +7,13 @@ import {
     ProcessActionResult,
     DraftQueueEventType,
     DraftQueueEvent,
+    ErrorDraftAction,
 } from '../DraftQueue';
-import { DurableDraftQueue, DraftDurableSegment } from '../DurableDraftQueue';
+import {
+    DurableDraftQueue,
+    DraftDurableSegment,
+    generateUniqueDraftActionId,
+} from '../DurableDraftQueue';
 import {
     MockDurableStore,
     buildMockNetworkAdapter,
@@ -34,9 +39,32 @@ const DEFAULT_REQUEST: ResourceRequest = {
     urlParams: {},
     headers: {},
 };
+const UPDATE_REQUEST: ResourceRequest = {
+    method: 'patch',
+    basePath: '/blah',
+    baseUri: 'blahuri',
+    body: null,
+    queryParams: {},
+    urlParams: {},
+    headers: {},
+};
 const DEFAULT_TAG = 'test-tag1';
 
 describe('DurableDraftQueue', () => {
+    it('creates unique ids', () => {
+        const createdIds: string[] = [];
+        for (let i = 0; i < 1000; i++) {
+            const newId = generateUniqueDraftActionId(createdIds);
+            createdIds.push(newId);
+        }
+        const len = createdIds.length;
+        for (let i = 0; i < len; i++) {
+            const id = createdIds[i];
+            expect(createdIds.indexOf(id)).toBe(i);
+            expect(createdIds.lastIndexOf(id)).toBe(i);
+        }
+    });
+
     describe('state', () => {
         it('begins in Stopped state', async () => {
             const network = buildMockNetworkAdapter([]);
@@ -598,11 +626,22 @@ describe('DurableDraftQueue', () => {
             const draftQueue = new DurableDraftQueue(durableStore, network);
             const draftAction = await draftQueue.enqueue(DEFAULT_REQUEST, DEFAULT_TAG);
 
-            const listener = jest.fn();
-            draftQueue.registerOnChangedListener(listener);
+            let deletingCalled = false;
+            let deletedCalled = false;
+            draftQueue.registerOnChangedListener(
+                (event): Promise<void> => {
+                    if (event.type === DraftQueueEventType.ActionDeleting) {
+                        deletingCalled = true;
+                    } else if (event.type === DraftQueueEventType.ActionDeleted) {
+                        deletedCalled = true;
+                    }
+                    return Promise.resolve();
+                }
+            );
 
             await draftQueue.removeDraftAction(draftAction.id);
-            expect(listener).toBeCalledTimes(1);
+            expect(deletingCalled).toBe(true);
+            expect(deletedCalled).toBe(true);
         });
 
         it('is called when item completes', async () => {
@@ -691,6 +730,305 @@ describe('DurableDraftQueue', () => {
             const { draftQueue, evictSpy } = setup(testAction);
             await draftQueue.removeDraftAction(testAction.id);
             expect(evictSpy).toBeCalledWith(['testActionTag__DraftAction__123456'], 'DRAFT');
+        });
+    });
+
+    describe('swap action', () => {
+        it('swaps correctly', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag);
+            const actionTwo = await draftQueue.enqueue(UPDATE_REQUEST, draftTag);
+            let actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(2);
+            await draftQueue.replaceAction(actionOne.id, actionTwo.id);
+            actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(1);
+            const action = actions[0];
+            expect(action.id).toBe(actionOne.id);
+        });
+
+        it('calls listeners when swapping', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag);
+            let secondUpdate = UPDATE_REQUEST;
+            secondUpdate.baseUri = 'secondTestURI';
+            const actionTwo = await draftQueue.enqueue(secondUpdate, draftTag);
+            let actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(2);
+            let deletingCalled = false;
+            let deletedCalled = false;
+            let updatingCalled = false;
+            let updatedCalled = false;
+            draftQueue.registerOnChangedListener(
+                (event): Promise<void> => {
+                    if (event.type === DraftQueueEventType.ActionDeleting) {
+                        expect(event.action.request).toEqual(secondUpdate);
+                        deletingCalled = true;
+                    } else if (event.type === DraftQueueEventType.ActionDeleted) {
+                        expect(event.action.request).toEqual(secondUpdate);
+                        deletedCalled = true;
+                    } else if (event.type === DraftQueueEventType.ActionUpdating) {
+                        expect(event.action.request).toEqual(UPDATE_REQUEST);
+                        updatingCalled = true;
+                    } else if (event.type === DraftQueueEventType.ActionUpdated) {
+                        expect(event.action.request).toEqual(secondUpdate);
+                        updatedCalled = true;
+                    }
+                    return Promise.resolve();
+                }
+            );
+
+            await draftQueue.replaceAction(actionOne.id, actionTwo.id);
+            expect(deletingCalled).toBe(true);
+            expect(deletedCalled).toBe(true);
+            expect(updatingCalled).toBe(true);
+            expect(updatedCalled).toBe(true);
+        });
+
+        it('rejects on equal draft action ids', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag);
+            await draftQueue.enqueue(UPDATE_REQUEST, draftTag);
+            let actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(2);
+            let result = draftQueue.replaceAction(actionOne.id, actionOne.id);
+            await expect(result).rejects.toBe('Swapped and swapping action ids cannot be the same');
+        });
+        it('rejects on non-existent draft', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag);
+            const result = draftQueue.replaceAction(actionOne.id, 'blah');
+            await expect(result).rejects.toBe('One or both actions does not exist');
+        });
+
+        it('rejects on non-matching target ids', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const draftTagTwo = 'UiAPI::RecordRepresentation::barId';
+            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag);
+            const actionTwo = await draftQueue.enqueue(UPDATE_REQUEST, draftTagTwo);
+            let actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(2);
+            const result = draftQueue.replaceAction(actionOne.id, actionTwo.id);
+            await expect(result).rejects.toBe('Cannot swap actions targeting different targets');
+        });
+
+        it('does not swap an in progress draft', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const firstId = '0';
+            const secondId = '1';
+            const firstDurableId = 'firstDurable';
+            const secondDurableId = 'secondDurable';
+            const inProgressAction: UploadingDraftAction<unknown> = {
+                id: firstId,
+                status: DraftActionStatus.Uploading,
+                request: createPatchRequest(),
+                tag: 'UiAPI::RecordRepresentation::fooId',
+                timestamp: Date.now(),
+            };
+            const firstEntry: DurableStoreEntry = { data: inProgressAction };
+            const pendingAction: PendingDraftAction<unknown> = {
+                id: secondId,
+                status: DraftActionStatus.Pending,
+                request: createPatchRequest(),
+                tag: 'UiAPI::RecordRepresentation::fooId',
+                timestamp: Date.now(),
+            };
+            const secondEntry: DurableStoreEntry = { data: pendingAction };
+            let entries: DurableStoreEntries = { [firstDurableId]: firstEntry };
+            await durableStore.setEntries(entries, DraftDurableSegment);
+            entries = { [secondDurableId]: secondEntry };
+            await durableStore.setEntries(entries, DraftDurableSegment);
+
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            let actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(2);
+            let result = draftQueue.replaceAction(actions[0].id, actions[1].id);
+            await expect(result).rejects.toBe('Cannot replace an draft action that is uploading');
+        });
+
+        it('rejects when replacing with a non-pending action', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const firstId = '0';
+            const secondId = '1';
+            const firstDurableId = 'firstDurable';
+            const secondDurableId = 'secondDurable';
+            const pendingAction: PendingDraftAction<unknown> = {
+                id: firstId,
+                status: DraftActionStatus.Pending,
+                request: createPatchRequest(),
+                tag: 'UiAPI::RecordRepresentation::fooId',
+                timestamp: Date.now(),
+            };
+            const firstEntry: DurableStoreEntry = { data: pendingAction };
+            const nonPendingAction: ErrorDraftAction<unknown> = {
+                id: secondId,
+                status: DraftActionStatus.Error,
+                request: createPatchRequest(),
+                tag: 'UiAPI::RecordRepresentation::fooId',
+                timestamp: Date.now(),
+                error: {},
+            };
+            const secondEntry: DurableStoreEntry = { data: nonPendingAction };
+            let entries: DurableStoreEntries = { [firstDurableId]: firstEntry };
+            await durableStore.setEntries(entries, DraftDurableSegment);
+            entries = { [secondDurableId]: secondEntry };
+            await durableStore.setEntries(entries, DraftDurableSegment);
+
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            let actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(2);
+            let result = draftQueue.replaceAction(actions[0].id, actions[1].id);
+            await expect(result).rejects.toBe('Cannot replace with a non-pending action');
+        });
+
+        it('sets a replaced item to pending', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const firstId = '0';
+            const secondId = '1';
+            const firstDurableId = 'firstDurable';
+            const secondDurableId = 'secondDurable';
+            const inProgressAction: ErrorDraftAction<unknown> = {
+                id: firstId,
+                status: DraftActionStatus.Error,
+                request: createPatchRequest(),
+                tag: 'UiAPI::RecordRepresentation::fooId',
+                timestamp: Date.now(),
+                error: {},
+            };
+            const firstEntry: DurableStoreEntry = { data: inProgressAction };
+            let secondPatchRequest = createPatchRequest();
+            secondPatchRequest.body.fields.Name = 'Second Name';
+            const pendingAction: PendingDraftAction<unknown> = {
+                id: secondId,
+                status: DraftActionStatus.Pending,
+                request: secondPatchRequest,
+                tag: 'UiAPI::RecordRepresentation::fooId',
+                timestamp: Date.now(),
+            };
+            const secondEntry: DurableStoreEntry = { data: pendingAction };
+            let entries: DurableStoreEntries = { [firstDurableId]: firstEntry };
+            await durableStore.setEntries(entries, DraftDurableSegment);
+            entries = { [secondDurableId]: secondEntry };
+            await durableStore.setEntries(entries, DraftDurableSegment);
+
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            let actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(2);
+            const actionToReplace = actions[0];
+            expect(actionToReplace.request.body.fields.Name).toBe('Acme');
+            const replacingAction = actions[1];
+            expect(replacingAction.request.body.fields.Name).toBe('Second Name');
+            let result = await draftQueue.replaceAction(actionToReplace.id, replacingAction.id);
+            expect(result.status).toBe(DraftActionStatus.Pending);
+            expect(result.request.body.fields.Name).toBe('Second Name');
+        });
+
+        it('does not start queue while replacing an action', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            let processNextSpy = jest.fn(() => {
+                return Promise.resolve(ProcessActionResult.ACTION_SUCCEEDED);
+            });
+            draftQueue.processNextAction = processNextSpy;
+            let evictSpy = jest.fn(() => {
+                // eslint-disable-next-line jest/valid-expect-in-promise
+                draftQueue.startQueue().then(() => {
+                    return Promise.resolve();
+                });
+                expect(processNextSpy).toBeCalledTimes(0);
+                return Promise.resolve();
+            });
+            durableStore.evictEntries = evictSpy;
+            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag);
+            const actionTwo = await draftQueue.enqueue(UPDATE_REQUEST, draftTag);
+            let actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(2);
+            await draftQueue.replaceAction(actionOne.id, actionTwo.id);
+            expect(processNextSpy).toBeCalledTimes(1);
+            expect(draftQueue.getQueueState()).toBe(DraftQueueState.Started);
+        });
+
+        it('does not start the queue if stop is called during replace', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            let stateCallCount = 0;
+            draftQueue.getQueueState = jest.fn(() => {
+                // Mock the queue being started for just one call
+                stateCallCount = stateCallCount + 1;
+                if (stateCallCount === 1) {
+                    return DraftQueueState.Started;
+                } else {
+                    const opaque = draftQueue as any;
+                    return opaque.state;
+                }
+            });
+            let processNextSpy = jest.fn(() => {
+                return Promise.resolve(ProcessActionResult.ACTION_SUCCEEDED);
+            });
+            draftQueue.processNextAction = processNextSpy;
+            let evictSpy = jest.fn(() => {
+                // eslint-disable-next-line jest/valid-expect-in-promise
+                draftQueue.stopQueue().then(() => {
+                    return Promise.resolve();
+                });
+                expect(processNextSpy).toBeCalledTimes(0);
+                return Promise.resolve();
+            });
+            durableStore.evictEntries = evictSpy;
+            let startSpy = jest.fn(() => {
+                return Promise.resolve();
+            });
+            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag);
+            const actionTwo = await draftQueue.enqueue(UPDATE_REQUEST, draftTag);
+            let actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(2);
+            await draftQueue.replaceAction(actionOne.id, actionTwo.id);
+            expect(processNextSpy).toBeCalledTimes(0);
+            expect(startSpy).toBeCalledTimes(0);
+            expect(draftQueue.getQueueState()).toBe(DraftQueueState.Stopped);
+        });
+
+        it('rejects if replace is called while a replace is in process', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(durableStore, network);
+            let secondReplace: Promise<DraftAction<unknown>>;
+            let evictSpy = jest.fn(() => {
+                secondReplace = draftQueue.replaceAction('foo', 'bar');
+                return Promise.resolve();
+            });
+            durableStore.evictEntries = evictSpy;
+            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag);
+            const actionTwo = await draftQueue.enqueue(UPDATE_REQUEST, draftTag);
+            let actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(2);
+            await draftQueue.replaceAction(actionOne.id, actionTwo.id);
+            await expect(secondReplace).rejects.toBe(
+                'Cannot replace actions while a replace action is in progress'
+            );
         });
     });
 });

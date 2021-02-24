@@ -75,6 +75,7 @@ export interface DraftRepresentation {
     edited: boolean;
     deleted: boolean;
     serverValues: { [fieldName: string]: ScalarFieldRepresentationValue };
+    draftActionIds: string[];
 }
 
 export interface DraftRecordRepresentationNormalized extends RecordRepresentationNormalized {
@@ -289,6 +290,8 @@ export function replayDraftsOnRecord<U extends DraftRecordRepresentation>(
     if (drafts.length === 0) {
         return record;
     }
+    const draftIds = drafts.filter(d => d !== undefined).map(d => d.id);
+
     // remove the next item from the front of the queue
     const draft = ArrayPrototypeShift.call(drafts);
     if (draft === undefined) {
@@ -307,6 +310,7 @@ export function replayDraftsOnRecord<U extends DraftRecordRepresentation>(
             edited: false,
             deleted: false,
             serverValues: {},
+            draftActionIds: draftIds,
         };
     }
 

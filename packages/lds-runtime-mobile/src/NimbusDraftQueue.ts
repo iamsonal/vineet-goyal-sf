@@ -82,4 +82,8 @@ export class NimbusDraftQueue implements DraftQueue {
     stopQueue(): Promise<void> {
         return Promise.reject('Cannot call stopQueue from the NimbusDraftQueue');
     }
+
+    replaceAction(_actionId: string, _withActionId: string): Promise<DraftAction<unknown>> {
+        return Promise.reject('Cannot call replaceAction from the NimbusDraftQueue');
+    }
 }

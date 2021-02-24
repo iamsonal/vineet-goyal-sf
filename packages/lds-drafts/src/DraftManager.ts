@@ -149,16 +149,16 @@ export class DraftManager {
     /**
      * Starts the draft queue and begins processing the first item in the queue.
      */
-    startQueue(): void {
-        this.draftQueue.startQueue();
+    startQueue(): Promise<void> {
+        return this.draftQueue.startQueue();
     }
 
     /**
      * Stops the draft queue from processing more draft items after any current
      * in progress items are finished.
      */
-    stopQueue(): void {
-        this.draftQueue.stopQueue();
+    stopQueue(): Promise<void> {
+        return this.draftQueue.stopQueue();
     }
 
     /**
@@ -215,5 +215,19 @@ export class DraftManager {
      */
     removeDraftAction(actionId: string): Promise<DraftManagerState> {
         return this.draftQueue.removeDraftAction(actionId).then(() => this.getQueue());
+    }
+
+    /**
+     * Replaces the resource request of `withAction` for the resource request
+     * of `actionId`. Action ids cannot be equal. Both actions must be acting
+     * on the same target object, and neither can currently be in progress.
+     *
+     * @param actionId The id of the draft action to replace
+     * @param withActionId The id of the draft action that will replace the other
+     */
+    replaceAction(actionId: string, withActionId: string): Promise<DraftQueueItem> {
+        return this.draftQueue.replaceAction(actionId, withActionId).then(replaced => {
+            return this.buildDraftQueueItem(replaced);
+        });
     }
 }

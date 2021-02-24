@@ -16,8 +16,14 @@ function setup(
     const draftQueue: DraftQueue = {
         enqueue: jest.fn(),
         getActionsForTags: jest.fn(),
-        registerDraftQueueCompletedListener: jest.fn(),
         processNextAction: jest.fn(),
+        registerOnChangedListener: jest.fn(),
+        getQueueActions: jest.fn(),
+        getQueueState: jest.fn(),
+        removeDraftAction: jest.fn(),
+        replaceAction: jest.fn(),
+        startQueue: jest.fn(),
+        stopQueue: jest.fn(),
     };
     const draftNetworkAdapter = makeNetworkAdapterDraftAware(
         baseNetworkAdapter,
@@ -110,8 +116,9 @@ describe('makeNetworkAdapterDraftAware', () => {
             recordResponseRetrievers: [mockRetriever],
             mockNetworkResponse,
         });
+        const editAction = createEditDraftAction(RECORD_ID, STORE_KEY_RECORD, draftName);
         draftQueue.getActionsForTags = jest.fn().mockResolvedValue({
-            [STORE_KEY_RECORD]: [createEditDraftAction(RECORD_ID, STORE_KEY_RECORD, draftName)],
+            [STORE_KEY_RECORD]: [editAction],
         });
 
         // execute
@@ -137,6 +144,7 @@ describe('makeNetworkAdapterDraftAware', () => {
                         displayValue: null,
                     },
                 },
+                draftActionIds: [editAction.id],
             },
         });
     });
@@ -167,11 +175,10 @@ describe('makeNetworkAdapterDraftAware', () => {
             recordResponseRetrievers: [mockRetriever],
             mockNetworkResponse,
         });
+        const editActionOne = createEditDraftAction(RECORD_ID, STORE_KEY_RECORD, draftName1);
+        const editActionTwo = createEditDraftAction(RECORD_ID, STORE_KEY_RECORD, draftName2);
         draftQueue.getActionsForTags = jest.fn().mockResolvedValue({
-            [STORE_KEY_RECORD]: [
-                createEditDraftAction(RECORD_ID, STORE_KEY_RECORD, draftName1),
-                createEditDraftAction(RECORD_ID, STORE_KEY_RECORD, draftName2),
-            ],
+            [STORE_KEY_RECORD]: [editActionOne, editActionTwo],
         });
 
         // execute
@@ -197,6 +204,7 @@ describe('makeNetworkAdapterDraftAware', () => {
                         displayValue: null,
                     },
                 },
+                draftActionIds: [editActionOne.id, editActionTwo.id],
             },
         });
     });

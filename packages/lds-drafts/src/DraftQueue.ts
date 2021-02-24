@@ -130,6 +130,14 @@ export enum DraftQueueEventType {
      * Triggered after an action has been completed and after it has been removed from the queue
      */
     ActionCompleted = 'completed',
+    /**
+     * Triggered just prior to updating an action by the updateAction API
+     */
+    ActionUpdating = 'updating',
+    /**
+     * Triggered after an action has been updated by the updateAction API
+     */
+    ActionUpdated = 'updated',
 }
 
 export interface DraftQueueAddEvent {
@@ -147,12 +155,12 @@ export interface DraftQueueCompleteEvent {
     action: CompletedDraftAction<unknown>;
 }
 
-export interface DraftQueueAcionRunningEvent {
+export interface DraftQueueActionRunningEvent {
     type: DraftQueueEventType.ActionRunning;
     action: UploadingDraftAction<unknown>;
 }
 
-export interface DraftQueueAcionFailedEvent {
+export interface DraftQueueActionFailedEvent {
     type: DraftQueueEventType.ActionFailed;
     action: ErrorDraftAction<unknown>;
 }
@@ -162,13 +170,25 @@ export interface DraftQueueActionRetryEvent {
     action: PendingDraftAction<unknown>;
 }
 
+export interface DraftQueueActionUpdatingEvent {
+    type: DraftQueueEventType.ActionUpdating;
+    action: DraftAction<unknown>;
+}
+
+export interface DraftQueueActionUpdatedEvent {
+    type: DraftQueueEventType.ActionUpdated;
+    action: DraftAction<unknown>;
+}
+
 export type DraftQueueEvent =
     | DraftQueueAddEvent
     | DraftQueueCompleteEvent
     | DraftQueueDeleteEvent
-    | DraftQueueAcionRunningEvent
+    | DraftQueueActionRunningEvent
     | DraftQueueActionRetryEvent
-    | DraftQueueAcionFailedEvent;
+    | DraftQueueActionFailedEvent
+    | DraftQueueActionUpdatingEvent
+    | DraftQueueActionUpdatedEvent;
 
 export interface DraftQueue {
     /**
@@ -212,6 +232,16 @@ export interface DraftQueue {
      * @param actionId The action identifier
      */
     removeDraftAction(actionId: string): Promise<void>;
+
+    /**
+     * Replaces the resource request of `withActionId` for the resource request
+     * of `actionId`. Action ids cannot be equal. Both actions must be acting
+     * on the same target object, and neither can currently be in progress.
+     *
+     * @param actionId The id of the draft action to replace
+     * @param withActionId The id of the draft action that will replace the other
+     */
+    replaceAction(actionId: string, withActionId: string): Promise<DraftAction<unknown>>;
 
     /** Set the draft queue state to Started and process the next item */
     startQueue(): Promise<void>;

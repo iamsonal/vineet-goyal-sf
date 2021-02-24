@@ -212,6 +212,7 @@ function createSyntheticRecord(
                 edited: false,
                 deleted: false,
                 serverValues: {},
+                draftActionIds: [draftId],
             },
             links,
         },

@@ -13,6 +13,7 @@ import {
     CompletedDraftAction,
     PendingDraftAction,
 } from '../DraftQueue';
+import { generateUniqueDraftActionId } from '../DurableDraftQueue';
 import { ObjectKeys } from '../utils/language';
 import { DurableRecordRepresentation } from '../utils/records';
 
@@ -120,14 +121,17 @@ export function createDeleteRequest() {
     };
 }
 
+var createdDraftIds: string[] = [];
 export function createEditDraftAction(
     recordId: string,
     recordKey: string,
     nameValue: string = DEFAULT_NAME_FIELD_VALUE,
     timestamp: number = DEFAULT_TIME_STAMP
 ): PendingDraftAction<RecordRepresentation> {
+    const newDraftId = generateUniqueDraftActionId(createdDraftIds);
+    createdDraftIds.push(newDraftId);
     return {
-        id: new Date().getUTCMilliseconds().toString(),
+        id: newDraftId,
         status: DraftActionStatus.Pending,
         tag: recordKey,
         timestamp: timestamp,
@@ -149,8 +153,10 @@ export function createPostDraftAction(
     apiName: string = DEFAULT_API_NAME,
     timestamp: number = DEFAULT_TIME_STAMP
 ): DraftAction<RecordRepresentation> {
+    const newDraftId = generateUniqueDraftActionId(createdDraftIds);
+    createdDraftIds.push(newDraftId);
     return {
-        id: new Date().getUTCMilliseconds().toString(),
+        id: newDraftId,
         status: DraftActionStatus.Pending,
         tag: recordKey,
         timestamp: timestamp,
@@ -171,8 +177,10 @@ export function createDeleteDraftAction(
     recordKey: string,
     timestamp: number = DEFAULT_TIME_STAMP
 ): DraftAction<RecordRepresentation> {
+    const newDraftId = generateUniqueDraftActionId(createdDraftIds);
+    createdDraftIds.push(newDraftId);
     return {
-        id: new Date().getUTCMilliseconds().toString(),
+        id: newDraftId,
         status: DraftActionStatus.Pending,
         tag: recordKey,
         timestamp: timestamp,
@@ -193,8 +201,10 @@ export function createErrorDraftAction(
     recordKey: string,
     timestamp: number = DEFAULT_TIME_STAMP
 ): ErrorDraftAction<RecordRepresentation> {
+    const newDraftId = generateUniqueDraftActionId(createdDraftIds);
+    createdDraftIds.push(newDraftId);
     return {
-        id: new Date().getUTCMilliseconds().toString(),
+        id: newDraftId,
         status: DraftActionStatus.Error,
         error: 'SOMETHING WENT WRONG',
         tag: recordKey,
@@ -216,8 +226,10 @@ export function createCompletedDraftAction(
     recordKey: string,
     timestamp: number = DEFAULT_TIME_STAMP
 ): CompletedDraftAction<RecordRepresentation> {
+    const newDraftId = generateUniqueDraftActionId(createdDraftIds);
+    createdDraftIds.push(newDraftId);
     return {
-        id: Date.now().toString(),
+        id: newDraftId,
         status: DraftActionStatus.Completed,
         response: {
             status: HttpStatusCode.Ok,

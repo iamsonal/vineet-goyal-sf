@@ -248,7 +248,9 @@ describe('draft environment record utilities', () => {
 
         it('adds drafts node and fields for delete', () => {
             const record = {} as any;
-            const result = replayDraftsOnRecord(record, [{ request: { method: 'delete' } } as any]);
+            const result = replayDraftsOnRecord(record, [
+                { id: '123', request: { method: 'delete' } } as any,
+            ]);
 
             expect(result).toStrictEqual({
                 drafts: {
@@ -256,6 +258,7 @@ describe('draft environment record utilities', () => {
                     edited: false,
                     deleted: true,
                     serverValues: {},
+                    draftActionIds: ['123'],
                 },
             });
         });
@@ -265,9 +268,12 @@ describe('draft environment record utilities', () => {
                 id: '123',
                 fields: { Name: { value: 'oldName', displayValue: null } },
             } as any;
-            const result = replayDraftsOnRecord(record, [
-                createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newName'),
-            ]);
+            const editAction = createEditDraftAction(
+                '123',
+                'UiApi::RecordRepresentation:123',
+                'newName'
+            );
+            const result = replayDraftsOnRecord(record, [editAction]);
 
             expect(result).toStrictEqual({
                 id: '123',
@@ -284,6 +290,7 @@ describe('draft environment record utilities', () => {
                             displayValue: null,
                         },
                     },
+                    draftActionIds: [editAction.id],
                 },
             });
         });
@@ -292,9 +299,12 @@ describe('draft environment record utilities', () => {
             const record = buildDurableRecordRepresentation('123', {
                 Name: { value: 'oldName', displayValue: null },
             });
-            const result = replayDraftsOnRecord(record, [
-                createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newName'),
-            ]);
+            const editAction = createEditDraftAction(
+                '123',
+                'UiApi::RecordRepresentation:123',
+                'newName'
+            );
+            const result = replayDraftsOnRecord(record, [editAction]);
 
             const expected = {
                 ...buildDurableRecordRepresentation('123', {
@@ -310,10 +320,23 @@ describe('draft environment record utilities', () => {
                             displayValue: null,
                         },
                     },
+                    draftActionIds: [editAction.id],
                 },
             };
 
             expect(result).toStrictEqual(expected);
+        });
+
+        it('adds draft action id array in drafts node', () => {
+            const record = buildDurableRecordRepresentation('123', {
+                Name: { value: 'oldName', displayValue: null },
+            });
+            const result = replayDraftsOnRecord(record, [
+                createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newName'),
+                createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newerName'),
+                createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newestName'),
+            ]);
+            expect(result.drafts.draftActionIds.length).toBe(3);
         });
     });
 

@@ -107,6 +107,7 @@ function testMetricInvocations(metricSpy: any, expectedCalls: any) {
 // - totalAdapterRequestSuccessMetric
 const baseCacheHitCounterIncrement = 4;
 const baseCacheMissCounterIncrement = 4;
+const GET_RECORD_TTL = 30000;
 
 describe('instrumentation', () => {
     describe('instrumentGetRecordAdapter', () => {
@@ -121,8 +122,8 @@ describe('instrumentation', () => {
                 }
             };
             const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(
-                'getRecord',
-                mockGetRecordAdapter
+                mockGetRecordAdapter,
+                { name: 'getRecord', ttl: GET_RECORD_TTL }
             );
             const getRecordConfig = {
                 recordId: '00x000000000000017',
@@ -135,7 +136,6 @@ describe('instrumentation', () => {
             };
 
             const recordKey = getRecordConfigKey(getRecordConfig);
-
             // Cache Miss #1
             const now = Date.now();
             timekeeper.freeze(now);
@@ -203,10 +203,9 @@ describe('instrumentation', () => {
                     setTimeout(() => resolve({}));
                 });
             };
-            const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(
-                'unknownAdapter',
-                unknownAdapter
-            );
+            const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(unknownAdapter, {
+                name: 'unknownAdapter',
+            });
             const adapterConfig = {
                 key: 'value',
             };
@@ -259,8 +258,8 @@ describe('instrumentation', () => {
                 });
             };
             const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(
-                'getRecord',
-                mockGetRecordAdapter
+                mockGetRecordAdapter,
+                { name: 'getRecord', ttl: GET_RECORD_TTL }
             );
             const getRecordConfig = {
                 optionalFields: ['Account.Id', 'Account.Name'],
@@ -495,8 +494,8 @@ describe('instrumentation', () => {
                 });
             };
             const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(
-                'getRecord',
-                mockGetRecordAdapter
+                mockGetRecordAdapter,
+                { name: 'getRecord', ttl: GET_RECORD_TTL }
             );
             const getRecordConfig = {
                 recordId: '00x000000000000017',
@@ -543,8 +542,8 @@ describe('instrumentation', () => {
                 return null;
             };
             const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(
-                'getRecord',
-                mockGetRecordAdapter
+                mockGetRecordAdapter,
+                { name: 'getRecord', ttl: GET_RECORD_TTL }
             );
             const getRecordConfig = {
                 recordId: 'not a valid id',
@@ -588,8 +587,8 @@ describe('instrumentation', () => {
                 });
             };
             const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(
-                'getRecord',
-                mockGetRecordAdapter
+                mockGetRecordAdapter,
+                { name: 'getRecord', ttl: GET_RECORD_TTL }
             );
             const getRecordConfig = {
                 recordId: '00x000000000000017',
@@ -641,12 +640,12 @@ describe('instrumentation', () => {
             };
 
             const instrumentedGetApexAdapterOne = (instrumentation.instrumentAdapter as any)(
-                'getApex__ContactController_getContactList_false',
-                mockGetApexAdapter
+                mockGetApexAdapter,
+                { name: 'getApex__ContactController_getContactList_false' }
             );
             const instrumentedGetApexAdapterTwo = (instrumentation.instrumentAdapter as any)(
-                'getApex__AccountController_getAccountList_true',
-                mockGetApexAdapter
+                mockGetApexAdapter,
+                { name: 'getApex__AccountController_getAccountList_true' }
             );
 
             expect(instrumentedGetApexAdapterOne.name).toEqual(

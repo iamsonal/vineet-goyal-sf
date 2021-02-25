@@ -52,9 +52,11 @@ describe('createWireAdapterConstructor', () => {
         (lwcLdsCreateWireAdapterConstructor as any).mockReturnValue(mockWire);
         const factory = jest.fn().mockReturnValue(mockAdapter);
 
-        const value = createWireAdapterConstructor('foo', factory);
+        const value = createWireAdapterConstructor(factory, { name: 'foo' });
         expect(factory).toHaveBeenCalled();
-        expect(instrumentationSpies.instrumentAdapter).toHaveBeenCalledWith('foo', mockAdapter);
+        expect(instrumentationSpies.instrumentAdapter).toHaveBeenCalledWith(mockAdapter, {
+            name: 'foo',
+        });
         expect(lwcLdsCreateWireAdapterConstructor).toHaveBeenCalledWith(
             mockInstrumented,
             'foo',

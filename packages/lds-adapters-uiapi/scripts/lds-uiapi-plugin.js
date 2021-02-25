@@ -1,7 +1,7 @@
 /**
  * @typedef {import("@luvio/compiler").CompilerConfig} CompilerConfig
  * @typedef {import("@luvio/compiler").ModelInfo} ModelInfo
- * @typedef { { name: string, method: string } } AdapterInfo
+ * @typedef { { name: string, method: string, ttl?: number } } AdapterInfo
  */
 
 const plugin = require('@salesforce/lds-compiler-plugins');
@@ -18,6 +18,7 @@ const ADAPTERS_NOT_DEFINED_IN_OVERLAY = [
     {
         name: 'getListUi',
         method: 'get',
+        ttl: 900000,
     },
 ];
 
@@ -46,18 +47,18 @@ const RAML_ARTIFACTS = {
 
 /**
  * @param {string} artifactsDir
- * @param {AdapterInfo[]} generatedAdapterNames
- * @param {AdapterInfo[]} imperativeAdapterNames
+ * @param {AdapterInfo[]} generatedAdapterInfos
+ * @param {AdapterInfo[]} imperativeAdapterInfos
  * @returns {void}
  */
-function generateWireBindingsExport(artifactsDir, generatedAdapterNames, imperativeAdapterNames) {
+function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperativeAdapterInfos) {
     const imports = [
         `import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}, ${CREATE_LDS_ADAPTER} } from '@salesforce/lds-bindings';`,
     ];
 
     const exports = [];
 
-    generatedAdapterNames.forEach(({ name, method }) => {
+    generatedAdapterInfos.forEach(({ name, method, ttl }) => {
         const factoryIdentifier = `${name}AdapterFactory`;
         const adapterNameIdentifier = `${name}__adapterName`;
         imports.push(
@@ -65,9 +66,15 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterNames, imperat
         );
 
         if (method === 'get') {
-            exports.push(
-                `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${adapterNameIdentifier}, ${factoryIdentifier});`
-            );
+            if (ttl !== undefined) {
+                exports.push(
+                    `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {name: ${adapterNameIdentifier}, ttl: ${ttl}});`
+                );
+            } else {
+                exports.push(
+                    `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {name: ${adapterNameIdentifier}});`
+                );
+            }
             return;
         }
 
@@ -77,15 +84,22 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterNames, imperat
     });
 
     imports.push('');
-    imperativeAdapterNames.forEach(({ name, method }) => {
+    imperativeAdapterInfos.forEach(({ name, method, ttl }) => {
         const factoryIdentifier = `${name}AdapterFactory`;
+
         imports.push(`import { factory as ${factoryIdentifier} } from '../../wire/${name}';`);
 
         switch (method) {
             case 'get':
-                exports.push(
-                    `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}('${name}', ${factoryIdentifier});`
-                );
+                if (ttl !== undefined) {
+                    exports.push(
+                        `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {name: '${name}', ttl: ${ttl}});`
+                    );
+                } else {
+                    exports.push(
+                        `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {name: '${name}'});`
+                    );
+                }
                 break;
             case 'post':
             case 'patch':
@@ -110,20 +124,20 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterNames, imperat
 
 /**
  * @param {string} artifactsDir
- * @param {AdapterInfo[]} generatedAdapterNames
- * @param {AdapterInfo[]} imperativeAdapterNames
+ * @param {AdapterInfo[]} generatedAdapterInfos
+ * @param {AdapterInfo[]} imperativeAdapterInfos
  * @returns {void}
  */
-function generateAdapterFactoryExport(artifactsDir, generatedAdapterNames, imperativeAdapterNames) {
+function generateAdapterFactoryExport(artifactsDir, generatedAdapterInfos, imperativeAdapterInfos) {
     const exports = [];
 
-    generatedAdapterNames.forEach(({ name }) => {
+    generatedAdapterInfos.forEach(({ name }) => {
         const factoryIdentifier = `${name}AdapterFactory`;
         exports.push(`export { ${factoryIdentifier} } from '../adapters/${name}';`);
     });
 
     exports.push('');
-    imperativeAdapterNames.forEach(({ name }) => {
+    imperativeAdapterInfos.forEach(({ name }) => {
         const factoryIdentifier = `${name}AdapterFactory`;
         exports.push(`export { factory as ${factoryIdentifier} } from '../../wire/${name}';`);
     });
@@ -155,11 +169,22 @@ module.exports = {
         const adapters = modelInfo.resources
             .filter(resource => resource.adapter !== undefined)
             .map(resource => {
-                return {
+                const adapterInfo = {
                     name: resource.adapter.name,
                     // using (luvio.method) annotation if defined
                     method: resource.alternativeMethod || resource.method,
                 };
+
+                const { returnShape } = resource;
+                if (returnShape !== undefined) {
+                    const { id: returnShapeId } = returnShape;
+                    const shapeTtlValue = modelInfo.shapeTtls[returnShapeId];
+                    if (shapeTtlValue !== undefined) {
+                        adapterInfo.ttl = shapeTtlValue;
+                    }
+                }
+
+                return adapterInfo;
             });
         const imperativeAdapters = [...ADAPTERS_NOT_DEFINED_IN_OVERLAY];
         const generatedAdapters = [];

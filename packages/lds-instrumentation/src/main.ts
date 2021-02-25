@@ -159,9 +159,13 @@ interface WeakEtagZeroEvents {
 
 interface wireAdapterMetricConfigs {
     [name: string]: {
-        ttl: number;
         wireConfigKeyFn: (config: any) => string;
     };
+}
+
+export interface AdapterMetadata {
+    name: string;
+    ttl?: number;
 }
 
 const NAMESPACE = 'lds';
@@ -197,51 +201,39 @@ const totalAdapterErrorMetric = counter(TOTAL_ADAPTER_ERROR_COUNT);
 
 const wireAdapterMetricConfigs: wireAdapterMetricConfigs = {
     getLayout: {
-        ttl: 900000,
         wireConfigKeyFn: getLayoutConfigKey,
     },
     getLayoutUserState: {
-        ttl: 900000,
         wireConfigKeyFn: getLayoutUserStateConfigKey,
     },
     getListUi: {
-        ttl: 900000,
         wireConfigKeyFn: getListUiConfigKey,
     },
     getLookupActions: {
-        ttl: 300000,
         wireConfigKeyFn: getLookupActionsConfigKey,
     },
     getLookupRecords: {
-        ttl: 30000,
         wireConfigKeyFn: getLookupRecordsConfigKey,
     },
     getObjectInfo: {
-        ttl: 900000,
         wireConfigKeyFn: getObjectInfoConfigKey,
     },
     getPicklistValues: {
-        ttl: 300000,
         wireConfigKeyFn: getPicklistValuesConfigKey,
     },
     getPicklistValuesByRecordType: {
-        ttl: 300000,
         wireConfigKeyFn: getPicklistValuesByRecordTypeConfigKey,
     },
     getRecord: {
-        ttl: 30000,
         wireConfigKeyFn: getRecordConfigKey,
     },
     getRecordAvatars: {
-        ttl: 300000,
         wireConfigKeyFn: getRecordAvatarsConfigKey,
     },
     getRecordCreateDefaults: {
-        ttl: 900000,
         wireConfigKeyFn: getRecordCreateDefaultsConfigKey,
     },
     getRecordUi: {
-        ttl: 900000,
         wireConfigKeyFn: getRecordUiConfigKey,
     },
 };
@@ -274,13 +266,17 @@ export class Instrumentation {
 
     /**
      * Instruments an existing adapter to log argus metrics and cache stats.
-     * @param name The adapter name.
      * @param adapter The adapter function.
+     * @param metadata The adapter metadata.
      * @param wireConfigKeyFn Optional function to transform wire configs to a unique key.
      * @returns The wrapped adapter.
      */
-    public instrumentAdapter<C, D>(name: string, adapter: Adapter<C, D>): Adapter<C, D> {
+    public instrumentAdapter<C, D>(
+        adapter: Adapter<C, D>,
+        metadata: AdapterMetadata
+    ): Adapter<C, D> {
         // We are consolidating all apex adapter instrumentation calls under a single key
+        const { name, ttl } = metadata;
         const adapterName = normalizeAdapterName(name);
         const isGetApexAdapter = isApexAdapter(name);
 
@@ -350,8 +346,12 @@ export class Instrumentation {
          * Request Record 1 -> Record 2 -> Back to Record 1 outside of TTL is an example of when this metric will fire.
          */
         const wireAdapterMetricConfig = wireAdapterMetricConfigs[adapterName];
+        const wireConfigKeyFn =
+            wireAdapterMetricConfig && wireAdapterMetricConfig.wireConfigKeyFn
+                ? wireAdapterMetricConfig.wireConfigKeyFn
+                : stableJSONStringify;
         const cacheMissOutOfTtlDurationByAdapterMetric: Timer | undefined =
-            (wireAdapterMetricConfig && wireAdapterMetricConfig.ttl) !== undefined
+            ttl !== undefined
                 ? timer(
                       createMetricsKey(
                           NAMESPACE,
@@ -362,12 +362,12 @@ export class Instrumentation {
                 : undefined;
 
         const cacheMissOutOfTtlCountByAdapterMetric: Counter | undefined =
-            (wireAdapterMetricConfig && wireAdapterMetricConfig.ttl) !== undefined
+            ttl !== undefined
                 ? counter(
                       createMetricsKey(
                           NAMESPACE,
                           ADAPTER_CACHE_MISS_OUT_OF_TTL_COUNT_METRIC_NAME,
-                          name
+                          adapterName
                       )
                   )
                 : undefined;
@@ -406,7 +406,8 @@ export class Instrumentation {
 
                 if (
                     cacheMissOutOfTtlDurationByAdapterMetric !== undefined &&
-                    cacheMissOutOfTtlCountByAdapterMetric !== undefined
+                    cacheMissOutOfTtlCountByAdapterMetric !== undefined &&
+                    ttl !== undefined
                 ) {
                     this.logAdapterCacheMissOutOfTtlDuration(
                         config,
@@ -414,8 +415,8 @@ export class Instrumentation {
                         cacheMissOutOfTtlCountByAdapterMetric,
                         ttlMissStats,
                         Date.now(),
-                        wireAdapterMetricConfig.ttl,
-                        wireAdapterMetricConfig.wireConfigKeyFn
+                        ttl,
+                        wireConfigKeyFn
                     );
                 }
             } else if (result !== null) {
@@ -458,11 +459,9 @@ export class Instrumentation {
         ttlMissStats: CacheStatsLogger,
         currentCacheMissTimestamp: number,
         ttl: number,
-        wireConfigKeyFn: (config: any) => string
+        wireConfigKeyFn: (config: any) => string | undefined
     ): void {
-        const configKey = wireConfigKeyFn
-            ? wireConfigKeyFn(config)
-            : (stableJSONStringify(config) as string);
+        const configKey = wireConfigKeyFn(config) as string;
         const existingCacheMissTimestamp = this.adapterCacheMisses.get(configKey);
         this.adapterCacheMisses.set(configKey, currentCacheMissTimestamp);
         if (existingCacheMissTimestamp !== undefined) {

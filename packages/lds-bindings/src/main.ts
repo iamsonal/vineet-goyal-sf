@@ -5,13 +5,19 @@ import {
 } from '@luvio/lwc-luvio';
 import { WireAdapterConstructor } from '@lwc/engine-core';
 import { luvio } from '@salesforce/lds-runtime-web';
-import { instrumentation, refreshApiEvent, refreshApiNames } from '@salesforce/lds-instrumentation';
+import {
+    instrumentation,
+    refreshApiEvent,
+    refreshApiNames,
+    AdapterMetadata,
+} from '@salesforce/lds-instrumentation';
 
 export function createWireAdapterConstructor<C, D>(
-    name: string,
-    factory: AdapterFactory<C, D>
+    factory: AdapterFactory<C, D>,
+    metadata: AdapterMetadata
 ): WireAdapterConstructor {
-    const adapter = instrumentation.instrumentAdapter(name, createLDSAdapter(name, factory));
+    const { name } = metadata;
+    const adapter = instrumentation.instrumentAdapter(createLDSAdapter(name, factory), metadata);
     return lwcLdsCreateWireAdapterConstructor(adapter as Adapter<unknown, unknown>, name, luvio);
 }
 

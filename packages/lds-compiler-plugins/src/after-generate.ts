@@ -7,6 +7,7 @@ type AdapterInfo = {
     name: string;
     method: string;
     refreshable: boolean;
+    ttl?: number;
 };
 
 const CREATE_WIRE_ADAPTER_CONSTRUCTOR = 'createWireAdapterConstructor';
@@ -29,7 +30,7 @@ function generateNpmModule(outputDir: string, adapters: AdapterInfo[]) {
 function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
     const code: { imports: string[]; exports: string[] } = adapters.reduce(
         (seed: { imports: string[]; exports: string[] }, adapter: AdapterInfo) => {
-            const { name, method } = adapter;
+            const { name, method, ttl } = adapter;
             const factoryIdentifier = `${name}AdapterFactory`;
             const adapterNameIdentifier = `${name}__adapterName`;
 
@@ -37,11 +38,15 @@ function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
                 `import { ${factoryIdentifier}, adapterName as ${adapterNameIdentifier} } from '../adapters/${name}';`
             );
 
-            const adapterExport =
-                method === 'get'
-                    ? `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}(${adapterNameIdentifier}, ${factoryIdentifier});`
-                    : `export const ${name} = ${CREATE_LDS_ADAPTER}(${adapterNameIdentifier}, ${factoryIdentifier});`;
-            seed.exports.push(adapterExport);
+            if (method === 'get') {
+                seed.exports.push(
+                    `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}(${factoryIdentifier}, {name: ${adapterNameIdentifier}, ttl: ${ttl}});`
+                );
+            } else {
+                seed.exports.push(
+                    `export const ${name} = ${CREATE_LDS_ADAPTER}(${adapterNameIdentifier}, ${factoryIdentifier});`
+                );
+            }
 
             if (adapter.refreshable) {
                 const notifyChangeNameIdentifier = `${name}NotifyChange`;
@@ -76,12 +81,23 @@ export function afterGenerate(config: CompilerConfig, modelInfo: ModelInfo) {
     const adapters = modelInfo.resources
         .filter(resource => resource.adapter !== undefined)
         .map(resource => {
-            return {
+            const adapterInfo = {
                 name: resource.adapter!.name,
                 // using (lds.method) annotation if defined
                 method: resource.alternativeMethod || resource.method,
                 refreshable: resource.refresheable === true && resource.returnShape !== undefined,
-            };
+            } as AdapterInfo;
+
+            const { returnShape } = resource;
+            if (returnShape !== undefined) {
+                const { id: returnShapeId } = returnShape;
+                const shapeTtlValue = modelInfo.shapeTtls[returnShapeId];
+                if (shapeTtlValue !== undefined) {
+                    adapterInfo.ttl = shapeTtlValue;
+                }
+            }
+
+            return adapterInfo;
         });
 
     const outputDur = path.join(config.outputDir, 'artifacts');

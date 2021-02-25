@@ -25,8 +25,10 @@ export const getApexInvoker = function(
             isContinuation,
         })
     );
-    invokeApexImperative.adapter = createWireAdapterConstructor(adapterName, luvio =>
-        GenerateGetApexWireAdapter(luvio, { namespace, classname, method, isContinuation })
+    invokeApexImperative.adapter = createWireAdapterConstructor(
+        luvio =>
+            GenerateGetApexWireAdapter(luvio, { namespace, classname, method, isContinuation }),
+        { name: adapterName }
     );
     return invokeApexImperative;
 };

@@ -85,6 +85,11 @@ const LIST_CONTENT_INTERNAL_PATH = new RegExp(
     'i'
 );
 
+const LIST_CONTENT_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/managed-content/delivery`,
+    'i'
+);
+
 const RECORD_SEO_PROPERTIES_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/seo/properties/([^\\s]){1,128}`,
     'i'
@@ -105,6 +110,14 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && LIST_CONTENT_INTERNAL_PATH.test(path),
         transport: {
             controller: 'ManagedContentController.getPublishedManagedContentListByContentKey',
+        },
+    },
+    listContent: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && LIST_CONTENT_PATH.test(path),
+        transport: {
+            controller: 'ManagedContentController.getManagedContentByTopicsAndContentKeys',
         },
     },
     getRecordSeoProperties: {

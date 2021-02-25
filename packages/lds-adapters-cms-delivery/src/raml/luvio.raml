@@ -10,8 +10,15 @@ types:
   ManagedContentVersionInternalRepresentation:
     (luvio.ttl): 3600000
     (luvio.opaque): true
+  ManagedContentVersionCollectionRepresentation:
+    (luvio.ttl): 3600000
+    (luvio.opaque): true
 
 /connect/communities/{communityId}/managed-content/delivery/contents:
   get:
     (luvio.adapter):
       name: listContentInternal
+/connect/communities/{communityId}/managed-content/delivery:
+  get:
+    (luvio.adapter):
+      name: listContent

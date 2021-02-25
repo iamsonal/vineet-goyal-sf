@@ -1,0 +1,56 @@
+{
+    "currentPageUrl": "/services/data/v52.0/connect/communities/0DBxx0000004DgCGAU/managed-content/delivery?page=0&pageSize=25",
+    "items": [
+        {
+            "contentKey": "MC6SGJS4V47ZB77MK252RFROEIKQ",
+            "contentNodes": {
+                "excerpt": {
+                    "nodeType": "MultilineText",
+                    "value": "News 1 Excerpt"
+                },
+                "title": {
+                    "nodeType": "NameField",
+                    "value": "News 1"
+                }
+            },
+            "contentUrlName": "news-1",
+            "language": "en_US",
+            "managedContentId": "20Yxx0000011VYAEA2",
+            "publishedDate": "2020-12-07T06:39:19.000Z",
+            "title": "News 1",
+            "type": "news",
+            "typeLabel": "News",
+            "unauthenticatedUrl": null
+        }
+    ],
+    "managedContentTypes": {
+        "news": {
+            "label": "News",
+            "name": "news",
+            "nodeTypes": {
+                "title": {
+                    "label": "Title",
+                    "name": "title",
+                    "nodeType": "NameField"
+                },
+                "body": {
+                    "label": "Body",
+                    "name": "body",
+                    "nodeType": "RichText"
+                },
+                "bannerImage": {
+                    "label": "Banner Image",
+                    "name": "bannerImage",
+                    "nodeType": "Media"
+                },
+                "excerpt": {
+                    "label": "Excerpt",
+                    "name": "excerpt",
+                    "nodeType": "MultilineText"
+                }
+            }
+        }
+    },
+    "total": 1,
+    "totalTypes": 1
+}

@@ -909,6 +909,7 @@ types:
       managedContentTypes:
         description: Managed content types for this page.
         type: object
+        required: false # TODO W-8891123 Hand rolled
         properties:
           //:
             type: ManagedContentTypeRepresentation
@@ -916,6 +917,7 @@ types:
         description: URL to the next page of managed content versions, The default
           is 25 managed content versions per page.
         type: string
+        required: false # TODO W-8891123 Hand rolled
       total:
         description: Total number of versions across all pages.
         type: integer
@@ -1051,6 +1053,7 @@ types:
         description: The Managed Content Associations, e.g. topic associations, describing
           how this Managed Content is organized and discoverable
         type: ManagedContentAssociationsRepresentation
+        required: false # TODO W-8891123 Hand rolled
       contentKey:
         description: The content key
         type: string
@@ -1084,7 +1087,7 @@ types:
         type: string
       unauthenticatedUrl:
         description: Unauthenticated delivery Url
-        type: string
+        type: string | nil # TODO W-8891091 Hand rolled
   ManagedContentVersionV2CollectionInputRepresentation:
     description: Input representation for collection of managed content version
     type: object

@@ -9,7 +9,7 @@ const URL_BASE = `/connect`;
 const CONTENT_LIST_TTL = 3600000;
 
 function mockListContentInternal(config, mockData) {
-    const paramMatch = getMatcher(config);
+    const paramMatch = getListContentInternalMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {
@@ -18,11 +18,11 @@ function mockListContentInternal(config, mockData) {
 }
 
 function mockListContentInternalErrorOnce(config, mockData) {
-    const paramMatch = getMatcher(config);
+    const paramMatch = getListContentInternalMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-function getMatcher(config) {
+function getListContentInternalMatcher(config) {
     let { communityId } = config;
     return sinon.match({
         body: null,
@@ -30,6 +30,32 @@ function getMatcher(config) {
         method: 'get',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/communities/${communityId}/managed-content/delivery/contents`,
+        queryParams: {},
+    });
+}
+
+function mockListContent(config, mockData) {
+    const paramMatch = getListContentMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockListContentErrorOnce(config, mockData) {
+    const paramMatch = getListContentMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getListContentMatcher(config) {
+    let { communityId } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/communities/${communityId}/managed-content/delivery`,
         queryParams: {},
     });
 }
@@ -49,6 +75,8 @@ function expireContentList() {
 export {
     mockListContentInternal,
     mockListContentInternalErrorOnce,
+    mockListContent,
+    mockListContentErrorOnce,
     expireContentList,
     clearContentListCache,
 };

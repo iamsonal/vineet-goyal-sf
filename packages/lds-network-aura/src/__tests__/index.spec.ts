@@ -4009,6 +4009,33 @@ describe('routes', () => {
         );
     });
 
+    describe('get /connect/communities/{communityId}/managed-content/delivery', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/communities/1234567890ABCDE/managed-content/delivery`,
+            },
+            [
+                'ManagedContentController.getManagedContentByTopicsAndContentKeys',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/communities/1234567890ABCDE/managed-content/delivery`,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/communities/1234567890ABCDE/managed-content/delivery`,
+            },
+            {}
+        );
+    });
+
     describe('get /connect/communities/{communityId}/seo/properties/{recordId}', () => {
         testControllerInput(
             {

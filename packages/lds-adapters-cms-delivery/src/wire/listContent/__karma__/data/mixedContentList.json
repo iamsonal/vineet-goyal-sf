@@ -1,0 +1,172 @@
+{
+    "currentPageUrl": "/services/data/v52.0/connect/communities/0DBRM0000004ohS4AQ/managed-content/delivery?page=0&pageSize=25",
+    "items": [
+        {
+            "contentKey": "MCHDKE2P6ERFAJ3LVVIKSHWQMXZA",
+            "contentNodes": {
+                "source": {
+                    "fileName": "fitnessWatch2.jpeg",
+                    "isExternal": false,
+                    "mediaType": "Document",
+                    "mimeType": "image/jpeg",
+                    "nodeType": "MediaSource",
+                    "referenceId": "05TRM000000Dpk7",
+                    "resourceUrl": null,
+                    "unauthenticatedUrl": null,
+                    "url": "/cms/delivery/media/MCHDKE2P6ERFAJ3LVVIKSHWQMXZA"
+                },
+                "title": {
+                    "nodeType": "NameField",
+                    "value": "Document"
+                }
+            },
+            "contentUrlName": "document",
+            "language": "en_US",
+            "managedContentId": "20YRM00000007gY2AQ",
+            "publishedDate": "2021-02-11T13:49:05.000Z",
+            "title": "Document",
+            "type": "cms_document",
+            "typeLabel": "Document",
+            "unauthenticatedUrl": null
+        },
+        {
+            "contentKey": "MCJRBGLELANNDEHIVHYWWVCF43IY",
+            "contentNodes": {
+                "source": {
+                    "fileName": "fitnesswatch3.jpeg",
+                    "isExternal": false,
+                    "mediaType": "Image",
+                    "mimeType": "image/jpeg",
+                    "nodeType": "MediaSource",
+                    "referenceId": "05TRM000000Dpk2",
+                    "resourceUrl": null,
+                    "unauthenticatedUrl": null,
+                    "url": "/cms/delivery/media/MCJRBGLELANNDEHIVHYWWVCF43IY"
+                },
+                "title": {
+                    "nodeType": "NameField",
+                    "value": "Image"
+                },
+                "thumbUrl": {
+                    "nodeType": "Url",
+                    "value": "https://images.unsplash.com/photo-1511953669874-6c617b315332?ixid=MXwxMjA3fDB8MHxzZWFyY2h8M3x8aG9saWRheXN8ZW58MHx8MHw%3D&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=800&amp;q=60"
+                }
+            },
+            "contentUrlName": "image",
+            "language": "en_US",
+            "managedContentId": "20YRM00000007gO2AQ",
+            "publishedDate": "2021-02-11T13:46:57.000Z",
+            "title": "Image",
+            "type": "cms_image",
+            "typeLabel": "Image",
+            "unauthenticatedUrl": null
+        },
+        {
+            "contentKey": "MCCXQR75OWVBDOZBOBBXXBY2RGRA",
+            "contentNodes": {
+                "excerpt": {
+                    "nodeType": "MultilineText",
+                    "value": "News 1 Excerpt"
+                },
+                "body": {
+                    "nodeType": "RichText",
+                    "value": "&lt;p&gt;News 1 Body&lt;/p&gt;"
+                },
+                "title": {
+                    "nodeType": "NameField",
+                    "value": "News 1 Title"
+                }
+            },
+            "contentUrlName": "news-1-title",
+            "language": "en_US",
+            "managedContentId": "20YRM00000006Zf2AI",
+            "publishedDate": "2020-12-17T05:46:54.000Z",
+            "title": "News 1 Title",
+            "type": "news",
+            "typeLabel": "News",
+            "unauthenticatedUrl": null
+        }
+    ],
+    "managedContentTypes": {
+        "news": {
+            "label": "News",
+            "name": "news",
+            "nodeTypes": {
+                "title": {
+                    "label": "Title",
+                    "name": "title",
+                    "nodeType": "NameField"
+                },
+                "body": {
+                    "label": "Body",
+                    "name": "body",
+                    "nodeType": "RichText"
+                },
+                "bannerImage": {
+                    "label": "Banner Image",
+                    "name": "bannerImage",
+                    "nodeType": "Media"
+                },
+                "excerpt": {
+                    "label": "Excerpt",
+                    "name": "excerpt",
+                    "nodeType": "MultilineText"
+                }
+            }
+        },
+        "cms_document": {
+            "label": "Document",
+            "name": "cms_document",
+            "nodeTypes": {
+                "source": {
+                    "label": "Source",
+                    "name": "source",
+                    "nodeType": "MediaSource"
+                },
+                "thumbUrl": {
+                    "label": "Link to Thumbnail",
+                    "name": "thumbUrl",
+                    "nodeType": "Url"
+                },
+                "title": {
+                    "label": "Title",
+                    "name": "title",
+                    "nodeType": "NameField"
+                },
+                "altText": {
+                    "label": "Alt Text",
+                    "name": "altText",
+                    "nodeType": "MultilineText"
+                }
+            }
+        },
+        "cms_image": {
+            "label": "Image",
+            "name": "cms_image",
+            "nodeTypes": {
+                "source": {
+                    "label": "Source",
+                    "name": "source",
+                    "nodeType": "MediaSource"
+                },
+                "thumbUrl": {
+                    "label": "Link to Thumbnail",
+                    "name": "thumbUrl",
+                    "nodeType": "Url"
+                },
+                "title": {
+                    "label": "Title",
+                    "name": "title",
+                    "nodeType": "NameField"
+                },
+                "altText": {
+                    "label": "Alt Text",
+                    "name": "altText",
+                    "nodeType": "MultilineText"
+                }
+            }
+        }
+    },
+    "total": 3,
+    "totalTypes": 3
+}

@@ -3,7 +3,13 @@
 
 import { NetworkAdapter } from '@luvio/engine';
 import { DurableStore } from '@luvio/environments';
-import { DraftQueue, DurableDraftQueue } from '@salesforce/lds-drafts';
+
+import {
+    DraftQueue,
+    DurableDraftQueue,
+    updateQueueOnPost,
+    createIdDraftMapping,
+} from '@salesforce/lds-drafts';
 import { NimbusDraftQueue } from './NimbusDraftQueue';
 
 export function buildLdsDraftQueue(
@@ -18,5 +24,5 @@ export function buildLdsDraftQueue(
         return new NimbusDraftQueue();
     }
 
-    return new DurableDraftQueue(durableStore, network);
+    return new DurableDraftQueue(durableStore, network, updateQueueOnPost, createIdDraftMapping);
 }

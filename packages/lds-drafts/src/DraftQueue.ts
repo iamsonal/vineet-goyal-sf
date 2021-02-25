@@ -190,6 +190,35 @@ export type DraftQueueEvent =
     | DraftQueueActionUpdatingEvent
     | DraftQueueActionUpdatedEvent;
 
+export enum QueueOperationType {
+    Add = 'add',
+    Delete = 'delete',
+    Update = 'update',
+}
+
+interface AddQueueOperation {
+    type: QueueOperationType.Add;
+    action: DraftAction<unknown>;
+}
+
+interface DeleteQueueOperation {
+    type: QueueOperationType.Delete;
+    key: string;
+}
+
+interface UpdateQueueOperation {
+    type: QueueOperationType.Update;
+    key: string;
+    action: DraftAction<unknown>;
+}
+
+export interface DraftIdMappingEntry {
+    draftKey: string;
+    canonicalKey: string;
+}
+
+export type QueueOperation = UpdateQueueOperation | AddQueueOperation | DeleteQueueOperation;
+
 export interface DraftQueue {
     /**
      * Enqueues a ResourceRequest into the DraftQueue

@@ -1,20 +1,18 @@
 import { Environment, IngestPath, Store } from '@luvio/engine';
 import { DurableEnvironment, DurableStore, ResponsePropertyRetriever } from '@luvio/environments';
 
-import { DraftQueue, DraftQueueEvent, DraftQueueEventType } from '../DraftQueue';
+import {
+    DraftQueue,
+    DraftQueueCompleteEvent,
+    DraftQueueEvent,
+    DraftQueueEventType,
+} from '../DraftQueue';
 import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { draftAwareHandleResponse } from '../makeNetworkAdapterDraftAware';
 import { getRecordDraftEnvironment } from './getRecordDraftEnvironment';
 import { createRecordDraftEnvironment } from './createRecordDraftEnvironment';
 import { updateRecordDraftEnvironment } from './updateRecordDraftEnvironment';
 import { deleteRecordDraftEnvironment } from './deleteRecordDraftEnvironment';
-
-export interface DraftIdMappingEntry {
-    draftKey: string;
-    canonicalKey: string;
-}
-
-export const DRAFT_ID_MAPPINGS_SEGMENT = 'DRAFT_ID_MAPPINGS';
 
 export interface DraftEnvironmentOptions {
     store: Store;
@@ -32,75 +30,62 @@ export interface DraftEnvironmentOptions {
     recordResponseRetrievers: ResponsePropertyRetriever<unknown, RecordRepresentation>[];
 }
 
-// retain draft id mappings for 30 days
-const MAPPING_TTL = 30 * 24 * 60 * 60 * 1000;
-
-function createDraftMappingEntryKey(draftKey: string, canonicalKey: string) {
-    return `DraftIdMapping::${draftKey}::${canonicalKey}`;
-}
-
 export function makeEnvironmentDraftAware(
     env: DurableEnvironment,
     options: DraftEnvironmentOptions
 ): Environment {
-    const { draftQueue, recordResponseRetrievers, ingestFunc, store, durableStore } = options;
+    const { draftQueue, recordResponseRetrievers, ingestFunc, store } = options;
 
     draftQueue.startQueue();
+
+    function onDraftActionCompleting(event: DraftQueueCompleteEvent) {
+        const { action } = event;
+        const { request, tag } = action;
+        const { method } = request;
+
+        if (method === 'delete') {
+            env.storeEvict(tag);
+            env.storeBroadcast(env.rebuildSnapshot);
+            return Promise.resolve();
+        }
+        return draftAwareHandleResponse(
+            request,
+            action.response,
+            draftQueue,
+            recordResponseRetrievers
+        ).then(response => {
+            const record = response.body as RecordRepresentation;
+            const key = keyBuilderRecord({ recordId: record.id });
+            const path = {
+                fullPath: key,
+                parent: null,
+                propertyName: null,
+            };
+
+            ingestFunc(record, path, store, Date.now());
+            env.storeBroadcast(env.rebuildSnapshot);
+        });
+    }
+
+    function onDraftActionCompleted(event: DraftQueueCompleteEvent) {
+        return env.reviveRecordsToStore([event.action.tag]).then(() => {
+            env.storeBroadcast(env.rebuildSnapshot);
+        });
+    }
 
     // register for when the draft queue completes an upload so we can properly
     // update subscribers
     draftQueue.registerOnChangedListener(
         (event: DraftQueueEvent): Promise<void> => {
-            if (event.type !== DraftQueueEventType.ActionCompleted) {
-                return Promise.resolve();
+            if (event.type === DraftQueueEventType.ActionCompleting) {
+                return onDraftActionCompleting(event);
             }
-            const { action } = event;
-            const { request, tag } = action;
 
-            if (request.method === 'delete') {
-                env.storeEvict(tag);
-                env.storeBroadcast(env.rebuildSnapshot);
-                return Promise.resolve();
+            if (event.type === DraftQueueEventType.ActionCompleted) {
+                return onDraftActionCompleted(event);
             }
-            return draftAwareHandleResponse(
-                request,
-                action.response,
-                draftQueue,
-                recordResponseRetrievers
-            ).then(response => {
-                const record = response.body as RecordRepresentation;
-                const key = keyBuilderRecord({ recordId: record.id });
-                const path = {
-                    fullPath: key,
-                    parent: null,
-                    propertyName: null,
-                };
 
-                ingestFunc(record, path, store, Date.now());
-                env.storeBroadcast(env.rebuildSnapshot);
-
-                if (request.method === 'post') {
-                    const draftKey = action.tag;
-                    const { id } = response.body;
-                    const canonicalKey = keyBuilderRecord({ recordId: id });
-
-                    const expiration = new Date().getMilliseconds() + MAPPING_TTL;
-                    const entry: DraftIdMappingEntry = {
-                        draftKey,
-                        canonicalKey,
-                    };
-                    const entryKey = createDraftMappingEntryKey(draftKey, canonicalKey);
-                    return durableStore.setEntries(
-                        {
-                            [entryKey]: {
-                                data: entry,
-                                expiration: { fresh: expiration, stale: expiration },
-                            },
-                        },
-                        DRAFT_ID_MAPPINGS_SEGMENT
-                    );
-                }
-            });
+            return Promise.resolve();
         }
     );
 

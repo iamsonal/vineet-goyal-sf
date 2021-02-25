@@ -13,10 +13,18 @@ import {
     buildSelectionFromFields,
     RecordRepresentationNormalized,
 } from '@salesforce/lds-adapters-uiapi';
-import { ArrayIsArray, ArrayPrototypeShift, ObjectKeys } from './language';
+import {
+    ArrayIsArray,
+    ArrayPrototypeShift,
+    JSONParse,
+    JSONStringify,
+    ObjectKeys,
+} from './language';
 import { Selector, PathSelection } from '@luvio/engine';
-import { DraftAction } from '../main';
+import { CompletedDraftAction, DraftAction } from '../main';
 import { RecordInputRepresentation } from '@salesforce/lds-adapters-uiapi/dist/types/src/generated/types/RecordInputRepresentation';
+import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
+import { DraftIdMappingEntry, QueueOperation, QueueOperationType } from '../DraftQueue';
 
 type DraftFields = { [key: string]: boolean | number | string | null };
 
@@ -355,4 +363,107 @@ export function extractRecordKeyFromDraftDurableStoreKey(key: string) {
 
 export function isStoreRecordError(storeRecord: unknown): storeRecord is StoreRecordError {
     return (storeRecord as StoreRecordError).__type === 'error';
+}
+
+/**
+ * Returns a set of Queue operations that the DraftQueue must perform to update itself with
+ * new id references after a record has been created.
+ * @param completedAction The action associated with the record that has just been created
+ * @param queue The remaining queue items
+ */
+export function updateQueueOnPost(
+    completedAction: CompletedDraftAction<unknown>,
+    queue: DraftAction<unknown>[]
+): QueueOperation[] {
+    const queueOperations: QueueOperation[] = [];
+    const { response } = completedAction;
+    const record = response.body as RecordRepresentation;
+    const draftKey = completedAction.tag;
+    const draftId = extractRecordIdFromStoreKey(draftKey);
+    if (draftId === undefined) {
+        throw Error('could not extract id from record key');
+    }
+    const { id: canonicalRecordId } = record;
+    if (canonicalRecordId === undefined) {
+        throw Error('could not id in record response');
+    }
+    const { length } = queue;
+
+    for (let i = 0; i < length; i++) {
+        const queueAction = queue[i];
+        const { tag: queueActionTag, request: queueActionRequest, id: queueActionId } = queueAction;
+        const { basePath, body } = queueActionRequest;
+        const stringifiedBody = JSONStringify(body);
+        const needsReplace = basePath.search(draftId) >= 0 || stringifiedBody.search(draftId) >= 0;
+
+        if (needsReplace) {
+            const queueActionKey = buildDraftDurableStoreKey(queueActionTag, queueActionId);
+            const updatedBasePath = basePath.replace(draftId, canonicalRecordId);
+            const updatedBody = stringifiedBody.replace(draftId, canonicalRecordId);
+
+            // if the action is performed on a previous draft id, we need to replace the action
+            // with a new one at the updated canonical key
+            if (queueActionTag === draftKey) {
+                const canonicalRecordKey = keyBuilderRecord({ recordId: canonicalRecordId });
+
+                const updatedAction = {
+                    ...queueAction,
+                    tag: canonicalRecordKey,
+                    request: {
+                        ...queueActionRequest,
+                        basePath: updatedBasePath,
+                        body: JSONParse(updatedBody),
+                    },
+                };
+                // item needs to be replaced with a new item at the new record key
+                queueOperations.push({
+                    type: QueueOperationType.Delete,
+                    key: queueActionKey,
+                });
+                queueOperations.push({
+                    type: QueueOperationType.Add,
+                    action: updatedAction,
+                });
+            } else {
+                const updatedAction = {
+                    ...queueAction,
+                    request: {
+                        ...queueActionRequest,
+                        basePath: updatedBasePath,
+                        body: JSONParse(updatedBody),
+                    },
+                };
+                // item needs to be updated
+                queueOperations.push({
+                    type: QueueOperationType.Update,
+                    key: queueActionKey,
+                    action: updatedAction,
+                });
+            }
+        }
+    }
+
+    return queueOperations;
+}
+
+/**
+ * Extracts the draft id from the action and the canonical id from the response containing a RecordRepresentation
+ * and returns a mapping entry
+ * @param action the completed action containing the request and response
+ */
+export function createIdDraftMapping(action: CompletedDraftAction<unknown>): DraftIdMappingEntry {
+    const { response } = action as CompletedDraftAction<RecordRepresentation>;
+    const draftKey = action.tag;
+    const { id } = response.body;
+    if (id === undefined) {
+        throw Error('Could not find record id in the response');
+    }
+    const canonicalKey = keyBuilderRecord({ recordId: id });
+
+    const entry: DraftIdMappingEntry = {
+        draftKey,
+        canonicalKey,
+    };
+
+    return entry;
 }

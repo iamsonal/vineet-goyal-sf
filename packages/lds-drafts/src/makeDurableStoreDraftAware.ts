@@ -23,16 +23,13 @@ import {
     extractRecordKeyFromDraftDurableStoreKey,
     isStoreRecordError,
 } from './utils/records';
-import { DraftDurableSegment } from './DurableDraftQueue';
 import {
     isStoreKeyRecordId,
     extractRecordIdFromStoreKey,
     buildRecordFieldStoreKey,
 } from '@salesforce/lds-uiapi-record-utils';
-import {
-    DraftIdMappingEntry,
-    DRAFT_ID_MAPPINGS_SEGMENT,
-} from './environment/makeEnvironmentDraftAware';
+import { DraftIdMappingEntry } from './DraftQueue';
+import { DRAFT_SEGMENT, DRAFT_ID_MAPPINGS_SEGMENT } from './DurableDraftQueue';
 
 /**
  * This method denormalizes field links so that a record can be looked up with all its fields in one
@@ -442,7 +439,7 @@ export function makeDurableStoreDraftAware(
                         });
                 }
 
-                if (segment !== DraftDurableSegment) {
+                if (segment !== DRAFT_SEGMENT) {
                     return listener(ids, segment, isExternalChange);
                 }
                 const keys = ObjectKeys(ids);

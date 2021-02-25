@@ -1,4 +1,6 @@
 import { Environment, Store } from '@luvio/engine';
+import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
+import { DraftActionStatus, PendingDraftAction, QueueOperationType } from '../../DraftQueue';
 import {
     buildDurableRecordRepresentation,
     createDeleteRequest,
@@ -11,6 +13,7 @@ import {
     RECORD_ID,
     STORE_KEY_RECORD,
     CURRENT_USER_ID,
+    createCompletedDraftAction,
 } from '../../__tests__/test-utils';
 import {
     buildRecordFieldValueRepresentationsFromDraftFields,
@@ -22,6 +25,7 @@ import {
     replayDraftsOnRecord,
     buildDraftDurableStoreKey,
     extractRecordKeyFromDraftDurableStoreKey,
+    updateQueueOnPost,
 } from '../records';
 
 describe('draft environment record utilities', () => {
@@ -367,6 +371,87 @@ describe('draft environment record utilities', () => {
 
         it('returns undefined for undefined input', () => {
             expect(extractRecordKeyFromDraftDurableStoreKey(undefined)).toBeUndefined();
+        });
+    });
+
+    describe('updateQueueOnPost', () => {
+        it('replaces actions in the queue on the draft-created record', () => {
+            const draftId = 'foo';
+            const canonicalId = 'bar';
+            const draftKey = keyBuilderRecord({ recordId: draftId });
+            const canonicalKey = keyBuilderRecord({ recordId: canonicalId });
+
+            const completedAction = {
+                ...createCompletedDraftAction(canonicalId, canonicalKey),
+                tag: draftKey,
+            };
+
+            const queue = [
+                createEditDraftAction(draftId, draftKey),
+                createEditDraftAction(draftId, draftKey),
+            ];
+            const operations = updateQueueOnPost(completedAction, queue);
+            expect(operations.length).toBe(4);
+            expect(operations[0].type).toBe(QueueOperationType.Delete);
+            expect(operations[1].type).toBe(QueueOperationType.Add);
+            expect((operations[1] as any).action.request.basePath).toBe(
+                completedAction.request.basePath
+            );
+            expect(operations[2].type).toBe(QueueOperationType.Delete);
+            expect((operations[3] as any).action.request.basePath).toBe(
+                completedAction.request.basePath
+            );
+        });
+
+        it('replaces draft id references in the body', () => {
+            const draftId = 'foo';
+            const canonicalId = 'bar';
+            const draftKey = keyBuilderRecord({ recordId: draftId });
+            const canonicalKey = keyBuilderRecord({ recordId: canonicalId });
+            const record2Id = 'baz';
+            const record2Key = keyBuilderRecord({ recordId: record2Id });
+
+            const completedAction = {
+                ...createCompletedDraftAction(canonicalId, canonicalKey),
+                tag: draftKey,
+            };
+
+            const actionWithBodyDraftReference: PendingDraftAction<unknown> = {
+                id: new Date().getUTCMilliseconds().toString(),
+                status: DraftActionStatus.Pending,
+                tag: record2Key,
+                timestamp: 12345,
+                request: {
+                    baseUri: '/services/data/v52.0',
+                    basePath: `/ui-api/records/${record2Id}`,
+                    method: 'patch',
+                    body: { fields: { FriendId: draftId } },
+                    urlParams: { recordId: record2Id },
+                    queryParams: {},
+                    headers: {},
+                },
+            };
+
+            const queue = [actionWithBodyDraftReference];
+            const operations = updateQueueOnPost(completedAction, queue);
+            expect(operations.length).toBe(1);
+            expect(operations[0].type).toBe(QueueOperationType.Update);
+            expect((operations[0] as any).action.request.body).toEqual({
+                fields: { FriendId: canonicalId },
+            });
+        });
+
+        it('returns no queue operations if no future references to the draft id exist', () => {
+            const record2Id = 'foo';
+            const canonicalId = 'bar';
+            const record2Key = keyBuilderRecord({ recordId: record2Id });
+            const canonicalKey = keyBuilderRecord({ recordId: canonicalId });
+
+            const completedAction = createCompletedDraftAction(canonicalId, canonicalKey);
+            const queue = [createEditDraftAction(record2Id, record2Key)];
+
+            const operations = updateQueueOnPost(completedAction, queue);
+            expect(operations.length).toBe(0);
         });
     });
 });

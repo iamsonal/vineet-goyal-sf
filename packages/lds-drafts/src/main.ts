@@ -4,14 +4,15 @@ export {
     DraftQueue,
     DraftQueueState,
     DraftAction,
+    CompletedDraftAction,
     DraftActionStatus,
     ProcessActionResult,
     DraftActionMap,
     DraftQueueChangeListener,
 } from './DraftQueue';
 export { makeNetworkAdapterDraftAware } from './makeNetworkAdapterDraftAware';
-export { DraftRecordRepresentation } from './utils/records';
-export { DurableDraftQueue, DraftDurableSegment } from './DurableDraftQueue';
+export { updateQueueOnPost, createIdDraftMapping } from './utils/records';
+export { DurableDraftQueue, DRAFT_SEGMENT } from './DurableDraftQueue';
 export {
     DraftManager,
     DraftManagerState,

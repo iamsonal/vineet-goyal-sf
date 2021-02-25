@@ -7,7 +7,7 @@ import {
 import {
     DraftManager,
     DraftQueue,
-    DraftDurableSegment,
+    DRAFT_SEGMENT,
     ProcessActionResult,
     DraftActionOperationType,
 } from '@salesforce/lds-drafts';
@@ -94,9 +94,7 @@ describe('mobile runtime integration tests', () => {
             );
             expect(Object.keys(entriesInDefaultSegment.entries).length).toBe(0);
 
-            const entriesInDraftSegment = await durableStore.getAllEntriesInSegment(
-                DraftDurableSegment
-            );
+            const entriesInDraftSegment = await durableStore.getAllEntriesInSegment(DRAFT_SEGMENT);
             expect(Object.keys(entriesInDraftSegment.entries).length).toBe(1);
 
             const value = Object.values(entriesInDraftSegment.entries)[0];

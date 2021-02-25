@@ -12,6 +12,7 @@ export function mockNimbusNetworkGlobal(adapter: MockNimbusAdapter) {
 
 export class MockNimbusAdapter implements NetworkAdapter {
     private mockResponses: Response[] = [];
+    public sentRequests: Request[] = [];
 
     setMockResponse(mockResponse: Response) {
         this.mockResponses = [mockResponse];
@@ -22,10 +23,11 @@ export class MockNimbusAdapter implements NetworkAdapter {
     }
 
     sendRequest(
-        _request: Request,
+        request: Request,
         onResponse: (response: Response) => void,
         onError: (error: NetworkError) => void
     ): Promise<string> {
+        this.sentRequests.push(request);
         const mockResponse = this.mockResponses.shift();
         if (mockResponse === undefined) {
             onError({ type: 'unspecified', message: 'response not set' });

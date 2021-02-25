@@ -9,7 +9,7 @@ import { ObjectKeys } from '../../../lds-runtime-mobile/src/utils/language';
 import { DraftQueue } from '../DraftQueue';
 import { makeDurableStoreDraftAware } from '../makeDurableStoreDraftAware';
 import { buildDraftDurableStoreKey, DurableRecordRepresentation } from '../utils/records';
-import { DraftDurableSegment } from '../DurableDraftQueue';
+import { DRAFT_SEGMENT } from '../DurableDraftQueue';
 import {
     buildDurableRecordRepresentation,
     createDeleteDraftAction,
@@ -38,7 +38,7 @@ function setupDraftStore(storeRecords: any = {}) {
     const draftQueue: DraftQueue = {
         enqueue: jest.fn(),
         getActionsForTags: jest.fn(),
-        registerDraftQueueCompletedListener: jest.fn(),
+        registerOnChangedListener: jest.fn(),
         processNextAction: jest.fn(),
         getQueueActions: jest.fn(),
         getQueueState: jest.fn(),
@@ -692,7 +692,7 @@ describe('makeDurableStoreDraftAware', () => {
                 done();
             };
             durableStore.registerOnChangedListener(baseListener);
-            changeListener({ [draftActionKey]: true }, DraftDurableSegment);
+            changeListener({ [draftActionKey]: true }, DRAFT_SEGMENT);
         });
 
         it('only changes to draft action segment are parsed', done => {
@@ -742,7 +742,7 @@ describe('makeDurableStoreDraftAware', () => {
                 done();
             };
             durableStore.registerOnChangedListener(baseListener);
-            changeListener({ [STORE_KEY_RECORD]: true }, DraftDurableSegment);
+            changeListener({ [STORE_KEY_RECORD]: true }, DRAFT_SEGMENT);
         });
 
         it('redirect entries added to the durable store invokes the injected mapping function', async () => {

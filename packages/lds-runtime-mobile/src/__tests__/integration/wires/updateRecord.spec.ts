@@ -196,7 +196,7 @@ describe('mobile runtime integration tests', () => {
             // the draft queue completed listener asynchronously ingests so have to flush promises
             await flushPromises();
 
-            expect(getRecordCallbackSpy).toBeCalledTimes(3);
+            expect(getRecordCallbackSpy).toBeCalledTimes(4);
 
             // should still contain the second draft data
             expect(getRecordCallbackSpy.mock.calls[2][0].data.fields.Name.value).toBe(
@@ -255,13 +255,15 @@ describe('mobile runtime integration tests', () => {
             // the draft queue completed listener asynchronously ingests so have to flush promises
             await flushPromises();
 
-            expect(getRecordCallbackSpy).toBeCalledTimes(2);
+            const recordCallbacks = getRecordCallbackSpy.mock.calls;
 
-            // second callback should not be a draft anymore
-            expect(getRecordCallbackSpy.mock.calls[1][0].data.fields.Name.value).toBe(
+            // callback should not contain drafts anymore
+            expect(recordCallbacks[recordCallbacks.length - 1][0].data.fields.Name.value).toBe(
                 updatedNameValue
             );
-            expect(getRecordCallbackSpy.mock.calls[1][0].data.drafts).toBeUndefined();
+            expect(
+                getRecordCallbackSpy.mock.calls[recordCallbacks.length - 1][0].data.drafts
+            ).toBeUndefined();
         });
 
         it('creates update item in queue visible by draft manager', async () => {

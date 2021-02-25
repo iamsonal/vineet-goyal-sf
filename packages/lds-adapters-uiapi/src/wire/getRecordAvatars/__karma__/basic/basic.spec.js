@@ -1,9 +1,31 @@
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import {
+    getMock as globalGetMock,
+    setupElement,
+    FETCH_RESPONSE_OK,
+    flushPromises,
+} from 'test-util';
+import { URL_BASE } from 'uiapi-test-util';
 import { expireRecordAvatar, mockGetAvatarsNetwork } from 'uiapi-test-util';
-
+import { karmaNetworkAdapter } from 'lds-engine';
 import GetRecordAvatars from '../lwc/get-record-avatars';
+import sinon from 'sinon';
 
 const MOCK_PREFIX = 'wire/getRecordAvatars/__karma__/basic/data/';
+
+const FAKE_RESPONSE = {
+    statusCode: 200,
+    result: {
+        backgroundColor: null,
+        eTag: '',
+        height: null,
+        photoMetadata: { companyBluemasterId: null, responseId: null },
+        photoUrl: '',
+        provider: null,
+        recordId: '',
+        type: 'Photo',
+        width: null,
+    },
+};
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
@@ -14,6 +36,54 @@ function getAvatarByRecordId(results, recordId) {
         return item.result.recordId === recordId;
     });
     return result && result.result;
+}
+
+function buildFakeBatchResponse(recordIds) {
+    const results = recordIds.map(() => {
+        return FAKE_RESPONSE;
+    });
+
+    return { hasErrors: false, results };
+}
+
+function mockNetworkOnceDefer(config, response) {
+    let promiseResolve;
+    karmaNetworkAdapter
+        .withArgs(getNetworkParams(config))
+        .onFirstCall()
+        .callsFake(function() {
+            return new Promise(res => {
+                promiseResolve = res;
+            });
+        })
+        .onSecondCall()
+        .throws('Network adapter stub called more than once');
+
+    return async () => {
+        if (typeof promiseResolve !== 'function') {
+            throw new Error(
+                `Attempting to resolve server response before network request has been issued. config: ${JSON.stringify(
+                    config
+                )}`
+            );
+        }
+        promiseResolve({
+            ...FETCH_RESPONSE_OK,
+            body: JSON.parse(JSON.stringify(response)),
+        });
+        await flushPromises();
+    };
+}
+
+function getNetworkParams(config) {
+    const recordIds = config.recordIds.join(',');
+    const queryParams = { ...config };
+    delete queryParams.recordIds;
+
+    return sinon.match({
+        basePath: `${URL_BASE}/record-avatars/batch/${recordIds}`,
+        queryParams,
+    });
 }
 
 describe('Basic', () => {
@@ -335,5 +405,107 @@ describe('config', () => {
 
         expect(elm.pushCount()).toBe(1);
         expect(elm.getWiredData()).toEqualRecordAvatarsSnapshot([recordId18], mock);
+    });
+});
+
+describe('test record avatar dedupe', () => {
+    it('correctly dedupes overlapping recordIds', async () => {
+        const mockA = getMock('avatar-001xx0000000003AAA-001xx0000000004AAA-001xx0000000005AAA');
+        const mockB = getMock('avatar-001xx0000000005AAA');
+
+        const configA = {
+            recordIds: ['001xx0000000003AAA', '001xx0000000004AAA', '001xx0000000005AAA'],
+        };
+
+        const configB = {
+            recordIds: ['001xx0000000005AAA'],
+        };
+
+        const request = mockNetworkOnceDefer(configA, mockA);
+        const elmA = await setupElement(configA, GetRecordAvatars);
+        const elmB = await setupElement(configB, GetRecordAvatars);
+
+        expect(elmA.pushCount()).toBe(0);
+        expect(elmB.pushCount()).toBe(1);
+
+        const fakeResponseB = buildFakeBatchResponse(configB.recordIds);
+
+        expect(elmB.getWiredData()).toEqualRecordAvatarsSnapshot(configB.recordIds, fakeResponseB);
+
+        await request();
+
+        expect(elmA.pushCount()).toBe(1);
+        expect(elmB.pushCount()).toBe(2);
+        expect(elmA.getWiredData()).toEqualRecordAvatarsSnapshot(configA.recordIds, mockA);
+        expect(elmB.getWiredData()).toEqualRecordAvatarsSnapshot(configB.recordIds, mockB);
+        expect(karmaNetworkAdapter.callCount).toBe(1);
+    });
+
+    it('correctly fetchs avatars when dedupe requests are out of order', async () => {
+        const mockA = getMock('avatar-001xx0000000003AAA-001xx0000000004AAA');
+        const mockB = getMock('avatar-001xx0000000003AAA-001xx0000000004AAA-001xx0000000005AAA');
+        const missingAvatarMock = getMock('avatar-001xx0000000005AAA');
+
+        const configA = {
+            recordIds: ['001xx0000000003AAA', '001xx0000000004AAA'],
+        };
+
+        const configB = {
+            recordIds: ['001xx0000000003AAA', '001xx0000000004AAA', '001xx0000000005AAA'],
+        };
+
+        const missingAvatarConfig = {
+            recordIds: ['001xx0000000005AAA'],
+        };
+
+        const requestA = mockNetworkOnceDefer(configA, mockA);
+        const requestForMissingAvatar = mockNetworkOnceDefer(
+            missingAvatarConfig,
+            missingAvatarMock
+        );
+
+        const elmA = await setupElement(configA, GetRecordAvatars);
+        const elmB = await setupElement(configB, GetRecordAvatars);
+
+        expect(elmA.pushCount()).toBe(0);
+        expect(elmB.pushCount()).toBe(0);
+
+        await requestA();
+        await requestForMissingAvatar();
+
+        expect(elmA.pushCount()).toBe(1);
+        expect(elmB.pushCount()).toBe(1);
+        expect(elmA.getWiredData()).toEqualRecordAvatarsSnapshot(configA.recordIds, mockA);
+        expect(elmB.getWiredData()).toEqualRecordAvatarsSnapshot(configB.recordIds, mockB);
+        expect(karmaNetworkAdapter.callCount).toBe(2);
+    });
+
+    it('ingesting fake response doesnt blow away cache', async () => {
+        const mockA = getMock('avatar-001xx0000000005AAA');
+        const mockB = getMock('avatar-001xx0000000003AAA-001xx0000000004AAA');
+
+        const configA = {
+            recordIds: ['001xx0000000005AAA'],
+        };
+
+        const configB = {
+            recordIds: ['001xx0000000003AAA', '001xx0000000004AAA'],
+        };
+
+        mockGetAvatarsNetwork(configA, mockA);
+        mockGetAvatarsNetwork(configB, mockB);
+
+        const elmA = await setupElement(configA, GetRecordAvatars);
+
+        expect(elmA.pushCount()).toBe(1);
+        expect(elmA.getWiredData()).toEqualRecordAvatarsSnapshot(configA.recordIds, mockA);
+
+        const elmB = await setupElement(configB, GetRecordAvatars);
+
+        expect(elmB.pushCount()).toBe(1);
+        expect(elmB.pushCount()).toBe(1);
+        expect(elmA.getWiredData()).toEqualRecordAvatarsSnapshot(configA.recordIds, mockA);
+        expect(elmB.getWiredData()).toEqualRecordAvatarsSnapshot(configB.recordIds, mockB);
+        expect(karmaNetworkAdapter.callCount).toBe(2);
     });
 });

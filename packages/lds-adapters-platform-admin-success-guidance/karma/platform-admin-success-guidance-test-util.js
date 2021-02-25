@@ -63,6 +63,16 @@ export function mockSaveQuestionnaireNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+export function mockGetActiveScenariosNetworkOnce(config, mockData) {
+    const paramMatch = getActiveScenariosMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockGetActiveScenariosNetworkErrorOnce(config, mockData) {
+    const paramMatch = getActiveScenariosMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 function getQuestionnaireMatcher(config) {
     let { assistantGroup, questionnaireId } = config;
 
@@ -77,7 +87,7 @@ function getQuestionnaireMatcher(config) {
 }
 
 function getActiveQuestionnaireMatcher(config) {
-    let { assistantGroup } = config;
+    let { assistantGroup, scenarioId } = config;
 
     return sinon.match({
         body: null,
@@ -85,7 +95,9 @@ function getActiveQuestionnaireMatcher(config) {
         method: 'get',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/assistant/${assistantGroup}/questionnaires`,
-        queryParams: {},
+        queryParams: {
+            scenarioId,
+        },
     });
 }
 
@@ -124,6 +136,19 @@ function getSaveQuestionnaireMatcher(config) {
         method: 'patch',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/assistant/${assistantGroup}/questionnaire/${questionnaireId}`,
+        queryParams: {},
+    });
+}
+
+function getActiveScenariosMatcher(config) {
+    let { assistantGroup } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/assistant/${assistantGroup}/scenarios`,
         queryParams: {},
     });
 }

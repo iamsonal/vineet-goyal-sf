@@ -1,3 +1,3 @@
 {
-    "questionnaireList": ["test_csg_questions"]
+    "questionnaireIds": ["test_csg_questions"]
 }

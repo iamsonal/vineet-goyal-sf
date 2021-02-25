@@ -32,17 +32,22 @@ const GET_PRODUCT_PRICE_PATH = new RegExp(
 );
 
 const GET_GUIDANCE_ASSISTANT_PATH = new RegExp(
-    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){2,32}$`,
+    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){1,64}$`,
     'i'
 );
 
 const GET_GUIDANCE_QUESTIONNAIRE_PATH = new RegExp(
-    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){2,32}/questionnaire/([A-Z0-9_]){2,32}$`,
+    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){1,64}/questionnaire/([A-Z0-9_]){2,32}$`,
     'i'
 );
 
 const GET_GUIDANCE_ACTIVE_QUESTIONNAIRES_PATH = new RegExp(
-    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){2,32}/questionnaires$`,
+    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){1,64}/questionnaires$`,
+    'i'
+);
+
+const GET_GUIDANCE_ACTIVE_SCENARIOS_PATH = new RegExp(
+    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){1,64}/scenarios$`,
     'i'
 );
 
@@ -187,6 +192,14 @@ const guidance: ApiFamily = {
             path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_QUESTIONNAIRE_PATH.test(path),
         transport: {
             controller: 'LightningExperienceAssistantPlatformController.saveQuestionnaire',
+        },
+    },
+    getGuidanceActiveScenarios: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_ACTIVE_SCENARIOS_PATH.test(path),
+        transport: {
+            controller: 'LightningExperienceAssistantPlatformController.getActiveScenarios',
         },
     },
 };

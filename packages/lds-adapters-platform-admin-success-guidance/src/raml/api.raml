@@ -202,7 +202,7 @@ types:
     description: List of Questionnaires for the Lightning Assistant
     type: object
     properties:
-      questionnaireList:
+      questionnaireIds:
         description: List of questionnaire ids
         type: array
         items:
@@ -251,6 +251,70 @@ types:
         type: array
         items:
           type: LightningAssistantItemRepresentation
+  LightningAssistantScenarioInputRepresentation:
+    description: An Input Representation for a Lightning Assistant scenario.
+    type: object
+    properties:
+      status:
+        description: Input current status when interacting with a scenario.
+        type: string
+        enum:
+          - Completed
+          - InProgress
+          - NotStarted
+  LightningAssistantScenarioListRepresentation:
+    description: List of Scenarios for the Lightning Assistant
+    type: object
+    properties:
+      scenarios:
+        description: List of scenarios
+        type: array
+        items:
+          type: LightningAssistantScenarioRepresentation
+  LightningAssistantScenarioRepresentation:
+    description: A Lightning Assistant Scenario
+    type: object
+    properties:
+      assistantGroup:
+        description: The Lightning Assistant group this scenario belongs in
+        type: string
+      completionDate:
+        description: The completion date for the scenario
+        type: string
+      icon:
+        description: The URL for the icon for the scenario
+        type: string
+      id:
+        description: The id of this scenario
+        type: string
+      isDeactivated:
+        description: Whether the scenario is deactivated or not
+        type: boolean
+      labels:
+        description: The localized labels for this scenario
+        type: object
+        properties:
+          //:
+            type: string
+      numberOfSteps:
+        description: Number of steps in the scenario
+        type: integer
+      progress:
+        description: The % of steps completed for the scenario
+        format: double
+        type: number
+      questionnaireIds:
+        description: The list of questionnaire Ids for this scenario
+        type: array
+        items:
+          type: string
+      status:
+        description: The completion status for the scenario
+        type: string
+        enum:
+          - Completed
+          - InProgress
+          - NotStarted
   LightningAssistantStepRepresentation:
     description: Lightning Assistant Item Step
     type: object
@@ -343,6 +407,10 @@ types:
         body:
           application/json:
             type: LightningAssistantRepresentation
+    queryParameters:
+      scenarioId:
+        type: string
+        required: false
   patch:
     description: Save the Guidance Center Assistant
     responses:
@@ -351,6 +419,10 @@ types:
         body:
           application/json:
             type: LightningAssistantRepresentation
+    queryParameters:
+      scenarioId:
+        type: string
+        required: false
     body:
       application/json:
         # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
@@ -400,6 +472,23 @@ types:
           body:
             application/json:
               type: LightningAssistantQuestionnaireListRepresentation
+      queryParameters:
+        scenarioId:
+          type: string
+          required: false
+    uriParameters:
+      assistantGroup:
+        type: string
+        required: true
+  /scenarios:
+    get:
+      description: Get Guidance Center Active Scenarios
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: LightningAssistantScenarioListRepresentation
     uriParameters:
       assistantGroup:
         type: string

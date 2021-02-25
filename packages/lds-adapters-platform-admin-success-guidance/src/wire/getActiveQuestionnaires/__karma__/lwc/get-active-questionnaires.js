@@ -8,9 +8,11 @@ export default class GetActiveQuestionnaires extends LightningElement {
     @track error;
 
     @api assistantGroup;
+    @api scenarioId;
 
     @wire(getActiveQuestionnaires, {
         assistantGroup: '$assistantGroup',
+        scenarioId: '$scenarioId',
     })
     onGetActiveQuestionnaires({ data, error }) {
         this.questionnaires = data;

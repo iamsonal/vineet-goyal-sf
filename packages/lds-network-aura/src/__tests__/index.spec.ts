@@ -3526,6 +3526,30 @@ describe('routes', () => {
         );
     });
 
+    describe('get /assistant/{id}/scenarios', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE/scenarios`,
+            },
+            [
+                'LightningExperienceAssistantPlatformController.getActiveScenarios',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE/scenarios`,
+            },
+            {}
+        );
+    });
+
     describe('get /wave/dataflowjobs', () => {
         testControllerInput(
             {

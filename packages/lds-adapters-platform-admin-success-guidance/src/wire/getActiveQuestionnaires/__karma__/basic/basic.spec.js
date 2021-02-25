@@ -15,7 +15,7 @@ function getMock(filename) {
 describe('basic', () => {
     it('gets basic active questionnaire list', async () => {
         const mock = getMock('active-questionnaires');
-        const config = { assistantGroup: 'assistantGroupName' };
+        const config = { assistantGroup: 'assistantGroupName', scenarioId: 'scenarioName' };
         mockGetActiveQuestionnairesNetworkOnce(config, mock);
 
         const el = await setupElement(config, GetActiveQuestionnaires);

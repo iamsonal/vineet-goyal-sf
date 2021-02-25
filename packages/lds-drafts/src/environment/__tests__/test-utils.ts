@@ -1,21 +1,15 @@
 import { Environment, Store } from '@luvio/engine';
 import { DurableStore, makeDurable } from '@luvio/environments';
 import { DraftQueue } from '../../DraftQueue';
-import {
-    DEFAULT_NAME_FIELD_VALUE,
-    RECORD_ID,
-    STORE_KEY_FIELD__NAME,
-    STORE_KEY_RECORD,
-} from '../../__tests__/test-utils';
+import { DRAFT_RECORD_ID } from '../../__tests__/test-utils';
 import { makeEnvironmentDraftAware } from '../makeEnvironmentDraftAware';
 
 export * from '../../__tests__/test-utils';
 
-const DEFAULT_API_NAME = 'Account';
-
 export function setupDraftEnvironment(
     setupOptions: {
         mockNetworkResponse?: any;
+        isDraftId?: (id: string) => boolean;
     } = {}
 ) {
     const { mockNetworkResponse } = setupOptions;
@@ -48,9 +42,9 @@ export function setupDraftEnvironment(
         durableStore,
         ingestFunc: (_record: any, _path: any, _store: any, _timestamp: any) => {},
         generateId: (_prefix: string) => {
-            return 'generatedId';
+            return DRAFT_RECORD_ID;
         },
-        isDraftId: _id => true,
+        isDraftId: setupOptions.isDraftId ?? (id => id === DRAFT_RECORD_ID),
         recordResponseRetrievers: undefined,
     });
     return {
@@ -61,35 +55,4 @@ export function setupDraftEnvironment(
         baseEnvironment,
         draftEnvironment,
     };
-}
-
-export function mockDurableStoreResponse(durableStore: DurableStore) {
-    durableStore.getEntries = jest.fn().mockResolvedValue({
-        [STORE_KEY_RECORD]: {
-            data: {
-                apiName: DEFAULT_API_NAME,
-                childRelationships: {},
-                eTag: '',
-                fields: {
-                    Name: {
-                        __ref: STORE_KEY_FIELD__NAME,
-                    },
-                },
-                id: RECORD_ID,
-                lastModifiedById: null,
-                lastModifiedDate: null,
-                recordTypeId: null,
-                recordTypeInfo: null,
-                systemModstamp: null,
-                weakEtag: -1,
-            },
-        },
-
-        [STORE_KEY_FIELD__NAME]: {
-            data: {
-                displayValue: DEFAULT_NAME_FIELD_VALUE,
-                value: DEFAULT_NAME_FIELD_VALUE,
-            },
-        },
-    });
 }

@@ -1,4 +1,5 @@
 import { Environment, Store } from '@luvio/engine';
+import { makeDurable } from '@luvio/environments';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import { DraftActionStatus, PendingDraftAction, QueueOperationType } from '../../DraftQueue';
 import {
@@ -13,6 +14,9 @@ import {
     RECORD_ID,
     STORE_KEY_RECORD,
     CURRENT_USER_ID,
+    buildMockDurableStore,
+    mockDurableStoreDraftResponse,
+    STORE_KEY_DRAFT_RECORD,
     createCompletedDraftAction,
 } from '../../__tests__/test-utils';
 import {
@@ -25,6 +29,9 @@ import {
     replayDraftsOnRecord,
     buildDraftDurableStoreKey,
     extractRecordKeyFromDraftDurableStoreKey,
+    reviveRecordToStore,
+    lookupRecordWithFields,
+    markDraftRecordOptionalFieldsMissing,
     updateQueueOnPost,
 } from '../records';
 
@@ -97,6 +104,10 @@ describe('draft environment record utilities', () => {
                     },
                     OwnerId: {
                         value: CURRENT_USER_ID,
+                        displayValue: null,
+                    },
+                    Id: {
+                        value: DRAFT_RECORD_ID,
                         displayValue: null,
                     },
                 },
@@ -181,22 +192,44 @@ describe('draft environment record utilities', () => {
     describe('getRecordFieldsFromRecordRequest', () => {
         it('returns fields for post request', () => {
             const fields = getRecordFieldsFromRecordRequest(createPostRequest());
-            expect(fields).toEqual(['Name']);
+            expect(fields.fields).toEqual(['Name']);
+            expect(fields.optionalFields).toEqual([]);
         });
         it('returns fields for patch request', () => {
             const fields = getRecordFieldsFromRecordRequest(createPatchRequest());
-            expect(fields).toEqual(['Name']);
+            expect(fields.fields).toEqual(['Name']);
+            expect(fields.optionalFields).toEqual([]);
         });
         it('returns undefined for unsupported method', () => {
             const fields = getRecordFieldsFromRecordRequest(createDeleteRequest());
-            expect(fields).toEqual(undefined);
+            expect(fields.fields).toEqual([]);
+            expect(fields.optionalFields).toEqual([]);
+        });
+
+        it('returns fields and optional fields for get request', () => {
+            const request = {
+                baseUri: '/services/data/v52.0',
+                basePath: `/ui-api/records/${RECORD_ID}`,
+                method: 'get',
+                body: {},
+                urlParams: {},
+                queryParams: {
+                    fields: ['Account.Name'],
+                    optionalFields: ['Account.Id'],
+                },
+                headers: {},
+            };
+            const fields = getRecordFieldsFromRecordRequest(request);
+            expect(fields.fields).toEqual(['Name']);
+            expect(fields.optionalFields).toEqual(['Id']);
         });
 
         it('returns undefined for missing body', () => {
             const request = createPostRequest();
             delete request.body;
             const fields = getRecordFieldsFromRecordRequest(request);
-            expect(fields).toEqual(undefined);
+            expect(fields.fields).toEqual([]);
+            expect(fields.optionalFields).toEqual([]);
         });
     });
 
@@ -374,6 +407,137 @@ describe('draft environment record utilities', () => {
         });
     });
 
+    describe('reviveRecordToStore', () => {
+        it('revives and marks missing optionalFields missing', async () => {
+            const durableStore = buildMockDurableStore();
+            mockDurableStoreDraftResponse(durableStore);
+            const env = makeDurable(new Environment(new Store(), jest.fn()), {
+                durableStore,
+            });
+
+            const record = await reviveRecordToStore(
+                STORE_KEY_DRAFT_RECORD,
+                { fields: ['Name'], optionalFields: ['Birthday'] },
+                env
+            );
+
+            expect(record).toBeDefined();
+            expect(record.fields['Name']).toBeDefined();
+            expect(record.fields['Birthday']).toBeUndefined();
+        });
+        it('returns undefined if required field is missing', async () => {
+            const durableStore = buildMockDurableStore();
+            mockDurableStoreDraftResponse(durableStore);
+            const env = makeDurable(new Environment(new Store(), jest.fn()), {
+                durableStore,
+            });
+
+            const record = await reviveRecordToStore(
+                STORE_KEY_DRAFT_RECORD,
+                { fields: ['Name', 'Birthday'], optionalFields: [] },
+                env
+            );
+
+            expect(record).toBeUndefined();
+        });
+    });
+
+    describe('lookupRecordWithFields', () => {
+        async function setup() {
+            const durableStore = buildMockDurableStore();
+            mockDurableStoreDraftResponse(durableStore);
+            const env = makeDurable(new Environment(new Store(), jest.fn()), {
+                durableStore,
+            });
+
+            const record = await reviveRecordToStore(
+                STORE_KEY_DRAFT_RECORD,
+                { fields: ['Name'], optionalFields: ['Birthday'] },
+                env
+            );
+
+            return { record, env, durableStore };
+        }
+
+        it('returns fulfilled data', async () => {
+            const { env } = await setup();
+            const record = lookupRecordWithFields(
+                STORE_KEY_DRAFT_RECORD,
+                { fields: ['Name'], optionalFields: [] },
+                env
+            );
+            expect(record).toBeDefined();
+        });
+        it('returns stale data', async () => {
+            const { env } = await setup();
+            // expire the record
+            env.storeSetExpiration(STORE_KEY_DRAFT_RECORD, 5, Number.MAX_SAFE_INTEGER);
+            const record = lookupRecordWithFields(
+                STORE_KEY_DRAFT_RECORD,
+                { fields: ['Name'], optionalFields: [] },
+                env
+            );
+            expect(record).toBeDefined();
+        });
+
+        it('returns mutable data', async () => {
+            const { env } = await setup();
+            const record = lookupRecordWithFields(
+                STORE_KEY_DRAFT_RECORD,
+                { fields: ['Name'], optionalFields: [] },
+                env
+            );
+            record.apiName = 'foo';
+            expect(record.apiName).toBe('foo');
+        });
+    });
+
+    describe('markDraftRecordOptionalFieldsMissing', () => {
+        it('only applies to draft records', () => {
+            const mockRecord = {
+                id: 'foo',
+                fields: { Name: {} },
+            };
+            const env = new Environment(new Store(), jest.fn());
+            env.storePublish('foo', mockRecord);
+            markDraftRecordOptionalFieldsMissing('foo', ['Birthday'], env);
+            const records = env.getStoreRecords();
+            const storeRecord = records['foo'];
+            expect(storeRecord.fields.Birthday).toBeUndefined();
+        });
+
+        it('marks missing optional fields missing', () => {
+            const mockRecord = {
+                id: 'foo',
+                drafts: {},
+                fields: { Name: {} },
+            };
+            const env = new Environment(new Store(), jest.fn());
+            env.storePublish('foo', mockRecord);
+            markDraftRecordOptionalFieldsMissing('foo', ['Birthday'], env);
+            const records = env.getStoreRecords();
+            const storeRecord = records['foo'];
+            expect(storeRecord.fields.Birthday.isMissing).toBe(true);
+            expect(Object.prototype.hasOwnProperty.call(storeRecord.fields.Birthday, '__ref')).toBe(
+                true
+            );
+            expect(storeRecord.fields.Birthday.__ref).toBe(undefined);
+        });
+
+        it('does not impact non-missing optional fields', () => {
+            const mockRecord = {
+                id: 'foo',
+                drafts: {},
+                fields: { Name: {}, Color: 'green' },
+            };
+            const env = new Environment(new Store(), jest.fn());
+            env.storePublish('foo', mockRecord);
+            markDraftRecordOptionalFieldsMissing('foo', ['Birthday', 'Color'], env);
+            const records = env.getStoreRecords();
+            const storeRecord = records['foo'];
+            expect(storeRecord.fields.Color).toBe('green');
+        });
+    });
     describe('updateQueueOnPost', () => {
         it('replaces actions in the queue on the draft-created record', () => {
             const draftId = 'foo';

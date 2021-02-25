@@ -64,18 +64,6 @@ describe('mobile runtime integration tests', () => {
             expect(record.drafts.created).toBe(true);
         });
 
-        it('synthetic record responds with null fields it does not know about', async () => {
-            const snapshot = await createRecord({ apiName: API_NAME, fields: { Name: 'Justin' } });
-            expect(snapshot.state).toBe('Fulfilled');
-            const record = (snapshot.data as unknown) as DraftRecordRepresentation;
-
-            const getRecordSnapshot = (await getRecord({
-                recordId: record.id,
-                fields: ['Account.Name', 'Account.BillingCity'],
-            })) as Snapshot<RecordRepresentation>;
-            expect(getRecordSnapshot.state).toBe('Fulfilled');
-        });
-
         it('record with generated ID does not get stored in default durable segment', async () => {
             const orginalName = 'Justin';
 

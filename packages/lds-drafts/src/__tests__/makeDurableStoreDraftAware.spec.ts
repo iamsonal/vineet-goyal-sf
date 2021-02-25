@@ -526,7 +526,7 @@ describe('makeDurableStoreDraftAware', () => {
                 [STORE_KEY_DRAFT_RECORD],
                 DefaultDurableSegment
             );
-            expect(ObjectKeys(readEntries).length).toBe(7);
+            expect(ObjectKeys(readEntries).length).toBe(8);
             const nameField = readEntries[DRAFT_STORE_KEY_FIELD__NAME].data;
             const readRecord = readEntries[STORE_KEY_DRAFT_RECORD].data;
 
@@ -573,7 +573,7 @@ describe('makeDurableStoreDraftAware', () => {
                 [STORE_KEY_DRAFT_RECORD],
                 DefaultDurableSegment
             );
-            expect(ObjectKeys(readEntries).length).toBe(7);
+            expect(ObjectKeys(readEntries).length).toBe(8);
             const nameField = readEntries[DRAFT_STORE_KEY_FIELD__NAME].data;
             const readRecord = readEntries[STORE_KEY_DRAFT_RECORD].data;
 

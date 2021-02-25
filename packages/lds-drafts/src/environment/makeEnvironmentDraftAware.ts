@@ -13,6 +13,7 @@ import { getRecordDraftEnvironment } from './getRecordDraftEnvironment';
 import { createRecordDraftEnvironment } from './createRecordDraftEnvironment';
 import { updateRecordDraftEnvironment } from './updateRecordDraftEnvironment';
 import { deleteRecordDraftEnvironment } from './deleteRecordDraftEnvironment';
+import { getRecordsDraftEnvironment } from './getRecordsDraftEnvironment';
 
 export interface DraftEnvironmentOptions {
     store: Store;
@@ -25,7 +26,7 @@ export interface DraftEnvironmentOptions {
         store: Store,
         timeStamp: number
     ) => void;
-    generateId: (id: string) => string;
+    generateId: (apiName: string) => string;
     isDraftId: (id: string) => boolean;
     recordResponseRetrievers: ResponsePropertyRetriever<unknown, RecordRepresentation>[];
 }
@@ -94,6 +95,7 @@ export function makeEnvironmentDraftAware(
         deleteRecordDraftEnvironment,
         updateRecordDraftEnvironment,
         createRecordDraftEnvironment,
+        getRecordsDraftEnvironment,
     ];
 
     return synthesizers.reduce((environment, synthesizer) => {

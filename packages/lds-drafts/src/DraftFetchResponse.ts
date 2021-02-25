@@ -1,5 +1,6 @@
 import { FetchResponse, HttpStatusCode, Headers } from '@luvio/engine';
-import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+
+export const DRAFT_ERROR_CODE = 'DRAFT_ERROR';
 
 export class DraftFetchResponse<T> implements FetchResponse<T> {
     status: HttpStatusCode;
@@ -33,14 +34,19 @@ export class DraftFetchResponse<T> implements FetchResponse<T> {
     }
 }
 
-export function createOkResponse(
-    body: RecordRepresentation
-): DraftFetchResponse<RecordRepresentation> {
+export function createOkResponse<T>(body: T): DraftFetchResponse<T> {
     return new DraftFetchResponse(HttpStatusCode.Ok, body);
 }
 
 export function createBadRequestResponse(body: unknown) {
     return new DraftFetchResponse(HttpStatusCode.BadRequest, body);
+}
+
+export function createDraftSynthesisErrorResponse() {
+    return new DraftFetchResponse(HttpStatusCode.BadRequest, {
+        errorCode: DRAFT_ERROR_CODE,
+        message: 'failed to synthesize draft response',
+    });
 }
 
 export function createDeletedResponse(): DraftFetchResponse<void> {

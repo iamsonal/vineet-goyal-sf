@@ -1,4 +1,5 @@
 import { HttpStatusCode } from '@luvio/engine';
+import { DurableStore } from '@luvio/environments';
 import {
     FieldValueRepresentation,
     keyBuilderRecord,
@@ -32,6 +33,16 @@ export const NAME_VALUE = {
     displayValue: null,
     value: 'Justin',
 };
+
+export function buildMockDurableStore(): DurableStore {
+    return {
+        setEntries: jest.fn(),
+        getEntries: jest.fn(),
+        getAllEntries: jest.fn(),
+        evictEntries: jest.fn(),
+        registerOnChangedListener: jest.fn(),
+    };
+}
 
 export function buildDurableRecordRepresentation(
     id: string,
@@ -86,7 +97,9 @@ export function createPatchRequest() {
                 Name: DEFAULT_NAME_FIELD_VALUE,
             },
         },
-        urlParams: {},
+        urlParams: {
+            recordId: RECORD_ID,
+        },
         queryParams: {},
         headers: {},
     };
@@ -301,4 +314,72 @@ export function createUnsupportedRequestDraftAction(
             headers: {},
         },
     };
+}
+
+export function mockDurableStoreResponse(durableStore: DurableStore) {
+    durableStore.getEntries = jest.fn().mockResolvedValue({
+        [STORE_KEY_RECORD]: {
+            data: {
+                apiName: DEFAULT_API_NAME,
+                childRelationships: {},
+                eTag: '',
+                fields: {
+                    Name: {
+                        __ref: STORE_KEY_FIELD__NAME,
+                    },
+                },
+                id: RECORD_ID,
+                lastModifiedById: null,
+                lastModifiedDate: null,
+                recordTypeId: null,
+                recordTypeInfo: null,
+                systemModstamp: null,
+                weakEtag: -1,
+            },
+        },
+
+        [STORE_KEY_FIELD__NAME]: {
+            data: {
+                displayValue: DEFAULT_NAME_FIELD_VALUE,
+                value: DEFAULT_NAME_FIELD_VALUE,
+            },
+        },
+    });
+}
+
+export function mockDurableStoreDraftResponse(durableStore: DurableStore) {
+    durableStore.getEntries = jest.fn().mockResolvedValue({
+        [STORE_KEY_DRAFT_RECORD]: {
+            data: {
+                apiName: DEFAULT_API_NAME,
+                childRelationships: {},
+                eTag: '',
+                fields: {
+                    Name: {
+                        __ref: DRAFT_STORE_KEY_FIELD__NAME,
+                    },
+                },
+                drafts: {
+                    created: true,
+                    edited: false,
+                    deleted: false,
+                    serverValues: {},
+                },
+                id: DRAFT_RECORD_ID,
+                lastModifiedById: null,
+                lastModifiedDate: null,
+                recordTypeId: null,
+                recordTypeInfo: null,
+                systemModstamp: null,
+                weakEtag: -1,
+            },
+        },
+
+        [DRAFT_STORE_KEY_FIELD__NAME]: {
+            data: {
+                displayValue: DEFAULT_NAME_FIELD_VALUE,
+                value: DEFAULT_NAME_FIELD_VALUE,
+            },
+        },
+    });
 }

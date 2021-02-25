@@ -1,17 +1,22 @@
 import { ResourceRequest, ResourceResponse, UnfulfilledSnapshot } from '@luvio/engine';
 import { DurableEnvironment } from '@luvio/environments';
-import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
+import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
-import { createBadRequestResponse } from '../DraftFetchResponse';
+import {
+    createBadRequestResponse,
+    createDraftSynthesisErrorResponse,
+    createInternalErrorResponse,
+    createOkResponse,
+} from '../DraftFetchResponse';
 import { ObjectCreate } from '../utils/language';
 import {
     extractRecordIdFromResourceRequest,
     getRecordFieldsFromRecordRequest,
     getRecordKeyFromResourceRequest,
     RECORD_ENDPOINT_REGEX,
+    reviveRecordToStore,
 } from '../utils/records';
 import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
-import { createSyntheticRecordResponse } from './utils';
 
 /**
  * Checks if a resource request is a GET method on the record endpoint
@@ -94,22 +99,47 @@ function createSyntheticGetRecordResponse(
     }
 
     // revive the modified record to the in-memory store
-    return env.reviveRecordsToStore([key]).then(() => {
-        const response = createSyntheticRecordResponse(key, fields, true, env);
-
-        // the getRecord request might include fields that aren't set, instead of letting
-        // the Reader think the snapshot is missing those fields and causing a network request
-        // (which will result in a 404 since this draft-created ID doesn't exist on server) we
-        // will fill in the requested fields with null values
-        for (let i = 0, len = fields.length; i < len; i++) {
-            const field = fields[i];
-            if (response.body.fields[field] === undefined) {
-                response.body.fields[field] = { value: null, displayValue: null };
+    return reviveRecordToStore(key, fields, env)
+        .catch(() => {
+            throw createInternalErrorResponse();
+        })
+        .then(record => {
+            if (record === undefined) {
+                throw createDraftSynthesisErrorResponse();
             }
-        }
+            return createOkResponse(record);
+        });
+}
 
-        return response;
-    });
+function handleGetRecordRequest(
+    resourceRequest: ResourceRequest,
+    env: DurableEnvironment,
+    isDraftId: (id: string) => boolean,
+    fetchRequest: (request: ResourceRequest) => Promise<ResourceResponse<RecordRepresentation>>
+) {
+    if (isRequestForDraftGetRecord(resourceRequest, isDraftId) === false) {
+        // only override requests to getRecord endpoint that contain draft ids
+        return fetchRequest(resourceRequest);
+    }
+
+    const recordKey = getRecordKeyFromResourceRequest(resourceRequest);
+    if (recordKey === undefined) {
+        // record id could not be found in this request, delegate request
+        return fetchRequest(resourceRequest);
+    }
+
+    const canonicalKey = env.storeGetCanonicalKey(recordKey);
+
+    // if the canonical key matches the key in the resource request it means we do not have a
+    // mapping in our cache and this record must be synthetically returned
+    if (canonicalKey === recordKey) {
+        return createSyntheticGetRecordResponse(resourceRequest, env);
+    }
+
+    // a canonical mapping exists for the draft id passed in, we can create a new resource
+    // request with the canonical key and dispatch to the network
+    const resolvedRequest = resolveResourceRequestIds(resourceRequest, canonicalKey);
+    return fetchRequest(resolvedRequest);
 }
 
 export function getRecordDraftEnvironment(
@@ -119,29 +149,12 @@ export function getRecordDraftEnvironment(
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function<T>(
         resourceRequest: ResourceRequest
     ) {
-        if (isRequestForDraftGetRecord(resourceRequest, options.isDraftId) === false) {
-            // only override requests to getRecord endpoint that contain drat ids
-            return env.dispatchResourceRequest(resourceRequest);
-        }
-
-        const recordKey = getRecordKeyFromResourceRequest(resourceRequest);
-        if (recordKey === undefined) {
-            // record id could not be found in this request, delegate request
-            return env.dispatchResourceRequest(resourceRequest);
-        }
-
-        const canonicalKey = env.storeGetCanonicalKey(recordKey);
-
-        // if the canonical key matches the key in the resource request it means we do not have a
-        // mapping in our cache and this record must be synthetically returned
-        if (canonicalKey === recordKey) {
-            return createSyntheticGetRecordResponse(resourceRequest, env) as any;
-        }
-
-        // a canonical mapping exists for the draft id passed in, we can create a new resource
-        // request with the canonical key and dispatch to the network
-        const resolvedRequest = resolveResourceRequestIds(resourceRequest, canonicalKey);
-        return env.dispatchResourceRequest(resolvedRequest);
+        return handleGetRecordRequest(
+            resourceRequest,
+            env,
+            options.isDraftId,
+            env.dispatchResourceRequest
+        ) as any;
     };
 
     const resolveUnfulfilledSnapshot: DurableEnvironment['resolveUnfulfilledSnapshot'] = function<
@@ -150,32 +163,12 @@ export function getRecordDraftEnvironment(
         resourceRequest: ResourceRequest,
         snapshot: UnfulfilledSnapshot<T, unknown>
     ): Promise<ResourceResponse<T>> {
-        if (isRequestForDraftGetRecord(resourceRequest, options.isDraftId) === false) {
-            // only override requests to getRecord endpoint that contain drat ids
-            return env.resolveUnfulfilledSnapshot(resourceRequest, snapshot);
-        }
-
-        const recordKey = getRecordKeyFromResourceRequest(resourceRequest);
-        if (recordKey === undefined) {
-            // record id could not be found in this request, delegate request
-            return env.resolveUnfulfilledSnapshot(resourceRequest, snapshot);
-        }
-
-        const canonicalKey = env.storeGetCanonicalKey(recordKey);
-
-        // if the canonical key matches the key in the resource request it means we do not have a
-        // mapping in our cache and this record must be synthetically returned
-        if (canonicalKey === recordKey) {
-            return createSyntheticGetRecordResponse(resourceRequest, env) as any;
-        }
-
-        // a canonical mapping exists for the draft id passed in, we can create a new resource
-        // request with the canonical key and dispatch to the network
-        const canonicalRequest = resolveResourceRequestIds(resourceRequest, canonicalKey);
-        if (canonicalRequest === undefined) {
-            return env.resolveUnfulfilledSnapshot(resourceRequest, snapshot);
-        }
-        return env.resolveUnfulfilledSnapshot(canonicalRequest, snapshot);
+        return handleGetRecordRequest(
+            resourceRequest,
+            env,
+            options.isDraftId,
+            request => env.resolveUnfulfilledSnapshot(request, snapshot) as any
+        ) as any;
     };
 
     return ObjectCreate(env, {

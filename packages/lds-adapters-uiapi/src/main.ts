@@ -26,6 +26,7 @@ export {
     FieldValueRepresentation,
     FieldValueRepresentationNormalized,
 } from './generated/types/FieldValueRepresentation';
+export { BatchRepresentation } from './generated/types/BatchRepresentation';
 
 export * from './generated/artifacts/main';
 

@@ -1,0 +1,55 @@
+{
+    "hasErrors": false,
+    "results": [
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "14987c9ec451f56582caaecf1d23e9ac",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005xx000001XL1tAAG"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Burlington Textiles Corp of America"
+                    }
+                },
+                "id": "005xx000001XL1tAAG",
+                "lastModifiedById": "005T1000000DvlhIAC",
+                "lastModifiedDate": "2020-09-17T01:41:35.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-09-17T01:41:35.000Z",
+                "weakEtag": 1600306895000
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "14987c9ec451f56582caaecf1d23e9ad",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005xx000001XL1tAAF"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Burlington Textiles Corp of America"
+                    }
+                },
+                "id": "005xx000001XL1tAAF",
+                "lastModifiedById": "005T1000000DvlhIAC",
+                "lastModifiedDate": "2020-09-17T01:41:35.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-09-17T01:41:35.000Z",
+                "weakEtag": 1600306895000
+            },
+            "statusCode": 200
+        }
+    ]
+}

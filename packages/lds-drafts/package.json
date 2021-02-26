@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-drafts",
-    "version": "1.8.2",
+    "version": "1.8.3",
     "description": "LDS Drafts",
     "license": "MIT",
     "main": "dist/ldsDrafts.js",
@@ -20,7 +20,7 @@
         "@luvio/environments": "^0.27.3"
     },
     "devDependencies": {
-        "@salesforce/lds-adapters-uiapi": "1.8.2",
-        "@salesforce/lds-uiapi-record-utils": "1.8.2"
+        "@salesforce/lds-adapters-uiapi": "1.8.3",
+        "@salesforce/lds-uiapi-record-utils": "1.8.3"
     }
 }

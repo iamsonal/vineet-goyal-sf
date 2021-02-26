@@ -30,7 +30,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         run(() => {
             luvio.storeLookup({
-                key: 'DuplicatesRepresentation(allowSaveOnDuplicate::apiName:Lead)',
+                recordId: 'DuplicatesRepresentation(allowSaveOnDuplicate::apiName:Lead)',
                 node: {},
                 variables: {},
             });
@@ -47,7 +47,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             ingestDuplicatesRepresentation(clone(mockDuplicates), 'key', luvio, store, TIMESTAMP);
 
             const snapshot = luvio.storeLookup({
-                key: 'DuplicatesRepresentation(allowSaveOnDuplicate::apiName:Lead)',
+                recordId: 'DuplicatesRepresentation(allowSaveOnDuplicate::apiName:Lead)',
                 node: {},
                 variables: {},
             });
@@ -74,7 +74,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             ingestDuplicatesRepresentation(clone(mockDuplicates), 'key', luvio, store, TIMESTAMP);
 
             const snapshot = luvio.storeLookup({
-                key: 'DuplicatesRepresentation(allowSaveOnDuplicate::apiName:Lead)',
+                recordId: 'DuplicatesRepresentation(allowSaveOnDuplicate::apiName:Lead)',
                 node: {},
                 variables: {},
             });
@@ -103,7 +103,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             ingestDuplicatesRepresentation(clone(mockDuplicates), 'key', luvio, store, TIMESTAMP);
 
             const snapshot = luvio.storeLookup({
-                key: 'DuplicatesRepresentation(allowSaveOnDuplicate::apiName:Lead)',
+                recordId: 'DuplicatesRepresentation(allowSaveOnDuplicate::apiName:Lead)',
                 node: {},
                 variables: {},
             });

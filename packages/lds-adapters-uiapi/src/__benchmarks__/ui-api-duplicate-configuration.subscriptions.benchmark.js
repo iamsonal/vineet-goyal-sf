@@ -36,7 +36,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         run(() => {
             luvio.storeLookup({
-                key: 'DuplicatesConfigurationRepresentation:Lead',
+                recordId: 'DuplicatesConfigurationRepresentation:Lead',
                 node: {},
                 variables: {},
             });
@@ -59,7 +59,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             );
 
             const snapshot = luvio.storeLookup({
-                key: 'DuplicatesConfigurationRepresentation:Lead',
+                recordId: 'DuplicatesConfigurationRepresentation:Lead',
                 node: {},
                 variables: {},
             });
@@ -92,7 +92,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             );
 
             const snapshot = luvio.storeLookup({
-                key: 'DuplicatesConfigurationRepresentation:Lead',
+                recordId: 'DuplicatesConfigurationRepresentation:Lead',
                 node: {},
                 variables: {},
             });
@@ -127,7 +127,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             );
 
             const snapshot = luvio.storeLookup({
-                key: 'DuplicatesConfigurationRepresentation:Lead',
+                recordId: 'DuplicatesConfigurationRepresentation:Lead',
                 node: {},
                 variables: {},
             });

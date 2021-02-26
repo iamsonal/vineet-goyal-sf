@@ -36,7 +36,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
 
         run(() => {
             luvio.storeLookup({
-                relatedListInfo: 'RelatedListInfo:CwcCustom00__c::CwcCustom01s__r',
+                recordId: 'RelatedListInfo:CwcCustom00__c::CwcCustom01s__r',
                 node: {},
                 variables: {},
             });
@@ -59,7 +59,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             );
 
             const snapshot = luvio.storeLookup({
-                relatedListInfo: 'RelatedListInfo:CwcCustom00__c::CwcCustom01s__r',
+                recordId: 'RelatedListInfo:CwcCustom00__c::CwcCustom01s__r',
                 node: {},
                 variables: {},
             });
@@ -92,7 +92,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             );
 
             const snapshot = luvio.storeLookup({
-                relatedListInfo: 'RelatedListInfo:CwcCustom00__c::CwcCustom01s__r',
+                recordId: 'RelatedListInfo:CwcCustom00__c::CwcCustom01s__r',
                 node: {},
                 variables: {},
             });
@@ -127,7 +127,7 @@ describe('O(n) emit time as subscription count(n) grows', () => {
             );
 
             const snapshot = luvio.storeLookup({
-                relatedListInfo: 'RelatedListInfo:CwcCustom00__c::CwcCustom01s__r',
+                recordId: 'RelatedListInfo:CwcCustom00__c::CwcCustom01s__r',
                 node: {},
                 variables: {},
             });

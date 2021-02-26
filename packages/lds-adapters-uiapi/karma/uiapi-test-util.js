@@ -17,6 +17,7 @@ import {
     LAYOUT_TTL,
     LAYOUT_USER_STATE_TTL,
     LIST_INFO_TTL,
+    QUICK_ACTION_DEFAULTS_TTL,
     RECORD_TTL,
     RECORD_AVATAR_TTL,
     RECORD_DEFAULTS_REPRESENTATION_TTL,
@@ -211,6 +212,26 @@ function mockGetGlobalActionsNetwork(config, mockData) {
         mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
     }
 }
+
+function mockGetQuickActionDefaultsNetwork(config, mockData) {
+    let { actionApiName, ...queryParams } = config;
+    if (typeof actionApiName !== 'string') {
+        actionApiName = actionApiName.actionApiName;
+    }
+    const basePath = `${URL_BASE}/actions/record-defaults/${actionApiName}`;
+    const paramMatch = sinon.match({
+        baseUri: BASE_URI,
+        basePath,
+        queryParams,
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
 function mockGetRelatedListActionsNetwork(config, mockData) {
     const { recordIds, relatedListId, ...queryParams } = config;
     const basePath = `${URL_BASE}/actions/record/${recordIds
@@ -697,6 +718,14 @@ function expireActions() {
 }
 
 /**
+ * Force a cache expiration for quick action defaults by fast-forwarding time past the
+ * standard actions TTL.
+ */
+function expireQuickActionDefaults() {
+    timekeeper.travel(Date.now() + QUICK_ACTION_DEFAULTS_TTL + 1);
+}
+
+/**
  * Force a cache expiration for lookup actions by fast-forwarding time past the
  * standard lookup actions TTL.
  */
@@ -876,6 +905,7 @@ export {
     URL_BASE,
     // cache expire utils
     expireActions,
+    expireQuickActionDefaults,
     expireLayout,
     expireLayoutUserState,
     expireListUi,
@@ -909,6 +939,7 @@ export {
     mockGetRecordsNetwork,
     mockGetRecordActionsNetwork,
     mockGetGlobalActionsNetwork,
+    mockGetQuickActionDefaultsNetwork,
     mockGetRecordEditActionsNetwork,
     mockGetObjectCreateActionsNetwork,
     mockGetRecordCreateDefaultsNetwork,

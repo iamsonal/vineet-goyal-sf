@@ -12,6 +12,7 @@ import {
     getLookupActionsAdapterFactory,
     getRecordActionsAdapterFactory,
     getGlobalActionsAdapterFactory,
+    getQuickActionDefaultsAdapterFactory,
     getRecordEditActionsAdapterFactory,
     getRecordsAdapterFactory,
     getObjectCreateActionsAdapterFactory,
@@ -226,3 +227,8 @@ export const getObjectCreateActions = createWireAdapterConstructor(
 export const getGlobalActions = createWireAdapterConstructor(getGlobalActionsAdapterFactory, {
     name: 'getGlobalActions',
 });
+
+export const getQuickActionDefaults = createWireAdapterConstructor(
+    getQuickActionDefaultsAdapterFactory,
+    { name: 'getQuickActionDefaults' }
+);

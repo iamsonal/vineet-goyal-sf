@@ -1991,6 +1991,36 @@ describe('routes', () => {
         );
     });
 
+    describe('get /actions/record-defaults/{actionApiName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/actions/record-defaults/`,
+            },
+            ['ActionsController.getQuickActionDefaults', {}, undefined]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: UI_API_BASE_URI,
+            basePath: `/actions/record-defaults/`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: UI_API_BASE_URI,
+                basePath: `/actions/record-defaults/`,
+            },
+            {
+                objectApiName: {},
+                fields: [],
+                actionApiName: {},
+            }
+        );
+    });
+
     describe('get /related-list-info', () => {
         describe('/{parentObjectApiName}/{relatedListId}', () => {
             testControllerInput(

@@ -18,6 +18,8 @@ export { TTL as LAYOUT_TTL } from '../src/generated/types/RecordLayoutRepresenta
 
 export { TTL as LAYOUT_USER_STATE_TTL } from '../src/generated/types/RecordLayoutUserStateRepresentation';
 
+export { TTL as QUICK_ACTION_DEFAULTS_TTL } from '../src/generated/types/QuickActionDefaultsRepresentation';
+
 export { TTL as RECORD_TTL } from '../src/generated/types/RecordRepresentation';
 
 export { TTL as RECORD_AVATAR_TTL } from '../src/generated/types/AbstractRecordAvatarBatchRepresentation';

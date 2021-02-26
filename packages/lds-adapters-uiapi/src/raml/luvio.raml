@@ -34,6 +34,12 @@ types:
       externalId: externalId
       relatedSourceObject: relatedSourceObject # Used in Related List, Related List Record Actions
       relatedListRecordId: relatedListRecordId # Used in Related List Record Actions
+  QuickActionDefaultsRepresentation:
+    (luvio.ttl): 900000
+    (luvio.key):
+      actionApiName: actionApiName
+    (luvio.private):
+      - eTag
   ListInfoRepresentation:
     (luvio.key):
       listViewApiName: listReference.listViewApiName
@@ -311,6 +317,19 @@ types:
             objectApiName: SalesforceObjectId
             formFactor: SalesforceFormFactor
             sections: SortedStringArray
+    '/record-defaults/{actionApiName}':
+      uriParameters:
+        actionApiName: SalesforceObjectId
+      get:
+        queryParameters:
+          optionalFields: SalesforceFieldIdArray
+        (luvio.adapter):
+          name: getQuickActionDefaults
+          coercedParams:
+            actionApiName: SalesforceObjectId
+            optionalFields: SalesforceFieldIdArray
+        (luvio.key):
+          actionApiName: urlParams.actionApiName
     '/global':
       get:
         (luvio.adapter):

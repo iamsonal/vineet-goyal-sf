@@ -2159,6 +2159,26 @@ types:
       ruleId:
         description: RuleId which encountered error during execution
         type: string
+  QuickActionDefaultsRepresentation:
+    description: Quick action default values for a specific action api name
+    type: object
+    properties:
+      actionApiName:
+        description: quick action name
+        type: string
+      eTag:
+        description: ETag like field, readOnly, handy while caching.
+        type: string
+        (oas-readOnly): true
+      fields:
+        description: fields in the layout
+        type: object
+        properties:
+          //:
+            type: FieldValueRepresentation
+      objectApiName:
+        description: object name
+        type: string
   RecommendedResultRepresentation:
     description: Retrieve the recommended result with it's search Layout metadata.
     type: object
@@ -3750,6 +3770,29 @@ types:
           items:
             type: string
             (oas-collectionFormat): csv
+    /record-defaults/{actionApiName}:
+      get:
+        description: Retrieve a quick action default values.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: QuickActionDefaultsRepresentation
+        queryParameters:
+          optionalFields:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          parentRecordId:
+            type: string
+            required: false
+      uriParameters:
+        actionApiName:
+          type: string
+          required: true
     /record/{recordIds}:
       get:
         description: Retrieve presentation-ready action data about specific recordIds.

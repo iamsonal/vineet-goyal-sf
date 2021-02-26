@@ -12,6 +12,7 @@ enum UiApiActionsController {
     GetRelatedListsActions = 'ActionsController.getRelatedListsActions',
     GetRelatedListRecordActions = 'ActionsController.getRelatedListRecordActions',
     GetGlobalActions = 'ActionsController.getGlobalActions',
+    GetQuickActionDefaults = 'ActionsController.getQuickActionDefaults',
 }
 
 const UIAPI_ACTIONS_LOOKUP_PATH = `${UI_API_BASE_URI}/actions/lookup/`;
@@ -23,6 +24,7 @@ const UIAPI_ACTIONS_RELATED_LIST = '/related-list/';
 const UIAPI_ACTIONS_OBJECT_CREATE = '/record-create';
 const UIAPI_ACTIONS_RELATED_LIST_BATCH = '/related-list/batch/';
 const UIAPI_ACTIONS_RELATED_LIST_RECORD = '/related-list-record/';
+const UIAPI_ACTIONS_QUICKACTION_DEFAULTS_PATH = `${UI_API_BASE_URI}/actions/record-defaults/`;
 
 function getLookupActions(resourceRequest: ResourceRequest): Promise<any> {
     const {
@@ -110,6 +112,16 @@ function getGlobalActions(resourceRequest: ResourceRequest): Promise<any> {
     return dispatchAction(UiApiActionsController.GetGlobalActions, parameters);
 }
 
+function getQuickActionDefaults(resourceRequest: ResourceRequest): Promise<any> {
+    const {
+        urlParams: { actionApiName },
+        queryParams,
+    } = resourceRequest;
+    const parameters = buildUiApiParams({ actionApiName, ...queryParams }, resourceRequest);
+
+    return dispatchAction(UiApiActionsController.GetQuickActionDefaults, parameters);
+}
+
 appRouter.get((path: string) => path.startsWith(UIAPI_ACTIONS_LOOKUP_PATH), getLookupActions);
 appRouter.get(
     (path: string) =>
@@ -149,3 +161,8 @@ appRouter.get(
     getObjectCreateActions
 );
 appRouter.get((path: string) => path.startsWith(UIAPI_ACTIONS_GLOBAL_PATH), getGlobalActions);
+
+appRouter.get(
+    (path: string) => path.startsWith(UIAPI_ACTIONS_QUICKACTION_DEFAULTS_PATH),
+    getQuickActionDefaults
+);

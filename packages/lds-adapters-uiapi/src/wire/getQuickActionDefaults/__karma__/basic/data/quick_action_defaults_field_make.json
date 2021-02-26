@@ -1,0 +1,11 @@
+{
+    "actionApiName": "Create_Custom_Object_2",
+    "eTag": "15951a394be323ef586b255879056702",
+    "fields": {
+        "Make__c": {
+            "displayValue": null,
+            "value": "Ford"
+        }
+    },
+    "objectApiName": "Custom_Object_2__c"
+}

@@ -41,6 +41,12 @@ const adaptersWithFieldDefinitions = {
             configName: 'fields',
         },
     },
+    getQuickActionDefaults: {
+        optionalFields: {
+            configName: 'optionalFields',
+        },
+        fields: null,
+    },
 };
 
 function generateShape(shape, outputDir, createGenerationContext, modelInfo) {

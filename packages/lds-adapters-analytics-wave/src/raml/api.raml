@@ -39,6 +39,16 @@ types:
         type: array
         items:
           type: string
+  AdvancedPropertyValueRepresentation:
+    description: An advanced property Name and Value.
+    type: object
+    properties:
+      name:
+        description: The name of the advanced property.
+        type: string
+      value:
+        description: The value of the advanced property
+        type: object
   AssetReferenceRepresentation:
     description: Asset reference representation.
     discriminatorValue: asset # TODO Hand rolled
@@ -171,6 +181,127 @@ types:
           - Raw
           - Single
           - Static
+  ConnectionPropertyValueRepresentation:
+    description: A Connection Property Name and Value.
+    type: object
+    properties:
+      name:
+        description: The name of the connection property.
+        type: string
+      value:
+        description: The value of the connection property
+        type: object
+  DailyScheduleRepresentation:
+    description: Daily schedule on which to execute some type of job
+    discriminatorValue: daily
+    type: ScheduleRepresentation
+    properties: {}
+  DataConnectorRepresentation:
+    description: A Data Connector represents a connection.
+    discriminatorValue: dataConnector
+    type: BaseWaveAssetRepresentation
+    properties:
+      connectionProperties:
+        description: The connection properties.
+        type: array
+        items:
+          type: ConnectionPropertyValueRepresentation
+      connectorType:
+        description: The type of data connector.
+        type: string
+        enum:
+          - ActCRM
+          - ActOn
+          - AdobeAnalytics
+          - AmazonAthena
+          - AmazonDynamoDB
+          - AmazonS3
+          - AmazonS3Output
+          - AwsMarketplace
+          - AwsRdsAuroraMySQL
+          - AwsRdsAuroraPostgres
+          - AwsRdsMariaDB
+          - AwsRdsMySQL
+          - AwsRdsOracle
+          - AwsRdsPostgres
+          - AwsRdsSqlServer
+          - AzureCosmosDB
+          - AzureSqlDatabase
+          - AzureSqlDatawarehouse
+          - AzureTable
+          - Box
+          - Cassandra
+          - Dropbox
+          - GoogleAds
+          - GoogleAnalytics
+          - GoogleBigQuery
+          - GoogleBigQueryStandardSQL
+          - GoogleCloudStorage
+          - GoogleSheets
+          - GoogleSpanner
+          - HerokuPostgres
+          - IbmCloudSqlQuery
+          - LinkedIn
+          - MarkLogic
+          - Marketo
+          - MicrosoftAdvertising
+          - MicrosoftDynamics
+          - MongoDB
+          - MulesoftAnaplan
+          - MulesoftConcur
+          - MulesoftHubSpot
+          - MulesoftMarkLogic
+          - MulesoftMongoDB
+          - MulesoftMySQL
+          - MulesoftOracle
+          - MulesoftServiceNow
+          - MulesoftSqlServer
+          - MulesoftSuccessFactors
+          - MulesoftWorkday
+          - MulesoftZuora
+          - NetSuite
+          - OracleEloqua
+          - Redshift
+          - SalesforceCPQ
+          - SalesforceCommunityCloud
+          - SalesforceEinsteinAnalytics
+          - SalesforceExternal
+          - SalesforceForceCom
+          - SalesforceMarketingCloud
+          - SalesforceMarketingCloudFull
+          - SalesforceMarketingCloudOAuth2
+          - SalesforceOutput
+          - SalesforceReport
+          - SalesforceSalesCloud
+          - SalesforceServiceCloud
+          - SapConcur
+          - SapHana
+          - SapSuccessFactors
+          - ServiceNow
+          - SfdcLocal
+          - SnowflakeComputing
+          - SnowflakeDirect
+          - SnowflakeOutput
+          - SugarCRM
+          - TableauHyperOutput
+          - Teradata
+          - VeevaVault
+          - Xactly
+          - Zendesk
+          - ZohoCRM
+          - ZuoraAQuA
+      folder:
+        description: Folder for the Live connection.
+        required: false # TODO Hand-rolled W-8253396
+        type: AssetReferenceRepresentation
+      ingestionSchedule:
+        description: Schedule of replication flows for the connection.
+        required: false # TODO Hand-rolled W-8253396
+        type: ScheduleRepresentation
+      targetConnector:
+        description: Target connector associated with the current source connector.
+        required: false # TODO Hand-rolled W-8253396
+        type: AssetReferenceRepresentation
   DataflowCollectionRepresentation:
     description: A collection of Dataflows.
     type: object
@@ -518,6 +649,30 @@ types:
         enum:
           - All
           - Limited
+  HourlyScheduleRepresentation:
+    description: A schedule which can run multiple times a day.
+    discriminatorValue: hourly
+    type: ScheduleRepresentation
+    properties:
+      daysOfWeek:
+        description: Days of the week on which the schedule will run.
+        type: array
+        items:
+          type: string
+          enum:
+            - Friday
+            - Monday
+            - Saturday
+            - Sunday
+            - Thursday
+            - Tuesday
+            - Wednesday
+      hourlyInterval:
+        description: Hours in between each queueing of task.
+        type: integer
+      lastHour:
+        description: Hour at which schedule stops queueing.
+        type: integer
   LicenseAttributesRepresentation:
     description: The analytics license type and other properties
     type: object
@@ -541,6 +696,69 @@ types:
       sourceObjectName:
         description: The source object name from the connection
         type: string
+  MinutelyScheduleRepresentation:
+    description: A schedule which can run multiple times an hour.
+    discriminatorValue: minutely
+    type: ScheduleRepresentation
+    properties:
+      daysOfWeek:
+        description: Days of the week on which the schedule will run.
+        type: array
+        items:
+          type: string
+          enum:
+            - Friday
+            - Monday
+            - Saturday
+            - Sunday
+            - Thursday
+            - Tuesday
+            - Wednesday
+      lastHour:
+        description: Hour at which schedule stops queueing.
+        type: integer
+      minutelyInterval:
+        description: Minutes in between each queueing of task.
+        type: integer
+  MonthlyRelativeScheduleRepresentation:
+    description: Schedule which runs monthly on a relative day within the month.
+    discriminatorValue: monthlyrelative
+    type: ScheduleRepresentation
+    properties:
+      dayInWeek:
+        description: Day within a week.
+        type: string
+        enum:
+          - Friday
+          - Monday
+          - Saturday
+          - Sunday
+          - Thursday
+          - Tuesday
+          - Wednesday
+      weekInMonth:
+        description: Week within a month.
+        type: string
+        enum:
+          - First
+          - Fourth
+          - Last
+          - Second
+          - Third
+  MonthlySpecificScheduleRepresentation:
+    description: A schedule which runs once a month on specific (numerical) days of
+      the month or on the 'last' day of the month.
+    discriminatorValue: monthly
+    type: ScheduleRepresentation
+    properties:
+      daysOfMonth:
+        description: Days of the month on which the schedule will run (-1, 1-31).
+          Note that months lacking specific days will skip the job. Can specify a
+          single value of -1 to indicate the last day of the month (-1 cannot be used
+          with additional days).
+        type: array
+        items:
+          type: integer
   NodeRowCountRepresentation:
     description: Row Statistics of a Job.
     type: object
@@ -569,6 +787,28 @@ types:
         description: Thousand separator
         type: string
         required: false # TODO Hand-rolled W-8253396
+  OutputSourceRepresentation:
+    description: output source for output objects
+    discriminatorValue: outputSource
+    type: object
+    properties:
+      inputRows:
+        description: The number of rows in the input of the sync out operation.
+        type: integer
+      isSyncOut:
+        description: Whether this object represents a sync out connection or a recipe
+          output connection.
+        type: boolean
+      name:
+        description: The name of the asset.
+        type: string
+      nextScheduledDate:
+        description: The next scheduled runtime for this output source.
+        required: false # TODO Hand-rolled W-8253396
+        type: string
+      outputRows:
+        description: The number of rows in the output of the sync out operation.
+        type: integer
   PermissionsRepresentation:
     description: Permissions of the user on an asset.
     type: object
@@ -811,6 +1051,161 @@ types:
         description: Validation code
         type: integer
         required: false # TODO Hand-rolled W-8253396
+  ReplicatedDatasetCollectionRepresentation:
+    description: A list of Replicated Datasets.
+    type: object
+    properties:
+      replicatedDatasets:
+        description: A list of Replicated Datasets.
+        type: array
+        items:
+          type: ReplicatedDatasetRepresentation
+      url:
+        description: The URL to get the collection.
+        type: string
+  ReplicatedDatasetRepresentation:
+    description: Replicates data from an external source object into a Wave as a dataset.
+      Replicated Datasets are not intended to be visualized directly, but are used
+      like a cache to speed up other workflows which refer to the same source object.
+    discriminatorValue: replicatedDataset
+    type: BaseWaveAssetRepresentation
+    properties:
+      advancedProperties:
+        description: The advanced properties associated with this dataset
+        type: array
+        items:
+          type: AdvancedPropertyValueRepresentation
+      connectionMode:
+        description: The data connection mode configured for this dataset
+        required: false # TODO Hand-rolled W-8253396
+        type: string
+        enum:
+          - Full
+          - Incremental
+          - PeriodicFull
+      connector:
+        description: Connector information associated with this replication object
+        type: DataConnectorRepresentation
+      datasetId:
+        description: Dataset ID that is associated with the source object being replicated
+        type: string
+      fieldCount:
+        description: Indicates column count for the replicated dataset
+        type: integer
+      fieldsUrl:
+        description: Url to get the fields associated with the replicated dataset
+        type: string
+      filterApplied:
+        description: Indicates if filters have been applied to the replicated dataset
+        type: boolean
+      lastRefreshedDate:
+        description: Indicates the date when the dataset was last run
+        required: false # TODO Hand-rolled W-8253396
+        type: string
+      outputSource:
+        description: The output source (recipe or sync out connection) configured
+          for this output dataset
+        required: false # TODO Hand-rolled W-8253396
+        type: OutputSourceRepresentation
+      passThroughFilter:
+        description: The replicated objects pass through filter string
+        required: false # TODO Hand-rolled W-8253396
+        type: string
+      replicationDataflowId:
+        description: Dataflow ID that is associated with running individual replication
+          for the object
+        required: false # TODO Hand-rolled W-8253396
+        type: string
+      rowLevelSharing:
+        description: Inherit row level sharing rules for this object
+        type: boolean
+      sourceObjectName:
+        description: The name of the source object being replicated.
+        type: string
+      status:
+        description: Current Status of the replicated dataset
+        type: string
+        enum:
+          - Cancelled
+          - Checkpoint
+          - Dequeued
+          - Enqueued
+          - Failure
+          - Initiated
+          - New
+          - Serviced
+          - Stale
+          - Success
+          - Warnings
+      supportedConnectionModes:
+        description: List of supported Connection modes for this dataset
+        type: array
+        items:
+          type: string
+          enum:
+            - Full
+            - Incremental
+            - PeriodicFull
+  ScheduleRepresentation:
+    description: Schedule on which to execute some type of job
+    discriminator: frequency
+    type: object
+    properties:
+      frequency:
+        description: Frequency on which this schedule is run.
+        type: string
+        enum:
+          - Daily
+          - EventDriven
+          - Hourly
+          - Minutely
+          - Monthly
+          - MonthlyRelative
+          - Weekly
+      nextScheduledDate:
+        description: Next scheduled time (in UTC) for this schedule.
+        required: false # TODO Hand-rolled W-8253396
+        type: string
+      notificationLevel:
+        description: Email notification level of dataflow associated with this schedule.
+        required: false # TODO Hand-rolled W-8253396
+        type: string
+        enum:
+          - Always
+          - Failures
+          - Never
+          - Warnings
+      time:
+        description: Hour and timezone in which this schedule is run.
+        required: false # TODO Hand-rolled W-8253396
+        type: TimeRepresentation
+  TimeRepresentation:
+    description: Time at which something should happen
+    type: object
+    properties:
+      hour:
+        description: Hour at which this schedule is run (0-23).
+        type: integer
+      minute:
+        description: Minute at which this schedule is run (0-59).
+        type: integer
+      timeZone:
+        description: Time zone of the hour at which the schedule is run.
+        type: TimeZoneRepresentation
+  TimeZoneRepresentation:
+    description: Information about a time zone.
+    type: object
+    properties:
+      gmtOffset:
+        description: The signed offset, in hours, from GMT.
+        format: double
+        type: number
+      name:
+        description: The display name of this time zone.
+        type: string
+      zoneId:
+        description: The zone ID of this time zone.
+        type: string
   SchemaFieldFormatSymbolsRepresentation:
     description: Representation of Schema Node Fieldformat symbols
     type: object
@@ -988,6 +1383,24 @@ types:
         description: The Chatter profile photo of the user.
         type: string | nil
         required: false # TODO Hand-rolled W-8253396
+  WeeklyScheduleRepresentation:
+    description: Weekly schedule on which to execute some type of job
+    discriminatorValue: weekly
+    type: ScheduleRepresentation
+    properties:
+      daysOfWeek:
+        description: Days of the week on which the schedule will run.
+        type: array
+        items:
+          type: string
+          enum:
+            - Friday
+            - Monday
+            - Saturday
+            - Sunday
+            - Thursday
+            - Tuesday
+            - Wednesday
   XmdDatasetRepresentation:
     description: Extended metadata for the dataset
     type: object
@@ -1777,3 +2190,25 @@ types:
           enum:
             - R2
             - R3
+  /replicatedDatasets:
+    get:
+      description: Get a list of all Replicated Datasets.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ReplicatedDatasetCollectionRepresentation
+      queryParameters:
+        category:
+          type: string
+          required: false
+          enum:
+            - Input
+            - Output
+        connector:
+          type: string
+          required: false
+        sourceObject:
+          type: string
+          required: false

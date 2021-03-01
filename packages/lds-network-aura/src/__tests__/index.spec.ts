@@ -4012,6 +4012,60 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/replicatedDatasets', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/replicatedDatasets`,
+            },
+            [
+                'WaveController.getReplicatedDatasets',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/replicatedDatasets`,
+                    queryParams: {
+                        category: 'Input',
+                        connector: 'SFDC_LOCAL',
+                        sourceObject: 'Opportunity',
+                    },
+                },
+                [
+                    'WaveController.getReplicatedDatasets',
+                    {
+                        category: 'Input',
+                        connector: 'SFDC_LOCAL',
+                        sourceObject: 'Opportunity',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/replicatedDatasets`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/replicatedDatasets`,
+            },
+            {}
+        );
+    });
+
     describe('get /connect/communities/{communityId}/managed-content/delivery/contents', () => {
         testControllerInput(
             {

@@ -1,0 +1,63 @@
+{
+    "replicatedDatasets": [
+        {
+            "advancedProperties": [],
+            "connectionMode": "incremental",
+            "connector": {
+                "connectionProperties": [],
+                "connectorType": "SfdcLocal",
+                "createdBy": {
+                    "id": "",
+                    "name": "",
+                    "profilePhotoUrl": ""
+                },
+                "createdDate": "2021-01-26T02:13:10.000Z",
+                "description": "SFDC_REMOTE",
+                "id": "0Itxx0000004CKKCA3",
+                "ingestionSchedule": {
+                    "daysOfWeek": [],
+                    "frequency": "weekly",
+                    "notificationLevel": "never"
+                },
+                "label": "SFDC_REMOTE",
+                "lastModifiedBy": {
+                    "id": "",
+                    "name": "",
+                    "profilePhotoUrl": ""
+                },
+                "lastModifiedDate": "2021-01-26T02:13:10.000Z",
+                "name": "SFDC_REMOTE",
+                "type": "dataconnector",
+                "url": "/services/data/v52.0/wave/dataConnectors/0Itxx0000004CKKCA3"
+            },
+            "createdBy": {
+                "id": "",
+                "name": "",
+                "profilePhotoUrl": ""
+            },
+            "createdDate": "2021-01-26T02:13:10.000Z",
+            "datasetId": "0Fbxx0000004CKKCA2",
+            "fieldCount": 36,
+            "fieldsUrl": "/services/data/v52.0/wave/replicatedDatasets/0Iuxx0000004CAeCAM/fields",
+            "filterApplied": false,
+            "id": "0Iuxx0000004CAeCAM",
+            "label": "Opportunity",
+            "lastModifiedBy": {
+                "id": "",
+                "name": "",
+                "profilePhotoUrl": ""
+            },
+            "lastModifiedDate": "2021-01-26T02:13:10.000Z",
+            "lastRefreshedDate": "2020-11-30T17:48:02.000Z",
+            "name": "Opportunity",
+            "replicationDataflowId": "02Kxx0000004DNNEA2",
+            "rowLevelSharing": false,
+            "sourceObjectName": "Opportunity",
+            "status": "cancelled",
+            "supportedConnectionModes": ["full", "incremental", "periodicFull"],
+            "type": "replicateddataset",
+            "url": "/services/data/v52.0/wave/replicatedDatasets/0Iuxx0000004CAeCAM"
+        }
+    ],
+    "url": "/services/data/v52.0/wave/replicatedDatasets"
+}

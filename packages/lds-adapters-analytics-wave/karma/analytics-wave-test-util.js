@@ -257,7 +257,6 @@ export function mockGetRecipesNetworkErrorOnce(config, mockData) {
 
 function getRecipesMatcher(config) {
     let { format, licenseType, page, pageSize, q, sort } = config;
-
     return sinon.match({
         body: null,
         headers: {},
@@ -301,6 +300,38 @@ function getRecipeMatcher(config) {
         basePath: `${URL_BASE}/recipes/${id}`,
         queryParams: {
             format,
+        },
+    });
+}
+
+// Replicated Datasets
+export function mockGetReplicatedDatasetsNetworkOnce(config, mockData) {
+    const paramMatch = getReplicatedDatasetsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+export function mockGetReplicatedDatasetsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getReplicatedDatasetsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getReplicatedDatasetsMatcher(config) {
+    let { category, connector, sourceObject } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/replicatedDatasets`,
+        queryParams: {
+            category,
+            connector,
+            sourceObject,
         },
     });
 }

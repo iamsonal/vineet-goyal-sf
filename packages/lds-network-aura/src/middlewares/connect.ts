@@ -71,6 +71,8 @@ const RECIPES_PATH = new RegExp(`${WAVE_BASE_URI}/recipes$`, 'i');
 
 const RECIPE_PATH = new RegExp(`${WAVE_BASE_URI}/recipes/([A-Z0-9_]){15,18}$`, 'i');
 
+const REPLICATED_DATASETS_PATH = new RegExp(`${WAVE_BASE_URI}/replicatedDatasets$`, 'i');
+
 const DATASETS_PATH = new RegExp(`${WAVE_BASE_URI}/datasets$`, 'i');
 
 const DATASET_PATH = new RegExp(`${WAVE_BASE_URI}/datasets/([A-Z0-9_]){1,80}$`, 'i');
@@ -335,6 +337,14 @@ const analytics: ApiFamily = {
         predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && XMD_PATH.test(path),
         transport: {
             controller: 'WaveController.getXmd',
+        },
+    },
+    getReplicatedDatasets: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && REPLICATED_DATASETS_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getReplicatedDatasets',
         },
     },
 };

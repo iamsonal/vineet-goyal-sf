@@ -3,7 +3,7 @@
  */
 
 import { Instrumentation, refreshApiEvent } from '../main';
-import { getRecordConfigKey } from '../config-key-functions';
+import { stableJSONStringify } from '../utils/utils';
 import { LRUCache } from '../utils/lru-cache';
 import timekeeper from 'timekeeper';
 
@@ -110,7 +110,7 @@ const baseCacheMissCounterIncrement = 4;
 const GET_RECORD_TTL = 30000;
 
 describe('instrumentation', () => {
-    describe('instrumentGetRecordAdapter', () => {
+    describe('cache misses out of ttl', () => {
         it('should not log metrics when getRecord adapter has a cache hit on existing value within TTL', () => {
             const mockGetRecordAdapter = config => {
                 if (config.cacheHit) {
@@ -131,11 +131,12 @@ describe('instrumentation', () => {
             };
             const getRecordConfigCacheHit = {
                 recordId: '00x000000000000017',
-                optionalFields: ['Account.Name', 'Account.Id'],
+                // Make sure that the key is the same when parameters are the same but ordering is different.
+                optionalFields: ['Account.Id', 'Account.Name'],
                 cacheHit: true,
             };
 
-            const recordKey = getRecordConfigKey(getRecordConfig);
+            const recordKey = 'getRecord:' + stableJSONStringify(getRecordConfig);
             // Cache Miss #1
             const now = Date.now();
             timekeeper.freeze(now);
@@ -266,7 +267,7 @@ describe('instrumentation', () => {
                 recordId: '00x000000000000018',
             };
 
-            const recordKey = getRecordConfigKey(getRecordConfig);
+            const recordKey = 'getRecord:' + stableJSONStringify(getRecordConfig);
 
             // Cache Miss #1
             const now = Date.now();

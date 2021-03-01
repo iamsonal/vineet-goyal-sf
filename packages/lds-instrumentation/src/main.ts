@@ -61,22 +61,6 @@ import {
 import { ObjectKeys } from './utils/language';
 import { LRUCache } from './utils/lru-cache';
 import { stableJSONStringify } from './utils/utils';
-
-import {
-    getLayoutConfigKey,
-    getLayoutUserStateConfigKey,
-    getListUiConfigKey,
-    getLookupActionsConfigKey,
-    getLookupRecordsConfigKey,
-    getObjectInfoConfigKey,
-    getPicklistValuesConfigKey,
-    getPicklistValuesByRecordTypeConfigKey,
-    getRecordAvatarsConfigKey,
-    getRecordCreateDefaultsConfigKey,
-    getRecordConfigKey,
-    getRecordUiConfigKey,
-} from './config-key-functions';
-
 interface RecordApiNameChangeCounters {
     [apiName: string]: Counter;
 }
@@ -198,46 +182,6 @@ const getApexCacheMissCountMetric = counter(GET_APEX_CACHE_MISS_COUNT);
 const getApexCacheMissDurationMetric = timer(GET_APEX_CACHE_MISS_DURATION);
 const totalAdapterRequestSuccessMetric = counter(TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT);
 const totalAdapterErrorMetric = counter(TOTAL_ADAPTER_ERROR_COUNT);
-
-const wireAdapterMetricConfigs: wireAdapterMetricConfigs = {
-    getLayout: {
-        wireConfigKeyFn: getLayoutConfigKey,
-    },
-    getLayoutUserState: {
-        wireConfigKeyFn: getLayoutUserStateConfigKey,
-    },
-    getListUi: {
-        wireConfigKeyFn: getListUiConfigKey,
-    },
-    getLookupActions: {
-        wireConfigKeyFn: getLookupActionsConfigKey,
-    },
-    getLookupRecords: {
-        wireConfigKeyFn: getLookupRecordsConfigKey,
-    },
-    getObjectInfo: {
-        wireConfigKeyFn: getObjectInfoConfigKey,
-    },
-    getPicklistValues: {
-        wireConfigKeyFn: getPicklistValuesConfigKey,
-    },
-    getPicklistValuesByRecordType: {
-        wireConfigKeyFn: getPicklistValuesByRecordTypeConfigKey,
-    },
-    getRecord: {
-        wireConfigKeyFn: getRecordConfigKey,
-    },
-    getRecordAvatars: {
-        wireConfigKeyFn: getRecordAvatarsConfigKey,
-    },
-    getRecordCreateDefaults: {
-        wireConfigKeyFn: getRecordCreateDefaultsConfigKey,
-    },
-    getRecordUi: {
-        wireConfigKeyFn: getRecordUiConfigKey,
-    },
-};
-
 export class Instrumentation {
     private recordApiNameChangeCounters: RecordApiNameChangeCounters = {};
     private adapterUnfulfilledErrorCounters: AdapterUnfulfilledErrorCounters = {};
@@ -345,11 +289,6 @@ export class Instrumentation {
          * a request we've made in the past.
          * Request Record 1 -> Record 2 -> Back to Record 1 outside of TTL is an example of when this metric will fire.
          */
-        const wireAdapterMetricConfig = wireAdapterMetricConfigs[adapterName];
-        const wireConfigKeyFn =
-            wireAdapterMetricConfig && wireAdapterMetricConfig.wireConfigKeyFn
-                ? wireAdapterMetricConfig.wireConfigKeyFn
-                : stableJSONStringify;
         const cacheMissOutOfTtlDurationByAdapterMetric: Timer | undefined =
             ttl !== undefined
                 ? timer(
@@ -410,13 +349,13 @@ export class Instrumentation {
                     ttl !== undefined
                 ) {
                     this.logAdapterCacheMissOutOfTtlDuration(
+                        adapterName,
                         config,
                         cacheMissOutOfTtlDurationByAdapterMetric,
                         cacheMissOutOfTtlCountByAdapterMetric,
                         ttlMissStats,
                         Date.now(),
-                        ttl,
-                        wireConfigKeyFn
+                        ttl
                     );
                 }
             } else if (result !== null) {
@@ -443,25 +382,24 @@ export class Instrumentation {
     /**
      * Logs when adapter requests come in. If we have subsequent cache misses on a given config, beyond its TTL then log the duration to metrics.
      * Backed by an LRU Cache implementation to prevent too many record entries from being stored in-memory.
-     * @param config The config passed into wire adapter.
      * @param name The wire adapter name.
+     * @param config The config passed into wire adapter.
      * @param durationMetric The argus timer metric for tracking cache miss durations.
      * @param counterMetric The argus counter metric for tracking cache misses out of TTL.
      * @param ttlMissStats CacheStatsLogger to log misses out of TTL.
      * @param currentCacheMissTimestamp Timestamp for when the request was made.
      * @param ttl TTL for the wire adapter.
-     * @param wireConfigKeyFn Optional function to transform wire configs to a unique key. Otherwise, defaults to use stableJSONStringify().
      */
     private logAdapterCacheMissOutOfTtlDuration(
+        name: string,
         config: unknown,
         durationMetric: Timer,
         counterMetric: Counter,
         ttlMissStats: CacheStatsLogger,
         currentCacheMissTimestamp: number,
-        ttl: number,
-        wireConfigKeyFn: (config: any) => string | undefined
+        ttl: number
     ): void {
-        const configKey = wireConfigKeyFn(config) as string;
+        const configKey = `${name}:${stableJSONStringify(config)}`;
         const existingCacheMissTimestamp = this.adapterCacheMisses.get(configKey);
         this.adapterCacheMisses.set(configKey, currentCacheMissTimestamp);
         if (existingCacheMissTimestamp !== undefined) {

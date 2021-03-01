@@ -59,7 +59,8 @@ const draftManager = new DraftManager(draftQueue);
 const draftAwareNetworkAdapter = makeNetworkAdapterDraftAware(
     networkAdapter,
     draftQueue,
-    responseRecordRepresentationRetrievers
+    responseRecordRepresentationRetrievers,
+    userId
 );
 const draftAwareDurableStore = makeDurableStoreDraftAware(
     durableStore,
@@ -86,7 +87,8 @@ const env = makeEnvironmentDraftAware(
         generateId: newRecordId,
         isDraftId: isGenerated,
         recordResponseRetrievers: responseRecordRepresentationRetrievers,
-    }
+    },
+    userId
 );
 
 luvio = new Luvio(env);

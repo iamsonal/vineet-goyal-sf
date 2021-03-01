@@ -403,10 +403,12 @@ export function markDraftRecordOptionalFieldsMissing(
  * Replays an ordered draft list on top of a record
  * @param record The base record to apply drafts to
  * @param drafts The list of drafts to apply to the record
+ * @param userId The current user id, will be the last modified id
  */
 export function replayDraftsOnRecord<U extends DraftRecordRepresentation>(
     record: U,
-    drafts: DraftAction<RecordRepresentation>[]
+    drafts: DraftAction<RecordRepresentation>[],
+    userId: string
 ): U {
     if (drafts.length === 0) {
         return record;
@@ -456,7 +458,23 @@ export function replayDraftsOnRecord<U extends DraftRecordRepresentation>(
     }
 
     record.drafts.edited = true;
-    return replayDraftsOnRecord(record, drafts);
+
+    // update last modified date to draft action time and
+    // last modified to user id
+    const lastModifiedDate = new Date(draft.timestamp).toISOString();
+    record.lastModifiedById = userId;
+    record.lastModifiedDate = lastModifiedDate;
+
+    record.fields[DEFAULT_FIELD_LAST_MODIFIED_BY_ID] = { value: userId, displayValue: null };
+    record.fields[DEFAULT_FIELD_LAST_MODIFIED_DATE] = {
+        value: lastModifiedDate,
+        //TODO: will format the display value properly when ObjectInfo and
+        //      locationization functionality are integrated in,
+        //      for now just use the raw value for display
+        displayValue: lastModifiedDate,
+    };
+
+    return replayDraftsOnRecord(record, drafts, userId);
 }
 
 export function buildDraftDurableStoreKey(recordKey: string, draftActionId: string) {

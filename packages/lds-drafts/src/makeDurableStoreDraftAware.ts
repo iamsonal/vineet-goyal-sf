@@ -111,13 +111,16 @@ function denormalizeRecordFields(
  * of the durable store boundary has draft values applied to it.
  * @param key
  * @param record
+ * @param drafts the list of draft action to play on the record
+ * @param userId The current user id, will be the last modified id
  */
 function normalizeRecordFields(
     key: string,
     entry: DurableStoreEntry<DurableRecordRepresentation>,
-    drafts: DraftAction<RecordRepresentation>[]
+    drafts: DraftAction<RecordRepresentation>[],
+    userId: string
 ): DurableStoreEntries {
-    const record = replayDraftsOnRecord(entry.data, drafts);
+    const record = replayDraftsOnRecord(entry.data, drafts, userId);
     const { fields, links } = record;
 
     const linkNames = ObjectKeys(links);
@@ -218,7 +221,8 @@ function createSyntheticRecord(
 
 function getRecordEntriesWithDraftOverlays(
     durableEntries: DurableStoreEntries,
-    draftActionMap: DraftActionMap
+    draftActionMap: DraftActionMap,
+    userId: string
 ) {
     const returnEntries: DurableStoreEntries = ObjectCreate(null);
     const keys = ObjectKeys(durableEntries);
@@ -233,7 +237,8 @@ function getRecordEntriesWithDraftOverlays(
                 normalizeRecordFields(
                     key,
                     value as DurableStoreEntry<DurableRecordRepresentation>,
-                    [...drafts]
+                    [...drafts],
+                    userId
                 )
             );
         } else {
@@ -271,7 +276,7 @@ function getSyntheticRecordEntries(
             // return undefined for the entire request
             return undefined;
         }
-        ObjectAssign(returnEntries, normalizeRecordFields(draftKey, record, drafts));
+        ObjectAssign(returnEntries, normalizeRecordFields(draftKey, record, drafts, currentUserId));
     }
     return returnEntries;
 }
@@ -339,7 +344,8 @@ export function makeDurableStoreDraftAware(
                     if (durableEntries !== undefined) {
                         const existingEntriesWithDrafts = getRecordEntriesWithDraftOverlays(
                             durableEntries,
-                            draftActionMap
+                            draftActionMap,
+                            currentUserId
                         );
                         ObjectAssign(returnEntries, existingEntriesWithDrafts);
                     }

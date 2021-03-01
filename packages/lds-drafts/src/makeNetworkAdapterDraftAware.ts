@@ -8,10 +8,12 @@ import { replayDraftsOnRecord } from './utils/records';
  * Applies drafts to records in a network response
  * @param records references to records in the response
  * @param draftQueue the draft queue
+ * @param userId the current user id
  */
 function applyDraftsToResponse(
     records: RetrievedProperty<RecordRepresentation>[],
-    draftQueue: DraftQueue
+    draftQueue: DraftQueue,
+    userId: string
 ) {
     const { length: retrievedRecordsLength } = records;
     const retrievedRecordKeys: { [key: string]: true } = {};
@@ -29,7 +31,7 @@ function applyDraftsToResponse(
             const drafts = actions[cacheKey] as Readonly<DraftAction<RecordRepresentation>[]>;
 
             if (drafts !== undefined && drafts.length > 0) {
-                records[j].data = replayDraftsOnRecord(data, [...drafts]);
+                records[j].data = replayDraftsOnRecord(data, [...drafts], userId);
             }
         }
     });
@@ -39,7 +41,8 @@ export function draftAwareHandleResponse(
     request: ResourceRequest,
     response: FetchResponse<any>,
     draftQueue: DraftQueue,
-    recordResponseRetrievers: ResponsePropertyRetriever<unknown, RecordRepresentation>[]
+    recordResponseRetrievers: ResponsePropertyRetriever<unknown, RecordRepresentation>[],
+    userId: string
 ): Promise<FetchResponse<any>> {
     for (let i = 0, len = recordResponseRetrievers.length; i < len; i++) {
         const { canRetrieve, retrieve } = recordResponseRetrievers[i];
@@ -54,7 +57,7 @@ export function draftAwareHandleResponse(
             return Promise.resolve(response);
         }
 
-        return applyDraftsToResponse(responseRecords, draftQueue).then(() => {
+        return applyDraftsToResponse(responseRecords, draftQueue, userId).then(() => {
             return response;
         });
     }
@@ -65,7 +68,8 @@ export function draftAwareHandleResponse(
 export function makeNetworkAdapterDraftAware(
     networkAdapter: NetworkAdapter,
     draftQueue: DraftQueue,
-    recordResponseRetrievers: ResponsePropertyRetriever<unknown, RecordRepresentation>[] = []
+    recordResponseRetrievers: ResponsePropertyRetriever<unknown, RecordRepresentation>[] = [],
+    userId: string
 ): NetworkAdapter {
     return (request: ResourceRequest) => {
         return networkAdapter(request).then(response => {
@@ -73,7 +77,8 @@ export function makeNetworkAdapterDraftAware(
                 request,
                 response,
                 draftQueue,
-                recordResponseRetrievers
+                recordResponseRetrievers,
+                userId
             );
         });
     };

@@ -33,7 +33,8 @@ export interface DraftEnvironmentOptions {
 
 export function makeEnvironmentDraftAware(
     env: DurableEnvironment,
-    options: DraftEnvironmentOptions
+    options: DraftEnvironmentOptions,
+    userId: string
 ): Environment {
     const { draftQueue, recordResponseRetrievers, ingestFunc, store } = options;
 
@@ -53,7 +54,8 @@ export function makeEnvironmentDraftAware(
             request,
             action.response,
             draftQueue,
-            recordResponseRetrievers
+            recordResponseRetrievers,
+            userId
         ).then(response => {
             const record = response.body as RecordRepresentation;
             const key = keyBuilderRecord({ recordId: record.id });

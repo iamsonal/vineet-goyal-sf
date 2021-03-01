@@ -2,7 +2,14 @@ import { ResponsePropertyRetriever } from '@luvio/environments';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { DraftQueue } from '../DraftQueue';
 import { makeNetworkAdapterDraftAware } from '../makeNetworkAdapterDraftAware';
-import { createEditDraftAction, createGetRequest, RECORD_ID, STORE_KEY_RECORD } from './test-utils';
+import {
+    createEditDraftAction,
+    createGetRequest,
+    RECORD_ID,
+    STORE_KEY_RECORD,
+    CURRENT_USER_ID,
+    DEFAULT_TIME_STAMP,
+} from './test-utils';
 
 function setup(
     setupOptions: {
@@ -28,7 +35,8 @@ function setup(
     const draftNetworkAdapter = makeNetworkAdapterDraftAware(
         baseNetworkAdapter,
         draftQueue,
-        recordResponseRetrievers ?? []
+        recordResponseRetrievers ?? [],
+        CURRENT_USER_ID
     );
 
     return {
@@ -125,13 +133,24 @@ describe('makeNetworkAdapterDraftAware', () => {
         const overlayedResponse = await draftNetworkAdapter(createGetRequest());
 
         // assert
-        expect(overlayedResponse).toStrictEqual({
+        const expectedLastModifiedDate = new Date(DEFAULT_TIME_STAMP).toISOString();
+        expect(overlayedResponse).toEqual({
             id: RECORD_ID,
             weakEtag: 1,
+            lastModifiedById: CURRENT_USER_ID,
+            lastModifiedDate: expectedLastModifiedDate,
             fields: {
                 Name: {
                     value: draftName,
                     displayValue: draftName,
+                },
+                LastModifiedById: {
+                    value: CURRENT_USER_ID,
+                    displayValue: null,
+                },
+                LastModifiedDate: {
+                    value: expectedLastModifiedDate,
+                    displayValue: expectedLastModifiedDate,
                 },
             },
             drafts: {
@@ -184,14 +203,25 @@ describe('makeNetworkAdapterDraftAware', () => {
         // execute
         const overlayedResponse = await draftNetworkAdapter(createGetRequest());
 
+        const expectedLastModifiedDate = new Date(DEFAULT_TIME_STAMP).toISOString();
         // assert
         expect(overlayedResponse).toStrictEqual({
             id: RECORD_ID,
             weakEtag: 1,
+            lastModifiedById: CURRENT_USER_ID,
+            lastModifiedDate: expectedLastModifiedDate,
             fields: {
                 Name: {
                     value: draftName2,
                     displayValue: draftName2,
+                },
+                LastModifiedById: {
+                    value: CURRENT_USER_ID,
+                    displayValue: null,
+                },
+                LastModifiedDate: {
+                    value: expectedLastModifiedDate,
+                    displayValue: expectedLastModifiedDate,
                 },
             },
             drafts: {

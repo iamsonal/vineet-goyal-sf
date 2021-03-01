@@ -14,6 +14,7 @@ import {
     RECORD_ID,
     STORE_KEY_RECORD,
     CURRENT_USER_ID,
+    DEFAULT_TIME_STAMP,
     buildMockDurableStore,
     mockDurableStoreDraftResponse,
     STORE_KEY_DRAFT_RECORD,
@@ -256,38 +257,46 @@ describe('draft environment record utilities', () => {
     describe('replayDraftsOnRecord', () => {
         it('returns unmodified record if no draft actions', () => {
             const record = {} as any;
-            const result = replayDraftsOnRecord(record, []);
+            const result = replayDraftsOnRecord(record, [], CURRENT_USER_ID);
 
             expect(result).toBe(record);
         });
 
         it('returns unmodified record if draft action undefined', () => {
             const record = {} as any;
-            const result = replayDraftsOnRecord(record, [undefined]);
+            const result = replayDraftsOnRecord(record, [undefined], CURRENT_USER_ID);
 
             expect(result).toBe(record);
         });
 
         it('throws error on POST', () => {
             expect(() =>
-                replayDraftsOnRecord({} as any, [{ request: { method: 'post' } } as any])
+                replayDraftsOnRecord(
+                    {} as any,
+                    [{ request: { method: 'post' } } as any],
+                    CURRENT_USER_ID
+                )
             ).toThrowError();
         });
 
         it('throws if draft action after a delete is present', () => {
             expect(() =>
-                replayDraftsOnRecord({} as any, [
-                    { request: { method: 'delete' } } as any,
+                replayDraftsOnRecord(
                     {} as any,
-                ])
+                    [{ request: { method: 'delete' } } as any, {} as any],
+                    CURRENT_USER_ID
+                )
             ).toThrowError();
         });
 
         it('adds drafts node and fields for delete', () => {
             const record = {} as any;
-            const result = replayDraftsOnRecord(record, [
-                { id: '123', request: { method: 'delete' } } as any,
-            ]);
+
+            const result = replayDraftsOnRecord(
+                record,
+                [{ id: '123', request: { method: 'delete' } } as any],
+                CURRENT_USER_ID
+            );
 
             expect(result).toStrictEqual({
                 drafts: {
@@ -304,18 +313,27 @@ describe('draft environment record utilities', () => {
             const record = {
                 id: '123',
                 fields: { Name: { value: 'oldName', displayValue: null } },
+                lastModifiedById: null,
+                lastModifiedDate: null,
             } as any;
+
             const editAction = createEditDraftAction(
                 '123',
                 'UiApi::RecordRepresentation:123',
                 'newName'
             );
-            const result = replayDraftsOnRecord(record, [editAction]);
+            const result = replayDraftsOnRecord(record, [editAction], CURRENT_USER_ID);
 
+            const expectedLastModifiedDate = new Date(DEFAULT_TIME_STAMP).toISOString();
             expect(result).toStrictEqual({
                 id: '123',
                 fields: {
                     Name: { value: 'newName', displayValue: 'newName' },
+                    LastModifiedById: { value: CURRENT_USER_ID, displayValue: null },
+                    LastModifiedDate: {
+                        value: expectedLastModifiedDate,
+                        displayValue: expectedLastModifiedDate,
+                    },
                 },
                 drafts: {
                     created: false,
@@ -329,23 +347,34 @@ describe('draft environment record utilities', () => {
                     },
                     draftActionIds: [editAction.id],
                 },
+                lastModifiedById: CURRENT_USER_ID,
+                lastModifiedDate: expectedLastModifiedDate,
             });
         });
 
         it('adds drafts node and linked fields for patch', () => {
             const record = buildDurableRecordRepresentation('123', {
                 Name: { value: 'oldName', displayValue: null },
+                LastModifiedById: { value: null, displayValue: null },
+                LastModifiedDate: { value: null, displayValue: null },
             });
+
             const editAction = createEditDraftAction(
                 '123',
                 'UiApi::RecordRepresentation:123',
                 'newName'
             );
-            const result = replayDraftsOnRecord(record, [editAction]);
+            const result = replayDraftsOnRecord(record, [editAction], CURRENT_USER_ID);
 
+            const expectedLastModifiedDate = new Date(DEFAULT_TIME_STAMP).toISOString();
             const expected = {
                 ...buildDurableRecordRepresentation('123', {
                     Name: { value: 'newName', displayValue: 'newName' },
+                    LastModifiedById: { value: CURRENT_USER_ID, displayValue: null },
+                    LastModifiedDate: {
+                        value: expectedLastModifiedDate,
+                        displayValue: expectedLastModifiedDate,
+                    },
                 }),
                 drafts: {
                     created: false,
@@ -361,6 +390,8 @@ describe('draft environment record utilities', () => {
                 },
             };
 
+            expected.lastModifiedById = CURRENT_USER_ID;
+            expected.lastModifiedDate = expectedLastModifiedDate;
             expect(result).toStrictEqual(expected);
         });
 
@@ -368,11 +399,15 @@ describe('draft environment record utilities', () => {
             const record = buildDurableRecordRepresentation('123', {
                 Name: { value: 'oldName', displayValue: null },
             });
-            const result = replayDraftsOnRecord(record, [
-                createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newName'),
-                createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newerName'),
-                createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newestName'),
-            ]);
+            const result = replayDraftsOnRecord(
+                record,
+                [
+                    createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newName'),
+                    createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newerName'),
+                    createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newestName'),
+                ],
+                CURRENT_USER_ID
+            );
             expect(result.drafts.draftActionIds.length).toBe(3);
         });
     });

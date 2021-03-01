@@ -14,5 +14,8 @@
         "build": "rollup --config rollup.config.js",
         "clean": "rm -rf dist",
         "test:unit": "jest"
+    },
+    "publishConfig": {
+        "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
     }
 }

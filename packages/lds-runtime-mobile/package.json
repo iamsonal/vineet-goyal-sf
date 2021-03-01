@@ -12,6 +12,9 @@
         "test:unit": "jest",
         "clean": "rm -rf dist"
     },
+    "publishConfig": {
+        "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
+    },
     "dependencies": {
         "@luvio/engine": "^0.27.3",
         "@luvio/environments": "^0.27.3"

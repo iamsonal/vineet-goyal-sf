@@ -95,6 +95,19 @@ const RECORD_SEO_PROPERTIES_PATH = new RegExp(
     'i'
 );
 
+const PUBLISH_ORCHESTRATION_EVENT_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/interaction/orchestration/events$`,
+    'i'
+);
+const GET_ORCHESTRATION_INSTANCE_COLLECTION_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/interaction/orchestration/instances$`,
+    'i'
+);
+const GET_ORCHESTRATION_INSTANCE_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/interaction/orchestration/instances/([A-Z0-9]){15,18}$`,
+    'i'
+);
+
 const connect: ApiFamily = {
     getCommunityNavigationMenu: {
         method: 'get',
@@ -126,6 +139,31 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && RECORD_SEO_PROPERTIES_PATH.test(path),
         transport: {
             controller: 'SeoPropertiesController.getRecordSeoProperties',
+        },
+    },
+    getOrchestrationInstance: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_ORCHESTRATION_INSTANCE_PATH.test(path),
+        transport: {
+            controller: 'InteractionOrchestrator.getOrchestrationInstance',
+        },
+    },
+    getOrchestrationInstanceCollection: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) &&
+            GET_ORCHESTRATION_INSTANCE_COLLECTION_PATH.test(path),
+        transport: {
+            controller: 'InteractionOrchestrator.getOrchestrationInstanceCollection',
+        },
+    },
+    publishOrchestrationEvent: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && PUBLISH_ORCHESTRATION_EVENT_PATH.test(path),
+        transport: {
+            controller: 'InteractionOrchestrator.publishOrchestrationEvent',
         },
     },
 };

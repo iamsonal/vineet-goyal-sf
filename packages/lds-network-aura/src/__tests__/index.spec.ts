@@ -4093,6 +4093,131 @@ describe('routes', () => {
         );
     });
 
+    describe('get /connect/interaction/orchestration/instances', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interaction/orchestration/instances`,
+                queryParams: {
+                    relatedRecordId: '001xx000003GYcFAAW',
+                },
+            },
+            [
+                'InteractionOrchestrator.getOrchestrationInstanceCollection',
+                { relatedRecordId: '001xx000003GYcFAAW' },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/interaction/orchestration/instances`,
+            queryParams: {
+                relatedRecordId: null,
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interaction/orchestration/instances`,
+                queryParams: {
+                    relatedRecordId: '001xx000003GYcFAAW',
+                },
+            },
+            {}
+        );
+    });
+
+    describe('get /connect/interaction/orchestration/instances/{instanceId}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interaction/orchestration/instances/0jExx000000001dEAA`,
+            },
+            [
+                'InteractionOrchestrator.getOrchestrationInstance',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/interaction/orchestration/instances/0jExx000000001dEAA`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interaction/orchestration/instances/0jExx000000001dEAA`,
+            },
+            {}
+        );
+    });
+
+    describe('post /connect/interaction/orchestration/events', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interaction/orchestration/events`,
+                body: {
+                    doesCancelOrchestrationInstance: false,
+                    eventPayload: '',
+                    orchestrationInstanceId: '0jExx000000001d',
+                    stepInstanceId: '0jLxx000000001f',
+                },
+            },
+            [
+                'InteractionOrchestrator.publishOrchestrationEvent',
+                {
+                    doesCancelOrchestrationInstance: false,
+                    eventPayload: '',
+                    orchestrationInstanceId: '0jExx000000001d',
+                    stepInstanceId: '0jLxx000000001f',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                doesCancelOrchestrationInstance: false,
+                eventPayload: null,
+                orchestrationInstanceId: '0jExx000000001d',
+                stepInstanceId: '0jLxx000000001f',
+            }
+        );
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/interaction/orchestration/events`,
+        });
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: COMMERCE_BASE_URI,
+                basePath: `/webstores/1234567890ABCDE/search/product-search`,
+                body: {
+                    doesCancelOrchestrationInstance: false,
+                    eventPayload: '',
+                    orchestrationInstanceId: '0jExx000000001d',
+                    stepInstanceId: '0jLxx000000001f',
+                },
+            },
+            {
+                doesCancelOrchestrationInstance: false,
+                eventPayload: null,
+                orchestrationInstanceId: '0jExx000000001d',
+                stepInstanceId: '0jLxx000000001f',
+            }
+        );
+    });
+
     // [IMPORTANT] this test has to be the last one in the suite to verify all registered routes have corresponding tests
     it.each(Object.keys(testedRoutes).map(key => key.split(':')))(
         '%s %s route tested',

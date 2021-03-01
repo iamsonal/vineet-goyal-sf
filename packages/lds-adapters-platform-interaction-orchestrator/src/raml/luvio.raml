@@ -1,0 +1,39 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'InteractionOrchestrator::'
+
+types:
+  AppProcessEventRepresentation:
+    (luvio.ttl): 50
+    (luvio.key):
+      orchestrationInstanceId: orchestrationInstanceId
+
+  FlowOrchestrationInstanceRepresentation:
+    (luvio.ttl): 30000
+    (luvio.key):
+      id: id
+
+/connect/interaction/orchestration:
+  /events:
+    post:
+      (luvio.adapter):
+        name: publishOrchestrationEvent
+
+  /instances:
+    get:
+      (luvio.adapter):
+        name: getOrchestrationInstanceCollection
+        oneOfParams:
+          - relatedRecordId
+          #in 234 add optional params here
+
+  /instances/{instanceId}:
+    get:
+      (luvio.adapter):
+        name: getOrchestrationInstance
+      (luvio.key):
+        id: urlParams.instanceId

@@ -1,0 +1,228 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '52.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v52.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  AppProcessEventInputRepresentation:
+    description: The input representation for an Orchestration event
+    type: object
+    properties:
+      doesCancelOrchestrationInstance:
+        description: if true, will cause Orchestrator instance to terminate
+        type: boolean
+      eventPayload:
+        description: Additional parameters for this event
+        type: string
+      orchestrationInstanceId:
+        description: ID of the Orchestration instance to resume
+        type: string
+      stepInstanceId:
+        description: ID of the app process step instance which triggered the operation
+          firing this event upon completion
+        type: string
+  AppProcessEventRepresentation:
+    description: Information about an Orchestration event.
+    type: object
+    properties:
+      doesCancelOrchestrationInstance:
+        description: if true, will cause the Orchestration instance to terminate
+        type: boolean | nil
+      eventPayload:
+        description: Orchestration event additional parameters
+        type: string | nil
+      orchestrationInstanceId:
+        description: Id of the orchestration instance to resume
+        type: string
+      stepInstanceId:
+        description: ID of the Orchestration step instance publishing the event
+        type: string
+  FlowOrchestrationInstanceCollectionRepresentation:
+    description: Information about a collection of Orchestration instances.
+    type: object
+    properties:
+      instances:
+        description: Collection of Orchestration instances
+        type: array
+        items:
+          type: FlowOrchestrationInstanceRepresentation
+  FlowOrchestrationInstanceRepresentation:
+    description: Information about an Orchestration instance.
+    type: object
+    properties:
+      id:
+        description: Orchestrator instance id
+        type: string
+      interviewId:
+        description: Id of the interview to resume
+        type: string | nil
+      stageInstances:
+        description: The Orchestrator Instance stages
+        type: array
+        items:
+          type: FlowOrchestrationStageInstanceRepresentation
+      status:
+        description: The Orchestrator Instance status
+        type: string
+        enum:
+          - Completed
+          - InProgress
+          - NotStarted
+  FlowOrchestrationStageInstanceRepresentation:
+    description: Information about an Orchestration stage instance.
+    type: object
+    properties:
+      id:
+        description: Orchestration stage instance id
+        type: string
+      label:
+        description: Orchestration stage instance label
+        type: string | nil
+      name:
+        description: Orchestration stage instance name
+        type: string | nil
+      status:
+        description: The Orchestration Stage Instance status
+        type: string
+        enum:
+          - Completed
+          - InProgress
+          - NotStarted
+      stepInstances:
+        description: Orchestration stage instance steps
+        type: array
+        items:
+          type: FlowOrchestrationStepInstanceRepresentation
+  FlowOrchestrationStepInstanceRepresentation:
+    description: Information about an Orchestration step instance.
+    type: object
+    properties:
+      id:
+        description: Orchestration step instance id
+        type: string
+      label:
+        description: Orchestration step instance label
+        type: string | nil
+      name:
+        description: Orchestration step instance name
+        type: string | nil
+      status:
+        description: The Orchestration Step Instance status
+        type: string
+        enum:
+          - Completed
+          - InProgress
+          - NotStarted
+      stepType:
+        description: The Orchestration Step Instance step type
+        type: string
+        enum:
+          - Task
+          - UserActionRequired
+      workItems:
+        description: Orchestration step instance work items
+        type: array
+        items:
+          type: FlowOrchestrationWorkItemRepresentation
+  FlowOrchestrationWorkAssignmentRepresentation:
+    description: Information about an Orchestration work assignment.
+    type: object
+    properties: {}
+  FlowOrchestrationWorkItemRepresentation:
+    description: Information about an Orchestration work item.
+    type: object
+    properties:
+      assigneeId:
+        description: The assignee for this Orchestrator work item
+        type: string
+      description:
+        description: Description for this Orchestration work item
+        type: string | nil
+      id:
+        description: Orchestration work item id
+        type: string
+      label:
+        description: Label key for this work item
+        type: string | nil
+      relatedRecordId:
+        description: The record this work item is related to
+        type: string | nil
+      screenFlowId:
+        description: The screen flow to start when assignees work on this work item
+        type: string
+      screenFlowInputs:
+        description: Input parameters for the screen flow
+        type: string
+      status:
+        description: This work item status
+        type: string
+        enum:
+          - Assigned
+          - Completed
+          - InProgress
+          - NotStarted
+/connect/interaction/orchestration:
+  /events:
+    post:
+      description: Publishes an Orchestration event
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: AppProcessEventRepresentation
+      body:
+        application/json:
+          type: AppProcessEventInputRepresentation
+          # TODO: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0 @W-8928625
+          (oas-body-name): event
+  /instances:
+    get:
+      description: Retrieves a collection of Orchestration instances
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: FlowOrchestrationInstanceCollectionRepresentation
+      queryParameters:
+        contextRecordId:
+          type: string
+          required: false
+        relatedRecordId:
+          type: string
+          required: false
+  /instances/{instanceId}:
+    get:
+      description: Retrieves an Orchestration instance
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: FlowOrchestrationInstanceRepresentation
+    uriParameters:
+      instanceId:
+        type: string
+        required: true

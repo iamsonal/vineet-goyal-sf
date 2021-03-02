@@ -266,6 +266,14 @@ const analytics: ApiFamily = {
             controller: 'WaveController.getAnalyticsLimits',
         },
     },
+    createDataflowJob: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && DATAFLOW_JOBS_PATH.test(path),
+        transport: {
+            controller: 'WaveController.startDataflow',
+        },
+    },
     getDataflowJobs: {
         method: 'get',
         predicate: (path: string) =>

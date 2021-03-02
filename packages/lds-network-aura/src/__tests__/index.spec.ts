@@ -3684,6 +3684,32 @@ describe('routes', () => {
         );
     });
 
+    describe('post /wave/dataflowjobs', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataflowjobs`,
+                body: { dataflowJob: { command: 'start', dataflowId: '1234567890ABCDE' } },
+            },
+            [
+                'WaveController.startDataflow',
+                { dataflowJob: { command: 'start', dataflowId: '1234567890ABCDE' } },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataflowjobs`,
+                body: { dataflowJob: { command: 'start', dataflowId: '1234567890ABCDE' } },
+            },
+            {}
+        );
+    });
+
     describe('get /wave/dataflowjobs/{dataflowjobId}/nodes', () => {
         testControllerInput(
             {

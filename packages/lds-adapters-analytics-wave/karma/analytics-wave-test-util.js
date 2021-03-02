@@ -72,6 +72,29 @@ function getDataflowJobsMatcher(config) {
     });
 }
 
+export function mockCreateDataflowJobNetworkOnce(config, mockData) {
+    const paramMatch = createDataflowJobMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockCreateDataflowJobNetworkErrorOnce(config, mockData) {
+    const paramMatch = createDataflowJobMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function createDataflowJobMatcher(config) {
+    let { command, dataflowId } = config;
+
+    return sinon.match({
+        body: { command, dataflowId },
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataflowjobs`,
+        queryParams: {},
+    });
+}
+
 // Dataflow Job
 export function mockGetDataflowJobNetworkOnce(config, mockData) {
     const paramMatch = getDataflowJobMatcher(config);

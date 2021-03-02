@@ -10,6 +10,7 @@ import {
     DraftQueueState,
     DraftQueueChangeListener,
 } from '@salesforce/lds-drafts';
+import { DraftActionMetadata } from '@salesforce/lds-drafts/dist/DraftQueue';
 import { JSONParse, JSONStringify, ObjectKeys } from './utils/language';
 
 /**
@@ -85,5 +86,9 @@ export class NimbusDraftQueue implements DraftQueue {
 
     replaceAction(_actionId: string, _withActionId: string): Promise<DraftAction<unknown>> {
         return Promise.reject('Cannot call replaceAction from the NimbusDraftQueue');
+    }
+
+    setMetadata(_actionId: string, _metadata: DraftActionMetadata): Promise<DraftAction<unknown>> {
+        return Promise.reject('Cannot call setMetadata from the NimbusDraftQueue');
     }
 }

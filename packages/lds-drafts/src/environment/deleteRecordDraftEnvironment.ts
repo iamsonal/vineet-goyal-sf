@@ -6,6 +6,7 @@ import { createBadRequestResponse, createDeletedResponse } from '../DraftFetchRe
 import { ObjectCreate } from '../utils/language';
 import {
     extractRecordIdFromResourceRequest,
+    getRecordIdFromRecordRequest,
     getRecordKeyFromRecordRequest,
     RECORD_ENDPOINT_REGEX,
 } from '../utils/records';
@@ -74,13 +75,14 @@ export function deleteRecordDraftEnvironment(
         const resolvedResourceRequest = resolveResourceRequestId(resourceRequest, env);
 
         const key = getRecordKeyFromRecordRequest(resolvedResourceRequest);
-        if (key === undefined) {
+        const targetId = getRecordIdFromRecordRequest(resolvedResourceRequest);
+        if (key === undefined || targetId === undefined) {
             return createBadRequestResponse({
                 message: 'missing record id in request',
             }) as any;
         }
 
-        return draftQueue.enqueue(resolvedResourceRequest, key).then(() => {
+        return draftQueue.enqueue(resolvedResourceRequest, key, targetId).then(() => {
             draftDeleteSet.add(key);
             return createDeletedResponse() as any;
         });

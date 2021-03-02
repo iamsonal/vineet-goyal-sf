@@ -16,6 +16,7 @@ import {
     QueueOperation,
     DraftIdMappingEntry,
     QueueOperationType,
+    DraftActionMetadata,
 } from './DraftQueue';
 import { ResourceRequest, NetworkAdapter, FetchResponse } from '@luvio/engine';
 import { ObjectKeys } from './utils/language';
@@ -179,7 +180,7 @@ export class DurableDraftQueue implements DraftQueue {
         });
     }
 
-    enqueue<T>(request: ResourceRequest, tag: string): Promise<DraftAction<T>> {
+    enqueue<T>(request: ResourceRequest, tag: string, targetId: string): Promise<DraftAction<T>> {
         return this.getQueueActions().then(queue => {
             if (request.method === 'post' && this.actionsForTag(tag, queue).length > 0) {
                 throw new Error('Cannot enqueue a POST draft action with an existing tag');
@@ -193,10 +194,12 @@ export class DurableDraftQueue implements DraftQueue {
             const durableStoreId = buildDraftDurableStoreKey(tag, id);
             const action: PendingDraftAction<T> = {
                 id,
+                targetId,
                 status: DraftActionStatus.Pending,
                 request,
                 tag,
                 timestamp: Date.now(),
+                metadata: {},
             };
             const entry: DurableStoreEntry = { data: action };
             const entries: DurableStoreEntries = { [durableStoreId]: entry };
@@ -258,7 +261,7 @@ export class DurableDraftQueue implements DraftQueue {
                 return ProcessActionResult.NO_ACTION_TO_PROCESS;
             }
 
-            const { status, id, tag, timestamp } = action;
+            const { status, id, tag, timestamp, metadata } = action;
 
             if (status === DraftActionStatus.Error) {
                 this.state = DraftQueueState.Error;
@@ -278,7 +281,7 @@ export class DurableDraftQueue implements DraftQueue {
             const entries: DurableStoreEntries = { [durableEntryKey]: entry };
             return this.durableStore.setEntries(entries, DRAFT_SEGMENT).then(() => {
                 this.processingAction = undefined;
-                const { request, id, tag } = action;
+                const { request, id, tag, targetId } = action;
 
                 if (this.state === DraftQueueState.Waiting) {
                     this.state = DraftQueueState.Started;
@@ -297,10 +300,12 @@ export class DurableDraftQueue implements DraftQueue {
                             const errorAction: ErrorDraftAction<unknown> = {
                                 status: DraftActionStatus.Error,
                                 id,
+                                targetId,
                                 tag,
                                 request,
                                 error: err,
                                 timestamp,
+                                metadata,
                             };
 
                             const entry: DurableStoreEntry = { data: errorAction };
@@ -494,6 +499,42 @@ export class DurableDraftQueue implements DraftQueue {
             });
             this.replacingAction = replacing;
             return replacing;
+        });
+    }
+
+    setMetadata(actionId: string, metadata: DraftActionMetadata): Promise<DraftAction<unknown>> {
+        const keys = ObjectKeys(metadata);
+        const compatibleKeys = keys.filter((key): boolean => {
+            const value = metadata[key];
+            return typeof key === 'string' && typeof value === 'string';
+        });
+        if (keys.length !== compatibleKeys.length) {
+            return Promise.reject('Cannot save incompatible metadata');
+        }
+        return this.getQueueActions().then(queue => {
+            const actions = queue.filter(action => action.id === actionId);
+            if (actions.length === 0) {
+                return Promise.reject('cannot save metadata to non-existent action');
+            }
+
+            const action = actions[0];
+            return this.notifyChangedListeners({
+                type: DraftQueueEventType.ActionUpdating,
+                action: action,
+            }).then(() => {
+                action.metadata = metadata;
+                const durableStoreId = buildDraftDurableStoreKey(action.tag, action.id);
+                const entry: DurableStoreEntry = { data: action };
+                const entries: DurableStoreEntries = { [durableStoreId]: entry };
+                return this.durableStore.setEntries(entries, DRAFT_SEGMENT).then(() => {
+                    return this.notifyChangedListeners({
+                        type: DraftQueueEventType.ActionUpdated,
+                        action: action,
+                    }).then(() => {
+                        return Promise.resolve(action);
+                    });
+                });
+            });
         });
     }
 

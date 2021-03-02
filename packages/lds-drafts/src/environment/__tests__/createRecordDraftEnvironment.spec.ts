@@ -98,7 +98,11 @@ describe('draft environment tests', () => {
 
             await draftEnvironment.dispatchResourceRequest(request);
 
-            expect(draftQueue.enqueue).toBeCalledWith(request, assignedDraftIdStoreKey);
+            expect(draftQueue.enqueue).toBeCalledWith(
+                request,
+                assignedDraftIdStoreKey,
+                DRAFT_RECORD_ID
+            );
         });
 
         it('throws if durable store rejects', async () => {
@@ -242,7 +246,11 @@ describe('draft environment tests', () => {
 
             await draftEnvironment.dispatchResourceRequest(request);
 
-            expect(draftQueue.enqueue).toBeCalledWith(expectedRequest, STORE_KEY_DRAFT_RECORD);
+            expect(draftQueue.enqueue).toBeCalledWith(
+                expectedRequest,
+                STORE_KEY_DRAFT_RECORD,
+                DRAFT_RECORD_ID
+            );
         });
     });
 });

@@ -12,6 +12,7 @@ import { ObjectCreate, ObjectKeys } from '../utils/language';
 import {
     extractRecordIdFromResourceRequest,
     getRecordFieldsFromRecordRequest,
+    getRecordIdFromRecordRequest,
     getRecordKeyFromRecordRequest,
     RECORD_ENDPOINT_REGEX,
     reviveRecordToStore,
@@ -101,13 +102,14 @@ export function updateRecordDraftEnvironment(
         const resolvedRequest = resolveResourceRequestIds(resourceRequest, env, options.isDraftId);
 
         const key = getRecordKeyFromRecordRequest(resolvedRequest);
-        if (key === undefined) {
+        const targetId = getRecordIdFromRecordRequest(resolvedRequest);
+        if (key === undefined || targetId === undefined) {
             return createBadRequestResponse({
                 message: 'missing record id in request',
             }) as any;
         }
 
-        return draftQueue.enqueue(resolvedRequest, key).then(() => {
+        return draftQueue.enqueue(resolvedRequest, key, targetId).then(() => {
             // TODO: [W-8195289] Draft edited records should include all fields in the Full/View layout if possible
             const fields = getRecordFieldsFromRecordRequest(resolvedRequest);
             if (fields === undefined) {

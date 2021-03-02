@@ -42,6 +42,11 @@ function setupDraftStore(storeRecords: any = {}) {
         processNextAction: jest.fn(),
         getQueueActions: jest.fn(),
         getQueueState: jest.fn(),
+        removeDraftAction: jest.fn(),
+        replaceAction: jest.fn(),
+        startQueue: jest.fn(),
+        stopQueue: jest.fn(),
+        setMetadata: jest.fn(),
     };
 
     const store = new Store();

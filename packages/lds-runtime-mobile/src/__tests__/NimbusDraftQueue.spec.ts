@@ -40,6 +40,7 @@ const draftAction: DraftAction<any> = {
     tag: 'foo',
     request: resourceRequest,
     timestamp: 12345,
+    metadata: {},
 };
 
 describe('NimbusDraftQueue', () => {
@@ -175,6 +176,13 @@ describe('NimbusDraftQueue', () => {
         const nimbusQueue = new NimbusDraftQueue();
         await expect(nimbusQueue.replaceAction('1', '2')).rejects.toEqual(
             'Cannot call replaceAction from the NimbusDraftQueue'
+        );
+    });
+
+    it('rejects on setMetadata', async () => {
+        const nimbusQueue = new NimbusDraftQueue();
+        await expect(nimbusQueue.setMetadata('1', { '1': '2' })).rejects.toBe(
+            'Cannot call setMetadata from the NimbusDraftQueue'
         );
     });
 });

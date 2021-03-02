@@ -33,20 +33,26 @@ export function setupDraftEnvironment(
         startQueue: jest.fn(),
         stopQueue: jest.fn(),
         removeDraftAction: jest.fn(),
+        replaceAction: jest.fn(),
+        setMetadata: jest.fn(),
     };
 
     const baseEnvironment = makeDurable(new Environment(store, network), { durableStore });
-    const draftEnvironment = makeEnvironmentDraftAware(baseEnvironment, {
-        store,
-        draftQueue,
-        durableStore,
-        ingestFunc: (_record: any, _path: any, _store: any, _timestamp: any) => {},
-        generateId: (_prefix: string) => {
-            return DRAFT_RECORD_ID;
+    const draftEnvironment = makeEnvironmentDraftAware(
+        baseEnvironment,
+        {
+            store,
+            draftQueue,
+            durableStore,
+            ingestFunc: (_record: any, _path: any, _store: any, _timestamp: any) => {},
+            generateId: (_prefix: string) => {
+                return DRAFT_RECORD_ID;
+            },
+            isDraftId: setupOptions.isDraftId ?? (id => id === DRAFT_RECORD_ID),
+            recordResponseRetrievers: undefined,
         },
-        isDraftId: setupOptions.isDraftId ?? (id => id === DRAFT_RECORD_ID),
-        recordResponseRetrievers: undefined,
-    });
+        'testUserId'
+    );
     return {
         store,
         network,

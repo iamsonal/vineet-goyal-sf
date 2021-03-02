@@ -6,13 +6,17 @@ export enum DraftActionStatus {
     Error = 'error',
     Completed = 'completed',
 }
+
+export type DraftActionMetadata = { [key: string]: string };
 interface BaseDraftAction<T> {
     status: DraftActionStatus;
     id: string;
+    targetId: string;
     tag: string;
     request: ResourceRequest;
     /** Timestamp as unix epoch time */
     timestamp: number;
+    metadata: DraftActionMetadata;
 }
 
 export interface CompletedDraftAction<T> extends BaseDraftAction<T> {
@@ -224,9 +228,10 @@ export interface DraftQueue {
      * Enqueues a ResourceRequest into the DraftQueue
      * @param request The resource request to enqueue
      * @param tag The tag to associate the resource request with. This tag can be used to query all draft actions associated with it
+     * @param targetId The unique id of the target of this draft action
      * @returns A promise including the action created for the request
      */
-    enqueue<T>(request: ResourceRequest, tag: string): Promise<DraftAction<T>>;
+    enqueue<T>(request: ResourceRequest, tag: string, targetId: string): Promise<DraftAction<T>>;
 
     /**
      * Retrieves ordered actions for all requested tags
@@ -277,4 +282,13 @@ export interface DraftQueue {
 
     /** Set the draft queue state to Stopped and don't let another item begin */
     stopQueue(): Promise<void>;
+
+    /**
+     * Sets the metadata object of the specified action to the
+     * provided metadata
+     *
+     * @param actionId The id of the draft action to set metadata on
+     * @param metadata The metadata to set on the specified action
+     */
+    setMetadata(actionId: string, metadata: DraftActionMetadata): Promise<DraftAction<unknown>>;
 }

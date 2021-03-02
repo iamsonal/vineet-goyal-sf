@@ -18,6 +18,8 @@ export interface DraftManagerState {
     items: DraftQueueItem[];
 }
 
+export type DraftQueueItemMetadata = { [key: string]: string };
+
 /**
  * An item in the draft queue that loosely maps to
  * a DraftAction
@@ -25,12 +27,18 @@ export interface DraftManagerState {
 export interface DraftQueueItem {
     /** The id of the Draft Action Item */
     id: string;
+    /** The unique id of the target item */
+    targetId?: string;
+    /** The current status of this item */
     state: DraftActionStatus;
+    /** The type of operation this item represents */
     operationType: DraftActionOperationType;
     /** Timestamp as unix epoch time */
     timestamp: number;
     /** undefined unless item is in an error state */
     error?: undefined | any;
+    /** The stored metadata for the draft queue item */
+    metadata: DraftQueueItemMetadata;
 }
 
 /**
@@ -47,6 +55,7 @@ export enum DraftQueueOperationType {
     ItemDeleted = 'deleted',
     ItemCompleted = 'completed',
     ItemFailed = 'failed',
+    ItemUpdated = 'updated',
 }
 
 /**
@@ -114,7 +123,8 @@ export class DraftManager {
             type === DraftQueueEventType.ActionAdded ||
             type === DraftQueueEventType.ActionCompleted ||
             type === DraftQueueEventType.ActionDeleted ||
-            type === DraftQueueEventType.ActionFailed
+            type === DraftQueueEventType.ActionFailed ||
+            type === DraftQueueEventType.ActionUpdated
         );
     }
 
@@ -128,6 +138,8 @@ export class DraftManager {
                 return DraftQueueOperationType.ItemDeleted;
             case DraftQueueEventType.ActionFailed:
                 return DraftQueueOperationType.ItemFailed;
+            case DraftQueueEventType.ActionUpdated:
+                return DraftQueueOperationType.ItemUpdated;
             default:
                 throw Error('Unsupported event type');
         }
@@ -181,12 +193,14 @@ export class DraftManager {
 
     private buildDraftQueueItem(action: DraftAction<unknown>): DraftQueueItem {
         const operationType = getOperationTypeFrom(action);
-        const { id, status, timestamp } = action;
+        const { id, status, timestamp, targetId, metadata } = action;
         const item: DraftQueueItem = {
             id,
+            targetId,
             state: status,
             timestamp,
             operationType,
+            metadata,
         };
         if (isDraftError(action)) {
             item.error = action.error;
@@ -228,6 +242,18 @@ export class DraftManager {
     replaceAction(actionId: string, withActionId: string): Promise<DraftQueueItem> {
         return this.draftQueue.replaceAction(actionId, withActionId).then(replaced => {
             return this.buildDraftQueueItem(replaced);
+        });
+    }
+
+    /**
+     * Sets the metadata object of the specified action to the
+     * provided metadata
+     * @param actionId The id of the action to set the metadata on
+     * @param metadata The metadata to set on the specified action
+     */
+    setMetadata(actionId: string, metadata: DraftQueueItemMetadata): Promise<DraftQueueItem> {
+        return this.draftQueue.setMetadata(actionId, metadata).then(updatedAction => {
+            return this.buildDraftQueueItem(updatedAction);
         });
     }
 }

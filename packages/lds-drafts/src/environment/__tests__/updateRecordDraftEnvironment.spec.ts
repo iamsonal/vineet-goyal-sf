@@ -18,7 +18,7 @@ describe('draft environment tests', () => {
             mockDurableStoreResponse(durableStore);
             const request = createPatchRequest();
             await draftEnvironment.dispatchResourceRequest(request);
-            expect(draftQueue.enqueue).toBeCalledWith(request, STORE_KEY_RECORD);
+            expect(draftQueue.enqueue).toBeCalledWith(request, STORE_KEY_RECORD, RECORD_ID);
         });
 
         it('record gets evicted from store prior to revival', async () => {
@@ -59,7 +59,7 @@ describe('draft environment tests', () => {
                 basePath: '/ui-api/records/bar',
                 urlParams: { recordId: 'bar' },
             };
-            expect(draftQueue.enqueue).toBeCalledWith(expectedRequest, redirected2Key);
+            expect(draftQueue.enqueue).toBeCalledWith(expectedRequest, redirected2Key, 'bar');
         });
 
         it('throws if durable store rejects', async () => {
@@ -147,7 +147,7 @@ describe('draft environment tests', () => {
                     recordId: RECORD_ID,
                 },
             };
-            expect(draftQueue.enqueue).toBeCalledWith(expectedRequest, STORE_KEY_RECORD);
+            expect(draftQueue.enqueue).toBeCalledWith(expectedRequest, STORE_KEY_RECORD, RECORD_ID);
         });
     });
 });

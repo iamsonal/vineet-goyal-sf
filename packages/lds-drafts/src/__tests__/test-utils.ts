@@ -145,6 +145,7 @@ export function createEditDraftAction(
     createdDraftIds.push(newDraftId);
     return {
         id: newDraftId,
+        targetId: recordId,
         status: DraftActionStatus.Pending,
         tag: recordKey,
         timestamp: timestamp,
@@ -162,6 +163,7 @@ export function createEditDraftAction(
 
 export function createPostDraftAction(
     recordKey: string,
+    targetId: string,
     nameValue: string = DEFAULT_NAME_FIELD_VALUE,
     apiName: string = DEFAULT_API_NAME,
     timestamp: number = DEFAULT_TIME_STAMP
@@ -170,6 +172,7 @@ export function createPostDraftAction(
     createdDraftIds.push(newDraftId);
     return {
         id: newDraftId,
+        targetId,
         status: DraftActionStatus.Pending,
         tag: recordKey,
         timestamp: timestamp,
@@ -194,6 +197,7 @@ export function createDeleteDraftAction(
     createdDraftIds.push(newDraftId);
     return {
         id: newDraftId,
+        targetId: recordId,
         status: DraftActionStatus.Pending,
         tag: recordKey,
         timestamp: timestamp,
@@ -218,6 +222,7 @@ export function createErrorDraftAction(
     createdDraftIds.push(newDraftId);
     return {
         id: newDraftId,
+        targetId: recordId,
         status: DraftActionStatus.Error,
         error: 'SOMETHING WENT WRONG',
         tag: recordKey,
@@ -243,6 +248,7 @@ export function createCompletedDraftAction(
     createdDraftIds.push(newDraftId);
     return {
         id: newDraftId,
+        targetId: recordId,
         status: DraftActionStatus.Completed,
         response: {
             status: HttpStatusCode.Ok,

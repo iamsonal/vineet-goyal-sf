@@ -89,7 +89,7 @@ export function createRecordDraftEnvironment(
         const recordId = generateId(apiName);
         const key = keyBuilderRecord({ recordId });
 
-        return draftQueue.enqueue(resolvedResourceRequest, key).then(() => {
+        return draftQueue.enqueue(resolvedResourceRequest, key, recordId).then(() => {
             const fields = getRecordFieldsFromRecordRequest(resolvedResourceRequest);
             if (fields === undefined) {
                 throw createBadRequestResponse({ message: 'fields are missing' });

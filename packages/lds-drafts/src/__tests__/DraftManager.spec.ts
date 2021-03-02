@@ -68,6 +68,7 @@ describe('DraftManager', () => {
             expect(subject.items.length).toEqual(1);
             expect(subject.items[0]).toEqual({
                 id: deleteAction.id,
+                targetId: '1234',
                 operationType: DraftActionOperationType.Delete,
                 state: DraftActionStatus.Pending,
                 timestamp: DEFAULT_TIME_STAMP,
@@ -88,6 +89,25 @@ describe('DraftManager', () => {
                 { operationType: DraftActionOperationType.Update },
                 { operationType: DraftActionOperationType.Create },
             ]);
+        });
+
+        it('state items have target id when expected', async () => {
+            const editAction = createEditDraftAction('mock123', 'mockKey', 'hi', 12355);
+            mockDraftQueue.getQueueActions = () => Promise.resolve([editAction]);
+            const result = await manager.getQueue();
+            expect(result.items.length).toBe(1);
+            const item = result.items[0];
+            expect(item.targetId).toBeDefined();
+        });
+
+        it('state items have metadata when expected', async () => {
+            const editAction = createEditDraftAction('mock123', 'mockKey', 'hi', 12355);
+            editAction.metadata = { foo: 'bar' };
+            mockDraftQueue.getQueueActions = () => Promise.resolve([editAction]);
+            const result = await manager.getQueue();
+            expect(result.items.length).toBe(1);
+            const item = result.items[0];
+            expect(item.metadata).toEqual({ foo: 'bar' });
         });
 
         it('returns error state items', async () => {
@@ -208,6 +228,20 @@ describe('DraftManager', () => {
                 action: errorAction,
             });
         });
+
+        it('sends updated draft action to listners', async () => {
+            expect.assertions(3);
+            const action = createEditDraftAction('mock123', 'mockKey', 'hi', 12355);
+            manager.registerDraftQueueChangedListener((state, type, queueItem) => {
+                expect(state).toBeDefined();
+                expect(type).toBe(DraftQueueOperationType.ItemUpdated);
+                expect(queueItem).toBeDefined();
+            });
+            await globalDraftQueueListener({
+                type: DraftQueueEventType.ActionUpdated,
+                action,
+            });
+        });
     });
 
     describe('removeDraftAction', () => {
@@ -222,6 +256,7 @@ describe('DraftManager', () => {
             expect(subject.items.length).toEqual(1);
             expect(subject.items[0]).toEqual({
                 id: deleteAction.id,
+                targetId: '1234',
                 operationType: DraftActionOperationType.Delete,
                 state: DraftActionStatus.Pending,
                 timestamp: DEFAULT_TIME_STAMP,
@@ -273,6 +308,27 @@ describe('DraftManager', () => {
             expect(swapSpy).toBeCalledTimes(1);
         });
     });
+
+    describe('metadata', () => {
+        it('calls draft queue metadata when saving', async done => {
+            const metadataSpy = jest.fn(
+                (actionId, metadata): Promise<DraftAction<unknown>> => {
+                    expect(actionId).toBe('foo');
+                    expect(metadata).toEqual({ bar: 'baz' });
+                    done();
+                    let action = createPostDraftAction('blah', 'target');
+                    action.id = 'foo';
+                    action.metadata = metadata;
+                    return Promise.resolve(action);
+                }
+            );
+            mockDraftQueue.setMetadata = metadataSpy;
+            const updatedItem = await manager.setMetadata('foo', { bar: 'baz' });
+            expect(metadataSpy).toBeCalledTimes(1);
+            expect(updatedItem.id).toBe('foo');
+            expect(updatedItem.metadata.bar).toBe('baz');
+        });
+    });
 });
 
 const MockDraftQueue = jest.fn(
@@ -287,6 +343,7 @@ const MockDraftQueue = jest.fn(
             startQueue: jest.fn(),
             stopQueue: jest.fn(),
             replaceAction: jest.fn(),
+            setMetadata: jest.fn(),
             registerOnChangedListener: jest.fn((listener: DraftQueueChangeListener): (() => Promise<
                 void
             >) => {

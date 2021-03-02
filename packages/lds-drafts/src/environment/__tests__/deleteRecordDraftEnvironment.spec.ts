@@ -1,6 +1,7 @@
 import {
     createDeleteRequest,
     mockDurableStoreResponse,
+    RECORD_ID,
     setupDraftEnvironment,
     STORE_KEY_RECORD,
 } from './test-utils';
@@ -25,7 +26,7 @@ describe('draft environment tests', () => {
                 mockDurableStoreResponse(durableStore);
                 const request = createDeleteRequest();
                 await draftEnvironment.dispatchResourceRequest(request);
-                expect(draftQueue.enqueue).toBeCalledWith(request, STORE_KEY_RECORD);
+                expect(draftQueue.enqueue).toBeCalledWith(request, STORE_KEY_RECORD, RECORD_ID);
             });
         });
     });

@@ -8,7 +8,7 @@ const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/wave`;
 
 // Analytics Limits
-export function mockGetAnalyticsLimitsNetworkOnce(config, mockData) {
+function mockGetAnalyticsLimitsNetworkOnce(config, mockData) {
     const paramMatch = getAnalyticsLimitsMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -17,7 +17,7 @@ export function mockGetAnalyticsLimitsNetworkOnce(config, mockData) {
     }
 }
 
-export function mockGetAnalyticsLimitsNetworkErrorOnce(config, mockData) {
+function mockGetAnalyticsLimitsNetworkErrorOnce(config, mockData) {
     const paramMatch = getAnalyticsLimitsMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -39,7 +39,7 @@ function getAnalyticsLimitsMatcher(config) {
 }
 
 // Dataflow Jobs
-export function mockGetDataflowJobsNetworkOnce(config, mockData) {
+function mockGetDataflowJobsNetworkOnce(config, mockData) {
     const paramMatch = getDataflowJobsMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -48,7 +48,7 @@ export function mockGetDataflowJobsNetworkOnce(config, mockData) {
     }
 }
 
-export function mockGetDataflowJobsNetworkErrorOnce(config, mockData) {
+function mockGetDataflowJobsNetworkErrorOnce(config, mockData) {
     const paramMatch = getDataflowJobsMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -72,12 +72,12 @@ function getDataflowJobsMatcher(config) {
     });
 }
 
-export function mockCreateDataflowJobNetworkOnce(config, mockData) {
+function mockCreateDataflowJobNetworkOnce(config, mockData) {
     const paramMatch = createDataflowJobMatcher(config);
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-export function mockCreateDataflowJobNetworkErrorOnce(config, mockData) {
+function mockCreateDataflowJobNetworkErrorOnce(config, mockData) {
     const paramMatch = createDataflowJobMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -96,7 +96,7 @@ function createDataflowJobMatcher(config) {
 }
 
 // Dataflow Job
-export function mockGetDataflowJobNetworkOnce(config, mockData) {
+function mockGetDataflowJobNetworkOnce(config, mockData) {
     const paramMatch = getDataflowJobMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -105,7 +105,7 @@ export function mockGetDataflowJobNetworkOnce(config, mockData) {
     }
 }
 
-export function mockGetDataflowJobNetworkErrorOnce(config, mockData) {
+function mockGetDataflowJobNetworkErrorOnce(config, mockData) {
     const paramMatch = getDataflowJobMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -123,12 +123,12 @@ function getDataflowJobMatcher(config) {
     });
 }
 
-export function mockUpdateDataflowJobNetworkOnce(config, mockData) {
+function mockUpdateDataflowJobNetworkOnce(config, mockData) {
     const paramMatch = updateDataflowJobMatcher(config);
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-export function mockUpdateDataflowJobNetworkErrorOnce(config, mockData) {
+function mockUpdateDataflowJobNetworkErrorOnce(config, mockData) {
     const paramMatch = updateDataflowJobMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -147,7 +147,7 @@ function updateDataflowJobMatcher(config) {
 }
 
 // Dataflow Job Nodes
-export function mockGetDataflowJobNodesNetworkOnce(config, mockData) {
+function mockGetDataflowJobNodesNetworkOnce(config, mockData) {
     const paramMatch = getDataflowJobNodesMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -156,7 +156,7 @@ export function mockGetDataflowJobNodesNetworkOnce(config, mockData) {
     }
 }
 
-export function mockGetDataflowJobNodesNetworkErrorOnce(config, mockData) {
+function mockGetDataflowJobNodesNetworkErrorOnce(config, mockData) {
     const paramMatch = getDataflowJobNodesMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -175,7 +175,7 @@ function getDataflowJobNodesMatcher(config) {
 }
 
 // Dataflow Job Node
-export function mockGetDataflowJobNodeNetworkOnce(config, mockData) {
+function mockGetDataflowJobNodeNetworkOnce(config, mockData) {
     const paramMatch = getDataflowJobNodeMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -184,7 +184,7 @@ export function mockGetDataflowJobNodeNetworkOnce(config, mockData) {
     }
 }
 
-export function mockGetDataflowJobNodeNetworkErrorOnce(config, mockData) {
+function mockGetDataflowJobNodeNetworkErrorOnce(config, mockData) {
     const paramMatch = getDataflowJobNodeMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -203,7 +203,7 @@ function getDataflowJobNodeMatcher(config) {
 }
 
 // Dataset
-export function mockGetDatasetNetworkOnce(config, mockData) {
+function mockGetDatasetNetworkOnce(config, mockData) {
     const paramMatch = getDatasetMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -212,7 +212,7 @@ export function mockGetDatasetNetworkOnce(config, mockData) {
     }
 }
 
-export function mockGetDatasetNetworkErrorOnce(config, mockData) {
+function mockGetDatasetNetworkErrorOnce(config, mockData) {
     const paramMatch = getDatasetMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -231,7 +231,7 @@ function getDatasetMatcher(config) {
 }
 
 // Datasets
-export function mockGetDatasetsNetworkOnce(config, mockData) {
+function mockGetDatasetsNetworkOnce(config, mockData) {
     const paramMatch = getDatasetsMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -240,7 +240,7 @@ export function mockGetDatasetsNetworkOnce(config, mockData) {
     }
 }
 
-export function mockGetDatasetsNetworkErrorOnce(config, mockData) {
+function mockGetDatasetsNetworkErrorOnce(config, mockData) {
     const paramMatch = getDatasetsMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -264,7 +264,7 @@ function getDatasetsMatcher(config) {
 }
 
 // Recipes
-export function mockGetRecipesNetworkOnce(config, mockData) {
+function mockGetRecipesNetworkOnce(config, mockData) {
     const paramMatch = getRecipesMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -273,7 +273,7 @@ export function mockGetRecipesNetworkOnce(config, mockData) {
     }
 }
 
-export function mockGetRecipesNetworkErrorOnce(config, mockData) {
+function mockGetRecipesNetworkErrorOnce(config, mockData) {
     const paramMatch = getRecipesMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -298,7 +298,7 @@ function getRecipesMatcher(config) {
 }
 
 // Recipe
-export function mockGetRecipeNetworkOnce(config, mockData) {
+function mockGetRecipeNetworkOnce(config, mockData) {
     const paramMatch = getRecipeMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -307,7 +307,7 @@ export function mockGetRecipeNetworkOnce(config, mockData) {
     }
 }
 
-export function mockGetRecipeNetworkErrorOnce(config, mockData) {
+function mockGetRecipeNetworkErrorOnce(config, mockData) {
     const paramMatch = getRecipeMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -327,8 +327,34 @@ function getRecipeMatcher(config) {
     });
 }
 
+function mockDeleteRecipeNetworkOnce(config, mockData = {}) {
+    const paramMatch = deleteRecipeMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockDeleteRecipeNetworkErrorOnce(config, mockData = {}) {
+    const paramMatch = deleteRecipeMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function deleteRecipeMatcher(config) {
+    let { id } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'delete',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/recipes/${id}`,
+    });
+}
+
 // Replicated Datasets
-export function mockGetReplicatedDatasetsNetworkOnce(config, mockData) {
+function mockGetReplicatedDatasetsNetworkOnce(config, mockData) {
     const paramMatch = getReplicatedDatasetsMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -337,7 +363,7 @@ export function mockGetReplicatedDatasetsNetworkOnce(config, mockData) {
     }
 }
 
-export function mockGetReplicatedDatasetsNetworkErrorOnce(config, mockData) {
+function mockGetReplicatedDatasetsNetworkErrorOnce(config, mockData) {
     const paramMatch = getReplicatedDatasetsMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -360,7 +386,7 @@ function getReplicatedDatasetsMatcher(config) {
 }
 
 // XMD
-export function mockGetXmdNetworkOnce(config, mockData) {
+function mockGetXmdNetworkOnce(config, mockData) {
     const paramMatch = getXmdMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -369,7 +395,7 @@ export function mockGetXmdNetworkOnce(config, mockData) {
     }
 }
 
-export function mockGetXmdNetworkErrorOnce(config, mockData) {
+function mockGetXmdNetworkErrorOnce(config, mockData) {
     const paramMatch = getXmdMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -386,3 +412,35 @@ function getXmdMatcher(config) {
         queryParams: {},
     });
 }
+
+export {
+    URL_BASE,
+    mockGetAnalyticsLimitsNetworkOnce,
+    mockGetAnalyticsLimitsNetworkErrorOnce,
+    mockGetDataflowJobsNetworkOnce,
+    mockGetDataflowJobsNetworkErrorOnce,
+    mockCreateDataflowJobNetworkOnce,
+    mockCreateDataflowJobNetworkErrorOnce,
+    mockGetDataflowJobNetworkOnce,
+    mockGetDataflowJobNetworkErrorOnce,
+    mockUpdateDataflowJobNetworkOnce,
+    mockUpdateDataflowJobNetworkErrorOnce,
+    mockGetDataflowJobNodesNetworkOnce,
+    mockGetDataflowJobNodesNetworkErrorOnce,
+    mockGetDataflowJobNodeNetworkOnce,
+    mockGetDataflowJobNodeNetworkErrorOnce,
+    mockGetDatasetNetworkOnce,
+    mockGetDatasetNetworkErrorOnce,
+    mockGetDatasetsNetworkOnce,
+    mockGetDatasetsNetworkErrorOnce,
+    mockGetRecipesNetworkOnce,
+    mockGetRecipesNetworkErrorOnce,
+    mockGetRecipeNetworkOnce,
+    mockGetRecipeNetworkErrorOnce,
+    mockDeleteRecipeNetworkOnce,
+    mockDeleteRecipeNetworkErrorOnce,
+    mockGetReplicatedDatasetsNetworkOnce,
+    mockGetReplicatedDatasetsNetworkErrorOnce,
+    mockGetXmdNetworkOnce,
+    mockGetXmdNetworkErrorOnce,
+};

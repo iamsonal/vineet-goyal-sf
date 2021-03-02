@@ -347,6 +347,13 @@ const analytics: ApiFamily = {
             controller: 'WaveController.getXmd',
         },
     },
+    deleteRecipe: {
+        method: 'delete',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && RECIPE_PATH.test(path),
+        transport: {
+            controller: 'WaveController.deleteRecipe',
+        },
+    },
     getReplicatedDatasets: {
         method: 'get',
         predicate: (path: string) =>

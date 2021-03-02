@@ -2190,6 +2190,15 @@ types:
           enum:
             - R2
             - R3
+    delete:
+      description: Delete a recipe by ID.
+      responses:
+        '200':
+          description: Success
+    uriParameters:
+      id:
+        type: string
+        required: true
   /replicatedDatasets:
     get:
       description: Get a list of all Replicated Datasets.

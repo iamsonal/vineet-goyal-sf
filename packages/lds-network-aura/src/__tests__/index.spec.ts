@@ -4038,6 +4038,47 @@ describe('routes', () => {
         );
     });
 
+    describe('delete /wave/recipes/{id}', () => {
+        testControllerInput(
+            {
+                method: 'delete',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/recipes/05vRM00000003rZYAQ`,
+                urlParams: {
+                    id: '05vRM00000003rZYAQ',
+                },
+            },
+            [
+                'WaveController.deleteRecipe',
+                {
+                    id: '05vRM00000003rZYAQ',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'delete',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/recipes/05vRM00000003rZYAQ`,
+            urlParams: {
+                id: '05vRM00000003rZYAQ',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'delete',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/recipes/05vRM00000003rZYAQ`,
+                urlParams: {
+                    id: '05vRM00000003rZYAQ',
+                },
+            },
+            null
+        );
+    });
+
     describe('get /wave/replicatedDatasets', () => {
         testControllerInput(
             {

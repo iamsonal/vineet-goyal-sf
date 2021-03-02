@@ -49,6 +49,13 @@ types:
       value:
         description: The value of the advanced property
         type: object
+  AppLogRepresentation:
+    description: Wave action representation.
+    type: object
+    properties:
+      message:
+        description: message
+        type: string
   AssetReferenceRepresentation:
     description: Asset reference representation.
     discriminatorValue: asset # TODO Hand rolled
@@ -649,6 +656,15 @@ types:
         enum:
           - All
           - Limited
+  FeaturedAssetsRepresentation:
+    description: Featured assets representation.
+    type: object
+    properties:
+      assets:
+        description: The list of featured assets.
+        type: array
+        items:
+          type: TypedAssetReferenceRepresentation
   HourlyScheduleRepresentation:
     description: A schedule which can run multiple times a day.
     discriminatorValue: hourly
@@ -1317,6 +1333,59 @@ types:
         description: Select or drop fields
         type: string
         required: false # TODO Hand-rolled W-8253396
+  TemplateOptionsRepresentation:
+    description: Representation for the options used on the last action performed
+      on a templated Wave Application.
+    type: object
+    properties:
+      appAction:
+        description: The last template action performed on the templated application.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+        enum:
+          - Create
+          - DecoupleApp
+          - Overlay
+          - Upgrade
+      appActionDate:
+        description: The date/time the last action was performed.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      appActionUser:
+        description: The user that performed the last action.
+        type: WaveUserRepresentation
+        required: false # TODO Hand-rolled W-8253396
+  TypedAssetReferenceRepresentation:
+    description: Typed asset reference representation.
+    type: BaseAssetReferenceRepresentation
+    properties:
+      type:
+        description: Type of the asset.
+        type: string
+        enum:
+          - Collection
+          - Component
+          - Dashboard
+          - DashboardSnapshot
+          - DataConnector
+          - DataPoolEntity
+          - DataPoolEntityVersion
+          - Dataflow
+          - DataflowJob
+          - DataflowJobNode
+          - Dataset
+          - DatasetShard
+          - DatasetVersion
+          - ExternalData
+          - Folder
+          - Lens
+          - LightningComponent
+          - Recipe
+          - RecipeModel
+          - ReplicatedDataset
+          - Story
+          - Widget
+          - Workflow
   WaveAnalyticsLimitCollectionRepresentation:
     description: A collection of analytics limits
     type: object
@@ -1368,6 +1437,135 @@ types:
           - DatasetRowCount
           - OutputExternalConnectorVolume
           - OutputLocalConnectorVolume
+  WaveFolderCollectionRepresentation:
+    description: Representation for a collection of Wave analytics folders or applications.
+    type: object
+    properties:
+      folders:
+        description: The folder list.
+        type: array
+        items:
+          type: WaveFolderRepresentation
+      nextPageUrl:
+        description: URL to get the next page of contents in the collection.
+        type: string | nil
+      totalSize:
+        description: Gets the total count of the elements in the collection irrespective of the page.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      url:
+        description: URL to get the collection.
+        type: string
+  WaveFolderRepresentation:
+    description: Representation for a single Wave analytics folder or application.
+    discriminatorValue: WaveFolder
+    type: BaseWaveAssetRepresentation
+    properties:
+      appLog:
+        description: The app log from the creation of this application.
+        type: array
+        items:
+          type: AppLogRepresentation
+      applicationStatus:
+        description: The creation status of application.
+        type: string
+        enum:
+          - CancelledStatus
+          - CompletedStatus
+          - DataflowInProgressStatus
+          - ExtensionAssetTypeInProgressStatus
+          - FailedStatus
+          - InProgressStatus
+          - NewStatus
+      attachedFiles:
+        description: The id's of the files attached to the insights folder
+        type: array
+        items:
+          type: AssetReferenceRepresentation
+      canBeSharedExternally:
+        description: Whether this app can be shared with Community Users.
+        type: boolean
+      defaultAsset:
+        description: The default asset(lens/dashboard) that is presented when the
+          app is viewed in AppRuntime mode.
+        type: AssetReferenceRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      featuredAssets:
+        description: Featured assets for this application to be used in the UI.
+        type: object
+        properties:
+          //:
+            type: any # TODO Hand-rolled W-8863405
+      icon:
+        description: The asset icon.
+        type: AssetReferenceRepresentation
+      isPinned:
+        description: Whether this app is pinned/unpinned
+        type: boolean
+      shares:
+        description: The folder shares list.
+        type: array
+        items:
+          type: WaveFolderShareRepresentation
+      templateOptions:
+        description: The options used on the last action performed on a templated
+          Wave Application.
+        type: TemplateOptionsRepresentation
+      templateSourceId:
+        description: The source template ID or api name used to create the folder
+          or application.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      templateValues:
+        description: The template values used to create or update the folder or application
+          (where applicable).
+        type: object
+        properties:
+          //:
+            type: any # TODO Hand-rolled W-8863405
+      templateVersion:
+        description: The version of the template this application was created from.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      usageUrl:
+        description: Url to resource usage for application.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+  WaveFolderShareRepresentation:
+    description: An instantiated version of a Wave share.
+    type: object
+    properties:
+      accessType:
+        description: The access type of the user.
+        type: string
+        enum:
+          - Edit
+          - Manage
+          - View
+      imageUrl:
+        description: The url of the user image.
+        type: string
+      shareType:
+        description: The share type of the user.
+        type: string
+        enum:
+          - AllCspUsers
+          - AllPrmUsers
+          - CustomerPortalUser
+          - Group
+          - Organization
+          - PartnerUser
+          - PortalRole
+          - PortalRoleAndSubordinates
+          - Role
+          - RoleAndSubordinates
+          - User
+      sharedWithId:
+        description: The Id of the user with the share representation.
+        type: string
+      sharedWithLabel:
+        description: The label for the share user/group/org.
+        type: string
   WaveUserRepresentation:
     description: Information about a user.
     type: object
@@ -2107,6 +2305,51 @@ types:
             - Main
             - System
             - User
+  /folders:
+    get:
+      description: Get a collection of Wave analytics folders.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: WaveFolderCollectionRepresentation
+      queryParameters:
+        isPinned:
+          type: boolean
+          required: false
+        mobileOnlyFeaturedAssets:
+          type: boolean
+          required: false
+        page:
+          type: string
+          required: false
+        pageSize:
+          type: integer
+          required: false
+        q:
+          type: string
+          required: false
+        scope:
+          type: string
+          required: false
+          enum:
+            - CreatedByMe
+            - Favorites
+            - IncludeAllPrivate
+            - Mru
+            - SharedWithMe
+        sort:
+          type: string
+          required: false
+          enum:
+            - LastModified
+            - LastModifiedBy
+            - Mru
+            - Name
+        templateSourceId:
+          type: string
+          required: false
   /limits:
     get:
       description: Retrieves limits in analytics

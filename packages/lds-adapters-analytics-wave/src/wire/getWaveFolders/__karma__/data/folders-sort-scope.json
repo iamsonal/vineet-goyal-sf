@@ -1,0 +1,133 @@
+{
+    "folders": [
+        {
+            "applicationStatus": "newstatus",
+            "appLog": [],
+            "assetSharingUrl": "https://na44.stmfa.stm.salesforce.com/analytics/wave/application?assetId=00lRM000000gQWjYAM&orgId=00DRM000000EJoa&loginHost=na44.stmfa.stm.salesforce.com&urlType=sharing",
+            "attachedFiles": [],
+            "canBeSharedExternally": false,
+            "createdBy": {
+                "id": "005RM000001nroAYAQ",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://c.na44.content.stmfa.stm.force.com/profilephoto/005/T"
+            },
+            "createdDate": "2021-02-19T07:05:16.000Z",
+            "featuredAssets": {},
+            "icon": {
+                "id": "00lRM000000gQWjYAM",
+                "name": "16.png",
+                "url": "/analytics/wave/web/proto/images/app/icons/16.png"
+            },
+            "id": "00lRM000000gQWjYAM",
+            "isPinned": false,
+            "label": "Ashton&#39;s App",
+            "lastAccessedDate": "2021-02-22T00:40:21.000Z",
+            "lastModifiedBy": {
+                "id": "005RM000001nroAYAQ",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://c.na44.content.stmfa.stm.force.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2021-02-19T07:05:16.000Z",
+            "name": "Ashton_s_App",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "shares": [],
+            "templateOptions": {},
+            "templateValues": {},
+            "type": "folder",
+            "url": "/services/data/v52.0/wave/folders/00lRM000000gQWjYAM"
+        },
+        {
+            "applicationStatus": "completedstatus",
+            "appLog": [],
+            "assetSharingUrl": "https://na44.stmfa.stm.salesforce.com/analytics/wave/application?assetId=00lRM000000g6bkYAA&orgId=00DRM000000EJoa&loginHost=na44.stmfa.stm.salesforce.com&urlType=sharing",
+            "attachedFiles": [],
+            "canBeSharedExternally": false,
+            "createdBy": {
+                "id": "005RM000001nroAYAQ",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://c.na44.content.stmfa.stm.force.com/profilephoto/005/T"
+            },
+            "createdDate": "2019-10-25T16:37:09.000Z",
+            "description": "Update for 2019 encompassing new chart types, and additional SAQL functions.",
+            "featuredAssets": {},
+            "icon": {
+                "id": "00lRM000000g6bkYAA",
+                "name": "11.png",
+                "url": "/analytics/wave/web/proto/images/app/icons/11.png"
+            },
+            "id": "00lRM000000g6bkYAA",
+            "isPinned": false,
+            "label": "Evan Learning Adventure Test",
+            "lastAccessedDate": "2021-02-19T21:51:43.000Z",
+            "lastModifiedBy": {
+                "id": "005RM000001nroAYAQ",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://c.na44.content.stmfa.stm.force.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2019-11-04T20:56:49.000Z",
+            "name": "Evan_Learning_Adventure_Test",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "shares": [],
+            "templateOptions": {},
+            "templateSourceId": "sfdc_internal__Learning_Adventure",
+            "templateValues": {},
+            "templateVersion": "6.0",
+            "type": "folder",
+            "url": "/services/data/v52.0/wave/folders/00lRM000000g6bkYAA"
+        },
+        {
+            "applicationStatus": "newstatus",
+            "appLog": [],
+            "assetSharingUrl": "https://na44.stmfa.stm.salesforce.com/analytics/wave/application?assetId=00lRM000000g6xfYAA&orgId=00DRM000000EJoa&loginHost=na44.stmfa.stm.salesforce.com&urlType=sharing",
+            "attachedFiles": [],
+            "canBeSharedExternally": false,
+            "createdBy": {
+                "id": "005RM000001nroAYAQ",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://c.na44.content.stmfa.stm.force.com/profilephoto/005/T"
+            },
+            "createdDate": "2019-11-04T20:50:42.000Z",
+            "featuredAssets": {},
+            "icon": {
+                "id": "00lRM000000g6xfYAA",
+                "name": "16.png",
+                "url": "/analytics/wave/web/proto/images/app/icons/16.png"
+            },
+            "id": "00lRM000000g6xfYAA",
+            "isPinned": false,
+            "label": "Typeahead Test App",
+            "lastAccessedDate": "2021-02-19T00:32:20.000Z",
+            "lastModifiedBy": {
+                "id": "005RM000001nroAYAQ",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://c.na44.content.stmfa.stm.force.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2020-07-29T05:14:10.000Z",
+            "name": "Typeahead_Test_App",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "shares": [],
+            "templateOptions": {},
+            "templateValues": {},
+            "type": "folder",
+            "url": "/services/data/v52.0/wave/folders/00lRM000000g6xfYAA"
+        }
+    ],
+    "nextPageUrl": "/services/data/v52.0/wave/folders?page=eyJwYWdlU2l6ZSI6Mywic29ydE9yZGVyIjoiTVJVIiwibGFzdElkIjoiMDJJUk0wMDAwMDAwQUpvMkFNIiwibGFzdE5hbWUiOiJUeXBlYWhlYWQgVGVzdCBBcHAiLCJsYXN0VGltZSI6MTYxMzY5NDc0MDAwMCwib3RoZXJQYXJhbWV0ZXJzIjp7InRlbXBsYXRlU291cmNlSWQiOm51bGx9LCJzY29wZSI6IkNSRUFURUQifQ%3D%3D",
+    "totalSize": 42,
+    "url": "/services/data/v52.0/wave/folders?pageSize=3&sort=Mru&scope=CreatedByMe"
+}

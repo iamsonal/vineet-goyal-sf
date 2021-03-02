@@ -82,6 +82,8 @@ const XMD_PATH = new RegExp(
     'i'
 );
 
+const WAVE_FOLDERS_PATH = new RegExp(`${WAVE_BASE_URI}/folders$`, 'i');
+
 const LIST_CONTENT_INTERNAL_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/managed-content/delivery/contents`,
     'i'
@@ -360,6 +362,14 @@ const analytics: ApiFamily = {
             path.startsWith(WAVE_BASE_URI) && REPLICATED_DATASETS_PATH.test(path),
         transport: {
             controller: 'WaveController.getReplicatedDatasets',
+        },
+    },
+
+    getWaveFolders: {
+        method: 'get',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && WAVE_FOLDERS_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getWaveFolders',
         },
     },
 };

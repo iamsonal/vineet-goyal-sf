@@ -370,7 +370,6 @@ function mockGetReplicatedDatasetsNetworkErrorOnce(config, mockData) {
 
 function getReplicatedDatasetsMatcher(config) {
     let { category, connector, sourceObject } = config;
-
     return sinon.match({
         body: null,
         headers: {},
@@ -381,6 +380,53 @@ function getReplicatedDatasetsMatcher(config) {
             category,
             connector,
             sourceObject,
+        },
+    });
+}
+
+//WaveFolders
+
+export function mockGetWaveFoldersNetworkOnce(config, mockData) {
+    const paramMatch = getWaveFoldersMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+export function mockGetWaveFoldersNetworkErrorOnce(config, mockData) {
+    const paramMatch = getWaveFoldersMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getWaveFoldersMatcher(config) {
+    let {
+        templateSourceId,
+        page,
+        pageSize,
+        q,
+        sort,
+        isPinned,
+        scope,
+        mobileOnlyFeaturedAssets,
+    } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/folders`,
+        queryParams: {
+            templateSourceId,
+            page,
+            pageSize,
+            q,
+            sort,
+            isPinned,
+            scope,
+            mobileOnlyFeaturedAssets,
         },
     });
 }

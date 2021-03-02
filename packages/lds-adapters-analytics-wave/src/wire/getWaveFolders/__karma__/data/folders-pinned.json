@@ -1,0 +1,67 @@
+{
+    "folders": [
+        {
+            "applicationStatus": "newstatus",
+            "appLog": [],
+            "assetSharingUrl": "https://na44.stmfa.stm.salesforce.com/analytics/wave/application?assetId=00lRM000000kzVOYAY&orgId=00DRM000000EJoa&loginHost=na44.stmfa.stm.salesforce.com&urlType=sharing",
+            "attachedFiles": [],
+            "canBeSharedExternally": true,
+            "createdBy": {
+                "id": "005RM000001s3x4YAA",
+                "name": "Integration User",
+                "profilePhotoUrl": "https://c.na44.content.stmfa.stm.force.com/profilephoto/005/T"
+            },
+            "createdDate": "2019-05-07T17:24:18.000Z",
+            "featuredAssets": {
+                "default": {
+                    "assets": [
+                        {
+                            "id": "0FKRM0000000Dco4AE",
+                            "label": "ApexStep",
+                            "name": "ApexStep",
+                            "type": "dashboard",
+                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000Dco4AE"
+                        },
+                        {
+                            "id": "0FKRM0000000DdS4AU",
+                            "label": "Conditional Formatting",
+                            "name": "Conditional_Formatting",
+                            "type": "lens",
+                            "url": "/services/data/v52.0/wave/lenses/0FKRM0000000DdS4AU"
+                        }
+                    ]
+                }
+            },
+            "icon": {
+                "id": "00lRM000000kzVOYAY",
+                "name": "3.png",
+                "url": "/analytics/wave/web/proto/images/app/icons/3.png"
+            },
+            "id": "00lRM000000kzVOYAY",
+            "isPinned": true,
+            "label": "Shared App",
+            "lastAccessedDate": "2021-01-26T14:23:10.000Z",
+            "lastModifiedBy": {
+                "id": "005RM000001nroAYAQ",
+                "name": "Admin User",
+                "profilePhotoUrl": "https://c.na44.content.stmfa.stm.force.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2020-08-21T18:50:04.000Z",
+            "name": "SharedApp",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "shares": [],
+            "templateOptions": {},
+            "templateValues": {},
+            "type": "folder",
+            "url": "/services/data/v52.0/wave/folders/00lRM000000kzVOYAY"
+        }
+    ],
+    "nextPageUrl": null,
+    "totalSize": 1,
+    "url": "/services/data/v52.0/wave/folders?isPinned=true"
+}

@@ -1,0 +1,50 @@
+{
+    "folders": [
+        {
+            "applicationStatus": "completedstatus",
+            "appLog": [],
+            "assetSharingUrl": "https://na44stmfaorg6.my.stmfa.stm.salesforce.com/analytics/wave/application?assetId=00lRM000000n755YAA&orgId=00DRM000000MjAD&loginHost=na44.stmfa.stm.salesforce.com&urlType=sharing",
+            "attachedFiles": [],
+            "canBeSharedExternally": false,
+            "createdBy": {
+                "id": "005RM000002LvtkYAC",
+                "name": "Automated Process",
+                "profilePhotoUrl": "https://na44stmfaorg6--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2021-01-25T21:40:10.000Z",
+            "description": "Update for 2019 encompassing new chart types, and additional SAQL functions.",
+            "featuredAssets": {},
+            "icon": {
+                "id": "00lRM000000n755YAA",
+                "name": "11.png",
+                "url": "/analytics/wave/web/proto/images/app/icons/11.png"
+            },
+            "id": "00lRM000000n755YAA",
+            "isPinned": false,
+            "label": "Learning Adventure",
+            "lastModifiedBy": {
+                "id": "005RM000002LvtkYAC",
+                "name": "Automated Process",
+                "profilePhotoUrl": "https://na44stmfaorg6--c.stmfa.stm.documentforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2021-01-25T21:40:10.000Z",
+            "name": "Learning_Adventure",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "shares": [],
+            "templateOptions": {},
+            "templateSourceId": "sfdc_internal__Learning_Adventure",
+            "templateValues": {},
+            "templateVersion": "6.0",
+            "type": "folder",
+            "url": "/services/data/v52.0/wave/folders/00lRM000000n755YAA"
+        }
+    ],
+    "nextPageUrl": null,
+    "totalSize": 1,
+    "url": "/services/data/v52.0/wave/folders?q=Learning"
+}

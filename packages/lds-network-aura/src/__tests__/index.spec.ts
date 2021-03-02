@@ -4133,6 +4133,70 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/folders', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/folders`,
+            },
+            [
+                'WaveController.getWaveFolders',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/folders`,
+                    queryParams: {
+                        templateSourceId: '123456ABCDEF',
+                        page: 'eyJwYWdlU2',
+                        pageSize: 10,
+                        q: 'Shared',
+                        sort: 'Name',
+                        isPinned: 'false',
+                        scope: 'CREATED',
+                        mobileOnlyFeaturedAssets: 'false',
+                    },
+                },
+                [
+                    'WaveController.getWaveFolders',
+                    {
+                        templateSourceId: '123456ABCDEF',
+                        pageParam: 'eyJwYWdlU2',
+                        pageSize: 10,
+                        q: 'Shared',
+                        sortParam: 'Name',
+                        isPinned: 'false',
+                        scope: 'CREATED',
+                        mobileOnlyFeaturedAssets: 'false',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/folders`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/folders`,
+            },
+            {}
+        );
+    });
+
     describe('get /connect/communities/{communityId}/managed-content/delivery/contents', () => {
         testControllerInput(
             {

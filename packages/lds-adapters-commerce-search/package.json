@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-commerce-search",
-    "version": "1.8.3",
+    "version": "1.8.4",
     "description": "Wire adapters Community Navigation Menu",
     "license": "MIT",
     "main": "dist/umd/es2018/commerce-search.js",
@@ -27,9 +27,9 @@
         "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.8.3"
+        "@salesforce/lds-bindings": "1.8.4"
     },
     "devDependencies": {
-        "@salesforce/lds-karma": "1.8.3"
+        "@salesforce/lds-karma": "1.8.4"
     }
 }

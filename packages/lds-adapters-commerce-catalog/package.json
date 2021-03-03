@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-commerce-catalog",
-    "version": "1.8.4",
+    "version": "1.8.5",
     "description": "Wire adapters Commerce Catalog",
     "license": "MIT",
     "main": "dist/umd/es2018/commerce-catalog.js",
@@ -26,9 +26,9 @@
         "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.8.4"
+        "@salesforce/lds-bindings": "1.8.5"
     },
     "devDependencies": {
-        "@salesforce/lds-karma": "1.8.4"
+        "@salesforce/lds-karma": "1.8.5"
     }
 }

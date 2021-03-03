@@ -3974,6 +3974,38 @@ describe('routes', () => {
         );
     });
 
+    describe('post /wave/query', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: '/query',
+                body: { query: { query: '', queryLanguage: 'Saql' } },
+            },
+            [
+                'WaveController.executeQueryByInputRep',
+                { query: { query: '', queryLanguage: 'Saql' } },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: WAVE_BASE_URI,
+            basePath: '/query',
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: '/query',
+                body: { query: { query: '', queryLanguage: 'Sql' } },
+            },
+            {}
+        );
+    });
+
     describe('get /wave/recipes', () => {
         testControllerInput(
             {

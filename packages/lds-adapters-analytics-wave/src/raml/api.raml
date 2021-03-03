@@ -1222,6 +1222,96 @@ types:
       zoneId:
         description: The zone ID of this time zone.
         type: string
+  SaqlQueryInputRepresentation:
+    description: A Wave query written in SAQL
+    type: object
+    properties:
+      # TODO: Hand-rolled, see comments in SaqlQueryMetadataInputRepresentation
+      metadata:
+        description: Query metadata contains query Id and query sequence Id used for
+          performance tracking and monitoring purposes.
+        type: SaqlQueryMetadataInputRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: The query name
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      query:
+        description: The query
+        type: string
+      queryLanguage:
+        description: The language in which the query is written.
+        type: string
+        enum:
+          - Saql
+          - Sql
+        required: false # TODO Hand-rolled W-8253396
+      timezone:
+        description: The timezone requested.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+  SaqlQueryInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for saql query input representation
+    type: object
+    properties:
+      query:
+        type: SaqlQueryInputRepresentation
+        description: Saql query input representation
+  # TODO: Hand-rolled, the gen'ed raml has this inlined in the 'metadata' attribute definition above, but that
+  # causes build:raml to fail with 'Error: untrustedConfig_metadata_prop has an unknown type'.
+  # Extracting it to a seperate type def works
+  SaqlQueryMetadataInputRepresentation:
+    description: Query metadata contains query Id and query sequence Id used for
+      performance tracking and monitoring purposes.
+    type: object
+    properties: # TODO Hand-rolled W-8252808
+      //:
+        type: any
+  # TODO: Intentionally hand-rolled
+  # The java source has a single 'json' string field, but uses a custom serializer which outputs that as
+  # the actual json. The json output comes from superpod code and the structure is not defined in the connect
+  # annotations.
+  SaqlQueryResultRepresentation:
+    description: Represents a string of JSON content that will be serialized as-is.
+    type: object
+    properties:
+      action:
+        type: string
+        required: false
+      responseId:
+        type: string
+        required: false
+      responseTime:
+        type: number
+        required: false
+      query:
+        description: The requested query
+        type: string
+      results:
+        description: The query results
+        type: SaqlQueryResultsRepresentation
+      # depending on the type of query and the underlying data, there might be other properties
+      //:
+        type: any
+  # TODO: intentionally hand-rolled, see comments on SaqlQueryResultRepresentation
+  SaqlQueryResultsRepresentation:
+    description: Represents the record and metadata results of a query execution
+    type: object
+    properties:
+      metadata:
+        description: Metadata about the structure of the result records and the query execution
+        type: array
+        items:
+          type: any
+        required: false
+      records:
+        description: The result records
+        type: array
+        items:
+          type: any
+      # depending on the type of query and the underlying data, there might be other properties
+      //:
+        type: any
   SchemaFieldFormatSymbolsRepresentation:
     description: Representation of Schema Node Fieldformat symbols
     type: object
@@ -2383,6 +2473,27 @@ types:
               - OutputExternalConnectorVolume
               - OutputLocalConnectorVolume
             (oas-collectionFormat): csv
+  /query:
+    post:
+      description: Execute a query.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: SaqlQueryResultRepresentation
+      # TODO: Hand rolled - removed queryParameters
+      # IQueryResource.post() has a number of existing Signatures w/ varying query params, but we only want to
+      # expose the one that takes a body since that has the broadest support in the api and is the only one that is
+      # aura generated.
+      body:
+        application/json:
+          # TODO Hand-rolled W-8334626
+          # type: SaqlQueryInputRepresentation
+          type: SaqlQueryInputWrapperRepresentation
+          # TODO: Hand-rolled due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          #required: false
+          (oas-body-name): query
   /recipes:
     get:
       description: Get a listing of all recipes.

@@ -7,6 +7,33 @@ const API_VERSION = 'v52.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/wave`;
 
+// Execute Query
+export function mockExecuteQueryNetworkOnce(config, mockData) {
+    const paramMatch = getExecuteQueryMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+export function mockExecuteQueryNetworkErrorOnce(config, mockData) {
+    const paramMatch = getExecuteQueryMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getExecuteQueryMatcher(config) {
+    let { query } = config;
+
+    return sinon.match({
+        body: { query },
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/query`,
+    });
+}
+
 // Analytics Limits
 function mockGetAnalyticsLimitsNetworkOnce(config, mockData) {
     const paramMatch = getAnalyticsLimitsMatcher(config);

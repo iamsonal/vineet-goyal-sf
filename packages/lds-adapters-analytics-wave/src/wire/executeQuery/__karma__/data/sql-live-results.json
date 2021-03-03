@@ -1,0 +1,65 @@
+{
+    "action": "query",
+    "responseId": "4aQJz1NrBjKm4G1Jiz9TyV",
+    "results": {
+        "metadata": [
+            {
+                "columns": [
+                    {
+                        "label": "Division_Name",
+                        "type": "varchar"
+                    },
+                    {
+                        "label": "Location_Description",
+                        "type": "varchar"
+                    }
+                ],
+                "queryLanguage": "SQL"
+            }
+        ],
+        "records": [
+            {
+                "Division_Name": "ABC",
+                "Location_Description": "Bunnell FL Yard"
+            },
+            {
+                "Division_Name": "ABC",
+                "Location_Description": "Jacksonville FL Install"
+            },
+            {
+                "Division_Name": "ABC",
+                "Location_Description": "Cherry Point SC Yard"
+            },
+            {
+                "Division_Name": "ABC",
+                "Location_Description": "Palm Bay FL Yard"
+            },
+            {
+                "Division_Name": "ABC",
+                "Location_Description": "West Palm FL Yard"
+            },
+            {
+                "Division_Name": "ABC",
+                "Location_Description": "Orlando FL Yard"
+            },
+            {
+                "Division_Name": "ABC",
+                "Location_Description": "Sanford FL Yard"
+            },
+            {
+                "Division_Name": "ABC",
+                "Location_Description": "Groveland FL Yard"
+            },
+            {
+                "Division_Name": "ABC",
+                "Location_Description": "Pooler GA Yard"
+            },
+            {
+                "Division_Name": "ABC",
+                "Location_Description": "Tallahassee FL Yard"
+            }
+        ]
+    },
+    "query": "SELECT Division_Name, Location_Description FROM \"ABCWidgetSales2017\" ORDER BY Division_Name LIMIT 10",
+    "responseTime": 45
+}

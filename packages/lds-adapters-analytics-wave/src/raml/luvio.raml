@@ -10,6 +10,8 @@ types:
   BaseWaveAssetRepresentation:
     (luvio.key):
       id: id
+  SaqlQueryResultsRepresentation:
+    (luvio.opaque): true
 
 /wave:
   /dataflowjobs:
@@ -65,6 +67,11 @@ types:
     get:
       (luvio.adapter):
         name: getAnalyticsLimits
+  /query:
+    post:
+      (luvio.adapter):
+        name: executeQuery
+      (luvio.method): get
   /recipes:
     get:
       (luvio.adapter):

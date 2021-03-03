@@ -67,6 +67,8 @@ const DATAFLOW_JOB_NODE_PATH = new RegExp(
     'i'
 );
 
+const EXECUTE_QUERY_PATH = new RegExp(`${WAVE_BASE_URI}/query`, 'i');
+
 const RECIPES_PATH = new RegExp(`${WAVE_BASE_URI}/recipes$`, 'i');
 
 const RECIPE_PATH = new RegExp(`${WAVE_BASE_URI}/recipes/([A-Z0-9_]){15,18}$`, 'i');
@@ -260,6 +262,14 @@ const guidance: ApiFamily = {
 };
 
 const analytics: ApiFamily = {
+    executeQuery: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && EXECUTE_QUERY_PATH.test(path),
+        transport: {
+            controller: 'WaveController.executeQueryByInputRep',
+        },
+    },
     getAnalyticsLimits: {
         method: 'get',
         predicate: (path: string) =>

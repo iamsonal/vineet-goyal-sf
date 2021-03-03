@@ -4476,6 +4476,33 @@ describe('routes', () => {
         );
     });
 
+    describe('get /connect/sites/{siteId}/search', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sites/1234567890ABCDE/search`,
+            },
+            [
+                'SitesController.searchSite',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/sites/1234567890ABCDE/search`,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/sites/1234567890ABCDE/search`,
+            },
+            {}
+        );
+    });
+
     // [IMPORTANT] this test has to be the last one in the suite to verify all registered routes have corresponding tests
     it.each(Object.keys(testedRoutes).map(key => key.split(':')))(
         '%s %s route tested',

@@ -1,0 +1,35 @@
+{
+    "searchTerm": "energy",
+    "pageSize": 25,
+    "totalItems": 3,
+    "language": "en_US",
+    "currentPageUrl": "/services/data/v52.0/connect/sites/0DMR00000000gKcOAI/search?queryTerm=energy&page=0&pageSize=25&language=en_US",
+    "nextPageUrl": "/services/data/v52.0/connect/sites/0DMR00000000gKcOAI/search?queryTerm=energy&page=1&pageSize=25&language=en_US",
+    "previousPageUrl": "",
+    "items": [
+        {
+            "id": "20YR000000002WtMAI",
+            "title": "Our Response to COVID-19",
+            "highlightedSnippet": "That includes making extra efforts to help customers who are struggling financially in these difficult times. And as always, your safety and the safety of our employees will always be our top priority as we work to meet your energy needs.",
+            "pageType": "SitePage",
+            "contentTypeDeveloperName": "sfdc_cms__view",
+            "contentReference": "covid-response"
+        },
+        {
+            "id": "20YR000000002QtMAI",
+            "title": "Supporting Communities During COVID-19",
+            "highlightedSnippet": "That's why Xcel Energy and the Xcel Energy Foundation are partnering with the Colorado Restaurant Association and the State of Colorado to support the Outdoor Winter Dining Grant Program",
+            "pageType": "SitePage",
+            "contentTypeDeveloperName": "sfdc_cms__view",
+            "contentReference": "covid-support"
+        },
+        {
+            "id": "20YR000000002DtMAI",
+            "title": "Keeping the Power On",
+            "highlightedSnippet": "We're committed to delivering the reliable service you expect as families and communities face the COVID-19 pandemic. Because the power grid is part of the nation's critical infrastructure, Xcel Energy has a strong track record of preparing for emergencies. ",
+            "pageType": "SitePage",
+            "contentTypeDeveloperName": "sfdc_cms__view",
+            "contentReference": "power"
+        }
+    ]
+}

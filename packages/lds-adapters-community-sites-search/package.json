@@ -1,0 +1,43 @@
+{
+    "name": "@salesforce/lds-adapters-community-sites-search",
+    "version": "1.8.3",
+    "description": "Wire adapter for Sites Search APIs",
+    "license": "MIT",
+    "main": "dist/umd/es2018/community-sites-search.js",
+    "module": "dist/es/es2018/community-sites-search.js",
+    "types": "dist/types/src/generated/artifacts/main.d.ts",
+    "files": [
+        "dist",
+        "sfdc",
+        "src/raml/*"
+    ],
+    "contributors": [
+        "hmaheshwari@salesforce.com"
+    ],
+    "scripts": {
+        "build": "yarn build:raml && yarn build:services && yarn build:karma",
+        "build:karma": "rollup --config rollup.config.karma.js",
+        "build:raml": "luvio generate src/raml/luvio.raml src/generated -p '../lds-compiler-plugins'",
+        "build:services": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist sfdc src/generated karma/dist",
+        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-community-sites-search",
+        "start": "karma start",
+        "test": "karma start --single-run",
+        "test:debug": "node --inspect-brk ../../node_modules/jest/bin/jest.js --runInBand -i",
+        "test:compat": "karma start --single-run --compat",
+        "test:unit": "jest"
+    },
+    "publishConfig": {
+        "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
+    },
+    "dependencies": {
+        "@salesforce/lds-bindings": "1.9.0"
+    },
+    "devDependencies": {
+        "@luvio/cli": "^0.28.0",
+        "@luvio/compiler": "^0.28.0",
+        "@luvio/engine": "^0.28.0",
+        "@luvio/lwc-luvio": "^0.28.0",
+        "@salesforce/lds-karma": "1.9.0"
+    }
+}

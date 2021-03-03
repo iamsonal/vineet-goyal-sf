@@ -1,0 +1,19 @@
+{
+    "queryTerm": "energy",
+    "pageSize": 25,
+    "totalItems": 1,
+    "language": "en_US",
+    "currentPageUrl": "/services/data/v52.0/connect/sites/0DMR00000000tKcOAI/search?queryTerm=energy&page=0&pageSize=25&language=en_US",
+    "nextPageUrl": "",
+    "previousPageUrl": "",
+    "items": [
+        {
+            "id": "20YR000000002WtMAI",
+            "title": "Our Response to COVID-19",
+            "highlightedSnippet": "That includes making extra efforts to help customers who are struggling financially in these difficult times. And as always, your safety and the safety of our employees will always be our top priority as we work to meet your energy needs.",
+            "pageType": "SitePage",
+            "contentTypeDeveloperName": "sfdc_cms__view",
+            "contentReference": "home"
+        }
+    ]
+}

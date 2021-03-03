@@ -1,0 +1,108 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '52.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v52.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  SiteSearchItemRepresentation:
+    description: Site search result Item
+    type: object
+    properties:
+      contentReference:
+        description: Content reference field, which will either have ‘Route Developer
+          Name’ if it's a site page or ‘ContentKey’ if it's a content detail page.
+        type: string
+      contentTypeDeveloperName:
+        description: Developer name of the content type of the result item
+        type: string
+      highlightedSnippet:
+        description: Text snippet that contains the query term.
+        type: string
+      id:
+        description: The unique identifier of the site search result item
+        type: string
+      pageType:
+        description: The type of the result item
+        type: string
+        enum:
+          - ContentPage
+          - SitePage
+      title:
+        description: The title of the result item
+        type: string
+  SiteSearchResultRepresentation:
+    description: Site search result representation
+    type: object
+    properties:
+      currentPageUrl:
+        description: URL to the current page of search results.
+        type: string
+      items:
+        description: Collections of the search result items.
+        type: array
+        items:
+          type: SiteSearchItemRepresentation
+      language:
+        description: Language of the search results.
+        type: string
+      nextPageUrl:
+        description: URL to the next page of search result, null if there isn’t the
+          next page.
+        type: string
+      pageSize:
+        description: Number of items per page in search result
+        type: integer
+      previousPageUrl:
+        description: URL to the previous page of search result, null if there isn’t
+          any previous page.
+        type: string
+      totalItems:
+        description: Total number of items in the search result across all pages.
+        type: integer
+/connect/sites/{siteId}/search:
+  get:
+    description: Get site search results
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: SiteSearchResultRepresentation
+    queryParameters:
+      language:
+        type: string
+        required: false
+      page:
+        type: integer
+        required: false
+      pageSize:
+        type: integer
+        required: false
+      queryTerm:
+        type: string
+        required: false
+  uriParameters:
+    siteId:
+      type: string
+      required: true

@@ -1,0 +1,82 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'SitesSearch::'
+
+types:
+  SiteSearchResultRepresentation:
+    (luvio.ttl): 3600000
+    (luvio.opaque): true
+    examples:
+      validSearchSiteResponse: !include ../mocks/types/SiteSearchResultRepresentation/validSearchSiteResponse.json
+      validSearchSiteResponseEmpty: !include ../mocks/types/SiteSearchResultRepresentation/validSearchSiteResponseEmpty.json
+  SalesforceRecordId18:
+    (luvio.coerceFunction): ../primitives/RecordId18/coerce
+
+/connect/sites/{siteId}/search:
+  get:
+    (luvio.adapter):
+      name: searchSite
+      coercedParams:
+        siteId: SalesforceRecordId18
+      tests:
+        expectedResponses:
+          - configInput: |
+              {
+                "siteId": "0DMR00000000gKcOAI",
+                "queryTerm": "energy",
+                "language": "en_US"
+              }
+            mockPayloadId: validSearchSiteResponse
+          - configInput: |
+              {
+                "siteId": "0DMR00000000tKcOAI",
+                "queryTerm": "energy",
+                "language": "en_US"
+              }
+            mockPayloadId: validSearchSiteResponseEmpty
+        validConfigs:
+          - |
+            {
+              "siteId": "0DMR00000000gKcOAI",
+              "queryTerm": "energy"
+            }
+          - |
+            {
+              "siteId": "0DMR00000000gKcOAI",
+              "queryTerm": "energy",
+              "language": "en_US"
+            }
+          - |
+            {
+              "siteId": "0DMR00000000gKcOAI"
+            }
+        invalidConfigs:
+          - |
+            {}
+          - |
+            {
+              "siteId": 1234567890
+            }
+          - |
+            {
+              "queryTerm": "energy",
+              "language": "en" 
+            }
+    queryParameters:
+      queryTerm:
+        examples:
+          validSearchSiteResponse: 'energy'
+          validSearchSiteResponseEmpty: 'energy'
+      language:
+        examples:
+          validSearchSiteResponse: 'en_US'
+          validSearchSiteResponseEmpty: 'en_US'
+  uriParameters:
+    siteId:
+      examples:
+        validSearchSiteResponse: '0DMR00000000gKcOAI'
+        validSearchSiteResponseEmpty: '0DMR00000000tKcOAI'

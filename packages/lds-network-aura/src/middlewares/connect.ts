@@ -113,6 +113,7 @@ const GET_ORCHESTRATION_INSTANCE_PATH = new RegExp(
     `${CONNECT_BASE_URI}/interaction/orchestration/instances/([A-Z0-9]){15,18}$`,
     'i'
 );
+const SITES_SEARCH_PATH = new RegExp(`${CONNECT_BASE_URI}/sites/([A-Z0-9]){15,18}/search`, 'i');
 
 const connect: ApiFamily = {
     getCommunityNavigationMenu: {
@@ -170,6 +171,14 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && PUBLISH_ORCHESTRATION_EVENT_PATH.test(path),
         transport: {
             controller: 'InteractionOrchestrator.publishOrchestrationEvent',
+        },
+    },
+    searchSite: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && SITES_SEARCH_PATH.test(path),
+        transport: {
+            controller: 'SitesController.searchSite',
         },
     },
 };

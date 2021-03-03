@@ -37,6 +37,7 @@ const resourceRequest: ResourceRequest = {
 const draftAction: DraftAction<any> = {
     status: DraftActionStatus.Pending,
     id: 'foo',
+    targetId: 'fooId',
     tag: 'foo',
     request: resourceRequest,
     timestamp: 12345,
@@ -50,12 +51,14 @@ describe('NimbusDraftQueue', () => {
 
             const nimbusQueue = new NimbusDraftQueue();
             const tag = 'foo';
-            nimbusQueue.enqueue(resourceRequest, tag);
+            const targetId = 'fooId';
+            nimbusQueue.enqueue(resourceRequest, tag, targetId);
             expect(nimbusMock.enqueue).toBeCalledTimes(1);
             expect((nimbusMock.enqueue as jest.Mock<any>).mock.calls[0][0]).toEqual(
                 JSONStringify(resourceRequest)
             );
             expect((nimbusMock.enqueue as jest.Mock<any>).mock.calls[0][1]).toEqual(tag);
+            expect((nimbusMock.enqueue as jest.Mock<any>).mock.calls[0][2]).toEqual(targetId);
         });
 
         it('deserializes the action', async () => {
@@ -64,13 +67,19 @@ describe('NimbusDraftQueue', () => {
             nimbusMock.enqueue = jest
                 .fn()
                 .mockImplementation(
-                    (_action: string, _tag: string, success: (result: string) => void) => {
+                    (
+                        _action: string,
+                        _tag: string,
+                        _targetId: string,
+                        success: (result: string) => void
+                    ) => {
                         success(JSONStringify(draftAction));
                     }
                 );
             const nimbusQueue = new NimbusDraftQueue();
             const tag = 'foo';
-            const action = await nimbusQueue.enqueue(resourceRequest, tag);
+            const targetId = 'fooId';
+            const action = await nimbusQueue.enqueue(resourceRequest, tag, targetId);
             expect(action).toEqual(draftAction);
         });
 
@@ -81,11 +90,15 @@ describe('NimbusDraftQueue', () => {
             };
             nimbusMock.enqueue = jest
                 .fn()
-                .mockImplementation((_action: string, _tag: string, _onSuccess, onError) => {
-                    onError(JSONStringify(error));
-                });
+                .mockImplementation(
+                    (_action: string, _tag: string, _targetId: string, _onSuccess, onError) => {
+                        onError(JSONStringify(error));
+                    }
+                );
             const nimbusQueue = new NimbusDraftQueue();
-            await expect(nimbusQueue.enqueue(resourceRequest, 'foo')).rejects.toEqual(error);
+            await expect(nimbusQueue.enqueue(resourceRequest, 'foo', 'fooId')).rejects.toEqual(
+                error
+            );
         });
     });
 

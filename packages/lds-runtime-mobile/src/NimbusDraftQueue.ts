@@ -21,12 +21,13 @@ import { JSONParse, JSONStringify, ObjectKeys } from './utils/language';
  * to a concrete implementation running in jscore.
  */
 export class NimbusDraftQueue implements DraftQueue {
-    enqueue<T>(request: ResourceRequest, tag: string): Promise<DraftAction<T>> {
+    enqueue<T>(request: ResourceRequest, tag: string, targetId: string): Promise<DraftAction<T>> {
         const serializedRequest = JSONStringify(request);
         return new Promise((resolve, reject) => {
             __nimbus.plugins.LdsDraftQueue.enqueue(
                 serializedRequest,
                 tag,
+                targetId,
                 serializedAction => {
                     const response = JSONParse(serializedAction) as DraftAction<T>;
                     resolve(response);

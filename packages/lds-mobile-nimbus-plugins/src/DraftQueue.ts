@@ -25,6 +25,7 @@ export interface DraftQueue {
     enqueue(
         serializedRequest: string,
         tag: string,
+        targetId: string,
         onActionEnqueued: (serializedAction: string) => void,
         onError: (serializedError: string) => void
     ): void;

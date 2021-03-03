@@ -6,6 +6,9 @@ export {
     DurableStoreEntries,
     DurableStoreFetchResult,
     DurableStoreChangedInfo,
+    DurableStoreChange,
+    DurableStoreOperationType,
+    DurableStoreOperation,
 } from './DurableStore';
 export { NetworkAdapter, Request, Response, NetworkError } from './NetworkAdapter';
 export { DraftQueue } from './DraftQueue';

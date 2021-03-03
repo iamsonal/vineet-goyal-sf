@@ -5,8 +5,8 @@ import {
     mockNimbusStoreGlobal,
 } from './MockNimbusDurableStore';
 import { JSONStringify } from '../utils/language';
-import { DefaultDurableSegment } from '@luvio/environments';
-import { DurableStoreChangedInfo } from '@mobileplatform/nimbus-plugin-lds';
+import { DefaultDurableSegment, DurableStoreOperationType } from '@luvio/environments';
+import { DurableStoreChange } from '@mobileplatform/nimbus-plugin-lds';
 
 const testSegment = 'testSegment';
 describe('nimbus durable store tests', () => {
@@ -40,15 +40,6 @@ describe('nimbus durable store tests', () => {
             expect(evictEntriesSpy).toBeCalledTimes(1);
             expect(evictEntriesSpy.mock.calls[0][0]).toEqual(['1']);
             expect(evictEntriesSpy.mock.calls[0][1]).toEqual(testSegment);
-        });
-
-        it('should use the old register listener if new doesnt exist', async () => {
-            const registerListenerSpy = jest.fn().mockResolvedValue('1234');
-            const mock = { registerOnChangedListener: registerListenerSpy };
-            mockNimbusStoreGlobal((mock as any) as MockNimbusDurableStore);
-            const durableStore = new NimbusDurableStore();
-            await durableStore.registerOnChangedListener(jest.fn());
-            expect(registerListenerSpy).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -94,11 +85,11 @@ describe('nimbus durable store tests', () => {
         });
     });
 
-    describe('setEntries', () => {
+    describe('batchOperations', () => {
         it('should stringify entries', async () => {
             const nimbusStore = new MockNimbusDurableStore();
-            const setSpy = jest.fn();
-            nimbusStore.setEntriesInSegmentWithSender = setSpy;
+            const batchSpy = jest.fn();
+            nimbusStore.batchOperation = batchSpy;
             const recordId = 'foo';
             const recordData = { data: { bar: true } };
             mockNimbusStoreGlobal(nimbusStore);
@@ -107,9 +98,91 @@ describe('nimbus durable store tests', () => {
             const setData = {
                 [recordId]: recordData,
             };
+            await durableStore.batchOperations([
+                {
+                    entries: setData,
+                    type: DurableStoreOperationType.SetEntries,
+                    segment: DefaultDurableSegment,
+                },
+            ]);
+
+            expect(batchSpy.mock.calls[0][0].entries[recordId]).toEqual(JSONStringify(recordData));
+        });
+
+        it('should use default setEntries if batchOperations is undefined', async () => {
+            const nimbusStore = new MockNimbusDurableStore();
+            const setEntriesSpy = jest.fn();
+            nimbusStore.batchOperations = undefined;
+            nimbusStore.setEntriesInSegmentWithSender = setEntriesSpy;
+
+            const recordId = 'foo';
+            const recordData = { data: { bar: true } };
+            mockNimbusStoreGlobal(nimbusStore);
+
+            const durableStore = new NimbusDurableStore();
+            const setData = {
+                [recordId]: recordData,
+            };
+
+            const stringifiedEntries = { [recordId]: JSONStringify(recordData) };
             await durableStore.setEntries(setData, DefaultDurableSegment);
 
-            expect(setSpy.mock.calls[0][0][recordId]).toEqual(JSONStringify(recordData));
+            expect(setEntriesSpy.mock.calls[0][0]).toEqual(stringifiedEntries);
+        });
+
+        it('should use default evictEntries if batchOperations is undefined', async () => {
+            const nimbusStore = new MockNimbusDurableStore();
+            const evictEntriesSpy = jest.fn();
+            nimbusStore.batchOperations = undefined;
+            nimbusStore.evictEntriesInSegmentWithSender = evictEntriesSpy;
+
+            const evictIds = ['1', '2', '3'];
+            mockNimbusStoreGlobal(nimbusStore);
+
+            const durableStore = new NimbusDurableStore();
+            await durableStore.evictEntries(evictIds, DefaultDurableSegment);
+
+            expect(evictEntriesSpy.mock.calls[0][0]).toEqual(evictIds);
+        });
+
+        it('should batch setEntries', async () => {
+            const nimbusStore = new MockNimbusDurableStore();
+            const batchSpy = jest.fn();
+            nimbusStore.batchOperation = batchSpy;
+            const recordId = 'foo';
+            const recordData = { data: { bar: true } };
+            mockNimbusStoreGlobal(nimbusStore);
+
+            const durableStore = new NimbusDurableStore();
+            const setData = {
+                [recordId]: recordData,
+            };
+
+            const stringifiedEntries = { [recordId]: JSONStringify(recordData) };
+            await durableStore.setEntries(setData, DefaultDurableSegment);
+
+            expect(batchSpy.mock.calls[0][0]).toEqual({
+                entries: stringifiedEntries,
+                type: DurableStoreOperationType.SetEntries,
+                segment: DefaultDurableSegment,
+            });
+        });
+
+        it('should batch evict', async () => {
+            const nimbusStore = new MockNimbusDurableStore();
+            const batchSpy = jest.fn();
+            nimbusStore.batchOperation = batchSpy;
+            const evictIds = ['1', '2', '3'];
+            mockNimbusStoreGlobal(nimbusStore);
+
+            const durableStore = new NimbusDurableStore();
+            await durableStore.evictEntries(evictIds, DefaultDurableSegment);
+
+            expect(batchSpy.mock.calls[0][0]).toEqual({
+                ids: evictIds,
+                type: DurableStoreOperationType.EvictEntries,
+                segment: DefaultDurableSegment,
+            });
         });
     });
 
@@ -120,27 +193,36 @@ describe('nimbus durable store tests', () => {
             const changedSegment = 'random segment';
             const nimbusStore = new MockNimbusDurableStore();
             mockNimbusStoreGlobal(nimbusStore);
-            let registeredListener: (info: DurableStoreChangedInfo) => void = undefined;
-            nimbusStore.registerOnChangedListenerWithInfo = listener => {
+            let registeredListener: (changes: DurableStoreChange[]) => void = undefined;
+            nimbusStore.registerOnChangedListenerWithBatchInfo = listener => {
                 registeredListener = listener;
                 return Promise.resolve('1234');
             };
             const listenerSpy = jest.fn();
             durableStore.registerOnChangedListener(listenerSpy);
             expect(registeredListener).toBeDefined();
-            const info = { ids: changedIds, segment: changedSegment, sender: '' };
-            registeredListener(info);
-            expect(listenerSpy.mock.calls[0][0]).toEqual({ 1: true, 2: true, 3: true });
-            expect(listenerSpy.mock.calls[0][1]).toEqual(changedSegment);
+
+            registeredListener([
+                {
+                    ids: changedIds,
+                    type: DurableStoreOperationType.EvictEntries,
+                    segment: changedSegment,
+                    sender: '',
+                },
+            ]);
+
+            expect(listenerSpy.mock.calls[0][0][0].ids).toEqual(changedIds);
+            expect(listenerSpy.mock.calls[0][0][0].segment).toEqual(changedSegment);
         });
+
         it('should unsubscribe on change listener', async () => {
             const durableStore = new NimbusDurableStore();
             const changedIds = ['1', '2', '3'];
             const changedSegment = 'random segment';
             const nimbusStore = new MockNimbusDurableStore();
             mockNimbusStoreGlobal(nimbusStore);
-            let registeredListener: (info: DurableStoreChangedInfo) => void = undefined;
-            nimbusStore.registerOnChangedListenerWithInfo = listener => {
+            let registeredListener: (changes: DurableStoreChange[]) => void = undefined;
+            nimbusStore.registerOnChangedListenerWithBatchInfo = listener => {
                 registeredListener = listener;
                 return Promise.resolve('1234');
             };
@@ -151,10 +233,16 @@ describe('nimbus durable store tests', () => {
             const listenerSpy = jest.fn();
             const unsubscribe = await durableStore.registerOnChangedListener(listenerSpy);
             expect(registeredListener).toBeDefined();
-            const info = { ids: changedIds, segment: changedSegment, sender: '' };
-            registeredListener(info);
-            expect(listenerSpy.mock.calls[0][0]).toEqual({ 1: true, 2: true, 3: true });
-            expect(listenerSpy.mock.calls[0][1]).toEqual(changedSegment);
+            registeredListener([
+                {
+                    ids: changedIds,
+                    type: DurableStoreOperationType.EvictEntries,
+                    segment: changedSegment,
+                    sender: '',
+                },
+            ]);
+            expect(listenerSpy.mock.calls[0][0][0].ids).toEqual(changedIds);
+            expect(listenerSpy.mock.calls[0][0][0].segment).toEqual(changedSegment);
 
             await unsubscribe();
             expect(registeredListener).toBeUndefined();
@@ -169,9 +257,9 @@ describe('nimbus durable store tests', () => {
             let callCount = 0;
             mockNimbusStoreGlobal(nimbusStore);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            durableStore.registerOnChangedListener((ids, segment, isExternal) => {
+            durableStore.registerOnChangedListener(changes => {
                 callCount += 1;
-                expect(isExternal).toEqual(true);
+                expect(changes[0].isExternalChange).toEqual(true);
             });
             expect(callCount).toEqual(0);
             const secondDurableStore = new NimbusDurableStore();
@@ -186,9 +274,9 @@ describe('nimbus durable store tests', () => {
             let callCount = 0;
             mockNimbusStoreGlobal(nimbusStore);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            durableStore.registerOnChangedListener((ids, segment, isExternal) => {
+            durableStore.registerOnChangedListener(changes => {
                 callCount += 1;
-                expect(isExternal).toEqual(false);
+                expect(changes[0].isExternalChange).toEqual(false);
             });
             expect(callCount).toEqual(0);
             durableStore.evictEntries(['1'], DefaultDurableSegment);

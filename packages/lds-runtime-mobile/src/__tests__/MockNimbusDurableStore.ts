@@ -3,7 +3,11 @@ import {
     DurableStoreFetchResult,
     DurableStoreEntries,
     DurableStoreChangedInfo,
+    DurableStoreChange,
+    DurableStoreOperation,
 } from '@mobileplatform/nimbus-plugin-lds';
+
+import { ObjectKeys } from '../utils/language';
 
 export function mockNimbusStoreGlobal(mockNimbusStore: MockNimbusDurableStore) {
     global.__nimbus = {
@@ -21,7 +25,7 @@ export function resetNimbusStoreGlobal() {
 // since MockNimbusDurableStore is likely to be re-instantiated before each test
 // we hoist the registered listeners since that happens when the lds instance
 // is created
-let listenerFunc: (info: DurableStoreChangedInfo) => void;
+let listenerFunc: (changes: DurableStoreChange[]) => void;
 const changedId = '1234';
 
 export class MockNimbusDurableStore implements DurableStore {
@@ -89,20 +93,7 @@ export class MockNimbusDurableStore implements DurableStore {
         segment: string,
         sender: string
     ): Promise<void> {
-        let storeSegment = this.kvp[segment];
-        if (storeSegment === undefined) {
-            storeSegment = {};
-            this.kvp[segment] = storeSegment;
-        }
-
-        Object.assign(storeSegment, entries);
-
-        if (listenerFunc !== undefined) {
-            const info = { ids: Object.keys(entries), segment: segment, sender: sender };
-            listenerFunc(info);
-        }
-
-        return Promise.resolve();
+        return this.batchOperations([{ entries, type: 'setEntries', segment }], sender);
     }
 
     evictEntriesInSegment(ids: string[], segment: string): Promise<void> {
@@ -110,21 +101,46 @@ export class MockNimbusDurableStore implements DurableStore {
     }
 
     evictEntriesInSegmentWithSender(ids: string[], segment: string, sender: string): Promise<void> {
-        let storeSegment = this.kvp[segment];
+        return this.batchOperations([{ ids, type: 'evictEntries', segment }], sender);
+    }
+
+    batchOperation(operation: DurableStoreOperation, sender: string): DurableStoreChange {
+        let storeSegment = this.kvp[operation.segment];
         if (storeSegment === undefined) {
             storeSegment = {};
+            this.kvp[operation.segment] = storeSegment;
         }
 
-        for (const id of ids) {
-            delete storeSegment[id];
+        let ids: string[];
+        switch (operation.type) {
+            case 'setEntries':
+                Object.assign(storeSegment, operation.entries);
+                ids = ObjectKeys(operation.entries);
+                break;
+            case 'evictEntries':
+                ids = operation.ids;
+                for (const id of ids) {
+                    delete storeSegment[id];
+                }
         }
 
+        return { ...operation, ids, sender };
+    }
+
+    batchOperations(operations: DurableStoreOperation[], sender: string): Promise<void> {
+        let changes = operations.map(op => this.batchOperation(op, sender));
         if (listenerFunc !== undefined) {
-            const info = { ids: ids, segment: segment, sender: sender };
-            listenerFunc(info);
+            listenerFunc(changes);
         }
 
         return Promise.resolve();
+    }
+
+    registerOnChangedListenerWithBatchInfo(
+        listener: (changes: DurableStoreChange[]) => void
+    ): Promise<string> {
+        listenerFunc = listener;
+        return Promise.resolve(changedId);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -135,7 +151,11 @@ export class MockNimbusDurableStore implements DurableStore {
     registerOnChangedListenerWithInfo(
         listener: (info: DurableStoreChangedInfo) => void
     ): Promise<string> {
-        listenerFunc = listener;
+        this.registerOnChangedListenerWithBatchInfo(changes => {
+            for (const change of changes) {
+                listener({ ...change });
+            }
+        });
         return Promise.resolve(changedId);
     }
 

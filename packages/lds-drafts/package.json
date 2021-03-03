@@ -19,8 +19,8 @@
         "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
     },
     "dependencies": {
-        "@luvio/engine": "^0.27.3",
-        "@luvio/environments": "^0.27.3"
+        "@luvio/engine": "^0.28.0",
+        "@luvio/environments": "^0.28.0"
     },
     "devDependencies": {
         "@salesforce/lds-adapters-uiapi": "1.8.4",

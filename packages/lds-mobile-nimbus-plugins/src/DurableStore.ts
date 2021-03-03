@@ -13,6 +13,13 @@ export interface DurableStoreChangedInfo {
     sender: string;
 }
 
+export interface DurableStoreChange {
+    ids: string[];
+    segment: string;
+    type: DurableStoreOperationType;
+    sender: string;
+}
+
 /**
  * A `DurableStore` persists entries beyond the lifetime of the LDS instance.
  */
@@ -48,11 +55,11 @@ export interface DurableStore {
     setEntriesInSegment(entries: DurableStoreEntries, segment: string): Promise<void>;
 
     /**
-     * A collection of entry operations to perform on the store.
+     * A collection of durable store operations to perform.
      *
-     * @param entries the array of batched entries
+     * @param operations the array of batched operations
      */
-    batchEntries(entries: BatchEntry[]): Promise<void>;
+    batchOperations(operations: DurableStoreOperation[], sender: string): Promise<void>;
 
     /**
      * Adds a collection of entries to the store.
@@ -111,6 +118,17 @@ export interface DurableStore {
     ): Promise<string>;
 
     /**
+     * Setup a listener to be notified of changes to the Durable Store
+     *
+     * @param listener callback giving an array of durable store entry
+     * ids that changed.
+     * @returns {Promise<string>} a generated id of the listener to unsubscribe with
+     */
+    registerOnChangedListenerWithBatchInfo(
+        listener: (changes: DurableStoreChange[]) => void
+    ): Promise<string>;
+
+    /**
      *
      * @param id the identifier given from registerOnChangedListener
      */
@@ -144,17 +162,14 @@ export interface DurableStoreEntries {
 /**
  * Batch entry type
  */
-export enum BatchEntryType {
-    SetEntries = 'setEntries',
-    EvictEntries = 'evictEntries',
-}
+export type DurableStoreOperationType = 'setEntries' | 'evictEntries';
 
 /**
  * Interface for either an evict or set batched operation.
  */
-export interface BatchEntry {
-    type: BatchEntryType;
+export interface DurableStoreOperation {
+    type: DurableStoreOperationType;
     segment: string;
-    entryIds?: string[];
+    ids?: string[];
     entries?: DurableStoreEntries;
 }

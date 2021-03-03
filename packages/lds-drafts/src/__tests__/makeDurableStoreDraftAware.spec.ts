@@ -34,6 +34,7 @@ function setupDraftStore(storeRecords: any = {}) {
         getAllEntries: jest.fn(),
         evictEntries: jest.fn(),
         registerOnChangedListener: jest.fn(),
+        batchOperations: jest.fn(),
     };
     const draftQueue: DraftQueue = {
         enqueue: jest.fn(),
@@ -674,7 +675,7 @@ describe('makeDurableStoreDraftAware', () => {
 
     describe('registerOnChangeListener', () => {
         it('draft action changes notify affected record change', done => {
-            let changeListener;
+            let changeListener: OnDurableStoreChangedListener;
             const durableStore: DurableStore = makeDurableStoreDraftAware(
                 {
                     registerOnChangedListener: listener => (changeListener = listener),
@@ -682,26 +683,30 @@ describe('makeDurableStoreDraftAware', () => {
                 {} as any,
                 {} as any,
                 () => false,
-                (_draftKey: string, _canonicalKey: string) => {}
+                (_draftKey: string, _canonicalKey: string) => {},
+                ''
             );
 
             const draftActionKey = buildDraftDurableStoreKey(STORE_KEY_RECORD, 'FOO');
-            const baseListener: OnDurableStoreChangedListener = (
-                ids: {
-                    [key: string]: boolean;
-                },
-                segment: string
-            ) => {
-                expect(ids[STORE_KEY_RECORD]).toBe(true);
-                expect(segment).toBe(DefaultDurableSegment);
+            const baseListener: OnDurableStoreChangedListener = changes => {
+                const change = changes[0];
+                expect(change.ids[0]).toBe(STORE_KEY_RECORD);
+                expect(change.segment).toBe(DefaultDurableSegment);
                 done();
             };
             durableStore.registerOnChangedListener(baseListener);
-            changeListener({ [draftActionKey]: true }, DRAFT_SEGMENT);
+
+            changeListener([
+                {
+                    ids: [draftActionKey],
+                    type: 'setEntries',
+                    segment: DRAFT_SEGMENT,
+                },
+            ]);
         });
 
         it('only changes to draft action segment are parsed', done => {
-            let changeListener;
+            let changeListener: OnDurableStoreChangedListener;
             const durableStore: DurableStore = makeDurableStoreDraftAware(
                 {
                     registerOnChangedListener: listener => (changeListener = listener),
@@ -709,28 +714,31 @@ describe('makeDurableStoreDraftAware', () => {
                 {} as any,
                 {} as any,
                 () => false,
-                (_draftKey: string, _canonicalKey: string) => {}
+                (_draftKey: string, _canonicalKey: string) => {},
+                ''
             );
 
             const draftActionKey = buildDraftDurableStoreKey(STORE_KEY_RECORD, 'FOO');
-            const baseListener: OnDurableStoreChangedListener = (
-                ids: {
-                    [key: string]: boolean;
-                },
-                segment: string,
-                external: boolean
-            ) => {
-                expect(ids[draftActionKey]).toBe(true);
-                expect(segment).toEqual('NOT_DRAFT_SEGMENT');
-                expect(external).toEqual(false);
+            const baseListener: OnDurableStoreChangedListener = changes => {
+                const change = changes[0];
+                expect(change.ids[0]).toBe(draftActionKey);
+                expect(change.segment).toEqual('NOT_DRAFT_SEGMENT');
+                expect(change.isExternalChange).toEqual(false);
                 done();
             };
             durableStore.registerOnChangedListener(baseListener);
-            changeListener({ [draftActionKey]: true }, 'NOT_DRAFT_SEGMENT', false);
+            changeListener([
+                {
+                    ids: [draftActionKey],
+                    type: 'setEntries',
+                    segment: 'NOT_DRAFT_SEGMENT',
+                    isExternalChange: false,
+                },
+            ]);
         });
 
         it('only changes to draft action keys in the draft segment are parsed', done => {
-            let changeListener;
+            let changeListener: OnDurableStoreChangedListener;
             const durableStore: DurableStore = makeDurableStoreDraftAware(
                 {
                     registerOnChangedListener: listener => (changeListener = listener),
@@ -738,20 +746,25 @@ describe('makeDurableStoreDraftAware', () => {
                 {} as any,
                 {} as any,
                 () => false,
-                (_draftKey: string, _canonicalKey: string) => {}
+                (_draftKey: string, _canonicalKey: string) => {},
+                ''
             );
-            const baseListener: OnDurableStoreChangedListener = (ids: {
-                [key: string]: boolean;
-            }) => {
-                expect(ids[STORE_KEY_RECORD]).toBe(true);
+            const baseListener: OnDurableStoreChangedListener = changes => {
+                expect(changes[0].ids[0]).toBe(STORE_KEY_RECORD);
                 done();
             };
             durableStore.registerOnChangedListener(baseListener);
-            changeListener({ [STORE_KEY_RECORD]: true }, DRAFT_SEGMENT);
+            changeListener([
+                {
+                    ids: [STORE_KEY_RECORD],
+                    type: 'setEntries',
+                    segment: DRAFT_SEGMENT,
+                },
+            ]);
         });
 
         it('redirect entries added to the durable store invokes the injected mapping function', async () => {
-            let changeListener;
+            let changeListener: OnDurableStoreChangedListener;
             const callbackSpy = jest.fn();
             const durableStore: DurableStore = makeDurableStoreDraftAware(
                 {
@@ -769,25 +782,23 @@ describe('makeDurableStoreDraftAware', () => {
                 {} as any,
                 {} as any,
                 () => false,
-                callbackSpy
+                callbackSpy,
+                ''
             );
 
             durableStore.registerOnChangedListener(() => {});
-            changeListener(
+            changeListener([
                 {
-                    [STORE_KEY_RECORD]: {
-                        draftKey: STORE_KEY_DRAFT_RECORD,
-                        canonicalKey: STORE_KEY_RECORD,
-                    },
+                    ids: [STORE_KEY_RECORD],
+                    segment: 'DRAFT_ID_MAPPINGS',
+                    type: 'setEntries',
                 },
-                'DRAFT_ID_MAPPINGS'
-            );
+            ]);
 
             await flushPromises();
 
             expect(callbackSpy).toBeCalledTimes(1);
-            expect(callbackSpy.mock.calls[0][1]).toEqual(STORE_KEY_RECORD);
-            expect(callbackSpy.mock.calls[0][0]).toEqual(STORE_KEY_DRAFT_RECORD);
+            expect(callbackSpy.mock.calls[0]).toEqual([STORE_KEY_DRAFT_RECORD, STORE_KEY_RECORD]);
         });
     });
 });

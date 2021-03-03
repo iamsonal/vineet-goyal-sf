@@ -4,6 +4,7 @@ import {
     DurableStore,
     DurableStoreEntries,
     DurableStoreEntry,
+    DurableStoreChange,
     OnDurableStoreChangedListener,
 } from '@luvio/environments';
 import {
@@ -425,43 +426,69 @@ export function makeDurableStoreDraftAware(
     const registerOnChangeListener: typeof durableStore['registerOnChangedListener'] = function(
         listener: OnDurableStoreChangedListener
     ): () => Promise<void> {
-        return durableStore.registerOnChangedListener(
-            (ids: { [key: string]: boolean }, segment: string, isExternalChange?: boolean) => {
-                if (segment === DRAFT_ID_MAPPINGS_SEGMENT) {
-                    durableStore
-                        .getEntries(ObjectKeys(ids), DRAFT_ID_MAPPINGS_SEGMENT)
-                        .then(mappingEntries => {
-                            if (mappingEntries === undefined) {
-                                return;
-                            }
-                            const keys = ObjectKeys(mappingEntries);
-                            for (const key of keys) {
-                                const entry = mappingEntries[key] as DurableStoreEntry<
-                                    DraftIdMappingEntry
-                                >;
-                                const { draftKey, canonicalKey } = entry.data;
-                                registerDraftKeyMapping(draftKey, canonicalKey);
-                            }
-                        });
-                }
+        return durableStore.registerOnChangedListener((changes: DurableStoreChange[]) => {
+            const draftIdMappingsIds: string[] = [];
+            const draftSegmentChanges: DurableStoreChange[] = [];
+            const otherSegmentChanges: DurableStoreChange[] = [];
 
-                if (segment !== DRAFT_SEGMENT) {
-                    return listener(ids, segment, isExternalChange);
+            for (let i = 0, len = changes.length; i < len; i++) {
+                const change = changes[i];
+
+                switch (change.segment) {
+                    case DRAFT_ID_MAPPINGS_SEGMENT:
+                        draftIdMappingsIds.push(...change.ids);
+                        continue;
+                    case DRAFT_SEGMENT:
+                        draftSegmentChanges.push(change);
+                        continue;
+                    default:
+                        otherSegmentChanges.push(change);
                 }
-                const keys = ObjectKeys(ids);
-                const changedIds: { [key: string]: true } = {};
-                for (let i = 0, len = keys.length; i < len; i++) {
-                    const key = keys[i];
+            }
+
+            if (draftIdMappingsIds.length > 0) {
+                durableStore
+                    .getEntries(draftIdMappingsIds, DRAFT_ID_MAPPINGS_SEGMENT)
+                    .then(mappingEntries => {
+                        if (mappingEntries === undefined) {
+                            return;
+                        }
+                        const keys = ObjectKeys(mappingEntries);
+                        for (const key of keys) {
+                            const entry = mappingEntries[key] as DurableStoreEntry<
+                                DraftIdMappingEntry
+                            >;
+                            const { draftKey, canonicalKey } = entry.data;
+                            registerDraftKeyMapping(draftKey, canonicalKey);
+                        }
+                    });
+            }
+
+            const remappedDraftChanges: DurableStoreChange[] = [];
+            for (let i = 0, len = draftSegmentChanges.length; i < len; i++) {
+                const draftChange = draftSegmentChanges[i];
+                const changedIds: string[] = [];
+
+                for (let j = 0, idLen = draftChange.ids.length; j < idLen; j++) {
+                    const key = draftChange.ids[j];
                     const recordKey = extractRecordKeyFromDraftDurableStoreKey(key);
                     if (recordKey !== undefined) {
-                        changedIds[recordKey] = true;
+                        changedIds.push(recordKey);
                     } else {
-                        changedIds[key] = true;
+                        changedIds.push(key);
                     }
                 }
-                return listener(changedIds, DefaultDurableSegment, isExternalChange);
+
+                remappedDraftChanges.push({
+                    ...draftChange,
+                    ids: changedIds,
+                    segment: DefaultDurableSegment,
+                });
             }
-        );
+
+            const combinedChanges = remappedDraftChanges.concat(otherSegmentChanges);
+            return listener(combinedChanges);
+        });
     };
 
     return ObjectCreate(durableStore, {

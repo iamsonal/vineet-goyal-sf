@@ -3832,6 +3832,47 @@ describe('routes', () => {
         });
     });
 
+    describe('delete /wave/datsets/{id}', () => {
+        testControllerInput(
+            {
+                method: 'delete',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/05vRM00000003rZYAQ`,
+                urlParams: {
+                    datasetIdOrApiName: '05vRM00000003rZYAQ',
+                },
+            },
+            [
+                'WaveController.deleteDataset',
+                {
+                    datasetIdOrApiName: '05vRM00000003rZYAQ',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'delete',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/datasets/05vRM00000003rZYAQ`,
+            urlParams: {
+                datasetIdOrApiName: '05vRM00000003rZYAQ',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'delete',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/datasets/05vRM00000003rZYAQ`,
+                urlParams: {
+                    datasetIdOrApiName: '05vRM00000003rZYAQ',
+                },
+            },
+            null
+        );
+    });
+
     describe('get /wave/datasets/{datasetIdOrApiName}/versions/{versionId}/xmds/{xmdType}', () => {
         describe('with dataset id', () => {
             testControllerInput(

@@ -2268,6 +2268,11 @@ types:
             - Name
             - TotalRows
   /datasets/{datasetIdOrApiName}:
+    delete:
+      description: Delete a dataset resource.
+      responses:
+        '200':
+          description: Success
     get:
       description: Get a dataset resource representation.
       responses:

@@ -43,6 +43,11 @@ types:
       (luvio.adapter):
         name: getDatasets
   /datasets/{datasetIdOrApiName}:
+    delete:
+      (luvio.adapter):
+        name: deleteDataset
+      (luvio.key):
+        id: urlParams.datasetIdOrApiName
     get:
       (luvio.adapter):
         name: getDataset

@@ -335,6 +335,13 @@ const analytics: ApiFamily = {
             controller: 'WaveController.getDataset',
         },
     },
+    deleteDataset: {
+        method: 'delete',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && DATASET_PATH.test(path),
+        transport: {
+            controller: 'WaveController.deleteDataset',
+        },
+    },
     getDatasets: {
         method: 'get',
         predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && DATASETS_PATH.test(path),

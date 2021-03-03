@@ -86,6 +86,7 @@ function generateResolveUnfulfilledSnapshot(adapter, resource, def, state) {
                           );
                       }
                   }
+                  luvio.storeBroadcast();
                   return snapshot as ${FULFILLED_SNAPSHOT}<${returnTypeInterface}, {}>;
               }, (response: ${FETCH_RESPONSE}<unknown>) => {
                   return ${onResourceResponseError}(luvio, config, resourceParams, response);

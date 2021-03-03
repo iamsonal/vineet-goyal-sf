@@ -180,8 +180,8 @@ describe('basic', () => {
             // fetches updated data from network
             const element2 = await setupElement(config, QuickActionDefaults);
 
-            expect(element1.pushCount()).toBe(1);
-            expect(element1.getWiredData()).toEqualActionsSnapshot(mockData);
+            expect(element1.pushCount()).toBe(2);
+            expect(element1.getWiredData()).toEqualActionsSnapshot(updatedData);
             expect(element2.pushCount()).toBe(1);
             expect(element2.getWiredData()).toEqualActionsSnapshot(updatedData);
         });

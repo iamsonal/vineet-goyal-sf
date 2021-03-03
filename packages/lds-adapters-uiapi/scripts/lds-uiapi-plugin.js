@@ -43,6 +43,7 @@ const RAML_ARTIFACTS = {
     '/resources/getUiApiRecordsByRecordId': ['createResourceRequest'],
     '/types/RecordRepresentation': ['keyBuilderFromType', 'ingest'],
     '/types/RecordAvatarBulkMapRepresentation': ['ingest'],
+    '/types/QuickActionDefaultsRepresentation': ['dynamicIngest'],
 };
 
 /**

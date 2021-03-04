@@ -1,7 +1,7 @@
 /**
  * @typedef {import("@luvio/compiler").CompilerConfig} CompilerConfig
  * @typedef {import("@luvio/compiler").ModelInfo} ModelInfo
- * @typedef { { name: string, method: string, ttl?: number } } AdapterInfo
+ * @typedef { { apiFamily: string, name: string, method: string, ttl?: number } } AdapterInfo
  */
 
 const plugin = require('@salesforce/lds-compiler-plugins');
@@ -16,6 +16,7 @@ const SFDC_PRIVATE_ADAPTERS = require('./sfdc-private-adapters');
 
 const ADAPTERS_NOT_DEFINED_IN_OVERLAY = [
     {
+        apiFamily: 'UiApi',
         name: 'getListUi',
         method: 'get',
         ttl: 900000,
@@ -59,7 +60,7 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
 
     const exports = [];
 
-    generatedAdapterInfos.forEach(({ name, method, ttl }) => {
+    generatedAdapterInfos.forEach(({ apiFamily, name, method, ttl }) => {
         const factoryIdentifier = `${name}AdapterFactory`;
         const adapterNameIdentifier = `${name}__adapterName`;
         imports.push(
@@ -69,11 +70,11 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
         if (method === 'get') {
             if (ttl !== undefined) {
                 exports.push(
-                    `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {name: ${adapterNameIdentifier}, ttl: ${ttl}});`
+                    `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {apiFamily: '${apiFamily}', name: ${adapterNameIdentifier}, ttl: ${ttl}});`
                 );
             } else {
                 exports.push(
-                    `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {name: ${adapterNameIdentifier}});`
+                    `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {apiFamily: '${apiFamily}', name: ${adapterNameIdentifier}});`
                 );
             }
             return;
@@ -85,7 +86,7 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
     });
 
     imports.push('');
-    imperativeAdapterInfos.forEach(({ name, method, ttl }) => {
+    imperativeAdapterInfos.forEach(({ apiFamily, name, method, ttl }) => {
         const factoryIdentifier = `${name}AdapterFactory`;
 
         imports.push(`import { factory as ${factoryIdentifier} } from '../../wire/${name}';`);
@@ -94,11 +95,11 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
             case 'get':
                 if (ttl !== undefined) {
                     exports.push(
-                        `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {name: '${name}', ttl: ${ttl}});`
+                        `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {apiFamily: '${apiFamily}', name: '${name}', ttl: ${ttl}});`
                     );
                 } else {
                     exports.push(
-                        `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {name: '${name}'});`
+                        `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {apiFamily: '${apiFamily}', name: '${name}'});`
                     );
                 }
                 break;
@@ -146,6 +147,17 @@ function generateAdapterFactoryExport(artifactsDir, generatedAdapterInfos, imper
     fs.writeFileSync(path.join(artifactsDir, 'main.ts'), exports.join('\n'));
 }
 
+/**
+ * Utilizes the keyPrefix string to supply the API family for the adapters.
+ * Stripping any non-word characters to be used by our instrumentation.
+ * For example, `UiApi::` => `UiApi`.
+ *
+ * @param keyPrefix string used to supply the namespace of the adapters
+ */
+function buildApiFamilyFromKeyPrefix(keyPrefix) {
+    return keyPrefix.replace(/\W+/, '');
+}
+
 module.exports = {
     validate: modelInfo => {
         fieldsPlugin.validate(modelInfo, (artifactSuffix, path, identifier, targetIdentifier) => {
@@ -167,10 +179,12 @@ module.exports = {
      * @returns {void}
      */
     afterGenerate: (compilerConfig, modelInfo, createGenerationContext) => {
+        const apiFamily = buildApiFamilyFromKeyPrefix(modelInfo.keyPrefix);
         const adapters = modelInfo.resources
             .filter(resource => resource.adapter !== undefined)
             .map(resource => {
                 const adapterInfo = {
+                    apiFamily,
                     name: resource.adapter.name,
                     // using (luvio.method) annotation if defined
                     method: resource.alternativeMethod || resource.method,

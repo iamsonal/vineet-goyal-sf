@@ -5,8 +5,9 @@ import {
 import { luvio } from 'lds-engine';
 
 export function createWireAdapterConstructor(factory, metadata) {
-    const adapter = createLDSAdapter(metadata.name, factory);
-    return lwcLdsCreateWireAdapterConstructor(adapter, metadata.name, luvio);
+    const { apiFamily, name } = metadata;
+    const adapter = createLDSAdapter(name, factory);
+    return lwcLdsCreateWireAdapterConstructor(adapter, `${apiFamily}.${name}`, luvio);
 }
 
 export function createLDSAdapter(name, factory) {

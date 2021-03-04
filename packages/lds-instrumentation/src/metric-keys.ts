@@ -1,5 +1,5 @@
 import { MetricsKey } from 'instrumentation/service';
-import { APEX_ADAPTER_NAME } from './main';
+import { NORMALIZED_APEX_ADAPTER_NAME } from './main';
 
 export const ADAPTER_CACHE_HIT_COUNT_METRIC_NAME = 'cache-hit-count';
 export const ADAPTER_CACHE_HIT_DURATION_METRIC_NAME = 'cache-hit-duration';
@@ -54,7 +54,7 @@ export const GET_APEX_CACHE_HIT_COUNT: MetricsKey = {
     get() {
         return {
             owner: METRIC_KEY_OWNER,
-            name: ADAPTER_CACHE_HIT_COUNT_METRIC_NAME + '.' + APEX_ADAPTER_NAME,
+            name: ADAPTER_CACHE_HIT_COUNT_METRIC_NAME + '.' + NORMALIZED_APEX_ADAPTER_NAME,
         };
     },
 };
@@ -67,7 +67,7 @@ export const GET_APEX_CACHE_HIT_DURATION: MetricsKey = {
     get() {
         return {
             owner: METRIC_KEY_OWNER,
-            name: ADAPTER_CACHE_HIT_DURATION_METRIC_NAME + '.' + APEX_ADAPTER_NAME,
+            name: ADAPTER_CACHE_HIT_DURATION_METRIC_NAME + '.' + NORMALIZED_APEX_ADAPTER_NAME,
         };
     },
 };
@@ -80,7 +80,7 @@ export const GET_APEX_CACHE_MISS_COUNT: MetricsKey = {
     get() {
         return {
             owner: METRIC_KEY_OWNER,
-            name: ADAPTER_CACHE_MISS_COUNT_METRIC_NAME + '.' + APEX_ADAPTER_NAME,
+            name: ADAPTER_CACHE_MISS_COUNT_METRIC_NAME + '.' + NORMALIZED_APEX_ADAPTER_NAME,
         };
     },
 };
@@ -93,7 +93,7 @@ export const GET_APEX_CACHE_MISS_DURATION: MetricsKey = {
     get() {
         return {
             owner: METRIC_KEY_OWNER,
-            name: ADAPTER_CACHE_MISS_DURATION_METRIC_NAME + '.' + APEX_ADAPTER_NAME,
+            name: ADAPTER_CACHE_MISS_DURATION_METRIC_NAME + '.' + NORMALIZED_APEX_ADAPTER_NAME,
         };
     },
 };

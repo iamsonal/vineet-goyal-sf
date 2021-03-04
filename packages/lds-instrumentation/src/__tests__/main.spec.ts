@@ -2,7 +2,16 @@
  * @jest-environment jsdom
  */
 
-import { Instrumentation, refreshApiEvent } from '../main';
+import {
+    Instrumentation,
+    refreshApiEvent,
+    NORMALIZED_APEX_ADAPTER_NAME,
+    REFRESH_APEX_KEY,
+    REFRESH_UIAPI_KEY,
+    SUPPORTED_KEY,
+    UNSUPPORTED_KEY,
+} from '../main';
+import { REFRESH_ADAPTER_EVENT } from '@luvio/lwc-luvio';
 import { stableJSONStringify } from '../utils/utils';
 import { LRUCache } from '../utils/lru-cache';
 import timekeeper from 'timekeeper';
@@ -123,7 +132,7 @@ describe('instrumentation', () => {
             };
             const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(
                 mockGetRecordAdapter,
-                { name: 'getRecord', ttl: GET_RECORD_TTL }
+                { apiFamily: 'UiApi', name: 'getRecord', ttl: GET_RECORD_TTL }
             );
             const getRecordConfig = {
                 recordId: '00x000000000000017',
@@ -136,7 +145,7 @@ describe('instrumentation', () => {
                 cacheHit: true,
             };
 
-            const recordKey = 'getRecord:' + stableJSONStringify(getRecordConfig);
+            const recordKey = 'UiApi.getRecord:' + stableJSONStringify(getRecordConfig);
             // Cache Miss #1
             const now = Date.now();
             timekeeper.freeze(now);
@@ -170,14 +179,14 @@ describe('instrumentation', () => {
 
             // Verify Metric Calls
             const expectedMetricCalls = [
-                { owner: 'LIGHTNING.lds.service', name: 'request.getRecord' },
+                { owner: 'LIGHTNING.lds.service', name: 'request.UiApi.getRecord' },
                 { owner: 'LIGHTNING.lds.service', name: 'request' },
                 { owner: 'lds', name: 'cache-miss-count' },
-                { owner: 'lds', name: 'cache-miss-count.getRecord' },
-                { owner: 'LIGHTNING.lds.service', name: 'request.getRecord' },
+                { owner: 'lds', name: 'cache-miss-count.UiApi.getRecord' },
+                { owner: 'LIGHTNING.lds.service', name: 'request.UiApi.getRecord' },
                 { owner: 'LIGHTNING.lds.service', name: 'request' },
                 { owner: 'lds', name: 'cache-hit-count' },
-                { owner: 'lds', name: 'cache-hit-count.getRecord' },
+                { owner: 'lds', name: 'cache-hit-count.UiApi.getRecord' },
             ];
             testMetricInvocations(
                 instrumentationServiceSpies.counterIncrementSpy,
@@ -185,7 +194,7 @@ describe('instrumentation', () => {
             );
 
             // Verify Cache Stats Calls
-            const expectedCacheStatsCalls = ['lds:getRecord'];
+            const expectedCacheStatsCalls = ['lds:UiApi.getRecord'];
             expect(
                 instrumentationServiceSpies.cacheStatsLogHitsSpy.mock.instances.map(instance => {
                     return instance.__name;
@@ -205,6 +214,7 @@ describe('instrumentation', () => {
                 });
             };
             const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(unknownAdapter, {
+                apiFamily: 'unknownApiFamily',
                 name: 'unknownAdapter',
             });
             const adapterConfig = {
@@ -229,14 +239,14 @@ describe('instrumentation', () => {
 
             // Verify Metric Calls
             const expectedMetricCalls = [
-                { owner: 'LIGHTNING.lds.service', name: 'request.unknownAdapter' },
+                { owner: 'LIGHTNING.lds.service', name: 'request.unknownApiFamily.unknownAdapter' },
                 { owner: 'LIGHTNING.lds.service', name: 'request' },
                 { owner: 'lds', name: 'cache-miss-count' },
-                { owner: 'lds', name: 'cache-miss-count.unknownAdapter' },
-                { owner: 'LIGHTNING.lds.service', name: 'request.unknownAdapter' },
+                { owner: 'lds', name: 'cache-miss-count.unknownApiFamily.unknownAdapter' },
+                { owner: 'LIGHTNING.lds.service', name: 'request.unknownApiFamily.unknownAdapter' },
                 { owner: 'LIGHTNING.lds.service', name: 'request' },
                 { owner: 'lds', name: 'cache-miss-count' },
-                { owner: 'lds', name: 'cache-miss-count.unknownAdapter' },
+                { owner: 'lds', name: 'cache-miss-count.unknownApiFamily.unknownAdapter' },
             ];
             testMetricInvocations(
                 instrumentationServiceSpies.counterIncrementSpy,
@@ -244,7 +254,10 @@ describe('instrumentation', () => {
             );
 
             // Verify Cache Stats Calls
-            const expectedCacheStatsCalls = ['lds:unknownAdapter', 'lds:unknownAdapter'];
+            const expectedCacheStatsCalls = [
+                'lds:unknownApiFamily.unknownAdapter',
+                'lds:unknownApiFamily.unknownAdapter',
+            ];
             expect(
                 instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(instance => {
                     return instance.__name;
@@ -260,14 +273,14 @@ describe('instrumentation', () => {
             };
             const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(
                 mockGetRecordAdapter,
-                { name: 'getRecord', ttl: GET_RECORD_TTL }
+                { apiFamily: 'UiApi', name: 'getRecord', ttl: GET_RECORD_TTL }
             );
             const getRecordConfig = {
                 optionalFields: ['Account.Id', 'Account.Name'],
                 recordId: '00x000000000000018',
             };
 
-            const recordKey = 'getRecord:' + stableJSONStringify(getRecordConfig);
+            const recordKey = 'UiApi.getRecord:' + stableJSONStringify(getRecordConfig);
 
             // Cache Miss #1
             const now = Date.now();
@@ -311,15 +324,15 @@ describe('instrumentation', () => {
 
             // Verify Metric Calls
             const expectedMetricCalls = [
-                { owner: 'LIGHTNING.lds.service', name: 'request.getRecord' },
+                { owner: 'LIGHTNING.lds.service', name: 'request.UiApi.getRecord' },
                 { owner: 'LIGHTNING.lds.service', name: 'request' },
                 { owner: 'lds', name: 'cache-miss-count' },
-                { owner: 'lds', name: 'cache-miss-count.getRecord' },
-                { owner: 'LIGHTNING.lds.service', name: 'request.getRecord' },
+                { owner: 'lds', name: 'cache-miss-count.UiApi.getRecord' },
+                { owner: 'LIGHTNING.lds.service', name: 'request.UiApi.getRecord' },
                 { owner: 'LIGHTNING.lds.service', name: 'request' },
                 { owner: 'lds', name: 'cache-miss-count' },
-                { owner: 'lds', name: 'cache-miss-count.getRecord' },
-                { owner: 'lds', name: 'cache-miss-out-of-ttl-count.getRecord' },
+                { owner: 'lds', name: 'cache-miss-count.UiApi.getRecord' },
+                { owner: 'lds', name: 'cache-miss-out-of-ttl-count.UiApi.getRecord' },
             ];
             testMetricInvocations(
                 instrumentationServiceSpies.counterIncrementSpy,
@@ -328,9 +341,9 @@ describe('instrumentation', () => {
 
             // Verify Cache Stats Calls
             const expectedCacheStatsCalls = [
-                'lds:getRecord',
-                'lds:getRecord',
-                'lds:getRecord:out-of-ttl-miss',
+                'lds:UiApi.getRecord',
+                'lds:UiApi.getRecord',
+                'lds:UiApi.getRecord:out-of-ttl-miss',
             ];
             expect(
                 instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(instance => {
@@ -406,19 +419,14 @@ describe('instrumentation', () => {
     });
 
     describe('refresh call events', () => {
-        const REFRESH_ADAPTER_EVENT = 'refresh-adapter-event';
-        const REFRESH_APEX_KEY = 'refreshApex';
-        const REFRESH_UIAPI_KEY = 'refreshUiApi';
-        const SUPPORTED_KEY = 'refreshSupported';
-        const UNSUPPORTED_KEY = 'refreshUnsupported';
-        const APEX_ADAPTER_NAME = 'getApex';
+        const GET_RECORD_ADAPTER_NAME = 'UiApi.getRecord';
         const uiApiAdapterRefreshEvent = {
             [REFRESH_ADAPTER_EVENT]: true,
-            adapterName: 'getRecord',
+            adapterName: GET_RECORD_ADAPTER_NAME,
         };
         const apexAdapterRefreshEvent = {
             [REFRESH_ADAPTER_EVENT]: true,
-            adapterName: 'getApex__ContactController_getContactList_false',
+            adapterName: 'Apex.getApex__ContactController_getContactList_false',
         };
 
         it('should increment refreshApex call count, and set lastRefreshApiCall', () => {
@@ -443,7 +451,9 @@ describe('instrumentation', () => {
             expect(instrumentationSpies.aggregateRefreshAdapterEvents).toHaveBeenCalledTimes(1);
             expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(0);
             expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(0);
-            expect((instrumentation as any).refreshAdapterEvents[APEX_ADAPTER_NAME]).toEqual(1);
+            expect(
+                (instrumentation as any).refreshAdapterEvents[NORMALIZED_APEX_ADAPTER_NAME]
+            ).toEqual(1);
             expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(1);
             expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(0);
         });
@@ -452,9 +462,9 @@ describe('instrumentation', () => {
             instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_APEX_KEY)());
             instrumentation.instrumentNetwork(uiApiAdapterRefreshEvent);
             expect(instrumentationSpies.aggregateRefreshAdapterEvents).toHaveBeenCalledTimes(1);
-            expect(
-                (instrumentation as any).refreshAdapterEvents[uiApiAdapterRefreshEvent.adapterName]
-            ).toEqual(1);
+            expect((instrumentation as any).refreshAdapterEvents[GET_RECORD_ADAPTER_NAME]).toEqual(
+                1
+            );
             expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(0);
             expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(1);
         });
@@ -474,10 +484,12 @@ describe('instrumentation', () => {
             instrumentation.instrumentNetwork(apexAdapterRefreshEvent);
             instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_UIAPI_KEY)());
             instrumentation.instrumentNetwork(uiApiAdapterRefreshEvent);
-            expect((instrumentation as any).refreshAdapterEvents[APEX_ADAPTER_NAME]).toEqual(1);
             expect(
-                (instrumentation as any).refreshAdapterEvents[uiApiAdapterRefreshEvent.adapterName]
+                (instrumentation as any).refreshAdapterEvents[NORMALIZED_APEX_ADAPTER_NAME]
             ).toEqual(1);
+            expect((instrumentation as any).refreshAdapterEvents[GET_RECORD_ADAPTER_NAME]).toEqual(
+                1
+            );
             expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(1);
             expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(1);
             (instrumentation as any).logRefreshStats();
@@ -496,7 +508,7 @@ describe('instrumentation', () => {
             };
             const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(
                 mockGetRecordAdapter,
-                { name: 'getRecord', ttl: GET_RECORD_TTL }
+                { apiFamily: 'UiApi', name: 'getRecord', ttl: GET_RECORD_TTL }
             );
             const getRecordConfig = {
                 recordId: '00x000000000000017',
@@ -510,10 +522,10 @@ describe('instrumentation', () => {
 
                 // Verify Metric Calls
                 const expectedMetricCalls = [
-                    { owner: 'LIGHTNING.lds.service', name: 'request.getRecord' },
+                    { owner: 'LIGHTNING.lds.service', name: 'request.UiApi.getRecord' },
                     { owner: 'LIGHTNING.lds.service', name: 'request' },
                     { owner: 'lds', name: 'cache-miss-count' },
-                    { owner: 'lds', name: 'cache-miss-count.getRecord' },
+                    { owner: 'lds', name: 'cache-miss-count.UiApi.getRecord' },
                 ];
                 testMetricInvocations(
                     instrumentationServiceSpies.counterIncrementSpy,
@@ -534,7 +546,7 @@ describe('instrumentation', () => {
                             return instance.__name;
                         }
                     )
-                ).toEqual(['lds:getRecord']);
+                ).toEqual(['lds:UiApi.getRecord']);
             });
         });
 
@@ -544,7 +556,7 @@ describe('instrumentation', () => {
             };
             const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(
                 mockGetRecordAdapter,
-                { name: 'getRecord', ttl: GET_RECORD_TTL }
+                { apiFamily: 'UiApi', name: 'getRecord', ttl: GET_RECORD_TTL }
             );
             const getRecordConfig = {
                 recordId: 'not a valid id',
@@ -559,7 +571,7 @@ describe('instrumentation', () => {
 
             // Verify Metric Calls
             const expectedMetricCalls = [
-                { owner: 'LIGHTNING.lds.service', name: 'request.getRecord' },
+                { owner: 'LIGHTNING.lds.service', name: 'request.UiApi.getRecord' },
                 { owner: 'LIGHTNING.lds.service', name: 'request' },
             ];
             testMetricInvocations(
@@ -589,7 +601,7 @@ describe('instrumentation', () => {
             };
             const instrumentedAdapter = (instrumentation.instrumentAdapter as any)(
                 mockGetRecordAdapter,
-                { name: 'getRecord', ttl: GET_RECORD_TTL }
+                { apiFamily: 'UiApi', name: 'getRecord', ttl: GET_RECORD_TTL }
             );
             const getRecordConfig = {
                 recordId: '00x000000000000017',
@@ -603,10 +615,10 @@ describe('instrumentation', () => {
 
                 // Verify Metric Calls
                 const expectedMetricCalls = [
-                    { owner: 'LIGHTNING.lds.service', name: 'request.getRecord' },
+                    { owner: 'LIGHTNING.lds.service', name: 'request.UiApi.getRecord' },
                     { owner: 'LIGHTNING.lds.service', name: 'request' },
                     { owner: 'lds', name: 'cache-miss-count' },
-                    { owner: 'lds', name: 'cache-miss-count.getRecord' },
+                    { owner: 'lds', name: 'cache-miss-count.UiApi.getRecord' },
                 ];
                 testMetricInvocations(
                     instrumentationServiceSpies.counterIncrementSpy,
@@ -627,7 +639,7 @@ describe('instrumentation', () => {
                             return instance.__name;
                         }
                     )
-                ).toEqual(['lds:getRecord']);
+                ).toEqual(['lds:UiApi.getRecord']);
             });
         });
     });
@@ -642,11 +654,11 @@ describe('instrumentation', () => {
 
             const instrumentedGetApexAdapterOne = (instrumentation.instrumentAdapter as any)(
                 mockGetApexAdapter,
-                { name: 'getApex__ContactController_getContactList_false' }
+                { apiFamily: 'Apex', name: 'getApex__ContactController_getContactList_false' }
             );
             const instrumentedGetApexAdapterTwo = (instrumentation.instrumentAdapter as any)(
                 mockGetApexAdapter,
-                { name: 'getApex__AccountController_getAccountList_true' }
+                { apiFamily: 'Apex', name: 'getApex__AccountController_getAccountList_true' }
             );
 
             expect(instrumentedGetApexAdapterOne.name).toEqual(
@@ -667,14 +679,14 @@ describe('instrumentation', () => {
 
             // Verify Metric Calls
             const expectedMetricCalls = [
-                { owner: 'LIGHTNING.lds.service', name: 'request.getApex' },
+                { owner: 'LIGHTNING.lds.service', name: 'request.Apex.getApex' },
                 { owner: 'LIGHTNING.lds.service', name: 'request' },
                 { owner: 'lds', name: 'cache-miss-count' },
-                { owner: 'lds', name: 'cache-miss-count.getApex' },
-                { owner: 'LIGHTNING.lds.service', name: 'request.getApex' },
+                { owner: 'lds', name: 'cache-miss-count.Apex.getApex' },
+                { owner: 'LIGHTNING.lds.service', name: 'request.Apex.getApex' },
                 { owner: 'LIGHTNING.lds.service', name: 'request' },
                 { owner: 'lds', name: 'cache-miss-count' },
-                { owner: 'lds', name: 'cache-miss-count.getApex' },
+                { owner: 'lds', name: 'cache-miss-count.Apex.getApex' },
             ];
             testMetricInvocations(
                 instrumentationServiceSpies.counterIncrementSpy,
@@ -682,7 +694,7 @@ describe('instrumentation', () => {
             );
 
             // Verify Cache Stats Calls
-            const expectedCacheStatsCalls = ['lds:getApex', 'lds:getApex'];
+            const expectedCacheStatsCalls = ['lds:Apex.getApex', 'lds:Apex.getApex'];
             expect(
                 instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(instance => {
                     return instance.__name;

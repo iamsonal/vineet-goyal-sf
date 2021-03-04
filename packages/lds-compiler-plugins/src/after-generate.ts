@@ -4,6 +4,7 @@ import path from 'path';
 import mkdirp from 'mkdirp';
 
 type AdapterInfo = {
+    apiFamily: string;
     name: string;
     method: string;
     refreshable: boolean;
@@ -30,7 +31,7 @@ function generateNpmModule(outputDir: string, adapters: AdapterInfo[]) {
 function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
     const code: { imports: string[]; exports: string[] } = adapters.reduce(
         (seed: { imports: string[]; exports: string[] }, adapter: AdapterInfo) => {
-            const { name, method, ttl } = adapter;
+            const { apiFamily, name, method, ttl } = adapter;
             const factoryIdentifier = `${name}AdapterFactory`;
             const adapterNameIdentifier = `${name}__adapterName`;
 
@@ -40,7 +41,7 @@ function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
 
             if (method === 'get') {
                 seed.exports.push(
-                    `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}(${factoryIdentifier}, {name: ${adapterNameIdentifier}, ttl: ${ttl}});`
+                    `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}(${factoryIdentifier}, {apiFamily: '${apiFamily}', name: ${adapterNameIdentifier}, ttl: ${ttl}});`
                 );
             } else {
                 seed.exports.push(
@@ -78,10 +79,12 @@ function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
 }
 
 export function afterGenerate(config: CompilerConfig, modelInfo: ModelInfo) {
+    const apiFamily = buildApiFamilyFromKeyPrefix(modelInfo.keyPrefix);
     const adapters = modelInfo.resources
         .filter(resource => resource.adapter !== undefined)
         .map(resource => {
             const adapterInfo = {
+                apiFamily,
                 name: resource.adapter!.name,
                 // using (lds.method) annotation if defined
                 method: resource.alternativeMethod || resource.method,
@@ -105,4 +108,15 @@ export function afterGenerate(config: CompilerConfig, modelInfo: ModelInfo) {
 
     generateCoreAdapterModule(outputDur, adapters);
     generateNpmModule(outputDur, adapters);
+}
+
+/**
+ * Utilizes the keyPrefix string to supply the API family for the adapters.
+ * Stripping any non-word characters to be used by our instrumentation.
+ * For example, `UiApi::` => `UiApi`.
+ *
+ * @param keyPrefix string used to supply the namespace of the adapters
+ */
+function buildApiFamilyFromKeyPrefix(keyPrefix: string): string {
+    return keyPrefix.replace(/\W+/, '');
 }

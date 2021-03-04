@@ -88,14 +88,15 @@ interface AdapterUnfulfilledError {
 }
 
 export const APEX_ADAPTER_NAME = 'getApex';
+export const NORMALIZED_APEX_ADAPTER_NAME = `Apex.${APEX_ADAPTER_NAME}`;
 interface RefreshAdapterEvents {
     [adapterName: string]: number;
 }
 
 export const REFRESH_APEX_KEY = 'refreshApex';
 export const REFRESH_UIAPI_KEY = 'refreshUiApi';
-const SUPPORTED_KEY = 'refreshSupported';
-const UNSUPPORTED_KEY = 'refreshUnsupported';
+export const SUPPORTED_KEY = 'refreshSupported';
+export const UNSUPPORTED_KEY = 'refreshUnsupported';
 
 const REFRESH_EVENTSOURCE = 'lds-refresh-summary';
 const REFRESH_EVENTTYPE = 'system';
@@ -148,6 +149,7 @@ interface wireAdapterMetricConfigs {
 }
 
 export interface AdapterMetadata {
+    apiFamily: string;
     name: string;
     ttl?: number;
 }
@@ -171,9 +173,9 @@ const storeSizeMetric = percentileHistogram(STORE_SIZE_COUNT);
 const storeWatchSubscriptionsMetric = percentileHistogram(STORE_WATCH_SUBSCRIPTIONS_COUNT);
 const storeSnapshotSubscriptionsMetric = percentileHistogram(STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT);
 // Aggregate Cache Stats and Metrics for all getApex invocations
-const getApexCacheStats = registerLdsCacheStats(APEX_ADAPTER_NAME);
+const getApexCacheStats = registerLdsCacheStats(NORMALIZED_APEX_ADAPTER_NAME);
 const getApexTtlCacheStats = registerLdsCacheStats(
-    APEX_ADAPTER_NAME + ':' + CACHE_STATS_OUT_OF_TTL_MISS_POSTFIX
+    NORMALIZED_APEX_ADAPTER_NAME + ':' + CACHE_STATS_OUT_OF_TTL_MISS_POSTFIX
 );
 const getApexRequestCountMetric = counter(GET_APEX_REQUEST_COUNT);
 const getApexCacheHitCountMetric = counter(GET_APEX_CACHE_HIT_COUNT);
@@ -220,8 +222,8 @@ export class Instrumentation {
         metadata: AdapterMetadata
     ): Adapter<C, D> {
         // We are consolidating all apex adapter instrumentation calls under a single key
-        const { name, ttl } = metadata;
-        const adapterName = normalizeAdapterName(name);
+        const { apiFamily, name, ttl } = metadata;
+        const adapterName = normalizeAdapterName(name, apiFamily);
         const isGetApexAdapter = isApexAdapter(name);
 
         const stats = isGetApexAdapter ? getApexCacheStats : registerLdsCacheStats(adapterName);
@@ -520,7 +522,7 @@ export class Instrumentation {
         // Adding additional logging that getApex adapters can invoke? Read normalizeAdapterName ts-doc.
         const adapterName = normalizeAdapterName(context.adapterName);
         if (this.lastRefreshApiCall === REFRESH_APEX_KEY) {
-            if (adapterName === APEX_ADAPTER_NAME) {
+            if (isApexAdapter(adapterName)) {
                 this.refreshApiCallEventStats[SUPPORTED_KEY] += 1;
             } else {
                 this.refreshApiCallEventStats[UNSUPPORTED_KEY] += 1;
@@ -736,11 +738,12 @@ function getStoreStats(store: Store): LdsStatsReport {
  * @param adapterName The name of the adapter.
  */
 function isApexAdapter(adapterName: string): boolean {
-    return adapterName.indexOf(APEX_ADAPTER_NAME) === 0;
+    return adapterName.indexOf(APEX_ADAPTER_NAME) > -1;
 }
 
 /**
- * Returns 'getApex' if it is a getApex adapter, otherwise uses the actual name.
+ * Normalizes getApex adapter names to `Apex.getApex`. Non-Apex adapters will be prefixed with
+ * API family, if supplied. Example: `UiApi.getRecord`.
  *
  * Note: If you are adding additional logging that can come from getApex adapter contexts that provide
  * the full getApex adapter name (i.e. getApex_[namespace]_[class]_[function]_[continuation]),
@@ -748,12 +751,13 @@ function isApexAdapter(adapterName: string): boolean {
  * is because Argus has a 50k key cardinality limit. More context: W-8379680.
  *
  * @param adapterName The name of the adapter.
+ * @param apiFamily The API family of the adapter.
  */
-function normalizeAdapterName(adapterName: string): string {
+function normalizeAdapterName(adapterName: string, apiFamily?: string): string {
     if (isApexAdapter(adapterName)) {
-        return APEX_ADAPTER_NAME;
+        return NORMALIZED_APEX_ADAPTER_NAME;
     }
-    return adapterName;
+    return apiFamily ? `${apiFamily}.${adapterName}` : adapterName;
 }
 
 /**

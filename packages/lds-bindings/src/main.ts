@@ -16,9 +16,13 @@ export function createWireAdapterConstructor<C, D>(
     factory: AdapterFactory<C, D>,
     metadata: AdapterMetadata
 ): WireAdapterConstructor {
-    const { name } = metadata;
+    const { apiFamily, name } = metadata;
     const adapter = instrumentation.instrumentAdapter(createLDSAdapter(name, factory), metadata);
-    return lwcLdsCreateWireAdapterConstructor(adapter as Adapter<unknown, unknown>, name, luvio);
+    return lwcLdsCreateWireAdapterConstructor(
+        adapter as Adapter<unknown, unknown>,
+        `${apiFamily}.${name}`,
+        luvio
+    );
 }
 
 export function createLDSAdapter<T>(name: string, factory: (luvio: Luvio) => T): T {

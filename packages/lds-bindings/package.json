@@ -19,10 +19,10 @@
         "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
     },
     "dependencies": {
-        "@luvio/lwc-luvio": "^0.28.0"
+        "@luvio/lwc-luvio": "^0.28.1"
     },
     "devDependencies": {
-        "@luvio/engine": "^0.28.0",
+        "@luvio/engine": "^0.28.1",
         "@lwc/engine-core": "~1.7.5",
         "@salesforce/lds-runtime-web": "1.9.0"
     }

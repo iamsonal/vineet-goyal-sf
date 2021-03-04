@@ -1,0 +1,17 @@
+{
+    "assetId": "05vRM00000003rZYAQ",
+    "daysOfWeek": ["monday"],
+    "frequency": "minutely",
+    "lastHour": 2,
+    "minutelyInterval": 30,
+    "nextScheduledDate": "2021-03-01T09:00:00.000Z",
+    "time": {
+        "hour": 1,
+        "minute": 0,
+        "timeZone": {
+            "gmtOffset": -8.0,
+            "name": "Pacific Standard Time",
+            "zoneId": "America/Los_Angeles"
+        }
+    }
+}

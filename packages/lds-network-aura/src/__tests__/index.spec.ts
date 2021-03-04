@@ -4206,6 +4206,80 @@ describe('routes', () => {
         );
     });
 
+    describe('get /asset/{assetId}/schedule', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/asset/05vRM00000003rZYAQ/schedule`,
+            },
+            [
+                'WaveController.getSchedule',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/asset/05vRM00000003rZYAQ/schedule`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/asset/05vRM00000003rZYAQ/schedule`,
+            },
+            {}
+        );
+    });
+
+    describe('put /asset/{assetId}/schedule', () => {
+        testControllerInput(
+            {
+                method: 'put',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/asset/05vRM00000003rZYAQ/schedule`,
+                body: {
+                    schedule: {
+                        frequency: 'monthly',
+                        daysOfMonth: [1, 4, 8, 16, 30],
+                        time: { hour: 0, minute: 15, timeZone: 'America/Los_Angeles' },
+                    },
+                },
+            },
+            [
+                'WaveController.updateSchedule',
+                {
+                    schedule: {
+                        frequency: 'monthly',
+                        daysOfMonth: [1, 4, 8, 16, 30],
+                        time: { hour: 0, minute: 15, timeZone: 'America/Los_Angeles' },
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'put',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/asset/05vRM00000003rZYAQ/schedule`,
+                body: {
+                    schedule: {
+                        frequency: 'monthly',
+                        daysOfMonth: [1, 4, 8, 16, 30],
+                        time: { hour: 0, minute: 15, timeZone: 'America/Los_Angeles' },
+                    },
+                },
+            },
+            {}
+        );
+    });
+
     describe('get /wave/folders', () => {
         testControllerInput(
             {

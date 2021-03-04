@@ -75,6 +75,8 @@ const RECIPE_PATH = new RegExp(`${WAVE_BASE_URI}/recipes/([A-Z0-9_]){15,18}$`, '
 
 const REPLICATED_DATASETS_PATH = new RegExp(`${WAVE_BASE_URI}/replicatedDatasets$`, 'i');
 
+const SCHEDULE_PATH = new RegExp(`${WAVE_BASE_URI}/asset/([A-Z0-9_]){15,18}/schedule$`, 'i');
+
 const DATASETS_PATH = new RegExp(`${WAVE_BASE_URI}/datasets$`, 'i');
 
 const DATASET_PATH = new RegExp(`${WAVE_BASE_URI}/datasets/([A-Z0-9_]){1,80}$`, 'i');
@@ -345,6 +347,20 @@ const analytics: ApiFamily = {
         predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && RECIPES_PATH.test(path),
         transport: {
             controller: 'WaveController.getRecipes',
+        },
+    },
+    getSchedule: {
+        method: 'get',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && SCHEDULE_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getSchedule',
+        },
+    },
+    updateSchedule: {
+        method: 'put',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && SCHEDULE_PATH.test(path),
+        transport: {
+            controller: 'WaveController.updateSchedule',
         },
     },
     getDataset: {

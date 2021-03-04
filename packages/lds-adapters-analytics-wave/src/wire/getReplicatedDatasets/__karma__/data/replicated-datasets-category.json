@@ -15,6 +15,7 @@
                 "description": "SFDC_REMOTE",
                 "id": "0Itxx0000004CKKCA3",
                 "ingestionSchedule": {
+                    "assetId": "0Itxx0000004CKKCA3",
                     "daysOfWeek": [],
                     "frequency": "weekly",
                     "notificationLevel": "never"

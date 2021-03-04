@@ -437,9 +437,59 @@ function getReplicatedDatasetsMatcher(config) {
     });
 }
 
-//WaveFolders
+// Schedule
+function mockGetScheduleNetworkOnce(config, mockData) {
+    const paramMatch = getScheduleMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
 
-export function mockGetWaveFoldersNetworkOnce(config, mockData) {
+function mockGetScheduleNetworkErrorOnce(config, mockData) {
+    const paramMatch = getScheduleMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getScheduleMatcher(config) {
+    const { assetId } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/asset/${assetId}/schedule`,
+        queryParams: {},
+    });
+}
+
+function mockUpdateScheduleNetworkOnce(config, mockData) {
+    const paramMatch = updateScheduleMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockUpdateScheduleNetworkErrorOnce(config, mockData) {
+    const paramMatch = updateScheduleMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function updateScheduleMatcher(config) {
+    let { assetId, schedule } = config;
+
+    return sinon.match({
+        body: { schedule },
+        headers: {},
+        method: 'put',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/asset/${assetId}/schedule`,
+        queryParams: {},
+    });
+}
+
+// WaveFolders
+function mockGetWaveFoldersNetworkOnce(config, mockData) {
     const paramMatch = getWaveFoldersMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -448,7 +498,7 @@ export function mockGetWaveFoldersNetworkOnce(config, mockData) {
     }
 }
 
-export function mockGetWaveFoldersNetworkErrorOnce(config, mockData) {
+function mockGetWaveFoldersNetworkErrorOnce(config, mockData) {
     const paramMatch = getWaveFoldersMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -540,6 +590,12 @@ export {
     mockDeleteRecipeNetworkErrorOnce,
     mockGetReplicatedDatasetsNetworkOnce,
     mockGetReplicatedDatasetsNetworkErrorOnce,
+    mockGetScheduleNetworkOnce,
+    mockGetScheduleNetworkErrorOnce,
+    mockUpdateScheduleNetworkOnce,
+    mockUpdateScheduleNetworkErrorOnce,
+    mockGetWaveFoldersNetworkOnce,
+    mockGetWaveFoldersNetworkErrorOnce,
     mockGetXmdNetworkOnce,
     mockGetXmdNetworkErrorOnce,
 };

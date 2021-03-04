@@ -12,8 +12,20 @@ types:
       id: id
   SaqlQueryResultsRepresentation:
     (luvio.opaque): true
+  ScheduleRepresentation:
+    (luvio.key):
+      id: assetId
 
 /wave:
+  /asset/{assetId}/schedule:
+    get:
+      (luvio.adapter):
+        name: getSchedule
+      (luvio.key):
+        id: urlParams.assetId
+    put:
+      (luvio.adapter):
+        name: updateSchedule
   /dataflowjobs:
     get:
       (luvio.adapter):

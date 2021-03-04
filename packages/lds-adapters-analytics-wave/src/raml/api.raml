@@ -303,7 +303,6 @@ types:
         type: AssetReferenceRepresentation
       ingestionSchedule:
         description: Schedule of replication flows for the connection.
-        required: false # TODO Hand-rolled W-8253396
         type: ScheduleRepresentation
       targetConnector:
         description: Target connector associated with the current source connector.
@@ -656,6 +655,14 @@ types:
         enum:
           - All
           - Limited
+  EmptyScheduleRepresentation:
+    description: Represents an empty schedule on an asset
+    discriminatorValue: none
+    type: ScheduleRepresentation
+  EventDrivenScheduleRepresentation:
+    description: A schedule triggered by an event, e.g., the completion of a data sync job
+    discriminatorValue: eventdriven
+    type: ScheduleRepresentation
   FeaturedAssetsRepresentation:
     description: Featured assets representation.
     type: object
@@ -689,6 +696,7 @@ types:
       lastHour:
         description: Hour at which schedule stops queueing.
         type: integer
+        required: false # TODO Hand-rolled W-8253396
   LicenseAttributesRepresentation:
     description: The analytics license type and other properties
     type: object
@@ -733,6 +741,7 @@ types:
       lastHour:
         description: Hour at which schedule stops queueing.
         type: integer
+        required: false # TODO Hand-rolled W-8253396
       minutelyInterval:
         description: Minutes in between each queueing of task.
         type: integer
@@ -1162,66 +1171,6 @@ types:
             - Full
             - Incremental
             - PeriodicFull
-  ScheduleRepresentation:
-    description: Schedule on which to execute some type of job
-    discriminator: frequency
-    type: object
-    properties:
-      frequency:
-        description: Frequency on which this schedule is run.
-        type: string
-        enum:
-          - Daily
-          - EventDriven
-          - Hourly
-          - Minutely
-          - Monthly
-          - MonthlyRelative
-          - Weekly
-      nextScheduledDate:
-        description: Next scheduled time (in UTC) for this schedule.
-        required: false # TODO Hand-rolled W-8253396
-        type: string
-      notificationLevel:
-        description: Email notification level of dataflow associated with this schedule.
-        required: false # TODO Hand-rolled W-8253396
-        type: string
-        enum:
-          - Always
-          - Failures
-          - Never
-          - Warnings
-      time:
-        description: Hour and timezone in which this schedule is run.
-        required: false # TODO Hand-rolled W-8253396
-        type: TimeRepresentation
-  TimeRepresentation:
-    description: Time at which something should happen
-    type: object
-    properties:
-      hour:
-        description: Hour at which this schedule is run (0-23).
-        type: integer
-      minute:
-        description: Minute at which this schedule is run (0-59).
-        type: integer
-      timeZone:
-        description: Time zone of the hour at which the schedule is run.
-        type: TimeZoneRepresentation
-  TimeZoneRepresentation:
-    description: Information about a time zone.
-    type: object
-    properties:
-      gmtOffset:
-        description: The signed offset, in hours, from GMT.
-        format: double
-        type: number
-      name:
-        description: The display name of this time zone.
-        type: string
-      zoneId:
-        description: The zone ID of this time zone.
-        type: string
   SaqlQueryInputRepresentation:
     description: A Wave query written in SAQL
     type: object
@@ -1312,6 +1261,77 @@ types:
       # depending on the type of query and the underlying data, there might be other properties
       //:
         type: any
+  ScheduleInputRepresentation:
+    description: Input representation for specifying a daily schedule on which to
+      execute some type of job.
+    type: object
+    properties:
+      notificationLevel:
+        description: Level of subscription for the related job.
+        type: string
+        enum:
+          - Always
+          - Failures
+          - Never
+          - Warnings
+        required: false # TODO Hand-rolled W-8253396
+      time:
+        description: When the schedule should be run.
+        type: object
+        properties:
+          //:
+            type: any # TODO Hand-rolled W-8863405
+        required: false # TODO Hand-rolled W-8253396
+      triggerRule: # TODO Hand-rolled W-8943368
+        description: The expression defining the events that trigger the scheduling
+          of the target asset. Currently, only accepting scheduling of Dataflows and
+          Recipes as the target asset.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+  ScheduleInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for schedule input representation
+    type: object
+    properties:
+      schedule:
+        type: ScheduleInputRepresentation
+        description: schedule input representation
+  ScheduleRepresentation:
+    description: Schedule on which to execute some type of job
+    discriminator: frequency
+    type: object
+    properties:
+      assetId:
+        description: The 18 character ID of the asset.
+        type: string
+      frequency:
+        description: Frequency on which this schedule is run.
+        type: string
+        enum:
+          - Daily
+          - EventDriven
+          - Hourly
+          - Minutely
+          - Monthly
+          - MonthlyRelative
+          - None
+          - Weekly
+      nextScheduledDate:
+        description: Next scheduled time (in UTC) for this schedule.
+        required: false # TODO Hand-rolled W-8253396
+        type: string
+      notificationLevel:
+        description: Email notification level of dataflow associated with this schedule.
+        required: false # TODO Hand-rolled W-8253396
+        type: string
+        enum:
+          - Always
+          - Failures
+          - Never
+          - Warnings
+      time:
+        description: Hour and timezone in which this schedule is run.
+        required: false # TODO Hand-rolled W-8253396
+        type: TimeRepresentation
   SchemaFieldFormatSymbolsRepresentation:
     description: Representation of Schema Node Fieldformat symbols
     type: object
@@ -1445,6 +1465,33 @@ types:
         description: The user that performed the last action.
         type: WaveUserRepresentation
         required: false # TODO Hand-rolled W-8253396
+  TimeRepresentation:
+    description: Time at which something should happen
+    type: object
+    properties:
+      hour:
+        description: Hour at which this schedule is run (0-23).
+        type: integer
+      minute:
+        description: Minute at which this schedule is run (0-59).
+        type: integer
+      timeZone:
+        description: Time zone of the hour at which the schedule is run.
+        type: TimeZoneRepresentation
+  TimeZoneRepresentation:
+    description: Information about a time zone.
+    type: object
+    properties:
+      gmtOffset:
+        description: The signed offset, in hours, from GMT.
+        format: double
+        type: number
+      name:
+        description: The display name of this time zone.
+        type: string
+      zoneId:
+        description: The zone ID of this time zone.
+        type: string
   TypedAssetReferenceRepresentation:
     description: Typed asset reference representation.
     type: BaseAssetReferenceRepresentation
@@ -2191,6 +2238,31 @@ types:
         required: false # TODO Hand-rolled W-8253396
 
 /wave:
+  /asset/{assetId}/schedule:
+    get:
+      description: Retrieves the schedule for an asset.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ScheduleRepresentation
+    put:
+      description: Create a schedule for an asset.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ScheduleRepresentation
+      body:
+        application/json:
+          type: ScheduleInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: ScheduleInputRepresentation
+          (oas-body-name): schedule
+    uriParameters:
+      assetId:
+        type: string
+        required: true
   /dataflowjobs:
     get:
       description: Get a collection  of all dataflow jobs representation

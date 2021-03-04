@@ -94,14 +94,25 @@ describe('selectChildResourceParams', () => {
     const pendingRecord = {
         state: 'Pending',
     };
-    const staleRecord = { state: 'Stale' };
+    const staleRecord = {
+        state: 'Stale',
+        data: {
+            fieldA: 'record1FiedlA',
+        },
+    };
+    const staleResult = {
+        statusCode: 200,
+        result: {
+            fieldA: 'record1FiedlA',
+        },
+    };
 
     it.each([
         ['fulfilled', record1, result1],
         ['errored', erroredRecord, erroredResult],
         ['unfulfilled', unfulfilledRecord, {}],
         ['pending', pendingRecord, {}],
-        ['stale', staleRecord, {}],
+        ['stale', staleRecord, staleResult],
     ])('selects %s record', (stateName, inputRecord, expectedRecord) => {
         reader.read = jest.fn().mockImplementation(() => inputRecord);
         const params = makeParams('record1');
@@ -132,7 +143,7 @@ describe('selectChildResourceParams', () => {
         assertIsFragment(fragment);
         const result = fragment.read(reader);
         expect(Object.isFrozen(result)).toEqual(true);
-        expect(result).toEqual({ results: [result1, result2, erroredResult, {}, {}, {}] });
+        expect(result).toEqual({ results: [result1, result2, erroredResult, {}, {}, staleResult] });
         expect(buildRecordSelector).toHaveBeenCalledTimes(6);
         const expectBuildRecordSelector = (n, recordId) =>
             expect(buildRecordSelector).toHaveBeenNthCalledWith(

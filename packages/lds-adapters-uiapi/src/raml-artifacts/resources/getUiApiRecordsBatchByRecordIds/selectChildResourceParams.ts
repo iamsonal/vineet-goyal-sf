@@ -72,6 +72,13 @@ export function selectChildResourceParams(
                         break;
                     case 'Stale':
                         reader.markStale();
+                        reader.seenIds[childKey] = true;
+                        reader.enterPath(envelopeStatusCodePath);
+                        reader.assignScalar(envelopeStatusCodePath, childSink, 200);
+                        reader.exitPath();
+                        reader.enterPath(envelopeBodyPath);
+                        reader.assignNonScalar(childSink, envelopeBodyPath, childSnapshot.data);
+                        reader.exitPath();
                         break;
                 }
                 ObjectFreeze(childSink);

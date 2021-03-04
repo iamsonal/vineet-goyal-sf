@@ -153,7 +153,7 @@ const connect: ApiFamily = {
         predicate: (path: string) =>
             path.startsWith(CONNECT_BASE_URI) && GET_ORCHESTRATION_INSTANCE_PATH.test(path),
         transport: {
-            controller: 'InteractionOrchestrator.getOrchestrationInstance',
+            controller: 'OrchestrationController.getOrchestrationInstance',
         },
     },
     getOrchestrationInstanceCollection: {
@@ -162,7 +162,7 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) &&
             GET_ORCHESTRATION_INSTANCE_COLLECTION_PATH.test(path),
         transport: {
-            controller: 'InteractionOrchestrator.getOrchestrationInstanceCollection',
+            controller: 'OrchestrationController.getOrchestrationInstanceCollection',
         },
     },
     publishOrchestrationEvent: {
@@ -170,7 +170,7 @@ const connect: ApiFamily = {
         predicate: (path: string) =>
             path.startsWith(CONNECT_BASE_URI) && PUBLISH_ORCHESTRATION_EVENT_PATH.test(path),
         transport: {
-            controller: 'InteractionOrchestrator.publishOrchestrationEvent',
+            controller: 'OrchestrationController.publishOrchestrationEvent',
         },
     },
     searchSite: {

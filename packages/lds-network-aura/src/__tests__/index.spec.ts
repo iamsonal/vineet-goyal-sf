@@ -4362,7 +4362,7 @@ describe('routes', () => {
                 },
             },
             [
-                'InteractionOrchestrator.getOrchestrationInstanceCollection',
+                'OrchestrationController.getOrchestrationInstanceCollection',
                 { relatedRecordId: '001xx000003GYcFAAW' },
                 { background: false, hotspot: true, longRunning: false },
             ]
@@ -4398,7 +4398,7 @@ describe('routes', () => {
                 basePath: `/interaction/orchestration/instances/0jExx000000001dEAA`,
             },
             [
-                'InteractionOrchestrator.getOrchestrationInstance',
+                'OrchestrationController.getOrchestrationInstance',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]
@@ -4434,7 +4434,7 @@ describe('routes', () => {
                 },
             },
             [
-                'InteractionOrchestrator.publishOrchestrationEvent',
+                'OrchestrationController.publishOrchestrationEvent',
                 {
                     doesCancelOrchestrationInstance: false,
                     eventPayload: '',

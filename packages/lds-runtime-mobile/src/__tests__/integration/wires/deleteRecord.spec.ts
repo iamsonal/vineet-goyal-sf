@@ -14,7 +14,7 @@ import {
 } from '@salesforce/lds-drafts';
 import { DraftRecordRepresentation } from '@salesforce/lds-drafts/dist/utils/records';
 import { NimbusDurableStore } from '../../../NimbusDurableStore';
-import { NimbusNetworkAdapter } from '../../../NimbusNetworkAdapter';
+import { NimbusNetworkAdapter } from '../../../network/NimbusNetworkAdapter';
 import { JSONStringify } from '../../../utils/language';
 import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusDurableStore';
 import { MockNimbusAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';

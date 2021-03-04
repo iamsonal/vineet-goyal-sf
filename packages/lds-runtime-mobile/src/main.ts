@@ -16,7 +16,8 @@ import {
 import userId from '@salesforce/user/Id';
 import { recordIdGenerator } from './RecordIdGenerator';
 
-import { NimbusNetworkAdapter } from './NimbusNetworkAdapter';
+import { NimbusNetworkAdapter } from './network/NimbusNetworkAdapter';
+import { makeNetworkAdapterBatchRecordFields } from './network/record-field-batching/makeNetworkAdapterBatchRecordFields';
 import { NimbusDurableStore } from './NimbusDurableStore';
 import { buildLdsDraftQueue } from './DraftQueueFactory';
 
@@ -44,7 +45,7 @@ const registerDraftMapping = (draftKey: string, canonicalKey: string) => {
 // non-draft-aware base services
 const store = new Store();
 const durableStore = new NimbusDurableStore();
-const networkAdapter = NimbusNetworkAdapter;
+const networkAdapter = makeNetworkAdapterBatchRecordFields(NimbusNetworkAdapter);
 
 // user id centric record ID generator
 const { newRecordId, isGenerated } = recordIdGenerator(userId);

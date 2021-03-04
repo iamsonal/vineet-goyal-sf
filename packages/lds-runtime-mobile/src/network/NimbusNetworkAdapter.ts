@@ -2,7 +2,6 @@
 /* global __nimbus */
 
 import { ResourceRequest, FetchResponse, NetworkAdapter } from '@luvio/engine';
-
 import { buildNimbusNetworkPluginRequest, buildLdsResponse } from './networkUtils';
 
 export const NimbusNetworkAdapter: NetworkAdapter = (

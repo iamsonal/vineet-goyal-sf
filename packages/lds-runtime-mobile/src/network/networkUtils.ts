@@ -1,6 +1,12 @@
 import { Request, Response } from '@mobileplatform/nimbus-plugin-lds';
 import { ResourceRequest, FetchResponse, HttpStatusCode } from '@luvio/engine';
-import { ArrayIsArray, ObjectKeys, ObjectCreate, JSONParse, JSONStringify } from './utils/language';
+import {
+    ArrayIsArray,
+    ObjectKeys,
+    ObjectCreate,
+    JSONParse,
+    JSONStringify,
+} from '../utils/language';
 
 function ldsParamsToString(params: ResourceRequest['queryParams']): Request['queryParams'] {
     const returnParams = ObjectCreate(null);

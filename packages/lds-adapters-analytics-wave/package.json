@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-analytics-wave",
-    "version": "1.9.2",
+    "version": "1.9.3",
     "description": "The Einstein Analytics family of APIs",
     "license": "MIT",
     "main": "dist/umd/es2018/analytics-wave.js",
@@ -32,14 +32,14 @@
         "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.9.2"
+        "@salesforce/lds-bindings": "1.9.3"
     },
     "devDependencies": {
         "@luvio/cli": "^0.28.1",
         "@luvio/compiler": "^0.28.1",
         "@luvio/engine": "^0.28.1",
         "@luvio/lwc-luvio": "^0.28.1",
-        "@salesforce/lds-karma": "1.9.2"
+        "@salesforce/lds-karma": "1.9.3"
     },
     "volta": {
         "extends": "../../package.json"

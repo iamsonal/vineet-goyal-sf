@@ -7,7 +7,7 @@ import { buildBanner, buildFooter } from '../../scripts/rollup/rollup-utils';
 const banner = buildBanner(false);
 const footer = buildFooter(packageJson.version);
 
-const browser = {
+const mobile = {
     input: './src/main.ts',
 
     external: ['@salesforce/user/Id'],
@@ -27,4 +27,4 @@ const browser = {
     ],
 };
 
-export default [browser];
+export default [mobile];

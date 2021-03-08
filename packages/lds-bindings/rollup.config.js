@@ -1,18 +1,11 @@
 import resolve from 'rollup-plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript2';
 
-const PROXY_COMPAT_DISABLE = '/* proxy-compat-disable */';
-const generatedFileBanner = [
-    '/*  *******************************************************************************************',
-    ' *  ATTENTION!',
-    ' *  THIS IS A GENERATED FILE FROM https://github.com/salesforce/lds-lightning-platform',
-    ' *  If you would like to contribute to LDS, please follow the steps outlined in the git repo.',
-    ' *  Any changes made to this file in p4 will be automatically overwritten.',
-    ' *  *******************************************************************************************',
-    ' */',
-];
+import * as packageJson from './package.json';
+import { buildBanner, buildFooter } from '../../scripts/rollup/rollup-utils';
 
-const banner = generatedFileBanner.concat([PROXY_COMPAT_DISABLE]).join('\n');
+const banner = buildBanner(true);
+const footer = buildFooter(packageJson.version);
 
 export default {
     input: './src/main.ts',
@@ -23,6 +16,7 @@ export default {
         file: 'dist/ldsBindings.js',
         format: 'esm',
         banner,
+        footer,
         paths: {
             '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
             '@salesforce/lds-runtime-web': 'force/ldsEngine',

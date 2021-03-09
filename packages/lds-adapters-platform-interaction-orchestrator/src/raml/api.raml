@@ -71,6 +71,15 @@ types:
     description: Information about an Orchestration instance.
     type: object
     properties:
+      flowDefinitionDeveloperName:
+        description: Developer name of the flow definition
+        type: string | nil
+      flowDefinitionId:
+        description: Id of the flow definition
+        type: string | nil
+      flowDefinitionName:
+        description: Name of the flow definition
+        type: string | nil
       id:
         description: Orchestrator instance id
         type: string
@@ -168,8 +177,13 @@ types:
       relatedRecordId:
         description: The record this work item is related to
         type: string | nil
+      screenFlowDeveloperName:
+        description: Developer name of the screen flow to start when assignees work
+          on this work item
+        type: string
       screenFlowId:
-        description: The screen flow to start when assignees work on this work item
+        description: Id of the screen flow to start when assignees work on this work
+          item
         type: string
       screenFlowInputs:
         description: Input parameters for the screen flow

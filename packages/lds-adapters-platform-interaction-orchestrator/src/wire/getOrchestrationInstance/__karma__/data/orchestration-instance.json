@@ -1,6 +1,9 @@
 {
     "id": "0jExx000000001d",
     "interviewId": "0Foxx0000004CCG",
+    "flowDefinitionName": null,
+    "flowDefinitionId": null,
+    "flowDefinitionDeveloperName": null,
     "stageInstances": [
         {
             "id": "0jFxx000000001d",
@@ -16,6 +19,7 @@
                     "workItems": [
                         {
                             "assigneeId": "005RM000002IuEY",
+                            "screenFlowDeveloperName": "Mock Screen Flow Name",
                             "relatedRecordId": "001xx000003GYad",
                             "description": null,
                             "id": "0jfxx0000000001",
@@ -35,6 +39,7 @@
                     "workItems": [
                         {
                             "assigneeId": "005RM000002IuEY",
+                            "screenFlowDeveloperName": "Mock Screen Flow Name",
                             "relatedRecordId": "001xx000003GYcF",
                             "description": null,
                             "id": "0jfxx000000001d",

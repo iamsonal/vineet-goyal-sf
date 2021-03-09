@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-drafts",
-    "version": "1.9.3",
+    "version": "1.9.4",
     "description": "LDS Drafts",
     "license": "MIT",
     "main": "dist/ldsDrafts.js",
@@ -19,11 +19,11 @@
         "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
     },
     "dependencies": {
-        "@luvio/engine": "^0.29.0",
-        "@luvio/environments": "^0.29.0"
+        "@luvio/engine": "^0.29.1",
+        "@luvio/environments": "^0.29.1"
     },
     "devDependencies": {
-        "@salesforce/lds-adapters-uiapi": "1.9.3",
-        "@salesforce/lds-uiapi-record-utils": "1.9.3"
+        "@salesforce/lds-adapters-uiapi": "1.9.4",
+        "@salesforce/lds-uiapi-record-utils": "1.9.4"
     }
 }

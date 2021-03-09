@@ -22,6 +22,7 @@ describe('basic', () => {
         const mock = getMock('save-assistant');
         const config = {
             assistantGroup: 'test_assistant_group_id',
+            scenarioId: 'test_scenario_id',
             assistantData: {
                 items: {
                     learn_about_salesforce: {
@@ -41,6 +42,7 @@ describe('basic', () => {
     it('displays error when network request 404s', async () => {
         const config = {
             assistantGroup: 'test_assistant_group_id',
+            scenarioId: 'test_scenario_id',
             assistantData: {
                 items: {
                     learn_about_salesforce: {
@@ -73,6 +75,7 @@ describe('basic', () => {
         const mock = getMock('save-assistant');
         const config = {
             assistantGroup: 'test_assistant_group_id',
+            scenarioId: 'test_scenario_id',
             assistantData: {
                 items: {
                     learn_about_salesforce: {

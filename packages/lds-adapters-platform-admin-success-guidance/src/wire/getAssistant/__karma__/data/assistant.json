@@ -1,6 +1,7 @@
 {
     "assistantGroup": "test_assistant_group_id",
     "id": "test_assistant_id",
+    "scenario": "test_scenario_id",
     "items": [
         {
             "action": {

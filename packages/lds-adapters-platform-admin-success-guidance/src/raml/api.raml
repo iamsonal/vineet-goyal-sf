@@ -207,6 +207,9 @@ types:
         type: array
         items:
           type: string
+      scenario:
+        description: The Lightning Scenario Id for this questionnaire list
+        type: string
   LightningAssistantQuestionnaireRepresentation:
     description: A Lightning Assistant Questionnaire
     type: object
@@ -251,6 +254,9 @@ types:
         type: array
         items:
           type: LightningAssistantItemRepresentation
+      scenario:
+        description: The Lightning Assistant Scenario Id
+        type: string
   LightningAssistantScenarioInputRepresentation:
     description: An Input Representation for a Lightning Assistant scenario.
     type: object
@@ -281,6 +287,8 @@ types:
       completionDate:
         description: The completion date for the scenario
         type: string
+        # TODO Hand-rolled W-8253396
+        required: false
       icon:
         description: The URL for the icon for the scenario
         type: string
@@ -410,7 +418,6 @@ types:
     queryParameters:
       scenarioId:
         type: string
-        required: false
   patch:
     description: Save the Guidance Center Assistant
     responses:
@@ -422,7 +429,6 @@ types:
     queryParameters:
       scenarioId:
         type: string
-        required: false
     body:
       application/json:
         # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
@@ -475,7 +481,6 @@ types:
       queryParameters:
         scenarioId:
           type: string
-          required: false
     uriParameters:
       assistantGroup:
         type: string

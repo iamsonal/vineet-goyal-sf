@@ -5,9 +5,11 @@ export default class GetAssistant extends LightningElement {
     wirePushCount = -1;
 
     @api assistantGroup;
+    @api scenarioId;
 
     @wire(getAssistant, {
         assistantGroup: '$assistantGroup',
+        scenarioId: '$scenarioId',
     })
     onGetAssistant({ data, error }) {
         this.assistant = data;

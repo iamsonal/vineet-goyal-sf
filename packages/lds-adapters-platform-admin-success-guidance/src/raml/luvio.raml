@@ -10,11 +10,16 @@ types:
   LightningAssistantRepresentation:
     (luvio.key):
       assistant_group_id: assistantGroup
+      scenario_id: scenario
 
   LightningAssistantQuestionnaireRepresentation:
     (luvio.key):
       assistant_group_id: assistantGroup
       questionnaire_id: id
+
+  LightningAssistantQuestionnaireListRepresentation:
+    (luvio.key):
+      scenario_id: scenario
 
 /guidance/assistant/{assistantGroup}:
   get:
@@ -22,6 +27,7 @@ types:
       name: getAssistant
     (luvio.key):
       assistant_group_id: urlParams.assistantGroup
+      scenario_id: queryParams.scenarioId
   patch:
     (luvio.adapter):
       name: saveAssistant
@@ -39,6 +45,8 @@ types:
     get:
       (luvio.adapter):
         name: getActiveQuestionnaires
+      (luvio.key):
+        scenario_id: queryParams.scenarioId
   /scenarios:
     get:
       (luvio.adapter):

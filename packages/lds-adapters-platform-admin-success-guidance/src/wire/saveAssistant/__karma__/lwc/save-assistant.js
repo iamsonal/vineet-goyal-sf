@@ -5,17 +5,20 @@ export default class SaveAssistant extends LightningElement {
     @track assistantData;
     @track assistantGroup;
     @track error;
+    @track scenarioId;
     @wire(getAssistant, {
         assistantGroup: '$assistantGroup',
+        scenarioId: '$scenarioId',
     })
     assistantWireResult;
 
     @api
-    invokeSaveAssistant({ assistantGroup, assistantData }) {
-        saveAssistant({ assistantGroup, assistantData })
+    invokeSaveAssistant({ assistantGroup, assistantData, scenarioId }) {
+        saveAssistant({ assistantGroup, assistantData, scenarioId })
             .then(({ data }) => {
                 this.assistantData = data;
                 this.assistantGroup = assistantGroup;
+                this.scenarioId = scenarioId;
             })
             .catch(error => {
                 this.error = error;

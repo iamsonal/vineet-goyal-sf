@@ -25,7 +25,7 @@ describe('basic', () => {
 
     it('does not fetch a second time', async () => {
         const mock = getMock('active-questionnaires');
-        const config = { assistantGroup: 'assistantGroupName' };
+        const config = { assistantGroup: 'assistantGroupName', scenarioId: 'scenarioName' };
         mockGetActiveQuestionnairesNetworkOnce(config, mock);
 
         const el = await setupElement(config, GetActiveQuestionnaires);
@@ -40,7 +40,7 @@ describe('basic', () => {
     });
 
     it('displays error when network request 404s', async () => {
-        const config = { assistantGroup: 'assistantGroupName' };
+        const config = { assistantGroup: 'assistantGroupName', scenarioId: 'scenarioName' };
         const mock = {
             ok: false,
             status: 404,

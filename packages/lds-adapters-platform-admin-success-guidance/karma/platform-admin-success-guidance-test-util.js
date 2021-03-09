@@ -102,7 +102,7 @@ function getActiveQuestionnaireMatcher(config) {
 }
 
 function getAssistantMatcher(config) {
-    let { assistantGroup } = config;
+    let { assistantGroup, scenarioId } = config;
 
     return sinon.match({
         body: null,
@@ -110,12 +110,14 @@ function getAssistantMatcher(config) {
         method: 'get',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/assistant/${assistantGroup}`,
-        queryParams: {},
+        queryParams: {
+            scenarioId,
+        },
     });
 }
 
 function getSaveAssistantMatcher(config) {
-    let { assistantGroup, assistantData } = config;
+    let { assistantGroup, assistantData, scenarioId } = config;
 
     return sinon.match({
         body: { assistantData },
@@ -123,7 +125,9 @@ function getSaveAssistantMatcher(config) {
         method: 'patch',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/assistant/${assistantGroup}`,
-        queryParams: {},
+        queryParams: {
+            scenarioId,
+        },
     });
 }
 

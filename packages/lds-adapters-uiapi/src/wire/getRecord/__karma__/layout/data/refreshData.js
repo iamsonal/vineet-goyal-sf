@@ -18,6 +18,10 @@ const entries = [
         filename: 'record-Opportunity-layouttypes-Full-Compact-modes-View',
     },
     {
+        endpoint: `record-ui/${id}?layoutTypes=Full&modes=Edit&optionalFields=Opportunity.Id,Opportunity.SystemModstamp`,
+        filename: `record-Opportunity-layouttypes-Full-modes-Edit-optionalFields`,
+    },
+    {
         endpoint: `records/${id}?fields=Opportunity.Name`,
         filename: 'record-Opportunity-fields-Opportunity.Name',
     },

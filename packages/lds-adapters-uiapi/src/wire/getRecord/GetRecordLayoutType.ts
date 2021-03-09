@@ -115,7 +115,14 @@ function fetchRecordLayout(
     const recordUiSnapshotOrPromise = recordUiAdapter(recordUiConfig);
     if (isPromise(recordUiSnapshotOrPromise)) {
         return recordUiSnapshotOrPromise.then(snapshot => {
-            return processRecordUiRepresentation(luvio, refresh, recordId, modes, snapshot);
+            return processRecordUiRepresentation(
+                luvio,
+                refresh,
+                recordId,
+                modes,
+                snapshot,
+                optionalFields
+            );
         });
     }
 
@@ -130,7 +137,8 @@ function fetchRecordLayout(
         refresh,
         recordId,
         modes,
-        recordUiSnapshotOrPromise!
+        recordUiSnapshotOrPromise!,
+        optionalFields
     );
 }
 
@@ -154,7 +162,8 @@ function processRecordUiRepresentation(
     refresh: SnapshotRefresh<RecordRepresentation>,
     recordId: string,
     modes: LayoutMode[],
-    snapshot: Snapshot<RecordUiRepresentation>
+    snapshot: Snapshot<RecordUiRepresentation>,
+    optionalFields?: string[]
 ) {
     if (isErrorSnapshot(snapshot)) {
         return luvio.errorSnapshot(snapshot.error, refresh);
@@ -167,7 +176,7 @@ function processRecordUiRepresentation(
         );
     }
     const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, snapshot.data);
-    return getRecord(luvio, refresh, recordId, layoutMap, objectInfo);
+    return getRecord(luvio, refresh, recordId, layoutMap, objectInfo, optionalFields);
 }
 
 function isPromise<D>(value: D | Promise<D> | null): value is Promise<D> {
@@ -270,15 +279,19 @@ function getRecord(
     refresh: SnapshotRefresh<RecordRepresentation>,
     recordId: string,
     layoutMap: RecordLayoutRepresentationMap,
-    objectInfo: ObjectInfoRepresentation
+    objectInfo: ObjectInfoRepresentation,
+    configOptionalFields?: string[]
 ): Promise<Snapshot<RecordRepresentation>> | Snapshot<RecordRepresentation> {
     const fields = getFieldsFromLayoutMap(layoutMap, objectInfo);
+    const optionalFields =
+        configOptionalFields === undefined ? [] : dedupe(configOptionalFields).sort();
 
     // We know what fields we need so delegate to getRecordByFields
     // This should be a cache hit because we just fetched the record-ui
     const recordSnapshotOrPromise = getRecordByFields(luvio, {
         recordId,
         fields,
+        optionalFields,
     });
 
     // attach a record layout refresh
@@ -332,5 +345,5 @@ export function getRecordLayoutType(
         return fetchRecordLayout(luvio, refresh, recordId, layoutTypes, modes, optionalFields);
     }
 
-    return getRecord(luvio, refresh, recordId, layoutMap, objectInfo);
+    return getRecord(luvio, refresh, recordId, layoutMap, objectInfo, optionalFields);
 }

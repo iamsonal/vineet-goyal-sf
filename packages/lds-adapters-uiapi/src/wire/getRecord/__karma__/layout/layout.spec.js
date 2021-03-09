@@ -276,6 +276,32 @@ describe('layout', () => {
         expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mockFullLayoutRecord);
     });
 
+    it('gets record with layoutType and optional field', async () => {
+        const mockRecordUiData = getMock(
+            'record-Opportunity-layouttypes-Full-modes-Edit-optionalFields'
+        );
+        const mockRecord = mockRecordUiData.records[Object.keys(mockRecordUiData.records)[0]];
+
+        const config = {
+            recordId: mockRecord.id,
+            layoutTypes: ['Full'],
+            modes: 'Edit',
+            optionalFields: ['Opportunity.Id', 'Opportunity.SystemModstamp'],
+        };
+
+        const networkParams = {
+            recordIds: mockRecord.id,
+            layoutTypes: config.layoutTypes,
+            optionalFields: config.optionalFields,
+        };
+
+        mockGetRecordUiNetwork(networkParams, mockRecordUiData);
+
+        const element = await setupElement(config, RecordLayoutTypes);
+
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockRecord);
+    });
+
     it('gets record with layoutType and non-existent optional field', async () => {
         const mockRecordUiData = getMock('record-Opportunity-layouttypes-Full-modes-View');
         const mockRecord = mockRecordUiData.records[Object.keys(mockRecordUiData.records)[0]];

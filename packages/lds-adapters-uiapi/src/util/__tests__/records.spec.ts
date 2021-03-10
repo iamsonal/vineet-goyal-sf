@@ -286,6 +286,21 @@ describe('getTrackedFields', () => {
         const dep6Fields = getTrackedFields(dep6key, luvio.getNode(dep6key), []);
         expect(dep6Fields).toEqual(expectedFields);
     });
+
+    it('should handle root with no child (records with no fields)', () => {
+        const key = 'UiApi::RecordTemplateCreateRepresentation:Custom_Object__c:012000000000000AAA';
+        const data = {
+            apiName: 'Custom_Object__c',
+            fields: {},
+            recordTypeId: '012000000000000AAA',
+        };
+        const store = new Store();
+        store.records = {
+            [key]: data,
+        };
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
+        expect(getTrackedFields(key, luvio.getNode(key)).length).toBe(0);
+    });
 });
 
 describe('extractTrackedFields', () => {

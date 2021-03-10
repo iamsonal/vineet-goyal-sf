@@ -385,6 +385,11 @@ export function getTrackedFields(
 
     mergeFieldsTries(root, rootFromConfig);
 
+    // records with no fields
+    if (ObjectKeys(root.children).length === 0) {
+        return [];
+    }
+
     return convertTrieToFields(root).sort();
 }
 

@@ -20,7 +20,13 @@ import {
 } from './DraftQueue';
 import { ResourceRequest, NetworkAdapter, FetchResponse } from '@luvio/engine';
 import { ObjectKeys } from './utils/language';
-import { DurableStore, DurableStoreEntries, DurableStoreEntry } from '@luvio/environments';
+import {
+    DurableStore,
+    DurableStoreEntries,
+    DurableStoreEntry,
+    DurableStoreOperation,
+    DurableStoreOperationType,
+} from '@luvio/environments';
 import { buildDraftDurableStoreKey } from './utils/records';
 
 export const DRAFT_SEGMENT = 'DRAFT';
@@ -357,22 +363,20 @@ export class DurableDraftQueue implements DraftQueue {
             type: DraftQueueEventType.ActionCompleting,
             action: completedAction,
         })
-            .then(() => this.updateQueueOnResponse(completedAction))
+            .then(() => this.getQueueActions())
+            .then(queue => this.storeOperationsForUploadedDraft(queue, completedAction))
+            .then(operations => this.durableStore.batchOperations(operations))
             .then(() => {
-                const { tag, id } = completedAction;
-                const durableEntryKey = buildDraftDurableStoreKey(tag, id);
-                return this.durableStore.evictEntries([durableEntryKey], DRAFT_SEGMENT).then(() => {
-                    this.retryIntervalMilliseconds = 0;
-                    // process action success
-                    return this.notifyChangedListeners({
-                        type: DraftQueueEventType.ActionCompleted,
-                        action: completedAction,
-                    }).then(() => {
-                        if (this.state === DraftQueueState.Started) {
-                            this.processNextAction();
-                        }
-                        return ProcessActionResult.ACTION_SUCCEEDED;
-                    });
+                this.retryIntervalMilliseconds = 0;
+                // process action success
+                return this.notifyChangedListeners({
+                    type: DraftQueueEventType.ActionCompleted,
+                    action: completedAction,
+                }).then(() => {
+                    if (this.state === DraftQueueState.Started) {
+                        this.processNextAction();
+                    }
+                    return ProcessActionResult.ACTION_SUCCEEDED;
                 });
             });
     };
@@ -551,47 +555,63 @@ export class DurableDraftQueue implements DraftQueue {
 
     /**
      * Invoked after the queue completes a POST action and creates a resource on the server.
-     * Entities further down the queue may need to be updated after a resource is created on the server as they may contain references to the created item
+     * Entities further down the queue may need to be updated after a resource is created on
+     * the server as they may contain references to the created item.
      * The DraftQueue is unaware of the contents of the DraftActions so it calls out to the consumer with the
      * completed action and the remaining queue items. The consumer will process the completed action and indicate what
      * queue operations the DraftQueue must take to update its entries with the new entity id
      * @param action the action that just completed
+     * @param queue the currenct queue DraftActions
      */
-    private updateQueueOnResponse(action: CompletedDraftAction<unknown>): Promise<void> {
-        const { request } = action;
-        if (request.method !== 'post') {
-            return Promise.resolve();
+    storeOperationsForUploadedDraft(
+        queue: DraftAction<unknown>[],
+        action: CompletedDraftAction<unknown>
+    ): DurableStoreOperation[] {
+        const { request, tag, id } = action;
+        const storeOperations: DurableStoreOperation[] = [];
+
+        if (request.method === 'post') {
+            const queueOperations = this.updateQueueOnPostCompletion(action, queue);
+            storeOperations.push(
+                ...this.mapQueueOperationsToDurableStoreOperations(queueOperations)
+            );
+
+            const mapping = this.createDraftIdMapping(action);
+            const { draftKey, canonicalKey } = mapping;
+            const expiration = Date.now() + MAPPING_TTL;
+            const entryKey = createDraftMappingEntryKey(draftKey, canonicalKey);
+            const mappingEntries = {
+                [entryKey]: {
+                    data: mapping,
+                    expiration: { fresh: expiration, stale: expiration },
+                },
+            };
+
+            storeOperations.push({
+                entries: mappingEntries,
+                type: DurableStoreOperationType.SetEntries,
+                segment: DRAFT_ID_MAPPINGS_SEGMENT,
+            });
         }
 
-        // TODO: W-8874402 batch write the mapping and the queue operations so they are atomically set
-        return this.getQueueActions()
-            .then(queue => {
-                const queueOperations = this.updateQueueOnPostCompletion(action, queue);
-                return this.executeBatchedQueueOperations(queueOperations);
-            })
-            .then(() => {
-                const mapping = this.createDraftIdMapping(action);
-                const { draftKey, canonicalKey } = mapping;
-                const expiration = Date.now() + MAPPING_TTL;
-                const entryKey = createDraftMappingEntryKey(draftKey, canonicalKey);
-                return this.durableStore.setEntries(
-                    {
-                        [entryKey]: {
-                            data: mapping,
-                            expiration: { fresh: expiration, stale: expiration },
-                        },
-                    },
-                    DRAFT_ID_MAPPINGS_SEGMENT
-                );
-            });
+        //delete the action from the store
+        const durableEntryKey = buildDraftDurableStoreKey(tag, id);
+        storeOperations.push({
+            ids: [durableEntryKey],
+            type: DurableStoreOperationType.EvictEntries,
+            segment: DRAFT_SEGMENT,
+        });
+
+        return storeOperations;
     }
 
     /**
-     * Executes a batch of queue operations
-     * @param queueOperations list of queue operations to execute
+     * Maps an array of QueueOperations to DurableStoreOperations
+     * @param queueOperations list of queue operations to map
      */
-    private executeBatchedQueueOperations(queueOperations: QueueOperation[]): Promise<void> {
-        // TODO convert queueOperations to a batched durable store operation when available
+    private mapQueueOperationsToDurableStoreOperations(
+        queueOperations: QueueOperation[]
+    ): DurableStoreOperation[] {
         const setEntries: DurableStoreEntries = {};
         const evictEntries: string[] = [];
         for (let i = 0, len = queueOperations.length; i < len; i++) {
@@ -609,8 +629,24 @@ export class DurableDraftQueue implements DraftQueue {
             }
         }
 
-        return this.durableStore
-            .setEntries(setEntries, DRAFT_SEGMENT)
-            .then(() => this.durableStore.evictEntries(evictEntries, DRAFT_SEGMENT));
+        const storeOperations: DurableStoreOperation[] = [];
+
+        if (ObjectKeys(setEntries).length > 0) {
+            storeOperations.push({
+                entries: setEntries,
+                type: DurableStoreOperationType.SetEntries,
+                segment: DRAFT_SEGMENT,
+            });
+        }
+
+        if (evictEntries.length > 0) {
+            storeOperations.push({
+                ids: evictEntries,
+                type: DurableStoreOperationType.EvictEntries,
+                segment: DRAFT_SEGMENT,
+            });
+        }
+
+        return storeOperations;
     }
 }

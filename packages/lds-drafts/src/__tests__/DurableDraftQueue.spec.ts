@@ -95,6 +95,7 @@ describe('DurableDraftQueue', () => {
                 mockQueuePostHandler,
                 mockDraftIdHandler
             );
+
             const state = draftQueue.getQueueState();
             expect(state).toEqual(DraftQueueState.Stopped);
         });
@@ -584,7 +585,7 @@ describe('DurableDraftQueue', () => {
             const successPayload: MockPayload = buildSuccessMockPayload(createArgs, {});
             const network = buildMockNetworkAdapter([successPayload]);
             const durableStore = new MockDurableStore();
-            const evictSpy = jest.spyOn(durableStore, 'evictEntries');
+            const batchOperationsSpy = jest.spyOn(durableStore, 'batchOperations');
 
             const draftQueue = new DurableDraftQueue(
                 durableStore,
@@ -601,7 +602,12 @@ describe('DurableDraftQueue', () => {
             expect(result).toEqual(ProcessActionResult.ACTION_SUCCEEDED);
             const callCount = getMockNetworkAdapterCallCount(network);
             expect(callCount).toEqual(1);
-            expect(evictSpy).toBeCalledTimes(1);
+
+            const evictCallOperations = batchOperationsSpy.mock.calls[2][0];
+            const { type, segment } = evictCallOperations[0];
+            expect(evictCallOperations.length).toEqual(1);
+            expect(type).toEqual('evictEntries');
+            expect(segment).toEqual(DRAFT_SEGMENT);
         });
 
         it('returns ACTION_ALREADY_PROCESSING if network request is in flight', async () => {
@@ -1445,6 +1451,129 @@ describe('DurableDraftQueue', () => {
             expect(action.metadata).toEqual(newMetadata);
             expect(updatedCalled).toBe(true);
             expect(updatingCalled).toBe(true);
+        });
+    });
+
+    describe('storeOperationsForUploadedDraft', () => {
+        const addQueueOperation: QueueOperation = {
+            type: QueueOperationType.Add,
+            action: {
+                id: 'foo',
+                tag: 'bar',
+            } as any,
+        };
+
+        const updateQueueOperation: QueueOperation = {
+            type: QueueOperationType.Update,
+            action: {
+                id: 'buz',
+                tag: 'baz',
+            } as any,
+            key: 'baz__DraftAction__buz',
+        };
+
+        const deleteQueueOperation: QueueOperation = {
+            type: QueueOperationType.Delete,
+            key: 'one__DraftAction__1',
+        };
+
+        const evictOperation = {
+            ids: ['myTag__DraftAction__100'],
+            segment: 'DRAFT',
+            type: 'evictEntries',
+        };
+
+        const evictOperation2 = {
+            ids: ['one__DraftAction__1'],
+            segment: 'DRAFT',
+            type: 'evictEntries',
+        };
+
+        const setOperation = {
+            entries: {
+                bar__DraftAction__foo: {
+                    data: { id: 'foo', tag: 'bar' },
+                },
+                baz__DraftAction__buz: {
+                    data: { id: 'buz', tag: 'baz' },
+                },
+            },
+            segment: 'DRAFT',
+            type: 'setEntries',
+        };
+
+        const draftIdMappingOperation = {
+            entries: {
+                ['DraftIdMapping::draft_1::canonical_1']: {
+                    data: {
+                        canonicalKey: 'canonical_1',
+                        draftKey: 'draft_1',
+                    },
+                    expiration: {
+                        fresh: expect.any(Number),
+                        stale: expect.any(Number),
+                    },
+                },
+            },
+            segment: 'DRAFT_ID_MAPPINGS',
+            type: 'setEntries',
+        };
+
+        const createAction = { id: '100', tag: 'myTag', request: { method: 'post' } };
+        const updateAction = { id: '100', tag: 'myTag', request: { method: 'patch' } };
+
+        const setupDraftQueue = (queueOperations: QueueOperation[] = []) => {
+            const durableStore = new MockDurableStore();
+
+            const draftQueue = new DurableDraftQueue(
+                durableStore,
+                buildMockNetworkAdapter([]),
+                jest.fn().mockReturnValue(queueOperations),
+                jest.fn().mockReturnValue({ canonicalKey: 'canonical_1', draftKey: 'draft_1' })
+            );
+
+            return draftQueue;
+        };
+
+        it('produces mapping IDs and evict for create action', async () => {
+            const storeOperations = setupDraftQueue().storeOperationsForUploadedDraft(
+                [],
+                createAction as any
+            );
+
+            expect(storeOperations).toEqual([draftIdMappingOperation, evictOperation]);
+        });
+
+        it('does not produce mapping IDs for update action', async () => {
+            const storeOperations = setupDraftQueue().storeOperationsForUploadedDraft(
+                [],
+                updateAction as any
+            );
+
+            expect(storeOperations).toEqual([evictOperation]);
+        });
+
+        it('does not include QueueOperations for an update', async () => {
+            const storeOperations = setupDraftQueue([
+                addQueueOperation,
+            ]).storeOperationsForUploadedDraft([], updateAction as any);
+
+            expect(storeOperations).toEqual([evictOperation]);
+        });
+
+        it('does include QueueOperations for a create', async () => {
+            const storeOperations = setupDraftQueue([
+                addQueueOperation,
+                updateQueueOperation,
+                deleteQueueOperation,
+            ]).storeOperationsForUploadedDraft([], createAction as any);
+
+            expect(storeOperations).toEqual([
+                setOperation,
+                evictOperation2,
+                draftIdMappingOperation,
+                evictOperation,
+            ]);
         });
     });
 });

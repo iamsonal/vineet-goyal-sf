@@ -4,14 +4,18 @@ import { getDatasets } from 'lds-adapters-analytics-wave';
 export default class GetDatasets extends LightningElement {
     wirePushCount = -1;
 
+    @api types;
     @api folderId;
+    @api licenseType;
     @api page;
     @api pageSize;
     @api q;
     @api scope;
 
     @wire(getDatasets, {
+        datasetTypes: '$types',
         folderId: '$folderId',
+        licenseType: '$licenseType',
         page: '$page',
         pageSize: '$pageSize',
         q: '$q',

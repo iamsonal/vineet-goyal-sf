@@ -42,6 +42,27 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
+    it('gets datasets by dataset types', async () => {
+        const mock = getMock('datasets');
+        const config = { datasetTypes: ['Default', 'Trended'] };
+        mockGetDatasetsNetworkOnce(config, mock);
+
+        const setupConfig = { types: ['Default', 'Trended'] };
+        const el = await setupElement(setupConfig, GetDatasets);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
+    it('gets datasets by license type', async () => {
+        const mock = getMock('datasets-by-license');
+        const config = { licenseType: 'EinsteinAnalytics' };
+        mockGetDatasetsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetDatasets);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
     it('gets datasets with folderId, page and pageSize', async () => {
         const mock = getMock('datasets-page');
         const config = {

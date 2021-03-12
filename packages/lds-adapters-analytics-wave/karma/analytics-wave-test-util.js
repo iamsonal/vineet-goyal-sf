@@ -8,7 +8,7 @@ const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/wave`;
 
 // Execute Query
-export function mockExecuteQueryNetworkOnce(config, mockData) {
+function mockExecuteQueryNetworkOnce(config, mockData) {
     const paramMatch = getExecuteQueryMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -17,7 +17,7 @@ export function mockExecuteQueryNetworkOnce(config, mockData) {
     }
 }
 
-export function mockExecuteQueryNetworkErrorOnce(config, mockData) {
+function mockExecuteQueryNetworkErrorOnce(config, mockData) {
     const paramMatch = getExecuteQueryMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -257,7 +257,7 @@ function getDatasetMatcher(config) {
     });
 }
 
-export function mockDeleteDatasetNetworkOnce(config, mockData = {}) {
+function mockDeleteDatasetNetworkOnce(config, mockData = {}) {
     const paramMatch = deleteDatasetMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
@@ -266,7 +266,7 @@ export function mockDeleteDatasetNetworkOnce(config, mockData = {}) {
     }
 }
 
-export function mockDeleteDatasetNetworkErrorOnce(config, mockData = {}) {
+function mockDeleteDatasetNetworkErrorOnce(config, mockData = {}) {
     const paramMatch = deleteDatasetMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
@@ -299,7 +299,7 @@ function mockGetDatasetsNetworkErrorOnce(config, mockData) {
 }
 
 function getDatasetsMatcher(config) {
-    let { folderId, page, pageSize, q, scope } = config;
+    let { datasetTypes, folderId, licenseType, page, pageSize, q, scope } = config;
 
     return sinon.match({
         body: null,
@@ -307,7 +307,9 @@ function getDatasetsMatcher(config) {
         method: 'get',
         basePath: `${URL_BASE}/datasets`,
         queryParams: {
+            datasetTypes,
             folderId,
+            licenseType,
             page,
             pageSize,
             q,
@@ -564,6 +566,8 @@ function getXmdMatcher(config) {
 
 export {
     URL_BASE,
+    mockExecuteQueryNetworkOnce,
+    mockExecuteQueryNetworkErrorOnce,
     mockGetAnalyticsLimitsNetworkOnce,
     mockGetAnalyticsLimitsNetworkErrorOnce,
     mockGetDataflowJobsNetworkOnce,
@@ -580,6 +584,8 @@ export {
     mockGetDataflowJobNodeNetworkErrorOnce,
     mockGetDatasetNetworkOnce,
     mockGetDatasetNetworkErrorOnce,
+    mockDeleteDatasetNetworkOnce,
+    mockDeleteDatasetNetworkErrorOnce,
     mockGetDatasetsNetworkOnce,
     mockGetDatasetsNetworkErrorOnce,
     mockGetRecipesNetworkOnce,

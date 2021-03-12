@@ -3772,6 +3772,38 @@ describe('routes', () => {
             ]
         );
 
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/datasets`,
+                    queryParams: {
+                        datasetTypes: ['Default', 'Trended'],
+                        folderId: '005xx000001XCD7AAO',
+                        licenseType: 'Sonic',
+                        page: 'eyJwYWdlU2',
+                        pageSize: 10,
+                        q: 'opp dataset',
+                        scope: 'LastModified',
+                    },
+                },
+                [
+                    'WaveController.getDatasets',
+                    {
+                        datasetTypes: ['Default', 'Trended'],
+                        folderId: '005xx000001XCD7AAO',
+                        licenseType: 'Sonic',
+                        pageParam: 'eyJwYWdlU2',
+                        pageSize: 10,
+                        q: 'opp dataset',
+                        scope: 'LastModified',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
         testResolveResponse(
             {
                 method: 'get',

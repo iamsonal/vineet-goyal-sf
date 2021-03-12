@@ -18,8 +18,7 @@ const TEST_CONFIG = {
     siteId: MOCK_SITE_ID,
     queryParams: {
         queryTerm: 'energy',
-        page: 0,
-        pageSize: 25,
+        pageSize: 3,
         language: 'en_US',
     },
 };
@@ -66,6 +65,7 @@ describe('basic', () => {
     it('makes two network calls for two wire function invocations with different config', async () => {
         const mock = getMock(MOCK_SEARCH_SITE_WITH_SITE_PAGES_JSON);
         const siteId = mock.currentPageUrl.split('/')[6];
+        const pageToken = mock.nextPageToken;
         TEST_CONFIG.siteId = siteId;
         WIRE_CONFIG.siteId = siteId;
 
@@ -73,8 +73,8 @@ describe('basic', () => {
             siteId: siteId,
             queryParams: {
                 queryTerm: 'energy',
-                page: 1,
-                pageSize: 25,
+                pageToken: pageToken,
+                pageSize: 4,
                 language: 'en_US',
             },
         };

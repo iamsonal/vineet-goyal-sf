@@ -6,14 +6,14 @@ export default class SearchSite extends LightningElement {
 
     @api siteId;
     @api queryTerm;
-    @api page;
+    @api pageToken;
     @api pageSize;
     @api language;
 
     @wire(searchSite, {
         siteId: '$siteId',
         queryTerm: '$queryTerm',
-        page: '$page',
+        pageToken: '$pageToken',
         pageSize: '$pageSize',
         language: '$language',
     })

@@ -55,6 +55,9 @@ types:
     description: Site search result representation
     type: object
     properties:
+      currentPageToken:
+        description: The token for the current page of search results.
+        type: string
       currentPageUrl:
         description: URL to the current page of search results.
         type: string
@@ -66,6 +69,9 @@ types:
       language:
         description: Language of the search results.
         type: string
+      nextPageToken:
+        description: The token for the next page of search results.
+        type: string
       nextPageUrl:
         description: URL to the next page of search result, null if there isn’t the
           next page.
@@ -73,6 +79,9 @@ types:
       pageSize:
         description: Number of items per page in search result
         type: integer
+      previousPageToken:
+        description: The token for the previous page of search results.
+        type: string
       previousPageUrl:
         description: URL to the previous page of search result, null if there isn’t
           any previous page.
@@ -93,11 +102,11 @@ types:
       language:
         type: string
         required: false
-      page:
-        type: integer
-        required: false
       pageSize:
         type: integer
+        required: false
+      pageToken:
+        type: string
         required: false
       queryTerm:
         type: string

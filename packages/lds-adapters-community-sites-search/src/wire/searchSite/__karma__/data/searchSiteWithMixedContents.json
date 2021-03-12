@@ -1,10 +1,12 @@
 {
-    "searchTerm": "energy",
-    "pageSize": 25,
-    "totalItems": 3,
+    "pageSize": 3,
+    "totalItems": 50,
     "language": "en_US",
-    "currentPageUrl": "/services/data/v52.0/connect/sites/0DMR00000000gKcOAI/search?queryTerm=energy&page=0&pageSize=25&language=en_US",
-    "nextPageUrl": "/services/data/v52.0/connect/sites/0DMR00000000gKcOAI/search?queryTerm=energy&page=1&pageSize=25&language=en_US",
+    "currentPageToken": "eyJwIjozLCJvIjowfQ==",
+    "currentPageUrl": "/services/data/v52.0/connect/sites/0DMR00000000gKcOAI/search?queryTerm=energy&&pageSize=3&language=en_US",
+    "nextPageToken": "eyJwIjozLCJvIjozfQ==",
+    "nextPageUrl": "/services/data/v52.0/connect/sites/0DMR00000000gKcOAI/search?queryTerm=energy&pageToken=eyJwIjozLCJvIjozfQ==&pageSize=3&language=en_US",
+    "previousPageToken": "",
     "previousPageUrl": "",
     "items": [
         {

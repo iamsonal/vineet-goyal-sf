@@ -6,7 +6,7 @@ import {
 } from '@luvio/environments';
 
 import { ObjectKeys } from '../../../lds-runtime-mobile/src/utils/language';
-import { DraftQueue } from '../DraftQueue';
+import { DraftAction, DraftQueue } from '../DraftQueue';
 import { makeDurableStoreDraftAware } from '../makeDurableStoreDraftAware';
 import { buildDraftDurableStoreKey, DurableRecordRepresentation } from '../utils/records';
 import { DRAFT_SEGMENT } from '../DurableDraftQueue';
@@ -524,7 +524,9 @@ describe('makeDurableStoreDraftAware', () => {
         it('should return draft creates', async () => {
             const { durableStore, baseDurableStore, draftQueue } = setupDraftStore();
             draftQueue.getActionsForTags = jest.fn().mockResolvedValue({
-                [STORE_KEY_DRAFT_RECORD]: [createPostDraftAction(STORE_KEY_DRAFT_RECORD)],
+                [STORE_KEY_DRAFT_RECORD]: [
+                    createPostDraftAction(STORE_KEY_DRAFT_RECORD, 'targetId'),
+                ],
             });
             baseDurableStore.getEntries = jest.fn().mockResolvedValue(undefined);
 
@@ -535,8 +537,14 @@ describe('makeDurableStoreDraftAware', () => {
             expect(ObjectKeys(readEntries).length).toBe(8);
             const nameField = readEntries[DRAFT_STORE_KEY_FIELD__NAME].data;
             const readRecord = readEntries[STORE_KEY_DRAFT_RECORD].data;
-
+            const draftActions = await draftQueue.getActionsForTags({
+                STORE_KEY_DRAFT_RECORD: true,
+            });
+            const actions: DraftAction<unknown>[] = draftActions[STORE_KEY_DRAFT_RECORD];
+            const action = actions[0];
+            expect(action).toBeDefined();
             expect(readRecord.drafts.created).toBe(true);
+            expect(readRecord.drafts.draftActionIds[0]).toBe(action.id);
             expect(nameField.value).toEqual(DEFAULT_NAME_FIELD_VALUE);
             expect(nameField.displayValue).toEqual(DEFAULT_NAME_FIELD_VALUE);
         });
@@ -569,7 +577,7 @@ describe('makeDurableStoreDraftAware', () => {
 
             draftQueue.getActionsForTags = jest.fn().mockResolvedValue({
                 [STORE_KEY_DRAFT_RECORD]: [
-                    createPostDraftAction(STORE_KEY_DRAFT_RECORD),
+                    createPostDraftAction(STORE_KEY_DRAFT_RECORD, 'targetId'),
                     createEditDraftAction(DRAFT_RECORD_ID, STORE_KEY_DRAFT_RECORD, editedNameField),
                 ],
             });
@@ -661,7 +669,9 @@ describe('makeDurableStoreDraftAware', () => {
             const { durableStore, baseDurableStore, draftQueue } = setupDraftStore();
 
             draftQueue.getActionsForTags = jest.fn().mockResolvedValue({
-                [STORE_KEY_DRAFT_RECORD]: [createPostDraftAction(STORE_KEY_DRAFT_RECORD)],
+                [STORE_KEY_DRAFT_RECORD]: [
+                    createPostDraftAction(STORE_KEY_DRAFT_RECORD, 'targetId'),
+                ],
             });
             baseDurableStore.getEntries = jest.fn().mockResolvedValue(undefined);
 

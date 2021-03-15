@@ -206,6 +206,20 @@ types:
           body:
             application/json:
               type: AppProcessEventRepresentation
+      # TODO: Hand Rolled removal of queryParams - please see @W-8999414
+      # queryParameters:
+      #   doesCancelOrchestrationInstance:
+      #     type: boolean
+      #     required: false
+      #   eventPayload:
+      #     type: string
+      #     required: false
+      #   orchestrationInstanceId:
+      #     type: string
+      #     required: false
+      #   stepInstanceId:
+      #     type: string
+      #     required: false
       body:
         application/json:
           type: AppProcessEventInputRepresentation

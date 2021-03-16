@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-ads-bridge",
-    "version": "1.9.4",
+    "version": "1.9.5",
     "description": "Bridge to sync data between LDS and ADS",
     "license": "MIT",
     "private": true,
@@ -14,9 +14,9 @@
         "test:unit": "jest"
     },
     "devDependencies": {
-        "@salesforce/lds-adapters-uiapi": "1.9.4",
-        "@salesforce/lds-instrumentation": "1.9.4",
-        "@salesforce/lds-runtime-aura": "1.9.4",
-        "@salesforce/lds-uiapi-record-utils": "1.9.4"
+        "@salesforce/lds-adapters-uiapi": "1.9.5",
+        "@salesforce/lds-instrumentation": "1.9.5",
+        "@salesforce/lds-runtime-aura": "1.9.5",
+        "@salesforce/lds-uiapi-record-utils": "1.9.5"
     }
 }

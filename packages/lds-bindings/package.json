@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-bindings",
-    "version": "1.9.4",
+    "version": "1.9.5",
     "description": "LDS Bindings for SFDC",
     "license": "MIT",
     "main": "dist/ldsBindings.js",
@@ -19,11 +19,11 @@
         "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
     },
     "dependencies": {
-        "@luvio/lwc-luvio": "^0.29.1"
+        "@luvio/lwc-luvio": "^0.29.2"
     },
     "devDependencies": {
-        "@luvio/engine": "^0.29.1",
+        "@luvio/engine": "^0.29.2",
         "@lwc/engine-core": "~1.7.5",
-        "@salesforce/lds-runtime-web": "1.9.4"
+        "@salesforce/lds-runtime-web": "1.9.5"
     }
 }

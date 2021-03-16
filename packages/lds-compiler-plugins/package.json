@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-compiler-plugins",
-    "version": "1.9.4",
+    "version": "1.9.5",
     "description": "Plugins for LDS compiler",
     "private": true,
     "license": "MIT",
@@ -12,6 +12,6 @@
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     },
     "devDependencies": {
-        "@luvio/compiler": "^0.29.1"
+        "@luvio/compiler": "^0.29.2"
     }
 }

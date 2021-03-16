@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-karma",
-    "version": "1.9.4",
+    "version": "1.9.5",
     "description": "Karma config and utils for wire adapter testing",
     "private": true,
     "license": "MIT",
@@ -10,7 +10,7 @@
         "build": "rollup --config rollup.config.js"
     },
     "dependencies": {
-        "@luvio/engine": "^0.29.1",
-        "@luvio/lwc-luvio": "^0.29.1"
+        "@luvio/engine": "^0.29.2",
+        "@luvio/lwc-luvio": "^0.29.2"
     }
 }

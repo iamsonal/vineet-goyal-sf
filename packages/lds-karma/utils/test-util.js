@@ -89,8 +89,7 @@ function stripProperties(obj, props) {
  * @param {object[]} headers The headers to return when the mock is called
  */
 function mockNetworkSequence(adapter, args, responses, headers = []) {
-    const times = responses.length;
-    MOCK_NETWORK_COUNT += times;
+    MOCK_NETWORK_COUNT += responses.length;
 
     responses.forEach((response, index) => {
         adapter
@@ -119,7 +118,15 @@ function mockNetworkSequence(adapter, args, responses, headers = []) {
             });
     });
 
-    adapter.throws(`Network adapter stub called more than ${times} time(s)`);
+    adapter.callsFake(request => {
+        throw new Error(
+            `Network adapter stub gets invoked with unexpected resource request:\n${JSON.stringify(
+                request,
+                null,
+                2
+            )}`
+        );
+    });
 }
 
 /**

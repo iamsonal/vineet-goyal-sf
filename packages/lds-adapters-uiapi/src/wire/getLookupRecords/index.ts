@@ -22,7 +22,7 @@ import { RecordRepresentation } from '../../generated/types/RecordRepresentation
 
 interface GetLookupRecordsConfigRequestParams {
     q?: string;
-    pageParam?: number;
+    page?: number;
     pageSize?: number;
     dependentFieldBindings?: string[];
     searchType?: 'Recent' | 'Search' | 'TypeAhead';
@@ -54,9 +54,9 @@ function coerceRequestParams(untrusted: unknown): GetLookupRecordsConfigRequestP
         coercedConfig.dependentFieldBindings = dependentFieldBindings;
     }
 
-    const pageParam = requestParams.pageParam;
-    if (pageParam !== undefined) {
-        coercedConfig.pageParam = pageParam;
+    const page = requestParams.page;
+    if (page !== undefined) {
+        coercedConfig.page = page;
     }
 
     const pageSize = requestParams.pageSize;
@@ -122,7 +122,7 @@ export function buildNetworkSnapshot(luvio: Luvio, config: GetLookupRecordsConfi
             targetApiName,
         },
         queryParams: {
-            pageParam: config.pageParam,
+            page: config.page,
             pageSize: config.pageSize,
             q: config.q,
             searchType: config.searchType,

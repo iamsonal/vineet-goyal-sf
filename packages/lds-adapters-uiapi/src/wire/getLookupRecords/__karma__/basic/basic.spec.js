@@ -61,7 +61,7 @@ describe('getLookupRecords', () => {
             requestParams: {
                 q: 'nc',
                 searchType: 'Recent',
-                pageParam: 1,
+                page: 1,
                 pageSize: 25,
                 dependentFieldBindings: null,
                 sourceRecordId: '',
@@ -86,7 +86,7 @@ describe('getLookupRecords', () => {
             requestParams: {
                 q: 'Bur',
                 searchType: 'TypeAhead',
-                pageParam: 1,
+                page: 1,
                 pageSize: 10,
                 sourceRecordId: '',
             },
@@ -113,7 +113,7 @@ describe('getLookupRecords', () => {
             requestParams: {
                 q: 'Bur',
                 searchType: 'TypeAhead',
-                pageParam: 1,
+                page: 1,
                 pageSize: 10,
                 sourceRecordId: '',
             },
@@ -139,7 +139,7 @@ describe('getLookupRecords', () => {
             requestParams: {
                 q: 'Bur',
                 searchType: 'TypeAhead',
-                pageParam: 1,
+                page: 1,
                 pageSize: 10,
                 sourceRecordId: '',
             },
@@ -164,7 +164,7 @@ describe('getLookupRecords', () => {
             requestParams: {
                 q: 'Bur',
                 searchType: 'TypeAhead',
-                pageParam: 1,
+                page: 1,
                 pageSize: 10,
                 sourceRecordId: '',
             },
@@ -193,7 +193,7 @@ describe('getLookupRecords', () => {
             requestParams: {
                 q: 'Bur',
                 searchType: 'TypeAhead',
-                pageParam: 1,
+                page: 1,
                 pageSize: 10,
                 sourceRecordId: '',
             },
@@ -228,7 +228,7 @@ describe('getLookupRecords', () => {
                 q: 'jak',
                 pageSize: 10,
                 searchType: 'TypeAhead',
-                pageParam: 1,
+                page: 1,
                 sourceRecordId: '',
             },
         };
@@ -253,7 +253,7 @@ describe('getLookupRecords', () => {
                 q: 'jak',
                 pageSize: 10,
                 searchType: 'TypeAhead',
-                pageParam: 1,
+                page: 1,
                 sourceRecordId: '',
             },
         };
@@ -285,7 +285,7 @@ describe('getLookupRecords', () => {
             requestParams: {
                 q: 'Bur',
                 searchType: 'TypeAhead',
-                pageParam: 1,
+                page: 1,
                 pageSize: 10,
                 sourceRecordId: '',
             },
@@ -313,7 +313,7 @@ describe('getLookupRecords', () => {
                 fieldApiName: 'Opportunity.Territory2Id',
                 targetApiName: 'Territory2',
                 requestParams: {
-                    pageParam: 1,
+                    page: 1,
                     pageSize: 25,
                     q: 'sub',
                     searchType: 'TypeAhead',
@@ -356,7 +356,7 @@ describe('getLookupRecords', () => {
                 requestParams: {
                     q: 'Bu',
                     searchType: 'Recent',
-                    pageParam: 123456,
+                    page: 123456,
                     pageSize: 10,
                     sourceRecordId: '',
                 },
@@ -379,7 +379,7 @@ describe('getLookupRecords', () => {
                 targetApiName: 'Account',
                 requestParams: {
                     searchType: 'Recent',
-                    pageParam: 1,
+                    page: 1,
                     pageSize: 25,
                     sourceRecordId: '',
                 },
@@ -402,7 +402,7 @@ describe('getLookupRecords', () => {
                 targetApiName: 'Account',
                 requestParams: {
                     searchType: 'TypeAhead',
-                    pageParam: 1,
+                    page: 1,
                     pageSize: 25,
                     sourceRecordId: '',
                     q: 'test',

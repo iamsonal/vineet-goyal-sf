@@ -18,6 +18,10 @@ import {
 
 import { ObjectKeys, ObjectCreate, JSONStringify, JSONParse } from './utils/language';
 
+import { idleDetector } from 'o11y/client';
+
+const tasker = idleDetector.declareNotifierTaskMulti('NimbusDurableStore');
+
 function operationTypeFromNimbus(type: NimbusOperationType): LuvioOperationType {
     switch (type) {
         case 'evictEntries':
@@ -91,7 +95,11 @@ export class NimbusDurableStore implements DurableStore {
             });
         }
 
-        return __nimbus.plugins.LdsDurableStore.batchOperations(nimbusOperations, this.senderId);
+        tasker.add();
+        return __nimbus.plugins.LdsDurableStore.batchOperations(
+            nimbusOperations,
+            this.senderId
+        ).finally(() => tasker.done());
     }
 
     senderId: string = this.generateSenderId();
@@ -106,8 +114,9 @@ export class NimbusDurableStore implements DurableStore {
             return Promise.resolve({});
         }
 
-        return __nimbus.plugins.LdsDurableStore.getEntriesInSegment(entryIds, segment).then(
-            result => {
+        tasker.add();
+        return __nimbus.plugins.LdsDurableStore.getEntriesInSegment(entryIds, segment)
+            .then(result => {
                 const { isMissingEntries, entries } = result;
 
                 if (isMissingEntries) {
@@ -122,29 +131,32 @@ export class NimbusDurableStore implements DurableStore {
                     returnEntries[key] = JSONParse(entries[key]) as DurableStoreEntry;
                 }
                 return returnEntries;
-            }
-        );
+            })
+            .finally(() => tasker.done());
     }
 
     getAllEntries(segment: string): Promise<DurableStoreEntries | undefined> {
-        return __nimbus.plugins.LdsDurableStore.getAllEntriesInSegment(segment).then(result => {
-            const { isMissingEntries, entries } = result;
+        tasker.add();
+        return __nimbus.plugins.LdsDurableStore.getAllEntriesInSegment(segment)
+            .then(result => {
+                const { isMissingEntries, entries } = result;
 
-            // if the segment isn't found then isMissingEntries will be set and
-            // we should return undefined.
-            if (isMissingEntries) {
-                return undefined;
-            }
+                // if the segment isn't found then isMissingEntries will be set and
+                // we should return undefined.
+                if (isMissingEntries) {
+                    return undefined;
+                }
 
-            const returnEntries: DurableStoreEntries = ObjectCreate(null);
-            const keys = ObjectKeys(entries);
-            for (let i = 0, len = keys.length; i < len; i++) {
-                const key = keys[i];
-                // values are stored on native side as JSON strings
-                returnEntries[key] = JSONParse(entries[key]) as DurableStoreEntry;
-            }
-            return returnEntries;
-        });
+                const returnEntries: DurableStoreEntries = ObjectCreate(null);
+                const keys = ObjectKeys(entries);
+                for (let i = 0, len = keys.length; i < len; i++) {
+                    const key = keys[i];
+                    // values are stored on native side as JSON strings
+                    returnEntries[key] = JSONParse(entries[key]) as DurableStoreEntry;
+                }
+                return returnEntries;
+            })
+            .finally(() => tasker.done());
     }
 
     setEntries(entries: DurableStoreEntries, segment: string): Promise<void> {
@@ -161,14 +173,18 @@ export class NimbusDurableStore implements DurableStore {
     setEntriesOld(entries: DurableStoreEntries, segment: string): Promise<void> {
         const putEntries = toNativeEntries(entries);
 
+        tasker.add();
         if (__nimbus.plugins.LdsDurableStore.setEntriesInSegmentWithSender !== undefined) {
             return __nimbus.plugins.LdsDurableStore.setEntriesInSegmentWithSender(
                 putEntries,
                 segment,
                 this.senderId
-            );
+            ).finally(() => tasker.done());
         }
-        return __nimbus.plugins.LdsDurableStore.setEntriesInSegment(putEntries, segment);
+        return __nimbus.plugins.LdsDurableStore.setEntriesInSegment(
+            putEntries,
+            segment
+        ).finally(() => tasker.done());
     }
 
     evictEntries(entryIds: string[], segment: string): Promise<void> {
@@ -183,14 +199,18 @@ export class NimbusDurableStore implements DurableStore {
     }
 
     evictEntriesOld(entryIds: string[], segment: string): Promise<void> {
+        tasker.add();
         if (__nimbus.plugins.LdsDurableStore.evictEntriesInSegmentWithSender !== undefined) {
             return __nimbus.plugins.LdsDurableStore.evictEntriesInSegmentWithSender(
                 entryIds,
                 segment,
                 this.senderId
-            );
+            ).finally(() => tasker.done());
         }
-        return __nimbus.plugins.LdsDurableStore.evictEntriesInSegment(entryIds, segment);
+        return __nimbus.plugins.LdsDurableStore.evictEntriesInSegment(
+            entryIds,
+            segment
+        ).finally(() => tasker.done());
     }
 
     registerOnChangedListener(listener: OnDurableStoreChangedListener): () => Promise<void> {

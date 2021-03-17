@@ -10,7 +10,7 @@ const footer = buildFooter(packageJson.version);
 const mobile = {
     input: './src/main.ts',
 
-    external: ['@salesforce/user/Id'],
+    external: ['@salesforce/user/Id', 'o11y/client'],
 
     output: {
         file: 'dist/ldsEngineRuntimeMobile.js',

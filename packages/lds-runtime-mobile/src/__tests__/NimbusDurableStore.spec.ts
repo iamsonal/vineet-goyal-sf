@@ -16,7 +16,7 @@ describe('nimbus durable store tests', () => {
 
     describe('plugin signature backward compatibility', () => {
         it('should use the old setEntries if new doesnt exist', async () => {
-            const setEntriesSpy = jest.fn();
+            const setEntriesSpy = jest.fn().mockResolvedValue(undefined);
             const mock = { setEntriesInSegment: setEntriesSpy };
             mockNimbusStoreGlobal((mock as any) as MockNimbusDurableStore);
             const durableStore = new NimbusDurableStore();
@@ -32,7 +32,7 @@ describe('nimbus durable store tests', () => {
         });
 
         it('should use the old evictEntries if new doesnt exist', async () => {
-            const evictEntriesSpy = jest.fn();
+            const evictEntriesSpy = jest.fn().mockResolvedValue(undefined);
             const mock = { evictEntriesInSegment: evictEntriesSpy };
             mockNimbusStoreGlobal((mock as any) as MockNimbusDurableStore);
             const durableStore = new NimbusDurableStore();
@@ -111,7 +111,7 @@ describe('nimbus durable store tests', () => {
 
         it('should use default setEntries if batchOperations is undefined', async () => {
             const nimbusStore = new MockNimbusDurableStore();
-            const setEntriesSpy = jest.fn();
+            const setEntriesSpy = jest.fn().mockResolvedValue(undefined);
             nimbusStore.batchOperations = undefined;
             nimbusStore.setEntriesInSegmentWithSender = setEntriesSpy;
 
@@ -132,7 +132,7 @@ describe('nimbus durable store tests', () => {
 
         it('should use default evictEntries if batchOperations is undefined', async () => {
             const nimbusStore = new MockNimbusDurableStore();
-            const evictEntriesSpy = jest.fn();
+            const evictEntriesSpy = jest.fn().mockResolvedValue(undefined);
             nimbusStore.batchOperations = undefined;
             nimbusStore.evictEntriesInSegmentWithSender = evictEntriesSpy;
 

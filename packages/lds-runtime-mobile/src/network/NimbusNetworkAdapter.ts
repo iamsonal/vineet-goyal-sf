@@ -4,10 +4,15 @@
 import { ResourceRequest, FetchResponse, NetworkAdapter } from '@luvio/engine';
 import { buildNimbusNetworkPluginRequest, buildLdsResponse } from './networkUtils';
 
+import { idleDetector } from 'o11y/client';
+
+const tasker = idleDetector.declareNotifierTaskMulti('NimbusNetworkAdapter');
+
 export const NimbusNetworkAdapter: NetworkAdapter = (
     request: ResourceRequest
 ): Promise<FetchResponse<any>> => {
-    return new Promise((resolve, reject) => {
+    tasker.add();
+    return new Promise<FetchResponse<any>>((resolve, reject) => {
         try {
             __nimbus.plugins.LdsNetworkAdapter.sendRequest(
                 buildNimbusNetworkPluginRequest(request),
@@ -29,5 +34,5 @@ export const NimbusNetworkAdapter: NetworkAdapter = (
             // returns malformed response) and call reject
             reject(error);
         }
-    });
+    }).finally(() => tasker.done());
 };

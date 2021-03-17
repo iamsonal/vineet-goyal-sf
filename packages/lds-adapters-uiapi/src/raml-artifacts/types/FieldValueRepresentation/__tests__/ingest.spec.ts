@@ -5,12 +5,12 @@ import {
     FieldValueRepresentation,
     FieldValueRepresentationNormalized,
 } from '../../../../generated/types/FieldValueRepresentation';
-import { default as normalize } from '../../../../helpers/FieldValueRepresentation/normalize';
+import * as FieldValueRepNormalize from '../../../../helpers/FieldValueRepresentation/normalize';
+
 import { default as merge } from '../../../../helpers/FieldValueRepresentation/merge';
 import { RecordConflictMap } from '../../../../helpers/RecordRepresentation/resolveConflict';
 
 jest.mock('../../../../helpers/FieldValueRepresentation/merge');
-jest.mock('../../../../helpers/FieldValueRepresentation/normalize');
 
 describe('ingest', () => {
     let store = new Store();
@@ -25,7 +25,9 @@ describe('ingest', () => {
             displayValue: 'a',
             value: 'a',
         };
-        const mockNormalize = normalize.mockReturnValueOnce(normalized);
+        const mockNormalize = jest.spyOn(FieldValueRepNormalize, 'default');
+        mockNormalize.mockReturnValue(normalized);
+
         const mockMerge = merge.mockReturnValueOnce(normalized);
         const fieldsTrie: RecordFieldTrie = {
             name: 'Name',
@@ -41,6 +43,7 @@ describe('ingest', () => {
             {
                 fullPath: 'abc',
                 parent: null,
+                propertyName: '',
             },
             luvio,
             store,
@@ -58,6 +61,7 @@ describe('ingest', () => {
             {
                 fullPath: 'abc',
                 parent: null,
+                propertyName: '',
             },
             luvio,
             store,

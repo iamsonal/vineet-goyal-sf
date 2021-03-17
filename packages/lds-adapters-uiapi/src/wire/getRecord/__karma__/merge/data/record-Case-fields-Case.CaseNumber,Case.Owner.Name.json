@@ -1,0 +1,47 @@
+{
+    "apiName": "Case",
+    "childRelationships": {},
+    "eTag": "7545959ce917f3791484c5c5a1fd5ef8",
+    "fields": {
+        "CaseNumber": {
+            "displayValue": null,
+            "value": "00001003"
+        },
+        "Owner": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "Name",
+                "childRelationships": {},
+                "eTag": "18a7e2c582ae6fa76b0b63970fee76b1",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005RM000002492xYAA"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Admin User"
+                    }
+                },
+                "id": "005RM000002492xYAA",
+                "lastModifiedById": null,
+                "lastModifiedDate": null,
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": null,
+                "weakEtag": 0
+            }
+        },
+        "OwnerId": {
+            "displayValue": null,
+            "value": "005RM000002492xYAA"
+        }
+    },
+    "id": "500RM0000031M6aYAE",
+    "lastModifiedById": "005RM000002492xYAA",
+    "lastModifiedDate": "2021-01-11T19:37:07.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2021-01-11T19:37:07.000Z",
+    "weakEtag": 1610393827000
+}

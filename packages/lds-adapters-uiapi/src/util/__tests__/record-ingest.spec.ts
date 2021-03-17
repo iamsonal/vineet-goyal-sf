@@ -1,15 +1,10 @@
-jest.mock('../../generated/types/RecordRepresentation');
 jest.mock('../../generated/types/type-utils');
 jest.mock('../../helpers/RecordRepresentation/merge');
-jest.mock('../../helpers/RecordRepresentation/normalize');
 jest.mock('../../raml-artifacts/types/RecordRepresentation/keyBuilderFromType');
 
-import {
-    validate,
-    equals,
-    normalize,
-    dynamicNormalize,
-} from '../../generated/types/RecordRepresentation';
+import { IngestPath } from '@luvio/engine';
+
+import * as RecordRepresentation from '../../generated/types/RecordRepresentation';
 import { keyBuilderFromType } from '../../raml-artifacts/types/RecordRepresentation/keyBuilderFromType';
 import merge from '../../helpers/RecordRepresentation/merge';
 import { createLink } from '../../generated/types/type-utils';
@@ -28,29 +23,31 @@ describe('Record Ingest Utils', () => {
             MOCK: 'RECORD',
         };
 
-        const mockLds = {
+        const mockLds: any = {
             storePublish: jest.fn(),
             storeSetExpiration: jest.fn(),
         };
 
-        const mockStore = {
+        const mockStore: any = {
             records: {
                 [MOCK_KEY]: mockExistingRecord,
             },
         };
 
-        const mockPath = {
+        const mockPath: IngestPath = {
             fullPath: 'full/patch',
             parent: null,
+            propertyName: '',
         };
 
         keyBuilderFromType.mockReturnValueOnce(MOCK_KEY);
-        normalize.mockReturnValueOnce(mockNormalizedRecord);
-        equals.mockReturnValueOnce(false);
-        validate.mockReturnValueOnce(null);
         createLink.mockReturnValueOnce(mockLink);
         merge.mockReturnValueOnce(mockMergedRecord);
-        dynamicNormalize.mockReturnValueOnce(normalize);
+
+        const mockEquals = jest.spyOn(RecordRepresentation, 'equals').mockReturnValueOnce(false);
+        jest.spyOn(RecordRepresentation, 'validate').mockReturnValueOnce(null);
+        const mockNormalize = jest.fn().mockReturnValueOnce(mockNormalizedRecord);
+        jest.spyOn(RecordRepresentation, 'dynamicNormalize').mockReturnValue(mockNormalize);
 
         const fields = convertFieldsToTrie(['ENTITY.FIELD', 'ENTITY.SUB.FIELD'], false);
         const optionalFields = convertFieldsToTrie(
@@ -67,10 +64,10 @@ describe('Record Ingest Utils', () => {
         });
 
         it('calls normalize with new and existing records', () => {
-            expect(normalize).toHaveBeenCalledWith(
+            expect(mockNormalize).toHaveBeenCalledWith(
                 mockData,
                 mockExistingRecord,
-                { fullPath: MOCK_KEY, parent: null },
+                { fullPath: MOCK_KEY, parent: null, propertyName: '' },
                 mockLds,
                 mockStore,
                 12345
@@ -88,7 +85,7 @@ describe('Record Ingest Utils', () => {
         });
 
         it('compares normalized and existing record via the equal method', () => {
-            expect(equals).toHaveBeenCalledWith(mockExistingRecord, mockMergedRecord);
+            expect(mockEquals).toHaveBeenCalledWith(mockExistingRecord, mockMergedRecord);
         });
 
         it('calls storePublish with the merged record when it does not equal the existing record', () => {

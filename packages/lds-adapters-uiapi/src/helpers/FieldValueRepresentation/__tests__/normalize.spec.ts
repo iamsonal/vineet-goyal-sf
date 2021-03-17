@@ -4,12 +4,12 @@ import {
     FieldValueRepresentationNormalized,
 } from '../../../generated/types/FieldValueRepresentation';
 import normalize from '../normalize';
-import { ingest as RecordRepresentation_ingest } from '../../../raml-artifacts/types/RecordRepresentation/ingest';
-import { createRecordIngest } from '../../../util/record-ingest';
 import { BLANK_RECORD_FIELDS_TRIE, convertFieldsToTrie } from '../../../util/records';
 
+import * as recordIngest from '../../../util/record-ingest';
+import { ingest as RecordRepresentation_ingest } from '../../../raml-artifacts/types/RecordRepresentation/ingest';
+
 jest.mock('../../../raml-artifacts/types/RecordRepresentation/ingest');
-jest.mock('../../../util/record-ingest');
 
 function clone<T>(value: T): T {
     return JSON.parse(JSON.stringify(value));
@@ -22,6 +22,7 @@ describe('normalize', () => {
     const path: IngestPath = {
         fullPath: 'some_path',
         parent: null,
+        propertyName: '',
     };
 
     const dynamicIngestValue: StoreLink = {
@@ -38,7 +39,8 @@ describe('normalize', () => {
     };
 
     const mockDynamicIngest = jest.fn().mockReturnValue(dynamicIngestValue);
-    const mockCreateIngest = createRecordIngest.mockReturnValue(mockDynamicIngest);
+    const mockCreateIngest = jest.spyOn(recordIngest, 'createRecordIngest');
+    mockCreateIngest.mockReturnValue(mockDynamicIngest);
     const mockStaticIngest = RecordRepresentation_ingest.mockReturnValueOnce(staticIngestValue);
 
     afterEach(() => {
@@ -170,7 +172,17 @@ describe('normalize', () => {
                 displayValue: 'a',
                 value: 'a',
             };
-            const output = normalize(input, existing, path, luvio, store, 123);
+            const output = normalize(
+                input,
+                existing,
+                path,
+                luvio,
+                store,
+                123,
+                BLANK_RECORD_FIELDS_TRIE,
+                BLANK_RECORD_FIELDS_TRIE,
+                {}
+            );
             expect(output).toBe(input);
             expect(output.value).toBe('a');
             expect(mockCreateIngest).toHaveBeenCalledTimes(0);
@@ -183,7 +195,17 @@ describe('normalize', () => {
                 displayValue: null,
                 value: null,
             };
-            const output = normalize(input, existing, path, luvio, store, 123);
+            const output = normalize(
+                input,
+                existing,
+                path,
+                luvio,
+                store,
+                123,
+                BLANK_RECORD_FIELDS_TRIE,
+                BLANK_RECORD_FIELDS_TRIE,
+                {}
+            );
             expect(output).toBe(input);
             expect(output.value).toBe(null);
             expect(mockCreateIngest).toHaveBeenCalledTimes(0);

@@ -253,6 +253,186 @@ describe('AdsBridge', () => {
                 },
             });
         });
+
+        describe('displayValue', () => {
+            it('does not let null overwrite non-null displayValue', () => {
+                const { bridge, luvio } = createBridge();
+
+                addRecord(
+                    luvio,
+                    createRecord({
+                        id: '123',
+                        fields: {
+                            Child: {
+                                displayValue: 'foo',
+                                value: createRecord({
+                                    id: '456',
+                                }),
+                            },
+                        },
+                    })
+                );
+
+                bridge.addRecords([
+                    createRecord({
+                        id: '123',
+                        fields: {
+                            Child: {
+                                displayValue: null,
+                                value: createRecord({
+                                    id: '456',
+                                }),
+                            },
+                        },
+                    }),
+                ]);
+
+                expect(queryRecord(luvio, { recordId: '123' })).toMatchObject({
+                    data: {
+                        fields: {
+                            Child: {
+                                displayValue: 'foo',
+                                value: {
+                                    id: '456',
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            it('allows to set displayValue when existing field has null value', () => {
+                const { bridge, luvio } = createBridge();
+
+                addRecord(
+                    luvio,
+                    createRecord({
+                        id: '123',
+                        fields: {
+                            Child: {
+                                displayValue: null,
+                                value: null,
+                            },
+                        },
+                    })
+                );
+
+                bridge.addRecords([
+                    createRecord({
+                        id: '123',
+                        fields: {
+                            Child: {
+                                displayValue: 'foo',
+                                value: createRecord({
+                                    id: '456',
+                                }),
+                            },
+                        },
+                    }),
+                ]);
+
+                expect(queryRecord(luvio, { recordId: '123' })).toMatchObject({
+                    data: {
+                        fields: {
+                            Child: {
+                                displayValue: 'foo',
+                                value: {
+                                    id: '456',
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            it('allows to set new displayValue from incoming field has a non-null displayValue', () => {
+                const { bridge, luvio } = createBridge();
+
+                addRecord(
+                    luvio,
+                    createRecord({
+                        id: '123',
+                        fields: {
+                            Child: {
+                                displayValue: 'foo',
+                                value: createRecord({
+                                    id: '456',
+                                }),
+                            },
+                        },
+                    })
+                );
+
+                bridge.addRecords([
+                    createRecord({
+                        id: '123',
+                        fields: {
+                            Child: {
+                                displayValue: 'bar',
+                                value: createRecord({
+                                    id: '789',
+                                }),
+                            },
+                        },
+                    }),
+                ]);
+
+                expect(queryRecord(luvio, { recordId: '123' })).toMatchObject({
+                    data: {
+                        fields: {
+                            Child: {
+                                displayValue: 'bar',
+                                value: {
+                                    id: '789',
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            it('allows to set displayValue to null when incoming field has null value ', () => {
+                const { bridge, luvio } = createBridge();
+
+                addRecord(
+                    luvio,
+                    createRecord({
+                        id: '123',
+                        fields: {
+                            Child: {
+                                displayValue: 'foo',
+                                value: createRecord({
+                                    id: '456',
+                                }),
+                            },
+                        },
+                    })
+                );
+
+                bridge.addRecords([
+                    createRecord({
+                        id: '123',
+                        fields: {
+                            Child: {
+                                displayValue: null,
+                                value: null,
+                            },
+                        },
+                    }),
+                ]);
+
+                expect(queryRecord(luvio, { recordId: '123' })).toMatchObject({
+                    data: {
+                        fields: {
+                            Child: {
+                                displayValue: null,
+                                value: null,
+                            },
+                        },
+                    },
+                });
+            });
+        });
     });
 
     describe('evict', () => {

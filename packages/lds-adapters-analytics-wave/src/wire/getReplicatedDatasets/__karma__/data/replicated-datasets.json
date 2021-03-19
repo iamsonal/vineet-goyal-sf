@@ -111,7 +111,6 @@
             "lastRefreshedDate": "2020-11-30T19:16:04.000Z",
             "name": "Case",
             "replicationDataflowId": "02Kxx0000004DNOEA2",
-            "rowLevelSharing": false,
             "sourceObjectName": "Case",
             "status": "cancelled",
             "supportedConnectionModes": ["full", "incremental", "periodicFull"],

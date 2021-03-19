@@ -148,6 +148,27 @@ function generateAdapterFactoryExport(artifactsDir, generatedAdapterInfos, imper
 }
 
 /**
+ * @param {string} artifactsDir
+ * @param {AdapterInfo[]} generatedAdapterInfos
+ * @param {AdapterInfo[]} imperativeAdapterInfos
+ * @returns {void}
+ */
+function generateAdapterInfoExport(artifactsDir, generatedAdapterInfos, imperativeAdapterInfos) {
+    fs.writeFileSync(
+        path.join(artifactsDir, 'adapter-info.json'),
+        JSON.stringify(
+            {
+                generated: generatedAdapterInfos,
+                imperative: imperativeAdapterInfos,
+                private: SFDC_PRIVATE_ADAPTERS,
+            },
+            null,
+            2
+        )
+    );
+}
+
+/**
  * Utilizes the keyPrefix string to supply the API family for the adapters.
  * Stripping any non-word characters to be used by our instrumentation.
  * For example, `UiApi::` => `UiApi`.
@@ -222,6 +243,7 @@ module.exports = {
             generatedAdapters.filter(({ name }) => !SFDC_PRIVATE_ADAPTERS[name]),
             imperativeAdapters.filter(({ name }) => !SFDC_PRIVATE_ADAPTERS[name])
         );
+        generateAdapterInfoExport(artifactsDir, generatedAdapters, imperativeAdapters);
 
         // right now LDS cli only supports one plugin, so invoke the offline record plugin from this one
         offlineRecordPlugin(compilerConfig, modelInfo);

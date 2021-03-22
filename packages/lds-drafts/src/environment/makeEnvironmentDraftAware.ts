@@ -38,8 +38,6 @@ export function makeEnvironmentDraftAware(
 ): Environment {
     const { draftQueue, recordResponseRetrievers, ingestFunc, store } = options;
 
-    draftQueue.startQueue();
-
     function onDraftActionCompleting(event: DraftQueueCompleteEvent) {
         const { action } = event;
         const { request, tag } = action;

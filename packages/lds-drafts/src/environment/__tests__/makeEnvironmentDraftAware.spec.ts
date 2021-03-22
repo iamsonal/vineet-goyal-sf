@@ -1,9 +1,9 @@
 import { setupDraftEnvironment } from './test-utils';
 
 describe('makeEnvironmentDraftAware', () => {
-    it('starts the draft queue', async () => {
+    it('does not start the draft queue', async () => {
         const { draftQueue } = setupDraftEnvironment();
-        expect(draftQueue.startQueue).toBeCalledTimes(1);
+        expect(draftQueue.startQueue).toBeCalledTimes(0);
     });
 
     describe('dispatchResourceRequest', () => {

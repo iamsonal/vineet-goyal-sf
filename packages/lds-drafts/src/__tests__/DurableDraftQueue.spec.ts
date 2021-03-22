@@ -603,7 +603,7 @@ describe('DurableDraftQueue', () => {
             const callCount = getMockNetworkAdapterCallCount(network);
             expect(callCount).toEqual(1);
 
-            const evictCallOperations = batchOperationsSpy.mock.calls[2][0];
+            const evictCallOperations = batchOperationsSpy.mock.calls[1][0];
             const { type, segment } = evictCallOperations[0];
             expect(evictCallOperations.length).toEqual(1);
             expect(type).toEqual('evictEntries');
@@ -833,6 +833,53 @@ describe('DurableDraftQueue', () => {
                     durableStore.segments[DRAFT_ID_MAPPINGS_SEGMENT]['DraftIdMapping::bar::foo']
                 ).toBeDefined();
             });
+
+            it('doesnt store uploading draft actions', async () => {
+                expect.assertions(3);
+                const draftId = 'fooId';
+                let foundStatus = '';
+                let foundId = '';
+                const durableStore = new MockDurableStore();
+                const network = jest.fn().mockImplementation(() => {
+                    const draftKey = ObjectKeys(durableStore.segments[DRAFT_SEGMENT])[0];
+                    const draftEntry = durableStore.segments[DRAFT_SEGMENT][draftKey] as any;
+                    expect(draftEntry).toBeDefined();
+                    foundId = draftEntry.data.targetId;
+                    foundStatus = draftEntry.data.status;
+                    return Promise.resolve(undefined);
+                });
+                const draftQueue = new DurableDraftQueue(
+                    durableStore,
+                    network,
+                    mockQueuePostHandler,
+                    mockDraftIdHandler
+                );
+                await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftId, draftId);
+                await draftQueue.processNextAction();
+                expect(foundStatus).toBe(DraftActionStatus.Pending);
+                expect(foundId).toBe(draftId);
+            });
+
+            it('reports action as uploading while being processed in the network adapter', async () => {
+                let action: DraftAction<unknown> = undefined;
+                const durableStore = new MockDurableStore();
+                const network = jest.fn();
+                const draftQueue = new DurableDraftQueue(
+                    durableStore,
+                    network,
+                    mockQueuePostHandler,
+                    mockDraftIdHandler
+                );
+                network.mockImplementation(async () => {
+                    const actions = await draftQueue.getQueueActions();
+                    action = actions[0];
+                });
+                const draftId = 'fooId';
+                await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftId, draftId);
+                await draftQueue.processNextAction();
+                expect(action).toBeDefined();
+                expect(action.status).toBe(DraftActionStatus.Uploading);
+            });
         });
     });
 
@@ -977,6 +1024,9 @@ describe('DurableDraftQueue', () => {
             };
 
             const { draftQueue } = setup(testAction);
+            // uploadingActionId is private, but we need to set it to
+            // mock the uploading action
+            (draftQueue as any).uploadingActionId = testAction.id;
             await expect(draftQueue.removeDraftAction(testAction.id)).rejects.toThrowError(
                 'Cannot remove an uploading draft action with ID 123456'
             );
@@ -1120,10 +1170,10 @@ describe('DurableDraftQueue', () => {
             const secondId = '1';
             const firstDurableId = 'firstDurable';
             const secondDurableId = 'secondDurable';
-            const inProgressAction: UploadingDraftAction<unknown> = {
+            const inProgressAction: PendingDraftAction<unknown> = {
                 id: firstId,
                 targetId: firstId,
-                status: DraftActionStatus.Uploading,
+                status: DraftActionStatus.Pending,
                 request: createPatchRequest(),
                 tag: 'UiAPI::RecordRepresentation::fooId',
                 timestamp: Date.now(),
@@ -1151,6 +1201,9 @@ describe('DurableDraftQueue', () => {
                 mockQueuePostHandler,
                 mockDraftIdHandler
             );
+            // uploadingActionId is private, but we need to set it to
+            // mock the uploading action
+            (draftQueue as any).uploadingActionId = firstId;
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(2);
             let result = draftQueue.replaceAction(actions[0].id, actions[1].id);

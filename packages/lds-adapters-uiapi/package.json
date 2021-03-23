@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-uiapi",
-    "version": "1.10.0",
+    "version": "1.10.1",
     "description": "Wire adapters for record related UI API endpoints",
     "license": "MIT",
     "main": "dist/umd/es2018/uiapi-records-service.js",
@@ -37,12 +37,12 @@
         "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.10.0"
+        "@salesforce/lds-bindings": "1.10.1"
     },
     "devDependencies": {
-        "@salesforce/lds-compiler-plugins": "1.10.0",
-        "@salesforce/lds-jest": "1.10.0",
-        "@salesforce/lds-karma": "1.10.0"
+        "@salesforce/lds-compiler-plugins": "1.10.1",
+        "@salesforce/lds-jest": "1.10.1",
+        "@salesforce/lds-karma": "1.10.1"
     },
     "bundlesize": [
         {

@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-commerce-store-pricing",
-    "version": "1.9.5",
+    "version": "1.10.0",
     "description": "Wire adapters Commerce Store Pricing",
     "license": "MIT",
     "main": "dist/umd/es2018/commerce-store-pricing.js",
@@ -26,9 +26,9 @@
         "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.9.5"
+        "@salesforce/lds-bindings": "1.10.0"
     },
     "devDependencies": {
-        "@salesforce/lds-karma": "1.9.5"
+        "@salesforce/lds-karma": "1.10.0"
     }
 }

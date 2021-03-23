@@ -29,6 +29,6 @@
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     },
     "dependencies": {
-        "@luvio/engine": "^0.29.1"
+        "@luvio/engine": "^0.29.2"
     }
 }

@@ -6,6 +6,7 @@ export default class GetDatasets extends LightningElement {
 
     @api types;
     @api folderId;
+    @api includeCurrentVersion;
     @api licenseType;
     @api page;
     @api pageSize;
@@ -15,6 +16,7 @@ export default class GetDatasets extends LightningElement {
     @wire(getDatasets, {
         datasetTypes: '$types',
         folderId: '$folderId',
+        includeCurrentVersion: '$includeCurrentVersion',
         licenseType: '$licenseType',
         page: '$page',
         pageSize: '$pageSize',

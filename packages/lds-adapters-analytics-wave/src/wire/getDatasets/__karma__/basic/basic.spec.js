@@ -63,6 +63,16 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
+    it('gets datasets with current version metadata', async () => {
+        const mock = getMock('datasets-current-version');
+        const config = { includeCurrentVersion: true };
+        mockGetDatasetsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetDatasets);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
     it('gets datasets with folderId, page and pageSize', async () => {
         const mock = getMock('datasets-page');
         const config = {

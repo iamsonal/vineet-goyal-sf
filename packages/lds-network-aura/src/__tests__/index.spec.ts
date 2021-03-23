@@ -3781,6 +3781,7 @@ describe('routes', () => {
                     queryParams: {
                         datasetTypes: ['Default', 'Trended'],
                         folderId: '005xx000001XCD7AAO',
+                        includeCurrentVersion: true,
                         licenseType: 'Sonic',
                         page: 'eyJwYWdlU2',
                         pageSize: 10,
@@ -3793,6 +3794,7 @@ describe('routes', () => {
                     {
                         datasetTypes: ['Default', 'Trended'],
                         folderId: '005xx000001XCD7AAO',
+                        includeCurrentVersion: true,
                         licenseType: 'Sonic',
                         pageParam: 'eyJwYWdlU2',
                         pageSize: 10,

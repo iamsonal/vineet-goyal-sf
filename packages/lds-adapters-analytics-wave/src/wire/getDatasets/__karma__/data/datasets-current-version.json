@@ -1,0 +1,203 @@
+{
+    "datasets": [
+        {
+            "clientShardsUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C96CAE/shards",
+            "createdBy": {
+                "id": "005xx000001X7VDAA0",
+                "name": "Automated Process",
+                "profilePhotoUrl": "https://https://na44.stmfa.stm.salesforce.com//profilephoto/005/T"
+            },
+            "createdDate": "2021-03-08T17:34:04.000Z",
+            "currentVersionId": "0Fcxx0000004C96CAE",
+            "currentVersionTotalRows": 671,
+            "currentVersionUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C96CAE/versions/0Fcxx0000004C96CAE",
+            "dataRefreshDate": "2020-12-09T17:28:12.000Z",
+            "datasetType": "default",
+            "folder": {
+                "id": "00lxx000000j5URAAY",
+                "label": "Learning Adventure",
+                "name": "Learning_Adventure",
+                "url": "/services/data/v52.0/wave/folders/00lxx000000j5URAAY"
+            },
+            "id": "0Fbxx0000004C96CAE",
+            "label": "Wave_Sample_Opportunities",
+            "lastAccessedDate": "2021-03-08T17:39:45.000Z",
+            "lastModifiedBy": {
+                "id": "005xx000001X7VDAA0",
+                "name": "Automated Process",
+                "profilePhotoUrl": "https://na44.stmfa.stm.salesforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2020-12-09T17:28:13.000Z",
+            "name": "Wave_Sample_Opportunities",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "type": "dataset",
+            "url": "/services/data/v52.0/wave/datasets/0Fbxx0000004C96CAE",
+            "versionsUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C96CAE/versions",
+            "visibility": "All"
+        },
+        {
+            "clientShardsUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C92CAE/shards",
+            "createdBy": {
+                "id": "005xx000001X7VDAA0",
+                "name": "Automated Process",
+                "profilePhotoUrl": "https://na44.stmfa.stm.salesforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2021-03-08T17:34:04.000Z",
+            "currentVersionId": "0Fcxx0000004C92CAE",
+            "currentVersionTotalRows": 720,
+            "currentVersionUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C92CAE/versions/0Fcxx0000004C92CAE",
+            "dataRefreshDate": "2020-12-09T17:23:44.000Z",
+            "datasetType": "default",
+            "folder": {
+                "id": "00lxx000000j5URAAY",
+                "label": "Learning Adventure",
+                "name": "Learning_Adventure",
+                "url": "/services/data/v52.0/wave/folders/00lxx000000j5URAAY"
+            },
+            "id": "0Fbxx0000004C92CAE",
+            "label": "anonymized_coffee",
+            "lastModifiedBy": {
+                "id": "005xx000001X7VDAA0",
+                "name": "Automated Process",
+                "profilePhotoUrl": "https://na44.stmfa.stm.salesforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2020-12-09T17:23:44.000Z",
+            "name": "anonymized_coffee",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "type": "dataset",
+            "url": "/services/data/v52.0/wave/datasets/0Fbxx0000004C92CAE",
+            "versionsUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C92CAE/versions",
+            "visibility": "All"
+        },
+        {
+            "clientShardsUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C93CAE/shards",
+            "createdBy": {
+                "id": "005xx000001X7VDAA0",
+                "name": "Automated Process",
+                "profilePhotoUrl": "https://na44.stmfa.stm.salesforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2021-03-08T17:34:04.000Z",
+            "currentVersionId": "0Fcxx0000004C93CAE",
+            "currentVersionTotalRows": 100,
+            "currentVersionUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C93CAE/versions/0Fcxx0000004C93CAE",
+            "dataRefreshDate": "2020-12-09T17:24:57.000Z",
+            "datasetType": "default",
+            "folder": {
+                "id": "00lxx000000j5URAAY",
+                "label": "Learning Adventure",
+                "name": "Learning_Adventure",
+                "url": "/services/data/v52.0/wave/folders/00lxx000000j5URAAY"
+            },
+            "id": "0Fbxx0000004C93CAE",
+            "label": "DTC_Opportunity_SAMPLE",
+            "lastModifiedBy": {
+                "id": "005xx000001X7VDAA0",
+                "name": "Automated Process",
+                "profilePhotoUrl": "https://na44.stmfa.stm.salesforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2020-12-09T17:24:57.000Z",
+            "name": "DTC_Opportunity_SAMPLE",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "type": "dataset",
+            "url": "/services/data/v52.0/wave/datasets/0Fbxx0000004C93CAE",
+            "versionsUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C93CAE/versions",
+            "visibility": "All"
+        },
+        {
+            "clientShardsUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C94CAE/shards",
+            "createdBy": {
+                "id": "005xx000001X7VDAA0",
+                "name": "Automated Process",
+                "profilePhotoUrl": "https://na44.stmfa.stm.salesforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2021-03-08T17:34:04.000Z",
+            "currentVersionId": "0Fcxx0000004C94CAE",
+            "currentVersionTotalRows": 99,
+            "currentVersionUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C94CAE/versions/0Fcxx0000004C94CAE",
+            "dataRefreshDate": "2020-12-09T17:26:02.000Z",
+            "datasetType": "default",
+            "folder": {
+                "id": "00lxx000000j5URAAY",
+                "label": "Learning Adventure",
+                "name": "Learning_Adventure",
+                "url": "/services/data/v52.0/wave/folders/00lxx000000j5URAAY"
+            },
+            "id": "0Fbxx0000004C94CAE",
+            "label": "OpportunitiesRegion",
+            "lastModifiedBy": {
+                "id": "005xx000001X7VDAA0",
+                "name": "Automated Process",
+                "profilePhotoUrl": "https://na44.stmfa.stm.salesforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2020-12-09T17:26:02.000Z",
+            "name": "OpportunitiesRegion",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "type": "dataset",
+            "url": "/services/data/v52.0/wave/datasets/0Fbxx0000004C94CAE",
+            "versionsUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C94CAE/versions",
+            "visibility": "All"
+        },
+        {
+            "clientShardsUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C95CAE/shards",
+            "createdBy": {
+                "id": "005xx000001X7VDAA0",
+                "name": "Automated Process",
+                "profilePhotoUrl": "https://na44.stmfa.stm.salesforce.com/profilephoto/005/T"
+            },
+            "createdDate": "2021-03-08T17:34:04.000Z",
+            "currentVersionId": "0Fcxx0000004C95CAE",
+            "currentVersionTotalRows": 32,
+            "currentVersionUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C95CAE/versions/0Fcxx0000004C95CAE",
+            "dataRefreshDate": "2020-12-09T17:27:06.000Z",
+            "datasetType": "default",
+            "folder": {
+                "id": "00lxx000000j5URAAY",
+                "label": "Learning Adventure",
+                "name": "Learning_Adventure",
+                "url": "/services/data/v52.0/wave/folders/00lxx000000j5URAAY"
+            },
+            "id": "0Fbxx0000004C95CAE",
+            "label": "Quota_Region",
+            "lastModifiedBy": {
+                "id": "005xx000001X7VDAA0",
+                "name": "Automated Process",
+                "profilePhotoUrl": "https://na44.stmfa.stm.salesforce.com/profilephoto/005/T"
+            },
+            "lastModifiedDate": "2020-12-09T17:27:06.000Z",
+            "name": "Quota_Region",
+            "permissions": {
+                "create": true,
+                "manage": true,
+                "modify": true,
+                "view": true
+            },
+            "type": "dataset",
+            "url": "/services/data/v52.0/wave/datasets/0Fbxx0000004C95CAE",
+            "versionsUrl": "/services/data/v52.0/wave/datasets/0Fbxx0000004C95CAE/versions",
+            "visibility": "All"
+        }
+    ],
+    "nextPageUrl": null,
+    "totalSize": 5,
+    "url": "/services/data/v52.0/wave/datasets"
+}

@@ -113,9 +113,6 @@ types:
       - eTag
     (luvio.private):
       - eTag
-  ObjectInfoDirectoryEntryRepresentation:
-    (luvio.key):
-      objectInfoUrl: objectInfoUrl
   ObjectInfoRepresentation:
     (luvio.ttl): 900000
     (luvio.key):
@@ -588,9 +585,6 @@ types:
           modes: SortedStringArray
           optionalFields: SalesforceFieldIdArray
   /object-info:
-    get:
-      (luvio.adapter):
-        name: getObjectInfoDirectory
     '/batch/{objectApiNames}':
       get:
         (luvio.adapter):

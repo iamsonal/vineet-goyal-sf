@@ -11,9 +11,6 @@
         "build": "rollup --config rollup.config.js",
         "clean": "rm -rf dist"
     },
-    "publishConfig": {
-        "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
-    },
     "devDependencies": {
         "@salesforce/lds-instrumentation": "1.10.1"
     }

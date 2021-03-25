@@ -14,9 +14,6 @@
         "test:unit": "jest",
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     },
-    "publishConfig": {
-        "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
-    },
     "devDependencies": {
         "@salesforce/lds-aura-storage": "1.10.1",
         "@salesforce/lds-instrumentation": "1.10.1",

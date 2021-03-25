@@ -27,9 +27,6 @@
         "test:compat": "karma start --single-run --compat",
         "test:unit": "jest"
     },
-    "publishConfig": {
-        "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
-    },
     "dependencies": {
         "@salesforce/lds-bindings": "1.10.1"
     },

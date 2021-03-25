@@ -23,9 +23,6 @@
         "test:compat": "karma start --single-run --compat",
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-cms-delivery"
     },
-    "publishConfig": {
-        "registry": "https://nexus.soma.salesforce.com/nexus/content/repositories/npmjs-internal/"
-    },
     "dependencies": {
         "@salesforce/lds-bindings": "1.10.1"
     },

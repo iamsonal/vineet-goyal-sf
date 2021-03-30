@@ -120,7 +120,7 @@ function normalizeRecordFields(
     entry: DurableStoreEntry<DurableRecordRepresentation>,
     drafts: DraftAction<RecordRepresentation>[],
     userId: string
-): DurableStoreEntries {
+): DurableStoreEntries<DurableRecordRepresentation | FieldValueRepresentation> {
     const record = replayDraftsOnRecord(entry.data, drafts, userId);
     const { fields, links } = record;
 
@@ -128,7 +128,9 @@ function normalizeRecordFields(
     const normalizedFields: {
         [key: string]: StoreLink<unknown>;
     } = {};
-    const returnEntries: DurableStoreEntries = {};
+    const returnEntries: DurableStoreEntries<
+        DurableRecordRepresentation | FieldValueRepresentation
+    > = {};
 
     for (let i = 0, len = linkNames.length; i < len; i++) {
         const fieldName = linkNames[i];
@@ -221,11 +223,11 @@ function createSyntheticRecord(
 }
 
 function getRecordEntriesWithDraftOverlays(
-    durableEntries: DurableStoreEntries,
+    durableEntries: DurableStoreEntries<DurableRecordRepresentation>,
     draftActionMap: DraftActionMap,
     userId: string
 ) {
-    const returnEntries: DurableStoreEntries = ObjectCreate(null);
+    const returnEntries: DurableStoreEntries<DurableRecordRepresentation> = ObjectCreate(null);
     const keys = ObjectKeys(durableEntries);
     for (let i = 0, len = keys.length; i < len; i++) {
         const key = keys[i];
@@ -257,7 +259,7 @@ function getSyntheticRecordEntries(
     draftActionMap: DraftActionMap,
     currentUserId: string
 ) {
-    const returnEntries: DurableStoreEntries = ObjectCreate(null);
+    const returnEntries: DurableStoreEntries<DurableRecordRepresentation> = ObjectCreate(null);
     for (let i = 0, len = draftRecordKeys.length; i < len; i++) {
         const draftKey = draftRecordKeys[i];
         const drafts = [...draftActionMap[draftKey]] as DraftAction<RecordRepresentation>[];
@@ -295,9 +297,9 @@ export function makeDurableStoreDraftAware(
     // and normalize the fields as it comes out of the durable store.
     // Before normalizing the fields, we will query the draft queue to determine if the record has any pending
     // draft actions. If so we will apply the drafts to the denormalized record prior to normalizing into StoreLinks
-    const getEntries: typeof durableStore['getEntries'] = function(
+    const getEntries: typeof durableStore['getEntries'] = function<T>(
         entries: string[]
-    ): Promise<DurableStoreEntries | undefined> {
+    ): Promise<DurableStoreEntries<T> | undefined> {
         const { length: entriesLength } = entries;
         if (entriesLength === 0) {
             return Promise.resolve({});
@@ -335,16 +337,16 @@ export function makeDurableStoreDraftAware(
 
         return durableStore
             .getEntries(filteredEntryIds, DefaultDurableSegment)
-            .then((durableEntries: DurableStoreEntries | undefined) => {
+            .then((durableEntries: DurableStoreEntries<unknown> | undefined) => {
                 if (durableEntries === undefined && filteredEntryIds.length > 0) {
                     return undefined;
                 }
 
                 return draftQueue.getActionsForTags(allRecordKeys).then(draftActionMap => {
-                    const returnEntries: DurableStoreEntries = ObjectCreate(null);
+                    const returnEntries: DurableStoreEntries<T> = ObjectCreate(null);
                     if (durableEntries !== undefined) {
                         const existingEntriesWithDrafts = getRecordEntriesWithDraftOverlays(
-                            durableEntries,
+                            durableEntries as DurableStoreEntries<DurableRecordRepresentation>,
                             draftActionMap,
                             currentUserId
                         );
@@ -370,8 +372,8 @@ export function makeDurableStoreDraftAware(
     // if an entry is a record or record field, we store the entire record with its fields denormalized
     // if the record has any draft fields applied to it, we restore the original field value to the record
     // prior to putting it to ensure that no draft data enters the DurableStore
-    const setEntries: typeof durableStore['setEntries'] = function(
-        entries: DurableStoreEntries
+    const setEntries: typeof durableStore['setEntries'] = function<T>(
+        entries: DurableStoreEntries<T>
     ): Promise<void> {
         const putEntries = ObjectCreate(null);
         const keys = ObjectKeys(entries);

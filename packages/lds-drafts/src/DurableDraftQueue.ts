@@ -159,36 +159,38 @@ export class DurableDraftQueue implements DraftQueue {
     }
 
     getQueueActions(): Promise<DraftAction<unknown>[]> {
-        return this.durableStore.getAllEntries(DRAFT_SEGMENT).then(durableEntries => {
-            const queue: DraftAction<unknown>[] = [];
-            if (durableEntries === undefined) {
-                return queue;
-            }
-            const keys = ObjectKeys(durableEntries);
-            for (let i = 0, len = keys.length; i < len; i++) {
-                const entry = durableEntries[keys[i]];
-                if (entry.data.id === this.uploadingActionId) {
-                    entry.data.status = DraftActionStatus.Uploading;
+        return this.durableStore
+            .getAllEntries<DraftAction<unknown>>(DRAFT_SEGMENT)
+            .then(durableEntries => {
+                const queue: DraftAction<unknown>[] = [];
+                if (durableEntries === undefined) {
+                    return queue;
                 }
-                queue.push(entry.data);
-            }
-
-            const sortedQueue = queue.sort((a, b) => {
-                const aTime = parseInt(a.id, 10);
-                const bTime = parseInt(b.id, 10);
-
-                // safety check
-                if (isNaN(aTime)) {
-                    return 1;
-                }
-                if (isNaN(bTime)) {
-                    return -1;
+                const keys = ObjectKeys(durableEntries);
+                for (let i = 0, len = keys.length; i < len; i++) {
+                    const entry = durableEntries[keys[i]];
+                    if (entry.data.id === this.uploadingActionId) {
+                        entry.data.status = DraftActionStatus.Uploading;
+                    }
+                    queue.push(entry.data);
                 }
 
-                return aTime - bTime;
+                const sortedQueue = queue.sort((a, b) => {
+                    const aTime = parseInt(a.id, 10);
+                    const bTime = parseInt(b.id, 10);
+
+                    // safety check
+                    if (isNaN(aTime)) {
+                        return 1;
+                    }
+                    if (isNaN(bTime)) {
+                        return -1;
+                    }
+
+                    return aTime - bTime;
+                });
+                return sortedQueue;
             });
-            return sortedQueue;
-        });
     }
 
     enqueue<T>(request: ResourceRequest, tag: string, targetId: string): Promise<DraftAction<T>> {
@@ -212,8 +214,8 @@ export class DurableDraftQueue implements DraftQueue {
                 timestamp: Date.now(),
                 metadata: {},
             };
-            const entry: DurableStoreEntry = { data: action };
-            const entries: DurableStoreEntries = { [durableStoreId]: entry };
+            const entry: DurableStoreEntry<DraftAction<T>> = { data: action };
+            const entries: DurableStoreEntries<DraftAction<T>> = { [durableStoreId]: entry };
             this.notifyChangedListeners({
                 type: DraftQueueEventType.ActionAdding,
                 action: action,
@@ -316,8 +318,12 @@ export class DurableDraftQueue implements DraftQueue {
                             timestamp,
                             metadata,
                         };
-                        const entry: DurableStoreEntry = { data: errorAction };
-                        const entries: DurableStoreEntries = { [durableEntryKey]: entry };
+                        const entry: DurableStoreEntry<DraftAction<unknown>> = {
+                            data: errorAction,
+                        };
+                        const entries: DurableStoreEntries<DraftAction<unknown>> = {
+                            [durableEntryKey]: entry,
+                        };
                         return this.durableStore.setEntries(entries, DRAFT_SEGMENT).then(() => {
                             this.state = DraftQueueState.Error;
                             return this.notifyChangedListeners({
@@ -465,12 +471,16 @@ export class DurableDraftQueue implements DraftQueue {
                 // TODO: W-8873834 - Will add batching support to durable store
                 // we should use that here to remove and set both actions in one operation
                 return this.removeDraftAction(replacingAction.id).then(() => {
-                    const entry: DurableStoreEntry = { data: actionToReplace };
+                    const entry: DurableStoreEntry<PendingDraftAction<unknown>> = {
+                        data: actionToReplace as PendingDraftAction<unknown>,
+                    };
                     const durableEntryKey = buildDraftDurableStoreKey(
                         actionToReplace.tag,
                         actionToReplace.id
                     );
-                    const entries: DurableStoreEntries = { [durableEntryKey]: entry };
+                    const entries: DurableStoreEntries<PendingDraftAction<unknown>> = {
+                        [durableEntryKey]: entry,
+                    };
                     return this.notifyChangedListeners({
                         type: DraftQueueEventType.ActionUpdating,
                         action: actionToReplaceCopy,
@@ -526,8 +536,10 @@ export class DurableDraftQueue implements DraftQueue {
             }).then(() => {
                 action.metadata = metadata;
                 const durableStoreId = buildDraftDurableStoreKey(action.tag, action.id);
-                const entry: DurableStoreEntry = { data: action };
-                const entries: DurableStoreEntries = { [durableStoreId]: entry };
+                const entry: DurableStoreEntry<DraftAction<unknown>> = { data: action };
+                const entries: DurableStoreEntries<DraftAction<unknown>> = {
+                    [durableStoreId]: entry,
+                };
                 return this.durableStore.setEntries(entries, DRAFT_SEGMENT).then(() => {
                     return this.notifyChangedListeners({
                         type: DraftQueueEventType.ActionUpdated,
@@ -564,9 +576,11 @@ export class DurableDraftQueue implements DraftQueue {
     storeOperationsForUploadedDraft(
         queue: DraftAction<unknown>[],
         action: CompletedDraftAction<unknown>
-    ): DurableStoreOperation[] {
+    ): DurableStoreOperation<DraftIdMappingEntry | DraftAction<unknown>>[] {
         const { request, tag, id } = action;
-        const storeOperations: DurableStoreOperation[] = [];
+        const storeOperations: DurableStoreOperation<
+            DraftIdMappingEntry | DraftAction<unknown>
+        >[] = [];
 
         if (request.method === 'post') {
             const queueOperations = this.updateQueueOnPostCompletion(action, queue);
@@ -609,8 +623,8 @@ export class DurableDraftQueue implements DraftQueue {
      */
     private mapQueueOperationsToDurableStoreOperations(
         queueOperations: QueueOperation[]
-    ): DurableStoreOperation[] {
-        const setEntries: DurableStoreEntries = {};
+    ): DurableStoreOperation<DraftAction<unknown>>[] {
+        const setEntries: DurableStoreEntries<DraftAction<unknown>> = {};
         const evictEntries: string[] = [];
         for (let i = 0, len = queueOperations.length; i < len; i++) {
             const operation = queueOperations[i];
@@ -627,7 +641,7 @@ export class DurableDraftQueue implements DraftQueue {
             }
         }
 
-        const storeOperations: DurableStoreOperation[] = [];
+        const storeOperations: DurableStoreOperation<DraftAction<unknown>>[] = [];
 
         if (ObjectKeys(setEntries).length > 0) {
             storeOperations.push({

@@ -175,7 +175,7 @@ export function buildInMemorySnapshot(
         );
 
         // Cache hit
-        if (luvio.snapshotDataAvailable(snapshot)) {
+        if (luvio.snapshotAvailable(snapshot)) {
             return snapshot;
         }
     }

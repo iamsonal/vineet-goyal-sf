@@ -265,7 +265,7 @@ export const factory: AdapterFactory<GetRecordAvatarsConfig, RecordAvatarBulkMap
         const cacheLookup = buildInMemorySnapshot(luvio, config);
 
         // CACHE HIT
-        if (luvio.snapshotDataAvailable(cacheLookup)) {
+        if (luvio.snapshotAvailable(cacheLookup)) {
             return cacheLookup;
         }
 

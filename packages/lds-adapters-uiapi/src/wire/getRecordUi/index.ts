@@ -174,7 +174,7 @@ export function buildInMemorySnapshot(
         );
 
         // CACHE HIT or unfulfilled returns snapshot
-        if (luvio.snapshotDataAvailable(cacheData) || isUnfulfilledSnapshot(cacheData)) {
+        if (luvio.snapshotAvailable(cacheData) || isUnfulfilledSnapshot(cacheData)) {
             return cacheData;
         }
     }
@@ -376,7 +376,7 @@ function resolveUnfulfilledSnapshot(
                     body,
                     buildSnapshotRefresh(luvio, config)
                 );
-                if (luvio.snapshotDataAvailable(dataSnapshot)) {
+                if (luvio.snapshotAvailable(dataSnapshot)) {
                     return dataSnapshot;
                 }
                 if (isUnfulfilledSnapshot(dataSnapshot)) {

@@ -178,7 +178,7 @@ export function getRecordByFields(
     config: GetRecordConfig
 ): Snapshot<RecordRepresentation> | Promise<Snapshot<RecordRepresentation>> {
     const snapshot = buildInMemorySnapshot(luvio, config);
-    if (luvio.snapshotDataAvailable(snapshot)) {
+    if (luvio.snapshotAvailable(snapshot)) {
         return snapshot;
     }
 

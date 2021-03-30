@@ -191,7 +191,7 @@ export const factory: AdapterFactory<GetLayoutConfig, RecordLayoutRepresentation
         const snapshot = buildInMemorySnapshot(luvio, config);
 
         // Cache hit
-        if (luvio.snapshotDataAvailable(snapshot)) {
+        if (luvio.snapshotAvailable(snapshot)) {
             return snapshot;
         }
 

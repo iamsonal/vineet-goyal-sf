@@ -45,7 +45,7 @@ export function makeEnvironmentDraftAware(
 
         if (method === 'delete') {
             env.storeEvict(tag);
-            env.storeBroadcast(env.rebuildSnapshot, env.snapshotDataAvailable);
+            env.storeBroadcast(env.rebuildSnapshot, env.snapshotAvailable);
             return Promise.resolve();
         }
         return draftAwareHandleResponse(
@@ -64,13 +64,13 @@ export function makeEnvironmentDraftAware(
             };
 
             ingestFunc(record, path, store, Date.now());
-            env.storeBroadcast(env.rebuildSnapshot, env.snapshotDataAvailable);
+            env.storeBroadcast(env.rebuildSnapshot, env.snapshotAvailable);
         });
     }
 
     function onDraftActionCompleted(event: DraftQueueCompleteEvent) {
         return env.reviveRecordsToStore([event.action.tag]).then(() => {
-            env.storeBroadcast(env.rebuildSnapshot, env.snapshotDataAvailable);
+            env.storeBroadcast(env.rebuildSnapshot, env.snapshotAvailable);
         });
     }
 

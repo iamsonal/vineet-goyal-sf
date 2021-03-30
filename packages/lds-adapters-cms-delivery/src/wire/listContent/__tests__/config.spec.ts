@@ -14,7 +14,7 @@ describe('input config validation', () => {
             storeLookup: jest.fn().mockReturnValue({ state: 'Fulfilled', data: mockData }),
             storeIngest: jest.fn(),
             storeBroadcast: jest.fn(),
-            snapshotDataAvailable: jest.fn(),
+            snapshotAvailable: jest.fn(),
         };
         await listContent(mockLds as any)({
             communityId: '123456781234567',

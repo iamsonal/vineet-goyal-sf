@@ -195,7 +195,7 @@ export const getRelatedListRecordsBatchAdapterFactory: AdapterFactory<
         const cacheSnapshot = buildInMemorySnapshot(luvio, coercedConfig);
 
         // Cache Hit
-        if (luvio.snapshotDataAvailable(cacheSnapshot) === true) {
+        if (luvio.snapshotAvailable(cacheSnapshot) === true) {
             return cacheSnapshot;
         }
 

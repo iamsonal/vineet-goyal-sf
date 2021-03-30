@@ -418,7 +418,7 @@ function getMruListUiSnapshotFromListInfo(
         return buildNetworkSnapshot_getMruListUi(luvio, config);
     }
 
-    if (luvio.snapshotDataAvailable(snapshot)) {
+    if (luvio.snapshotAvailable(snapshot)) {
         // cache hit :partyparrot:
         return snapshot;
     }

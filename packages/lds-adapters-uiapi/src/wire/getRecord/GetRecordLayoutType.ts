@@ -82,7 +82,13 @@ function refresh(
             );
         }
 
-        const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, snapshot.data);
+        const { data } = snapshot;
+        if (data === undefined) {
+            throw new Error(
+                `RecordUi adapter resolved with a ${snapshot.state} snapshot with undefined data`
+            );
+        }
+        const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, data);
         const fields = getFieldsFromLayoutMap(layoutMap, objectInfo);
         return getRecordByFieldsCache(
             luvio,
@@ -175,7 +181,15 @@ function processRecordUiRepresentation(
             )}`
         );
     }
-    const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, snapshot.data);
+
+    const { data } = snapshot;
+    if (data === undefined) {
+        throw new Error(
+            `RecordUi adapter resolved with a ${snapshot.state} snapshot with undefined data`
+        );
+    }
+
+    const { layoutMap, objectInfo } = getLayoutMapAndObjectInfo(recordId, data);
     return getRecord(luvio, refresh, recordId, layoutMap, objectInfo, optionalFields);
 }
 
@@ -186,7 +200,7 @@ function isPromise<D>(value: D | Promise<D> | null): value is Promise<D> {
 
 function lookupObjectInfo(luvio: Luvio, apiName: string): ObjectInfoRepresentation | null {
     const snapshot = getObjectInfoCache(luvio, { objectApiName: apiName });
-    if (luvio.snapshotDataAvailable(snapshot)) {
+    if (luvio.snapshotAvailable(snapshot)) {
         if (!isErrorSnapshot(snapshot) && snapshot.data !== undefined) {
             return snapshot.data;
         }
@@ -233,7 +247,7 @@ function lookupLayouts(
             });
 
             // Cache hit
-            if (luvio.snapshotDataAvailable(snapshot) && !isErrorSnapshot(snapshot)) {
+            if (luvio.snapshotAvailable(snapshot) && !isErrorSnapshot(snapshot)) {
                 layoutMap[mode] = snapshot.data!;
             } else {
                 return null;
@@ -325,7 +339,7 @@ export function getRecordLayoutType(
     });
     const refresh = buildSnapshotRefresh(luvio, config);
     // If we haven't seen the record then go to the server
-    if (!luvio.snapshotDataAvailable(recordSnapshot) || recordSnapshot.data === undefined) {
+    if (!luvio.snapshotAvailable(recordSnapshot) || recordSnapshot.data === undefined) {
         return fetchRecordLayout(luvio, refresh, recordId, layoutTypes, modes, optionalFields);
     }
 

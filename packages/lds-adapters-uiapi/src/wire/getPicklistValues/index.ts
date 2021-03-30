@@ -153,7 +153,7 @@ export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepr
         }
 
         const snapshot = buildInMemorySnapshot(luvio, config);
-        if (luvio.snapshotDataAvailable(snapshot)) {
+        if (luvio.snapshotAvailable(snapshot)) {
             return snapshot;
         }
 

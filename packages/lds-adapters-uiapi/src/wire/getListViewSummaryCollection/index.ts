@@ -230,7 +230,7 @@ export const factory: AdapterFactory<
         const cacheSnapshot = buildInMemorySnapshot(luvio, config);
 
         // Cache Hit
-        if (luvio.snapshotDataAvailable(cacheSnapshot)) {
+        if (luvio.snapshotAvailable(cacheSnapshot)) {
             return cacheSnapshot;
         }
 

@@ -13,8 +13,8 @@
         "clean": "rm -rf dist"
     },
     "dependencies": {
-        "@luvio/engine": "^0.29.2",
-        "@luvio/environments": "^0.29.2"
+        "@luvio/engine": "^0.30.0",
+        "@luvio/environments": "^0.30.0"
     },
     "devDependencies": {
         "@mobileplatform/nimbus-plugin-lds": "1.10.2",

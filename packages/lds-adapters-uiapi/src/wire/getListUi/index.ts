@@ -592,7 +592,7 @@ function getListUiSnapshotFromListInfo(
         return buildNetworkSnapshot_getListUi(luvio, context, config);
     }
 
-    if (luvio.snapshotDataAvailable(snapshot)) {
+    if (luvio.snapshotAvailable(snapshot)) {
         // cache hit :partyparrot:
         return snapshot;
     }

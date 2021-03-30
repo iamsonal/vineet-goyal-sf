@@ -265,7 +265,7 @@ export const factory: AdapterFactory<
         });
 
         // Cache Hit
-        if (luvio.snapshotDataAvailable(cacheSnapshot) === true) {
+        if (luvio.snapshotAvailable(cacheSnapshot) === true) {
             return cacheSnapshot;
         }
 

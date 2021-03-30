@@ -55,7 +55,7 @@ function unsubscribe(uuidFn: () => string | undefined): () => Promise<void> {
     };
 }
 
-function toNativeEntries(entries: DurableStoreEntries) {
+function toNativeEntries(entries: DurableStoreEntries<unknown>) {
     const putEntries = ObjectCreate(null);
     const keys = ObjectKeys(entries);
     for (let i = 0, len = keys.length; i < len; i++) {
@@ -69,7 +69,7 @@ function toNativeEntries(entries: DurableStoreEntries) {
 }
 
 export class NimbusDurableStore implements DurableStore {
-    batchOperations(operations: LuvioOperation[]): Promise<void> {
+    batchOperations(operations: LuvioOperation<unknown>[]): Promise<void> {
         const nimbusOperations: NimbusOperation[] = [];
 
         for (let i = 0, len = operations.length; i < len; i++) {
@@ -109,7 +109,10 @@ export class NimbusDurableStore implements DurableStore {
         return random.toString();
     }
 
-    getEntries(entryIds: string[], segment: string): Promise<DurableStoreEntries | undefined> {
+    getEntries<T>(
+        entryIds: string[],
+        segment: string
+    ): Promise<DurableStoreEntries<T> | undefined> {
         if (entryIds.length === 0) {
             return Promise.resolve({});
         }
@@ -123,19 +126,19 @@ export class NimbusDurableStore implements DurableStore {
                     return undefined;
                 }
 
-                const returnEntries: DurableStoreEntries = ObjectCreate(null);
+                const returnEntries: DurableStoreEntries<T> = ObjectCreate(null);
                 const keys = ObjectKeys(entries);
                 for (let i = 0, len = keys.length; i < len; i++) {
                     const key = keys[i];
                     // values are stored on native side as JSON strings
-                    returnEntries[key] = JSONParse(entries[key]) as DurableStoreEntry;
+                    returnEntries[key] = JSONParse(entries[key]) as DurableStoreEntry<T>;
                 }
                 return returnEntries;
             })
             .finally(() => tasker.done());
     }
 
-    getAllEntries(segment: string): Promise<DurableStoreEntries | undefined> {
+    getAllEntries<T>(segment: string): Promise<DurableStoreEntries<T> | undefined> {
         tasker.add();
         return __nimbus.plugins.LdsDurableStore.getAllEntriesInSegment(segment)
             .then(result => {
@@ -147,19 +150,19 @@ export class NimbusDurableStore implements DurableStore {
                     return undefined;
                 }
 
-                const returnEntries: DurableStoreEntries = ObjectCreate(null);
+                const returnEntries: DurableStoreEntries<T> = ObjectCreate(null);
                 const keys = ObjectKeys(entries);
                 for (let i = 0, len = keys.length; i < len; i++) {
                     const key = keys[i];
                     // values are stored on native side as JSON strings
-                    returnEntries[key] = JSONParse(entries[key]) as DurableStoreEntry;
+                    returnEntries[key] = JSONParse(entries[key]) as DurableStoreEntry<T>;
                 }
                 return returnEntries;
             })
             .finally(() => tasker.done());
     }
 
-    setEntries(entries: DurableStoreEntries, segment: string): Promise<void> {
+    setEntries<T>(entries: DurableStoreEntries<T>, segment: string): Promise<void> {
         // TODO W-8963041: Remove this once old versions of setEntries are no longer supported
         if (__nimbus.plugins.LdsDurableStore.batchOperations === undefined) {
             return this.setEntriesOld(entries, segment);
@@ -170,7 +173,7 @@ export class NimbusDurableStore implements DurableStore {
         ]);
     }
 
-    setEntriesOld(entries: DurableStoreEntries, segment: string): Promise<void> {
+    setEntriesOld(entries: DurableStoreEntries<unknown>, segment: string): Promise<void> {
         const putEntries = toNativeEntries(entries);
 
         tasker.add();

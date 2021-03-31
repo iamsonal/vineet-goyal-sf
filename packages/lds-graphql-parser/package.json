@@ -1,0 +1,15 @@
+{
+    "name": "@salesforce/lds-graphql-parser",
+    "version": "1.10.2",
+    "description": "GraphQL parser for LDS GraphQL adapter",
+    "main": "dist/ldsGraphqlParser.js",
+    "types": "dist/main.d.ts",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+        "clean": "rm -rf dist",
+        "build": "rollup --config rollup.config.js",
+        "test:unit": "jest",
+        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
+    }
+}

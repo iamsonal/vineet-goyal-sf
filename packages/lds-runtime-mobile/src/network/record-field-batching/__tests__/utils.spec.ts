@@ -4,7 +4,12 @@ import {
     shouldUseAggregateUiForFields,
     UiApiParams,
 } from '../utils';
-import { BASE_URI, buildResourceRequest, generateMockedRecordFields } from './testUtils';
+import {
+    BASE_URI,
+    buildResourceRequest,
+    generateMockedRecordFields,
+    wrapFieldsInRecordObject,
+} from './testUtils';
 
 describe('record-field-batching utils', () => {
     describe('mergeRecordFields', () => {
@@ -602,19 +607,3 @@ describe('record-field-batching utils', () => {
         });
     });
 });
-
-export function wrapFieldsInRecordObject(fields: any) {
-    return {
-        apiName: 'foo',
-        childRelationships: {},
-        eTag: 'eTag',
-        fields: fields,
-        id: 'oppy',
-        systemModstamp: '01-01-1970',
-        lastModifiedById: 'user',
-        lastModifiedDate: '01-01-1970',
-        recordTypeId: 'recordTypeId',
-        recordTypeInfo: null,
-        weakEtag: 1,
-    };
-}

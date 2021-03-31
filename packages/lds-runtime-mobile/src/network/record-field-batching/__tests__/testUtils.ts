@@ -1,4 +1,5 @@
 import { ResourceRequest } from '@luvio/engine';
+import { FieldValueRepresentation } from '@salesforce/lds-adapters-uiapi';
 export const BASE_URI = '/services/data/v52.0';
 
 export function generateMockedRecordFields(
@@ -32,4 +33,20 @@ export function buildResourceRequest(resourceRequest: Partial<ResourceRequest>):
 
 export function verifyRequestBasePath(request: ResourceRequest, expectedBasePath: string) {
     expect(request.basePath).toBe(expectedBasePath);
+}
+
+export function wrapFieldsInRecordObject(fields: { [key: string]: FieldValueRepresentation }) {
+    return {
+        apiName: 'foo',
+        childRelationships: {},
+        eTag: 'eTag',
+        fields: fields,
+        id: 'oppy',
+        systemModstamp: '01-01-1970',
+        lastModifiedById: 'user',
+        lastModifiedDate: '01-01-1970',
+        recordTypeId: 'recordTypeId',
+        recordTypeInfo: null,
+        weakEtag: 1,
+    };
 }

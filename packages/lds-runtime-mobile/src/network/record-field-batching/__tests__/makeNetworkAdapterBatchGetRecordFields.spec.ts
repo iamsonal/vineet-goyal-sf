@@ -9,7 +9,8 @@ import {
     generateMockedRecordFields,
     verifyRequestBasePath,
 } from './testUtils';
-import { wrapFieldsInRecordObject } from './utils.spec';
+import { wrapFieldsInRecordObject } from './testUtils';
+
 const RECORD_ID = '001x0000004u7cZAAQ';
 const ACCOUNT_ID_FIELD_STRING = 'Account.Id';
 const ACCOUNT_NAME_FIELD_STRING = 'Account.Name';

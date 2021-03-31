@@ -198,10 +198,10 @@
                 "__ref": "UiApi::RecordRepresentation:001RM00000558MnYAI__fields__Id"
             },
             "Parent": {
-                "__ref": "UiApi::RecordRepresentation:001RM00000558MnYAI__fields__Parent"
-            },
-            "ParentId": {
-                "__ref": "UiApi::RecordRepresentation:001RM00000558MnYAI__fields__ParentId"
+                "__ref": "UiApi::RecordRepresentation:001RM00000558MnYAI__fields__Parent",
+                "data": {
+                    "fields": ["Id"]
+                }
             }
         },
         "id": "001RM00000558MnYAI",
@@ -229,10 +229,6 @@
         "value": "001RM00000558MnYAI"
     },
     "UiApi::RecordRepresentation:001RM00000558MnYAI__fields__Parent": {
-        "displayValue": null,
-        "value": null
-    },
-    "UiApi::RecordRepresentation:001RM00000558MnYAI__fields__ParentId": {
         "displayValue": null,
         "value": null
     }

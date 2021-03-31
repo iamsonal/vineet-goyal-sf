@@ -32,6 +32,7 @@ import deepRecord from './data/sampleRecordDeep';
 import storeRecordsWith6LevelRefsCustom from './data/store-records-6-level-refs-custom.json';
 import storeRecordsWith6LevelRefsAccount from './data/store-records-6-level-refs-account.json';
 import storeRecordsW8249949 from './data/store-records-w-8249949.json';
+import storeRecordsWith6LevelRefsAccountWithoutSiblingIdField from './data/store-records-6-level-refs-account-without-sibling-Id-field.json';
 
 import { ObjectKeys } from '../language';
 
@@ -62,7 +63,11 @@ describe('getTrackedFields', () => {
 
         ingest(
             buildSampleRecord(),
-            { fullPath: keyBuilder({ recordId: record.id }), parent: null },
+            {
+                fullPath: keyBuilder({ recordId: record.id }),
+                parent: null,
+                propertyName: '',
+            },
             luvio,
             store,
             0
@@ -85,7 +90,11 @@ describe('getTrackedFields', () => {
 
         ingest(
             buildSampleRecord(),
-            { fullPath: keyBuilder({ recordId: record.id }), parent: null },
+            {
+                fullPath: keyBuilder({ recordId: record.id }),
+                parent: null,
+                propertyName: '',
+            },
             luvio,
             store,
             0
@@ -109,7 +118,11 @@ describe('getTrackedFields', () => {
 
         ingest(
             buildSampleRecord(),
-            { fullPath: keyBuilder({ recordId: record.id }), parent: null },
+            {
+                fullPath: keyBuilder({ recordId: record.id }),
+                parent: null,
+                propertyName: '',
+            },
             luvio,
             store,
             0
@@ -132,7 +145,11 @@ describe('getTrackedFields', () => {
 
         ingest(
             buildRecursiveRecord(),
-            { fullPath: keyBuilder({ recordId: record.id }), parent: null },
+            {
+                fullPath: keyBuilder({ recordId: record.id }),
+                parent: null,
+                propertyName: '',
+            },
             luvio,
             store,
             0
@@ -149,7 +166,11 @@ describe('getTrackedFields', () => {
 
         ingest(
             buildRecursiveRecordDifferentPaths(),
-            { fullPath: keyBuilder({ recordId: record.id }), parent: null },
+            {
+                fullPath: keyBuilder({ recordId: record.id }),
+                parent: null,
+                propertyName: '',
+            },
             luvio,
             store,
             0
@@ -179,7 +200,11 @@ describe('getTrackedFields', () => {
 
         ingest(
             record,
-            { fullPath: keyBuilder({ recordId: record.id }), parent: null },
+            {
+                fullPath: keyBuilder({ recordId: record.id }),
+                parent: null,
+                propertyName: '',
+            },
             luvio,
             store,
             0
@@ -226,7 +251,6 @@ describe('getTrackedFields', () => {
             'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__c',
             'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Id',
             'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Name',
-            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__c',
         ];
 
         // Record with 6 depth relationship field (boundary value)
@@ -239,51 +263,77 @@ describe('getTrackedFields', () => {
         // Name: Dep7, RecordId: a00xx000000bnXNAAY
         const dep7key = keyBuilder({ recordId: 'a00xx000000bnXNAAY' });
         const dep7Fields = getTrackedFields(dep7key, luvio.getNode(dep7key), []);
+        expectedFields.push(
+            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__c'
+        );
         expect(dep7Fields).toEqual(expectedFields);
     });
 
-    it('should not include 6 levels deep null relationship fields', () => {
+    it('should not include 6 levels deep null relationship fields which have linked data', () => {
         const store = new Store();
         store.records = storeRecordsW8249949;
         const luvio = new Luvio(new Environment(store, () => Promise.reject()));
 
         // Record with 7 depth relationship fields
-        // Name: Dep6, RecordId: a1nxx000001hGmbAAE
-        const dep6Fields = getTrackedFields(luvio, 'a1nxx000001hGmbAAE', []);
+        // Name: SP-5089528, RecordId: a1nxx000001hGmbAAE
+        const dep6Key = keyBuilder({ recordId: 'a1nxx000001hGmbAAE' });
+        const dep6Fields = getTrackedFields(dep6Key, luvio.getNode(dep6Key), []);
         const violators = dep6Fields.filter(field => field.split('.').length > 7); // root + 6
         expect(violators.length).toEqual(0);
     });
 
-    it('should not include 6 levels deep relationship field', () => {
+    it('should not include 6 levels deep relationship fields have sibling Id field in the store', () => {
         const store = new Store();
         store.records = storeRecordsWith6LevelRefsAccount;
         const luvio = new Luvio(new Environment(store, () => Promise.reject()));
 
         const expectedFields = [
-            'Department__c.Id',
-            'Department__c.Name',
-            'Department__c.ParentDepartment__c',
-            'Department__c.ParentDepartment__r.Id',
-            'Department__c.ParentDepartment__r.Name',
-            'Department__c.ParentDepartment__r.ParentDepartment__c',
-            'Department__c.ParentDepartment__r.ParentDepartment__r.Id',
-            'Department__c.ParentDepartment__r.ParentDepartment__r.Name',
-            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__c',
-            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Id',
-            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Name',
-            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__c',
-            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Id',
-            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Name',
-            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__c',
-            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.AccountId',
-            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Id',
-            'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.Name',
+            'Account.Parent.Id',
+            'Account.Parent.Parent.Id',
+            'Account.Parent.Parent.Parent.Id',
+            'Account.Parent.Parent.Parent.Parent.Id',
+            'Account.Parent.Parent.Parent.Parent.Parent.Id',
+            'Account.Parent.Parent.Parent.Parent.ParentId',
+            'Account.Parent.Parent.Parent.ParentId',
+            'Account.Parent.Parent.ParentId',
+            'Account.Parent.ParentId',
+            'Account.ParentId',
         ];
 
-        // Record with 6 depth relationship field (boundary value)
-        // Name: Dep6, RecordId: a00xx000000bnVlAAI
-        const dep6key = keyBuilder({ recordId: 'a00xx000000bnVlAAI' });
+        // Record with 6-level depth parent relationship field (boundary value)
+        // Top parent record: 001RM00000558MnYAI
+        const dep6key = keyBuilder({ recordId: '001RM00000558MhYAI' });
         const dep6Fields = getTrackedFields(dep6key, luvio.getNode(dep6key), []);
+        expect(dep6Fields).toEqual(expectedFields);
+    });
+
+    /**
+     * It's not guaranteed that sibling Id fields (e.g. AccountId) are returned with pre-defined relationship fields.
+     * This test case is intended to document the cache state for relationship fields. getTrackedFields() is expectded
+     * to return the same result as when relationship fields which havesibling Id field in the store.
+     */
+    it('should not include 6 levels deep relationship fields which have no sibling Id field in the store', () => {
+        const store = new Store();
+        store.records = storeRecordsWith6LevelRefsAccountWithoutSiblingIdField;
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
+
+        const expectedFields = [
+            'Account.Parent.Id',
+            'Account.Parent.Parent.Id',
+            'Account.Parent.Parent.Parent.Id',
+            'Account.Parent.Parent.Parent.Parent.Id',
+            'Account.Parent.Parent.Parent.Parent.Parent.Id',
+            'Account.Parent.Parent.Parent.Parent.ParentId',
+            'Account.Parent.Parent.Parent.ParentId',
+            'Account.Parent.Parent.ParentId',
+            'Account.Parent.ParentId',
+            'Account.ParentId',
+        ];
+
+        // Record with 6-level depth parent relationship field (boundary value)
+        // Top parent record: 001RM00000558MnYAI
+        const dep6Key = keyBuilder({ recordId: '001RM00000558MhYAI' });
+        const dep6Fields = getTrackedFields(dep6Key, luvio.getNode(dep6Key), []);
         expect(dep6Fields).toEqual(expectedFields);
     });
 
@@ -310,7 +360,7 @@ describe('extractTrackedFields', () => {
         const store = new Store();
         const luvio = new Luvio(new Environment(store, () => Promise.reject()));
         const recordKey = keyBuilder({ recordId: record.id });
-        ingest(record, { fullPath: recordKey, parent: null }, luvio, store, 0);
+        ingest(record, { fullPath: recordKey, parent: null, propertyName: '' }, luvio, store, 0);
 
         const node = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(recordKey);
 
@@ -339,7 +389,7 @@ describe('extractTrackedFieldsToTrie', () => {
         const store = new Store();
         const luvio = new Luvio(new Environment(store, () => Promise.reject()));
         const recordKey = keyBuilder({ recordId: record.id });
-        ingest(record, { fullPath: recordKey, parent: null }, luvio, store, 0);
+        ingest(record, { fullPath: recordKey, parent: null, propertyName: '' }, luvio, store, 0);
 
         const node = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(recordKey);
 

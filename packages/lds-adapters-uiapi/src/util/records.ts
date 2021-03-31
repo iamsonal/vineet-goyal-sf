@@ -1,4 +1,4 @@
-import { ProxyGraphNode, GraphNode, StoreLink } from '@luvio/engine';
+import { ProxyGraphNode, GraphNode } from '@luvio/engine';
 import { FieldRepresentation } from '../generated/types/FieldRepresentation';
 import {
     FieldValueRepresentation,
@@ -39,7 +39,6 @@ import {
 type FieldValueRepresentationValue = FieldValueRepresentation['value'];
 
 const CUSTOM_API_NAME_SUFFIX = '__c';
-const CUSTOM_RELATIONSHIP_FIELD_SUFFIX = '__r';
 const CUSTOM_EXTERNAL_OBJECT_FIELD_SUFFIX = '__x';
 
 export interface FieldValueRepresentationLinkState {
@@ -229,15 +228,14 @@ export function extractTrackedFieldsToTrie(
                     continue;
                 }
             } else {
-                if (
-                    depth === MAX_RECORD_DEPTH &&
-                    field.scalar('value') === null &&
-                    isLookupFieldKey(key, fields) === true
-                ) {
-                    // When this is max depth and the field's value is null,
-                    // it needs to check the key to see if this is a lookup field.
+                // Skip the field, if its value is null at the max level depth.
+                // Ideally, it should only skip relationship field. However,
+                // on the client, there is not a reliable way to determine the
+                // the field type.
+                if (depth === MAX_RECORD_DEPTH && field.scalar('value') === null) {
                     continue;
                 }
+
                 const state = fieldValueRep.linkData();
                 if (state !== undefined) {
                     const { fields } = state;
@@ -256,26 +254,9 @@ export function extractTrackedFieldsToTrie(
                     }
                 }
             }
-
             current.children[key] = next;
         }
     }
-}
-
-function isLookupFieldKey(
-    key: string,
-    fields: GraphNode<
-        {
-            [key: string]: StoreLink<unknown>;
-        },
-        RecordRepresentation
-    >
-): boolean {
-    return (
-        StringPrototypeEndsWith.call(key, CUSTOM_RELATIONSHIP_FIELD_SUFFIX) ||
-        (StringPrototypeEndsWith.call(key, CUSTOM_API_NAME_SUFFIX) === false &&
-            fields.data[`${key}Id`] !== undefined)
-    );
 }
 
 function isExternalLookupFieldKey(

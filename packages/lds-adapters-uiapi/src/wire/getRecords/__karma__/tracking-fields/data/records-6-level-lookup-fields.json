@@ -1,0 +1,278 @@
+{
+    "hasErrors": false,
+    "results": [
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "1a315884db4315050ef7a67e7bbbf5cf",
+                "fields": {
+                    "Parent": {
+                        "displayValue": "Account1",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "a86d41bd2e60dfed54cef4d6fc3cbbad",
+                            "fields": {
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001RM000004uuhnYAA"
+                                }
+                            },
+                            "id": "001RM000004uuhnYAA",
+                            "lastModifiedById": "005RM000002492xYAA",
+                            "lastModifiedDate": "2021-03-11T20:15:39.000Z",
+                            "recordTypeId": "012RM000000E79WYAS",
+                            "recordTypeInfo": {
+                                "available": true,
+                                "defaultRecordTypeMapping": true,
+                                "master": false,
+                                "name": "CustomRecordType1",
+                                "recordTypeId": "012RM000000E79WYAS"
+                            },
+                            "systemModstamp": "2021-03-11T20:15:39.000Z",
+                            "weakEtag": 1615493739000
+                        }
+                    },
+                    "ParentId": {
+                        "displayValue": null,
+                        "value": "001RM000004uuhnYAA"
+                    }
+                },
+                "id": "001RM00000558MhYAI",
+                "lastModifiedById": "005RM000002492xYAA",
+                "lastModifiedDate": "2021-03-11T20:16:31.000Z",
+                "recordTypeId": "012RM000000E79WYAS",
+                "recordTypeInfo": {
+                    "available": true,
+                    "defaultRecordTypeMapping": true,
+                    "master": false,
+                    "name": "CustomRecordType1",
+                    "recordTypeId": "012RM000000E79WYAS"
+                },
+                "systemModstamp": "2021-03-11T20:16:31.000Z",
+                "weakEtag": 1615493791000
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "a9bc312dd7fcb7117b0168c4875b5da1",
+                "fields": {
+                    "Parent": {
+                        "displayValue": "Account2",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "e63d4d44801814f4df792d23f511b628",
+                            "fields": {
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001RM000004uuhsYAA"
+                                }
+                            },
+                            "id": "001RM000004uuhsYAA",
+                            "lastModifiedById": "005RM000002492xYAA",
+                            "lastModifiedDate": "2021-03-11T20:16:05.000Z",
+                            "recordTypeId": "012000000000000AAA",
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2021-03-11T20:16:05.000Z",
+                            "weakEtag": 1615493765000
+                        }
+                    },
+                    "ParentId": {
+                        "displayValue": null,
+                        "value": "001RM000004uuhsYAA"
+                    }
+                },
+                "id": "001RM000004uuhnYAA",
+                "lastModifiedById": "005RM000002492xYAA",
+                "lastModifiedDate": "2021-03-11T20:15:39.000Z",
+                "recordTypeId": "012RM000000E79WYAS",
+                "recordTypeInfo": {
+                    "available": true,
+                    "defaultRecordTypeMapping": true,
+                    "master": false,
+                    "name": "CustomRecordType1",
+                    "recordTypeId": "012RM000000E79WYAS"
+                },
+                "systemModstamp": "2021-03-11T20:15:39.000Z",
+                "weakEtag": 1615493739000
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "3a1d78adb1ebb7d2f58155a0acea88d7",
+                "fields": {
+                    "Parent": {
+                        "displayValue": "Account3",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "5a95ad63c9e9f458b2ca13efcec20a47",
+                            "fields": {
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001RM000004uuhtYAA"
+                                }
+                            },
+                            "id": "001RM000004uuhtYAA",
+                            "lastModifiedById": "005RM000002492xYAA",
+                            "lastModifiedDate": "2021-03-11T20:17:01.000Z",
+                            "recordTypeId": "012000000000000AAA",
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2021-03-11T20:17:01.000Z",
+                            "weakEtag": 1615493821000
+                        }
+                    },
+                    "ParentId": {
+                        "displayValue": null,
+                        "value": "001RM000004uuhtYAA"
+                    }
+                },
+                "id": "001RM000004uuhsYAA",
+                "lastModifiedById": "005RM000002492xYAA",
+                "lastModifiedDate": "2021-03-11T20:16:05.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2021-03-11T20:16:05.000Z",
+                "weakEtag": 1615493765000
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "2ab0e0bc01e79940a34e848b96879fb1",
+                "fields": {
+                    "Parent": {
+                        "displayValue": "Account4",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "4799a36c4d125d4942e74497eb4c5920",
+                            "fields": {
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001RM00000558MmYAI"
+                                }
+                            },
+                            "id": "001RM00000558MmYAI",
+                            "lastModifiedById": "005RM000002492xYAA",
+                            "lastModifiedDate": "2021-03-11T20:17:59.000Z",
+                            "recordTypeId": "012RM000000E79WYAS",
+                            "recordTypeInfo": {
+                                "available": true,
+                                "defaultRecordTypeMapping": true,
+                                "master": false,
+                                "name": "CustomRecordType1",
+                                "recordTypeId": "012RM000000E79WYAS"
+                            },
+                            "systemModstamp": "2021-03-11T20:17:59.000Z",
+                            "weakEtag": 1615493879000
+                        }
+                    },
+                    "ParentId": {
+                        "displayValue": null,
+                        "value": "001RM00000558MmYAI"
+                    }
+                },
+                "id": "001RM000004uuhtYAA",
+                "lastModifiedById": "005RM000002492xYAA",
+                "lastModifiedDate": "2021-03-11T20:17:01.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2021-03-11T20:17:01.000Z",
+                "weakEtag": 1615493821000
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "0d3268115a6cda07f7abdfbe254844f7",
+                "fields": {
+                    "Parent": {
+                        "displayValue": "Account5",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "3bd870ce5626420057ca15d9756921b5",
+                            "fields": {
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001RM00000558MnYAI"
+                                }
+                            },
+                            "id": "001RM00000558MnYAI",
+                            "lastModifiedById": "005RM000002492xYAA",
+                            "lastModifiedDate": "2021-03-11T20:17:57.000Z",
+                            "recordTypeId": "012RM000000E79WYAS",
+                            "recordTypeInfo": {
+                                "available": true,
+                                "defaultRecordTypeMapping": true,
+                                "master": false,
+                                "name": "CustomRecordType1",
+                                "recordTypeId": "012RM000000E79WYAS"
+                            },
+                            "systemModstamp": "2021-03-11T20:17:57.000Z",
+                            "weakEtag": 1615493877000
+                        }
+                    },
+                    "ParentId": {
+                        "displayValue": null,
+                        "value": "001RM00000558MnYAI"
+                    }
+                },
+                "id": "001RM00000558MmYAI",
+                "lastModifiedById": "005RM000002492xYAA",
+                "lastModifiedDate": "2021-03-11T20:17:59.000Z",
+                "recordTypeId": "012RM000000E79WYAS",
+                "recordTypeInfo": {
+                    "available": true,
+                    "defaultRecordTypeMapping": true,
+                    "master": false,
+                    "name": "CustomRecordType1",
+                    "recordTypeId": "012RM000000E79WYAS"
+                },
+                "systemModstamp": "2021-03-11T20:17:59.000Z",
+                "weakEtag": 1615493879000
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "3bd870ce5626420057ca15d9756921b5",
+                "fields": {
+                    "Parent": {
+                        "displayValue": null,
+                        "value": null
+                    }
+                },
+                "id": "001RM00000558MnYAI",
+                "lastModifiedById": "005RM000002492xYAA",
+                "lastModifiedDate": "2021-03-11T20:17:57.000Z",
+                "recordTypeId": "012RM000000E79WYAS",
+                "recordTypeInfo": {
+                    "available": true,
+                    "defaultRecordTypeMapping": true,
+                    "master": false,
+                    "name": "CustomRecordType1",
+                    "recordTypeId": "012RM000000E79WYAS"
+                },
+                "systemModstamp": "2021-03-11T20:17:57.000Z",
+                "weakEtag": 1615493877000
+            },
+            "statusCode": 200
+        }
+    ]
+}

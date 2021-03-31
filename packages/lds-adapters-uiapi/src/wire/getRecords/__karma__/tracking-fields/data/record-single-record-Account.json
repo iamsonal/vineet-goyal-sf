@@ -1,0 +1,167 @@
+{
+    "apiName": "Account",
+    "childRelationships": {},
+    "eTag": "e2a5e9d89bcb5a59f72e96c96416454b",
+    "fields": {
+        "Name": {
+            "displayValue": null,
+            "value": "RootAccount"
+        },
+        "Parent": {
+            "displayValue": "Account1",
+            "value": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "d8a436b6828477480424fca008dfd7e0",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "001RM000004uuhnYAA"
+                    },
+                    "Parent": {
+                        "displayValue": "Account2",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "734793d78be6ba9b4c778a9a5327721a",
+                            "fields": {
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001RM000004uuhsYAA"
+                                },
+                                "Parent": {
+                                    "displayValue": "Account3",
+                                    "value": {
+                                        "apiName": "Account",
+                                        "childRelationships": {},
+                                        "eTag": "1437a1c131b22270eb05aac65ff0dfd0",
+                                        "fields": {
+                                            "Id": {
+                                                "displayValue": null,
+                                                "value": "001RM000004uuhtYAA"
+                                            },
+                                            "Parent": {
+                                                "displayValue": "Account4",
+                                                "value": {
+                                                    "apiName": "Account",
+                                                    "childRelationships": {},
+                                                    "eTag": "d242d65b992bf87fbaae8ae14cc9ecad",
+                                                    "fields": {
+                                                        "Id": {
+                                                            "displayValue": null,
+                                                            "value": "001RM00000558MmYAI"
+                                                        },
+                                                        "Parent": {
+                                                            "displayValue": "Account5",
+                                                            "value": {
+                                                                "apiName": "Account",
+                                                                "childRelationships": {},
+                                                                "eTag": "3bd870ce5626420057ca15d9756921b5",
+                                                                "fields": {
+                                                                    "Id": {
+                                                                        "displayValue": null,
+                                                                        "value": "001RM00000558MnYAI"
+                                                                    }
+                                                                },
+                                                                "id": "001RM00000558MnYAI",
+                                                                "lastModifiedById": "005RM000002492xYAA",
+                                                                "lastModifiedDate": "2021-03-11T20:17:57.000Z",
+                                                                "recordTypeId": "012RM000000E79WYAS",
+                                                                "recordTypeInfo": {
+                                                                    "available": true,
+                                                                    "defaultRecordTypeMapping": true,
+                                                                    "master": false,
+                                                                    "name": "CustomRecordType1",
+                                                                    "recordTypeId": "012RM000000E79WYAS"
+                                                                },
+                                                                "systemModstamp": "2021-03-11T20:17:57.000Z",
+                                                                "weakEtag": 1615493877000
+                                                            }
+                                                        },
+                                                        "ParentId": {
+                                                            "displayValue": null,
+                                                            "value": "001RM00000558MnYAI"
+                                                        }
+                                                    },
+                                                    "id": "001RM00000558MmYAI",
+                                                    "lastModifiedById": "005RM000002492xYAA",
+                                                    "lastModifiedDate": "2021-03-11T20:17:59.000Z",
+                                                    "recordTypeId": "012RM000000E79WYAS",
+                                                    "recordTypeInfo": {
+                                                        "available": true,
+                                                        "defaultRecordTypeMapping": true,
+                                                        "master": false,
+                                                        "name": "CustomRecordType1",
+                                                        "recordTypeId": "012RM000000E79WYAS"
+                                                    },
+                                                    "systemModstamp": "2021-03-11T20:17:59.000Z",
+                                                    "weakEtag": 1615493879000
+                                                }
+                                            },
+                                            "ParentId": {
+                                                "displayValue": null,
+                                                "value": "001RM00000558MmYAI"
+                                            }
+                                        },
+                                        "id": "001RM000004uuhtYAA",
+                                        "lastModifiedById": "005RM000002492xYAA",
+                                        "lastModifiedDate": "2021-03-11T20:17:01.000Z",
+                                        "recordTypeId": "012000000000000AAA",
+                                        "recordTypeInfo": null,
+                                        "systemModstamp": "2021-03-11T20:17:01.000Z",
+                                        "weakEtag": 1615493821000
+                                    }
+                                },
+                                "ParentId": {
+                                    "displayValue": null,
+                                    "value": "001RM000004uuhtYAA"
+                                }
+                            },
+                            "id": "001RM000004uuhsYAA",
+                            "lastModifiedById": "005RM000002492xYAA",
+                            "lastModifiedDate": "2021-03-11T20:16:05.000Z",
+                            "recordTypeId": "012000000000000AAA",
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2021-03-11T20:16:05.000Z",
+                            "weakEtag": 1615493765000
+                        }
+                    },
+                    "ParentId": {
+                        "displayValue": null,
+                        "value": "001RM000004uuhsYAA"
+                    }
+                },
+                "id": "001RM000004uuhnYAA",
+                "lastModifiedById": "005RM000002492xYAA",
+                "lastModifiedDate": "2021-03-11T20:15:39.000Z",
+                "recordTypeId": "012RM000000E79WYAS",
+                "recordTypeInfo": {
+                    "available": true,
+                    "defaultRecordTypeMapping": true,
+                    "master": false,
+                    "name": "CustomRecordType1",
+                    "recordTypeId": "012RM000000E79WYAS"
+                },
+                "systemModstamp": "2021-03-11T20:15:39.000Z",
+                "weakEtag": 1615493739000
+            }
+        },
+        "ParentId": {
+            "displayValue": null,
+            "value": "001RM000004uuhnYAA"
+        }
+    },
+    "id": "001RM00000558MhYAI",
+    "lastModifiedById": "005RM000002492xYAA",
+    "lastModifiedDate": "2021-03-11T20:16:31.000Z",
+    "recordTypeId": "012RM000000E79WYAS",
+    "recordTypeInfo": {
+        "available": true,
+        "defaultRecordTypeMapping": true,
+        "master": false,
+        "name": "CustomRecordType1",
+        "recordTypeId": "012RM000000E79WYAS"
+    },
+    "systemModstamp": "2021-03-11T20:16:31.000Z",
+    "weakEtag": 1615493791000
+}

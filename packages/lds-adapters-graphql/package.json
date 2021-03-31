@@ -8,13 +8,19 @@
     "types": "dist/types/src/main.d.ts",
     "scripts": {
         "clean": "rm -rf dist",
-        "build": "rollup --config rollup.config.js"
+        "build": "yarn build:services && yarn build:karma",
+        "build:karma": "rollup --config rollup.config.karma.js",
+        "build:services": "rollup --config rollup.config.js",
+        "start": "karma start",
+        "test": "karma start --single-run",
+        "test:compat": "karma start --single-run --compat"
     },
     "dependencies": {
         "@salesforce/lds-bindings": "1.10.2"
     },
     "devDependencies": {
         "@salesforce/lds-compiler-plugins": "1.10.2",
+        "@salesforce/lds-graphql-parser": "1.10.2",
         "@salesforce/lds-jest": "1.10.2",
         "@salesforce/lds-karma": "1.10.2",
         "@salesforce/lds-adapters-uiapi": "1.10.2"

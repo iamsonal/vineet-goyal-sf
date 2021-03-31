@@ -10,17 +10,6 @@
     "files": [
         "dist"
     ],
-    "lwc": {
-        "modules": [
-            {
-                "name": "lds/defaultLuvio",
-                "path": "dist/es/es2018/main.js"
-            }
-        ],
-        "expose": [
-            "lds/defaultLuvio"
-        ]
-    },
     "scripts": {
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",

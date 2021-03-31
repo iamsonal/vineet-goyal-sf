@@ -11,12 +11,12 @@
     "lwc": {
         "modules": [
             {
-                "name": "@salesforce/lwc-adapters-uiapi",
+                "name": "force/ldsAdaptersUiapi",
                 "path": "dist/main.js"
             }
         ],
         "expose": [
-            "@salesforce/lwc-adapters-uiapi"
+            "force/ldsAdaptersUiapi"
         ]
     },
     "scripts": {

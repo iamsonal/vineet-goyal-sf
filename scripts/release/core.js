@@ -127,7 +127,7 @@ const CORE_LDS_ENVIRONMENT_SETTINGS_PATH = path.resolve(
     'core/ui-force-components/modules/force/ldsEnvironmentSettings/ldsEnvironmentSettings.js'
 );
 
-const RELEASABLE_BRANCHES = ['master'];
+const RELEASABLE_BRANCHES = ['main'];
 
 function error(msg, code = 1) {
     console.error(`[ERROR]: ${msg}`);

@@ -386,4 +386,26 @@ describe('getRecords LDS adapter', () => {
         delete combinedMock.hasErrors;
         expect(getRecordsWire.getWiredData()).toEqualSnapshotWithoutEtags(combinedMock);
     });
+    it('hits cache when requesting optionalField that has been marked as missing', async () => {
+        const mock = getMock('records-single-record-Account');
+        const config = {
+            records: [
+                {
+                    recordIds: getIdsFromGetRecordsMock(mock),
+                    fields: [ACCOUNT_ID_FIELD_STRING, ACCOUNT_NAME_FIELD_STRING],
+                    optionalFields: ['Account.BadField'],
+                },
+            ],
+        };
+        mockGetRecordsNetwork(config, mock);
+        const wire1 = await setupElement(config, GetRecords);
+        expect(wire1.pushCount()).toBe(1);
+        expect(wire1.getWiredData()).toEqualBatchRecordSnapshot(mock);
+        // second request, should hit cache and emit correct data
+        const wire2 = await setupElement(config, GetRecords);
+        // Verify
+        expect(wire1.pushCount()).toBe(1);
+        expect(wire2.pushCount()).toBe(1);
+        expect(wire2.getWiredData()).toEqualBatchRecordSnapshot(mock);
+    });
 });

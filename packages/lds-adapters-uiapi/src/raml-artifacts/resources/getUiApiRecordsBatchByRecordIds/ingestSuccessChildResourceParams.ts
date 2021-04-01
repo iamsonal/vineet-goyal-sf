@@ -14,6 +14,7 @@ import {
     ingestSuccess as getRecord_onResourceSuccess,
     ingestError as getRecord_onResourceError,
 } from '../../../wire/getRecord/GetRecordFields';
+import { getTrackedFields } from '../../../util/records';
 
 export function ingestSuccessChildResourceParams(
     luvio: Luvio,
@@ -39,6 +40,13 @@ export function ingestSuccessChildResourceParams(
                 statusText: 'OK',
                 headers: undefined,
             };
+
+            const childKey = getUiApiRecordsByRecordId_keyBuilder(childResourceParams);
+            const childTrackedFields = getTrackedFields(
+                childKey,
+                luvio.getNode(childKey),
+                childResourceParams.queryParams.optionalFields
+            );
             const childSnapshot = getRecord_onResourceSuccess(
                 luvio,
                 {
@@ -46,8 +54,8 @@ export function ingestSuccessChildResourceParams(
                     fields: childResourceParams.queryParams.fields,
                     optionalFields: childResourceParams.queryParams.optionalFields,
                 },
-                getUiApiRecordsByRecordId_keyBuilder(childResourceParams),
-                [],
+                childKey,
+                childTrackedFields,
                 childResponse
             ) as
                 | FulfilledSnapshot<RecordRepresentation, {}>

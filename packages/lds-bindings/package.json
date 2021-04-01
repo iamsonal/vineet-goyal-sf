@@ -16,10 +16,10 @@
         "test:unit": "jest"
     },
     "dependencies": {
-        "@luvio/lwc-luvio": "^0.30.0"
+        "@luvio/lwc-luvio": "^0.30.1"
     },
     "devDependencies": {
-        "@luvio/engine": "^0.30.0",
+        "@luvio/engine": "^0.30.1",
         "@lwc/engine-core": "~1.7.5",
         "@salesforce/lds-runtime-web": "1.10.2"
     }

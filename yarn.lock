@@ -3977,19 +3977,19 @@
     npmlog "^4.1.2"
     write-file-atomic "^2.3.0"
 
-"@luvio/adapter-test-library@^0.30.0":
-  version "0.30.0"
-  resolved "https://registry.yarnpkg.com/@luvio/adapter-test-library/-/adapter-test-library-0.30.0.tgz#6c683e605dc4e3b203a29ceba68ab8e55f280aa1"
-  integrity sha512-HOTByUQf7ENC4wQqr/imv7lfPBwBDtH94E2WDpluT/ZjY74EGvrG0zElzvQx5ULT6g7aynqnK+5fV98nu7m++Q==
+"@luvio/adapter-test-library@^0.30.1":
+  version "0.30.1"
+  resolved "https://registry.yarnpkg.com/@luvio/adapter-test-library/-/adapter-test-library-0.30.1.tgz#1ee86725e42b9e43c78906c8a316ef3100c24a58"
+  integrity sha512-RxOS4sHuwhG7eswJJG5Ioum0DP+9kBc+bcm5yamBe8MRyufM+HnNnDOo1atQrWfNS4rD3qwsKrRqTvEhKT7ikA==
   dependencies:
     sinon "^7.5.0"
 
-"@luvio/cli@^0.30.0":
-  version "0.30.0"
-  resolved "https://registry.yarnpkg.com/@luvio/cli/-/cli-0.30.0.tgz#f924f970b3c30e3d6bdced70841cb93d9353bc4f"
-  integrity sha512-7gM5KBYGx6aCbB7sih/KBpGUtL+TZcYgG8NOoLCv7pnHhTS+YQrw9hZ/s+u7PZKP7LqCVzwvMNbVkYur7bytCQ==
+"@luvio/cli@^0.30.1":
+  version "0.30.1"
+  resolved "https://registry.yarnpkg.com/@luvio/cli/-/cli-0.30.1.tgz#ff21811089e484757758a9d236f422c7e7d4a5e8"
+  integrity sha512-6Q0a8cSnGFwsxObsBerYehuCIL45IgNWn9+FEfjVN8PDgOrsCqAmV0Oxv/xq1GCtZbxueLrNOj3ONnnWRq7ocA==
   dependencies:
-    "@luvio/compiler" "0.30.0"
+    "@luvio/compiler" "0.30.1"
     "@oclif/command" "^1.5.19"
     "@oclif/config" "^1.13.3"
     "@oclif/plugin-help" "^2.2.1"
@@ -3997,29 +3997,30 @@
     strip-ansi "^6.0.0"
     text-table "^0.2.0"
 
-"@luvio/compiler@0.30.0", "@luvio/compiler@^0.30.0":
-  version "0.30.0"
-  resolved "https://registry.yarnpkg.com/@luvio/compiler/-/compiler-0.30.0.tgz#e24b68a0177c80b71f586d7574ed3bd27c4d35d9"
-  integrity sha512-K7EaG/HYMtNgPU9/znZ6J7VBcGc+OD5XtXJCYXjD3XPjbC6G96qoA2uPWXNeFzVSSs1/kMoyFcVRrl38FRk4aw==
+"@luvio/compiler@0.30.1", "@luvio/compiler@^0.30.1":
+  version "0.30.1"
+  resolved "https://registry.yarnpkg.com/@luvio/compiler/-/compiler-0.30.1.tgz#96c92b22b15892e3659be27bf555ad96fe7e5c91"
+  integrity sha512-M5e4yj4sM1I/4vM+BWo1CNKV9+pZQsfepwWk+C3NU/13dGU1dXRwSWsqOslY/RmxqpZ6hs9WSUBbTBp5lUrbCg==
   dependencies:
     amf-client-js "4.2.0"
 
-"@luvio/engine@0.30.0", "@luvio/engine@^0.30.0":
-  version "0.30.0"
-  resolved "https://registry.yarnpkg.com/@luvio/engine/-/engine-0.30.0.tgz#78b5bfa3ffdd2b0b9871de4ada837ee28c2096d4"
-  integrity sha512-P2aF3hOKY0cHExODWK67IVNeDVSH9jGElp71SComETi3mjACgKSStWkXbd4kT1poxjF3q5yBwHeWPFq8zEKsDg==
+"@luvio/engine@0.30.1", "@luvio/engine@^0.30.1":
+  version "0.30.1"
+  resolved "https://registry.yarnpkg.com/@luvio/engine/-/engine-0.30.1.tgz#2e6f2c25b952fe3e9903e358f976d762971fb53a"
+  integrity sha512-kk62BGDKTXZ6UrCARtfFGzB5JcQUwaWzu1nk1vN/Zoh2gD43pyAjy9X8IkZpk6euXFTHZUyA/35LtRxQmVLJaw==
 
-"@luvio/environments@^0.30.0":
-  version "0.30.0"
-  resolved "https://registry.yarnpkg.com/@luvio/environments/-/environments-0.30.0.tgz#0a85dd2ddd022877bca539672cef5318cae93dac"
-  integrity sha512-dWjFm1zQxhnIYb0xqXUNP/oD2unlHC4o5sSbvG+2ExLp2QRHxjt4iOfi0I0ZVcXVcY0WVQVdnfLu3maULmc6qQ==
+"@luvio/environments@^0.30.1":
+  version "0.30.1"
+  resolved "https://registry.yarnpkg.com/@luvio/environments/-/environments-0.30.1.tgz#eef32861ae6fa6488d11099c6abd638f14d80f68"
+  integrity sha512-EJepXyeIe/A07rOyp/PT85j2HbmtoMqHD3hID93iKYKybKkMuP8+b9bnaNthnZBCnVgkbKJwlVfR+IPWI9B4cQ==
 
-"@luvio/lwc-luvio@^0.30.0":
-  version "0.30.0"
-  resolved "https://registry.yarnpkg.com/@luvio/lwc-luvio/-/lwc-luvio-0.30.0.tgz#8cb736134a21140a0fd6764365285ba64042a87d"
-  integrity sha512-97bFdt6JQR8vzDw7rCqlt70LRoHwGnnpFBmjrsJwnhOhHrgGvCbBPiCOYKl3cO0BLLjLIFhDiQbrT0hsQPJ4Lg==
+"@luvio/lwc-luvio@^0.30.1":
+  version "0.30.1"
+  resolved "https://registry.yarnpkg.com/@luvio/lwc-luvio/-/lwc-luvio-0.30.1.tgz#3f6d63ff499f929edc5e482eb3c049496e243cc3"
+  integrity sha512-cpk1Akj0ZJvg2EWTFL93YQDFvAiJdyfKVGkqOGkkdZbo65zV2SEu61UyrHiN3Ze/1icKmiEJienDzUCVM2UAEw==
   dependencies:
-    "@luvio/engine" "0.30.0"
+    "@luvio/engine" "0.30.1"
+    "@lwc/engine-core" "^1.7.5"
 
 "@lwc/babel-plugin-component@1.7.14":
   version "1.7.14"
@@ -4047,6 +4048,11 @@
     babel-preset-compat "~0.22.1"
     rollup "~2.26.3"
     terser "~5.1.0"
+
+"@lwc/engine-core@^1.7.5":
+  version "1.17.6"
+  resolved "https://registry.yarnpkg.com/@lwc/engine-core/-/engine-core-1.17.6.tgz#1fddb8cfa79d7aa62545b2a2b9087ff857c74925"
+  integrity sha512-y9kMTgrhxUDCMhhRehzuRYYGe2ejdng/dv+x9H2WokjZVHZ6YHOz/YI+5GFhI/1/Os1eCiH34LyYvJMWqLWDDg==
 
 "@lwc/engine-core@~1.7.5":
   version "1.7.14"

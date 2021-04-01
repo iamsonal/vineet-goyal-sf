@@ -31,40 +31,43 @@ describe('LDS GraphQL Parser', () => {
                         kind: 'OperationDefinition',
                         operation: 'query',
                         variableDefinitions: [],
-                        name: { kind: 'Name', value: 'operationName' },
-                        selections: [
+                        name: 'operationName',
+                        luvioSelections: [
                             {
-                                kind: 'ObjectField',
+                                kind: 'ObjectFieldSelection',
                                 name: 'uiapi',
-                                selections: [
+                                luvioSelections: [
                                     {
-                                        kind: 'ObjectField',
+                                        kind: 'ObjectFieldSelection',
                                         name: 'query',
-                                        selections: [
+                                        luvioSelections: [
                                             {
-                                                kind: 'CustomField',
+                                                kind: 'CustomFieldSelection',
                                                 name: 'Account',
                                                 type: 'Connection',
-                                                selections: [
+                                                luvioSelections: [
                                                     {
-                                                        kind: 'ObjectField',
+                                                        kind: 'ObjectFieldSelection',
                                                         name: 'edges',
-                                                        selections: [
+                                                        luvioSelections: [
                                                             {
-                                                                kind: 'CustomField',
+                                                                kind: 'CustomFieldSelection',
                                                                 name: 'node',
                                                                 type: 'Record',
-                                                                selections: [
+                                                                luvioSelections: [
                                                                     {
-                                                                        kind: 'ObjectField',
+                                                                        kind:
+                                                                            'ObjectFieldSelection',
                                                                         name: 'Name',
-                                                                        selections: [
+                                                                        luvioSelections: [
                                                                             {
-                                                                                kind: 'ScalarField',
+                                                                                kind:
+                                                                                    'ScalarFieldSelection',
                                                                                 name: 'value',
                                                                             },
                                                                             {
-                                                                                kind: 'ScalarField',
+                                                                                kind:
+                                                                                    'ScalarFieldSelection',
                                                                                 name:
                                                                                     'displayValue',
                                                                             },
@@ -75,7 +78,7 @@ describe('LDS GraphQL Parser', () => {
                                                         ],
                                                     },
                                                 ],
-                                                args: [
+                                                arguments: [
                                                     {
                                                         kind: 'Argument',
                                                         name: 'where',
@@ -86,8 +89,7 @@ describe('LDS GraphQL Parser', () => {
                                                                     kind: 'ObjectValue',
                                                                     fields: {
                                                                         like: {
-                                                                            kind: 'LiteralValue',
-                                                                            type: 'string',
+                                                                            kind: 'StringValue',
                                                                             value: 'Account1',
                                                                         },
                                                                     },

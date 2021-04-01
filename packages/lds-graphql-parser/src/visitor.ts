@@ -4,14 +4,21 @@ import {
     DirectiveNode,
     StringValueNode,
     ValueNode,
+    VariableDefinitionNode,
     visit,
 } from 'graphql/language';
-import { LuvioDocumentNode, LuvioOperationDefinitionNode } from './ast';
+import {
+    LuvioFieldNode,
+    LuvioDocumentNode,
+    LuvioOperationDefinitionNode,
+    LuvioArgumentNode,
+    LuvioValueNode,
+} from './ast';
 
-function copyArguments(argNodes: readonly ArgumentNode[], target: any[]) {
+function copyArguments(argNodes: readonly ArgumentNode[], target: LuvioArgumentNode[]) {
     for (let i = 0; i < argNodes.length; i++) {
         const argNode = argNodes[i];
-        const arg = {
+        const arg: LuvioArgumentNode = {
             kind: 'Argument',
             name: argNode.name.value,
             value: getArgumentValue(argNode.value),
@@ -21,7 +28,7 @@ function copyArguments(argNodes: readonly ArgumentNode[], target: any[]) {
     }
 }
 
-function getArgumentValue(valueNode: ValueNode): any {
+function getArgumentValue(valueNode: ValueNode): LuvioValueNode {
     switch (valueNode.kind) {
         case 'Variable':
             return {
@@ -29,35 +36,33 @@ function getArgumentValue(valueNode: ValueNode): any {
                 name: valueNode.name.value,
             };
         case 'IntValue':
+            return {
+                kind: 'IntValue',
+                value: valueNode.value,
+            };
         case 'FloatValue':
             return {
-                kind: 'LiteralValue',
-                type: 'number',
+                kind: 'FloatValue',
                 value: valueNode.value,
             };
         case 'StringValue':
             return {
-                kind: 'LiteralValue',
-                type: 'string',
+                kind: 'StringValue',
                 value: valueNode.value,
             };
         case 'BooleanValue':
             return {
-                kind: 'LiteralValue',
-                type: 'string',
+                kind: 'BooleanValue',
                 value: valueNode.value,
             };
         case 'EnumValue':
             return {
-                kind: 'LiteralValue',
-                type: 'enum',
+                kind: 'EnumValue',
                 value: valueNode.value,
             };
         case 'NullValue':
             return {
-                kind: 'LiteralValue',
-                type: 'null',
-                value: null,
+                kind: 'NullValue',
             };
         case 'ListValue': {
             const values = valueNode.values.map(value => {
@@ -71,7 +76,7 @@ function getArgumentValue(valueNode: ValueNode): any {
         }
         case 'ObjectValue': {
             const { fields } = valueNode;
-            const result: { [name: string]: any } = {};
+            const result: { [name: string]: LuvioValueNode } = {};
             fields.forEach(field => {
                 const name = field.name.value;
                 result[name] = getArgumentValue(field.value);
@@ -88,24 +93,29 @@ function getArgumentValue(valueNode: ValueNode): any {
 }
 
 export function fieldVisitor(ast: ASTNode): LuvioDocumentNode {
-    const variableDeclarations: any[] = [];
+    const variableDeclarations: VariableDefinitionNode[] = [];
 
-    const queryRoot = {
-        kind: 'ObjectField',
+    const queryRoot: LuvioFieldNode = {
+        kind: 'ObjectFieldSelection',
         name: 'query',
-        selections: [] as any[],
+        luvioSelections: [],
     };
-    const currentNodePath = [queryRoot];
+    const currentNodePath: Array<LuvioFieldNode> = [queryRoot];
 
     visit(ast, {
         enter(node, _key, _parent, _path, _ancestors) {
             if (node.kind === 'Field') {
                 const { name, arguments: fieldArgs, selectionSet, directives } = node;
 
-                let selectionNode: any = undefined;
+                let selectionNode: LuvioFieldNode = {
+                    kind: 'ObjectFieldSelection',
+                    name: name.value,
+                    luvioSelections: [],
+                };
+
                 if (selectionSet === undefined || selectionSet.selections.length === 0) {
                     selectionNode = {
-                        kind: 'ScalarField',
+                        kind: 'ScalarFieldSelection',
                         name: name.value,
                     };
                 } else if (directives !== undefined && directives.length > 0) {
@@ -116,10 +126,10 @@ export function fieldVisitor(ast: ASTNode): LuvioDocumentNode {
                         })
                     ) {
                         selectionNode = {
-                            kind: 'CustomField',
+                            kind: 'CustomFieldSelection',
                             name: name.value,
                             type: 'Connection',
-                            selections: [],
+                            luvioSelections: [],
                         };
                     } else if (
                         directives.find(directive => {
@@ -131,33 +141,28 @@ export function fieldVisitor(ast: ASTNode): LuvioDocumentNode {
                         })
                     ) {
                         selectionNode = {
-                            kind: 'CustomField',
+                            kind: 'CustomFieldSelection',
                             name: name.value,
                             type: (resourceDirective!.arguments![0].value as StringValueNode).value,
-                            selections: [],
+                            luvioSelections: [],
                         };
                     }
                 }
 
-                if (selectionNode === undefined) {
-                    selectionNode = {
-                        kind: 'ObjectField',
-                        name: name.value,
-                        selections: [],
-                    };
-                }
-
-                if (selectionNode.kind !== 'ScalarField') {
+                if (selectionNode.kind !== 'ScalarFieldSelection') {
                     if (fieldArgs !== undefined && fieldArgs.length > 0) {
-                        const args: any[] = [];
+                        const args: LuvioArgumentNode[] = [];
                         copyArguments(fieldArgs, args);
-                        selectionNode.args = args;
+                        selectionNode.arguments = args;
                     }
                 }
 
                 const parentNode = currentNodePath[currentNodePath.length - 1];
-                if (parentNode.kind === 'ObjectField' || parentNode.kind === 'CustomField') {
-                    parentNode.selections.push(selectionNode);
+                if (
+                    parentNode.kind === 'ObjectFieldSelection' ||
+                    parentNode.kind === 'CustomFieldSelection'
+                ) {
+                    parentNode.luvioSelections!.push(selectionNode);
                 }
 
                 currentNodePath.push(selectionNode);
@@ -174,8 +179,8 @@ export function fieldVisitor(ast: ASTNode): LuvioDocumentNode {
         kind: 'OperationDefinition',
         operation: 'query',
         variableDefinitions: variableDeclarations,
-        name: { kind: 'Name', value: 'operationName' },
-        selections: queryRoot.selections,
+        name: 'operationName',
+        luvioSelections: queryRoot.luvioSelections!,
     };
 
     const root: LuvioDocumentNode = {

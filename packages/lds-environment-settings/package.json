@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-environment-settings",
-    "version": "1.10.2",
+    "version": "1.10.3",
     "description": "Environment Settings for LDS",
     "main": "dist/main.js",
     "types": "dist/main.d.ts",

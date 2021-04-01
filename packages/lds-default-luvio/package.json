@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-default-luvio",
-    "version": "1.10.2",
+    "version": "1.10.3",
     "description": "rendezvous point for producers & consumers of the default luvio instance",
     "private": true,
     "license": "MIT",

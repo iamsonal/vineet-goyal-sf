@@ -1,7 +1,6 @@
 {
     "name": "lds-lightning-platform",
     "private": true,
-    "version": "1.10.2",
     "description": "Lightning Platform; Lightning Data Service",
     "repository": {
         "type": "git",

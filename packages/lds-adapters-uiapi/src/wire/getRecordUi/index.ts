@@ -320,7 +320,8 @@ function onResourceResponseError(
     key: string,
     err: FetchResponse<unknown>
 ) {
-    luvio.storeIngestFetchResponse(key, err, RecordUiRepresentationTTL);
+    const errorSnapshot = luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
+    luvio.storeIngestError(key, errorSnapshot, RecordUiRepresentationTTL);
     luvio.storeBroadcast();
 
     const { status } = err;
@@ -341,7 +342,7 @@ function onResourceResponseError(
         ) as ErrorSnapshot;
     }
 
-    return luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
+    return errorSnapshot;
 }
 
 function isSelector(data: Selector | RecordUiRepresentation): data is Selector {

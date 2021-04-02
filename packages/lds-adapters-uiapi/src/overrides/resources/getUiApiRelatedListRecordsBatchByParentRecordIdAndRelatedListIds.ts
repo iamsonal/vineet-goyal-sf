@@ -307,8 +307,9 @@ export function ingestError(
     snapshotRefresh?: SnapshotRefresh<RelatedListRecordCollectionBatchRepresentation>
 ): ErrorSnapshot {
     const key = keyBuilder(params);
-    luvio.storeIngestFetchResponse(key, error);
-    return luvio.errorSnapshot(error, snapshotRefresh);
+    const errorSnapshot = luvio.errorSnapshot(error, snapshotRefresh);
+    luvio.storeIngestError(key, errorSnapshot);
+    return errorSnapshot;
 }
 
 export function createResourceRequest(config: ResourceRequestConfig): ResourceRequest {

@@ -119,7 +119,8 @@ export const notifyChangeFactory = (luvio: Luvio) => {
                     luvio.instrument(notifyChangeNetworkResolveInstrumentParamBuilder);
                 },
                 (error: FetchResponse<unknown>) => {
-                    luvio.storeIngestFetchResponse(key, error, RecordRepresentationTTL);
+                    const errorSnapshot = luvio.errorSnapshot(error);
+                    luvio.storeIngestError(key, errorSnapshot, RecordRepresentationTTL);
                     luvio.storeBroadcast();
                     luvio.instrument(notifyChangeNetworkRejectInstrumentParamBuilder);
                 }

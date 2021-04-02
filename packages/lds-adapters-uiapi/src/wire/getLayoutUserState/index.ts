@@ -169,9 +169,10 @@ function onResourceResponseError(
     key: string,
     error: FetchResponse<unknown>
 ) {
-    luvio.storeIngestFetchResponse(key, error);
+    const errorSnapshot = luvio.errorSnapshot(error, buildSnapshotRefresh(luvio, config));
+    luvio.storeIngestError(key, errorSnapshot);
     luvio.storeBroadcast();
-    return luvio.errorSnapshot(error, buildSnapshotRefresh(luvio, config));
+    return errorSnapshot;
 }
 
 function prepareRequest(config: GetLayoutUserStateConfigWithDefaults) {

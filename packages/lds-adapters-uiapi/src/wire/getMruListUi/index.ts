@@ -347,15 +347,16 @@ function onResourceError_getMruListRecords(
     listInfo: ListInfoRepresentation,
     err: FetchResponse<unknown>
 ) {
-    luvio.storeIngestFetchResponse(
+    const errorSnapshot = luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
+    luvio.storeIngestError(
         listUiRepresentation_keyBuilder({
             ...listInfo.listReference,
             sortBy: config.sortBy === undefined ? null : config.sortBy,
         }),
-        err
+        errorSnapshot
     );
     luvio.storeBroadcast();
-    return luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
+    return errorSnapshot;
 }
 
 function resolveUnfulfilledSnapshot_getMruListRecords(

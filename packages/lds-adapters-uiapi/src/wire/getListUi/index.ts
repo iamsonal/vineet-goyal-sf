@@ -457,15 +457,16 @@ function onResourceError_getListRecords(
     listInfo: ListInfoRepresentation,
     err: FetchResponse<unknown>
 ) {
-    luvio.storeIngestFetchResponse(
+    const errorSnapshot = luvio.errorSnapshot(err);
+    luvio.storeIngestError(
         listUiRepresentation_keyBuilder({
             ...listInfo.listReference,
             sortBy: getSortBy(config, context),
         }),
-        err
+        errorSnapshot
     );
     luvio.storeBroadcast();
-    return luvio.errorSnapshot(err);
+    return errorSnapshot;
 }
 
 function resolveUnfulfilledSnapshot_getListRecords(

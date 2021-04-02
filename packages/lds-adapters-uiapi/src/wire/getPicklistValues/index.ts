@@ -71,9 +71,10 @@ function onResponseError(
     key: string,
     err: FetchResponse<unknown>
 ) {
-    luvio.storeIngestFetchResponse(key, err);
+    const errorSnapshot = luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
+    luvio.storeIngestError(key, errorSnapshot);
     luvio.storeBroadcast();
-    return luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
+    return errorSnapshot;
 }
 
 export function buildNetworkSnapshot(

@@ -142,12 +142,13 @@ const buildNetworkSnapshot: (
                     cloneSourceId: config.recordId,
                     recordTypeId: config.recordTypeId || null,
                 });
-                luvio.storeIngestFetchResponse(key, response, TTL);
-                return luvio.errorSnapshot(response, {
+                const errorSnapshot = luvio.errorSnapshot(response, {
                     config,
                     resolve: () =>
                         buildNetworkSnapshot(luvio, context, config, snapshotRefreshOptions),
                 });
+                luvio.storeIngestError(key, errorSnapshot, TTL);
+                return errorSnapshot;
             }
         );
 };

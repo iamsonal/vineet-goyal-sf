@@ -112,8 +112,9 @@ export function ingestError(
     key: string,
     err: FetchResponse<unknown>
 ) {
-    luvio.storeIngestFetchResponse(key, err, RecordRepresentationTTL);
-    return luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
+    const errorSnapshot = luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
+    luvio.storeIngestError(key, errorSnapshot, RecordRepresentationTTL);
+    return errorSnapshot;
 }
 
 function onResourceError(

@@ -166,9 +166,10 @@ function onResponseError(
     // Remove ids from in flight list
     recordIds.forEach(id => IN_FLIGHT_REQUESTS.delete(id));
 
-    luvio.storeIngestFetchResponse(KEY, err);
+    const errorSnapshot = luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config, recordIds));
+    luvio.storeIngestError(KEY, errorSnapshot);
     luvio.storeBroadcast();
-    return luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config, recordIds));
+    return errorSnapshot;
 }
 
 function resolveUnfulfilledSnapshot(

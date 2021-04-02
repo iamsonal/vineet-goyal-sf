@@ -13,6 +13,14 @@ import {
     EnumValueNode,
     VariableNode,
     DirectiveNode,
+    VariableDefinitionNode,
+    NonNullTypeNode,
+    ListTypeNode,
+    NamedTypeNode,
+    FragmentSpreadNode,
+    InlineFragmentNode,
+    FragmentDefinitionNode,
+    DefinitionNode,
 } from 'graphql/language';
 
 /**
@@ -26,24 +34,38 @@ import {
 
 /* Document */
 export interface LuvioDocumentNode extends Omit<DocumentNode, 'loc' | 'definitions'> {
-    definitions: Array<LuvioDefinitionNode>;
+    definitions: LuvioDefinitionNode[];
 }
 
-// TODO: add LuvioFragmentDefinitionNode
-type LuvioDefinitionNode = LuvioOperationDefinitionNode;
+export type LuvioDefinitionNode = LuvioOperationDefinitionNode | LuvioFragmentDefinitionNode;
 
 export interface LuvioOperationDefinitionNode
-    extends Omit<OperationDefinitionNode, 'loc' | 'name' | 'selectionSet'> {
+    extends Omit<
+        OperationDefinitionNode,
+        'loc' | 'name' | 'variableDefinitions' | 'directives' | 'selectionSet'
+    > {
     name?: string;
+    variableDefinitions?: LuvioVariableDefinitionNode[];
+    directives?: LuvioDirectiveNode[];
     luvioSelections: LuvioSelectionNode[];
+}
+
+export interface LuvioVariableDefinitionNode
+    extends Omit<
+        VariableDefinitionNode,
+        'loc' | 'variable' | 'type' | 'defaultValue' | 'directives'
+    > {
+    variable: LuvioVariableNode;
+    type: LuvioTypeNode;
+    defaultValue?: LuvioValueNode;
+    directives?: LuvioDirectiveNode[];
 }
 
 export interface LuvioVariableNode extends Omit<VariableNode, 'loc' | 'name'> {
     name: string;
 }
 
-// TODO: add LuvioFragmentSpreadNode and LuvioInlineFragmentNode
-export type LuvioSelectionNode = LuvioFieldNode;
+export type LuvioSelectionNode = LuvioFieldNode | LuvioFragmentSpreadNode | LuvioInlineFragmentNode;
 
 export type LuvioFieldNode =
     | LuvioSelectionScalarFieldNode
@@ -53,6 +75,34 @@ export type LuvioFieldNode =
 export interface LuvioArgumentNode extends Omit<ArgumentNode, 'loc' | 'name' | 'value'> {
     name: string;
     value: LuvioValueNode;
+}
+
+/* Fragments */
+export interface LuvioFragmentSpreadNode
+    extends Omit<FragmentSpreadNode, 'loc' | 'name' | 'directives'> {
+    name: string;
+    directives?: LuvioDirectiveNode[];
+}
+
+export interface LuvioInlineFragmentNode
+    extends Omit<InlineFragmentNode, 'loc' | 'typeCondition' | 'directives' | 'selectionSet'> {
+    typeCondition?: LuvioNamedTypeNode;
+    directives?: LuvioDirectiveNode[];
+    luvioSelections: LuvioSelectionNode[];
+}
+
+export interface LuvioFragmentDefinitionNode
+    extends Omit<
+        FragmentDefinitionNode,
+        'loc' | 'name' | 'variableDefinitions' | 'typeCondition' | 'directives' | 'selectionSet'
+    > {
+    name: string;
+    // Note: fragment variable definitions are experimental and may be changed
+    // or removed in the future.
+    variableDefinitions?: LuvioVariableDefinitionNode[];
+    typeCondition: LuvioNamedTypeNode;
+    directives?: LuvioDirectiveNode[];
+    luvioSelections: LuvioSelectionNode[];
 }
 
 /* Values */
@@ -83,6 +133,21 @@ export interface LuvioDirectiveNode extends Omit<DirectiveNode, 'loc' | 'name' |
     arguments?: LuvioArgumentNode[];
 }
 
+/* Type Reference */
+export type LuvioTypeNode = LuvioNamedTypeNode | LuvioListTypeNode | LuvioNonNullTypeNode;
+
+export interface LuvioNamedTypeNode extends Omit<NamedTypeNode, 'loc' | 'name'> {
+    name: string;
+}
+
+export interface LuvioListTypeNode extends Omit<ListTypeNode, 'loc' | 'type'> {
+    type: LuvioTypeNode;
+}
+
+export interface LuvioNonNullTypeNode extends Omit<NonNullTypeNode, 'loc' | 'type'> {
+    type: LuvioNamedTypeNode | LuvioListTypeNode;
+}
+
 /* Custom Selection Fields */
 export interface LuvioSelectionScalarFieldNode
     extends Omit<
@@ -109,4 +174,13 @@ export interface LuvioSelectionObjectFieldNode
 export interface LuvioSelectionCustomFieldNode extends Omit<LuvioSelectionObjectFieldNode, 'kind'> {
     kind: 'CustomFieldSelection';
     type: string;
+}
+
+/* Util Functions */
+export function isOperationDefinitionNode(input: DefinitionNode): input is OperationDefinitionNode {
+    return input.kind === 'OperationDefinition';
+}
+
+export function isFragmentDefinitionNode(input: DefinitionNode): input is FragmentDefinitionNode {
+    return input.kind === 'FragmentDefinition';
 }

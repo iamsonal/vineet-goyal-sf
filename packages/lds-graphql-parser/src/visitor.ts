@@ -4,16 +4,9 @@ import {
     DirectiveNode,
     StringValueNode,
     ValueNode,
-    VariableDefinitionNode,
     visit,
 } from 'graphql/language';
-import {
-    LuvioFieldNode,
-    LuvioDocumentNode,
-    LuvioOperationDefinitionNode,
-    LuvioArgumentNode,
-    LuvioValueNode,
-} from './ast';
+import { LuvioFieldNode, LuvioArgumentNode, LuvioValueNode } from './ast';
 
 function copyArguments(argNodes: readonly ArgumentNode[], target: LuvioArgumentNode[]) {
     for (let i = 0; i < argNodes.length; i++) {
@@ -92,16 +85,7 @@ function getArgumentValue(valueNode: ValueNode): LuvioValueNode {
     }
 }
 
-export function fieldVisitor(ast: ASTNode): LuvioDocumentNode {
-    const variableDeclarations: VariableDefinitionNode[] = [];
-
-    const queryRoot: LuvioFieldNode = {
-        kind: 'ObjectFieldSelection',
-        name: 'query',
-        luvioSelections: [],
-    };
-    const currentNodePath: Array<LuvioFieldNode> = [queryRoot];
-
+export function fieldVisitor(ast: ASTNode, path: LuvioFieldNode[]) {
     visit(ast, {
         enter(node, _key, _parent, _path, _ancestors) {
             if (node.kind === 'Field') {
@@ -157,7 +141,7 @@ export function fieldVisitor(ast: ASTNode): LuvioDocumentNode {
                     }
                 }
 
-                const parentNode = currentNodePath[currentNodePath.length - 1];
+                const parentNode = path[path.length - 1];
                 if (
                     parentNode.kind === 'ObjectFieldSelection' ||
                     parentNode.kind === 'CustomFieldSelection'
@@ -165,28 +149,13 @@ export function fieldVisitor(ast: ASTNode): LuvioDocumentNode {
                     parentNode.luvioSelections!.push(selectionNode);
                 }
 
-                currentNodePath.push(selectionNode);
+                path.push(selectionNode);
             }
         },
         leave(node, _key, _parent, _path, _ancestors) {
             if (node.kind === 'Field') {
-                currentNodePath.pop();
+                path.pop();
             }
         },
     });
-
-    const operationDefinition: LuvioOperationDefinitionNode = {
-        kind: 'OperationDefinition',
-        operation: 'query',
-        variableDefinitions: variableDeclarations,
-        name: 'operationName',
-        luvioSelections: queryRoot.luvioSelections!,
-    };
-
-    const root: LuvioDocumentNode = {
-        kind: 'Document',
-        definitions: [operationDefinition],
-    };
-
-    return root;
 }

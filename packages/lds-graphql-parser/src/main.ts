@@ -1,10 +1,10 @@
 import { parse } from 'graphql/language';
 import { LuvioDocumentNode } from './ast';
-import { fieldVisitor } from './visitor';
+import { transform } from './document';
 
 function parseAndVisit(source: string): LuvioDocumentNode {
     const ast = parse(source);
-    return fieldVisitor(ast);
+    return transform(ast);
 }
 
 export default parseAndVisit;

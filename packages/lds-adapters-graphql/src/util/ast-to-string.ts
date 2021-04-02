@@ -1,5 +1,9 @@
 import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
 import {
+    BooleanValueNode,
+    FloatValueNode,
+    IntValueNode,
+    StringValueNode,
     LuvioArgumentNode,
     LuvioDefinitionNode,
     LuvioObjectValueNode,
@@ -9,8 +13,7 @@ import {
     LuvioSelectionObjectFieldNode,
     LuvioSelectionScalarFieldNode,
     LuvioValueNode,
-} from '@salesforce/lds-graphql-parser/dist/ast';
-import { BooleanValueNode, FloatValueNode, IntValueNode, StringValueNode } from 'graphql/language';
+} from '@salesforce/lds-graphql-parser';
 
 const { keys } = Object;
 

@@ -1,5 +1,22 @@
-import { parse } from 'graphql/language';
-import { LuvioDocumentNode } from './ast';
+import {
+    parse,
+    BooleanValueNode,
+    FloatValueNode,
+    IntValueNode,
+    StringValueNode,
+} from 'graphql/language';
+import {
+    LuvioDocumentNode,
+    LuvioArgumentNode,
+    LuvioDefinitionNode,
+    LuvioObjectValueNode,
+    LuvioOperationDefinitionNode,
+    LuvioSelectionCustomFieldNode,
+    LuvioSelectionNode,
+    LuvioSelectionObjectFieldNode,
+    LuvioSelectionScalarFieldNode,
+    LuvioValueNode,
+} from './ast';
 import { transform } from './document';
 
 function parseAndVisit(source: string): LuvioDocumentNode {
@@ -10,4 +27,19 @@ function parseAndVisit(source: string): LuvioDocumentNode {
 export default parseAndVisit;
 
 // type exports
-export { LuvioDocumentNode };
+export {
+    BooleanValueNode,
+    FloatValueNode,
+    IntValueNode,
+    StringValueNode,
+    LuvioDocumentNode,
+    LuvioArgumentNode,
+    LuvioDefinitionNode,
+    LuvioObjectValueNode,
+    LuvioOperationDefinitionNode,
+    LuvioSelectionCustomFieldNode,
+    LuvioSelectionNode,
+    LuvioSelectionObjectFieldNode,
+    LuvioSelectionScalarFieldNode,
+    LuvioValueNode,
+};

@@ -1,7 +1,11 @@
 import path from 'path';
 import camelCase from 'camelcase';
 
-import { adapterTestUtilConfigs, targetConfigs } from '../../scripts/rollup/rollup.config.karma';
+import {
+    compatBabelPlugin,
+    adapterTestUtilConfigs,
+    targetConfigs,
+} from '../../scripts/rollup/rollup.config.karma';
 
 function getTargetPath(filename, compat) {
     let targetDir = path.join(__dirname, 'karma', 'dist');
@@ -9,9 +13,8 @@ function getTargetPath(filename, compat) {
     return path.join(targetDir, filename);
 }
 
-export function ldsAdaptersConfigs({ adapterModuleName }, overrides = {}) {
-    const { entryFile: entryFileOverride } = overrides;
-    const entryFile = entryFileOverride || path.join(__dirname, 'sfdc', 'index.js');
+export function ldsAdaptersConfigs({ adapterModuleName }) {
+    const entryFile = path.join(__dirname, 'karma', 'lds-adapters-graphql.js');
 
     return targetConfigs.map(({ compat }) => {
         return {
@@ -20,15 +23,17 @@ export function ldsAdaptersConfigs({ adapterModuleName }, overrides = {}) {
                 file: getTargetPath(`${adapterModuleName}.js`, compat),
                 format: 'umd',
                 name: camelCase(adapterModuleName),
+                globals: {
+                    'force/ldsBindings': 'ldsBindings',
+                },
             },
+            external: ['force/ldsBindings'],
+            plugins: compat && [compatBabelPlugin],
         };
     });
 }
 
 module.exports = [
-    ...ldsAdaptersConfigs(
-        { adapterModuleName: 'lds-adapters-graphql' },
-        { entryFile: path.join(__dirname, 'karma', 'lds-adapters-graphql.js') }
-    ),
+    ...ldsAdaptersConfigs({ adapterModuleName: 'lds-adapters-graphql' }),
     ...adapterTestUtilConfigs({ testUtilName: 'graphql-test-util' }),
 ];

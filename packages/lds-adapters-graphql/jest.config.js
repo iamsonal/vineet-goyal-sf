@@ -5,4 +5,12 @@ module.exports = {
 
     displayName: '@salesforce/lds-adapters-graphql',
     roots: ['<rootDir>/src'],
+    // TODO: improve unit test coverage and remove this override
+    coverageThreshold: {
+        global: {
+            branches: 40,
+            functions: 40,
+            lines: 25,
+        },
+    },
 };

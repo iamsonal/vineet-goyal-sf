@@ -7,17 +7,18 @@ import { mockNetworkOnce, mockNetworkSequence } from 'test-util';
 
 const API_VERSION = 'v52.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
-const URL_BASE = `/ui-api`;
+const URL_BASE = `/graphql`;
 
 const RECORD_TTL = 30000;
 
 function mockGraphqlNetwork(config, mockData) {
     const paramMatch = sinon.match({
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/graphql`,
+        basePath: `${URL_BASE}`,
         method: 'post',
         body: config,
     });
+
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {

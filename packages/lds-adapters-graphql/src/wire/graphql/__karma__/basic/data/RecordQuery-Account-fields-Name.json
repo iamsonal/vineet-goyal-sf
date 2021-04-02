@@ -1,0 +1,21 @@
+{
+    "data": {
+        "uiapi": {
+            "query": {
+                "Account": {
+                    "edges": [
+                        {
+                            "node": {
+                                "Name": {
+                                    "value": "Account1",
+                                    "displayValue": null
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "errors": []
+}

@@ -7,13 +7,14 @@
     "module": "dist/es/es2018/graphql-service.js",
     "types": "dist/types/src/main.d.ts",
     "scripts": {
-        "clean": "rm -rf dist",
+        "clean": "rm -rf dist karma/dist",
         "build": "yarn build:services && yarn build:karma",
         "build:karma": "rollup --config rollup.config.karma.js",
         "build:services": "rollup --config rollup.config.js",
         "start": "karma start",
         "test": "karma start --single-run",
-        "test:compat": "karma start --single-run --compat"
+        "test:compat": "karma start --single-run --compat",
+        "test:unit": "jest"
     },
     "dependencies": {
         "@salesforce/lds-bindings": "1.10.3"

@@ -1,17 +1,9 @@
-import { getMock as globalGetMock } from 'test-util';
-import { mockGraphqlNetwork } from 'graphql-test-util';
+import { astToString } from '../ast-to-string';
+import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
 
-import { graphql } from 'lds-adapters-graphql';
-
-const MOCK_PREFIX = 'wire/graphql/__karma__/basic/data/';
-
-function getMock(filename) {
-    return globalGetMock(MOCK_PREFIX + filename);
-}
-
-describe('graphql', () => {
-    it('hits network when no data is in the cache', async () => {
-        const ast = {
+describe('AST to string', () => {
+    it('should create correct graphql query', () => {
+        const ast: LuvioDocumentNode = {
             kind: 'Document',
             definitions: [
                 {
@@ -95,22 +87,7 @@ describe('graphql', () => {
 
         const expectedQuery = `query { uiapi { query { Account(where:  { Name:  { like: "Account1" } }) { edges { node { Name { value, displayValue,  } } } } } } }`;
 
-        const networkData = getMock('RecordQuery-Account-fields-Name');
-
-        mockGraphqlNetwork(
-            {
-                query: expectedQuery,
-                variables: {},
-            },
-            networkData
-        );
-
-        const graphqlConfig = {
-            query: ast,
-            variables: {},
-        };
-
-        const snapshot = await graphql(graphqlConfig);
-        expect(snapshot.data).toEqual(networkData);
+        const actual = astToString(ast);
+        expect(actual).toEqual(expectedQuery);
     });
 });

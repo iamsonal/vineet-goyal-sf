@@ -195,7 +195,15 @@ function createSyntheticRecord(
         }
         return undefined;
     }
-    const draftRecord = buildSyntheticRecordRepresentation(currentUserId, draftId, apiName, fields);
+    const timestampString = draft.timestamp.toString();
+    const draftRecord = buildSyntheticRecordRepresentation(
+        currentUserId,
+        draftId,
+        apiName,
+        fields,
+        timestampString,
+        timestampString
+    );
 
     const links: { [key: string]: StoreLink } = {};
     const keys = ObjectKeys(draftRecord.fields);
@@ -484,6 +492,7 @@ export function makeDurableStoreDraftAware(
                 remappedDraftChanges.push({
                     ...draftChange,
                     ids: changedIds,
+                    isExternalChange: true,
                     segment: DefaultDurableSegment,
                 });
             }

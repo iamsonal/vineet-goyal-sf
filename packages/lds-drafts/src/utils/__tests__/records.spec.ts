@@ -64,11 +64,15 @@ describe('draft environment record utilities', () => {
 
     describe('buildSyntheticRecordRepresentation', () => {
         it('builds sythetic record with fields', () => {
+            const lastModDate = 'lastModDate';
+            const createdDate = 'createdDate';
             const syntheticRecord = buildSyntheticRecordRepresentation(
                 CURRENT_USER_ID,
                 DRAFT_RECORD_ID,
                 DEFAULT_API_NAME,
-                { Name: DEFAULT_NAME_FIELD_VALUE }
+                { Name: DEFAULT_NAME_FIELD_VALUE },
+                lastModDate,
+                createdDate
             );
 
             expect(syntheticRecord).toEqual({
@@ -77,10 +81,10 @@ describe('draft environment record utilities', () => {
                 childRelationships: {},
                 eTag: '',
                 lastModifiedById: CURRENT_USER_ID,
-                lastModifiedDate: expect.any(String),
+                lastModifiedDate: lastModDate,
                 recordTypeId: null,
                 recordTypeInfo: null,
-                systemModstamp: expect.any(String),
+                systemModstamp: createdDate,
                 weakEtag: -1,
                 fields: {
                     Name: {
@@ -92,7 +96,7 @@ describe('draft environment record utilities', () => {
                         displayValue: null,
                     },
                     CreatedDate: {
-                        value: expect.any(String),
+                        value: createdDate,
                         displayValue: null,
                     },
                     LastModifiedById: {
@@ -100,7 +104,7 @@ describe('draft environment record utilities', () => {
                         displayValue: null,
                     },
                     LastModifiedDate: {
-                        value: expect.any(String),
+                        value: lastModDate,
                         displayValue: null,
                     },
                     OwnerId: {
@@ -617,6 +621,8 @@ describe('draft environment record utilities', () => {
 
             const actionWithBodyDraftReference: PendingDraftAction<unknown> = {
                 id: new Date().getUTCMilliseconds().toString(),
+                targetId: 'targetId',
+                metadata: {},
                 status: DraftActionStatus.Pending,
                 tag: record2Key,
                 timestamp: 12345,

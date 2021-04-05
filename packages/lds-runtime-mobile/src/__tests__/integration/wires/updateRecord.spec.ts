@@ -97,10 +97,21 @@ describe('mobile runtime integration tests', () => {
             await updateRecord({ recordId, fields: { Name: updatedName } });
 
             // ensure the getRecord callback was invoked
-            expect(callbackSpy).toBeCalledTimes(1);
+            /**
+             * This test has more snapshot callbacks than expected because
+             * of how luvio handles opaque fields in snapshots. This should be
+             * fixed in a future version and this count should go down to 1
+             * Created story W-9099112 to address this in the future
+             */
+            expect(callbackSpy).toBeCalledTimes(2);
             // ensure the getRecord callback was invoked with updated draft data value
             expect(callbackSpy.mock.calls[0][0].data.fields.Name.value).toBe(updatedName);
             expect(callbackSpy.mock.calls[0][0].data.drafts.serverValues.Name.value).toBe(
+                orginalName
+            );
+
+            expect(callbackSpy.mock.calls[1][0].data.fields.Name.value).toBe(updatedName);
+            expect(callbackSpy.mock.calls[1][0].data.drafts.serverValues.Name.value).toBe(
                 orginalName
             );
         });
@@ -168,7 +179,14 @@ describe('mobile runtime integration tests', () => {
                 recordId: RECORD_ID,
                 fields: { Name: draftTwoNameValue },
             });
-            expect(getRecordCallbackSpy).toBeCalledTimes(2);
+
+            /**
+             * This test has more snapshot callbacks than expected because
+             * of how luvio handles opaque fields in snapshots. This should be
+             * fixed in a future version and this count should go down to 2
+             * Created story W-9099112 to address this in the future
+             */
+            expect(getRecordCallbackSpy).toBeCalledTimes(4);
 
             expect(getRecordCallbackSpy.mock.calls[0][0].data.fields.Name.value).toBe(
                 draftOneNameValue
@@ -176,10 +194,23 @@ describe('mobile runtime integration tests', () => {
             expect(getRecordCallbackSpy.mock.calls[0][0].data.drafts.edited).toBe(true);
 
             expect(getRecordCallbackSpy.mock.calls[1][0].data.fields.Name.value).toBe(
-                draftTwoNameValue
+                draftOneNameValue
             );
             expect(getRecordCallbackSpy.mock.calls[1][0].data.drafts.edited).toBe(true);
-            expect(getRecordCallbackSpy.mock.calls[1][0].data.drafts.serverValues.Name.value).toBe(
+
+            expect(getRecordCallbackSpy.mock.calls[2][0].data.fields.Name.value).toBe(
+                draftTwoNameValue
+            );
+            expect(getRecordCallbackSpy.mock.calls[2][0].data.drafts.edited).toBe(true);
+            expect(getRecordCallbackSpy.mock.calls[2][0].data.drafts.serverValues.Name.value).toBe(
+                originalNameValue
+            );
+
+            expect(getRecordCallbackSpy.mock.calls[3][0].data.fields.Name.value).toBe(
+                draftTwoNameValue
+            );
+            expect(getRecordCallbackSpy.mock.calls[3][0].data.drafts.edited).toBe(true);
+            expect(getRecordCallbackSpy.mock.calls[3][0].data.drafts.serverValues.Name.value).toBe(
                 originalNameValue
             );
 
@@ -196,15 +227,22 @@ describe('mobile runtime integration tests', () => {
             // the draft queue completed listener asynchronously ingests so have to flush promises
             await flushPromises();
 
-            expect(getRecordCallbackSpy).toBeCalledTimes(4);
+            /**
+             * This test has more snapshot callbacks than expected because
+             * of how luvio handles opaque fields in snapshots. This should be
+             * fixed in a future version and this count should go down to 4
+             * Created story W-9099112 to address this in the future
+             */
+            expect(getRecordCallbackSpy).toBeCalledTimes(7);
 
             // should still contain the second draft data
-            expect(getRecordCallbackSpy.mock.calls[2][0].data.fields.Name.value).toBe(
+            expect(getRecordCallbackSpy.mock.calls[3][0].data.fields.Name.value).toBe(
                 draftTwoNameValue
             );
-            expect(getRecordCallbackSpy.mock.calls[2][0].data.drafts.edited).toBe(true);
+            expect(getRecordCallbackSpy.mock.calls[3][0].data.drafts.edited).toBe(true);
+
             // the server value should be updated
-            expect(getRecordCallbackSpy.mock.calls[2][0].data.drafts.serverValues.Name.value).toBe(
+            expect(getRecordCallbackSpy.mock.calls[4][0].data.drafts.serverValues.Name.value).toBe(
                 draftOneNameValue
             );
         });
@@ -233,7 +271,13 @@ describe('mobile runtime integration tests', () => {
             });
 
             // before upload we should get back the optimistic response with drafts property
-            expect(getRecordCallbackSpy).toBeCalledTimes(1);
+            /**
+             * This test has more snapshot callbacks than expected because
+             * of how luvio handles opaque fields in snapshots. This should be
+             * fixed in a future version and this count should go down to 1
+             * Created story W-9099112 to address this in the future
+             */
+            expect(getRecordCallbackSpy).toBeCalledTimes(2);
             expect(getRecordCallbackSpy.mock.calls[0][0].data.fields.Name.value).toBe(
                 updatedNameValue
             );

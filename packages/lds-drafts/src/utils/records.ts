@@ -128,22 +128,27 @@ export function buildRecordFieldValueRepresentationsFromDraftFields(fields: Draf
  * @param draftId The client-side id representing the record
  * @param apiName The api-name of the record
  * @param draftFields List of fields included in the create request
+ * @param lastModifiedDate A string of the date the record was last modified
+ * @param createdDate A string of the date the record was created
  */
 export function buildSyntheticRecordRepresentation(
     userId: string,
     draftId: string,
     apiName: string,
-    draftFields: DraftFields
+    draftFields: DraftFields,
+    lastModifiedDate: string,
+    createdDate: string
 ): RecordRepresentation {
-    const now = new Date().toISOString();
+    const lastModDate = lastModifiedDate;
+    const sysModStamp = createdDate;
 
     const fields = buildRecordFieldValueRepresentationsFromDraftFields(draftFields);
 
     // add default fields
     fields[DEFAULT_FIELD_CREATED_BY_ID] = { value: userId, displayValue: null };
-    fields[DEFAULT_FIELD_CREATED_DATE] = { value: now, displayValue: null };
+    fields[DEFAULT_FIELD_CREATED_DATE] = { value: sysModStamp, displayValue: null };
     fields[DEFAULT_FIELD_LAST_MODIFIED_BY_ID] = { value: userId, displayValue: null };
-    fields[DEFAULT_FIELD_LAST_MODIFIED_DATE] = { value: now, displayValue: null };
+    fields[DEFAULT_FIELD_LAST_MODIFIED_DATE] = { value: lastModDate, displayValue: null };
     fields[DEFAULT_FIELD_OWNER_ID] = { value: userId, displayValue: null };
     fields[DEFAULT_FIELD_ID] = { value: draftId, displayValue: null };
 
@@ -153,10 +158,10 @@ export function buildSyntheticRecordRepresentation(
         childRelationships: {},
         eTag: '',
         lastModifiedById: userId,
-        lastModifiedDate: now,
+        lastModifiedDate: lastModDate,
         recordTypeId: null,
         recordTypeInfo: null,
-        systemModstamp: now,
+        systemModstamp: sysModStamp,
         weakEtag: -1,
         fields: fields,
     };

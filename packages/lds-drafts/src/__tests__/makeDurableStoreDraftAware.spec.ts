@@ -2,6 +2,7 @@ import { Store } from '@luvio/engine';
 import {
     DefaultDurableSegment,
     DurableStore,
+    DurableStoreOperationType,
     OnDurableStoreChangedListener,
 } from '@luvio/environments';
 
@@ -543,6 +544,8 @@ describe('makeDurableStoreDraftAware', () => {
             const actions: DraftAction<unknown>[] = draftActions[STORE_KEY_DRAFT_RECORD];
             const action = actions[0];
             expect(action).toBeDefined();
+            expect(readRecord.lastModifiedDate).toBe(action.timestamp.toString());
+            expect(readRecord.systemModstamp).toBe(action.timestamp.toString());
             expect(readRecord.drafts.created).toBe(true);
             expect(readRecord.drafts.draftActionIds[0]).toBe(action.id);
             expect(nameField.value).toEqual(DEFAULT_NAME_FIELD_VALUE);
@@ -702,6 +705,7 @@ describe('makeDurableStoreDraftAware', () => {
                 const change = changes[0];
                 expect(change.ids[0]).toBe(STORE_KEY_RECORD);
                 expect(change.segment).toBe(DefaultDurableSegment);
+                expect(change.isExternalChange).toBe(true);
                 done();
             };
             durableStore.registerOnChangedListener(baseListener);
@@ -709,7 +713,39 @@ describe('makeDurableStoreDraftAware', () => {
             changeListener([
                 {
                     ids: [draftActionKey],
-                    type: 'setEntries',
+                    type: DurableStoreOperationType.SetEntries,
+                    segment: DRAFT_SEGMENT,
+                },
+            ]);
+        });
+
+        it('draft action deletes notify affected record change', done => {
+            let changeListener: OnDurableStoreChangedListener;
+            const durableStore: DurableStore = makeDurableStoreDraftAware(
+                {
+                    registerOnChangedListener: listener => (changeListener = listener),
+                } as any,
+                {} as any,
+                {} as any,
+                () => false,
+                (_draftKey: string, _canonicalKey: string) => {},
+                ''
+            );
+
+            const draftActionKey = buildDraftDurableStoreKey(STORE_KEY_RECORD, 'FOO');
+            const baseListener: OnDurableStoreChangedListener = changes => {
+                const change = changes[0];
+                expect(change.ids[0]).toBe(STORE_KEY_RECORD);
+                expect(change.segment).toBe(DefaultDurableSegment);
+                expect(change.isExternalChange).toBe(true);
+                done();
+            };
+            durableStore.registerOnChangedListener(baseListener);
+
+            changeListener([
+                {
+                    ids: [draftActionKey],
+                    type: DurableStoreOperationType.EvictEntries,
                     segment: DRAFT_SEGMENT,
                 },
             ]);
@@ -740,7 +776,7 @@ describe('makeDurableStoreDraftAware', () => {
             changeListener([
                 {
                     ids: [draftActionKey],
-                    type: 'setEntries',
+                    type: DurableStoreOperationType.SetEntries,
                     segment: 'NOT_DRAFT_SEGMENT',
                     isExternalChange: false,
                 },
@@ -767,7 +803,7 @@ describe('makeDurableStoreDraftAware', () => {
             changeListener([
                 {
                     ids: [STORE_KEY_RECORD],
-                    type: 'setEntries',
+                    type: DurableStoreOperationType.SetEntries,
                     segment: DRAFT_SEGMENT,
                 },
             ]);
@@ -801,7 +837,7 @@ describe('makeDurableStoreDraftAware', () => {
                 {
                     ids: [STORE_KEY_RECORD],
                     segment: 'DRAFT_ID_MAPPINGS',
-                    type: 'setEntries',
+                    type: DurableStoreOperationType.SetEntries,
                 },
             ]);
 

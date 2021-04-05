@@ -2,7 +2,6 @@
     "name": "@salesforce/lds-default-luvio",
     "version": "1.10.3",
     "description": "rendezvous point for producers & consumers of the default luvio instance",
-    "private": true,
     "license": "MIT",
     "main": "dist/umd/es2018/main.js",
     "module": "dist/es/es2018/main.js",

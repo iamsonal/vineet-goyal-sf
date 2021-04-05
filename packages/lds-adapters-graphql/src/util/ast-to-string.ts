@@ -83,6 +83,60 @@ function serializeSelections(selections: LuvioSelectionNode[] | undefined) {
     return str;
 }
 
+const RECORD_ID_SCALAR_FIELD_SELECTION: LuvioSelectionScalarFieldNode = {
+    kind: 'ScalarFieldSelection',
+    name: 'id',
+};
+
+const RECORD_WEAK_ETAG_FIELD_SELECTION: LuvioSelectionScalarFieldNode = {
+    kind: 'ScalarFieldSelection',
+    name: 'WeakEtag',
+};
+
+const REQUIRED_RECORD_FIELDS: {
+    fieldNames: string[];
+    selections: { [key: string]: LuvioSelectionScalarFieldNode };
+} = {
+    fieldNames: ['id', 'WeakEtag'],
+    selections: {
+        id: RECORD_ID_SCALAR_FIELD_SELECTION,
+        WeakEtag: RECORD_WEAK_ETAG_FIELD_SELECTION,
+    },
+};
+
+const {
+    fieldNames: REQUIRED_FIELD_NAMES,
+    selections: REQUIRED_RECORD_SELECTIONS,
+} = REQUIRED_RECORD_FIELDS;
+const { length: REQUIRED_RECORD_FIELDS_LEN } = REQUIRED_FIELD_NAMES;
+
+function serializeRequiredRecordFields(currentString: string, presentFields: Record<string, true>) {
+    let str = '';
+    for (let i = 0; i < REQUIRED_RECORD_FIELDS_LEN; i += 1) {
+        const fieldName = REQUIRED_FIELD_NAMES[i];
+        if (presentFields[fieldName] !== true) {
+            str = `${str}${serializeScalarFieldNode(REQUIRED_RECORD_SELECTIONS[fieldName])}`;
+        }
+    }
+    return `${str}${currentString}`;
+}
+
+function serializeRecordSelections(selections: LuvioSelectionNode[] | undefined) {
+    if (selections === undefined) {
+        return '';
+    }
+    let str = '';
+    const fields: Record<string, true> = {};
+    for (let i = 0, len = selections.length; i < len; i += 1) {
+        const sel = selections[i];
+        fields[(sel as any).name] = true;
+        const def = serializeFieldNode(sel);
+        str = `${str}${def}`;
+    }
+
+    return serializeRequiredRecordFields(str, fields);
+}
+
 function serializeFieldNode(def: LuvioSelectionNode) {
     const { kind } = def;
     switch (kind) {
@@ -113,7 +167,7 @@ function serializeCustomFieldConnection(def: LuvioSelectionCustomFieldNode) {
 
 function serializeCustomFieldRecord(def: LuvioSelectionCustomFieldNode) {
     const { name, luvioSelections } = def;
-    return `${name} { ${serializeSelections(luvioSelections)} }`;
+    return `${name} { ${serializeRecordSelections(luvioSelections)} }`;
 }
 
 function serializeCustomFieldNode(def: LuvioSelectionCustomFieldNode) {

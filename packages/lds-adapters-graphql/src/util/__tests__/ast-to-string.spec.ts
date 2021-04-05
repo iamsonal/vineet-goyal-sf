@@ -85,7 +85,7 @@ describe('AST to string', () => {
             ],
         };
 
-        const expectedQuery = `query { uiapi { query { Account(where:  { Name:  { like: "Account1" } }) { edges { node { Name { value, displayValue,  } } } } } } }`;
+        const expectedQuery = `query { uiapi { query { Account(where:  { Name:  { like: "Account1" } }) { edges { node { id, WeakEtag, Name { value, displayValue,  } } } } } } }`;
 
         const actual = astToString(ast);
         expect(actual).toEqual(expectedQuery);

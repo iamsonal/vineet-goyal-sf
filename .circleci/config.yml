@@ -131,7 +131,7 @@ setup_best_environment: &setup_best_environment
       export PULL_REQUEST=${CIRCLE_PULL_REQUEST}
       export REPO_NAME=${CIRCLE_PROJECT_REPONAME}
       export TARGET_COMMIT=${CIRCLE_SHA1}
-      export BASE_COMMIT=`git rev-parse origin/master`' >> $BASH_ENV
+      export BASE_COMMIT=`git rev-parse origin/main`' >> $BASH_ENV
 
       echo -e "$GIT_APP_CERT" | base64 -d >> ~/lds-lp/git_app.pem
 
@@ -147,7 +147,7 @@ compare_best_results: &compare_best_results
 
 store_best_artifacts: &store_best_artifacts
   store_artifacts:
-    path: ~/lds-lp/__benchmark_results__/
+    path: ~/lds-lp/__benchmarks_results__/
     destination: benchmarks
 
 test_size: &test_size
@@ -240,6 +240,6 @@ workflows:
       - test_mobile:
           requires:
             - build_and_test
-#      - perf_and_compare:
-#          requires:
-#            - build_and_test
+      - perf_and_compare:
+          requires:
+            - build_and_test

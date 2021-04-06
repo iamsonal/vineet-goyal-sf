@@ -8,5 +8,5 @@ export function transform(node: OperationDefinitionNode): LuvioOperationDefiniti
         return QueryTransform(node);
     }
 
-    throw new Error('Only query operation is supported');
+    throw new Error(`Unsupported ${operation} operation. Only query operation is supported`);
 }

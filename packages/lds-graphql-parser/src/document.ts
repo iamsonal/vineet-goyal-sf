@@ -1,6 +1,12 @@
 import { DocumentNode } from 'graphql/language';
-import { LuvioDocumentNode, LuvioDefinitionNode, isOperationDefinitionNode } from './ast';
-import { transform as OperationDefinitionTransform } from './operation';
+import {
+    LuvioDocumentNode,
+    LuvioDefinitionNode,
+    isOperationDefinitionNode,
+    isFragmentDefinitionNode,
+} from './ast';
+import { transform as operationDefinitionTransform } from './operation';
+import { transform as fragmentDefinitionTransform } from './fragment';
 
 export function transform(root: DocumentNode): LuvioDocumentNode {
     const { kind, definitions } = root;
@@ -8,7 +14,13 @@ export function transform(root: DocumentNode): LuvioDocumentNode {
     for (let i = 0; i < definitions.length; i++) {
         const definition = definitions[i];
         if (isOperationDefinitionNode(definition)) {
-            luvioDefinitions.push(OperationDefinitionTransform(definition));
+            luvioDefinitions.push(operationDefinitionTransform(definition));
+        } else if (isFragmentDefinitionNode(definition)) {
+            luvioDefinitions.push(fragmentDefinitionTransform(definition));
+        } else {
+            throw new Error(
+                `Unsupported ${definition.kind} definition. Only OperationDefinition and FragmentDefinition are supported in a GraphQL Document`
+            );
         }
     }
 

@@ -5,7 +5,6 @@
     "main": "dist/ldsGraphqlParser.js",
     "types": "dist/main.d.ts",
     "license": "MIT",
-    "private": true,
     "scripts": {
         "clean": "rm -rf dist",
         "build": "rollup --config rollup.config.js",

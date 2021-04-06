@@ -2,7 +2,7 @@ import * as parser from '../main';
 
 describe('LDS GraphQL Parser', () => {
     describe('parseAndVisit', () => {
-        it('turns GraphQL string into a custom AST', () => {
+        it('transforms GraphQL operation into a custom AST', () => {
             const source = `
             query {
                 uiapi {
@@ -111,6 +111,97 @@ describe('LDS GraphQL Parser', () => {
             const target = parser.default(source);
 
             expect(target).toStrictEqual(expected);
+        });
+
+        it('transforms GraphQL fragment into a custom AST', () => {
+            const source = `
+            fragment requiredFields on Record{
+                id,
+                WeakEtag,
+                ApiName,
+                DisplayValue,
+                LastModifiedById {
+                  value
+                }
+                LastModifiedDate {
+                    value
+                }
+                SystemModstamp {
+                  value
+                }
+                RecordTypeId {
+                  value
+                }
+              }
+            `;
+
+            const expected = {
+                kind: 'Document',
+                definitions: [
+                    {
+                        kind: 'FragmentDefinition',
+                        name: 'requiredFields',
+                        typeCondition: { kind: 'NamedType', name: 'Record' },
+                        luvioSelections: [
+                            { kind: 'ScalarFieldSelection', name: 'id' },
+                            { kind: 'ScalarFieldSelection', name: 'WeakEtag' },
+                            { kind: 'ScalarFieldSelection', name: 'ApiName' },
+                            { kind: 'ScalarFieldSelection', name: 'DisplayValue' },
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'LastModifiedById',
+                                luvioSelections: [{ kind: 'ScalarFieldSelection', name: 'value' }],
+                            },
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'LastModifiedDate',
+                                luvioSelections: [{ kind: 'ScalarFieldSelection', name: 'value' }],
+                            },
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'SystemModstamp',
+                                luvioSelections: [{ kind: 'ScalarFieldSelection', name: 'value' }],
+                            },
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'RecordTypeId',
+                                luvioSelections: [{ kind: 'ScalarFieldSelection', name: 'value' }],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const target = parser.default(source);
+            expect(target).toStrictEqual(expected);
+        });
+
+        it('throws an error for unsupported GraphQL definition', () => {
+            const source = `
+            type Character {
+                name: String!
+                appearsIn: [Episode!]!
+            }
+            `;
+
+            expect(() => parser.default(source)).toThrowError(
+                'Unsupported ObjectTypeDefinition definition. Only OperationDefinition and FragmentDefinition are supported in a GraphQL Document'
+            );
+        });
+
+        it('throws an error for unsupported GraphQL operation definition', () => {
+            const source = `
+            mutation CreateReviewForEpisode($ep: Episode!, $review: ReviewInput!) {
+                createReview(episode: $ep, review: $review) {
+                  stars
+                  commentary
+                }
+            }
+            `;
+
+            expect(() => parser.default(source)).toThrowError(
+                'Unsupported mutation operation. Only query operation is supported'
+            );
         });
     });
 });

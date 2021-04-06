@@ -195,7 +195,7 @@ function addDefaultFields(field: string, defaultFields: { [key: string]: boolean
 }
 
 /**
- * Indicates if a RecordRepresntation contains a specified field.
+ * Indicates if a RecordRepresentation contains a specified field.
  *
  * @param record record
  * @param field field to check for, split on '.'s, with the leading object api name omitted.

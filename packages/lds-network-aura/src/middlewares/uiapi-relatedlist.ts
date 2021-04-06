@@ -1,7 +1,21 @@
 import { ResourceRequest } from '@luvio/engine';
 import { UI_API_BASE_URI } from './uiapi-base';
-import { buildUiApiParams, dispatchAction } from './utils';
+import {
+    buildUiApiParams,
+    dispatchAction,
+    InstrumentationRejectConfig,
+    InstrumentationResolveConfig,
+} from './utils';
 import appRouter from '../router';
+import {
+    CrudEventState,
+    CrudEventType,
+    forceRecordTransactionsDisabled,
+    RelatedListInstrumentationCallbacks,
+} from './event-logging';
+import { logCRUDLightningInteraction } from '@salesforce/lds-instrumentation';
+import { RelatedListRecordCollectionRepresentation } from '@salesforce/lds-adapters-uiapi';
+import { RelatedListRecordCollectionBatchRepresentation } from '@salesforce/lds-adapters-uiapi';
 
 enum UiApiRecordController {
     GetRelatedListInfo = 'RelatedListUiController.getRelatedListInfoByApiName',
@@ -19,6 +33,46 @@ const UIAPI_RELATED_LIST_INFO_BATCH_PATH = `${UI_API_BASE_URI}/related-list-info
 const UIAPI_RELATED_LIST_RECORDS_PATH = `${UI_API_BASE_URI}/related-list-records`;
 const UIAPI_RELATED_LIST_RECORDS_BATCH_PATH = `${UI_API_BASE_URI}/related-list-records/batch`;
 const UIAPI_RELATED_LIST_COUNT_PATH = `${UI_API_BASE_URI}/related-list-count`;
+
+let crudInstrumentationCallbacks: RelatedListInstrumentationCallbacks | null = null;
+
+interface GetRelatedListRecordsCrudMetadata {
+    recordIds: string[];
+    recordType: string | null;
+    recordTypes: string[];
+}
+
+if (forceRecordTransactionsDisabled === false) {
+    crudInstrumentationCallbacks = {
+        getRelatedListRecordsRejectFunction: (config: InstrumentationRejectConfig) => {
+            logCRUDLightningInteraction(CrudEventType.READ, {
+                parentRecordId: config.params.parentRecordId,
+                relatedListId: config.params.relatedListId,
+                state: CrudEventState.ERROR,
+            });
+        },
+        getRelatedListRecordsResolveFunction: (config: InstrumentationResolveConfig) => {
+            logGetRelatedListRecordsInteraction(
+                config.body as RelatedListRecordCollectionRepresentation
+            );
+        },
+        getRelatedListRecordsBatchRejectFunction: (config: InstrumentationRejectConfig) => {
+            logCRUDLightningInteraction(CrudEventType.READ, {
+                parentRecordId: config.params.parentRecordId,
+                relatedListIds: config.params.relatedListIds,
+                state: CrudEventState.ERROR,
+            });
+        },
+        getRelatedListRecordsBatchResolveFunction: (config: InstrumentationResolveConfig) => {
+            (config.body as RelatedListRecordCollectionBatchRepresentation).results.forEach(res => {
+                // Log for each RL that was returned from batch endpoint
+                if (res.statusCode === 200) {
+                    logGetRelatedListRecordsInteraction(res.result);
+                }
+            });
+        },
+    };
+}
 
 function getRelatedListInfo(resourceRequest: ResourceRequest): Promise<any> {
     const { urlParams, queryParams } = resourceRequest;
@@ -87,7 +141,20 @@ function getRelatedListRecords(resourceRequest: ResourceRequest): Promise<any> {
         resourceRequest
     );
 
-    return dispatchAction(UiApiRecordController.GetRelatedListRecords, params);
+    const instrumentationCallbacks =
+        crudInstrumentationCallbacks !== null
+            ? {
+                  rejectFn: crudInstrumentationCallbacks.getRelatedListRecordsRejectFunction,
+                  resolveFn: crudInstrumentationCallbacks.getRelatedListRecordsResolveFunction,
+              }
+            : {};
+
+    return dispatchAction(
+        UiApiRecordController.GetRelatedListRecords,
+        params,
+        undefined,
+        instrumentationCallbacks
+    );
 }
 
 function getRelatedListRecordsBatch(resourceRequest: ResourceRequest): Promise<any> {
@@ -108,7 +175,20 @@ function getRelatedListRecordsBatch(resourceRequest: ResourceRequest): Promise<a
         resourceRequest
     );
 
-    return dispatchAction(UiApiRecordController.GetRelatedListRecordsBatch, params);
+    const instrumentationCallbacks =
+        crudInstrumentationCallbacks !== null
+            ? {
+                  rejectFn: crudInstrumentationCallbacks.getRelatedListRecordsBatchRejectFunction,
+                  resolveFn: crudInstrumentationCallbacks.getRelatedListRecordsBatchResolveFunction,
+              }
+            : {};
+
+    return dispatchAction(
+        UiApiRecordController.GetRelatedListRecordsBatch,
+        params,
+        undefined,
+        instrumentationCallbacks
+    );
 }
 
 function getRelatedListCount(resourceRequest: ResourceRequest): Promise<any> {
@@ -200,3 +280,31 @@ appRouter.get(
         path.startsWith(UIAPI_RELATED_LIST_COUNT_PATH + '/batch') === false,
     getRelatedListCount
 );
+
+function logGetRelatedListRecordsInteraction(
+    body: RelatedListRecordCollectionRepresentation
+): void {
+    const records = body.records;
+    // Don't log anything if the related list has no records.
+    if (records.length === 0) {
+        return;
+    }
+
+    const recordIds = records.map(record => {
+        return record.id;
+    });
+
+    /** 
+     *  In almost every case - the relatedList records will all be of the same apiName, but there is an edge case for
+        Activities entity that could return Events & Tasks- so handle that case by returning a joined string.
+        ADS Implementation only looks at the first record returned to determine the apiName.
+        See force/recordLibrary/recordMetricsPlugin.js _getRecordType method. 
+     */
+    logCRUDLightningInteraction(CrudEventType.READ, {
+        parentRecordId: body.listReference.inContextOfRecordId,
+        relatedListId: body.listReference.relatedListId,
+        recordIds,
+        recordType: body.records[0].apiName,
+        state: CrudEventState.SUCCESS,
+    });
+}

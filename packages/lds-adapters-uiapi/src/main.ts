@@ -28,6 +28,9 @@ export {
 } from './generated/types/FieldValueRepresentation';
 export { BatchRepresentation } from './generated/types/BatchRepresentation';
 
+export { RelatedListRecordCollectionBatchRepresentation } from './generated/types/RelatedListRecordCollectionBatchRepresentation';
+export { RelatedListRecordCollectionRepresentation } from './generated/types/RelatedListRecordCollectionRepresentation';
+
 export * from './generated/artifacts/main';
 
 // Exposing those ingestion methods method "@luvio/engine" performance tests.

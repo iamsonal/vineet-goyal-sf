@@ -15,9 +15,7 @@ import {
     dispatchAction,
     DispatchActionConfig,
     shouldForceRefresh,
-    InstrumentationRejectCallback,
     InstrumentationRejectConfig,
-    InstrumentationResolveCallback,
     InstrumentationResolveConfig,
 } from './utils';
 import {
@@ -27,7 +25,13 @@ import {
 } from './execute-aggregate-ui';
 import appRouter from '../router';
 import { ArrayIsArray } from '../utils/language';
-import { getEnvironmentSetting, EnvironmentSettings } from '@salesforce/lds-environment-settings';
+
+import {
+    CrudEventState,
+    CrudEventType,
+    forceRecordTransactionsDisabled,
+    RecordInstrumentationCallbacks,
+} from './event-logging';
 
 enum UiApiRecordController {
     CreateRecord = 'RecordUiController.createRecord',
@@ -70,36 +74,7 @@ const UIAPI_OBJECT_INFO_BATCH_PATH = `${UI_API_BASE_URI}/object-info/batch/`;
 const UIAPI_DUPLICATE_CONFIGURATION_PATH = `${UI_API_BASE_URI}/duplicates/`;
 const UIAPI_DUPLICATES_PATH = `${UI_API_BASE_URI}/predupe`;
 
-enum CrudEventType {
-    CREATE = 'create',
-    DELETE = 'delete',
-    READ = 'read',
-    UPDATE = 'update',
-}
-
-enum CrudEventState {
-    ERROR = 'ERROR',
-    SUCCESS = 'SUCCESS',
-}
-
-interface CrudInstrumentationCallbacks {
-    createRecordRejectFunction: InstrumentationRejectCallback;
-    createRecordResolveFunction: InstrumentationResolveCallback;
-    deleteRecordRejectFunction: InstrumentationRejectCallback;
-    deleteRecordResolveFunction: InstrumentationResolveCallback;
-    getRecordAggregateRejectFunction: InstrumentationRejectCallback;
-    getRecordAggregateResolveFunction: InstrumentationResolveCallback;
-    getRecordRejectFunction: InstrumentationRejectCallback;
-    getRecordResolveFunction: InstrumentationResolveCallback;
-    updateRecordRejectFunction: InstrumentationRejectCallback;
-    updateRecordResolveFunction: InstrumentationResolveCallback;
-}
-
-let crudInstrumentationCallbacks: CrudInstrumentationCallbacks | null = null;
-
-const forceRecordTransactionsDisabled: boolean | undefined = getEnvironmentSetting(
-    EnvironmentSettings.ForceRecordTransactionsDisabled
-);
+let crudInstrumentationCallbacks: RecordInstrumentationCallbacks | null = null;
 
 if (forceRecordTransactionsDisabled === false) {
     crudInstrumentationCallbacks = {

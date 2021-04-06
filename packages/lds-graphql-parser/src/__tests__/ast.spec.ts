@@ -1,4 +1,10 @@
-import { isOperationDefinitionNode, isFragmentDefinitionNode } from '../ast';
+import {
+    isOperationDefinitionNode,
+    isFragmentDefinitionNode,
+    isNamedTypeNode,
+    isListTypeNode,
+    isNonNullTypeNode,
+} from '../ast';
 
 describe('Luvio GraphQL AST', () => {
     describe('utility functions', () => {
@@ -56,6 +62,48 @@ describe('Luvio GraphQL AST', () => {
                 },
             });
             expect(target).toBe(false);
+        });
+
+        it('isNamedTypeNode returns true if input is GraphQL NamedTypeNode', () => {
+            expect(
+                isNamedTypeNode({
+                    kind: 'NamedType',
+                    name: {
+                        kind: 'Name',
+                        value: 'test',
+                    },
+                })
+            ).toBe(true);
+        });
+
+        it('isListTypeNode returns true if input is GraphQL ListTypeNode', () => {
+            expect(
+                isListTypeNode({
+                    kind: 'ListType',
+                    type: {
+                        kind: 'NamedType',
+                        name: {
+                            kind: 'Name',
+                            value: 'test',
+                        },
+                    },
+                })
+            ).toBe(true);
+        });
+
+        it('isNonNullTypeNode returns true if input is Graphql NonNullTypeNode', () => {
+            expect(
+                isNonNullTypeNode({
+                    kind: 'NonNullType',
+                    type: {
+                        kind: 'NamedType',
+                        name: {
+                            kind: 'Name',
+                            value: 'test',
+                        },
+                    },
+                })
+            ).toBe(true);
         });
     });
 });

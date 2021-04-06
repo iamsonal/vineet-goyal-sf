@@ -30,7 +30,6 @@ describe('LDS GraphQL Parser', () => {
                     {
                         kind: 'OperationDefinition',
                         operation: 'query',
-                        variableDefinitions: [],
                         name: 'operationName',
                         luvioSelections: [
                             {
@@ -202,6 +201,147 @@ describe('LDS GraphQL Parser', () => {
             expect(() => parser.default(source)).toThrowError(
                 'Unsupported mutation operation. Only query operation is supported'
             );
+        });
+
+        it('transforms variable definitions', () => {
+            const source = `
+            query HeroNameAndFriends($episode: Episode = JEDI) {
+                hero(episode: $episode) {
+                  name
+                  friends {
+                    name
+                  }
+                }
+            }
+            `;
+
+            const expected = {
+                kind: 'Document',
+                definitions: [
+                    {
+                        kind: 'OperationDefinition',
+                        operation: 'query',
+                        name: 'HeroNameAndFriends',
+                        luvioSelections: [
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'hero',
+                                luvioSelections: [
+                                    { kind: 'ScalarFieldSelection', name: 'name' },
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'friends',
+                                        luvioSelections: [
+                                            { kind: 'ScalarFieldSelection', name: 'name' },
+                                        ],
+                                    },
+                                ],
+                                arguments: [
+                                    {
+                                        kind: 'Argument',
+                                        name: 'episode',
+                                        value: { kind: 'Variable', name: 'episode' },
+                                    },
+                                ],
+                            },
+                        ],
+                        variableDefinitions: [
+                            {
+                                kind: 'VariableDefinition',
+                                variable: { kind: 'Variable', name: 'episode' },
+                                type: { kind: 'NamedType', name: 'Episode' },
+                                defaultValue: { kind: 'EnumValue', value: 'JEDI' },
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const target = parser.default(source);
+
+            expect(target).toStrictEqual(expected);
+        });
+
+        it('transform directives', () => {
+            const source = `
+            query Hero($episode: Episode, $withFriends: Boolean!) {
+                hero(episode: $episode) {
+                  name
+                  friends @include(if: $withFriends) {
+                    name
+                  }
+                }
+            }
+            `;
+
+            const expected = {
+                kind: 'Document',
+                definitions: [
+                    {
+                        kind: 'OperationDefinition',
+                        operation: 'query',
+                        name: 'Hero',
+                        luvioSelections: [
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'hero',
+                                luvioSelections: [
+                                    { kind: 'ScalarFieldSelection', name: 'name' },
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'friends',
+                                        luvioSelections: [
+                                            { kind: 'ScalarFieldSelection', name: 'name' },
+                                        ],
+                                        directives: [
+                                            {
+                                                kind: 'Directive',
+                                                name: 'include',
+                                                arguments: [
+                                                    {
+                                                        kind: 'Argument',
+                                                        name: 'if',
+                                                        value: {
+                                                            kind: 'Variable',
+                                                            name: 'withFriends',
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                                arguments: [
+                                    {
+                                        kind: 'Argument',
+                                        name: 'episode',
+                                        value: { kind: 'Variable', name: 'episode' },
+                                    },
+                                ],
+                            },
+                        ],
+                        variableDefinitions: [
+                            {
+                                kind: 'VariableDefinition',
+                                variable: { kind: 'Variable', name: 'episode' },
+                                type: { kind: 'NamedType', name: 'Episode' },
+                            },
+                            {
+                                kind: 'VariableDefinition',
+                                variable: { kind: 'Variable', name: 'withFriends' },
+                                type: {
+                                    kind: 'NonNullType',
+                                    type: { kind: 'NamedType', name: 'Boolean' },
+                                },
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const target = parser.default(source);
+
+            expect(target).toStrictEqual(expected);
         });
     });
 });

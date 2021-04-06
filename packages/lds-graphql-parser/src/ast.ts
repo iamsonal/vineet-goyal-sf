@@ -21,6 +21,7 @@ import {
     InlineFragmentNode,
     FragmentDefinitionNode,
     DefinitionNode,
+    TypeNode,
 } from 'graphql/language';
 
 /**
@@ -183,4 +184,16 @@ export function isOperationDefinitionNode(input: DefinitionNode): input is Opera
 
 export function isFragmentDefinitionNode(input: DefinitionNode): input is FragmentDefinitionNode {
     return input.kind === 'FragmentDefinition';
+}
+
+export function isNamedTypeNode(input: TypeNode): input is NamedTypeNode {
+    return input.kind === 'NamedType';
+}
+
+export function isListTypeNode(input: TypeNode): input is ListTypeNode {
+    return input.kind === 'ListType';
+}
+
+export function isNonNullTypeNode(input: TypeNode): input is NonNullTypeNode {
+    return input.kind === 'NonNullType';
 }

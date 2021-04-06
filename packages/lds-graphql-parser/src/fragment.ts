@@ -1,9 +1,20 @@
 import { FragmentDefinitionNode } from 'graphql/language';
 import { LuvioFieldNode, LuvioFragmentDefinitionNode } from './ast';
 import { fieldVisitor } from './visitor';
+import { transform as transformVariableDefinition } from './variable-definition';
+import { transform as transformDirectiveNode } from './directive-node';
 
 export function transform(node: FragmentDefinitionNode): LuvioFragmentDefinitionNode {
-    // TODO transform variableDefinitions and directives
+    const {
+        kind: nodeKind,
+        name: { value: nodeName },
+        typeCondition: {
+            kind: typeKind,
+            name: { value: typeName },
+        },
+        variableDefinitions,
+        directives,
+    } = node;
 
     // dummy root node
     const fragmentRoot: LuvioFieldNode = {
@@ -16,14 +27,22 @@ export function transform(node: FragmentDefinitionNode): LuvioFragmentDefinition
     fieldVisitor(node, currentNodePath);
 
     const luvioNode: LuvioFragmentDefinitionNode = {
-        kind: node.kind,
-        name: node.name.value,
+        kind: nodeKind,
+        name: nodeName,
         typeCondition: {
-            kind: node.typeCondition.kind,
-            name: node.typeCondition.name.value,
+            kind: typeKind,
+            name: typeName,
         },
         luvioSelections: fragmentRoot.luvioSelections!,
     };
+
+    if (variableDefinitions !== undefined && variableDefinitions.length > 0) {
+        luvioNode.variableDefinitions = variableDefinitions.map(transformVariableDefinition);
+    }
+
+    if (directives !== undefined && directives.length > 0) {
+        luvioNode.directives = directives.map(transformDirectiveNode);
+    }
 
     return luvioNode;
 }

@@ -1,89 +1,7 @@
-import {
-    ArgumentNode,
-    ASTNode,
-    DirectiveNode,
-    StringValueNode,
-    ValueNode,
-    visit,
-} from 'graphql/language';
-import { LuvioFieldNode, LuvioArgumentNode, LuvioValueNode } from './ast';
-
-function copyArguments(argNodes: readonly ArgumentNode[], target: LuvioArgumentNode[]) {
-    for (let i = 0; i < argNodes.length; i++) {
-        const argNode = argNodes[i];
-        const arg: LuvioArgumentNode = {
-            kind: 'Argument',
-            name: argNode.name.value,
-            value: getArgumentValue(argNode.value),
-        };
-
-        target.push(arg);
-    }
-}
-
-function getArgumentValue(valueNode: ValueNode): LuvioValueNode {
-    switch (valueNode.kind) {
-        case 'Variable':
-            return {
-                kind: 'Variable',
-                name: valueNode.name.value,
-            };
-        case 'IntValue':
-            return {
-                kind: 'IntValue',
-                value: valueNode.value,
-            };
-        case 'FloatValue':
-            return {
-                kind: 'FloatValue',
-                value: valueNode.value,
-            };
-        case 'StringValue':
-            return {
-                kind: 'StringValue',
-                value: valueNode.value,
-            };
-        case 'BooleanValue':
-            return {
-                kind: 'BooleanValue',
-                value: valueNode.value,
-            };
-        case 'EnumValue':
-            return {
-                kind: 'EnumValue',
-                value: valueNode.value,
-            };
-        case 'NullValue':
-            return {
-                kind: 'NullValue',
-            };
-        case 'ListValue': {
-            const values = valueNode.values.map(value => {
-                return getArgumentValue(value);
-            });
-
-            return {
-                kind: 'ListValue',
-                values: values,
-            };
-        }
-        case 'ObjectValue': {
-            const { fields } = valueNode;
-            const result: { [name: string]: LuvioValueNode } = {};
-            fields.forEach(field => {
-                const name = field.name.value;
-                result[name] = getArgumentValue(field.value);
-            });
-
-            return {
-                kind: 'ObjectValue',
-                fields: result,
-            };
-        }
-        default:
-            throw new Error('Unsupported type');
-    }
-}
+import { ASTNode, DirectiveNode, StringValueNode, visit } from 'graphql/language';
+import { LuvioFieldNode } from './ast';
+import { transform as transformArgumentNode } from './argument-node';
+import { transform as transformDirectiveNode } from './directive-node';
 
 export function fieldVisitor(ast: ASTNode, path: LuvioFieldNode[]) {
     visit(ast, {
@@ -130,14 +48,15 @@ export function fieldVisitor(ast: ASTNode, path: LuvioFieldNode[]) {
                             type: (resourceDirective!.arguments![0].value as StringValueNode).value,
                             luvioSelections: [],
                         };
+                    } else {
+                        // transform non client-side directives
+                        selectionNode.directives = directives.map(transformDirectiveNode);
                     }
                 }
 
                 if (selectionNode.kind !== 'ScalarFieldSelection') {
                     if (fieldArgs !== undefined && fieldArgs.length > 0) {
-                        const args: LuvioArgumentNode[] = [];
-                        copyArguments(fieldArgs, args);
-                        selectionNode.arguments = args;
+                        selectionNode.arguments = fieldArgs.map(transformArgumentNode);
                     }
                 }
 

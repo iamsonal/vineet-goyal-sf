@@ -1222,10 +1222,16 @@ describe('routes', () => {
                 urlParams: {
                     objectApiName: 'Test_c',
                 },
+                queryParams: {
+                    recordTypeId: '123',
+                },
             },
             [
-                'RecordUiController.getDedupeConfig',
-                { objectApiName: 'Test_c' },
+                'RecordUiController.getDuplicateConfig',
+                {
+                    objectApiName: 'Test_c',
+                    recordTypeId: '123',
+                },
                 { background: false, hotspot: true, longRunning: false },
             ]
         );

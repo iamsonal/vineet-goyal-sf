@@ -50,7 +50,7 @@ enum UiApiRecordController {
     UpdateRecord = 'RecordUiController.updateRecord',
     UpdateRecordAvatar = 'RecordUiController.postRecordAvatarAssociation',
     UpdateLayoutUserState = 'RecordUiController.updateLayoutUserState',
-    GetDuplicateConfiguration = 'RecordUiController.getDedupeConfig',
+    GetDuplicateConfiguration = 'RecordUiController.getDuplicateConfig',
     GetDuplicates = 'RecordUiController.findDuplicates',
 }
 
@@ -649,6 +649,7 @@ function getDuplicateConfiguration(resourceRequest: ResourceRequest): Promise<an
     const params = buildUiApiParams(
         {
             objectApiName: resourceRequest.urlParams.objectApiName,
+            recordTypeId: resourceRequest.queryParams.recordTypeId,
         },
         resourceRequest
     );

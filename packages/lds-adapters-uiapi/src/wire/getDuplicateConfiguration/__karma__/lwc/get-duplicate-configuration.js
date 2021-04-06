@@ -4,10 +4,15 @@ import { getDuplicateConfiguration } from 'lds-adapters-uiapi';
 export default class Basic extends LightningElement {
     @api
     objectApiName;
+
+    @api
+    recordTypeId;
+
     wirePushCount = -1;
 
     @wire(getDuplicateConfiguration, {
         objectApiName: '$objectApiName',
+        recordTypeId: '$recordTypeId',
     })
     onGetDuplicateConfiguration(result) {
         this.configuration = result;

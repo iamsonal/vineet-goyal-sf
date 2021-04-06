@@ -1,4 +1,9 @@
-import { getMock as globalGetMock, setupElement, mockNetworkErrorOnce } from 'test-util';
+import {
+    getMock as globalGetMock,
+    setupElement,
+    mockNetworkErrorOnce,
+    flushPromises,
+} from 'test-util';
 import {
     expireDuplicateConfiguration,
     mockGetDuplicatesConfigurationNetwork,
@@ -43,6 +48,21 @@ describe('duplicate configuration', () => {
         expect(elm.pushCount()).toBe(1);
         expect(elm.getWiredData()).toEqualSnapshotWithoutEtags(mock);
     });
+    it('should make http request when data is not present in cache with given recordTypeId', async () => {
+        const mock = getMock('duplicate-configuration-Account');
+
+        const config = {
+            objectApiName: 'Account',
+            recordTypeId: '012xx0000005vp7AAA',
+        };
+
+        mockGetDuplicatesConfigurationNetwork(config, mock);
+
+        const elm = await setupElement(config, GetDuplicatesConfiguration);
+
+        expect(elm.pushCount()).toBe(1);
+        expect(elm.getWiredData()).toEqualSnapshotWithoutEtags(mock);
+    });
     it('should not make http request when data is present in cache', async () => {
         const mock = getMock('duplicate-configuration-Account');
 
@@ -61,6 +81,84 @@ describe('duplicate configuration', () => {
 
         expect(wireB.pushCount()).toBe(1);
         expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mock);
+    });
+
+    it('should not make http request when data is present in cache with given recordTypeId', async () => {
+        const mock = getMock('duplicate-configuration-Account');
+
+        const config = {
+            objectApiName: 'Account',
+            recordTypeId: '012xx0000005vp7AAA',
+        };
+
+        mockGetDuplicatesConfigurationNetwork(config, mock);
+
+        const wireA = await setupElement(config, GetDuplicatesConfiguration);
+
+        expect(wireA.pushCount()).toBe(1);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mock);
+
+        const wireB = await setupElement(config, GetDuplicatesConfiguration);
+
+        expect(wireB.pushCount()).toBe(1);
+        expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mock);
+    });
+    it('should make http request when data is present in cache but without recordTypeId', async () => {
+        const mock1 = getMock('duplicate-configuration-Account');
+        const mock2 = getMock('duplicate-configuration-Lead');
+
+        const config1 = {
+            objectApiName: 'Account',
+        };
+
+        const config2 = {
+            objectApiName: 'Account',
+            recordTypeId: '012xx0000005vp7AAA',
+        };
+
+        mockGetDuplicatesConfigurationNetwork(config1, mock1);
+
+        const wireA = await setupElement(config1, GetDuplicatesConfiguration);
+
+        expect(wireA.pushCount()).toBe(1);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mock1);
+
+        mockGetDuplicatesConfigurationNetwork(config2, mock2);
+
+        wireA.recordTypeId = '012xx0000005vp7AAA';
+        await flushPromises();
+
+        expect(wireA.pushCount()).toBe(2);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mock2);
+    });
+    it('should make http request when data is present in cache but with different recordTypeId', async () => {
+        const mock1 = getMock('duplicate-configuration-Account');
+        const mock2 = getMock('duplicate-configuration-Lead');
+
+        const config1 = {
+            objectApiName: 'Account',
+            recordTypeId: '012xx0000005vp7AAA',
+        };
+
+        const config2 = {
+            objectApiName: 'Account',
+            recordTypeId: '012xx0000005vp8AAA',
+        };
+
+        mockGetDuplicatesConfigurationNetwork(config1, mock1);
+
+        const wireA = await setupElement(config1, GetDuplicatesConfiguration);
+
+        expect(wireA.pushCount()).toBe(1);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mock1);
+
+        mockGetDuplicatesConfigurationNetwork(config2, mock2);
+
+        wireA.recordTypeId = '012xx0000005vp8AAA';
+        await flushPromises();
+
+        expect(wireA.pushCount()).toBe(2);
+        expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(mock2);
     });
     it('should make http request when data is not present in cache but expired', async () => {
         const mock = getMock('duplicate-configuration-Account');

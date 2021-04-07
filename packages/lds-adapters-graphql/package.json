@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-graphql",
-    "version": "1.10.3",
+    "version": "1.11.0",
     "description": "Wire adapter for GraphQL API endpoint",
     "license": "MIT",
     "main": "dist/umd/es2018/graphql-service.js",
@@ -17,13 +17,13 @@
         "test:unit": "jest"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.10.3"
+        "@salesforce/lds-bindings": "1.11.0"
     },
     "devDependencies": {
-        "@salesforce/lds-adapters-uiapi": "1.10.3",
-        "@salesforce/lds-compiler-plugins": "1.10.3",
-        "@salesforce/lds-graphql-parser": "1.10.3",
-        "@salesforce/lds-jest": "1.10.3",
-        "@salesforce/lds-karma": "1.10.3"
+        "@salesforce/lds-adapters-uiapi": "1.11.0",
+        "@salesforce/lds-compiler-plugins": "1.11.0",
+        "@salesforce/lds-graphql-parser": "1.11.0",
+        "@salesforce/lds-jest": "1.11.0",
+        "@salesforce/lds-karma": "1.11.0"
     }
 }

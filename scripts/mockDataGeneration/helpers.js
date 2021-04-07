@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const API_VERSION = 'v52.0';
+const API_VERSION = 'v53.0';
 const URL_BASE = `/services/data/${API_VERSION}`;
 
 const toDelete = [];

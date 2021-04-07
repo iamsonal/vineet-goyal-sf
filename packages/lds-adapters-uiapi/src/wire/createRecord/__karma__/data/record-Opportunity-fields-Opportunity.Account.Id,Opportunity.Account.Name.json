@@ -1,43 +1,43 @@
 {
     "apiName": "Opportunity",
     "childRelationships": {},
-    "eTag": "40042b3a49212a36e6b254432c6e0fd2",
+    "eTag": "1589d7926b53f2f7aef5c14e49329221",
     "fields": {
         "Account": {
             "displayValue": "Seahawks",
             "value": {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "a78e4ba42c1b2786ac506122f829e43f",
+                "eTag": "fdf2490ef5f369ef4482dc7c6774a67a",
                 "fields": {
                     "Id": {
                         "displayValue": null,
-                        "value": "001T1000001nL4UIAU"
+                        "value": "001T1000001nLr4IAE"
                     },
                     "Name": {
                         "displayValue": null,
                         "value": "Seahawks"
                     }
                 },
-                "id": "001T1000001nL4UIAU",
-                "lastModifiedById": "005T1000000HsOgIAK",
-                "lastModifiedDate": "2020-12-01T20:05:07.000Z",
+                "id": "001T1000001nLr4IAE",
+                "lastModifiedById": "005T1000000Huh7IAC",
+                "lastModifiedDate": "2021-04-07T00:28:27.000Z",
                 "recordTypeId": "012000000000000AAA",
                 "recordTypeInfo": null,
-                "systemModstamp": "2020-12-01T20:05:07.000Z",
-                "weakEtag": 1606853107000
+                "systemModstamp": "2021-04-07T00:28:28.000Z",
+                "weakEtag": 1617755308000
             }
         },
         "AccountId": {
             "displayValue": null,
-            "value": "001T1000001nL4UIAU"
+            "value": "001T1000001nLr4IAE"
         }
     },
-    "id": "006T1000001rGQJIA2",
-    "lastModifiedById": "005T1000000HsOgIAK",
-    "lastModifiedDate": "2020-12-01T20:05:36.000Z",
+    "id": "006T1000001rGRvIAM",
+    "lastModifiedById": "005T1000000Huh7IAC",
+    "lastModifiedDate": "2021-04-07T00:28:35.000Z",
     "recordTypeId": "012000000000000AAA",
     "recordTypeInfo": null,
-    "systemModstamp": "2020-12-01T20:05:37.000Z",
-    "weakEtag": 1606853137000
+    "systemModstamp": "2021-04-07T00:28:36.000Z",
+    "weakEtag": 1617755316000
 }

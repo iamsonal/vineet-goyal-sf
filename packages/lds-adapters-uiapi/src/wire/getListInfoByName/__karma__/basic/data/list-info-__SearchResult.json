@@ -9,6 +9,11 @@
             "sortable": true
         },
         {
+            "fieldApiName": "Site",
+            "label": "Account Site",
+            "sortable": true
+        },
+        {
             "fieldApiName": "Phone",
             "label": "Phone",
             "sortable": true
@@ -19,7 +24,7 @@
             "sortable": true
         }
     ],
-    "eTag": "6f9262d835ab5b42f058ec35fef79067",
+    "eTag": "dde688e9b0ec426bbc5e6783dcb53b7e",
     "filterLogicString": null,
     "filteredByInfo": [],
     "label": null,
@@ -33,11 +38,13 @@
     "updateable": false,
     "userPreferences": {
         "columnWidths": {
+            "Site": -1,
             "Owner.Alias": -1,
             "Phone": -1,
             "Name": -1
         },
         "columnWrap": {
+            "Site": false,
             "Owner.Alias": false,
             "Phone": false,
             "Name": false

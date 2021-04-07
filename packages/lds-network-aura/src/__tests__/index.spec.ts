@@ -1438,7 +1438,7 @@ describe('routes', () => {
                 defaultValue: null,
                 eTag: 'a4587e5dc7cc5157e1f07e3cc9ed94e5',
                 url:
-                    '/services/data/v52.0/ui-api/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User',
+                    '/services/data/v53.0/ui-api/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User',
                 values: [
                     {
                         attributes: null,

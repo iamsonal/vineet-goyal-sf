@@ -1,7 +1,7 @@
 {
-    "count": 5,
+    "count": 1,
     "currentPageToken": null,
-    "currentPageUrl": "/services/data/v52.0/ui-api/lookups/Case/AccountId/Account?q=test&searchType=TypeAhead&page=1&pageSize=25",
+    "currentPageUrl": "/services/data/v53.0/ui-api/lookups/Case/AccountId/Account?q=test&searchType=TypeAhead&page=1&pageSize=25",
     "nextPageToken": null,
     "nextPageUrl": null,
     "previousPageToken": null,
@@ -10,197 +10,32 @@
         {
             "apiName": "Account",
             "childRelationships": {},
-            "eTag": "9e6cedd1f84fab0d3cf39a50814c4240",
+            "eTag": "298eb045cdaee7ff3c0217ae1b955b76",
             "fields": {
-                "Client_Coverage_officer1__r": {
-                    "displayValue": null,
-                    "value": null
-                },
-                "Id": {
-                    "displayValue": null,
-                    "value": "0018A00000C3BOOQA3"
-                },
-                "Name": {
-                    "displayValue": null,
-                    "value": "Acme Test Sponsor"
-                }
-            },
-            "id": "0018A00000C3BOOQA3",
-            "lastModifiedById": "005d0000002yBcZuuA",
-            "lastModifiedDate": "2019-11-26T23:14:59.000Z",
-            "recordTypeId": "0018A00000Y2BaaZx4",
-            "recordTypeInfo": {
-                "available": true,
-                "defaultRecordTypeMapping": true,
-                "master": false,
-                "name": "Customer",
-                "recordTypeId": "0018A00000Y2BaaZx4"
-            },
-            "systemModstamp": "2019-11-26T23:14:59.000Z",
-            "weakEtag": 1574810099000
-        },
-        {
-            "apiName": "Account",
-            "childRelationships": {},
-            "eTag": "5067024bae28b9d4303aa57a6f049c0c",
-            "fields": {
-                "Client_Coverage_officer1__r": {
-                    "displayValue": null,
-                    "value": null
-                },
-                "Id": {
-                    "displayValue": null,
-                    "value": "0018A00000Z5BaaZx4"
-                },
-                "Name": {
-                    "displayValue": null,
-                    "value": "Acme Test Customer"
-                }
-            },
-            "id": "0018A00000Z5BaaZx4",
-            "lastModifiedById": "005d0000001ZSbIAAW",
-            "lastModifiedDate": "2020-01-02T16:33:03.000Z",
-            "recordTypeId": "0018A00000Y2BaaZx4",
-            "recordTypeInfo": {
-                "available": true,
-                "defaultRecordTypeMapping": true,
-                "master": false,
-                "name": "Customer",
-                "recordTypeId": "0018A00000Y2BaaZx4"
-            },
-            "systemModstamp": "2020-01-02T16:33:03.000Z",
-            "weakEtag": 1577982783000
-        },
-        {
-            "apiName": "Account",
-            "childRelationships": {},
-            "eTag": "ff8812b5c51efce292d701ac54bf28f9",
-            "fields": {
-                "Client_Coverage_officer1__c": {
-                    "displayValue": null,
-                    "value": "0030V00001ZQ7fyKUC"
-                },
-                "Client_Coverage_officer1__r": {
-                    "displayValue": "Larry Smith",
-                    "value": {
-                        "apiName": "Contact",
-                        "childRelationships": {},
-                        "eTag": "6537f6c51481fa5b56eeab851792a0b4",
-                        "fields": {
-                            "Id": {
-                                "displayValue": null,
-                                "value": "0030V00001ZQ7fyKUC"
-                            },
-                            "Name": {
-                                "displayValue": null,
-                                "value": "Larry Smith"
-                            }
-                        },
-                        "id": "0030V00001ZQ7fyKUC",
-                        "lastModifiedById": "005d0000001aG2nAAE",
-                        "lastModifiedDate": "2019-11-29T10:26:25.000Z",
-                        "recordTypeId": "012d0000000ObNTAA0",
-                        "recordTypeInfo": {
-                            "available": false,
-                            "defaultRecordTypeMapping": false,
-                            "master": false,
-                            "name": "ACME Employee",
-                            "recordTypeId": "012d0000000ObNTAA0"
-                        },
-                        "systemModstamp": "2019-11-29T10:26:25.000Z",
-                        "weakEtag": 1575023185000
-                    }
-                },
                 "DisambiguationField": {
                     "displayValue": null,
-                    "value": "Larry Smith"
-                },
-                "Id": {
-                    "displayValue": null,
-                    "value": "0018A00000HaN5asdf"
-                },
-                "Name": {
-                    "displayValue": null,
-                    "value": "Test123"
-                }
-            },
-            "id": "0018A00000HaN5asdf",
-            "lastModifiedById": "005d0000002yBcZuuA",
-            "lastModifiedDate": "2019-11-26T23:15:02.000Z",
-            "recordTypeId": "0018A00000Y2BaaZx4",
-            "recordTypeInfo": {
-                "available": true,
-                "defaultRecordTypeMapping": true,
-                "master": false,
-                "name": "Customer",
-                "recordTypeId": "0018A00000Y2BaaZx4"
-            },
-            "systemModstamp": "2019-11-26T23:15:02.000Z",
-            "weakEtag": 1574810102000
-        },
-        {
-            "apiName": "Account",
-            "childRelationships": {},
-            "eTag": "6cb10693eeb96ed2c0f29461b5c0de5c",
-            "fields": {
-                "Client_Coverage_officer1__r": {
-                    "displayValue": null,
                     "value": null
                 },
                 "Id": {
                     "displayValue": null,
-                    "value": "0018A00000LtNWzQAN"
+                    "value": "001T1000002GaXCIA0"
                 },
                 "Name": {
                     "displayValue": null,
-                    "value": "Acme Test Customer"
-                }
-            },
-            "id": "0018A00000LtNWzQAN",
-            "lastModifiedById": "0058A000001F5QiQAK",
-            "lastModifiedDate": "2020-01-16T04:15:52.000Z",
-            "recordTypeId": "0018A00000Y2BaaZx4",
-            "recordTypeInfo": {
-                "available": true,
-                "defaultRecordTypeMapping": true,
-                "master": false,
-                "name": "Customer",
-                "recordTypeId": "0018A00000Y2BaaZx4"
-            },
-            "systemModstamp": "2020-01-16T04:15:52.000Z",
-            "weakEtag": 1579148152000
-        },
-        {
-            "apiName": "Account",
-            "childRelationships": {},
-            "eTag": "68406ede052ad95a2e97eb1239020891",
-            "fields": {
-                "Customer_Coverage_officer1__r": {
+                    "value": "Burlington Textiles Corp of America"
+                },
+                "Site": {
                     "displayValue": null,
                     "value": null
-                },
-                "Id": {
-                    "displayValue": null,
-                    "value": "0018A00000HaSWKQA3"
-                },
-                "Name": {
-                    "displayValue": null,
-                    "value": "test user"
                 }
             },
-            "id": "0018A00000HaSWKQA3",
-            "lastModifiedById": "005d0000002yBcZuuA",
-            "lastModifiedDate": "2019-11-26T23:15:02.000Z",
-            "recordTypeId": "0018A00000Y2BaaZx4",
-            "recordTypeInfo": {
-                "available": true,
-                "defaultRecordTypeMapping": true,
-                "master": false,
-                "name": "Customer",
-                "recordTypeId": "0018A00000Y2BaaZx4"
-            },
-            "systemModstamp": "2019-11-26T23:15:02.000Z",
-            "weakEtag": 1574810102000
+            "id": "001T1000002GaXCIA0",
+            "lastModifiedById": "005T1000000Huh7IAC",
+            "lastModifiedDate": "2021-04-06T23:46:16.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2021-04-06T23:46:16.000Z",
+            "weakEtag": 1617752776000
         }
     ]
 }

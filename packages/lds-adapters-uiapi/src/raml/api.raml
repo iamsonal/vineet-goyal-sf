@@ -2,11 +2,11 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '52.0'
+version: '53.0'
 mediaType: application/json
 protocols:
   - https
-baseUri: /services/data/v52.0
+baseUri: /services/data/v53.0
 securitySchemes:
   OAuth2:
     type: OAuth 2.0
@@ -1883,6 +1883,7 @@ types:
       type:
         description: API name of the corresponding PageDefinition.
         type: string
+        # format: int64 - W-9109412: Format int64 is not valid for type http://www.w3.org/2001/XMLSchema#string.
   PhotoMetadataRepresentation:
     description: Represents an metadata of an avatar associated to a record.
     type: object
@@ -1922,6 +1923,7 @@ types:
       width:
         description: Retrieve the width of the photo in pixels, if known, otherwise
           this will be null.
+        # format: int64 - W-9109412: Format int64 is not valid for type http://www.w3.org/2001/XMLSchema#string.
         type: integer | nil
   PicklistValueRepresentation:
     description: A single picklist value.
@@ -2578,6 +2580,9 @@ types:
       apiName:
         description: The record's object API name.
         type: string
+      cloneSourceId:
+        description: The cloneSourceId of the record.
+        type: string
       fields:
         description: The field data for this record, matching the requested layout
           and mode.
@@ -2588,9 +2593,6 @@ types:
       recordTypeId:
         description: The RecordTypeId of the record.
         type: string | nil
-      cloneSourceId:
-        description: The cloneSourceId of the record.
-        type: string
   RecordTemplateCreateRepresentation:
     description: Record defaults create template for specifying api name, fields,
       record typeinfo and recordtypeid information
@@ -3004,7 +3006,9 @@ types:
         description: The theme info for this related list's entity.
         type: ThemeInfoRepresentation | nil
       uiApiEnabledLayout:
-        description: True if the elements in the layout are supported in UI API.
+        description: True if the elements in the layout are supported in UI API.  This
+          is a best effort calculation, and should not be relied upon to always be
+          completely accurate.
         type: boolean
   ReportLayoutComponentRepresentation:
     description: Report record layout component.
@@ -3352,6 +3356,21 @@ types:
         description: Record Version like field, readOnly, handy while caching and comparing versions of records.
         type: integer
         (oas-readOnly): true
+/:
+  /graphql:
+    post:
+      description: Execute a GraphQL query.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: GraphQLRepresentation
+      body:
+        application/json:
+          type: GraphQLInputRepresentation
+          # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
+          (oas-body-name): queryInput
 /ui-api:
   /actions:
     /flexipage/{flexipageNames}:
@@ -4118,6 +4137,7 @@ types:
       body:
         application/json:
           type: AggregateInputRepresentation
+          # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
           (oas-body-name): input
   /apps:
     get:
@@ -4212,6 +4232,7 @@ types:
         body:
           application/json:
             type: NavItemsInputRepresentation
+            # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
             (oas-body-name): navItems
       uriParameters:
         appId:
@@ -4275,6 +4296,7 @@ types:
       body:
         application/json:
           type: FavoriteInputRepresentation
+          # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
           (oas-body-name): favorite
     /batch:
       put:
@@ -4290,6 +4312,7 @@ types:
         body:
           application/json:
             type: FavoriteBatchCollectionInputRepresentation
+            # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
             (oas-body-name): favorites
     /{favoriteId}:
       delete:
@@ -4323,6 +4346,7 @@ types:
         body:
           application/json:
             type: FavoriteInputRepresentation
+            # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
             (oas-body-name): favorite
       uriParameters:
         favoriteId:
@@ -4457,6 +4481,7 @@ types:
       body:
         application/json:
           type: RecordLayoutUserStateInputRepresentation
+          # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
           (oas-body-name): userState
     uriParameters:
       objectApiName:
@@ -4977,6 +5002,7 @@ types:
       body:
         application/json:
           type: RecordInputRepresentation
+          # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
           (oas-body-name): recordInput
           examples: # TODO hand rolled
             getDuplicatesResponse1: |
@@ -5072,6 +5098,7 @@ types:
         body:
           application/json:
             type: AvatarAssociationInputRepresentation
+            # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
             (oas-body-name): input
       uriParameters:
         recordId:
@@ -5287,6 +5314,7 @@ types:
       body:
         application/json:
           type: RecordInputRepresentation
+          # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
           (oas-body-name): recordInput
         multipart/form-data:
           properties:
@@ -5466,6 +5494,7 @@ types:
         body:
           application/json:
             type: RecordInputRepresentation
+            # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
             (oas-body-name): recordInput
           multipart/form-data:
             properties:
@@ -5635,6 +5664,7 @@ types:
         body:
           application/json:
             type: ListInfoInputRepresentation
+            # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
             (oas-body-name): relatedListInfoInput
       uriParameters:
         parentObjectApiName:
@@ -5671,6 +5701,7 @@ types:
         body:
           application/json:
             type: ListInfoInputRepresentation
+            # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
             (oas-body-name): relatedListInfoInput
       uriParameters:
         parentRecordId:

@@ -1,26 +1,17 @@
 {
-    "eTag": "a1da461584b413c1c2c9919f78205382",
-    "id": "00hT1000000G6iHIAS",
+    "eTag": "4e1f350d1de505a29af441861646b8c0",
+    "id": "00hT1000000GNeeIAG",
     "layoutType": "Full",
     "mode": "Create",
     "objectApiName": "Account",
     "recordTypeId": "012000000000000AAA",
-    "saveOptions": [
-        {
-            "defaultValue": false,
-            "isDisplayed": true,
-            "label": "Evaluate this account against territory rules on save",
-            "name": "UseDefaultAssignmentRule",
-            "restHeaderName": "Sforce-Auto-Assign",
-            "soapHeaderName": "AssignmentRuleHeader.useDefaultRule"
-        }
-    ],
+    "saveOptions": [],
     "sections": [
         {
             "collapsible": false,
             "columns": 2,
             "heading": "Account Information",
-            "id": "01BT1000000YRklMAG",
+            "id": "01BT1000000ZeLEMA0",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -302,7 +293,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Address Information",
-            "id": "01BT1000000YRkpMAG",
+            "id": "01BT1000000ZeLIMA0",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -386,7 +377,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Additional Information",
-            "id": "01BT1000000YRkmMAG",
+            "id": "01BT1000000ZeLFMA0",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -531,7 +522,7 @@
             "collapsible": false,
             "columns": 1,
             "heading": "Description Information",
-            "id": "01BT1000000YRkqMAG",
+            "id": "01BT1000000ZeLJMA0",
             "layoutRows": [
                 {
                     "layoutItems": [

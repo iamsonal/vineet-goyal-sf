@@ -6,8 +6,8 @@
         "profilePhotoUrl": ""
     },
     "createdDate": "2021-02-05T21:41:58.000Z",
-    "fileUrl": "/services/data/v52.0/wave/recipes/05vRM00000003rZYAQ/file",
-    "historiesUrl": "/services/data/v52.0/wave/recipes/05vRM00000003rZYAQ/histories",
+    "fileUrl": "/services/data/v53.0/wave/recipes/05vRM00000003rZYAQ/file",
+    "historiesUrl": "/services/data/v53.0/wave/recipes/05vRM00000003rZYAQ/histories",
     "id": "05vRM00000003rZYAQ",
     "label": "Append",
     "lastModifiedBy": {
@@ -19,6 +19,6 @@
     "name": "Append",
     "publishingTarget": "Dataset",
     "type": "recipe",
-    "url": "/services/data/v52.0/wave/recipes/05vRM00000003rZYAQ",
+    "url": "/services/data/v53.0/wave/recipes/05vRM00000003rZYAQ",
     "validationDetails": []
 }

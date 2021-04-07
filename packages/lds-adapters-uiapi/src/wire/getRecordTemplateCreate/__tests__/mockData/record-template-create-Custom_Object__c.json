@@ -132,6 +132,13 @@
                     "relationshipName": "NotesAndAttachments"
                 },
                 {
+                    "childObjectApiName": "ProcessException",
+                    "fieldName": "AttachedToId",
+                    "junctionIdListNames": [],
+                    "junctionReferenceTo": [],
+                    "relationshipName": "ProcessExceptions"
+                },
+                {
                     "childObjectApiName": "ProcessInstance",
                     "fieldName": "TargetObjectId",
                     "junctionIdListNames": [],
@@ -172,7 +179,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "06b74d80494380fb187e2a381010deaf",
+            "eTag": "069c91cd65a2812f04ceeb48970d0da0",
             "feedEnabled": false,
             "fields": {
                 "CloneSourceId": {

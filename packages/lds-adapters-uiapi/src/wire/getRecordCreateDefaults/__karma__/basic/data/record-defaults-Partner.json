@@ -334,7 +334,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "ba6599de890e85bc13a93c6389b3627d",
+            "eTag": "53ab611349539e4be16c3f4e0298ee84",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -6782,7 +6782,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         },
@@ -6796,7 +6796,7 @@
             "defaultRecordTypeId": null,
             "deletable": true,
             "dependentFields": {},
-            "eTag": "0c770c2dc03404f131150f3bc4f3b6e3",
+            "eTag": "c352e1fbd4f78a6a79671646eba59feb",
             "feedEnabled": false,
             "fields": {
                 "AccountFromId": {
@@ -7270,7 +7270,7 @@
             "searchable": false,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_partner_120.png"
+                "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_partner_120.png"
             },
             "updateable": false
         }
@@ -7278,7 +7278,7 @@
     "record": {
         "apiName": "Partner",
         "childRelationships": {},
-        "eTag": "db30e92021ed0f0de16cfece3e19e781",
+        "eTag": "819ced65142b8ed970f05a90717e4b10",
         "fields": {
             "CreatedDate": {
                 "displayValue": null,

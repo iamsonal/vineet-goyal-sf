@@ -509,7 +509,7 @@
                 "defaultRecordTypeId": "012000000000000AAA",
                 "deletable": true,
                 "dependentFields": {},
-                "eTag": "31561fa701b9884937f7e3074d745758",
+                "eTag": "bc94ee2dfe43dce6c1e3994e18284e3f",
                 "feedEnabled": true,
                 "fields": {
                     "AccountNumber": {
@@ -2778,7 +2778,7 @@
                 "searchable": true,
                 "themeInfo": {
                     "color": "7F8DE1",
-                    "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
+                    "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
                 },
                 "updateable": true
             },
@@ -3006,7 +3006,7 @@
                 "defaultRecordTypeId": "012000000000000AAA",
                 "deletable": true,
                 "dependentFields": {},
-                "eTag": "b18785655e81b319432004c0a8a0190f",
+                "eTag": "1c01d757f80cda29d6c660ba157c6625",
                 "feedEnabled": true,
                 "fields": {
                     "AccountId": {
@@ -4067,6 +4067,39 @@
                         "unique": false,
                         "updateable": false
                     },
+                    "LastStageChangeDate": {
+                        "apiName": "LastStageChangeDate",
+                        "calculated": false,
+                        "compound": false,
+                        "compoundComponentName": null,
+                        "compoundFieldName": null,
+                        "controllerName": null,
+                        "controllingFields": [],
+                        "createable": false,
+                        "custom": false,
+                        "dataType": "DateTime",
+                        "extraTypeInfo": null,
+                        "filterable": true,
+                        "filteredLookupInfo": null,
+                        "highScaleNumber": false,
+                        "htmlFormatted": false,
+                        "inlineHelpText": null,
+                        "label": "Last Stage Change Date",
+                        "length": 0,
+                        "nameField": false,
+                        "polymorphicForeignKey": false,
+                        "precision": 0,
+                        "reference": false,
+                        "referenceTargetField": null,
+                        "referenceToInfos": [],
+                        "relationshipName": null,
+                        "required": false,
+                        "scale": 0,
+                        "searchPrefilterable": false,
+                        "sortable": true,
+                        "unique": false,
+                        "updateable": false
+                    },
                     "LastViewedDate": {
                         "apiName": "LastViewedDate",
                         "calculated": false,
@@ -4559,7 +4592,7 @@
                 "searchable": true,
                 "themeInfo": {
                     "color": "FCB95B",
-                    "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/opportunity_120.png"
+                    "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/opportunity_120.png"
                 },
                 "updateable": true
             },

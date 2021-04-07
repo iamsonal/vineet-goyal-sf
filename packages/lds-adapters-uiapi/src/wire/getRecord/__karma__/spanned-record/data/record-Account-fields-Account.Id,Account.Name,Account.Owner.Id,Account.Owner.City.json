@@ -1,11 +1,11 @@
 {
     "apiName": "Account",
     "childRelationships": {},
-    "eTag": "80de831248f7b9842d00e39ee69fd75f",
+    "eTag": "41737c2c78b720185a5e3ee8a4a1167a",
     "fields": {
         "Id": {
             "displayValue": null,
-            "value": "001T1000002GXfyIAG"
+            "value": "001T1000002GaXCIA0"
         },
         "Name": {
             "displayValue": null,
@@ -16,7 +16,7 @@
             "value": {
                 "apiName": "User",
                 "childRelationships": {},
-                "eTag": "26f999301a0a6342fe69c9a12c7b8bb4",
+                "eTag": "01d978e1080d6411cd494581063a93c7",
                 "fields": {
                     "City": {
                         "displayValue": null,
@@ -24,28 +24,28 @@
                     },
                     "Id": {
                         "displayValue": null,
-                        "value": "005T1000000HsOgIAK"
+                        "value": "005T1000000Huh7IAC"
                     }
                 },
-                "id": "005T1000000HsOgIAK",
-                "lastModifiedById": "005T1000000HsOgIAK",
-                "lastModifiedDate": "2020-12-01T20:09:40.000Z",
+                "id": "005T1000000Huh7IAC",
+                "lastModifiedById": "005T1000000Huh7IAC",
+                "lastModifiedDate": "2021-04-07T00:30:48.000Z",
                 "recordTypeId": null,
                 "recordTypeInfo": null,
-                "systemModstamp": "2020-12-01T20:09:40.000Z",
-                "weakEtag": 1606853380000
+                "systemModstamp": "2021-04-07T00:30:48.000Z",
+                "weakEtag": 1617755448000
             }
         },
         "OwnerId": {
             "displayValue": null,
-            "value": "005T1000000HsOgIAK"
+            "value": "005T1000000Huh7IAC"
         }
     },
-    "id": "001T1000002GXfyIAG",
-    "lastModifiedById": "005T1000000HsOgIAK",
-    "lastModifiedDate": "2020-12-01T19:34:04.000Z",
+    "id": "001T1000002GaXCIA0",
+    "lastModifiedById": "005T1000000Huh7IAC",
+    "lastModifiedDate": "2021-04-06T23:46:16.000Z",
     "recordTypeId": "012000000000000AAA",
     "recordTypeInfo": null,
-    "systemModstamp": "2020-12-01T19:34:04.000Z",
-    "weakEtag": 1606851244000
+    "systemModstamp": "2021-04-06T23:46:16.000Z",
+    "weakEtag": 1617752776000
 }

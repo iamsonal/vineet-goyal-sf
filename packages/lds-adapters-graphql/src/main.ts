@@ -14,7 +14,7 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQlConfig, unknown> = (lu
 
         const { variables: queryVariables, query } = validatedConfig;
         const request: ResourceRequest = {
-            baseUri: '/services/data/v52.0',
+            baseUri: '/services/data/v53.0',
             basePath: '/graphql',
             method: 'post',
             body: {

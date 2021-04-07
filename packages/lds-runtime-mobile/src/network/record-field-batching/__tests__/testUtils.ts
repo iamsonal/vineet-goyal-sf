@@ -1,6 +1,6 @@
 import { ResourceRequest } from '@luvio/engine';
 import { FieldValueRepresentation } from '@salesforce/lds-adapters-uiapi';
-export const BASE_URI = '/services/data/v52.0';
+export const BASE_URI = '/services/data/v53.0';
 
 export function generateMockedRecordFields(
     numberOfFields: number,

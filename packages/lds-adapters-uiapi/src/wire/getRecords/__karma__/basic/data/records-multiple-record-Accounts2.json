@@ -5,24 +5,24 @@
             "result": {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "4c1b884a2c3a3e68fe952479395b727a",
+                "eTag": "69bb937217193746fc72293c781c938c",
                 "fields": {
                     "Id": {
                         "displayValue": null,
-                        "value": "001T1000002GXfyIAG"
+                        "value": "001T1000002GaXCIA0"
                     },
                     "Name": {
                         "displayValue": null,
                         "value": "Burlington Textiles Corp of America"
                     }
                 },
-                "id": "001T1000002GXfyIAG",
-                "lastModifiedById": "005T1000000HsOgIAK",
-                "lastModifiedDate": "2020-12-01T19:34:04.000Z",
+                "id": "001T1000002GaXCIA0",
+                "lastModifiedById": "005T1000000Huh7IAC",
+                "lastModifiedDate": "2021-04-06T23:46:16.000Z",
                 "recordTypeId": "012000000000000AAA",
                 "recordTypeInfo": null,
-                "systemModstamp": "2020-12-01T19:34:04.000Z",
-                "weakEtag": 1606851244000
+                "systemModstamp": "2021-04-06T23:46:16.000Z",
+                "weakEtag": 1617752776000
             },
             "statusCode": 200
         },
@@ -30,24 +30,24 @@
             "result": {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "9326f2eb41352f565bc4700b87a7cbab",
+                "eTag": "1238f3a9e0f60aac87a355822418d7bb",
                 "fields": {
                     "Id": {
                         "displayValue": null,
-                        "value": "001T1000002GXfxIAG"
+                        "value": "001T1000002GaXBIA0"
                     },
                     "Name": {
                         "displayValue": null,
                         "value": "Edge Communications"
                     }
                 },
-                "id": "001T1000002GXfxIAG",
-                "lastModifiedById": "005T1000000HsOgIAK",
-                "lastModifiedDate": "2020-12-01T19:34:04.000Z",
+                "id": "001T1000002GaXBIA0",
+                "lastModifiedById": "005T1000000Huh7IAC",
+                "lastModifiedDate": "2021-04-06T23:46:16.000Z",
                 "recordTypeId": "012000000000000AAA",
                 "recordTypeInfo": null,
-                "systemModstamp": "2020-12-01T19:34:04.000Z",
-                "weakEtag": 1606851244000
+                "systemModstamp": "2021-04-06T23:46:16.000Z",
+                "weakEtag": 1617752776000
             },
             "statusCode": 200
         },
@@ -55,24 +55,24 @@
             "result": {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "fe404a225a9563d58b37c5aed2ea93cf",
+                "eTag": "00a67ed97694a842cb31d8d814449612",
                 "fields": {
                     "Id": {
                         "displayValue": null,
-                        "value": "001T1000002GXg7IAG"
+                        "value": "001T1000002GaX8IAK"
                     },
                     "Name": {
                         "displayValue": null,
                         "value": "GenePoint"
                     }
                 },
-                "id": "001T1000002GXg7IAG",
-                "lastModifiedById": "005T1000000HsOgIAK",
-                "lastModifiedDate": "2020-12-01T19:34:04.000Z",
+                "id": "001T1000002GaX8IAK",
+                "lastModifiedById": "005T1000000Huh7IAC",
+                "lastModifiedDate": "2021-04-06T23:46:16.000Z",
                 "recordTypeId": "012000000000000AAA",
                 "recordTypeInfo": null,
-                "systemModstamp": "2020-12-01T19:34:04.000Z",
-                "weakEtag": 1606851244000
+                "systemModstamp": "2021-04-06T23:46:16.000Z",
+                "weakEtag": 1617752776000
             },
             "statusCode": 200
         }

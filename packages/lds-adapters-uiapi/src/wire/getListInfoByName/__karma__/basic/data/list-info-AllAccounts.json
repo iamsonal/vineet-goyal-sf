@@ -9,6 +9,11 @@
             "sortable": true
         },
         {
+            "fieldApiName": "Site",
+            "label": "Account Site",
+            "sortable": true
+        },
+        {
             "fieldApiName": "BillingState",
             "label": "Billing State/Province",
             "sortable": true
@@ -27,19 +32,14 @@
             "fieldApiName": "Owner.Alias",
             "label": "Account Owner Alias",
             "sortable": true
-        },
-        {
-            "fieldApiName": "CreatedDate",
-            "label": "Created Date",
-            "sortable": true
         }
     ],
-    "eTag": "d1f26d98f99ef8e29d2a7ea75bdd2791",
+    "eTag": "be0001cdba2e29ba64a1ef5ce083aa23",
     "filterLogicString": null,
     "filteredByInfo": [],
     "label": "All Accounts",
     "listReference": {
-        "id": "00BRM000005zVgr2AE",
+        "id": "00BT1000000tiA9MAI",
         "listViewApiName": "AllAccounts",
         "objectApiName": "Account",
         "type": "listView"
@@ -54,18 +54,18 @@
     "updateable": true,
     "userPreferences": {
         "columnWidths": {
+            "Site": -1,
             "Type": -1,
             "Owner.Alias": -1,
             "Phone": -1,
-            "CreatedDate": -1,
             "BillingState": -1,
             "Name": -1
         },
         "columnWrap": {
+            "Site": false,
             "Type": false,
             "Owner.Alias": false,
             "Phone": false,
-            "CreatedDate": false,
             "BillingState": false,
             "Name": false
         }

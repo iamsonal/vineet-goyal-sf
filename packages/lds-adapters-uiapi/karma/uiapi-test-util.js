@@ -31,7 +31,7 @@ import {
     DUPLICATES_TTL,
 } from './dist/uiapi-constants';
 
-const API_VERSION = 'v52.0';
+const API_VERSION = 'v53.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/ui-api`;
 

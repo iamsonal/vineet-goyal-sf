@@ -23,7 +23,7 @@ describe('draft environment tests', () => {
             const { draftEnvironment } = setupDraftEnvironment();
             const { rejects } = await expect(
                 draftEnvironment.dispatchResourceRequest({
-                    baseUri: '/services/data/v52.0',
+                    baseUri: '/services/data/v53.0',
                     basePath: `/ui-api/records/`,
                     method: 'post',
                     body: {
@@ -82,7 +82,7 @@ describe('draft environment tests', () => {
                 });
             });
             const request = {
-                baseUri: '/services/data/v52.0',
+                baseUri: '/services/data/v53.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'post',
                 body: {
@@ -221,7 +221,7 @@ describe('draft environment tests', () => {
                 },
             });
             const request = {
-                baseUri: '/services/data/v52.0',
+                baseUri: '/services/data/v53.0',
                 basePath: `/ui-api/records/`,
                 method: 'post',
                 body: {

@@ -20,14 +20,14 @@
                             "label": "ApexStep",
                             "name": "ApexStep",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000Dco4AE"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000Dco4AE"
                         },
                         {
                             "id": "0FKRM0000000DdS4AU",
                             "label": "Conditional Formatting",
                             "name": "Conditional_Formatting",
                             "type": "lens",
-                            "url": "/services/data/v52.0/wave/lenses/0FKRM0000000DdS4AU"
+                            "url": "/services/data/v53.0/wave/lenses/0FKRM0000000DdS4AU"
                         }
                     ]
                 }
@@ -58,10 +58,10 @@
             "templateOptions": {},
             "templateValues": {},
             "type": "folder",
-            "url": "/services/data/v52.0/wave/folders/00lRM000000kzVOYAY"
+            "url": "/services/data/v53.0/wave/folders/00lRM000000kzVOYAY"
         }
     ],
     "nextPageUrl": null,
     "totalSize": 1,
-    "url": "/services/data/v52.0/wave/folders?isPinned=true"
+    "url": "/services/data/v53.0/wave/folders?isPinned=true"
 }

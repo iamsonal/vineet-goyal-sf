@@ -30,7 +30,7 @@
             "objectApiName": "CwcCustom01__c",
             "parentFieldApiName": "Id",
             "relatedListId": "CwcCustom01s__r",
-            "relatedListInfoUrl": "/services/data/v52.0/ui-api/related-list-info/CwcCustom00__c/CwcCustom01s__r",
+            "relatedListInfoUrl": "/services/data/v53.0/ui-api/related-list-info/CwcCustom00__c/CwcCustom01s__r",
             "themeInfo": {
                 "color": "e46fbe",
                 "iconUrl": "https://na44.stmfa.stm.salesforce.com/img/icon/t4v35/custom/custom25_120.png"
@@ -47,7 +47,7 @@
             "objectApiName": "CwcCustom02__c",
             "parentFieldApiName": "Id",
             "relatedListId": "CwcCustom02s__r",
-            "relatedListInfoUrl": "/services/data/v52.0/ui-api/related-list-info/CwcCustom00__c/CwcCustom02s__r",
+            "relatedListInfoUrl": "/services/data/v53.0/ui-api/related-list-info/CwcCustom00__c/CwcCustom02s__r",
             "themeInfo": {
                 "color": "d8c760",
                 "iconUrl": "https://na44.stmfa.stm.salesforce.com/img/icon/t4v35/custom/custom51_120.png"

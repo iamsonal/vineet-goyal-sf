@@ -1,28 +1,28 @@
 {
-    "eTag": "1373b2af1d9f88474c828c6913778583",
+    "eTag": "39ff7582129105b30b1e2aca017f9ad3",
     "layoutUserStates": {
-        "00hT1000000G6icIAC": {
-            "id": "00hT1000000G6icIAC",
+        "00hT1000000GNezIAG": {
+            "id": "00hT1000000GNezIAG",
             "sectionUserStates": {
-                "01BT1000000YRmgMAG": {
+                "01BT1000000ZeN9MAK": {
                     "collapsed": false,
-                    "id": "01BT1000000YRmgMAG"
+                    "id": "01BT1000000ZeN9MAK"
                 },
-                "01BT1000000YRmiMAG": {
+                "01BT1000000ZeNBMA0": {
                     "collapsed": false,
-                    "id": "01BT1000000YRmiMAG"
+                    "id": "01BT1000000ZeNBMA0"
                 },
-                "01BT1000000YRmjMAG": {
+                "01BT1000000ZeNCMA0": {
                     "collapsed": false,
-                    "id": "01BT1000000YRmjMAG"
+                    "id": "01BT1000000ZeNCMA0"
                 },
-                "01BT1000000YRmkMAG": {
+                "01BT1000000ZeNDMA0": {
                     "collapsed": false,
-                    "id": "01BT1000000YRmkMAG"
+                    "id": "01BT1000000ZeNDMA0"
                 },
-                "01BT1000000YRmlMAG": {
+                "01BT1000000ZeNEMA0": {
                     "collapsed": false,
-                    "id": "01BT1000000YRmlMAG"
+                    "id": "01BT1000000ZeNEMA0"
                 }
             }
         }
@@ -32,7 +32,7 @@
             "012000000000000AAA": {
                 "Compact": {
                     "View": {
-                        "eTag": "264bd0f2586a592079a56ed6ac6f1ac7",
+                        "eTag": "fc2d9093dd00de574ff133c7f8c3bdba",
                         "id": null,
                         "layoutType": "Compact",
                         "mode": "View",
@@ -150,8 +150,8 @@
                 },
                 "Full": {
                     "View": {
-                        "eTag": "22f6a718e211e1ab7b79bcc5fd047178",
-                        "id": "00hT1000000G6icIAC",
+                        "eTag": "6bb8e23f5225f5516ee834aa12cef2e8",
+                        "id": "00hT1000000GNezIAG",
                         "layoutType": "Full",
                         "mode": "View",
                         "objectApiName": "Opportunity",
@@ -162,7 +162,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "Opportunity Information",
-                                "id": "01BT1000000YRmgMAG",
+                                "id": "01BT1000000ZeN9MAK",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -409,7 +409,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "Additional Information",
-                                "id": "01BT1000000YRmiMAG",
+                                "id": "01BT1000000ZeNBMA0",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -520,7 +520,7 @@
                                 "collapsible": false,
                                 "columns": 2,
                                 "heading": "System Information",
-                                "id": "01BT1000000YRmlMAG",
+                                "id": "01BT1000000ZeNEMA0",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -574,7 +574,7 @@
                                 "collapsible": false,
                                 "columns": 1,
                                 "heading": "Description Information",
-                                "id": "01BT1000000YRmkMAG",
+                                "id": "01BT1000000ZeNDMA0",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -603,7 +603,7 @@
                                 "collapsible": false,
                                 "columns": 3,
                                 "heading": "Custom Links",
-                                "id": "01BT1000000YRmjMAG",
+                                "id": "01BT1000000ZeNCMA0",
                                 "layoutRows": [
                                     {
                                         "layoutItems": [
@@ -616,7 +616,7 @@
                                                         "apiName": "DeliveryStatus",
                                                         "behavior": "NewWindow",
                                                         "componentType": "CustomLink",
-                                                        "customLinkUrl": "/servlet/servlet.Integration?lid=00bT1000000QTmh&eid=ENTITY_ID&ic=1",
+                                                        "customLinkUrl": "/servlet/servlet.Integration?lid=00bT1000000QWBa&eid=ENTITY_ID&ic=1",
                                                         "label": "Delivery Status"
                                                     }
                                                 ],
@@ -1173,7 +1173,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "31561fa701b9884937f7e3074d745758",
+            "eTag": "bc94ee2dfe43dce6c1e3994e18284e3f",
             "feedEnabled": true,
             "fields": {
                 "AccountNumber": {
@@ -3442,7 +3442,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
@@ -3632,7 +3632,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "ce1b0720ad794187daea015e68928d17",
+            "eTag": "715a081b779ea6a14c0a9e5392d3849d",
             "feedEnabled": false,
             "fields": {
                 "ActualCost": {
@@ -4667,7 +4667,7 @@
                     "highScaleNumber": false,
                     "htmlFormatted": false,
                     "inlineHelpText": null,
-                    "label": "",
+                    "label": "Show Campaign Member Chart",
                     "length": 0,
                     "nameField": false,
                     "polymorphicForeignKey": false,
@@ -4835,7 +4835,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "F49756",
-                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/campaign_120.png"
+                "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/campaign_120.png"
             },
             "updateable": true
         },
@@ -5060,7 +5060,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "b18785655e81b319432004c0a8a0190f",
+            "eTag": "1c01d757f80cda29d6c660ba157c6625",
             "feedEnabled": true,
             "fields": {
                 "AccountId": {
@@ -6121,6 +6121,39 @@
                     "unique": false,
                     "updateable": false
                 },
+                "LastStageChangeDate": {
+                    "apiName": "LastStageChangeDate",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": false,
+                    "custom": false,
+                    "dataType": "DateTime",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "Last Stage Change Date",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": false,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": true,
+                    "unique": false,
+                    "updateable": false
+                },
                 "LastViewedDate": {
                     "apiName": "LastViewedDate",
                     "calculated": false,
@@ -6613,7 +6646,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "FCB95B",
-                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/opportunity_120.png"
+                "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/opportunity_120.png"
             },
             "updateable": true
         },
@@ -6950,7 +6983,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "ba6599de890e85bc13a93c6389b3627d",
+            "eTag": "53ab611349539e4be16c3f4e0298ee84",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -13398,45 +13431,45 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         }
     },
     "records": {
-        "006T10000023V6FIAU": {
+        "006T10000023ZEJIA2": {
             "apiName": "Opportunity",
             "childRelationships": {},
-            "eTag": "4d721301ed6dfffd2375d5b8097de656",
+            "eTag": "e5a1637c3327eebf754b2bc7fa403726",
             "fields": {
                 "Account": {
                     "displayValue": "Burlington Textiles Corp of America",
                     "value": {
                         "apiName": "Account",
                         "childRelationships": {},
-                        "eTag": "4c1b884a2c3a3e68fe952479395b727a",
+                        "eTag": "69bb937217193746fc72293c781c938c",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "001T1000002GXfyIAG"
+                                "value": "001T1000002GaXCIA0"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "Burlington Textiles Corp of America"
                             }
                         },
-                        "id": "001T1000002GXfyIAG",
-                        "lastModifiedById": "005T1000000HsOgIAK",
-                        "lastModifiedDate": "2020-12-01T19:34:04.000Z",
+                        "id": "001T1000002GaXCIA0",
+                        "lastModifiedById": "005T1000000Huh7IAC",
+                        "lastModifiedDate": "2021-04-06T23:46:16.000Z",
                         "recordTypeId": "012000000000000AAA",
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-12-01T19:34:04.000Z",
-                        "weakEtag": 1606851244000
+                        "systemModstamp": "2021-04-06T23:46:16.000Z",
+                        "weakEtag": 1617752776000
                     }
                 },
                 "AccountId": {
                     "displayValue": null,
-                    "value": "001T1000002GXfyIAG"
+                    "value": "001T1000002GaXCIA0"
                 },
                 "Amount": {
                     "displayValue": "$235,000.00",
@@ -13451,41 +13484,41 @@
                     "value": null
                 },
                 "CloseDate": {
-                    "displayValue": "11/12/2018",
-                    "value": "2018-11-12"
+                    "displayValue": "3/18/2019",
+                    "value": "2019-03-18"
                 },
                 "CreatedBy": {
                     "displayValue": "User User",
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "26f999301a0a6342fe69c9a12c7b8bb4",
+                        "eTag": "01d978e1080d6411cd494581063a93c7",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005T1000000HsOgIAK"
+                                "value": "005T1000000Huh7IAC"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005T1000000HsOgIAK",
-                        "lastModifiedById": "005T1000000HsOgIAK",
-                        "lastModifiedDate": "2020-12-01T20:09:40.000Z",
+                        "id": "005T1000000Huh7IAC",
+                        "lastModifiedById": "005T1000000Huh7IAC",
+                        "lastModifiedDate": "2021-04-07T00:30:48.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-12-01T20:09:40.000Z",
-                        "weakEtag": 1606853380000
+                        "systemModstamp": "2021-04-07T00:30:48.000Z",
+                        "weakEtag": 1617755448000
                     }
                 },
                 "CreatedById": {
                     "displayValue": null,
-                    "value": "005T1000000HsOgIAK"
+                    "value": "005T1000000Huh7IAC"
                 },
                 "CreatedDate": {
-                    "displayValue": "12/1/2020, 11:34 AM",
-                    "value": "2020-12-01T19:34:04.000Z"
+                    "displayValue": "4/6/2021, 4:46 PM",
+                    "value": "2021-04-06T23:46:16.000Z"
                 },
                 "CurrentGenerators__c": {
                     "displayValue": null,
@@ -13512,33 +13545,33 @@
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "26f999301a0a6342fe69c9a12c7b8bb4",
+                        "eTag": "01d978e1080d6411cd494581063a93c7",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005T1000000HsOgIAK"
+                                "value": "005T1000000Huh7IAC"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005T1000000HsOgIAK",
-                        "lastModifiedById": "005T1000000HsOgIAK",
-                        "lastModifiedDate": "2020-12-01T20:09:40.000Z",
+                        "id": "005T1000000Huh7IAC",
+                        "lastModifiedById": "005T1000000Huh7IAC",
+                        "lastModifiedDate": "2021-04-07T00:30:48.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-12-01T20:09:40.000Z",
-                        "weakEtag": 1606853380000
+                        "systemModstamp": "2021-04-07T00:30:48.000Z",
+                        "weakEtag": 1617755448000
                     }
                 },
                 "LastModifiedById": {
                     "displayValue": null,
-                    "value": "005T1000000HsOgIAK"
+                    "value": "005T1000000Huh7IAC"
                 },
                 "LastModifiedDate": {
-                    "displayValue": "12/1/2020, 11:34 AM",
-                    "value": "2020-12-01T19:34:04.000Z"
+                    "displayValue": "4/6/2021, 4:46 PM",
+                    "value": "2021-04-06T23:46:16.000Z"
                 },
                 "LeadSource": {
                     "displayValue": "Web",
@@ -13565,29 +13598,29 @@
                     "value": {
                         "apiName": "User",
                         "childRelationships": {},
-                        "eTag": "26f999301a0a6342fe69c9a12c7b8bb4",
+                        "eTag": "01d978e1080d6411cd494581063a93c7",
                         "fields": {
                             "Id": {
                                 "displayValue": null,
-                                "value": "005T1000000HsOgIAK"
+                                "value": "005T1000000Huh7IAC"
                             },
                             "Name": {
                                 "displayValue": null,
                                 "value": "User User"
                             }
                         },
-                        "id": "005T1000000HsOgIAK",
-                        "lastModifiedById": "005T1000000HsOgIAK",
-                        "lastModifiedDate": "2020-12-01T20:09:40.000Z",
+                        "id": "005T1000000Huh7IAC",
+                        "lastModifiedById": "005T1000000Huh7IAC",
+                        "lastModifiedDate": "2021-04-07T00:30:48.000Z",
                         "recordTypeId": null,
                         "recordTypeInfo": null,
-                        "systemModstamp": "2020-12-01T20:09:40.000Z",
-                        "weakEtag": 1606853380000
+                        "systemModstamp": "2021-04-07T00:30:48.000Z",
+                        "weakEtag": 1617755448000
                     }
                 },
                 "OwnerId": {
                     "displayValue": null,
-                    "value": "005T1000000HsOgIAK"
+                    "value": "005T1000000Huh7IAC"
                 },
                 "Probability": {
                     "displayValue": null,
@@ -13606,13 +13639,13 @@
                     "value": "New Customer"
                 }
             },
-            "id": "006T10000023V6FIAU",
-            "lastModifiedById": "005T1000000HsOgIAK",
-            "lastModifiedDate": "2020-12-01T19:34:04.000Z",
+            "id": "006T10000023ZEJIA2",
+            "lastModifiedById": "005T1000000Huh7IAC",
+            "lastModifiedDate": "2021-04-06T23:46:16.000Z",
             "recordTypeId": "012000000000000AAA",
             "recordTypeInfo": null,
-            "systemModstamp": "2020-12-01T19:34:04.000Z",
-            "weakEtag": 1606851244000
+            "systemModstamp": "2021-04-06T23:46:16.000Z",
+            "weakEtag": 1617752776000
         }
     }
 }

@@ -14,20 +14,20 @@
             "result": {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "eb536aefff817941a1d2fc890930ff9f",
+                "eTag": "7bc04155304fc3bda53fc258ffd4c96b",
                 "fields": {
                     "Site": {
                         "displayValue": null,
                         "value": null
                     }
                 },
-                "id": "001T1000002GXfyIAG",
-                "lastModifiedById": "005T1000000HsOgIAK",
-                "lastModifiedDate": "2020-12-01T19:34:04.000Z",
+                "id": "001T1000002GaXCIA0",
+                "lastModifiedById": "005T1000000Huh7IAC",
+                "lastModifiedDate": "2021-04-06T23:46:16.000Z",
                 "recordTypeId": "012000000000000AAA",
                 "recordTypeInfo": null,
-                "systemModstamp": "2020-12-01T19:34:04.000Z",
-                "weakEtag": 1606851244000
+                "systemModstamp": "2021-04-06T23:46:16.000Z",
+                "weakEtag": 1617752776000
             },
             "statusCode": 200
         },

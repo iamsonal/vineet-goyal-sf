@@ -7,9 +7,9 @@
                     "actionTarget": null,
                     "actionTargetType": "Invoke",
                     "apiName": "CreateFromLookup",
-                    "externalId": "00DT10000000jeU:Opportunity::Lookup:Tablet:StandardButton:CreateFromLookup",
-                    "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_120.png",
-                    "id": "0JVT10000000012OAA",
+                    "externalId": "00DT10000000mmb:Opportunity::Lookup:Tablet:StandardButton:CreateFromLookup",
+                    "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_120.png",
+                    "id": "0JVT10000000013OAA",
                     "isMassAction": "false",
                     "label": "New",
                     "primaryColor": "33BCE7",
@@ -24,9 +24,9 @@
                 }
             ],
             "links": [],
-            "url": "/services/data/v52.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
+            "url": "/services/data/v53.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
         }
     },
-    "eTag": "5fa2c1c505cfe0f2dff46a67e985a45f",
-    "url": "/services/data/v52.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
+    "eTag": "80dd190dfcee1b8541cc6ec0f158b341",
+    "url": "/services/data/v53.0/ui-api/actions/lookup/Opportunity?formFactor=Medium&amp;actionTypes=StandardButton&amp;sections=Page"
 }

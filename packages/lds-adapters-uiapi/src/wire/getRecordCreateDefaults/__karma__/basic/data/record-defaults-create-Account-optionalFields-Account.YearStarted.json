@@ -1,27 +1,18 @@
 {
     "layout": {
-        "eTag": "a1da461584b413c1c2c9919f78205382",
-        "id": "00hT1000000G6iHIAS",
+        "eTag": "4e1f350d1de505a29af441861646b8c0",
+        "id": "00hT1000000GNeeIAG",
         "layoutType": "Full",
         "mode": "Create",
         "objectApiName": "Account",
         "recordTypeId": "012000000000000AAA",
-        "saveOptions": [
-            {
-                "defaultValue": false,
-                "isDisplayed": true,
-                "label": "Evaluate this account against territory rules on save",
-                "name": "UseDefaultAssignmentRule",
-                "restHeaderName": "Sforce-Auto-Assign",
-                "soapHeaderName": "AssignmentRuleHeader.useDefaultRule"
-            }
-        ],
+        "saveOptions": [],
         "sections": [
             {
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Account Information",
-                "id": "01BT1000000YRklMAG",
+                "id": "01BT1000000ZeLEMA0",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -303,7 +294,7 @@
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Address Information",
-                "id": "01BT1000000YRkpMAG",
+                "id": "01BT1000000ZeLIMA0",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -387,7 +378,7 @@
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Additional Information",
-                "id": "01BT1000000YRkmMAG",
+                "id": "01BT1000000ZeLFMA0",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -532,7 +523,7 @@
                 "collapsible": false,
                 "columns": 1,
                 "heading": "Description Information",
-                "id": "01BT1000000YRkqMAG",
+                "id": "01BT1000000ZeLJMA0",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -1068,7 +1059,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "31561fa701b9884937f7e3074d745758",
+            "eTag": "bc94ee2dfe43dce6c1e3994e18284e3f",
             "feedEnabled": true,
             "fields": {
                 "AccountNumber": {
@@ -3337,7 +3328,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "7F8DE1",
-                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
+                "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
             },
             "updateable": true
         },
@@ -3674,7 +3665,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "ba6599de890e85bc13a93c6389b3627d",
+            "eTag": "53ab611349539e4be16c3f4e0298ee84",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -10122,7 +10113,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         }
@@ -10130,7 +10121,7 @@
     "record": {
         "apiName": "Account",
         "childRelationships": {},
-        "eTag": "51b21a14a9c1283e6f977551a9c549a4",
+        "eTag": "cdf1b8c69854c1bffa88a39d4df4b739",
         "fields": {
             "AccountNumber": {
                 "displayValue": null,
@@ -10197,18 +10188,18 @@
                 "value": {
                     "apiName": "User",
                     "childRelationships": {},
-                    "eTag": "9030d322da3fbcde3ec9bcc1a5cc8299",
+                    "eTag": "431a2d8e39d6f965374e304ed9619387",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "005T1000000HsOgIAK"
+                            "value": "005T1000000Huh7IAC"
                         },
                         "Name": {
                             "displayValue": null,
                             "value": "User User"
                         }
                     },
-                    "id": "005T1000000HsOgIAK",
+                    "id": "005T1000000Huh7IAC",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -10219,7 +10210,7 @@
             },
             "OwnerId": {
                 "displayValue": null,
-                "value": "005T1000000HsOgIAK"
+                "value": "005T1000000Huh7IAC"
             },
             "Ownership": {
                 "displayValue": null,

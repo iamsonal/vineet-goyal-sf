@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import { karmaNetworkAdapter } from 'lds-engine';
 import { mockNetworkOnce, mockNetworkSequence } from 'test-util';
 
-const API_VERSION = 'v52.0';
+const API_VERSION = 'v53.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/graphql`;
 

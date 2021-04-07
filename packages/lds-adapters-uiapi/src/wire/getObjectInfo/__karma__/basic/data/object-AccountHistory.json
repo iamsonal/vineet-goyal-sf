@@ -8,7 +8,7 @@
     "defaultRecordTypeId": null,
     "deletable": false,
     "dependentFields": {},
-    "eTag": "3bed9b74c14a1c95a43951baf13f5406",
+    "eTag": "2047f9499b6e6688d42f2827d8475d5e",
     "feedEnabled": false,
     "fields": {
         "AccountId": {
@@ -462,7 +462,7 @@
     "searchable": false,
     "themeInfo": {
         "color": "7F8DE1",
-        "iconUrl": "https://chocolate-chocolate-5728-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
+        "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
     },
     "updateable": false
 }

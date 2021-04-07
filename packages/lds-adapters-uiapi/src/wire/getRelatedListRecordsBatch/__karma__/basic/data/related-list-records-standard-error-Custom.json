@@ -4,7 +4,7 @@
             "result": {
                 "count": 5,
                 "currentPageToken": "0",
-                "currentPageUrl": "/services/data/v52.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?fields=CwcCustom01__c.Name&optionalFields=CwcCustom01__c.CwcCustom00__c&pageSize=5&pageToken=0&sortBy=CwcCustom01__c.Name",
+                "currentPageUrl": "/services/data/v53.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?fields=CwcCustom01__c.Name&optionalFields=CwcCustom01__c.CwcCustom00__c&pageSize=5&pageToken=0&sortBy=CwcCustom01__c.Name",
                 "fields": ["CwcCustom01__c.Name"],
                 "listInfoETag": null,
                 "listReference": {
@@ -18,7 +18,7 @@
                     "type": "relatedList"
                 },
                 "nextPageToken": "5",
-                "nextPageUrl": "/services/data/v52.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?fields=CwcCustom01__c.Name&optionalFields=CwcCustom01__c.CwcCustom00__c&pageSize=5&pageToken=5&sortBy=CwcCustom01__c.Name",
+                "nextPageUrl": "/services/data/v53.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?fields=CwcCustom01__c.Name&optionalFields=CwcCustom01__c.CwcCustom00__c&pageSize=5&pageToken=5&sortBy=CwcCustom01__c.Name",
                 "optionalFields": ["CwcCustom01__c.CwcCustom00__c"],
                 "pageSize": 5,
                 "previousPageToken": null,

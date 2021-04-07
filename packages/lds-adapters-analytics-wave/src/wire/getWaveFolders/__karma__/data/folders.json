@@ -39,7 +39,7 @@
             "templateOptions": {},
             "templateValues": {},
             "type": "folder",
-            "url": "/services/data/v52.0/wave/folders/00lRM000000lu1AYAQ"
+            "url": "/services/data/v53.0/wave/folders/00lRM000000lu1AYAQ"
         },
         {
             "applicationStatus": "completedstatus",
@@ -61,70 +61,70 @@
                             "label": "Sales Analytics Home",
                             "name": "About_Wave_for_Sales",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000Wpj4AE"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000Wpj4AE"
                         },
                         {
                             "id": "0FKRM0000000Wpk4AE",
                             "label": "Leaderboard",
                             "name": "Manager_Overview",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000Wpk4AE"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000Wpk4AE"
                         },
                         {
                             "id": "0FKRM0000000Wph4AE",
                             "label": "Team Trending",
                             "name": "Pipeline_Changes",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000Wph4AE"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000Wph4AE"
                         },
                         {
                             "id": "0FKRM0000000Wpf4AE",
                             "label": "Forecast",
                             "name": "Quota_Progress",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000Wpf4AE"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000Wpf4AE"
                         },
                         {
                             "id": "0FKRM0000000Wpo4AE",
                             "label": "Sales Rep Whitespace",
                             "name": "Opportunity_Discovery",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000Wpo4AE"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000Wpo4AE"
                         },
                         {
                             "id": "0FKRM0000000Wpp4AE",
                             "label": "Company Overview",
                             "name": "Sales_Ops_Manager_Overview",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000Wpp4AE"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000Wpp4AE"
                         },
                         {
                             "id": "0FKRM0000000Wpx4AE",
                             "label": "Sales Stage Analysis",
                             "name": "Sales_Stage_Analysis",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000Wpx4AE"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000Wpx4AE"
                         },
                         {
                             "id": "0FKRM0000000Wpw4AE",
                             "label": "Lead Analysis",
                             "name": "Lead_Analysis",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000Wpw4AE"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000Wpw4AE"
                         },
                         {
                             "id": "0FKRM0000000Wpu4AE",
                             "label": "Sales Rep Overview",
                             "name": "Sales_Rep_Overview",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000Wpu4AE"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000Wpu4AE"
                         },
                         {
                             "id": "0FKRM0000000Wpg4AE",
                             "label": "Executive Overview",
                             "name": "Exec_Overview_Pipeline_Performance",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000Wpg4AE"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000Wpg4AE"
                         }
                     ]
                 }
@@ -157,7 +157,7 @@
             "templateValues": {},
             "templateVersion": "5.0",
             "type": "folder",
-            "url": "/services/data/v52.0/wave/folders/00lRM000000g0tjYAA"
+            "url": "/services/data/v53.0/wave/folders/00lRM000000g0tjYAA"
         },
         {
             "applicationStatus": "newstatus",
@@ -198,7 +198,7 @@
             "templateOptions": {},
             "templateValues": {},
             "type": "folder",
-            "url": "/services/data/v52.0/wave/folders/00lRM000000g0xlYAA"
+            "url": "/services/data/v53.0/wave/folders/00lRM000000g0xlYAA"
         },
         {
             "applicationStatus": "completedstatus",
@@ -220,56 +220,56 @@
                             "label": "Service Analytics Overview",
                             "name": "Service_Overview",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000HVU4A2"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000HVU4A2"
                         },
                         {
                             "id": "0FKRM0000000HV34AM",
                             "label": "Service Open Cases",
                             "name": "Service_By_OpenCases",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000HV34AM"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000HV34AM"
                         },
                         {
                             "id": "0FKRM0000000HVV4A2",
                             "label": "Service Backlog",
                             "name": "Service_Backlog_Analysis",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000HVV4A2"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000HVV4A2"
                         },
                         {
                             "id": "0FKRM0000000HVW4A2",
                             "label": "Service Agent Performance",
                             "name": "Service_By_TeamEfficiency",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000HVW4A2"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000HVW4A2"
                         },
                         {
                             "id": "0FKRM0000000HVX4A2",
                             "label": "Service Agent Activity",
                             "name": "Service_Agent_Activity",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000HVX4A2"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000HVX4A2"
                         },
                         {
                             "id": "0FKRM0000000HVY4A2",
                             "label": "Service Channel Review",
                             "name": "Service_By_EngagementEfficiency",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000HVY4A2"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000HVY4A2"
                         },
                         {
                             "id": "0FKRM0000000HUt4AM",
                             "label": "Service Telephony",
                             "name": "Service_Telephony",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000HUt4AM"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000HUt4AM"
                         },
                         {
                             "id": "0FKRM0000000HVZ4A2",
                             "label": "Service Account Profile",
                             "name": "Service_Account_Profile",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000HVZ4A2"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000HVZ4A2"
                         }
                     ]
                 }
@@ -302,7 +302,7 @@
             "templateValues": {},
             "templateVersion": "5.0",
             "type": "folder",
-            "url": "/services/data/v52.0/wave/folders/00lRM000000lu1DYAQ"
+            "url": "/services/data/v53.0/wave/folders/00lRM000000lu1DYAQ"
         },
         {
             "applicationStatus": "completedstatus",
@@ -324,28 +324,28 @@
                             "label": "Adventure Home",
                             "name": "Adventure_Home",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000HVQ4A2"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000HVQ4A2"
                         },
                         {
                             "id": "0FKRM0000000HVR4A2",
                             "label": "Charts - Introduction",
                             "name": "Charts_Introduction",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000HVR4A2"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000HVR4A2"
                         },
                         {
                             "id": "0FKRM0000000HVS4A2",
                             "label": "Dynamic Apps - Introduction",
                             "name": "Dynamic_Apps_Introduction",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000HVS4A2"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000HVS4A2"
                         },
                         {
                             "id": "0FKRM0000000HVT4A2",
                             "label": "SAQL - Introduction",
                             "name": "SAQL_Introduction",
                             "type": "dashboard",
-                            "url": "/services/data/v52.0/wave/dashboards/0FKRM0000000HVT4A2"
+                            "url": "/services/data/v53.0/wave/dashboards/0FKRM0000000HVT4A2"
                         }
                     ]
                 }
@@ -378,7 +378,7 @@
             "templateValues": {},
             "templateVersion": "5.0",
             "type": "folder",
-            "url": "/services/data/v52.0/wave/folders/00lRM000000lu1BYAQ"
+            "url": "/services/data/v53.0/wave/folders/00lRM000000lu1BYAQ"
         },
         {
             "applicationStatus": "newstatus",
@@ -420,10 +420,10 @@
             "templateOptions": {},
             "templateValues": {},
             "type": "folder",
-            "url": "/services/data/v52.0/wave/folders/00lRM000000lu1CYAQ"
+            "url": "/services/data/v53.0/wave/folders/00lRM000000lu1CYAQ"
         }
     ],
     "nextPageUrl": null,
     "totalSize": 6,
-    "url": "/services/data/v52.0/wave/folders"
+    "url": "/services/data/v53.0/wave/folders"
 }

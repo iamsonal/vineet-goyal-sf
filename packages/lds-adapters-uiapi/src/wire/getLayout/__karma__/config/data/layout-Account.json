@@ -1,26 +1,17 @@
 {
-    "eTag": "47da02ba539d45e70281a6e4b496e0eb",
-    "id": "00hT1000000G6iHIAS",
+    "eTag": "8ce96915cbeb8b9e3296eed09218b137",
+    "id": "00hT1000000GNeeIAG",
     "layoutType": "Full",
     "mode": "View",
     "objectApiName": "Account",
     "recordTypeId": "012000000000000AAA",
-    "saveOptions": [
-        {
-            "defaultValue": false,
-            "isDisplayed": true,
-            "label": "Evaluate this account against territory rules on save",
-            "name": "UseDefaultAssignmentRule",
-            "restHeaderName": "Sforce-Auto-Assign",
-            "soapHeaderName": "AssignmentRuleHeader.useDefaultRule"
-        }
-    ],
+    "saveOptions": [],
     "sections": [
         {
             "collapsible": false,
             "columns": 2,
             "heading": "Account Information",
-            "id": "01BT1000000YRklMAG",
+            "id": "01BT1000000ZeLEMA0",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -302,7 +293,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Address Information",
-            "id": "01BT1000000YRkpMAG",
+            "id": "01BT1000000ZeLIMA0",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -386,7 +377,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "Additional Information",
-            "id": "01BT1000000YRkmMAG",
+            "id": "01BT1000000ZeLFMA0",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -531,7 +522,7 @@
             "collapsible": false,
             "columns": 2,
             "heading": "System Information",
-            "id": "01BT1000000YRkoMAG",
+            "id": "01BT1000000ZeLHMA0",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -585,7 +576,7 @@
             "collapsible": false,
             "columns": 1,
             "heading": "Description Information",
-            "id": "01BT1000000YRkqMAG",
+            "id": "01BT1000000ZeLJMA0",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -614,7 +605,7 @@
             "collapsible": false,
             "columns": 3,
             "heading": "Custom Links",
-            "id": "01BT1000000YRkkMAG",
+            "id": "01BT1000000ZeLDMA0",
             "layoutRows": [
                 {
                     "layoutItems": [
@@ -627,7 +618,7 @@
                                     "apiName": "Billing",
                                     "behavior": "NewWindow",
                                     "componentType": "CustomLink",
-                                    "customLinkUrl": "/servlet/servlet.Integration?lid=00bT1000000QTmf&eid=ENTITY_ID&ic=1",
+                                    "customLinkUrl": "/servlet/servlet.Integration?lid=00bT1000000QWBY&eid=ENTITY_ID&ic=1",
                                     "label": "Billing"
                                 }
                             ],

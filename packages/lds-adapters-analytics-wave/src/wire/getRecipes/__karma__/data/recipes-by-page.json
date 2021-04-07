@@ -10,9 +10,9 @@
             },
             "createdDate": "2020-11-25T00:09:23.000Z",
             "dataflowLastUpdate": "2020-11-27T16:52:34.000Z",
-            "fileUrl": "/services/data/v52.0/wave/recipes/05vRM00000003O3YAI/file",
+            "fileUrl": "/services/data/v53.0/wave/recipes/05vRM00000003O3YAI/file",
             "format": "R3",
-            "historiesUrl": "/services/data/v52.0/wave/recipes/05vRM00000003O3YAI/histories",
+            "historiesUrl": "/services/data/v53.0/wave/recipes/05vRM00000003O3YAI/histories",
             "id": "05vRM00000003O3YAI",
             "label": "r3y_basic_sonic",
             "lastModifiedBy": {
@@ -26,10 +26,10 @@
             "publishingTarget": "Dataset",
             "targetDataflowId": "02KRM0000002X9s2AE",
             "type": "recipe",
-            "url": "/services/data/v52.0/wave/recipes/05vRM00000003O3YAI?format=R3",
+            "url": "/services/data/v53.0/wave/recipes/05vRM00000003O3YAI?format=R3",
             "validationDetails": []
         }
     ],
     "totalSize": 1,
-    "url": "/services/data/v52.0/wave/recipes?q=r3y_basic_sonic"
+    "url": "/services/data/v53.0/wave/recipes?q=r3y_basic_sonic"
 }

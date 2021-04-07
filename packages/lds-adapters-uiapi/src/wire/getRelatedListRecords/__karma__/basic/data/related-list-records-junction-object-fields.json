@@ -1,7 +1,7 @@
 {
     "count": 1,
     "currentPageToken": "0",
-    "currentPageUrl": "/services/data/v52.0/ui-api/related-list-records/a01RM000000ATMYYA4/Junction_Objects__r?fields=barley__r.RichTextArea__c%2Cbarley__r.Id%2Cbarley__r.LongTextArea__c%2CId%2Cbarley__r.TextArea__c%2Cbarley__r.Text__c%2Cbarley__r.Url__c%2CName%2Cbarley__r.Name%2Cbarley__r.Picklist__c&pageSize=10&pageToken=0",
+    "currentPageUrl": "/services/data/v53.0/ui-api/related-list-records/a01RM000000ATMYYA4/Junction_Objects__r?fields=barley__r.RichTextArea__c%2Cbarley__r.Id%2Cbarley__r.LongTextArea__c%2CId%2Cbarley__r.TextArea__c%2Cbarley__r.Text__c%2Cbarley__r.Url__c%2CName%2Cbarley__r.Name%2Cbarley__r.Picklist__c&pageSize=10&pageToken=0",
     "fields": [
         "Junction_Object__c.barley__r.RichTextArea__c",
         "Junction_Object__c.barley__r.Id",

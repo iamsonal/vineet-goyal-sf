@@ -22,6 +22,7 @@ import {
     convertFieldsToTrie,
     isSuperRecordFieldTrie,
     extractRecordIds,
+    RecordFieldTrie,
 } from '../records';
 
 import record from './data/sampleRecord';
@@ -948,5 +949,17 @@ describe('convertFieldsToTrie', () => {
             optional: false,
             scalar: false,
         });
+    });
+});
+
+describe('convertTrieToFields', () => {
+    it('should return empty array when root node has no child', () => {
+        const root: RecordFieldTrie = {
+            name: 'ApiName',
+            children: {},
+        };
+
+        const fields = convertTrieToFields(root);
+        expect(fields).toEqual([]);
     });
 });

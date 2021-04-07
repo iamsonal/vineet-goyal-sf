@@ -277,6 +277,14 @@ function isExternalLookupFieldKey(
 }
 
 export function convertTrieToFields(root: RecordFieldTrie): string[] {
+    if (ObjectKeys(root.children).length === 0) {
+        return [];
+    }
+
+    return convertTrieToFieldsRecursively(root);
+}
+
+export function convertTrieToFieldsRecursively(root: RecordFieldTrie): string[] {
     const childKeys = ObjectKeys(root.children);
     if (childKeys.length === 0) {
         if (root.name === '') {
@@ -290,7 +298,7 @@ export function convertTrieToFields(root: RecordFieldTrie): string[] {
         (acc, cur) =>
             ArrayPrototypeConcat.call(
                 acc,
-                convertTrieToFields(root.children[cur]).map(i => `${root.name}.${i}`)
+                convertTrieToFieldsRecursively(root.children[cur]).map(i => `${root.name}.${i}`)
             ),
         []
     ) as string[];
@@ -365,11 +373,6 @@ export function getTrackedFields(
     insertFieldsIntoTrie(rootFromConfig, fieldsList);
 
     mergeFieldsTries(root, rootFromConfig);
-
-    // records with no fields
-    if (ObjectKeys(root.children).length === 0) {
-        return [];
-    }
 
     return convertTrieToFields(root).sort();
 }

@@ -1,7 +1,6 @@
 import { StoreLink } from '@luvio/engine';
 import { ArrayPrototypePush, ObjectKeys } from '../../util/language';
-import { RecordFieldTrie } from '../../util/records';
-import { convertTrieToFields } from '../../util/records';
+import { convertTrieToFieldsRecursively, RecordFieldTrie } from '../../util/records';
 import { dedupe } from '../../validation/utils';
 
 /**
@@ -31,7 +30,7 @@ export function addFieldsToStoreLink(
             const fieldName = fieldNames[i];
             const childTrie = subtrie.children[fieldName];
             if (childTrie) {
-                fields = [...fields, ...convertTrieToFields(childTrie)];
+                fields = [...fields, ...convertTrieToFieldsRecursively(childTrie)];
             }
         }
     }

@@ -6,6 +6,8 @@ interface GraphQlConfig {
     variables: Record<string, string | number | boolean>;
 }
 
+export const adapterName = 'graphQL';
+
 export const graphQLAdapterFactory: AdapterFactory<GraphQlConfig, unknown> = (luvio: Luvio) =>
     function graphql(
         untrustedConfig: unknown

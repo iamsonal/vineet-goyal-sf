@@ -2,9 +2,8 @@ import resolve from 'rollup-plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript2';
 
 import * as packageJson from './package.json';
-import { buildBanner, buildFooter } from '../../scripts/rollup/rollup-utils';
+import { buildFooter } from '../../scripts/rollup/rollup-utils';
 
-const banner = buildBanner(true);
 const footer = buildFooter(packageJson.version);
 
 const ldsGraphqlParserRollupConfig = {
@@ -12,7 +11,6 @@ const ldsGraphqlParserRollupConfig = {
     output: {
         file: 'dist/ldsGraphqlParser.js',
         format: 'esm',
-        banner,
         footer,
     },
 

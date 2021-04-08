@@ -1,6 +1,7 @@
 import { DirectiveNode } from 'graphql/language';
 import { LuvioDirectiveNode } from './ast';
 import { transform as transformArgumentNode } from './argument-node';
+import { CUSTOM_DIRECTIVE_CONNECTION, CUSTOM_DIRECTIVE_RESOURCE } from './constants';
 
 export function transform(node: DirectiveNode): LuvioDirectiveNode {
     const {
@@ -18,4 +19,11 @@ export function transform(node: DirectiveNode): LuvioDirectiveNode {
     }
 
     return ret;
+}
+
+export function isCustomDirective(node: DirectiveNode): boolean {
+    return (
+        node.name.value === CUSTOM_DIRECTIVE_CONNECTION ||
+        node.name.value === CUSTOM_DIRECTIVE_RESOURCE
+    );
 }

@@ -1,8 +1,9 @@
 import { FragmentDefinitionNode } from 'graphql/language';
-import { LuvioFieldNode, LuvioFragmentDefinitionNode } from './ast';
-import { fieldVisitor } from './visitor';
+import { LuvioFieldNode, LuvioFragmentDefinitionNode, LuvioSelectionNode } from './ast';
+import { selectionSetVisitor } from './visitor';
 import { transform as transformVariableDefinition } from './variable-definition';
 import { transform as transformDirectiveNode } from './directive-node';
+import { NODE_KIND_OBJECT_FIELD_SELECTION } from './constants';
 
 export function transform(node: FragmentDefinitionNode): LuvioFragmentDefinitionNode {
     const {
@@ -18,13 +19,13 @@ export function transform(node: FragmentDefinitionNode): LuvioFragmentDefinition
 
     // dummy root node
     const fragmentRoot: LuvioFieldNode = {
-        kind: 'ObjectFieldSelection',
+        kind: NODE_KIND_OBJECT_FIELD_SELECTION,
         name: 'fragment',
         luvioSelections: [],
     };
-    const currentNodePath: LuvioFieldNode[] = [fragmentRoot];
+    const currentNodePath: LuvioSelectionNode[] = [fragmentRoot];
 
-    fieldVisitor(node, currentNodePath);
+    selectionSetVisitor(node, currentNodePath);
 
     const luvioNode: LuvioFragmentDefinitionNode = {
         kind: nodeKind,

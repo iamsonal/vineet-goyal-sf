@@ -156,6 +156,7 @@ export interface LuvioSelectionScalarFieldNode
         'kind' | 'loc' | 'alias' | 'name' | 'arguments' | 'directives' | 'selectionSet'
     > {
     kind: 'ScalarFieldSelection';
+    alias?: string;
     name: string;
 }
 

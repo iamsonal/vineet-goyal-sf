@@ -6,6 +6,7 @@ import {
     responseRecordRepresentationRetrievers,
     ingestRecord,
 } from '@salesforce/lds-adapters-uiapi';
+import { getRecordsPropertyRetriever } from '@salesforce/lds-uiapi-record-utils';
 import {
     makeDurableStoreDraftAware,
     makeEnvironmentDraftAware,
@@ -94,6 +95,7 @@ const env = makeEnvironmentDraftAware(
     makeDurable(makeOffline(new Environment(store, draftAwareNetworkAdapter)), {
         durableStore: draftAwareDurableStore,
         reviveRetrievers: responseRecordRepresentationRetrievers,
+        compositeRetrievers: [getRecordsPropertyRetriever],
     }),
     {
         store,

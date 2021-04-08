@@ -43,8 +43,7 @@ describe('getRecordTemplateCreate adapter offline', () => {
             configWithRecordTypeId,
             recordPayload,
             TTL,
-            undefined,
-            responseRecordRepresentationRetrievers
+            { reviveRetrievers: responseRecordRepresentationRetrievers }
         );
     });
 
@@ -53,8 +52,7 @@ describe('getRecordTemplateCreate adapter offline', () => {
             getRecordTemplateCreate,
             configWithRecordTypeId,
             recordPayload,
-            undefined,
-            responseRecordRepresentationRetrievers
+            { reviveRetrievers: responseRecordRepresentationRetrievers }
         );
     });
 

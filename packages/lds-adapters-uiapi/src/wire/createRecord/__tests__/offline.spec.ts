@@ -31,7 +31,7 @@ import { RecordRepresentation } from '../../../generated/types/RecordRepresentat
 import { Snapshot } from '@luvio/engine';
 
 describe('createRecord offline tests', () => {
-    it('getRecord is fullfilled when offline after a createRecord is invoked online', async () => {
+    it('getRecord is fulfilled when offline after a createRecord is invoked online', async () => {
         const durableStore = await populateDurableStore(createRecordFactory, config, createPayload);
         const network = buildMockNetworkAdapter([]);
         const { luvio } = buildOfflineLuvio(durableStore, network);

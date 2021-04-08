@@ -64,13 +64,16 @@ export const factory = (luvio: Luvio) => {
                     throw new Error('Unsupported avatar type');
                 }
 
-                luvio.storeBroadcast();
                 // TODO W-6804405 - support unions on fragments (only supported on links today)
-                return luvio.storeLookup<AbstractRecordAvatarRepresentation>({
+                const snapshot = luvio.storeLookup<AbstractRecordAvatarRepresentation>({
                     recordId: key,
                     node: selectors(),
                     variables: {},
                 });
+
+                luvio.storeBroadcast();
+
+                return snapshot;
             },
             (err: FetchResponse<{ error: string }>) => {
                 deepFreeze(err);

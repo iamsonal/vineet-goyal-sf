@@ -29,9 +29,8 @@ export const factory = (luvio: Luvio) => {
                 });
 
                 luvio.storeIngest(key, recordIngest, body);
-                luvio.storeBroadcast();
 
-                return luvio.storeLookup({
+                const snapshot = luvio.storeLookup<RecordRepresentation>({
                     recordId: key,
                     node: {
                         kind: 'Fragment',
@@ -40,6 +39,10 @@ export const factory = (luvio: Luvio) => {
                     },
                     variables: {},
                 });
+
+                luvio.storeBroadcast();
+
+                return snapshot;
             },
             (err: FetchResponse<{ error: string }>) => {
                 deepFreeze(err);

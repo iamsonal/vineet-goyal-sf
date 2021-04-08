@@ -36,9 +36,9 @@ export function selectChildResourceParams(
                     )
                 );
                 const childSink = {} as BatchResultRepresentation;
+                reader.seenIds[childKey] = true;
                 switch (childSnapshot.state) {
                     case 'Fulfilled':
-                        reader.seenIds[childKey] = true;
                         reader.enterPath(envelopeStatusCodePath);
                         reader.assignScalar(envelopeStatusCodePath, childSink, 200);
                         reader.exitPath();

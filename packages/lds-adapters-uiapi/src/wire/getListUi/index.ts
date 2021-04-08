@@ -291,9 +291,8 @@ function onResourceSuccess_getListUi(
     const fragment = buildListUiFragment(config, context, listInfo, fields);
 
     luvio.storeIngest(listUiKey, types_ListUiRepresentation_ingest, body);
-    luvio.storeBroadcast();
 
-    return luvio.storeLookup<ListUiRepresentation>(
+    const snapshot = luvio.storeLookup<ListUiRepresentation>(
         {
             recordId: listUiKey,
             node: fragment,
@@ -301,6 +300,10 @@ function onResourceSuccess_getListUi(
         },
         buildSnapshotRefresh(luvio, context, config)
     );
+
+    luvio.storeBroadcast();
+
+    return snapshot;
 }
 
 function onResourceError_getListUi(
@@ -638,7 +641,13 @@ export const factory: AdapterFactory<
             return buildNetworkSnapshot_getListUi(luvio, context, config);
         }
 
-        const listInfoSnapshot = getListInfo(listRef, luvio);
+        const listInfoSnapshot = getListInfo(
+            listRef,
+            luvio,
+            (buildSnapshotRefresh(luvio, context, config) as unknown) as SnapshotRefresh<
+                ListInfoRepresentation
+            >
+        );
 
         // if we have list info then build a snapshot from that
         if (isFulfilledSnapshot(listInfoSnapshot)) {

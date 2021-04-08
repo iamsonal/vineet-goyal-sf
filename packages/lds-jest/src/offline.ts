@@ -19,16 +19,24 @@ export type CustomEnvironmentFactory = (
     store: Store
 ) => DurableEnvironment;
 
+export interface OfflineOptions {
+    customEnvironment?: CustomEnvironmentFactory;
+    reviveRetrievers?: ResponsePropertyRetriever<any, any>[];
+    compositeRetrievers?: ResponsePropertyRetriever<any, any>[];
+}
+
 export function buildOfflineLuvio(
     durableStore: MockDurableStore,
     network: NetworkAdapter,
-    customEnvironment?: CustomEnvironmentFactory,
-    reviveRetrievers?: ResponsePropertyRetriever<any, any>[]
+    options: OfflineOptions = {}
 ) {
+    const { compositeRetrievers, customEnvironment, reviveRetrievers } = options;
+
     const store = new Store();
-    let env: Environment = makeDurable(makeOffline(new Environment(store, network)), {
+    let env = makeDurable(makeOffline(new Environment(store, network)), {
         durableStore,
         reviveRetrievers: reviveRetrievers || [],
+        compositeRetrievers: compositeRetrievers || [],
     });
     if (customEnvironment !== undefined) {
         env = customEnvironment(env, durableStore, store);
@@ -49,7 +57,7 @@ export async function populateDurableStore<Config, DataType>(
     config: Config,
     payload: MockPayload
 ) {
-    const { durableStore, luvio, network } = buildOfflineLuvio(
+    const { durableStore, luvio, network, env } = buildOfflineLuvio(
         new MockDurableStore(),
         buildMockNetworkAdapter([payload])
     );
@@ -58,6 +66,11 @@ export async function populateDurableStore<Config, DataType>(
     expect(result.state).toBe('Fulfilled');
     const callCount = getMockNetworkAdapterCallCount(network);
     expect(callCount).toBe(1);
+
+    // dispose the makeDurable environment so it doesn't keep listening
+    // to DS changes
+    env.dispose();
+
     return durableStore;
 }
 
@@ -66,14 +79,12 @@ export async function testDataEmittedWhenStale<Config, DataType>(
     config: Config,
     payload: MockPayload,
     ttl: number,
-    customEnvironment?: CustomEnvironmentFactory,
-    reviveRetrievers?: ResponsePropertyRetriever<any, any>[]
+    options: OfflineOptions = {}
 ) {
     const { luvio } = buildOfflineLuvio(
         new MockDurableStore(),
         buildMockNetworkAdapter([payload]),
-        customEnvironment,
-        reviveRetrievers
+        options
     );
     const adapter = adapterFactory(luvio);
     const result = await (adapter(config) as Promise<any>);
@@ -87,15 +98,13 @@ export async function testDurableHitDoesNotHitNetwork<Config, DataType>(
     adapterFactory: AdapterFactory<Config, DataType>,
     config: Config,
     payload: MockPayload,
-    customEnvironment?: CustomEnvironmentFactory,
-    reviveRetrievers?: ResponsePropertyRetriever<any, any>[]
+    options: OfflineOptions = {}
 ) {
     const durableStore = await populateDurableStore(adapterFactory, config, payload);
     const { luvio, network } = buildOfflineLuvio(
         durableStore,
         buildMockNetworkAdapter([payload]),
-        customEnvironment,
-        reviveRetrievers
+        options
     );
     const adapter = adapterFactory(luvio);
     const result = await (adapter(config) as Promise<any>);

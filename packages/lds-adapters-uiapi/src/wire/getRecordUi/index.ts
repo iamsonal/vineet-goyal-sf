@@ -155,15 +155,22 @@ export function buildInMemorySnapshot(
     );
     const cachedSelectorKey = buildCachedSelectorKey(key);
 
-    const cacheSel = luvio.storeLookup<Selector>({
-        recordId: cachedSelectorKey,
-        node: {
-            kind: 'Fragment',
-            private: [],
-            opaque: true,
+    const cacheSel = luvio.storeLookup<Selector>(
+        {
+            recordId: cachedSelectorKey,
+            node: {
+                kind: 'Fragment',
+                private: [],
+                opaque: true,
+            },
+            variables: {},
         },
-        variables: {},
-    });
+        // TODO - W-9051409 - today makeDurable environment needs a refresh set for
+        // "resolveUnfulfilledSnapshot" override to work properly, but once this work
+        // item is done we won't have "resolveUnfulfilledSnapshot" anymore and we
+        // do not need to pass in a refresh here
+        (buildSnapshotRefresh(luvio, config) as unknown) as SnapshotRefresh<Selector>
+    );
 
     if (isFulfilledSnapshot(cacheSel)) {
         const cachedSelector = cacheSel.data;
@@ -307,10 +314,16 @@ function onResourceResponseSuccess(
     markRecordUiNulledOutLookupFields(recordLookupFields, recordNodes);
     markRecordUiOptionalFields(optionalFields, recordLookupFields, recordNodes);
 
-    luvio.storeBroadcast();
     publishDependencies(luvio, validRecordIds, [key, selectorKey]);
 
-    return luvio.storeLookup<RecordUiRepresentation>(sel, buildSnapshotRefresh(luvio, config));
+    const snapshot = luvio.storeLookup<RecordUiRepresentation>(
+        sel,
+        buildSnapshotRefresh(luvio, config)
+    );
+
+    luvio.storeBroadcast();
+
+    return snapshot;
 }
 
 function onResourceResponseError(

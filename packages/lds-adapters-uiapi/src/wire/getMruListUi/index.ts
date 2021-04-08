@@ -179,9 +179,8 @@ function onResourceSuccess_getMruListUi(
     const fragment = buildListUiFragment(config, listInfo, fields);
 
     luvio.storeIngest(listUiKey, types_ListUiRepresentation_ingest, body);
-    luvio.storeBroadcast();
 
-    return luvio.storeLookup<ListUiRepresentation>(
+    const snapshot = luvio.storeLookup<ListUiRepresentation>(
         {
             recordId: listUiKey,
             node: fragment,
@@ -189,6 +188,10 @@ function onResourceSuccess_getMruListUi(
         },
         buildSnapshotRefresh(luvio, config)
     );
+
+    luvio.storeBroadcast();
+
+    return snapshot;
 }
 
 function onResourceError_getMruListUi(
@@ -336,9 +339,12 @@ function onResourceSuccess_getMruListRecords(
         types_ListRecordCollectionRepresentation_ingest,
         body
     );
+
+    const snapshot = buildInMemorySnapshot(luvio, config, listInfo, fields);
+
     luvio.storeBroadcast();
 
-    return buildInMemorySnapshot(luvio, config, listInfo, fields);
+    return snapshot;
 }
 
 function onResourceError_getMruListRecords(
@@ -453,7 +459,10 @@ export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> =
                 objectApiName: config.objectApiName,
                 type: 'mru',
             },
-            luvio
+            luvio,
+            (buildSnapshotRefresh(luvio, config) as unknown) as SnapshotRefresh<
+                ListInfoRepresentation
+            >
         );
 
         // if we have list info then build a snapshot from that

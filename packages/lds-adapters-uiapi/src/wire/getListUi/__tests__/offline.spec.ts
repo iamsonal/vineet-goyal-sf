@@ -38,24 +38,15 @@ const configUsingApiName: GetListUiByApiNameConfig = {
 
 describe('getListUi adapter offline', () => {
     it('returns stale snapshot when data is expired', async () => {
-        await testDataEmittedWhenStale(
-            getListUi,
-            configUsingListViewId,
-            payload,
-            TTL,
-            undefined,
-            responseRecordRepresentationRetrievers
-        );
+        await testDataEmittedWhenStale(getListUi, configUsingListViewId, payload, TTL, {
+            reviveRetrievers: responseRecordRepresentationRetrievers,
+        });
     });
 
     it('does not hit the network when durable store is populated', async () => {
-        await testDurableHitDoesNotHitNetwork(
-            getListUi,
-            configUsingListViewId,
-            payload,
-            undefined,
-            responseRecordRepresentationRetrievers
-        );
+        await testDurableHitDoesNotHitNetwork(getListUi, configUsingListViewId, payload, {
+            reviveRetrievers: responseRecordRepresentationRetrievers,
+        });
     });
 
     it('should not make another HTTP request when using different props of listReference', async () => {

@@ -22,23 +22,14 @@ const config: GetMruListUiConfig = {
 
 describe('getMruListUi adapter offline', () => {
     it('returns stale snapshot when data is expired', async () => {
-        await testDataEmittedWhenStale(
-            getMruListUi,
-            config,
-            payload,
-            TTL,
-            undefined,
-            responseRecordRepresentationRetrievers
-        );
+        await testDataEmittedWhenStale(getMruListUi, config, payload, TTL, {
+            reviveRetrievers: responseRecordRepresentationRetrievers,
+        });
     });
 
     it('does not hit the network when durable store is populated', async () => {
-        await testDurableHitDoesNotHitNetwork(
-            getMruListUi,
-            config,
-            payload,
-            undefined,
-            responseRecordRepresentationRetrievers
-        );
+        await testDurableHitDoesNotHitNetwork(getMruListUi, config, payload, {
+            reviveRetrievers: responseRecordRepresentationRetrievers,
+        });
     });
 });

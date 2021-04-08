@@ -71,7 +71,7 @@ function buildLds(ds?: MockDurableStore) {
 }
 
 async function populateDurableStore(recordIds: string[]) {
-    const { durableStore, luvio, network } = buildLds();
+    const { durableStore, luvio, network, env } = buildLds();
 
     const adapter = getRecordUiAdapterFactory(luvio);
     const snapshotOrPromise = adapter({
@@ -85,6 +85,9 @@ async function populateDurableStore(recordIds: string[]) {
     expect(isFulfilledSnapshot(result)).toBe(true);
     const callCount = getMockNetworkAdapterCallCount(network);
     expect(callCount).toBe(1);
+
+    env.dispose();
+
     return {
         durableStore,
     };

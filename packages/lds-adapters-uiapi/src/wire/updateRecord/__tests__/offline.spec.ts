@@ -13,6 +13,7 @@ import { RecordRepresentation } from '../../../generated/types/RecordRepresentat
 import { Snapshot } from '@luvio/engine';
 import { DefaultDurableSegment } from '@luvio/environments';
 import { keyBuilder as recordKeyBuilder } from '../../../generated/types/RecordRepresentation';
+import { FieldValueRepresentation } from '../../../generated/types/FieldValueRepresentation';
 
 const RECORD_ID = '005xx000001XL1tAAG';
 const UPDATED_NAME = 'User Edited';
@@ -58,6 +59,6 @@ describe('updateRecord offline tests', () => {
         const nameKey = `${recordKey}__fields__Name`;
         const recordSegment = durableStore.segments[DefaultDurableSegment];
         const fieldEntry = recordSegment[nameKey];
-        expect(fieldEntry.data.value).toBe(UPDATED_NAME);
+        expect((fieldEntry.data as FieldValueRepresentation).value).toBe(UPDATED_NAME);
     });
 });

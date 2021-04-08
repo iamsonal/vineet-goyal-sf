@@ -7,6 +7,8 @@ import {
     getMockNetworkAdapterCallCount,
 } from '@luvio/adapter-test-library';
 
+import { getRecordsPropertyRetriever } from '@salesforce/lds-uiapi-record-utils';
+
 import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
 
 import { makeDurable, makeOffline } from '@luvio/environments';
@@ -44,6 +46,7 @@ function buildLds(durableStore: MockDurableStore, n?: NetworkAdapter) {
     const env = makeDurable(makeOffline(new Environment(store, network)), {
         durableStore,
         reviveRetrievers: responseRecordRepresentationRetrievers,
+        compositeRetrievers: [getRecordsPropertyRetriever],
     });
 
     const luvio = new Luvio(env);
@@ -57,7 +60,7 @@ function buildLds(durableStore: MockDurableStore, n?: NetworkAdapter) {
 }
 
 async function populateDurableStore() {
-    const { durableStore, luvio, network } = buildLds(
+    const { durableStore, luvio, network, env } = buildLds(
         new MockDurableStore(),
         buildMockNetworkAdapter([recordPayload_Account])
     );
@@ -77,6 +80,10 @@ async function populateDurableStore() {
     expect(result.state).toEqual('Fulfilled');
     const callCount = getMockNetworkAdapterCallCount(network);
     expect(callCount).toBe(1);
+
+    // dispose DS so on changed listener doesn't keep firing
+    env.dispose();
+
     return durableStore;
 }
 
@@ -100,7 +107,10 @@ describe('getRecords with fields offline', () => {
         await testDurableHitDoesNotHitNetwork(
             getRecordsAdapterFactory,
             config,
-            recordPayload_Account
+            recordPayload_Account,
+            {
+                compositeRetrievers: [getRecordsPropertyRetriever],
+            }
         );
     });
 

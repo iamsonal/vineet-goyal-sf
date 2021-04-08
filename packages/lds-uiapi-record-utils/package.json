@@ -14,5 +14,8 @@
         "build": "rollup --config rollup.config.js",
         "clean": "rm -rf dist",
         "test:unit": "jest"
+    },
+    "devDependencies": {
+        "@salesforce/lds-adapters-uiapi": "1.11.0"
     }
 }

@@ -10,6 +10,8 @@ import {
     makeDurableStoreDraftAware,
     makeEnvironmentDraftAware,
     makeNetworkAdapterDraftAware,
+    RecordMetadataOnSetPlugin,
+    DurableStoreSetEntryPlugin,
     DraftManager,
 } from '@salesforce/lds-drafts';
 
@@ -20,6 +22,8 @@ import { NimbusNetworkAdapter } from './network/NimbusNetworkAdapter';
 import { makeNetworkAdapterBatchRecordFields } from './network/record-field-batching/makeNetworkAdapterBatchRecordFields';
 import { NimbusDurableStore } from './NimbusDurableStore';
 import { buildLdsDraftQueue } from './DraftQueueFactory';
+import { buildInternalAdapters } from './utils/adapters';
+import { objectInfoServiceFactory } from './utils/ObjectInfoService';
 
 let luvio: Luvio;
 
@@ -47,6 +51,13 @@ const store = new Store();
 const durableStore = new NimbusDurableStore();
 const networkAdapter = makeNetworkAdapterBatchRecordFields(NimbusNetworkAdapter);
 
+// specific adapters
+const adapters = buildInternalAdapters(store, networkAdapter, durableStore);
+const { ensureObjectInfoCached, apiNameForPrefix, prefixForApiName } = objectInfoServiceFactory(
+    adapters.getObjectInfo,
+    durableStore
+);
+
 // user id centric record ID generator
 const { newRecordId, isGenerated } = recordIdGenerator(userId);
 
@@ -63,8 +74,14 @@ const draftAwareNetworkAdapter = makeNetworkAdapterDraftAware(
     responseRecordRepresentationRetrievers,
     userId
 );
+
+// build the draft durable store plugins
+const objectInfoPlugin = new RecordMetadataOnSetPlugin(ensureObjectInfoCached);
+const plugins: DurableStoreSetEntryPlugin[] = [objectInfoPlugin];
+
 const draftAwareDurableStore = makeDurableStoreDraftAware(
     durableStore,
+    plugins,
     draftQueue,
     store,
     isGenerated,
@@ -87,6 +104,8 @@ const env = makeEnvironmentDraftAware(
         ingestFunc: recordIngestFunc,
         generateId: newRecordId,
         isDraftId: isGenerated,
+        prefixForApiName,
+        apiNameForPrefix,
         recordResponseRetrievers: responseRecordRepresentationRetrievers,
     },
     userId

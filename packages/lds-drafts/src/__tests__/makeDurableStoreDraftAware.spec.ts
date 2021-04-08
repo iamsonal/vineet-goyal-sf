@@ -8,9 +8,10 @@ import {
 
 import { ObjectKeys } from '../../../lds-runtime-mobile/src/utils/language';
 import { DraftAction, DraftQueue } from '../DraftQueue';
-import { makeDurableStoreDraftAware } from '../makeDurableStoreDraftAware';
+import { makeDurableStoreDraftAware, ObjectInfoConfig } from '../makeDurableStoreDraftAware';
 import { buildDraftDurableStoreKey, DurableRecordRepresentation } from '../utils/records';
 import { DRAFT_SEGMENT } from '../DurableDraftQueue';
+import { DurableStoreSetEntryPlugin } from '../plugins/DurableStorePlugins';
 import {
     buildDurableRecordRepresentation,
     createDeleteDraftAction,
@@ -54,22 +55,59 @@ function setupDraftStore(storeRecords: any = {}) {
     const store = new Store();
     store.records = storeRecords;
 
+    const plugin: DurableStoreSetEntryPlugin = {
+        beforeSet: jest.fn(),
+    };
+
     const durableStore = makeDurableStoreDraftAware(
         baseDurableStore,
+        [plugin],
         draftQueue,
         store,
         (id: string) => {
             return id === DRAFT_RECORD_ID;
         },
         (_draftKey: string, _canonicalKey: string) => {},
+        (_config: ObjectInfoConfig) => {
+            return Promise.resolve(undefined);
+        },
         CURRENT_USER_ID
     );
 
-    return { durableStore, baseDurableStore, draftQueue };
+    return { durableStore, baseDurableStore, draftQueue, plugin };
 }
 
 describe('makeDurableStoreDraftAware', () => {
     describe('setValues', () => {
+        it('runs the plugin with only a record representation and not fields', async () => {
+            const record = {
+                id: RECORD_ID,
+                weakEtag: 1,
+                fields: {
+                    Name: {
+                        __ref: STORE_KEY_FIELD__NAME,
+                    },
+                },
+            };
+
+            const storeRecords = {
+                [STORE_KEY_RECORD]: record,
+                [STORE_KEY_FIELD__NAME]: NAME_VALUE,
+            };
+
+            const { durableStore, plugin } = setupDraftStore(storeRecords);
+            durableStore.setEntries<any>(
+                {
+                    [STORE_KEY_RECORD]: { data: record },
+                    [STORE_KEY_FIELD__NAME]: { data: NAME_VALUE },
+                },
+                DefaultDurableSegment
+            );
+
+            expect(plugin.beforeSet).toBeCalledTimes(1);
+            expect(plugin.beforeSet).toBeCalledWith(STORE_KEY_RECORD, { data: record }, 'DEFAULT');
+        });
+
         it('should denormalize fields', async () => {
             const record = {
                 id: RECORD_ID,
@@ -87,7 +125,7 @@ describe('makeDurableStoreDraftAware', () => {
             };
 
             const { durableStore, baseDurableStore } = setupDraftStore(storeRecords);
-            durableStore.setEntries(
+            durableStore.setEntries<any>(
                 {
                     [STORE_KEY_RECORD]: { data: record },
                     [STORE_KEY_FIELD__NAME]: { data: NAME_VALUE },
@@ -131,7 +169,7 @@ describe('makeDurableStoreDraftAware', () => {
             };
 
             const { durableStore, baseDurableStore } = setupDraftStore(storeRecords);
-            durableStore.setEntries(
+            durableStore.setEntries<any>(
                 {
                     [STORE_KEY_RECORD]: { data: record },
                     [STORE_KEY_FIELD__NAME]: { data: NAME_VALUE },
@@ -168,7 +206,7 @@ describe('makeDurableStoreDraftAware', () => {
             };
 
             const { durableStore, baseDurableStore } = setupDraftStore(storeRecords);
-            durableStore.setEntries(
+            durableStore.setEntries<any>(
                 {
                     [STORE_KEY_RECORD]: { data: record },
                     [STORE_KEY_FIELD__NAME]: { data: NAME_VALUE },
@@ -288,7 +326,7 @@ describe('makeDurableStoreDraftAware', () => {
             };
 
             const { durableStore, baseDurableStore } = setupDraftStore(storeRecords);
-            durableStore.setEntries(
+            durableStore.setEntries<any>(
                 {
                     [STORE_KEY_RECORD]: { data: record },
                     [STORE_KEY_FIELD__NAME]: { data: NAME_VALUE },
@@ -326,7 +364,7 @@ describe('makeDurableStoreDraftAware', () => {
             };
 
             const { durableStore, baseDurableStore } = setupDraftStore(storeRecords);
-            durableStore.setEntries(
+            durableStore.setEntries<any>(
                 {
                     [STORE_KEY_DRAFT_RECORD]: { data: record },
                     [DRAFT_STORE_KEY_FIELD__NAME]: { data: NAME_VALUE },
@@ -364,7 +402,7 @@ describe('makeDurableStoreDraftAware', () => {
             };
 
             const { durableStore, baseDurableStore } = setupDraftStore(storeRecords);
-            durableStore.setEntries(
+            durableStore.setEntries<any>(
                 {
                     [STORE_KEY_RECORD]: { data: record },
                     [STORE_KEY_FIELD__NAME]: { data: NAME_VALUE },
@@ -402,7 +440,7 @@ describe('makeDurableStoreDraftAware', () => {
             };
 
             const { durableStore, baseDurableStore } = setupDraftStore(storeRecords);
-            durableStore.setEntries(
+            durableStore.setEntries<any>(
                 {
                     [STORE_KEY_RECORD]: { data: record },
                     [STORE_KEY_FIELD__NAME]: { data: NAME_VALUE },
@@ -483,7 +521,7 @@ describe('makeDurableStoreDraftAware', () => {
                 .fn()
                 .mockResolvedValue({ [STORE_KEY_RECORD]: { data: durableRecord } });
 
-            const readEntries = await durableStore.getEntries(
+            const readEntries = await durableStore.getEntries<any>(
                 [STORE_KEY_RECORD],
                 DefaultDurableSegment
             );
@@ -508,7 +546,7 @@ describe('makeDurableStoreDraftAware', () => {
                 .fn()
                 .mockResolvedValue({ [STORE_KEY_RECORD]: { data: durableRecord } });
 
-            const readEntries = await durableStore.getEntries(
+            const readEntries = await durableStore.getEntries<any>(
                 [STORE_KEY_RECORD],
                 DefaultDurableSegment
             );
@@ -531,7 +569,7 @@ describe('makeDurableStoreDraftAware', () => {
             });
             baseDurableStore.getEntries = jest.fn().mockResolvedValue(undefined);
 
-            const readEntries = await durableStore.getEntries(
+            const readEntries = await durableStore.getEntries<any>(
                 [STORE_KEY_DRAFT_RECORD],
                 DefaultDurableSegment
             );
@@ -563,7 +601,7 @@ describe('makeDurableStoreDraftAware', () => {
                 .fn()
                 .mockResolvedValue({ [STORE_KEY_RECORD]: { data: durableRecord } });
 
-            const readEntries = await durableStore.getEntries(
+            const readEntries = await durableStore.getEntries<any>(
                 [STORE_KEY_RECORD],
                 DefaultDurableSegment
             );
@@ -586,7 +624,7 @@ describe('makeDurableStoreDraftAware', () => {
             });
             baseDurableStore.getEntries = jest.fn().mockResolvedValue(undefined);
 
-            const readEntries = await durableStore.getEntries(
+            const readEntries = await durableStore.getEntries<any>(
                 [STORE_KEY_DRAFT_RECORD],
                 DefaultDurableSegment
             );
@@ -618,7 +656,7 @@ describe('makeDurableStoreDraftAware', () => {
                 .fn()
                 .mockResolvedValue({ [STORE_KEY_RECORD]: { data: durableRecord } });
 
-            const readEntries = await durableStore.getEntries(
+            const readEntries = await durableStore.getEntries<any>(
                 [STORE_KEY_RECORD],
                 DefaultDurableSegment
             );
@@ -643,7 +681,7 @@ describe('makeDurableStoreDraftAware', () => {
                 .fn()
                 .mockResolvedValue({ [STORE_KEY_RECORD]: { data: durableRecord } });
 
-            const readEntries = await durableStore.getEntries(
+            const readEntries = await durableStore.getEntries<any>(
                 [STORE_KEY_RECORD],
                 DefaultDurableSegment
             );
@@ -825,6 +863,7 @@ describe('makeDurableStoreDraftAware', () => {
                             },
                         }),
                 } as any,
+                [] as DraftDurableStoreReactivePlugin[],
                 {} as any,
                 {} as any,
                 () => false,

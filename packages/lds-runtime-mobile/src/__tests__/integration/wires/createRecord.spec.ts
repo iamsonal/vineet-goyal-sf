@@ -18,8 +18,9 @@ import { MockNimbusAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetw
 import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 import { recordIdGenerator } from '../../../RecordIdGenerator';
-import { DefaultDurableSegment } from '@luvio/environments';
+import { DefaultDurableSegment, DurableStoreEntry } from '@luvio/environments';
 import Id from '@salesforce/user/Id';
+import { ObjectInfoIndex, OBJECT_INFO_PREFIX_SEGMENT } from '../../../utils/ObjectInfoService';
 
 const RECORD_ID = mockAccount.id;
 const API_NAME = 'Account';
@@ -51,12 +52,21 @@ describe('mobile runtime integration tests', () => {
 
         createRecord = createRecordAdapterFactory(luvio);
         getRecord = getRecordAdapterFactory(luvio);
+
+        const accountObjectInfo: DurableStoreEntry<ObjectInfoIndex> = {
+            data: { apiName: API_NAME, keyPrefix: '001' },
+        };
+        durableStore.setEntriesInSegment(
+            {
+                [API_NAME]: JSON.stringify(accountObjectInfo),
+            },
+            OBJECT_INFO_PREFIX_SEGMENT
+        );
     });
 
     describe('createRecord', () => {
         it('createRecord returns synthetic record', async () => {
             const networkSpy = jest.fn();
-            networkAdapter.sendRequest = networkSpy;
             const snapshot = await createRecord({ apiName: API_NAME, fields: { Name: 'Justin' } });
             expect(snapshot.state).toBe('Fulfilled');
             const record = (snapshot.data as unknown) as DraftRecordRepresentation;
@@ -65,6 +75,11 @@ describe('mobile runtime integration tests', () => {
         });
 
         it('record with generated ID does not get stored in default durable segment', async () => {
+            const startingEntries = await durableStore.getAllEntriesInSegment(
+                DefaultDurableSegment
+            );
+            const entryCount = Object.keys(startingEntries.entries).length;
+
             const orginalName = 'Justin';
 
             // create a synthetic record
@@ -80,7 +95,7 @@ describe('mobile runtime integration tests', () => {
             const entriesInDefaultSegment = await durableStore.getAllEntriesInSegment(
                 DefaultDurableSegment
             );
-            expect(Object.keys(entriesInDefaultSegment.entries).length).toBe(0);
+            expect(Object.keys(entriesInDefaultSegment.entries).length).toBe(entryCount);
 
             const entriesInDraftSegment = await durableStore.getAllEntriesInSegment(DRAFT_SEGMENT);
             expect(Object.keys(entriesInDraftSegment.entries).length).toBe(1);

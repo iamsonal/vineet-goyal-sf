@@ -122,22 +122,10 @@ export const recordIdGenerator = (id: string) => {
         /**
          * Returns a new record id with the provided prefix
          */
-        newRecordId: (apiName: string) => {
-            if (apiName === undefined || apiName.length === 0) {
-                throw Error('apiName is undefined or empty');
+        newRecordId: (prefix: string) => {
+            if (prefix === undefined || prefix.length !== 3) {
+                throw Error('Missing or prefix is not 3 characters long');
             }
-            let prefix;
-            if (apiName.length < 3) {
-                const count = 3 - apiName.length;
-                let before = '0';
-                while (before.length < count) {
-                    before = before + '0';
-                }
-                prefix = before + apiName;
-            } else {
-                prefix = apiName.substr(0, 3);
-            }
-
             lastTimestamp = waitNextMilliSeconds(timestamp(), lastTimestamp);
             const id = prefix + clientId + numberAs7CharRecordId(lastTimestamp);
             return recordIdWithChecksum(id);

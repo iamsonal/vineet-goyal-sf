@@ -28,6 +28,8 @@ export interface DraftEnvironmentOptions {
     ) => void;
     generateId: (apiName: string) => string;
     isDraftId: (id: string) => boolean;
+    apiNameForPrefix: (prefix: string) => Promise<string>;
+    prefixForApiName: (apiName: string) => Promise<string>;
     recordResponseRetrievers: ResponsePropertyRetriever<unknown, RecordRepresentation>[];
 }
 

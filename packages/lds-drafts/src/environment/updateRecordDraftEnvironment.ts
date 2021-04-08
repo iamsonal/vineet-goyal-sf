@@ -88,18 +88,17 @@ function resolveResourceRequestIds(
 
 export function updateRecordDraftEnvironment(
     env: DurableEnvironment,
-    options: DraftEnvironmentOptions
+    { draftQueue, isDraftId, store, apiNameForPrefix }: DraftEnvironmentOptions
 ): DurableEnvironment {
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function(
         resourceRequest: ResourceRequest
     ) {
-        const { draftQueue } = options;
         if (isRequestUpdateRecord(resourceRequest) === false) {
             // only override requests to updateRecord endpoint
             return env.dispatchResourceRequest(resourceRequest);
         }
 
-        const resolvedRequest = resolveResourceRequestIds(resourceRequest, env, options.isDraftId);
+        const resolvedRequest = resolveResourceRequestIds(resourceRequest, env, isDraftId);
 
         const key = getRecordKeyFromRecordRequest(resolvedRequest);
         const targetId = getRecordIdFromRecordRequest(resolvedRequest);
@@ -109,31 +108,38 @@ export function updateRecordDraftEnvironment(
             }) as any;
         }
 
-        return draftQueue.enqueue(resolvedRequest, key, targetId).then(() => {
-            // TODO: [W-8195289] Draft edited records should include all fields in the Full/View layout if possible
-            const fields = getRecordFieldsFromRecordRequest(resolvedRequest);
-            if (fields === undefined) {
-                throw createBadRequestResponse({ message: 'fields are missing' });
-            }
+        const prefix = targetId.substring(0, 3);
+        return apiNameForPrefix(prefix).then(_apiName => {
+            //TODO: W-8903579 take apiName and use it to hit the getRecordAdapter
 
-            // now that there's a mutation request enqueued the value in the
-            // store is no longer accurate as it does not have draft values applied
-            // so evict it from the store in case anyone tries to access it before we have
-            // a chance to revive it with drafts applied
-            options.store.evict(key);
+            return draftQueue.enqueue(resolvedRequest, key, targetId).then(() => {
+                // TODO: [W-8195289] Draft edited records should include all fields in the Full/View layout if possible
+                const fields = getRecordFieldsFromRecordRequest(resolvedRequest);
+                if (fields === undefined) {
+                    throw createBadRequestResponse({
+                        message: 'fields are missing',
+                    });
+                }
 
-            // revive the modified record to the in-memory store. This will put the record
-            // in the in-memory store with the new draft values applied to it
-            return reviveRecordToStore(key, fields, env)
-                .catch(() => {
-                    throw createInternalErrorResponse();
-                })
-                .then(record => {
-                    if (record === undefined) {
-                        throw createDraftSynthesisErrorResponse();
-                    }
-                    return createOkResponse(record);
-                });
+                // now that there's a mutation request enqueued the value in the
+                // store is no longer accurate as it does not have draft values applied
+                // so evict it from the store in case anyone tries to access it before we have
+                // a chance to revive it with drafts applied
+                store.evict(key);
+
+                // revive the modified record to the in-memory store. This will put the record
+                // in the in-memory store with the new draft values applied to it
+                return reviveRecordToStore(key, fields, env)
+                    .catch(() => {
+                        throw createInternalErrorResponse();
+                    })
+                    .then(record => {
+                        if (record === undefined) {
+                            throw createDraftSynthesisErrorResponse();
+                        }
+                        return createOkResponse(record);
+                    });
+            });
         });
     };
 

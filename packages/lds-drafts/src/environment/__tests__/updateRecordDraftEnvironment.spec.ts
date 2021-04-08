@@ -14,7 +14,11 @@ import {
 describe('draft environment tests', () => {
     describe('updateRecord', () => {
         it('request gets enqueued with key as tag', async () => {
-            const { durableStore, draftEnvironment, draftQueue } = setupDraftEnvironment();
+            const { durableStore, draftEnvironment, draftQueue } = setupDraftEnvironment({
+                apiNameForPrefix: (_prefix: string) => {
+                    return Promise.resolve('Account');
+                },
+            });
             mockDurableStoreResponse(durableStore);
             const request = createPatchRequest();
             await draftEnvironment.dispatchResourceRequest(request);
@@ -22,7 +26,11 @@ describe('draft environment tests', () => {
         });
 
         it('record gets evicted from store prior to revival', async () => {
-            const { durableStore, draftEnvironment, store } = setupDraftEnvironment();
+            const { durableStore, draftEnvironment, store } = setupDraftEnvironment({
+                apiNameForPrefix: (_prefix: string) => {
+                    return Promise.resolve('Account');
+                },
+            });
             const spy = jest.spyOn(store, 'evict');
             mockDurableStoreResponse(durableStore);
             const request = createPatchRequest();
@@ -31,7 +39,11 @@ describe('draft environment tests', () => {
         });
 
         it('returns mutable data in the response', async () => {
-            const { durableStore, draftEnvironment } = setupDraftEnvironment();
+            const { durableStore, draftEnvironment } = setupDraftEnvironment({
+                apiNameForPrefix: (_prefix: string) => {
+                    return Promise.resolve('Account');
+                },
+            });
             mockDurableStoreResponse(durableStore);
             const request = createPatchRequest();
             const response = await draftEnvironment.dispatchResourceRequest<RecordRepresentation>(
@@ -46,7 +58,11 @@ describe('draft environment tests', () => {
         });
 
         it('resolves draft ids in the base path', async () => {
-            const { durableStore, draftEnvironment, draftQueue, store } = setupDraftEnvironment();
+            const { durableStore, draftEnvironment, draftQueue, store } = setupDraftEnvironment({
+                apiNameForPrefix: (_prefix: string) => {
+                    return Promise.resolve('Account');
+                },
+            });
             const redirected2 = 'bar';
             const redirected2Key = getRecordKeyForId(redirected2);
             store.redirect(STORE_KEY_RECORD, redirected2Key);
@@ -63,7 +79,11 @@ describe('draft environment tests', () => {
         });
 
         it('throws if durable store rejects', async () => {
-            const { draftEnvironment, durableStore } = setupDraftEnvironment();
+            const { draftEnvironment, durableStore } = setupDraftEnvironment({
+                apiNameForPrefix: (_prefix: string) => {
+                    return Promise.resolve('Account');
+                },
+            });
 
             durableStore.getEntries = jest.fn().mockRejectedValue(undefined);
             const request = {
@@ -87,7 +107,11 @@ describe('draft environment tests', () => {
         });
 
         it('resolves draft id references in the body', async () => {
-            const { durableStore, draftEnvironment, store, draftQueue } = setupDraftEnvironment();
+            const { durableStore, draftEnvironment, store, draftQueue } = setupDraftEnvironment({
+                apiNameForPrefix: (_prefix: string) => {
+                    return Promise.resolve('Account');
+                },
+            });
 
             store.redirect(STORE_KEY_DRAFT_RECORD, STORE_KEY_RECORD);
             durableStore.getEntries = jest.fn().mockResolvedValue({

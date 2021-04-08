@@ -10,12 +10,13 @@ import {
     createPostRequest,
     DEFAULT_API_NAME,
     DEFAULT_NAME_FIELD_VALUE,
-    DRAFT_RECORD_ID,
-    DRAFT_STORE_KEY_FIELD__NAME,
     RECORD_ID,
     setupDraftEnvironment,
-    STORE_KEY_DRAFT_RECORD,
 } from './test-utils';
+
+const CREATE_DRAFT_RECORD_ID = '001x000001XL1tAAG';
+const STORE_KEY_DRAFT_RECORD = `UiApi::RecordRepresentation:${CREATE_DRAFT_RECORD_ID}`;
+const DRAFT_STORE_KEY_FIELD__NAME = `UiApi::RecordRepresentation:${CREATE_DRAFT_RECORD_ID}__fields__Name`;
 
 describe('draft environment tests', () => {
     describe('createRecord', () => {
@@ -44,8 +45,70 @@ describe('draft environment tests', () => {
                 status: 400,
             });
         });
+
+        it('returns the correct prefix for the record', async () => {
+            const { draftEnvironment, durableStore } = setupDraftEnvironment({
+                prefixForApiName: (_apiName: string) => Promise.resolve('001'),
+            });
+
+            let assignedDraftId = '';
+            let assignedDraftIdStoreKey = '';
+            durableStore.getEntries = jest.fn().mockImplementation((keys: string[]) => {
+                assignedDraftIdStoreKey = keys[0];
+                assignedDraftId = extractRecordIdFromStoreKey(assignedDraftIdStoreKey);
+                const nameKey = buildRecordFieldStoreKey(assignedDraftIdStoreKey, 'Name');
+                return Promise.resolve({
+                    [assignedDraftIdStoreKey]: {
+                        data: {
+                            apiName: DEFAULT_API_NAME,
+                            childRelationships: {},
+                            eTag: '',
+                            fields: {
+                                Name: {
+                                    __ref: nameKey,
+                                },
+                            },
+                            id: assignedDraftId,
+                            lastModifiedById: null,
+                            lastModifiedDate: null,
+                            recordTypeId: null,
+                            recordTypeInfo: null,
+                            systemModstamp: null,
+                            weakEtag: -1,
+                        },
+                    },
+
+                    [nameKey]: {
+                        data: {
+                            displayValue: DEFAULT_NAME_FIELD_VALUE,
+                            value: DEFAULT_NAME_FIELD_VALUE,
+                        },
+                    },
+                });
+            });
+            const request = {
+                baseUri: '/services/data/v52.0',
+                basePath: `/ui-api/records/${CREATE_DRAFT_RECORD_ID}`,
+                method: 'post',
+                body: {
+                    apiName: DEFAULT_API_NAME,
+                    fields: {
+                        Name: DEFAULT_NAME_FIELD_VALUE,
+                    },
+                },
+                urlParams: {},
+                queryParams: {},
+                headers: {},
+            };
+
+            const result = await draftEnvironment.dispatchResourceRequest(request);
+            expect(result.body.id.substring(0, 3)).toEqual('001');
+        });
+
         it('request gets enqueued with key as tag', async () => {
-            const { draftEnvironment, draftQueue, durableStore } = setupDraftEnvironment();
+            const { draftEnvironment, draftQueue, durableStore } = setupDraftEnvironment({
+                prefixForApiName: (_apiName: string) => Promise.resolve('001'),
+            });
             let assignedDraftId = '';
             let assignedDraftIdStoreKey = '';
             durableStore.getEntries = jest.fn().mockImplementation((keys: string[]) => {
@@ -101,12 +164,14 @@ describe('draft environment tests', () => {
             expect(draftQueue.enqueue).toBeCalledWith(
                 request,
                 assignedDraftIdStoreKey,
-                DRAFT_RECORD_ID
+                CREATE_DRAFT_RECORD_ID
             );
         });
 
         it('throws if durable store rejects', async () => {
-            const { draftEnvironment, durableStore } = setupDraftEnvironment();
+            const { draftEnvironment, durableStore } = setupDraftEnvironment({
+                prefixForApiName: (_apiName: string) => Promise.resolve('001'),
+            });
 
             durableStore.getEntries = jest.fn().mockRejectedValue(undefined);
             const request = createPostRequest();
@@ -118,7 +183,9 @@ describe('draft environment tests', () => {
         });
 
         it('throws draft error if unable to synthesize draft after create', async () => {
-            const { draftEnvironment, durableStore } = setupDraftEnvironment();
+            const { draftEnvironment, durableStore } = setupDraftEnvironment({
+                prefixForApiName: (_apiName: string) => Promise.resolve('001'),
+            });
             durableStore.getEntries = jest.fn().mockResolvedValue(undefined);
             const request = createPostRequest();
 
@@ -133,7 +200,9 @@ describe('draft environment tests', () => {
         });
 
         it('returns mutable data in the response', async () => {
-            const { draftEnvironment, durableStore } = setupDraftEnvironment();
+            const { draftEnvironment, durableStore } = setupDraftEnvironment({
+                prefixForApiName: (_apiName: string) => Promise.resolve('001'),
+            });
             let assignedDraftId = '';
             let assignedDraftIdStoreKey = '';
             durableStore.getEntries = jest.fn().mockImplementation((keys: string[]) => {
@@ -189,8 +258,9 @@ describe('draft environment tests', () => {
 
             const { draftEnvironment, draftQueue, durableStore, store } = setupDraftEnvironment({
                 isDraftId: (id: string) => {
-                    return id === DRAFT_RECORD_ID || id === draftReferenceId;
+                    return id === CREATE_DRAFT_RECORD_ID || id === draftReferenceId;
                 },
+                prefixForApiName: (_apiName: string) => Promise.resolve('001'),
             });
             store.redirect(draftReferenceKey, canonicalReferenceKey);
             durableStore.getEntries = jest.fn().mockResolvedValue({
@@ -204,7 +274,7 @@ describe('draft environment tests', () => {
                                 __ref: DRAFT_STORE_KEY_FIELD__NAME,
                             },
                         },
-                        id: DRAFT_RECORD_ID,
+                        id: CREATE_DRAFT_RECORD_ID,
                         lastModifiedById: null,
                         lastModifiedDate: null,
                         recordTypeId: null,
@@ -249,7 +319,7 @@ describe('draft environment tests', () => {
             expect(draftQueue.enqueue).toBeCalledWith(
                 expectedRequest,
                 STORE_KEY_DRAFT_RECORD,
-                DRAFT_RECORD_ID
+                CREATE_DRAFT_RECORD_ID
             );
         });
     });

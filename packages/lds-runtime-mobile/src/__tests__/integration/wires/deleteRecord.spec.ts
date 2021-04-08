@@ -20,6 +20,8 @@ import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusD
 import { MockNimbusAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
 import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
+import { ObjectInfoIndex, OBJECT_INFO_PREFIX_SEGMENT } from '../../../utils/ObjectInfoService';
+import { DurableStoreEntry } from '@luvio/environments';
 
 const RECORD_ID = mockAccount.id;
 const API_NAME = 'Account';
@@ -83,6 +85,16 @@ describe('mobile runtime integration tests', () => {
 
     describe('deleteRecord', () => {
         it('deleteRecord sets draft deleted to true', async () => {
+            const accountObjectInfo: DurableStoreEntry<ObjectInfoIndex> = {
+                data: { apiName: API_NAME, keyPrefix: '001' },
+            };
+            durableStore.setEntriesInSegment(
+                {
+                    [API_NAME]: JSON.stringify(accountObjectInfo),
+                },
+                OBJECT_INFO_PREFIX_SEGMENT
+            );
+
             const snapshot = await createRecord({
                 apiName: API_NAME,
                 fields: { Name: 'TestRecord' },

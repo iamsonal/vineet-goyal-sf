@@ -61,18 +61,17 @@ function resolveResourceRequestIds(
 
 export function createRecordDraftEnvironment(
     env: DurableEnvironment,
-    options: DraftEnvironmentOptions
+    { draftQueue, prefixForApiName, generateId, isDraftId }: DraftEnvironmentOptions
 ): DurableEnvironment {
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function<T>(
         request: ResourceRequest
     ) {
-        const { generateId, draftQueue } = options;
         if (isRequestCreateRecord(request) === false) {
             // only override requests to createRecord endpoint
             return env.dispatchResourceRequest(request);
         }
 
-        const resolvedResourceRequest = resolveResourceRequestIds(request, env, options.isDraftId);
+        const resolvedResourceRequest = resolveResourceRequestIds(request, env, isDraftId);
 
         const apiName = resolvedResourceRequest.body.apiName;
 
@@ -84,27 +83,27 @@ export function createRecordDraftEnvironment(
             );
         }
 
-        // TODO: we need to generate proper prefix based on key prefix in the
-        // corresponding ObjectInfo
-        const recordId = generateId(apiName);
-        const key = keyBuilderRecord({ recordId });
+        return prefixForApiName(apiName).then(prefix => {
+            const recordId = generateId(prefix);
+            const key = keyBuilderRecord({ recordId });
 
-        return draftQueue.enqueue(resolvedResourceRequest, key, recordId).then(() => {
-            const fields = getRecordFieldsFromRecordRequest(resolvedResourceRequest);
-            if (fields === undefined) {
-                throw createBadRequestResponse({ message: 'fields are missing' });
-            }
-            // revive the modified record to the in-memory store
-            return reviveRecordToStore(key, fields, env)
-                .catch(() => {
-                    throw createInternalErrorResponse();
-                })
-                .then(record => {
-                    if (record === undefined) {
-                        throw createDraftSynthesisErrorResponse();
-                    }
-                    return createOkResponse(record) as any;
-                });
+            return draftQueue.enqueue(resolvedResourceRequest, key, recordId).then(() => {
+                const fields = getRecordFieldsFromRecordRequest(resolvedResourceRequest);
+                if (fields === undefined) {
+                    throw createBadRequestResponse({ message: 'fields are missing' });
+                }
+                // revive the modified record to the in-memory store
+                return reviveRecordToStore(key, fields, env)
+                    .catch(() => {
+                        throw createInternalErrorResponse();
+                    })
+                    .then(record => {
+                        if (record === undefined) {
+                            throw createDraftSynthesisErrorResponse();
+                        }
+                        return createOkResponse(record) as any;
+                    });
+            });
         });
     };
 

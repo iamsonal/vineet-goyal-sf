@@ -1,5 +1,7 @@
 export { makeEnvironmentDraftAware } from './environment/makeEnvironmentDraftAware';
 export { makeDurableStoreDraftAware } from './makeDurableStoreDraftAware';
+export { DurableStoreSetEntryPlugin } from './plugins/DurableStorePlugins';
+export { RecordMetadataOnSetPlugin } from './plugins/RecordMetadataOnSetPlugin';
 export {
     DraftQueue,
     DraftQueueState,

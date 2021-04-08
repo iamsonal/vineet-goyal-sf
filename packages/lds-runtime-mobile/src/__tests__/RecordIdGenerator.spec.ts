@@ -33,28 +33,32 @@ describe('RecordIdGenerator', () => {
         expect(userId.substring(10, 15)).not.toBe(id2.substring(3, 8));
     });
 
-    it('generate a record id with an empty prefix', () => {
+    it('generate a record id with an undefined prefix', () => {
         const generator = recordIdGenerator('005B0000000GR4OIAW');
-        expect(() => generator.newRecordId(undefined)).toThrow('apiName is undefined or empty');
+        expect(() => generator.newRecordId(undefined)).toThrow(
+            'Missing or prefix is not 3 characters long'
+        );
     });
 
     it('generate a record id with an empty string', () => {
         const generator = recordIdGenerator('005B0000000GR4OIAW');
-        expect(() => generator.newRecordId('')).toThrow('apiName is undefined or empty');
+        expect(() => generator.newRecordId('')).toThrow(
+            'Missing or prefix is not 3 characters long'
+        );
     });
 
-    it('generate a record id prefixed with 0s if too short', () => {
+    it('throws error if prefix is too short', () => {
         const generator = recordIdGenerator('005B0000000GR4OIAW');
-        const id = generator.newRecordId('0A');
-        expect(generator.isGenerated(id)).toBe(true);
-        expect(id.substring(0, 3)).toBe('00A');
+        expect(() => generator.newRecordId('0A')).toThrow(
+            'Missing or prefix is not 3 characters long'
+        );
     });
 
-    it('generate a record id prefixed with 0s if string is 1 character long', () => {
+    it('throws error if prefix is too long', () => {
         const generator = recordIdGenerator('005B0000000GR4OIAW');
-        const id = generator.newRecordId('A');
-        expect(generator.isGenerated(id)).toBe(true);
-        expect(id.substring(0, 3)).toBe('00A');
+        expect(() => generator.newRecordId('0001')).toThrow(
+            'Missing or prefix is not 3 characters long'
+        );
     });
 
     it('ensure successively generated record ids are different', () => {

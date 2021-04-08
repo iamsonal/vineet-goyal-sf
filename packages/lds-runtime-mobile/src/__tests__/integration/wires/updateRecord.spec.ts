@@ -13,6 +13,8 @@ import { MockNimbusAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetw
 import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 import { RECORD_TTL } from '@salesforce/lds-adapters-uiapi/karma/dist/uiapi-constants';
+import { DurableStoreEntry } from '@luvio/environments';
+import { ObjectInfoIndex, OBJECT_INFO_PREFIX_SEGMENT } from '../../../utils/ObjectInfoService';
 
 const RECORD_ID = mockAccount.id;
 const API_NAME = 'Account';
@@ -70,6 +72,16 @@ describe('mobile runtime integration tests', () => {
         createRecord = createRecordAdapterFactory(luvio);
         getRecord = getRecordAdapterFactory(luvio);
         updateRecord = updateRecordAdapterFactory(luvio);
+
+        const accountObjectInfo: DurableStoreEntry<ObjectInfoIndex> = {
+            data: { apiName: API_NAME, keyPrefix: '001' },
+        };
+        durableStore.setEntriesInSegment(
+            {
+                [API_NAME]: JSON.stringify(accountObjectInfo),
+            },
+            OBJECT_INFO_PREFIX_SEGMENT
+        );
     });
 
     describe('updateRecord', () => {

@@ -12,6 +12,7 @@ import {
     RecordRepresentation,
     keyBuilderRecord,
     FieldValueRepresentation,
+    getObjectInfoAdapterFactory,
 } from '@salesforce/lds-adapters-uiapi';
 import { DraftAction, DraftActionMap, DraftQueue } from './DraftQueue';
 import { ObjectCreate, ObjectKeys, ObjectAssign, ArrayPrototypeShift } from './utils/language';
@@ -31,6 +32,7 @@ import {
 } from '@salesforce/lds-uiapi-record-utils';
 import { DraftIdMappingEntry } from './DraftQueue';
 import { DRAFT_SEGMENT, DRAFT_ID_MAPPINGS_SEGMENT } from './DurableDraftQueue';
+import { DurableStoreSetEntryPlugin } from './plugins/DurableStorePlugins';
 
 /**
  * This method denormalizes field links so that a record can be looked up with all its fields in one
@@ -292,8 +294,12 @@ function getSyntheticRecordEntries(
     return returnEntries;
 }
 
+type ObjectInfoAdapterReturn = ReturnType<typeof getObjectInfoAdapterFactory>;
+export type ObjectInfoConfig = Parameters<ObjectInfoAdapterReturn>[0];
+
 export function makeDurableStoreDraftAware(
     durableStore: DurableStore,
+    plugins: DurableStoreSetEntryPlugin[],
     draftQueue: DraftQueue,
     store: Store,
     isDraftId: (id: string) => boolean,
@@ -381,7 +387,8 @@ export function makeDurableStoreDraftAware(
     // if the record has any draft fields applied to it, we restore the original field value to the record
     // prior to putting it to ensure that no draft data enters the DurableStore
     const setEntries: typeof durableStore['setEntries'] = function<T>(
-        entries: DurableStoreEntries<T>
+        entries: DurableStoreEntries<T>,
+        segment: string
     ): Promise<void> {
         const putEntries = ObjectCreate(null);
         const keys = ObjectKeys(entries);
@@ -423,9 +430,14 @@ export function makeDurableStoreDraftAware(
             } else {
                 putEntries[key] = value;
             }
+
+            for (let j = 0, len = plugins.length; j < len; j++) {
+                const plugin = plugins[j];
+                plugin.beforeSet(key, value, segment);
+            }
         }
 
-        return durableStore.setEntries(putEntries, DefaultDurableSegment);
+        return durableStore.setEntries(putEntries, segment);
     };
 
     /**

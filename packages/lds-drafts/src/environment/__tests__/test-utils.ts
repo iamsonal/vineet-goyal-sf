@@ -1,5 +1,6 @@
-import { Environment, Store } from '@luvio/engine';
+import { Environment, Luvio, Store } from '@luvio/engine';
 import { DurableStore, makeDurable } from '@luvio/environments';
+import { getRecordAdapterFactory } from '@salesforce/lds-adapters-uiapi';
 import { DraftQueue } from '../../DraftQueue';
 import { DRAFT_RECORD_ID } from '../../__tests__/test-utils';
 import { makeEnvironmentDraftAware } from '../makeEnvironmentDraftAware';
@@ -10,12 +11,12 @@ export function setupDraftEnvironment(
     setupOptions: {
         mockNetworkResponse?: any;
         isDraftId?: (id: string) => boolean;
+        getRecordMock?: any;
         prefixForApiName?: (apiName: string) => Promise<string>;
         apiNameForPrefix?: (prefix: string) => Promise<string>;
     } = {}
 ) {
-    const { mockNetworkResponse } = setupOptions;
-
+    const { mockNetworkResponse, getRecordMock } = setupOptions;
     const store = new Store();
     const network = jest.fn().mockResolvedValue(mockNetworkResponse ?? {});
     const durableStore: DurableStore = {
@@ -38,8 +39,10 @@ export function setupDraftEnvironment(
         replaceAction: jest.fn(),
         setMetadata: jest.fn(),
     };
-
     const baseEnvironment = makeDurable(new Environment(store, network), { durableStore });
+    const adapters = {
+        getRecord: getRecordMock ?? getRecordAdapterFactory(new Luvio(baseEnvironment)),
+    };
     const draftEnvironment = makeEnvironmentDraftAware(
         baseEnvironment,
         {
@@ -51,6 +54,7 @@ export function setupDraftEnvironment(
                 return `${prefix}${DRAFT_RECORD_ID.substring(4, DRAFT_RECORD_ID.length)}`;
             },
             isDraftId: setupOptions.isDraftId ?? (id => id === DRAFT_RECORD_ID),
+            ...adapters,
             prefixForApiName: setupOptions.prefixForApiName ?? jest.fn(),
             apiNameForPrefix: setupOptions.apiNameForPrefix ?? jest.fn(),
             recordResponseRetrievers: undefined,
@@ -64,5 +68,6 @@ export function setupDraftEnvironment(
         draftQueue,
         baseEnvironment,
         draftEnvironment,
+        adapters,
     };
 }

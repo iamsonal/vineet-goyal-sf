@@ -1,6 +1,7 @@
-import { Environment, ResourceRequest } from '@luvio/engine';
-import { DurableEnvironment } from '@luvio/environments';
-import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
+import { Adapter, Environment, ResourceRequest } from '@luvio/engine';
+import { DefaultDurableSegment, DurableEnvironment } from '@luvio/environments';
+import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import { GetRecordConfig } from '@salesforce/lds-adapters-uiapi/dist/types/src/generated/adapters/getRecord';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
 import {
     createBadRequestResponse,
@@ -15,9 +16,14 @@ import {
     getRecordIdFromRecordRequest,
     getRecordKeyFromRecordRequest,
     RECORD_ENDPOINT_REGEX,
+    RequestFields,
     reviveRecordToStore,
 } from '../utils/records';
 import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
+
+export interface UpdateRecordDraftEnvironmentOptions extends DraftEnvironmentOptions {
+    getRecord: Adapter<GetRecordConfig, RecordRepresentation>;
+}
 
 /**
  * Checks if a provided resource request is a POST operation on the record
@@ -88,7 +94,14 @@ function resolveResourceRequestIds(
 
 export function updateRecordDraftEnvironment(
     env: DurableEnvironment,
-    { draftQueue, isDraftId, store, apiNameForPrefix }: DraftEnvironmentOptions
+    {
+        isDraftId,
+        durableStore,
+        store,
+        draftQueue,
+        getRecord,
+        apiNameForPrefix,
+    }: UpdateRecordDraftEnvironmentOptions
 ): DurableEnvironment {
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function(
         resourceRequest: ResourceRequest
@@ -103,45 +116,80 @@ export function updateRecordDraftEnvironment(
         const key = getRecordKeyFromRecordRequest(resolvedRequest);
         const targetId = getRecordIdFromRecordRequest(resolvedRequest);
         if (key === undefined || targetId === undefined) {
-            return createBadRequestResponse({
-                message: 'missing record id in request',
-            }) as any;
+            return Promise.reject(
+                createBadRequestResponse({
+                    message: 'missing record id in request',
+                })
+            ) as any;
         }
 
-        const prefix = targetId.substring(0, 3);
-        return apiNameForPrefix(prefix).then(_apiName => {
-            //TODO: W-8903579 take apiName and use it to hit the getRecordAdapter
-
-            return draftQueue.enqueue(resolvedRequest, key, targetId).then(() => {
-                // TODO: [W-8195289] Draft edited records should include all fields in the Full/View layout if possible
-                const fields = getRecordFieldsFromRecordRequest(resolvedRequest);
-                if (fields === undefined) {
-                    throw createBadRequestResponse({
-                        message: 'fields are missing',
+        return durableStore
+            .getEntries([key], DefaultDurableSegment)
+            .catch(() => {
+                throw createInternalErrorResponse();
+            })
+            .then(entries => {
+                if (entries === undefined) {
+                    return fetchRecord(resolvedRequest, key, targetId).then(() => {
+                        return enqueueRequest(resolvedRequest, key, targetId);
                     });
+                } else {
+                    return enqueueRequest(resolvedRequest, key, targetId);
                 }
+            });
+    };
 
-                // now that there's a mutation request enqueued the value in the
-                // store is no longer accurate as it does not have draft values applied
-                // so evict it from the store in case anyone tries to access it before we have
-                // a chance to revive it with drafts applied
-                store.evict(key);
+    function fetchRecord(request: ResourceRequest, key: string, recordId: string) {
+        const recordFields = getRecordFieldsFromRecordRequest(request);
+        const prefix = recordId.substring(0, 3);
 
-                // revive the modified record to the in-memory store. This will put the record
-                // in the in-memory store with the new draft values applied to it
-                return reviveRecordToStore(key, fields, env)
-                    .catch(() => {
-                        throw createInternalErrorResponse();
-                    })
-                    .then(record => {
-                        if (record === undefined) {
-                            throw createDraftSynthesisErrorResponse();
-                        }
-                        return createOkResponse(record);
-                    });
+        return apiNameForPrefix(prefix).then(apiName => {
+            const fields: RequestFields = {
+                fields: recordFields.fields.map(f => `${apiName}.${f}`),
+                optionalFields: recordFields.optionalFields.map(f => `${apiName}.${f}`),
+            };
+
+            return Promise.resolve(
+                getRecord({
+                    recordId,
+                    ...fields,
+                })
+            ).catch(() => {
+                throw createInternalErrorResponse();
             });
         });
-    };
+    }
+
+    function enqueueRequest(request: ResourceRequest, key: string, targetId: string) {
+        return draftQueue.enqueue(request, key, targetId).then(() => {
+            // TODO: [W-8195289] Draft edited records should include all fields in the Full/View layout if possible
+            const fields = getRecordFieldsFromRecordRequest(request);
+            if (fields === undefined) {
+                throw createBadRequestResponse({
+                    message: 'fields are missing',
+                });
+            }
+
+            // now that there's a mutation request enqueued the value in the
+            // store is no longer accurate as it does not have draft values applied
+            // so evict it from the store in case anyone tries to access it before we have
+            // a chance to revive it with drafts applied
+            store.evict(key);
+
+            // revive the modified record to the in-memory store. This will put the record
+            // in the in-memory store with the new draft values applied to it
+            return reviveRecordToStore(key, fields, env)
+                .catch(() => {
+                    throw createInternalErrorResponse();
+                })
+                .then(record => {
+                    if (record === undefined) {
+                        throw createDraftSynthesisErrorResponse();
+                    }
+                    return createOkResponse(record);
+                });
+        });
+    }
 
     return ObjectCreate(env, {
         dispatchResourceRequest: { value: dispatchResourceRequest },

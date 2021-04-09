@@ -42,10 +42,12 @@ export function createBadRequestResponse(body: unknown) {
     return new DraftFetchResponse(HttpStatusCode.BadRequest, body);
 }
 
-export function createDraftSynthesisErrorResponse() {
+export function createDraftSynthesisErrorResponse(
+    message: string = 'failed to synthesize draft response'
+) {
     return new DraftFetchResponse(HttpStatusCode.BadRequest, {
         errorCode: DRAFT_ERROR_CODE,
-        message: 'failed to synthesize draft response',
+        message: message,
     });
 }
 

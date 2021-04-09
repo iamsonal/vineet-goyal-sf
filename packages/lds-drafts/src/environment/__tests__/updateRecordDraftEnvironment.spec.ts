@@ -1,6 +1,12 @@
+import { HttpStatusCode } from '@luvio/engine';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { getRecordKeyForId } from '../../utils/records';
-import { DRAFT_RECORD_ID, RECORD_ID, STORE_KEY_DRAFT_RECORD } from '../../__tests__/test-utils';
+import {
+    DEFAULT_DURABLE_STORE_GET_ENTRY,
+    DRAFT_RECORD_ID,
+    RECORD_ID,
+    STORE_KEY_DRAFT_RECORD,
+} from '../../__tests__/test-utils';
 import {
     createPatchRequest,
     DEFAULT_API_NAME,
@@ -10,6 +16,8 @@ import {
     STORE_KEY_FIELD__NAME,
     STORE_KEY_RECORD,
 } from './test-utils';
+import mockGetRecord from './mockData/record-Account-fields-Account.Id,Account.Name.json';
+import { clone } from '../../utils/clone';
 
 describe('draft environment tests', () => {
     describe('updateRecord', () => {
@@ -106,6 +114,72 @@ describe('draft environment tests', () => {
             });
         });
 
+        it('throws if durable store returns nothing after revive', async () => {
+            const { draftEnvironment, durableStore, network } = setupDraftEnvironment({
+                apiNameForPrefix: (_prefix: string) => {
+                    return Promise.resolve('Account');
+                },
+            });
+            network.mockResolvedValue({
+                body: clone(mockGetRecord),
+                status: 200,
+            });
+            durableStore.getEntries = jest.fn().mockResolvedValue(undefined);
+            const request = {
+                baseUri: '/services/data/v53.0',
+                basePath: `/ui-api/records/${RECORD_ID}`,
+                method: 'patch',
+                body: {
+                    apiName: 'Account',
+                    fields: {
+                        Name: DEFAULT_NAME_FIELD_VALUE,
+                    },
+                },
+                urlParams: {},
+                queryParams: {},
+                headers: {},
+            };
+
+            await expect(draftEnvironment.dispatchResourceRequest(request)).rejects.toEqual({
+                status: 500,
+                headers: {},
+            });
+        });
+
+        it('throws if no object info is stored in the durable store for the prefix when attempting to call getRecord', async () => {
+            const { draftEnvironment, durableStore } = setupDraftEnvironment({
+                apiNameForPrefix: (_prefix: string) => {
+                    return Promise.reject({
+                        body: { message: 'apiName is missing from the request body.' },
+                        headers: {},
+                        status: 400,
+                    });
+                },
+            });
+            durableStore.getEntries = jest.fn().mockResolvedValue(undefined);
+            const request = {
+                baseUri: '/services/data/v53.0',
+                basePath: `/ui-api/records/${RECORD_ID}`,
+                method: 'patch',
+                body: {
+                    fields: {
+                        Name: DEFAULT_NAME_FIELD_VALUE,
+                    },
+                },
+                urlParams: {},
+                queryParams: {},
+                headers: {},
+            };
+
+            await expect(draftEnvironment.dispatchResourceRequest(request)).rejects.toEqual({
+                status: 400,
+                headers: {},
+                body: {
+                    message: 'apiName is missing from the request body.',
+                },
+            });
+        });
+
         it('resolves draft id references in the body', async () => {
             const { durableStore, draftEnvironment, store, draftQueue } = setupDraftEnvironment({
                 apiNameForPrefix: (_prefix: string) => {
@@ -172,6 +246,99 @@ describe('draft environment tests', () => {
                 },
             };
             expect(draftQueue.enqueue).toBeCalledWith(expectedRequest, STORE_KEY_RECORD, RECORD_ID);
+        });
+
+        it('throws error when request has no recordId', async () => {
+            const { draftEnvironment, durableStore } = setupDraftEnvironment();
+            mockDurableStoreResponse(durableStore);
+            const request = {
+                baseUri: '/services/data/v53.0',
+                basePath: '/ui-api/records/',
+                method: 'patch',
+                body: {
+                    fields: {
+                        OwnerId: DRAFT_RECORD_ID,
+                    },
+                },
+                urlParams: {},
+                queryParams: {},
+                headers: {},
+            };
+
+            await expect(
+                draftEnvironment.dispatchResourceRequest<RecordRepresentation>(request)
+            ).rejects.toEqual({
+                body: {
+                    message: 'missing record id in request',
+                },
+                status: 400,
+                headers: {},
+            });
+        });
+
+        it('calls getRecord adapter when durable store missing enough info to synthesize response', async () => {
+            const { durableStore, draftEnvironment, draftQueue, adapters } = setupDraftEnvironment({
+                getRecordMock: jest.fn(),
+                apiNameForPrefix: (_prefix: string) => {
+                    return Promise.resolve('Account');
+                },
+            });
+            const request = createPatchRequest();
+            durableStore.getEntries = jest
+                .fn()
+                .mockResolvedValueOnce(undefined)
+                .mockResolvedValue(DEFAULT_DURABLE_STORE_GET_ENTRY);
+            durableStore.setEntries = jest.fn().mockResolvedValue(Promise.resolve());
+            await draftEnvironment.dispatchResourceRequest<RecordRepresentation>(request);
+            expect(adapters.getRecord).toBeCalledTimes(1);
+            expect(draftQueue.enqueue).toBeCalledWith(request, STORE_KEY_RECORD, RECORD_ID);
+        });
+
+        it('doesnt exist in durable store but finds it on the network', async () => {
+            const { durableStore, draftEnvironment, network } = setupDraftEnvironment({
+                apiNameForPrefix: (_prefix: string) => {
+                    return Promise.resolve('Account');
+                },
+            });
+            const request = createPatchRequest();
+            durableStore.getEntries = jest
+                .fn()
+                .mockResolvedValueOnce(undefined)
+                .mockResolvedValueOnce(undefined)
+                .mockResolvedValue(DEFAULT_DURABLE_STORE_GET_ENTRY);
+            durableStore.setEntries = jest.fn().mockResolvedValue(Promise.resolve());
+            network.mockResolvedValue({
+                body: clone(mockGetRecord),
+                status: 200,
+            });
+            const response = await draftEnvironment.dispatchResourceRequest<RecordRepresentation>(
+                request
+            );
+            expect(network).toBeCalledTimes(1);
+            expect(response.status).toBe(200);
+            const record = response.body;
+            expect(record.fields.Name.value).toBe(DEFAULT_NAME_FIELD_VALUE);
+        });
+
+        it('throws error because it doesnt find a record in the store or online', async () => {
+            const { durableStore, draftEnvironment, network } = setupDraftEnvironment({
+                apiNameForPrefix: (_prefix: string) => {
+                    return Promise.resolve('Account');
+                },
+            });
+            const request = createPatchRequest();
+            durableStore.getEntries = jest.fn().mockResolvedValue(undefined);
+            network.mockResolvedValue({
+                body: undefined,
+                status: HttpStatusCode.BadRequest,
+            });
+
+            await expect(
+                draftEnvironment.dispatchResourceRequest<RecordRepresentation>(request)
+            ).rejects.toEqual({
+                status: 500,
+                headers: {},
+            });
         });
     });
 });

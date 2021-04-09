@@ -8,7 +8,7 @@ import {
 
 import { ObjectKeys } from '../../../lds-runtime-mobile/src/utils/language';
 import { DraftAction, DraftQueue } from '../DraftQueue';
-import { makeDurableStoreDraftAware, ObjectInfoConfig } from '../makeDurableStoreDraftAware';
+import { makeDurableStoreDraftAware } from '../makeDurableStoreDraftAware';
 import { buildDraftDurableStoreKey, DurableRecordRepresentation } from '../utils/records';
 import { DRAFT_SEGMENT } from '../DurableDraftQueue';
 import { DurableStoreSetEntryPlugin } from '../plugins/DurableStorePlugins';
@@ -68,9 +68,6 @@ function setupDraftStore(storeRecords: any = {}) {
             return id === DRAFT_RECORD_ID;
         },
         (_draftKey: string, _canonicalKey: string) => {},
-        (_config: ObjectInfoConfig) => {
-            return Promise.resolve(undefined);
-        },
         CURRENT_USER_ID
     );
 
@@ -863,7 +860,7 @@ describe('makeDurableStoreDraftAware', () => {
                             },
                         }),
                 } as any,
-                [] as DraftDurableStoreReactivePlugin[],
+                [] as DurableStoreSetEntryPlugin[],
                 {} as any,
                 {} as any,
                 () => false,

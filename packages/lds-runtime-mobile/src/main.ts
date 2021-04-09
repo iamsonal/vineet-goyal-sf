@@ -53,9 +53,9 @@ const durableStore = new NimbusDurableStore();
 const networkAdapter = makeNetworkAdapterBatchRecordFields(NimbusNetworkAdapter);
 
 // specific adapters
-const adapters = buildInternalAdapters(store, networkAdapter, durableStore);
+const { getObjectInfo, getRecord } = buildInternalAdapters(store, networkAdapter, durableStore);
 const { ensureObjectInfoCached, apiNameForPrefix, prefixForApiName } = objectInfoServiceFactory(
-    adapters.getObjectInfo,
+    getObjectInfo,
     durableStore
 );
 
@@ -106,6 +106,7 @@ const env = makeEnvironmentDraftAware(
         ingestFunc: recordIngestFunc,
         generateId: newRecordId,
         isDraftId: isGenerated,
+        getRecord,
         prefixForApiName,
         apiNameForPrefix,
         recordResponseRetrievers: responseRecordRepresentationRetrievers,

@@ -106,7 +106,7 @@ describe('mobile runtime integration tests', () => {
             luvio.storeSubscribe(getRecordSnapshot, callbackSpy);
 
             // update the synthetic record
-            await updateRecord({ recordId, fields: { Name: updatedName } });
+            await updateRecord({ recordId, apiName: API_NAME, fields: { Name: updatedName } });
 
             // ensure the getRecord callback was invoked
             /**

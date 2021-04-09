@@ -87,7 +87,7 @@ describe('draft environment tests', () => {
                 });
             });
             const request = {
-                baseUri: '/services/data/v52.0',
+                baseUri: '/services/data/v53.0',
                 basePath: `/ui-api/records/${CREATE_DRAFT_RECORD_ID}`,
                 method: 'post',
                 body: {

@@ -1,6 +1,5 @@
 import { Environment, IngestPath, Store } from '@luvio/engine';
 import { DurableEnvironment, DurableStore, ResponsePropertyRetriever } from '@luvio/environments';
-
 import {
     DraftQueue,
     DraftQueueCompleteEvent,
@@ -11,9 +10,14 @@ import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters
 import { draftAwareHandleResponse } from '../makeNetworkAdapterDraftAware';
 import { getRecordDraftEnvironment } from './getRecordDraftEnvironment';
 import { createRecordDraftEnvironment } from './createRecordDraftEnvironment';
-import { updateRecordDraftEnvironment } from './updateRecordDraftEnvironment';
+import {
+    updateRecordDraftEnvironment,
+    UpdateRecordDraftEnvironmentOptions,
+} from './updateRecordDraftEnvironment';
 import { deleteRecordDraftEnvironment } from './deleteRecordDraftEnvironment';
 import { getRecordsDraftEnvironment } from './getRecordsDraftEnvironment';
+
+type AllDraftEnvironmentOptions = DraftEnvironmentOptions & UpdateRecordDraftEnvironmentOptions;
 
 export interface DraftEnvironmentOptions {
     store: Store;
@@ -35,7 +39,7 @@ export interface DraftEnvironmentOptions {
 
 export function makeEnvironmentDraftAware(
     env: DurableEnvironment,
-    options: DraftEnvironmentOptions,
+    options: AllDraftEnvironmentOptions,
     userId: string
 ): Environment {
     const { draftQueue, recordResponseRetrievers, ingestFunc, store } = options;

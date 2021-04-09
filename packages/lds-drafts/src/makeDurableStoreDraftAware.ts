@@ -12,7 +12,6 @@ import {
     RecordRepresentation,
     keyBuilderRecord,
     FieldValueRepresentation,
-    getObjectInfoAdapterFactory,
 } from '@salesforce/lds-adapters-uiapi';
 import { DraftAction, DraftActionMap, DraftQueue } from './DraftQueue';
 import { ObjectCreate, ObjectKeys, ObjectAssign, ArrayPrototypeShift } from './utils/language';
@@ -293,9 +292,6 @@ function getSyntheticRecordEntries(
     }
     return returnEntries;
 }
-
-type ObjectInfoAdapterReturn = ReturnType<typeof getObjectInfoAdapterFactory>;
-export type ObjectInfoConfig = Parameters<ObjectInfoAdapterReturn>[0];
 
 export function makeDurableStoreDraftAware(
     durableStore: DurableStore,

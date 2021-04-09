@@ -93,6 +93,7 @@ export function createPatchRequest() {
         basePath: `/ui-api/records/${RECORD_ID}`,
         method: 'patch',
         body: {
+            apiName: DEFAULT_API_NAME,
             fields: {
                 Name: DEFAULT_NAME_FIELD_VALUE,
             },
@@ -322,35 +323,37 @@ export function createUnsupportedRequestDraftAction(
     };
 }
 
-export function mockDurableStoreResponse(durableStore: DurableStore) {
-    durableStore.getEntries = jest.fn().mockResolvedValue({
-        [STORE_KEY_RECORD]: {
-            data: {
-                apiName: DEFAULT_API_NAME,
-                childRelationships: {},
-                eTag: '',
-                fields: {
-                    Name: {
-                        __ref: STORE_KEY_FIELD__NAME,
-                    },
+export const DEFAULT_DURABLE_STORE_GET_ENTRY = {
+    [STORE_KEY_RECORD]: {
+        data: {
+            apiName: DEFAULT_API_NAME,
+            childRelationships: {},
+            eTag: '',
+            fields: {
+                Name: {
+                    __ref: STORE_KEY_FIELD__NAME,
                 },
-                id: RECORD_ID,
-                lastModifiedById: null,
-                lastModifiedDate: null,
-                recordTypeId: null,
-                recordTypeInfo: null,
-                systemModstamp: null,
-                weakEtag: -1,
             },
+            id: RECORD_ID,
+            lastModifiedById: null,
+            lastModifiedDate: null,
+            recordTypeId: null,
+            recordTypeInfo: null,
+            systemModstamp: null,
+            weakEtag: -1,
         },
+    },
 
-        [STORE_KEY_FIELD__NAME]: {
-            data: {
-                displayValue: DEFAULT_NAME_FIELD_VALUE,
-                value: DEFAULT_NAME_FIELD_VALUE,
-            },
+    [STORE_KEY_FIELD__NAME]: {
+        data: {
+            displayValue: DEFAULT_NAME_FIELD_VALUE,
+            value: DEFAULT_NAME_FIELD_VALUE,
         },
-    });
+    },
+};
+
+export function mockDurableStoreResponse(durableStore: DurableStore) {
+    durableStore.getEntries = jest.fn().mockResolvedValue(DEFAULT_DURABLE_STORE_GET_ENTRY);
 }
 
 export function mockDurableStoreDraftResponse(durableStore: DurableStore) {

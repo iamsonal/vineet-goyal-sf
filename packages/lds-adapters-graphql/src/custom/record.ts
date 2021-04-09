@@ -2,7 +2,7 @@ import { IngestPath, Luvio, ResourceIngest, Store } from '@luvio/engine';
 import { LuvioSelectionCustomFieldNode } from '@salesforce/lds-graphql-parser';
 import {
     createIngest as createSelectionIngest,
-    selectionIsLuvioFieldNode,
+    getLuvioFieldNodeSelection,
 } from '../type/Selection';
 
 export type GqlRecord = {
@@ -31,10 +31,7 @@ export const createIngest: (ast: LuvioSelectionCustomFieldNode) => ResourceInges
         const key = keyBuilder(id);
         const selections = ast.luvioSelections === undefined ? [] : ast.luvioSelections;
         for (let i = 0, len = selections.length; i < len; i += 1) {
-            const sel = selections[i];
-            if (!selectionIsLuvioFieldNode(sel)) {
-                throw new Error('"FragmentSpread" and "InlineFragment" currently not supported');
-            }
+            const sel = getLuvioFieldNodeSelection(selections[i]);
             const { name: propertyName } = sel;
             data[propertyName] = createSelectionIngest(sel)(
                 data[propertyName],

@@ -8,9 +8,13 @@ import { LuvioFieldNode } from '@salesforce/lds-graphql-parser/dist/ast';
 import { createIngest as createCustomFieldIngest } from './CustomField';
 import { createIngest as createObjectFieldIngest } from './ObjectField';
 
-export function selectionIsLuvioFieldNode(ast: LuvioSelectionNode): ast is LuvioFieldNode {
+export function getLuvioFieldNodeSelection(ast: LuvioSelectionNode): LuvioFieldNode {
     const { kind } = ast;
-    return kind !== 'FragmentSpread' && kind !== 'InlineFragment';
+    if (kind === 'FragmentSpread' || kind === 'InlineFragment') {
+        throw new Error('"FragmentSpread" and "InlineFragment" currently not supported');
+    }
+
+    return ast as LuvioFieldNode;
 }
 
 export const createIngest: (ast: LuvioSelectionNode) => ResourceIngest = (

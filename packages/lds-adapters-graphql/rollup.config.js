@@ -1,17 +1,13 @@
-import { localConfiguration } from '../../scripts/rollup/rollup.config.adapters';
+import { rollup } from '../../scripts/rollup/rollup.config.adapters';
 import path from 'path';
 
+const sfdcEntry = path.join(__dirname, 'src', 'sfdc.ts');
 const entry = path.join(__dirname, 'src', 'main.ts');
 
-const config = {
+export default rollup({
     cwd: __dirname,
+    sfdcEntry,
     entry,
     fileName: 'graphql-service',
     bundleName: 'graphqlService',
-};
-
-export default args => {
-    const localConfigurations = localConfiguration(args, config);
-
-    return localConfigurations;
-};
+});

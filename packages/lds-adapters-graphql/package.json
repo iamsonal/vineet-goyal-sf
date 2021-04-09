@@ -6,6 +6,10 @@
     "main": "dist/umd/es2018/graphql-service.js",
     "module": "dist/es/es2018/graphql-service.js",
     "types": "dist/types/src/main.d.ts",
+    "files": [
+        "dist",
+        "sfdc"
+    ],
     "scripts": {
         "clean": "rm -rf dist karma/dist",
         "build": "yarn build:services && yarn build:karma",
@@ -14,7 +18,8 @@
         "start": "karma start",
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat",
-        "test:unit": "jest"
+        "test:unit": "jest",
+        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-graphql"
     },
     "dependencies": {
         "@salesforce/lds-bindings": "1.11.0"

@@ -15,6 +15,9 @@ import {
     LuvioValueNode,
 } from '@salesforce/lds-graphql-parser';
 
+const RECORD_ID_FIELD = 'Id';
+const RECORD_WEAK_ETAG_FIELD = 'WeakEtag';
+
 const { keys } = Object;
 
 function serializeValueNode(valueDefinition: LuvioValueNode) {
@@ -85,22 +88,22 @@ function serializeSelections(selections: LuvioSelectionNode[] | undefined) {
 
 const RECORD_ID_SCALAR_FIELD_SELECTION: LuvioSelectionScalarFieldNode = {
     kind: 'ScalarFieldSelection',
-    name: 'id',
+    name: RECORD_ID_FIELD,
 };
 
 const RECORD_WEAK_ETAG_FIELD_SELECTION: LuvioSelectionScalarFieldNode = {
     kind: 'ScalarFieldSelection',
-    name: 'WeakEtag',
+    name: RECORD_WEAK_ETAG_FIELD,
 };
 
 const REQUIRED_RECORD_FIELDS: {
     fieldNames: string[];
     selections: { [key: string]: LuvioSelectionScalarFieldNode };
 } = {
-    fieldNames: ['id', 'WeakEtag'],
+    fieldNames: [RECORD_ID_FIELD, RECORD_WEAK_ETAG_FIELD],
     selections: {
-        id: RECORD_ID_SCALAR_FIELD_SELECTION,
-        WeakEtag: RECORD_WEAK_ETAG_FIELD_SELECTION,
+        [RECORD_ID_FIELD]: RECORD_ID_SCALAR_FIELD_SELECTION,
+        [RECORD_WEAK_ETAG_FIELD]: RECORD_WEAK_ETAG_FIELD_SELECTION,
     },
 };
 

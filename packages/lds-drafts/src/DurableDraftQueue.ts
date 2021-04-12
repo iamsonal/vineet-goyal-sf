@@ -274,7 +274,7 @@ export class DurableDraftQueue implements DraftQueue {
                 return ProcessActionResult.NO_ACTION_TO_PROCESS;
             }
 
-            const { status, id, tag, timestamp, metadata } = action;
+            const { status, id, request } = action;
 
             if (status === DraftActionStatus.Error) {
                 this.state = DraftQueueState.Error;
@@ -289,9 +289,7 @@ export class DurableDraftQueue implements DraftQueue {
             }
 
             this.uploadingActionId = id;
-            const durableEntryKey = buildDraftDurableStoreKey(tag, id);
             this.processingAction = undefined;
-            const { request, targetId } = action;
 
             if (this.state === DraftQueueState.Waiting) {
                 this.state = DraftQueueState.Started;
@@ -308,45 +306,15 @@ export class DurableDraftQueue implements DraftQueue {
                     this.uploadingActionId = undefined;
                     // if the error is a FetchResponse shape then it's a bad request
                     if (isErrorFetchResponse(err)) {
-                        const errorAction: ErrorDraftAction<unknown> = {
-                            status: DraftActionStatus.Error,
-                            id,
-                            targetId,
-                            tag,
-                            request,
-                            error: err,
-                            timestamp,
-                            metadata,
-                        };
-                        const entry: DurableStoreEntry<DraftAction<unknown>> = {
-                            data: errorAction,
-                        };
-                        const entries: DurableStoreEntries<DraftAction<unknown>> = {
-                            [durableEntryKey]: entry,
-                        };
-                        return this.durableStore.setEntries(entries, DRAFT_SEGMENT).then(() => {
-                            this.state = DraftQueueState.Error;
-                            return this.notifyChangedListeners({
-                                type: DraftQueueEventType.ActionFailed,
-                                action: errorAction,
-                            }).then(() => {
-                                return ProcessActionResult.ACTION_ERRORED;
-                            });
-                        });
+                        return this.handleServerError(action, err);
                     }
 
                     // if we got here then it's a network error,
                     if (this.state === DraftQueueState.Stopped) {
                         return ProcessActionResult.NETWORK_ERROR;
                     }
-                    this.state = DraftQueueState.Waiting;
-                    return this.notifyChangedListeners({
-                        type: DraftQueueEventType.ActionRetrying,
-                        action: action as PendingDraftAction<unknown>,
-                    }).then(() => {
-                        this.scheduleRetry();
-                        return ProcessActionResult.NETWORK_ERROR;
-                    });
+
+                    return this.handleNetworkError(action);
                 });
         });
         return this.processingAction;
@@ -384,6 +352,48 @@ export class DurableDraftQueue implements DraftQueue {
                 });
             });
     };
+
+    private handleServerError(
+        action: DraftAction<unknown>,
+        error: FetchResponse<unknown>
+    ): Promise<ProcessActionResult> {
+        const { id, tag } = action;
+        const durableEntryKey = buildDraftDurableStoreKey(tag, id);
+        const errorAction: ErrorDraftAction<unknown> = {
+            ...action,
+            status: DraftActionStatus.Error,
+            error,
+        };
+        const entry: DurableStoreEntry<DraftAction<unknown>> = {
+            data: errorAction,
+        };
+        const entries: DurableStoreEntries<DraftAction<unknown>> = {
+            [durableEntryKey]: entry,
+        };
+        return this.durableStore
+            .setEntries(entries, DRAFT_SEGMENT)
+            .then(() => {
+                this.state = DraftQueueState.Error;
+                return this.notifyChangedListeners({
+                    type: DraftQueueEventType.ActionFailed,
+                    action: errorAction,
+                });
+            })
+            .then(() => {
+                return ProcessActionResult.ACTION_ERRORED;
+            });
+    }
+
+    private handleNetworkError(action: DraftAction<unknown>): Promise<ProcessActionResult> {
+        this.state = DraftQueueState.Waiting;
+        return this.notifyChangedListeners({
+            type: DraftQueueEventType.ActionRetrying,
+            action: action as PendingDraftAction<unknown>,
+        }).then(() => {
+            this.scheduleRetry();
+            return ProcessActionResult.NETWORK_ERROR;
+        });
+    }
 
     private notifyChangedListeners(event: DraftQueueEvent) {
         var results: Promise<void>[] = [];

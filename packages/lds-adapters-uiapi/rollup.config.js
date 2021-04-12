@@ -1,7 +1,15 @@
+// @ts-check
+
+/**
+ * @typedef { import("../../scripts/rollup/rollup.config.adapters").AdapterRollupConfig} AdapterRollupConfig
+ */
+
 import { sfdcConfiguration, localConfiguration } from '../../scripts/rollup/rollup.config.adapters';
 import path from 'path';
 import typescript from 'rollup-plugin-typescript2';
 import resolve from 'rollup-plugin-node-resolve';
+
+import * as packageJson from './package.json';
 
 const { buildOverridesMap, resolveModulesWithOverrides } = require('./scripts/ldsModuleOverride');
 
@@ -9,6 +17,7 @@ function ldsOverrides({ generatedDir, overridesDir }) {
     const overrides = buildOverridesMap({ generatedDir, overridesDir });
 
     return {
+        name: 'lds-overrides',
         resolveId(source, importer) {
             return resolveModulesWithOverrides(source, importer, overrides);
         },
@@ -25,12 +34,14 @@ const plugins = [
     }),
 ];
 
+/** @type {AdapterRollupConfig} */
 const config = {
     cwd: __dirname,
     sfdcEntry,
     entry,
     fileName: 'uiapi-records-service',
     bundleName: 'uiapiRecordsService',
+    packageVersion: packageJson.version,
 };
 
 const staticFunctions = {

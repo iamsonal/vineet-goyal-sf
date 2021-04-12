@@ -1,19 +1,12 @@
+// @ts-check
+
 import typescript from 'rollup-plugin-typescript2';
 import path from 'path';
 import fs from 'fs';
 
-const PROXY_COMPAT_DISABLE = '/* proxy-compat-disable */';
-const generatedFileBanner = [
-    '/*  *******************************************************************************************',
-    ' *  ATTENTION!',
-    ' *  THIS IS A GENERATED FILE FROM https://github.com/salesforce/lds-lightning-platform',
-    ' *  If you would like to contribute to LDS, please follow the steps outlined in the git repo.',
-    ' *  Any changes made to this file in p4 will be automatically overwritten.',
-    ' *  *******************************************************************************************',
-    ' */',
-];
+import { buildBanner, buildFooter } from './rollup-utils';
 
-const banner = generatedFileBanner.concat([PROXY_COMPAT_DISABLE]).join('\n');
+const banner = buildBanner(true);
 
 const defaultConfigs = [
     { formats: ['es', 'umd'], target: 'es2018' },
@@ -44,22 +37,31 @@ function getTypesDir(cwd) {
  * @typedef { import("rollup").ExternalOption } ExternalOption
  * @typedef { import('rollup').OptionsPaths } OptionsPaths
  * @typedef { import('rollup').Plugin } Plugin
+ * @typedef { import('rollup').RollupOptions } RollupOptions
+ *
+ * @typedef AdapterRollupConfig
+ * @prop {string} cwd
+ * @prop {string} sfdcEntry
+ * @prop {string} entry
+ * @prop {string} fileName
+ * @prop {string} bundleName
+ * @prop {string} packageVersion
  */
 
 /**
- * @param {{
- *  cwd: string,
- *  sfdcEntry: string
- * }} config
+ * @param {AdapterRollupConfig} config
  *
  * @param {{
- *   external?: ExternalOption,
+ *   external?: string[],
  *   paths?: OptionsPaths,
+ *   outputPaths?: OptionsPaths,
  *   plugins?: Plugin[]
  * }} [overrides]
+ *
+ * @returns {RollupOptions[]}
  */
 export function sfdcConfiguration(config, overrides = {}) {
-    const { sfdcEntry, cwd } = config;
+    const { sfdcEntry, cwd, packageVersion } = config;
     const {
         external: overridesExternals = [],
         outputPaths: overridesOutputPaths = {},
@@ -84,9 +86,11 @@ export function sfdcConfiguration(config, overrides = {}) {
                 file: path.join(sfdcDistFolder, 'index.js'),
                 format: 'es',
                 banner,
+                footer: buildFooter(packageVersion),
                 paths: { ...PATHS, ...overridesOutputPaths },
                 plugins: [
                     {
+                        name: 'LDS Types Exporter',
                         writeBundle() {
                             fs.writeFileSync(
                                 path.join(sfdcDistFolder, 'index.d.ts'),
@@ -100,6 +104,7 @@ export function sfdcConfiguration(config, overrides = {}) {
                 ...overridesPlugins,
                 typescript({
                     clean: false,
+                    // @ts-ignore (rollup-plugin-typescript2 types are missing cwd)
                     cwd,
                     tsconfigOverride: {
                         compilerOptions: {
@@ -117,13 +122,7 @@ export function sfdcConfiguration(config, overrides = {}) {
  *  configTarget: string,
  *  configFormat: string,
  * }} args
- * @param {{
- *  cwd: string,
- *  sfdcEntry: string,
- *  entry: string,
- *  fileName: string,
- *  bundleName: string,
- * }} config
+ * @param {AdapterRollupConfig} config
  * @param {{
  *   plugins?: Plugin[]
  * }} [overrides]
@@ -168,14 +167,7 @@ export function localConfiguration(args, config, overrides = {}) {
 }
 
 /**
- * @param {{
- *  cwd: string,
- *  sfdcEntry: string,
- *  entry: string,
- *  fileName: string,
- *  bundleName: string,
- *  plugins: Plugin[]
- * }} config
+ * @param {AdapterRollupConfig} config
  */
 export function rollup(config) {
     return args => [...localConfiguration(args, config), ...sfdcConfiguration(config)];

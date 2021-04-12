@@ -357,31 +357,42 @@ export class DurableDraftQueue implements DraftQueue {
         action: DraftAction<unknown>,
         error: FetchResponse<unknown>
     ): Promise<ProcessActionResult> {
-        const { id, tag } = action;
-        const durableEntryKey = buildDraftDurableStoreKey(tag, id);
-        const errorAction: ErrorDraftAction<unknown> = {
-            ...action,
-            status: DraftActionStatus.Error,
-            error,
-        };
-        const entry: DurableStoreEntry<DraftAction<unknown>> = {
-            data: errorAction,
-        };
-        const entries: DurableStoreEntries<DraftAction<unknown>> = {
-            [durableEntryKey]: entry,
-        };
-        return this.durableStore
-            .setEntries(entries, DRAFT_SEGMENT)
-            .then(() => {
-                this.state = DraftQueueState.Error;
-                return this.notifyChangedListeners({
-                    type: DraftQueueEventType.ActionFailed,
-                    action: errorAction,
+        return this.getQueueActions().then(queue => {
+            const { id, tag } = action;
+            const durableEntryKey = buildDraftDurableStoreKey(tag, id);
+            const localAction = queue.filter(qAction => qAction.id === action.id)[0];
+            let newMetadata = undefined;
+            if (localAction !== undefined) {
+                newMetadata = localAction.metadata || {};
+            } else {
+                newMetadata = {};
+            }
+
+            const errorAction: ErrorDraftAction<unknown> = {
+                ...action,
+                status: DraftActionStatus.Error,
+                error,
+                metadata: newMetadata,
+            };
+            const entry: DurableStoreEntry<DraftAction<unknown>> = {
+                data: errorAction,
+            };
+            const entries: DurableStoreEntries<DraftAction<unknown>> = {
+                [durableEntryKey]: entry,
+            };
+            return this.durableStore
+                .setEntries(entries, DRAFT_SEGMENT)
+                .then(() => {
+                    this.state = DraftQueueState.Error;
+                    return this.notifyChangedListeners({
+                        type: DraftQueueEventType.ActionFailed,
+                        action: errorAction,
+                    });
+                })
+                .then(() => {
+                    return ProcessActionResult.ACTION_ERRORED;
                 });
-            })
-            .then(() => {
-                return ProcessActionResult.ACTION_ERRORED;
-            });
+        });
     }
 
     private handleNetworkError(action: DraftAction<unknown>): Promise<ProcessActionResult> {

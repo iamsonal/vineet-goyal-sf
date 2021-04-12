@@ -551,7 +551,10 @@ describe('DurableDraftQueue', () => {
             // the durable key order shouldn't matter so reverse it
             const entryID = '2';
             const entryTwoID = '1';
-            const entries: DurableStoreEntries = { [entryTwoID]: entryTwo, [entryID]: entry };
+            const entries: DurableStoreEntries<unknown> = {
+                [entryTwoID]: entryTwo,
+                [entryID]: entry,
+            };
             durableStore.setEntries(entries, DRAFT_SEGMENT);
 
             const actions = await draftQueue.getActionsForTags({ testActionTag: true });
@@ -1190,7 +1193,7 @@ describe('DurableDraftQueue', () => {
                 metadata: {},
             };
             const secondEntry: DurableStoreEntry = { data: pendingAction };
-            let entries: DurableStoreEntries = { [firstDurableId]: firstEntry };
+            let entries: DurableStoreEntries<unknown> = { [firstDurableId]: firstEntry };
             await durableStore.setEntries(entries, DRAFT_SEGMENT);
             entries = { [secondDurableId]: secondEntry };
             await durableStore.setEntries(entries, DRAFT_SEGMENT);
@@ -1238,7 +1241,7 @@ describe('DurableDraftQueue', () => {
                 metadata: {},
             };
             const secondEntry: DurableStoreEntry = { data: nonPendingAction };
-            let entries: DurableStoreEntries = { [firstDurableId]: firstEntry };
+            let entries: DurableStoreEntries<unknown> = { [firstDurableId]: firstEntry };
             await durableStore.setEntries(entries, DRAFT_SEGMENT);
             entries = { [secondDurableId]: secondEntry };
             await durableStore.setEntries(entries, DRAFT_SEGMENT);
@@ -1285,7 +1288,7 @@ describe('DurableDraftQueue', () => {
                 metadata: {},
             };
             const secondEntry: DurableStoreEntry = { data: pendingAction };
-            let entries: DurableStoreEntries = { [firstDurableId]: firstEntry };
+            let entries: DurableStoreEntries<unknown> = { [firstDurableId]: firstEntry };
             await durableStore.setEntries(entries, DRAFT_SEGMENT);
             entries = { [secondDurableId]: secondEntry };
             await durableStore.setEntries(entries, DRAFT_SEGMENT);
@@ -1434,6 +1437,34 @@ describe('DurableDraftQueue', () => {
             action = actions[0];
             expect(action.metadata).toEqual(newMetadata);
             expect(action).toBe(updated);
+        });
+
+        it('isnt overwritten by errored action', async () => {
+            const request = DEFAULT_PATCH_REQUEST;
+            const newMetadata = { foo: 'bar', anotherItem: 'anotherValue' };
+            const network = jest.fn().mockImplementation(async () => {
+                await draftQueue.setMetadata(action.id, newMetadata);
+                let error = buildErrorMockPayload(request, {}, 400, 'BAD_REQUEST') as any;
+                error.status = 400;
+                return Promise.reject(error);
+            });
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(
+                durableStore,
+                network,
+                mockQueuePostHandler,
+                mockDraftIdHandler
+            );
+            const draftId = 'fooId';
+            let action = await draftQueue.enqueue(request, draftId, 'fooId');
+            expect(ObjectKeys(action.metadata).length).toBe(0);
+            let actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(1);
+            await draftQueue.processNextAction();
+            actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(1);
+            action = actions[0];
+            expect(action.metadata).toEqual(newMetadata);
         });
 
         it('rejects when setting incompatible metadata', async () => {

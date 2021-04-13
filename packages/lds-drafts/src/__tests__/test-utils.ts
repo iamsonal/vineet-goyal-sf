@@ -41,6 +41,7 @@ export function buildMockDurableStore(): DurableStore {
         getAllEntries: jest.fn(),
         evictEntries: jest.fn(),
         registerOnChangedListener: jest.fn(),
+        batchOperations: jest.fn(),
     };
 }
 
@@ -159,6 +160,7 @@ export function createEditDraftAction(
             queryParams: {},
             headers: {},
         },
+        metadata: {},
     };
 }
 
@@ -186,6 +188,7 @@ export function createPostDraftAction(
             queryParams: {},
             headers: {},
         },
+        metadata: {},
     };
 }
 
@@ -211,6 +214,7 @@ export function createDeleteDraftAction(
             queryParams: {},
             headers: {},
         },
+        metadata: {},
     };
 }
 
@@ -225,7 +229,13 @@ export function createErrorDraftAction(
         id: newDraftId,
         targetId: recordId,
         status: DraftActionStatus.Error,
-        error: 'SOMETHING WENT WRONG',
+        error: {
+            status: 400,
+            ok: false,
+            headers: {},
+            statusText: 'SOMETHING WENT WRONG',
+            body: { foo: 'bar', one: ['two'] },
+        },
         tag: recordKey,
         timestamp: timestamp,
         request: {
@@ -237,6 +247,7 @@ export function createErrorDraftAction(
             queryParams: {},
             headers: {},
         },
+        metadata: {},
     };
 }
 
@@ -269,6 +280,7 @@ export function createCompletedDraftAction(
             queryParams: {},
             headers: {},
         },
+        metadata: {},
     };
 }
 
@@ -308,6 +320,7 @@ export function createUnsupportedRequestDraftAction(
 ): DraftAction<RecordRepresentation> {
     return {
         id: new Date().getUTCMilliseconds().toString(),
+        targetId: 'targetId',
         status: DraftActionStatus.Pending,
         tag: recordKey,
         timestamp: timestamp,
@@ -320,6 +333,7 @@ export function createUnsupportedRequestDraftAction(
             queryParams: {},
             headers: {},
         },
+        metadata: {},
     };
 }
 

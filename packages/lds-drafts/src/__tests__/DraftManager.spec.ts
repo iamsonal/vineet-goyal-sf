@@ -72,6 +72,7 @@ describe('DraftManager', () => {
                 operationType: DraftActionOperationType.Delete,
                 state: DraftActionStatus.Pending,
                 timestamp: DEFAULT_TIME_STAMP,
+                metadata: {},
             });
         });
 
@@ -119,8 +120,29 @@ describe('DraftManager', () => {
             expect(subject.queueState).toEqual(DraftQueueState.Error);
             expect(subject.items[0]).toMatchObject({
                 state: DraftActionStatus.Error,
-                error: 'SOMETHING WENT WRONG',
+                error: { status: 400, ok: false, headers: {}, statusText: 'SOMETHING WENT WRONG' },
             });
+        });
+
+        it('populates error body with a json string', async () => {
+            const errorItem = createErrorDraftAction('123', 'mock');
+            mockDraftQueue.getQueueActions = () => Promise.resolve([errorItem]);
+            mockDraftQueue.getQueueState = () => DraftQueueState.Error;
+
+            const state = await manager.getQueue();
+            const action = state.items[0];
+            expect(action.error.bodyString).toBe('[{"foo":"bar","one":["two"]}]');
+        });
+
+        it('only puts single object body types into an array', async () => {
+            const errorItem = createErrorDraftAction('123', 'mock');
+            errorItem.error.body = [{ foo: 'bar', one: ['two'] }];
+            mockDraftQueue.getQueueActions = () => Promise.resolve([errorItem]);
+            mockDraftQueue.getQueueState = () => DraftQueueState.Error;
+
+            const state = await manager.getQueue();
+            const action = state.items[0];
+            expect(action.error.bodyString).toBe('[{"foo":"bar","one":["two"]}]');
         });
 
         it('throws error if Request is not supported method', async () => {
@@ -260,6 +282,7 @@ describe('DraftManager', () => {
                 operationType: DraftActionOperationType.Delete,
                 state: DraftActionStatus.Pending,
                 timestamp: DEFAULT_TIME_STAMP,
+                metadata: {},
             });
 
             expect(removeSpy).toBeCalledWith(actionID);

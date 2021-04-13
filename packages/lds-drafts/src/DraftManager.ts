@@ -7,6 +7,7 @@ import {
     DraftQueueEvent,
     DraftQueueEventType,
 } from './DraftQueue';
+import { ArrayIsArray, JSONStringify } from './utils/language';
 
 /**
  * Representation of the current state of the draft queue.
@@ -36,9 +37,25 @@ export interface DraftQueueItem {
     /** Timestamp as unix epoch time */
     timestamp: number;
     /** undefined unless item is in an error state */
-    error?: undefined | any;
+    error?: undefined | DraftQueueItemError;
     /** The stored metadata for the draft queue item */
     metadata: DraftQueueItemMetadata;
+}
+
+/**
+ * An error of a draft action that was submitted and failed
+ */
+export interface DraftQueueItemError {
+    /** The status code of the response */
+    status: number;
+    /** The headers of the response */
+    headers: { [key: string]: string };
+    /** A flag representing the status of the response */
+    ok: boolean;
+    /** A summary of the response */
+    statusText: string;
+    /** A stringified object representing the body of the response */
+    bodyString: string;
 }
 
 /**
@@ -203,7 +220,17 @@ export class DraftManager {
             metadata,
         };
         if (isDraftError(action)) {
-            item.error = action.error;
+            // We should always return an array, if the body is just a dictionary,
+            // stick it in an array
+            const body = ArrayIsArray(action.error.body) ? action.error.body : [action.error.body];
+            const bodyString = JSONStringify(body);
+            item.error = {
+                status: action.error.status || 0,
+                ok: action.error.ok || false,
+                headers: action.error.headers || {},
+                statusText: action.error.statusText || '',
+                bodyString,
+            };
         }
         return item;
     }

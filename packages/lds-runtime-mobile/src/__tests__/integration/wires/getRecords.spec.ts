@@ -34,8 +34,8 @@ describe('mobile runtime integration tests', () => {
 
     describe('getRecords', () => {
         it('resolves stale snapshots from durable store', async () => {
-            const id1 = '005xx000001XL1tAAG';
-            const id2 = '005xx000001XL1tAAF';
+            const id1 = '001xx000003Gn4WAAS';
+            const id2 = '00122000003Gn4WBBA';
             const config = {
                 records: [
                     {

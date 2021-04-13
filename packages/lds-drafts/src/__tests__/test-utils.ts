@@ -20,7 +20,7 @@ import { DurableRecordRepresentation } from '../utils/records';
 
 export const CURRENT_USER_ID = '005x0000000xNhq';
 export const DRAFT_RECORD_ID = 'DRAxx000001XL1tAAG';
-export const RECORD_ID = '005xx000001XL1tAAG';
+export const RECORD_ID = '001xx000003Gn4WAAS';
 export const STORE_KEY_RECORD = `UiApi::RecordRepresentation:${RECORD_ID}`;
 export const STORE_KEY_DRAFT_RECORD = `UiApi::RecordRepresentation:${DRAFT_RECORD_ID}`;
 export const STORE_KEY_FIELD__NAME = `UiApi::RecordRepresentation:${RECORD_ID}__fields__Name`;

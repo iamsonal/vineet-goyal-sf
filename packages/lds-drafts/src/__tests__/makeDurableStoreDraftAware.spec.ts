@@ -218,7 +218,7 @@ describe('makeDurableStoreDraftAware', () => {
             expect(durableRecord.fields['Name'].value).toEqual(NAME_VALUE.value);
             expect(durableRecord.fields['Birthday']).toBeUndefined();
             expect(durableRecord.links['Name']).toEqual({
-                __ref: 'UiApi::RecordRepresentation:005xx000001XL1tAAG__fields__Name',
+                __ref: 'UiApi::RecordRepresentation:001xx000003Gn4WAAS__fields__Name',
             });
             expect(durableRecord.links['Birthday']).toEqual({
                 __ref: undefined,
@@ -524,7 +524,7 @@ describe('makeDurableStoreDraftAware', () => {
             );
             expect(ObjectKeys(readEntries).length).toBe(2);
             const missingField =
-                readEntries['UiApi::RecordRepresentation:005xx000001XL1tAAG'].data.fields[
+                readEntries['UiApi::RecordRepresentation:001xx000003Gn4WAAS'].data.fields[
                     'Birthday'
                 ];
             expect(missingField).toBeDefined();

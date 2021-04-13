@@ -33,6 +33,30 @@
             "interval": "Monthly"
         },
         {
+            "current": 0.0,
+            "interval": "Daily",
+            "licenseAttributes": { "type": "Sonic" },
+            "max": 161061273600,
+            "threshold": 75,
+            "type": "MaxDailySizeHighOutputCon"
+        },
+        {
+            "current": 0.0,
+            "interval": "Daily",
+            "licenseAttributes": { "type": "Sonic" },
+            "max": 161061273600,
+            "threshold": 75,
+            "type": "MaxDailySizeMedOutputCon"
+        },
+        {
+            "current": 0.0,
+            "interval": "Daily",
+            "licenseAttributes": { "type": "Sonic" },
+            "max": 32212254720,
+            "threshold": 75,
+            "type": "MaxDailySizeLowOutputCon"
+        },
+        {
             "type": "OutputExternalConnectorVolume",
             "licenseAttributes": { "type": "Sonic" },
             "current": 275000,
@@ -73,12 +97,52 @@
             "interval": "Monthly"
         },
         {
-            "type": "OutputExternalConnectorVolume",
+            "current": 0.0,
+            "interval": "Daily",
             "licenseAttributes": { "type": "EinsteinAnalytics" },
-            "current": 2750000,
-            "max": 1000000000,
-            "threshold": 90,
-            "interval": "Monthly"
+            "max": 50000000,
+            "threshold": 75,
+            "type": "MaxDailyRowsHighOutputCon"
+        },
+        {
+            "current": 0.0,
+            "interval": "Daily",
+            "licenseAttributes": { "type": "EinsteinAnalytics" },
+            "max": 53687091200,
+            "threshold": 75,
+            "type": "MaxDailySizeHighOutputCon"
+        },
+        {
+            "current": 0.0,
+            "interval": "Daily",
+            "licenseAttributes": { "type": "EinsteinAnalytics" },
+            "max": 50000000,
+            "threshold": 75,
+            "type": "MaxDailyRowsMedOutputCon"
+        },
+        {
+            "current": 0.0,
+            "interval": "Daily",
+            "licenseAttributes": { "type": "EinsteinAnalytics" },
+            "max": 53687091200,
+            "threshold": 75,
+            "type": "MaxDailySizeMedOutputCon"
+        },
+        {
+            "current": 0.0,
+            "interval": "Daily",
+            "licenseAttributes": { "type": "EinsteinAnalytics" },
+            "max": 10000000,
+            "threshold": 75,
+            "type": "MaxDailyRowsLowOutputCon"
+        },
+        {
+            "current": 0.0,
+            "interval": "Daily",
+            "licenseAttributes": { "type": "EinsteinAnalytics" },
+            "max": 10737418240,
+            "threshold": 75,
+            "type": "MaxDailySizeLowOutputCon"
         }
     ]
 }

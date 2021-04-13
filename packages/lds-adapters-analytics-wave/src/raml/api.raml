@@ -1577,7 +1577,12 @@ types:
           - BatchTransformationHours
           - DatasetQueries
           - DatasetRowCount
-          - OutputExternalConnectorVolume
+          - MaxDailyRowsHighOutputCon
+          - MaxDailyRowsLowOutputCon
+          - MaxDailyRowsMedOutputCon
+          - MaxDailySizeHighOutputCon
+          - MaxDailySizeLowOutputCon
+          - MaxDailySizeMedOutputCon
           - OutputLocalConnectorVolume
   WaveFolderCollectionRepresentation:
     description: Representation for a collection of Wave analytics folders or applications.
@@ -2556,7 +2561,12 @@ types:
               - BatchTransformationHours
               - DatasetQueries
               - DatasetRowCount
-              - OutputExternalConnectorVolume
+              - MaxDailyRowsHighOutputCon
+              - MaxDailyRowsLowOutputCon
+              - MaxDailyRowsMedOutputCon
+              - MaxDailySizeHighOutputCon
+              - MaxDailySizeLowOutputCon
+              - MaxDailySizeMedOutputCon
               - OutputLocalConnectorVolume
             (oas-collectionFormat): csv
   /query:

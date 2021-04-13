@@ -17,12 +17,28 @@
             "interval": "Monthly"
         },
         {
-            "type": "OutputExternalConnectorVolume",
+            "current": 0.0,
+            "interval": "Daily",
             "licenseAttributes": { "type": "Sonic" },
-            "current": 275000,
-            "max": 10000000,
+            "max": 161061273600,
             "threshold": 75,
-            "interval": "Monthly"
+            "type": "MaxDailySizeHighOutputCon"
+        },
+        {
+            "current": 0.0,
+            "interval": "Daily",
+            "licenseAttributes": { "type": "Sonic" },
+            "max": 161061273600,
+            "threshold": 75,
+            "type": "MaxDailySizeMedOutputCon"
+        },
+        {
+            "current": 0.0,
+            "interval": "Daily",
+            "licenseAttributes": { "type": "Sonic" },
+            "max": 32212254720,
+            "threshold": 75,
+            "type": "MaxDailySizeLowOutputCon"
         }
     ]
 }

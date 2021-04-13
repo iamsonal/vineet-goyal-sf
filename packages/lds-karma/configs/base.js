@@ -5,14 +5,14 @@ const karmaPluginLwc = require('../plugins/karma-plugin-lwc');
 const TIMEKEEPER = require.resolve('timekeeper');
 const SINON = require.resolve('sinon/pkg/sinon.js');
 
-function getTestSpecs(sharedOnly) {
+function getTestSpecs() {
     const files = [];
 
     const { SUITE: SUITE_ENV } = process.env;
     if (SUITE_ENV) {
         files.push(`**/__karma__/**/${SUITE_ENV}.spec.js`);
     } else {
-        files.push(sharedOnly ? '**/__karma__/**/*.shared.spec.js' : '**/__karma__/**/*.spec.js');
+        files.push('**/__karma__/**/*.spec.js');
     }
 
     files.push('**/__karma__/**/data/**/*.json');

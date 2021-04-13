@@ -147,11 +147,6 @@ module.exports = [
             outputFile: path.join(COMPAT_DIST_DIR, 'lds-runtime-browser.js'),
             compat: true,
         },
-        {
-            entryFile: path.join(__dirname, 'lds-runtime-webview.js'),
-            outputFile: path.join(DIST_DIR, 'lds-runtime-webview.js'),
-            compat: false,
-        },
     ]),
 
     ...implTestUtilsConfigs([
@@ -164,11 +159,6 @@ module.exports = [
             entryFile: path.join(UTILS_ENTRY_DIR, 'browser', 'browser-test-utils.js'),
             outputFile: path.join(COMPAT_DIST_DIR, 'utils', 'browser-test-utils.js'),
             compat: true,
-        },
-        {
-            entryFile: path.join(UTILS_ENTRY_DIR, 'webview', 'webview-test-utils.js'),
-            outputFile: path.join(DIST_DIR, 'utils', 'webview-test-utils.js'),
-            compat: false,
         },
     ]),
 ];

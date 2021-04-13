@@ -1,6 +1,5 @@
 const browserConfig = require('./browser');
 const browserCompatConfig = require('./browser-compat');
-const webviewConfig = require('./webview');
 
 const SAUCE_BROWSERS = {
     sl_chrome_latest: {
@@ -38,27 +37,10 @@ const SAUCE_COMPAT_BROWSERS = {
     },
 };
 
-const SAUCE_WEBVIEW_DEVICES = {
-    sl_android: {
-        base: 'SauceLabs',
-        deviceName: 'Android GoogleAPI Emulator',
-        deviceOrientation: 'portrait',
-        browserName: '',
-        platformVersion: '9.0',
-        platformName: 'Android',
-        app: `sauce-storage:${process.env.ANDROID_TEST_APK_NAME}`,
-        automationName: 'UiAutomator2',
-        newCommandTimeout: 0,
-    },
-};
-
 module.exports = function(config) {
-    const webview = Boolean(config.webview);
     const compat = Boolean(config.compat);
 
-    if (webview) {
-        webviewConfig(config);
-    } else if (compat) {
+    if (compat) {
         browserCompatConfig(config);
     } else {
         browserConfig(config);
@@ -92,11 +74,7 @@ module.exports = function(config) {
         };
     }
 
-    const browsers = webview
-        ? SAUCE_WEBVIEW_DEVICES
-        : compat
-        ? SAUCE_COMPAT_BROWSERS
-        : SAUCE_BROWSERS;
+    const browsers = compat ? SAUCE_COMPAT_BROWSERS : SAUCE_BROWSERS;
 
     config.set({
         sauceLabs: sauceLabs,

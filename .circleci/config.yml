@@ -73,24 +73,11 @@ run_integration_tests_compat: &run_integration_tests_compat
     name: Run integration tests (compat)
     command: yarn test:integration:compat
 
-run_mobile_tests: &run_mobile_tests
-  run:
-    name: Run LDS on Mobile integration tests
-    command: yarn test:mobile
-
 # Sauce Labs
 setup_sauce_env_variables: &setup_sauce_env_variables
   run:
     name: Setup sauce connect environnement variables
     command: echo 'export SAUCE_TUNNEL_ID="lds-${CIRCLE_BUILD_NUM}"' >> $BASH_ENV
-
-setup_mobile_sauce_env_variables: &setup_mobile_sauce_env_variables
-  run:
-    name: Setup sauce environnement variables for mobile
-    command: echo '
-      export ANDROID_TEST_APK_NAME="lds-android-hybrid-test-app-$(echo $CIRCLE_BRANCH | sed -e 's/[^A-Za-z0-9._-]/_/g').apk"
-      export SAUCE_USERNAME=${SAUCE_USERNAME_NATIVE}
-      export SAUCE_KEY=${SAUCE_KEY_NATIVE}' >> $BASH_ENV
 
 start_sauce_connect: &start_sauce_connect
   run:
@@ -116,12 +103,6 @@ add_tunnelhost_hosts_entry: &add_tunnelhost_hosts_entry
   run:
     name: add tunnelhost entry to hosts file
     command: echo 127.0.0.1 tunnelhost | sudo tee -a /etc/hosts
-
-upload_test_mobile_apps_to_sauce: &upload_test_mobile_apps_to_sauce
-  run:
-    name: Upload LDS Android Hybrid Test App to sauce files
-    command: |
-      curl -v -u ${SAUCE_USERNAME}:${SAUCE_KEY} POST https://saucelabs.com/rest/v1/storage/${SAUCE_USERNAME}/${ANDROID_TEST_APK_NAME}?overwrite=true -H 'Content-Type: application/octet-stream' --data-binary @packages/lds-karma/utils/webview/lds-android-hybrid-test-app.apk
 
 # Best
 setup_best_environment: &setup_best_environment
@@ -195,24 +176,6 @@ jobs:
 
       - *stop_sauce_connect
 
-  test_mobile:
-    <<: *env_default
-    steps:
-      - *load_workspace
-
-      - *add_tunnelhost_hosts_entry
-
-      - *setup_sauce_env_variables
-      - *setup_mobile_sauce_env_variables
-      - *start_sauce_connect
-      - *wait_for_sauce_connect
-
-      - *upload_test_mobile_apps_to_sauce
-
-      - *run_mobile_tests
-
-      - *stop_sauce_connect
-
   perf_and_compare:
     <<: *env_perf
     steps:
@@ -235,9 +198,6 @@ workflows:
     jobs:
       - build_and_test
       - test_integration:
-          requires:
-            - build_and_test
-      - test_mobile:
           requires:
             - build_and_test
       - perf_and_compare:

@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-platform-interaction-orchestrator",
-    "version": "1.11.1",
+    "version": "1.11.2",
     "description": "Interaction Orchestrator APIs",
     "license": "MIT",
     "main": "dist/umd/es2018/platform-interaction-orchestrator.js",
@@ -27,13 +27,13 @@
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-platform-interaction-orchestrator"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.11.1"
+        "@salesforce/lds-bindings": "1.11.2"
     },
     "devDependencies": {
         "@luvio/cli": "0.31.0",
         "@luvio/compiler": "0.31.0",
         "@luvio/engine": "0.31.0",
         "@luvio/lwc-luvio": "0.31.0",
-        "@salesforce/lds-karma": "1.11.1"
+        "@salesforce/lds-karma": "1.11.2"
     }
 }

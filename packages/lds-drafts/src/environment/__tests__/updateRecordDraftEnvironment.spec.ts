@@ -141,7 +141,11 @@ describe('draft environment tests', () => {
             };
 
             await expect(draftEnvironment.dispatchResourceRequest(request)).rejects.toEqual({
-                status: 500,
+                status: 400,
+                body: {
+                    errorCode: 'DRAFT_ERROR',
+                    message: 'failed to synthesize draft response',
+                },
                 headers: {},
             });
         });

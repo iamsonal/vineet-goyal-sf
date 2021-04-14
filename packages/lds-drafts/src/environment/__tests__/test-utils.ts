@@ -1,5 +1,6 @@
+import { MockDurableStore } from '@luvio/adapter-test-library';
 import { Environment, Luvio, Store } from '@luvio/engine';
-import { DurableStore, makeDurable } from '@luvio/environments';
+import { makeDurable, makeOffline } from '@luvio/environments';
 import { getRecordAdapterFactory } from '@salesforce/lds-adapters-uiapi';
 import { DraftQueue } from '../../DraftQueue';
 import { DRAFT_RECORD_ID } from '../../__tests__/test-utils';
@@ -19,13 +20,7 @@ export function setupDraftEnvironment(
     const { mockNetworkResponse, getRecordMock } = setupOptions;
     const store = new Store();
     const network = jest.fn().mockResolvedValue(mockNetworkResponse ?? {});
-    const durableStore: DurableStore = {
-        setEntries: jest.fn(),
-        getEntries: jest.fn(),
-        getAllEntries: jest.fn(),
-        evictEntries: jest.fn(),
-        registerOnChangedListener: jest.fn(),
-    };
+    const durableStore = new MockDurableStore();
     const draftQueue: DraftQueue = {
         enqueue: jest.fn().mockResolvedValue(undefined),
         getActionsForTags: jest.fn(),
@@ -39,7 +34,9 @@ export function setupDraftEnvironment(
         replaceAction: jest.fn(),
         setMetadata: jest.fn(),
     };
-    const baseEnvironment = makeDurable(new Environment(store, network), { durableStore });
+    const baseEnvironment = makeDurable(makeOffline(new Environment(store, network)), {
+        durableStore,
+    });
     const adapters = {
         getRecord: getRecordMock ?? getRecordAdapterFactory(new Luvio(baseEnvironment)),
     };

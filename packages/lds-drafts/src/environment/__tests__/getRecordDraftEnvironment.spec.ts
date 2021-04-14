@@ -64,12 +64,11 @@ describe('draft environment tests', () => {
             const { durableStore, draftEnvironment } = setupDraftEnvironment();
             mockDurableStoreDraftResponse(durableStore);
 
-            const { rejects } = await expect(
+            await expect(
                 draftEnvironment.dispatchResourceRequest(
                     buildRequest(DRAFT_RECORD_ID, ['Account.Name', 'Account.Birthday'], [])
                 )
-            );
-            rejects.toMatchObject({
+            ).rejects.toMatchObject({
                 status: HttpStatusCode.BadRequest,
             });
         });

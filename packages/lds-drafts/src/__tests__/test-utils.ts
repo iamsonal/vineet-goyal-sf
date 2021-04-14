@@ -36,7 +36,7 @@ export const NAME_VALUE = {
 
 export function buildMockDurableStore(): DurableStore {
     return {
-        setEntries: jest.fn(),
+        setEntries: jest.fn().mockResolvedValue(undefined),
         getEntries: jest.fn(),
         getAllEntries: jest.fn(),
         evictEntries: jest.fn(),

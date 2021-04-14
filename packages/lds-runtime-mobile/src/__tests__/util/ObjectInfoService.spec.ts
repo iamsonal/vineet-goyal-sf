@@ -7,7 +7,7 @@ import {
     OBJECT_INFO_PREFIX_SEGMENT,
 } from '../../utils/ObjectInfoService';
 
-const info: ObjectInfoRepresentation = {
+const info: Partial<ObjectInfoRepresentation> = {
     apiName: 'Account',
     keyPrefix: '001',
 };
@@ -33,8 +33,8 @@ describe('ObjectInfoService', () => {
             Account: { data: { apiName: 'Account', keyPrefix: '001' } },
         });
 
-        let snapshot: FulfilledSnapshot<ObjectInfoRepresentation, {}> = {
-            data: info,
+        let snapshot: Partial<FulfilledSnapshot<ObjectInfoRepresentation, {}>> = {
+            data: info as ObjectInfoRepresentation,
             recordId: '000',
             select: null,
         };

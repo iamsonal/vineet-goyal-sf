@@ -756,6 +756,7 @@ describe('makeDurableStoreDraftAware', () => {
                 {
                     registerOnChangedListener: listener => (changeListener = listener),
                 } as any,
+                [],
                 {} as any,
                 {} as any,
                 () => false,
@@ -788,6 +789,7 @@ describe('makeDurableStoreDraftAware', () => {
                 {
                     registerOnChangedListener: listener => (changeListener = listener),
                 } as any,
+                [],
                 {} as any,
                 {} as any,
                 () => false,
@@ -820,6 +822,7 @@ describe('makeDurableStoreDraftAware', () => {
                 {
                     registerOnChangedListener: listener => (changeListener = listener),
                 } as any,
+                [],
                 {} as any,
                 {} as any,
                 () => false,
@@ -852,6 +855,7 @@ describe('makeDurableStoreDraftAware', () => {
                 {
                     registerOnChangedListener: listener => (changeListener = listener),
                 } as any,
+                [],
                 {} as any,
                 {} as any,
                 () => false,

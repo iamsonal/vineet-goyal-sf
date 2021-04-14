@@ -506,6 +506,34 @@ describe('makeDurableStoreDraftAware', () => {
             expect(ObjectKeys(readEntries).length).toBe(2);
         });
 
+        it('does not normalize fields of errors', async () => {
+            const record404 = {
+                __type: 'error',
+                status: 404,
+                error: {
+                    statusText: 'Not Found',
+                    status: 404,
+                    body: null,
+                    headers: {},
+                    ok: false,
+                },
+            };
+
+            const { durableStore, draftQueue, baseDurableStore } = setupDraftStore({});
+            draftQueue.getActionsForTags = jest.fn().mockResolvedValue({ [STORE_KEY_RECORD]: [] });
+            baseDurableStore.getEntries = jest
+                .fn()
+                .mockResolvedValue({ [STORE_KEY_RECORD]: { data: record404 } });
+
+            const entries = await durableStore.getEntries(
+                [STORE_KEY_RECORD],
+                DefaultDurableSegment
+            );
+
+            const entry = entries[STORE_KEY_RECORD];
+            expect(entry.data).toStrictEqual(record404);
+        });
+
         it('should restore missing link markers', async () => {
             const durableRecord = buildDurableRecordRepresentation(RECORD_ID, { Name: NAME_VALUE });
             durableRecord.links['Birthday'] = {

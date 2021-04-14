@@ -243,7 +243,7 @@ function getRecordEntriesWithDraftOverlays(
         const value = durableEntries[key];
         const drafts = (draftActionMap[key] as Readonly<DraftAction<RecordRepresentation>[]>) || [];
 
-        if (isStoreKeyRecordId(key)) {
+        if (isStoreKeyRecordId(key) && !isStoreRecordError(value.data)) {
             ObjectAssign(
                 returnEntries,
                 normalizeRecordFields(

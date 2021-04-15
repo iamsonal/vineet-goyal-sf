@@ -272,7 +272,7 @@ describe('crud logging', () => {
             await networkAdapter(buildResourceRequest(request));
 
             expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith('read', {
+            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith('reads', {
                 parentRecordId: '001RM000004km7aYAA',
                 recordIds: ['003RM000006Swh5YAC', '003RM000006Swh5YAD'],
                 recordType: 'Contact',
@@ -354,7 +354,7 @@ describe('crud logging', () => {
             } catch (err) {
                 expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
                 expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith(
-                    'read',
+                    'reads',
                     {
                         parentRecordId: '001RM000004km7aYAA',
                         relatedListId: 'Contacts',
@@ -499,7 +499,7 @@ describe('crud logging', () => {
             expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(2);
             expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenNthCalledWith(
                 1,
-                'read',
+                'reads',
                 {
                     parentRecordId: 'a00RM0000004aVwYAI',
                     recordIds: ['a01RM000000vPOBYA1'],
@@ -510,7 +510,7 @@ describe('crud logging', () => {
             );
             expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenNthCalledWith(
                 2,
-                'read',
+                'reads',
                 {
                     parentRecordId: 'a00RM0000004aVwYAI',
                     recordIds: ['a01RM000000vPOBYA2', 'a01RM000000qecDYAQ', 'a01RM000000v7ThYAI'],
@@ -595,7 +595,7 @@ describe('crud logging', () => {
             await networkAdapter(buildResourceRequest(request));
 
             expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith('read', {
+            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith('reads', {
                 parentRecordId: 'a00RM0000004aVwYAI',
                 recordIds: ['a01RM000000vPOBYA1'],
                 recordType: 'CwcCustom02__c',
@@ -622,7 +622,7 @@ describe('crud logging', () => {
             } catch (err) {
                 expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
                 expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith(
-                    'read',
+                    'reads',
                     {
                         parentRecordId: 'a00RM0000004aVwYAI',
                         relatedListIds: ['CwcCustom02s__r, CwcCustom01s__r'],

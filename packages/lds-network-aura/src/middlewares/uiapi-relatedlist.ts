@@ -45,7 +45,7 @@ interface GetRelatedListRecordsCrudMetadata {
 if (forceRecordTransactionsDisabled === false) {
     crudInstrumentationCallbacks = {
         getRelatedListRecordsRejectFunction: (config: InstrumentationRejectConfig) => {
-            logCRUDLightningInteraction(CrudEventType.READ, {
+            logCRUDLightningInteraction(CrudEventType.READS, {
                 parentRecordId: config.params.parentRecordId,
                 relatedListId: config.params.relatedListId,
                 state: CrudEventState.ERROR,
@@ -57,7 +57,7 @@ if (forceRecordTransactionsDisabled === false) {
             );
         },
         getRelatedListRecordsBatchRejectFunction: (config: InstrumentationRejectConfig) => {
-            logCRUDLightningInteraction(CrudEventType.READ, {
+            logCRUDLightningInteraction(CrudEventType.READS, {
                 parentRecordId: config.params.parentRecordId,
                 relatedListIds: config.params.relatedListIds,
                 state: CrudEventState.ERROR,
@@ -300,7 +300,7 @@ function logGetRelatedListRecordsInteraction(
         ADS Implementation only looks at the first record returned to determine the apiName.
         See force/recordLibrary/recordMetricsPlugin.js _getRecordType method. 
      */
-    logCRUDLightningInteraction(CrudEventType.READ, {
+    logCRUDLightningInteraction(CrudEventType.READS, {
         parentRecordId: body.listReference.inContextOfRecordId,
         relatedListId: body.listReference.relatedListId,
         recordIds,

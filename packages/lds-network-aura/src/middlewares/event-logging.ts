@@ -5,6 +5,7 @@ export enum CrudEventType {
     CREATE = 'create',
     DELETE = 'delete',
     READ = 'read',
+    READS = 'reads',
     UPDATE = 'update',
 }
 

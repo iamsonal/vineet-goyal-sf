@@ -1,4 +1,4 @@
-import { StoreLink, Store } from '@luvio/engine';
+import { StoreLink, Store, RecordSource } from '@luvio/engine';
 import {
     DefaultDurableSegment,
     DurableStore,
@@ -45,7 +45,10 @@ import { DurableStoreSetEntryPlugin } from './plugins/DurableStorePlugins';
  */
 function denormalizeRecordFields(
     entry: DurableStoreEntry<RecordRepresentationNormalized | DraftRecordRepresentationNormalized>,
-    store: Store
+    records: RecordSource,
+    pendingEntries: DurableStoreEntries<
+        RecordRepresentationNormalized | DraftRecordRepresentationNormalized
+    >
 ): DurableStoreEntry | undefined {
     const record = entry.data;
 
@@ -57,7 +60,6 @@ function denormalizeRecordFields(
         [key: string]: StoreLink;
     } = {};
     const fieldNames = ObjectKeys(fields);
-    const { records } = store;
     let drafts;
     if (isDraftRecordRepresentationNormalized(record)) {
         drafts = record.drafts;
@@ -73,6 +75,13 @@ function denormalizeRecordFields(
 
             if (__ref !== undefined) {
                 let ref = records[__ref];
+
+                // If the ref was part of the pending write that takes precedence
+                const pendingEntry = pendingEntries[__ref];
+                if (pendingEntry !== undefined) {
+                    ref = pendingEntry.data;
+                }
+
                 // there is a dangling field reference, do not persist a
                 // record if there's a field reference missing
                 if (ref === undefined) {
@@ -389,6 +398,9 @@ export function makeDurableStoreDraftAware(
         const putEntries = ObjectCreate(null);
         const keys = ObjectKeys(entries);
         const putRecords: { [key: string]: boolean } = {};
+
+        const { records: storeRecords, recordExpirations: storeExpirations } = store;
+
         for (let i = 0, len = keys.length; i < len; i++) {
             const key = keys[i];
             let value = entries[key];
@@ -400,8 +412,17 @@ export function makeDurableStoreDraftAware(
                 if (putRecords[recordId] === true) {
                     continue;
                 }
-                const record = store.records[recordKey];
-                if (isDraftId(record.id)) {
+
+                const recordEntries = (entries as unknown) as DurableStoreEntries<
+                    DraftRecordRepresentationNormalized
+                >;
+                const entry = recordEntries[recordKey];
+                let record = entry && entry.data;
+                if (record === undefined) {
+                    record = storeRecords[recordKey];
+                }
+
+                if (record === undefined || isDraftId(record.id)) {
                     // don't put draft created items to durable store
                     continue;
                 }
@@ -413,12 +434,18 @@ export function makeDurableStoreDraftAware(
                     continue;
                 }
 
+                let expiration = entry && entry.expiration;
+                if (entry === undefined) {
+                    expiration = storeExpirations[recordKey];
+                }
+
                 const denormalizedValue = denormalizeRecordFields(
                     {
-                        expiration: store.recordExpirations[recordKey],
+                        expiration,
                         data: record,
                     },
-                    store
+                    storeRecords,
+                    recordEntries
                 );
                 if (denormalizedValue !== undefined) {
                     putEntries[recordKey] = denormalizedValue;
@@ -433,6 +460,14 @@ export function makeDurableStoreDraftAware(
             }
         }
 
+        // TODO - W-9099212 - uncomment this if-block once draft-created records
+        // go into DS.  We can't do this yet because draft-created records do not
+        // actually go into default segment today.  If we don't call broadcast then
+        // subscribers to draft-created never emit.
+        // if (ObjectKeys(putEntries).length === 0) {
+        //     return Promise.resolve(undefined);
+        // }
+
         return durableStore.setEntries(putEntries, segment);
     };
 
@@ -446,6 +481,7 @@ export function makeDurableStoreDraftAware(
     ): () => Promise<void> {
         return durableStore.registerOnChangedListener((changes: DurableStoreChange[]) => {
             const draftIdMappingsIds: string[] = [];
+            const draftIdMappingSegmentChanges: DurableStoreChange[] = [];
             const draftSegmentChanges: DurableStoreChange[] = [];
             const otherSegmentChanges: DurableStoreChange[] = [];
 
@@ -455,6 +491,7 @@ export function makeDurableStoreDraftAware(
                 switch (change.segment) {
                     case DRAFT_ID_MAPPINGS_SEGMENT:
                         draftIdMappingsIds.push(...change.ids);
+                        draftIdMappingSegmentChanges.push(change);
                         continue;
                     case DRAFT_SEGMENT:
                         draftSegmentChanges.push(change);
@@ -464,49 +501,57 @@ export function makeDurableStoreDraftAware(
                 }
             }
 
+            const calculateCombinedChanges = () => {
+                const remappedDraftChanges: DurableStoreChange[] = [];
+                for (let i = 0, len = draftSegmentChanges.length; i < len; i++) {
+                    const draftChange = draftSegmentChanges[i];
+                    const changedIds: string[] = [];
+
+                    for (let j = 0, idLen = draftChange.ids.length; j < idLen; j++) {
+                        const key = draftChange.ids[j];
+                        const recordKey = extractRecordKeyFromDraftDurableStoreKey(key);
+                        if (recordKey !== undefined) {
+                            changedIds.push(recordKey);
+                        } else {
+                            changedIds.push(key);
+                        }
+                    }
+
+                    remappedDraftChanges.push({
+                        ...draftChange,
+                        ids: changedIds,
+                        isExternalChange: true,
+                        segment: DefaultDurableSegment,
+                    });
+                }
+
+                const combinedChanges = remappedDraftChanges
+                    .concat(otherSegmentChanges)
+                    .concat(draftIdMappingSegmentChanges)
+                    .concat(draftSegmentChanges);
+                return listener(combinedChanges);
+            };
+
             if (draftIdMappingsIds.length > 0) {
-                durableStore
+                return durableStore
                     .getEntries(draftIdMappingsIds, DRAFT_ID_MAPPINGS_SEGMENT)
                     .then(mappingEntries => {
-                        if (mappingEntries === undefined) {
-                            return;
+                        if (mappingEntries !== undefined) {
+                            const keys = ObjectKeys(mappingEntries);
+                            for (const key of keys) {
+                                const entry = mappingEntries[key] as DurableStoreEntry<
+                                    DraftIdMappingEntry
+                                >;
+                                const { draftKey, canonicalKey } = entry.data;
+                                registerDraftKeyMapping(draftKey, canonicalKey);
+                            }
                         }
-                        const keys = ObjectKeys(mappingEntries);
-                        for (const key of keys) {
-                            const entry = mappingEntries[key] as DurableStoreEntry<
-                                DraftIdMappingEntry
-                            >;
-                            const { draftKey, canonicalKey } = entry.data;
-                            registerDraftKeyMapping(draftKey, canonicalKey);
-                        }
+
+                        calculateCombinedChanges();
                     });
             }
 
-            const remappedDraftChanges: DurableStoreChange[] = [];
-            for (let i = 0, len = draftSegmentChanges.length; i < len; i++) {
-                const draftChange = draftSegmentChanges[i];
-                const changedIds: string[] = [];
-
-                for (let j = 0, idLen = draftChange.ids.length; j < idLen; j++) {
-                    const key = draftChange.ids[j];
-                    const recordKey = extractRecordKeyFromDraftDurableStoreKey(key);
-                    if (recordKey !== undefined) {
-                        changedIds.push(recordKey);
-                    } else {
-                        changedIds.push(key);
-                    }
-                }
-
-                remappedDraftChanges.push({
-                    ...draftChange,
-                    ids: changedIds,
-                    isExternalChange: true,
-                    segment: DefaultDurableSegment,
-                });
-            }
-
-            const combinedChanges = remappedDraftChanges.concat(otherSegmentChanges);
-            return listener(combinedChanges);
+            calculateCombinedChanges();
         });
     };
 

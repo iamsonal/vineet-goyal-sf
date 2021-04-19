@@ -25,6 +25,10 @@ export interface OfflineOptions {
     compositeRetrievers?: ResponsePropertyRetriever<any, any>[];
 }
 
+function flushPromises() {
+    return new Promise(resolve => setImmediate(resolve));
+}
+
 export function buildOfflineLuvio(
     durableStore: MockDurableStore,
     network: NetworkAdapter,
@@ -92,6 +96,10 @@ export async function testDataEmittedWhenStale<Config, DataType>(
     timekeeper.travel(Date.now() + ttl + 1);
     const staleResult = await (adapter(config) as Promise<any>);
     expect(staleResult.state).toBe('Stale');
+
+    // makeOffline will kick off a refresh, wait for that to ensure it doesn't
+    // throw any errors
+    await flushPromises();
 }
 
 export async function testDurableHitDoesNotHitNetwork<Config, DataType>(
@@ -111,4 +119,7 @@ export async function testDurableHitDoesNotHitNetwork<Config, DataType>(
     expect(result.state).toBe('Fulfilled');
     const callCount = getMockNetworkAdapterCallCount(network);
     expect(callCount).toBe(0);
+
+    // ensure no outstanding promises throw errors
+    await flushPromises();
 }

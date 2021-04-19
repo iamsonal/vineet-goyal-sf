@@ -107,7 +107,7 @@ describe('mobile runtime integration tests', () => {
             expect(tag).toBe(formattedTagWithRecordId);
         });
 
-        it('created record is still obervable after draft is uploaded', async () => {
+        it('created record is still observable after draft is uploaded', async () => {
             const orginalName = 'Justin';
             // create a synthetic record
             const snapshot = await createRecord({

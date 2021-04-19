@@ -1,12 +1,7 @@
 import { HttpStatusCode } from '@luvio/engine';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { getRecordKeyForId } from '../../utils/records';
-import {
-    DEFAULT_DURABLE_STORE_GET_ENTRY,
-    DRAFT_RECORD_ID,
-    RECORD_ID,
-    STORE_KEY_DRAFT_RECORD,
-} from '../../__tests__/test-utils';
+import { DRAFT_RECORD_ID, RECORD_ID, STORE_KEY_DRAFT_RECORD } from '../../__tests__/test-utils';
 import {
     createPatchRequest,
     DEFAULT_API_NAME,
@@ -280,67 +275,51 @@ describe('draft environment tests', () => {
             });
         });
 
-        it('calls getRecord adapter when durable store missing enough info to synthesize response', async () => {
-            const { durableStore, draftEnvironment, draftQueue, adapters } = setupDraftEnvironment({
-                getRecordMock: jest.fn(),
+        it(`calls getRecord adapter when durable store missing enough info to synthesize response`, async () => {
+            const { draftEnvironment, network, adapters, draftQueue } = setupDraftEnvironment({
                 apiNameForPrefix: (_prefix: string) => {
                     return Promise.resolve('Account');
                 },
             });
             const request = createPatchRequest();
-            durableStore.getEntries = jest
-                .fn()
-                .mockResolvedValueOnce(undefined)
-                .mockResolvedValue(DEFAULT_DURABLE_STORE_GET_ENTRY);
-            durableStore.setEntries = jest.fn().mockResolvedValue(Promise.resolve());
-            await draftEnvironment.dispatchResourceRequest<RecordRepresentation>(request);
-            expect(adapters.getRecord).toBeCalledTimes(1);
-            expect(draftQueue.enqueue).toBeCalledWith(request, STORE_KEY_RECORD, RECORD_ID);
-        });
-
-        it('doesnt exist in durable store but finds it on the network', async () => {
-            const { durableStore, draftEnvironment, network } = setupDraftEnvironment({
-                apiNameForPrefix: (_prefix: string) => {
-                    return Promise.resolve('Account');
-                },
-            });
-            const request = createPatchRequest();
-            durableStore.getEntries = jest
-                .fn()
-                .mockResolvedValueOnce(undefined)
-                .mockResolvedValueOnce(undefined)
-                .mockResolvedValue(DEFAULT_DURABLE_STORE_GET_ENTRY);
-            durableStore.setEntries = jest.fn().mockResolvedValue(Promise.resolve());
             network.mockResolvedValue({
                 body: clone(mockGetRecord),
                 status: 200,
             });
+            const enqueueSpy = jest.spyOn(draftQueue, 'enqueue');
+
             const response = await draftEnvironment.dispatchResourceRequest<RecordRepresentation>(
                 request
             );
+
+            expect(adapters.getRecord).toBeCalledTimes(1);
+            expect(enqueueSpy).toBeCalledWith(request, STORE_KEY_RECORD, RECORD_ID);
             expect(network).toBeCalledTimes(1);
             expect(response.status).toBe(200);
             const record = response.body;
             expect(record.fields.Name.value).toBe(DEFAULT_NAME_FIELD_VALUE);
         });
 
-        it('throws error because it doesnt find a record in the store or online', async () => {
-            const { durableStore, draftEnvironment, network } = setupDraftEnvironment({
+        it(`throws error because it doesn't find a record in the store or online`, async () => {
+            const { draftEnvironment, network } = setupDraftEnvironment({
                 apiNameForPrefix: (_prefix: string) => {
                     return Promise.resolve('Account');
                 },
             });
             const request = createPatchRequest();
-            durableStore.getEntries = jest.fn().mockResolvedValue(undefined);
-            network.mockResolvedValue({
-                body: undefined,
+            network.mockRejectedValue({
+                body: {},
                 status: HttpStatusCode.BadRequest,
             });
 
             await expect(
                 draftEnvironment.dispatchResourceRequest<RecordRepresentation>(request)
             ).rejects.toEqual({
-                status: 500,
+                status: 400,
+                body: {
+                    errorCode: 'DRAFT_ERROR',
+                    message: 'failed to synthesize draft response',
+                },
                 headers: {},
             });
         });

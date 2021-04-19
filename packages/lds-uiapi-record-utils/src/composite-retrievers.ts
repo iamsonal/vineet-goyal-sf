@@ -16,10 +16,11 @@ const getRecordsPropertyRetriever: ResponsePropertyRetriever<
 > = {
     canRetrieve(request: ResourceRequest) {
         const { basePath, method } = request;
+        const recordIds = request.urlParams['recordIds'] as [] | undefined;
         return (
             method === 'get' &&
-            basePath ===
-                '/ui-api/records/batch/' + (request.urlParams['recordIds'] as []).join(',') + ''
+            recordIds !== undefined &&
+            basePath === '/ui-api/records/batch/' + recordIds.join(',') + ''
         );
     },
     retrieve(response: ResourceResponse<BatchRepresentation>) {

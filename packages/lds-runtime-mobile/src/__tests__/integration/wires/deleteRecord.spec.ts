@@ -158,7 +158,12 @@ describe('mobile runtime integration tests', () => {
             // simulate another draft queue enqueuing a delete (which will modify
             // durable store)
             const nimbusDurableStore2 = new NimbusDurableStore();
-            const queue = new DurableDraftQueue(nimbusDurableStore2, NimbusNetworkAdapter);
+            const queue = new DurableDraftQueue(
+                nimbusDurableStore2,
+                NimbusNetworkAdapter,
+                jest.fn(),
+                jest.fn()
+            );
             await queue.enqueue(
                 {
                     method: 'delete',
@@ -169,7 +174,8 @@ describe('mobile runtime integration tests', () => {
                     body: null,
                     headers: {},
                 },
-                STORE_KEY_RECORD
+                STORE_KEY_RECORD,
+                RECORD_ID
             );
 
             await flushPromises();

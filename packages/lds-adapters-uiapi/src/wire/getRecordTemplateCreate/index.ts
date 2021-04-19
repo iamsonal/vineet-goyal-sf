@@ -133,7 +133,6 @@ function onResourceResponseSuccess(
 
     luvio.storeIngest<RecordDefaultsTemplateCreateRepresentation>(key, ingest, body);
 
-    luvio.storeBroadcast();
     const snapshot = buildInMemorySnapshot(luvio, context, {
         ...config,
         recordTypeId: responseRecordTypeId as string,
@@ -146,6 +145,8 @@ function onResourceResponseSuccess(
             );
         }
     }
+
+    luvio.storeBroadcast();
 
     return snapshot as FulfilledSnapshot<RecordDefaultsTemplateCreateRepresentation, {}>;
 }

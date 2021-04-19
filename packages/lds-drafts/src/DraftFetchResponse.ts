@@ -18,6 +18,8 @@ export class DraftFetchResponse<T> implements FetchResponse<T> {
         switch (status) {
             case HttpStatusCode.Ok:
                 return 'OK';
+            case HttpStatusCode.Created:
+                return 'Created';
             case HttpStatusCode.NoContent:
                 return 'No Content';
             case HttpStatusCode.BadRequest:

@@ -16,6 +16,7 @@ const RAML_ARTIFACTS = {
         'onResourceResponseSuccess',
         'onResourceResponseError',
     ],
+    '/adapters/deleteDataset': ['buildNetworkSnapshot'],
 };
 
 // extend the basePlugin to add the logic for the partial raml artifacts

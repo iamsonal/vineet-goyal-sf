@@ -26,7 +26,7 @@ describe('deleteDataset - basic', () => {
         expect(karmaNetworkAdapter.firstCall.args[0]).toEqual(jasmine.objectContaining(expected));
     });
 
-    it('evicts dataset from cache', async () => {
+    it('evicts dataset from cache using id', async () => {
         const mockDataset = getMock('dataset');
         const mockError = getMock('delete-dataset-not-exist');
         const config = {
@@ -49,8 +49,43 @@ describe('deleteDataset - basic', () => {
 
         // First successful GET call will populate the cache
         const el = await setupElement(elementConfig, GetDataset);
+        expect(el.getWiredData()).toEqual(mockDataset);
 
         await deleteDataset(config);
+        // The existing GET wire will be refreshed
+        await flushPromises();
+
+        expect(el.pushCount()).toBe(2);
+        expect(el.getWiredError()).toEqual(mockError);
+        expect(el.getWiredError()).toBeImmutable();
+    });
+
+    it('evicts dataset from cache using name', async () => {
+        const mockDataset = getMock('dataset');
+        const mockError = getMock('delete-dataset-not-exist');
+        const config = {
+            datasetIdOrApiName: mockDataset.id,
+        };
+        const elementConfig = {
+            idOrApiName: mockDataset.id,
+        };
+
+        // First GET call should retrieve successfully. Second GET call should return not found.
+        mockGetDatasetNetworkOnce(config, [
+            mockDataset,
+            {
+                reject: true,
+                status: 404,
+                data: mockError,
+            },
+        ]);
+        mockDeleteDatasetNetworkOnce(config);
+
+        // First successful GET call will populate the cache
+        const el = await setupElement(elementConfig, GetDataset);
+        expect(el.getWiredData()).toEqual(mockDataset);
+
+        await deleteDataset({ datasetIdOrApiName: mockDataset.name });
         // The existing GET wire will be refreshed
         await flushPromises();
 

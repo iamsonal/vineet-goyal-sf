@@ -1010,7 +1010,7 @@ describe('DurableDraftQueue', () => {
                 };
             }
 
-            return { draftQueue, evictSpy };
+            return { draftQueue, evictSpy, durableStore };
         };
 
         it('throws an error if no draft action with the ID exists', async () => {
@@ -1041,15 +1041,41 @@ describe('DurableDraftQueue', () => {
                 status: DraftActionStatus.Pending,
             };
 
-            const { draftQueue, evictSpy } = setup(testAction);
+            const { draftQueue, evictSpy, durableStore } = setup(testAction);
+            evictSpy.mockImplementation((ids, segment) => {
+                expect(ids).toEqual(['testActionTag__DraftAction__123456']);
+                expect(segment).toEqual('DRAFT');
+                durableStore.segments[DRAFT_SEGMENT] = undefined;
+                return Promise.resolve();
+            });
+
             await draftQueue.removeDraftAction(testAction.id);
-            expect(evictSpy).toBeCalledWith(['testActionTag__DraftAction__123456'], 'DRAFT');
+        });
+
+        it('restarts queue if removing an errored item', async () => {
+            const errorAction: ErrorDraftAction<unknown> = {
+                ...baseAction,
+                status: DraftActionStatus.Error,
+                error: 'some error',
+            };
+
+            const { draftQueue, evictSpy, durableStore } = setup(errorAction);
+            evictSpy.mockImplementation((_ids, _segment) => {
+                durableStore.segments[DRAFT_SEGMENT] = undefined;
+                return Promise.resolve();
+            });
+            await expect(draftQueue.startQueue()).rejects.toBe(undefined);
+            expect(draftQueue.getQueueState()).toEqual(DraftQueueState.Error);
+            await draftQueue.removeDraftAction(errorAction.id);
+
+            expect(draftQueue.getQueueState()).toEqual(DraftQueueState.Started);
         });
     });
 
     describe('swap action', () => {
         it('swaps correctly', async () => {
-            const network = buildMockNetworkAdapter([]);
+            const success = buildSuccessMockPayload(DEFAULT_PATCH_REQUEST, {});
+            const network = buildMockNetworkAdapter([success]);
             const durableStore = new MockDurableStore();
             const draftQueue = new DurableDraftQueue(
                 durableStore,
@@ -1070,7 +1096,8 @@ describe('DurableDraftQueue', () => {
         });
 
         it('calls listeners when swapping', async () => {
-            const network = buildMockNetworkAdapter([]);
+            const success = buildSuccessMockPayload(DEFAULT_PATCH_REQUEST, {});
+            const network = buildMockNetworkAdapter([success]);
             const durableStore = new MockDurableStore();
             const draftQueue = new DurableDraftQueue(
                 durableStore,
@@ -1311,7 +1338,9 @@ describe('DurableDraftQueue', () => {
         });
 
         it('does not start queue while replacing an action', async () => {
-            const network = buildMockNetworkAdapter([]);
+            const network = buildMockNetworkAdapter([
+                buildSuccessMockPayload(DEFAULT_PATCH_REQUEST, {}),
+            ]);
             const durableStore = new MockDurableStore();
             const draftQueue = new DurableDraftQueue(
                 durableStore,
@@ -1386,11 +1415,12 @@ describe('DurableDraftQueue', () => {
             await draftQueue.replaceAction(actionOne.id, actionTwo.id);
             expect(processNextSpy).toBeCalledTimes(0);
             expect(startSpy).toBeCalledTimes(0);
-            expect(draftQueue.getQueueState()).toBe(DraftQueueState.Stopped);
+            expect(draftQueue.getQueueState()).toBe(DraftQueueState.Started);
         });
 
         it('rejects if replace is called while a replace is in process', async () => {
-            const network = buildMockNetworkAdapter([]);
+            const success = buildSuccessMockPayload(DEFAULT_PATCH_REQUEST, {});
+            const network = buildMockNetworkAdapter([success]);
             const durableStore = new MockDurableStore();
             const draftQueue = new DurableDraftQueue(
                 durableStore,
@@ -1413,6 +1443,55 @@ describe('DurableDraftQueue', () => {
             await expect(secondReplace).rejects.toBe(
                 'Cannot replace actions while a replace action is in progress'
             );
+        });
+
+        it('restarts the queue if replacing an item while in error state', async () => {
+            const success = buildSuccessMockPayload(DEFAULT_PATCH_REQUEST, {});
+
+            const network = buildMockNetworkAdapter([success]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(
+                durableStore,
+                network,
+                mockQueuePostHandler,
+                mockDraftIdHandler
+            );
+
+            const errorAction: ErrorDraftAction<unknown> = {
+                id: '123456',
+                targetId: 'testTargetId',
+                tag: 'testActionTag',
+                request: DEFAULT_PATCH_REQUEST,
+                timestamp: 2,
+                metadata: {},
+                status: DraftActionStatus.Error,
+                error: 'mock error',
+            };
+
+            const pendingAction: PendingDraftAction<unknown> = {
+                id: '654321',
+                targetId: 'testTargetId',
+                tag: 'testActionTag',
+                request: DEFAULT_PATCH_REQUEST,
+                timestamp: 2,
+                metadata: {},
+                status: DraftActionStatus.Pending,
+            };
+
+            const entries: DurableStoreEntries<DraftAction<unknown>> = {
+                [`${errorAction.tag}__DraftAction__${errorAction.id}`]: { data: errorAction },
+                [`${pendingAction.tag}__DraftAction__${pendingAction.id}`]: { data: pendingAction },
+            };
+
+            durableStore.setEntries(entries, 'DRAFT');
+            let actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(2);
+
+            await expect(draftQueue.startQueue()).rejects.toBe(undefined);
+            expect(draftQueue.getQueueState()).toEqual(DraftQueueState.Error);
+
+            await draftQueue.replaceAction(errorAction.id, pendingAction.id);
+            expect(draftQueue.getQueueState()).toEqual(DraftQueueState.Started);
         });
     });
 

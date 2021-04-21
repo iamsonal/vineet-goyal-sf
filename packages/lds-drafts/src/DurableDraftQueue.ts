@@ -94,11 +94,11 @@ export class DurableDraftQueue implements DraftQueue {
     private networkAdapter: NetworkAdapter;
     private draftQueueChangedListeners: DraftQueueChangeListener[] = [];
     private state = DraftQueueState.Stopped;
+    private userState = DraftQueueState.Stopped;
     private processingAction?: Promise<ProcessActionResult>;
     private updateQueueOnPostCompletion: QueuePostHandler;
     private createDraftIdMapping: CreateDraftIdMappingHandler;
     private replacingAction?: Promise<DraftAction<unknown>>;
-    private stopCalledDuringReplace: Boolean = false;
     private uploadingActionId?: String = undefined;
 
     constructor(
@@ -118,15 +118,15 @@ export class DurableDraftQueue implements DraftQueue {
     }
 
     startQueue(): Promise<void> {
+        this.userState = DraftQueueState.Started;
         if (this.state === DraftQueueState.Started) {
             return Promise.resolve();
         }
         if (this.replacingAction !== undefined) {
-            // If we're replacing an action, wait until we are done
-            // then start the queue
-            return this.replacingAction.then(() => {
-                return this.startQueue();
-            });
+            // If we're replacing an action do nothing
+            // replace will restart the queue for us as long as the user
+            // has last set the queue to be started
+            return Promise.resolve();
         }
         this.state = DraftQueueState.Started;
         this.retryIntervalMilliseconds = 0;
@@ -143,10 +143,16 @@ export class DurableDraftQueue implements DraftQueue {
     }
 
     stopQueue(): Promise<void> {
+        this.userState = DraftQueueState.Stopped;
+        return this.stopQueueManually();
+    }
+
+    /**
+     * Used to stop the queue within DraftQueue without user interaction
+     * @returns
+     */
+    private stopQueueManually(): Promise<void> {
         this.state = DraftQueueState.Stopped;
-        if (this.replacingAction !== undefined) {
-            this.stopCalledDuringReplace = true;
-        }
         return Promise.resolve();
     }
 
@@ -436,14 +442,26 @@ export class DurableDraftQueue implements DraftQueue {
             return this.notifyChangedListeners({
                 type: DraftQueueEventType.ActionDeleting,
                 action,
-            }).then(() => {
-                return this.durableStore.evictEntries([durableStoreKey], DRAFT_SEGMENT).then(() => {
-                    this.notifyChangedListeners({
-                        type: DraftQueueEventType.ActionDeleted,
-                        action,
-                    });
+            })
+                .then(() => {
+                    return this.durableStore
+                        .evictEntries([durableStoreKey], DRAFT_SEGMENT)
+                        .then(() => {
+                            this.notifyChangedListeners({
+                                type: DraftQueueEventType.ActionDeleted,
+                                action,
+                            });
+                        });
+                })
+                .then(() => {
+                    if (
+                        this.userState === DraftQueueState.Started &&
+                        this.state !== DraftQueueState.Started &&
+                        this.replacingAction === undefined
+                    ) {
+                        this.startQueue();
+                    }
                 });
-            });
         });
     }
 
@@ -456,8 +474,7 @@ export class DurableDraftQueue implements DraftQueue {
         if (this.replacingAction !== undefined) {
             return Promise.reject('Cannot replace actions while a replace action is in progress');
         }
-        const initialQueueState = this.getQueueState();
-        return this.stopQueue().then(() => {
+        return this.stopQueueManually().then(() => {
             const replacing = this.getQueueActions().then(actions => {
                 // get the action to replace
                 const actionToReplace = actions.filter(action => action.id === actionId)[0];
@@ -511,18 +528,15 @@ export class DurableDraftQueue implements DraftQueue {
                                 type: DraftQueueEventType.ActionUpdated,
                                 action: actionToReplace,
                             }).then(() => {
+                                this.replacingAction = undefined;
                                 if (
-                                    initialQueueState === DraftQueueState.Started &&
-                                    this.stopCalledDuringReplace === false
+                                    this.userState === DraftQueueState.Started &&
+                                    this.state !== DraftQueueState.Started
                                 ) {
                                     return this.startQueue().then(() => {
-                                        this.replacingAction = undefined;
-                                        this.stopCalledDuringReplace = false;
                                         return actionToReplace;
                                     });
                                 } else {
-                                    this.replacingAction = undefined;
-                                    this.stopCalledDuringReplace = false;
                                     return actionToReplace;
                                 }
                             });

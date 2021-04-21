@@ -16,8 +16,8 @@
         "test:unit": "jest"
     },
     "dependencies": {
-        "@luvio/engine": "0.31.0",
-        "@luvio/environments": "0.31.0"
+        "@luvio/engine": "0.31.2",
+        "@luvio/environments": "0.31.2"
     },
     "devDependencies": {
         "@salesforce/lds-adapters-uiapi": "1.11.2",

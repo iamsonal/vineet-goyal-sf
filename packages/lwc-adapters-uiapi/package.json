@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lwc-adapters-uiapi",
-    "version": "1.11.2",
+    "version": "1.11.3",
     "description": "UIAPI adapters with LWC bindings",
     "license": "MIT",
     "module": "dist/main.js",
@@ -25,10 +25,10 @@
     },
     "devDependencies": {
         "@luvio/engine": "0.31.2",
-        "@salesforce/lds-adapters-uiapi": "1.11.2"
+        "@salesforce/lds-adapters-uiapi": "1.11.3"
     },
     "dependencies": {
         "@luvio/lwc-luvio": "0.31.2",
-        "@salesforce/lds-default-luvio": "1.11.2"
+        "@salesforce/lds-default-luvio": "1.11.3"
     }
 }

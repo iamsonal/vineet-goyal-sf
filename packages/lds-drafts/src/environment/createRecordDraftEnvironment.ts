@@ -61,7 +61,7 @@ function resolveResourceRequestIds(
 
 export function createRecordDraftEnvironment(
     env: DurableEnvironment,
-    { draftQueue, prefixForApiName, generateId, isDraftId }: DraftEnvironmentOptions
+    { draftQueue, prefixForApiName, generateId, isDraftId, store }: DraftEnvironmentOptions
 ): DurableEnvironment {
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function<T>(
         request: ResourceRequest
@@ -107,7 +107,44 @@ export function createRecordDraftEnvironment(
         });
     };
 
+    // TODO - W-9099212 - remove this override once draft-created records
+    // go into DS.  We need this for now because draft-created records do not
+    // actually go into default segment today so if we let them go into pending
+    // writers then they will get emitted from in-memory store on broadcast.
+    const storePublish: DurableEnvironment['storePublish'] = function<Data>(
+        key: string,
+        data: Data
+    ) {
+        const recordId = extractRecordIdFromStoreKey(key);
+        if (recordId !== undefined && isDraftId(recordId) === true) {
+            store.publish<Data>(key, data);
+            return;
+        }
+
+        env.storePublish(key, data);
+    };
+
+    // TODO - W-9099212 - remove this override once draft-created records
+    // go into DS.  We need this for now because draft-created records do not
+    // actually go into default segment today so if we let them go into pending
+    // writers then they will get emitted from in-memory store on broadcast.
+    const storeSetExpiration: DurableEnvironment['storeSetExpiration'] = function(
+        key: string,
+        expiration: number,
+        staleExpiration?: number
+    ) {
+        const recordId = extractRecordIdFromStoreKey(key);
+        if (recordId !== undefined && isDraftId(recordId) === true) {
+            store.setExpiration(key, expiration, staleExpiration);
+            return;
+        }
+
+        env.storeSetExpiration(key, expiration, staleExpiration);
+    };
+
     return ObjectCreate(env, {
         dispatchResourceRequest: { value: dispatchResourceRequest },
+        storePublish: { value: storePublish },
+        storeSetExpiration: { value: storeSetExpiration },
     });
 }

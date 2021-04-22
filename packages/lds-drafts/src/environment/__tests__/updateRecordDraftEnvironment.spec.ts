@@ -119,7 +119,18 @@ describe('draft environment tests', () => {
                 body: clone(mockGetRecord),
                 status: 200,
             });
-            durableStore.getEntries = jest.fn().mockResolvedValue(undefined);
+
+            // turns out it's non-trivial to mock makeDurable.reviveRecordsToStore
+            // so we mock the 5th call to getEntries (that's the call from reviveRecordsToStore)
+            const realReadFunction = durableStore.getEntries.bind(durableStore);
+            durableStore.getEntries = jest
+                .fn()
+                .mockImplementationOnce((ids, segment) => realReadFunction(ids, segment))
+                .mockImplementationOnce((ids, segment) => realReadFunction(ids, segment))
+                .mockImplementationOnce((ids, segment) => realReadFunction(ids, segment))
+                .mockImplementationOnce((ids, segment) => realReadFunction(ids, segment))
+                .mockResolvedValueOnce(undefined);
+
             const request = {
                 baseUri: '/services/data/v53.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,

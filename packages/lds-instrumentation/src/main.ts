@@ -154,6 +154,16 @@ export interface AdapterMetadata {
     ttl?: number;
 }
 
+export interface LightningInteractionSchema {
+    kind: 'interaction';
+    target: string;
+    scope: string;
+    context: unknown;
+    eventSource: string;
+    eventType: string;
+    attributes: unknown;
+}
+
 const NAMESPACE = 'lds';
 const STORE_STATS_MARK_NAME = 'store-stats';
 const RUNTIME_PERF_MARK_NAME = 'runtime-perf';
@@ -432,6 +442,8 @@ export class Instrumentation {
             this.handleRefreshApiCall(context);
         } else if (this.isAdapterUnfulfilledError(context)) {
             this.incrementAdapterRequestErrorCount(context);
+        } else if (isLightningInteractionLog(context)) {
+            log(null, context);
         } else {
             perfStart(NETWORK_TRANSACTION_NAME);
             perfEnd(NETWORK_TRANSACTION_NAME, context);
@@ -758,6 +770,25 @@ function normalizeAdapterName(adapterName: string, apiFamily?: string): string {
         return NORMALIZED_APEX_ADAPTER_NAME;
     }
     return apiFamily ? `${apiFamily}.${adapterName}` : adapterName;
+}
+
+/**
+ * @param context the payload received from `luvio.instrument`
+ * @returns whether or not the context is of type `LightningInteractionSchema`.
+ */
+function isLightningInteractionLog(context: unknown): context is LightningInteractionSchema {
+    return (context as LightningInteractionSchema).kind === 'interaction';
+}
+
+/**
+ * Calls instrumentation/service interaction API. Function name and parameters mapped to `o11y`
+ * implementation for Log Lines.
+ * @param schema Expected shape of the payload (Currently unused)
+ * @param payload Content to be logged, shape matches schema
+ */
+function log(schema: any, payload: LightningInteractionSchema): void {
+    const { target, scope, context, eventSource, eventType, attributes } = payload;
+    interaction(target, scope, context, eventSource, eventType, attributes);
 }
 
 /**

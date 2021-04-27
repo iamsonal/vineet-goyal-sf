@@ -2,10 +2,20 @@ import { FieldValueRepresentationNormalized } from '../../generated/types/FieldV
 import { Luvio, IngestPath } from '@luvio/engine';
 import { RecordRepresentationNormalized } from '../../generated/types/RecordRepresentation';
 
+interface LightningInteractionSchema {
+    kind: 'interaction';
+    target: string;
+    scope: string;
+    context: unknown;
+    eventSource: string;
+    eventType: string;
+    attributes: unknown;
+}
+
 export default function merge(
     existing: FieldValueRepresentationNormalized | undefined,
     incoming: FieldValueRepresentationNormalized,
-    _luvio: Luvio,
+    luvio: Luvio,
     path: IngestPath
 ): FieldValueRepresentationNormalized {
     if (existing === undefined) {
@@ -35,6 +45,24 @@ export default function merge(
         existing.displayValue !== null
     ) {
         incoming.displayValue = existing.displayValue;
+
+        // Temporary instrumentation to capture distribution and frequency, W-8990630
+        luvio.instrument(
+            (): LightningInteractionSchema => {
+                return {
+                    kind: 'interaction',
+                    target: 'merge',
+                    scope: 'lds-adapters-uiapi',
+                    context: {
+                        entityName: (path.parent!.data as RecordRepresentationNormalized).apiName,
+                        fieldName: path.propertyName,
+                    },
+                    eventSource: 'lds-dv-bandaid',
+                    eventType: 'system',
+                    attributes: null,
+                };
+            }
+        );
     }
 
     const { value } = incoming;

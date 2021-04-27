@@ -4,6 +4,7 @@
 
 import {
     Instrumentation,
+    LightningInteractionSchema,
     refreshApiEvent,
     NORMALIZED_APEX_ADAPTER_NAME,
     REFRESH_APEX_KEY,
@@ -119,6 +120,25 @@ const baseCacheMissCounterIncrement = 4;
 const GET_RECORD_TTL = 30000;
 
 describe('instrumentation', () => {
+    describe('log lines', () => {
+        const interaction: LightningInteractionSchema = {
+            kind: 'interaction',
+            target: 'merge',
+            scope: 'lds-adapters-uiapi',
+            context: {
+                entityName: 'User',
+                fieldName: 'Id',
+            },
+            eventSource: 'lds-dv-bandaid',
+            eventType: 'system',
+            attributes: null,
+        };
+
+        it('should call the log function, which will call interaction', () => {
+            instrumentation.instrumentNetwork(interaction);
+            expect(instrumentationServiceSpies.interaction).toHaveBeenCalledTimes(1);
+        });
+    });
     describe('cache misses out of ttl', () => {
         it('should not log metrics when getRecord adapter has a cache hit on existing value within TTL', () => {
             const mockGetRecordAdapter = config => {

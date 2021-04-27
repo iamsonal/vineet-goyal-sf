@@ -14,6 +14,9 @@
     "contributors": [
         "kartik.saxena@salesforce.com"
     ],
+    "sfdc": {
+        "path": "forcelds/ldsAdaptersCommunitySeo/"
+    },
     "scripts": {
         "clean": "rm -rf dist sfdc src/generated karma/dist",
         "build": "yarn build:raml && yarn build:services && yarn build:karma",
@@ -23,6 +26,7 @@
         "start": "karma start",
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat",
+        "release:corejar": "yarn build && ../core-build/scripts/core.js --adapter=lds-adapters-community-seo",
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-community-seo"
     },
     "dependencies": {

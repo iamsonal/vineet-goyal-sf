@@ -9,6 +9,9 @@
     "files": [
         "dist"
     ],
+    "sfdc": {
+        "path": "forcelds/ldsUiapiRecordUtils/"
+    },
     "scripts": {
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",

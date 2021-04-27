@@ -7,11 +7,16 @@
     "main": "dist/adsBridge.js",
     "module": "dist/adsBridge.js",
     "types": "dist/main.d.ts",
+    "sfdc": {
+        "path": "forcelds/adsBridge/",
+        "publishedFileName": "adsBridge.js"
+    },
     "scripts": {
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",
         "clean": "rm -rf dist",
-        "test:unit": "jest"
+        "test:unit": "jest",
+        "release:corejar": "yarn build && ../core-build/scripts/core.js --name=lds-ads-bridge"
     },
     "devDependencies": {
         "@salesforce/lds-adapters-uiapi": "1.11.3",

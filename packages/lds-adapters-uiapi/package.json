@@ -24,9 +24,10 @@
         "test:unit": "jest",
         "test:size": "bundlesize",
         "test:overrides": "jest --testPathPattern=src/overrides",
-        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-uiapi"
+        "release:corejar": "yarn build && ../core-build/scripts/core.js --adapter=lds-adapters-uiapi"
     },
     "sfdc": {
+        "path": "forcelds/ldsAdaptersUiapi/",
         "addition": [
             "uiapi-static-functions"
         ]

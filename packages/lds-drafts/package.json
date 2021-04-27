@@ -13,7 +13,8 @@
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",
         "clean": "rm -rf dist",
-        "test:unit": "jest"
+        "test:unit": "jest",
+        "release:corejar": "yarn build && ../core-build/scripts/core.js --adapter=lds-drafts"
     },
     "dependencies": {
         "@luvio/engine": "0.32.0",

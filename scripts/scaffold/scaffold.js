@@ -46,7 +46,7 @@ const BUNDLE_NAME_TAG = '{{BUNDLE_NAME}}';
 const ARTIFACT_NAME = '{{ARTIFACT_NAME}}';
 const RELEASE_CORE_TAG = '{{RELEASE_CORE}}';
 const RELEASE_CORE =
-    '"release:core": "../../scripts/release/core.js --adapter={{PACKAGE_NAME_TAG}}",';
+    '"release:core": "yarn build && packages/core-build/scripts/core.js --adapter={{PACKAGE_NAME_TAG}}",';
 
 function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);

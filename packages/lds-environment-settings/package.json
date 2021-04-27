@@ -2,14 +2,19 @@
     "name": "@salesforce/lds-environment-settings",
     "version": "1.11.3",
     "description": "Environment Settings for LDS",
-    "main": "dist/main.js",
+    "main": "dist/ldsEnvironmentSettings.js",
     "types": "dist/main.d.ts",
     "license": "MIT",
     "private": true,
+    "sfdc": {
+        "path": "forcelds/ldsEnvironmentSettings/",
+        "publishedFileName": "ldsEnvironmentSettings.js"
+    },
     "scripts": {
         "clean": "rm -rf dist",
         "build": "rollup --config rollup.config.js",
         "test:unit": "jest",
-        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
+        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand",
+        "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-environment-settings"
     }
 }

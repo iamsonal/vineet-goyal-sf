@@ -279,7 +279,10 @@ function deployAdapterPackage() {
         `packages/${argv.adapter}/package.json`
     );
     const repoAdapterPackageJson = require(repoAdapterPackageJsonPath);
-    if (repoAdapterPackageJson.sfdc !== undefined) {
+    if (
+        repoAdapterPackageJson.sfdc !== undefined &&
+        repoAdapterPackageJson.sfdc.addition !== undefined
+    ) {
         const utilModuleNames = repoAdapterPackageJson.sfdc.addition;
         utilModuleNames.forEach(utilModuleName => {
             const coreUtilModulePath = path.resolve(

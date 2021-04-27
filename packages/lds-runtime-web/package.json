@@ -6,6 +6,9 @@
     "main": "dist/ldsEngineWebRuntime.js",
     "module": "dist/ldsEngineWebRuntime.js",
     "types": "dist/main.d.ts",
+    "sfdc": {
+        "path": "forcelds/ldsEngineWebRuntime/"
+    },
     "scripts": {
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",

@@ -1,0 +1,32 @@
+{
+    "projectDir": ".",
+    "destinationDir": "./packages/core-build/core-package",
+    "packageNamespace": "org.luvio",
+    "mavenPackageNamespace": "sfdc.ui",
+    "componentLocatorClassPrefix": "forcelds",
+    "artifactId": "ui-lds",
+    "artifactName": "Lightning Data Service Modules",
+    "perforce": "//app/main",
+    "version": "234-SNAPSHOT",
+    "lwcFilter": ["**/__tests__/**", "**/__benchmarks__/**", "packages/lds-*", "packages/lwr-*"],
+    "includeLwcModules": [
+        "forcelds/adsBridge",
+        "forcelds/ldsAdaptersAnalyticsWave",
+        "forcelds/ldsAdaptersApex",
+        "forcelds/ldsAdaptersCmsDelivery",
+        "forcelds/ldsAdaptersCommerceCatalog",
+        "forcelds/ldsAdaptersCommerceSearch",
+        "forcelds/ldsAdaptersCommerceStorePricing",
+        "forcelds/ldsAdaptersCommunityNavigationMenu",
+        "forcelds/ldsAdaptersCommunitySeo",
+        "forcelds/ldsAdaptersPlatformAdminSuccessGuidance",
+        "forcelds/ldsAdaptersUiapi",
+        "forcelds/ldsBindings",
+        "forcelds/ldsEngine",
+        "forcelds/ldsEngineMobile",
+        "forcelds/ldsEnvironmentSettings",
+        "forcelds/ldsInstrumentation",
+        "forcelds/ldsNetwork",
+        "forcelds/ldsStorage"
+    ]
+}

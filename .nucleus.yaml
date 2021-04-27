@@ -1,6 +1,13 @@
 core-deploy:
   enabled: true
+  use-core-packager: false
 steps:
   node-pre-release-tests:
     run:
       command: yarn test:unit:coverage
+  platform-build:
+    name: platform-build
+    description: Runs platform-specific build step
+    run:
+      command: yarn release:core
+    before: core-packager

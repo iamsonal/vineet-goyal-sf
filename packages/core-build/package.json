@@ -1,0 +1,40 @@
+{
+    "name": "@salesforce/core-build",
+    "private": false,
+    "version": "1.11.1",
+    "description": "LDS Build System",
+    "license": "MIT",
+    "files": [
+        "dist"
+    ],
+    "lwc": {
+        "modules": [
+            {
+                "dir": "dist"
+            }
+        ],
+        "expose": [
+            "forcelds/adsBridge",
+            "forcelds/ldsAdaptersAnalyticsWave",
+            "forcelds/ldsAdaptersApex",
+            "forcelds/ldsAdaptersCmsDelivery",
+            "forcelds/ldsAdaptersCommerceCatalog",
+            "forcelds/ldsAdaptersCommerceSearch",
+            "forcelds/ldsAdaptersCommerceStorePricing",
+            "forcelds/ldsAdaptersCommunityNavigationMenu",
+            "forcelds/ldsAdaptersCommunitySeo",
+            "forcelds/ldsAdaptersPlatformAdminSuccessGuidance",
+            "forcelds/ldsAdaptersUiapi",
+            "forcelds/ldsBindings",
+            "forcelds/ldsEngine",
+            "forcelds/ldsEngineMobile",
+            "forcelds/ldsEnvironmentSettings",
+            "forcelds/ldsInstrumentation",
+            "forcelds/ldsNetwork",
+            "forcelds/ldsStorage"
+        ]
+    },
+    "scripts": {
+        "release:core-package": "scripts/core.js"
+    }
+}

@@ -21,9 +21,11 @@
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat",
         "test:unit": "jest",
+        "release:corejar": "yarn build && ../core-build/scripts/core.js --adapter=lds-adapters-apex",
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-apex"
     },
     "sfdc": {
+        "path": "forcelds/ldsAdaptersApex/",
         "addition": [
             "lds-apex-static-utils"
         ]

@@ -7,12 +7,17 @@
     "main": "dist/ldsNetwork.js",
     "module": "dist/ldsNetwork.js",
     "types": "dist/main.d.ts",
+    "sfdc": {
+        "path": "forcelds/ldsNetwork/",
+        "publishedFileName": "ldsNetwork.js"
+    },
     "scripts": {
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",
         "clean": "rm -rf dist",
         "test:unit": "jest",
-        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
+        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand",
+        "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-network-aura"
     },
     "devDependencies": {
         "@salesforce/lds-adapters-uiapi": "1.11.3",

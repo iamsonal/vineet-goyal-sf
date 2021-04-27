@@ -9,11 +9,15 @@
     "files": [
         "dist"
     ],
+    "sfdc": {
+        "path": "forcelds/ldsBindings/"
+    },
     "scripts": {
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",
         "clean": "rm -rf dist",
-        "test:unit": "jest"
+        "test:unit": "jest",
+        "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-bindings"
     },
     "dependencies": {
         "@luvio/lwc-luvio": "0.32.0"

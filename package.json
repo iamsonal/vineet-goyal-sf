@@ -31,7 +31,7 @@
         "release": "yarn release:adapters && ./scripts/release/core.js",
         "release:local": "./scripts/release/core.js --skip-git-check --auto-checkout && yarn release:adapters:local",
         "link:luvio": "yarn link @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio && lerna exec -- yarn link @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio",
-        "unlink:luvio": "yarn unlink @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio && lerna exec -- yarn unlink @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio"
+        "unlink:luvio": "yarn unlink @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio; lerna exec --no-bail -- yarn unlink @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio"
     },
     "devDependencies": {
         "@babel/core": "^7.6.4",

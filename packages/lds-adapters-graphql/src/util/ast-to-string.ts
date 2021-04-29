@@ -159,8 +159,9 @@ function serializeScalarFieldNode(def: LuvioSelectionScalarFieldNode) {
 }
 
 function serializeObjectFieldNode(def: LuvioSelectionObjectFieldNode) {
-    const { luvioSelections } = def;
-    return `${def.name} { ${serializeSelections(luvioSelections)} }`;
+    const { luvioSelections, arguments: defArgs } = def;
+    const args = defArgs === undefined ? '' : `(${serializeArguments(defArgs)})`;
+    return `${def.name}${args} { ${serializeSelections(luvioSelections)} }`;
 }
 
 function serializeCustomFieldConnection(def: LuvioSelectionCustomFieldNode) {

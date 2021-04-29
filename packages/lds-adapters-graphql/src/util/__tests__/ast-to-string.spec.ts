@@ -90,4 +90,98 @@ describe('AST to string', () => {
         const actual = astToString(ast);
         expect(actual).toEqual(expectedQuery);
     });
+
+    it('should make correct request when arguments are present outside @connection directive', () => {
+        const ast: LuvioDocumentNode = {
+            kind: 'Document',
+            definitions: [
+                {
+                    kind: 'OperationDefinition',
+                    operation: 'query',
+                    name: 'operationName',
+                    luvioSelections: [
+                        {
+                            kind: 'ObjectFieldSelection',
+                            name: 'uiapi',
+                            luvioSelections: [
+                                {
+                                    kind: 'ObjectFieldSelection',
+                                    name: 'query',
+                                    luvioSelections: [
+                                        {
+                                            kind: 'ObjectFieldSelection',
+                                            name: 'Account',
+                                            luvioSelections: [
+                                                {
+                                                    kind: 'ObjectFieldSelection',
+                                                    name: 'edges',
+                                                    luvioSelections: [
+                                                        {
+                                                            kind: 'ObjectFieldSelection',
+                                                            name: 'node',
+                                                            luvioSelections: [
+                                                                {
+                                                                    kind: 'ScalarFieldSelection',
+                                                                    name: 'id',
+                                                                },
+                                                                {
+                                                                    kind: 'ScalarFieldSelection',
+                                                                    name: 'WeakEtag',
+                                                                },
+                                                                {
+                                                                    kind: 'ObjectFieldSelection',
+                                                                    name: 'Name',
+                                                                    luvioSelections: [
+                                                                        {
+                                                                            kind:
+                                                                                'ScalarFieldSelection',
+                                                                            name: 'value',
+                                                                        },
+                                                                        {
+                                                                            kind:
+                                                                                'ScalarFieldSelection',
+                                                                            name: 'displayValue',
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                            arguments: [
+                                                {
+                                                    kind: 'Argument',
+                                                    name: 'where',
+                                                    value: {
+                                                        kind: 'ObjectValue',
+                                                        fields: {
+                                                            Name: {
+                                                                kind: 'ObjectValue',
+                                                                fields: {
+                                                                    like: {
+                                                                        kind: 'StringValue',
+                                                                        value: 'Account1',
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const expectedQuery = `query { uiapi { query { Account(where:  { Name:  { like: "Account1" } }) { edges { node { id, WeakEtag, Name { value, displayValue,  } } } } } } }`;
+
+        const actual = astToString(ast);
+        expect(actual).toEqual(expectedQuery);
+    });
 });

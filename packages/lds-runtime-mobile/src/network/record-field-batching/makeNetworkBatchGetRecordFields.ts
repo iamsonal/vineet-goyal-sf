@@ -143,7 +143,7 @@ function createAggregateUiRequest(
     const aggregateResourceRequest: ResourceRequest = {
         method: 'post',
         baseUri: resourceRequest.baseUri,
-        basePath: '/aggregate-ui',
+        basePath: '/ui-api/aggregate-ui',
         body: aggregateUiPostBody,
         queryParams: {},
         headers: {},

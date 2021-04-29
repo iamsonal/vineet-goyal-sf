@@ -148,7 +148,7 @@ describe('makeNetworkBatchGetRecordFields', () => {
             // check
             const requestCalled = mockNetworkAdapter.mock.calls[0][0];
             expect(requestCalled.method).toBe('post');
-            expect(requestCalled.basePath).toBe('/aggregate-ui');
+            expect(requestCalled.basePath).toBe('/ui-api/aggregate-ui');
 
             const compositeRequests = requestCalled.body.compositeRequest as CompositeRequest[];
             expect(compositeRequests.length).toBe(2);

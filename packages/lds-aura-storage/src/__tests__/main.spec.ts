@@ -62,4 +62,28 @@ describe('resetStorages', () => {
         expect(storageA.clear).toHaveBeenCalled();
         expect(storageB.clear).toHaveBeenCalled();
     });
+
+    it('invokes clear on all the created storages, handles clear promise reject', async () => {
+        jest.mock('aura-storage', () => ({
+            initStorage: () => ({
+                isPersistent: () => true,
+                clear: jest
+                    .fn()
+                    .mockRejectedValue(
+                        new Error(
+                            'IDBDatabase.transaction: Cant start a transaction on a closed database'
+                        )
+                    ),
+            }),
+        }));
+        const storage = require('../main');
+
+        const storageA = storage.createStorage({ name: 'A' });
+        const storageB = storage.createStorage({ name: 'B' });
+
+        await storage.clearStorages();
+
+        expect(storageA.clear).toHaveBeenCalled();
+        expect(storageB.clear).toHaveBeenCalled();
+    });
 });

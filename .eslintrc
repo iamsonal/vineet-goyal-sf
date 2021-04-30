@@ -7,7 +7,11 @@
     },
 
     "extends": "eslint:recommended",
-    "plugins": ["@typescript-eslint", "jest"],
+    "plugins": [
+        "@salesforce/eslint-plugin-lds",
+        "@typescript-eslint",
+        "jest"
+    ],
 
     "env": {
         "browser": true,
@@ -17,12 +21,6 @@
     },
 
     "rules": {
-        "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": [
-            "error",
-            { "argsIgnorePattern": "^_" }
-        ],
-
         "eqeqeq": "error",
         "guard-for-in": "error",
         "no-console": "error",
@@ -31,6 +29,13 @@
         "no-return-await": "error",
         "no-throw-literal": "error",
         "no-unused-expressions": "error",
+        "no-unused-vars": "off",
+
+        "@salesforce/lds/no-optional-chaining": "warn",
+        "@typescript-eslint/no-unused-vars": [
+            "error",
+            { "argsIgnorePattern": "^_" }
+        ],
 
         "jest/no-focused-tests": "error",
         "jest/no-identical-title": "error",
@@ -80,6 +85,16 @@
 
             "globals": {
                 "$conn": true
+            }
+        },
+        {
+            "files": [
+                "packages/**/__tests__/**",
+                "packages/**/__karma__/**",
+                "packages/**/__benchmarks__/**"
+            ],
+            "rules": {
+                "@salesforce/lds/no-optional-chaining": "off"
             }
         }
     ]

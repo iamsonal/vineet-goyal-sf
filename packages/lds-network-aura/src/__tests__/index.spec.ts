@@ -3586,6 +3586,36 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/dataConnectorTypes', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataConnectorTypes`,
+            },
+            [
+                'WaveController.getDataConnectorTypes',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'get',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/dataConnectorTypes`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataConnectorTypes`,
+            },
+            {}
+        );
+    });
+
     describe('get /wave/dataflowjobs', () => {
         testControllerInput(
             {

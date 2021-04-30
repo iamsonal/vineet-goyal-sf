@@ -53,6 +53,8 @@ const GET_GUIDANCE_ACTIVE_SCENARIOS_PATH = new RegExp(
 
 const ANALYTICS_LIMITS_PATH = new RegExp(`${WAVE_BASE_URI}/limits$`, 'i');
 
+const DATA_CONNECTOR_TYPES_PATH = new RegExp(`${WAVE_BASE_URI}/dataConnectorTypes$`, 'i');
+
 const DATAFLOW_JOBS_PATH = new RegExp(`${WAVE_BASE_URI}/dataflowjobs$`, 'i');
 
 const DATAFLOW_JOB_PATH = new RegExp(`${WAVE_BASE_URI}/dataflowjobs/([A-Z0-9_]){15,18}$`, 'i');
@@ -287,6 +289,14 @@ const analytics: ApiFamily = {
             path.startsWith(WAVE_BASE_URI) && ANALYTICS_LIMITS_PATH.test(path),
         transport: {
             controller: 'WaveController.getAnalyticsLimits',
+        },
+    },
+    getDataConnectorTypes: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && DATA_CONNECTOR_TYPES_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getDataConnectorTypes',
         },
     },
     createDataflowJob: {

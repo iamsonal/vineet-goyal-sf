@@ -39,6 +39,33 @@ types:
         type: array
         items:
           type: string
+  AdvancedPropertyRepresentation:
+    description: An advanced property is an object-level replication property for
+      a data source.
+    type: object
+    properties:
+      dataType:
+        description: The field type of the advanced property.
+        type: string
+        enum:
+          - Boolean
+          - Numeric
+          - Text
+      defaultValue:
+        description: The default value of the advanced property.
+        type: string | number | nil | boolean # TODO: hand rolled
+      description:
+        description: The description of the advanced property.
+        type: string
+      isRequired:
+        description: The mandatory nature of the advanced property.
+        type: boolean
+      label:
+        description: The label of the advanced property.
+        type: string
+      name:
+        description: The name of the advanced property attribute.
+        type: string
   AdvancedPropertyValueRepresentation:
     description: An advanced property Name and Value.
     type: object
@@ -188,6 +215,36 @@ types:
           - Raw
           - Single
           - Static
+  ConnectionPropertyRepresentation:
+    description: A Connection Property represents a property to connect to a data
+      connector.
+    type: object
+    properties:
+      dataType:
+        description: The field type of the connection property.
+        type: string
+        enum:
+          - Boolean
+          - Numeric
+          - Text
+      defaultValue:
+        description: The default value of the connection property.
+        type: string | number | nil | boolean # TODO: hand rolled
+      isEncrypted:
+        description: The security setting of the connection property.
+        type: boolean
+      isRequired:
+        description: The mandatory nature of the connection property.
+        type: boolean
+      label:
+        description: The label of the connection property.
+        type: string
+      maxLength:
+        description: The maximum length of the connection property.
+        type: integer
+      name:
+        description: The name of the connection property.
+        type: string
   ConnectionPropertyValueRepresentation:
     description: A Connection Property Name and Value.
     type: object
@@ -308,6 +365,150 @@ types:
         description: Target connector associated with the current source connector.
         required: false # TODO Hand-rolled W-8253396
         type: AssetReferenceRepresentation
+  DataConnectorTypeCollectionRepresentation:
+    description: A list of Data Connector Types.
+    type: object
+    properties:
+      types:
+        description: A list of Data Connector Types.
+        type: array
+        items:
+          type: DataConnectorTypeRepresentation
+      url:
+        description: The URL to get the collection.
+        type: string
+  DataConnectorTypeRepresentation:
+    description: A Data Connector Type represents a type of connector that can be
+      used for replicating data into Wave.
+    type: object
+    properties:
+      advancedProperties:
+        description: The advancedProperties of the data connector type.
+        type: array
+        items:
+          type: AdvancedPropertyRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      associatedCategories:
+        description: The categories that the data connector type belongs to.
+        type: array
+        items:
+          type: string
+          enum:
+            - AdvancedPropertiesSupport
+            - BatchRead
+            - Direct
+            - FileBased
+            - FilterSupport
+            - MuleSoft
+            - Output
+      connectionProperties:
+        description: The connection properties of the data connector type.
+        type: array
+        items:
+          type: ConnectionPropertyRepresentation
+      isExternal:
+        description: Indicator of whether the data connector type is external.
+        type: boolean
+      label:
+        description: The label of the data connector type.
+        type: string
+      name:
+        description: The name of the data connector type.
+        type: string
+      supportedConnectorHandlers:
+        description: The supported connector handlers for the data connector type.
+        type: array
+        items:
+          type: string
+          enum:
+            - Base
+            - Legacy
+        required: false # TODO Hand-rolled W-8253396
+      type:
+        description: The type of the data connector.
+        type: string
+        enum:
+          - ActCRM
+          - ActOn
+          - AdobeAnalytics
+          - AmazonAthena
+          - AmazonDynamoDB
+          - AmazonS3
+          - AmazonS3Output
+          - AwsMarketplace
+          - AwsRdsAuroraMySQL
+          - AwsRdsAuroraPostgres
+          - AwsRdsMariaDB
+          - AwsRdsMySQL
+          - AwsRdsOracle
+          - AwsRdsPostgres
+          - AwsRdsSqlServer
+          - AzureCosmosDB
+          - AzureSqlDatabase
+          - AzureSqlDatawarehouse
+          - AzureTable
+          - Box
+          - Cassandra
+          - CdpDirect
+          - Dropbox
+          - GoogleAds
+          - GoogleAnalytics
+          - GoogleBigQuery
+          - GoogleBigQueryStandardSQL
+          - GoogleCloudStorage
+          - GoogleSheets
+          - GoogleSpanner
+          - HerokuPostgres
+          - IbmCloudSqlQuery
+          - LinkedIn
+          - MarkLogic
+          - Marketo
+          - MicrosoftAdvertising
+          - MicrosoftDynamics
+          - MongoDB
+          - MulesoftAnaplan
+          - MulesoftConcur
+          - MulesoftHubSpot
+          - MulesoftMarkLogic
+          - MulesoftMongoDB
+          - MulesoftMySQL
+          - MulesoftOracle
+          - MulesoftServiceNow
+          - MulesoftSqlServer
+          - MulesoftSuccessFactors
+          - MulesoftWorkday
+          - MulesoftZuora
+          - NetSuite
+          - OracleEloqua
+          - Redshift
+          - SalesforceCPQ
+          - SalesforceCommunityCloud
+          - SalesforceEinsteinAnalytics
+          - SalesforceExternal
+          - SalesforceForceCom
+          - SalesforceMarketingCloud
+          - SalesforceMarketingCloudFull
+          - SalesforceMarketingCloudOAuth2
+          - SalesforceOutput
+          - SalesforceReport
+          - SalesforceSalesCloud
+          - SalesforceServiceCloud
+          - SapConcur
+          - SapHana
+          - SapSuccessFactors
+          - ServiceNow
+          - SfdcLocal
+          - SnowflakeComputing
+          - SnowflakeDirect
+          - SnowflakeOutput
+          - SugarCRM
+          - TableauHyperOutput
+          - Teradata
+          - VeevaVault
+          - Xactly
+          - Zendesk
+          - ZohoCRM
+          - ZuoraAQuA
   DataflowCollectionRepresentation:
     description: A collection of Dataflows.
     type: object
@@ -2273,6 +2474,15 @@ types:
       assetId:
         type: string
         required: true
+  /dataConnectorTypes:
+    get:
+      description: A collection of Wave Data Connector Types.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DataConnectorTypeCollectionRepresentation
   /dataflowjobs:
     get:
       description: Get a collection  of all dataflow jobs representation

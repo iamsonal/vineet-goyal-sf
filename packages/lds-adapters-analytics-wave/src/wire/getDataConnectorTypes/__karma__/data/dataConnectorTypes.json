@@ -1,0 +1,1938 @@
+{
+    "types": [
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [],
+            "isExternal": false,
+            "label": "Salesforce Connector",
+            "name": "SfdcLocal",
+            "supportedConnectorHandlers": [],
+            "type": "SfdcLocal"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": false,
+                    "label": "Master Symmetric Key",
+                    "maxLength": 255,
+                    "name": "MasterSymmetricKey"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "AWS Secret Access Key",
+                    "maxLength": 1000,
+                    "name": "AWSSecretAccessKey"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 255,
+                    "name": "Username"
+                },
+                {
+                    "dataType": "numeric",
+                    "defaultValue": 1,
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Number Of Nodes in Cluster",
+                    "maxLength": 0,
+                    "name": "NumberOfNodesinCluster"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "public",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Schema",
+                    "maxLength": 255,
+                    "name": "Schema"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "AWS Access Key ID",
+                    "maxLength": 1000,
+                    "name": "AWSAccessKeyID"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "ds1.xlarge",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Cluster Node Type",
+                    "maxLength": 255,
+                    "name": "ClusterNodeType"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "S3 Bucket Name",
+                    "maxLength": 63,
+                    "name": "S3BucketName"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "JDBC URL",
+                    "maxLength": 1000,
+                    "name": "JDBCURL"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 300,
+                    "name": "Password"
+                }
+            ],
+            "isExternal": true,
+            "label": "Redshift Connector",
+            "name": "Redshift",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "Redshift"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 100,
+                    "name": "Username"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "https://login.salesforce.com/services/Soap/u/46.0",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Service URL",
+                    "maxLength": 100,
+                    "name": "Service_URL"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 300,
+                    "name": "Password"
+                }
+            ],
+            "isExternal": true,
+            "label": "Salesforce External Connector",
+            "name": "SalesforceExternal",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "SalesforceExternal"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 100,
+                    "name": "Username"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "ClientSecret",
+                    "maxLength": 100,
+                    "name": "ClientSecret"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "ClientId",
+                    "maxLength": 100,
+                    "name": "ClientId"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "https://webservice.s7.exacttarget.com/etframework.wsdl",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Salesforce Marketing Cloud Url",
+                    "maxLength": 100,
+                    "name": "Salesforce_Marketing_Cloud_Url"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "UTC",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "UTC Offset",
+                    "maxLength": 100,
+                    "name": "UTC_Offset"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 300,
+                    "name": "Password"
+                }
+            ],
+            "isExternal": true,
+            "label": "Salesforce Marketing Cloud Contacts Connector",
+            "name": "SalesforceMarketingCloud",
+            "supportedConnectorHandlers": ["Legacy"],
+            "type": "SalesforceMarketingCloud"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "ClientSecret",
+                    "maxLength": 100,
+                    "name": "ClientSecret"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "ClientId",
+                    "maxLength": 100,
+                    "name": "ClientId"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "https://mcxxx.soap.marketingcloudapis.com/etframework.wsdl",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Salesforce Marketing Cloud Url",
+                    "maxLength": 100,
+                    "name": "Salesforce_Marketing_Cloud_Url"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "UTC",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "UTC Offset",
+                    "maxLength": 100,
+                    "name": "UTC_Offset"
+                }
+            ],
+            "isExternal": true,
+            "label": "Salesforce Marketing Cloud Contacts OAuth 2.0 Connector",
+            "name": "SalesforceMarketingCloudOAuth2",
+            "supportedConnectorHandlers": ["Legacy"],
+            "type": "SalesforceMarketingCloudOAuth2"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "JDBC Connection URL",
+                    "maxLength": 300,
+                    "name": "JDBC_Connection_URL"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 100,
+                    "name": "Username"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "public",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Schema",
+                    "maxLength": 100,
+                    "name": "Schema"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 300,
+                    "name": "Password"
+                }
+            ],
+            "isExternal": true,
+            "label": "Heroku Postgres Connector",
+            "name": "HerokuPostgres",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "HerokuPostgres"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 255,
+                    "name": "Username"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Organization Name",
+                    "maxLength": 255,
+                    "name": "OrgName"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Discovery Service URL",
+                    "maxLength": 255,
+                    "name": "DiscoveryServiceURL"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Domain",
+                    "maxLength": 255,
+                    "name": "Domain"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "Passport",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Authentication Type",
+                    "maxLength": 255,
+                    "name": "AuthenticationType"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password:",
+                    "maxLength": 255,
+                    "name": "Password"
+                }
+            ],
+            "isExternal": true,
+            "label": "Microsoft Dynamics CRM Connector",
+            "name": "MicrosoftDynamics",
+            "supportedConnectorHandlers": ["Legacy"],
+            "type": "MicrosoftDynamics"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Schema",
+                    "maxLength": 255,
+                    "name": "schema"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Private Key",
+                    "maxLength": 4096,
+                    "name": "privateKey"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Client Email",
+                    "maxLength": 255,
+                    "name": "clientEmail"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Region Id",
+                    "maxLength": 255,
+                    "name": "regionId"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Storage Path",
+                    "maxLength": 512,
+                    "name": "storagePath"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Project ID",
+                    "maxLength": 255,
+                    "name": "projectId"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Extract Mode",
+                    "maxLength": 255,
+                    "name": "readMode"
+                }
+            ],
+            "isExternal": true,
+            "label": "Google BigQuery Connector",
+            "name": "GoogleBigQuery",
+            "supportedConnectorHandlers": ["Legacy"],
+            "type": "GoogleBigQuery"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Schema",
+                    "maxLength": 255,
+                    "name": "schema"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Private Key",
+                    "maxLength": 4096,
+                    "name": "privateKey"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Client Email",
+                    "maxLength": 255,
+                    "name": "clientEmail"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Region Id",
+                    "maxLength": 255,
+                    "name": "regionId"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Storage Path",
+                    "maxLength": 512,
+                    "name": "storagePath"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Project ID",
+                    "maxLength": 255,
+                    "name": "projectId"
+                }
+            ],
+            "isExternal": true,
+            "label": "Google BigQuery Standard SQL Connector",
+            "name": "GoogleBigQueryStandardSQL",
+            "supportedConnectorHandlers": ["Legacy"],
+            "type": "GoogleBigQueryStandardSQL"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database",
+                    "maxLength": 300,
+                    "name": "database"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "JDBC Connection URL",
+                    "maxLength": 300,
+                    "name": "JDBC_Connection_URL"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 100,
+                    "name": "Username"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "dbo",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Schema",
+                    "maxLength": 100,
+                    "name": "Schema"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 300,
+                    "name": "Password"
+                }
+            ],
+            "isExternal": true,
+            "label": "Microsoft Azure SQL Database Connector",
+            "name": "AzureSqlDatabase",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "AzureSqlDatabase"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Azure DW JDBC URL",
+                    "maxLength": 1024,
+                    "name": "JdbcUrl"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Azure DW JDBC Password",
+                    "maxLength": 255,
+                    "name": "JdbcPassword"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Azure Blob Account Name",
+                    "maxLength": 255,
+                    "name": "BlobAccountName"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database",
+                    "maxLength": 300,
+                    "name": "database"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Azure DW JDBC Username",
+                    "maxLength": 255,
+                    "name": "JdbcUsername"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Azure Blob Account Key",
+                    "maxLength": 1024,
+                    "name": "BlobAccountKey"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "dbo",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Azure DW Schema Name",
+                    "maxLength": 255,
+                    "name": "SchemaName"
+                }
+            ],
+            "isExternal": true,
+            "label": "Microsoft Azure SQL Datawarehouse Connector",
+            "name": "AzureSqlDatawarehouse",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "AzureSqlDatawarehouse"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database",
+                    "maxLength": 100,
+                    "name": "database"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "JDBC Connection URL",
+                    "maxLength": 300,
+                    "name": "JDBC_Connection_URL"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 100,
+                    "name": "Username"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "public",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Schema",
+                    "maxLength": 100,
+                    "name": "Schema"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 300,
+                    "name": "Password"
+                }
+            ],
+            "isExternal": true,
+            "label": "Amazon RDS PostgreSQL Connector",
+            "name": "AwsRdsPostgres",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "AwsRdsPostgres"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database",
+                    "maxLength": 300,
+                    "name": "database"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "JDBC Connection URL",
+                    "maxLength": 300,
+                    "name": "JDBC_Connection_URL"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 100,
+                    "name": "Username"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "dbo",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Schema",
+                    "maxLength": 100,
+                    "name": "Schema"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 300,
+                    "name": "Password"
+                }
+            ],
+            "isExternal": true,
+            "label": "Amazon RDS SQL Server Connector",
+            "name": "AwsRdsSqlServer",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "AwsRdsSqlServer"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Base URL",
+                    "maxLength": 100,
+                    "name": "Base_Url"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 100,
+                    "name": "Username"
+                },
+                {
+                    "dataType": "numeric",
+                    "defaultValue": 0,
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Time Zone Offset",
+                    "maxLength": 0,
+                    "name": "Time_Zone_Offset"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Domain Name",
+                    "maxLength": 100,
+                    "name": "Domain_Name"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 100,
+                    "name": "Password"
+                }
+            ],
+            "isExternal": true,
+            "label": "Oracle Eloqua Connector",
+            "name": "OracleEloqua",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "OracleEloqua"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database",
+                    "maxLength": 100,
+                    "name": "database"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "JDBC Connection URL",
+                    "maxLength": 300,
+                    "name": "JDBC_Connection_URL"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 100,
+                    "name": "Username"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 300,
+                    "name": "Password"
+                }
+            ],
+            "isExternal": true,
+            "label": "Amazon RDS MySQL Connector",
+            "name": "AwsRdsMySQL",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "AwsRdsMySQL"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database",
+                    "maxLength": 100,
+                    "name": "database"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "JDBC Connection URL",
+                    "maxLength": 300,
+                    "name": "JDBC_Connection_URL"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 100,
+                    "name": "Username"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 300,
+                    "name": "Password"
+                }
+            ],
+            "isExternal": true,
+            "label": "Amazon RDS MariaDB Connector",
+            "name": "AwsRdsMariaDB",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "AwsRdsMariaDB"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database",
+                    "maxLength": 100,
+                    "name": "database"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "JDBC Connection URL",
+                    "maxLength": 300,
+                    "name": "JDBC_Connection_URL"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 100,
+                    "name": "Username"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 300,
+                    "name": "Password"
+                }
+            ],
+            "isExternal": true,
+            "label": "Amazon RDS Aurora MySQL Connector",
+            "name": "AwsRdsAuroraMySQL",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "AwsRdsAuroraMySQL"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database",
+                    "maxLength": 100,
+                    "name": "database"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "JDBC Connection URL",
+                    "maxLength": 300,
+                    "name": "JDBC_Connection_URL"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 100,
+                    "name": "Username"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "public",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Schema",
+                    "maxLength": 100,
+                    "name": "Schema"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 300,
+                    "name": "Password"
+                }
+            ],
+            "isExternal": true,
+            "label": "Amazon RDS Aurora PostgreSQL Connector",
+            "name": "AwsRdsAuroraPostgres",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "AwsRdsAuroraPostgres"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 255,
+                    "name": "password"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 255,
+                    "name": "userName"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "URL",
+                    "maxLength": 4096,
+                    "name": "url"
+                }
+            ],
+            "isExternal": true,
+            "label": "SAP HANA Connector",
+            "name": "SapHana",
+            "supportedConnectorHandlers": ["Legacy"],
+            "type": "SapHana"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "filterSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Schema",
+                    "maxLength": 100,
+                    "name": "schema"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 255,
+                    "name": "password"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database",
+                    "maxLength": 300,
+                    "name": "database"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Role",
+                    "maxLength": 65535,
+                    "name": "role"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Additional JDBC URL Parameters",
+                    "maxLength": 65535,
+                    "name": "additionalparam"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Warehouse",
+                    "maxLength": 255,
+                    "name": "warehouse"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 255,
+                    "name": "user"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Account",
+                    "maxLength": 255,
+                    "name": "account"
+                }
+            ],
+            "isExternal": true,
+            "label": "Snowflake Connector",
+            "name": "SnowflakeComputing",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "SnowflakeComputing"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["direct"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Schema",
+                    "maxLength": 100,
+                    "name": "schema"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Password",
+                    "maxLength": 255,
+                    "name": "password"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Role",
+                    "maxLength": 65535,
+                    "name": "role"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Warehouse",
+                    "maxLength": 255,
+                    "name": "warehouse"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Username",
+                    "maxLength": 255,
+                    "name": "user"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Account",
+                    "maxLength": 255,
+                    "name": "account"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database",
+                    "maxLength": 300,
+                    "name": "db"
+                }
+            ],
+            "isExternal": true,
+            "label": "Snowflake Direct Connector",
+            "name": "SnowflakeDirect",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "SnowflakeDirect"
+        },
+        {
+            "advancedProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "",
+                    "isRequired": true,
+                    "label": "StartDate",
+                    "name": "StartDate"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "",
+                    "isRequired": true,
+                    "label": "ViewID",
+                    "name": "ViewID"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "",
+                    "isRequired": true,
+                    "label": "EndDate",
+                    "name": "EndDate"
+                }
+            ],
+            "associatedCategories": ["batchRead", "advancedPropertiesSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "Core Reporting API v3",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "APIVersion",
+                    "maxLength": 255,
+                    "name": "APIVersion"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Client Email",
+                    "maxLength": 255,
+                    "name": "ServiceAccountID"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Private Key",
+                    "maxLength": 4094,
+                    "name": "ServiceAccountKey"
+                }
+            ],
+            "isExternal": true,
+            "label": "Google Analytics",
+            "name": "GoogleAnalytics",
+            "supportedConnectorHandlers": ["Legacy"],
+            "type": "GoogleAnalytics"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "fileBased"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": false,
+                    "label": "Master Symmetric Key",
+                    "maxLength": 255,
+                    "name": "MasterSymmetricKey"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Secret Key",
+                    "maxLength": 255,
+                    "name": "SecretKey"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "US East(N. Virginia)",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Region Name",
+                    "maxLength": 255,
+                    "name": "RegionName"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Folder Path",
+                    "maxLength": 320,
+                    "name": "FolderPath"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Access Key",
+                    "maxLength": 255,
+                    "name": "AccessKey"
+                }
+            ],
+            "isExternal": true,
+            "label": "Amazon S3 Connector",
+            "name": "AmazonS3",
+            "supportedConnectorHandlers": ["Legacy"],
+            "type": "AmazonS3"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Consumer Secret",
+                    "maxLength": 1024,
+                    "name": "CONSUMER_SECRET"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Consumer Key",
+                    "maxLength": 1024,
+                    "name": "CONSUMER_KEY"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Account ID",
+                    "maxLength": 1024,
+                    "name": "ACCOUNT_ID"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Rest Domain",
+                    "maxLength": 1024,
+                    "name": "REST_DOMAIN"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Token ID",
+                    "maxLength": 1024,
+                    "name": "TOKEN_ID"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Token Secret",
+                    "maxLength": 1024,
+                    "name": "TOKEN_SECRET"
+                }
+            ],
+            "isExternal": true,
+            "label": "NetSuite Connector",
+            "name": "NetSuite",
+            "supportedConnectorHandlers": ["Legacy"],
+            "type": "NetSuite"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Private Key",
+                    "maxLength": 4096,
+                    "name": "privateKey"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database",
+                    "maxLength": 255,
+                    "name": "database"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Instance Id",
+                    "maxLength": 255,
+                    "name": "instanceId"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Client Email",
+                    "maxLength": 255,
+                    "name": "clientEmail"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Project Id",
+                    "maxLength": 255,
+                    "name": "projectId"
+                }
+            ],
+            "isExternal": true,
+            "label": "Google Spanner Connector",
+            "name": "GoogleSpanner",
+            "supportedConnectorHandlers": ["Legacy"],
+            "type": "GoogleSpanner"
+        },
+        {
+            "advancedProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Comma separated Tag Types for Program",
+                    "isRequired": false,
+                    "label": "Tag Types (Program)",
+                    "name": "Program___Tag_Type"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Comma separated Filter Values For Custom/Opportunity/OpportunityRole/Company/SalesPerson Object",
+                    "isRequired": false,
+                    "label": "Filter Values (Custom/Opportunity/OpportunityRole/Company/SalesPerson)",
+                    "name": "Custom_Object_Filter_Values"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Comma separated Channel Names to retrieve",
+                    "isRequired": false,
+                    "label": "Channel Names (Channel)",
+                    "name": "Channel___Channel_Name"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Comma separated List Names for getting List details",
+                    "isRequired": false,
+                    "label": "List Names (List)",
+                    "name": "List_Name"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Comma separated Campaign Names for getting Campaign details",
+                    "isRequired": false,
+                    "label": "Campaign Names (Campaign)",
+                    "name": "Campaign_Name"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Comma separated Program Names to which the Programs are related",
+                    "isRequired": false,
+                    "label": "Program Names (Program)",
+                    "name": "Program___Program_Name"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Specifies comma separated filter values for Lead",
+                    "isRequired": false,
+                    "label": "Filter Values (Lead)",
+                    "name": "Filter_Values_CSV_File"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "End date range for Lead or LeadActivity data",
+                    "isRequired": false,
+                    "label": "End Date (Lead / LeadActivity)",
+                    "name": "End_Date"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Specifies comma separated Activity Type Ids for fetching Lead",
+                    "isRequired": false,
+                    "label": "Activity Type Ids (Lead / LeadActivity)",
+                    "name": "Activity_Type_Id"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Specifies a field which needs to be used for filtering the Leads",
+                    "isRequired": false,
+                    "label": "Filter Field (Lead)",
+                    "name": "Filter_Field"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Specifies comma separated Lead Ids for filtering the LeadActivity",
+                    "isRequired": false,
+                    "label": "LeadActivity Ids (LeadActivity)",
+                    "name": "Lead_Ids_For_Activity_Type_Ids"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Comma separated List Ids to get the List Details",
+                    "isRequired": false,
+                    "label": "List Ids (List)",
+                    "name": "List_Id_for_List_Details"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Comma separated Program Ids to which the Programs are related",
+                    "isRequired": false,
+                    "label": "Program Ids (Program)",
+                    "name": "Program___Program_Id"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Comma separated Email Ids for getting Email details",
+                    "isRequired": false,
+                    "label": "Email Ids (Email)",
+                    "name": "Email___Email_Id"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Specifies a Program Id for fetching Lead",
+                    "isRequired": false,
+                    "label": "Program Id (Lead)",
+                    "name": "Program_Id"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Comma separated Campaign Ids for getting Campaign details",
+                    "isRequired": false,
+                    "label": "Campaign Ids (Campaign)",
+                    "name": "Campaign_Id"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Comma separated Program Names to which the Lists are related",
+                    "isRequired": false,
+                    "label": "Program Names (List)",
+                    "name": "Program_Name"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Start date range for Lead or LeadActivity data",
+                    "isRequired": false,
+                    "label": "Start Date (Lead / LeadActivity)",
+                    "name": "Start_Date"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Name of the Workspace",
+                    "isRequired": false,
+                    "label": "Workspace (Folder)",
+                    "name": "Folder___Workspace"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Custom/Opportunity/OpportunityRole/Company/SalesPerson Object Filter Type",
+                    "isRequired": false,
+                    "label": "Filter Type (Custom/Opportunity/OpportunityRole/Company/SalesPerson)",
+                    "name": "Custom_Object_Filter_Type"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Comma separated Tag Values for Program",
+                    "isRequired": false,
+                    "label": "Tag Values (Program)",
+                    "name": "Program___Tag_Value"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "description": "Comma separated Tag Types for getting Tag",
+                    "isRequired": false,
+                    "label": "Tag Types (Tag)",
+                    "name": "Tag___Tag_Name"
+                }
+            ],
+            "associatedCategories": ["batchRead", "advancedPropertiesSupport"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Rest API URL",
+                    "maxLength": 1000,
+                    "name": "Rest_API_URL"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "client_credentials",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Grant Type",
+                    "maxLength": 1000,
+                    "name": "grant_type"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Client Secret",
+                    "maxLength": 1000,
+                    "name": "client_secret"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Client Id",
+                    "maxLength": 1000,
+                    "name": "client_id"
+                }
+            ],
+            "isExternal": true,
+            "label": "Marketo Connector",
+            "name": "Marketo",
+            "supportedConnectorHandlers": ["Legacy"],
+            "type": "Marketo"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "muleSoft"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Database Port",
+                    "maxLength": 5,
+                    "name": "dbport"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Cloudhub Env ID",
+                    "maxLength": 300,
+                    "name": "chEnvId"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database Name",
+                    "maxLength": 300,
+                    "name": "dbname"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Database Password",
+                    "maxLength": 300,
+                    "name": "dbpassword"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Cloudhub Password",
+                    "maxLength": 300,
+                    "name": "chPassword"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database Username",
+                    "maxLength": 100,
+                    "name": "dbuser"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Cloudhub Username",
+                    "maxLength": 100,
+                    "name": "chUsername"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database Host",
+                    "maxLength": 300,
+                    "name": "dbhost"
+                }
+            ],
+            "isExternal": true,
+            "label": "MuleSoft MySQL Connector",
+            "name": "MulesoftMySQL",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "MulesoftMySQL"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "muleSoft"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Database Port",
+                    "maxLength": 5,
+                    "name": "dbport"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Cloudhub Env ID",
+                    "maxLength": 300,
+                    "name": "chEnvId"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "public",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Database Schema",
+                    "maxLength": 100,
+                    "name": "dbschema"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database Username",
+                    "maxLength": 100,
+                    "name": "dbuser"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Cloudhub Username",
+                    "maxLength": 100,
+                    "name": "chUsername"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database Name",
+                    "maxLength": 300,
+                    "name": "dbname"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Database Password",
+                    "maxLength": 300,
+                    "name": "dbpassword"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Cloudhub Password",
+                    "maxLength": 300,
+                    "name": "chPassword"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database Host",
+                    "maxLength": 300,
+                    "name": "dbhost"
+                }
+            ],
+            "isExternal": true,
+            "label": "MuleSoft Oracle Connector",
+            "name": "MulesoftOracle",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "MulesoftOracle"
+        },
+        {
+            "advancedProperties": [],
+            "associatedCategories": ["batchRead", "muleSoft"],
+            "connectionProperties": [
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Database Port",
+                    "maxLength": 5,
+                    "name": "dbport"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Cloudhub Env ID",
+                    "maxLength": 300,
+                    "name": "chEnvId"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "dbo",
+                    "isEncrypted": false,
+                    "isRequired": false,
+                    "label": "Database Schema",
+                    "maxLength": 100,
+                    "name": "dbschema"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database Username",
+                    "maxLength": 100,
+                    "name": "dbuser"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Cloudhub Username",
+                    "maxLength": 100,
+                    "name": "chUsername"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database Name",
+                    "maxLength": 300,
+                    "name": "dbname"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Database Password",
+                    "maxLength": 300,
+                    "name": "dbpassword"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": true,
+                    "isRequired": true,
+                    "label": "Cloudhub Password",
+                    "maxLength": 300,
+                    "name": "chPassword"
+                },
+                {
+                    "dataType": "text",
+                    "defaultValue": "",
+                    "isEncrypted": false,
+                    "isRequired": true,
+                    "label": "Database Host",
+                    "maxLength": 300,
+                    "name": "dbhost"
+                }
+            ],
+            "isExternal": true,
+            "label": "MuleSoft SQL Server Connector",
+            "name": "MulesoftSqlServer",
+            "supportedConnectorHandlers": ["Base"],
+            "type": "MulesoftSqlServer"
+        }
+    ],
+    "url": "/services/data/v53.0/wave/dataConnectorTypes"
+}

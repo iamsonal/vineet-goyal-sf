@@ -65,6 +65,32 @@ function getAnalyticsLimitsMatcher(config) {
     });
 }
 
+// Data connector types
+function mockGetDataConnectorTypesNetworkOnce(config, mockData) {
+    const paramMatch = getDataConnectorTypesMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDataConnectorTypesNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDataConnectorTypesMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDataConnectorTypesMatcher(_config) {
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataConnectorTypes`,
+        queryParams: {},
+    });
+}
+
 // Dataflow Jobs
 function mockGetDataflowJobsNetworkOnce(config, mockData) {
     const paramMatch = getDataflowJobsMatcher(config);
@@ -570,6 +596,8 @@ export {
     mockExecuteQueryNetworkErrorOnce,
     mockGetAnalyticsLimitsNetworkOnce,
     mockGetAnalyticsLimitsNetworkErrorOnce,
+    mockGetDataConnectorTypesNetworkOnce,
+    mockGetDataConnectorTypesNetworkErrorOnce,
     mockGetDataflowJobsNetworkOnce,
     mockGetDataflowJobsNetworkErrorOnce,
     mockCreateDataflowJobNetworkOnce,

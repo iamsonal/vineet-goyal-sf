@@ -115,7 +115,7 @@ describe('updateRelatedListInfo', () => {
             userPreferences: mockData.userPreferences,
         };
         const response = await updateRelatedListInfo(props);
-        expect(response.data).toEqualSnapshotWithoutEtags(mockData);
+        expect(response).toEqualSnapshotWithoutEtags(mockData);
     });
 
     it('properly emits when data has been updated', async () => {
@@ -197,9 +197,9 @@ describe('updateRelatedListInfo', () => {
         mockUpdateNetwork(networkConfig, updateSecondConfig, mockSecondUpdate);
 
         const firstResult = await updateRelatedListInfo(updateConfig);
-        expect(firstResult.data).toEqualSnapshotWithoutEtags(mockFirstUpdate);
+        expect(firstResult).toEqualSnapshotWithoutEtags(mockFirstUpdate);
         const secondResult = await updateRelatedListInfo(updateSecondConfig);
-        expect(secondResult.data).toEqualSnapshotWithoutEtags(mockSecondUpdate);
+        expect(secondResult).toEqualSnapshotWithoutEtags(mockSecondUpdate);
     });
 
     it('updates values on elements when an update is made', async () => {

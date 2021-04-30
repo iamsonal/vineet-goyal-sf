@@ -15,7 +15,11 @@ const REPO_ROOT = path.resolve(__dirname, '../../');
 const REPO_LDS_BINDINGS_PATH = path.resolve(REPO_ROOT, 'packages/lds-bindings/dist/ldsBindings.js');
 const REPO_LDS_ENGINE_RUNTIME_AURA_PATH = path.resolve(
     REPO_ROOT,
-    'packages/lds-runtime-aura/dist/ldsEngine.js'
+    'packages/lds-default-luvio/sfdc/ldsEngine.js'
+);
+const REPO_LDS_ENGINE_CREATOR_RUNTIME_AURA_PATH = path.resolve(
+    REPO_ROOT,
+    'packages/lds-runtime-aura/dist/ldsEngineCreator.js'
 );
 const REPO_LDS_ENGINE_RUNTIME_MOBILE_PATH = path.resolve(
     REPO_ROOT,
@@ -76,6 +80,13 @@ const CORE_LDS_ENGINE_RUNTIME_AURA_PATH = path.resolve(
     'app',
     CORE_BRANCH,
     'core/ui-force-components/modules/force/ldsEngine/ldsEngine.js'
+);
+
+const CORE_LDS_ENGINE_CREATOR_RUNTIME_AURA_PATH = path.resolve(
+    BLT_HOME,
+    'app',
+    CORE_BRANCH,
+    'core/ui-force-components/modules/force/ldsEngineCreator/ldsEngineCreator.js'
 );
 
 const CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH = path.resolve(
@@ -319,6 +330,7 @@ function deployAdapterPackage() {
     }
 
     checkCore(CORE_LDS_ENGINE_RUNTIME_AURA_PATH);
+    checkCore(CORE_LDS_ENGINE_CREATOR_RUNTIME_AURA_PATH);
     checkCore(CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH);
     checkCore(CORE_LDS_NETWORK_PATH);
     checkCore(CORE_LDS_STORAGE_PATH);
@@ -347,6 +359,10 @@ function deployAdapterPackage() {
     }
 
     copyArtifacts(REPO_LDS_ENGINE_RUNTIME_AURA_PATH, CORE_LDS_ENGINE_RUNTIME_AURA_PATH);
+    copyArtifacts(
+        REPO_LDS_ENGINE_CREATOR_RUNTIME_AURA_PATH,
+        CORE_LDS_ENGINE_CREATOR_RUNTIME_AURA_PATH
+    );
     copyArtifacts(REPO_LDS_ENGINE_RUNTIME_MOBILE_PATH, CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH);
     copyArtifacts(REPO_LDS_NETWORK_PATH, CORE_LDS_NETWORK_PATH);
     copyArtifacts(REPO_LDS_STORAGE_PATH, CORE_LDS_STORAGE_PATH);

@@ -37,7 +37,7 @@ describe('update record', () => {
         mockUpdateRecordNetwork(updateParams.fields.Id, updateParams, mockResponse);
 
         const response = await updateRecord(updateParams);
-        expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
+        expect(response).toEqualSnapshotWithoutEtags(mockResponse);
     });
 
     it('refreshes all record fields when updating a subset of fields', async () => {
@@ -111,7 +111,7 @@ describe('update record', () => {
         mockGetRecordNetwork(refetchConfig, refetchMock);
 
         const response = await updateRecord(updateParams);
-        expect(response.data).toEqualSnapshotWithoutEtags(mockUpdatedResponse);
+        expect(response).toEqualSnapshotWithoutEtags(mockUpdatedResponse);
 
         expect(wireA.pushCount()).toBe(2);
         expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(expected);
@@ -147,7 +147,7 @@ describe('update record', () => {
         expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(subjectCMock);
 
         const response = await updateRecord(updateParams);
-        expect(response.data).toEqualSnapshotWithoutEtags(mockUpdatedResponse);
+        expect(response).toEqualSnapshotWithoutEtags(mockUpdatedResponse);
 
         // The updated data has changed the underlying record,
         // so wireA gets a new push
@@ -257,7 +257,7 @@ describe('update record', () => {
         const response = await updateRecord(updateParams, {
             ifUnmodifiedSince: '2012-01-01',
         });
-        expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
+        expect(response).toEqualSnapshotWithoutEtags(mockResponse);
     });
 
     it('passes allowSaveOnDuplicate to HTTP request', async () => {
@@ -282,7 +282,7 @@ describe('update record', () => {
         mockUpdateRecordNetwork(updateParams.fields.Id, updateParams, mockResponse);
 
         const response = await updateRecord(updateParams);
-        expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
+        expect(response).toEqualSnapshotWithoutEtags(mockResponse);
     });
 
     it('passes useDefaultRule as a query param to HTTP request', async () => {
@@ -304,7 +304,7 @@ describe('update record', () => {
         );
         mockUpdateRecordNetwork(updateParams.fields.Id, updateParams, mockResponse);
         const response = await updateRecord(updateParams);
-        expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
+        expect(response).toEqualSnapshotWithoutEtags(mockResponse);
     });
 
     it('passes triggerUserEmail as a query param to HTTP request', async () => {
@@ -326,7 +326,7 @@ describe('update record', () => {
         );
         mockUpdateRecordNetwork(updateParams.fields.Id, updateParams, mockResponse);
         const response = await updateRecord(updateParams);
-        expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
+        expect(response).toEqualSnapshotWithoutEtags(mockResponse);
     });
 
     it('passes triggerOtherEmail as a query param to HTTP request', async () => {
@@ -348,7 +348,7 @@ describe('update record', () => {
         );
         mockUpdateRecordNetwork(updateParams.fields.Id, updateParams, mockResponse);
         const response = await updateRecord(updateParams);
-        expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
+        expect(response).toEqualSnapshotWithoutEtags(mockResponse);
     });
 
     it('propagates an immutable error when server rejects request', async () => {
@@ -420,7 +420,7 @@ describe('update record', () => {
         expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(subjectCMock);
 
         const response = await updateRecord(updateParams);
-        expect(response.data).toEqualSnapshotWithoutEtags(mockUpdatedResponse);
+        expect(response).toEqualSnapshotWithoutEtags(mockUpdatedResponse);
 
         const expectedFields = {};
         Object.keys(subjectCMock.fields).forEach(fieldName => {
@@ -502,7 +502,7 @@ describe('update record', () => {
         mockUpdateRecordNetwork(mockResponse.id, updateParams, mockResponse);
 
         const response = await updateRecord(updateParams);
-        expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
+        expect(response).toEqualSnapshotWithoutEtags(mockResponse);
     });
 
     it('should send correct XHR when updating a numeric field with integer value', async () => {
@@ -521,6 +521,6 @@ describe('update record', () => {
         mockUpdateRecordNetwork(mockResponse.id, updateParams, mockResponse);
 
         const response = await updateRecord(updateParams);
-        expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
+        expect(response).toEqualSnapshotWithoutEtags(mockResponse);
     });
 });

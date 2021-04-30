@@ -63,9 +63,11 @@ export function ldsAdaptersConfigs({ adapterModuleName }, overrides = {}) {
                 name: camelCase(adapterModuleName),
                 globals: {
                     'force/ldsBindings': 'ldsBindings',
+                    'force/ldsEngine': 'ldsEngine',
+                    'force/ldsInstrumentation': 'ldsInstrumentation',
                 },
             },
-            external: ['force/ldsBindings'],
+            external: ['force/ldsBindings', 'force/ldsEngine', 'force/ldsInstrumentation'],
             plugins: compat && [compatBabelPlugin],
         };
     });

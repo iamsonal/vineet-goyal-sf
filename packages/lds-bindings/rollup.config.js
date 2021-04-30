@@ -10,7 +10,7 @@ const footer = buildFooter(packageJson.version);
 export default {
     input: './src/main.ts',
 
-    external: ['lwc', '@salesforce/lds-instrumentation', '@salesforce/lds-runtime-web'],
+    external: ['lwc', '@salesforce/lds-instrumentation'],
 
     output: {
         file: 'dist/ldsBindings.js',
@@ -19,7 +19,6 @@ export default {
         footer,
         paths: {
             '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
-            '@salesforce/lds-runtime-web': 'force/ldsEngine',
         },
     },
 

@@ -13,20 +13,24 @@ const ldsEngine = {
     input: './src/main.ts',
 
     external: [
+        '@luvio/engine',
         '@salesforce/lds-aura-storage',
-        '@salesforce/lds-network',
+        '@salesforce/lds-default-luvio',
         '@salesforce/lds-instrumentation',
+        '@salesforce/lds-network-aura',
     ],
 
     output: {
-        file: 'dist/ldsEngine.js',
+        file: 'dist/ldsEngineCreator.js',
         format: 'esm',
         banner,
         footer,
         paths: {
-            '@salesforce/lds-network': 'force/ldsNetwork',
+            '@luvio/engine': 'force/ldsEngine',
             '@salesforce/lds-aura-storage': 'force/ldsStorage',
+            '@salesforce/lds-default-luvio': 'force/ldsEngine',
             '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
+            '@salesforce/lds-network-aura': 'force/ldsNetwork',
         },
     },
     plugins: [

@@ -31,9 +31,11 @@
         ]
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.11.4"
+        "@salesforce/lds-bindings": "1.11.4",
+        "@salesforce/lds-default-luvio": "1.11.4"
     },
     "devDependencies": {
+        "@luvio/engine": "0.32.0",
         "@salesforce/lds-karma": "1.11.4"
     }
 }

@@ -1,3 +1,1 @@
-export const luvio = {
-    withContext: jest.fn(),
-};
+export { setDefaultLuvio, withDefaultLuvio } from '@salesforce/lds-default-luvio';

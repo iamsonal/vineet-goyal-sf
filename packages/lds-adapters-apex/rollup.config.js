@@ -31,8 +31,13 @@ const config = {
  */
 export default function(args) {
     const sfdcConfigurations = sfdcConfiguration(config, {
-        external: ['./lds-apex-static-utils', '@salesforce/lds-instrumentation'],
+        external: [
+            './lds-apex-static-utils',
+            '@salesforce/lds-instrumentation',
+            '@salesforce/lds-default-luvio',
+        ],
         outputPaths: {
+            '@salesforce/lds-default-luvio': 'force/ldsEngine',
             '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
         },
     });

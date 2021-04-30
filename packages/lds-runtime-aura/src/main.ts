@@ -1,7 +1,20 @@
-import { luvio } from '@salesforce/lds-runtime-web';
-
+import { Luvio, Store, Environment } from '@luvio/engine';
+import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
+import networkAdapter from '@salesforce/lds-network-aura';
+import { instrumentation, setupInstrumentation } from '@salesforce/lds-instrumentation';
 import { setupMetadataWatcher } from './metadata';
 
-setupMetadataWatcher(luvio);
+export default function ldsEngineCreator() {
+    const store = new Store();
+    const environment = new Environment(store, networkAdapter);
+    const luvio = new Luvio(environment, {
+        instrument: instrumentation.instrumentNetwork.bind(instrumentation),
+    });
 
-export { luvio };
+    setupInstrumentation(luvio, store);
+    setupMetadataWatcher(luvio);
+
+    setDefaultLuvio({ luvio });
+
+    return { name: 'ldsEngineCreator' };
+}

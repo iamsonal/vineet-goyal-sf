@@ -15,9 +15,10 @@ const defaultConfigs = [
 
 const PATHS = {
     '@salesforce/lds-bindings': 'force/ldsBindings',
+    '@salesforce/lds-default-luvio': 'force/ldsEngine',
 };
 
-const EXTERNALS = ['@salesforce/lds-bindings'];
+const EXTERNALS = ['@salesforce/lds-bindings', '@salesforce/lds-default-luvio'];
 
 /**
  * @param {string} cwd

@@ -5,12 +5,14 @@ const ADAPTER_MODULE_NAME = 'lds-adapters-uiapi';
 const ADAPTER_TEST_UTIL_NAME = 'uiapi-test-util';
 
 const FILES = [
+    require.resolve('./karma/dist/uiapi-mock-instrumentation.js'),
     require.resolve(`./karma/dist/${ADAPTER_MODULE_NAME}.js`),
     require.resolve(`./karma/dist/${ADAPTER_TEST_UTIL_NAME}.js`),
     require.resolve('./karma/dist/uiapi-test-setup.js'),
 ];
 
 const COMPAT_FILES = [
+    require.resolve('./karma/dist/compat/uiapi-mock-instrumentation.js'),
     require.resolve(`./karma/dist/compat/${ADAPTER_MODULE_NAME}.js`),
     require.resolve(`./karma/dist/compat/${ADAPTER_TEST_UTIL_NAME}.js`),
     require.resolve('./karma/dist/compat/uiapi-test-setup.js'),

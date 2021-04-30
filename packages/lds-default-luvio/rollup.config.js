@@ -7,7 +7,7 @@ import { buildBanner, buildFooter } from '../../scripts/rollup/rollup-utils';
 const banner = buildBanner(true);
 const footer = buildFooter(packageJson.version);
 
-export default [
+const ldsDefaultLuvioConfigs = [
     { formats: ['es', 'umd'], target: 'es2018' },
     { formats: ['umd'], target: 'es5' },
 ]
@@ -42,3 +42,22 @@ export default [
         }))
     )
     .flat();
+
+const coreConfig = {
+    input: 'src/sfdc.ts',
+    output: {
+        file: `sfdc/ldsEngine.js`,
+        format: 'es',
+        name: 'ldsEngine',
+        banner,
+        footer,
+    },
+    plugins: [
+        resolve(),
+        typescript({
+            clean: true,
+        }),
+    ],
+};
+
+export default [...ldsDefaultLuvioConfigs, coreConfig];

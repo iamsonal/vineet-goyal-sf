@@ -12,8 +12,8 @@ const adsBridge = {
     external: [
         'instrumentation/service',
         '@salesforce/lds-instrumentation',
-        '@salesforce/lds-runtime-aura',
         '@salesforce/lds-adapters-uiapi',
+        '@salesforce/lds-default-luvio',
     ],
     output: {
         file: 'dist/adsBridge.js',
@@ -22,7 +22,7 @@ const adsBridge = {
         footer,
         paths: {
             '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
-            '@salesforce/lds-runtime-aura': 'force/ldsEngine',
+            '@salesforce/lds-default-luvio': 'force/ldsEngine',
             '@salesforce/lds-adapters-uiapi': 'force/ldsAdaptersUiapi',
         },
     },

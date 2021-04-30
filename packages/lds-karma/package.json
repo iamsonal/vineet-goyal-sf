@@ -11,6 +11,7 @@
     },
     "dependencies": {
         "@luvio/engine": "0.32.0",
-        "@luvio/lwc-luvio": "0.32.0"
+        "@luvio/lwc-luvio": "0.32.0",
+        "@salesforce/lds-default-luvio": "1.11.4"
     }
 }

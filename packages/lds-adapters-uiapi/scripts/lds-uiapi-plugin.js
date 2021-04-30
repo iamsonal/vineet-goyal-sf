@@ -54,74 +54,77 @@ const RAML_ARTIFACTS = {
  * @returns {void}
  */
 function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperativeAdapterInfos) {
-    const imports = [
-        `import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}, ${CREATE_LDS_ADAPTER} } from '@salesforce/lds-bindings';`,
-    ];
-
-    const exports = [];
+    const adapterCode = {};
 
     generatedAdapterInfos.forEach(({ apiFamily, name, method, ttl }) => {
         const factoryIdentifier = `${name}AdapterFactory`;
         const adapterNameIdentifier = `${name}__adapterName`;
-        imports.push(
-            `import { ${factoryIdentifier}, adapterName as ${adapterNameIdentifier} } from '../adapters/${name}';`
-        );
 
-        if (method === 'get') {
-            if (ttl !== undefined) {
-                exports.push(
-                    `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {apiFamily: '${apiFamily}', name: ${adapterNameIdentifier}, ttl: ${ttl}});`
-                );
-            } else {
-                exports.push(
-                    `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {apiFamily: '${apiFamily}', name: ${adapterNameIdentifier}});`
-                );
-            }
-            return;
-        }
+        const bind =
+            method === 'get'
+                ? ttl !== undefined
+                    ? `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(luvio, ${factoryIdentifier}, {apiFamily: '${apiFamily}', name: ${adapterNameIdentifier}, ttl: ${ttl}})`
+                    : `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(luvio, ${factoryIdentifier}, {apiFamily: '${apiFamily}', name: ${adapterNameIdentifier}})`
+                : `${name}: ${CREATE_LDS_ADAPTER}(luvio, ${adapterNameIdentifier}, ${factoryIdentifier})`;
 
-        exports.push(
-            `export const ${name} = ${CREATE_LDS_ADAPTER}(${adapterNameIdentifier}, ${factoryIdentifier});`
-        );
+        adapterCode[name] = {
+            bind,
+            import: `import { ${factoryIdentifier}, adapterName as ${adapterNameIdentifier} } from '../adapters/${name}';`,
+        };
     });
 
-    imports.push('');
     imperativeAdapterInfos.forEach(({ apiFamily, name, method, ttl }) => {
         const factoryIdentifier = `${name}AdapterFactory`;
 
-        imports.push(`import { factory as ${factoryIdentifier} } from '../../wire/${name}';`);
+        const bind =
+            method === 'get'
+                ? ttl !== undefined
+                    ? `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(luvio, ${factoryIdentifier}, {apiFamily: '${apiFamily}', name: '${name}', ttl: ${ttl}})`
+                    : `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(luvio, ${factoryIdentifier}, {apiFamily: '${apiFamily}', name: '${name}'})`
+                : method === 'post' || method === 'patch'
+                ? `${name}: unwrapSnapshotData(${factoryIdentifier})`
+                : `${name}: ${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier})`;
 
-        switch (method) {
-            case 'get':
-                if (ttl !== undefined) {
-                    exports.push(
-                        `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {apiFamily: '${apiFamily}', name: '${name}', ttl: ${ttl}});`
-                    );
-                } else {
-                    exports.push(
-                        `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(${factoryIdentifier}, {apiFamily: '${apiFamily}', name: '${name}'});`
-                    );
-                }
-                break;
-            case 'post':
-            case 'patch':
-                exports.push(dedent`
-                        const _${name} = ${CREATE_LDS_ADAPTER}('${name}', ${factoryIdentifier});
-                        export const ${name} = (...config: Parameters<ReturnType<typeof ${factoryIdentifier}>>) => {
-                            return _${name}(...config).then(snapshot => snapshot.data);
-                        };
-                    `);
-                break;
-            default:
-                exports.push(
-                    `export const ${name} = ${CREATE_LDS_ADAPTER}('${name}', ${factoryIdentifier});`
-                );
-        }
+        adapterCode[name] = {
+            bind,
+            import: `import { factory as ${factoryIdentifier} } from '../../wire/${name}';`,
+        };
     });
 
-    const code = [imports.join('\n'), exports.join('\n')];
+    const adapterNames = Object.keys(adapterCode).sort();
 
-    fs.writeFileSync(path.join(artifactsDir, 'sfdc.ts'), code.join('\n\n'));
+    const code = dedent`
+        import { Luvio, Snapshot } from '@luvio/engine';
+        import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}, ${CREATE_LDS_ADAPTER} } from '@salesforce/lds-bindings';
+        import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
+        
+        ${adapterNames.map(name => adapterCode[name].import).join('\n')}
+        
+        type AdapterFactoryish<DataType> = (luvio: Luvio) => (...config: unknown[]) => Promise<Snapshot<DataType>>;
+        
+        ${adapterNames.map(name => 'let ' + name + ': any;').join('\n    ')}
+        
+        function bindExportsTo(luvio: Luvio): { [key: string]: any } {
+            function unwrapSnapshotData<DataType>(factory: AdapterFactoryish<DataType>) {
+                const adapter = factory(luvio);
+                return (...config: unknown[]) => (adapter(...config) as Promise<Snapshot<DataType>>).then(snapshot => snapshot.data);
+            }
+        
+            return {
+                ${adapterNames.map(name => adapterCode[name].bind).join(',\n            ')}
+            }
+        }
+        
+        withDefaultLuvio((luvio: Luvio) => {
+            ({
+                ${adapterNames.join(',\n            ')}
+            } = bindExportsTo(luvio));
+        });
+        
+        export { ${adapterNames.join(', ')}};
+        `;
+
+    fs.writeFileSync(path.join(artifactsDir, 'sfdc.ts'), code);
 }
 
 /**

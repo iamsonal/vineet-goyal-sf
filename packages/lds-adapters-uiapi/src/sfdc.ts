@@ -1,4 +1,10 @@
-import { createLDSAdapter, refresh as refreshUiApi } from '@salesforce/lds-bindings';
+import { Luvio } from '@luvio/engine';
+import {
+    bindWireRefresh,
+    createLDSAdapter,
+    refresh as refreshUiApi,
+} from '@salesforce/lds-bindings';
+import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
 
 import {
     incrementGetRecordNotifyChangeAllowCount,
@@ -23,10 +29,8 @@ export const refresh: typeof refreshUiApi = function<D>(data: D) {
 
 /** Custom adapters */
 // updateLayoutUserState adapter should always return undefined
-const baseUpdateLayoutUserState = createLDSAdapter(
-    'updateLayoutUserState',
-    updateLayoutUserStateAdapterFactory
-);
+let baseUpdateLayoutUserState: ReturnType<typeof updateLayoutUserStateAdapterFactory>;
+
 export const updateLayoutUserState = (
     apiName: unknown,
     recordTypeId: unknown,
@@ -43,12 +47,10 @@ export const updateLayoutUserState = (
     ).then(() => undefined);
 };
 
-const baseUpdateRelatedListInfo = createLDSAdapter(
-    'baseUpdateRelatedListInfo',
-    updateRelatedListInfoAdapterFactory
-);
 // In order to export the imperative wire correctly, we need to add some safety checks
 // to ensure the config passed is correct
+let baseUpdateRelatedListInfo: ReturnType<typeof updateRelatedListInfoAdapterFactory>;
+
 export const updateRelatedListInfo = (
     config: Parameters<ReturnType<typeof updateRelatedListInfoAdapterFactory>>[0]
 ) => {
@@ -67,15 +69,33 @@ export const updateRelatedListInfo = (
 };
 
 /** SFDC utils */
-export const getRecordNotifyChange = throttle(
-    60,
-    60000,
-    createLDSAdapter('getRecordNotifyChange', GetRecordNotifyChange),
-    {
-        allowFunction: incrementGetRecordNotifyChangeAllowCount,
-        dropFunction: incrementGetRecordNotifyChangeDropCount,
-    }
-);
+export let getRecordNotifyChange: any;
+
+withDefaultLuvio((luvio: Luvio) => {
+    bindWireRefresh(luvio);
+
+    baseUpdateLayoutUserState = createLDSAdapter(
+        luvio,
+        'updateLayoutUserState',
+        updateLayoutUserStateAdapterFactory
+    );
+
+    baseUpdateRelatedListInfo = createLDSAdapter(
+        luvio,
+        'baseUpdateRelatedListInfo',
+        updateRelatedListInfoAdapterFactory
+    );
+
+    getRecordNotifyChange = throttle(
+        60,
+        60000,
+        createLDSAdapter(luvio, 'getRecordNotifyChange', GetRecordNotifyChange),
+        {
+            allowFunction: incrementGetRecordNotifyChangeAllowCount,
+            dropFunction: incrementGetRecordNotifyChangeDropCount,
+        }
+    );
+});
 
 export {
     createRecordInputFilteredByEditedFields,

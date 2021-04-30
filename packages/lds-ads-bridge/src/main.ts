@@ -1,4 +1,10 @@
+import { Luvio } from '@luvio/engine';
 import AdsBridge from './ads-bridge';
-import { luvio } from '@salesforce/lds-runtime-aura';
 
-export const adsBridge = new AdsBridge(luvio);
+import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
+
+export let adsBridge: AdsBridge;
+
+withDefaultLuvio((luvio: Luvio) => {
+    adsBridge = new AdsBridge(luvio);
+});

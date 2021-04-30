@@ -63,7 +63,7 @@ describe('Update Avatar record', () => {
         const response = await updateRecordAvatar(updateParams);
 
         //assert
-        expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
+        expect(response).toEqualSnapshotWithoutEtags(mockResponse);
     });
 
     it('update avatar call correctly calls update and returns mocked response type photo', async () => {
@@ -76,7 +76,7 @@ describe('Update Avatar record', () => {
         const response = await updateRecordAvatar(updateParams);
 
         //assert
-        expect(response.data).toEqualSnapshotWithoutEtags(mockResponse);
+        expect(response).toEqualSnapshotWithoutEtags(mockResponse);
     });
 
     it('update avatar publishes to listening getRecordAvatars wired adapters with different avatars (theme->photo)', async () => {

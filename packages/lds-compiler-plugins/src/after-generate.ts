@@ -2,6 +2,7 @@ import { CompilerConfig, ModelInfo } from '@luvio/compiler';
 import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';
+import dedent from 'dedent';
 
 type AdapterInfo = {
     apiFamily: string;
@@ -9,6 +10,11 @@ type AdapterInfo = {
     method: string;
     refreshable: boolean;
     ttl?: number;
+};
+
+type ProcessedAdapter = {
+    bind: string;
+    import: string;
 };
 
 const CREATE_WIRE_ADAPTER_CONSTRUCTOR = 'createWireAdapterConstructor';
@@ -29,51 +35,56 @@ function generateNpmModule(outputDir: string, adapters: AdapterInfo[]) {
 }
 
 function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
-    const code: { imports: string[]; exports: string[] } = adapters.reduce(
-        (seed: { imports: string[]; exports: string[] }, adapter: AdapterInfo) => {
-            const { apiFamily, name, method, ttl } = adapter;
-            const factoryIdentifier = `${name}AdapterFactory`;
-            const adapterNameIdentifier = `${name}__adapterName`;
+    const adapterCode = adapters.reduce((_adapterCode, adapter) => {
+        const { apiFamily, name, method, ttl } = adapter;
+        const factoryIdentifier = `${name}AdapterFactory`;
+        const adapterNameIdentifier = `${name}__adapterName`;
 
-            seed.imports.push(
-                `import { ${factoryIdentifier}, adapterName as ${adapterNameIdentifier} } from '../adapters/${name}';`
-            );
+        _adapterCode[name] = {
+            bind:
+                method === 'get'
+                    ? `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}(luvio, ${factoryIdentifier}, {apiFamily: '${apiFamily}', name: ${adapterNameIdentifier}, ttl: ${ttl}}),`
+                    : `${name}: ${CREATE_LDS_ADAPTER}(luvio, ${adapterNameIdentifier}, ${factoryIdentifier}),`,
+            import: `import { ${factoryIdentifier}, adapterName as ${adapterNameIdentifier} } from '../adapters/${name}';`,
+        };
 
-            if (method === 'get') {
-                seed.exports.push(
-                    `export const ${name} = ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}(${factoryIdentifier}, {apiFamily: '${apiFamily}', name: ${adapterNameIdentifier}, ttl: ${ttl}});`
-                );
-            } else {
-                seed.exports.push(
-                    `export const ${name} = ${CREATE_LDS_ADAPTER}(${adapterNameIdentifier}, ${factoryIdentifier});`
-                );
-            }
+        if (adapter.refreshable) {
+            const notifyChangeNameIdentifier = `${name}NotifyChange`;
+            const notifyChangeFactoryIdentifier = `${name}__notifyChangeFactory`;
 
-            if (adapter.refreshable) {
-                const notifyChangeNameIdentifier = `${name}NotifyChange`;
-                const notifyChangeFactoryIdentifier = `${name}__notifyChangeFactory`;
-
-                seed.imports.push(
-                    `import { notifyChangeFactory as ${notifyChangeFactoryIdentifier} } from '../adapters/${name}';`
-                );
-
-                const notifyChangeExport = `export const ${notifyChangeNameIdentifier} = ${CREATE_LDS_ADAPTER}('${notifyChangeNameIdentifier}', ${notifyChangeFactoryIdentifier});`;
-                seed.exports.push(notifyChangeExport);
-            }
-
-            return seed;
-        },
-        {
-            imports: [],
-            exports: [],
+            _adapterCode[notifyChangeNameIdentifier] = {
+                bind: `${notifyChangeNameIdentifier}: ${CREATE_LDS_ADAPTER}(luvio, '${notifyChangeNameIdentifier}', ${notifyChangeFactoryIdentifier}),`,
+                import: `import { notifyChangeFactory as ${notifyChangeFactoryIdentifier} } from '../adapters/${name}';`,
+            };
         }
-    );
 
-    const source = [
-        `import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}, ${CREATE_LDS_ADAPTER} } from '${LDS_BINDINGS}';`,
-        `${code.imports.join('\n')}`,
-        `${code.exports.join('\n')}`,
-    ].join('\n\n');
+        return _adapterCode;
+    }, {} as { [key: string]: ProcessedAdapter });
+
+    const adapterNames = Object.keys(adapterCode).sort();
+
+    const source = dedent`
+        import { Luvio } from '@luvio/engine';
+        import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}, ${CREATE_LDS_ADAPTER} } from '${LDS_BINDINGS}';
+        import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
+        ${adapterNames.map(name => adapterCode[name].import).join('\n')}
+
+        ${adapterNames.map(name => 'let ' + name + ': any;').join('\n    ')}
+
+        function bindExportsTo(luvio: Luvio): { [key: string]: any } {
+            return {
+                ${adapterNames.map(name => adapterCode[name].bind).join('\n')}
+            };
+        }
+
+        withDefaultLuvio((luvio: Luvio) => {
+            ({
+                ${adapterNames.join(',\n        ')}
+            } = bindExportsTo(luvio));
+        });
+
+        export { ${adapterNames.join(', ')} };
+    `;
 
     fs.writeFileSync(path.join(outputDir, 'sfdc.ts'), source);
 }

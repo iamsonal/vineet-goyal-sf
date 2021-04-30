@@ -1,5 +1,6 @@
 import { Luvio, Store, Environment, IngestPath } from '@luvio/engine';
 import { makeOffline, makeDurable } from '@luvio/environments';
+import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
 
 import {
     RecordRepresentation,
@@ -115,5 +116,19 @@ const env = makeEnvironmentDraftAware(
 );
 
 luvio = new Luvio(env);
+setDefaultLuvio({ luvio });
 
 export { luvio, draftQueue, draftManager };
+
+/**
+ * NB: to exactly match force/ldsEngine, we'd also need to:
+ *
+ * export { Environment, GraphNode, HttpStatusCode, Luvio, Reader, Store } from '@luvio/engine';
+ * export { setDefaultLuvio } from '@salesforce/lds-default-luvio';
+ *
+ * but those are really only needed for scenarios like force/ldsEngineCreator where the luvio instance
+ * is created by a different module.
+ */
+
+// so adapter modules can find our luvio instance
+export { withDefaultLuvio } from '@salesforce/lds-default-luvio';

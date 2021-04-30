@@ -1,7 +1,7 @@
 import { getMock as globalGetMock } from 'test-util';
 import { mockGraphqlNetwork } from 'graphql-test-util';
 
-import { graphql } from 'lds-adapters-graphql';
+import { graphQLImperative } from 'lds-adapters-graphql';
 
 const MOCK_PREFIX = 'wire/graphql/__karma__/basic/data/';
 
@@ -110,7 +110,7 @@ describe('graphql', () => {
             variables: {},
         };
 
-        const snapshot = await graphql(graphqlConfig);
+        const snapshot = await graphQLImperative(graphqlConfig);
         expect(snapshot.data).toEqual(networkData);
     });
 });

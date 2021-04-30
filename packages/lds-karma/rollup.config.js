@@ -41,10 +41,9 @@ function ldsBindingsConfigs(configs) {
                 name: 'ldsBindings',
                 globals: {
                     lwc: 'LWC',
-                    'lds-engine': 'ldsEngine',
                 },
             },
-            external: ['lwc', 'lds-engine'],
+            external: ['lwc'],
             plugins: [resolve(), ...(compat ? [compatBabelPlugin] : [])],
         };
     });

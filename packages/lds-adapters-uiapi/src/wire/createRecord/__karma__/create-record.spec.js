@@ -29,7 +29,7 @@ describe('createRecord', () => {
 
         const data = await createRecord(createRecordConfig);
 
-        expect(data.data).toEqualSnapshotWithoutEtags(mockRecord);
+        expect(data).toEqualSnapshotWithoutEtags(mockRecord);
     });
 
     it('should not hit the network when another wire tries to access the newly created record', async () => {

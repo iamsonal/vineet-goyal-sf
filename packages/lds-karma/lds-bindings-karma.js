@@ -1,17 +1,20 @@
 import {
     createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor,
-    bindWireRefresh,
+    bindWireRefresh as lwcLdsBindWireRefresh,
 } from '@luvio/lwc-luvio';
-import { luvio } from 'lds-engine';
 
-export function createWireAdapterConstructor(factory, metadata) {
+export function createWireAdapterConstructor(luvio, factory, metadata) {
     const { apiFamily, name } = metadata;
-    const adapter = createLDSAdapter(name, factory);
+    const adapter = createLDSAdapter(luvio, name, factory);
     return lwcLdsCreateWireAdapterConstructor(adapter, `${apiFamily}.${name}`, luvio);
 }
 
-export function createLDSAdapter(name, factory) {
+export function createLDSAdapter(luvio, name, factory) {
     return factory(luvio);
 }
 
-export const refresh = bindWireRefresh(luvio);
+export let refresh;
+
+export function bindWireRefresh(luvio) {
+    refresh = lwcLdsBindWireRefresh(luvio);
+}

@@ -54,13 +54,27 @@ function uiApiTestSetupConfig() {
     });
 }
 
+function instrumentationConfigs() {
+    const entryFile = path.join(__dirname, 'karma', 'uiapi-mock-instrumentation.js');
+
+    return targetConfigs.map(({ compat }) => {
+        return {
+            input: entryFile,
+            output: {
+                file: getTargetPath('uiapi-mock-instrumentation.js', compat),
+                format: 'umd',
+                name: 'ldsInstrumentation',
+            },
+            plugins: compat && [compatBabelPlugin],
+        };
+    });
+}
+
 module.exports = [
     // uiApiConstants needs to be built prior to uiApiTestUtil
     uiApiConstantsConfig(),
     ...uiApiTestSetupConfig(),
-    ...ldsAdaptersConfigs(
-        { adapterModuleName: 'lds-adapters-uiapi' },
-        { entryFile: path.join(__dirname, 'karma', 'lds-adapters-uiapi.js') }
-    ),
+    ...ldsAdaptersConfigs({ adapterModuleName: 'lds-adapters-uiapi' }),
     ...adapterTestUtilConfigs({ testUtilName: 'uiapi-test-util' }),
+    ...instrumentationConfigs(),
 ];

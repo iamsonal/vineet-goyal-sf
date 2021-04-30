@@ -1,4 +1,9 @@
 import * as uiapiExports from '../sfdc';
+import ldsEngineCreator from 'force/ldsEngineCreator';
+
+beforeAll(() => {
+    ldsEngineCreator();
+});
 
 describe('SFDC exports', () => {
     describe('items exported to core', () => {

@@ -4,6 +4,7 @@ import { DRAFT_RECORD_ID, RECORD_ID, STORE_KEY_DRAFT_RECORD } from '../../__test
 import { mockDurableStoreDraftResponse, setupDraftEnvironment } from './test-utils';
 import mockCompositeResponseSingleRecord from './mockData/records-single-Accounts-fields-Account.Id,Account.Name.json';
 import mockCompositeResponseMultipleRecords from './mockData/records-multiple-Accounts-fields-Account.Id,Account.Name.json';
+import mockCompositeResponseMultipleRecordsDraftIngested from './mockData/records-multiple-Accounts-fields-Account.Id,Account.Name-DraftIngestedFirst.json';
 import { clone } from '../../utils/clone';
 import { getRecordKeyForId } from '../../utils/records';
 
@@ -90,6 +91,33 @@ describe('draft environment tests', () => {
             );
         });
 
+        it('maintains order of requested ids in response', async () => {
+            const { draftEnvironment, network, durableStore } = setupDraftEnvironment();
+
+            mockDurableStoreDraftResponse(durableStore);
+            mockCompositeNetworkResponse(network);
+
+            // create getRecords request containing a mix of draft ids and canonical ids
+            const request = buildRequest([DRAFT_RECORD_ID, RECORD_ID], FIELDS, []);
+            const response = await draftEnvironment.dispatchResourceRequest<BatchRepresentation>(
+                request
+            );
+
+            // ensure network request containing only canonical ids is made
+            expect(network).toBeCalledTimes(1);
+            expect(network.mock.calls[0][0].basePath).toBe(`/ui-api/records/batch/${RECORD_ID}`);
+
+            // ensure result contains the network response and synthetic responses
+            const compoundResponse = response.body;
+            expect(compoundResponse.results.length).toBe(2);
+            expect(compoundResponse.results[0].statusCode).toBe(200);
+            expect((compoundResponse.results[0].result as RecordRepresentation).id).toBe(
+                DRAFT_RECORD_ID
+            );
+            expect(compoundResponse.results[1].statusCode).toBe(200);
+            expect((compoundResponse.results[1].result as RecordRepresentation).id).toBe(RECORD_ID);
+        });
+
         it('returns mutable data', async () => {
             const { draftEnvironment, network, durableStore } = setupDraftEnvironment();
 
@@ -172,6 +200,44 @@ describe('draft environment tests', () => {
             );
             expect(response.body.results.length).toBe(2);
             expect((response.body.results[1].result as any).id).toBe(mappedRecordId);
+        });
+
+        it('maintains request id order with ingested draft records', async () => {
+            const { draftEnvironment, network, store } = setupDraftEnvironment();
+            const mappedRecordId =
+                mockCompositeResponseMultipleRecordsDraftIngested.results[0].result.id;
+            const nonMappedRecordId =
+                mockCompositeResponseMultipleRecordsDraftIngested.results[1].result.id;
+            let networkCount = 0;
+
+            network.mockImplementation(() => {
+                networkCount++;
+
+                expect(networkCount).toBeLessThanOrEqual(2);
+
+                if (networkCount === 1) {
+                    const mappedRecordKey = getRecordKeyForId(mappedRecordId);
+                    store.redirect(STORE_KEY_DRAFT_RECORD, mappedRecordKey);
+                    return Promise.resolve({
+                        body: clone(mockCompositeResponseSingleRecord),
+                    });
+                }
+
+                if (networkCount === 2) {
+                    return Promise.resolve({
+                        body: clone(mockCompositeResponseMultipleRecordsDraftIngested),
+                    });
+                }
+            });
+
+            // create getRecords request containing a mix of draft ids and canonical ids
+            const request = buildRequest([DRAFT_RECORD_ID, nonMappedRecordId], FIELDS, []);
+            const response = await draftEnvironment.dispatchResourceRequest<BatchRepresentation>(
+                request
+            );
+            expect(response.body.results.length).toBe(2);
+            expect((response.body.results[0].result as any).id).toBe(mappedRecordId);
+            expect((response.body.results[1].result as any).id).toBe(nonMappedRecordId);
         });
     });
 });

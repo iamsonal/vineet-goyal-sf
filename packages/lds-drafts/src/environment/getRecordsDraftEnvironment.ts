@@ -140,6 +140,7 @@ function applyDraftsToBatchResponse(
         })
         .then(() => {
             const fields = getRecordFieldsFromRecordRequest(resourceRequest) || [];
+            const requestedIds = extractRecordIdsFromResourceRequest(resourceRequest) || [];
             for (let i = 0; i < length; i++) {
                 const draftId = draftIds[i];
                 const draftKey = keyBuilderRecord({ recordId: draftId });
@@ -155,7 +156,11 @@ function applyDraftsToBatchResponse(
                         },
                     });
                 } else {
-                    response.body.results.push({
+                    // It is a luvio invariant that the order of resources in response
+                    // matches the order of ids in the request
+                    const requestIndex = requestedIds.indexOf(draftId);
+                    const insertIndex = requestIndex >= 0 ? requestIndex : 0;
+                    response.body.results.splice(insertIndex, 0, {
                         statusCode: 200,
                         result: record,
                     });

@@ -65,6 +65,37 @@ function getAnalyticsLimitsMatcher(config) {
     });
 }
 
+// Data Connectors
+function mockGetDataConnectorsNetworkOnce(config, mockData) {
+    const paramMatch = getDataConnectorsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDataConnectorsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDataConnectorsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDataConnectorsMatcher(config) {
+    let { category, connectorType, scope } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataConnectors`,
+        queryParams: {
+            category,
+            connectorType,
+            scope,
+        },
+    });
+}
+
 // Data connector types
 function mockGetDataConnectorTypesNetworkOnce(config, mockData) {
     const paramMatch = getDataConnectorTypesMatcher(config);
@@ -596,6 +627,8 @@ export {
     mockExecuteQueryNetworkErrorOnce,
     mockGetAnalyticsLimitsNetworkOnce,
     mockGetAnalyticsLimitsNetworkErrorOnce,
+    mockGetDataConnectorsNetworkOnce,
+    mockGetDataConnectorsNetworkErrorOnce,
     mockGetDataConnectorTypesNetworkOnce,
     mockGetDataConnectorTypesNetworkErrorOnce,
     mockGetDataflowJobsNetworkOnce,

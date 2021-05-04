@@ -254,12 +254,24 @@ types:
         type: string
       value:
         description: The value of the connection property
-        type: object
+        type: string | integer | boolean #TODO handrolled W-9203372
   DailyScheduleRepresentation:
     description: Daily schedule on which to execute some type of job
     discriminatorValue: daily
     type: ScheduleRepresentation
     properties: {}
+  DataConnectorCollectionRepresentation:
+    description: A list of Data Connectors.
+    type: object
+    properties:
+      dataConnectors:
+        description: A list of Data Connectors.
+        type: array
+        items:
+          type: DataConnectorRepresentation
+      url:
+        description: The URL to get the collection.
+        type: string
   DataConnectorRepresentation:
     description: A Data Connector represents a connection.
     discriminatorValue: dataConnector
@@ -270,6 +282,13 @@ types:
         type: array
         items:
           type: ConnectionPropertyValueRepresentation
+      connectorHandler:
+        description: Third party driver used for connection
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+        enum:
+          - Base
+          - Legacy
       connectorType:
         description: The type of data connector.
         type: string
@@ -2474,6 +2493,121 @@ types:
       assetId:
         type: string
         required: true
+  /dataConnectors:
+    get:
+      description: A collection of Wave Data Connectors.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DataConnectorCollectionRepresentation
+      queryParameters:
+        category:
+          type: string
+          required: false
+          enum:
+            - AdvancedPropertiesSupport
+            - BatchRead
+            - Direct
+            - FileBased
+            - FilterSupport
+            - MuleSoft
+            - Output
+        connectorType:
+          type: string
+          required: false
+          enum:
+            - ActCRM
+            - ActOn
+            - AdobeAnalytics
+            - AmazonAthena
+            - AmazonDynamoDB
+            - AmazonS3
+            - AmazonS3Output
+            - AwsMarketplace
+            - AwsRdsAuroraMySQL
+            - AwsRdsAuroraPostgres
+            - AwsRdsMariaDB
+            - AwsRdsMySQL
+            - AwsRdsOracle
+            - AwsRdsPostgres
+            - AwsRdsSqlServer
+            - AzureCosmosDB
+            - AzureSqlDatabase
+            - AzureSqlDatawarehouse
+            - AzureTable
+            - Box
+            - Cassandra
+            - CdpDirect
+            - Dropbox
+            - GoogleAds
+            - GoogleAnalytics
+            - GoogleBigQuery
+            - GoogleBigQueryStandardSQL
+            - GoogleCloudStorage
+            - GoogleSheets
+            - GoogleSpanner
+            - HerokuPostgres
+            - IbmCloudSqlQuery
+            - LinkedIn
+            - MarkLogic
+            - Marketo
+            - MicrosoftAdvertising
+            - MicrosoftDynamics
+            - MongoDB
+            - MulesoftAnaplan
+            - MulesoftConcur
+            - MulesoftHubSpot
+            - MulesoftMarkLogic
+            - MulesoftMongoDB
+            - MulesoftMySQL
+            - MulesoftOracle
+            - MulesoftServiceNow
+            - MulesoftSqlServer
+            - MulesoftSuccessFactors
+            - MulesoftWorkday
+            - MulesoftZuora
+            - NetSuite
+            - OracleEloqua
+            - Redshift
+            - SalesforceCPQ
+            - SalesforceCommunityCloud
+            - SalesforceEinsteinAnalytics
+            - SalesforceExternal
+            - SalesforceForceCom
+            - SalesforceMarketingCloud
+            - SalesforceMarketingCloudFull
+            - SalesforceMarketingCloudOAuth2
+            - SalesforceOutput
+            - SalesforceReport
+            - SalesforceSalesCloud
+            - SalesforceServiceCloud
+            - SapConcur
+            - SapHana
+            - SapSuccessFactors
+            - ServiceNow
+            - SfdcLocal
+            - SnowflakeComputing
+            - SnowflakeDirect
+            - SnowflakeOutput
+            - SugarCRM
+            - TableauHyperOutput
+            - Teradata
+            - VeevaVault
+            - Xactly
+            - Zendesk
+            - ZohoCRM
+            - ZuoraAQuA
+        scope:
+          type: string
+          required: false
+          enum:
+            - CreatedByMe
+            - Favorites
+            - IncludeAllPrivate
+            - Mru
+            - SharedWithMe
   /dataConnectorTypes:
     get:
       description: A collection of Wave Data Connector Types.

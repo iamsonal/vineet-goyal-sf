@@ -3586,6 +3586,54 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/dataconnectors', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors`,
+            },
+            [
+                'WaveController.getDataConnectors',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/dataconnectors`,
+                    queryParams: {
+                        category: 'FileBased',
+                        connectorType: 'AmazonS3',
+                        scope: 'SharedWithMe',
+                    },
+                },
+                [
+                    'WaveController.getDataConnectors',
+                    {
+                        category: 'FileBased',
+                        connectorType: 'AmazonS3',
+                        scope: 'SharedWithMe',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors`,
+            },
+            {}
+        );
+    });
+
     describe('get /wave/dataConnectorTypes', () => {
         testControllerInput(
             {

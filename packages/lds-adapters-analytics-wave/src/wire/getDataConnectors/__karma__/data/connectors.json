@@ -1,0 +1,441 @@
+{
+    "dataConnectors": [
+        {
+            "connectionProperties": [],
+            "connectorHandler": "Legacy",
+            "connectorType": "SfdcLocal",
+            "createdBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-10-14T14:36:56.000Z",
+            "description": "SFDC_LOCAL",
+            "id": "0ItRM0000004Dfe0AE",
+            "ingestionSchedule": {
+                "assetId": "0ItRM0000004Dfb0AE",
+                "daysOfWeek": [],
+                "frequency": "weekly",
+                "notificationLevel": "warnings"
+            },
+            "label": "SFDC_LOCAL",
+            "lastModifiedBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-10-14T14:36:56.000Z",
+            "name": "SFDC_LOCAL",
+            "type": "dataconnector",
+            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfe0AE"
+        },
+        {
+            "connectionProperties": [
+                {
+                    "name": "AccessKey",
+                    "value": "******"
+                },
+                {
+                    "name": "FolderPath",
+                    "value": "?????"
+                },
+                {
+                    "name": "MasterSymmetricKey",
+                    "value": "******"
+                },
+                {
+                    "name": "RegionName",
+                    "value": "?????"
+                },
+                {
+                    "name": "SecretKey",
+                    "value": "******"
+                }
+            ],
+            "connectorHandler": "Legacy",
+            "connectorType": "AmazonS3",
+            "createdBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-10-14T14:36:56.000Z",
+            "description": "s3testKeys",
+            "id": "0ItRM0000004Dfb0AE",
+            "ingestionSchedule": {
+                "assetId": "0ItRM0000004Dfb0AE",
+                "daysOfWeek": [],
+                "frequency": "weekly",
+                "notificationLevel": "warnings"
+            },
+            "label": "s3testKeys",
+            "lastModifiedBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-10-14T14:36:56.000Z",
+            "name": "s3testKeys",
+            "type": "dataconnector",
+            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfb0AE"
+        },
+        {
+            "connectionProperties": [
+                {
+                    "name": "AccessKey",
+                    "value": "******"
+                },
+                {
+                    "name": "FolderPath",
+                    "value": "?????"
+                },
+                {
+                    "name": "MasterSymmetricKey",
+                    "value": "******"
+                },
+                {
+                    "name": "RegionName",
+                    "value": "?????"
+                },
+                {
+                    "name": "SecretKey",
+                    "value": "******"
+                }
+            ],
+            "connectorHandler": "Legacy",
+            "connectorType": "AmazonS3",
+            "createdBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-10-14T14:36:56.000Z",
+            "description": "arg7d",
+            "id": "0ItRM0000004Dfc0AE",
+            "ingestionSchedule": {
+                "assetId": "0ItRM0000004Dfc0AE",
+                "daysOfWeek": [],
+                "frequency": "weekly",
+                "notificationLevel": "warnings"
+            },
+            "label": "arg7",
+            "lastModifiedBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-10-14T14:36:56.000Z",
+            "name": "arg7dn",
+            "type": "dataconnector",
+            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfc0AE"
+        },
+        {
+            "connectionProperties": [
+                {
+                    "name": "AccessKey",
+                    "value": "******"
+                },
+                {
+                    "name": "FolderPath",
+                    "value": "?????"
+                },
+                {
+                    "name": "MasterSymmetricKey",
+                    "value": "******"
+                },
+                {
+                    "name": "RegionName",
+                    "value": "?????"
+                },
+                {
+                    "name": "SecretKey",
+                    "value": "******"
+                }
+            ],
+            "connectorHandler": "Legacy",
+            "connectorType": "AmazonS3",
+            "createdBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-10-14T14:36:56.000Z",
+            "description": "badinfod",
+            "id": "0ItRM0000004Dfd0AE",
+            "ingestionSchedule": {
+                "assetId": "0ItRM0000004Dfd0AE",
+                "daysOfWeek": [],
+                "frequency": "weekly",
+                "notificationLevel": "warnings"
+            },
+            "label": "badinfo",
+            "lastModifiedBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-10-14T14:36:56.000Z",
+            "name": "badinfodn",
+            "type": "dataconnector",
+            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfd0AE"
+        },
+        {
+            "connectionProperties": [
+                {
+                    "name": "AccessKey",
+                    "value": "******"
+                },
+                {
+                    "name": "FolderPath",
+                    "value": "?????"
+                },
+                {
+                    "name": "MasterSymmetricKey",
+                    "value": "******"
+                },
+                {
+                    "name": "RegionName",
+                    "value": "?????"
+                },
+                {
+                    "name": "SecretKey",
+                    "value": "******"
+                }
+            ],
+            "connectorHandler": "Legacy",
+            "connectorType": "AmazonS3",
+            "createdBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-10-14T14:36:56.000Z",
+            "description": "arf&#39;&quot;&gt;&lt;img src=x onerror=alert(2)&gt;;alert(4)|sleep 200|`sleep 200`",
+            "id": "0ItRM0000004Dfg0AE",
+            "ingestionSchedule": {
+                "assetId": "0ItRM0000004Dfg0AE",
+                "daysOfWeek": [],
+                "frequency": "weekly",
+                "notificationLevel": "warnings"
+            },
+            "label": "&#39;&quot;`arf&#39;&quot;&gt;&lt;img src=x onerror=alert(2)&gt;;alert(4)|sleep 200|`sleep 200`",
+            "lastModifiedBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-10-14T14:36:56.000Z",
+            "name": "arf",
+            "type": "dataconnector",
+            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfg0AE"
+        },
+        {
+            "connectionProperties": [
+                {
+                    "name": "AccessKey",
+                    "value": "******"
+                },
+                {
+                    "name": "FolderPath",
+                    "value": "?????"
+                },
+                {
+                    "name": "MasterSymmetricKey",
+                    "value": "******"
+                },
+                {
+                    "name": "RegionName",
+                    "value": "?????"
+                },
+                {
+                    "name": "SecretKey",
+                    "value": "******"
+                }
+            ],
+            "connectorHandler": "Legacy",
+            "connectorType": "AmazonS3",
+            "createdBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-10-14T14:36:56.000Z",
+            "description": "someDescription",
+            "id": "0ItRM0000004Dfh0AE",
+            "ingestionSchedule": {
+                "assetId": "0ItRM0000004Dfh0AE",
+                "daysOfWeek": [],
+                "frequency": "weekly",
+                "notificationLevel": "warnings"
+            },
+            "label": "arf2ConNameFolderPathTest",
+            "lastModifiedBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-10-14T14:36:56.000Z",
+            "name": "arf2DevName",
+            "type": "dataconnector",
+            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfh0AE"
+        },
+        {
+            "connectionProperties": [
+                {
+                    "name": "AccessKey",
+                    "value": "******"
+                },
+                {
+                    "name": "FolderPath",
+                    "value": "?????"
+                },
+                {
+                    "name": "MasterSymmetricKey",
+                    "value": "******"
+                },
+                {
+                    "name": "RegionName",
+                    "value": "?????"
+                },
+                {
+                    "name": "SecretKey",
+                    "value": "******"
+                }
+            ],
+            "connectorHandler": "Legacy",
+            "connectorType": "AmazonS3",
+            "createdBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-10-14T14:36:56.000Z",
+            "description": "arf5desc",
+            "id": "0ItRM0000004Dfi0AE",
+            "ingestionSchedule": {
+                "assetId": "0ItRM0000004Dfi0AE",
+                "daysOfWeek": [],
+                "frequency": "weekly",
+                "notificationLevel": "warnings"
+            },
+            "label": "arf5con",
+            "lastModifiedBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-10-14T14:36:56.000Z",
+            "name": "arfarf5dev",
+            "type": "dataconnector",
+            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfi0AE"
+        },
+        {
+            "connectionProperties": [
+                {
+                    "name": "AccessKey",
+                    "value": "******"
+                },
+                {
+                    "name": "FolderPath",
+                    "value": "?????"
+                },
+                {
+                    "name": "MasterSymmetricKey",
+                    "value": "******"
+                },
+                {
+                    "name": "RegionName",
+                    "value": "?????"
+                },
+                {
+                    "name": "SecretKey",
+                    "value": "******"
+                }
+            ],
+            "connectorHandler": "Legacy",
+            "connectorType": "AmazonS3",
+            "createdBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-10-14T14:36:56.000Z",
+            "description": "deletemedec",
+            "id": "0ItRM0000004Dfj0AE",
+            "ingestionSchedule": {
+                "assetId": "0ItRM0000004Dfj0AE",
+                "daysOfWeek": [],
+                "frequency": "weekly",
+                "notificationLevel": "warnings"
+            },
+            "label": "deleteme",
+            "lastModifiedBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-10-14T14:36:56.000Z",
+            "name": "deletemedv",
+            "type": "dataconnector",
+            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfj0AE"
+        },
+        {
+            "connectionProperties": [
+                {
+                    "name": "account",
+                    "value": "?????"
+                },
+                {
+                    "name": "db",
+                    "value": "?????"
+                },
+                {
+                    "name": "password",
+                    "value": "******"
+                },
+                {
+                    "name": "role",
+                    "value": ""
+                },
+                {
+                    "name": "schema",
+                    "value": "?????"
+                },
+                {
+                    "name": "user",
+                    "value": "?????"
+                },
+                {
+                    "name": "warehouse",
+                    "value": "?????"
+                }
+            ],
+            "connectorType": "SnowflakeDirect",
+            "createdBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2020-10-14T14:36:56.000Z",
+            "description": "Sample Data",
+            "id": "0ItRM0000004Dfk0AE",
+            "ingestionSchedule": {
+                "assetId": "0ItRM0000004Dfk0AE",
+                "daysOfWeek": [],
+                "frequency": "weekly",
+                "notificationLevel": "warnings"
+            },
+            "label": "Sample Data",
+            "lastModifiedBy": {
+                "id": "005RM000002AuUpYAK",
+                "name": "Admin User",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2020-10-14T14:36:56.000Z",
+            "name": "Sample_Data",
+            "type": "dataconnector",
+            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfk0AE"
+        }
+    ],
+    "url": "/services/data/v53.0/wave/dataConnectors"
+}

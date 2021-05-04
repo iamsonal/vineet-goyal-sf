@@ -25,7 +25,7 @@
         "test:memory": "rollup -c ./scripts/memory/rollup.config.js && node --expose-gc ./scripts/memory/build/test.js",
         "test:size": "lerna run --scope @salesforce/* test:size",
         "release:adapters:corejar": "lerna run --scope @salesforce/* release:corejar",
-        "release:core": "yarn release:adapters:corejar && lerna run release:core-package",
+        "release:corejar": "yarn release:adapters:corejar && lerna run release:core-package",
         "release:adapters": "lerna run --scope @salesforce/* release:core",
         "release:adapters:local": "lerna run --scope @salesforce/* release:core -- --auto-checkout",
         "release": "yarn release:adapters && ./scripts/release/core.js",

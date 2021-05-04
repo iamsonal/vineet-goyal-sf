@@ -19,6 +19,7 @@
         "build:services": "rollup --config rollup.config.js",
         "clean": "rm -rf dist sfdc src/generated karma/dist",
         {{RELEASE_CORE}}
+        {{RELEASE_COREJAR}}
         "start": "karma start",
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat",

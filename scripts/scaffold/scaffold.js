@@ -45,8 +45,11 @@ const PACKAGE_CONTRIBUTORS_TAG = '{{PACKAGE_CONTRIBUTORS}}';
 const BUNDLE_NAME_TAG = '{{BUNDLE_NAME}}';
 const ARTIFACT_NAME = '{{ARTIFACT_NAME}}';
 const RELEASE_CORE_TAG = '{{RELEASE_CORE}}';
+const RELEASE_COREJAR_TAG = '{{RELEASE_COREJAR}}';
 const RELEASE_CORE =
-    '"release:core": "yarn build && packages/core-build/scripts/core.js --adapter={{PACKAGE_NAME_TAG}}",';
+    '"release:core": "../../scripts/release/core.js --adapter={{PACKAGE_NAME_TAG}}",';
+const RELEASE_COREJAR =
+    '"release:corejar": "yarn build && packages/core-build/scripts/core.js --adapter={{PACKAGE_NAME_TAG}}",';
 
 function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -91,6 +94,7 @@ function renderPackageJSON(config) {
     const formatted = ldsPackageJSONTemplate
         .replace(DESCRIPTION_TAG, description)
         .replace(RELEASE_CORE_TAG, releaseToCore ? RELEASE_CORE : '')
+        .replace(RELEASE_COREJAR_TAG, releaseToCore ? RELEASE_COREJAR : '')
         .replace(new RegExp(PACKAGE_NAME_TAG, 'g'), packageName)
         .replace(PACKAGE_NAMESPACE_TAG, getPackageNamespace(cloud))
         .replace(new RegExp(LDS_VERSION_TAG, 'g'), config.engineVersion)

@@ -29,7 +29,7 @@ import {
 } from '@luvio/adapter-test-library';
 import { ObjectKeys } from '../utils/language';
 import { DurableStoreEntry, DurableStoreEntries } from '@luvio/environments';
-import { createPatchRequest, createPostRequest, RECORD_ID } from './test-utils';
+import { createPatchRequest, createPostRequest, flushPromises, RECORD_ID } from './test-utils';
 import { ResourceRequest } from '@luvio/engine';
 import {
     buildDraftDurableStoreKey,
@@ -1107,7 +1107,7 @@ describe('DurableDraftQueue', () => {
             );
             const draftTag = 'UiAPI::RecordRepresentation::fooId';
             const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'targetId');
-            let secondUpdate = UPDATE_REQUEST;
+            const secondUpdate = { ...UPDATE_REQUEST };
             secondUpdate.baseUri = 'secondTestURI';
             const actionTwo = await draftQueue.enqueue(secondUpdate, draftTag, 'targetId');
             let actions = await draftQueue.getQueueActions();
@@ -1140,6 +1140,8 @@ describe('DurableDraftQueue', () => {
             expect(deletedCalled).toBe(true);
             expect(updatingCalled).toBe(true);
             expect(updatedCalled).toBe(true);
+
+            await flushPromises();
         });
 
         it('rejects on equal draft action ids', async () => {
@@ -1515,7 +1517,7 @@ describe('DurableDraftQueue', () => {
             expect(actions.length).toBe(1);
             action = actions[0];
             expect(action.metadata).toEqual(newMetadata);
-            expect(action).toBe(updated);
+            expect(action).toEqual(updated);
         });
 
         it('isnt overwritten by errored action', async () => {

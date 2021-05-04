@@ -50,18 +50,18 @@ export function coerceActualAdapterConfigToGeneratedRepresentation(
     config.relatedLists.forEach(relatedList => {
         relatedListIds.push(relatedList.relatedListId);
         if (!!relatedList.fields && relatedList.fields.length) {
-            fields.push(relatedList.relatedListId + ':' + relatedList.fields?.join());
+            fields.push(relatedList.relatedListId + ':' + relatedList.fields.join());
         }
         if (!!relatedList.optionalFields && relatedList.optionalFields.length) {
             optionalFields.push(
-                relatedList.relatedListId + ':' + relatedList.optionalFields?.join()
+                relatedList.relatedListId + ':' + relatedList.optionalFields.join()
             );
         }
         if (relatedList.pageSize) {
             pageSize.push(relatedList.relatedListId + ':' + relatedList.pageSize);
         }
         if (!!relatedList.sortBy && relatedList.sortBy.length) {
-            sortBy.push(relatedList.relatedListId + ':' + relatedList.sortBy?.join());
+            sortBy.push(relatedList.relatedListId + ':' + relatedList.sortBy.join());
         }
     });
     const fieldsParam = fields.join(';');

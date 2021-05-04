@@ -45,18 +45,22 @@ export const createChildResourceParams: typeof generatedCreateChildResourceParam
         index += 1
     ) {
         const relatedListId = resourceParams.urlParams.relatedListIds[index];
-        const fields = extractSingleResourceParamsFromBatchParamString(
+        const fieldsString = extractSingleResourceParamsFromBatchParamString(
             relatedListId,
             resourceParams.queryParams.fields
-        )?.split(',');
-        const optionalFields = extractSingleResourceParamsFromBatchParamString(
+        );
+        const fields = fieldsString === undefined ? undefined : fieldsString.split(',');
+        const optionalFieldsString = extractSingleResourceParamsFromBatchParamString(
             relatedListId,
             resourceParams.queryParams.optionalFields
-        )?.split(',');
-        const sortBy = extractSingleResourceParamsFromBatchParamString(
+        );
+        const optionalFields =
+            optionalFieldsString === undefined ? undefined : optionalFieldsString.split(',');
+        const sortByString = extractSingleResourceParamsFromBatchParamString(
             relatedListId,
             resourceParams.queryParams.sortBy
-        )?.split(',');
+        );
+        const sortBy = sortByString === undefined ? undefined : sortByString.split(',');
         const pageSize = extractSingleResourceParamsFromBatchParamString(
             relatedListId,
             resourceParams.queryParams.pageSize
@@ -82,10 +86,14 @@ function extractSingleResourceParamsFromBatchParamString(
     relatedListId: string,
     batchParamString?: string
 ): string | undefined {
-    return batchParamString
-        ?.split(';')
-        .find(fieldString => fieldString.split(':')[0] === relatedListId)
-        ?.slice(relatedListId.length + 1);
+    if (batchParamString === undefined) {
+        return undefined;
+    }
+
+    const match = batchParamString
+        .split(';')
+        .find(fieldString => fieldString.split(':')[0] === relatedListId);
+    return match === undefined ? undefined : match.slice(relatedListId.length + 1);
 }
 
 // HUGE BLOCK OF COPY PASTED CODE:

@@ -64,7 +64,7 @@ export interface RequestFields {
  */
 function formatDisplayValue(value: boolean | number | string | null) {
     // TODO: [W-7919614] This method should properly format displayValues for FieldValueRepresentations
-    return value?.toString() ?? null;
+    return value === null ? null : value.toString();
 }
 
 /**

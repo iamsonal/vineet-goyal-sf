@@ -183,8 +183,18 @@ export const ingestSuccess: typeof generatedIngestSuccess = (
             `${Object.keys(snapshot.missingPaths).join(
                 ', '
             )} missing immediately after get-related-list-records request.
-            Requested fields: ${resourceRequestConfig.queryParams.fields?.join()}
-            Requested optionalFields: ${resourceRequestConfig.queryParams.optionalFields?.join()}
+            Requested fields: ${
+                resourceRequestConfig.queryParams.fields === null ||
+                resourceRequestConfig.queryParams.fields === undefined
+                    ? undefined
+                    : resourceRequestConfig.queryParams.fields.join()
+            }
+            Requested optionalFields: ${
+                resourceRequestConfig.queryParams.optionalFields === null ||
+                resourceRequestConfig.queryParams.optionalFields === undefined
+                    ? undefined
+                    : resourceRequestConfig.queryParams.optionalFields.join()
+            }
             ${returnedFieldsDebug}`
         );
     }

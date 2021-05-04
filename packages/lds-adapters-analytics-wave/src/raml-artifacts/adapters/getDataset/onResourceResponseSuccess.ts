@@ -14,12 +14,15 @@ export function onResourceResponseSuccess(
     response: ResourceResponse<DatasetRepresentation>
 ) {
     // save off the name->id for the next request
-    if (response.body?.name) {
+    if (response.body !== null && response.body !== undefined && response.body.name) {
         datasetNameToIdCache.set(response.body.name, response.body.id);
     }
     let cacheResourceParams: ResourceRequestConfig;
     // we need to always cache on the datasetId, so check if the urlParams was not using the returned id
-    if (resourceParams.urlParams.datasetIdOrApiName !== response.body?.id) {
+    if (
+        resourceParams.urlParams.datasetIdOrApiName !==
+        (response.body === null || response.body === undefined ? undefined : response.body.id)
+    ) {
         // and switch it to use the id in the response, so ingestSuccess() will use that to gen the cache key
         cacheResourceParams = {
             ...resourceParams,

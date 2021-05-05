@@ -41,6 +41,7 @@
         "@luvio/engine": "0.32.2",
         "@luvio/lwc-luvio": "0.32.2",
         "@salesforce/lds-karma": "1.11.4"
+
     },
     "volta": {
         "extends": "../../package.json"

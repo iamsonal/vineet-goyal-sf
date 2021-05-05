@@ -8,7 +8,6 @@ import {
     DEFAULT_NAME_FIELD_VALUE,
     mockDurableStoreResponse,
     setupDraftEnvironment,
-    STORE_KEY_FIELD__NAME,
     STORE_KEY_RECORD,
 } from './test-utils';
 import mockGetRecord from './mockData/record-Account-fields-Account.Id,Account.Name.json';
@@ -69,8 +68,26 @@ describe('draft environment tests', () => {
             const redirected2 = 'bar';
             const redirected2Key = getRecordKeyForId(redirected2);
             store.redirect(STORE_KEY_RECORD, redirected2Key);
-            mockDurableStoreResponse(durableStore);
+            durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue({
+                apiName: DEFAULT_API_NAME,
+                childRelationships: {},
+                eTag: '',
+                fields: {
+                    Name: {
+                        displayValue: DEFAULT_NAME_FIELD_VALUE,
+                        value: DEFAULT_NAME_FIELD_VALUE,
+                    },
+                },
+                id: RECORD_ID,
+                lastModifiedById: null,
+                lastModifiedDate: null,
+                recordTypeId: null,
+                recordTypeInfo: null,
+                systemModstamp: null,
+                weakEtag: -1,
+            });
             const request = createPatchRequest();
+
             await draftEnvironment.dispatchResourceRequest(request);
 
             const expectedRequest = {
@@ -88,7 +105,7 @@ describe('draft environment tests', () => {
                 },
             });
 
-            durableStore.getEntries = jest.fn().mockRejectedValue(undefined);
+            durableStore.getDenormalizedRecord = jest.fn().mockRejectedValue(undefined);
             const request = {
                 baseUri: '/services/data/v53.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
@@ -120,15 +137,11 @@ describe('draft environment tests', () => {
                 status: 200,
             });
 
-            // turns out it's non-trivial to mock makeDurable.reviveRecordsToStore
-            // so we mock the 5th call to getEntries (that's the call from reviveRecordsToStore)
-            const realReadFunction = durableStore.getEntries.bind(durableStore);
-            durableStore.getEntries = jest
+            const realReadFunction = durableStore.getDenormalizedRecord.bind(durableStore);
+            durableStore.getDenormalizedRecord = jest
                 .fn()
                 .mockImplementationOnce((ids, segment) => realReadFunction(ids, segment))
-                .mockImplementationOnce((ids, segment) => realReadFunction(ids, segment))
-                .mockImplementationOnce((ids, segment) => realReadFunction(ids, segment))
-                .mockImplementationOnce((ids, segment) => realReadFunction(ids, segment))
+                // mock the second call
                 .mockResolvedValueOnce(undefined);
 
             const request = {
@@ -198,33 +211,23 @@ describe('draft environment tests', () => {
             });
 
             store.redirect(STORE_KEY_DRAFT_RECORD, STORE_KEY_RECORD);
-            durableStore.getEntries = jest.fn().mockResolvedValue({
-                [STORE_KEY_RECORD]: {
-                    data: {
-                        apiName: DEFAULT_API_NAME,
-                        childRelationships: {},
-                        eTag: '',
-                        fields: {
-                            OwnerId: {
-                                __ref: STORE_KEY_FIELD__NAME,
-                            },
-                        },
-                        id: RECORD_ID,
-                        lastModifiedById: null,
-                        lastModifiedDate: null,
-                        recordTypeId: null,
-                        recordTypeInfo: null,
-                        systemModstamp: null,
-                        weakEtag: -1,
-                    },
-                },
-
-                [STORE_KEY_FIELD__NAME]: {
-                    data: {
+            durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue({
+                apiName: DEFAULT_API_NAME,
+                childRelationships: {},
+                eTag: '',
+                fields: {
+                    OwnerId: {
                         displayValue: null,
                         value: RECORD_ID,
                     },
                 },
+                id: RECORD_ID,
+                lastModifiedById: null,
+                lastModifiedDate: null,
+                recordTypeId: null,
+                recordTypeInfo: null,
+                systemModstamp: null,
+                weakEtag: -1,
             });
             const request = {
                 baseUri: '/services/data/v53.0',

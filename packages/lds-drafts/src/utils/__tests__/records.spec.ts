@@ -1,7 +1,11 @@
 import { Environment, Store } from '@luvio/engine';
-import { makeDurable } from '@luvio/environments';
-import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
-import { DraftActionStatus, PendingDraftAction, QueueOperationType } from '../../DraftQueue';
+import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import {
+    DraftAction,
+    DraftActionStatus,
+    PendingDraftAction,
+    QueueOperationType,
+} from '../../DraftQueue';
 import {
     buildDurableRecordRepresentation,
     createDeleteRequest,
@@ -15,10 +19,8 @@ import {
     STORE_KEY_RECORD,
     CURRENT_USER_ID,
     DEFAULT_TIME_STAMP,
-    buildMockDurableStore,
-    mockDurableStoreDraftResponse,
-    STORE_KEY_DRAFT_RECORD,
     createCompletedDraftAction,
+    STORE_KEY_DRAFT_RECORD,
 } from '../../__tests__/test-utils';
 import {
     buildRecordFieldValueRepresentationsFromDraftFields,
@@ -30,9 +32,6 @@ import {
     replayDraftsOnRecord,
     buildDraftDurableStoreKey,
     extractRecordKeyFromDraftDurableStoreKey,
-    reviveRecordToStore,
-    lookupRecordWithFields,
-    markDraftRecordOptionalFieldsMissing,
     updateQueueOnPost,
 } from '../records';
 
@@ -64,27 +63,45 @@ describe('draft environment record utilities', () => {
 
     describe('buildSyntheticRecordRepresentation', () => {
         it('builds sythetic record with fields', () => {
-            const lastModDate = 'lastModDate';
-            const createdDate = 'createdDate';
-            const syntheticRecord = buildSyntheticRecordRepresentation(
-                CURRENT_USER_ID,
-                DRAFT_RECORD_ID,
-                DEFAULT_API_NAME,
-                { Name: DEFAULT_NAME_FIELD_VALUE },
-                lastModDate,
-                createdDate
-            );
+            const timestamp = Date.now();
+            const actionId = 'foo';
+            const action: DraftAction<RecordRepresentation> = {
+                tag: STORE_KEY_DRAFT_RECORD,
+                targetId: DRAFT_RECORD_ID,
+                timestamp,
+                id: actionId,
+                metadata: {},
+                status: DraftActionStatus.Pending,
+                request: {
+                    method: 'post',
+                    body: {
+                        apiName: 'Account',
+                        fields: {
+                            Name: DEFAULT_NAME_FIELD_VALUE,
+                        },
+                    },
+                } as any,
+            };
+
+            const syntheticRecord = buildSyntheticRecordRepresentation(action, CURRENT_USER_ID);
 
             expect(syntheticRecord).toEqual({
                 id: DRAFT_RECORD_ID,
                 apiName: DEFAULT_API_NAME,
                 childRelationships: {},
+                drafts: {
+                    created: true,
+                    deleted: false,
+                    draftActionIds: [actionId],
+                    edited: false,
+                    serverValues: {},
+                },
                 eTag: '',
                 lastModifiedById: CURRENT_USER_ID,
-                lastModifiedDate: lastModDate,
+                lastModifiedDate: timestamp.toString(),
                 recordTypeId: null,
                 recordTypeInfo: null,
-                systemModstamp: createdDate,
+                systemModstamp: timestamp.toString(),
                 weakEtag: -1,
                 fields: {
                     Name: {
@@ -96,7 +113,7 @@ describe('draft environment record utilities', () => {
                         displayValue: null,
                     },
                     CreatedDate: {
-                        value: createdDate,
+                        value: timestamp,
                         displayValue: null,
                     },
                     LastModifiedById: {
@@ -104,7 +121,7 @@ describe('draft environment record utilities', () => {
                         displayValue: null,
                     },
                     LastModifiedDate: {
-                        value: lastModDate,
+                        value: timestamp,
                         displayValue: null,
                     },
                     OwnerId: {
@@ -114,6 +131,29 @@ describe('draft environment record utilities', () => {
                     Id: {
                         value: DRAFT_RECORD_ID,
                         displayValue: null,
+                    },
+                },
+                links: {
+                    CreatedById: {
+                        __ref:
+                            'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__CreatedById',
+                    },
+                    CreatedDate: {
+                        __ref:
+                            'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__CreatedDate',
+                    },
+                    Id: { __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Id' },
+                    LastModifiedById: {
+                        __ref:
+                            'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__LastModifiedById',
+                    },
+                    LastModifiedDate: {
+                        __ref:
+                            'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__LastModifiedDate',
+                    },
+                    Name: { __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Name' },
+                    OwnerId: {
+                        __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__OwnerId',
                     },
                 },
             });
@@ -446,137 +486,6 @@ describe('draft environment record utilities', () => {
         });
     });
 
-    describe('reviveRecordToStore', () => {
-        it('revives and marks missing optionalFields missing', async () => {
-            const durableStore = buildMockDurableStore();
-            mockDurableStoreDraftResponse(durableStore);
-            const env = makeDurable(new Environment(new Store(), jest.fn()), {
-                durableStore,
-            });
-
-            const record = await reviveRecordToStore(
-                STORE_KEY_DRAFT_RECORD,
-                { fields: ['Name'], optionalFields: ['Birthday'] },
-                env
-            );
-
-            expect(record).toBeDefined();
-            expect(record.fields['Name']).toBeDefined();
-            expect(record.fields['Birthday']).toBeUndefined();
-        });
-        it('returns undefined if required field is missing', async () => {
-            const durableStore = buildMockDurableStore();
-            mockDurableStoreDraftResponse(durableStore);
-            const env = makeDurable(new Environment(new Store(), jest.fn()), {
-                durableStore,
-            });
-
-            const record = await reviveRecordToStore(
-                STORE_KEY_DRAFT_RECORD,
-                { fields: ['Name', 'Birthday'], optionalFields: [] },
-                env
-            );
-
-            expect(record).toBeUndefined();
-        });
-    });
-
-    describe('lookupRecordWithFields', () => {
-        async function setup() {
-            const durableStore = buildMockDurableStore();
-            mockDurableStoreDraftResponse(durableStore);
-            const env = makeDurable(new Environment(new Store(), jest.fn()), {
-                durableStore,
-            });
-
-            const record = await reviveRecordToStore(
-                STORE_KEY_DRAFT_RECORD,
-                { fields: ['Name'], optionalFields: ['Birthday'] },
-                env
-            );
-
-            return { record, env, durableStore };
-        }
-
-        it('returns fulfilled data', async () => {
-            const { env } = await setup();
-            const record = lookupRecordWithFields(
-                STORE_KEY_DRAFT_RECORD,
-                { fields: ['Name'], optionalFields: [] },
-                env
-            );
-            expect(record).toBeDefined();
-        });
-        it('returns stale data', async () => {
-            const { env } = await setup();
-            // expire the record
-            env.storeSetExpiration(STORE_KEY_DRAFT_RECORD, 5, Number.MAX_SAFE_INTEGER);
-            const record = lookupRecordWithFields(
-                STORE_KEY_DRAFT_RECORD,
-                { fields: ['Name'], optionalFields: [] },
-                env
-            );
-            expect(record).toBeDefined();
-        });
-
-        it('returns mutable data', async () => {
-            const { env } = await setup();
-            const record = lookupRecordWithFields(
-                STORE_KEY_DRAFT_RECORD,
-                { fields: ['Name'], optionalFields: [] },
-                env
-            );
-            record.apiName = 'foo';
-            expect(record.apiName).toBe('foo');
-        });
-    });
-
-    describe('markDraftRecordOptionalFieldsMissing', () => {
-        it('only applies to draft records', () => {
-            const mockRecord = {
-                id: 'foo',
-                fields: { Name: {} },
-            };
-            const env = new Environment(new Store(), jest.fn());
-            env.storePublish('foo', mockRecord);
-            markDraftRecordOptionalFieldsMissing('foo', ['Birthday'], env);
-            const records = env.getStoreRecords();
-            const storeRecord = records['foo'];
-            expect(storeRecord.fields.Birthday).toBeUndefined();
-        });
-
-        it('marks missing optional fields missing', () => {
-            const mockRecord = {
-                id: 'foo',
-                drafts: {},
-                fields: { Name: {} },
-            };
-            const env = new Environment(new Store(), jest.fn());
-            env.storePublish('foo', mockRecord);
-            markDraftRecordOptionalFieldsMissing('foo', ['Birthday'], env);
-            const records = env.getStoreRecords();
-            const storeRecord = records['foo'];
-            expect(storeRecord.fields.Birthday.isMissing).toBe(true);
-            expect(Object.prototype.hasOwnProperty.call(storeRecord.fields.Birthday, '__ref')).toBe(
-                true
-            );
-            expect(storeRecord.fields.Birthday.__ref).toBe(undefined);
-        });
-
-        it('does not impact non-missing optional fields', () => {
-            const mockRecord = {
-                id: 'foo',
-                drafts: {},
-                fields: { Name: {}, Color: 'green' },
-            };
-            const env = new Environment(new Store(), jest.fn());
-            env.storePublish('foo', mockRecord);
-            markDraftRecordOptionalFieldsMissing('foo', ['Birthday', 'Color'], env);
-            const records = env.getStoreRecords();
-            const storeRecord = records['foo'];
-            expect(storeRecord.fields.Color).toBe('green');
-        });
-    });
     describe('updateQueueOnPost', () => {
         it('replaces actions in the queue on the draft-created record', () => {
             const draftId = 'foo';

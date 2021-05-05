@@ -1,9 +1,6 @@
 import { HttpStatusCode } from '@luvio/engine';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
-import {
-    buildRecordFieldStoreKey,
-    extractRecordIdFromStoreKey,
-} from '@salesforce/lds-uiapi-record-utils';
+import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
 import { DRAFT_ERROR_CODE } from '../../DraftFetchResponse';
 import { getRecordKeyForId } from '../../utils/records';
 import {
@@ -16,7 +13,6 @@ import {
 
 const CREATE_DRAFT_RECORD_ID = '001x000001XL1tAAG';
 const STORE_KEY_DRAFT_RECORD = `UiApi::RecordRepresentation:${CREATE_DRAFT_RECORD_ID}`;
-const DRAFT_STORE_KEY_FIELD__NAME = `UiApi::RecordRepresentation:${CREATE_DRAFT_RECORD_ID}__fields__Name`;
 
 describe('draft environment tests', () => {
     describe('createRecord', () => {
@@ -53,37 +49,26 @@ describe('draft environment tests', () => {
 
             let assignedDraftId = '';
             let assignedDraftIdStoreKey = '';
-            durableStore.getEntries = jest.fn().mockImplementation((keys: string[]) => {
-                assignedDraftIdStoreKey = keys[0];
+            durableStore.getDenormalizedRecord = jest.fn().mockImplementation(key => {
+                assignedDraftIdStoreKey = key;
                 assignedDraftId = extractRecordIdFromStoreKey(assignedDraftIdStoreKey);
-                const nameKey = buildRecordFieldStoreKey(assignedDraftIdStoreKey, 'Name');
                 return Promise.resolve({
-                    [assignedDraftIdStoreKey]: {
-                        data: {
-                            apiName: DEFAULT_API_NAME,
-                            childRelationships: {},
-                            eTag: '',
-                            fields: {
-                                Name: {
-                                    __ref: nameKey,
-                                },
-                            },
-                            id: assignedDraftId,
-                            lastModifiedById: null,
-                            lastModifiedDate: null,
-                            recordTypeId: null,
-                            recordTypeInfo: null,
-                            systemModstamp: null,
-                            weakEtag: -1,
-                        },
-                    },
-
-                    [nameKey]: {
-                        data: {
+                    apiName: DEFAULT_API_NAME,
+                    childRelationships: {},
+                    eTag: '',
+                    fields: {
+                        Name: {
                             displayValue: DEFAULT_NAME_FIELD_VALUE,
                             value: DEFAULT_NAME_FIELD_VALUE,
                         },
                     },
+                    id: assignedDraftId,
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    weakEtag: -1,
                 });
             });
             const request = {
@@ -101,7 +86,9 @@ describe('draft environment tests', () => {
                 headers: {},
             };
 
-            const result = await draftEnvironment.dispatchResourceRequest(request);
+            const result = await draftEnvironment.dispatchResourceRequest<RecordRepresentation>(
+                request
+            );
             expect(result.body.id.substring(0, 3)).toEqual('001');
         });
 
@@ -111,37 +98,26 @@ describe('draft environment tests', () => {
             });
             let assignedDraftId = '';
             let assignedDraftIdStoreKey = '';
-            durableStore.getEntries = jest.fn().mockImplementation((keys: string[]) => {
-                assignedDraftIdStoreKey = keys[0];
+            durableStore.getDenormalizedRecord = jest.fn().mockImplementation(key => {
+                assignedDraftIdStoreKey = key;
                 assignedDraftId = extractRecordIdFromStoreKey(assignedDraftIdStoreKey);
-                const nameKey = buildRecordFieldStoreKey(assignedDraftIdStoreKey, 'Name');
                 return Promise.resolve({
-                    [assignedDraftIdStoreKey]: {
-                        data: {
-                            apiName: DEFAULT_API_NAME,
-                            childRelationships: {},
-                            eTag: '',
-                            fields: {
-                                Name: {
-                                    __ref: nameKey,
-                                },
-                            },
-                            id: assignedDraftId,
-                            lastModifiedById: null,
-                            lastModifiedDate: null,
-                            recordTypeId: null,
-                            recordTypeInfo: null,
-                            systemModstamp: null,
-                            weakEtag: -1,
-                        },
-                    },
-
-                    [nameKey]: {
-                        data: {
+                    apiName: DEFAULT_API_NAME,
+                    childRelationships: {},
+                    eTag: '',
+                    fields: {
+                        Name: {
                             displayValue: DEFAULT_NAME_FIELD_VALUE,
                             value: DEFAULT_NAME_FIELD_VALUE,
                         },
                     },
+                    id: assignedDraftId,
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    weakEtag: -1,
                 });
             });
             const request = {
@@ -173,7 +149,7 @@ describe('draft environment tests', () => {
                 prefixForApiName: (_apiName: string) => Promise.resolve('001'),
             });
 
-            durableStore.getEntries = jest.fn().mockRejectedValue(undefined);
+            durableStore.getDenormalizedRecord = jest.fn().mockRejectedValue(undefined);
             const request = createPostRequest();
 
             await expect(draftEnvironment.dispatchResourceRequest(request)).rejects.toEqual({
@@ -186,7 +162,7 @@ describe('draft environment tests', () => {
             const { draftEnvironment, durableStore } = setupDraftEnvironment({
                 prefixForApiName: (_apiName: string) => Promise.resolve('001'),
             });
-            durableStore.getEntries = jest.fn().mockResolvedValue(undefined);
+            durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue(undefined);
             const request = createPostRequest();
 
             const { rejects } = await expect(draftEnvironment.dispatchResourceRequest(request));
@@ -205,37 +181,26 @@ describe('draft environment tests', () => {
             });
             let assignedDraftId = '';
             let assignedDraftIdStoreKey = '';
-            durableStore.getEntries = jest.fn().mockImplementation((keys: string[]) => {
-                assignedDraftIdStoreKey = keys[0];
+            durableStore.getDenormalizedRecord = jest.fn().mockImplementation(key => {
+                assignedDraftIdStoreKey = key;
                 assignedDraftId = extractRecordIdFromStoreKey(assignedDraftIdStoreKey);
-                const nameKey = buildRecordFieldStoreKey(assignedDraftIdStoreKey, 'Name');
                 return Promise.resolve({
-                    [assignedDraftIdStoreKey]: {
-                        data: {
-                            apiName: DEFAULT_API_NAME,
-                            childRelationships: {},
-                            eTag: '',
-                            fields: {
-                                Name: {
-                                    __ref: nameKey,
-                                },
-                            },
-                            id: assignedDraftId,
-                            lastModifiedById: null,
-                            lastModifiedDate: null,
-                            recordTypeId: null,
-                            recordTypeInfo: null,
-                            systemModstamp: null,
-                            weakEtag: -1,
-                        },
-                    },
-
-                    [nameKey]: {
-                        data: {
+                    apiName: DEFAULT_API_NAME,
+                    childRelationships: {},
+                    eTag: '',
+                    fields: {
+                        Name: {
                             displayValue: DEFAULT_NAME_FIELD_VALUE,
                             value: DEFAULT_NAME_FIELD_VALUE,
                         },
                     },
+                    id: assignedDraftId,
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    weakEtag: -1,
                 });
             });
             const request = createPostRequest();
@@ -263,32 +228,23 @@ describe('draft environment tests', () => {
                 prefixForApiName: (_apiName: string) => Promise.resolve('001'),
             });
             store.redirect(draftReferenceKey, canonicalReferenceKey);
-            durableStore.getEntries = jest.fn().mockResolvedValue({
-                [STORE_KEY_DRAFT_RECORD]: {
-                    data: {
-                        apiName: DEFAULT_API_NAME,
-                        childRelationships: {},
-                        eTag: '',
-                        fields: {
-                            Name: {
-                                __ref: DRAFT_STORE_KEY_FIELD__NAME,
-                            },
-                        },
-                        id: CREATE_DRAFT_RECORD_ID,
-                        lastModifiedById: null,
-                        lastModifiedDate: null,
-                        recordTypeId: null,
-                        recordTypeInfo: null,
-                        systemModstamp: null,
-                        weakEtag: -1,
-                    },
-                },
-                [DRAFT_STORE_KEY_FIELD__NAME]: {
-                    data: {
+            durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue({
+                apiName: DEFAULT_API_NAME,
+                childRelationships: {},
+                eTag: '',
+                fields: {
+                    Name: {
                         displayValue: null,
                         value: RECORD_ID,
                     },
                 },
+                id: CREATE_DRAFT_RECORD_ID,
+                lastModifiedById: null,
+                lastModifiedDate: null,
+                recordTypeId: null,
+                recordTypeInfo: null,
+                systemModstamp: null,
+                weakEtag: -1,
             });
             const request = {
                 baseUri: '/services/data/v53.0',

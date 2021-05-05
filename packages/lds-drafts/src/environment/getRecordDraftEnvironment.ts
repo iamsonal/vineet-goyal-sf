@@ -5,16 +5,16 @@ import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils'
 import {
     createBadRequestResponse,
     createDraftSynthesisErrorResponse,
-    createInternalErrorResponse,
     createOkResponse,
 } from '../DraftFetchResponse';
+import { RecordDenormalizingDurableStore } from '../durableStore/makeRecordDenormalizingDurableStore';
 import { ObjectCreate } from '../utils/language';
 import {
     extractRecordIdFromResourceRequest,
+    filterRecordFields,
     getRecordFieldsFromRecordRequest,
     getRecordKeyFromResourceRequest,
     RECORD_ENDPOINT_REGEX,
-    reviveRecordToStore,
 } from '../utils/records';
 import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
 
@@ -81,7 +81,7 @@ function resolveResourceRequestIds(request: ResourceRequest, canonicalRecordStor
  */
 function createSyntheticGetRecordResponse(
     resourceRequest: ResourceRequest,
-    env: DurableEnvironment
+    durableStore: RecordDenormalizingDurableStore
 ) {
     const key = getRecordKeyFromResourceRequest(resourceRequest);
 
@@ -98,22 +98,18 @@ function createSyntheticGetRecordResponse(
         return Promise.reject(createBadRequestResponse({ message: 'fields are missing' }));
     }
 
-    // revive the modified record to the in-memory store
-    return reviveRecordToStore(key, fields, env)
-        .catch(() => {
-            throw createInternalErrorResponse();
-        })
-        .then(record => {
-            if (record === undefined) {
-                throw createDraftSynthesisErrorResponse();
-            }
-            return createOkResponse(record);
-        });
+    return durableStore.getDenormalizedRecord(key).then(record => {
+        if (record === undefined) {
+            throw createDraftSynthesisErrorResponse();
+        }
+        return createOkResponse(filterRecordFields(record, fields));
+    });
 }
 
 function handleGetRecordRequest(
     resourceRequest: ResourceRequest,
     env: DurableEnvironment,
+    durableStore: RecordDenormalizingDurableStore,
     isDraftId: (id: string) => boolean,
     fetchRequest: (request: ResourceRequest) => Promise<ResourceResponse<RecordRepresentation>>
 ) {
@@ -133,7 +129,7 @@ function handleGetRecordRequest(
     // if the canonical key matches the key in the resource request it means we do not have a
     // mapping in our cache and this record must be synthetically returned
     if (canonicalKey === recordKey) {
-        return createSyntheticGetRecordResponse(resourceRequest, env);
+        return createSyntheticGetRecordResponse(resourceRequest, durableStore);
     }
 
     // a canonical mapping exists for the draft id passed in, we can create a new resource
@@ -144,7 +140,7 @@ function handleGetRecordRequest(
 
 export function getRecordDraftEnvironment(
     env: DurableEnvironment,
-    options: DraftEnvironmentOptions
+    { durableStore, isDraftId }: DraftEnvironmentOptions
 ): DurableEnvironment {
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function<T>(
         resourceRequest: ResourceRequest
@@ -152,7 +148,8 @@ export function getRecordDraftEnvironment(
         return handleGetRecordRequest(
             resourceRequest,
             env,
-            options.isDraftId,
+            durableStore,
+            isDraftId,
             env.dispatchResourceRequest
         ) as any;
     };
@@ -166,7 +163,8 @@ export function getRecordDraftEnvironment(
         return handleGetRecordRequest(
             resourceRequest,
             env,
-            options.isDraftId,
+            durableStore,
+            isDraftId,
             request => env.resolveUnfulfilledSnapshot(request, snapshot) as any
         ) as any;
     };

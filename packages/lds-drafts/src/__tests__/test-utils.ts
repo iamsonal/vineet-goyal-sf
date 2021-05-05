@@ -15,6 +15,7 @@ import {
     PendingDraftAction,
 } from '../DraftQueue';
 import { generateUniqueDraftActionId } from '../DurableDraftQueue';
+import { RecordDenormalizingDurableStore } from '../durableStore/makeRecordDenormalizingDurableStore';
 import { ObjectKeys } from '../utils/language';
 import { DurableRecordRepresentation } from '../utils/records';
 
@@ -320,10 +321,10 @@ export function createUnsupportedRequestDraftAction(
 ): DraftAction<RecordRepresentation> {
     return {
         id: new Date().getUTCMilliseconds().toString(),
-        targetId: 'targetId',
         status: DraftActionStatus.Pending,
         tag: recordKey,
         timestamp: timestamp,
+        targetId: recordId,
         request: {
             baseUri: '/services/data/v53.0',
             basePath: `/ui-api/records/${recordId}`,
@@ -366,43 +367,57 @@ export const DEFAULT_DURABLE_STORE_GET_ENTRY = {
     },
 };
 
-export function mockDurableStoreResponse(durableStore: DurableStore) {
-    durableStore.getEntries = jest.fn().mockResolvedValue(DEFAULT_DURABLE_STORE_GET_ENTRY);
-}
-
-export function mockDurableStoreDraftResponse(durableStore: DurableStore) {
-    durableStore.getEntries = jest.fn().mockResolvedValue({
-        [STORE_KEY_DRAFT_RECORD]: {
-            data: {
-                apiName: DEFAULT_API_NAME,
-                childRelationships: {},
-                eTag: '',
-                fields: {
-                    Name: {
-                        __ref: DRAFT_STORE_KEY_FIELD__NAME,
-                    },
-                },
-                drafts: {
-                    created: true,
-                    edited: false,
-                    deleted: false,
-                    serverValues: {},
-                },
-                id: DRAFT_RECORD_ID,
-                lastModifiedById: null,
-                lastModifiedDate: null,
-                recordTypeId: null,
-                recordTypeInfo: null,
-                systemModstamp: null,
-                weakEtag: -1,
-            },
-        },
-
-        [DRAFT_STORE_KEY_FIELD__NAME]: {
-            data: {
+export function mockDurableStoreResponse(durableStore: RecordDenormalizingDurableStore) {
+    durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue({
+        apiName: DEFAULT_API_NAME,
+        childRelationships: {},
+        eTag: '',
+        fields: {
+            Name: {
                 displayValue: DEFAULT_NAME_FIELD_VALUE,
                 value: DEFAULT_NAME_FIELD_VALUE,
             },
         },
+        id: RECORD_ID,
+        lastModifiedById: null,
+        lastModifiedDate: null,
+        recordTypeId: null,
+        recordTypeInfo: null,
+        systemModstamp: null,
+        weakEtag: -1,
+    });
+}
+
+export function mockDurableStoreGetDenormalizedRecordDraft(
+    durableStore: RecordDenormalizingDurableStore
+) {
+    durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue({
+        apiName: DEFAULT_API_NAME,
+        childRelationships: {},
+        eTag: '',
+        fields: {
+            Name: {
+                displayValue: DEFAULT_NAME_FIELD_VALUE,
+                value: DEFAULT_NAME_FIELD_VALUE,
+            },
+        },
+        drafts: {
+            created: true,
+            edited: false,
+            deleted: false,
+            serverValues: {},
+        },
+        links: {
+            Name: {
+                __ref: DRAFT_STORE_KEY_FIELD__NAME,
+            },
+        },
+        id: DRAFT_RECORD_ID,
+        lastModifiedById: null,
+        lastModifiedDate: null,
+        recordTypeId: null,
+        recordTypeInfo: null,
+        systemModstamp: null,
+        weakEtag: -1,
     });
 }

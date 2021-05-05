@@ -8,6 +8,7 @@ import {
 } from '@mobileplatform/nimbus-plugin-lds';
 
 import { ObjectKeys } from '../utils/language';
+import { clone } from './testUtils';
 
 export function mockNimbusStoreGlobal(mockNimbusStore: MockNimbusDurableStore) {
     global.__nimbus = {
@@ -18,15 +19,16 @@ export function mockNimbusStoreGlobal(mockNimbusStore: MockNimbusDurableStore) {
         },
     } as any;
 }
-export function resetNimbusStoreGlobal() {
-    global.__nimbus = undefined;
-}
 
 // since MockNimbusDurableStore is likely to be re-instantiated before each test
 // we hoist the registered listeners since that happens when the lds instance
 // is created
-let listenerFunc: (changes: DurableStoreChange[]) => void;
-const changedId = '1234';
+let listeners: { [listenerId: string]: (changes: DurableStoreChange[]) => void } = {};
+let count = 0;
+export function resetNimbusStoreGlobal() {
+    global.__nimbus = undefined;
+    listeners = {};
+}
 
 export class MockNimbusDurableStore implements DurableStore {
     kvp: { [segment: string]: { [key: string]: string } } = {};
@@ -47,7 +49,7 @@ export class MockNimbusDurableStore implements DurableStore {
             if (val === undefined) {
                 isMissingEntries = true;
             } else {
-                result[id] = val;
+                result[id] = clone(val);
             }
         }
 
@@ -129,8 +131,10 @@ export class MockNimbusDurableStore implements DurableStore {
 
     batchOperations(operations: DurableStoreOperation[], sender: string): Promise<void> {
         let changes = operations.map(op => this.batchOperation(op, sender));
-        if (listenerFunc !== undefined) {
-            listenerFunc(changes);
+        const listenerIds = ObjectKeys(listeners);
+        for (const id of listenerIds) {
+            const listener = listeners[id];
+            listener(changes);
         }
 
         return Promise.resolve();
@@ -139,28 +143,24 @@ export class MockNimbusDurableStore implements DurableStore {
     registerOnChangedListenerWithBatchInfo(
         listener: (changes: DurableStoreChange[]) => void
     ): Promise<string> {
-        listenerFunc = listener;
-        return Promise.resolve(changedId);
+        const id = (count++).toString();
+        listeners[id] = listener;
+        return Promise.resolve(id);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     registerOnChangedListener(listener: (ids: string[], segment: string) => void): Promise<string> {
-        return Promise.resolve(changedId);
+        throw new Error('deprecated');
     }
 
     registerOnChangedListenerWithInfo(
-        listener: (info: DurableStoreChangedInfo) => void
+        _listener: (info: DurableStoreChangedInfo) => void
     ): Promise<string> {
-        this.registerOnChangedListenerWithBatchInfo(changes => {
-            for (const change of changes) {
-                listener({ ...change });
-            }
-        });
-        return Promise.resolve(changedId);
+        throw new Error('deprecated');
     }
 
-    unsubscribeOnChangedListener(_id: string): Promise<void> {
-        listenerFunc = undefined;
+    unsubscribeOnChangedListener(id: string): Promise<void> {
+        delete listeners[id];
         return Promise.resolve();
     }
 }

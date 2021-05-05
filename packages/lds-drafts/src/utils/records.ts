@@ -23,9 +23,10 @@ import {
 import { Selector, PathSelection } from '@luvio/engine';
 import { CompletedDraftAction, DraftAction } from '../main';
 import { RecordInputRepresentation } from '@salesforce/lds-adapters-uiapi/dist/types/src/generated/types/RecordInputRepresentation';
-import { clone } from './clone';
-import { DurableEnvironment } from '@luvio/environments';
-import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
+import {
+    buildRecordFieldStoreKey,
+    extractRecordIdFromStoreKey,
+} from '@salesforce/lds-uiapi-record-utils';
 import { DraftIdMappingEntry, QueueOperation, QueueOperationType } from '../DraftQueue';
 
 type DraftFields = { [key: string]: boolean | number | string | null };
@@ -84,6 +85,13 @@ const WEAK_ETAG_SELECTION: PathSelection = {
     name: 'weakEtag',
 };
 
+const DRAFTS_SELECTION: PathSelection = {
+    kind: 'Object',
+    opaque: true,
+    name: 'drafts',
+    required: false,
+};
+
 export const RECORD_ENDPOINT_REGEX = /^\/ui-api\/records\/?(([a-zA-Z0-9]+))?$/;
 
 export interface DraftRepresentation {
@@ -132,38 +140,52 @@ export function buildRecordFieldValueRepresentationsFromDraftFields(fields: Draf
  * @param createdDate A string of the date the record was created
  */
 export function buildSyntheticRecordRepresentation(
-    userId: string,
-    draftId: string,
-    apiName: string,
-    draftFields: DraftFields,
-    lastModifiedDate: string,
-    createdDate: string
-): RecordRepresentation {
-    const lastModDate = lastModifiedDate;
-    const sysModStamp = createdDate;
+    action: DraftAction<RecordRepresentation>,
+    userId: string
+): DurableRecordRepresentation {
+    const { timestamp, request, targetId: recordId, tag: recordKey, id: actionId } = action;
+    const { body } = request;
+    const { apiName } = body;
 
-    const fields = buildRecordFieldValueRepresentationsFromDraftFields(draftFields);
+    const fields = buildRecordFieldValueRepresentationsFromDraftFields(body.fields);
 
     // add default fields
     fields[DEFAULT_FIELD_CREATED_BY_ID] = { value: userId, displayValue: null };
-    fields[DEFAULT_FIELD_CREATED_DATE] = { value: sysModStamp, displayValue: null };
+    fields[DEFAULT_FIELD_CREATED_DATE] = { value: timestamp, displayValue: null };
     fields[DEFAULT_FIELD_LAST_MODIFIED_BY_ID] = { value: userId, displayValue: null };
-    fields[DEFAULT_FIELD_LAST_MODIFIED_DATE] = { value: lastModDate, displayValue: null };
+    fields[DEFAULT_FIELD_LAST_MODIFIED_DATE] = { value: timestamp, displayValue: null };
     fields[DEFAULT_FIELD_OWNER_ID] = { value: userId, displayValue: null };
-    fields[DEFAULT_FIELD_ID] = { value: draftId, displayValue: null };
+    fields[DEFAULT_FIELD_ID] = { value: recordId, displayValue: null };
+
+    const links: { [key: string]: StoreLink } = {};
+    const fieldNames = ObjectKeys(fields);
+    for (let i = 0, len = fieldNames.length; i < len; i++) {
+        const fieldName = fieldNames[i];
+        links[fieldName] = { __ref: buildRecordFieldStoreKey(recordKey, fieldName) };
+    }
+
+    const timestampString = timestamp.toString();
 
     return {
-        id: draftId,
+        id: recordId,
         apiName,
         childRelationships: {},
         eTag: '',
         lastModifiedById: userId,
-        lastModifiedDate: lastModDate,
+        lastModifiedDate: timestampString,
         recordTypeId: null,
         recordTypeInfo: null,
-        systemModstamp: sysModStamp,
+        systemModstamp: timestampString,
         weakEtag: -1,
-        fields: fields,
+        fields,
+        drafts: {
+            created: true,
+            edited: false,
+            deleted: false,
+            serverValues: {},
+            draftActionIds: [actionId],
+        },
+        links,
     };
 }
 
@@ -186,6 +208,7 @@ export function buildRecordSelector(
                 ...buildSelectionFromFields(fields, optionalFields),
                 ETAG_SELECTION,
                 WEAK_ETAG_SELECTION,
+                DRAFTS_SELECTION,
             ],
         },
         variables: {},
@@ -320,88 +343,6 @@ export function extractRecordApiNameFromStore(key: string, env: Environment): st
         return record.apiName;
     }
     return undefined;
-}
-
-/**
- * Revives a record from durable store to the Store, marks any missing optional fields
- * and returns a lookup of the record with the provided fields
- * @param key record key
- * @param fields list of fields to lookup
- * @param env the durable environment
- */
-export function reviveRecordToStore(key: string, fields: RequestFields, env: DurableEnvironment) {
-    return env.reviveRecordsToStore([key]).then(() => {
-        const { optionalFields } = fields;
-        markDraftRecordOptionalFieldsMissing(key, optionalFields, env);
-        return lookupRecordWithFields(key, fields, env);
-    });
-}
-
-/**
- * Looks up a record in the store with a given set of fields
- * @param key Record key
- * @param requestFields requested fields
- * @param env the environment
- */
-export function lookupRecordWithFields(
-    key: string,
-    requestFields: RequestFields,
-    env: Environment
-) {
-    const apiName = extractRecordApiNameFromStore(key, env);
-    if (apiName === null) {
-        return undefined;
-    }
-
-    const { fields, optionalFields } = requestFields;
-
-    const selector = buildRecordSelector(
-        key,
-        fields.map(f => `${apiName}.${f}`),
-        optionalFields.map(f => `${apiName}.${f}`)
-    );
-    const snapshot = env.storeLookup<RecordRepresentation>(selector, env.createSnapshot);
-    const { state } = snapshot;
-    if (state === 'Fulfilled' || state === 'Stale') {
-        // We need the data to be mutable to go through ingest/normalization.
-        // Eventually storeLookup will supply a mutable version however for now we need
-        // to make it mutable ourselves.
-        return clone(snapshot.data) as RecordRepresentation;
-    }
-
-    return undefined;
-}
-
-/**
- * Inspects a draft record in the store and adds missing markers
- * for optional fields that are not included in the record
- * @param key The store key for a draft record in the store
- * @param optionalFields A list of optional fields
- * @param env The environment
- */
-export function markDraftRecordOptionalFieldsMissing(
-    key: string,
-    optionalFields: string[],
-    env: Environment
-) {
-    const node = env.getNode<DraftRecordRepresentationNormalized>(key);
-    if (isGraphNode(node)) {
-        const record = node.retrieve();
-        if (record.drafts === undefined) {
-            return;
-        }
-        const fields = node.object('fields');
-        for (let i = 0, len = optionalFields.length; i < len; i++) {
-            const fieldName = optionalFields[i];
-            if (fields.isUndefined(fieldName)) {
-                fields.write(fieldName, {
-                    __ref: undefined,
-                    isMissing: true,
-                } as any);
-            }
-        }
-        return;
-    }
 }
 
 /**
@@ -602,4 +543,33 @@ export function createIdDraftMapping(action: CompletedDraftAction<unknown>): Dra
     };
 
     return entry;
+}
+
+/**
+ * Filters a records field list
+ * @param record The record
+ * @param requestFields fields to filter to
+ * @returns a record with the filtered fields
+ */
+export function filterRecordFields(
+    record: DraftRecordRepresentation,
+    requestFields: RequestFields
+) {
+    const filteredFields: { [key: string]: FieldValueRepresentation } = {};
+    const { fields, optionalFields } = requestFields;
+    const denormalizedFields = record.fields;
+    for (const field of fields) {
+        const denormalizedField = denormalizedFields[field];
+        if (denormalizedField === undefined) {
+            return;
+        }
+        filteredFields[field] = denormalizedField;
+    }
+    for (const field of optionalFields) {
+        const denormalizedField = denormalizedFields[field];
+        if (denormalizedField !== undefined) {
+            filteredFields[field] = denormalizedField;
+        }
+    }
+    return { ...record, fields: filteredFields };
 }

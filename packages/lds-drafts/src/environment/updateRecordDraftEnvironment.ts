@@ -1,5 +1,5 @@
 import { Adapter, Environment, ResourceRequest } from '@luvio/engine';
-import { DefaultDurableSegment, DurableEnvironment } from '@luvio/environments';
+import { DurableEnvironment } from '@luvio/environments';
 import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { GetRecordConfig } from '@salesforce/lds-adapters-uiapi/dist/types/src/generated/adapters/getRecord';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
@@ -12,12 +12,12 @@ import {
 import { ObjectCreate, ObjectKeys } from '../utils/language';
 import {
     extractRecordIdFromResourceRequest,
+    filterRecordFields,
     getRecordFieldsFromRecordRequest,
     getRecordIdFromRecordRequest,
     getRecordKeyFromRecordRequest,
     RECORD_ENDPOINT_REGEX,
     RequestFields,
-    reviveRecordToStore,
 } from '../utils/records';
 import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
 
@@ -124,7 +124,7 @@ export function updateRecordDraftEnvironment(
         }
 
         return durableStore
-            .getEntries([key], DefaultDurableSegment)
+            .getDenormalizedRecord(key)
             .catch(() => {
                 throw createInternalErrorResponse();
             })
@@ -178,7 +178,8 @@ export function updateRecordDraftEnvironment(
 
             // revive the modified record to the in-memory store. This will put the record
             // in the in-memory store with the new draft values applied to it
-            return reviveRecordToStore(key, fields, env)
+            return durableStore
+                .getDenormalizedRecord(key)
                 .catch(() => {
                     throw createInternalErrorResponse();
                 })
@@ -186,7 +187,7 @@ export function updateRecordDraftEnvironment(
                     if (record === undefined) {
                         throw createDraftSynthesisErrorResponse();
                     }
-                    return createOkResponse(record);
+                    return createOkResponse(filterRecordFields(record, fields));
                 });
         });
     }

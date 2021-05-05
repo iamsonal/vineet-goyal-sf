@@ -7,7 +7,6 @@ import {
 import {
     DraftManager,
     DraftQueue,
-    DRAFT_SEGMENT,
     ProcessActionResult,
     DraftActionOperationType,
 } from '@salesforce/lds-drafts';
@@ -17,15 +16,11 @@ import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusD
 import { MockNimbusAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
 import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
-import { recordIdGenerator } from '../../../RecordIdGenerator';
-import { DefaultDurableSegment, DurableStoreEntry } from '@luvio/environments';
-import Id from '@salesforce/user/Id';
+import { DurableStoreEntry } from '@luvio/environments';
 import { ObjectInfoIndex, OBJECT_INFO_PREFIX_SEGMENT } from '../../../utils/ObjectInfoService';
 
 const RECORD_ID = mockAccount.id;
 const API_NAME = 'Account';
-
-const { isGenerated } = recordIdGenerator(Id);
 
 describe('mobile runtime integration tests', () => {
     let luvio: Luvio;
@@ -74,39 +69,19 @@ describe('mobile runtime integration tests', () => {
             expect(record.drafts.created).toBe(true);
         });
 
-        it('record with generated ID does not get stored in default durable segment', async () => {
-            const startingEntries = await durableStore.getAllEntriesInSegment(
-                DefaultDurableSegment
-            );
-            const entryCount = Object.keys(startingEntries.entries).length;
+        it('created record gets persisted', async () => {
+            const snapshot = await createRecord({ apiName: API_NAME, fields: { Name: 'Justin' } });
+            (luvio as any).environment.storeReset();
 
-            const orginalName = 'Justin';
-
-            // create a synthetic record
-            const snapshot = await createRecord({
-                apiName: API_NAME,
-                fields: { Name: orginalName },
-            });
             const record = snapshot.data;
             const recordId = record.id;
-            const isGeneratedRecordId = isGenerated(recordId);
-            expect(isGeneratedRecordId).toBe(true);
-
-            const entriesInDefaultSegment = await durableStore.getAllEntriesInSegment(
-                DefaultDurableSegment
-            );
-            expect(Object.keys(entriesInDefaultSegment.entries).length).toBe(entryCount);
-
-            const entriesInDraftSegment = await durableStore.getAllEntriesInSegment(DRAFT_SEGMENT);
-            expect(Object.keys(entriesInDraftSegment.entries).length).toBe(1);
-
-            const value = Object.values(entriesInDraftSegment.entries)[0];
-            const parsedValue = JSON.parse(value);
-            const tag = parsedValue['data']['tag'];
-            const formattedTagWithRecordId = `UiApi::RecordRepresentation:${recordId}`;
-            expect(tag).toBe(formattedTagWithRecordId);
+            // call getRecord with synthetic record id
+            const getRecordSnapshot = (await getRecord({
+                recordId: recordId,
+                fields: ['Account.Name', 'Account.Id'],
+            })) as Snapshot<RecordRepresentation>;
+            expect(getRecordSnapshot.state).toBe('Fulfilled');
         });
-
         it('created record is still observable after draft is uploaded', async () => {
             const orginalName = 'Justin';
             // create a synthetic record

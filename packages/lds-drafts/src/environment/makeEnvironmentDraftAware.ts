@@ -1,6 +1,12 @@
 import { Environment, IngestPath, Store } from '@luvio/engine';
-import { DurableEnvironment, DurableStore, ResponsePropertyRetriever } from '@luvio/environments';
 import {
+    DurableEnvironment,
+    DurableStoreChange,
+    DurableStoreEntry,
+    ResponsePropertyRetriever,
+} from '@luvio/environments';
+import {
+    DraftIdMappingEntry,
     DraftQueue,
     DraftQueueCompleteEvent,
     DraftQueueEvent,
@@ -16,13 +22,16 @@ import {
 } from './updateRecordDraftEnvironment';
 import { deleteRecordDraftEnvironment } from './deleteRecordDraftEnvironment';
 import { getRecordsDraftEnvironment } from './getRecordsDraftEnvironment';
+import { RecordDenormalizingDurableStore } from '../durableStore/makeRecordDenormalizingDurableStore';
+import { DRAFT_ID_MAPPINGS_SEGMENT } from '../DurableDraftQueue';
+import { ObjectKeys } from '../utils/language';
 
 type AllDraftEnvironmentOptions = DraftEnvironmentOptions & UpdateRecordDraftEnvironmentOptions;
 
 export interface DraftEnvironmentOptions {
     store: Store;
     draftQueue: DraftQueue;
-    durableStore: DurableStore;
+    durableStore: RecordDenormalizingDurableStore;
     // TODO - W-8291468 - have ingest get called a different way somehow
     ingestFunc: (
         record: RecordRepresentation,
@@ -35,6 +44,8 @@ export interface DraftEnvironmentOptions {
     apiNameForPrefix: (prefix: string) => Promise<string>;
     prefixForApiName: (apiName: string) => Promise<string>;
     recordResponseRetrievers: ResponsePropertyRetriever<unknown, RecordRepresentation>[];
+    userId: string;
+    registerDraftKeyMapping: (draftKey: string, canonicalKey: string) => void;
 }
 
 export function makeEnvironmentDraftAware(
@@ -42,7 +53,14 @@ export function makeEnvironmentDraftAware(
     options: AllDraftEnvironmentOptions,
     userId: string
 ): Environment {
-    const { draftQueue, recordResponseRetrievers, ingestFunc, store } = options;
+    const {
+        draftQueue,
+        recordResponseRetrievers,
+        ingestFunc,
+        store,
+        durableStore,
+        registerDraftKeyMapping,
+    } = options;
 
     function onDraftActionCompleting(event: DraftQueueCompleteEvent) {
         const { action } = event;
@@ -95,6 +113,39 @@ export function makeEnvironmentDraftAware(
             return Promise.resolve();
         }
     );
+
+    /**
+     * Intercepts durable store changes to determine if a change to a draft action was made.
+     * If a DraftAction changes, we need to evict the affected record from the in memory store
+     * So it rebuilds with the new draft action applied to it
+     */
+
+    durableStore.registerOnChangedListener((changes: DurableStoreChange[]) => {
+        const draftIdMappingsIds: string[] = [];
+
+        for (let i = 0, len = changes.length; i < len; i++) {
+            const change = changes[i];
+            if (change.segment === DRAFT_ID_MAPPINGS_SEGMENT) {
+                draftIdMappingsIds.push(...change.ids);
+            }
+        }
+
+        if (draftIdMappingsIds.length > 0) {
+            return durableStore
+                .getEntries(draftIdMappingsIds, DRAFT_ID_MAPPINGS_SEGMENT)
+                .then(mappingEntries => {
+                    if (mappingEntries === undefined) {
+                        return;
+                    }
+                    const keys = ObjectKeys(mappingEntries);
+                    for (const key of keys) {
+                        const entry = mappingEntries[key] as DurableStoreEntry<DraftIdMappingEntry>;
+                        const { draftKey, canonicalKey } = entry.data;
+                        registerDraftKeyMapping(draftKey, canonicalKey);
+                    }
+                });
+        }
+    });
 
     const synthesizers = [
         getRecordDraftEnvironment,

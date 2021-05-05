@@ -1,5 +1,4 @@
 import { DefaultDurableSegment, DurableStoreEntries } from '@luvio/environments';
-import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { RecordMetadataOnSetPlugin } from '../../plugins/RecordMetadataOnSetPlugin';
 
 describe('RecordMetadataOnSetPlugin', () => {
@@ -57,7 +56,7 @@ describe('RecordMetadataOnSetPlugin', () => {
                 apiName: string
             ) => Promise<void> = jest.fn().mockResolvedValue(() => {});
             const subject = new RecordMetadataOnSetPlugin(mockFetch);
-            const entries: DurableStoreEntries<RecordRepresentation> = {
+            const entries: DurableStoreEntries<any> = {
                 one: { data: { apiName: 'mockApiName', id: '1234', eTag: '' } },
             };
             subject.beforeSet('one', entries['one'], 'DRAFTS');

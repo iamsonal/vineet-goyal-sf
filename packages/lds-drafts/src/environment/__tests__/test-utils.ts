@@ -1,8 +1,13 @@
 import { MockDurableStore } from '@luvio/adapter-test-library';
 import { Environment, Luvio, Store } from '@luvio/engine';
-import { makeDurable, makeOffline } from '@luvio/environments';
+import { DurableStore, makeDurable, makeOffline } from '@luvio/environments';
 import { getRecordAdapterFactory } from '@salesforce/lds-adapters-uiapi';
 import { DraftQueue } from '../../DraftQueue';
+import { makeDurableStoreDraftAware } from '../../durableStore/makeDurableStoreDraftAware';
+import {
+    makeRecordDenormalizingDurableStore,
+    RecordDenormalizingDurableStore,
+} from '../../durableStore/makeRecordDenormalizingDurableStore';
 import { DRAFT_RECORD_ID } from '../../__tests__/test-utils';
 import { makeEnvironmentDraftAware } from '../makeEnvironmentDraftAware';
 
@@ -19,7 +24,8 @@ export function setupDraftEnvironment(
     const { mockNetworkResponse } = setupOptions;
     const store = new Store();
     const network = jest.fn().mockResolvedValue(mockNetworkResponse ?? {});
-    const durableStore = new MockDurableStore();
+    let durableStore: DurableStore = new MockDurableStore();
+
     const draftQueue: DraftQueue = {
         enqueue: jest.fn().mockResolvedValue(undefined),
         getActionsForTags: jest.fn(),
@@ -33,6 +39,14 @@ export function setupDraftEnvironment(
         replaceAction: jest.fn(),
         setMetadata: jest.fn(),
     };
+
+    durableStore = makeDurableStoreDraftAware(
+        durableStore,
+        () => Promise.resolve({}),
+        'testUserId'
+    );
+    durableStore = makeRecordDenormalizingDurableStore(durableStore, store);
+
     const baseEnvironment = makeDurable(makeOffline(new Environment(store, network)), {
         durableStore,
     });
@@ -41,12 +55,13 @@ export function setupDraftEnvironment(
     const adapters = {
         getRecord: jest.fn().mockImplementation(realGetRecord),
     };
+    const registerDraftKeyMapping = jest.fn();
     const draftEnvironment = makeEnvironmentDraftAware(
         baseEnvironment,
         {
             store,
             draftQueue,
-            durableStore,
+            durableStore: durableStore as RecordDenormalizingDurableStore,
             ingestFunc: (_record: any, _path: any, _store: any, _timestamp: any) => {},
             generateId: (prefix: string) => {
                 return `${prefix}${DRAFT_RECORD_ID.substring(4, DRAFT_RECORD_ID.length)}`;
@@ -56,16 +71,19 @@ export function setupDraftEnvironment(
             prefixForApiName: setupOptions.prefixForApiName ?? jest.fn(),
             apiNameForPrefix: setupOptions.apiNameForPrefix ?? jest.fn(),
             recordResponseRetrievers: undefined,
+            userId: 'testUserId',
+            registerDraftKeyMapping: registerDraftKeyMapping,
         },
         'testUserId'
     );
     return {
         store,
         network,
-        durableStore,
+        durableStore: durableStore as RecordDenormalizingDurableStore,
         draftQueue,
         baseEnvironment,
         draftEnvironment,
         adapters,
+        registerDraftKeyMapping,
     };
 }

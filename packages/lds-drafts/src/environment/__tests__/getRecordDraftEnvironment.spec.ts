@@ -1,9 +1,8 @@
 import { HttpStatusCode, ResourceRequest } from '@luvio/engine';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
-import { DEFAULT_NAME_FIELD_VALUE } from './test-utils';
+import { DEFAULT_NAME_FIELD_VALUE, mockDurableStoreGetDenormalizedRecordDraft } from './test-utils';
 import {
     DRAFT_RECORD_ID,
-    mockDurableStoreDraftResponse,
     RECORD_ID,
     setupDraftEnvironment,
     STORE_KEY_DRAFT_RECORD,
@@ -47,7 +46,7 @@ describe('draft environment tests', () => {
 
         it('returns mutable data', async () => {
             const { durableStore, draftEnvironment } = setupDraftEnvironment();
-            mockDurableStoreDraftResponse(durableStore);
+            mockDurableStoreGetDenormalizedRecordDraft(durableStore);
             const response = await draftEnvironment.dispatchResourceRequest(
                 buildRequest(DRAFT_RECORD_ID, ['Account.Name'], [])
             );
@@ -62,7 +61,7 @@ describe('draft environment tests', () => {
 
         it('fails to get record with fields that do not exist on the synthetic record', async () => {
             const { durableStore, draftEnvironment } = setupDraftEnvironment();
-            mockDurableStoreDraftResponse(durableStore);
+            durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue(undefined);
 
             await expect(
                 draftEnvironment.dispatchResourceRequest(
@@ -75,7 +74,7 @@ describe('draft environment tests', () => {
 
         it('succeeds to get record with optionalFields that do not exist on the synthetic record', async () => {
             const { durableStore, draftEnvironment } = setupDraftEnvironment();
-            mockDurableStoreDraftResponse(durableStore);
+            mockDurableStoreGetDenormalizedRecordDraft(durableStore);
             const response = await draftEnvironment.dispatchResourceRequest(
                 buildRequest(DRAFT_RECORD_ID, ['Account.Name'], ['Account.Birthday'])
             );

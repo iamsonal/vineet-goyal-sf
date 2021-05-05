@@ -1,7 +1,12 @@
 import { ResourceRequest } from '@luvio/engine';
 import { BatchRepresentation, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
-import { DRAFT_RECORD_ID, RECORD_ID, STORE_KEY_DRAFT_RECORD } from '../../__tests__/test-utils';
-import { mockDurableStoreDraftResponse, setupDraftEnvironment } from './test-utils';
+import {
+    DRAFT_RECORD_ID,
+    mockDurableStoreGetDenormalizedRecordDraft,
+    RECORD_ID,
+    STORE_KEY_DRAFT_RECORD,
+} from '../../__tests__/test-utils';
+import { setupDraftEnvironment } from './test-utils';
 import mockCompositeResponseSingleRecord from './mockData/records-single-Accounts-fields-Account.Id,Account.Name.json';
 import mockCompositeResponseMultipleRecords from './mockData/records-multiple-Accounts-fields-Account.Id,Account.Name.json';
 import mockCompositeResponseMultipleRecordsDraftIngested from './mockData/records-multiple-Accounts-fields-Account.Id,Account.Name-DraftIngestedFirst.json';
@@ -40,7 +45,7 @@ describe('draft environment tests', () => {
 
             // create getRecords request containing draft ids
             const request = buildRequest([DRAFT_RECORD_ID], FIELDS, []);
-            mockDurableStoreDraftResponse(durableStore);
+            mockDurableStoreGetDenormalizedRecordDraft(durableStore);
             const response = await draftEnvironment.dispatchResourceRequest(request);
             // ensure network not called
             expect(network).toBeCalledTimes(0);
@@ -67,7 +72,7 @@ describe('draft environment tests', () => {
         it('merges synthetic records with canonical records', async () => {
             const { draftEnvironment, network, durableStore } = setupDraftEnvironment();
 
-            mockDurableStoreDraftResponse(durableStore);
+            mockDurableStoreGetDenormalizedRecordDraft(durableStore);
             mockCompositeNetworkResponse(network);
 
             // create getRecords request containing a mix of draft ids and canonical ids
@@ -94,7 +99,7 @@ describe('draft environment tests', () => {
         it('maintains order of requested ids in response', async () => {
             const { draftEnvironment, network, durableStore } = setupDraftEnvironment();
 
-            mockDurableStoreDraftResponse(durableStore);
+            mockDurableStoreGetDenormalizedRecordDraft(durableStore);
             mockCompositeNetworkResponse(network);
 
             // create getRecords request containing a mix of draft ids and canonical ids
@@ -121,7 +126,7 @@ describe('draft environment tests', () => {
         it('returns mutable data', async () => {
             const { draftEnvironment, network, durableStore } = setupDraftEnvironment();
 
-            mockDurableStoreDraftResponse(durableStore);
+            mockDurableStoreGetDenormalizedRecordDraft(durableStore);
             mockCompositeNetworkResponse(network);
 
             // create getRecords request containing a mix of draft ids and canonical ids
@@ -142,7 +147,7 @@ describe('draft environment tests', () => {
         it('returns synthetic records with missing optionalFields', async () => {
             const { draftEnvironment, network, durableStore } = setupDraftEnvironment();
 
-            mockDurableStoreDraftResponse(durableStore);
+            mockDurableStoreGetDenormalizedRecordDraft(durableStore);
             mockCompositeNetworkResponse(network);
 
             // create getRecords request containing a mix of draft ids and canonical ids

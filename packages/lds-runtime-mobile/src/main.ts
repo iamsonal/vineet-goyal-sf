@@ -10,11 +10,12 @@ import {
 import { getRecordsPropertyRetriever } from '@salesforce/lds-uiapi-record-utils';
 import {
     makeDurableStoreDraftAware,
+    makeRecordDenormalizingDurableStore,
     makeEnvironmentDraftAware,
     makeNetworkAdapterDraftAware,
     RecordMetadataOnSetPlugin,
-    DurableStoreSetEntryPlugin,
     DraftManager,
+    makePluginEnabledDurableStore,
 } from '@salesforce/lds-drafts';
 
 import userId from '@salesforce/user/Id';
@@ -48,26 +49,56 @@ const registerDraftMapping = (draftKey: string, canonicalKey: string) => {
     }
 };
 
-// non-draft-aware base services
-const store = new Store();
-const durableStore = new NimbusDurableStore();
-const networkAdapter = makeNetworkAdapterBatchRecordFields(NimbusNetworkAdapter);
+const getDraftActionForRecordKeys = (keys: string[]) => {
+    const objectSet: { [key: string]: true } = {};
+    for (let i = 0, len = keys.length; i < len; i++) {
+        objectSet[keys[i]] = true;
+    }
 
-// specific adapters
-const { getObjectInfo, getRecord } = buildInternalAdapters(store, networkAdapter, durableStore);
-const { ensureObjectInfoCached, apiNameForPrefix, prefixForApiName } = objectInfoServiceFactory(
-    getObjectInfo,
-    durableStore
-);
+    return draftQueue.getActionsForTags(objectSet);
+};
 
 // user id centric record ID generator
 const { newRecordId, isGenerated } = recordIdGenerator(userId);
 
+// non-draft-aware base services
+const store = new Store();
+const networkAdapter = makeNetworkAdapterBatchRecordFields(NimbusNetworkAdapter);
+const baseDurableStore = new NimbusDurableStore();
+const internalAdapterDurableStore = makeRecordDenormalizingDurableStore(baseDurableStore, store);
+
+// specific adapters
+const { getObjectInfo, getRecord } = buildInternalAdapters(
+    store,
+    networkAdapter,
+    internalAdapterDurableStore
+);
+const { ensureObjectInfoCached, apiNameForPrefix, prefixForApiName } = objectInfoServiceFactory(
+    getObjectInfo,
+    internalAdapterDurableStore
+);
+
+// creates a durable store that updates records when drafts are inserted
+const draftAwareDurableStore = makeDurableStoreDraftAware(
+    baseDurableStore,
+    getDraftActionForRecordKeys,
+    userId
+);
+
 // draft queue
-const draftQueue = buildLdsDraftQueue(networkAdapter, durableStore);
+const draftQueue = buildLdsDraftQueue(networkAdapter, draftAwareDurableStore);
 
 // draft manager
 const draftManager = new DraftManager(draftQueue);
+
+// build the draft durable store plugins
+const objectInfoPlugin = new RecordMetadataOnSetPlugin(ensureObjectInfoCached);
+// creates a durable store that can have plugins registered with it
+const pluginEnabledDurableStore = makePluginEnabledDurableStore(baseDurableStore);
+pluginEnabledDurableStore.registerPlugins([objectInfoPlugin]);
+
+// creates a durable store that denormalizes scalar fields for records
+const recordDenormingStore = makeRecordDenormalizingDurableStore(pluginEnabledDurableStore, store);
 
 // make network and durable draft aware
 const draftAwareNetworkAdapter = makeNetworkAdapterDraftAware(
@@ -77,40 +108,26 @@ const draftAwareNetworkAdapter = makeNetworkAdapterDraftAware(
     userId
 );
 
-// build the draft durable store plugins
-const objectInfoPlugin = new RecordMetadataOnSetPlugin(ensureObjectInfoCached);
-const plugins: DurableStoreSetEntryPlugin[] = [objectInfoPlugin];
-
-const draftAwareDurableStore = makeDurableStoreDraftAware(
-    durableStore,
-    plugins,
-    draftQueue,
-    store,
-    isGenerated,
-    registerDraftMapping,
-    userId
-);
-
 // build environment
 const env = makeEnvironmentDraftAware(
     makeDurable(makeOffline(new Environment(store, draftAwareNetworkAdapter)), {
-        durableStore: draftAwareDurableStore,
+        durableStore: recordDenormingStore,
         reviveRetrievers: responseRecordRepresentationRetrievers,
         compositeRetrievers: [getRecordsPropertyRetriever],
     }),
     {
         store,
         draftQueue,
-        // W-8794366: replace with draftAwareDurableStore once resolved
-        // draftAwareDurableStore,
-        durableStore,
+        durableStore: recordDenormingStore,
         ingestFunc: recordIngestFunc,
         generateId: newRecordId,
         isDraftId: isGenerated,
-        getRecord,
         prefixForApiName,
         apiNameForPrefix,
+        getRecord,
         recordResponseRetrievers: responseRecordRepresentationRetrievers,
+        userId,
+        registerDraftKeyMapping: registerDraftMapping,
     },
     userId
 );

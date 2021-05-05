@@ -9,11 +9,7 @@ import {
     createOkResponse,
 } from '../DraftFetchResponse';
 import { ObjectCreate, ObjectKeys } from '../utils/language';
-import {
-    getRecordFieldsFromRecordRequest,
-    RECORD_ENDPOINT_REGEX,
-    reviveRecordToStore,
-} from '../utils/records';
+import { getRecordFieldsFromRecordRequest, RECORD_ENDPOINT_REGEX } from '../utils/records';
 import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
 
 /**
@@ -61,7 +57,7 @@ function resolveResourceRequestIds(
 
 export function createRecordDraftEnvironment(
     env: DurableEnvironment,
-    { draftQueue, prefixForApiName, generateId, isDraftId, store }: DraftEnvironmentOptions
+    { draftQueue, prefixForApiName, generateId, isDraftId, durableStore }: DraftEnvironmentOptions
 ): DurableEnvironment {
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function<T>(
         request: ResourceRequest
@@ -87,13 +83,14 @@ export function createRecordDraftEnvironment(
             const recordId = generateId(prefix);
             const key = keyBuilderRecord({ recordId });
 
+            const fields = getRecordFieldsFromRecordRequest(resolvedResourceRequest);
+            if (fields === undefined) {
+                throw createBadRequestResponse({ message: 'fields are missing' });
+            }
+
             return draftQueue.enqueue(resolvedResourceRequest, key, recordId).then(() => {
-                const fields = getRecordFieldsFromRecordRequest(resolvedResourceRequest);
-                if (fields === undefined) {
-                    throw createBadRequestResponse({ message: 'fields are missing' });
-                }
-                // revive the modified record to the in-memory store
-                return reviveRecordToStore(key, fields, env)
+                return durableStore
+                    .getDenormalizedRecord(key)
                     .catch(() => {
                         throw createInternalErrorResponse();
                     })
@@ -107,44 +104,7 @@ export function createRecordDraftEnvironment(
         });
     };
 
-    // TODO - W-9099212 - remove this override once draft-created records
-    // go into DS.  We need this for now because draft-created records do not
-    // actually go into default segment today so if we let them go into pending
-    // writers then they will get emitted from in-memory store on broadcast.
-    const storePublish: DurableEnvironment['storePublish'] = function<Data>(
-        key: string,
-        data: Data
-    ) {
-        const recordId = extractRecordIdFromStoreKey(key);
-        if (recordId !== undefined && isDraftId(recordId) === true) {
-            store.publish<Data>(key, data);
-            return;
-        }
-
-        env.storePublish(key, data);
-    };
-
-    // TODO - W-9099212 - remove this override once draft-created records
-    // go into DS.  We need this for now because draft-created records do not
-    // actually go into default segment today so if we let them go into pending
-    // writers then they will get emitted from in-memory store on broadcast.
-    const storeSetExpiration: DurableEnvironment['storeSetExpiration'] = function(
-        key: string,
-        expiration: number,
-        staleExpiration?: number
-    ) {
-        const recordId = extractRecordIdFromStoreKey(key);
-        if (recordId !== undefined && isDraftId(recordId) === true) {
-            store.setExpiration(key, expiration, staleExpiration);
-            return;
-        }
-
-        env.storeSetExpiration(key, expiration, staleExpiration);
-    };
-
     return ObjectCreate(env, {
         dispatchResourceRequest: { value: dispatchResourceRequest },
-        storePublish: { value: storePublish },
-        storeSetExpiration: { value: storeSetExpiration },
     });
 }

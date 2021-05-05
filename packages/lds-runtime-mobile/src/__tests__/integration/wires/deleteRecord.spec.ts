@@ -3,30 +3,19 @@ import {
     createRecordAdapterFactory,
     deleteRecordAdapterFactory,
     getRecordAdapterFactory,
-    keyBuilderRecord,
     RecordRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
-import {
-    DraftManager,
-    DraftQueue,
-    DraftActionOperationType,
-    DurableDraftQueue,
-} from '@salesforce/lds-drafts';
+import { DraftManager, DraftQueue, DraftActionOperationType } from '@salesforce/lds-drafts';
 import { DraftRecordRepresentation } from '@salesforce/lds-drafts/dist/utils/records';
-import { NimbusDurableStore } from '../../../NimbusDurableStore';
-import { NimbusNetworkAdapter } from '../../../network/NimbusNetworkAdapter';
 import { JSONStringify } from '../../../utils/language';
 import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusDurableStore';
 import { MockNimbusAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
-import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 import { ObjectInfoIndex, OBJECT_INFO_PREFIX_SEGMENT } from '../../../utils/ObjectInfoService';
 import { DurableStoreEntry } from '@luvio/environments';
 
 const RECORD_ID = mockAccount.id;
 const API_NAME = 'Account';
-
-const STORE_KEY_RECORD = keyBuilderRecord({ recordId: RECORD_ID });
 
 function createTestRecord(
     id: string,
@@ -139,75 +128,6 @@ describe('mobile runtime integration tests', () => {
             expect(subject.items[0]).toMatchObject({
                 operationType: DraftActionOperationType.Delete,
             });
-        });
-
-        it('getRecord subscription notified when delete DRAFT enters durable store', async () => {
-            const fieldName = 'foo';
-            networkAdapter.setMockResponse({
-                status: 200,
-                headers: {},
-                body: JSONStringify(createTestRecord(RECORD_ID, fieldName, fieldName, 1)),
-            });
-
-            const snapshot = await getRecord({ recordId: RECORD_ID, fields: ['Account.Name'] });
-            expect(snapshot.state).toBe('Fulfilled');
-
-            const getRecordCallbackSpy = jest.fn();
-            luvio.storeSubscribe(snapshot, getRecordCallbackSpy);
-
-            // simulate another draft queue enqueuing a delete (which will modify
-            // durable store)
-            const nimbusDurableStore2 = new NimbusDurableStore();
-            const queue = new DurableDraftQueue(
-                nimbusDurableStore2,
-                NimbusNetworkAdapter,
-                jest.fn(),
-                jest.fn()
-            );
-            await queue.enqueue(
-                {
-                    method: 'delete',
-                    urlParams: { recordId: RECORD_ID },
-                    queryParams: {},
-                    basePath: '',
-                    baseUri: '',
-                    body: null,
-                    headers: {},
-                },
-                STORE_KEY_RECORD,
-                RECORD_ID
-            );
-
-            await flushPromises();
-
-            // before upload we should get back the optimistic response with drafts property
-            expect(getRecordCallbackSpy).toBeCalledTimes(1);
-            expect(getRecordCallbackSpy.mock.calls[0][0].data.drafts.deleted).toBe(true);
-
-            networkAdapter.setMockResponses([
-                {
-                    status: 204,
-                    headers: {},
-                    body: null,
-                },
-                {
-                    status: 404,
-                    headers: {},
-                    body: JSON.stringify({}),
-                },
-            ]);
-
-            // now have our main queue upload the action
-            await draftQueue.processNextAction();
-
-            // the draft queue completed listener asynchronously ingests so have to flush promises
-            await flushPromises();
-
-            expect(getRecordCallbackSpy).toBeCalledTimes(2);
-
-            // second callback should emit a 404
-            expect(getRecordCallbackSpy.mock.calls[1][0].data).toBeUndefined();
-            expect(getRecordCallbackSpy.mock.calls[1][0].error.status).toBe(404);
         });
     });
 });

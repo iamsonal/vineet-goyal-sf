@@ -2,6 +2,7 @@
     "assistantGroup": "test_assistant_group_id",
     "id": "test_assistant_id",
     "scenario": "test_scenario_id",
+    "itemSetRule": "best_item_set",
     "items": [
         {
             "action": {
@@ -31,6 +32,46 @@
                         "meta": "",
                         "description": "Explore Salesforce Setup on your own, where you can refine your users&#39; Salesforce experience."
                     },
+                    "progress": "NotStarted"
+                }
+            ]
+        },
+        {
+            "action": {
+                "iconName": "utilityBarIcon",
+                "actionType": "Custom",
+                "actionComponent": "lightning_message_service_trigger",
+                "customData": {
+                    "lmsEventTriggerName": "utilityBar"
+                }
+            },
+            "id": "trigger_lms_pub",
+            "labels": {
+                "title": "Show Utility Bar Actions",
+                "meta": "5:00 mins",
+                "description": "See how the utility bar actions can be customized."
+            },
+            "itemComponent": "custom_item_type",
+            "figureComponent": "custom_figure",
+            "progress": "NotStarted",
+            "steps": [
+                {
+                    "action": {
+                        "iconName": "utilityBarStepIcon",
+                        "actionType": "Custom",
+                        "actionComponent": "lightning_message_service_trigger",
+                        "customData": {
+                            "lmsEventTriggerName": "utilityBar"
+                        }
+                    },
+                    "id": "trigger_lms_pub_step",
+                    "labels": {
+                        "title": "Show Utility Bar Functions",
+                        "meta": "5:00 mins",
+                        "description": "See how the utility bar functions can be customized."
+                    },
+                    "stepComponent": "custom_step_type",
+                    "figureComponent": "custom_step_figure",
                     "progress": "NotStarted"
                 }
             ]

@@ -2,7 +2,7 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '52.0'
+version: '53.0'
 mediaType: application/json
 protocols:
   - https
@@ -34,6 +34,7 @@ types:
         description: The action type
         type: string
         enum:
+          - Custom
           - Link
           - NoAction
           - TlxModule
@@ -69,6 +70,25 @@ types:
       next:
         description: The id of the follow up question to be displayed
         type: string
+  LightningAssistantCustomActionRepresentation:
+    description: A Custom Action Representation
+    discriminatorValue: Custom
+    type: AbstractLightningAssistantActionRepresentation
+    properties:
+      actionComponent:
+        description: The action component id for the custom action
+        type: string
+      customData:
+        description: The custom data for the custom action
+        type: object
+        properties:
+          //:
+            type: string
+      iconName:
+        description: The name of the icon displayed for the custom action
+        type: string
+        # TODO Hand-rolled W-8253396
+        required: false
   LightningAssistantItemInputRepresentation:
     description: An Input Representation for the Lightning Assistant Item or Step
       Updates.
@@ -94,9 +114,19 @@ types:
       action:
         description: The action that will occur when an item is selected
         type: AbstractLightningAssistantActionRepresentation
+      figureComponent:
+        description: The id of the component used to display this item's figure
+        type: string
+        # TODO Hand-rolled W-8253396
+        required: false
       id:
         description: The Id of the Lightning Assistant
         type: string
+      itemComponent:
+        description: The id of the component used to to display this item
+        type: string
+        # TODO Hand-rolled W-8253396
+        required: false
       labels:
         description: The localized labels for this item
         type: object
@@ -249,6 +279,9 @@ types:
       id:
         description: The Lightning Assistant id
         type: string
+      itemSetRule:
+        description: The itemset (and questionnaire) that created this guidance set
+        type: string
       items:
         description: Lightning Assistant Items
         type: array
@@ -298,6 +331,9 @@ types:
       isDeactivated:
         description: Whether the scenario is deactivated or not
         type: boolean
+      isPreview:
+        description: Whether the scenario is being previewed or not
+        type: boolean
       labels:
         description: The localized labels for this scenario
         type: object
@@ -330,6 +366,11 @@ types:
       action:
         description: The action that will occur when an step is selected
         type: AbstractLightningAssistantActionRepresentation
+      figureComponent:
+        description: The id of the component used to display this step's figure
+        type: string
+        # TODO Hand-rolled W-8253396
+        required: false
       id:
         description: The id of the item
         type: string
@@ -346,6 +387,11 @@ types:
           - Completed
           - InProgress
           - NotStarted
+      stepComponent:
+        description: The id of the component used to display this step
+        type: string
+        # TODO Hand-rolled W-8253396
+        required: false
   LightningAssistantTrailheadActionRepresentation:
     description: A Trailhead Action Representation
     discriminatorValue: TlxModule

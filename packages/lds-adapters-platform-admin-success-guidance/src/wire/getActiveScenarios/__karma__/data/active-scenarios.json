@@ -11,6 +11,7 @@
             "progress": 50.5,
             "numberOfSteps": 12,
             "isDeactivated": false,
+            "isPreview": false,
             "completionDate": "3921-07-01T00:00:00.000Z",
             "questionnaireIds": ["test_csg_questions"],
             "status": "NotStarted"

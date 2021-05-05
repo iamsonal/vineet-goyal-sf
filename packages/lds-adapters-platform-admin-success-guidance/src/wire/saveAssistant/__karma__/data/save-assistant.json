@@ -2,6 +2,7 @@
     "assistantGroup": "test_assistant_group_id",
     "id": "test_assistant_id",
     "scenario": "test_scenario_id",
+    "itemSetRule": "best_item_set",
     "items": [
         {
             "action": {
@@ -41,6 +42,24 @@
                     "progress": "Completed"
                 }
             ]
+        },
+        {
+            "action": {
+                "iconName": "utilityBarIcon",
+                "actionType": "Custom",
+                "actionComponent": "lightning_message_service_trigger",
+                "customData": {
+                    "lmsEventTriggerName": "utilityBar"
+                }
+            },
+            "id": "trigger_lms_pub",
+            "labels": {
+                "title": "Show Utility Bar Actions",
+                "meta": "5:00 mins",
+                "description": "See how the utility bar actions can be customized."
+            },
+            "progress": "NotStarted",
+            "steps": []
         },
         {
             "action": {

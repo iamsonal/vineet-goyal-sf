@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-jest",
-    "version": "1.11.4",
+    "version": "1.12.0",
     "description": "Jest test library for lds adapters",
     "main": "dist/main.js",
     "types": "dist/main.d.ts",

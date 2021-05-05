@@ -3020,3 +3020,16 @@ types:
         sourceObject:
           type: string
           required: false
+  /replicatedDatasets/{id}:
+    get:
+      description: Get a single Replicated Dataset by ID.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ReplicatedDatasetRepresentation
+    uriParameters:
+      id:
+        type: string
+        required: true

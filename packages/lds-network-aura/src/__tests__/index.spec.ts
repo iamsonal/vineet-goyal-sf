@@ -4324,6 +4324,30 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/replicatedDatasets/{id}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/replicatedDatasets/0IuS70000004CqIKAU`,
+            },
+            [
+                'WaveController.getReplicatedDataset',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/replicatedDatasets/0IuS70000004CqIKAU`,
+            },
+            {}
+        );
+    });
+
     describe('get /asset/{assetId}/schedule', () => {
         testControllerInput(
             {

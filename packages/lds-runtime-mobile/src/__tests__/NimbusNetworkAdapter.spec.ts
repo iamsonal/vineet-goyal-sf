@@ -1,10 +1,10 @@
-import { mockNimbusNetworkGlobal, MockNimbusAdapter } from './MockNimbusNetworkAdapter';
+import { mockNimbusNetworkGlobal, MockNimbusNetworkAdapter } from './MockNimbusNetworkAdapter';
 import { NimbusNetworkAdapter as network } from '../network/NimbusNetworkAdapter';
 
 describe('NimbusNetworkAdapter tests', () => {
     it('filters out empty arrays from query params', () => {
         const sendSpy = jest.fn();
-        const mock = new MockNimbusAdapter();
+        const mock = new MockNimbusNetworkAdapter();
         mock.sendRequest = sendSpy;
         mockNimbusNetworkGlobal(mock);
         const originalQueryParams = {

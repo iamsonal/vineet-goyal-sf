@@ -120,11 +120,7 @@ export class NimbusDurableStore implements DurableStore {
         tasker.add();
         return __nimbus.plugins.LdsDurableStore.getEntriesInSegment(entryIds, segment)
             .then(result => {
-                const { isMissingEntries, entries } = result;
-
-                if (isMissingEntries) {
-                    return undefined;
-                }
+                const { entries } = result;
 
                 const returnEntries: DurableStoreEntries<T> = ObjectCreate(null);
                 const keys = ObjectKeys(entries);
@@ -218,7 +214,7 @@ export class NimbusDurableStore implements DurableStore {
 
     registerOnChangedListener(listener: OnDurableStoreChangedListener): () => Promise<void> {
         const sender = this.senderId;
-        let durableStore = __nimbus.plugins.LdsDurableStore;
+        const durableStore = __nimbus.plugins.LdsDurableStore;
         let uuid: string | undefined = undefined;
 
         if (durableStore.registerOnChangedListenerWithBatchInfo !== undefined) {
@@ -229,6 +225,12 @@ export class NimbusDurableStore implements DurableStore {
                 .then(id => {
                     uuid = id;
                 });
+        } else if (durableStore.registerOnChangedListenerWithInfo !== undefined) {
+            durableStore.registerOnChangedListenerWithInfo(info => {
+                listener([
+                    { ids: info.ids, segment: info.segment, type: LuvioOperationType.SetEntries },
+                ]);
+            });
         }
 
         return unsubscribe(() => uuid);

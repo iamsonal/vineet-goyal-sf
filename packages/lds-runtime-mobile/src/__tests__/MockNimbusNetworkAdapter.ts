@@ -1,6 +1,6 @@
 import { NetworkAdapter, NetworkError, Request, Response } from '@mobileplatform/nimbus-plugin-lds';
 
-export function mockNimbusNetworkGlobal(adapter: MockNimbusAdapter) {
+export function mockNimbusNetworkGlobal(adapter: MockNimbusNetworkAdapter) {
     global.__nimbus = {
         ...(global.__nimbus || {}),
         plugins: {
@@ -10,7 +10,7 @@ export function mockNimbusNetworkGlobal(adapter: MockNimbusAdapter) {
     } as any;
 }
 
-export class MockNimbusAdapter implements NetworkAdapter {
+export class MockNimbusNetworkAdapter implements NetworkAdapter {
     private mockResponses: Response[] = [];
     public sentRequests: Request[] = [];
 

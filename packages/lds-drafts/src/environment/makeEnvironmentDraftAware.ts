@@ -138,7 +138,8 @@ export function makeEnvironmentDraftAware(
                         return;
                     }
                     const keys = ObjectKeys(mappingEntries);
-                    for (const key of keys) {
+                    for (let i = 0, len = keys.length; i < len; i++) {
+                        const key = keys[i];
                         const entry = mappingEntries[key] as DurableStoreEntry<DraftIdMappingEntry>;
                         const { draftKey, canonicalKey } = entry.data;
                         registerDraftKeyMapping(draftKey, canonicalKey);

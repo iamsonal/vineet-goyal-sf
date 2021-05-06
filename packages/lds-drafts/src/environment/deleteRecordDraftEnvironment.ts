@@ -59,14 +59,13 @@ function resolveResourceRequestId(request: ResourceRequest, env: Environment) {
 
 export function deleteRecordDraftEnvironment(
     env: DurableEnvironment,
-    options: DraftEnvironmentOptions
+    { draftQueue, store }: DraftEnvironmentOptions
 ): DurableEnvironment {
     const draftDeleteSet = new Set<string>();
 
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function(
         resourceRequest: ResourceRequest
     ) {
-        const { draftQueue } = options;
         if (isRequestDeleteRecord(resourceRequest) === false) {
             // only override requests to deleteRecord endpoint
             return env.dispatchResourceRequest(resourceRequest);
@@ -94,7 +93,7 @@ export function deleteRecordDraftEnvironment(
         // until the action to delete it on the server succeeds.
         if (draftDeleteSet.has(key)) {
             draftDeleteSet.delete(key);
-            options.store.evict(key);
+            store.evict(key);
             return;
         }
 

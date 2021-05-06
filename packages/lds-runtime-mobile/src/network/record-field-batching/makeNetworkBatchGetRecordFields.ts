@@ -155,7 +155,7 @@ function createAggregateUiRequest(
 export function makeNetworkBatchGetRecordFields(networkAdapter: NetworkAdapter): NetworkAdapter {
     return (resourceRequest: ResourceRequest) => {
         // only handle GETs on record endpoint
-        if (!isRequestForGetRecord(resourceRequest)) {
+        if (isRequestForGetRecord(resourceRequest) === false) {
             return networkAdapter(resourceRequest);
         }
 

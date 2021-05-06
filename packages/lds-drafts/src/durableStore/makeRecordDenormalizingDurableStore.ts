@@ -191,6 +191,10 @@ export function makeRecordDenormalizingDurableStore(
                 const key = keys[i];
                 const value = durableEntries[key];
 
+                if (value === undefined) {
+                    continue;
+                }
+
                 if (isStoreKeyRecordId(key) && !isStoreRecordError(value.data)) {
                     ObjectAssign(
                         returnEntries,
@@ -200,9 +204,6 @@ export function makeRecordDenormalizingDurableStore(
                         )
                     );
                 } else {
-                    if (value === undefined) {
-                        return undefined;
-                    }
                     returnEntries[key] = value;
                 }
             }

@@ -606,7 +606,7 @@ export class DurableDraftQueue implements DraftQueue {
      * completed action and the remaining queue items. The consumer will process the completed action and indicate what
      * queue operations the DraftQueue must take to update its entries with the new entity id
      * @param action the action that just completed
-     * @param queue the currenct queue DraftActions
+     * @param queue the current queue DraftActions
      */
     storeOperationsForUploadedDraft(
         queue: DraftAction<unknown>[],

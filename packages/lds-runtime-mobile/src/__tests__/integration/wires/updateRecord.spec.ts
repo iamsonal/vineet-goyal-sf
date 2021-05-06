@@ -9,7 +9,7 @@ import {
 import { DraftManager, DraftQueue, DraftActionOperationType } from '@salesforce/lds-drafts';
 import { JSONStringify } from '../../../utils/language';
 import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusDurableStore';
-import { MockNimbusAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
+import { MockNimbusNetworkAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
 import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 import { RECORD_TTL } from '@salesforce/lds-adapters-uiapi/karma/dist/uiapi-constants';
@@ -49,7 +49,7 @@ describe('mobile runtime integration tests', () => {
     let luvio: Luvio;
     let draftQueue: DraftQueue;
     let draftManager: DraftManager;
-    let networkAdapter: MockNimbusAdapter;
+    let networkAdapter: MockNimbusNetworkAdapter;
     let durableStore: MockNimbusDurableStore;
     let createRecord;
     let updateRecord;
@@ -59,7 +59,7 @@ describe('mobile runtime integration tests', () => {
         durableStore = new MockNimbusDurableStore();
         mockNimbusStoreGlobal(durableStore);
 
-        networkAdapter = new MockNimbusAdapter();
+        networkAdapter = new MockNimbusNetworkAdapter();
         mockNimbusNetworkGlobal(networkAdapter);
 
         const runtime = await import('../../../main');

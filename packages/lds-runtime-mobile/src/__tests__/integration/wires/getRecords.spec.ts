@@ -4,7 +4,7 @@ import { getRecordsAdapterFactory } from '@salesforce/lds-adapters-uiapi';
 import { DraftQueue } from '@salesforce/lds-drafts';
 import { JSONStringify } from '../../../utils/language';
 import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusDurableStore';
-import { MockNimbusAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
+import { MockNimbusNetworkAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
 import getRecordsResponse from './data/records-multiple-Accounts-fields-Account.Id,Account.Name.json';
 
 const RECORD_TTL = 30000;
@@ -12,7 +12,7 @@ const RECORD_TTL = 30000;
 describe('mobile runtime integration tests', () => {
     let luvio: Luvio;
     let draftQueue: DraftQueue;
-    let networkAdapter: MockNimbusAdapter;
+    let networkAdapter: MockNimbusNetworkAdapter;
     let durableStore: MockNimbusDurableStore;
     let getRecords;
 
@@ -20,7 +20,7 @@ describe('mobile runtime integration tests', () => {
         durableStore = new MockNimbusDurableStore();
         mockNimbusStoreGlobal(durableStore);
 
-        networkAdapter = new MockNimbusAdapter();
+        networkAdapter = new MockNimbusNetworkAdapter();
         mockNimbusNetworkGlobal(networkAdapter);
 
         const runtime = await import('../../../main');

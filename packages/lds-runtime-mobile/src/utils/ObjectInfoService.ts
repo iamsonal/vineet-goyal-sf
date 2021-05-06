@@ -49,7 +49,7 @@ export function objectInfoServiceFactory(
     function objectInfoMapExists(apiName: string) {
         return durableStore
             .getEntries<ObjectInfoIndex>([apiName], OBJECT_INFO_PREFIX_SEGMENT)
-            .then(entries => entries !== undefined);
+            .then(entries => entries !== undefined && entries[apiName] !== undefined);
     }
 
     function ensureObjectInfoCached(apiName: string) {

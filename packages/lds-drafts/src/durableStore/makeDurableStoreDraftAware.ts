@@ -92,7 +92,12 @@ function resolveDrafts(
 
                 for (let i = 0, len = recordKeys.length; i < len; i++) {
                     const recordKey = recordKeys[i];
-                    const { data: record, expiration } = entries[recordKey];
+                    const entry = entries[recordKey];
+                    if (entry === undefined) {
+                        continue;
+                    }
+
+                    const { data: record, expiration } = entry;
                     let baseRecord = removeDrafts(record);
 
                     const drafts =
@@ -169,6 +174,7 @@ export function makeDurableStoreDraftAware(
         if (segment !== DRAFT_SEGMENT) {
             return durableStore.setEntries(entries, segment);
         }
+
         // change made to a draft action require affected records to be resolved
         return durableStore.setEntries(entries, segment).then(() => {
             return persistDraftCreates(

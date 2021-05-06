@@ -44,12 +44,12 @@ describe('nimbus durable store tests', () => {
     });
 
     describe('getEntries', () => {
-        it('should return undefined if missing entries', async () => {
+        it('should return empty object if missing entries', async () => {
             const nimbusStore = new MockNimbusDurableStore();
             mockNimbusStoreGlobal(nimbusStore);
             const durableStore = new NimbusDurableStore();
             const result = await durableStore.getEntries(['missing'], DefaultDurableSegment);
-            expect(result).toBeUndefined();
+            expect(result).toEqual({});
         });
         it('should parse serialized entries', async () => {
             const recordId = 'foo';
@@ -68,7 +68,7 @@ describe('nimbus durable store tests', () => {
             expect(entry).toEqual(recordData);
             expect(entry.data['bar']).toBe(true);
         });
-        it('should return undefined if missing some entries', async () => {
+        it('should return partial map if missing some entries', async () => {
             const nimbusStore = new MockNimbusDurableStore();
             mockNimbusStoreGlobal(nimbusStore);
             const durableStore = new NimbusDurableStore();
@@ -81,7 +81,7 @@ describe('nimbus durable store tests', () => {
                 ['missing', 'present'],
                 DefaultDurableSegment
             );
-            expect(result).toBeUndefined();
+            expect(result).toEqual({ present: { data: {} } });
         });
     });
 

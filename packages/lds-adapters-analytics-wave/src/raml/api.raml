@@ -283,7 +283,7 @@ types:
         items:
           type: ConnectionPropertyValueRepresentation
       connectorHandler:
-        description: Third party driver used for connection
+        description: Connector Handler associated with the current source connector.
         type: string
         required: false # TODO Hand-rolled W-8253396
         enum:
@@ -314,6 +314,7 @@ types:
           - AzureTable
           - Box
           - Cassandra
+          - CdpDirect
           - Dropbox
           - GoogleAds
           - GoogleAnalytics
@@ -1312,6 +1313,56 @@ types:
       url:
         description: The URL to get the collection.
         type: string
+  ReplicatedDatasetInputRepresentation:
+    description: Replicates data from an external source object into a Wave as a dataset.
+      Replicated Datasets are not intended to be visualized directly, but are used
+      like a cache to speed up other workflows which refer to the same source object.
+    type: object
+    properties:
+      advancedProperties:
+        description: List of user-specified advanced properties associated with this
+          object.
+        type: array
+        items:
+          type: object
+          properties: # TODO Hand-rolled W-8252808
+            //:
+              type: any
+        required: false # TODO Hand-rolled W-8253396
+      connectionMode:
+        description: Connection mode for pulling the data from the replicated dataset
+        type: string
+        enum:
+          - Full
+          - Incremental
+          - PeriodicFull
+        required: false # TODO Hand-rolled W-8253396
+      connectorId:
+        description: The id of the connector object used to replicate.
+        type: string
+      fullRefresh:
+        description: Whether to perform a one-time full refresh (during the next run)
+          as opposed to incremental
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      passThroughFilter:
+        description: Passthrough filter for the replicated object
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      rowLevelSharing:
+        description: Inherit row level sharing rules for this object
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      sourceObjectName:
+        description: The name of the source object to be replicated.
+        type: string
+  ReplicatedDatasetInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for replicated dataset input representation
+    type: object
+    properties:
+      replicatedDataset:
+        type: ReplicatedDatasetInputRepresentation
+        description: Replicated dataset input representation
   ReplicatedDatasetRepresentation:
     description: Replicates data from an external source object into a Wave as a dataset.
       Replicated Datasets are not intended to be visualized directly, but are used
@@ -3020,6 +3071,18 @@ types:
         sourceObject:
           type: string
           required: false
+    post:
+      description: Add a Source Object to be replicated.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ReplicatedDatasetRepresentation
+      body:
+        application/json:
+          type: ReplicatedDatasetInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: ReplicatedDatasetInputRepresentation
+          (oas-body-name): replicatedDataset
   /replicatedDatasets/{id}:
     get:
       description: Get a single Replicated Dataset by ID.

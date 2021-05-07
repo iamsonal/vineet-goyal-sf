@@ -432,6 +432,14 @@ const analytics: ApiFamily = {
             controller: 'WaveController.getReplicatedDatasets',
         },
     },
+    createReplicatedDataset: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && REPLICATED_DATASETS_PATH.test(path),
+        transport: {
+            controller: 'WaveController.createReplicatedDataset',
+        },
+    },
     getReplicatedDataset: {
         method: 'get',
         predicate: (path: string) =>

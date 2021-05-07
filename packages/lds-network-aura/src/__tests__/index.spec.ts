@@ -4324,6 +4324,47 @@ describe('routes', () => {
         );
     });
 
+    describe('post /wave/replicatedDatasets', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/replicatedDatasets`,
+                body: {
+                    replicatedDataset: {
+                        connectorId: '0ItS700000001YxKAI',
+                        sourceObjectName: 'Account',
+                    },
+                },
+            },
+            [
+                'WaveController.createReplicatedDataset',
+                {
+                    replicatedDataset: {
+                        connectorId: '0ItS700000001YxKAI',
+                        sourceObjectName: 'Account',
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/replicatedDatasets`,
+                body: {
+                    replicatedDataset: {
+                        connectorId: '0ItS700000001YxKAI',
+                        sourceObjectName: 'Account',
+                    },
+                },
+            },
+            {}
+        );
+    });
+
     describe('get /wave/replicatedDatasets/{id}', () => {
         testControllerInput(
             {

@@ -13,7 +13,7 @@ function getMock(filename) {
 
 describe('basic', () => {
     it('gets dataConnectorTypes', async () => {
-        const mock = getMock('dataConnectorTypes');
+        const mock = getMock('data-connector-types');
         const config = {};
         mockGetDataConnectorTypesNetworkOnce(config, mock);
 
@@ -23,7 +23,7 @@ describe('basic', () => {
     });
 
     it('does not fetch a second time', async () => {
-        const mock = getMock('dataConnectorTypes');
+        const mock = getMock('data-connector-types');
         const config = {};
         mockGetDataConnectorTypesNetworkOnce(config, mock);
 

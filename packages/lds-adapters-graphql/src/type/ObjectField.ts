@@ -3,6 +3,18 @@ import { LuvioSelectionObjectFieldNode } from '@salesforce/lds-graphql-parser';
 import { getLuvioFieldNodeSelection } from './Selection';
 import { createIngest as createCustomFieldIngest } from './CustomField';
 
+function merge<T extends Record<string, unknown>>(existing: T | undefined, incoming: T) {
+    if (existing === undefined) {
+        return incoming;
+    }
+
+    // Merge existing and incoming values together
+    return {
+        ...existing,
+        ...incoming,
+    };
+}
+
 export const createIngest: (ast: LuvioSelectionObjectFieldNode) => ResourceIngest = (
     ast: LuvioSelectionObjectFieldNode
 ) => {
@@ -47,7 +59,10 @@ export const createIngest: (ast: LuvioSelectionObjectFieldNode) => ResourceInges
             }
         }
 
-        luvio.storePublish(fullPath, data);
+        const existing = store.records[fullPath];
+        const newData = merge(existing, data);
+
+        luvio.storePublish(fullPath, newData);
 
         return {
             __ref: fullPath,

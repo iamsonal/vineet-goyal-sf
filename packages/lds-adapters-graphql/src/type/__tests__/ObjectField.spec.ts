@@ -135,4 +135,173 @@ describe('ObjectField', () => {
             },
         });
     });
+
+    describe('Merge Tests', () => {
+        const fooAst: LuvioSelectionObjectFieldNode = {
+            kind: 'ObjectFieldSelection',
+            name: 'query',
+            luvioSelections: [
+                {
+                    kind: 'ObjectFieldSelection',
+                    name: 'foo',
+                    luvioSelections: [
+                        {
+                            kind: 'ScalarFieldSelection',
+                            name: 'field1',
+                        },
+                        {
+                            kind: 'ScalarFieldSelection',
+                            name: 'field2',
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const barAst: LuvioSelectionObjectFieldNode = {
+            kind: 'ObjectFieldSelection',
+            name: 'query',
+            luvioSelections: [
+                {
+                    kind: 'ObjectFieldSelection',
+                    name: 'bar',
+                    luvioSelections: [
+                        {
+                            kind: 'ScalarFieldSelection',
+                            name: 'field1',
+                        },
+                        {
+                            kind: 'ScalarFieldSelection',
+                            name: 'field2',
+                        },
+                    ],
+                },
+            ],
+        };
+
+        it('should merge ingest ObjectFieldSelection query correctly', () => {
+            const firstData = {
+                foo: {
+                    field1: 'Field1 - 1',
+                    field2: 'Field2 - 1',
+                },
+            };
+
+            const secondData = {
+                bar: {
+                    field1: 'Field1 - 2',
+                    field2: 'Field2 - 2',
+                },
+            };
+
+            const store = new Store();
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            createIngest(fooAst)(
+                firstData,
+                {
+                    parent: null,
+                    fullPath: 'toplevel',
+                    propertyName: null,
+                },
+                luvio,
+                store,
+                0
+            );
+
+            createIngest(barAst)(
+                secondData,
+                {
+                    parent: null,
+                    fullPath: 'toplevel',
+                    propertyName: null,
+                },
+                luvio,
+                store,
+                0
+            );
+
+            expect(store.records).toEqual({
+                toplevel: {
+                    foo: {
+                        __ref: 'toplevel__foo',
+                    },
+                    bar: {
+                        __ref: 'toplevel__bar',
+                    },
+                },
+                toplevel__foo: {
+                    field1: 'Field1 - 1',
+                    field2: 'Field2 - 1',
+                },
+                toplevel__bar: {
+                    field1: 'Field1 - 2',
+                    field2: 'Field2 - 2',
+                },
+            });
+        });
+
+        it('should overwrite existing ObjectFieldSelection query correctly', () => {
+            const firstData = {
+                foo: {
+                    field1: 'Field1 - 1',
+                    field2: 'Field2 - 1',
+                },
+            };
+
+            const secondData = {
+                foo: {
+                    field1: 'Field1 - 2',
+                    field2: null,
+                },
+            };
+
+            const store = new Store();
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            createIngest(fooAst)(
+                firstData,
+                {
+                    parent: null,
+                    fullPath: 'toplevel',
+                    propertyName: null,
+                },
+                luvio,
+                store,
+                0
+            );
+
+            createIngest(fooAst)(
+                secondData,
+                {
+                    parent: null,
+                    fullPath: 'toplevel',
+                    propertyName: null,
+                },
+                luvio,
+                store,
+                0
+            );
+
+            expect(store.records).toEqual({
+                toplevel: {
+                    foo: {
+                        __ref: 'toplevel__foo',
+                    },
+                },
+                toplevel__foo: {
+                    field1: 'Field1 - 2',
+                    field2: null,
+                },
+            });
+        });
+    });
 });

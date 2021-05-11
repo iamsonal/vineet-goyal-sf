@@ -108,13 +108,15 @@ const draftAwareNetworkAdapter = makeNetworkAdapterDraftAware(
     userId
 );
 
-// build environment
-const env = makeEnvironmentDraftAware(
-    makeDurable(makeOffline(new Environment(store, draftAwareNetworkAdapter)), {
-        durableStore: recordDenormingStore,
-        reviveRetrievers: responseRecordRepresentationRetrievers,
-        compositeRetrievers: [getRecordsPropertyRetriever],
-    }),
+const baseEnv = new Environment(store, draftAwareNetworkAdapter);
+const offlineEnv = makeOffline(baseEnv);
+const durableEnv = makeDurable(offlineEnv, {
+    durableStore: recordDenormingStore,
+    reviveRetrievers: responseRecordRepresentationRetrievers,
+    compositeRetrievers: [getRecordsPropertyRetriever],
+});
+const draftEnv = makeEnvironmentDraftAware(
+    durableEnv,
     {
         store,
         draftQueue,
@@ -132,7 +134,7 @@ const env = makeEnvironmentDraftAware(
     userId
 );
 
-luvio = new Luvio(env);
+luvio = new Luvio(draftEnv);
 setDefaultLuvio({ luvio });
 
 export { luvio, draftQueue, draftManager };

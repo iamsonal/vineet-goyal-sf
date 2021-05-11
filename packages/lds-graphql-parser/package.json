@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-graphql-parser",
-    "version": "1.12.0",
+    "version": "1.12.1",
     "description": "GraphQL parser for LDS GraphQL adapter",
     "main": "dist/ldsGraphqlParser.js",
     "types": "dist/main.d.ts",

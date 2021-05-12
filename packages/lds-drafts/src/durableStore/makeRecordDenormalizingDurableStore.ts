@@ -95,36 +95,35 @@ function buildDurableRecordRepresentation(
 
         // pending fields get filtered out of the durable store
         const { pending } = field;
-        if (pending !== true) {
-            const { isMissing, __ref } = field;
-
-            if (__ref !== undefined) {
-                let ref = records[__ref];
-
-                if (pendingEntries !== undefined) {
-                    // If the ref was part of the pending write that takes precedence
-                    const pendingEntry = pendingEntries[__ref];
-                    if (pendingEntry !== undefined) {
-                        ref = pendingEntry.data;
-                    }
-                }
-
-                // there is a dangling field reference, do not persist a
-                // record if there's a field reference missing
-                if (ref === undefined) {
-                    if (process.env.NODE_ENV !== 'production') {
-                        throw new Error('failed to find normalized field reference');
-                    }
-                    return undefined;
-                }
-
-                filteredFields[fieldName] = ref;
-                links[fieldName] = field;
-            } else if (isMissing) {
-                // persist missing links
-                links[fieldName] = field;
-            }
+        if (pending === true) {
+            continue;
         }
+
+        const { __ref } = field;
+
+        if (__ref !== undefined) {
+            let ref = records[__ref];
+
+            if (pendingEntries !== undefined) {
+                // If the ref was part of the pending write that takes precedence
+                const pendingEntry = pendingEntries[__ref];
+                if (pendingEntry !== undefined) {
+                    ref = pendingEntry.data;
+                }
+            }
+
+            // there is a dangling field reference, do not persist a
+            // record if there's a field reference missing
+            if (ref === undefined) {
+                if (process.env.NODE_ENV !== 'production') {
+                    throw new Error('failed to find normalized field reference');
+                }
+                return undefined;
+            }
+
+            filteredFields[fieldName] = ref;
+        }
+        links[fieldName] = field;
     }
 
     return {

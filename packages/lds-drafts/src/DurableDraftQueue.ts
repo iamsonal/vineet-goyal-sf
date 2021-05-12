@@ -40,6 +40,39 @@ function createDraftMappingEntryKey(draftKey: string, canonicalKey: string) {
 }
 
 /**
+ * Returns an array of keys for DraftActions that should be deleted, since the draft-create that they
+ * are related to is being deleted.
+ */
+function getRelatedDraftKeysForDelete(
+    deletedAction: DraftAction<unknown>,
+    queue: DraftAction<unknown>[]
+): string[] {
+    const relatedKeysToDelete: string[] = [];
+    // only look to delete related drafts of deleted draft-creates
+    if (deletedAction.request.method !== 'post') {
+        return relatedKeysToDelete;
+    }
+
+    const deletedActionTargetId = deletedAction.targetId;
+    const { length } = queue;
+
+    for (let i = 0; i < length; i++) {
+        const queueAction = queue[i];
+        const { tag, id, targetId } = queueAction;
+        // a related draft action needs to be set for deletion if its targetId is the same as the
+        // deleted action's targetId.  Also check that the queueAction is not the deletedAction itself.
+        const needsDelete = targetId === deletedActionTargetId && queueAction !== deletedAction;
+
+        if (needsDelete) {
+            const draftKey = buildDraftDurableStoreKey(tag, id);
+            relatedKeysToDelete.push(draftKey);
+        }
+    }
+
+    return relatedKeysToDelete;
+}
+
+/**
  * Generates a time-ordered, unique id to associate with a DraftAction. Ensures
  * no collisions with existing draft action IDs.
  */
@@ -439,13 +472,18 @@ export class DurableDraftQueue implements DraftQueue {
             }
 
             let durableStoreKey = buildDraftDurableStoreKey(action.tag, action.id);
+            // array of draft action to delete, and all related actions
+            let allRelatedDraftKeysToDelete = getRelatedDraftKeysForDelete(action, queue).concat(
+                durableStoreKey
+            );
+
             return this.notifyChangedListeners({
                 type: DraftQueueEventType.ActionDeleting,
                 action,
             })
                 .then(() => {
                     return this.durableStore
-                        .evictEntries([durableStoreKey], DRAFT_SEGMENT)
+                        .evictEntries(allRelatedDraftKeysToDelete, DRAFT_SEGMENT)
                         .then(() => {
                             this.notifyChangedListeners({
                                 type: DraftQueueEventType.ActionDeleted,

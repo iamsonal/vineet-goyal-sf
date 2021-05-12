@@ -65,7 +65,7 @@ const UPDATE_REQUEST: ResourceRequest = {
     urlParams: {},
     headers: {},
 };
-const DEFAULT_TAG = 'test-tag1';
+const DEFAULT_TAG = 'UiApi::RecordRepresentation:Res1D505SS6iztdRYA';
 
 const mockQueuePostHandler = jest.fn().mockResolvedValue([]);
 const mockDraftIdHandler = jest.fn().mockRejectedValue({ canonicalKey: 'foo', draftKey: 'bar' });
@@ -984,16 +984,17 @@ describe('DurableDraftQueue', () => {
     });
 
     describe('removeDraftAction', () => {
+        const baseTag = 'UiApi::RecordRepresentation:Res1D505SS6iztdRYA';
         const baseAction = {
             id: '123456',
             targetId: 'testTargetId',
-            tag: 'testActionTag',
+            tag: baseTag,
             request: DEFAULT_PATCH_REQUEST,
             timestamp: 2,
             metadata: {},
         };
 
-        const setup = (testAction: DraftAction<unknown> | undefined = undefined) => {
+        const setup = (testActions: DraftAction<unknown>[] = []) => {
             const durableStore = new MockDurableStore();
             const evictSpy = jest.spyOn(durableStore, 'evictEntries');
 
@@ -1004,11 +1005,13 @@ describe('DurableDraftQueue', () => {
                 mockDraftIdHandler
             );
 
-            if (testAction !== undefined) {
-                durableStore.segments[DRAFT_SEGMENT] = {
-                    [testAction.id]: { data: testAction },
-                };
-            }
+            // reset the durable store's draft segment before each test
+            durableStore.segments[DRAFT_SEGMENT] = {};
+            testActions.forEach(testAction => {
+                durableStore.segments[DRAFT_SEGMENT][
+                    buildDraftDurableStoreKey(testAction.tag, testAction.id)
+                ] = { data: testAction };
+            });
 
             return { draftQueue, evictSpy, durableStore };
         };
@@ -1026,7 +1029,7 @@ describe('DurableDraftQueue', () => {
                 status: DraftActionStatus.Uploading,
             };
 
-            const { draftQueue } = setup(testAction);
+            const { draftQueue } = setup([testAction]);
             // uploadingActionId is private, but we need to set it to
             // mock the uploading action
             (draftQueue as any).uploadingActionId = testAction.id;
@@ -1041,15 +1044,126 @@ describe('DurableDraftQueue', () => {
                 status: DraftActionStatus.Pending,
             };
 
-            const { draftQueue, evictSpy, durableStore } = setup(testAction);
+            const { draftQueue, evictSpy, durableStore } = setup([testAction]);
             evictSpy.mockImplementation((ids, segment) => {
-                expect(ids).toEqual(['testActionTag__DraftAction__123456']);
+                const expectedId = `${baseTag}__DraftAction__123456`;
+                expect(ids).toEqual([expectedId]);
                 expect(segment).toEqual('DRAFT');
                 durableStore.segments[DRAFT_SEGMENT] = undefined;
                 return Promise.resolve();
             });
 
             await draftQueue.removeDraftAction(testAction.id);
+        });
+
+        it('deletes related draft edits on draft-create delete', async () => {
+            const testAction1: PendingDraftAction<unknown> = {
+                ...baseAction,
+                id: '101',
+                tag: 'UiApi::RecordRepresentation:target110',
+                targetId: 'target110',
+                request: DEFAULT_POST_REQUEST,
+                status: DraftActionStatus.Pending,
+            };
+            const testAction2: PendingDraftAction<unknown> = {
+                ...baseAction,
+                id: '102',
+                tag: 'UiApi::RecordRepresentation:target110',
+                targetId: 'target110',
+                request: { ...DEFAULT_PATCH_REQUEST, basePath: '/basePath/target110' },
+                status: DraftActionStatus.Pending,
+            };
+            const testAction3: PendingDraftAction<unknown> = {
+                ...baseAction,
+                id: '103',
+                tag: 'UiApi::RecordRepresentation:target110',
+                targetId: 'target110',
+                request: { ...DEFAULT_PATCH_REQUEST, basePath: '/basePath/target110' },
+                status: DraftActionStatus.Pending,
+            };
+            const testAction4: PendingDraftAction<unknown> = {
+                ...baseAction,
+                id: '104',
+                tag: 'UiApi::RecordRepresentation:target140',
+                targetId: 'target140',
+                status: DraftActionStatus.Pending,
+            };
+            const testAction5: PendingDraftAction<unknown> = {
+                ...baseAction,
+                id: '105',
+                tag: 'UiApi::RecordRepresentation:target150',
+                targetId: 'target150',
+                status: DraftActionStatus.Pending,
+            };
+
+            const { draftQueue, evictSpy } = setup([
+                testAction1,
+                testAction2,
+                testAction3,
+                testAction4,
+                testAction5,
+            ]);
+
+            const expectedId1 = `UiApi::RecordRepresentation:target110__DraftAction__101`;
+            const expectedId2 = `UiApi::RecordRepresentation:target110__DraftAction__102`;
+            const expectedId3 = `UiApi::RecordRepresentation:target110__DraftAction__103`;
+
+            await draftQueue.removeDraftAction(testAction1.id);
+            expect(evictSpy).toBeCalledWith([expectedId2, expectedId3, expectedId1], 'DRAFT');
+        });
+
+        it('does not delete related draft edits on draft-edit delete', async () => {
+            const testAction1: PendingDraftAction<unknown> = {
+                ...baseAction,
+                id: '101',
+                tag: 'UiApi::RecordRepresentation:target110',
+                targetId: 'target110',
+                request: DEFAULT_POST_REQUEST,
+                status: DraftActionStatus.Pending,
+            };
+            const testAction2: PendingDraftAction<unknown> = {
+                ...baseAction,
+                id: '102',
+                tag: 'UiApi::RecordRepresentation:target110',
+                targetId: 'target110',
+                request: { ...DEFAULT_PATCH_REQUEST, basePath: '/basePath/target110' },
+                status: DraftActionStatus.Pending,
+            };
+            const testAction3: PendingDraftAction<unknown> = {
+                ...baseAction,
+                id: '103',
+                tag: 'UiApi::RecordRepresentation:target110',
+                targetId: 'target110',
+                request: { ...DEFAULT_PATCH_REQUEST, basePath: '/basePath/target110' },
+                status: DraftActionStatus.Pending,
+            };
+            const testAction4: PendingDraftAction<unknown> = {
+                ...baseAction,
+                id: '104',
+                tag: 'UiApi::RecordRepresentation:target140',
+                targetId: 'target140',
+                status: DraftActionStatus.Pending,
+            };
+            const testAction5: PendingDraftAction<unknown> = {
+                ...baseAction,
+                id: '105',
+                tag: 'UiApi::RecordRepresentation:target150',
+                targetId: 'target150',
+                status: DraftActionStatus.Pending,
+            };
+
+            const { draftQueue, evictSpy } = setup([
+                testAction1,
+                testAction2,
+                testAction3,
+                testAction4,
+                testAction5,
+            ]);
+
+            const expectedId3 = `UiApi::RecordRepresentation:target110__DraftAction__103`;
+
+            await draftQueue.removeDraftAction(testAction3.id);
+            expect(evictSpy).toBeCalledWith([expectedId3], 'DRAFT');
         });
 
         it('restarts queue if removing an errored item', async () => {
@@ -1059,7 +1173,7 @@ describe('DurableDraftQueue', () => {
                 error: 'some error',
             };
 
-            const { draftQueue, evictSpy, durableStore } = setup(errorAction);
+            const { draftQueue, evictSpy, durableStore } = setup([errorAction]);
             evictSpy.mockImplementation((_ids, _segment) => {
                 durableStore.segments[DRAFT_SEGMENT] = undefined;
                 return Promise.resolve();
@@ -1083,7 +1197,7 @@ describe('DurableDraftQueue', () => {
                 mockQueuePostHandler,
                 mockDraftIdHandler
             );
-            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const draftTag = 'UiApi::RecordRepresentation:Res1D505SS6iztdRYA';
             const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'targetId');
             const actionTwo = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'targetId');
             let actions = await draftQueue.getQueueActions();
@@ -1105,7 +1219,7 @@ describe('DurableDraftQueue', () => {
                 mockQueuePostHandler,
                 mockDraftIdHandler
             );
-            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const draftTag = 'UiApi::RecordRepresentation:fooId';
             const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'targetId');
             const secondUpdate = { ...UPDATE_REQUEST };
             secondUpdate.baseUri = 'secondTestURI';
@@ -1299,7 +1413,7 @@ describe('DurableDraftQueue', () => {
                 targetId: firstId,
                 status: DraftActionStatus.Error,
                 request: createPatchRequest(),
-                tag: 'UiAPI::RecordRepresentation::fooId',
+                tag: 'UiApi::RecordRepresentation:fooId',
                 timestamp: Date.now(),
                 metadata: {},
                 error: {},
@@ -1312,7 +1426,7 @@ describe('DurableDraftQueue', () => {
                 targetId: secondId,
                 status: DraftActionStatus.Pending,
                 request: secondPatchRequest,
-                tag: 'UiAPI::RecordRepresentation::fooId',
+                tag: 'UiApi::RecordRepresentation:fooId',
                 timestamp: Date.now(),
                 metadata: {},
             };
@@ -1363,7 +1477,7 @@ describe('DurableDraftQueue', () => {
                 return Promise.resolve();
             });
             durableStore.evictEntries = evictSpy;
-            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const draftTag = 'UiApi::RecordRepresentation:fooId';
             const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
             const actionTwo = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
             let actions = await draftQueue.getQueueActions();
@@ -1409,7 +1523,7 @@ describe('DurableDraftQueue', () => {
             let startSpy = jest.fn(() => {
                 return Promise.resolve();
             });
-            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const draftTag = 'UiApi::RecordRepresentation:fooId';
             const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
             const actionTwo = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
             let actions = await draftQueue.getQueueActions();
@@ -1436,7 +1550,7 @@ describe('DurableDraftQueue', () => {
                 return Promise.resolve();
             });
             durableStore.evictEntries = evictSpy;
-            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const draftTag = 'UiApi::RecordRepresentation:fooId';
             const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
             const actionTwo = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
             let actions = await draftQueue.getQueueActions();
@@ -1462,7 +1576,7 @@ describe('DurableDraftQueue', () => {
             const errorAction: ErrorDraftAction<unknown> = {
                 id: '123456',
                 targetId: 'testTargetId',
-                tag: 'testActionTag',
+                tag: DEFAULT_TAG,
                 request: DEFAULT_PATCH_REQUEST,
                 timestamp: 2,
                 metadata: {},
@@ -1473,7 +1587,7 @@ describe('DurableDraftQueue', () => {
             const pendingAction: PendingDraftAction<unknown> = {
                 id: '654321',
                 targetId: 'testTargetId',
-                tag: 'testActionTag',
+                tag: DEFAULT_TAG,
                 request: DEFAULT_PATCH_REQUEST,
                 timestamp: 2,
                 metadata: {},

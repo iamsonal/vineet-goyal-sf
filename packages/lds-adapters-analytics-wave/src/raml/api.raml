@@ -1340,6 +1340,7 @@ types:
       connectorId:
         description: The id of the connector object used to replicate.
         type: string
+        required: false # TODO Hand-rolled W-8253396
       fullRefresh:
         description: Whether to perform a one-time full refresh (during the next run)
           as opposed to incremental
@@ -1356,6 +1357,7 @@ types:
       sourceObjectName:
         description: The name of the source object to be replicated.
         type: string
+        required: false # TODO Hand-rolled W-8253396
   ReplicatedDatasetInputWrapperRepresentation: # TODO Hand-rolled W-8334626
     description: Wrapper for replicated dataset input representation
     type: object
@@ -3092,6 +3094,18 @@ types:
           body:
             application/json:
               type: ReplicatedDatasetRepresentation
+    patch:
+      description: Update a replicated dataset by ID
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ReplicatedDatasetRepresentation
+      body:
+        application/json:
+          type: ReplicatedDatasetInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: ReplicatedDatasetInputRepresentation
+          (oas-body-name): replicatedDataset
     uriParameters:
       id:
         type: string

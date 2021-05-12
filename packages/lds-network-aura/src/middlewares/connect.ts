@@ -448,6 +448,14 @@ const analytics: ApiFamily = {
             controller: 'WaveController.getReplicatedDataset',
         },
     },
+    updateReplicatedDataset: {
+        method: 'patch',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && REPLICATED_DATASET_PATH.test(path),
+        transport: {
+            controller: 'WaveController.updateReplicatedDataset',
+        },
+    },
     getWaveFolders: {
         method: 'get',
         predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && WAVE_FOLDERS_PATH.test(path),

@@ -218,10 +218,10 @@ function mockUpdateDataflowJobNetworkErrorOnce(config, mockData) {
 }
 
 function updateDataflowJobMatcher(config) {
-    let { dataflowjobId, command } = config;
+    const { dataflowjobId, dataflowJob } = config;
 
     return sinon.match({
-        body: { command },
+        body: { dataflowJob },
         headers: {},
         method: 'patch',
         baseUri: BASE_URI,
@@ -561,6 +561,31 @@ function getReplicatedDatasetMatcher(config) {
     });
 }
 
+function mockUpdateReplicatedDatasetNetworkOnce(config, mockData) {
+    const paramMatch = updateReplicatedDatasetMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockUpdateReplicatedDatasetNetworkErrorOnce(config, mockData) {
+    const paramMatch = updateReplicatedDatasetMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function updateReplicatedDatasetMatcher(config) {
+    const { id, replicatedDataset } = config;
+
+    return sinon.match({
+        body: {
+            replicatedDataset,
+        },
+        headers: {},
+        method: 'patch',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/replicatedDatasets/${id}`,
+        queryParams: {},
+    });
+}
+
 // Schedule
 function mockGetScheduleNetworkOnce(config, mockData) {
     const paramMatch = getScheduleMatcher(config);
@@ -722,6 +747,8 @@ export {
     mockDeleteRecipeNetworkErrorOnce,
     mockGetReplicatedDatasetNetworkOnce,
     mockGetReplicatedDatasetNetworkErrorOnce,
+    mockUpdateReplicatedDatasetNetworkOnce,
+    mockUpdateReplicatedDatasetNetworkErrorOnce,
     mockGetReplicatedDatasetsNetworkOnce,
     mockGetReplicatedDatasetsNetworkErrorOnce,
     mockCreateReplicatedDatasetNetworkOnce,

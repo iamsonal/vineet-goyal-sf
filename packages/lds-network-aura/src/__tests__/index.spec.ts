@@ -4389,6 +4389,32 @@ describe('routes', () => {
         );
     });
 
+    describe('patch /wave/replicatedDatasets/{id}', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/replicatedDatasets/0IuS70000004CqIKAU`,
+                body: { replicatedDataset: { connectionMode: 'Full' } },
+            },
+            [
+                'WaveController.updateReplicatedDataset',
+                { replicatedDataset: { connectionMode: 'Full' } },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'patch',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/replicatedDatasets/0IuS70000004CqIKAU`,
+                body: { replicatedDataset: { connectionMode: 'Full' } },
+            },
+            {}
+        );
+    });
+
     describe('get /asset/{assetId}/schedule', () => {
         testControllerInput(
             {

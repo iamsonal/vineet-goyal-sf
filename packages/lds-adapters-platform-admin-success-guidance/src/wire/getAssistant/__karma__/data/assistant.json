@@ -3,6 +3,7 @@
     "id": "test_assistant_id",
     "scenario": "test_scenario_id",
     "itemSetRule": "best_item_set",
+    "debugModeEnabled": false,
     "items": [
         {
             "action": {

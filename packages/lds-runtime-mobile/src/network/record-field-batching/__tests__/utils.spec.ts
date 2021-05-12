@@ -1,14 +1,20 @@
+import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import {
     buildAggregateUiUrl,
+    buildCompositeRequestByFields,
     mergeRecordFields,
     shouldUseAggregateUiForFields,
     UiApiParams,
+    createAggregateBatchRequestInfo,
+    mergeAggregateUiResponse,
 } from '../utils';
 import {
     BASE_URI,
     buildResourceRequest,
+    generateFetchResponse,
     generateMockedRecordFields,
     wrapFieldsInRecordObject,
+    wrapRecordInCompositeResponse,
 } from './testUtils';
 
 describe('record-field-batching utils', () => {
@@ -567,6 +573,23 @@ describe('record-field-batching utils', () => {
                 expect(actualUrl).toContain(field);
             });
         });
+
+        it('should generate a valid url without losing other parameter beside fields and optionalFields', () => {
+            const params: UiApiParams = {
+                fields: ['Name'],
+                optionalFields: ['SomeField'],
+            };
+            const resourceRequest = buildResourceRequest({
+                basePath: '/ui-api/records',
+                queryParams: {
+                    modes: ['Create', 'Edit'],
+                },
+            });
+            const actualUrl = buildAggregateUiUrl(params, resourceRequest);
+            expect(actualUrl).toEqual(
+                '/services/data/v53.0/ui-api/records?modes=Create,Edit&fields=Name&optionalFields=SomeField'
+            );
+        });
     });
 
     describe('shouldUseAggregateUiForFields', () => {
@@ -604,6 +627,183 @@ describe('record-field-batching utils', () => {
             );
 
             expect(actual).toBe(false);
+        });
+    });
+
+    describe('buildCompositeRequestByFields', () => {
+        const referenceId = 'mockId';
+        it('should build a CompositeRequest with a getRecord input', () => {
+            const fields = ['Name', 'Id', 'Cars__c', 'Cars__r.Name'];
+
+            const actualCompositeRequest = buildCompositeRequestByFields(
+                referenceId,
+                buildResourceRequest({}),
+                {
+                    fieldsArray: fields,
+                    optionalFieldsArray: [],
+                    optionalFieldsLength: 0,
+                    fieldsLength: fields.join(',').length,
+                }
+            );
+
+            expect(actualCompositeRequest.length).toEqual(1);
+            expect(actualCompositeRequest[0].referenceId.length).toBeGreaterThan(0);
+            expect(actualCompositeRequest[0].url.length).toBeGreaterThan(0);
+        });
+
+        it('should create multiple chunks with fields and optionalFields', () => {
+            const fields = ['Name', 'Id', 'Cars__c', 'Cars__r.Name'];
+            const optionalFields = ['Parent_Account__c'];
+
+            const actualCompositeRequest = buildCompositeRequestByFields(
+                referenceId,
+                buildResourceRequest({}),
+                {
+                    fieldsArray: fields,
+                    optionalFieldsArray: optionalFields,
+                    optionalFieldsLength: optionalFields.join(',').length,
+                    fieldsLength: fields.join(',').length,
+                }
+            );
+
+            expect(actualCompositeRequest.length).toEqual(2);
+            expect(actualCompositeRequest[0].referenceId.length).toBeGreaterThan(0);
+            expect(actualCompositeRequest[0].url.length).toBeGreaterThan(0);
+            expect(actualCompositeRequest[1].referenceId.length).toBeGreaterThan(0);
+            expect(actualCompositeRequest[1].url.length).toBeGreaterThan(0);
+        });
+
+        it('should create multiple chunks with a large amount of fields', () => {
+            const fields = generateMockedRecordFields(500, 'CrazyHugeCustomFieldName__c');
+
+            const actualCompositeRequest = buildCompositeRequestByFields(
+                referenceId,
+                buildResourceRequest({}),
+                {
+                    fieldsArray: fields,
+                    optionalFieldsArray: [],
+                    optionalFieldsLength: 0,
+                    fieldsLength: fields.join(',').length,
+                }
+            );
+
+            expect(actualCompositeRequest.length).toBeGreaterThan(1);
+            actualCompositeRequest.forEach(requestChunk => {
+                expect(requestChunk.referenceId.length).toBeGreaterThan(0);
+                expect(requestChunk.url.length).toBeGreaterThan(0);
+            });
+        });
+    });
+
+    describe('createAggregateBatchRequestInfo', () => {
+        const endpoint = /^\/ui-api\/?(([a-zA-Z0-9]+))?$/;
+        it('should return undefined because it doesnt match regex', () => {
+            const subject = createAggregateBatchRequestInfo(buildResourceRequest({}), endpoint);
+            expect(subject).toBe(undefined);
+        });
+
+        it('matches regex but has no fields', () => {
+            const subject = createAggregateBatchRequestInfo(
+                buildResourceRequest({ basePath: '/ui-api/mock' }),
+                endpoint
+            );
+            expect(subject).toBe(undefined);
+        });
+
+        it('returns undefined because fields and optional fields are empty', () => {
+            const subject = createAggregateBatchRequestInfo(
+                buildResourceRequest({
+                    basePath: '/ui-api/mock',
+                    queryParams: { fields: '', optionalFields: '' },
+                }),
+                endpoint
+            );
+            expect(subject).toBe(undefined);
+        });
+
+        it('returns field object and is an aggregate', () => {
+            const subject = createAggregateBatchRequestInfo(
+                buildResourceRequest({
+                    basePath: '/ui-api/mock',
+                    queryParams: {
+                        fields: generateMockedRecordFields(1000),
+                        optionalFields: generateMockedRecordFields(1000),
+                    },
+                }),
+                endpoint
+            );
+
+            expect(subject.fieldsArray.length).toEqual(1000);
+            expect(subject.optionalFieldsArray.length).toEqual(1000);
+            expect(subject.fieldsString.length).toEqual(17889);
+            expect(subject.optionalFieldsString.length).toEqual(17889);
+        });
+    });
+
+    describe('mergeAggregateUiResponse', () => {
+        it('throw error with no body', () => {
+            const result = mergeAggregateUiResponse(
+                {
+                    status: 200,
+                    body: undefined,
+                    headers: {},
+                    ok: true,
+                    statusText: '',
+                },
+                mergeRecordFields
+            );
+            expect(result).toEqual({
+                body: {
+                    error: 'Error: No response body in executeAggregateUi found',
+                },
+                headers: {},
+                ok: true,
+                status: 500,
+                statusText: 'Server Error',
+            });
+        });
+
+        it('throw error with no responses', () => {
+            const result = mergeAggregateUiResponse(
+                generateFetchResponse<RecordRepresentation>([]),
+                mergeRecordFields
+            );
+            expect(result).toEqual({
+                body: {
+                    error: 'Error: No response body in executeAggregateUi found',
+                },
+                headers: {},
+                ok: true,
+                status: 500,
+                statusText: 'Server Error',
+            });
+        });
+
+        it('to merge records together', () => {
+            const firstRecord = wrapFieldsInRecordObject({
+                Id: {
+                    displayValue: null,
+                    value: '12345',
+                },
+            });
+            const secondRecord = wrapFieldsInRecordObject({
+                Name: {
+                    displayValue: 'Costco Richmond',
+                    value: 'Costco Richmond',
+                },
+            });
+
+            const mergeSpy = jest.fn().mockImplementation(mergeRecordFields);
+            const subject = mergeAggregateUiResponse(
+                generateFetchResponse<RecordRepresentation>([
+                    wrapRecordInCompositeResponse(firstRecord),
+                    wrapRecordInCompositeResponse(secondRecord),
+                ]),
+                mergeSpy
+            );
+
+            expect(mergeSpy).toBeCalledTimes(1);
+            expect(subject.body.fields).toEqual({ ...firstRecord.fields, ...secondRecord.fields });
         });
     });
 });

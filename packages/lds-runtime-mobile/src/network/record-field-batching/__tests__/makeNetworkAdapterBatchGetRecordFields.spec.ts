@@ -1,14 +1,8 @@
 import { FetchResponse, HttpStatusCode } from '@luvio/engine';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { makeNetworkAdapterBatchRecordFields } from '../makeNetworkAdapterBatchRecordFields';
-import { buildGetRecordByFieldsCompositeRequest } from '../makeNetworkBatchGetRecordFields';
 import { CompositeRequest, CompositeResponseEnvelope } from '../utils';
-import {
-    BASE_URI,
-    buildResourceRequest,
-    generateMockedRecordFields,
-    verifyRequestBasePath,
-} from './testUtils';
+import { BASE_URI, generateMockedRecordFields, verifyRequestBasePath } from './testUtils';
 import { wrapFieldsInRecordObject } from './testUtils';
 
 const RECORD_ID = '001x0000004u7cZAAQ';
@@ -166,67 +160,6 @@ describe('makeNetworkBatchGetRecordFields', () => {
                     },
                 })
             );
-        });
-    });
-
-    describe('buildGetRecordByFieldsCompositeRequest', () => {
-        it('should build a CompositeRequest with a getRecord input', () => {
-            const fields = ['Name', 'Id', 'Cars__c', 'Cars__r.Name'];
-
-            const actualCompositeRequest = buildGetRecordByFieldsCompositeRequest(
-                buildResourceRequest({}),
-                {
-                    fieldsArray: fields,
-                    optionalFieldsArray: [],
-                    optionalFieldsLength: 0,
-                    fieldsLength: fields.join(',').length,
-                }
-            );
-
-            expect(actualCompositeRequest.length).toEqual(1);
-            expect(actualCompositeRequest[0].referenceId.length).toBeGreaterThan(0);
-            expect(actualCompositeRequest[0].url.length).toBeGreaterThan(0);
-        });
-
-        it('should create multiple chunks with fields and optionalFields', () => {
-            const fields = ['Name', 'Id', 'Cars__c', 'Cars__r.Name'];
-            const optionalFields = ['Parent_Account__c'];
-
-            const actualCompositeRequest = buildGetRecordByFieldsCompositeRequest(
-                buildResourceRequest({}),
-                {
-                    fieldsArray: fields,
-                    optionalFieldsArray: optionalFields,
-                    optionalFieldsLength: optionalFields.join(',').length,
-                    fieldsLength: fields.join(',').length,
-                }
-            );
-
-            expect(actualCompositeRequest.length).toEqual(2);
-            expect(actualCompositeRequest[0].referenceId.length).toBeGreaterThan(0);
-            expect(actualCompositeRequest[0].url.length).toBeGreaterThan(0);
-            expect(actualCompositeRequest[1].referenceId.length).toBeGreaterThan(0);
-            expect(actualCompositeRequest[1].url.length).toBeGreaterThan(0);
-        });
-
-        it('should create multiple chunks with a large amount of fields', () => {
-            const fields = generateMockedRecordFields(500, 'CrazyHugeCustomFieldName__c');
-
-            const actualCompositeRequest = buildGetRecordByFieldsCompositeRequest(
-                buildResourceRequest({}),
-                {
-                    fieldsArray: fields,
-                    optionalFieldsArray: [],
-                    optionalFieldsLength: 0,
-                    fieldsLength: fields.join(',').length,
-                }
-            );
-
-            expect(actualCompositeRequest.length).toBeGreaterThan(1);
-            actualCompositeRequest.forEach(requestChunk => {
-                expect(requestChunk.referenceId.length).toBeGreaterThan(0);
-                expect(requestChunk.url.length).toBeGreaterThan(0);
-            });
         });
     });
 });

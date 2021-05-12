@@ -1,5 +1,6 @@
 import { NetworkAdapter } from '@luvio/engine';
 import { makeNetworkBatchGetRecordFields } from './makeNetworkBatchGetRecordFields';
+import { makeNetworkBatchGetRelatedListRecordsFields } from './makeNetworkBatchGetRelatedListRecordsFields';
 
 /**
  * Higher order function that accepts a network adapter and returns a new network adapter
@@ -12,7 +13,10 @@ export function makeNetworkAdapterBatchRecordFields(
     networkAdapter: NetworkAdapter
 ): NetworkAdapter {
     // endpoint handlers that support aggregate-ui field batching
-    const batchHandlers = [makeNetworkBatchGetRecordFields];
+    const batchHandlers = [
+        makeNetworkBatchGetRecordFields,
+        makeNetworkBatchGetRelatedListRecordsFields,
+    ];
 
     return batchHandlers.reduce((network, handler) => {
         return handler(network);

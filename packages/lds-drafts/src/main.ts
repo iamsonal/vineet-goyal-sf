@@ -1,8 +1,6 @@
 export { makeEnvironmentDraftAware } from './environment/makeEnvironmentDraftAware';
 export { makeDurableStoreDraftAware } from './durableStore/makeDurableStoreDraftAware';
 export { makeRecordDenormalizingDurableStore } from './durableStore/makeRecordDenormalizingDurableStore';
-export { DurableStoreSetEntryPlugin } from './durableStore/plugins/DurableStorePlugins';
-export { RecordMetadataOnSetPlugin } from './durableStore/plugins/RecordMetadataOnSetPlugin';
 export {
     DraftQueue,
     DraftQueueState,
@@ -22,4 +20,3 @@ export {
     DraftActionOperationType,
     DraftQueueItem,
 } from './DraftManager';
-export { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledDurableStore';

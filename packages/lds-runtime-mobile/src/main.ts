@@ -13,9 +13,7 @@ import {
     makeRecordDenormalizingDurableStore,
     makeEnvironmentDraftAware,
     makeNetworkAdapterDraftAware,
-    RecordMetadataOnSetPlugin,
     DraftManager,
-    makePluginEnabledDurableStore,
 } from '@salesforce/lds-drafts';
 
 import userId from '@salesforce/user/Id';
@@ -27,6 +25,8 @@ import { NimbusDurableStore } from './NimbusDurableStore';
 import { buildLdsDraftQueue } from './DraftQueueFactory';
 import { buildInternalAdapters } from './utils/adapters';
 import { objectInfoServiceFactory } from './utils/ObjectInfoService';
+import { RecordMetadataOnSetPlugin } from './durableStore/plugins/RecordMetadataOnSetPlugin';
+import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledDurableStore';
 
 let luvio: Luvio;
 

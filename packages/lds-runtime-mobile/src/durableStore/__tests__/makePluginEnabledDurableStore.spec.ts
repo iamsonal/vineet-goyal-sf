@@ -1,7 +1,7 @@
 import { MockDurableStore } from '@luvio/adapter-test-library';
 import { DefaultDurableSegment } from '@luvio/environments';
+import { flushPromises } from '../../__tests__/testUtils';
 import { makePluginEnabledDurableStore } from '../makePluginEnabledDurableStore';
-import { flushPromises } from '../../__tests__/test-utils';
 
 describe('makePluginEnableDurableStore tests', () => {
     it('calls registered plugins', async () => {

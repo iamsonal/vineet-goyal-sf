@@ -1,6 +1,7 @@
 import { IngestPath, Luvio, ResourceIngest, Store } from '@luvio/engine';
 import { LuvioOperationDefinitionNode } from '@salesforce/lds-graphql-parser';
 import { getLuvioFieldNodeSelection, createIngest as createSelectionIngest } from './Selection';
+import merge from '../util/merge';
 
 type GqlOperation = any;
 
@@ -34,7 +35,10 @@ export function createIngest(ast: LuvioOperationDefinitionNode): ResourceIngest 
             );
         }
 
-        luvio.storePublish(key, data);
+        const existing = store.records[key];
+        const newData = merge(existing, data);
+
+        luvio.storePublish(key, newData);
 
         return {
             __ref: key,

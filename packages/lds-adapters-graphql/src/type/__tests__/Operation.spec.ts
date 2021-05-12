@@ -3,7 +3,7 @@ import { LuvioOperationDefinitionNode } from '@salesforce/lds-graphql-parser';
 import { createIngest } from '../Operation';
 
 describe('Operation', () => {
-    describe('ingst', () => {
+    describe('ingest', () => {
         it('should ingest data correctly', () => {
             const ast: LuvioOperationDefinitionNode = {
                 kind: 'OperationDefinition',
@@ -164,6 +164,106 @@ describe('Operation', () => {
                         __ref: 'toplevel__uiapi',
                     },
                 },
+            });
+        });
+
+        describe('merge ingest', () => {
+            const fooAst: LuvioOperationDefinitionNode = {
+                kind: 'OperationDefinition',
+                operation: 'query',
+                variableDefinitions: [],
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'foo',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'field1',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const barAst: LuvioOperationDefinitionNode = {
+                kind: 'OperationDefinition',
+                operation: 'query',
+                variableDefinitions: [],
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'bar',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'field1',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            it('should merge ingest data correctly', () => {
+                const fooData = {
+                    foo: {
+                        field1: 'Field1 - 1',
+                    },
+                };
+
+                const barData = {
+                    bar: {
+                        field1: 'Field1 - 2',
+                    },
+                };
+
+                const store = new Store();
+                const luvio = new Luvio(
+                    new Environment(store, () => {
+                        throw new Error('Not used');
+                    })
+                );
+
+                createIngest(fooAst)(
+                    fooData,
+                    {
+                        parent: null,
+                        fullPath: 'toplevel',
+                        propertyName: null,
+                    },
+                    luvio,
+                    store,
+                    0
+                );
+
+                createIngest(barAst)(
+                    barData,
+                    {
+                        parent: null,
+                        fullPath: 'toplevel',
+                        propertyName: null,
+                    },
+                    luvio,
+                    store,
+                    0
+                );
+
+                expect(store.records).toEqual({
+                    toplevel__foo: {
+                        field1: 'Field1 - 1',
+                    },
+                    toplevel__bar: {
+                        field1: 'Field1 - 2',
+                    },
+                    toplevel: {
+                        foo: {
+                            __ref: 'toplevel__foo',
+                        },
+                        bar: {
+                            __ref: 'toplevel__bar',
+                        },
+                    },
+                });
             });
         });
     });

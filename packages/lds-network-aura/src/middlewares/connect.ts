@@ -84,6 +84,11 @@ const REPLICATED_DATASET_PATH = new RegExp(
     'i'
 );
 
+const REPLICATED_DATASET_FIELDS_PATH = new RegExp(
+    `${WAVE_BASE_URI}/replicatedDatasets/([A-Z0-9_]){15,18}/fields$`,
+    'i'
+);
+
 const SCHEDULE_PATH = new RegExp(`${WAVE_BASE_URI}/asset/([A-Z0-9_]){15,18}/schedule$`, 'i');
 
 const DATASETS_PATH = new RegExp(`${WAVE_BASE_URI}/datasets$`, 'i');
@@ -454,6 +459,14 @@ const analytics: ApiFamily = {
             path.startsWith(WAVE_BASE_URI) && REPLICATED_DATASET_PATH.test(path),
         transport: {
             controller: 'WaveController.updateReplicatedDataset',
+        },
+    },
+    getReplicatedDatasetFields: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && REPLICATED_DATASET_FIELDS_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getReplicatedDatasetFields',
         },
     },
     getWaveFolders: {

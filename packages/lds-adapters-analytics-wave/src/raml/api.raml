@@ -39,6 +39,64 @@ types:
         type: array
         items:
           type: string
+  AbstractFieldRepresentation:
+    description: Base represenation for fields in Wave.
+    discriminator: fieldType
+    type: object
+    properties:
+      defaultValue:
+        description: An optional default value.
+        type: string | number | nil | boolean # TODO: hand rolled
+        required: false # TODO Hand-rolled W-8253396
+      description:
+        description: A long-form description of the field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      fieldType:
+        description: The type of the field.
+        type: string
+        enum:
+          - Date
+          - DateOnly
+          - DateTime
+          - Numeric
+          - Text
+      format:
+        description: For dates, the format string is used to parse the input value;
+          for other field types, the format string is used for display.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: A user-friendly label for the field.
+        type: string
+      multiValue:
+        description: Indicates if the field is mulit-value or not (default false).
+        type: boolean
+      multiValueSeparator:
+        description: The value separator, used only if this is a multi-value field.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: The field's developer name.
+        type: string
+      precision:
+        description: The numeric precision or text length depending on field type.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      scale:
+        description: The numeric scale.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      systemField:
+        description: Indicates if the field is a system field (default false). System
+          fields are not queryable.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      uniqueId:
+        description: Indicates if the field is a unique ID for the data set (default
+          false). There can be only one unique ID for any dataset.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
   AdvancedPropertyRepresentation:
     description: An advanced property is an object-level replication property for
       a data source.
@@ -1449,6 +1507,27 @@ types:
             - Full
             - Incremental
             - PeriodicFull
+  ReplicatedFieldRepresentation:
+    description: Metadata/configururation for a single field of a Replicated Dataset.
+    discriminatorValue: replicatedField
+    type: AbstractFieldRepresentation
+    properties:
+      skipped:
+        description: If set and true, this field will not be replicated -- but the
+          field metadata can still be stored and retrieved.
+        type: boolean
+  ReplicatedFieldCollectionRepresentation:
+    description: A list of Replicated Fields.
+    type: object
+    properties:
+      fields:
+        description: A list of Replicated Fields.
+        type: array
+        items:
+          type: ReplicatedFieldRepresentation
+      url:
+        description: URL to get the collection.
+        type: string
   SaqlQueryInputRepresentation:
     description: A Wave query written in SAQL
     type: object
@@ -3106,6 +3185,19 @@ types:
         application/json:
           type: ReplicatedDatasetInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: ReplicatedDatasetInputRepresentation
           (oas-body-name): replicatedDataset
+    uriParameters:
+      id:
+        type: string
+        required: true
+  /replicatedDatasets/{id}/fields:
+    get:
+      description: Get a list of a Replicated Dataset's fields.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ReplicatedFieldCollectionRepresentation
     uriParameters:
       id:
         type: string

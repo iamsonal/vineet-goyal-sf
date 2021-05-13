@@ -1,0 +1,371 @@
+{
+    "fields": [
+        {
+            "fieldType": "text",
+            "label": "Account ID",
+            "multiValue": false,
+            "name": "Id",
+            "precision": 18,
+            "skipped": true
+        },
+        {
+            "defaultValue": "false",
+            "fieldType": "text",
+            "label": "Deleted",
+            "multiValue": false,
+            "name": "IsDeleted",
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Master Record ID",
+            "multiValue": false,
+            "name": "MasterRecordId",
+            "precision": 18,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Account Name",
+            "multiValue": false,
+            "name": "Name",
+            "precision": 255,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Account Type",
+            "multiValue": false,
+            "name": "Type",
+            "precision": 255,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Parent Account ID",
+            "multiValue": false,
+            "name": "ParentId",
+            "precision": 18,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Billing Street",
+            "multiValue": false,
+            "name": "BillingStreet",
+            "precision": 255,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Billing City",
+            "multiValue": false,
+            "name": "BillingCity",
+            "precision": 40,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Billing State/Province",
+            "multiValue": false,
+            "name": "BillingState",
+            "precision": 80,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Billing Zip/Postal Code",
+            "multiValue": false,
+            "name": "BillingPostalCode",
+            "precision": 20,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Billing Country",
+            "multiValue": false,
+            "name": "BillingCountry",
+            "precision": 80,
+            "skipped": true
+        },
+        {
+            "fieldType": "numeric",
+            "label": "Billing Latitude",
+            "multiValue": false,
+            "name": "BillingLatitude",
+            "precision": 18,
+            "scale": 15,
+            "skipped": true
+        },
+        {
+            "fieldType": "numeric",
+            "label": "Billing Longitude",
+            "multiValue": false,
+            "name": "BillingLongitude",
+            "precision": 18,
+            "scale": 15,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Billing Geocode Accuracy",
+            "multiValue": false,
+            "name": "BillingGeocodeAccuracy",
+            "precision": 40,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Shipping Street",
+            "multiValue": false,
+            "name": "ShippingStreet",
+            "precision": 255,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Shipping City",
+            "multiValue": false,
+            "name": "ShippingCity",
+            "precision": 40,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Shipping State/Province",
+            "multiValue": false,
+            "name": "ShippingState",
+            "precision": 80,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Shipping Zip/Postal Code",
+            "multiValue": false,
+            "name": "ShippingPostalCode",
+            "precision": 20,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Shipping Country",
+            "multiValue": false,
+            "name": "ShippingCountry",
+            "precision": 80,
+            "skipped": true
+        },
+        {
+            "fieldType": "numeric",
+            "label": "Shipping Latitude",
+            "multiValue": false,
+            "name": "ShippingLatitude",
+            "precision": 18,
+            "scale": 15,
+            "skipped": true
+        },
+        {
+            "fieldType": "numeric",
+            "label": "Shipping Longitude",
+            "multiValue": false,
+            "name": "ShippingLongitude",
+            "precision": 18,
+            "scale": 15,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Shipping Geocode Accuracy",
+            "multiValue": false,
+            "name": "ShippingGeocodeAccuracy",
+            "precision": 40,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Account Phone",
+            "multiValue": false,
+            "name": "Phone",
+            "precision": 40,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Account Fax",
+            "multiValue": false,
+            "name": "Fax",
+            "precision": 40,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Website",
+            "multiValue": false,
+            "name": "Website",
+            "precision": 255,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Photo URL",
+            "multiValue": false,
+            "name": "PhotoUrl",
+            "precision": 255,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Industry",
+            "multiValue": false,
+            "name": "Industry",
+            "precision": 255,
+            "skipped": true
+        },
+        {
+            "fieldType": "numeric",
+            "label": "Annual Revenue",
+            "multiValue": false,
+            "name": "AnnualRevenue",
+            "precision": 18,
+            "scale": 0,
+            "skipped": true
+        },
+        {
+            "fieldType": "numeric",
+            "label": "Employees",
+            "multiValue": false,
+            "name": "NumberOfEmployees",
+            "precision": 10,
+            "scale": 0,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Account Description",
+            "multiValue": false,
+            "name": "Description",
+            "precision": 32000,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Owner ID",
+            "multiValue": false,
+            "name": "OwnerId",
+            "precision": 18,
+            "skipped": true
+        },
+        {
+            "fieldType": "date",
+            "format": "yyyy-MM-ddTHH:mm:ss.SSSZ",
+            "label": "Created Date",
+            "multiValue": false,
+            "name": "CreatedDate",
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Created By ID",
+            "multiValue": false,
+            "name": "CreatedById",
+            "precision": 18,
+            "skipped": true
+        },
+        {
+            "fieldType": "date",
+            "format": "yyyy-MM-ddTHH:mm:ss.SSSZ",
+            "label": "Last Modified Date",
+            "multiValue": false,
+            "name": "LastModifiedDate",
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Last Modified By ID",
+            "multiValue": false,
+            "name": "LastModifiedById",
+            "precision": 18,
+            "skipped": true
+        },
+        {
+            "fieldType": "date",
+            "format": "yyyy-MM-ddTHH:mm:ss.SSSZ",
+            "label": "System Modstamp",
+            "multiValue": false,
+            "name": "SystemModstamp",
+            "skipped": true
+        },
+        {
+            "fieldType": "date",
+            "format": "yyyy-MM-dd",
+            "label": "Last Activity",
+            "multiValue": false,
+            "name": "LastActivityDate",
+            "skipped": true
+        },
+        {
+            "defaultValue": "false",
+            "fieldType": "text",
+            "label": "May Edit",
+            "multiValue": false,
+            "name": "MayEdit",
+            "skipped": true
+        },
+        {
+            "defaultValue": "false",
+            "fieldType": "text",
+            "label": "Is Locked",
+            "multiValue": false,
+            "name": "IsLocked",
+            "skipped": true
+        },
+        {
+            "fieldType": "date",
+            "format": "yyyy-MM-ddTHH:mm:ss.SSSZ",
+            "label": "Last Viewed Date",
+            "multiValue": false,
+            "name": "LastViewedDate",
+            "skipped": true
+        },
+        {
+            "fieldType": "date",
+            "format": "yyyy-MM-ddTHH:mm:ss.SSSZ",
+            "label": "Last Referenced Date",
+            "multiValue": false,
+            "name": "LastReferencedDate",
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Data.com Key",
+            "multiValue": false,
+            "name": "Jigsaw",
+            "precision": 20,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Jigsaw Company ID",
+            "multiValue": false,
+            "name": "JigsawCompanyId",
+            "precision": 20,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "Account Source",
+            "multiValue": false,
+            "name": "AccountSource",
+            "precision": 255,
+            "skipped": true
+        },
+        {
+            "fieldType": "text",
+            "label": "SIC Description",
+            "multiValue": false,
+            "name": "SicDesc",
+            "precision": 80,
+            "skipped": true
+        }
+    ],
+    "url": "/services/data/v53.0/wave/replicatedDatasets/0IuS70000004CqXKAU/fields"
+}

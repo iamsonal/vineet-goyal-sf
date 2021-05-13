@@ -586,6 +586,34 @@ function updateReplicatedDatasetMatcher(config) {
     });
 }
 
+// Replicated Dataset Fields
+function mockGetReplicatedDatasetFieldsNetworkOnce(config, mockData) {
+    const paramMatch = getReplicatedDatasetFieldsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetReplicatedDatasetFieldsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getReplicatedDatasetFieldsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getReplicatedDatasetFieldsMatcher(config) {
+    const { id } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/replicatedDatasets/${id}/fields`,
+        queryParams: {},
+    });
+}
+
 // Schedule
 function mockGetScheduleNetworkOnce(config, mockData) {
     const paramMatch = getScheduleMatcher(config);
@@ -753,6 +781,8 @@ export {
     mockGetReplicatedDatasetsNetworkErrorOnce,
     mockCreateReplicatedDatasetNetworkOnce,
     mockCreateReplicatedDatasetNetworkErrorOnce,
+    mockGetReplicatedDatasetFieldsNetworkOnce,
+    mockGetReplicatedDatasetFieldsNetworkErrorOnce,
     mockGetScheduleNetworkOnce,
     mockGetScheduleNetworkErrorOnce,
     mockUpdateScheduleNetworkOnce,

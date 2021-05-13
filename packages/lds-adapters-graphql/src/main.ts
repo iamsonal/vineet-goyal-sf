@@ -1,4 +1,4 @@
-import { AdapterFactory, Luvio, ResourceRequest, Snapshot } from '@luvio/engine';
+import { AdapterFactory, Luvio, ReaderFragment, ResourceRequest, Snapshot } from '@luvio/engine';
 import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
 import { astToString } from './util/ast-to-string';
 import { createIngest, createRead } from './type/Document';
@@ -16,6 +16,24 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQlConfig, unknown> = (lu
         const validatedConfig = untrustedConfig as GraphQlConfig;
 
         const { variables: queryVariables, query } = validatedConfig;
+
+        const fragment: ReaderFragment = {
+            kind: 'Fragment',
+            synthetic: false,
+            reader: true,
+            read: createRead(query),
+        };
+
+        const snapshot = luvio.storeLookup({
+            recordId: 'graphql',
+            node: fragment,
+            variables: {},
+        });
+
+        if (luvio.snapshotAvailable(snapshot)) {
+            return snapshot;
+        }
+
         const request: ResourceRequest = {
             baseUri: '/services/data/v53.0',
             basePath: '/graphql',
@@ -35,12 +53,7 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQlConfig, unknown> = (lu
 
             return luvio.storeLookup({
                 recordId: 'graphql',
-                node: {
-                    kind: 'Fragment',
-                    synthetic: false,
-                    reader: true,
-                    read: createRead(query),
-                },
+                node: fragment,
                 variables: {},
             });
         });

@@ -14,6 +14,7 @@ import {
     LuvioSelectionScalarFieldNode,
     LuvioValueNode,
 } from '@salesforce/lds-graphql-parser';
+import { defaultRecordFieldsFragmentName, defaultRecordFieldsFragment } from '../custom/record';
 
 const RECORD_ID_FIELD = 'Id';
 const RECORD_WEAK_ETAG_FIELD = 'WeakEtag';
@@ -73,13 +74,13 @@ function serializeArgument(argDefinition: LuvioArgumentNode) {
     return `${name}: ${serializeValueNode(value)}`;
 }
 
-function serializeSelections(selections: LuvioSelectionNode[] | undefined) {
+function serializeSelections(selections: LuvioSelectionNode[] | undefined, state: SerializeState) {
     if (selections === undefined) {
         return '';
     }
     let str = '';
     for (let i = 0, len = selections.length; i < len; i += 1) {
-        const def = serializeFieldNode(selections[i]);
+        const def = serializeFieldNode(selections[i], state);
         str = `${str}${def}`;
     }
 
@@ -124,7 +125,10 @@ function serializeRequiredRecordFields(currentString: string, presentFields: Rec
     return `${str}${currentString}`;
 }
 
-function serializeRecordSelections(selections: LuvioSelectionNode[] | undefined) {
+function serializeRecordSelections(
+    selections: LuvioSelectionNode[] | undefined,
+    state: SerializeState
+) {
     if (selections === undefined) {
         return '';
     }
@@ -133,20 +137,20 @@ function serializeRecordSelections(selections: LuvioSelectionNode[] | undefined)
     for (let i = 0, len = selections.length; i < len; i += 1) {
         const sel = selections[i];
         fields[(sel as any).name] = true;
-        const def = serializeFieldNode(sel);
+        const def = serializeFieldNode(sel, state);
         str = `${str}${def}`;
     }
 
     return serializeRequiredRecordFields(str, fields);
 }
 
-function serializeFieldNode(def: LuvioSelectionNode) {
+function serializeFieldNode(def: LuvioSelectionNode, state: SerializeState) {
     const { kind } = def;
     switch (kind) {
         case 'ObjectFieldSelection':
-            return serializeObjectFieldNode(def as LuvioSelectionObjectFieldNode);
+            return serializeObjectFieldNode(def as LuvioSelectionObjectFieldNode, state);
         case 'CustomFieldSelection':
-            return serializeCustomFieldNode(def as LuvioSelectionCustomFieldNode);
+            return serializeCustomFieldNode(def as LuvioSelectionCustomFieldNode, state);
         case 'ScalarFieldSelection':
             return serializeScalarFieldNode(def as LuvioSelectionScalarFieldNode);
     }
@@ -158,40 +162,49 @@ function serializeScalarFieldNode(def: LuvioSelectionScalarFieldNode) {
     return `${def.name}, `;
 }
 
-function serializeObjectFieldNode(def: LuvioSelectionObjectFieldNode) {
+function serializeObjectFieldNode(def: LuvioSelectionObjectFieldNode, state: SerializeState) {
     const { luvioSelections, arguments: defArgs } = def;
     const args = defArgs === undefined ? '' : `(${serializeArguments(defArgs)})`;
-    return `${def.name}${args} { ${serializeSelections(luvioSelections)} }`;
+    return `${def.name}${args} { ${serializeSelections(luvioSelections, state)} }`;
 }
 
-function serializeCustomFieldConnection(def: LuvioSelectionCustomFieldNode) {
+function serializeCustomFieldConnection(def: LuvioSelectionCustomFieldNode, state: SerializeState) {
     const { name, luvioSelections, arguments: args } = def;
-    return `${name}(${serializeArguments(args)}) { ${serializeSelections(luvioSelections)} }`;
+    return `${name}(${serializeArguments(args)}) { ${serializeSelections(
+        luvioSelections,
+        state
+    )} }`;
 }
 
-function serializeCustomFieldRecord(def: LuvioSelectionCustomFieldNode) {
+function serializeCustomFieldRecord(def: LuvioSelectionCustomFieldNode, state: SerializeState) {
     const { name, luvioSelections } = def;
-    return `${name} { ${serializeRecordSelections(luvioSelections)} }`;
+    if (state.fragments[defaultRecordFieldsFragmentName] === undefined) {
+        state.fragments[defaultRecordFieldsFragmentName] = defaultRecordFieldsFragment;
+    }
+    return `${name} { ${serializeRecordSelections(
+        luvioSelections,
+        state
+    )} ...${defaultRecordFieldsFragmentName} }`;
 }
 
-function serializeCustomFieldNode(def: LuvioSelectionCustomFieldNode) {
+function serializeCustomFieldNode(def: LuvioSelectionCustomFieldNode, state: SerializeState) {
     const { type } = def;
 
     switch (type) {
         case 'Connection':
-            return serializeCustomFieldConnection(def);
+            return serializeCustomFieldConnection(def, state);
         case 'Record':
-            return serializeCustomFieldRecord(def);
+            return serializeCustomFieldRecord(def, state);
     }
 
     throw new Error(`Unable to serialize graphql query, unsupported CustomField type "${type}"`);
 }
 
-function serializeOperationNode(def: LuvioDefinitionNode) {
+function serializeOperationNode(def: LuvioDefinitionNode, state: SerializeState) {
     const { kind } = def;
     switch (kind) {
         case 'OperationDefinition':
-            return serializeOperationDefinition(def as LuvioOperationDefinitionNode);
+            return serializeOperationDefinition(def as LuvioOperationDefinitionNode, state);
     }
 
     throw new Error(
@@ -199,18 +212,35 @@ function serializeOperationNode(def: LuvioDefinitionNode) {
     );
 }
 
-function serializeOperationDefinition(def: LuvioOperationDefinitionNode) {
+function serializeOperationDefinition(def: LuvioOperationDefinitionNode, state: SerializeState) {
     const { operation, luvioSelections } = def;
-    return `${operation} { ${serializeSelections(luvioSelections)} }`;
+    return `${operation} { ${serializeSelections(luvioSelections, state)} }`;
+}
+
+interface SerializeState {
+    fragments: Record<string, string>;
+}
+
+function applyFragments(str: string, fragments: SerializeState['fragments']) {
+    let appliedString = str;
+    const fragmentNames = Object.keys(fragments);
+    for (let i = 0, len = fragmentNames.length; i < len; i += 1) {
+        const name = fragmentNames[i];
+        appliedString = `${appliedString} ${fragments[name]}`;
+    }
+
+    return appliedString;
 }
 
 export function astToString(ast: LuvioDocumentNode) {
     const { definitions } = ast;
+    const state: SerializeState = {
+        fragments: {},
+    };
     let str = '';
     for (let i = 0, len = definitions.length; i < len; i += 1) {
-        const def = serializeOperationNode(definitions[i]);
+        const def = serializeOperationNode(definitions[i], state);
         str = `${str}${def}`;
     }
-
-    return str;
+    return applyFragments(str, state.fragments);
 }

@@ -5,12 +5,14 @@ import {
     getLuvioFieldNodeSelection,
 } from '../type/Selection';
 
-export type GqlRecord = {
+interface DefaultRecordFields {
     id: string;
     WeakEtag: number;
-} & {
+}
+
+export type GqlRecord = DefaultRecordFields & {
     [key: string]:
-        | GqlRecord
+        | DefaultRecordFields
         | {
               value?: string;
               displayValue?: string;
@@ -22,6 +24,10 @@ export const CUSTOM_FIELD_NODE_TYPE = 'Record';
 function keyBuilder(id: string) {
     return `gql::${CUSTOM_FIELD_NODE_TYPE}::${id}`;
 }
+
+export const defaultRecordFieldsFragmentName = 'defaultRecordFields';
+
+export const defaultRecordFieldsFragment = `fragment ${defaultRecordFieldsFragmentName} on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
 
 export const createIngest: (ast: LuvioSelectionCustomFieldNode) => ResourceIngest = (
     ast: LuvioSelectionCustomFieldNode

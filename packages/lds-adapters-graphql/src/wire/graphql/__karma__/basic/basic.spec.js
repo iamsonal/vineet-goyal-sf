@@ -96,6 +96,27 @@ describe('graphql', () => {
         const expectedQuery = `query { uiapi { query { Account(where:  { Name:  { like: "Account1" } }) { edges { node { Id, WeakEtag, Name { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
 
         const networkData = getMock('RecordQuery-Account-fields-Name');
+        const expectedData = {
+            data: {
+                uiapi: {
+                    query: {
+                        Account: {
+                            edges: [
+                                {
+                                    node: {
+                                        Name: {
+                                            value: 'Account1',
+                                            displayValue: null,
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+            errors: [],
+        };
 
         mockGraphqlNetwork(
             {
@@ -111,6 +132,6 @@ describe('graphql', () => {
         };
 
         const snapshot = await graphQLImperative(graphqlConfig);
-        expect(snapshot.data).toEqual(networkData);
+        expect(snapshot.data).toEqual(expectedData);
     });
 });

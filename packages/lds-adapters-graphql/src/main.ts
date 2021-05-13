@@ -1,6 +1,7 @@
-import { AdapterFactory, FulfilledSnapshot, Luvio, ResourceRequest, Snapshot } from '@luvio/engine';
+import { AdapterFactory, Luvio, ResourceRequest, Snapshot } from '@luvio/engine';
 import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
 import { astToString } from './util/ast-to-string';
+import { createIngest, createRead } from './type/Document';
 interface GraphQlConfig {
     query: LuvioDocumentNode;
     variables: Record<string, string | number | boolean>;
@@ -28,23 +29,19 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQlConfig, unknown> = (lu
             headers: {},
         };
 
-        return luvio.dispatchResourceRequest(request).then(resp => {
-            const snap: FulfilledSnapshot<unknown, GraphQlConfig['variables']> = {
-                recordId: '',
-                data: resp.body,
-                state: 'Fulfilled' as FulfilledSnapshot<any, any>['state'],
-                variables: queryVariables,
-                seenRecords: {},
-                select: {
-                    recordId: '',
-                    node: {
-                        kind: 'Fragment',
-                        private: [],
-                    },
-                    variables: queryVariables,
-                },
-            };
+        return luvio.dispatchResourceRequest<any>(request).then(resp => {
+            const ingest = createIngest(query);
+            luvio.storeIngest('graphql', ingest, resp.body.data);
 
-            return snap;
+            return luvio.storeLookup({
+                recordId: 'graphql',
+                node: {
+                    kind: 'Fragment',
+                    synthetic: false,
+                    reader: true,
+                    read: createRead(query),
+                },
+                variables: {},
+            });
         });
     };

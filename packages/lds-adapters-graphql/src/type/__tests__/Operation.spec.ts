@@ -1,8 +1,76 @@
 import { Environment, Luvio, Store } from '@luvio/engine';
 import { LuvioOperationDefinitionNode } from '@salesforce/lds-graphql-parser';
-import { createIngest } from '../Operation';
+import { createIngest, createRead } from '../Operation';
 
 describe('Operation', () => {
+    describe('read', () => {
+        it('should read child objects correctly', () => {
+            const ast: LuvioOperationDefinitionNode = {
+                kind: 'OperationDefinition',
+                operation: 'query',
+                variableDefinitions: [],
+                name: 'operationName',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'Name',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'displayValue',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const data = {
+                Name: {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+            };
+
+            const store = new Store();
+            store.records = {
+                'gql::Record::001RM000004uuhnYAA__Name': {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                toplevel__uiapi__query: {
+                    id: '001RM000004uuhnYAA',
+                    WeakEtag: 1615493739000,
+                    Name: {
+                        __ref: 'gql::Record::001RM000004uuhnYAA__Name',
+                    },
+                },
+            };
+
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const snap = luvio.storeLookup({
+                recordId: 'toplevel__uiapi__query',
+                node: {
+                    kind: 'Fragment',
+                    synthetic: false,
+                    reader: true,
+                    read: createRead(ast),
+                },
+                variables: {},
+            });
+
+            expect(snap.data).toEqual(data);
+        });
+    });
+
     describe('ingest', () => {
         it('should ingest data correctly', () => {
             const ast: LuvioOperationDefinitionNode = {

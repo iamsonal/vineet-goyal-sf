@@ -1,4 +1,12 @@
-import { IngestPath, Luvio, ResourceIngest, Store, StoreLink } from '@luvio/engine';
+import {
+    IngestPath,
+    Luvio,
+    Reader,
+    ReaderFragment,
+    ResourceIngest,
+    Store,
+    StoreLink,
+} from '@luvio/engine';
 import {
     LuvioSelectionCustomFieldNode,
     LuvioSelectionObjectFieldNode,
@@ -6,6 +14,8 @@ import {
 import {
     createIngest as createSelectionIngest,
     getLuvioFieldNodeSelection,
+    resolveLink,
+    followLink,
 } from '../type/Selection';
 import { GqlRecord } from './record';
 import { serializeArguments } from '../type/Argument';
@@ -19,6 +29,7 @@ export type GqlConnection = {
     edges: GqlEdge[];
 };
 
+const PROPERTY_NAME_EDGES = 'edges';
 export const CUSTOM_FIELD_NODE_TYPE = 'Connection';
 
 function keyBuilder(ast: LuvioSelectionCustomFieldNode) {
@@ -29,6 +40,40 @@ function keyBuilder(ast: LuvioSelectionCustomFieldNode) {
     const serialized = serializeArguments(args);
     return `gql::${CUSTOM_FIELD_NODE_TYPE}::${name}(${serialized})`;
 }
+
+function selectEdges(builder: Reader<any>, ast: LuvioFieldNode, links: StoreLink[]) {
+    const sink: any[] = [];
+    for (let i = 0, len = links.length; i < len; i += 1) {
+        const link = links[i];
+        const resolved = followLink(ast, builder, link);
+        builder.assignNonScalar(sink, i, resolved);
+    }
+    return sink;
+}
+
+export const createRead: (ast: LuvioSelectionCustomFieldNode) => ReaderFragment['read'] = (
+    ast: LuvioSelectionCustomFieldNode
+) => {
+    const selections = ast.luvioSelections === undefined ? [] : ast.luvioSelections;
+    return (source: any, builder: Reader<any>) => {
+        const sink = {};
+        for (let i = 0, len = selections.length; i < len; i += 1) {
+            const sel = getLuvioFieldNodeSelection(selections[i]);
+            const { name } = sel;
+            const edges = resolveLink(builder, source[name]) as StoreLink[];
+            builder.enterPath(name);
+            if (name === PROPERTY_NAME_EDGES) {
+                const data = selectEdges(builder, sel, edges);
+                builder.assignNonScalar(sink, name, data);
+            } else {
+                throw new Error('Not supported');
+            }
+
+            builder.exitPath();
+        }
+        return sink;
+    };
+};
 
 function ingestConnectionProperty(
     sel: LuvioFieldNode,
@@ -41,7 +86,7 @@ function ingestConnectionProperty(
     const propertyName = sel.name as keyof GqlConnection;
 
     switch (propertyName) {
-        case 'edges':
+        case PROPERTY_NAME_EDGES:
             return ingestConnectionEdges(
                 sel as LuvioSelectionObjectFieldNode,
                 data,

@@ -1,8 +1,33 @@
-import { IngestPath, Luvio, ResourceIngest, Store } from '@luvio/engine';
+import { IngestPath, Luvio, Reader, ReaderFragment, ResourceIngest, Store } from '@luvio/engine';
 import { LuvioSelectionObjectFieldNode } from '@salesforce/lds-graphql-parser';
-import { getLuvioFieldNodeSelection } from './Selection';
+import { getLuvioFieldNodeSelection, followLink } from './Selection';
 import { createIngest as createCustomFieldIngest } from './CustomField';
 import merge from '../util/merge';
+
+export const createRead: (ast: LuvioSelectionObjectFieldNode) => ReaderFragment['read'] = (
+    ast: LuvioSelectionObjectFieldNode
+) => {
+    const selections = ast.luvioSelections === undefined ? [] : ast.luvioSelections;
+    return (source: any, builder: Reader<any>) => {
+        const sink = {};
+        for (let i = 0, len = selections.length; i < len; i += 1) {
+            const sel = getLuvioFieldNodeSelection(selections[i]);
+            const { name } = sel;
+            builder.enterPath(name);
+            switch (sel.kind) {
+                case 'ScalarFieldSelection':
+                    builder.readScalar(name, source, sink);
+                    break;
+                default: {
+                    const data = followLink(sel, builder, source[name]);
+                    builder.assignNonScalar(sink, name, data);
+                }
+            }
+            builder.exitPath();
+        }
+        return sink;
+    };
+};
 
 export const createIngest: (ast: LuvioSelectionObjectFieldNode) => ResourceIngest = (
     ast: LuvioSelectionObjectFieldNode

@@ -1,8 +1,130 @@
-import { Environment, Luvio, Store } from '@luvio/engine';
+import { Environment, Luvio, Selector, Store } from '@luvio/engine';
 import { LuvioSelectionObjectFieldNode } from '@salesforce/lds-graphql-parser';
-import { createIngest } from '../ObjectField';
+import { createIngest, createRead } from '../ObjectField';
 
 describe('ObjectField', () => {
+    describe('Cache Reading', () => {
+        it('should follow nested objects properly', () => {
+            const ast: LuvioSelectionObjectFieldNode = {
+                kind: 'ObjectFieldSelection',
+                name: 'node',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'Name',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'displayValue',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const data = {
+                Name: {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+            };
+
+            const store = new Store();
+            store.records = {
+                'gql::Record::001RM000004uuhnYAA__Name': {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                'gql::Record::001RM000004uuhnYAA': {
+                    id: '001RM000004uuhnYAA',
+                    WeakEtag: 1615493739000,
+                    Name: {
+                        __ref: 'gql::Record::001RM000004uuhnYAA__Name',
+                    },
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const selector: Selector<any> = {
+                recordId: 'gql::Record::001RM000004uuhnYAA',
+                node: {
+                    kind: 'Fragment',
+                    reader: true,
+                    synthetic: false,
+                    read: createRead(ast),
+                },
+                variables: {},
+            };
+
+            const snap = luvio.storeLookup(selector);
+            expect(snap.data).toEqual(data);
+        });
+
+        it('should select scalar fields properly', () => {
+            const ast: LuvioSelectionObjectFieldNode = {
+                kind: 'ObjectFieldSelection',
+                name: 'Name',
+                luvioSelections: [
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: 'value',
+                    },
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: 'displayValue',
+                    },
+                ],
+            };
+
+            const data = {
+                value: 'Account1',
+                displayValue: null,
+            };
+
+            const store = new Store();
+            store.records = {
+                'gql::Record::001RM000004uuhnYAA__Name': {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                'gql::Record::001RM000004uuhnYAA': {
+                    id: '001RM000004uuhnYAA',
+                    WeakEtag: 1615493739000,
+                    Name: {
+                        __ref: 'gql::Record::001RM000004uuhnYAA__Name',
+                    },
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const selector: Selector<any> = {
+                recordId: 'gql::Record::001RM000004uuhnYAA__Name',
+                node: {
+                    kind: 'Fragment',
+                    reader: true,
+                    synthetic: false,
+                    read: createRead(ast),
+                },
+                variables: {},
+            };
+
+            const snap = luvio.storeLookup(selector);
+            expect(snap.data).toEqual(data);
+        });
+    });
+
     it('should ingest ObjectFieldSelection query correctly', () => {
         const ast: LuvioSelectionObjectFieldNode = {
             kind: 'ObjectFieldSelection',

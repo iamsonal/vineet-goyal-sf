@@ -1,0 +1,29 @@
+{
+    "connectionProperties": [],
+    "connectorHandler": "Legacy",
+    "connectorType": "SfdcLocal",
+    "createdBy": {
+        "id": "005RM000002AuUpYAK",
+        "name": "Admin User",
+        "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+    },
+    "createdDate": "2020-10-14T14:36:56.000Z",
+    "description": "SFDC_LOCAL",
+    "id": "0ItRM0000004Dfe0AE",
+    "ingestionSchedule": {
+        "assetId": "0ItRM0000004Dfb0AE",
+        "daysOfWeek": [],
+        "frequency": "weekly",
+        "notificationLevel": "warnings"
+    },
+    "label": "SFDC_LOCAL",
+    "lastModifiedBy": {
+        "id": "005RM000002AuUpYAK",
+        "name": "Admin User",
+        "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+    },
+    "lastModifiedDate": "2020-10-14T14:36:56.000Z",
+    "name": "SFDC_LOCAL",
+    "type": "dataconnector",
+    "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfe0AE"
+}

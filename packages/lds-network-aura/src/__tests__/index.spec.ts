@@ -3634,6 +3634,53 @@ describe('routes', () => {
         );
     });
 
+    describe('post /wave/dataconnectors', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors`,
+                body: {
+                    dataConnector: {
+                        connectorType: 'SfdcLocal',
+                        connectionProperties: [],
+                        connectorHandler: 'Legacy',
+                        folder: { name: '', namespace: '', id: '', url: '', label: '' },
+                        targetConnector: { name: '', namespace: '', id: '', url: '', label: '' },
+                        label: 'sfdc 2',
+                        name: 'sfdc2',
+                        description: 'second sfdc connector',
+                    },
+                },
+            },
+            [
+                'WaveController.createDataConnector',
+                {
+                    dataConnector: {
+                        connectorType: 'SfdcLocal',
+                        connectionProperties: [],
+                        connectorHandler: 'Legacy',
+                        folder: { name: '', namespace: '', id: '', url: '', label: '' },
+                        targetConnector: { name: '', namespace: '', id: '', url: '', label: '' },
+                        label: 'sfdc 2',
+                        name: 'sfdc2',
+                        description: 'second sfdc connector',
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors`,
+            },
+            {}
+        );
+    });
+
     describe('get /wave/dataConnectorTypes', () => {
         testControllerInput(
             {

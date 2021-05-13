@@ -96,6 +96,50 @@ function getDataConnectorsMatcher(config) {
     });
 }
 
+function mockCreateDataConnectorNetworkOnce(config, mockData) {
+    const paramMatch = createDataConnectorsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockCreateDataConnectorNetworkErrorOnce(config, mockData) {
+    const paramMatch = createDataConnectorsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function createDataConnectorsMatcher(config) {
+    let {
+        label,
+        name,
+        description,
+        connectionProperties,
+        connectorType,
+        connectorHandler,
+        folder,
+        targetConnector,
+    } = config;
+    return sinon.match({
+        body: {
+            label,
+            name,
+            description,
+            connectionProperties,
+            connectorType,
+            connectorHandler,
+            folder,
+            targetConnector,
+        },
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataConnectors`,
+        queryParams: {},
+    });
+}
+
 // Data connector types
 function mockGetDataConnectorTypesNetworkOnce(config, mockData) {
     const paramMatch = getDataConnectorTypesMatcher(config);
@@ -771,6 +815,8 @@ export {
     mockExecuteQueryNetworkErrorOnce,
     mockGetAnalyticsLimitsNetworkOnce,
     mockGetAnalyticsLimitsNetworkErrorOnce,
+    mockCreateDataConnectorNetworkOnce,
+    mockCreateDataConnectorNetworkErrorOnce,
     mockGetDataConnectorsNetworkOnce,
     mockGetDataConnectorsNetworkErrorOnce,
     mockGetDataConnectorTypesNetworkOnce,

@@ -312,6 +312,14 @@ const analytics: ApiFamily = {
             controller: 'WaveController.getDataConnectors',
         },
     },
+    createDataConnector: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && DATA_CONNECTORS_PATH.test(path),
+        transport: {
+            controller: 'WaveController.createDataConnector',
+        },
+    },
     getDataConnectorTypes: {
         method: 'get',
         predicate: (path: string) =>

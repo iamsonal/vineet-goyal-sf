@@ -146,6 +146,20 @@ types:
     discriminatorValue: asset # TODO Hand rolled
     type: BaseAssetReferenceRepresentation
     properties: {}
+  BaseAssetInputRepresentation:
+    description: Base Wave Asset input Representation
+    discriminator: name # TODO Hand rolled  W-8988532
+    type: object
+    properties:
+      description:
+        description: Short Description of the asset.
+        type: string
+      label:
+        description: The label of the asset.
+        type: string
+      name:
+        description: The name of the asset.
+        type: string
   BaseAssetReferenceRepresentation:
     description: Base asset reference representation.
     discriminator: name # TODO Hand rolled
@@ -330,6 +344,140 @@ types:
       url:
         description: The URL to get the collection.
         type: string
+  DataConnectorInputRepresentation:
+    description: Wave Data Connector input representation
+    discriminatorValue: connector
+    type: BaseAssetInputRepresentation
+    properties:
+      connectionProperties:
+        description: Connection properties for the connector
+        type: array
+        items:
+          type: any
+      connectorHandler:
+        description: Third party driver used for connection
+        type: string
+        enum:
+          - Base
+          - Legacy
+        required: false # TODO Hand-rolled W-8253396
+      connectorType:
+        description: The type of the Data Connector.
+        type: string
+        enum:
+          - ActCRM
+          - ActOn
+          - AdobeAnalytics
+          - AmazonAthena
+          - AmazonDynamoDB
+          - AmazonS3
+          - AmazonS3Output
+          - AwsMarketplace
+          - AwsRdsAuroraMySQL
+          - AwsRdsAuroraPostgres
+          - AwsRdsMariaDB
+          - AwsRdsMySQL
+          - AwsRdsOracle
+          - AwsRdsPostgres
+          - AwsRdsSqlServer
+          - AzureCosmosDB
+          - AzureSqlDatabase
+          - AzureSqlDatawarehouse
+          - AzureTable
+          - Box
+          - Cassandra
+          - CdpDirect
+          - Dropbox
+          - GoogleAds
+          - GoogleAnalytics
+          - GoogleBigQuery
+          - GoogleBigQueryStandardSQL
+          - GoogleCloudStorage
+          - GoogleSheets
+          - GoogleSpanner
+          - HerokuPostgres
+          - IbmCloudSqlQuery
+          - LinkedIn
+          - MarkLogic
+          - Marketo
+          - MicrosoftAdvertising
+          - MicrosoftDynamics
+          - MongoDB
+          - MulesoftAnaplan
+          - MulesoftConcur
+          - MulesoftHubSpot
+          - MulesoftMarkLogic
+          - MulesoftMongoDB
+          - MulesoftMySQL
+          - MulesoftOracle
+          - MulesoftServiceNow
+          - MulesoftSqlServer
+          - MulesoftSuccessFactors
+          - MulesoftWorkday
+          - MulesoftZuora
+          - NetSuite
+          - OracleEloqua
+          - Redshift
+          - SalesforceCPQ
+          - SalesforceCommunityCloud
+          - SalesforceEinsteinAnalytics
+          - SalesforceExternal
+          - SalesforceForceCom
+          - SalesforceMarketingCloud
+          - SalesforceMarketingCloudFull
+          - SalesforceMarketingCloudOAuth2
+          - SalesforceOutput
+          - SalesforceReport
+          - SalesforceSalesCloud
+          - SalesforceServiceCloud
+          - SapConcur
+          - SapHana
+          - SapSuccessFactors
+          - ServiceNow
+          - SfdcLocal
+          - SnowflakeComputing
+          - SnowflakeDirect
+          - SnowflakeOutput
+          - SugarCRM
+          - TableauHyperOutput
+          - Teradata
+          - VeevaVault
+          - Xactly
+          - Zendesk
+          - ZohoCRM
+          - ZuoraAQuA
+      folder:
+        description: Folder for the Live connector
+        type: object
+        properties: # TODO Hand-rolled W-8252808
+          //:
+            type: string
+        required: false # TODO Hand-rolled W-8253396
+      targetConnector:
+        description: AssetReference containing ID or API name of target connector
+          associated with the current source connector
+        type: object
+        properties: # TODO Hand-rolled W-8252808
+          //:
+            type: string
+        required: false # TODO Hand-rolled W-8253396
+  DataConnectorInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for data connector input representation
+    type: object
+    properties:
+      dataConnector:
+        type: DataConnectorInputRepresentation
+        description: Data connector input representation
+  DataConnectorPropertyInputRepresentation:
+    description: Wave Data Connector Property input representation
+    type: object
+    properties:
+      name:
+        description: The name of the connection property.
+        type: string
+      value:
+        description: The value of the connection property
+        type: object
   DataConnectorRepresentation:
     description: A Data Connector represents a connection.
     discriminatorValue: dataConnector
@@ -2740,6 +2888,18 @@ types:
             - IncludeAllPrivate
             - Mru
             - SharedWithMe
+    post:
+      description: Add a Data Connector.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DataConnectorRepresentation
+      body:
+        application/json:
+          type: DataConnectorInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: DataConnectorInputRepresentation
+          (oas-body-name): dataConnector
   /dataConnectorTypes:
     get:
       description: A collection of Wave Data Connector Types.

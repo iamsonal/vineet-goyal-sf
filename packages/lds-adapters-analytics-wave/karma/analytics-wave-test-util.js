@@ -586,6 +586,32 @@ function updateReplicatedDatasetMatcher(config) {
     });
 }
 
+function mockDeleteReplicatedDatasetNetworkOnce(config, mockData = {}) {
+    const paramMatch = deleteReplicatedDatasetMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockDeleteReplicatedDatasetNetworkErrorOnce(config, mockData = {}) {
+    const paramMatch = deleteReplicatedDatasetMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function deleteReplicatedDatasetMatcher(config) {
+    const { id } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'delete',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/replicatedDatasets/${id}`,
+    });
+}
+
 // Replicated Dataset Fields
 function mockGetReplicatedDatasetFieldsNetworkOnce(config, mockData) {
     const paramMatch = getReplicatedDatasetFieldsMatcher(config);
@@ -781,6 +807,8 @@ export {
     mockGetReplicatedDatasetsNetworkErrorOnce,
     mockCreateReplicatedDatasetNetworkOnce,
     mockCreateReplicatedDatasetNetworkErrorOnce,
+    mockDeleteReplicatedDatasetNetworkOnce,
+    mockDeleteReplicatedDatasetNetworkErrorOnce,
     mockGetReplicatedDatasetFieldsNetworkOnce,
     mockGetReplicatedDatasetFieldsNetworkErrorOnce,
     mockGetScheduleNetworkOnce,

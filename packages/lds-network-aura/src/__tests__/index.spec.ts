@@ -4415,6 +4415,47 @@ describe('routes', () => {
         );
     });
 
+    describe('delete /wave/replicatedDatasets/{id}', () => {
+        testControllerInput(
+            {
+                method: 'delete',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/replicatedDatasets/0IuS70000004CqIKAU`,
+                urlParams: {
+                    id: '0IuS70000004CqIKAU',
+                },
+            },
+            [
+                'WaveController.deleteReplicatedDataset',
+                {
+                    id: '0IuS70000004CqIKAU',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'delete',
+            baseUri: WAVE_BASE_URI,
+            basePath: `/replicatedDatasets/0IuS70000004CqIKAU`,
+            urlParams: {
+                id: '0IuS70000004CqIKAU',
+            },
+        });
+
+        testResolveResponse(
+            {
+                method: 'delete',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/replicatedDatasets/0IuS70000004CqIKAU`,
+                urlParams: {
+                    id: '0IuS70000004CqIKAU',
+                },
+            },
+            null
+        );
+    });
+
     describe('get /wave/replicatedDatasets/{id}/fields', () => {
         testControllerInput(
             {

@@ -3165,6 +3165,11 @@ types:
           type: ReplicatedDatasetInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: ReplicatedDatasetInputRepresentation
           (oas-body-name): replicatedDataset
   /replicatedDatasets/{id}:
+    delete:
+      description: Delete a Replicated Dataset by ID.
+      responses:
+        '200':
+          description: Success
     get:
       description: Get a single Replicated Dataset by ID.
       responses:

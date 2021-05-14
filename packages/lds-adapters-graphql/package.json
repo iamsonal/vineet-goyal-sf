@@ -22,10 +22,10 @@
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-graphql"
     },
     "dependencies": {
+        "@salesforce/lds-adapters-uiapi": "1.12.1",
         "@salesforce/lds-bindings": "1.12.1"
     },
     "devDependencies": {
-        "@salesforce/lds-adapters-uiapi": "1.12.1",
         "@salesforce/lds-compiler-plugins": "1.12.1",
         "@salesforce/lds-graphql-parser": "1.12.1",
         "@salesforce/lds-jest": "1.12.1",

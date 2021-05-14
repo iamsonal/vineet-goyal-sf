@@ -64,7 +64,7 @@ describe('GQL Connection', () => {
                 edges: [
                     {
                         node: {
-                            id: '001RM000004uuhnYAA',
+                            Id: '001RM000004uuhnYAA',
                             WeakEtag: 1615493739000,
                             Name: {
                                 value: 'Account1',
@@ -111,7 +111,7 @@ describe('GQL Connection', () => {
                     },
                 },
                 'gql::Record::001RM000004uuhnYAA': {
-                    id: '001RM000004uuhnYAA',
+                    Id: '001RM000004uuhnYAA',
                     WeakEtag: 1615493739000,
                     Name: {
                         __ref: 'gql::Record::001RM000004uuhnYAA__Name',
@@ -165,7 +165,7 @@ describe('GQL Connection', () => {
                 edges: [
                     {
                         node: {
-                            id: '001RM000004uuhnYAA',
+                            Id: '001RM000004uuhnYAA',
                             WeakEtag: 1615493739000,
                             Name: {
                                 value: 'Account1',
@@ -212,7 +212,7 @@ describe('GQL Connection', () => {
                     },
                 },
                 'gql::Record::001RM000004uuhnYAA': {
-                    id: '001RM000004uuhnYAA',
+                    Id: '001RM000004uuhnYAA',
                     WeakEtag: 1615493739000,
                     Name: {
                         __ref: 'gql::Record::001RM000004uuhnYAA__Name',
@@ -391,14 +391,14 @@ describe('GQL Connection', () => {
                 edges: [
                     {
                         node: {
-                            id: '001RM000004uuhnYAA',
+                            Id: '001RM000004uuhnYAA',
                             WeakEtag: 1615493739000,
                             Name: {
                                 value: 'Account1',
                                 displayValue: null,
                             },
                             Owner: {
-                                id: '005RM000002492xYAA',
+                                Id: '005RM000002492xYAA',
                                 WeakEtag: 1616602434000,
                                 Name: {
                                     value: 'Admin User',
@@ -445,7 +445,7 @@ describe('GQL Connection', () => {
                     },
                 },
                 'gql::Record::001RM000004uuhnYAA': {
-                    id: '001RM000004uuhnYAA',
+                    Id: '001RM000004uuhnYAA',
                     WeakEtag: 1615493739000,
                     Name: {
                         __ref: 'gql::Record::001RM000004uuhnYAA__Name',
@@ -459,7 +459,7 @@ describe('GQL Connection', () => {
                     displayValue: null,
                 },
                 'gql::Record::005RM000002492xYAA': {
-                    id: '005RM000002492xYAA',
+                    Id: '005RM000002492xYAA',
                     WeakEtag: 1616602434000,
                     Name: {
                         __ref: 'gql::Record::005RM000002492xYAA__Name',

@@ -42,7 +42,7 @@ describe('Operation', () => {
                     displayValue: null,
                 },
                 toplevel__uiapi__query: {
-                    id: '001RM000004uuhnYAA',
+                    Id: '001RM000004uuhnYAA',
                     WeakEtag: 1615493739000,
                     Name: {
                         __ref: 'gql::Record::001RM000004uuhnYAA__Name',
@@ -157,7 +157,7 @@ describe('Operation', () => {
                             edges: [
                                 {
                                     node: {
-                                        id: '001RM000004uuhnYAA',
+                                        Id: '001RM000004uuhnYAA',
                                         WeakEtag: 1615493739000,
                                         Name: {
                                             value: 'Account1',
@@ -196,7 +196,7 @@ describe('Operation', () => {
                     displayValue: null,
                 },
                 'gql::Record::001RM000004uuhnYAA': {
-                    id: '001RM000004uuhnYAA',
+                    Id: '001RM000004uuhnYAA',
                     WeakEtag: 1615493739000,
                     Name: {
                         __ref: 'gql::Record::001RM000004uuhnYAA__Name',

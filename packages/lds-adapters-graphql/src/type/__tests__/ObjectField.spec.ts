@@ -40,7 +40,7 @@ describe('ObjectField', () => {
                     displayValue: null,
                 },
                 'gql::Record::001RM000004uuhnYAA': {
-                    id: '001RM000004uuhnYAA',
+                    Id: '001RM000004uuhnYAA',
                     WeakEtag: 1615493739000,
                     Name: {
                         __ref: 'gql::Record::001RM000004uuhnYAA__Name',
@@ -96,7 +96,7 @@ describe('ObjectField', () => {
                     displayValue: null,
                 },
                 'gql::Record::001RM000004uuhnYAA': {
-                    id: '001RM000004uuhnYAA',
+                    Id: '001RM000004uuhnYAA',
                     WeakEtag: 1615493739000,
                     Name: {
                         __ref: 'gql::Record::001RM000004uuhnYAA__Name',
@@ -192,7 +192,7 @@ describe('ObjectField', () => {
                 edges: [
                     {
                         node: {
-                            id: '001RM000004uuhnYAA',
+                            Id: '001RM000004uuhnYAA',
                             WeakEtag: 1615493739000,
                             Name: {
                                 value: 'Account1',
@@ -229,7 +229,7 @@ describe('ObjectField', () => {
                 displayValue: null,
             },
             'gql::Record::001RM000004uuhnYAA': {
-                id: '001RM000004uuhnYAA',
+                Id: '001RM000004uuhnYAA',
                 WeakEtag: 1615493739000,
                 Name: {
                     __ref: 'gql::Record::001RM000004uuhnYAA__Name',

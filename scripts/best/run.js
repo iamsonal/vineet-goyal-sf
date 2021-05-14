@@ -3,7 +3,7 @@ const { resolve } = require('path');
 
 const REPO_ROOT = resolve(__dirname, '../../');
 // FILES that we need JS versions for best
-const FILES = ['packages/lds-adapters-graphql/src/util/ast-to-string.ts'].map(file =>
+const FILES = ['packages/lds-adapters-graphql/src/util/ast-to-string.ts'].map((file) =>
     resolve(REPO_ROOT, file)
 );
 
@@ -21,7 +21,7 @@ if (buildOrClean === 'build') {
     });
 } else if (buildOrClean === 'clean') {
     // remove all JS transpiled files
-    FILES.forEach(tsFile => {
+    FILES.forEach((tsFile) => {
         const jsFile = tsFile.replace('.ts', '.js');
         execSync(`rm ${jsFile}`);
     });

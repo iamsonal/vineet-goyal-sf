@@ -38,13 +38,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -134,13 +132,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -150,48 +146,38 @@ describe('convert AST to query string', () => {
                                                                     name: 'Owner',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ObjectFieldSelection',
+                                                                            kind: 'ObjectFieldSelection',
                                                                             name: 'edges',
                                                                             luvioSelections: [
                                                                                 {
-                                                                                    kind:
-                                                                                        'ObjectFieldSelection',
+                                                                                    kind: 'ObjectFieldSelection',
                                                                                     name: 'node',
-                                                                                    luvioSelections: [
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'Id',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'WeakEtag',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ObjectFieldSelection',
-                                                                                            name:
-                                                                                                'Name',
-                                                                                            luvioSelections: [
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'value',
-                                                                                                },
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'displayValue',
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                    ],
+                                                                                    luvioSelections:
+                                                                                        [
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'Id',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'WeakEtag',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ObjectFieldSelection',
+                                                                                                name: 'Name',
+                                                                                                luvioSelections:
+                                                                                                    [
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'value',
+                                                                                                        },
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'displayValue',
+                                                                                                        },
+                                                                                                    ],
+                                                                                            },
+                                                                                        ],
                                                                                 },
                                                                             ],
                                                                         },
@@ -278,13 +264,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -346,13 +330,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -414,13 +396,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -482,13 +462,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -550,13 +528,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -618,13 +594,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -686,13 +660,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -754,13 +726,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -822,13 +792,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -890,13 +858,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -982,13 +948,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -998,48 +962,38 @@ describe('convert AST to query string', () => {
                                                                     name: 'Owner',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ObjectFieldSelection',
+                                                                            kind: 'ObjectFieldSelection',
                                                                             name: 'edges',
                                                                             luvioSelections: [
                                                                                 {
-                                                                                    kind:
-                                                                                        'ObjectFieldSelection',
+                                                                                    kind: 'ObjectFieldSelection',
                                                                                     name: 'node',
-                                                                                    luvioSelections: [
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'Id',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'WeakEtag',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ObjectFieldSelection',
-                                                                                            name:
-                                                                                                'Name',
-                                                                                            luvioSelections: [
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'value',
-                                                                                                },
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'displayValue',
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                    ],
+                                                                                    luvioSelections:
+                                                                                        [
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'Id',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'WeakEtag',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ObjectFieldSelection',
+                                                                                                name: 'Name',
+                                                                                                luvioSelections:
+                                                                                                    [
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'value',
+                                                                                                        },
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'displayValue',
+                                                                                                        },
+                                                                                                    ],
+                                                                                            },
+                                                                                        ],
                                                                                 },
                                                                             ],
                                                                         },
@@ -1102,13 +1056,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -1118,48 +1070,38 @@ describe('convert AST to query string', () => {
                                                                     name: 'Owner',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ObjectFieldSelection',
+                                                                            kind: 'ObjectFieldSelection',
                                                                             name: 'edges',
                                                                             luvioSelections: [
                                                                                 {
-                                                                                    kind:
-                                                                                        'ObjectFieldSelection',
+                                                                                    kind: 'ObjectFieldSelection',
                                                                                     name: 'node',
-                                                                                    luvioSelections: [
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'Id',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'WeakEtag',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ObjectFieldSelection',
-                                                                                            name:
-                                                                                                'Name',
-                                                                                            luvioSelections: [
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'value',
-                                                                                                },
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'displayValue',
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                    ],
+                                                                                    luvioSelections:
+                                                                                        [
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'Id',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'WeakEtag',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ObjectFieldSelection',
+                                                                                                name: 'Name',
+                                                                                                luvioSelections:
+                                                                                                    [
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'value',
+                                                                                                        },
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'displayValue',
+                                                                                                        },
+                                                                                                    ],
+                                                                                            },
+                                                                                        ],
                                                                                 },
                                                                             ],
                                                                         },
@@ -1222,13 +1164,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -1238,48 +1178,38 @@ describe('convert AST to query string', () => {
                                                                     name: 'Owner',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ObjectFieldSelection',
+                                                                            kind: 'ObjectFieldSelection',
                                                                             name: 'edges',
                                                                             luvioSelections: [
                                                                                 {
-                                                                                    kind:
-                                                                                        'ObjectFieldSelection',
+                                                                                    kind: 'ObjectFieldSelection',
                                                                                     name: 'node',
-                                                                                    luvioSelections: [
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'Id',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'WeakEtag',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ObjectFieldSelection',
-                                                                                            name:
-                                                                                                'Name',
-                                                                                            luvioSelections: [
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'value',
-                                                                                                },
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'displayValue',
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                    ],
+                                                                                    luvioSelections:
+                                                                                        [
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'Id',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'WeakEtag',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ObjectFieldSelection',
+                                                                                                name: 'Name',
+                                                                                                luvioSelections:
+                                                                                                    [
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'value',
+                                                                                                        },
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'displayValue',
+                                                                                                        },
+                                                                                                    ],
+                                                                                            },
+                                                                                        ],
                                                                                 },
                                                                             ],
                                                                         },
@@ -1342,13 +1272,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -1358,48 +1286,38 @@ describe('convert AST to query string', () => {
                                                                     name: 'Owner',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ObjectFieldSelection',
+                                                                            kind: 'ObjectFieldSelection',
                                                                             name: 'edges',
                                                                             luvioSelections: [
                                                                                 {
-                                                                                    kind:
-                                                                                        'ObjectFieldSelection',
+                                                                                    kind: 'ObjectFieldSelection',
                                                                                     name: 'node',
-                                                                                    luvioSelections: [
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'Id',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'WeakEtag',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ObjectFieldSelection',
-                                                                                            name:
-                                                                                                'Name',
-                                                                                            luvioSelections: [
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'value',
-                                                                                                },
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'displayValue',
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                    ],
+                                                                                    luvioSelections:
+                                                                                        [
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'Id',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'WeakEtag',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ObjectFieldSelection',
+                                                                                                name: 'Name',
+                                                                                                luvioSelections:
+                                                                                                    [
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'value',
+                                                                                                        },
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'displayValue',
+                                                                                                        },
+                                                                                                    ],
+                                                                                            },
+                                                                                        ],
                                                                                 },
                                                                             ],
                                                                         },
@@ -1462,13 +1380,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -1478,48 +1394,38 @@ describe('convert AST to query string', () => {
                                                                     name: 'Owner',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ObjectFieldSelection',
+                                                                            kind: 'ObjectFieldSelection',
                                                                             name: 'edges',
                                                                             luvioSelections: [
                                                                                 {
-                                                                                    kind:
-                                                                                        'ObjectFieldSelection',
+                                                                                    kind: 'ObjectFieldSelection',
                                                                                     name: 'node',
-                                                                                    luvioSelections: [
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'Id',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'WeakEtag',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ObjectFieldSelection',
-                                                                                            name:
-                                                                                                'Name',
-                                                                                            luvioSelections: [
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'value',
-                                                                                                },
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'displayValue',
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                    ],
+                                                                                    luvioSelections:
+                                                                                        [
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'Id',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'WeakEtag',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ObjectFieldSelection',
+                                                                                                name: 'Name',
+                                                                                                luvioSelections:
+                                                                                                    [
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'value',
+                                                                                                        },
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'displayValue',
+                                                                                                        },
+                                                                                                    ],
+                                                                                            },
+                                                                                        ],
                                                                                 },
                                                                             ],
                                                                         },
@@ -1582,13 +1488,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -1598,48 +1502,38 @@ describe('convert AST to query string', () => {
                                                                     name: 'Owner',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ObjectFieldSelection',
+                                                                            kind: 'ObjectFieldSelection',
                                                                             name: 'edges',
                                                                             luvioSelections: [
                                                                                 {
-                                                                                    kind:
-                                                                                        'ObjectFieldSelection',
+                                                                                    kind: 'ObjectFieldSelection',
                                                                                     name: 'node',
-                                                                                    luvioSelections: [
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'Id',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'WeakEtag',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ObjectFieldSelection',
-                                                                                            name:
-                                                                                                'Name',
-                                                                                            luvioSelections: [
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'value',
-                                                                                                },
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'displayValue',
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                    ],
+                                                                                    luvioSelections:
+                                                                                        [
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'Id',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'WeakEtag',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ObjectFieldSelection',
+                                                                                                name: 'Name',
+                                                                                                luvioSelections:
+                                                                                                    [
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'value',
+                                                                                                        },
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'displayValue',
+                                                                                                        },
+                                                                                                    ],
+                                                                                            },
+                                                                                        ],
                                                                                 },
                                                                             ],
                                                                         },
@@ -1702,13 +1596,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -1718,48 +1610,38 @@ describe('convert AST to query string', () => {
                                                                     name: 'Owner',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ObjectFieldSelection',
+                                                                            kind: 'ObjectFieldSelection',
                                                                             name: 'edges',
                                                                             luvioSelections: [
                                                                                 {
-                                                                                    kind:
-                                                                                        'ObjectFieldSelection',
+                                                                                    kind: 'ObjectFieldSelection',
                                                                                     name: 'node',
-                                                                                    luvioSelections: [
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'Id',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'WeakEtag',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ObjectFieldSelection',
-                                                                                            name:
-                                                                                                'Name',
-                                                                                            luvioSelections: [
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'value',
-                                                                                                },
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'displayValue',
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                    ],
+                                                                                    luvioSelections:
+                                                                                        [
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'Id',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'WeakEtag',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ObjectFieldSelection',
+                                                                                                name: 'Name',
+                                                                                                luvioSelections:
+                                                                                                    [
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'value',
+                                                                                                        },
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'displayValue',
+                                                                                                        },
+                                                                                                    ],
+                                                                                            },
+                                                                                        ],
                                                                                 },
                                                                             ],
                                                                         },
@@ -1822,13 +1704,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -1838,48 +1718,38 @@ describe('convert AST to query string', () => {
                                                                     name: 'Owner',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ObjectFieldSelection',
+                                                                            kind: 'ObjectFieldSelection',
                                                                             name: 'edges',
                                                                             luvioSelections: [
                                                                                 {
-                                                                                    kind:
-                                                                                        'ObjectFieldSelection',
+                                                                                    kind: 'ObjectFieldSelection',
                                                                                     name: 'node',
-                                                                                    luvioSelections: [
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'Id',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'WeakEtag',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ObjectFieldSelection',
-                                                                                            name:
-                                                                                                'Name',
-                                                                                            luvioSelections: [
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'value',
-                                                                                                },
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'displayValue',
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                    ],
+                                                                                    luvioSelections:
+                                                                                        [
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'Id',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'WeakEtag',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ObjectFieldSelection',
+                                                                                                name: 'Name',
+                                                                                                luvioSelections:
+                                                                                                    [
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'value',
+                                                                                                        },
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'displayValue',
+                                                                                                        },
+                                                                                                    ],
+                                                                                            },
+                                                                                        ],
                                                                                 },
                                                                             ],
                                                                         },
@@ -1942,13 +1812,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -1958,48 +1826,38 @@ describe('convert AST to query string', () => {
                                                                     name: 'Owner',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ObjectFieldSelection',
+                                                                            kind: 'ObjectFieldSelection',
                                                                             name: 'edges',
                                                                             luvioSelections: [
                                                                                 {
-                                                                                    kind:
-                                                                                        'ObjectFieldSelection',
+                                                                                    kind: 'ObjectFieldSelection',
                                                                                     name: 'node',
-                                                                                    luvioSelections: [
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'Id',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'WeakEtag',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ObjectFieldSelection',
-                                                                                            name:
-                                                                                                'Name',
-                                                                                            luvioSelections: [
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'value',
-                                                                                                },
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'displayValue',
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                    ],
+                                                                                    luvioSelections:
+                                                                                        [
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'Id',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'WeakEtag',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ObjectFieldSelection',
+                                                                                                name: 'Name',
+                                                                                                luvioSelections:
+                                                                                                    [
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'value',
+                                                                                                        },
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'displayValue',
+                                                                                                        },
+                                                                                                    ],
+                                                                                            },
+                                                                                        ],
                                                                                 },
                                                                             ],
                                                                         },
@@ -2062,13 +1920,11 @@ describe('convert AST to query string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -2078,48 +1934,38 @@ describe('convert AST to query string', () => {
                                                                     name: 'Owner',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ObjectFieldSelection',
+                                                                            kind: 'ObjectFieldSelection',
                                                                             name: 'edges',
                                                                             luvioSelections: [
                                                                                 {
-                                                                                    kind:
-                                                                                        'ObjectFieldSelection',
+                                                                                    kind: 'ObjectFieldSelection',
                                                                                     name: 'node',
-                                                                                    luvioSelections: [
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'Id',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ScalarFieldSelection',
-                                                                                            name:
-                                                                                                'WeakEtag',
-                                                                                        },
-                                                                                        {
-                                                                                            kind:
-                                                                                                'ObjectFieldSelection',
-                                                                                            name:
-                                                                                                'Name',
-                                                                                            luvioSelections: [
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'value',
-                                                                                                },
-                                                                                                {
-                                                                                                    kind:
-                                                                                                        'ScalarFieldSelection',
-                                                                                                    name:
-                                                                                                        'displayValue',
-                                                                                                },
-                                                                                            ],
-                                                                                        },
-                                                                                    ],
+                                                                                    luvioSelections:
+                                                                                        [
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'Id',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ScalarFieldSelection',
+                                                                                                name: 'WeakEtag',
+                                                                                            },
+                                                                                            {
+                                                                                                kind: 'ObjectFieldSelection',
+                                                                                                name: 'Name',
+                                                                                                luvioSelections:
+                                                                                                    [
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'value',
+                                                                                                        },
+                                                                                                        {
+                                                                                                            kind: 'ScalarFieldSelection',
+                                                                                                            name: 'displayValue',
+                                                                                                        },
+                                                                                                    ],
+                                                                                            },
+                                                                                        ],
                                                                                 },
                                                                             ],
                                                                         },

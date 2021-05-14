@@ -75,7 +75,7 @@ async function populateDurableStore() {
 // durable store so we need to make sure the microtask queue is emptied
 // before checking the durable store for expected result
 function flushPromises() {
-    return new Promise(resolve => setImmediate(resolve));
+    return new Promise((resolve) => setImmediate(resolve));
 }
 
 describe('getRecord with fields offline', () => {

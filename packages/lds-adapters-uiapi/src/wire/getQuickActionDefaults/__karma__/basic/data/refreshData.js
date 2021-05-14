@@ -33,7 +33,7 @@ try {
         },
     ];
 
-    entries.forEach(async function({ endpoint, filename }) {
+    entries.forEach(async function ({ endpoint, filename }) {
         await helpers.requestGetAndSave(
             `/ui-api/actions/record-defaults/${endpoint}`,
             path.join(rootDir, `${filename}.json`)

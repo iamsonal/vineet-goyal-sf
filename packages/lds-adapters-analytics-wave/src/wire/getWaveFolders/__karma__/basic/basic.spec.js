@@ -58,8 +58,7 @@ describe('basic', () => {
     it('gets folders with page token', async () => {
         const mock = getMock('folders-page');
         const config = {
-            page:
-                'eyJwYWdlU2l6ZSI6Mywic29ydE9yZGVyIjoiTVJVIiwibGFzdElkIjoiMDJJUk0wMDAwMDAwOGtrMkFBIiwibGFzdE5hbWUiOiJhMSIsImxhc3RUaW1lIjoxNTk4MDM2NzEwMDAwLCJvdGhlclBhcmFtZXRlcnMiOnsidGVtcGxhdGVTb3VyY2VJZCI6InNmZGNfaW50ZXJuYWxfX0xlYXJuaW5nX0FkdmVudHVyZSJ9fQ==',
+            page: 'eyJwYWdlU2l6ZSI6Mywic29ydE9yZGVyIjoiTVJVIiwibGFzdElkIjoiMDJJUk0wMDAwMDAwOGtrMkFBIiwibGFzdE5hbWUiOiJhMSIsImxhc3RUaW1lIjoxNTk4MDM2NzEwMDAwLCJvdGhlclBhcmFtZXRlcnMiOnsidGVtcGxhdGVTb3VyY2VJZCI6InNmZGNfaW50ZXJuYWxfX0xlYXJuaW5nX0FkdmVudHVyZSJ9fQ==',
             pageSize: 3,
         };
         mockGetWaveFoldersNetworkOnce(config, mock);

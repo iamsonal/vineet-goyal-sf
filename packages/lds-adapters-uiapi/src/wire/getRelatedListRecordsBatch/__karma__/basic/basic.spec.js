@@ -18,7 +18,7 @@ function getMock(filename) {
 }
 
 async function createSingleComponentsFromBatchData(mockData) {
-    const individualResults = mockData.results.map(item => item.result);
+    const individualResults = mockData.results.map((item) => item.result);
     // Setup all our results to be retrieved from the single version of the wire.
     for (const relatedListRecordCollection of individualResults) {
         const singleResourceConfig = {
@@ -131,9 +131,8 @@ describe('batching', () => {
 
         const mockData = getMock('related-list-records-standard-fields-Custom');
         const batchComponentParams = extractRelatedListsBatchParamsFromMockData(mockData);
-        const batchResourceConfig = convertRelatedListsBatchParamsToResourceParams(
-            batchComponentParams
-        );
+        const batchResourceConfig =
+            convertRelatedListsBatchParamsToResourceParams(batchComponentParams);
 
         mockGetRelatedListRecordsBatchNetwork(batchResourceConfig, mockData);
         const element = await setupElement(batchComponentParams, RelatedListRecordsBatch);

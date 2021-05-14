@@ -24,7 +24,7 @@ const getRecordsPropertyRetriever: ResponsePropertyRetriever<
         );
     },
     retrieve(response: ResourceResponse<BatchRepresentation>) {
-        return response.body.results.map(result => {
+        return response.body.results.map((result) => {
             const data = result.result as RecordRepresentation;
             return { cacheKey: keyBuilderFromTypeRecord(data), data };
         });

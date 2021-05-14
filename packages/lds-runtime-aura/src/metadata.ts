@@ -17,7 +17,7 @@ export function setupMetadataWatcher(luvio: Luvio): void {
     // Watch for object info changes. Since we don't have enough information to understand to which
     // extent an object info change may impact the application the only thing we do is to clear all
     // the  persistent storages.
-    luvio.storeWatch(OBJECT_INFO_PREFIX, entries => {
+    luvio.storeWatch(OBJECT_INFO_PREFIX, (entries) => {
         for (let i = 0, len = entries.length; i < len; i++) {
             const entry = entries[i];
             const isObjectInfoUpdated = entry.inserted === false;

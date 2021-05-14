@@ -112,7 +112,7 @@ describe('tracked fields', () => {
 
         const expected = getMock('record-Account-fields-Account.Website');
         // Only keep the fields which get requested by config
-        expectedOptionalFields.forEach(fieldName => {
+        expectedOptionalFields.forEach((fieldName) => {
             const split = fieldName.split('.');
 
             const last = split[split.length - 1];

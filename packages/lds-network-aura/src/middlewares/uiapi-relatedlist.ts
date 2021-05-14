@@ -64,12 +64,14 @@ if (forceRecordTransactionsDisabled === false) {
             });
         },
         getRelatedListRecordsBatchResolveFunction: (config: InstrumentationResolveConfig) => {
-            (config.body as RelatedListRecordCollectionBatchRepresentation).results.forEach(res => {
-                // Log for each RL that was returned from batch endpoint
-                if (res.statusCode === 200) {
-                    logGetRelatedListRecordsInteraction(res.result);
+            (config.body as RelatedListRecordCollectionBatchRepresentation).results.forEach(
+                (res) => {
+                    // Log for each RL that was returned from batch endpoint
+                    if (res.statusCode === 200) {
+                        logGetRelatedListRecordsInteraction(res.result);
+                    }
                 }
-            });
+            );
         },
     };
 }
@@ -290,7 +292,7 @@ function logGetRelatedListRecordsInteraction(
         return;
     }
 
-    const recordIds = records.map(record => {
+    const recordIds = records.map((record) => {
         return record.id;
     });
 

@@ -52,7 +52,7 @@ const LIST_VIEW_API_NAME = 'AllAccounts';
         pageSize: 1,
         params: ['optionalFields=Account.Rating,Account.Website'],
     },
-].forEach(async function(entry) {
+].forEach(async function (entry) {
     let url = `/ui-api/${entry.endpoint}/${OBJECT_API_NAME}/${LIST_VIEW_API_NAME}`;
     let filename = `${entry.endpoint}-${OBJECT_API_NAME}-${LIST_VIEW_API_NAME}`;
     let parameters = [];
@@ -69,7 +69,7 @@ const LIST_VIEW_API_NAME = 'AllAccounts';
 
     if (entry.params) {
         parameters.push(...entry.params);
-        filename += '-' + entry.params.map(p => p.replace('=', '-')).join('-');
+        filename += '-' + entry.params.map((p) => p.replace('=', '-')).join('-');
     }
 
     if (parameters.length) {

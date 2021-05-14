@@ -108,10 +108,8 @@ const REQUIRED_RECORD_FIELDS: {
     },
 };
 
-const {
-    fieldNames: REQUIRED_FIELD_NAMES,
-    selections: REQUIRED_RECORD_SELECTIONS,
-} = REQUIRED_RECORD_FIELDS;
+const { fieldNames: REQUIRED_FIELD_NAMES, selections: REQUIRED_RECORD_SELECTIONS } =
+    REQUIRED_RECORD_FIELDS;
 const { length: REQUIRED_RECORD_FIELDS_LEN } = REQUIRED_FIELD_NAMES;
 
 function serializeRequiredRecordFields(currentString: string, presentFields: Record<string, true>) {

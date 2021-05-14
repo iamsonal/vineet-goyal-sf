@@ -84,9 +84,9 @@ describe('createLDSAdapter', () => {
 
 describe('refresh', () => {
     it('should call function returned by bindWireRefresh', async () => {
-        const luvio = ({
+        const luvio = {
             instrument: jest.fn(),
-        } as unknown) as Luvio;
+        } as unknown as Luvio;
         const data = {};
         bindWireRefresh(luvio);
 

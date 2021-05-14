@@ -77,7 +77,7 @@ function deployPackage() {
 
         // Copy the utils into the same subdir
         if (utilModuleNames !== undefined) {
-            utilModuleNames.forEach(utilModuleName => {
+            utilModuleNames.forEach((utilModuleName) => {
                 const repoUtilModulePath = path.resolve(
                     REPO_ROOT,
                     `packages/${argv.adapter}/sfdc/${utilModuleName}.js`
@@ -96,7 +96,7 @@ function deployPackage() {
     }
 }
 
-(function() {
+(function () {
     if (argv.adapter !== undefined || argv.name !== undefined) {
         deployPackage();
         return;

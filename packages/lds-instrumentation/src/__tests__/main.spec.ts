@@ -30,25 +30,25 @@ jest.mock('instrumentation/service', () => {
     };
 
     return {
-        counter: metricKey => ({
+        counter: (metricKey) => ({
             increment: spies.counterIncrementSpy,
             __metricKey: metricKey,
         }),
         interaction: spies.interaction,
-        percentileHistogram: metricKey => ({
+        percentileHistogram: (metricKey) => ({
             update: spies.percentileUpdateSpy,
             __metricKey: metricKey,
         }),
         perfEnd: spies.perfEnd,
         perfStart: spies.perfStart,
-        registerCacheStats: name => ({
+        registerCacheStats: (name) => ({
             logHits: spies.cacheStatsLogHitsSpy,
             logMisses: spies.cacheStatsLogMissesSpy,
             __name: name,
         }),
         registerPeriodicLogger: jest.fn(),
         registerPlugin: jest.fn(),
-        timer: metricKey => ({
+        timer: (metricKey) => ({
             addDuration: spies.timerAddDurationSpy,
             __metricKey: metricKey,
         }),
@@ -141,11 +141,11 @@ describe('instrumentation', () => {
     });
     describe('cache misses out of ttl', () => {
         it('should not log metrics when getRecord adapter has a cache hit on existing value within TTL', () => {
-            const mockGetRecordAdapter = config => {
+            const mockGetRecordAdapter = (config) => {
                 if (config.cacheHit) {
                     return {};
                 } else {
-                    return new Promise(resolve => {
+                    return new Promise((resolve) => {
                         setTimeout(() => resolve({}));
                     });
                 }
@@ -216,20 +216,22 @@ describe('instrumentation', () => {
             // Verify Cache Stats Calls
             const expectedCacheStatsCalls = ['lds:UiApi.getRecord'];
             expect(
-                instrumentationServiceSpies.cacheStatsLogHitsSpy.mock.instances.map(instance => {
+                instrumentationServiceSpies.cacheStatsLogHitsSpy.mock.instances.map((instance) => {
                     return instance.__name;
                 })
             ).toEqual(expectedCacheStatsCalls);
             expect(
-                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(instance => {
-                    return instance.__name;
-                })
+                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(
+                    (instance) => {
+                        return instance.__name;
+                    }
+                )
             ).toEqual(expectedCacheStatsCalls);
         });
 
         it('should not log metrics when adapter with no TTL defined has a cache miss on existing value out of TTL', () => {
             const unknownAdapter = () => {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     setTimeout(() => resolve({}));
                 });
             };
@@ -279,15 +281,17 @@ describe('instrumentation', () => {
                 'lds:unknownApiFamily.unknownAdapter',
             ];
             expect(
-                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(instance => {
-                    return instance.__name;
-                })
+                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(
+                    (instance) => {
+                        return instance.__name;
+                    }
+                )
             ).toEqual(expectedCacheStatsCalls);
         });
 
         it('should log metrics when getRecord adapter has a cache miss on existing value out of TTL', () => {
             const mockGetRecordAdapter = () => {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     setTimeout(() => resolve({}));
                 });
             };
@@ -366,9 +370,11 @@ describe('instrumentation', () => {
                 'lds:UiApi.getRecord:out-of-ttl-miss',
             ];
             expect(
-                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(instance => {
-                    return instance.__name;
-                })
+                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(
+                    (instance) => {
+                        return instance.__name;
+                    }
+                )
             ).toEqual(expectedCacheStatsCalls);
         });
     });
@@ -522,7 +528,7 @@ describe('instrumentation', () => {
     describe('Observability metrics', () => {
         it('should instrument error when UnfulfilledSnapshot is returned to the adapter', () => {
             const mockGetRecordAdapter = () => {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     setTimeout(() => resolve({ state: 'Unfulfilled' }));
                 });
             };
@@ -537,7 +543,7 @@ describe('instrumentation', () => {
 
             var now = Date.now();
             timekeeper.freeze(now);
-            return instrumentedAdapter(getRecordConfig).then(_result => {
+            return instrumentedAdapter(getRecordConfig).then((_result) => {
                 expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
 
                 // Verify Metric Calls
@@ -555,14 +561,14 @@ describe('instrumentation', () => {
                 // Verify Cache Stats Calls
                 expect(
                     instrumentationServiceSpies.cacheStatsLogHitsSpy.mock.instances.map(
-                        instance => {
+                        (instance) => {
                             return instance.__name;
                         }
                     )
                 ).toEqual([]);
                 expect(
                     instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(
-                        instance => {
+                        (instance) => {
                             return instance.__name;
                         }
                     )
@@ -602,20 +608,22 @@ describe('instrumentation', () => {
             // Verify Cache Stats Calls
             const expectedCacheStatsCalls = [];
             expect(
-                instrumentationServiceSpies.cacheStatsLogHitsSpy.mock.instances.map(instance => {
+                instrumentationServiceSpies.cacheStatsLogHitsSpy.mock.instances.map((instance) => {
                     return instance.__name;
                 })
             ).toEqual(expectedCacheStatsCalls);
             expect(
-                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(instance => {
-                    return instance.__name;
-                })
+                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(
+                    (instance) => {
+                        return instance.__name;
+                    }
+                )
             ).toEqual(expectedCacheStatsCalls);
         });
 
         it('should not instrument error when a non UnfulfilledSnapshot Promise is returned to the adapter', () => {
             const mockGetRecordAdapter = () => {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     setTimeout(() => resolve({}));
                 });
             };
@@ -630,7 +638,7 @@ describe('instrumentation', () => {
 
             var now = Date.now();
             timekeeper.freeze(now);
-            return instrumentedAdapter(getRecordConfig).then(_result => {
+            return instrumentedAdapter(getRecordConfig).then((_result) => {
                 expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
 
                 // Verify Metric Calls
@@ -648,14 +656,14 @@ describe('instrumentation', () => {
                 // Verify Cache Stats Calls
                 expect(
                     instrumentationServiceSpies.cacheStatsLogHitsSpy.mock.instances.map(
-                        instance => {
+                        (instance) => {
                             return instance.__name;
                         }
                     )
                 ).toEqual([]);
                 expect(
                     instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(
-                        instance => {
+                        (instance) => {
                             return instance.__name;
                         }
                     )
@@ -667,7 +675,7 @@ describe('instrumentation', () => {
     describe('getApex cardinality', () => {
         it('should aggregate all dynamic metrics under getApex', () => {
             const mockGetApexAdapter = () => {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     setTimeout(() => resolve({}));
                 });
             };
@@ -716,9 +724,11 @@ describe('instrumentation', () => {
             // Verify Cache Stats Calls
             const expectedCacheStatsCalls = ['lds:Apex.getApex', 'lds:Apex.getApex'];
             expect(
-                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(instance => {
-                    return instance.__name;
-                })
+                instrumentationServiceSpies.cacheStatsLogMissesSpy.mock.instances.map(
+                    (instance) => {
+                        return instance.__name;
+                    }
+                )
             ).toEqual(expectedCacheStatsCalls);
         });
     });

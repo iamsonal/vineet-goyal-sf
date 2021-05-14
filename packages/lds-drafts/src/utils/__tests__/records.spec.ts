@@ -135,21 +135,17 @@ describe('draft environment record utilities', () => {
                 },
                 links: {
                     CreatedById: {
-                        __ref:
-                            'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__CreatedById',
+                        __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__CreatedById',
                     },
                     CreatedDate: {
-                        __ref:
-                            'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__CreatedDate',
+                        __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__CreatedDate',
                     },
                     Id: { __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Id' },
                     LastModifiedById: {
-                        __ref:
-                            'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__LastModifiedById',
+                        __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__LastModifiedById',
                     },
                     LastModifiedDate: {
-                        __ref:
-                            'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__LastModifiedDate',
+                        __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__LastModifiedDate',
                     },
                     Name: { __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Name' },
                     OwnerId: {

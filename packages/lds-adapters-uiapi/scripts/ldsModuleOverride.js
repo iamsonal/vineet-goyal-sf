@@ -25,7 +25,7 @@ function buildOverridesMap({ generatedDir, overridesDir }) {
         const generatedFolder = `${generatedDir}/${directoryName}`;
         const overrideItems = fs.readdirSync(path.resolve(overrideFolder));
 
-        overrideItems.forEach(childFileName => {
+        overrideItems.forEach((childFileName) => {
             const generatedFilePath = path.resolve(
                 `${generatedFolder}/${path.basename(childFileName, '.ts')}`
             );

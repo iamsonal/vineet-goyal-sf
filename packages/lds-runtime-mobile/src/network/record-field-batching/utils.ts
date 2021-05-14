@@ -231,12 +231,8 @@ export function buildCompositeRequestByFields(
         optionalFieldsLength: number;
     }
 ): CompositeRequest[] {
-    const {
-        fieldsArray,
-        optionalFieldsArray,
-        fieldsLength,
-        optionalFieldsLength,
-    } = recordsCompositeRequest;
+    const { fieldsArray, optionalFieldsArray, fieldsLength, optionalFieldsLength } =
+        recordsCompositeRequest;
     // Formula:  # of fields per chunk = floor( max length per chunk / avg field length)
     const averageFieldStringLength = Math.floor(
         (fieldsLength + optionalFieldsLength) / (fieldsArray.length + optionalFieldsArray.length)

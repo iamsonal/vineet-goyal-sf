@@ -24,8 +24,8 @@ function mockNetworkOnceDefer(config, response) {
     karmaNetworkAdapter
         .withArgs(getNetworkParams(config))
         .onFirstCall()
-        .callsFake(function() {
-            return new Promise(res => {
+        .callsFake(function () {
+            return new Promise((res) => {
                 promiseResolve = res;
             });
         })

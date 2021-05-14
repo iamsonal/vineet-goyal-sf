@@ -83,9 +83,9 @@ export const notifyChangeFactory = (luvio: Luvio) => {
                 continue;
             }
             // retrieve data (Representation) from GraphNode and use createResourceRequestFromRepresentation to build refresh resource request from Representation
-            const representation: RecordRepresentation = (node as GraphNode<
-                RecordRepresentation
-            >).retrieve();
+            const representation: RecordRepresentation = (
+                node as GraphNode<RecordRepresentation>
+            ).retrieve();
             const optionalFields = getTrackedFields(key, luvio.getNode(key));
             const refreshRequest = createResourceRequestFromRepresentation(
                 representation,
@@ -98,7 +98,7 @@ export const notifyChangeFactory = (luvio: Luvio) => {
 
             // dispatch resource request, then ingest and broadcast
             luvio.dispatchResourceRequest<RecordRepresentation>(refreshRequest).then(
-                response => {
+                (response) => {
                     const { body } = response;
                     luvio.storeIngest<RecordRepresentation>(
                         key,

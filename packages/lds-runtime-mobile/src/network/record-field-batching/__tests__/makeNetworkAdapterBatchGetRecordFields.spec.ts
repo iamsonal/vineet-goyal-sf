@@ -105,9 +105,9 @@ describe('makeNetworkBatchGetRecordFields', () => {
                 },
             });
 
-            const mockCompositeResponse: FetchResponse<CompositeResponseEnvelope<
-                RecordRepresentation
-            >> = {
+            const mockCompositeResponse: FetchResponse<
+                CompositeResponseEnvelope<RecordRepresentation>
+            > = {
                 status: HttpStatusCode.Ok,
                 body: {
                     compositeResponse: [
@@ -121,9 +121,8 @@ describe('makeNetworkBatchGetRecordFields', () => {
             };
 
             const mockNetworkAdapter = jest.fn().mockResolvedValue(mockCompositeResponse);
-            const lengthAwareNetworkAdapter = makeNetworkAdapterBatchRecordFields(
-                mockNetworkAdapter
-            );
+            const lengthAwareNetworkAdapter =
+                makeNetworkAdapterBatchRecordFields(mockNetworkAdapter);
 
             const queryParams = {
                 fields: generateMockedRecordFields(400),

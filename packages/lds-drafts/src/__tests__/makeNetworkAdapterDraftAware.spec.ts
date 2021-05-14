@@ -115,7 +115,7 @@ describe('makeNetworkAdapterDraftAware', () => {
 
         const mockRetriever: ResponsePropertyRetriever<any, any> = {
             canRetrieve: jest.fn().mockImplementation(() => true),
-            retrieve: response => {
+            retrieve: (response) => {
                 // this retriever returns the top-level response
                 return [{ cacheKey: STORE_KEY_RECORD, data: response }];
             },
@@ -185,7 +185,7 @@ describe('makeNetworkAdapterDraftAware', () => {
 
         const mockRetriever: ResponsePropertyRetriever<any, any> = {
             canRetrieve: jest.fn().mockImplementation(() => true),
-            retrieve: response => {
+            retrieve: (response) => {
                 // this retriever returns the top-level response
                 return [{ cacheKey: STORE_KEY_RECORD, data: response }];
             },

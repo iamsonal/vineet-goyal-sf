@@ -215,7 +215,7 @@ describe('update record', () => {
         await updateRecord(updateParams);
 
         const apiName = mockUpdatedResponse.apiName;
-        const fields = Object.keys(mockUpdatedResponse.fields).map(field => {
+        const fields = Object.keys(mockUpdatedResponse.fields).map((field) => {
             const value = mockUpdatedResponse.fields[field].value;
             if (typeof value === 'object') {
                 return `${apiName}.${field}.Id`;
@@ -423,7 +423,7 @@ describe('update record', () => {
         expect(response).toEqualSnapshotWithoutEtags(mockUpdatedResponse);
 
         const expectedFields = {};
-        Object.keys(subjectCMock.fields).forEach(fieldName => {
+        Object.keys(subjectCMock.fields).forEach((fieldName) => {
             expectedFields[fieldName] = mockUpdatedResponse.fields[fieldName];
         });
 

@@ -8,9 +8,11 @@ export function createResourceParams(config: GetRecordsConfig): ResourceRequestC
     const resourceConfigFields: string[] = [];
     const resourceConfigOptionalFields: string[] = [];
     for (let index = 0, len = configRecords.length; index < len; index += 1) {
-        const { recordIds: recordIdsFromConfig, fields = [], optionalFields = [] } = configRecords[
-            index
-        ];
+        const {
+            recordIds: recordIdsFromConfig,
+            fields = [],
+            optionalFields = [],
+        } = configRecords[index];
         ArrayPrototypePush.call(recordIds, ...recordIdsFromConfig);
         if (fields.length > 0) {
             ArrayPrototypePush.call(resourceConfigFields, ...fields);

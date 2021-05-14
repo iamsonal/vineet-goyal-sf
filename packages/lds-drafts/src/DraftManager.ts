@@ -109,7 +109,7 @@ function getOperationTypeFrom(action: DraftAction<unknown>): DraftActionOperatio
 }
 
 function toQueueState(queue: DraftQueue): (states: DraftQueueItem[]) => DraftManagerState {
-    return states => {
+    return (states) => {
         return {
             queueState: queue.getQueueState(),
             items: states,
@@ -124,14 +124,12 @@ export class DraftManager {
     constructor(draftQueue: DraftQueue) {
         this.draftQueue = draftQueue;
 
-        draftQueue.registerOnChangedListener(
-            (event: DraftQueueEvent): Promise<void> => {
-                if (this.shouldEmitDraftEvent(event)) {
-                    return this.callListeners(event);
-                }
-                return Promise.resolve();
+        draftQueue.registerOnChangedListener((event: DraftQueueEvent): Promise<void> => {
+            if (this.shouldEmitDraftEvent(event)) {
+                return this.callListeners(event);
             }
-        );
+            return Promise.resolve();
+        });
     }
 
     private shouldEmitDraftEvent(event: DraftQueueEvent) {
@@ -169,7 +167,7 @@ export class DraftManager {
     getQueue(): Promise<DraftManagerState> {
         return this.draftQueue
             .getQueueActions()
-            .then(queueActions => {
+            .then((queueActions) => {
                 return queueActions.map(this.buildDraftQueueItem);
             })
             .then(toQueueState(this.draftQueue));
@@ -201,7 +199,7 @@ export class DraftManager {
     registerDraftQueueChangedListener(listener: DraftQueueListener): () => Promise<void> {
         this.listeners.push(listener);
         return () => {
-            this.listeners = this.listeners.filter(l => {
+            this.listeners = this.listeners.filter((l) => {
                 return l !== listener;
             });
             return Promise.resolve();
@@ -236,7 +234,7 @@ export class DraftManager {
     }
 
     private callListeners(event: DraftQueueEvent): Promise<void> {
-        return this.getQueue().then(queueState => {
+        return this.getQueue().then((queueState) => {
             const { action, type } = event;
             const item = this.buildDraftQueueItem(action);
             const operationType = this.draftQueueEventTypeToOperationType(type);
@@ -267,7 +265,7 @@ export class DraftManager {
      * @param withActionId The id of the draft action that will replace the other
      */
     replaceAction(actionId: string, withActionId: string): Promise<DraftQueueItem> {
-        return this.draftQueue.replaceAction(actionId, withActionId).then(replaced => {
+        return this.draftQueue.replaceAction(actionId, withActionId).then((replaced) => {
             return this.buildDraftQueueItem(replaced);
         });
     }
@@ -279,7 +277,7 @@ export class DraftManager {
      * @param metadata The metadata to set on the specified action
      */
     setMetadata(actionId: string, metadata: DraftQueueItemMetadata): Promise<DraftQueueItem> {
-        return this.draftQueue.setMetadata(actionId, metadata).then(updatedAction => {
+        return this.draftQueue.setMetadata(actionId, metadata).then((updatedAction) => {
             return this.buildDraftQueueItem(updatedAction);
         });
     }

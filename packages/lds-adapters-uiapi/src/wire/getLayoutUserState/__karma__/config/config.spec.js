@@ -15,7 +15,7 @@ function getMock(filename) {
 }
 
 describe('validation', () => {
-    ['objectApiName', 'recordTypeId'].forEach(param => {
+    ['objectApiName', 'recordTypeId'].forEach((param) => {
         it(`should not make a network request if required param '${param}' is undefined`, async () => {
             const config = {
                 objectApiName: 'Account',
@@ -28,7 +28,7 @@ describe('validation', () => {
         });
     });
 
-    ['objectApiName', 'recordTypeId'].forEach(param => {
+    ['objectApiName', 'recordTypeId'].forEach((param) => {
         it(`should not make a network request if required param ${param} is null`, async () => {
             const config = {
                 objectApiName: 'Account',

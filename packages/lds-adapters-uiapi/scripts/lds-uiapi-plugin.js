@@ -98,11 +98,11 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
         import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}, ${CREATE_LDS_ADAPTER} } from '@salesforce/lds-bindings';
         import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
         
-        ${adapterNames.map(name => adapterCode[name].import).join('\n')}
+        ${adapterNames.map((name) => adapterCode[name].import).join('\n')}
         
         type AdapterFactoryish<DataType> = (luvio: Luvio) => (...config: unknown[]) => Promise<Snapshot<DataType>>;
         
-        ${adapterNames.map(name => 'let ' + name + ': any;').join('\n    ')}
+        ${adapterNames.map((name) => 'let ' + name + ': any;').join('\n    ')}
         
         function bindExportsTo(luvio: Luvio): { [key: string]: any } {
             function unwrapSnapshotData<DataType>(factory: AdapterFactoryish<DataType>) {
@@ -111,7 +111,7 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
             }
         
             return {
-                ${adapterNames.map(name => adapterCode[name].bind).join(',\n            ')}
+                ${adapterNames.map((name) => adapterCode[name].bind).join(',\n            ')}
             }
         }
         
@@ -183,7 +183,7 @@ function buildApiFamilyFromKeyPrefix(keyPrefix) {
 }
 
 module.exports = {
-    validate: modelInfo => {
+    validate: (modelInfo) => {
         fieldsPlugin.validate(modelInfo, (artifactSuffix, path, identifier, targetIdentifier) => {
             let entry = RAML_ARTIFACTS[artifactSuffix];
             if (entry === undefined) {
@@ -205,8 +205,8 @@ module.exports = {
     afterGenerate: (compilerConfig, modelInfo, createGenerationContext) => {
         const apiFamily = buildApiFamilyFromKeyPrefix(modelInfo.keyPrefix);
         const adapters = modelInfo.resources
-            .filter(resource => resource.adapter !== undefined)
-            .map(resource => {
+            .filter((resource) => resource.adapter !== undefined)
+            .map((resource) => {
                 const adapterInfo = {
                     apiFamily,
                     name: resource.adapter.name,
@@ -228,7 +228,7 @@ module.exports = {
         const imperativeAdapters = [...ADAPTERS_NOT_DEFINED_IN_OVERLAY];
         const generatedAdapters = [];
 
-        adapters.forEach(adapter => {
+        adapters.forEach((adapter) => {
             const { name } = adapter;
             const fullPath = path.resolve(path.join('src', 'wire', name, 'index.ts'));
             if (fs.existsSync(fullPath)) {
@@ -264,7 +264,7 @@ module.exports = {
             const [, folder, file] = key.split('/');
             if (ramlId.endsWith(key)) {
                 const artifacts = RAML_ARTIFACTS[key];
-                const match = artifacts.find(item => {
+                const match = artifacts.find((item) => {
                     if (typeof item === 'string') {
                         return item === identifier;
                     }

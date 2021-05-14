@@ -89,7 +89,7 @@ describe('mobile runtime integration tests', () => {
                 fields: { Name: 'TestRecord' },
             });
 
-            const createdRecord = (snapshot.data as unknown) as DraftRecordRepresentation;
+            const createdRecord = snapshot.data as unknown as DraftRecordRepresentation;
             expect(snapshot.data.drafts.deleted).toBe(false);
 
             const getNewRecordSnapshot = (await getRecord({
@@ -97,7 +97,7 @@ describe('mobile runtime integration tests', () => {
                 fields: ['Account.Name'],
             })) as Snapshot<RecordRepresentation>;
 
-            const newRecord = (getNewRecordSnapshot.data as unknown) as DraftRecordRepresentation;
+            const newRecord = getNewRecordSnapshot.data as unknown as DraftRecordRepresentation;
             expect(newRecord.drafts.deleted).toBe(false);
 
             // delete the record
@@ -108,7 +108,7 @@ describe('mobile runtime integration tests', () => {
                 fields: ['Account.Name'],
             })) as Snapshot<RecordRepresentation>;
 
-            const deletedRecord = (getRecordSnapshot.data as unknown) as DraftRecordRepresentation;
+            const deletedRecord = getRecordSnapshot.data as unknown as DraftRecordRepresentation;
             expect(deletedRecord.drafts.deleted).toBe(true);
         });
 

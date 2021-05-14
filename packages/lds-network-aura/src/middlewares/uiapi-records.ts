@@ -421,7 +421,7 @@ function updateLayoutUserState(resourceRequest: ResourceRequest): Promise<any> {
     );
 
     return dispatchAction(UiApiRecordController.UpdateLayoutUserState, params, actionConfig).then(
-        response => {
+        (response) => {
             // TODO: Instead of surgically evicting the record that has been updated in the cache we
             // currently dump all the entries. We need a way to recreate the same cache key between
             // getLayoutUserState and updateLayoutUserState.

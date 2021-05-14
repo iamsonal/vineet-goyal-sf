@@ -12,7 +12,8 @@ import {
     RelatedListRecordCollectionRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
 
-const RELATED_LIST_RECORDS_ENDPOINT_REGEX = /^\/ui-api\/related-list-records\/?(([a-zA-Z0-9]+))?\/?(([a-zA-Z0-9]+))?$/;
+const RELATED_LIST_RECORDS_ENDPOINT_REGEX =
+    /^\/ui-api\/related-list-records\/?(([a-zA-Z0-9]+))?\/?(([a-zA-Z0-9]+))?$/;
 const referenceId = 'LDS_Related_List_Records_AggregateUi';
 
 function mergeRelatedRecordsFields(
@@ -47,9 +48,9 @@ function mergeRelatedRecordsFields(
  * @returns
  */
 function recordIdsAllMatch(first: RecordRepresentation[], second: RecordRepresentation[]): boolean {
-    const firstIds = first.map(record => record.id);
-    const secondIds = second.map(record => record.id);
-    return firstIds.every(id => secondIds.includes(id));
+    const firstIds = first.map((record) => record.id);
+    const secondIds = second.map((record) => record.id);
+    return firstIds.every((id) => secondIds.includes(id));
 }
 
 export function makeNetworkBatchGetRelatedListRecordsFields(
@@ -63,12 +64,8 @@ export function makeNetworkBatchGetRelatedListRecordsFields(
         if (batchRequestInfo === undefined) {
             return networkAdapter(resourceRequest);
         }
-        const {
-            fieldsArray,
-            optionalFieldsArray,
-            fieldsString,
-            optionalFieldsString,
-        } = batchRequestInfo;
+        const { fieldsArray, optionalFieldsArray, fieldsString, optionalFieldsString } =
+            batchRequestInfo;
         const compositeRequest = createAggregateUiRequest(
             resourceRequest,
             buildCompositeRequestByFields(referenceId, resourceRequest, {
@@ -79,7 +76,7 @@ export function makeNetworkBatchGetRelatedListRecordsFields(
             })
         );
 
-        return networkAdapter(compositeRequest).then(response => {
+        return networkAdapter(compositeRequest).then((response) => {
             return mergeAggregateUiResponse(
                 response as AggregateResponse<RelatedListRecordCollectionRepresentation>,
                 mergeRelatedRecordsFields

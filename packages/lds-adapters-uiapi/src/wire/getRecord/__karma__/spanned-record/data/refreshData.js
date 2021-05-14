@@ -30,7 +30,7 @@ await helpers.requestGetAndSave(
         filename: 'record-Account-fields-Account.Id,Account.Name',
         params: '?fields=Account.Id,Account.Name',
     },
-].forEach(async entry => {
+].forEach(async (entry) => {
     await helpers.requestGetAndSave(
         `/ui-api/records/${accountId}${entry.params}`,
         path.join(rootDir, `${entry.filename}.json`)
@@ -46,22 +46,19 @@ await helpers.requestGetAndSave(
     {
         filename:
             'record-Opportunity-fields-Opportunity.Id,Opportunity.Name,Opportunity.Owner.Id,Opportunity.Owner.City',
-        params:
-            '?fields=Opportunity.Id,Opportunity.Name,Opportunity.Owner.Id,Opportunity.Owner.City',
+        params: '?fields=Opportunity.Id,Opportunity.Name,Opportunity.Owner.Id,Opportunity.Owner.City',
     },
     {
         filename:
             'record-Opportunity-fields-Opportunity.Id,Opportunity.Name,Opportunity.Account.Id,Opportunity.Account.Name,Opportunity.Owner.Id,Opportunity.Owner.City',
-        params:
-            '?fields=Opportunity.Id,Opportunity.Name,Opportunity.Account.Id,Opportunity.Account.Name,Opportunity.Owner.Id,Opportunity.Owner.City',
+        params: '?fields=Opportunity.Id,Opportunity.Name,Opportunity.Account.Id,Opportunity.Account.Name,Opportunity.Owner.Id,Opportunity.Owner.City',
     },
     {
         filename:
             'record-Opportunity-fields-Opportunity.Id,Opportunity.Name,Opportunity.Account.Id,Opportunity.Account.Name,Opportunity.Account.Owner.Id,Account.Owner.City',
-        params:
-            '?fields=Opportunity.Id,Opportunity.Name,Opportunity.Account.Id,Opportunity.Account.Name,Opportunity.Account.Owner.Id,Opportunity.Account.Owner.City',
+        params: '?fields=Opportunity.Id,Opportunity.Name,Opportunity.Account.Id,Opportunity.Account.Name,Opportunity.Account.Owner.Id,Opportunity.Account.Owner.City',
     },
-].forEach(async entry => {
+].forEach(async (entry) => {
     await helpers.requestGetAndSave(
         `/ui-api/records/${opportunityId}${entry.params}`,
         path.join(rootDir, `${entry.filename}.json`)

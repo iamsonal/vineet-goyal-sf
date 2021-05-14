@@ -114,7 +114,7 @@ describe('DurableDraftQueue', () => {
             expect(draftQueue.getQueueState()).toEqual(DraftQueueState.Started);
         });
 
-        it('starts a new action when added to the queue in started state', async done => {
+        it('starts a new action when added to the queue in started state', async (done) => {
             const network = jest.fn().mockResolvedValue({});
             const durableStore = new MockDurableStore();
             const draftQueue = new DurableDraftQueue(
@@ -140,7 +140,7 @@ describe('DurableDraftQueue', () => {
             await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftId, draftId);
         });
 
-        it('starts a new action when one completes when in started state', async done => {
+        it('starts a new action when one completes when in started state', async (done) => {
             const network = jest.fn().mockResolvedValue({});
             const durableStore = new MockDurableStore();
             const draftQueue = new DurableDraftQueue(
@@ -164,7 +164,7 @@ describe('DurableDraftQueue', () => {
             draftQueue.startQueue();
         });
 
-        it('retries an item that encounteres a network error', async done => {
+        it('retries an item that encounteres a network error', async (done) => {
             const request = {
                 method: 'patch',
                 basePath: '/blah',
@@ -245,7 +245,7 @@ describe('DurableDraftQueue', () => {
             expect(anyDraftQueue.retryIntervalMilliseconds).toEqual(0);
         });
 
-        it('interval goes to zero on success', async done => {
+        it('interval goes to zero on success', async (done) => {
             const createArgs: MockPayload['networkArgs'] = {
                 method: 'patch',
                 basePath: '/blah',
@@ -922,16 +922,14 @@ describe('DurableDraftQueue', () => {
 
             let deletingCalled = false;
             let deletedCalled = false;
-            draftQueue.registerOnChangedListener(
-                (event): Promise<void> => {
-                    if (event.type === DraftQueueEventType.ActionDeleting) {
-                        deletingCalled = true;
-                    } else if (event.type === DraftQueueEventType.ActionDeleted) {
-                        deletedCalled = true;
-                    }
-                    return Promise.resolve();
+            draftQueue.registerOnChangedListener((event): Promise<void> => {
+                if (event.type === DraftQueueEventType.ActionDeleting) {
+                    deletingCalled = true;
+                } else if (event.type === DraftQueueEventType.ActionDeleted) {
+                    deletedCalled = true;
                 }
-            );
+                return Promise.resolve();
+            });
 
             await draftQueue.removeDraftAction(draftAction.id);
             expect(deletingCalled).toBe(true);
@@ -1007,7 +1005,7 @@ describe('DurableDraftQueue', () => {
 
             // reset the durable store's draft segment before each test
             durableStore.segments[DRAFT_SEGMENT] = {};
-            testActions.forEach(testAction => {
+            testActions.forEach((testAction) => {
                 durableStore.segments[DRAFT_SEGMENT][
                     buildDraftDurableStoreKey(testAction.tag, testAction.id)
                 ] = { data: testAction };
@@ -1230,24 +1228,22 @@ describe('DurableDraftQueue', () => {
             let deletedCalled = false;
             let updatingCalled = false;
             let updatedCalled = false;
-            draftQueue.registerOnChangedListener(
-                (event): Promise<void> => {
-                    if (event.type === DraftQueueEventType.ActionDeleting) {
-                        expect(event.action.request).toEqual(secondUpdate);
-                        deletingCalled = true;
-                    } else if (event.type === DraftQueueEventType.ActionDeleted) {
-                        expect(event.action.request).toEqual(secondUpdate);
-                        deletedCalled = true;
-                    } else if (event.type === DraftQueueEventType.ActionUpdating) {
-                        expect(event.action.request).toEqual(UPDATE_REQUEST);
-                        updatingCalled = true;
-                    } else if (event.type === DraftQueueEventType.ActionUpdated) {
-                        expect(event.action.request).toEqual(secondUpdate);
-                        updatedCalled = true;
-                    }
-                    return Promise.resolve();
+            draftQueue.registerOnChangedListener((event): Promise<void> => {
+                if (event.type === DraftQueueEventType.ActionDeleting) {
+                    expect(event.action.request).toEqual(secondUpdate);
+                    deletingCalled = true;
+                } else if (event.type === DraftQueueEventType.ActionDeleted) {
+                    expect(event.action.request).toEqual(secondUpdate);
+                    deletedCalled = true;
+                } else if (event.type === DraftQueueEventType.ActionUpdating) {
+                    expect(event.action.request).toEqual(UPDATE_REQUEST);
+                    updatingCalled = true;
+                } else if (event.type === DraftQueueEventType.ActionUpdated) {
+                    expect(event.action.request).toEqual(secondUpdate);
+                    updatedCalled = true;
                 }
-            );
+                return Promise.resolve();
+            });
 
             await draftQueue.replaceAction(actionOne.id, actionTwo.id);
             expect(deletingCalled).toBe(true);
@@ -1708,18 +1704,16 @@ describe('DurableDraftQueue', () => {
             const newMetadata = { foo: 'bar', anotherItem: 'anotherValue' };
             let updatingCalled = false;
             let updatedCalled = false;
-            draftQueue.registerOnChangedListener(
-                (event): Promise<void> => {
-                    if (event.type === DraftQueueEventType.ActionUpdating) {
-                        updatingCalled = true;
-                        expect(ObjectKeys(event.action.metadata).length).toBe(0);
-                    } else if (event.type === DraftQueueEventType.ActionUpdated) {
-                        updatedCalled = true;
-                        expect(event.action.metadata).toBe(newMetadata);
-                    }
-                    return Promise.resolve();
+            draftQueue.registerOnChangedListener((event): Promise<void> => {
+                if (event.type === DraftQueueEventType.ActionUpdating) {
+                    updatingCalled = true;
+                    expect(ObjectKeys(event.action.metadata).length).toBe(0);
+                } else if (event.type === DraftQueueEventType.ActionUpdated) {
+                    updatedCalled = true;
+                    expect(event.action.metadata).toBe(newMetadata);
                 }
-            );
+                return Promise.resolve();
+            });
             let action = await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftId, draftId);
             expect(ObjectKeys(action.metadata).length).toBe(0);
 

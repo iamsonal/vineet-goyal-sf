@@ -5,7 +5,7 @@ function generateNodeShapeFieldsIngest(shape, state) {
     const { CREATE_FIELDS_INGESTION } = importsMap;
     const { properties } = shape;
 
-    const code = properties.map(property => {
+    const code = properties.map((property) => {
         const {
             isFieldsProperty,
             containsFields,
@@ -109,11 +109,8 @@ function generateFieldsIngest(shape, state) {
     const { generationContext, importsMap } = state;
     const { deindent } = generationContext;
 
-    const {
-        RESOLVE_RECORD_MAP_INTERFACE,
-        RECORD_FIELD_TRIE,
-        RESOURCE_INGEST_INTERFACE,
-    } = importsMap;
+    const { RESOLVE_RECORD_MAP_INTERFACE, RECORD_FIELD_TRIE, RESOURCE_INGEST_INTERFACE } =
+        importsMap;
 
     return deindent`
     interface Inputs {

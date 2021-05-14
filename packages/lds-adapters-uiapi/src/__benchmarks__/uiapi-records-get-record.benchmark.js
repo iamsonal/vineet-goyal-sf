@@ -37,7 +37,9 @@ function createRecord(maxDepth, maxBreadth, recordIdPrefix, depth = 0) {
             const spanning = createRecord(maxDepth, maxBreadth, recordIdPrefix, depth + 1);
 
             fieldNames.push(
-                ...spanning.fieldNames.map(spanningFieldName => `${fieldName}.${spanningFieldName}`)
+                ...spanning.fieldNames.map(
+                    (spanningFieldName) => `${fieldName}.${spanningFieldName}`
+                )
             );
             data.fields[fieldName] = {
                 displayValue: spanning.data.id,
@@ -47,13 +49,13 @@ function createRecord(maxDepth, maxBreadth, recordIdPrefix, depth = 0) {
     }
 
     if (depth === 0) {
-        fieldNames = fieldNames.map(fieldName => `${apiName}.${fieldName}`);
+        fieldNames = fieldNames.map((fieldName) => `${apiName}.${fieldName}`);
     }
 
     return { data, fieldNames };
 }
 
-const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
+const rejectNetworkAdapter = (_) => Promise.reject(new Error('not implemented'));
 
 const store = new Store();
 const luvio = new Luvio(new Environment(store, rejectNetworkAdapter));

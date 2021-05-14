@@ -2,13 +2,13 @@ import { Luvio, Store, Environment } from '@luvio/engine';
 import { ingestRecord } from '@salesforce/lds-adapters-uiapi';
 import mockRecord from '@salesforce/lds-adapters-uiapi/src/__benchmarks__/mocks/custom-proto-medium-record';
 
-const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
+const rejectNetworkAdapter = (_) => Promise.reject(new Error('not implemented'));
 
 function createBigFunction() {
     // Create a function with a lot of data in its closure so we can actually see the memory impact of subscribers
     const data = new Array(1000)
         .fill()
-        .map(_ => Math.random())
+        .map((_) => Math.random())
         .join('');
     return () => data;
 }

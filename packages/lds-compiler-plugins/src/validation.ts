@@ -17,7 +17,7 @@ function validateUnion(
     visitedNodes: Record<string, boolean>
 ) {
     const { anyOf } = node;
-    anyOf.forEach(member => {
+    anyOf.forEach((member) => {
         if (member.shapeType === ShapeTypes.NodeShape) {
             validateNode(member as NodeShapeDefinition, shapePrivate, parseErrors, visitedNodes);
         }
@@ -49,25 +49,25 @@ function validateNode(
     }
 
     visitedNodes[id] = true;
-    properties.forEach(property => {
+    properties.forEach((property) => {
         const { shapeType, name: propertyName } = property;
         if (shapeType === ShapeTypes.ArrayShape) {
             validateArray(
-                (property as ShapeDefinition) as ArrayShapeDefinition,
+                property as ShapeDefinition as ArrayShapeDefinition,
                 shapePrivate,
                 parseErrors,
                 visitedNodes
             );
         } else if (shapeType === ShapeTypes.NodeShape) {
             validateNode(
-                (property as ShapeDefinition) as NodeShapeDefinition,
+                property as ShapeDefinition as NodeShapeDefinition,
                 shapePrivate,
                 parseErrors,
                 visitedNodes
             );
         } else if (shapeType === ShapeTypes.UnionShape) {
             validateUnion(
-                (property as ShapeDefinition) as UnionShapeDefinition,
+                property as ShapeDefinition as UnionShapeDefinition,
                 shapePrivate,
                 parseErrors,
                 visitedNodes
@@ -101,7 +101,7 @@ function validateEtagIsPrivate(modelInfo: ModelInfo): ParseError[] {
     const parseErrors: ParseError[] = [];
     const visitedNodes: Record<string, boolean> = {};
 
-    resources.forEach(resource => {
+    resources.forEach((resource) => {
         const { adapter, returnShape } = resource;
         if (adapter !== undefined && returnShape !== undefined) {
             validateNode(returnShape, shapePrivate, parseErrors, visitedNodes);

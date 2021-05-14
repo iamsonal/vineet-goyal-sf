@@ -61,10 +61,10 @@ describe('Luvio GraphQL TypeNode transform', () => {
 
     it('throws when input is unsupported TypeNode', () => {
         expect(() =>
-            transform(({
+            transform({
                 kind: 'Unknown',
                 name: 'test',
-            } as unknown) as TypeNode)
+            } as unknown as TypeNode)
         ).toThrowError('Unsupported TypeNode');
     });
 
@@ -72,10 +72,10 @@ describe('Luvio GraphQL TypeNode transform', () => {
         expect(() =>
             transform({
                 kind: 'NonNullType',
-                type: ({
+                type: {
                     kind: 'Unknown',
                     name: 'test',
-                } as unknown) as NamedTypeNode,
+                } as unknown as NamedTypeNode,
             })
         ).toThrowError('Unsupported NonNullTypeNode');
     });

@@ -3,7 +3,7 @@ import { ingestRecord, ingestRecordUi } from '@salesforce/lds-adapters-uiapi';
 import mockRecord from '@salesforce/lds-adapters-uiapi/src/__benchmarks__/mocks/custom-proto-medium-record';
 import mockRecordUI from '@salesforce/lds-adapters-uiapi/src/__benchmarks__/mocks/custom-proto-medium-record-ui';
 
-const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
+const rejectNetworkAdapter = (_) => Promise.reject(new Error('not implemented'));
 const ITERATION_COUNT = 100;
 
 export default {

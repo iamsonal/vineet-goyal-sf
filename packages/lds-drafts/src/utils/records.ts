@@ -321,8 +321,8 @@ export function getRecordFieldsFromRecordRequest(request: ResourceRequest): Requ
             ? optionalFieldsParam
             : [];
         return {
-            fields: fields.map(f => f.substring(f.indexOf('.') + 1)),
-            optionalFields: optionalFields.map(f => f.substring(f.indexOf('.') + 1)),
+            fields: fields.map((f) => f.substring(f.indexOf('.') + 1)),
+            optionalFields: optionalFields.map((f) => f.substring(f.indexOf('.') + 1)),
         };
     }
     return {
@@ -359,7 +359,7 @@ export function replayDraftsOnRecord<U extends DraftRecordRepresentation>(
     if (drafts.length === 0) {
         return record;
     }
-    const draftIds = drafts.filter(d => d !== undefined).map(d => d.id);
+    const draftIds = drafts.filter((d) => d !== undefined).map((d) => d.id);
 
     // remove the next item from the front of the queue
     const draft = ArrayPrototypeShift.call(drafts);

@@ -130,7 +130,7 @@ export class MockNimbusDurableStore implements DurableStore {
     }
 
     batchOperations(operations: DurableStoreOperation[], sender: string): Promise<void> {
-        let changes = operations.map(op => this.batchOperation(op, sender));
+        let changes = operations.map((op) => this.batchOperation(op, sender));
         const listenerIds = ObjectKeys(listeners);
         for (const id of listenerIds) {
             const listener = listeners[id];

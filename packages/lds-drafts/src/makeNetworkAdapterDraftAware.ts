@@ -23,7 +23,7 @@ function applyDraftsToResponse(
         retrievedRecordKeys[cacheKey] = true;
     }
 
-    return draftQueue.getActionsForTags(retrievedRecordKeys).then(actions => {
+    return draftQueue.getActionsForTags(retrievedRecordKeys).then((actions) => {
         // even though some might be duplicate record IDs, we have to loop through
         // each record because it sits at a different spot in memory
         for (let j = 0; j < retrievedRecordsLength; j++) {
@@ -72,7 +72,7 @@ export function makeNetworkAdapterDraftAware(
     userId: string
 ): NetworkAdapter {
     return (request: ResourceRequest) => {
-        return networkAdapter(request).then(response => {
+        return networkAdapter(request).then((response) => {
             return draftAwareHandleResponse(
                 request,
                 response,

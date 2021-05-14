@@ -23,7 +23,7 @@ import {
 export { MRU } from './wire/getListUi';
 export * from './generated/artifacts/sfdc';
 
-export const refresh: typeof refreshUiApi = function<D>(data: D) {
+export const refresh: typeof refreshUiApi = function <D>(data: D) {
     return refreshUiApi(data, REFRESH_UIAPI_KEY);
 };
 
@@ -59,7 +59,7 @@ export const updateRelatedListInfo = (
         throw new Error('Invalid config for updateRelatedListInfo');
     }
     if ('then' in value) {
-        return value.then(snapshot => snapshot.data);
+        return value.then((snapshot) => snapshot.data);
     }
     if (value.state === 'Error') {
         return Promise.reject(value.error);

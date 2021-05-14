@@ -169,7 +169,7 @@ export function buildInMemorySnapshot(
         // "resolveUnfulfilledSnapshot" override to work properly, but once this work
         // item is done we won't have "resolveUnfulfilledSnapshot" anymore and we
         // do not need to pass in a refresh here
-        (buildSnapshotRefresh(luvio, config) as unknown) as SnapshotRefresh<Selector>
+        buildSnapshotRefresh(luvio, config) as unknown as SnapshotRefresh<Selector>
     );
 
     if (isFulfilledSnapshot(cacheSel)) {
@@ -380,7 +380,7 @@ function resolveUnfulfilledSnapshot(
     // is special (polymorphic response, could either be a record-ui representation or a
     // selector).
     return luvio.resolveUnfulfilledSnapshot(resourceRequest, snapshot).then(
-        response => {
+        (response) => {
             const { body } = response;
 
             // if the response is a selector then we can attempt to build a snapshot
@@ -415,7 +415,7 @@ export function buildNetworkSnapshot(
     const { key, resourceRequest, selectorKey } = prepareRequest(luvio, config);
 
     return luvio.dispatchResourceRequest<RecordUiRepresentation>(resourceRequest).then(
-        response => {
+        (response) => {
             return onResourceResponseSuccess(luvio, config, selectorKey, key, response.body);
         },
         (err: FetchResponse<unknown>) => {

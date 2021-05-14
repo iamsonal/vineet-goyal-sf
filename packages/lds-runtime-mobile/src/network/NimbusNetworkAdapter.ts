@@ -16,7 +16,7 @@ export const NimbusNetworkAdapter: NetworkAdapter = (
         try {
             __nimbus.plugins.LdsNetworkAdapter.sendRequest(
                 buildNimbusNetworkPluginRequest(request),
-                response => {
+                (response) => {
                     const ldsResponse = buildLdsResponse(response);
 
                     if (ldsResponse.ok) {
@@ -25,7 +25,7 @@ export const NimbusNetworkAdapter: NetworkAdapter = (
                         reject(ldsResponse);
                     }
                 },
-                error => {
+                (error) => {
                     reject(`Network error: type: ${error.type}, message: ${error.message}`);
                 }
             );

@@ -94,9 +94,9 @@ async function getCaseByNumber(number) {
 }
 
 async function getIdFromSoql(soql) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         // eslint-disable-next-line no-undef
-        $conn.query(soql, function(err, res) {
+        $conn.query(soql, function (err, res) {
             if (err) {
                 // eslint-disable-next-line no-console
                 console.error(err);
@@ -295,7 +295,7 @@ async function createSObject(entityName, label, recordTypes = 0) {
 
         result = await $conn.metadata.create('RecordType', metadata);
         if (Array.isArray(result)) {
-            result.forEach(res => {
+            result.forEach((res) => {
                 if (!res.success) {
                     throw new Error(res.errors.message);
                 }
@@ -308,7 +308,7 @@ async function createSObject(entityName, label, recordTypes = 0) {
 
         result = await $conn.metadata.upsert('Profile', profileMetadata);
         if (Array.isArray(result)) {
-            result.forEach(res => {
+            result.forEach((res) => {
                 if (!res.success) {
                     throw new Error(
                         `Error assigning RecordType to 'Admin' profile: ${res.errors.message}`

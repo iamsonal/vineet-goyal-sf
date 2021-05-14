@@ -21,12 +21,8 @@ export function makeNetworkBatchGetRecordFields(networkAdapter: NetworkAdapter):
         if (batchRequestInfo === undefined) {
             return networkAdapter(resourceRequest);
         }
-        const {
-            fieldsArray,
-            optionalFieldsArray,
-            fieldsString,
-            optionalFieldsString,
-        } = batchRequestInfo;
+        const { fieldsArray, optionalFieldsArray, fieldsString, optionalFieldsString } =
+            batchRequestInfo;
         const compositeRequest = createAggregateUiRequest(
             resourceRequest,
             buildCompositeRequestByFields(referenceId, resourceRequest, {
@@ -37,7 +33,7 @@ export function makeNetworkBatchGetRecordFields(networkAdapter: NetworkAdapter):
             })
         );
 
-        return networkAdapter(compositeRequest).then(response => {
+        return networkAdapter(compositeRequest).then((response) => {
             return mergeAggregateUiResponse(
                 response as AggregateResponse<RecordRepresentation>,
                 mergeRecordFields

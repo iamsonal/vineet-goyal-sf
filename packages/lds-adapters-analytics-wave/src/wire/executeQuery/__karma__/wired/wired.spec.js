@@ -18,8 +18,9 @@ describe('wired', () => {
         { mockname: 'sql-results', queryLanguage: 'Sql' },
         { mockname: 'sql-live-results', queryLanguage: 'Sql' },
     ].forEach(({ mockname, queryLanguage }) => {
-        it(`executes ${queryLanguage ||
-            'default'} query with results from ${mockname}.json`, async () => {
+        it(`executes ${
+            queryLanguage || 'default'
+        } query with results from ${mockname}.json`, async () => {
             const mock = getMock(mockname);
             const query = { query: mock.query, queryLanguage };
             mockExecuteQueryNetworkOnce({ query }, mock);

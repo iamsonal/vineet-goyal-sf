@@ -5,7 +5,7 @@ import mockRecordUI from './mocks/custom-proto-medium-record-ui';
 import { ITERATION_COUNT, WARM_UP_ITERATION_COUNT } from './shared';
 
 const RECORD_ID = 'recordId';
-const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
+const rejectNetworkAdapter = (_) => Promise.reject(new Error('not implemented'));
 
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
@@ -45,7 +45,7 @@ describe('addRecordUi tests', () => {
         const next = new Array(ITERATION_COUNT)
             .fill()
             .map(() => JSON.parse(mockRecordUI))
-            .map(next => {
+            .map((next) => {
                 const mockRecordId = Object.keys(next.records)[0];
                 const fieldValue = next.records[mockRecordId].fields.Name.value;
 

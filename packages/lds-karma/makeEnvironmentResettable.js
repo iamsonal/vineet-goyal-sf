@@ -3,7 +3,7 @@ const resetAllAdapterContexts = () => {
     const keys = Object.keys(contextSpies);
     for (const key of keys) {
         const { context, entries } = contextSpies[key];
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
             context.set(entry, undefined);
         });
         delete contextSpies[key];
@@ -14,7 +14,7 @@ function makeContextSpyable(context, adapterName) {
     const existingSpy = contextSpies[adapterName];
     const contextEntries = existingSpy === undefined ? [] : [...existingSpy.entries];
 
-    const set = function(key, value) {
+    const set = function (key, value) {
         contextEntries.push(key);
         contextSpies[adapterName] = { context, entries: contextEntries };
         context.set(key, value);
@@ -25,7 +25,7 @@ function makeContextSpyable(context, adapterName) {
 }
 
 function makeEnvironmentResettable(environment) {
-    const withContext = function(adapter, onContextLoaded) {
+    const withContext = function (adapter, onContextLoaded) {
         const adapterSpy = (config, context) => {
             return adapter(config, makeContextSpyable(context, adapter.name));
         };

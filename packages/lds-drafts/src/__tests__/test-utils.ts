@@ -54,7 +54,7 @@ export function buildDurableRecordRepresentation(
     const links = {};
     const key = keyBuilderRecord({ recordId: id });
 
-    ObjectKeys(fields).forEach(field => {
+    ObjectKeys(fields).forEach((field) => {
         const fieldValue = fields[field];
         recordFields[field] = fieldValue;
         links[field] = { __ref: buildRecordFieldStoreKey(key, field) };
@@ -312,7 +312,7 @@ export function createTestRecord(
 }
 
 export function flushPromises() {
-    return new Promise(resolve => setImmediate(resolve));
+    return new Promise((resolve) => setImmediate(resolve));
 }
 export function createUnsupportedRequestDraftAction(
     recordId: string,

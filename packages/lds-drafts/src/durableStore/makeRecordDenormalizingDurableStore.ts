@@ -145,7 +145,7 @@ export function makeRecordDenormalizingDurableStore(
     durableStore: DurableStore,
     store: Store
 ): RecordDenormalizingDurableStore {
-    const getEntries: typeof durableStore['getEntries'] = function<T>(
+    const getEntries: typeof durableStore['getEntries'] = function <T>(
         entries: string[],
         segment: string
     ): Promise<DurableStoreEntries<T> | undefined> {
@@ -180,7 +180,7 @@ export function makeRecordDenormalizingDurableStore(
         }
 
         // call base getEntries
-        return durableStore.getEntries<T>(filteredEntryIds, segment).then(durableEntries => {
+        return durableStore.getEntries<T>(filteredEntryIds, segment).then((durableEntries) => {
             if (durableEntries === undefined) {
                 return undefined;
             }
@@ -199,7 +199,7 @@ export function makeRecordDenormalizingDurableStore(
                         returnEntries,
                         normalizeRecordFields(
                             key,
-                            (value as unknown) as DurableStoreEntry<DurableRecordRepresentation>
+                            value as unknown as DurableStoreEntry<DurableRecordRepresentation>
                         )
                     );
                 } else {
@@ -210,7 +210,7 @@ export function makeRecordDenormalizingDurableStore(
         });
     };
 
-    const setEntries: typeof durableStore['setEntries'] = function<T>(
+    const setEntries: typeof durableStore['setEntries'] = function <T>(
         entries: DurableStoreEntries<T>,
         segment: string
     ): Promise<void> {
@@ -235,9 +235,8 @@ export function makeRecordDenormalizingDurableStore(
                     continue;
                 }
 
-                const recordEntries = (entries as unknown) as DurableStoreEntries<
-                    RecordRepresentationNormalized
-                >;
+                const recordEntries =
+                    entries as unknown as DurableStoreEntries<RecordRepresentationNormalized>;
                 const entry = recordEntries[recordKey];
                 let record = entry && entry.data;
                 if (record === undefined) {
@@ -282,15 +281,15 @@ export function makeRecordDenormalizingDurableStore(
      * @param durableStore the durable store
      * @returns a DraftRecordRepresentation containing the requested fields
      */
-    const getDenormalizedRecord = function(recordKey: string) {
-        return durableStore.getEntries([recordKey], DefaultDurableSegment).then(entries => {
+    const getDenormalizedRecord = function (recordKey: string) {
+        return durableStore.getEntries([recordKey], DefaultDurableSegment).then((entries) => {
             if (entries === undefined) {
                 return undefined;
             }
 
-            const denormalizedEntry = entries[recordKey] as DurableStoreEntry<
-                DurableRecordRepresentation
-            >;
+            const denormalizedEntry = entries[
+                recordKey
+            ] as DurableStoreEntry<DurableRecordRepresentation>;
 
             if (denormalizedEntry === undefined) {
                 return undefined;

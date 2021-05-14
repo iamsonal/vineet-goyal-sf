@@ -34,7 +34,7 @@ const relatedListRecordIds =
         filename: 'related-list-record-actions-sections-Page',
         queryString: '?sections=Page',
     },
-].forEach(async entry => {
+].forEach(async (entry) => {
     await helpers.requestGetAndSave(
         `/ui-api/actions/record/${recordId}/related-list-record/${relatedListRecordIds}${entry.queryString}`,
         path.join(rootDir, `${entry.filename}.json`)

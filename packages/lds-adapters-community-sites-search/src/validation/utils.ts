@@ -28,7 +28,7 @@ export function isArrayOfNonEmptyStrings(value: any[]): value is string[] {
     if (value.length === 0) {
         return false;
     }
-    return value.every(v => isString(v) && v.trim().length > 0);
+    return value.every((v) => isString(v) && v.trim().length > 0);
 }
 
 /**

@@ -256,7 +256,7 @@ describe('getRecords LDS adapter', () => {
         // hard code for now
         const errorId1 = '001Z1000002GSZjIAO';
         const errorId2 = '001X1000002GSZjIAO';
-        const validId = getIdsFromGetRecordsMock(mockData).filter(val => val !== undefined)[0];
+        const validId = getIdsFromGetRecordsMock(mockData).filter((val) => val !== undefined)[0];
         const config = {
             records: [
                 {

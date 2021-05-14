@@ -81,8 +81,8 @@ export function generateUniqueDraftActionId(existingIds: string[]) {
     let newId = new Date().getTime() * 100;
 
     const existingAsNumbers = existingIds
-        .map(id => parseInt(id, 10))
-        .filter(parsed => !isNaN(parsed));
+        .map((id) => parseInt(id, 10))
+        .filter((parsed) => !isNaN(parsed));
 
     let counter = 0;
     while (existingAsNumbers.includes(newId)) {
@@ -163,7 +163,7 @@ export class DurableDraftQueue implements DraftQueue {
         }
         this.state = DraftQueueState.Started;
         this.retryIntervalMilliseconds = 0;
-        return this.processNextAction().then(result => {
+        return this.processNextAction().then((result) => {
             switch (result) {
                 case ProcessActionResult.BLOCKED_ON_ERROR:
                     this.state = DraftQueueState.Error;
@@ -190,17 +190,19 @@ export class DurableDraftQueue implements DraftQueue {
     }
 
     actionsForTag(tag: string, queue: DraftAction<unknown>[]): DraftAction<unknown>[] {
-        return queue.filter(action => action.tag === tag);
+        return queue.filter((action) => action.tag === tag);
     }
 
     deleteActionsForTag(tag: string, queue: DraftAction<unknown>[]): DraftAction<unknown>[] {
-        return this.actionsForTag(tag, queue).filter(action => action.request.method === 'delete');
+        return this.actionsForTag(tag, queue).filter(
+            (action) => action.request.method === 'delete'
+        );
     }
 
     getQueueActions(): Promise<DraftAction<unknown>[]> {
         return this.durableStore
             .getAllEntries<DraftAction<unknown>>(DRAFT_SEGMENT)
-            .then(durableEntries => {
+            .then((durableEntries) => {
                 const queue: DraftAction<unknown>[] = [];
                 if (durableEntries === undefined) {
                     return queue;
@@ -233,7 +235,7 @@ export class DurableDraftQueue implements DraftQueue {
     }
 
     enqueue<T>(request: ResourceRequest, tag: string, targetId: string): Promise<DraftAction<T>> {
-        return this.getQueueActions().then(queue => {
+        return this.getQueueActions().then((queue) => {
             if (request.method === 'post' && this.actionsForTag(tag, queue).length > 0) {
                 throw new Error('Cannot enqueue a POST draft action with an existing tag');
             }
@@ -242,7 +244,7 @@ export class DurableDraftQueue implements DraftQueue {
                 throw new Error('Cannot enqueue a draft action for a deleted record');
             }
 
-            const id = generateUniqueDraftActionId(queue.map(a => a.id));
+            const id = generateUniqueDraftActionId(queue.map((a) => a.id));
             const durableStoreId = buildDraftDurableStoreKey(tag, id);
             const action: PendingDraftAction<T> = {
                 id,
@@ -273,7 +275,7 @@ export class DurableDraftQueue implements DraftQueue {
     }
 
     getActionsForTags(tags: ObjectAsSet): Promise<DraftActionMap> {
-        return this.getQueueActions().then(queue => {
+        return this.getQueueActions().then((queue) => {
             const map: DraftActionMap = {};
             const tagKeys = ObjectKeys(tags);
             for (let i = 0, tagLen = tagKeys.length; i < tagLen; i++) {
@@ -295,7 +297,7 @@ export class DurableDraftQueue implements DraftQueue {
     registerOnChangedListener(listener: DraftQueueChangeListener): () => Promise<void> {
         this.draftQueueChangedListeners.push(listener);
         return () => {
-            this.draftQueueChangedListeners = this.draftQueueChangedListeners.filter(l => {
+            this.draftQueueChangedListeners = this.draftQueueChangedListeners.filter((l) => {
                 return l !== listener;
             });
             return Promise.resolve();
@@ -306,7 +308,7 @@ export class DurableDraftQueue implements DraftQueue {
         if (this.processingAction !== undefined) {
             return this.processingAction;
         }
-        this.processingAction = this.getQueueActions().then(queue => {
+        this.processingAction = this.getQueueActions().then((queue) => {
             const action = queue[0];
             if (action === undefined) {
                 this.processingAction = undefined;
@@ -359,47 +361,46 @@ export class DurableDraftQueue implements DraftQueue {
         return this.processingAction;
     }
 
-    private handleDraftUploaded = (action: UploadingDraftAction<unknown>) => (
-        response: FetchResponse<unknown>
-    ) => {
-        const completedAction: CompletedDraftAction<unknown> = {
-            ...action,
-            status: DraftActionStatus.Completed,
-            response,
-        };
+    private handleDraftUploaded =
+        (action: UploadingDraftAction<unknown>) => (response: FetchResponse<unknown>) => {
+            const completedAction: CompletedDraftAction<unknown> = {
+                ...action,
+                status: DraftActionStatus.Completed,
+                response,
+            };
 
-        // notify that consumers that this action is completed and about to be removed from the draft queue
-        return this.notifyChangedListeners({
-            type: DraftQueueEventType.ActionCompleting,
-            action: completedAction,
-        })
-            .then(() => this.getQueueActions())
-            .then(queue => this.storeOperationsForUploadedDraft(queue, completedAction))
-            .then(operations => this.durableStore.batchOperations(operations))
-            .then(() => {
-                this.retryIntervalMilliseconds = 0;
-                this.uploadingActionId = undefined;
-                // process action success
-                return this.notifyChangedListeners({
-                    type: DraftQueueEventType.ActionCompleted,
-                    action: completedAction,
-                }).then(() => {
-                    if (this.state === DraftQueueState.Started) {
-                        this.processNextAction();
-                    }
-                    return ProcessActionResult.ACTION_SUCCEEDED;
+            // notify that consumers that this action is completed and about to be removed from the draft queue
+            return this.notifyChangedListeners({
+                type: DraftQueueEventType.ActionCompleting,
+                action: completedAction,
+            })
+                .then(() => this.getQueueActions())
+                .then((queue) => this.storeOperationsForUploadedDraft(queue, completedAction))
+                .then((operations) => this.durableStore.batchOperations(operations))
+                .then(() => {
+                    this.retryIntervalMilliseconds = 0;
+                    this.uploadingActionId = undefined;
+                    // process action success
+                    return this.notifyChangedListeners({
+                        type: DraftQueueEventType.ActionCompleted,
+                        action: completedAction,
+                    }).then(() => {
+                        if (this.state === DraftQueueState.Started) {
+                            this.processNextAction();
+                        }
+                        return ProcessActionResult.ACTION_SUCCEEDED;
+                    });
                 });
-            });
-    };
+        };
 
     private handleServerError(
         action: DraftAction<unknown>,
         error: FetchResponse<unknown>
     ): Promise<ProcessActionResult> {
-        return this.getQueueActions().then(queue => {
+        return this.getQueueActions().then((queue) => {
             const { id, tag } = action;
             const durableEntryKey = buildDraftDurableStoreKey(tag, id);
-            const localAction = queue.filter(qAction => qAction.id === action.id)[0];
+            const localAction = queue.filter((qAction) => qAction.id === action.id)[0];
             let newMetadata = undefined;
             if (localAction !== undefined) {
                 newMetadata = localAction.metadata || {};
@@ -459,9 +460,9 @@ export class DurableDraftQueue implements DraftQueue {
     }
 
     removeDraftAction(actionId: string): Promise<void> {
-        return this.getQueueActions().then(queue => {
+        return this.getQueueActions().then((queue) => {
             //Get the store key for the removed action
-            const actions = queue.filter(action => action.id === actionId);
+            const actions = queue.filter((action) => action.id === actionId);
             if (actions.length === 0) {
                 throw new Error(`No removable action with id ${actionId}`);
             }
@@ -513,11 +514,11 @@ export class DurableDraftQueue implements DraftQueue {
             return Promise.reject('Cannot replace actions while a replace action is in progress');
         }
         return this.stopQueueManually().then(() => {
-            const replacing = this.getQueueActions().then(actions => {
+            const replacing = this.getQueueActions().then((actions) => {
                 // get the action to replace
-                const actionToReplace = actions.filter(action => action.id === actionId)[0];
+                const actionToReplace = actions.filter((action) => action.id === actionId)[0];
                 // get the replacing action
-                const replacingAction = actions.filter(action => action.id === withActionId)[0];
+                const replacingAction = actions.filter((action) => action.id === withActionId)[0];
                 // reject if either action is undefined
                 if (actionToReplace === undefined || replacingAction === undefined) {
                     return Promise.reject('One or both actions does not exist');
@@ -596,8 +597,8 @@ export class DurableDraftQueue implements DraftQueue {
         if (keys.length !== compatibleKeys.length) {
             return Promise.reject('Cannot save incompatible metadata');
         }
-        return this.getQueueActions().then(queue => {
-            const actions = queue.filter(action => action.id === actionId);
+        return this.getQueueActions().then((queue) => {
+            const actions = queue.filter((action) => action.id === actionId);
             if (actions.length === 0) {
                 return Promise.reject('cannot save metadata to non-existent action');
             }
@@ -651,9 +652,8 @@ export class DurableDraftQueue implements DraftQueue {
         action: CompletedDraftAction<unknown>
     ): DurableStoreOperation<DraftIdMappingEntry | DraftAction<unknown>>[] {
         const { request, tag, id } = action;
-        const storeOperations: DurableStoreOperation<
-            DraftIdMappingEntry | DraftAction<unknown>
-        >[] = [];
+        const storeOperations: DurableStoreOperation<DraftIdMappingEntry | DraftAction<unknown>>[] =
+            [];
 
         if (request.method === 'post') {
             const queueOperations = this.updateQueueOnPostCompletion(action, queue);

@@ -11,7 +11,7 @@ const OBJECT_API_NAME = 'Opportunity';
 const listRecords = await helpers.requestGet(
     `/ui-api/list-records/${OBJECT_API_NAME}/AllOpportunities`
 );
-const recordIds = listRecords.records.map(r => `'${r.id}'`).join(',');
+const recordIds = listRecords.records.map((r) => `'${r.id}'`).join(',');
 await $conn.query(`SELECT Id FROM ${OBJECT_API_NAME} WHERE Id IN (${recordIds}) FOR VIEW`);
 
 const entries = [
@@ -22,7 +22,7 @@ const entries = [
     },
 ];
 
-entries.forEach(async function(entry) {
+entries.forEach(async function (entry) {
     await helpers.requestGetAndSave(
         `/ui-api/${entry.endpoint}/${OBJECT_API_NAME}${entry.params}`,
         path.join(rootDir, `${entry.filename}.json`)

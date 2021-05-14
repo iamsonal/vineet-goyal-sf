@@ -78,7 +78,7 @@ export function makeEnvironmentDraftAware(
             draftQueue,
             recordResponseRetrievers,
             userId
-        ).then(response => {
+        ).then((response) => {
             const record = response.body as RecordRepresentation;
             const key = keyBuilderRecord({ recordId: record.id });
             const path = {
@@ -100,19 +100,17 @@ export function makeEnvironmentDraftAware(
 
     // register for when the draft queue completes an upload so we can properly
     // update subscribers
-    draftQueue.registerOnChangedListener(
-        (event: DraftQueueEvent): Promise<void> => {
-            if (event.type === DraftQueueEventType.ActionCompleting) {
-                return onDraftActionCompleting(event);
-            }
-
-            if (event.type === DraftQueueEventType.ActionCompleted) {
-                return onDraftActionCompleted(event);
-            }
-
-            return Promise.resolve();
+    draftQueue.registerOnChangedListener((event: DraftQueueEvent): Promise<void> => {
+        if (event.type === DraftQueueEventType.ActionCompleting) {
+            return onDraftActionCompleting(event);
         }
-    );
+
+        if (event.type === DraftQueueEventType.ActionCompleted) {
+            return onDraftActionCompleted(event);
+        }
+
+        return Promise.resolve();
+    });
 
     /**
      * Intercepts durable store changes to determine if a change to a draft action was made.
@@ -133,7 +131,7 @@ export function makeEnvironmentDraftAware(
         if (draftIdMappingsIds.length > 0) {
             return durableStore
                 .getEntries(draftIdMappingsIds, DRAFT_ID_MAPPINGS_SEGMENT)
-                .then(mappingEntries => {
+                .then((mappingEntries) => {
                     if (mappingEntries === undefined) {
                         return;
                     }

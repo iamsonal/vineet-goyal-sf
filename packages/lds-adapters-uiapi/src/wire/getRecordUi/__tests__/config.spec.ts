@@ -1,7 +1,7 @@
 import { factory as getRecordUi } from '../index';
 
 describe('validation', () => {
-    ['recordIds', 'layoutTypes', 'modes'].forEach(param => {
+    ['recordIds', 'layoutTypes', 'modes'].forEach((param) => {
         it(`throws a TypeError if required parameter ${param} is not present`, () => {
             const config: any = {
                 recordIds: '005B0000003g6BCIAY',
@@ -16,7 +16,7 @@ describe('validation', () => {
         });
     });
 
-    ['childRelationships', 'pageSize', 'updateMru'].forEach(param => {
+    ['childRelationships', 'pageSize', 'updateMru'].forEach((param) => {
         it(`throws a TypeError when passing unsupported parameter ${param}`, () => {
             const config: any = {
                 recordIds: '005B0000003g6BCIAY',

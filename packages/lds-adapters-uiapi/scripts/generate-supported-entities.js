@@ -48,12 +48,8 @@ console.log(`found ${Object.keys(supportedEntities).length} supported entities`)
 
 // grab p4 changelist of allow list
 const filelogResult = spawnSync('p4', ['filelog', '-m', '1', allowListYaml]);
-const [
-    ,
-    allowListDepotPath,
-    allowListRevision,
-    allowListChangelist,
-] = /(\/\/app\/.*)\n.*#(\d+) change (\d+)/.exec(filelogResult.stdout.toString());
+const [, allowListDepotPath, allowListRevision, allowListChangelist] =
+    /(\/\/app\/.*)\n.*#(\d+) change (\d+)/.exec(filelogResult.stdout.toString());
 
 // generate supported-entities.ts
 const supportedEntitiesTs = path.join('src', 'util', 'supported-entities.ts');
@@ -71,7 +67,7 @@ export const UIAPI_SUPPORTED_ENTITY_API_NAMES: { [key: string]: true } = {
 
 const entityList = Object.keys(supportedEntities)
     .sort()
-    .map(entity => `    ${entity}: true,`)
+    .map((entity) => `    ${entity}: true,`)
     .join('\n');
 
 const epilog = `

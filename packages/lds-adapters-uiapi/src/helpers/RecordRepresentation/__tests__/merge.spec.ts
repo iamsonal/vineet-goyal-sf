@@ -267,8 +267,7 @@ describe('merge', () => {
                 eTag: '233f17c01db43cdfe6fe618c6c8cfd51',
                 fields: {
                     CreatedDate: {
-                        __ref:
-                            'UiApi::RecordRepresentation:001T1000001nFt5IAE__fields__CreatedDate',
+                        __ref: 'UiApi::RecordRepresentation:001T1000001nFt5IAE__fields__CreatedDate',
                     },
 
                     Name: {
@@ -447,8 +446,7 @@ describe('merge', () => {
                 eTag: '233f17c01db43cdfe6fe618c6c8cfd51',
                 fields: {
                     CreatedDate: {
-                        __ref:
-                            'UiApi::RecordRepresentation:001T1000001nFt5IAE__fields__CreatedDate',
+                        __ref: 'UiApi::RecordRepresentation:001T1000001nFt5IAE__fields__CreatedDate',
                     },
 
                     Name: {
@@ -536,8 +534,7 @@ describe('merge', () => {
                 eTag: '233f17c01db43cdfe6fe618c6c8cfd51',
                 fields: {
                     CreatedDate: {
-                        __ref:
-                            'UiApi::RecordRepresentation:001T1000001nFt5IAE__fields__CreatedDate',
+                        __ref: 'UiApi::RecordRepresentation:001T1000001nFt5IAE__fields__CreatedDate',
                     },
 
                     Name: {
@@ -600,8 +597,7 @@ describe('merge', () => {
                 eTag: '233f17c01db43cdfe6fe618c6c8cfd51',
                 fields: {
                     CreatedDate: {
-                        __ref:
-                            'UiApi::RecordRepresentation:001T1000001nFt5IAE__fields__CreatedDate',
+                        __ref: 'UiApi::RecordRepresentation:001T1000001nFt5IAE__fields__CreatedDate',
                     },
 
                     Name: {

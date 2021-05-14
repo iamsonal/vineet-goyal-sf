@@ -20,7 +20,7 @@ describe('basic', () => {
 
         const parentObjectApiName = mockData.results[0].result.listReference.parentObjectApiName;
         const relatedListNames = mockData.results.map(
-            result => result.result.listReference.relatedListId
+            (result) => result.result.listReference.relatedListId
         );
         const resourceConfig = {
             parentObjectApiName: parentObjectApiName,
@@ -43,7 +43,7 @@ describe('basic', () => {
 
         const parentObjectApiName = mockData.results[0].result.listReference.parentObjectApiName;
         const relatedListNames = mockData.results.map(
-            result => result.result.listReference.relatedListId
+            (result) => result.result.listReference.relatedListId
         );
         const resourceConfig = {
             parentObjectApiName: parentObjectApiName,
@@ -71,7 +71,7 @@ describe('basic', () => {
         });
         const parentObjectApiName = mockData.results[0].result.listReference.parentObjectApiName;
         const relatedListNames = mockData.results.map(
-            result => result.result.listReference.relatedListId
+            (result) => result.result.listReference.relatedListId
         );
         const resourceConfig = {
             parentObjectApiName: parentObjectApiName,
@@ -99,7 +99,7 @@ describe('basic', () => {
 
         const parentObjectApiName = mockData1.results[0].result.listReference.parentObjectApiName;
         const relatedListNames1 = mockData1.results.map(
-            result => result.result.listReference.relatedListId
+            (result) => result.result.listReference.relatedListId
         );
         const resourceConfig1 = {
             parentObjectApiName: parentObjectApiName,
@@ -118,7 +118,7 @@ describe('basic', () => {
 
         // Setup second element.
         const combinedRelatedListNames = mockDataCombined.results.map(
-            result => result.result.listReference.relatedListId
+            (result) => result.result.listReference.relatedListId
         );
         const resourceConfigCombined = {
             parentObjectApiName: parentObjectApiName,
@@ -160,7 +160,7 @@ describe('basic', () => {
 
         // Setup batch element.
         const combinedRelatedListNames = mockDataCombined.results.map(
-            result => result.result.listReference.relatedListId
+            (result) => result.result.listReference.relatedListId
         );
         const batchProps = {
             parentObjectApiName: parentObjectApiName,

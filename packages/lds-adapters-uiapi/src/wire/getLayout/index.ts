@@ -109,7 +109,7 @@ export function buildNetworkSnapshot(
     const { request, key } = buildRequestAndKey(config);
 
     return luvio.dispatchResourceRequest<RecordLayoutRepresentation>(request, requestOverride).then(
-        response => {
+        (response) => {
             return onResourceResponseSuccess(luvio, config, key, response);
         },
         (error: FetchResponse<unknown>) => {
@@ -126,7 +126,7 @@ export function resolveUnfulfilledSnapshot(
     const { request, key } = buildRequestAndKey(config);
 
     return luvio.resolveUnfulfilledSnapshot<RecordLayoutRepresentation>(request, snapshot).then(
-        response => {
+        (response) => {
             return onResourceResponseSuccess(luvio, config, key, response);
         },
         (error: FetchResponse<unknown>) => {

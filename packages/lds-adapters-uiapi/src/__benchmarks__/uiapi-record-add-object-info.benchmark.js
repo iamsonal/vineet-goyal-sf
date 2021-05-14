@@ -5,7 +5,7 @@ import mockObjectInfo from './mocks/custom-proto-medium-object-info';
 import { ITERATION_COUNT, WARM_UP_ITERATION_COUNT } from './shared';
 
 const RECORD_ID = 'objectInfo';
-const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
+const rejectNetworkAdapter = (_) => Promise.reject(new Error('not implemented'));
 
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
@@ -45,7 +45,7 @@ describe('addObjectInfo tests', () => {
         const next = new Array(ITERATION_COUNT)
             .fill()
             .map(() => JSON.parse(mockObjectInfo))
-            .map(next => {
+            .map((next) => {
                 return {
                     ...next,
                     eTag: `${next}:updated`,

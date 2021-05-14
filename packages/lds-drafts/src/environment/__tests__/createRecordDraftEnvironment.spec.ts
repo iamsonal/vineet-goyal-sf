@@ -49,7 +49,7 @@ describe('draft environment tests', () => {
 
             let assignedDraftId = '';
             let assignedDraftIdStoreKey = '';
-            durableStore.getDenormalizedRecord = jest.fn().mockImplementation(key => {
+            durableStore.getDenormalizedRecord = jest.fn().mockImplementation((key) => {
                 assignedDraftIdStoreKey = key;
                 assignedDraftId = extractRecordIdFromStoreKey(assignedDraftIdStoreKey);
                 return Promise.resolve({
@@ -98,7 +98,7 @@ describe('draft environment tests', () => {
             });
             let assignedDraftId = '';
             let assignedDraftIdStoreKey = '';
-            durableStore.getDenormalizedRecord = jest.fn().mockImplementation(key => {
+            durableStore.getDenormalizedRecord = jest.fn().mockImplementation((key) => {
                 assignedDraftIdStoreKey = key;
                 assignedDraftId = extractRecordIdFromStoreKey(assignedDraftIdStoreKey);
                 return Promise.resolve({
@@ -181,7 +181,7 @@ describe('draft environment tests', () => {
             });
             let assignedDraftId = '';
             let assignedDraftIdStoreKey = '';
-            durableStore.getDenormalizedRecord = jest.fn().mockImplementation(key => {
+            durableStore.getDenormalizedRecord = jest.fn().mockImplementation((key) => {
                 assignedDraftIdStoreKey = key;
                 assignedDraftId = extractRecordIdFromStoreKey(assignedDraftIdStoreKey);
                 return Promise.resolve({

@@ -32,7 +32,7 @@ function getMock(filename) {
 }
 
 function getAvatarByRecordId(results, recordId) {
-    const result = results.find(item => {
+    const result = results.find((item) => {
         return item.result.recordId === recordId;
     });
     return result && result.result;
@@ -51,8 +51,8 @@ function mockNetworkOnceDefer(config, response) {
     karmaNetworkAdapter
         .withArgs(getNetworkParams(config))
         .onFirstCall()
-        .callsFake(function() {
-            return new Promise(res => {
+        .callsFake(function () {
+            return new Promise((res) => {
                 promiseResolve = res;
             });
         })

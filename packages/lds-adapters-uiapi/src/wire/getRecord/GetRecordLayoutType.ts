@@ -68,7 +68,7 @@ function refresh(
         optionalFields,
     };
 
-    return getRecordUiNetwork(luvio, recordUiConfig).then(snapshot => {
+    return getRecordUiNetwork(luvio, recordUiConfig).then((snapshot) => {
         const refresh = buildSnapshotRefresh(luvio, config);
         if (isErrorSnapshot(snapshot)) {
             return luvio.errorSnapshot(snapshot.error, refresh);
@@ -120,7 +120,7 @@ function fetchRecordLayout(
     const recordUiAdapter = getRecordUiFactory(luvio);
     const recordUiSnapshotOrPromise = recordUiAdapter(recordUiConfig);
     if (isPromise(recordUiSnapshotOrPromise)) {
-        return recordUiSnapshotOrPromise.then(snapshot => {
+        return recordUiSnapshotOrPromise.then((snapshot) => {
             return processRecordUiRepresentation(
                 luvio,
                 refresh,
@@ -310,7 +310,7 @@ function getRecord(
 
     // attach a record layout refresh
     if (isPromise(recordSnapshotOrPromise)) {
-        recordSnapshotOrPromise.then(snapshot => {
+        recordSnapshotOrPromise.then((snapshot) => {
             snapshot.refresh = refresh;
             return snapshot;
         });

@@ -37,7 +37,7 @@ const SAUCE_COMPAT_BROWSERS = {
     },
 };
 
-module.exports = function(config) {
+module.exports = function (config) {
     const compat = Boolean(config.compat);
 
     if (compat) {

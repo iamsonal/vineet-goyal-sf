@@ -1,7 +1,7 @@
 /* global gc */
 async function doGC() {
     gc();
-    await new Promise(resolve => setTimeout(resolve, 5000)); // allow memory to actually be cleared
+    await new Promise((resolve) => setTimeout(resolve, 5000)); // allow memory to actually be cleared
 }
 
 export default async function testMemory(before, func) {

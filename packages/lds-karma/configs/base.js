@@ -29,7 +29,7 @@ function getBaseDepFiles() {
     return files;
 }
 
-const configBuilder = config => {
+const configBuilder = (config) => {
     config.set({
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: path.resolve('./src'),

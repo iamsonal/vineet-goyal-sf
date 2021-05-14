@@ -13,14 +13,14 @@ import { BLANK_RECORD_FIELDS_TRIE } from '../../util/records';
 import { createRecordIngest } from '../../util/record-ingest';
 
 export const factory = (luvio: Luvio) => {
-    return function(untrustedConfig: unknown): Promise<Snapshot<RecordRepresentation>> {
+    return function (untrustedConfig: unknown): Promise<Snapshot<RecordRepresentation>> {
         const resourceParams = createResourceParams(untrustedConfig as CreateRecordConfig);
         const request = postUiApiRecords(resourceParams);
         const fieldTrie = BLANK_RECORD_FIELDS_TRIE;
         const optionalFieldTrie = BLANK_RECORD_FIELDS_TRIE;
         const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie);
         return luvio.dispatchResourceRequest<RecordRepresentation>(request).then(
-            response => {
+            (response) => {
                 const { body } = response;
 
                 const selections = buildSelectionFromRecord(body);

@@ -176,10 +176,8 @@ describe('getLayoutUserState', () => {
     it('refresh should refresh layout user state', async () => {
         const mock = getMock('layoutUserState-Account-Full-View');
         const refreshed = getMock('layoutUserState-Account-Full-View');
-        refreshed.sectionUserStates[
-            Object.keys(refreshed.sectionUserStates)[0]
-        ].collapsed = !refreshed.sectionUserStates[Object.keys(refreshed.sectionUserStates)[0]]
-            .collapsed;
+        refreshed.sectionUserStates[Object.keys(refreshed.sectionUserStates)[0]].collapsed =
+            !refreshed.sectionUserStates[Object.keys(refreshed.sectionUserStates)[0]].collapsed;
 
         mockGetLayoutUserStateNetwork(DEFAULT_CONFIG, [mock, refreshed]);
 

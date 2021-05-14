@@ -31,7 +31,7 @@ async function main() {
     }
 }
 
-main().catch(err => {
+main().catch((err) => {
     console.error(err); // eslint-disable-line no-console
     process.exit(1);
 });

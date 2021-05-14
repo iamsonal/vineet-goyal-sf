@@ -38,7 +38,7 @@ function setupDraftStore(draftActions: DraftActionMap) {
         jest.fn().mockResolvedValue(draftActions),
         CURRENT_USER_ID,
         (_draftKey: string, _canonicalKey: string) => {},
-        id => id === DRAFT_RECORD_ID
+        (id) => id === DRAFT_RECORD_ID
     );
 
     return { durableStore, baseDurableStore, plugin };

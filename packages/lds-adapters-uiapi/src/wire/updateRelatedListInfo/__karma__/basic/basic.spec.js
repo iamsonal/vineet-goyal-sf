@@ -14,7 +14,7 @@ function getMock(filename) {
 
 function buildSinonMatch(obj) {
     if (Array.isArray(obj)) {
-        const next = obj.map(value => {
+        const next = obj.map((value) => {
             if (typeof value === 'object' && value !== null) {
                 return buildSinonMatch(value);
             }

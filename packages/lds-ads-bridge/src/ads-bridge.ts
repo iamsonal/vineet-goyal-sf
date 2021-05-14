@@ -96,9 +96,8 @@ function isSpanningRecord(
  * It returns null if the record contains any pending field.
  */
 function getShallowRecord(luvio: Luvio, storeRecordId: string): RecordRepresentation | null {
-    const recordNode = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(
-        storeRecordId
-    );
+    const recordNode =
+        luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(storeRecordId);
 
     if (!isGraphNode(recordNode)) {
         return null;
@@ -118,10 +117,10 @@ function getShallowRecord(luvio: Luvio, storeRecordId: string): RecordRepresenta
         let fieldCopy: FieldValueRepresentation;
 
         const fieldName = fieldNames[i];
-        const fieldLink = fieldsNode.link<
-            FieldValueRepresentationNormalized,
-            FieldValueRepresentation
-        >(fieldName);
+        const fieldLink =
+            fieldsNode.link<FieldValueRepresentationNormalized, FieldValueRepresentation>(
+                fieldName
+            );
         if (fieldLink.isPending() === true) {
             return null;
         }
@@ -138,10 +137,8 @@ function getShallowRecord(luvio: Luvio, storeRecordId: string): RecordRepresenta
                 value: value as string | number | boolean | null,
             };
         } else {
-            const spanningRecordLink = fieldNode.link<
-                RecordRepresentationNormalized,
-                RecordRepresentation
-            >('value');
+            const spanningRecordLink =
+                fieldNode.link<RecordRepresentationNormalized, RecordRepresentation>('value');
             if (spanningRecordLink.isPending() === true) {
                 return null;
             }
@@ -263,7 +260,7 @@ export default class AdsBridge {
         }
 
         if (callback !== undefined) {
-            this.watchUnsubscribe = this.luvio.storeWatch(RECORD_ID_PREFIX, entries => {
+            this.watchUnsubscribe = this.luvio.storeWatch(RECORD_ID_PREFIX, (entries) => {
                 if (this.isRecordEmitLocked === true) {
                     return;
                 }
@@ -344,9 +341,8 @@ export default class AdsBridge {
         const { luvio } = this;
         const storeRecordId = keyBuilderRecord({ recordId });
 
-        const recordNode = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(
-            storeRecordId
-        );
+        const recordNode =
+            luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(storeRecordId);
 
         if (!isGraphNode(recordNode)) {
             return Promise.resolve([]);

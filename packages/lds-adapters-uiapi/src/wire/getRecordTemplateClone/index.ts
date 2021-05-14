@@ -99,7 +99,7 @@ const buildNetworkSnapshot: (
     return luvio
         .dispatchResourceRequest<RecordDefaultsTemplateCloneRepresentation>(request, override)
         .then(
-            response => {
+            (response) => {
                 const { body } = response;
                 const key = templateKeyBuilderFromType(body);
 

@@ -12,7 +12,7 @@ import { stripEtags } from 'test-util';
  * @returns true if the record contains any fields after pruning; false if not
  */
 function _pruneFields(record, prefix, predicate) {
-    Object.keys(record.fields).forEach(field => {
+    Object.keys(record.fields).forEach((field) => {
         // nested record, recurse
         if (record.fields[field].value && record.fields[field].value.fields) {
             // delete the field if we removed all of its fields
@@ -48,14 +48,14 @@ const DEFAULT_SERVER_FIELDS = [
  */
 export function fieldPredicate(listInfo, extraFields, keepMagicServerFields = true) {
     let fieldsToKeep = [
-        ...listInfo.displayColumns.map(dc => dc.fieldApiName),
+        ...listInfo.displayColumns.map((dc) => dc.fieldApiName),
         ...(extraFields || []),
     ];
 
-    return field =>
+    return (field) =>
         fieldsToKeep.includes(field) ||
         (keepMagicServerFields &&
-            DEFAULT_SERVER_FIELDS.find(f => field === f || field.endsWith(`.${f}`)));
+            DEFAULT_SERVER_FIELDS.find((f) => field === f || field.endsWith(`.${f}`)));
 }
 
 /**
@@ -70,7 +70,7 @@ export function fieldPredicate(listInfo, extraFields, keepMagicServerFields = tr
  * @returns listUi
  */
 export function pruneFields(listUi, predicate) {
-    listUi.records.records.forEach(record => {
+    listUi.records.records.forEach((record) => {
         _pruneFields(record, '', predicate);
     });
 
@@ -85,7 +85,7 @@ export function pruneFields(listUi, predicate) {
  * @returns config
  */
 export function convertToFieldIds(config) {
-    const toFieldId = f => {
+    const toFieldId = (f) => {
         const [objectApiName, ...fieldApiName] = f.split('.');
         return {
             objectApiName,
@@ -97,14 +97,14 @@ export function convertToFieldIds(config) {
         config.fields =
             typeof config.fields === 'string'
                 ? toFieldId(config.fields)
-                : config.fields.map(f => toFieldId(f));
+                : config.fields.map((f) => toFieldId(f));
     }
 
     if (config.optionalFields) {
         config.optionalFields =
             typeof config.optionalFields === 'string'
                 ? toFieldId(config.optionalFields)
-                : config.optionalFields.map(f => toFieldId(f));
+                : config.optionalFields.map((f) => toFieldId(f));
     }
 
     return config;
@@ -121,7 +121,7 @@ export function beforeEach() {
                     let extraFields = [
                         ...(expected.records.fields || []),
                         ...(expected.records.optionalFields || []),
-                    ].map(f =>
+                    ].map((f) =>
                         f.startsWith(objectApiName) ? f.substring(objectApiName.length + 1) : f
                     );
                     let patched = pruneFields(

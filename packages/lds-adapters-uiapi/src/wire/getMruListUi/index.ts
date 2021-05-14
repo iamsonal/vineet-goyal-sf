@@ -163,7 +163,7 @@ function onResourceSuccess_getMruListUi(
     // response might have records.sortBy in csv format
     const sortBy = body.records.sortBy;
     if (sortBy && typeof sortBy === 'string') {
-        body.records.sortBy = ((sortBy as unknown) as string).split(',');
+        body.records.sortBy = (sortBy as unknown as string).split(',');
     }
 
     const listUiKey = listUiRepresentation_keyBuilder({
@@ -228,7 +228,7 @@ function resolveUnfulfilledSnapshot_getMruListUi(
     const request = createMruListUiResourceRequest(params);
 
     return luvio.resolveUnfulfilledSnapshot<ListUiRepresentation>(request, snapshot).then(
-        response => {
+        (response) => {
             return onResourceSuccess_getMruListUi(luvio, config, response);
         },
         (err: FetchResponse<unknown>) => {
@@ -252,7 +252,7 @@ function buildNetworkSnapshot_getMruListUi(
     const request = createMruListUiResourceRequest(params);
 
     return luvio.dispatchResourceRequest<ListUiRepresentation>(request).then(
-        response => {
+        (response) => {
             return onResourceSuccess_getMruListUi(luvio, config, response);
         },
         (err: FetchResponse<unknown>) => {
@@ -326,7 +326,7 @@ function onResourceSuccess_getMruListRecords(
 
     // server returns sortBy in csv format
     if (body.sortBy) {
-        body.sortBy = ((body.sortBy as unknown) as string).split(',');
+        body.sortBy = (body.sortBy as unknown as string).split(',');
     }
 
     const fields = listFields(luvio, config, listInfo).processRecords(body.records);
@@ -376,10 +376,10 @@ function resolveUnfulfilledSnapshot_getMruListRecords(
     return luvio
         .resolveUnfulfilledSnapshot<ListRecordCollectionRepresentation>(
             request,
-            (snapshot as unknown) as UnfulfilledSnapshot<ListRecordCollectionRepresentation, any>
+            snapshot as unknown as UnfulfilledSnapshot<ListRecordCollectionRepresentation, any>
         )
         .then(
-            response => {
+            (response) => {
                 return onResourceSuccess_getMruListRecords(luvio, config, listInfo, response);
             },
             (err: FetchResponse<unknown>) => {
@@ -397,7 +397,7 @@ function buildNetworkSnapshot_getMruListRecords(
     const request = prepareRequest_getMruListRecords(luvio, config, listInfo, snapshot);
 
     return luvio.dispatchResourceRequest<ListRecordCollectionRepresentation>(request).then(
-        response => {
+        (response) => {
             return onResourceSuccess_getMruListRecords(luvio, config, listInfo, response);
         },
         (err: FetchResponse<unknown>) => {
@@ -460,9 +460,10 @@ export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> =
                 type: 'mru',
             },
             luvio,
-            (buildSnapshotRefresh(luvio, config) as unknown) as SnapshotRefresh<
-                ListInfoRepresentation
-            >
+            buildSnapshotRefresh(
+                luvio,
+                config
+            ) as unknown as SnapshotRefresh<ListInfoRepresentation>
         );
 
         // if we have list info then build a snapshot from that
@@ -489,7 +490,7 @@ export const factory: AdapterFactory<GetMruListUiConfig, ListUiRepresentation> =
             return luvio
                 .resolveUnfulfilledSnapshot(mruListUiResourceRequest, listInfoSnapshot)
                 .then(
-                    response => {
+                    (response) => {
                         // if result came from cache we know it's a listinfo, otherwise
                         // it's a full list-ui response
                         if (isResultListInfoRepresentation(response)) {

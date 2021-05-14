@@ -178,7 +178,7 @@ function buildNetworkSnapshot(
     return luvio
         .dispatchResourceRequest<RecordDefaultsTemplateCreateRepresentation>(request, override)
         .then(
-            response => {
+            (response) => {
                 return onResourceResponseSuccess(
                     luvio,
                     context,
@@ -204,7 +204,7 @@ function resolveUnfulfilledSnapshot(
     const request = prepareRequest(luvio, context, config);
 
     return luvio.resolveUnfulfilledSnapshot(request, snapshot).then(
-        response => {
+        (response) => {
             return onResourceResponseSuccess(
                 luvio,
                 context,

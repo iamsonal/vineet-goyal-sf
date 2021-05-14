@@ -43,7 +43,7 @@ describe('basic', () => {
     [
         { name: 'string', value: ['Lead', 'Opportunity'] },
         { name: 'object', value: [{ objectApiName: 'Lead' }, { objectApiName: 'Opportunity' }] },
-    ].forEach(testConfig => {
+    ].forEach((testConfig) => {
         it(`gets data when adapter config is ${testConfig.name}`, async () => {
             const mockData = getMock('lookup-Lead-Opportunity');
             const resourceConfig = {

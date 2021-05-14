@@ -30,7 +30,7 @@ function getFiles() {
     return files;
 }
 
-module.exports = function(config) {
+module.exports = function (config) {
     // Apply the base config first with common configurations.
     base.configBuilder(config);
 

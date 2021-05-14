@@ -38,7 +38,7 @@ const recordId = await helpers.getAccountByName(ACCOUNT_NAME);
         filename: 'record-actions-sections-SingleActionLinks',
         queryString: '?sections=SingleActionLinks',
     },
-].forEach(async entry => {
+].forEach(async (entry) => {
     await helpers.requestGetAndSave(
         `/ui-api/actions/record/${recordId}${entry.queryString}`,
         path.join(rootDir, `${entry.filename}.json`)

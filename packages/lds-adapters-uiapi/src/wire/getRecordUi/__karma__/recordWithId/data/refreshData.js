@@ -41,7 +41,7 @@ const opportunityId = await helpers.getOpportunityByName(OPPORTUNITY_NAME);
         queryString:
             '?layoutTypes=Full&modes=View&optionalFields=Opportunity.IsDeleted,Opportunity.OrderNumber__c',
     },
-].forEach(async function(entry) {
+].forEach(async function (entry) {
     await helpers.requestGetAndSave(
         `/ui-api/record-ui/${opportunityId}${entry.queryString}`,
         path.join(rootDir, `${entry.filename}.json`)
@@ -82,7 +82,7 @@ const opportunityId = await helpers.getOpportunityByName(OPPORTUNITY_NAME);
         filename: 'single-record-Account-layouttypes-Full-Compact-modes-Create,Edit,View',
         queryString: '?layoutTypes=Full,Compact&modes=Create,Edit,View',
     },
-].forEach(async function(entry) {
+].forEach(async function (entry) {
     await helpers.requestGetAndSave(
         `/ui-api/record-ui/${accountId}${entry.queryString}`,
         path.join(rootDir, `${entry.filename}.json`)

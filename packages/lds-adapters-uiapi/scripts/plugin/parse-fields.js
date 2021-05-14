@@ -36,11 +36,11 @@ function traverseNodeShape(shape, state) {
     const { modelInfo, fieldValueRepId } = state;
     let containsFields = false;
     const filter = shape.properties
-        .filter(prop => {
+        .filter((prop) => {
             // filter out non-normalizable shapes
             return modelInfo.normalizableShapeDefinitions[prop.range.id] !== undefined;
         })
-        .map(prop => {
+        .map((prop) => {
             const { range, name: propertyName } = prop;
             const resolved = resolveDeclaredShape(range, state);
             if (resolved === undefined) {
@@ -81,7 +81,7 @@ function traverseNodeShape(shape, state) {
                 shape: value,
             };
         })
-        .filter(val => val !== undefined);
+        .filter((val) => val !== undefined);
 
     return containsFields === false
         ? undefined
@@ -94,12 +94,12 @@ function traverseNodeShape(shape, state) {
 function parse(modelInfo) {
     const { declaredShapeDefinitions } = modelInfo;
     const declaredShapeDefinitionKeys = Object.keys(declaredShapeDefinitions);
-    const fieldValueRepId = declaredShapeDefinitionKeys.find(id =>
+    const fieldValueRepId = declaredShapeDefinitionKeys.find((id) =>
         FIELD_VALUE_REPRESENTATION_REGEXP.test(id)
     );
 
     const shapesWithFields = {};
-    declaredShapeDefinitionKeys.forEach(id => {
+    declaredShapeDefinitionKeys.forEach((id) => {
         if (id === fieldValueRepId) {
             return;
         }

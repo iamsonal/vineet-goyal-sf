@@ -18,9 +18,9 @@ try {
     await helpers.createAccountWithOwner(sysAdminUserId, 'Burros');
     await helpers.createAccountWithOwner(sysAdminUserId, 'Burton');
 
-    entries.forEach(async function({ endpoint, filename, params = {} }) {
+    entries.forEach(async function ({ endpoint, filename, params = {} }) {
         const queryParams = Object.entries(params)
-            .map(entry => entry.join('='))
+            .map((entry) => entry.join('='))
             .join('&');
         await helpers.requestGetAndSave(
             `/ui-api/${endpoint}${queryParams ? '?' + queryParams : ''}`,

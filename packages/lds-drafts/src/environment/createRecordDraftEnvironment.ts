@@ -59,7 +59,7 @@ export function createRecordDraftEnvironment(
     env: DurableEnvironment,
     { draftQueue, prefixForApiName, generateId, isDraftId, durableStore }: DraftEnvironmentOptions
 ): DurableEnvironment {
-    const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function<T>(
+    const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function <T>(
         request: ResourceRequest
     ) {
         if (isRequestCreateRecord(request) === false) {
@@ -79,7 +79,7 @@ export function createRecordDraftEnvironment(
             );
         }
 
-        return prefixForApiName(apiName).then(prefix => {
+        return prefixForApiName(apiName).then((prefix) => {
             const recordId = generateId(prefix);
             const key = keyBuilderRecord({ recordId });
 
@@ -94,7 +94,7 @@ export function createRecordDraftEnvironment(
                     .catch(() => {
                         throw createInternalErrorResponse();
                     })
-                    .then(record => {
+                    .then((record) => {
                         if (record === undefined) {
                             throw createDraftSynthesisErrorResponse();
                         }

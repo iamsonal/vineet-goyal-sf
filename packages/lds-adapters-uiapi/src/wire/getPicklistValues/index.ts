@@ -84,7 +84,7 @@ export function buildNetworkSnapshot(
     const { request, key } = buildRequestAndKey(config);
 
     return luvio.dispatchResourceRequest<PicklistValuesRepresentation>(request).then(
-        response => {
+        (response) => {
             return onResponseSuccess(luvio, config, key, response);
         },
         (err: FetchResponse<unknown>) => {
@@ -101,7 +101,7 @@ export function resolveUnfulfilledSnapshot(
     const { request, key } = buildRequestAndKey(config);
 
     return luvio.resolveUnfulfilledSnapshot<PicklistValuesRepresentation>(request, snapshot).then(
-        response => {
+        (response) => {
             return onResponseSuccess(luvio, config, key, response);
         },
         (err: FetchResponse<unknown>) => {

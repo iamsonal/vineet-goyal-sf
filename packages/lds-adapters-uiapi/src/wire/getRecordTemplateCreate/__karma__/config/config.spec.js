@@ -10,7 +10,7 @@ function getMock(filename) {
 }
 
 describe('objectApiName', () => {
-    [undefined, null].forEach(value => {
+    [undefined, null].forEach((value) => {
         it(`should not make a network request if required param objectApiName is '${value}'`, async () => {
             const config = {
                 objectApiName: value,
@@ -39,7 +39,7 @@ describe('objectApiName', () => {
 });
 
 describe('recordTypeId', () => {
-    [undefined, null].forEach(value => {
+    [undefined, null].forEach((value) => {
         it(`requests with undefined if recordTypeId is ${value}`, async () => {
             const mock = getMock('record-template-create-Custom_Object_2__c');
             const apiName = mock.record.apiName;
@@ -99,7 +99,7 @@ describe('recordTypeId', () => {
 });
 
 describe('optionalFields', () => {
-    [undefined, null].forEach(value => {
+    [undefined, null].forEach((value) => {
         it(`requests with undefined if optionalFields is ${value}`, async () => {
             const mock = getMock('record-template-create-Custom_Object_2__c');
             const apiName = mock.record.apiName;

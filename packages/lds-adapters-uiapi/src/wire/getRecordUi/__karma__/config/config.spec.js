@@ -185,29 +185,29 @@ describe('coercion', () => {
     [
         {
             type: 'string',
-            generate: recordIds => {
+            generate: (recordIds) => {
                 return recordIds;
             },
         },
         {
             type: 'string[]',
-            generate: recordIds => {
+            generate: (recordIds) => {
                 return [recordIds];
             },
         },
         {
             type: '15-char string',
-            generate: recordIds => {
+            generate: (recordIds) => {
                 return recordIds.slice(0, 15);
             },
         },
         {
             type: '15-char string[]',
-            generate: recordIds => {
+            generate: (recordIds) => {
                 return [recordIds.slice(0, 15)];
             },
         },
-    ].forEach(testCase => {
+    ].forEach((testCase) => {
         it(`gets recordUi with recordIds as ${testCase.type}`, async () => {
             const mockData = getMock('single-record-Account-layouttypes-Full-modes-View');
             const coercedRecordIds = getRecordIdFromMock(mockData);
@@ -241,7 +241,7 @@ describe('coercion', () => {
             layoutTypes: ['Full'],
             modes: ['View'],
         },
-    ].forEach(testCase => {
+    ].forEach((testCase) => {
         it(`gets recordUi with required parameters as ${testCase.type}`, async () => {
             const mockData = getMock('single-record-Account-layouttypes-Full-modes-View');
             const recordIds = getRecordIdFromMock(mockData);
@@ -280,7 +280,7 @@ describe('coercion', () => {
             type: 'FieldId[]',
             optionalFields: [fieldId('Account', 'Industry')],
         },
-    ].forEach(testCase => {
+    ].forEach((testCase) => {
         it(`gets recordUi with optionalFields as ${testCase.type}`, async () => {
             const mockData = getMock('single-record-Account-layouttypes-Full-modes-View');
             const recordIds = getRecordIdFromMock(mockData);

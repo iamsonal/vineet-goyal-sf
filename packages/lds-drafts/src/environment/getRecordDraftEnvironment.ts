@@ -98,7 +98,7 @@ function createSyntheticGetRecordResponse(
         return Promise.reject(createBadRequestResponse({ message: 'fields are missing' }));
     }
 
-    return durableStore.getDenormalizedRecord(key).then(record => {
+    return durableStore.getDenormalizedRecord(key).then((record) => {
         if (record === undefined) {
             throw createDraftSynthesisErrorResponse();
         }
@@ -142,7 +142,7 @@ export function getRecordDraftEnvironment(
     env: DurableEnvironment,
     { durableStore, isDraftId }: DraftEnvironmentOptions
 ): DurableEnvironment {
-    const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function<T>(
+    const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function <T>(
         resourceRequest: ResourceRequest
     ) {
         return handleGetRecordRequest(
@@ -154,7 +154,7 @@ export function getRecordDraftEnvironment(
         ) as any;
     };
 
-    const resolveUnfulfilledSnapshot: DurableEnvironment['resolveUnfulfilledSnapshot'] = function<
+    const resolveUnfulfilledSnapshot: DurableEnvironment['resolveUnfulfilledSnapshot'] = function <
         T
     >(
         resourceRequest: ResourceRequest,
@@ -165,7 +165,7 @@ export function getRecordDraftEnvironment(
             env,
             durableStore,
             isDraftId,
-            request => env.resolveUnfulfilledSnapshot(request, snapshot) as any
+            (request) => env.resolveUnfulfilledSnapshot(request, snapshot) as any
         ) as any;
     };
 

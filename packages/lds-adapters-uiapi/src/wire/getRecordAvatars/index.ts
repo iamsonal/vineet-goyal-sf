@@ -132,16 +132,16 @@ function onResponseSuccess(
     let formatted: RecordAvatarBulkMapRepresentation;
 
     // Remove ids from in flight list
-    recordIds.forEach(id => IN_FLIGHT_REQUESTS.delete(id));
+    recordIds.forEach((id) => IN_FLIGHT_REQUESTS.delete(id));
 
     // the selector passed to resolveUnfulfilledSnapshot requests the data already formatted so the response
     // can either be a RecordAvatarBulkRepresentation or a RecordAvatarBulkMapRepresentation
     if (isRecordAvatarBulkMapRepresentation(response)) {
         formatted = response.body;
     } else {
-        formatted = (response as ResourceResponse<
-            RecordAvatarBulkRepresentation
-        >).body.results.reduce((seed, avatar, index) => {
+        formatted = (
+            response as ResourceResponse<RecordAvatarBulkRepresentation>
+        ).body.results.reduce((seed, avatar, index) => {
             const recordId = recordIds[index];
             seed[recordId] = avatar;
             return seed;
@@ -164,7 +164,7 @@ function onResponseError(
     err: FetchResponse<unknown>
 ) {
     // Remove ids from in flight list
-    recordIds.forEach(id => IN_FLIGHT_REQUESTS.delete(id));
+    recordIds.forEach((id) => IN_FLIGHT_REQUESTS.delete(id));
 
     const errorSnapshot = luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config, recordIds));
     luvio.storeIngestError(KEY, errorSnapshot);
@@ -183,7 +183,7 @@ function resolveUnfulfilledSnapshot(
     let luvioResponse;
 
     // Split up the given record ids into in flight ids and not in flight ids
-    recordIds.forEach(id => {
+    recordIds.forEach((id) => {
         if (IN_FLIGHT_REQUESTS.has(id)) {
             recordIdsInFlight.push(id);
         } else {
@@ -193,11 +193,11 @@ function resolveUnfulfilledSnapshot(
 
     // For any remaining record ids send off the real request and add it to the in flight request list
     if (recordIdsNotInFlight.length > 0) {
-        recordIdsNotInFlight.forEach(id => IN_FLIGHT_REQUESTS.add(id));
+        recordIdsNotInFlight.forEach((id) => IN_FLIGHT_REQUESTS.add(id));
         const resourceRequest = buildRequest(recordIdsNotInFlight);
 
         luvioResponse = luvio.resolveUnfulfilledSnapshot(resourceRequest, snapshot).then(
-            response => {
+            (response) => {
                 return onResponseSuccess(luvio, config, recordIdsNotInFlight, response);
             },
             (err: FetchResponse<unknown>) => {
@@ -229,7 +229,7 @@ export function buildNetworkSnapshot(
     const resourceRequest = buildRequest(recordIds);
 
     return luvio.dispatchResourceRequest<RecordAvatarBulkRepresentation>(resourceRequest).then(
-        response => {
+        (response) => {
             return onResponseSuccess(luvio, config, recordIds, response);
         },
         (err: FetchResponse<unknown>) => {

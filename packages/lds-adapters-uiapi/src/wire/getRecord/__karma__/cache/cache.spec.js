@@ -32,8 +32,8 @@ function mockNetworkOnceDefer(config, response) {
     karmaNetworkAdapter
         .withArgs(getNetworkParams(config))
         .onFirstCall()
-        .callsFake(function() {
-            return new Promise(res => {
+        .callsFake(function () {
+            return new Promise((res) => {
                 promiseResolve = res;
             });
         })
@@ -314,7 +314,8 @@ describe('cache', () => {
                 ...account.fields,
                 ...expectedAccount.fields,
             };
-            expected.fields.TestC__r.value.fields.TestA__r.value.fields.Opportunity__r.value.fields.Account.value = expectedAccount;
+            expected.fields.TestC__r.value.fields.TestA__r.value.fields.Opportunity__r.value.fields.Account.value =
+                expectedAccount;
 
             delete expected.fields.TestC__c;
             delete expected.fields.TestC__r.value.fields.Id;
@@ -334,7 +335,8 @@ describe('cache', () => {
             delete expected.fields.TestC__r.value.fields.TestA__r.value.fields.Opportunity__r.value
                 .fields.Account.value.fields.OperatingHours.value.fields.CreatedById;
 
-            expected.fields.TestC__r.value.fields.TestA__r.value.fields.Opportunity__r.value.fields.Account.value.recordTypeInfo = expectedAccountRecordTypeInfo;
+            expected.fields.TestC__r.value.fields.TestA__r.value.fields.Opportunity__r.value.fields.Account.value.recordTypeInfo =
+                expectedAccountRecordTypeInfo;
 
             delete expectedAccount.fields.OperatingHours.value.fields.CreatedBy;
 
@@ -402,7 +404,8 @@ describe('cache', () => {
                 ...account.fields,
                 ...expectedAccount.fields,
             };
-            expected.fields.TestC__r.value.fields.TestA__r.value.fields.Opportunity__r.value.fields.Account.value = expectedAccount;
+            expected.fields.TestC__r.value.fields.TestA__r.value.fields.Opportunity__r.value.fields.Account.value =
+                expectedAccount;
 
             delete expected.fields.TestC__c;
             delete expected.fields.TestC__r.value.fields.Id;
@@ -424,7 +427,8 @@ describe('cache', () => {
             delete expected.fields.TestC__r.value.fields.TestA__r.value.fields.Opportunity__r.value
                 .fields.Account.value.fields.OperatingHours.value.fields.Id;
 
-            expected.fields.TestC__r.value.fields.TestA__r.value.fields.Opportunity__r.value.fields.Account.value.recordTypeInfo = expectedAccountRecordTypeInfo;
+            expected.fields.TestC__r.value.fields.TestA__r.value.fields.Opportunity__r.value.fields.Account.value.recordTypeInfo =
+                expectedAccountRecordTypeInfo;
 
             delete expectedAccount.fields.OperatingHours.value.fields.CreatedBy;
 

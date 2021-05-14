@@ -15,7 +15,7 @@ export default class UpdateDataflowJob extends LightningElement {
                 this.jobData = data;
                 this.jobId = dataflowjobId;
             })
-            .catch(error => {
+            .catch((error) => {
                 this.error = error;
             });
     }

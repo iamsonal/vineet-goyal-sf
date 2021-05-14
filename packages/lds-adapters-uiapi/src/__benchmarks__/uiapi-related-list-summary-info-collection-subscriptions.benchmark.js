@@ -4,7 +4,7 @@ import { ingestRelatedListSummaryInfoCollection } from '@salesforce/lds-adapters
 import mockRelatedListInfoCollection from './mocks/cwccustom00__c-related-list-info-collection';
 import { WARM_UP_ITERATION_COUNT, TIMESTAMP } from './shared';
 
-const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
+const rejectNetworkAdapter = (_) => Promise.reject(new Error('not implemented'));
 
 function clone(data) {
     return JSON.parse(data);

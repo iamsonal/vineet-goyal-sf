@@ -9,7 +9,7 @@ function getMock(fileName) {
 const ERROR_CODE_431 = 'ERROR_HTTP_431';
 const ERROR_MESSAGE_431 = 'Request Header Fields Too Large';
 
-const verifyError = mock => {
+const verifyError = (mock) => {
     expect(mock.errorCode).toEqual(ERROR_CODE_431);
     expect(mock.message).toContain(ERROR_MESSAGE_431);
 };

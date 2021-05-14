@@ -2,7 +2,7 @@ import { setupElement } from 'test-util';
 import RelatedListInfoBatch from '../lwc/related-list-info-batch';
 
 describe('validation', () => {
-    ['parentObjectApiName', 'relatedListNames'].forEach(param => {
+    ['parentObjectApiName', 'relatedListNames'].forEach((param) => {
         it(`should not make an HTTP request if required param '${param}' is undefined`, async () => {
             const config = {
                 parentObjectApiName: 'Custom__c',

@@ -212,9 +212,8 @@ function markMissingOptionalRecordFieldsMissing(
         const record = returnedRecords[i];
         const recordKey = record.__ref;
         if (recordKey) {
-            const node = luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(
-                recordKey
-            );
+            const node =
+                luvio.getNode<RecordRepresentationNormalized, RecordRepresentation>(recordKey);
             if (isGraphNode(node)) {
                 markMissingOptionalFields(node, optionalFields);
             }

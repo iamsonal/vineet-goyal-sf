@@ -193,7 +193,7 @@ describe('GetRecordTemplateCreate', () => {
         expect(wireA.pushCount()).toBe(2);
     });
 
-    [undefined, null].forEach(value => {
+    [undefined, null].forEach((value) => {
         it(`should make another HTTP request when defaultRecordTypeId is already cached but optionalFields are not the same and 2nd recordTypeId is ${value}`, async () => {
             const numberMock = getMock(
                 'record-template-create-Custom_Object_2__c-optionalField-Number'
@@ -246,7 +246,7 @@ describe('GetRecordTemplateCreate', () => {
         });
     });
 
-    [undefined, null].forEach(value => {
+    [undefined, null].forEach((value) => {
         it(`should not make another HTTP request when initial request with recordTypeId is ${value} and resulting recordTypeId is default`, async () => {
             const numberMock = getMock(
                 'record-template-create-Custom_Object_2__c-optionalField-Number'

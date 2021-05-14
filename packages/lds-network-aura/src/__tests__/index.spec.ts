@@ -178,7 +178,7 @@ describe('routes', () => {
     const testedRoutes: Record<string, boolean> = Object.keys(appRouter.methods).reduce(
         (acc, cur) => {
             const routes: Route[] = appRouter.methods[cur];
-            routes.forEach(route => {
+            routes.forEach((route) => {
                 const key = `${cur}:${route.handler.name}`;
                 acc[key] = false;
             });
@@ -190,7 +190,7 @@ describe('routes', () => {
     beforeAll(() => {
         original = appRouter.lookup;
         // override lookup function to bookkeep seen route from tests
-        appRouter.lookup = function(resourceRequest: ResourceRequest): ControllerInvoker | null {
+        appRouter.lookup = function (resourceRequest: ResourceRequest): ControllerInvoker | null {
             const { basePath, baseUri, method } = resourceRequest;
             const path = `${baseUri}${basePath}`;
             const routes: Route[] = this.methods[method];
@@ -198,7 +198,7 @@ describe('routes', () => {
                 return null;
             }
 
-            const matchedRoute = routes.find(route => route.predicate(path));
+            const matchedRoute = routes.find((route) => route.predicate(path));
             if (matchedRoute !== undefined) {
                 testedRoutes[`${method}:${matchedRoute.handler.name}`] = true;
                 return matchedRoute.handler;
@@ -1437,8 +1437,7 @@ describe('routes', () => {
                 },
                 defaultValue: null,
                 eTag: 'a4587e5dc7cc5157e1f07e3cc9ed94e5',
-                url:
-                    '/services/data/v53.0/ui-api/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User',
+                url: '/services/data/v53.0/ui-api/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User',
                 values: [
                     {
                         attributes: null,
@@ -4899,7 +4898,7 @@ describe('routes', () => {
     });
 
     // [IMPORTANT] this test has to be the last one in the suite to verify all registered routes have corresponding tests
-    it.each(Object.keys(testedRoutes).map(key => key.split(':')))(
+    it.each(Object.keys(testedRoutes).map((key) => key.split(':')))(
         '%s %s route tested',
         (method, handlerName) => {
             expect(testedRoutes[`${method}:${handlerName}`]).toBe(true);

@@ -47,7 +47,7 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQlConfig, unknown> = (lu
             headers: {},
         };
 
-        return luvio.dispatchResourceRequest<any>(request).then(resp => {
+        return luvio.dispatchResourceRequest<any>(request).then((resp) => {
             const ingest = createIngest(query);
             luvio.storeIngest('graphql', ingest, resp.body.data);
 

@@ -1,5 +1,5 @@
 export const instrumentation = {
-    instrumentNetwork: function() {},
+    instrumentNetwork: function () {},
 };
 export function mark() {}
 export function setupInstrumentation() {}

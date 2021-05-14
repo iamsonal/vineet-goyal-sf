@@ -71,12 +71,12 @@ describe('setDefaultLuvio', () => {
 });
 
 describe('withDefaultLuvio', () => {
-    it('invokes the callback if the default luvio was previously set', done => {
+    it('invokes the callback if the default luvio was previously set', (done) => {
         const { setDefaultLuvio, withDefaultLuvio } = require('../main');
         const luvio = Object.create(null);
 
         setDefaultLuvio({ luvio });
-        withDefaultLuvio(x => {
+        withDefaultLuvio((x) => {
             expect(x).toBe(luvio);
             done();
         });
@@ -91,11 +91,11 @@ describe('withDefaultLuvio', () => {
         expect(callback).not.toHaveBeenCalled();
     });
 
-    it('invokes the callback when the default luvio is subsequently set', done => {
+    it('invokes the callback when the default luvio is subsequently set', (done) => {
         const { setDefaultLuvio, withDefaultLuvio } = require('../main');
         const luvio = Object.create(null);
 
-        const callback = jest.fn(x => {
+        const callback = jest.fn((x) => {
             expect(x).toBe(luvio);
             done();
         });
@@ -106,20 +106,20 @@ describe('withDefaultLuvio', () => {
         setDefaultLuvio({ luvio });
     });
 
-    it('invokes all callbacks when the default luvio is set', done => {
+    it('invokes all callbacks when the default luvio is set', (done) => {
         const { setDefaultLuvio, withDefaultLuvio } = require('../main');
         const luvio = Object.create(null);
 
         const sawLuvio = [false, false, false];
 
         sawLuvio.forEach((_, i) => {
-            withDefaultLuvio(x => {
+            withDefaultLuvio((x) => {
                 expect(x).toBe(luvio);
                 expect(sawLuvio[i]).toBe(false);
 
                 sawLuvio[i] = true;
 
-                if (sawLuvio.every(y => y)) {
+                if (sawLuvio.every((y) => y)) {
                     done();
                 }
             });
@@ -130,7 +130,7 @@ describe('withDefaultLuvio', () => {
         setDefaultLuvio({ luvio });
     });
 
-    it('invokes all callbacks when the default luvio is changed', done => {
+    it('invokes all callbacks when the default luvio is changed', (done) => {
         const { setDefaultLuvio, withDefaultLuvio } = require('../main');
         const luvio1 = Object.create(null);
         const luvio2 = Object.create(null);
@@ -140,7 +140,7 @@ describe('withDefaultLuvio', () => {
 
         sawLuvio1.forEach((_, i) => {
             sawLuvio2[i] = false;
-            withDefaultLuvio(x => {
+            withDefaultLuvio((x) => {
                 if (x === luvio1) {
                     expect(sawLuvio1[i]).toBe(false);
                     sawLuvio1[i] = true;
@@ -151,7 +151,7 @@ describe('withDefaultLuvio', () => {
                     throw new Error('unexpected luvio instance received by callback');
                 }
 
-                if (sawLuvio1.every(y => y) && sawLuvio2.every(y => y)) {
+                if (sawLuvio1.every((y) => y) && sawLuvio2.every((y) => y)) {
                     done();
                 }
             });

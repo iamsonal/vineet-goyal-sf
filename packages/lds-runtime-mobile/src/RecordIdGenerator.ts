@@ -79,10 +79,7 @@ function recordIdWithChecksum(recordId: string): string {
 }
 
 function reverse(value: string): string {
-    return value
-        .split('')
-        .reverse()
-        .join('');
+    return value.split('').reverse().join('');
 }
 
 function base62AsNumber(value: string): number {

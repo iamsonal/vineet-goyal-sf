@@ -39,13 +39,11 @@ describe('AST to string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],
@@ -133,13 +131,11 @@ describe('AST to string', () => {
                                                                     name: 'Name',
                                                                     luvioSelections: [
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'value',
                                                                         },
                                                                         {
-                                                                            kind:
-                                                                                'ScalarFieldSelection',
+                                                                            kind: 'ScalarFieldSelection',
                                                                             name: 'displayValue',
                                                                         },
                                                                     ],

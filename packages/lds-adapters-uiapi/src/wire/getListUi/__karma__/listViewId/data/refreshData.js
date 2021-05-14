@@ -91,7 +91,7 @@ const entries = [
     },
 ];
 
-entries.forEach(async function(entry) {
+entries.forEach(async function (entry) {
     await helpers.requestGetAndSave(
         `/ui-api/${entry.endpoint}/${id}${entry.params}`,
         path.join(rootDir, `${entry.filename}.json`)

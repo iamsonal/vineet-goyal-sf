@@ -11,7 +11,7 @@ export function makePluginEnabledDurableStore(
 ): PluginEnabledDurableStore {
     const registeredPlugins: DurableStoreSetEntryPlugin[] = [];
 
-    const setEntries: typeof durableStore['setEntries'] = function<T>(
+    const setEntries: typeof durableStore['setEntries'] = function <T>(
         entries: DurableStoreEntries<T>,
         segment: string
     ): Promise<void> {
@@ -29,7 +29,7 @@ export function makePluginEnabledDurableStore(
         return durableStore.setEntries(entries, segment);
     };
 
-    const registerPlugins = function(plugins: DurableStoreSetEntryPlugin[]) {
+    const registerPlugins = function (plugins: DurableStoreSetEntryPlugin[]) {
         for (let i = 0, len = plugins.length; i < len; i++) {
             registeredPlugins.push(plugins[i]);
         }

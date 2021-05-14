@@ -36,7 +36,7 @@ describe('non-GET request', () => {
             },
         });
         const fn = jest.spyOn(aura, 'executeGlobalController').mockImplementation(() => {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 setTimeout(() =>
                     resolve({
                         id: '1234',
@@ -55,7 +55,7 @@ describe('identical GET request', () => {
     it('dedupes inflight GET requests', async () => {
         const request = buildResourceRequest({ method: 'get', basePath: '/records/1234' });
         const fn = jest.spyOn(aura, 'executeGlobalController').mockImplementation(() => {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 setTimeout(() => resolve({}));
             });
         });
@@ -72,7 +72,7 @@ describe('identical GET request', () => {
     it('does not clone for non-deduped request', async () => {
         const request = buildResourceRequest({ method: 'get', basePath: '/records/1234' });
         const fn = jest.spyOn(aura, 'executeGlobalController').mockImplementation(() => {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 setTimeout(() => resolve({}));
             });
         });
@@ -90,17 +90,17 @@ describe('identical GET request', () => {
         const request = buildResourceRequest({ method: 'get', basePath: '/records/1234' });
         const ret = { foo: 'bar' };
         const fn = jest.spyOn(aura, 'executeGlobalController').mockImplementation(() => {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 setTimeout(() => resolve(ret));
             });
         });
 
         const [, response2] = await Promise.all([
-            networkAdapter(request).then(res => {
+            networkAdapter(request).then((res) => {
                 res.body.foo = 'mutated by first request';
             }),
             networkAdapter(request),
-            networkAdapter(request).then(res => {
+            networkAdapter(request).then((res) => {
                 res.body.foo = 'mutated by last request';
             }),
         ]);
@@ -113,7 +113,7 @@ describe('identical GET request', () => {
 describe('identical GET request per fulfill', () => {
     it('dedupes inflight GET requests when fulfill returns true', async () => {
         const fn = jest.spyOn(aura, 'executeGlobalController').mockImplementation(() => {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 setTimeout(() => resolve({}));
             });
         });
@@ -133,7 +133,7 @@ describe('identical GET request per fulfill', () => {
 
     it('does not dedupe inflight GET requests when fulfill returns false', async () => {
         const fn = jest.spyOn(aura, 'executeGlobalController').mockImplementation(() => {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 setTimeout(() => resolve({}));
             });
         });

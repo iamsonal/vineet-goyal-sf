@@ -346,10 +346,8 @@ describe('refresh', () => {
             mockRecordUiData.layoutUserStates[layoutUserStateId]
         );
         const sectionUserStateId = Object.keys(mockLayoutUserStateDataUpdated.sectionUserStates)[0];
-        mockLayoutUserStateDataUpdated.sectionUserStates[
-            sectionUserStateId
-        ].collapsed = !mockLayoutUserStateDataUpdated.sectionUserStates[sectionUserStateId]
-            .collapsed;
+        mockLayoutUserStateDataUpdated.sectionUserStates[sectionUserStateId].collapsed =
+            !mockLayoutUserStateDataUpdated.sectionUserStates[sectionUserStateId].collapsed;
 
         const configRecordUi = {
             recordIds: recordId,

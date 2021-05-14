@@ -698,7 +698,7 @@ function instrumentMethod(
         const originalMethod = obj[methodName];
         const methodTimer = timer(method.metricKey);
 
-        obj[methodName] = function(...args: any[]): any {
+        obj[methodName] = function (...args: any[]): any {
             markStart(NAMESPACE, methodName);
             const startTime = Date.now();
             const res = originalMethod.call(this, ...args);

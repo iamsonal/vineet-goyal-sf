@@ -148,9 +148,9 @@ function network(
     const request = getApexRequest(requestConfig);
 
     return luvio.dispatchResourceRequest<any>(request).then(
-        resp => {
+        (resp) => {
             const { cacheable } = resp.headers;
-            if (((cacheable as unknown) as boolean) === true) {
+            if ((cacheable as unknown as boolean) === true) {
                 luvio.storePublish(recordId + '_cacheable', resp.headers);
                 luvio.storeIngest(recordId, apexResponseIngest, resp.body);
                 luvio.storeBroadcast();

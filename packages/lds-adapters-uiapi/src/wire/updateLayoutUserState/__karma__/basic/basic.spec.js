@@ -29,8 +29,8 @@ describe('Update layoutUserState', () => {
         const firstSectionUserStateId = Object.keys(mock.sectionUserStates)[0];
         const updatedMock = getMock('layoutUserState-Account-Full-View');
 
-        updatedMock.sectionUserStates[firstSectionUserStateId].collapsed = !updatedMock
-            .sectionUserStates[firstSectionUserStateId].collapsed;
+        updatedMock.sectionUserStates[firstSectionUserStateId].collapsed =
+            !updatedMock.sectionUserStates[firstSectionUserStateId].collapsed;
         const sectionUserStateInput = {
             sectionUserStates: {
                 [firstSectionUserStateId]: {
@@ -60,8 +60,8 @@ describe('Update layoutUserState', () => {
         const mock = getMock('layoutUserState-Account-Full-View');
         const firstSectionUserStateId = Object.keys(mock.sectionUserStates)[0];
         const updatedMock = getMock('layoutUserState-Account-Full-View');
-        updatedMock.sectionUserStates[firstSectionUserStateId].collapsed = !updatedMock
-            .sectionUserStates[firstSectionUserStateId].collapsed;
+        updatedMock.sectionUserStates[firstSectionUserStateId].collapsed =
+            !updatedMock.sectionUserStates[firstSectionUserStateId].collapsed;
         const sectionUserStateInput = {
             sectionUserStates: {
                 [firstSectionUserStateId]: {
@@ -101,8 +101,8 @@ describe('Update layoutUserState', () => {
 
         const updatedMock = getMock('layoutUserState-Account-Full-View');
 
-        updatedMock.sectionUserStates[firstSectionUserStateId].collapsed = !updatedMock
-            .sectionUserStates[firstSectionUserStateId].collapsed;
+        updatedMock.sectionUserStates[firstSectionUserStateId].collapsed =
+            !updatedMock.sectionUserStates[firstSectionUserStateId].collapsed;
         const sectionUserStateInput = {
             sectionUserStates: {
                 [firstSectionUserStateId]: {

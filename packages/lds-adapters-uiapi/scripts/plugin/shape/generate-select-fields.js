@@ -8,10 +8,10 @@ function generateShapeFieldsSelect(shape, state) {
     const { RECORD_FIELD_TRIE, FRAGMENT_IMPORT, CREATE_FIELDS_SELECTION } = importsMap;
     const dynamicSelectImport = importRamlArtifact(shape.id, 'dynamicSelect');
     const statements = shape.properties
-        .filter(prop => {
+        .filter((prop) => {
             return prop.containsFields === true || prop.isFieldsProperty === true;
         })
-        .map(prop => {
+        .map((prop) => {
             const { shapeName, name: propName } = prop;
             if (prop.containsFields === true) {
                 const childSelectFieldsImport = namedImport(`./${shapeName}`, SELECT_FIELDS);

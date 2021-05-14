@@ -80,12 +80,12 @@ function resolveDrafts(
 ) {
     return durableStore
         .getEntries<DurableRecordRepresentation>(recordKeys, DefaultDurableSegment)
-        .then(entries => {
+        .then((entries) => {
             if (entries === undefined) {
                 return;
             }
 
-            return getDraftActionsForRecords(recordKeys).then(actions => {
+            return getDraftActionsForRecords(recordKeys).then((actions) => {
                 const updatedRecords: {
                     [key: string]: DurableStoreEntry<DurableRecordRepresentation>;
                 } = {};
@@ -167,7 +167,7 @@ export function makeDurableStoreDraftAware(
     getDraftActionsForRecords: GetDraftActionsForRecords,
     userId: string
 ): DurableStore {
-    const setEntries: typeof durableStore['setEntries'] = function<T>(
+    const setEntries: typeof durableStore['setEntries'] = function <T>(
         entries: DurableStoreEntries<T>,
         segment: string
     ): Promise<void> {
@@ -178,7 +178,7 @@ export function makeDurableStoreDraftAware(
         // change made to a draft action require affected records to be resolved
         return durableStore.setEntries(entries, segment).then(() => {
             return persistDraftCreates(
-                (entries as unknown) as DurableStoreEntries<DraftAction<RecordRepresentation>>,
+                entries as unknown as DurableStoreEntries<DraftAction<RecordRepresentation>>,
                 durableStore,
                 userId
             ).then(() => {
@@ -192,7 +192,7 @@ export function makeDurableStoreDraftAware(
         });
     };
 
-    const evictEntries: typeof durableStore['evictEntries'] = function<T>(
+    const evictEntries: typeof durableStore['evictEntries'] = function <T>(
         entryIds: string[],
         segment: string
     ) {
@@ -207,7 +207,7 @@ export function makeDurableStoreDraftAware(
             );
     };
 
-    const batchOperations: typeof durableStore['batchOperations'] = function<T>(
+    const batchOperations: typeof durableStore['batchOperations'] = function <T>(
         operations: DurableStoreOperation<T>[]
     ): Promise<void> {
         let changedDraftKeys: string[] = [];
@@ -228,7 +228,7 @@ export function makeDurableStoreDraftAware(
                 changedDraftKeys = changedDraftKeys.concat(keys);
                 persistOperations.push(
                     persistDraftCreates(
-                        (operation.entries as unknown) as DurableStoreEntries<
+                        operation.entries as unknown as DurableStoreEntries<
                             DraftAction<RecordRepresentation>
                         >,
                         durableStore,

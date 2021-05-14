@@ -6,7 +6,7 @@ import mockRecordUI from './mocks/custom-proto-medium-record-ui';
 import { WARM_UP_ITERATION_COUNT, TIMESTAMP } from './shared';
 
 const DEFAULT_STORE_ID = 'DEFAULT_STORE_ID';
-const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
+const rejectNetworkAdapter = (_) => Promise.reject(new Error('not implemented'));
 
 function clone(data, iteration) {
     const copy = JSON.parse(data);

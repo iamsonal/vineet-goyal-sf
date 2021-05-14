@@ -132,7 +132,7 @@ export function buildNetworkSnapshot(luvio: Luvio, config: GetRecordConfig) {
     const { request, key, allTrackedFields } = prepareRequest(luvio, config);
 
     return luvio.dispatchResourceRequest<RecordRepresentation>(request).then(
-        response => {
+        (response) => {
             return onResourceSuccess(luvio, config, key, allTrackedFields, response);
         },
         (err: FetchResponse<unknown>) => {
@@ -149,7 +149,7 @@ export function resolveUnfulfilledSnapshot(
     const { request, key, allTrackedFields } = prepareRequest(luvio, config);
 
     return luvio.resolveUnfulfilledSnapshot<RecordRepresentation>(request, snapshot).then(
-        response => {
+        (response) => {
             return onResourceSuccess(luvio, config, key, allTrackedFields, response);
         },
         (err: FetchResponse<unknown>) => {

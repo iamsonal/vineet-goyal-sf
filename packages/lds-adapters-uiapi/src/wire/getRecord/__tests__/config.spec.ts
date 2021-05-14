@@ -19,7 +19,7 @@ describe('validation', () => {
         ).toBeNull();
     });
 
-    ['childRelationships', 'pageSize', 'updateMru'].forEach(prop => {
+    ['childRelationships', 'pageSize', 'updateMru'].forEach((prop) => {
         it(`throws a TypeError when passing ${prop}`, () => {
             expect(() =>
                 getRecord({} as any)({

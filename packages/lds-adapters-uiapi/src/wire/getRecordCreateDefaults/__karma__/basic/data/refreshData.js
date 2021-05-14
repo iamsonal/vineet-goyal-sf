@@ -11,9 +11,9 @@ try {
     const [recordType1, recordType2] = (
         await $conn.describeSObject('TestEntity__c')
     ).recordTypeInfos
-        .filter(rti => rti.name !== 'Master')
+        .filter((rti) => rti.name !== 'Master')
         .sort((rti1, rti2) => (rti1.name < rti2.name ? -1 : rti1.name > rti2.name ? 1 : 0))
-        .map(rti => rti.recordTypeId);
+        .map((rti) => rti.recordTypeId);
 
     const entries = [
         {
@@ -55,7 +55,7 @@ try {
         },
     ];
 
-    entries.forEach(async function({ endpoint, filename }) {
+    entries.forEach(async function ({ endpoint, filename }) {
         await helpers.requestGetAndSave(
             `/ui-api/${endpoint}`,
             path.join(rootDir, `${filename}.json`)

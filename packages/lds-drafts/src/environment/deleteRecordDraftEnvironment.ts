@@ -63,7 +63,7 @@ export function deleteRecordDraftEnvironment(
 ): DurableEnvironment {
     const draftDeleteSet = new Set<string>();
 
-    const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function(
+    const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function (
         resourceRequest: ResourceRequest
     ) {
         if (isRequestDeleteRecord(resourceRequest) === false) {
@@ -87,7 +87,7 @@ export function deleteRecordDraftEnvironment(
         });
     };
 
-    const storeEvict: DurableEnvironment['storeEvict'] = function(key: string) {
+    const storeEvict: DurableEnvironment['storeEvict'] = function (key: string) {
         // when a storeEvict is called immediately following a draft delete, ensure that it
         // only gets evicted from the in-memory store, we need to keep the record in durable store
         // until the action to delete it on the server succeeds.

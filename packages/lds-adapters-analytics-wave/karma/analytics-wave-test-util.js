@@ -751,16 +751,8 @@ function mockGetWaveFoldersNetworkErrorOnce(config, mockData) {
 }
 
 function getWaveFoldersMatcher(config) {
-    let {
-        templateSourceId,
-        page,
-        pageSize,
-        q,
-        sort,
-        isPinned,
-        scope,
-        mobileOnlyFeaturedAssets,
-    } = config;
+    let { templateSourceId, page, pageSize, q, sort, isPinned, scope, mobileOnlyFeaturedAssets } =
+        config;
 
     return sinon.match({
         body: null,

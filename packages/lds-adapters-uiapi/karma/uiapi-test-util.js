@@ -159,7 +159,7 @@ function mockGetRecordsNetwork(config, mockData) {
     const allRecordIds = [],
         allFields = [],
         allOptionalFields = [];
-    config.records.forEach(rec => {
+    config.records.forEach((rec) => {
         const { recordIds = [], fields = [], optionalFields = [] } = rec;
         allRecordIds.push(...recordIds);
         allFields.push(...fields);
@@ -823,7 +823,7 @@ function extractRecordFields(record, options) {
     if (options) {
         const { omit, add } = options;
         if (omit) {
-            fields = fields.filter(name => options.omit.indexOf(name) === -1);
+            fields = fields.filter((name) => options.omit.indexOf(name) === -1);
         }
         if (add) {
             fields.push(...add);
@@ -840,7 +840,7 @@ function convertRelatedListsBatchParamsToResourceParams(parameters) {
     var optionalFields = [];
     var pageSize = [];
     var sortBy = [];
-    parameters.relatedLists.forEach(relatedList => {
+    parameters.relatedLists.forEach((relatedList) => {
         relatedListIds.push(relatedList.relatedListId);
         if (relatedList.fields && relatedList.fields.length) {
             fields.push(relatedList.relatedListId + ':' + relatedList.fields.join());
@@ -874,11 +874,11 @@ function convertRelatedListsBatchParamsToResourceParams(parameters) {
 
 function extractRelatedListsBatchParamsFromMockData(mockData) {
     if (mockData.results && mockData.results.length > 0) {
-        const parentRecordId = mockData.results.find(item => item.result.listReference).result
+        const parentRecordId = mockData.results.find((item) => item.result.listReference).result
             .listReference.inContextOfRecordId;
         const relatedLists = mockData.results
-            .filter(result => result.result.listReference)
-            .map(item => {
+            .filter((result) => result.result.listReference)
+            .map((item) => {
                 return {
                     relatedListId: item.result.listReference.relatedListId,
                     fields: item.result.fields,

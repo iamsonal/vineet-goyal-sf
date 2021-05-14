@@ -103,7 +103,7 @@ export function updateRecordDraftEnvironment(
         apiNameForPrefix,
     }: UpdateRecordDraftEnvironmentOptions
 ): DurableEnvironment {
-    const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function(
+    const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function (
         resourceRequest: ResourceRequest
     ) {
         if (isRequestUpdateRecord(resourceRequest) === false) {
@@ -128,7 +128,7 @@ export function updateRecordDraftEnvironment(
             .catch(() => {
                 throw createInternalErrorResponse();
             })
-            .then(entries => {
+            .then((entries) => {
                 if (entries === undefined) {
                     return fetchRecord(resolvedRequest, key, targetId).then(() => {
                         return enqueueRequest(resolvedRequest, key, targetId);
@@ -143,10 +143,10 @@ export function updateRecordDraftEnvironment(
         const recordFields = getRecordFieldsFromRecordRequest(request);
         const prefix = recordId.substring(0, 3);
 
-        return apiNameForPrefix(prefix).then(apiName => {
+        return apiNameForPrefix(prefix).then((apiName) => {
             const fields: RequestFields = {
-                fields: recordFields.fields.map(f => `${apiName}.${f}`),
-                optionalFields: recordFields.optionalFields.map(f => `${apiName}.${f}`),
+                fields: recordFields.fields.map((f) => `${apiName}.${f}`),
+                optionalFields: recordFields.optionalFields.map((f) => `${apiName}.${f}`),
             };
 
             return Promise.resolve(
@@ -183,7 +183,7 @@ export function updateRecordDraftEnvironment(
                 .catch(() => {
                     throw createInternalErrorResponse();
                 })
-                .then(record => {
+                .then((record) => {
                     if (record === undefined) {
                         throw createDraftSynthesisErrorResponse();
                     }

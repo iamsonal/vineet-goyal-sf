@@ -20,7 +20,7 @@ export function buildNetworkSnapshot(
             // if delete request is successful, remove id-name mapping from nameToIdCache
             datasetNameToIdCache.remove(config.datasetIdOrApiName);
         },
-        response => {
+        (response) => {
             throw response;
         }
     );

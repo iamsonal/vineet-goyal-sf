@@ -279,7 +279,7 @@ describe('getTrackedFields', () => {
         // Name: SP-5089528, RecordId: a1nxx000001hGmbAAE
         const dep6Key = keyBuilder({ recordId: 'a1nxx000001hGmbAAE' });
         const dep6Fields = getTrackedFields(dep6Key, luvio.getNode(dep6Key), []);
-        const violators = dep6Fields.filter(field => field.split('.').length > 7); // root + 6
+        const violators = dep6Fields.filter((field) => field.split('.').length > 7); // root + 6
         expect(violators.length).toEqual(0);
     });
 

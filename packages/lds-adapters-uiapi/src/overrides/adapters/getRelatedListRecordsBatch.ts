@@ -47,7 +47,7 @@ export function coerceActualAdapterConfigToGeneratedRepresentation(
     var pageSize: Array<string> = [];
     var sortBy: Array<string> = [];
 
-    config.relatedLists.forEach(relatedList => {
+    config.relatedLists.forEach((relatedList) => {
         relatedListIds.push(relatedList.relatedListId);
         if (!!relatedList.fields && relatedList.fields.length) {
             fields.push(relatedList.relatedListId + ':' + relatedList.fields.join());
@@ -131,7 +131,8 @@ export function typeCheckConfig(
                         }
                     }
 
-                    untrustedConfig_relatedListIds_item.optionalFields = untrustedConfig_optionalFields_array;
+                    untrustedConfig_relatedListIds_item.optionalFields =
+                        untrustedConfig_optionalFields_array;
                 }
 
                 const untrustedConfig_pageSize = untrustedConfig_relatedListIds_item.pageSize;

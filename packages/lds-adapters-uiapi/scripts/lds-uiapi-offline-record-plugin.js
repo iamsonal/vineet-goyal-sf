@@ -97,7 +97,7 @@ function recursivelyFindRecordReps(shape, modelInfo, currentPath, recordLocation
  * @returns {void}
  */
 function generateRecordRetrievers(compilerConfig, modelInfo) {
-    const resources = modelInfo.resources.filter(resource => resource.adapter !== undefined);
+    const resources = modelInfo.resources.filter((resource) => resource.adapter !== undefined);
 
     const exports = [];
     const handlers = [];

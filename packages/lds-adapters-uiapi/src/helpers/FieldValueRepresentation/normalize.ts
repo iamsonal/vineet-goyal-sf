@@ -40,5 +40,5 @@ export default function normalize(
         ) as any;
     }
 
-    return (input as unknown) as FieldValueRepresentationNormalized;
+    return input as unknown as FieldValueRepresentationNormalized;
 }

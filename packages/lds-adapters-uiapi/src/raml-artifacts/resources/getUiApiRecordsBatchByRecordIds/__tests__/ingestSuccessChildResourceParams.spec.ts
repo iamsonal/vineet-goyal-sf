@@ -27,7 +27,7 @@ describe('ingestSuccessChildResourceParams', () => {
     const fields = ['Account.City', 'Account.Id'];
     const optionalFields = ['Account.LastModifiedBy'];
 
-    const makeParams = recordId => ({
+    const makeParams = (recordId) => ({
         urlParams: {
             recordId,
         },

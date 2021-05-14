@@ -33,7 +33,7 @@ module.exports = Object.assign({}, basePlugin, {
             const [, folder, file] = key.split('/');
             if (ramlId.endsWith(key)) {
                 const artifacts = RAML_ARTIFACTS[key];
-                const match = artifacts.find(item => item === identifier);
+                const match = artifacts.find((item) => item === identifier);
 
                 if (match) {
                     return {

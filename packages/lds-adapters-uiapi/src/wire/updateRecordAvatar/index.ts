@@ -42,7 +42,7 @@ export const factory = (luvio: Luvio) => {
         };
         const request = postUiApiRecordAvatarsAssociationByRecordId(resourceParams);
         return luvio.dispatchResourceRequest<AbstractRecordAvatarRepresentation>(request).then(
-            response => {
+            (response) => {
                 const { body } = response;
                 const key = keyBuilderFromType(body);
                 let selectors;

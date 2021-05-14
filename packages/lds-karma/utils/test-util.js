@@ -61,11 +61,11 @@ function stripEtags(obj) {
  * @returns {object} The payload in JSON format
  */
 function stripProperties(obj, props) {
-    props.forEach(prop => {
+    props.forEach((prop) => {
         delete obj[prop];
     });
 
-    Object.keys(obj).forEach(key => {
+    Object.keys(obj).forEach((key) => {
         const value = obj[key];
         if (typeof value === 'object' && value !== null) {
             stripProperties(value, props);
@@ -95,7 +95,7 @@ function mockNetworkSequence(adapter, args, responses, headers = []) {
         adapter
             .withArgs(args)
             .onCall(index)
-            .callsFake(function() {
+            .callsFake(function () {
                 MOCK_NETWORK_CALLS += 1;
 
                 const header = headers[index] ? clone(headers[index]) : null;
@@ -118,7 +118,7 @@ function mockNetworkSequence(adapter, args, responses, headers = []) {
             });
     });
 
-    adapter.callsFake(request => {
+    adapter.callsFake((request) => {
         throw new Error(
             `Network adapter stub gets invoked with unexpected resource request:\n${JSON.stringify(
                 request,
@@ -246,7 +246,7 @@ function verifyImmutable(value, path) {
         throw new Error(`Unexpected mutable property found at ${path}: Object is extensible!`);
     }
 
-    Object.keys(value).forEach(key => {
+    Object.keys(value).forEach((key) => {
         if (
             verifyMutationThrows(() => {
                 const old = value[key];
@@ -300,7 +300,7 @@ function clearCache() {
  * finish rerendering after a state change.
  */
 function flushPromises() {
-    return new Promise(resolve => setTimeout(resolve));
+    return new Promise((resolve) => setTimeout(resolve));
 }
 
 export {

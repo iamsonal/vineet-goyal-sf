@@ -39,9 +39,9 @@ function getMissingRecordLookupFields(
     return ObjectKeys(lookupFields);
 }
 
-export function getRecordUiMissingRecordLookupFields(
-    recordUi: RecordUiRepresentation
-): { [key: string]: string[] } {
+export function getRecordUiMissingRecordLookupFields(recordUi: RecordUiRepresentation): {
+    [key: string]: string[];
+} {
     const { records, objectInfos } = recordUi;
     const recordLookupFields: { [key: string]: string[] } = {};
     const recordIds = ObjectKeys(records);

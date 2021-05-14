@@ -14,7 +14,7 @@ function getMock(filename) {
 }
 
 describe('objectApiName', () => {
-    [undefined, null].forEach(value => {
+    [undefined, null].forEach((value) => {
         it(`should not make a network request if required param objectApiName is '${value}'`, async () => {
             const config = {
                 objectApiName: value,
@@ -81,7 +81,7 @@ describe('formFactor', () => {
 });
 
 describe('recordTypeId', () => {
-    [undefined, null].forEach(value => {
+    [undefined, null].forEach((value) => {
         it(`requests with master recordTypeId if recordTypeId is ${value}`, async () => {
             const mock = getMock('record-defaults-create-Account');
 
@@ -103,7 +103,7 @@ describe('recordTypeId', () => {
 });
 
 describe('optionalFields', () => {
-    [undefined, null].forEach(value => {
+    [undefined, null].forEach((value) => {
         it(`requests with empty array if optionalFields is ${value}`, async () => {
             const mock = getMock('record-defaults-create-Account');
 

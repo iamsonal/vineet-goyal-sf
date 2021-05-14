@@ -4,7 +4,7 @@ import { ingestRelatedListRecords } from '@salesforce/lds-adapters-uiapi';
 import mockRelatedListRecords from './mocks/custom-related-list-records';
 import { WARM_UP_ITERATION_COUNT, TIMESTAMP } from './shared';
 
-const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
+const rejectNetworkAdapter = (_) => Promise.reject(new Error('not implemented'));
 
 function clone(data) {
     return JSON.parse(data);

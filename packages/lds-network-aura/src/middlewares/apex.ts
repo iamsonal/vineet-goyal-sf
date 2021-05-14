@@ -40,7 +40,7 @@ function dispatchApexAction(
                 { cacheable: body.cacheable as any }
             );
         },
-        err => {
+        (err) => {
             // Handle ConnectedInJava exception shapes
             if (err.data !== undefined && err.data.statusCode !== undefined) {
                 const { data } = err;

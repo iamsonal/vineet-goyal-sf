@@ -1098,7 +1098,7 @@ describe('populating null nested record', () => {
             'record-ui-Opportunity-Account-layouttypes-Full-modes-View'
         );
         let mockOpportunityRecord, mockAccountRecord;
-        Object.keys(mockOpportunityAndAccountRecordUi.records).forEach(recordId => {
+        Object.keys(mockOpportunityAndAccountRecordUi.records).forEach((recordId) => {
             const record = mockOpportunityAndAccountRecordUi.records[recordId];
             if (record.apiName === 'Opportunity') {
                 mockOpportunityRecord = clone(record);

@@ -290,25 +290,21 @@ describe('DraftManager', () => {
     });
 
     describe('queue', () => {
-        it('starts when startQueue is called', async done => {
-            const startSpy = jest.fn(
-                (): Promise<void> => {
-                    done();
-                    return Promise.resolve();
-                }
-            );
+        it('starts when startQueue is called', async (done) => {
+            const startSpy = jest.fn((): Promise<void> => {
+                done();
+                return Promise.resolve();
+            });
             mockDraftQueue.startQueue = startSpy;
             manager.startQueue();
             expect(mockDraftQueue.startQueue).toBeCalledTimes(1);
         });
 
-        it('stops when stopQueue is called', async done => {
-            const stopSpy = jest.fn(
-                (): Promise<void> => {
-                    done();
-                    return Promise.resolve();
-                }
-            );
+        it('stops when stopQueue is called', async (done) => {
+            const stopSpy = jest.fn((): Promise<void> => {
+                done();
+                return Promise.resolve();
+            });
             mockDraftQueue.stopQueue = stopSpy;
             manager.stopQueue();
             expect(mockDraftQueue.stopQueue).toBeCalledTimes(1);
@@ -318,13 +314,11 @@ describe('DraftManager', () => {
     describe('swap action', () => {
         it('successfully swaps actions', async () => {
             const editAction = createEditDraftAction('mock123', 'mockKey', 'hi', 12355);
-            const swapSpy = jest.fn(
-                (actionId, forActionId): Promise<DraftAction<unknown>> => {
-                    expect(actionId).toBe('mockIdOne');
-                    expect(forActionId).toBe('mockIdTwo');
-                    return Promise.resolve(editAction);
-                }
-            );
+            const swapSpy = jest.fn((actionId, forActionId): Promise<DraftAction<unknown>> => {
+                expect(actionId).toBe('mockIdOne');
+                expect(forActionId).toBe('mockIdTwo');
+                return Promise.resolve(editAction);
+            });
             mockDraftQueue.replaceAction = swapSpy;
             const result = await manager.replaceAction('mockIdOne', 'mockIdTwo');
             expect(result.id).toBe(editAction.id);
@@ -333,18 +327,16 @@ describe('DraftManager', () => {
     });
 
     describe('metadata', () => {
-        it('calls draft queue metadata when saving', async done => {
-            const metadataSpy = jest.fn(
-                (actionId, metadata): Promise<DraftAction<unknown>> => {
-                    expect(actionId).toBe('foo');
-                    expect(metadata).toEqual({ bar: 'baz' });
-                    done();
-                    let action = createPostDraftAction('blah', 'target');
-                    action.id = 'foo';
-                    action.metadata = metadata;
-                    return Promise.resolve(action);
-                }
-            );
+        it('calls draft queue metadata when saving', async (done) => {
+            const metadataSpy = jest.fn((actionId, metadata): Promise<DraftAction<unknown>> => {
+                expect(actionId).toBe('foo');
+                expect(metadata).toEqual({ bar: 'baz' });
+                done();
+                let action = createPostDraftAction('blah', 'target');
+                action.id = 'foo';
+                action.metadata = metadata;
+                return Promise.resolve(action);
+            });
             mockDraftQueue.setMetadata = metadataSpy;
             const updatedItem = await manager.setMetadata('foo', { bar: 'baz' });
             expect(metadataSpy).toBeCalledTimes(1);
@@ -367,13 +359,13 @@ const MockDraftQueue = jest.fn(
             stopQueue: jest.fn(),
             replaceAction: jest.fn(),
             setMetadata: jest.fn(),
-            registerOnChangedListener: jest.fn((listener: DraftQueueChangeListener): (() => Promise<
-                void
-            >) => {
-                globalDraftQueueListener = listener;
-                return () => {
-                    return Promise.resolve();
-                };
-            }),
+            registerOnChangedListener: jest.fn(
+                (listener: DraftQueueChangeListener): (() => Promise<void>) => {
+                    globalDraftQueueListener = listener;
+                    return () => {
+                        return Promise.resolve();
+                    };
+                }
+            ),
         } as DraftQueue)
 );

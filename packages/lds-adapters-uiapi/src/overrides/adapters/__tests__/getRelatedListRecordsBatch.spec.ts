@@ -28,13 +28,11 @@ describe('getRelatedListRecordsBatch', () => {
         expect(coerceActualAdapterConfigToGeneratedRepresentation(standardAdapterInput)).toEqual({
             parentRecordId: 'aStandardRecordId',
             relatedListIds: ['relatedList1', 'relatedList2'],
-            fields:
-                'relatedList1:Opportunity.Name,Opportunity.Id;relatedList2:Account.Name,Account.Id',
+            fields: 'relatedList1:Opportunity.Name,Opportunity.Id;relatedList2:Account.Name,Account.Id',
             optionalFields:
                 'relatedList1:Account.Name,Account.Revenue;relatedList2:Opportunity.Name,Opportunity.Id',
             pageSize: 'relatedList1:10;relatedList2:6',
-            sortBy:
-                'relatedList1:Opportunity.Name,Account.Name;relatedList2:Account.Name,Account.Id',
+            sortBy: 'relatedList1:Opportunity.Name,Account.Name;relatedList2:Account.Name,Account.Id',
         });
     });
 });

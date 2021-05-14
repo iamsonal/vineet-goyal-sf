@@ -115,9 +115,9 @@ describe('makeNetworkBatchGetRelatedListRecordsFields', () => {
                 { fields: [], optionalFields: ['Contact.Name'] }
             );
 
-            const mockCompositeResponse: FetchResponse<CompositeResponseEnvelope<
-                RelatedListRecordCollectionRepresentation
-            >> = {
+            const mockCompositeResponse: FetchResponse<
+                CompositeResponseEnvelope<RelatedListRecordCollectionRepresentation>
+            > = {
                 status: HttpStatusCode.Ok,
                 body: {
                     compositeResponse: [
@@ -131,9 +131,8 @@ describe('makeNetworkBatchGetRelatedListRecordsFields', () => {
             };
 
             const mockNetworkAdapter = jest.fn().mockResolvedValue(mockCompositeResponse);
-            const lengthAwareNetworkAdapter = makeNetworkBatchGetRelatedListRecordsFields(
-                mockNetworkAdapter
-            );
+            const lengthAwareNetworkAdapter =
+                makeNetworkBatchGetRelatedListRecordsFields(mockNetworkAdapter);
 
             const queryParams = {
                 fields: generateMockedRecordFields(400),
@@ -201,9 +200,9 @@ describe('makeNetworkBatchGetRelatedListRecordsFields', () => {
                 { fields: [], optionalFields: ['Contact.Name'] }
             );
 
-            const mockCompositeResponse: FetchResponse<CompositeResponseEnvelope<
-                RelatedListRecordCollectionRepresentation
-            >> = {
+            const mockCompositeResponse: FetchResponse<
+                CompositeResponseEnvelope<RelatedListRecordCollectionRepresentation>
+            > = {
                 status: HttpStatusCode.Ok,
                 body: {
                     compositeResponse: [
@@ -217,9 +216,8 @@ describe('makeNetworkBatchGetRelatedListRecordsFields', () => {
             };
 
             const mockNetworkAdapter = jest.fn().mockResolvedValue(mockCompositeResponse);
-            const lengthAwareNetworkAdapter = makeNetworkBatchGetRelatedListRecordsFields(
-                mockNetworkAdapter
-            );
+            const lengthAwareNetworkAdapter =
+                makeNetworkBatchGetRelatedListRecordsFields(mockNetworkAdapter);
 
             const queryParams = {
                 fields: generateMockedRecordFields(400),
@@ -257,7 +255,7 @@ describe('makeNetworkBatchGetRelatedListRecordsFields', () => {
                 { fields: ['Contact.Id'], optionalFields: [] }
             );
 
-            responseChunk1.records = responseChunk1.records.map(record => {
+            responseChunk1.records = responseChunk1.records.map((record) => {
                 return {
                     ...record,
                     id: '1234',
@@ -274,9 +272,9 @@ describe('makeNetworkBatchGetRelatedListRecordsFields', () => {
                 { fields: [], optionalFields: ['Contact.Name'] }
             );
 
-            const mockCompositeResponse: FetchResponse<CompositeResponseEnvelope<
-                RelatedListRecordCollectionRepresentation
-            >> = {
+            const mockCompositeResponse: FetchResponse<
+                CompositeResponseEnvelope<RelatedListRecordCollectionRepresentation>
+            > = {
                 status: HttpStatusCode.Ok,
                 body: {
                     compositeResponse: [
@@ -290,9 +288,8 @@ describe('makeNetworkBatchGetRelatedListRecordsFields', () => {
             };
 
             const mockNetworkAdapter = jest.fn().mockResolvedValue(mockCompositeResponse);
-            const lengthAwareNetworkAdapter = makeNetworkBatchGetRelatedListRecordsFields(
-                mockNetworkAdapter
-            );
+            const lengthAwareNetworkAdapter =
+                makeNetworkBatchGetRelatedListRecordsFields(mockNetworkAdapter);
 
             const queryParams = {
                 fields: generateMockedRecordFields(400),

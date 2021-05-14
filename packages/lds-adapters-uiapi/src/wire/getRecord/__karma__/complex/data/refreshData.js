@@ -26,12 +26,11 @@ const entries = [
     {
         filename:
             'record-Opportunity-fields-Opportunity.Account.Name,Opportunity.Account.Owner.Name,Opportunity.Owner.City',
-        params:
-            '?fields=Opportunity.Account.Name,Opportunity.Account.Owner.Name,Opportunity.Owner.City',
+        params: '?fields=Opportunity.Account.Name,Opportunity.Account.Owner.Name,Opportunity.Owner.City',
     },
 ];
 
-entries.forEach(async function(entry) {
+entries.forEach(async function (entry) {
     await helpers.requestGetAndSave(
         `/ui-api/records/${id}${entry.params}`,
         path.join(rootDir, `${entry.filename}.json`)
@@ -45,7 +44,7 @@ const getRecordCreateDefaults = [
     },
 ];
 
-getRecordCreateDefaults.forEach(async function({ endpoint, filename }) {
+getRecordCreateDefaults.forEach(async function ({ endpoint, filename }) {
     await helpers.requestGetAndSave(`/ui-api/${endpoint}`, path.join(rootDir, `${filename}.json`));
 });
 

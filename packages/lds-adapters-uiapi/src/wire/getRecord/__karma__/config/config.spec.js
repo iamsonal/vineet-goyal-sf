@@ -62,7 +62,7 @@ describe('fields', () => {
         { type: 'string[]', fields: ['Opportunity.Name'] },
         { type: 'FieldId', fields: fieldId('Opportunity', 'Name') },
         { type: 'FieldId[]', fields: [fieldId('Opportunity', 'Name')] },
-    ].forEach(testCase => {
+    ].forEach((testCase) => {
         it(`gets record with required field as ${testCase.type}`, async () => {
             const mockData = getMock('record-Opportunity-fields-Opportunity.Name');
             const params = {
@@ -88,7 +88,7 @@ describe('fields', () => {
         { type: 'string[]', optionalFields: ['Opportunity.Name'] },
         { type: 'FieldId', optionalFields: fieldId('Opportunity', 'Name') },
         { type: 'FieldId[]', optionalFields: [fieldId('Opportunity', 'Name')] },
-    ].forEach(testCase => {
+    ].forEach((testCase) => {
         it(`gets record with optionalFields as ${testCase.type}`, async () => {
             const mockData = getMock('record-Opportunity-fields-Opportunity.Name');
             const params = {

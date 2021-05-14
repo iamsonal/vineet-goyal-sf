@@ -29,7 +29,7 @@ const config = {
  *  configFormat: string,
  * }} args
  */
-export default function(args) {
+export default function (args) {
     const sfdcConfigurations = sfdcConfiguration(config, {
         external: [
             './lds-apex-static-utils',

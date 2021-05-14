@@ -47,22 +47,20 @@ export default function merge(
         incoming.displayValue = existing.displayValue;
 
         // Temporary instrumentation to capture distribution and frequency, W-8990630
-        luvio.instrument(
-            (): LightningInteractionSchema => {
-                return {
-                    kind: 'interaction',
-                    target: 'merge',
-                    scope: 'lds-adapters-uiapi',
-                    context: {
-                        entityName: (path.parent!.data as RecordRepresentationNormalized).apiName,
-                        fieldName: path.propertyName,
-                    },
-                    eventSource: 'lds-dv-bandaid',
-                    eventType: 'system',
-                    attributes: null,
-                };
-            }
-        );
+        luvio.instrument((): LightningInteractionSchema => {
+            return {
+                kind: 'interaction',
+                target: 'merge',
+                scope: 'lds-adapters-uiapi',
+                context: {
+                    entityName: (path.parent!.data as RecordRepresentationNormalized).apiName,
+                    fieldName: path.propertyName,
+                },
+                eventSource: 'lds-dv-bandaid',
+                eventType: 'system',
+                attributes: null,
+            };
+        });
     }
 
     const { value } = incoming;

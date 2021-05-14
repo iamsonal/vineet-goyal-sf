@@ -21,7 +21,7 @@ export default class SaveQuestionnaire extends LightningElement {
                 this.assistantGroup = assistantGroup;
                 this.questionnaireData = data;
             })
-            .catch(error => {
+            .catch((error) => {
                 this.error = error;
             });
     }

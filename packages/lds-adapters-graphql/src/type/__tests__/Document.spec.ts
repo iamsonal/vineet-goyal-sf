@@ -37,20 +37,16 @@ describe('Document', () => {
                                                                 type: 'Record',
                                                                 luvioSelections: [
                                                                     {
-                                                                        kind:
-                                                                            'ObjectFieldSelection',
+                                                                        kind: 'ObjectFieldSelection',
                                                                         name: 'Name',
                                                                         luvioSelections: [
                                                                             {
-                                                                                kind:
-                                                                                    'ScalarFieldSelection',
+                                                                                kind: 'ScalarFieldSelection',
                                                                                 name: 'value',
                                                                             },
                                                                             {
-                                                                                kind:
-                                                                                    'ScalarFieldSelection',
-                                                                                name:
-                                                                                    'displayValue',
+                                                                                kind: 'ScalarFieldSelection',
+                                                                                name: 'displayValue',
                                                                             },
                                                                         ],
                                                                     },
@@ -210,20 +206,16 @@ describe('Document', () => {
                                                                 type: 'Record',
                                                                 luvioSelections: [
                                                                     {
-                                                                        kind:
-                                                                            'ObjectFieldSelection',
+                                                                        kind: 'ObjectFieldSelection',
                                                                         name: 'Name',
                                                                         luvioSelections: [
                                                                             {
-                                                                                kind:
-                                                                                    'ScalarFieldSelection',
+                                                                                kind: 'ScalarFieldSelection',
                                                                                 name: 'value',
                                                                             },
                                                                             {
-                                                                                kind:
-                                                                                    'ScalarFieldSelection',
-                                                                                name:
-                                                                                    'displayValue',
+                                                                                kind: 'ScalarFieldSelection',
+                                                                                name: 'displayValue',
                                                                             },
                                                                         ],
                                                                     },

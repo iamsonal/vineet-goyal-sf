@@ -64,7 +64,7 @@ describe('mobile runtime integration tests', () => {
             const networkSpy = jest.fn();
             const snapshot = await createRecord({ apiName: API_NAME, fields: { Name: 'Justin' } });
             expect(snapshot.state).toBe('Fulfilled');
-            const record = (snapshot.data as unknown) as DraftRecordRepresentation;
+            const record = snapshot.data as unknown as DraftRecordRepresentation;
             expect(networkSpy).toHaveBeenCalledTimes(0);
             expect(record.drafts.created).toBe(true);
         });

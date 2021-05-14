@@ -20,7 +20,7 @@ function getMock(filename) {
 }
 
 function getSinonParamsMatch({ endpoint, params = {} }) {
-    return sinon.match(config => {
+    return sinon.match((config) => {
         const { queryParams } = config;
         return (
             `${URL_BASE}/${endpoint}` === config.basePath && sinon.match(params).test(queryParams)
@@ -48,7 +48,7 @@ describe('getLookupRecords', () => {
     });
 
     function getEndpointEntry(reference) {
-        return endpointEntries.find(entryToMock => entryToMock.filename === reference);
+        return endpointEntries.find((entryToMock) => entryToMock.filename === reference);
     }
 
     it('handles empty record response', async () => {

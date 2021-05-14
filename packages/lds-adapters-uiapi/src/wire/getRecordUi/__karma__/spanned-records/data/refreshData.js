@@ -23,7 +23,7 @@ const opportunityId = await helpers.getOpportunityByName(OPPORTUNITY_NAME);
         queryString:
             '?layoutTypes=Full&modes=View&optionalFields=Opportunity.IsDeleted,Opportunity.OrderNumber__c',
     },
-].forEach(async function(entry) {
+].forEach(async function (entry) {
     await helpers.requestGetAndSave(
         `/ui-api/record-ui/${opportunityId}${entry.queryString}`,
         path.join(rootDir, `${entry.filename}.json`)
@@ -36,7 +36,7 @@ const opportunityId = await helpers.getOpportunityByName(OPPORTUNITY_NAME);
         filename: 'single-record-Account-layouttypes-Full-modes-View',
         queryString: '?layoutTypes=Full&modes=View',
     },
-].forEach(async function(entry) {
+].forEach(async function (entry) {
     await helpers.requestGetAndSave(
         `/ui-api/record-ui/${accountId}${entry.queryString}`,
         path.join(rootDir, `${entry.filename}.json`)
@@ -49,7 +49,7 @@ const opportunityId = await helpers.getOpportunityByName(OPPORTUNITY_NAME);
         filename: 'record-Account-fields-Account.Phone,Account.Id,Account.Name',
         queryString: '?fields=Account.Phone,Account.Id,Account.Name',
     },
-].forEach(async function(entry) {
+].forEach(async function (entry) {
     await helpers.requestGetAndSave(
         `/ui-api/records/${accountId}${entry.queryString}`,
         path.join(rootDir, `${entry.filename}.json`)

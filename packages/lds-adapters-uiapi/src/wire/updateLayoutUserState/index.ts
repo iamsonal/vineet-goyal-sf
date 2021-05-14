@@ -39,7 +39,7 @@ function updateLayoutUserState(
     updateRequest: ResourceRequest
 ) {
     return luvio.dispatchResourceRequest<RecordLayoutUserStateRepresentation>(updateRequest).then(
-        response => {
+        (response) => {
             return ingestAndBroadcast(luvio, key, config, response.body);
         },
         (err: FetchResponse<{ error: string }>) => {

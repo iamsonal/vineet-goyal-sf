@@ -509,7 +509,7 @@ describe('record-field-batching utils', () => {
             expect(actualUrl).toContain(`${BASE_URI}/ui-api/records`);
 
             // Verify fields
-            params.fields.forEach(field => {
+            params.fields.forEach((field) => {
                 expect(actualUrl).toContain(field);
             });
         });
@@ -538,7 +538,7 @@ describe('record-field-batching utils', () => {
             expect(actualUrl).toContain(`${BASE_URI}/ui-api/records`);
 
             // Verify fields
-            params.optionalFields.forEach(field => {
+            params.optionalFields.forEach((field) => {
                 expect(actualUrl).toContain(field);
             });
         });
@@ -566,10 +566,10 @@ describe('record-field-batching utils', () => {
             expect(actualUrl).toContain(`${BASE_URI}/ui-api/records`);
 
             // Verify fields
-            params.fields.forEach(field => {
+            params.fields.forEach((field) => {
                 expect(actualUrl).toContain(field);
             });
-            params.optionalFields.forEach(field => {
+            params.optionalFields.forEach((field) => {
                 expect(actualUrl).toContain(field);
             });
         });
@@ -688,7 +688,7 @@ describe('record-field-batching utils', () => {
             );
 
             expect(actualCompositeRequest.length).toBeGreaterThan(1);
-            actualCompositeRequest.forEach(requestChunk => {
+            actualCompositeRequest.forEach((requestChunk) => {
                 expect(requestChunk.referenceId.length).toBeGreaterThan(0);
                 expect(requestChunk.url.length).toBeGreaterThan(0);
             });

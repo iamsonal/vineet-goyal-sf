@@ -83,12 +83,8 @@ function getOrchestrationInstanceCollectionMatcher(config) {
 }
 
 function publishOrchestrationEventMatcher(config) {
-    let {
-        doesCancelOrchestrationInstance,
-        orchestrationInstanceId,
-        eventPayload,
-        stepInstanceId,
-    } = config;
+    let { doesCancelOrchestrationInstance, orchestrationInstanceId, eventPayload, stepInstanceId } =
+        config;
 
     return sinon.match({
         body: {

@@ -133,7 +133,7 @@ export function dispatchSplitRecordAggregateUiAction(
 
             return createOkResponse(merged);
         },
-        err => {
+        (err) => {
             if (instrumentationCallbacks && instrumentationCallbacks.rejectFn) {
                 instrumentationCallbacks.rejectFn({
                     err,
@@ -185,12 +185,8 @@ export function buildGetRecordByFieldsCompositeRequest(
         optionalFieldsLength: number;
     }
 ): CompositeRequest[] {
-    const {
-        fieldsArray,
-        optionalFieldsArray,
-        fieldsLength,
-        optionalFieldsLength,
-    } = recordsCompositeRequest;
+    const { fieldsArray, optionalFieldsArray, fieldsLength, optionalFieldsLength } =
+        recordsCompositeRequest;
     // Formula:  # of fields per chunk = floor(avg field length / max length per chunk)
     const averageFieldStringLength = Math.floor(
         (fieldsLength + optionalFieldsLength) / (fieldsArray.length + optionalFieldsArray.length)

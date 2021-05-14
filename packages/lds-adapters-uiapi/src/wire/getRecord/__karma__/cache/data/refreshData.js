@@ -40,7 +40,7 @@ async function writeOpportunityPayloads(opportunityId) {
         },
     ];
 
-    entries.forEach(async function(entry) {
+    entries.forEach(async function (entry) {
         await helpers.requestGetAndSave(
             `/ui-api/records/${opportunityId}${entry.params}`,
             path.join(rootDir, `${entry.filename}.json`)

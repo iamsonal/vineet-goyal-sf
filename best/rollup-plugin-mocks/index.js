@@ -13,7 +13,7 @@ const EXTERNALS = {
     'force/ldsEnvironmentSettings': path.join(SRC_DIR, '/mocks/ldsEnvironmentSettings.js'),
 };
 
-module.exports = function() {
+module.exports = function () {
     return {
         resolveId(importee) {
             // We need this override to import methods that aren't exposed at module level.

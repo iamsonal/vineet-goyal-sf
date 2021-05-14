@@ -87,7 +87,7 @@ function networkAdapter(resourceRequest: ResourceRequest): Promise<any> {
     // fallback to checking a custom deduper to find a similar (but not identical) request
     const similarTransactionKey = getFulfillingRequest(inflightRequests, resourceRequest);
     if (similarTransactionKey !== null) {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             // custom dedupers find similar (not identical) requests. if the similar request fails
             // there's no guarantee the deduped request should fail. thus we re-issue the
             // original request in the case of a failure
@@ -106,7 +106,7 @@ function networkAdapter(resourceRequest: ResourceRequest): Promise<any> {
     // when it resolves, clear the queue then invoke queued handlers
     // (must clear the queue first in case handlers re-invoke the network)
     controllerInvoker(resourceRequest, transactionKey).then(
-        response => {
+        (response) => {
             const handlers = inflightRequests[transactionKey];
             delete inflightRequests[transactionKey];
             // handlers mutate responses so must clone the response for each.
@@ -118,7 +118,7 @@ function networkAdapter(resourceRequest: ResourceRequest): Promise<any> {
             }
             handlers[0].resolve(response);
         },
-        error => {
+        (error) => {
             const handlers = inflightRequests[transactionKey];
             delete inflightRequests[transactionKey];
             for (let i = 0, len = handlers.length; i < len; i++) {

@@ -44,9 +44,7 @@ export function buildFooter(packageVersion) {
 export function readGitHash() {
     let hash;
     try {
-        hash = execSync('git rev-parse --short HEAD')
-            .toString()
-            .trim();
+        hash = execSync('git rev-parse --short HEAD').toString().trim();
     } catch (e) {
         //ignore
         hash = '';

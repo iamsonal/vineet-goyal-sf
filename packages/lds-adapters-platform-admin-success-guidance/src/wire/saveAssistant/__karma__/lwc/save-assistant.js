@@ -20,7 +20,7 @@ export default class SaveAssistant extends LightningElement {
                 this.assistantGroup = assistantGroup;
                 this.scenarioId = scenarioId;
             })
-            .catch(error => {
+            .catch((error) => {
                 this.error = error;
             });
     }

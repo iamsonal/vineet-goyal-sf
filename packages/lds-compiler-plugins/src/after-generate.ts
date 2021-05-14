@@ -22,7 +22,7 @@ const CREATE_LDS_ADAPTER = 'createLDSAdapter';
 const LDS_BINDINGS = '@salesforce/lds-bindings';
 
 function generateNpmModule(outputDir: string, adapters: AdapterInfo[]) {
-    const code = adapters.map(adapter => {
+    const code = adapters.map((adapter) => {
         const { name } = adapter;
         const factoryIdentifier = `${name}AdapterFactory`;
 
@@ -67,13 +67,13 @@ function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
         import { Luvio } from '@luvio/engine';
         import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}, ${CREATE_LDS_ADAPTER} } from '${LDS_BINDINGS}';
         import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
-        ${adapterNames.map(name => adapterCode[name].import).join('\n')}
+        ${adapterNames.map((name) => adapterCode[name].import).join('\n')}
 
-        ${adapterNames.map(name => 'let ' + name + ': any;').join('\n    ')}
+        ${adapterNames.map((name) => 'let ' + name + ': any;').join('\n    ')}
 
         function bindExportsTo(luvio: Luvio): { [key: string]: any } {
             return {
-                ${adapterNames.map(name => adapterCode[name].bind).join('\n')}
+                ${adapterNames.map((name) => adapterCode[name].bind).join('\n')}
             };
         }
 
@@ -92,8 +92,8 @@ function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
 export function afterGenerate(config: CompilerConfig, modelInfo: ModelInfo) {
     const apiFamily = buildApiFamilyFromKeyPrefix(modelInfo.keyPrefix);
     const adapters = modelInfo.resources
-        .filter(resource => resource.adapter !== undefined)
-        .map(resource => {
+        .filter((resource) => resource.adapter !== undefined)
+        .map((resource) => {
             const adapterInfo = {
                 apiFamily,
                 name: resource.adapter!.name,

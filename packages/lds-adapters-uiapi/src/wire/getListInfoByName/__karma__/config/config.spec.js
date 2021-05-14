@@ -2,7 +2,7 @@ import { setupElement } from 'test-util';
 import ListBasic from '../lwc/list-basic';
 
 describe('validation', () => {
-    ['objectApiName', 'listViewApiName'].forEach(param => {
+    ['objectApiName', 'listViewApiName'].forEach((param) => {
         it(`should not make an HTTP request if required param '${param}' is undefined`, async () => {
             const config = {
                 objectApiName: 'Account',

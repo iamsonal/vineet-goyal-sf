@@ -38,7 +38,7 @@ export function transform(node: ValueNode): LuvioValueNode {
                 kind: 'NullValue',
             };
         case 'ListValue': {
-            const values = node.values.map(value => {
+            const values = node.values.map((value) => {
                 return transform(value);
             });
 
@@ -50,7 +50,7 @@ export function transform(node: ValueNode): LuvioValueNode {
         case 'ObjectValue': {
             const { fields } = node;
             const result: { [name: string]: LuvioValueNode } = {};
-            fields.forEach(field => {
+            fields.forEach((field) => {
                 const name = field.name.value;
                 result[name] = transform(field.value);
             });

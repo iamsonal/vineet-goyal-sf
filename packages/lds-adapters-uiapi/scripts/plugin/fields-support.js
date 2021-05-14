@@ -119,7 +119,7 @@ function getSuffix(id) {
 
 function linkFieldImports(fieldsAst, addImportOverride) {
     const { resourcesWithFields } = fieldsAst;
-    Object.keys(resourcesWithFields).forEach(resourceId => {
+    Object.keys(resourcesWithFields).forEach((resourceId) => {
         const resource = resourcesWithFields[resourceId];
         const { adapter } = resource;
         if (adapter === undefined) {
@@ -179,7 +179,7 @@ module.exports = {
     afterGenerate: (compilerConfig, modelInfo, createGenerationContext) => {
         const generatedFieldsDir = path.join(compilerConfig.outputDir, 'fields');
         const { shapesWithFields, resourcesWithFields } = fieldsAst;
-        Object.keys(shapesWithFields).forEach(shapeId => {
+        Object.keys(shapesWithFields).forEach((shapeId) => {
             generateShape(
                 shapesWithFields[shapeId],
                 generatedFieldsDir,
@@ -188,7 +188,7 @@ module.exports = {
             );
         });
 
-        Object.keys(resourcesWithFields).forEach(resourceId => {
+        Object.keys(resourcesWithFields).forEach((resourceId) => {
             const resource = resourcesWithFields[resourceId];
             const { adapter } = resource;
             if (adapter === undefined) {

@@ -179,9 +179,7 @@ function checkCore(corePath) {
 function checkGitStatus() {
     console.log('* Check git status');
 
-    const currentBranch = execSync(`git branch | grep \\* | cut -d ' ' -f2`)
-        .toString()
-        .trim();
+    const currentBranch = execSync(`git branch | grep \\* | cut -d ' ' -f2`).toString().trim();
 
     if (!RELEASABLE_BRANCHES.includes(currentBranch)) {
         error(
@@ -243,10 +241,7 @@ function printCommits(corePath) {
 
     console.log('* Include commits:');
     let hash;
-    const version = execSync(`tail -n 1 ${corePath}`)
-        .toString()
-        .trim()
-        .split('-');
+    const version = execSync(`tail -n 1 ${corePath}`).toString().trim().split('-');
 
     if (CORE_BRANCH.endsWith('/patch') && version[2]) {
         hash = version[2];
@@ -295,7 +290,7 @@ function deployAdapterPackage() {
         repoAdapterPackageJson.sfdc.addition !== undefined
     ) {
         const utilModuleNames = repoAdapterPackageJson.sfdc.addition;
-        utilModuleNames.forEach(utilModuleName => {
+        utilModuleNames.forEach((utilModuleName) => {
             const coreUtilModulePath = path.resolve(
                 BLT_HOME,
                 'app',
@@ -313,7 +308,7 @@ function deployAdapterPackage() {
     }
 }
 
-(function() {
+(function () {
     if (argv.adapter !== undefined) {
         deployAdapterPackage();
         return;

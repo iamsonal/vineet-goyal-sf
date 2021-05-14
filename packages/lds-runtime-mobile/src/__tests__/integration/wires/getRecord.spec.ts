@@ -58,13 +58,13 @@ describe('mobile runtime integration tests', () => {
                 optionalFields: [
                     `${API_NAME}.Id`,
                     `${API_NAME}.Name`,
-                    ...generateMockedRecordFields(500).map(field => `${API_NAME}.${field}`),
+                    ...generateMockedRecordFields(500).map((field) => `${API_NAME}.${field}`),
                 ],
             };
 
-            const getRecordSnapshot = (await getRecord(getRecordConfig)) as Snapshot<
-                RecordRepresentation
-            >;
+            const getRecordSnapshot = (await getRecord(
+                getRecordConfig
+            )) as Snapshot<RecordRepresentation>;
 
             expect(getRecordSnapshot.state).toBe('Fulfilled');
             const record = getRecordSnapshot.data;

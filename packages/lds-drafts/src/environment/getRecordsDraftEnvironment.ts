@@ -132,16 +132,16 @@ function applyDraftsToBatchResponse(
 
     const fields = getRecordFieldsFromRecordRequest(resourceRequest) || [];
     const requestedIds = extractRecordIdsFromResourceRequest(resourceRequest) || [];
-    const promises = draftIds.map(draftId => {
+    const promises = draftIds.map((draftId) => {
         const draftKey = keyBuilderRecord({ recordId: draftId });
-        return durableStore.getDenormalizedRecord(draftKey).then(record => {
+        return durableStore.getDenormalizedRecord(draftKey).then((record) => {
             if (record === undefined) {
                 return;
             }
             return filterRecordFields(record, fields);
         });
     });
-    return Promise.all(promises).then(results => {
+    return Promise.all(promises).then((results) => {
         for (let i = 0; i < length; i++) {
             const record = results[i];
             if (record === undefined) {
@@ -245,7 +245,7 @@ export function getRecordsDraftEnvironment(
     env: DurableEnvironment,
     { durableStore, isDraftId }: DraftEnvironmentOptions
 ): DurableEnvironment {
-    const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function(
+    const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function (
         resourceRequest: ResourceRequest
     ) {
         if (isRequestForGetRecords(resourceRequest) === false) {
@@ -259,7 +259,7 @@ export function getRecordsDraftEnvironment(
             durableStore,
             isDraftId,
             (request: ResourceRequest, removedDraftIds: string[]) =>
-                env.dispatchResourceRequest<BatchRepresentation>(request).then(response => {
+                env.dispatchResourceRequest<BatchRepresentation>(request).then((response) => {
                     // check if any of the draft ids have been ingested since the request was dispatched.
                     // if some draft ids have become canonical, we must refetch the request including all ids
                     if (hasIdsChanged(removedDraftIds, env)) {
@@ -279,7 +279,7 @@ export function getRecordsDraftEnvironment(
         ) as any;
     };
 
-    const resolveUnfulfilledSnapshot: DurableEnvironment['resolveUnfulfilledSnapshot'] = function<
+    const resolveUnfulfilledSnapshot: DurableEnvironment['resolveUnfulfilledSnapshot'] = function <
         T
     >(
         resourceRequest: ResourceRequest,

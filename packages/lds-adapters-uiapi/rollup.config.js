@@ -64,7 +64,7 @@ const staticFunctions = {
     ],
 };
 
-export default args => {
+export default (args) => {
     const localConfigurations = localConfiguration(args, config, {
         plugins,
     });

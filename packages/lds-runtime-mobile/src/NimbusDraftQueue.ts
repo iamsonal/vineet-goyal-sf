@@ -28,11 +28,11 @@ export class NimbusDraftQueue implements DraftQueue {
                 serializedRequest,
                 tag,
                 targetId,
-                serializedAction => {
+                (serializedAction) => {
                     const response = JSONParse(serializedAction) as DraftAction<T>;
                     resolve(response);
                 },
-                serializedError => {
+                (serializedError) => {
                     reject(JSONParse(serializedError));
                 }
             );
@@ -44,11 +44,11 @@ export class NimbusDraftQueue implements DraftQueue {
         return new Promise((resolve, reject) => {
             __nimbus.plugins.LdsDraftQueue.getActionsForTags(
                 keys,
-                serializedMap => {
+                (serializedMap) => {
                     const map = JSONParse(serializedMap) as DraftActionMap;
                     resolve(map);
                 },
-                serializedError => {
+                (serializedError) => {
                     reject(JSONParse(serializedError));
                 }
             );

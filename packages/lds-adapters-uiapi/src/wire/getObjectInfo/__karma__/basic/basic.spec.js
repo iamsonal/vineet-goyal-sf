@@ -13,7 +13,7 @@ describe('getObjectInfo - basic', () => {
     [
         { name: 'string', value: 'Account' },
         { name: 'ObjectId', value: { objectApiName: 'Account' } },
-    ].forEach(testConfig => {
+    ].forEach((testConfig) => {
         it(`gets data when objectApiName is ${testConfig.name}`, async () => {
             const mockData = getMock('object-Account');
             const resourceConfig = { objectApiName: mockData.apiName };

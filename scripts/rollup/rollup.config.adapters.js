@@ -136,11 +136,11 @@ export function localConfiguration(args, config, overrides = {}) {
     const typesDir = getTypesDir(cwd);
 
     return defaultConfigs
-        .filter(config => configTarget === undefined || configTarget === config.target)
-        .map(config => {
+        .filter((config) => configTarget === undefined || configTarget === config.target)
+        .map((config) => {
             const output = config.formats
-                .filter(format => configFormat === undefined || configFormat === format)
-                .map(format => ({
+                .filter((format) => configFormat === undefined || configFormat === format)
+                .map((format) => ({
                     file: path.join(dist, format, config.target, `${fileName}.js`),
                     format,
                     name: bundleName,
@@ -171,5 +171,5 @@ export function localConfiguration(args, config, overrides = {}) {
  * @param {AdapterRollupConfig} config
  */
 export function rollup(config) {
-    return args => [...localConfiguration(args, config), ...sfdcConfiguration(config)];
+    return (args) => [...localConfiguration(args, config), ...sfdcConfiguration(config)];
 }

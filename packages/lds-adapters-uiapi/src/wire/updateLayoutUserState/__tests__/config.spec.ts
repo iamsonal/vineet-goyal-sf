@@ -5,7 +5,7 @@ const MASTER_RECORD_TYPE_ID = '012000000000000AAA';
 describe('validation', () => {
     it.each([undefined, null])(
         'throws an error when required param recordTypeId is %s',
-        recordTypeId => {
+        (recordTypeId) => {
             expect(() => {
                 updateLayoutUserState({} as any)('Account', recordTypeId, 'Full', 'View', {});
             }).toThrow('@wire(updateLayoutUserState) invalid configuration');

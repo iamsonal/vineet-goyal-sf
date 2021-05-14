@@ -18,11 +18,11 @@ const COMPAT_FILES = [
     require.resolve('./karma/dist/compat/uiapi-test-setup.js'),
 ];
 
-module.exports = config => {
+module.exports = (config) => {
     baseConfig(config);
 
     const compat = Boolean(config.compat);
-    const index = config.files.findIndex(file => file.endsWith('/global-setup.js'));
+    const index = config.files.findIndex((file) => file.endsWith('/global-setup.js'));
     const files = [
         ...config.files.slice(0, index + 1),
         ...(compat ? COMPAT_FILES : FILES),

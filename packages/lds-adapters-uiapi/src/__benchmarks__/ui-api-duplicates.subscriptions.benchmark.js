@@ -4,7 +4,7 @@ import { ingestDuplicatesRepresentation } from '@salesforce/lds-adapters-uiapi';
 import mockDuplicates from './mocks/duplicates-Lead';
 import { WARM_UP_ITERATION_COUNT, TIMESTAMP } from './shared';
 
-const rejectNetworkAdapter = _ => Promise.reject(new Error('not implemented'));
+const rejectNetworkAdapter = (_) => Promise.reject(new Error('not implemented'));
 
 function clone(data) {
     return JSON.parse(data);

@@ -36,7 +36,7 @@ describe('makeEnvironmentDraftAware', () => {
                     },
                 },
             });
-            const listeners = ((durableStore as unknown) as MockDurableStore).listeners;
+            const listeners = (durableStore as unknown as MockDurableStore).listeners;
             for (const listener of listeners) {
                 listener([
                     {

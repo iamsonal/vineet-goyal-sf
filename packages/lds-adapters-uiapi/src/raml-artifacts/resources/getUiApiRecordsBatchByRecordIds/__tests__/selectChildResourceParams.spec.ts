@@ -34,7 +34,7 @@ describe('selectChildResourceParams', () => {
     const fields = ['a', 'b', 'c'];
     const optionalFields = ['d', 'e', 'f'];
 
-    const makeParams = recordId => ({
+    const makeParams = (recordId) => ({
         urlParams: {
             recordId,
         },
@@ -136,9 +136,9 @@ describe('selectChildResourceParams', () => {
             'UiApi::RecordRepresentation:pending': pendingRecord,
             'UiApi::RecordRepresentation:stale': staleRecord,
         };
-        reader.read = jest.fn().mockImplementation(selector => records[selector.recordId]);
+        reader.read = jest.fn().mockImplementation((selector) => records[selector.recordId]);
         const recordIds = ['record1', 'record2', 'errored', 'unfulfilled', 'pending', 'stale'];
-        const params = recordIds.map(recordId => makeParams(recordId));
+        const params = recordIds.map((recordId) => makeParams(recordId));
         const fragment = selectChildResourceParams(luvio, params) as ReaderFragment;
         assertIsFragment(fragment);
         const result = fragment.read(reader);

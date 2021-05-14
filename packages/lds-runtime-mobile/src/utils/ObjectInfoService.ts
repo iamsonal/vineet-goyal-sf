@@ -26,7 +26,7 @@ export function objectInfoServiceFactory(
     function findInfo(info: { apiName?: string; prefix?: string }) {
         return durableStore
             .getAllEntries<ObjectInfoIndex>(OBJECT_INFO_PREFIX_SEGMENT)
-            .then(entries => {
+            .then((entries) => {
                 if (entries === undefined) {
                     throw missingObjectInfoError(info);
                 }
@@ -49,17 +49,17 @@ export function objectInfoServiceFactory(
     function objectInfoMapExists(apiName: string) {
         return durableStore
             .getEntries<ObjectInfoIndex>([apiName], OBJECT_INFO_PREFIX_SEGMENT)
-            .then(entries => entries !== undefined && entries[apiName] !== undefined);
+            .then((entries) => entries !== undefined && entries[apiName] !== undefined);
     }
 
     function ensureObjectInfoCached(apiName: string) {
-        return objectInfoMapExists(apiName).then(exists => {
+        return objectInfoMapExists(apiName).then((exists) => {
             if (!exists) {
                 return Promise.resolve(
                     getObjectInfo({
                         objectApiName: apiName,
                     })
-                ).then(snapshot => {
+                ).then((snapshot) => {
                     if (snapshot !== null && snapshot.data !== undefined) {
                         const apiName = snapshot.data.apiName;
                         const keyPrefix = snapshot.data.keyPrefix ?? '';

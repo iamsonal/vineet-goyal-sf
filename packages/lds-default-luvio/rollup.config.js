@@ -12,7 +12,7 @@ const ldsDefaultLuvioConfigs = [
     { formats: ['umd'], target: 'es5' },
 ]
     .map(({ formats, target }) =>
-        formats.map(format => ({
+        formats.map((format) => ({
             input: 'src/main.ts',
             external: ['@luvio/engine'],
             output: {

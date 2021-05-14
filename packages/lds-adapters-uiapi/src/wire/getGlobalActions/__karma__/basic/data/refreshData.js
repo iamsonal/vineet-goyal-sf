@@ -15,7 +15,7 @@ const helpers = require(helpersPath);
         filename: 'global-actions-apiNames',
         queryString: '?apiNames=Global.NewEvent,Global.NewContact',
     },
-].forEach(async entry => {
+].forEach(async (entry) => {
     await helpers.requestGetAndSave(
         `/ui-api/actions/global/${entry.queryString}`,
         path.join(rootDir, `${entry.filename}.json`)

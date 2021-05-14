@@ -10,7 +10,7 @@ function getMock(filename) {
 }
 
 describe('recordId', () => {
-    [undefined, null].forEach(value => {
+    [undefined, null].forEach((value) => {
         it(`should not make a network request if required param recordId is '${value}'`, async () => {
             const config = {
                 recordId: value,
@@ -44,7 +44,7 @@ describe('recordId', () => {
 });
 
 describe('recordTypeId', () => {
-    [undefined, null].forEach(value => {
+    [undefined, null].forEach((value) => {
         it(`requests with undefined if recordTypeId is ${value}`, async () => {
             const mock = getMock('record-template-clone-Custom_Object_2__c');
             const recordId = mock.record.cloneSourceId;
@@ -104,7 +104,7 @@ describe('recordTypeId', () => {
 });
 
 describe('optionalFields', () => {
-    [undefined, null].forEach(value => {
+    [undefined, null].forEach((value) => {
         it(`requests with undefined if optionalFields is ${value}`, async () => {
             const mock = getMock('record-template-clone-Custom_Object_2__c');
             const recordId = mock.record.cloneSourceId;

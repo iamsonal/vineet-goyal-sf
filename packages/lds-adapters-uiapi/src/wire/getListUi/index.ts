@@ -269,7 +269,7 @@ function onResourceSuccess_getListUi(
     // response might have records.sortBy in csv format
     const sortBy = body.records.sortBy;
     if (sortBy && typeof sortBy === 'string') {
-        body.records.sortBy = ((sortBy as unknown) as string).split(',');
+        body.records.sortBy = (sortBy as unknown as string).split(',');
     }
 
     const listUiKey = listUiRepresentation_keyBuilder({
@@ -323,7 +323,7 @@ function resolveUnfulfilledSnapshot_getListUi(
 ) {
     const request = prepareRequest_getListUi(config);
     return luvio.resolveUnfulfilledSnapshot<ListUiRepresentation>(request, snapshot).then(
-        response => {
+        (response) => {
             return onResourceSuccess_getListUi(luvio, context, config, response);
         },
         (err: FetchResponse<unknown>) => {
@@ -347,7 +347,7 @@ function buildNetworkSnapshot_getListUi(
     const request = prepareRequest_getListUi(config);
 
     return luvio.dispatchResourceRequest<ListUiRepresentation>(request).then(
-        response => {
+        (response) => {
             return onResourceSuccess_getListUi(luvio, context, config, response);
         },
         (err: FetchResponse<unknown>) => {
@@ -435,7 +435,7 @@ function onResourceSuccess_getListRecords(
     // response might have records.sortBy in csv format
     const { sortBy } = body;
     if (sortBy && typeof sortBy === 'string') {
-        body.sortBy = ((sortBy as unknown) as string).split(',');
+        body.sortBy = (sortBy as unknown as string).split(',');
     }
 
     const fields = listFields(luvio, config, listInfo).processRecords(body.records);
@@ -484,10 +484,10 @@ function resolveUnfulfilledSnapshot_getListRecords(
     return luvio
         .resolveUnfulfilledSnapshot<ListRecordCollectionRepresentation>(
             request,
-            (snapshot as unknown) as UnfulfilledSnapshot<ListRecordCollectionRepresentation, any>
+            snapshot as unknown as UnfulfilledSnapshot<ListRecordCollectionRepresentation, any>
         )
         .then(
-            response => {
+            (response) => {
                 return onResourceSuccess_getListRecords(luvio, context, config, listInfo, response);
             },
             (err: FetchResponse<unknown>) => {
@@ -506,7 +506,7 @@ function buildNetworkSnapshot_getListRecords(
     const request = prepareRequest_getListRecords(luvio, context, config, listInfo, snapshot);
 
     return luvio.dispatchResourceRequest<ListRecordCollectionRepresentation>(request).then(
-        response => {
+        (response) => {
             return onResourceSuccess_getListRecords(luvio, context, config, listInfo, response);
         },
         (err: FetchResponse<unknown>) => {
@@ -644,9 +644,11 @@ export const factory: AdapterFactory<
         const listInfoSnapshot = getListInfo(
             listRef,
             luvio,
-            (buildSnapshotRefresh(luvio, context, config) as unknown) as SnapshotRefresh<
-                ListInfoRepresentation
-            >
+            buildSnapshotRefresh(
+                luvio,
+                context,
+                config
+            ) as unknown as SnapshotRefresh<ListInfoRepresentation>
         );
 
         // if we have list info then build a snapshot from that
@@ -669,7 +671,7 @@ export const factory: AdapterFactory<
             // is special (polymorphic response, could either be a list-info representation or a
             // list-ui representation).
             return luvio.resolveUnfulfilledSnapshot(listUiResourceRequest, listInfoSnapshot).then(
-                response => {
+                (response) => {
                     // if result came from cache we know it's a listinfo, otherwise
                     // it's a full list-ui response
                     if (isResultListInfoRepresentation(response)) {
@@ -714,9 +716,8 @@ export const factory: AdapterFactory<
         // to listViewSummaryCollectionAdapter
         if (looksLikeGetListViewSummaryCollectionConfig(untrustedConfig)) {
             if (listViewSummaryCollectionAdapter === null) {
-                listViewSummaryCollectionAdapter = getListViewSummaryCollectionAdapterFactory(
-                    luvio
-                );
+                listViewSummaryCollectionAdapter =
+                    getListViewSummaryCollectionAdapterFactory(luvio);
             }
 
             return listViewSummaryCollectionAdapter(untrustedConfig);

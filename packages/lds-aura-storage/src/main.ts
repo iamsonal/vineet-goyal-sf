@@ -46,7 +46,7 @@ export function createStorage(config: AuraStorageConfig): AuraStorage | null {
 
 export function clearStorages(): Promise<void[]> {
     return Promise.all(
-        STORAGE_INSTANCES.map(storage => {
+        STORAGE_INSTANCES.map((storage) => {
             return storage.clear().catch(() => {}); // intentional noop on error
         })
     );

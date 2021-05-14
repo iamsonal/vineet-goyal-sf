@@ -31,7 +31,7 @@ describe('basic', () => {
 
         const parentRecordId = mockData.results[0].result.listReference.inContextOfRecordId;
         const relatedListNames = mockData.results.map(
-            result => result.result.listReference.relatedListId
+            (result) => result.result.listReference.relatedListId
         );
         const resourceConfig = {
             parentRecordId: parentRecordId,

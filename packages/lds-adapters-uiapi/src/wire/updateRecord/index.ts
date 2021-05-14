@@ -65,7 +65,7 @@ export const factory = (luvio: Luvio) => {
         const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie);
 
         return luvio.dispatchResourceRequest<RecordRepresentation>(request).then(
-            response => {
+            (response) => {
                 const { body } = response;
 
                 const sel = buildSelectionFromRecord(body);

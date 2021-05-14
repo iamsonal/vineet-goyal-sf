@@ -1,6 +1,6 @@
 import { setDefaultLuvio } from 'force/ldsEngine';
 
-export default function() {
+export default function () {
     const luvio = {
         withContext: jest.fn(),
     };

@@ -15,7 +15,7 @@ function getMock(filename) {
 }
 
 describe('validation', () => {
-    ['objectApiName', 'layoutType', 'mode'].forEach(param => {
+    ['objectApiName', 'layoutType', 'mode'].forEach((param) => {
         it(`should not make an HTTP request if required param ${param} is undefined`, async () => {
             const config = {
                 objectApiName: 'Account',
@@ -30,7 +30,7 @@ describe('validation', () => {
         });
     });
 
-    ['objectApiName', 'layoutType', 'mode'].forEach(param => {
+    ['objectApiName', 'layoutType', 'mode'].forEach((param) => {
         it(`should not make an HTTP request if required param '${param}' is null`, async () => {
             const config = {
                 objectApiName: 'Account',
@@ -45,7 +45,7 @@ describe('validation', () => {
         });
     });
 
-    ['layoutType', 'mode'].forEach(param => {
+    ['layoutType', 'mode'].forEach((param) => {
         it(`should not make an HTTP request if '${param}' is invalid value`, async () => {
             const config = {
                 objectApiName: 'Account',
@@ -60,7 +60,7 @@ describe('validation', () => {
         });
     });
 
-    ['layoutType', 'mode'].forEach(param => {
+    ['layoutType', 'mode'].forEach((param) => {
         it(`should not make an HTTP request if '${param}' is empty string`, async () => {
             const config = {
                 objectApiName: 'Account',

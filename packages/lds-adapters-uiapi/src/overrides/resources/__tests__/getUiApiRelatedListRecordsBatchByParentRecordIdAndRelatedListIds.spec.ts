@@ -17,8 +17,7 @@ const standardResourceRequestConfig: ResourceRequestConfig = {
         relatedListIds: ['relatedList1__r', 'relatedList2', 'relatedList1'],
     },
     queryParams: {
-        fields:
-            'relatedList1__r:Opportunity.Name,Opportunity.Id;relatedList2:Account.Name,Account.Revenue;relatedList1:Account.Name',
+        fields: 'relatedList1__r:Opportunity.Name,Opportunity.Id;relatedList2:Account.Name,Account.Revenue;relatedList1:Account.Name',
         optionalFields:
             'relatedList1__r:Opportunity.AccountName;relatedList2:Account.Id;relatedList1:Account.Id',
         pageSize: 'relatedList1__r:10;relatedList2:10;relatedList1:15',

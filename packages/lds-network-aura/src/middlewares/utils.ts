@@ -118,7 +118,7 @@ export function dispatchAction(
                 // need to wait for the store to resolve/reject before returning the value.
                 // Swallow the error to not have an unhandled promise rejection.
                 if (cacheConfig !== undefined && cacheConfig.storage !== null) {
-                    cacheConfig.storage.set(cacheConfig.key, body).catch(_error => {});
+                    cacheConfig.storage.set(cacheConfig.key, body).catch((_error) => {});
                 }
 
                 if (instrumentationCallbacks.resolveFn) {
@@ -130,7 +130,7 @@ export function dispatchAction(
 
                 return createOkResponse(body);
             },
-            err => {
+            (err) => {
                 if (instrumentationCallbacks.rejectFn) {
                     instrumentationCallbacks.rejectFn({
                         err,
@@ -165,7 +165,7 @@ export function dispatchAction(
     // Otherwise check for the action body in the cache. If action is not present in the cache or if
     // the cache lookup fails for any reason fallback to the network.
     return cacheConfig.storage.get(cacheConfig.key).then(
-        cacheResult => {
+        (cacheResult) => {
             if (cacheResult !== undefined) {
                 cacheConfig.statsLogger.logHits();
                 return createOkResponse(cacheResult);
@@ -244,13 +244,13 @@ export function shouldForceRefresh(resourceRequest: ResourceRequest): boolean {
 }
 
 export function registerApiFamilyRoutes(apiFamily: ApiFamily) {
-    ObjectKeys(apiFamily).forEach(adapterName => {
+    ObjectKeys(apiFamily).forEach((adapterName) => {
         const adapter = apiFamily[adapterName];
         const { method, predicate, transport } = adapter;
         appRouter[method](
             predicate,
             {
-                [`${adapterName}`]: function(resourceRequest: ResourceRequest): Promise<any> {
+                [`${adapterName}`]: function (resourceRequest: ResourceRequest): Promise<any> {
                     const actionConfig: DispatchActionConfig = {
                         action:
                             transport.action === undefined ? defaultActionConfig : transport.action,

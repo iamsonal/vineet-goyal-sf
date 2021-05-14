@@ -1,7 +1,7 @@
 import { clone, stripProperties } from 'test-util';
 
 function formatResults(recordIds, results) {
-    return results.reduce(function(seed, avatar, index) {
+    return results.reduce(function (seed, avatar, index) {
         const recordId = recordIds[index];
         seed[recordId] = avatar;
         return seed;
@@ -28,7 +28,7 @@ function stripActionsIds(result) {
 const matchers = {
     toEqualActionsBatchSnapshot: () => {
         return {
-            compare: function(actual, expected) {
+            compare: function (actual, expected) {
                 var stripped = clone(expected);
                 stripProperties(stripped, ['url', 'links']);
 
@@ -46,7 +46,7 @@ const matchers = {
     },
     toEqualActionsSnapshot: () => {
         return {
-            compare: function(actual, expected) {
+            compare: function (actual, expected) {
                 var stripped = clone(expected);
                 stripProperties(stripped, ['url', 'links']);
 
@@ -61,7 +61,7 @@ const matchers = {
 
     toEqualRecordAvatarsSnapshot: () => {
         return {
-            compare: function(actual, recordIds, expected) {
+            compare: function (actual, recordIds, expected) {
                 if (expected === undefined) {
                     throw new Error(
                         `Invalid use of "toEqualRecordAvatarsSnapshot". Must pass array of "recordIds" because server response does not have enough information to infer record id`
@@ -76,7 +76,7 @@ const matchers = {
 
     toEqualNavItemsSnapShot: () => {
         return {
-            compare: function(actual, expected) {
+            compare: function (actual, expected) {
                 var stripped = clone(expected);
                 stripProperties(stripped, ['currentPageUrl']);
 
@@ -88,7 +88,7 @@ const matchers = {
 
     toEqualBatchRecordSnapshot: () => {
         return {
-            compare: function(actual, expected) {
+            compare: function (actual, expected) {
                 var stripped = clone(expected);
                 stripProperties(stripped, ['hasErrors']);
 

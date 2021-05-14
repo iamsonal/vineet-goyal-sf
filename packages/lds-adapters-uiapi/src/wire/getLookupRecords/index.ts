@@ -105,7 +105,7 @@ function removeEtags(recordRep: RecordRepresentation) {
     delete recordRep.eTag;
     delete recordRep.weakEtag;
 
-    Object.keys(fields).forEach(fieldName => {
+    Object.keys(fields).forEach((fieldName) => {
         const { value: nestedValue } = fields[fieldName];
         if (isSpanningRecord(nestedValue)) {
             removeEtags(nestedValue);
@@ -133,7 +133,7 @@ export function buildNetworkSnapshot(luvio: Luvio, config: GetLookupRecordsConfi
     const request = getLookupRecordsResourceRequest(resourceParams);
 
     return luvio.dispatchResourceRequest<RecordCollectionRepresentation>(request).then(
-        response => {
+        (response) => {
             // TODO W-7235112 - remove this hack to never ingest lookup responses that
             // avoids issues caused by them not being real RecordRepresentations
             const key = keyBuilder(resourceParams);
@@ -168,7 +168,7 @@ export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRep
     luvio: Luvio
 ) => {
     return refreshable(
-        function(untrusted: unknown) {
+        function (untrusted: unknown) {
             const config = coerceConfigWithDefaults(untrusted);
             if (config === null) {
                 return null;

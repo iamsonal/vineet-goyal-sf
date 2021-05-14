@@ -119,7 +119,7 @@ export class NimbusDurableStore implements DurableStore {
 
         tasker.add();
         return __nimbus.plugins.LdsDurableStore.getEntriesInSegment(entryIds, segment)
-            .then(result => {
+            .then((result) => {
                 const { entries } = result;
 
                 const returnEntries: DurableStoreEntries<T> = ObjectCreate(null);
@@ -137,7 +137,7 @@ export class NimbusDurableStore implements DurableStore {
     getAllEntries<T>(segment: string): Promise<DurableStoreEntries<T> | undefined> {
         tasker.add();
         return __nimbus.plugins.LdsDurableStore.getAllEntriesInSegment(segment)
-            .then(result => {
+            .then((result) => {
                 const { isMissingEntries, entries } = result;
 
                 // if the segment isn't found then isMissingEntries will be set and
@@ -180,10 +180,9 @@ export class NimbusDurableStore implements DurableStore {
                 this.senderId
             ).finally(() => tasker.done());
         }
-        return __nimbus.plugins.LdsDurableStore.setEntriesInSegment(
-            putEntries,
-            segment
-        ).finally(() => tasker.done());
+        return __nimbus.plugins.LdsDurableStore.setEntriesInSegment(putEntries, segment).finally(
+            () => tasker.done()
+        );
     }
 
     evictEntries(entryIds: string[], segment: string): Promise<void> {
@@ -206,10 +205,9 @@ export class NimbusDurableStore implements DurableStore {
                 this.senderId
             ).finally(() => tasker.done());
         }
-        return __nimbus.plugins.LdsDurableStore.evictEntriesInSegment(
-            entryIds,
-            segment
-        ).finally(() => tasker.done());
+        return __nimbus.plugins.LdsDurableStore.evictEntriesInSegment(entryIds, segment).finally(
+            () => tasker.done()
+        );
     }
 
     registerOnChangedListener(listener: OnDurableStoreChangedListener): () => Promise<void> {
@@ -219,14 +217,14 @@ export class NimbusDurableStore implements DurableStore {
 
         if (durableStore.registerOnChangedListenerWithBatchInfo !== undefined) {
             durableStore
-                .registerOnChangedListenerWithBatchInfo(events =>
+                .registerOnChangedListenerWithBatchInfo((events) =>
                     listener(mapDurableStoreEvents(events, sender))
                 )
-                .then(id => {
+                .then((id) => {
                     uuid = id;
                 });
         } else if (durableStore.registerOnChangedListenerWithInfo !== undefined) {
-            durableStore.registerOnChangedListenerWithInfo(info => {
+            durableStore.registerOnChangedListenerWithInfo((info) => {
                 listener([
                     { ids: info.ids, segment: info.segment, type: LuvioOperationType.SetEntries },
                 ]);

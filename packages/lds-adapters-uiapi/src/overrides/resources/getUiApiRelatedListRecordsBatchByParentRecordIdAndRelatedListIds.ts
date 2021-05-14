@@ -92,7 +92,7 @@ function extractSingleResourceParamsFromBatchParamString(
 
     const match = batchParamString
         .split(';')
-        .find(fieldString => fieldString.split(':')[0] === relatedListId);
+        .find((fieldString) => fieldString.split(':')[0] === relatedListId);
     return match === undefined ? undefined : match.slice(relatedListId.length + 1);
 }
 
@@ -224,7 +224,8 @@ export function ingestSuccess(
 
     const snapshotStateFulfilled = 'Fulfilled';
     const key = keyBuilder(resourceParams);
-    const childSnapshotDataResponses: RelatedListRecordCollectionBatchRepresentation['results'] = [];
+    const childSnapshotDataResponses: RelatedListRecordCollectionBatchRepresentation['results'] =
+        [];
     let seenRecords: FulfilledSnapshot<
         RelatedListRecordCollectionBatchRepresentation,
         {}

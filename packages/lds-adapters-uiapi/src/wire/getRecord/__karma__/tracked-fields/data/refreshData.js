@@ -37,8 +37,7 @@ const opportunityId = await helpers.getOpportunityByName(OPPORTUNITY_NAME);
     {
         filename:
             'record-Account-fields-Account.Fax-optionalFields-Account.DisambiguationField,Account.FirstName,Account.LastName,Account.Name,Account.NameLocal',
-        params:
-            '?fields=Account.Fax&optionalFields=Account.DisambiguationField,Account.FirstName,Account.LastName,Account.Name,Account.NameLocal',
+        params: '?fields=Account.Fax&optionalFields=Account.DisambiguationField,Account.FirstName,Account.LastName,Account.Name,Account.NameLocal',
     },
 ].forEach(async ({ params, filename }) => {
     await helpers.requestGetAndSave(

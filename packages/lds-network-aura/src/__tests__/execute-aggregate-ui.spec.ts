@@ -94,7 +94,7 @@ describe('executeAggregateUi', () => {
             );
 
             expect(actualCompositeRequest.length).toBeGreaterThan(1);
-            actualCompositeRequest.forEach(requestChunk => {
+            actualCompositeRequest.forEach((requestChunk) => {
                 expect(requestChunk.referenceId.length).toBeGreaterThan(0);
                 expect(requestChunk.url.length).toBeGreaterThan(0);
             });
@@ -129,7 +129,7 @@ describe('executeAggregateUi', () => {
                 .spyOn(aura, 'executeGlobalController')
                 .mockResolvedValueOnce(aggregateResponse);
 
-            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').then(data => {
+            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').then((data) => {
                 expect(successfulResponseMock).toHaveBeenCalledTimes(1);
 
                 expect(data.status).toBe(HttpStatusCode.Ok);
@@ -170,7 +170,7 @@ describe('executeAggregateUi', () => {
                 .spyOn(aura, 'executeGlobalController')
                 .mockResolvedValueOnce(aggregateResponse);
 
-            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').catch(e => {
+            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').catch((e) => {
                 expect(unsuccessfulResponseMock).toHaveBeenCalledTimes(1);
 
                 expect(e.status).toBe(HttpStatusCode.ServerError);
@@ -188,7 +188,7 @@ describe('executeAggregateUi', () => {
                 .spyOn(aura, 'executeGlobalController')
                 .mockRejectedValueOnce(expectedServerResponse);
 
-            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').catch(e => {
+            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').catch((e) => {
                 expect(serverErrorResponseMock).toHaveBeenCalledTimes(1);
                 expect(e).toBeInstanceOf(AuraFetchResponse);
                 expect(e.body.statusCode).toEqual(HttpStatusCode.BadRequest);
@@ -204,7 +204,7 @@ describe('executeAggregateUi', () => {
                 .spyOn(aura, 'executeGlobalController')
                 .mockRejectedValueOnce(expectedServerResponse);
 
-            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').catch(e => {
+            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').catch((e) => {
                 expect(serverErrorResponseMock).toHaveBeenCalledTimes(1);
                 expect(e).toBeInstanceOf(AuraFetchResponse);
                 expect(e.status).toEqual(HttpStatusCode.ServerError);
@@ -217,7 +217,7 @@ describe('executeAggregateUi', () => {
                 .spyOn(aura, 'executeGlobalController')
                 .mockResolvedValueOnce({});
 
-            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').catch(e => {
+            return dispatchSplitRecordAggregateUiAction('', {}, {}, '').catch((e) => {
                 expect(emptyBodyResponseMock).toHaveBeenCalledTimes(1);
                 expect(e).toBeInstanceOf(AuraFetchResponse);
                 expect(e.status).toEqual(HttpStatusCode.ServerError);
@@ -289,7 +289,7 @@ describe('executeAggregateUi', () => {
             expect(actualUrl).toContain(`${UI_API_BASE_URI}/ui-api/records`);
 
             // Verify fields
-            params.fields.forEach(field => {
+            params.fields.forEach((field) => {
                 expect(actualUrl).toContain(field);
             });
         });
@@ -318,7 +318,7 @@ describe('executeAggregateUi', () => {
             expect(actualUrl).toContain(`${UI_API_BASE_URI}/ui-api/records`);
 
             // Verify fields
-            params.optionalFields.forEach(field => {
+            params.optionalFields.forEach((field) => {
                 expect(actualUrl).toContain(field);
             });
         });
@@ -346,10 +346,10 @@ describe('executeAggregateUi', () => {
             expect(actualUrl).toContain(`${UI_API_BASE_URI}/ui-api/records`);
 
             // Verify fields
-            params.fields.forEach(field => {
+            params.fields.forEach((field) => {
                 expect(actualUrl).toContain(field);
             });
-            params.optionalFields.forEach(field => {
+            params.optionalFields.forEach((field) => {
                 expect(actualUrl).toContain(field);
             });
         });

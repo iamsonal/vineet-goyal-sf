@@ -3,7 +3,7 @@ import { MASTER_RECORD_TYPE_ID } from 'uiapi-test-util';
 import GetPicklistValuesByRecordType from '../lwc/get-picklist-values-by-record-type';
 
 describe('validation', () => {
-    ['objectApiName', 'recordTypeId'].forEach(param => {
+    ['objectApiName', 'recordTypeId'].forEach((param) => {
         it(`should not make a network request if required param '${param}' is undefined`, async () => {
             const config = {
                 objectApiName: 'Account',
@@ -16,7 +16,7 @@ describe('validation', () => {
         });
     });
 
-    ['objectApiName', 'recordTypeId'].forEach(param => {
+    ['objectApiName', 'recordTypeId'].forEach((param) => {
         it(`should not make a network request if required param '${param}' is null`, async () => {
             const config = {
                 objectApiName: 'Account',

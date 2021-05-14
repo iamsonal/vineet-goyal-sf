@@ -54,7 +54,7 @@ describe('coerceRecordId18Array', () => {
 
 describe('coerceConfig', () => {
     const mockRecordIds18 = ['001xx000003Gn4VAAS', '001xx000003Gn4WAAS'];
-    const mockRecordIds15 = mockRecordIds18.map(elem => elem.slice(0, 15));
+    const mockRecordIds15 = mockRecordIds18.map((elem) => elem.slice(0, 15));
     const ACCOUNT_ID_FIELD_STRING = 'Account.Id';
     const ACCOUNT_NAME_FIELD_STRING = 'Account.Name';
 

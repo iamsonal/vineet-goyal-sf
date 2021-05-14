@@ -10,12 +10,12 @@ import { Luvio } from '@luvio/engine';
 import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
 
 // export for @salesforce/apex
-export const refreshApex: typeof refresh = function<D>(data: D) {
+export const refreshApex: typeof refresh = function <D>(data: D) {
     return refresh(data, REFRESH_APEX_KEY);
 };
 
 let luvio: Luvio;
-withDefaultLuvio(_luvio => {
+withDefaultLuvio((_luvio) => {
     luvio = _luvio;
     bindWireRefresh(luvio);
 });
@@ -23,7 +23,7 @@ withDefaultLuvio(_luvio => {
 /**
  * Apex
  */
-export const getApexInvoker = function(
+export const getApexInvoker = function (
     namespace: string,
     classname: string,
     method: string,
@@ -34,7 +34,7 @@ export const getApexInvoker = function(
     }
 
     const adapterName = `getApex_${namespace}_${classname}_${method}_${isContinuation}`;
-    const invokeApexImperative: any = createLDSAdapter(luvio, adapterName, luvio =>
+    const invokeApexImperative: any = createLDSAdapter(luvio, adapterName, (luvio) =>
         GetApexInvoker(luvio, {
             namespace,
             classname,
@@ -44,7 +44,7 @@ export const getApexInvoker = function(
     );
     invokeApexImperative.adapter = createWireAdapterConstructor(
         luvio,
-        luvio =>
+        (luvio) =>
             GenerateGetApexWireAdapter(luvio, { namespace, classname, method, isContinuation }),
         { apiFamily: 'Apex', name: adapterName }
     );

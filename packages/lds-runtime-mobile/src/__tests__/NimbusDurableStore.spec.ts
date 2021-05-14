@@ -18,7 +18,7 @@ describe('nimbus durable store tests', () => {
         it('should use the old setEntries if new doesnt exist', async () => {
             const setEntriesSpy = jest.fn().mockResolvedValue(undefined);
             const mock = { setEntriesInSegment: setEntriesSpy };
-            mockNimbusStoreGlobal((mock as any) as MockNimbusDurableStore);
+            mockNimbusStoreGlobal(mock as any as MockNimbusDurableStore);
             const durableStore = new NimbusDurableStore();
             const recordId = 'foo';
             const recordData = { data: { bar: true } };
@@ -34,7 +34,7 @@ describe('nimbus durable store tests', () => {
         it('should use the old evictEntries if new doesnt exist', async () => {
             const evictEntriesSpy = jest.fn().mockResolvedValue(undefined);
             const mock = { evictEntriesInSegment: evictEntriesSpy };
-            mockNimbusStoreGlobal((mock as any) as MockNimbusDurableStore);
+            mockNimbusStoreGlobal(mock as any as MockNimbusDurableStore);
             const durableStore = new NimbusDurableStore();
             await durableStore.evictEntries(['1'], testSegment);
             expect(evictEntriesSpy).toBeCalledTimes(1);
@@ -194,7 +194,7 @@ describe('nimbus durable store tests', () => {
             const nimbusStore = new MockNimbusDurableStore();
             mockNimbusStoreGlobal(nimbusStore);
             let registeredListener: (changes: DurableStoreChange[]) => void = undefined;
-            nimbusStore.registerOnChangedListenerWithBatchInfo = listener => {
+            nimbusStore.registerOnChangedListenerWithBatchInfo = (listener) => {
                 registeredListener = listener;
                 return Promise.resolve('1234');
             };
@@ -222,11 +222,11 @@ describe('nimbus durable store tests', () => {
             const nimbusStore = new MockNimbusDurableStore();
             mockNimbusStoreGlobal(nimbusStore);
             let registeredListener: (changes: DurableStoreChange[]) => void = undefined;
-            nimbusStore.registerOnChangedListenerWithBatchInfo = listener => {
+            nimbusStore.registerOnChangedListenerWithBatchInfo = (listener) => {
                 registeredListener = listener;
                 return Promise.resolve('1234');
             };
-            nimbusStore.unsubscribeOnChangedListener = _id => {
+            nimbusStore.unsubscribeOnChangedListener = (_id) => {
                 registeredListener = undefined;
                 return Promise.resolve();
             };
@@ -257,7 +257,7 @@ describe('nimbus durable store tests', () => {
             let callCount = 0;
             mockNimbusStoreGlobal(nimbusStore);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            durableStore.registerOnChangedListener(changes => {
+            durableStore.registerOnChangedListener((changes) => {
                 callCount += 1;
                 expect(changes[0].isExternalChange).toEqual(true);
             });
@@ -274,7 +274,7 @@ describe('nimbus durable store tests', () => {
             let callCount = 0;
             mockNimbusStoreGlobal(nimbusStore);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            durableStore.registerOnChangedListener(changes => {
+            durableStore.registerOnChangedListener((changes) => {
                 callCount += 1;
                 expect(changes[0].isExternalChange).toEqual(false);
             });

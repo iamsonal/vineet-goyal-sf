@@ -13,7 +13,7 @@ const OBJECT_API_NAME = 'Opportunity';
 const listviews = (await $conn.sobject(OBJECT_API_NAME).listviews()).listviews;
 const recentIds = listviews
     .filter((lv, i) => i % 2)
-    .map(lv => `'${lv.id}'`)
+    .map((lv) => `'${lv.id}'`)
     .join(',');
 await $conn.query(`SELECT id FROM ListView WHERE id IN (${recentIds}) FOR VIEW`);
 
@@ -24,7 +24,7 @@ const entries = [
     },
 ];
 
-entries.forEach(async function(entry) {
+entries.forEach(async function (entry) {
     await helpers.requestGetAndSave(
         `/ui-api/list-ui/${OBJECT_API_NAME}${entry.params}`,
         path.join(rootDir, `${entry.filename}.json`)

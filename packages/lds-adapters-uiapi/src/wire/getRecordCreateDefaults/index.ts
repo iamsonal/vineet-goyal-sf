@@ -81,7 +81,7 @@ export function buildNetworkSnapshot(
     const selectorKey = `${key}__selector`;
 
     return luvio.dispatchResourceRequest<RecordDefaultsRepresentation>(request).then(
-        response => {
+        (response) => {
             const { body } = response;
             const cacheSelector: Selector = {
                 recordId: key,
@@ -184,19 +184,17 @@ export function buildInMemorySnapshot(
     return null;
 }
 
-export const factory: AdapterFactory<
-    GetRecordCreateDefaultsConfig,
-    RecordDefaultsRepresentation
-> = (luvio: Luvio) =>
-    function getRecordCreateDefaults(untrusted: unknown) {
-        const config = coerceConfigWithDefaults(untrusted);
-        if (config === null) {
-            return null;
-        }
+export const factory: AdapterFactory<GetRecordCreateDefaultsConfig, RecordDefaultsRepresentation> =
+    (luvio: Luvio) =>
+        function getRecordCreateDefaults(untrusted: unknown) {
+            const config = coerceConfigWithDefaults(untrusted);
+            if (config === null) {
+                return null;
+            }
 
-        const snapshot = buildInMemorySnapshot(luvio, config);
-        if (snapshot !== null) {
-            return snapshot;
-        }
-        return buildNetworkSnapshot(luvio, config);
-    };
+            const snapshot = buildInMemorySnapshot(luvio, config);
+            if (snapshot !== null) {
+                return snapshot;
+            }
+            return buildNetworkSnapshot(luvio, config);
+        };

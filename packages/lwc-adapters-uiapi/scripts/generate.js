@@ -38,7 +38,7 @@ const code = dedent`
 
     type AdapterFactoryish<DataType> = (luvio: Luvio) => (...config: unknown[]) => Promise<Snapshot<DataType>>;
 
-    ${adapterNames.map(name => 'let ' + name + ': any;').join('\n    ')}
+    ${adapterNames.map((name) => 'let ' + name + ': any;').join('\n    ')}
 
     function bindExportsTo(luvio: Luvio): { [key: string]: any } {
         function unwrapSnapshotData<DataType>(factory: AdapterFactoryish<DataType>) {
@@ -47,7 +47,7 @@ const code = dedent`
         }
 
         return {
-            ${adapterNames.map(name => adapters[name].bind).join(',\n            ')}
+            ${adapterNames.map((name) => adapters[name].bind).join(',\n            ')}
         }
     }
 

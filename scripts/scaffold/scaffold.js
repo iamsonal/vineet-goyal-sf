@@ -231,7 +231,7 @@ module.exports = class CreateApiFamily extends Command {
                 message:
                     'Do you plan to use your adapter package in core (if the answer is yes, please create core module beforehand)?',
                 choices: ['yes', 'no'],
-                filter: val => val === 'yes',
+                filter: (val) => val === 'yes',
             },
         ]);
 

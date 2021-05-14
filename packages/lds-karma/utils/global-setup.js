@@ -10,7 +10,7 @@ import {
 } from 'test-util';
 
 beforeAll(() => {
-    window.addEventListener('unhandledrejection', event => {
+    window.addEventListener('unhandledrejection', (event) => {
         fail(`Uncaught promise rejection in test: ${event.reason}\nStack:\n${event.reason.stack}`);
     });
 });
@@ -19,7 +19,7 @@ beforeEach(() => {
     jasmine.addMatchers({
         toBeImmutable: () => {
             return {
-                compare: actual => {
+                compare: (actual) => {
                     verifyImmutable(actual, '$');
 
                     return { pass: true };
@@ -29,7 +29,7 @@ beforeEach(() => {
 
         toBeMutable: () => {
             return {
-                compare: actual => {
+                compare: (actual) => {
                     verifyMutable(actual, '$');
 
                     return { pass: true };

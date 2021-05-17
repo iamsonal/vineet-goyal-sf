@@ -7,6 +7,7 @@ import {
 import { JSONStringify } from '../utils/language';
 import { DefaultDurableSegment, DurableStoreOperationType } from '@luvio/environments';
 import { DurableStoreChange } from '@mobileplatform/nimbus-plugin-lds';
+import { flushPromises } from './testUtils';
 
 const testSegment = 'testSegment';
 describe('nimbus durable store tests', () => {
@@ -88,8 +89,8 @@ describe('nimbus durable store tests', () => {
     describe('batchOperations', () => {
         it('should stringify entries', async () => {
             const nimbusStore = new MockNimbusDurableStore();
-            const batchSpy = jest.fn();
-            nimbusStore.batchOperation = batchSpy;
+            const batchSpy = jest.fn().mockResolvedValue(undefined);
+            nimbusStore.batchOperations = batchSpy;
             const recordId = 'foo';
             const recordData = { data: { bar: true } };
             mockNimbusStoreGlobal(nimbusStore);
@@ -106,7 +107,9 @@ describe('nimbus durable store tests', () => {
                 },
             ]);
 
-            expect(batchSpy.mock.calls[0][0].entries[recordId]).toEqual(JSONStringify(recordData));
+            expect(batchSpy.mock.calls[0][0][0].entries[recordId]).toEqual(
+                JSONStringify(recordData)
+            );
         });
 
         it('should use default setEntries if batchOperations is undefined', async () => {
@@ -147,8 +150,8 @@ describe('nimbus durable store tests', () => {
 
         it('should batch setEntries', async () => {
             const nimbusStore = new MockNimbusDurableStore();
-            const batchSpy = jest.fn();
-            nimbusStore.batchOperation = batchSpy;
+            const batchSpy = jest.fn().mockResolvedValue(undefined);
+            nimbusStore.batchOperations = batchSpy;
             const recordId = 'foo';
             const recordData = { data: { bar: true } };
             mockNimbusStoreGlobal(nimbusStore);
@@ -161,8 +164,9 @@ describe('nimbus durable store tests', () => {
             const stringifiedEntries = { [recordId]: JSONStringify(recordData) };
             await durableStore.setEntries(setData, DefaultDurableSegment);
 
-            expect(batchSpy.mock.calls[0][0]).toEqual({
+            expect(batchSpy.mock.calls[0][0][0]).toEqual({
                 entries: stringifiedEntries,
+                ids: [recordId],
                 type: DurableStoreOperationType.SetEntries,
                 segment: DefaultDurableSegment,
             });
@@ -170,15 +174,15 @@ describe('nimbus durable store tests', () => {
 
         it('should batch evict', async () => {
             const nimbusStore = new MockNimbusDurableStore();
-            const batchSpy = jest.fn();
-            nimbusStore.batchOperation = batchSpy;
+            const batchSpy = jest.fn().mockResolvedValue(undefined);
+            nimbusStore.batchOperations = batchSpy;
             const evictIds = ['1', '2', '3'];
             mockNimbusStoreGlobal(nimbusStore);
 
             const durableStore = new NimbusDurableStore();
             await durableStore.evictEntries(evictIds, DefaultDurableSegment);
 
-            expect(batchSpy.mock.calls[0][0]).toEqual({
+            expect(batchSpy.mock.calls[0][0][0]).toEqual({
                 ids: evictIds,
                 type: DurableStoreOperationType.EvictEntries,
                 segment: DefaultDurableSegment,
@@ -264,6 +268,8 @@ describe('nimbus durable store tests', () => {
             expect(callCount).toEqual(0);
             const secondDurableStore = new NimbusDurableStore();
             secondDurableStore.evictEntries(['1'], DefaultDurableSegment);
+
+            await flushPromises();
             expect(callCount).toEqual(1);
         });
 
@@ -280,6 +286,8 @@ describe('nimbus durable store tests', () => {
             });
             expect(callCount).toEqual(0);
             durableStore.evictEntries(['1'], DefaultDurableSegment);
+
+            await flushPromises();
             expect(callCount).toEqual(1);
         });
     });

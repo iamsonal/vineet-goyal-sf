@@ -1,18 +1,8 @@
-import {
-    DurableStore,
-    DurableStoreFetchResult,
-    DurableStoreEntries,
-    DurableStoreChangedInfo,
-    DurableStoreChange,
-    DurableStoreOperation,
-} from '@mobileplatform/nimbus-plugin-lds';
+import { BackingStore, JsNimbusDurableStore } from '@mobileplatform/nimbus-plugin-lds';
 
-import { ObjectKeys } from '../utils/language';
-import { clone } from './testUtils';
-
-export function mockNimbusStoreGlobal(mockNimbusStore: MockNimbusDurableStore) {
+export function mockNimbusStoreGlobal(mockNimbusStore: JsNimbusDurableStore) {
     global.__nimbus = {
-        ...(global.__nimbus ?? {}),
+        ...(global.__nimbus || {}),
         plugins: {
             ...(global.__nimbus?.plugins || {}),
             LdsDurableStore: mockNimbusStore,
@@ -20,147 +10,65 @@ export function mockNimbusStoreGlobal(mockNimbusStore: MockNimbusDurableStore) {
     } as any;
 }
 
-// since MockNimbusDurableStore is likely to be re-instantiated before each test
-// we hoist the registered listeners since that happens when the lds instance
-// is created
-let listeners: { [listenerId: string]: (changes: DurableStoreChange[]) => void } = {};
-let count = 0;
 export function resetNimbusStoreGlobal() {
     global.__nimbus = undefined;
-    listeners = {};
 }
 
-export class MockNimbusDurableStore implements DurableStore {
+export class InMemoryBackingStore implements BackingStore {
     kvp: { [segment: string]: { [key: string]: string } } = {};
 
-    async getEntriesInSegment(ids: string[], segment: string): Promise<DurableStoreFetchResult> {
-        const result = {};
+    get(key: string, segment: string): Promise<any> {
         const storeSegment = this.kvp[segment];
         if (storeSegment === undefined) {
-            return {
-                isMissingEntries: true,
-                entries: result,
-            };
+            return Promise.resolve(undefined);
         }
-
-        let isMissingEntries = false;
-        for (const id of ids) {
-            const val = storeSegment[id];
-            if (val === undefined) {
-                isMissingEntries = true;
-            } else {
-                result[id] = clone(val);
-            }
-        }
-
-        return {
-            entries: result,
-            isMissingEntries,
-        };
+        return Promise.resolve(storeSegment[key]);
     }
 
-    async getAllEntriesInSegment(segment: string): Promise<DurableStoreFetchResult> {
-        const result = {};
-        const storeSegment = this.kvp[segment];
-        if (storeSegment === undefined) {
-            return {
-                isMissingEntries: true,
-                entries: result,
-            };
-        }
-
-        let isMissingEntries = false;
-        const keys = Object.keys(storeSegment);
-        for (const key of keys) {
-            const val = storeSegment[key];
-            if (val === undefined) {
-                isMissingEntries = true;
-            } else {
-                result[key] = val;
-            }
-        }
-
-        return {
-            entries: result,
-            isMissingEntries,
-        };
-    }
-
-    setEntriesInSegment(entries: DurableStoreEntries, segment: string): Promise<void> {
-        return this.setEntriesInSegmentWithSender(entries, segment, '');
-    }
-
-    setEntriesInSegmentWithSender(
-        entries: DurableStoreEntries,
-        segment: string,
-        sender: string
-    ): Promise<void> {
-        return this.batchOperations([{ entries, type: 'setEntries', segment }], sender);
-    }
-
-    evictEntriesInSegment(ids: string[], segment: string): Promise<void> {
-        return this.evictEntriesInSegmentWithSender(ids, segment, '');
-    }
-
-    evictEntriesInSegmentWithSender(ids: string[], segment: string, sender: string): Promise<void> {
-        return this.batchOperations([{ ids, type: 'evictEntries', segment }], sender);
-    }
-
-    batchOperation(operation: DurableStoreOperation, sender: string): DurableStoreChange {
-        let storeSegment = this.kvp[operation.segment];
+    set(key: string, segment: string, value: any): Promise<void> {
+        let storeSegment = this.kvp[segment];
         if (storeSegment === undefined) {
             storeSegment = {};
-            this.kvp[operation.segment] = storeSegment;
+            this.kvp[segment] = storeSegment;
         }
 
-        let ids: string[];
-        switch (operation.type) {
-            case 'setEntries':
-                Object.assign(storeSegment, operation.entries);
-                ids = ObjectKeys(operation.entries);
-                break;
-            case 'evictEntries':
-                ids = operation.ids;
-                for (const id of ids) {
-                    delete storeSegment[id];
-                }
-        }
-
-        return { ...operation, ids, sender };
-    }
-
-    batchOperations(operations: DurableStoreOperation[], sender: string): Promise<void> {
-        let changes = operations.map((op) => this.batchOperation(op, sender));
-        const listenerIds = ObjectKeys(listeners);
-        for (const id of listenerIds) {
-            const listener = listeners[id];
-            listener(changes);
-        }
-
+        storeSegment[key] = value;
         return Promise.resolve();
     }
 
-    registerOnChangedListenerWithBatchInfo(
-        listener: (changes: DurableStoreChange[]) => void
-    ): Promise<string> {
-        const id = (count++).toString();
-        listeners[id] = listener;
-        return Promise.resolve(id);
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    registerOnChangedListener(listener: (ids: string[], segment: string) => void): Promise<string> {
-        throw new Error('deprecated');
-    }
-
-    registerOnChangedListenerWithInfo(
-        _listener: (info: DurableStoreChangedInfo) => void
-    ): Promise<string> {
-        throw new Error('deprecated');
-    }
-
-    unsubscribeOnChangedListener(id: string): Promise<void> {
-        delete listeners[id];
+    delete(key: string, segment: string): Promise<void> {
+        const storeSegment = this.kvp[segment];
+        if (storeSegment !== undefined) {
+            delete storeSegment[key];
+        }
         return Promise.resolve();
+    }
+
+    getAllKeys(segment: string): Promise<string[]> {
+        const storeSegment = this.kvp[segment];
+        if (storeSegment === undefined) {
+            return Promise.resolve([]);
+        }
+
+        return Promise.resolve(Object.keys(storeSegment));
+    }
+
+    reset(): Promise<void> {
+        this.kvp = {};
+        return Promise.resolve();
+    }
+}
+
+export class MockNimbusDurableStore extends JsNimbusDurableStore {
+    constructor() {
+        super(new InMemoryBackingStore());
+    }
+
+    get kvp() {
+        return (this.backingStore as InMemoryBackingStore).kvp;
+    }
+
+    set kvp(value) {
+        (this.backingStore as InMemoryBackingStore).kvp = value;
     }
 }

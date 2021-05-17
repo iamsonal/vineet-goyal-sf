@@ -4,6 +4,8 @@
     "description": "Nimbus plugins for LDS on Mobile native integrations: durable store, networking, and draft queue.",
     "license": "MIT",
     "types": "dist/index.d.ts",
+    "main": "dist/index.js",
+    "module": "dist/index.js",
     "files": [
         "dist"
     ],
@@ -11,7 +13,7 @@
         "prepare": "yarn build",
         "build": "tsc"
     },
-    "dependencies": {
+    "devDependencies": {
         "nimbus-types": "^2.0.0-alpha1"
     }
 }

@@ -1,5 +1,6 @@
-// this import ensures global ts declarations get set
-import 'nimbus-types';
+// this import/export ensures global ts declarations are set and show up to consumers
+import type * as NimbusTypes from 'nimbus-types';
+export type { NimbusTypes };
 
 export {
     DurableStore,
@@ -12,3 +13,6 @@ export {
 } from './DurableStore';
 export { NetworkAdapter, Request, Response, NetworkError } from './NetworkAdapter';
 export { DraftQueue } from './DraftQueue';
+
+// export implementations for downstream testing
+export { JsNimbusDurableStore, BackingStore } from './JsNimbusDurableStore';

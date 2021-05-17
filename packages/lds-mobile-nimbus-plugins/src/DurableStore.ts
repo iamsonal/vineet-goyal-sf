@@ -47,10 +47,7 @@ export interface DurableStore {
     getAllEntriesInSegment(segment: string): Promise<DurableStoreFetchResult>;
 
     /**
-     * Adds a collection of entries to the store.
-     *
-     * @param entries the entries to add to the store
-     * @param segment The durable store segment to query
+     * @deprecated Use batchOperations instead
      */
     setEntriesInSegment(entries: DurableStoreEntries, segment: string): Promise<void>;
 
@@ -62,11 +59,7 @@ export interface DurableStore {
     batchOperations(operations: DurableStoreOperation[], sender: string): Promise<void>;
 
     /**
-     * Adds a collection of entries to the store.
-     *
-     * @param entries the entries to add to the store
-     * @param segment The durable store segment to query
-     * @param sender An opaque id of the sender of this set event
+     * @deprecated Use batchOperations instead
      */
     setEntriesInSegmentWithSender(
         entries: DurableStoreEntries,
@@ -75,43 +68,22 @@ export interface DurableStore {
     ): Promise<void>;
 
     /**
-     * Removes entries from the store based on their id.
-     *
-     * Upon completion, the store will not contain a value for any id in the list
-     * of evicted ids.
-     *
-     * @param ids the ids to be removed from the store
-     * @param segment The durable store segment to query
+     * @deprecated Use batchOperations instead
      */
     evictEntriesInSegment(ids: string[], segment: string): Promise<void>;
 
     /**
-     * Removes entries from the store based on their id.
-     *
-     * Upon completion, the store will not contain a value for any id in the list
-     * of evicted ids.
-     *
-     * @param ids the ids to be removed from the store
-     * @param segment The durable store segment to query
-     * @param sender An opaque id of the sender of this event
+     * @deprecated Use batchOperations instead
      */
     evictEntriesInSegmentWithSender(ids: string[], segment: string, sender: string): Promise<void>;
 
     /**
-     * Setup a listener to be notified of changes to the Durable Store
-     *
-     * @param listener callback giving an array of durable store entry
-     * ids that changed.
-     * @returns {Promise<string>} a generated id of the listener to unsubscribe with
+     * @deprecated Use registerOnChangedListenerWithBatchInfo instead
      */
     registerOnChangedListener(listener: (ids: string[], segment: string) => void): Promise<string>;
 
     /**
-     * Setup a listener to be notified of changes to the Durable Store
-     *
-     * @param listener callback giving array of ids, segment
-     * and sender of the change event.
-     * @returns {Promise<string>} a generated id of the listener to unsubscribe with
+     * @deprecated Use registerOnChangedListenerWithBatchInfo instead
      */
     registerOnChangedListenerWithInfo(
         listener: (info: DurableStoreChangedInfo) => void
@@ -170,6 +142,6 @@ export type DurableStoreOperationType = 'setEntries' | 'evictEntries';
 export interface DurableStoreOperation {
     type: DurableStoreOperationType;
     segment: string;
-    ids?: string[];
+    ids: string[];
     entries?: DurableStoreEntries;
 }

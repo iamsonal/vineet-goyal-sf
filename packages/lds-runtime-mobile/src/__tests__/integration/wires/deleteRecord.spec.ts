@@ -48,14 +48,18 @@ describe('mobile runtime integration tests', () => {
     let draftQueue: DraftQueue;
     let draftManager: DraftManager;
     let networkAdapter: MockNimbusNetworkAdapter;
-    let durableStore: MockNimbusDurableStore;
     let createRecord;
     let deleteRecord;
     let getRecord;
 
+    // we want the same instance of MockNimbusDurableStore since we don't
+    // want to lose the listeners between tests (luvio instance only registers
+    // the listeners once on static import)
+    const durableStore = new MockNimbusDurableStore();
+    mockNimbusStoreGlobal(durableStore);
+
     beforeEach(async () => {
-        durableStore = new MockNimbusDurableStore();
-        mockNimbusStoreGlobal(durableStore);
+        await durableStore.resetStore();
 
         networkAdapter = new MockNimbusNetworkAdapter();
         mockNimbusNetworkGlobal(networkAdapter);
@@ -77,11 +81,18 @@ describe('mobile runtime integration tests', () => {
             const accountObjectInfo: DurableStoreEntry<ObjectInfoIndex> = {
                 data: { apiName: API_NAME, keyPrefix: '001' },
             };
-            durableStore.setEntriesInSegment(
-                {
-                    [API_NAME]: JSON.stringify(accountObjectInfo),
-                },
-                OBJECT_INFO_PREFIX_SEGMENT
+            await durableStore.batchOperations(
+                [
+                    {
+                        entries: {
+                            [API_NAME]: JSON.stringify(accountObjectInfo),
+                        },
+                        segment: OBJECT_INFO_PREFIX_SEGMENT,
+                        ids: [API_NAME],
+                        type: 'setEntries',
+                    },
+                ],
+                ''
             );
 
             const snapshot = await createRecord({

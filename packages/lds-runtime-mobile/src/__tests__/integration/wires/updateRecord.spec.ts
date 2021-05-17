@@ -50,14 +50,18 @@ describe('mobile runtime integration tests', () => {
     let draftQueue: DraftQueue;
     let draftManager: DraftManager;
     let networkAdapter: MockNimbusNetworkAdapter;
-    let durableStore: MockNimbusDurableStore;
     let createRecord;
     let updateRecord;
     let getRecord;
 
+    // we want the same instance of MockNimbusDurableStore since we don't
+    // want to lose the listeners between tests (luvio instance only registers
+    // the listeners once on static import)
+    const durableStore = new MockNimbusDurableStore();
+    mockNimbusStoreGlobal(durableStore);
+
     beforeEach(async () => {
-        durableStore = new MockNimbusDurableStore();
-        mockNimbusStoreGlobal(durableStore);
+        await durableStore.resetStore();
 
         networkAdapter = new MockNimbusNetworkAdapter();
         mockNimbusNetworkGlobal(networkAdapter);

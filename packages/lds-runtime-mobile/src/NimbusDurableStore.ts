@@ -2,6 +2,7 @@
 /* global __nimbus */
 
 import {
+    DefaultDurableSegment,
     DurableStore,
     DurableStoreChange,
     DurableStoreEntries,
@@ -55,7 +56,7 @@ function unsubscribe(uuidFn: () => string | undefined): () => Promise<void> {
     };
 }
 
-function toNativeEntries(entries: DurableStoreEntries<unknown>) {
+function toNativeEntries(entries: DurableStoreEntries<unknown>): { [key: string]: string } {
     const putEntries = ObjectCreate(null);
     const keys = ObjectKeys(entries);
     for (let i = 0, len = keys.length; i < len; i++) {
@@ -74,8 +75,8 @@ export class NimbusDurableStore implements DurableStore {
 
         for (let i = 0, len = operations.length; i < len; i++) {
             const operation = operations[i];
-            let ids = undefined;
-            let putEntries = undefined;
+            let ids: string[];
+            let putEntries: { [key: string]: string } | undefined = undefined;
 
             switch (operation.type) {
                 case LuvioOperationType.EvictEntries:
@@ -83,6 +84,7 @@ export class NimbusDurableStore implements DurableStore {
                     break;
                 case LuvioOperationType.SetEntries: {
                     putEntries = toNativeEntries(operation.entries);
+                    ids = ObjectKeys(putEntries);
                     break;
                 }
             }
@@ -91,7 +93,7 @@ export class NimbusDurableStore implements DurableStore {
                 segment: operation.segment,
                 type: operationTypeFromLuvio(operation.type),
                 entries: putEntries,
-                ids: ids,
+                ids,
             });
         }
 
@@ -169,7 +171,7 @@ export class NimbusDurableStore implements DurableStore {
         ]);
     }
 
-    setEntriesOld(entries: DurableStoreEntries<unknown>, segment: string): Promise<void> {
+    private setEntriesOld(entries: DurableStoreEntries<unknown>, segment: string): Promise<void> {
         const putEntries = toNativeEntries(entries);
 
         tasker.add();
@@ -186,17 +188,17 @@ export class NimbusDurableStore implements DurableStore {
     }
 
     evictEntries(entryIds: string[], segment: string): Promise<void> {
-        // TODO W-8963041: Remove this once old versions of setEntries are no longer supported
-        if (__nimbus.plugins.LdsDurableStore.batchOperations === undefined) {
-            return this.evictEntriesOld(entryIds, segment);
+        if (__nimbus.plugins.LdsDurableStore.batchOperations !== undefined) {
+            return this.batchOperations([
+                { ids: entryIds, segment, type: LuvioOperationType.EvictEntries },
+            ]);
         }
 
-        return this.batchOperations([
-            { ids: entryIds, segment, type: LuvioOperationType.EvictEntries },
-        ]);
+        // TODO W-8963041: Remove this once old versions of setEntries are no longer supported
+        return this.evictEntriesOld(entryIds, segment);
     }
 
-    evictEntriesOld(entryIds: string[], segment: string): Promise<void> {
+    private evictEntriesOld(entryIds: string[], segment: string): Promise<void> {
         tasker.add();
         if (__nimbus.plugins.LdsDurableStore.evictEntriesInSegmentWithSender !== undefined) {
             return __nimbus.plugins.LdsDurableStore.evictEntriesInSegmentWithSender(
@@ -227,6 +229,12 @@ export class NimbusDurableStore implements DurableStore {
             durableStore.registerOnChangedListenerWithInfo((info) => {
                 listener([
                     { ids: info.ids, segment: info.segment, type: LuvioOperationType.SetEntries },
+                ]);
+            });
+        } else if (durableStore.registerOnChangedListener !== undefined) {
+            durableStore.registerOnChangedListener((ids) => {
+                listener([
+                    { ids, segment: DefaultDurableSegment, type: LuvioOperationType.SetEntries },
                 ]);
             });
         }

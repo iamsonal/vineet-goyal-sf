@@ -1,7 +1,7 @@
 import { IngestPath, Luvio, Reader, ReaderFragment, ResourceIngest, Store } from '@luvio/engine';
 import { LuvioSelectionObjectFieldNode } from '@salesforce/lds-graphql-parser';
 import { getLuvioFieldNodeSelection, followLink } from './Selection';
-import { createIngest as createCustomFieldIngest } from './CustomField';
+import { createIngest as customFieldCreateIngest } from './CustomField';
 import merge from '../util/merge';
 
 export const createRead: (ast: LuvioSelectionObjectFieldNode) => ReaderFragment['read'] = (
@@ -63,7 +63,7 @@ export const createIngest: (ast: LuvioSelectionObjectFieldNode) => ResourceInges
                     timestamp
                 );
             } else if (sel.kind === 'CustomFieldSelection') {
-                data[propertyName] = createCustomFieldIngest(sel)(
+                data[propertyName] = customFieldCreateIngest(sel)(
                     data[propertyName],
                     childPath,
                     luvio,

@@ -10,18 +10,18 @@ import {
 } from '@salesforce/lds-graphql-parser/dist/ast';
 import { createIngest as createCustomFieldIngest } from './CustomField';
 import {
-    createIngest as createObjectFieldIngest,
-    createRead as createObjectFieldRead,
+    createIngest as objectFieldCreateIngest,
+    createRead as objectFieldCreateRead,
 } from './ObjectField';
-import { createRead as createOperationRead } from './Operation';
-import { createRead as createConnectionRead } from '../custom/connection';
+import { createRead as operationCreateRead } from './Operation';
+import { createRead as connectionCreateRead } from '../custom/connection';
 
 function createCustomFieldRead(sel: LuvioSelectionCustomFieldNode): ReaderFragment['read'] {
     if (sel.type === 'Connection') {
-        return createConnectionRead(sel);
+        return connectionCreateRead(sel);
     }
 
-    return createObjectFieldRead({
+    return objectFieldCreateRead({
         name: sel.name,
         kind: 'ObjectFieldSelection',
         luvioSelections: sel.luvioSelections,
@@ -46,9 +46,9 @@ export function followLink(
 
     switch (sel.kind) {
         case 'ObjectFieldSelection':
-            return createObjectFieldRead(sel)(lookup, builder);
+            return objectFieldCreateRead(sel)(lookup, builder);
         case 'OperationDefinition':
-            return createOperationRead(sel)(lookup, builder);
+            return operationCreateRead(sel)(lookup, builder);
         case 'CustomFieldSelection':
             return createCustomFieldRead(sel)(lookup, builder);
         default:
@@ -73,7 +73,7 @@ export const createIngest: (ast: LuvioSelectionNode) => ResourceIngest = (
         case 'CustomFieldSelection':
             return createCustomFieldIngest(ast as LuvioSelectionCustomFieldNode);
         case 'ObjectFieldSelection':
-            return createObjectFieldIngest(ast as LuvioSelectionObjectFieldNode);
+            return objectFieldCreateIngest(ast as LuvioSelectionObjectFieldNode);
     }
 
     throw new Error(`Unsupported "${kind}"`);

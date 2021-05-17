@@ -3,7 +3,7 @@ import { LuvioSelectionCustomFieldNode } from '@salesforce/lds-graphql-parser';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { GqlConnection } from './connection';
 import {
-    createIngest as createSelectionIngest,
+    createIngest as selectionCreateIngest,
     getLuvioFieldNodeSelection,
 } from '../type/Selection';
 
@@ -137,7 +137,7 @@ export const createIngest: (ast: LuvioSelectionCustomFieldNode) => ResourceInges
         for (let i = 0, len = selections.length; i < len; i += 1) {
             const sel = getLuvioFieldNodeSelection(selections[i]);
             const { name: propertyName } = sel;
-            data[propertyName] = createSelectionIngest(sel)(
+            data[propertyName] = selectionCreateIngest(sel)(
                 data[propertyName],
                 {
                     fullPath: `${key}__${propertyName}`,

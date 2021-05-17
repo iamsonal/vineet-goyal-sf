@@ -12,7 +12,7 @@ import {
     LuvioSelectionObjectFieldNode,
 } from '@salesforce/lds-graphql-parser';
 import {
-    createIngest as createSelectionIngest,
+    createIngest as selectionCreateIngest,
     getLuvioFieldNodeSelection,
     resolveLink,
     followLink,
@@ -115,7 +115,7 @@ function ingestEdgeItem(
         const key = `${fullPath}__${i}`;
         const propertyName = sel.name as keyof GqlEdge;
         const item = data[propertyName];
-        data[propertyName] = createSelectionIngest(sel)(
+        data[propertyName] = selectionCreateIngest(sel)(
             item,
             {
                 parent: {

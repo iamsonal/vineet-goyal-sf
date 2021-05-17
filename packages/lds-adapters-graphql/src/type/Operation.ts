@@ -2,7 +2,7 @@ import { IngestPath, Luvio, Reader, ReaderFragment, ResourceIngest, Store } from
 import { LuvioOperationDefinitionNode } from '@salesforce/lds-graphql-parser';
 import {
     getLuvioFieldNodeSelection,
-    createIngest as createSelectionIngest,
+    createIngest as selectionCreateIngest,
     followLink,
 } from './Selection';
 import merge from '../util/merge';
@@ -41,7 +41,7 @@ export function createIngest(ast: LuvioOperationDefinitionNode): ResourceIngest 
         for (let i = 0, len = selections.length; i < len; i += 1) {
             const sel = getLuvioFieldNodeSelection(selections[i]);
             const propertyName = sel.name;
-            data[propertyName] = createSelectionIngest(sel)(
+            data[propertyName] = selectionCreateIngest(sel)(
                 data[propertyName],
                 {
                     parent: {

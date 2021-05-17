@@ -1,5 +1,5 @@
 import { getMock as globalGetMock } from 'test-util';
-import { mockGraphqlNetwork } from 'graphql-test-util';
+import { mockGraphqlNetwork, parseQuery } from 'graphql-test-util';
 
 import { graphQLImperative } from 'lds-adapters-graphql';
 
@@ -9,90 +9,62 @@ function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
 }
 
+/**
+ * Note: for graphql adapter, karma tests don't have strict assertion on
+ * the query format in the resource request. To verify query serialization,
+ * using jest tests instead.
+ */
+
 describe('graphql', () => {
     describe('no cache', () => {
         it('hits network when no data is in the cache', async () => {
-            const ast = {
-                kind: 'Document',
-                definitions: [
-                    {
-                        kind: 'OperationDefinition',
-                        operation: 'query',
-                        variableDefinitions: [],
-                        name: 'operationName',
-                        luvioSelections: [
-                            {
-                                kind: 'ObjectFieldSelection',
-                                name: 'uiapi',
-                                luvioSelections: [
-                                    {
-                                        kind: 'ObjectFieldSelection',
-                                        name: 'query',
-                                        luvioSelections: [
-                                            {
-                                                kind: 'CustomFieldSelection',
-                                                name: 'Account',
-                                                type: 'Connection',
-                                                luvioSelections: [
-                                                    {
-                                                        kind: 'ObjectFieldSelection',
-                                                        name: 'edges',
-                                                        luvioSelections: [
-                                                            {
-                                                                kind: 'CustomFieldSelection',
-                                                                name: 'node',
-                                                                type: 'Record',
-                                                                luvioSelections: [
-                                                                    {
-                                                                        kind: 'ObjectFieldSelection',
-                                                                        name: 'Name',
-                                                                        luvioSelections: [
-                                                                            {
-                                                                                kind: 'ScalarFieldSelection',
-                                                                                name: 'value',
-                                                                            },
-                                                                            {
-                                                                                kind: 'ScalarFieldSelection',
-                                                                                name: 'displayValue',
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                ],
-                                                            },
-                                                        ],
-                                                    },
-                                                ],
-                                                arguments: [
-                                                    {
-                                                        kind: 'Argument',
-                                                        name: 'where',
-                                                        value: {
-                                                            kind: 'ObjectValue',
-                                                            fields: {
-                                                                Name: {
-                                                                    kind: 'ObjectValue',
-                                                                    fields: {
-                                                                        like: {
-                                                                            kind: 'StringValue',
-                                                                            value: 'Account1',
-                                                                        },
-                                                                    },
-                                                                },
-                                                            },
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        ],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            };
+            const ast = parseQuery(`
+                query {
+                    uiapi {
+                        query {
+                            Account(
+                                where: { Name: { like: "Account1" } }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name { value, displayValue }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
 
-            const expectedQuery = `query { uiapi { query { Account(where:  { Name:  { like: "Account1" } }) { edges { node { Id, WeakEtag, Name { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+            const expectedQuery = `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) {
+                                edges {
+                                    node {
+                                        Id,
+                                        WeakEtag,
+                                        Name { value, displayValue}
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename,
+                    ApiName,
+                    WeakEtag,
+                    Id,
+                    DisplayValue,
+                    SystemModstamp { value }
+                    LastModifiedById { value }
+                    LastModifiedDate { value }
+                    RecordTypeId(fallback: true) { value }
+                }
+            `;
 
             const networkData = getMock('RecordQuery-Account-fields-Name');
             const expectedData = {
@@ -137,87 +109,53 @@ describe('graphql', () => {
 
     describe('caching', () => {
         it('should not hit network when all data is in cache', async () => {
-            const ast = {
-                kind: 'Document',
-                definitions: [
-                    {
-                        kind: 'OperationDefinition',
-                        operation: 'query',
-                        variableDefinitions: [],
-                        name: 'operationName',
-                        luvioSelections: [
-                            {
-                                kind: 'ObjectFieldSelection',
-                                name: 'uiapi',
-                                luvioSelections: [
-                                    {
-                                        kind: 'ObjectFieldSelection',
-                                        name: 'query',
-                                        luvioSelections: [
-                                            {
-                                                kind: 'CustomFieldSelection',
-                                                name: 'Account',
-                                                type: 'Connection',
-                                                luvioSelections: [
-                                                    {
-                                                        kind: 'ObjectFieldSelection',
-                                                        name: 'edges',
-                                                        luvioSelections: [
-                                                            {
-                                                                kind: 'CustomFieldSelection',
-                                                                name: 'node',
-                                                                type: 'Record',
-                                                                luvioSelections: [
-                                                                    {
-                                                                        kind: 'ObjectFieldSelection',
-                                                                        name: 'Name',
-                                                                        luvioSelections: [
-                                                                            {
-                                                                                kind: 'ScalarFieldSelection',
-                                                                                name: 'value',
-                                                                            },
-                                                                            {
-                                                                                kind: 'ScalarFieldSelection',
-                                                                                name: 'displayValue',
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                ],
-                                                            },
-                                                        ],
-                                                    },
-                                                ],
-                                                arguments: [
-                                                    {
-                                                        kind: 'Argument',
-                                                        name: 'where',
-                                                        value: {
-                                                            kind: 'ObjectValue',
-                                                            fields: {
-                                                                Name: {
-                                                                    kind: 'ObjectValue',
-                                                                    fields: {
-                                                                        like: {
-                                                                            kind: 'StringValue',
-                                                                            value: 'Account1',
-                                                                        },
-                                                                    },
-                                                                },
-                                                            },
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        ],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            };
+            const ast = parseQuery(`
+                query {
+                    uiapi {
+                        query {
+                            Account(
+                                where: { Name: { like: "Account1" } }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name { value, displayValue }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
 
-            const expectedQuery = `query { uiapi { query { Account(where:  { Name:  { like: "Account1" } }) { edges { node { Id, WeakEtag, Name { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+            const expectedQuery = `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) {
+                                edges {
+                                    node {
+                                        Id,
+                                        WeakEtag,
+                                        Name { value, displayValue }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename,
+                    ApiName,
+                    WeakEtag,
+                    Id,
+                    DisplayValue,
+                    SystemModstamp { value }
+                    LastModifiedById { value }
+                    LastModifiedDate { value }
+                    RecordTypeId(fallback: true) { value }
+                }
+            `;
 
             const networkData = getMock('RecordQuery-Account-fields-Name');
             const expectedData = {
@@ -263,87 +201,53 @@ describe('graphql', () => {
         });
 
         it('should not hit network when subset of already cached data is requested', async () => {
-            const ast = {
-                kind: 'Document',
-                definitions: [
-                    {
-                        kind: 'OperationDefinition',
-                        operation: 'query',
-                        variableDefinitions: [],
-                        name: 'operationName',
-                        luvioSelections: [
-                            {
-                                kind: 'ObjectFieldSelection',
-                                name: 'uiapi',
-                                luvioSelections: [
-                                    {
-                                        kind: 'ObjectFieldSelection',
-                                        name: 'query',
-                                        luvioSelections: [
-                                            {
-                                                kind: 'CustomFieldSelection',
-                                                name: 'Account',
-                                                type: 'Connection',
-                                                luvioSelections: [
-                                                    {
-                                                        kind: 'ObjectFieldSelection',
-                                                        name: 'edges',
-                                                        luvioSelections: [
-                                                            {
-                                                                kind: 'CustomFieldSelection',
-                                                                name: 'node',
-                                                                type: 'Record',
-                                                                luvioSelections: [
-                                                                    {
-                                                                        kind: 'ObjectFieldSelection',
-                                                                        name: 'Name',
-                                                                        luvioSelections: [
-                                                                            {
-                                                                                kind: 'ScalarFieldSelection',
-                                                                                name: 'value',
-                                                                            },
-                                                                            {
-                                                                                kind: 'ScalarFieldSelection',
-                                                                                name: 'displayValue',
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                ],
-                                                            },
-                                                        ],
-                                                    },
-                                                ],
-                                                arguments: [
-                                                    {
-                                                        kind: 'Argument',
-                                                        name: 'where',
-                                                        value: {
-                                                            kind: 'ObjectValue',
-                                                            fields: {
-                                                                Name: {
-                                                                    kind: 'ObjectValue',
-                                                                    fields: {
-                                                                        like: {
-                                                                            kind: 'StringValue',
-                                                                            value: 'Account1',
-                                                                        },
-                                                                    },
-                                                                },
-                                                            },
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        ],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            };
+            const ast = parseQuery(`
+                query {
+                    uiapi {
+                        query {
+                            Account(
+                                where: { Name: { like: "Account1" } }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name { value, displayValue }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
 
-            const expectedQuery = `query { uiapi { query { Account(where:  { Name:  { like: "Account1" } }) { edges { node { Id, WeakEtag, Name { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+            const expectedQuery = `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) {
+                                edges {
+                                    node {
+                                        Id,
+                                        WeakEtag,
+                                        Name { value, displayValue}
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename,
+                    ApiName,
+                    WeakEtag,
+                    Id,
+                    DisplayValue,
+                    SystemModstamp { value }
+                    LastModifiedById { value }
+                    LastModifiedDate { value }
+                    RecordTypeId(fallback: true) { value }
+                }
+            `;
 
             const networkData = getMock('RecordQuery-Account-fields-Name');
             const expectedData = {
@@ -381,81 +285,23 @@ describe('graphql', () => {
             };
 
             await graphQLImperative(graphqlConfig);
-            const cachedDataAst = {
-                kind: 'Document',
-                definitions: [
-                    {
-                        kind: 'OperationDefinition',
-                        operation: 'query',
-                        variableDefinitions: [],
-                        name: 'operationName',
-                        luvioSelections: [
-                            {
-                                kind: 'ObjectFieldSelection',
-                                name: 'uiapi',
-                                luvioSelections: [
-                                    {
-                                        kind: 'ObjectFieldSelection',
-                                        name: 'query',
-                                        luvioSelections: [
-                                            {
-                                                kind: 'CustomFieldSelection',
-                                                name: 'Account',
-                                                type: 'Connection',
-                                                luvioSelections: [
-                                                    {
-                                                        kind: 'ObjectFieldSelection',
-                                                        name: 'edges',
-                                                        luvioSelections: [
-                                                            {
-                                                                kind: 'CustomFieldSelection',
-                                                                name: 'node',
-                                                                type: 'Record',
-                                                                luvioSelections: [
-                                                                    {
-                                                                        kind: 'ObjectFieldSelection',
-                                                                        name: 'Name',
-                                                                        luvioSelections: [
-                                                                            {
-                                                                                kind: 'ScalarFieldSelection',
-                                                                                name: 'value',
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                ],
-                                                            },
-                                                        ],
-                                                    },
-                                                ],
-                                                arguments: [
-                                                    {
-                                                        kind: 'Argument',
-                                                        name: 'where',
-                                                        value: {
-                                                            kind: 'ObjectValue',
-                                                            fields: {
-                                                                Name: {
-                                                                    kind: 'ObjectValue',
-                                                                    fields: {
-                                                                        like: {
-                                                                            kind: 'StringValue',
-                                                                            value: 'Account1',
-                                                                        },
-                                                                    },
-                                                                },
-                                                            },
-                                                        },
-                                                    },
-                                                ],
-                                            },
-                                        ],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            };
+            const cachedDataAst = parseQuery(`
+                query {
+                    uiapi {
+                        query {
+                            Account(
+                                where: { Name: { like: "Account1" } }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name { value }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
 
             const secondSnapshot = await graphQLImperative({
                 query: cachedDataAst,

@@ -15,17 +15,14 @@ import {
 } from './ObjectField';
 import { createRead as operationCreateRead } from './Operation';
 import { createRead as connectionCreateRead } from '../custom/connection';
+import { createRead as recordCreateRead } from '../custom/record';
 
 function createCustomFieldRead(sel: LuvioSelectionCustomFieldNode): ReaderFragment['read'] {
     if (sel.type === 'Connection') {
         return connectionCreateRead(sel);
     }
 
-    return objectFieldCreateRead({
-        name: sel.name,
-        kind: 'ObjectFieldSelection',
-        luvioSelections: sel.luvioSelections,
-    });
+    return recordCreateRead(sel);
 }
 
 export function resolveLink(builder: Reader<any>, storeLink: StoreLink) {

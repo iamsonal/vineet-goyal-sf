@@ -1,11 +1,26 @@
-import { IngestPath, Luvio, ResourceIngest, Store } from '@luvio/engine';
-import { LuvioSelectionCustomFieldNode } from '@salesforce/lds-graphql-parser';
-import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
-import { GqlConnection } from './connection';
 import {
-    createIngest as selectionCreateIngest,
-    getLuvioFieldNodeSelection,
-} from '../type/Selection';
+    IngestPath,
+    Luvio,
+    Reader,
+    ReaderFragment,
+    ResourceIngest,
+    Store,
+    StoreLink,
+} from '@luvio/engine';
+import {
+    LuvioSelectionCustomFieldNode,
+    LuvioSelectionNode,
+    LuvioSelectionObjectFieldNode,
+} from '@salesforce/lds-graphql-parser';
+import {
+    RecordRepresentation,
+    ingestRecord,
+    RecordRepresentationNormalized,
+    FieldValueRepresentationNormalized,
+    FieldValueRepresentation,
+} from '@salesforce/lds-adapters-uiapi';
+import { GqlConnection } from './connection';
+import { getLuvioFieldNodeSelection, resolveLink } from '../type/Selection';
 
 interface DefaultRecordFields {
     ApiName: string;
@@ -28,27 +43,21 @@ interface DefaultRecordFields {
 
 export type CustomDataType = GqlRecord | GqlConnection;
 
+interface GqlRecordField {
+    value?: string;
+    displayValue?: string;
+}
+
 export type GqlRecord = DefaultRecordFields & {
-    [key: string]:
-        | DefaultRecordFields
-        | {
-              value?: string;
-              displayValue?: string;
-          };
+    [key: string]: DefaultRecordFields | GqlRecordField;
 };
 
 export const CUSTOM_FIELD_NODE_TYPE = 'Record';
 
-function keyBuilder(id: string) {
-    return `gql::${CUSTOM_FIELD_NODE_TYPE}::${id}`;
-}
-
-function collectObjectFieldSelection<K extends keyof RecordRepresentation['fields']>(
-    data: any
-): RecordRepresentation['fields'][K] {
+function collectObjectFieldSelection(data: GqlRecordField): FieldValueRepresentation {
     return {
-        value: data.value,
-        displayValue: data.displayValue,
+        value: data.value as string,
+        displayValue: data.displayValue as string,
     };
 }
 
@@ -97,7 +106,7 @@ export function convertToRecordRepresentation(
 
         switch (sel.kind) {
             case 'ObjectFieldSelection': {
-                fieldsBag[name] = collectObjectFieldSelection(data);
+                fieldsBag[name] = collectObjectFieldSelection(data as GqlRecordField);
                 break;
             }
             case 'CustomFieldSelection': {
@@ -131,33 +140,163 @@ export const createIngest: (ast: LuvioSelectionCustomFieldNode) => ResourceInges
     ast: LuvioSelectionCustomFieldNode
 ) => {
     return (data: GqlRecord, path: IngestPath, luvio: Luvio, store: Store, timestamp: number) => {
-        const { Id } = data;
-        const key = keyBuilder(Id);
-        const selections = ast.luvioSelections === undefined ? [] : ast.luvioSelections;
-        for (let i = 0, len = selections.length; i < len; i += 1) {
-            const sel = getLuvioFieldNodeSelection(selections[i]);
-            const { name: propertyName } = sel;
-            data[propertyName] = selectionCreateIngest(sel)(
-                data[propertyName],
-                {
-                    fullPath: `${key}__${propertyName}`,
-                    parent: {
-                        data,
-                        key,
-                        existing: store.records[key],
-                    },
-                    propertyName,
-                },
-                luvio,
-                store,
-                timestamp
-            ) as any;
+        const recordRep = convertToRecordRepresentation(ast, data);
+        return ingestRecord(recordRep, path, luvio, store, timestamp);
+    };
+};
+
+interface RecordDenormalizationState {
+    source: RecordRepresentationNormalized;
+    sink: Partial<GqlRecord>;
+    parentFieldValue?: FieldValueRepresentationNormalized;
+}
+
+const recordProperties: Record<keyof GqlRecord, { propertyName: keyof RecordRepresentation }> = {
+    Id: {
+        propertyName: 'id',
+    },
+    ApiName: {
+        propertyName: 'apiName',
+    },
+};
+
+function getNonSpanningField(
+    sel: LuvioSelectionObjectFieldNode,
+    builder: Reader<any>,
+    source: any
+) {
+    const sink: GqlRecordField = {};
+    const { luvioSelections } = sel;
+    if (luvioSelections === undefined) {
+        throw new Error('Empty selections not supported');
+    }
+    for (let i = 0, len = luvioSelections.length; i < len; i += 1) {
+        const sel = getLuvioFieldNodeSelection(luvioSelections[i]);
+        const { kind } = sel;
+        const name = sel.name as keyof GqlRecordField;
+        builder.enterPath(name);
+        if (kind !== 'ScalarFieldSelection') {
+            throw new Error(`Unexpected kind "${kind}"`);
         }
+        sink[name] = source[name] as any;
+        builder.exitPath();
+    }
 
-        luvio.storePublish(key, data);
+    return sink;
+}
 
-        return {
-            __ref: key,
-        };
+function getCustomSelection(
+    selection: LuvioSelectionCustomFieldNode,
+    builder: Reader<any>,
+    options: RecordRepresentationReadOptions
+) {
+    const { type } = selection;
+    switch (type) {
+        case 'Record':
+            return readRecordRepresentation(selection, builder, options);
+    }
+}
+
+function getScalarValue(selectionName: string, state: RecordDenormalizationState) {
+    if (selectionName === 'DisplayValue') {
+        const { parentFieldValue } = state;
+        if (parentFieldValue === undefined) {
+            throw new Error('Unable to calculate DisplayValue');
+        }
+        return parentFieldValue.displayValue;
+    }
+
+    const assignment = recordProperties[selectionName];
+    if (assignment === undefined) {
+        throw new Error(
+            `Unknown assignment for ScalarFieldSelection at property "${selectionName}"`
+        );
+    }
+    return state.source[assignment.propertyName] as any;
+}
+
+function assignSelection(
+    selection: LuvioSelectionNode,
+    builder: Reader<any>,
+    state: RecordDenormalizationState
+) {
+    const sel = getLuvioFieldNodeSelection(selection);
+    const { name: selectionName, kind } = sel;
+    const { source, sink } = state;
+    const { fields } = source;
+    builder.enterPath(selectionName);
+    switch (kind) {
+        case 'ScalarFieldSelection': {
+            sink[selectionName] = getScalarValue(selectionName, state);
+            break;
+        }
+        case 'ObjectFieldSelection': {
+            // regular field, not spanning
+            const field = fields[selectionName];
+            const resolved = resolveLink(builder, field);
+            sink[selectionName] = getNonSpanningField(
+                sel as LuvioSelectionObjectFieldNode,
+                builder,
+                resolved
+            );
+            break;
+        }
+        case 'CustomFieldSelection': {
+            const field = fields[selectionName];
+            const resolved = resolveLink(builder, field) as FieldValueRepresentationNormalized;
+            const { value } = resolved;
+            const resolvedSpanningRecord = resolveLink(
+                builder,
+                value as StoreLink
+            ) as RecordRepresentationNormalized;
+            sink[selectionName] = getCustomSelection(
+                sel as LuvioSelectionCustomFieldNode,
+                builder,
+                {
+                    source: resolvedSpanningRecord,
+                    parentFieldValue: resolved,
+                }
+            );
+        }
+    }
+    builder.exitPath();
+}
+
+interface RecordRepresentationReadOptions {
+    source: RecordRepresentationNormalized;
+    parentFieldValue: FieldValueRepresentationNormalized | undefined;
+}
+
+function readRecordRepresentation(
+    ast: LuvioSelectionCustomFieldNode,
+    builder: Reader<any>,
+    options: RecordRepresentationReadOptions
+) {
+    const { luvioSelections } = ast;
+    if (luvioSelections === undefined) {
+        throw new Error('Empty selections not supported');
+    }
+
+    const sink = {};
+    const state: RecordDenormalizationState = {
+        source: options.source,
+        sink,
+        parentFieldValue: options.parentFieldValue,
+    };
+
+    for (let i = 0, len = luvioSelections.length; i < len; i += 1) {
+        assignSelection(luvioSelections[i], builder, state);
+    }
+    return sink;
+}
+
+export const createRead: (ast: LuvioSelectionCustomFieldNode) => ReaderFragment['read'] = (
+    ast: LuvioSelectionCustomFieldNode
+) => {
+    return (data: RecordRepresentationNormalized, builder: Reader<any>) => {
+        return readRecordRepresentation(ast, builder, {
+            source: data,
+            parentFieldValue: undefined,
+        });
     };
 };

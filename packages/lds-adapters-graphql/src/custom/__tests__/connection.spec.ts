@@ -70,6 +70,21 @@ describe('GQL Connection', () => {
                                 value: 'Account1',
                                 displayValue: null,
                             },
+                            __typename: 'Account',
+                            ApiName: 'Account',
+                            DisplayValue: 'Account1',
+                            SystemModstamp: {
+                                value: '2021-03-11T20:15:39.000Z',
+                            },
+                            LastModifiedById: {
+                                value: '005RM000002492xYAA',
+                            },
+                            LastModifiedDate: {
+                                value: '2021-03-11T20:15:39.000Z',
+                            },
+                            RecordTypeId: {
+                                value: '012RM000000E79WYAS',
+                            },
                         },
                     },
                 ],
@@ -107,17 +122,27 @@ describe('GQL Connection', () => {
                 ],
                 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
                     node: {
-                        __ref: 'gql::Record::001RM000004uuhnYAA',
+                        __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                     },
                 },
-                'gql::Record::001RM000004uuhnYAA': {
-                    Id: '001RM000004uuhnYAA',
-                    WeakEtag: 1615493739000,
-                    Name: {
-                        __ref: 'gql::Record::001RM000004uuhnYAA__Name',
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
+                    id: '001RM000004uuhnYAA',
+                    childRelationships: {},
+                    eTag: '',
+                    apiName: 'Account',
+                    weakEtag: 1615493739000,
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name',
+                        },
                     },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
                 },
-                'gql::Record::001RM000004uuhnYAA__Name': {
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': {
                     value: 'Account1',
                     displayValue: null,
                 },
@@ -171,6 +196,21 @@ describe('GQL Connection', () => {
                                 value: 'Account1',
                                 displayValue: null,
                             },
+                            __typename: 'Account',
+                            ApiName: 'Account',
+                            DisplayValue: 'Account1',
+                            SystemModstamp: {
+                                value: '2021-03-11T20:15:39.000Z',
+                            },
+                            LastModifiedById: {
+                                value: '005RM000002492xYAA',
+                            },
+                            LastModifiedDate: {
+                                value: '2021-03-11T20:15:39.000Z',
+                            },
+                            RecordTypeId: {
+                                value: '012RM000000E79WYAS',
+                            },
                         },
                     },
                 ],
@@ -208,17 +248,27 @@ describe('GQL Connection', () => {
                 ],
                 'gql::Connection::Account()__edges__0': {
                     node: {
-                        __ref: 'gql::Record::001RM000004uuhnYAA',
+                        __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                     },
                 },
-                'gql::Record::001RM000004uuhnYAA': {
-                    Id: '001RM000004uuhnYAA',
-                    WeakEtag: 1615493739000,
-                    Name: {
-                        __ref: 'gql::Record::001RM000004uuhnYAA__Name',
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
+                    id: '001RM000004uuhnYAA',
+                    childRelationships: {},
+                    eTag: '',
+                    apiName: 'Account',
+                    weakEtag: 1615493739000,
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name',
+                        },
                     },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
                 },
-                'gql::Record::001RM000004uuhnYAA__Name': {
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': {
                     value: 'Account1',
                     displayValue: null,
                 },
@@ -398,11 +448,41 @@ describe('GQL Connection', () => {
                                 displayValue: null,
                             },
                             Owner: {
+                                ApiName: 'User',
                                 Id: '005RM000002492xYAA',
                                 WeakEtag: 1616602434000,
+                                DisplayValue: 'Owner',
                                 Name: {
                                     value: 'Admin User',
+                                    displayValue: 'display value',
                                 },
+                                SystemModstamp: {
+                                    value: '2021-03-11T20:15:39.000Z',
+                                },
+                                LastModifiedById: {
+                                    value: '005RM000002492xYAA',
+                                },
+                                LastModifiedDate: {
+                                    value: '2021-03-11T20:15:39.000Z',
+                                },
+                                RecordTypeId: {
+                                    value: '012RM000000E79WYAS',
+                                },
+                            },
+                            __typename: 'Account',
+                            ApiName: 'Account',
+                            DisplayValue: 'Account1',
+                            SystemModstamp: {
+                                value: '2021-03-11T20:15:39.000Z',
+                            },
+                            LastModifiedById: {
+                                value: '005RM000002492xYAA',
+                            },
+                            LastModifiedDate: {
+                                value: '2021-03-11T20:15:39.000Z',
+                            },
+                            RecordTypeId: {
+                                value: '012RM000000E79WYAS',
                             },
                         },
                     },
@@ -441,32 +521,59 @@ describe('GQL Connection', () => {
                 ],
                 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
                     node: {
-                        __ref: 'gql::Record::001RM000004uuhnYAA',
+                        __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                     },
                 },
-                'gql::Record::001RM000004uuhnYAA': {
-                    Id: '001RM000004uuhnYAA',
-                    WeakEtag: 1615493739000,
-                    Name: {
-                        __ref: 'gql::Record::001RM000004uuhnYAA__Name',
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
+                    apiName: 'Account',
+                    id: '001RM000004uuhnYAA',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1615493739000,
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name',
+                        },
+                        Owner: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Owner',
+                        },
                     },
-                    Owner: {
-                        __ref: 'gql::Record::005RM000002492xYAA',
-                    },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
                 },
-                'gql::Record::001RM000004uuhnYAA__Name': {
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': {
                     value: 'Account1',
                     displayValue: null,
                 },
-                'gql::Record::005RM000002492xYAA': {
-                    Id: '005RM000002492xYAA',
-                    WeakEtag: 1616602434000,
-                    Name: {
-                        __ref: 'gql::Record::005RM000002492xYAA__Name',
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Owner': {
+                    displayValue: 'Owner',
+                    value: {
+                        __ref: 'UiApi::RecordRepresentation:005RM000002492xYAA',
                     },
                 },
-                'gql::Record::005RM000002492xYAA__Name': {
+                'UiApi::RecordRepresentation:005RM000002492xYAA': {
+                    apiName: 'User',
+                    id: '005RM000002492xYAA',
+                    weakEtag: 1616602434000,
+                    eTag: '',
+                    childRelationships: {},
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:005RM000002492xYAA__fields__Name',
+                        },
+                    },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                },
+                'UiApi::RecordRepresentation:005RM000002492xYAA__fields__Name': {
                     value: 'Admin User',
+                    displayValue: 'display value',
                 },
             });
         });

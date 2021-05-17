@@ -1,7 +1,7 @@
 import { Environment, Luvio, Store } from '@luvio/engine';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { LuvioSelectionCustomFieldNode } from '@salesforce/lds-graphql-parser';
-import { GqlRecord, createIngest, convertToRecordRepresentation } from '../record';
+import { GqlRecord, createIngest, convertToRecordRepresentation, createRead } from '../record';
 
 describe('GQL Record', () => {
     describe('convertToRecordRepresentation', () => {
@@ -204,7 +204,7 @@ describe('GQL Record', () => {
         });
     });
 
-    describe.skip('ingest', () => {
+    describe('ingest', () => {
         it('should ingest flat records correctly', () => {
             const selection: LuvioSelectionCustomFieldNode = {
                 kind: 'CustomFieldSelection',
@@ -454,6 +454,366 @@ describe('GQL Record', () => {
                     displayValue: 'display value',
                 },
             });
+        });
+    });
+
+    describe('read', () => {
+        it('should denormalize RecordRepresentation correctly', () => {
+            const store = new Store();
+            store.records = {
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
+                    id: '001RM000004uuhnYAA',
+                    childRelationships: {},
+                    eTag: '',
+                    apiName: 'Account',
+                    weakEtag: 1615493739000,
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name',
+                        },
+                    },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const selection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'node',
+                type: 'Record',
+                luvioSelections: [
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: 'Id',
+                    },
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'Name',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'displayValue',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const expected = {
+                Id: '001RM000004uuhnYAA',
+                Name: {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+            };
+
+            const snap = luvio.storeLookup({
+                recordId: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
+                node: {
+                    kind: 'Fragment',
+                    synthetic: false,
+                    reader: true,
+                    read: createRead(selection),
+                },
+                variables: {},
+            });
+            expect(snap.data).toEqual(expected);
+        });
+
+        it('should denormalize spanning RecordRepresentation correctly', () => {
+            const selection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'node',
+                type: 'Record',
+                luvioSelections: [
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: 'Id',
+                    },
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'Name',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'displayValue',
+                            },
+                        ],
+                    },
+                    {
+                        kind: 'CustomFieldSelection',
+                        name: 'Owner',
+                        type: 'Record',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'Id',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'ApiName',
+                            },
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'Name',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ScalarFieldSelection',
+                                        name: 'value',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const store = new Store();
+            store.records = {
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
+                    apiName: 'Account',
+                    id: '001RM000004uuhnYAA',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1615493739000,
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name',
+                        },
+                        Owner: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Owner',
+                        },
+                    },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Owner': {
+                    displayValue: 'Owner',
+                    value: {
+                        __ref: 'UiApi::RecordRepresentation:005RM000002492xYAA',
+                    },
+                },
+                'UiApi::RecordRepresentation:005RM000002492xYAA': {
+                    apiName: 'User',
+                    id: '005RM000002492xYAA',
+                    weakEtag: 1616602434000,
+                    eTag: '',
+                    childRelationships: {},
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:005RM000002492xYAA__fields__Name',
+                        },
+                    },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                },
+                'UiApi::RecordRepresentation:005RM000002492xYAA__fields__Name': {
+                    value: 'Admin User',
+                    displayValue: 'display value',
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const expected = {
+                Id: '001RM000004uuhnYAA',
+                Name: {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                Owner: {
+                    ApiName: 'User',
+                    Id: '005RM000002492xYAA',
+                    Name: {
+                        value: 'Admin User',
+                    },
+                },
+            };
+
+            const snap = luvio.storeLookup({
+                recordId: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
+                node: {
+                    kind: 'Fragment',
+                    synthetic: false,
+                    reader: true,
+                    read: createRead(selection),
+                },
+                variables: {},
+            });
+            expect(snap.data).toEqual(expected);
+        });
+
+        it('should denormalize DisplayValue from spanning RecordRepresentation correctly', () => {
+            const selection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'node',
+                type: 'Record',
+                luvioSelections: [
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: 'Id',
+                    },
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'Name',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'displayValue',
+                            },
+                        ],
+                    },
+                    {
+                        kind: 'CustomFieldSelection',
+                        name: 'Owner',
+                        type: 'Record',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'Id',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'DisplayValue',
+                            },
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'Name',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ScalarFieldSelection',
+                                        name: 'value',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const store = new Store();
+            store.records = {
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
+                    apiName: 'Account',
+                    id: '001RM000004uuhnYAA',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1615493739000,
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name',
+                        },
+                        Owner: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Owner',
+                        },
+                    },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Owner': {
+                    displayValue: 'Owner',
+                    value: {
+                        __ref: 'UiApi::RecordRepresentation:005RM000002492xYAA',
+                    },
+                },
+                'UiApi::RecordRepresentation:005RM000002492xYAA': {
+                    apiName: 'User',
+                    id: '005RM000002492xYAA',
+                    weakEtag: 1616602434000,
+                    eTag: '',
+                    childRelationships: {},
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:005RM000002492xYAA__fields__Name',
+                        },
+                    },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                },
+                'UiApi::RecordRepresentation:005RM000002492xYAA__fields__Name': {
+                    value: 'Admin User',
+                    displayValue: 'display value',
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const expected = {
+                Id: '001RM000004uuhnYAA',
+                Name: {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                Owner: {
+                    DisplayValue: 'Owner',
+                    Id: '005RM000002492xYAA',
+                    Name: {
+                        value: 'Admin User',
+                    },
+                },
+            };
+
+            const snap = luvio.storeLookup({
+                recordId: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
+                node: {
+                    kind: 'Fragment',
+                    synthetic: false,
+                    reader: true,
+                    read: createRead(selection),
+                },
+                variables: {},
+            });
+            expect(snap.data).toEqual(expected);
         });
     });
 });

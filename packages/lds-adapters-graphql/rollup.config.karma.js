@@ -7,7 +7,12 @@ import {
 } from '../../scripts/rollup/rollup.config.karma';
 
 module.exports = [
-    ...ldsAdaptersConfigs({ adapterModuleName: 'lds-adapters-graphql' }),
+    ...ldsAdaptersConfigs({ adapterModuleName: 'lds-adapters-graphql' }).map((config) => {
+        const { plugins } = config;
+        config.plugins = [...(plugins || []), resolve()];
+
+        return config;
+    }),
     ...adapterTestUtilConfigs({ testUtilName: 'graphql-test-util' }).map((config) => {
         const { plugins } = config;
         config.plugins = [

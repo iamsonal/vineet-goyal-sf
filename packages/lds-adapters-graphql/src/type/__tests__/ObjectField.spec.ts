@@ -198,6 +198,21 @@ describe('ObjectField', () => {
                                 value: 'Account1',
                                 displayValue: null,
                             },
+                            __typename: 'Account',
+                            ApiName: 'Account',
+                            DisplayValue: 'Account1',
+                            SystemModstamp: {
+                                value: '2021-03-11T20:15:39.000Z',
+                            },
+                            LastModifiedById: {
+                                value: '005RM000002492xYAA',
+                            },
+                            LastModifiedDate: {
+                                value: '2021-03-11T20:15:39.000Z',
+                            },
+                            RecordTypeId: {
+                                value: '012RM000000E79WYAS',
+                            },
                         },
                     },
                 ],
@@ -224,20 +239,30 @@ describe('ObjectField', () => {
         );
 
         expect(store.records).toEqual({
-            'gql::Record::001RM000004uuhnYAA__Name': {
+            'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
+                id: '001RM000004uuhnYAA',
+                childRelationships: {},
+                eTag: '',
+                apiName: 'Account',
+                weakEtag: 1615493739000,
+                fields: {
+                    Name: {
+                        __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name',
+                    },
+                },
+                systemModstamp: '2021-03-11T20:15:39.000Z',
+                lastModifiedById: '005RM000002492xYAA',
+                lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                recordTypeId: '012RM000000E79WYAS',
+                recordTypeInfo: null,
+            },
+            'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': {
                 value: 'Account1',
                 displayValue: null,
             },
-            'gql::Record::001RM000004uuhnYAA': {
-                Id: '001RM000004uuhnYAA',
-                WeakEtag: 1615493739000,
-                Name: {
-                    __ref: 'gql::Record::001RM000004uuhnYAA__Name',
-                },
-            },
             'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
                 node: {
-                    __ref: 'gql::Record::001RM000004uuhnYAA',
+                    __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                 },
             },
             'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [

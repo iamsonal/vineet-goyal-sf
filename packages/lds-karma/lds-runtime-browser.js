@@ -6,7 +6,10 @@ import { makeEnvironmentResettable, resetAllAdapterContexts } from './makeEnviro
 
 const karmaNetworkAdapter = sinon.stub().rejects();
 
-const store = new Store();
+const storeOptions = {
+    scheduler: () => {},
+};
+const store = new Store(storeOptions);
 const luvio = new Luvio(makeEnvironmentResettable(new Environment(store, karmaNetworkAdapter)));
 
 setDefaultLuvio({ luvio });

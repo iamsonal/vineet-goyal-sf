@@ -62,7 +62,11 @@ const getDraftActionForRecordKeys = (keys: string[]) => {
 const { newRecordId, isGenerated } = recordIdGenerator(userId);
 
 // non-draft-aware base services
-const store = new Store();
+//todo:
+const storeOptions = {
+    scheduler: () => {},
+};
+const store = new Store(storeOptions);
 const networkAdapter = makeNetworkAdapterBatchRecordFields(NimbusNetworkAdapter);
 const baseDurableStore = new NimbusDurableStore();
 const internalAdapterDurableStore = makeRecordDenormalizingDurableStore(baseDurableStore, store);

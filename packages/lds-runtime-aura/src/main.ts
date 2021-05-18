@@ -5,7 +5,10 @@ import { instrumentation, setupInstrumentation } from '@salesforce/lds-instrumen
 import { setupMetadataWatcher } from './metadata';
 
 export default function ldsEngineCreator() {
-    const store = new Store();
+    const storeOptions = {
+        scheduler: () => {},
+    };
+    const store = new Store(storeOptions);
     const environment = new Environment(store, networkAdapter);
     const luvio = new Luvio(environment, {
         instrument: instrumentation.instrumentNetwork.bind(instrumentation),

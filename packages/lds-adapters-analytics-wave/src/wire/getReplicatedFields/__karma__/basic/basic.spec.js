@@ -1,11 +1,11 @@
-import GetReplicatedDatasetFields from '../lwc/get-replicated-dataset-fields';
+import GetReplicatedFields from '../lwc/get-replicated-fields';
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
-    mockGetReplicatedDatasetFieldsNetworkOnce,
-    mockGetReplicatedDatasetFieldsNetworkErrorOnce,
+    mockGetReplicatedFieldsNetworkOnce,
+    mockGetReplicatedFieldsNetworkErrorOnce,
 } from 'analytics-wave-test-util';
 
-const MOCK_PREFIX = 'wire/getReplicatedDatasetFields/__karma__/data/';
+const MOCK_PREFIX = 'wire/getReplicatedFields/__karma__/data/';
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
@@ -13,35 +13,35 @@ function getMock(filename) {
 
 describe('basic', () => {
     it('gets replicated dataset fields', async () => {
-        const mock = getMock('replicated-dataset-fields');
+        const mock = getMock('replicated-fields');
         const replicatedDatasetMock = getMock('replicated-dataset');
         const config = { id: replicatedDatasetMock.id };
-        mockGetReplicatedDatasetFieldsNetworkOnce(config, mock);
+        mockGetReplicatedFieldsNetworkOnce(config, mock);
 
         const el = await setupElement(
             { replicatedDatasetId: replicatedDatasetMock.id },
-            GetReplicatedDatasetFields
+            GetReplicatedFields
         );
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredData()).toEqual(mock);
     });
 
     it('does not fetch a second time', async () => {
-        const mock = getMock('replicated-dataset-fields');
+        const mock = getMock('replicated-fields');
         const replicatedDatasetMock = getMock('replicated-dataset');
         const config = { id: replicatedDatasetMock.id };
-        mockGetReplicatedDatasetFieldsNetworkOnce(config, mock);
+        mockGetReplicatedFieldsNetworkOnce(config, mock);
 
         const el = await setupElement(
             { replicatedDatasetId: replicatedDatasetMock.id },
-            GetReplicatedDatasetFields
+            GetReplicatedFields
         );
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredData()).toEqual(mock);
 
         const el2 = await setupElement(
             { replicatedDatasetId: replicatedDatasetMock.id },
-            GetReplicatedDatasetFields
+            GetReplicatedFields
         );
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredData()).toEqual(mock);
@@ -61,9 +61,9 @@ describe('basic', () => {
             ],
         };
         const config = { id: mock.id };
-        mockGetReplicatedDatasetFieldsNetworkErrorOnce(config, mock);
+        mockGetReplicatedFieldsNetworkErrorOnce(config, mock);
 
-        const el = await setupElement({ replicatedDatasetId: mock.id }, GetReplicatedDatasetFields);
+        const el = await setupElement({ replicatedDatasetId: mock.id }, GetReplicatedFields);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
     });
@@ -82,7 +82,7 @@ describe('basic', () => {
             ],
         };
         const config = { id: mock.id };
-        mockGetReplicatedDatasetFieldsNetworkOnce(config, [
+        mockGetReplicatedFieldsNetworkOnce(config, [
             {
                 reject: true,
                 status: 404,
@@ -92,14 +92,11 @@ describe('basic', () => {
             },
         ]);
 
-        const el = await setupElement({ replicatedDatasetId: mock.id }, GetReplicatedDatasetFields);
+        const el = await setupElement({ replicatedDatasetId: mock.id }, GetReplicatedFields);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
 
-        const el2 = await setupElement(
-            { replicatedDatasetId: mock.id },
-            GetReplicatedDatasetFields
-        );
+        const el2 = await setupElement({ replicatedDatasetId: mock.id }, GetReplicatedFields);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredError()).toEqual(mock);
     });

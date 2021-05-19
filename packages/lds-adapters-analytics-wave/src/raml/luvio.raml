@@ -15,6 +15,9 @@ types:
   ScheduleRepresentation:
     (luvio.key):
       id: assetId
+  ReplicatedFieldCollectionRepresentation:
+    (luvio.key):
+      id: replicatedDataset.id
 
 /wave:
   /asset/{assetId}/schedule:
@@ -134,4 +137,9 @@ types:
   /replicatedDatasets/{id}/fields:
     get:
       (luvio.adapter):
-        name: getReplicatedDatasetFields
+        name: getReplicatedFields
+      (luvio.key):
+        id: urlParams.id
+    patch:
+      (luvio.adapter):
+        name: updateReplicatedFields

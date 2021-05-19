@@ -1,15 +1,15 @@
 import { api, LightningElement, wire } from 'lwc';
-import { getReplicatedDatasetFields } from 'lds-adapters-analytics-wave';
+import { getReplicatedFields } from 'lds-adapters-analytics-wave';
 
-export default class GetReplicatedDatasetFields extends LightningElement {
+export default class GetReplicatedFields extends LightningElement {
     wirePushCount = -1;
 
     @api replicatedDatasetId;
 
-    @wire(getReplicatedDatasetFields, {
+    @wire(getReplicatedFields, {
         id: '$replicatedDatasetId',
     })
-    onGetReplicatedDatasetFields({ data, error }) {
+    onGetReplicatedFields({ data, error }) {
         this.data = data;
         this.error = error;
         this.wirePushCount += 1;

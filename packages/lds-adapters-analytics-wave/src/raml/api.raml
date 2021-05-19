@@ -1664,6 +1664,23 @@ types:
         description: If set and true, this field will not be replicated -- but the
           field metadata can still be stored and retrieved.
         type: boolean
+  ReplicatedFieldCollectionInputRepresentation:
+    description: A list of configuration metadata that specifies how to replicate
+      each field of a Replicated Dataset.
+    type: object
+    properties:
+      fields:
+        description: The list of field configuration.
+        type: array
+        items:
+          type: object
+  ReplicatedFieldCollectionInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for replicated dataset fields input representation
+    type: object
+    properties:
+      replicatedFields:
+        type: ReplicatedFieldCollectionInputRepresentation
+        description: Replicated dataset fields input representation
   ReplicatedFieldCollectionRepresentation:
     description: A list of Replicated Fields.
     type: object
@@ -1673,6 +1690,10 @@ types:
         type: array
         items:
           type: ReplicatedFieldRepresentation
+      replicatedDataset:
+        description: A reference to the replicated dataset that the fields belong
+          to
+        type: AssetReferenceRepresentation
       url:
         description: URL to get the collection.
         type: string
@@ -3363,6 +3384,21 @@ types:
           body:
             application/json:
               type: ReplicatedFieldCollectionRepresentation
+    patch:
+      description: Merge (upsert) the target Replicated Dataset's fields with those
+        provided input body. Each field requires at least a name if it's existing,
+        and fieldType if it's new. This method cannot be used to delete fields,
+        but they can be skipped, which removes them from active replication.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ReplicatedFieldCollectionRepresentation
+      body:
+        application/json:
+          type: ReplicatedFieldCollectionInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: ReplicatedFieldCollectionInputRepresentation
+          (oas-body-name): replicatedFields
     uriParameters:
       id:
         type: string

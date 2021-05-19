@@ -367,5 +367,8 @@
             "skipped": true
         }
     ],
+    "replicatedDataset": {
+        "id": "0IuS70000004CqXKAU"
+    },
     "url": "/services/data/v53.0/wave/replicatedDatasets/0IuS70000004CqXKAU/fields"
 }

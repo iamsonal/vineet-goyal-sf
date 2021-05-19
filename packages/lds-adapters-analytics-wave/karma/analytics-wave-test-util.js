@@ -657,8 +657,8 @@ function deleteReplicatedDatasetMatcher(config) {
 }
 
 // Replicated Dataset Fields
-function mockGetReplicatedDatasetFieldsNetworkOnce(config, mockData) {
-    const paramMatch = getReplicatedDatasetFieldsMatcher(config);
+function mockGetReplicatedFieldsNetworkOnce(config, mockData) {
+    const paramMatch = getReplicatedFieldsMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {
@@ -666,18 +666,43 @@ function mockGetReplicatedDatasetFieldsNetworkOnce(config, mockData) {
     }
 }
 
-function mockGetReplicatedDatasetFieldsNetworkErrorOnce(config, mockData) {
-    const paramMatch = getReplicatedDatasetFieldsMatcher(config);
+function mockGetReplicatedFieldsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getReplicatedFieldsMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-function getReplicatedDatasetFieldsMatcher(config) {
+function getReplicatedFieldsMatcher(config) {
     const { id } = config;
 
     return sinon.match({
         body: null,
         headers: {},
         method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/replicatedDatasets/${id}/fields`,
+        queryParams: {},
+    });
+}
+
+function mockUpdateReplicatedFieldsNetworkOnce(config, mockData) {
+    const paramMatch = updateReplicatedFieldsMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockUpdateReplicatedFieldsNetworkErrorOnce(config, mockData) {
+    const paramMatch = updateReplicatedFieldsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function updateReplicatedFieldsMatcher(config) {
+    const { id, replicatedFields } = config;
+
+    return sinon.match({
+        body: {
+            replicatedFields,
+        },
+        headers: {},
+        method: 'patch',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/replicatedDatasets/${id}/fields`,
         queryParams: {},
@@ -847,8 +872,10 @@ export {
     mockCreateReplicatedDatasetNetworkErrorOnce,
     mockDeleteReplicatedDatasetNetworkOnce,
     mockDeleteReplicatedDatasetNetworkErrorOnce,
-    mockGetReplicatedDatasetFieldsNetworkOnce,
-    mockGetReplicatedDatasetFieldsNetworkErrorOnce,
+    mockGetReplicatedFieldsNetworkOnce,
+    mockGetReplicatedFieldsNetworkErrorOnce,
+    mockUpdateReplicatedFieldsNetworkOnce,
+    mockUpdateReplicatedFieldsNetworkErrorOnce,
     mockGetScheduleNetworkOnce,
     mockGetScheduleNetworkErrorOnce,
     mockUpdateScheduleNetworkOnce,

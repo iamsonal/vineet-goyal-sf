@@ -4510,7 +4510,7 @@ describe('routes', () => {
                 basePath: `/replicatedDatasets/0IuS70000004CqXKAU/fields`,
             },
             [
-                'WaveController.getReplicatedDatasetFields',
+                'WaveController.getReplicatedFields',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]
@@ -4521,6 +4521,53 @@ describe('routes', () => {
                 method: 'get',
                 baseUri: WAVE_BASE_URI,
                 basePath: `/replicatedDatasets/0IuS70000004CqXKAU/fields`,
+            },
+            {}
+        );
+    });
+
+    describe('patch /wave/replicatedDatasets/{id}/fields', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/replicatedDatasets/0IuS70000004CqXKAU/fields`,
+                body: {
+                    replicatedFields: {
+                        fields: [
+                            { fieldType: 'text', label: 'Id', name: 'Id', skipped: 'false' },
+                            { fieldType: 'text', label: 'Name', name: 'Name', skipped: 'false' },
+                        ],
+                    },
+                },
+            },
+            [
+                'WaveController.updateReplicatedFields',
+                {
+                    replicatedFields: {
+                        fields: [
+                            { fieldType: 'text', label: 'Id', name: 'Id', skipped: 'false' },
+                            { fieldType: 'text', label: 'Name', name: 'Name', skipped: 'false' },
+                        ],
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'patch',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/replicatedDatasets/0IuS70000004CqXKAU/fields`,
+                body: {
+                    replicatedFields: {
+                        fields: [
+                            { fieldType: 'text', label: 'Id', name: 'Id', skipped: 'false' },
+                            { fieldType: 'text', label: 'Name', name: 'Name', skipped: 'false' },
+                        ],
+                    },
+                },
             },
             {}
         );

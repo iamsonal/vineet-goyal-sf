@@ -25,6 +25,41 @@ function createCustomFieldRead(sel: LuvioSelectionCustomFieldNode): ReaderFragme
     return recordCreateRead(sel);
 }
 
+export enum PropertyLookupResultState {
+    Missing,
+    Present,
+}
+interface PropertyLookupResultMissing {
+    state: PropertyLookupResultState.Missing;
+}
+
+interface PropertyLookupResultPresent {
+    state: PropertyLookupResultState.Present;
+    value: any;
+}
+
+type PropertyLookupResult = PropertyLookupResultMissing | PropertyLookupResultPresent;
+
+const objectPrototypeHasOwnProperty = Object.prototype.hasOwnProperty;
+
+export function propertyLookup(
+    builder: Reader<any>,
+    key: string,
+    source: any
+): PropertyLookupResult {
+    if (objectPrototypeHasOwnProperty.call(source, key) === false) {
+        builder.markMissing();
+        return {
+            state: PropertyLookupResultState.Missing,
+        };
+    }
+
+    return {
+        state: PropertyLookupResultState.Present,
+        value: source[key],
+    } as PropertyLookupResultPresent;
+}
+
 export function resolveLink(builder: Reader<any>, storeLink: StoreLink) {
     const { __ref } = storeLink;
     const lookup = builder.storeLookup(__ref as string);

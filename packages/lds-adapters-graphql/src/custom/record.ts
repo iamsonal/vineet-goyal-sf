@@ -20,7 +20,12 @@ import {
     FieldValueRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
 import { GqlConnection } from './connection';
-import { getLuvioFieldNodeSelection, resolveLink } from '../type/Selection';
+import {
+    getLuvioFieldNodeSelection,
+    resolveLink,
+    propertyLookup,
+    PropertyLookupResultState,
+} from '../type/Selection';
 
 interface DefaultRecordFields {
     ApiName: string;
@@ -232,8 +237,12 @@ function assignSelection(
         }
         case 'ObjectFieldSelection': {
             // regular field, not spanning
-            const field = fields[selectionName];
-            const resolved = resolveLink(builder, field);
+            const field = propertyLookup(builder, selectionName, fields);
+            if (field.state === PropertyLookupResultState.Missing) {
+                break;
+            }
+
+            const resolved = resolveLink(builder, field.value as StoreLink);
             sink[selectionName] = getNonSpanningField(
                 sel as LuvioSelectionObjectFieldNode,
                 builder,

@@ -5,11 +5,15 @@ const ADAPTER_MODULE_NAME = 'lds-adapters-graphql';
 const ADAPTER_TEST_UTIL_NAME = 'graphql-test-util';
 
 const FILES = [
+    require.resolve('../lds-adapters-uiapi/karma/dist/uiapi-mock-instrumentation.js'),
+    require.resolve(`../lds-adapters-uiapi/karma/dist/lds-adapters-uiapi.js`),
     require.resolve(`./karma/dist/${ADAPTER_MODULE_NAME}.js`),
     require.resolve(`./karma/dist/${ADAPTER_TEST_UTIL_NAME}.js`),
 ];
 
 const COMPAT_FILES = [
+    require.resolve('../lds-adapters-uiapi/karma/dist/compat/uiapi-mock-instrumentation.js'),
+    require.resolve(`../lds-adapters-uiapi/karma/dist/compat/lds-adapters-uiapi.js`),
     require.resolve(`./karma/dist/compat/${ADAPTER_MODULE_NAME}.js`),
     require.resolve(`./karma/dist/compat/${ADAPTER_TEST_UTIL_NAME}.js`),
 ];

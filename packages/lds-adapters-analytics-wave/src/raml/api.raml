@@ -154,12 +154,15 @@ types:
       description:
         description: Short Description of the asset.
         type: string
+        required: false # TODO Hand-rolled W-8253396
       label:
         description: The label of the asset.
         type: string
+        required: false # TODO Hand-rolled W-8253396
       name:
         description: The name of the asset.
         type: string
+        required: false # TODO Hand-rolled W-8253396
   BaseAssetReferenceRepresentation:
     description: Base asset reference representation.
     discriminator: name # TODO Hand rolled
@@ -446,6 +449,7 @@ types:
           - Zendesk
           - ZohoCRM
           - ZuoraAQuA
+        required: false # TODO Hand-rolled W-8253396
       folder:
         description: Folder for the Live connector
         type: object
@@ -2921,6 +2925,31 @@ types:
         application/json:
           type: DataConnectorInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: DataConnectorInputRepresentation
           (oas-body-name): dataConnector
+  /dataConnectors/{connectorIdOrApiName}:
+    get:
+      description: Get a single data connection.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DataConnectorRepresentation
+    patch:
+      description: Patch a data connection resource.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DataConnectorRepresentation
+      body:
+        application/json:
+          type: DataConnectorInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: DataConnectorInputRepresentation
+          (oas-body-name): dataConnector
+    uriParameters:
+      connectorIdOrApiName:
+        type: string
+        required: true
   /dataConnectorTypes:
     get:
       description: A collection of Wave Data Connector Types.

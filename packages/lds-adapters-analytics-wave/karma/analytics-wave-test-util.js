@@ -111,31 +111,72 @@ function mockCreateDataConnectorNetworkErrorOnce(config, mockData) {
 }
 
 function createDataConnectorsMatcher(config) {
-    let {
-        label,
-        name,
-        description,
-        connectionProperties,
-        connectorType,
-        connectorHandler,
-        folder,
-        targetConnector,
-    } = config;
+    const { dataConnector } = config;
     return sinon.match({
         body: {
-            label,
-            name,
-            description,
-            connectionProperties,
-            connectorType,
-            connectorHandler,
-            folder,
-            targetConnector,
+            dataConnector,
         },
         headers: {},
         method: 'post',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/dataConnectors`,
+        queryParams: {},
+    });
+}
+
+// Data connector
+function mockGetDataConnectorNetworkOnce(config, mockData) {
+    const paramMatch = getDataConnectorMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDataConnectorNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDataConnectorMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDataConnectorMatcher(config) {
+    const { connectorIdOrApiName } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataConnectors/${connectorIdOrApiName}`,
+        queryParams: {},
+    });
+}
+
+function mockUpdateDataConnectorNetworkOnce(config, mockData) {
+    const paramMatch = updateDataConnectorMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockUpdateDataConnectorNetworkErrorOnce(config, mockData) {
+    const paramMatch = updateDataConnectorMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function updateDataConnectorMatcher(config) {
+    const { connectorIdOrApiName, dataConnector } = config;
+
+    return sinon.match({
+        body: {
+            dataConnector,
+        },
+        headers: {},
+        method: 'patch',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataConnectors/${connectorIdOrApiName}`,
         queryParams: {},
     });
 }
@@ -551,23 +592,11 @@ function mockCreateReplicatedDatasetNetworkErrorOnce(config, mockData) {
 }
 
 function createReplicatedDatasetMatcher(config) {
-    const {
-        advancedProperties,
-        connectionMode,
-        connectorId,
-        fullRefresh,
-        passThroughFilter,
-        sourceObjectName,
-    } = config;
+    const { replicatedDataset } = config;
 
     return sinon.match({
         body: {
-            advancedProperties,
-            connectionMode,
-            connectorId,
-            fullRefresh,
-            passThroughFilter,
-            sourceObjectName,
+            replicatedDataset,
         },
         headers: {},
         method: 'post',
@@ -834,6 +863,10 @@ export {
     mockGetAnalyticsLimitsNetworkErrorOnce,
     mockCreateDataConnectorNetworkOnce,
     mockCreateDataConnectorNetworkErrorOnce,
+    mockGetDataConnectorNetworkOnce,
+    mockGetDataConnectorNetworkErrorOnce,
+    mockUpdateDataConnectorNetworkOnce,
+    mockUpdateDataConnectorNetworkErrorOnce,
     mockGetDataConnectorsNetworkOnce,
     mockGetDataConnectorsNetworkErrorOnce,
     mockGetDataConnectorTypesNetworkOnce,

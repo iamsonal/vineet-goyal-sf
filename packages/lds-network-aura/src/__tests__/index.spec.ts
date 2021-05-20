@@ -3585,6 +3585,89 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/dataconnectors/{connectorIdOrApiName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS700000001YxKAI`,
+            },
+            [
+                'WaveController.getDataConnector',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS700000001YxKAI`,
+            },
+            {}
+        );
+    });
+
+    describe('patch /wave/dataconnectors/{connectorIdOrApiName}', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS70000004CVSKA2`,
+                body: {
+                    dataConnector: {
+                        label: 'My Salesforce External Connector',
+                        description: 'Snowflake connector',
+                        connectionProperties: [
+                            {
+                                name: 'account',
+                                value: 'ib89151',
+                            },
+                        ],
+                    },
+                },
+            },
+            [
+                'WaveController.updateDataConnector',
+                {
+                    dataConnector: {
+                        label: 'My Salesforce External Connector',
+                        description: 'Snowflake connector',
+                        connectionProperties: [
+                            {
+                                name: 'account',
+                                value: 'ib89151',
+                            },
+                        ],
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS70000004CVSKA2`,
+                body: {
+                    dataConnector: {
+                        label: 'My Salesforce External Connector',
+                        description: 'Snowflake connector',
+                        connectionProperties: [
+                            {
+                                name: 'account',
+                                value: 'ib89151',
+                            },
+                        ],
+                    },
+                },
+            },
+            {}
+        );
+    });
+
     describe('get /wave/dataconnectors', () => {
         testControllerInput(
             {

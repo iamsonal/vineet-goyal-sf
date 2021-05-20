@@ -36,6 +36,15 @@ types:
     post:
       (luvio.adapter):
         name: createDataConnector
+  /dataConnectors/{connectorIdOrApiName}:
+    get:
+      (luvio.adapter):
+        name: getDataConnector
+      (luvio.key):
+        id: urlParams.connectorIdOrApiName
+    patch:
+      (luvio.adapter):
+        name: updateDataConnector
   /dataConnectorTypes:
     get:
       (luvio.adapter):

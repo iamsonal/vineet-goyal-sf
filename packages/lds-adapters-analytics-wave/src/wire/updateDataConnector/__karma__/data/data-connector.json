@@ -1,0 +1,55 @@
+{
+    "connectionProperties": [
+        {
+            "name": "account",
+            "value": "ib89151"
+        },
+        {
+            "name": "db",
+            "value": "EA_DEMO_DB"
+        },
+        {
+            "name": "password",
+            "value": "******"
+        },
+        {
+            "name": "role",
+            "value": "SYSADMIN"
+        },
+        {
+            "name": "schema",
+            "value": "AIRLINE_DATA"
+        },
+        {
+            "name": "user",
+            "value": "einsteinanalytics"
+        },
+        {
+            "name": "warehouse",
+            "value": "DEMOWAREHOUSE"
+        }
+    ],
+    "connectorType": "SnowflakeOutput",
+    "createdBy": {
+        "id": "005S7000000VQ6fIAG",
+        "name": "Admin User",
+        "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+    },
+    "createdDate": "2021-04-29T17:26:29.000Z",
+    "description": "Snowflake connector",
+    "id": "0ItS70000004CVSKA2",
+    "ingestionSchedule": {
+        "assetId": "0ItS70000004CVSKA2",
+        "frequency": "none"
+    },
+    "label": "My Salesforce External Connector",
+    "lastModifiedBy": {
+        "id": "005S7000000VQ6fIAG",
+        "name": "Admin User",
+        "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+    },
+    "lastModifiedDate": "2021-05-18T23:34:35.000Z",
+    "name": "snowflake",
+    "type": "dataconnector",
+    "url": "/services/data/v53.0/wave/dataConnectors/0ItS70000004CVSKA2"
+}

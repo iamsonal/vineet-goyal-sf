@@ -55,6 +55,8 @@ const ANALYTICS_LIMITS_PATH = new RegExp(`${WAVE_BASE_URI}/limits$`, 'i');
 
 const DATA_CONNECTORS_PATH = new RegExp(`${WAVE_BASE_URI}/dataconnectors$`, 'i');
 
+const DATA_CONNECTOR_PATH = new RegExp(`${WAVE_BASE_URI}/dataconnectors/([A-Z0-9_]){15,18}$`, 'i');
+
 const DATA_CONNECTOR_TYPES_PATH = new RegExp(`${WAVE_BASE_URI}/dataConnectorTypes$`, 'i');
 
 const DATAFLOW_JOBS_PATH = new RegExp(`${WAVE_BASE_URI}/dataflowjobs$`, 'i');
@@ -303,7 +305,6 @@ const analytics: ApiFamily = {
             controller: 'WaveController.getAnalyticsLimits',
         },
     },
-
     getDataConnectors: {
         method: 'get',
         predicate: (path: string) =>
@@ -318,6 +319,22 @@ const analytics: ApiFamily = {
             path.startsWith(WAVE_BASE_URI) && DATA_CONNECTORS_PATH.test(path),
         transport: {
             controller: 'WaveController.createDataConnector',
+        },
+    },
+    getDataConnector: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && DATA_CONNECTOR_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getDataConnector',
+        },
+    },
+    updateDataConnector: {
+        method: 'patch',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && DATA_CONNECTOR_PATH.test(path),
+        transport: {
+            controller: 'WaveController.updateDataConnector',
         },
     },
     getDataConnectorTypes: {

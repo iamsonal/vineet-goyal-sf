@@ -1,7 +1,8 @@
-import { getMock as globalGetMock } from 'test-util';
+import { getMock as globalGetMock, setupElement } from 'test-util';
 import { mockGraphqlNetwork, parseQuery } from 'graphql-test-util';
-
 import { graphQLImperative } from 'lds-adapters-graphql';
+
+import GetRecord from '../lwc/get-record';
 
 const MOCK_PREFIX = 'wire/graphql/__karma__/basic/data/';
 
@@ -484,6 +485,125 @@ describe('graphql', () => {
 
             const snapshot2 = await graphQLImperative(secondGraphQLConfig);
             expect(snapshot2.data).toEqual(expectedDataTwo);
+        });
+    });
+
+    describe('Record representation', () => {
+        describe('getRecord', () => {
+            it('should be a CACHE HIT if getRecord requests a record with same fields fetched from GQL', async () => {
+                const ast = parseQuery(`
+                    query {
+                        uiapi {
+                            query {
+                                Account(
+                                    where: { Name: { like: "Account1" } }
+                                ) @connection {
+                                    edges {
+                                        node @resource(type: "Record") {
+                                            Name { value, displayValue }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                `);
+
+                const expectedQuery = `
+                    query {
+                        uiapi {
+                            query {
+                                Account(where: { Name: { like: "Account1" } }) {
+                                    edges {
+                                        node {
+                                            Id,
+                                            WeakEtag,
+                                            Name { value, displayValue }
+                                            ...defaultRecordFields
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    fragment defaultRecordFields on Record {
+                        __typename,
+                        ApiName,
+                        WeakEtag,
+                        Id,
+                        DisplayValue,
+                        SystemModstamp { value }
+                        LastModifiedById { value }
+                        LastModifiedDate { value }
+                        RecordTypeId(fallback: true) { value }
+                    }
+                `;
+
+                const networkData = getMock('RecordQuery-Account-fields-Name');
+                const expectedData = {
+                    data: {
+                        uiapi: {
+                            query: {
+                                Account: {
+                                    edges: [
+                                        {
+                                            node: {
+                                                Name: {
+                                                    value: 'Account1',
+                                                    displayValue: null,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                    errors: [],
+                };
+
+                mockGraphqlNetwork(
+                    {
+                        query: expectedQuery,
+                        variables: {},
+                    },
+                    networkData
+                );
+
+                const graphqlConfig = {
+                    query: ast,
+                    variables: {},
+                };
+
+                const snapshot = await graphQLImperative(graphqlConfig);
+                expect(snapshot.data).toEqual(expectedData);
+
+                const getRecord = await setupElement(
+                    {
+                        recordId: '001RM000004uuhnYAA',
+                        fields: ['Account.Name'],
+                    },
+                    GetRecord
+                );
+
+                expect(getRecord.getWiredData()).toEqualSnapshotWithoutEtags({
+                    apiName: 'Account',
+                    id: '001RM000004uuhnYAA',
+                    childRelationships: {},
+                    weakEtag: 1615493739000,
+                    fields: {
+                        Name: {
+                            value: 'Account1',
+                            displayValue: null,
+                        },
+                    },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                });
+            });
         });
     });
 });

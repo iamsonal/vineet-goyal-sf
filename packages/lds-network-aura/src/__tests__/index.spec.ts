@@ -4875,6 +4875,33 @@ describe('routes', () => {
         );
     });
 
+    describe('get /connect/cms/types/{contentTypeIdOrFQN}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/types/news`,
+            },
+            [
+                'ManagedContentTypeController.getContentTypeSchema',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/cms/types/news`,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/types/news`,
+            },
+            {}
+        );
+    });
+
     describe('get /connect/interaction/orchestration/instances', () => {
         testControllerInput(
             {

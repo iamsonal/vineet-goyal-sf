@@ -1,0 +1,17 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'CMSType::'
+
+types:
+  ManagedContentTypeSchemaRepresentation:
+    (luvio.ttl): 3600000
+    (luvio.opaque): true
+
+/connect/cms/types/{contentTypeIdOrFQN}:
+  get:
+    (luvio.adapter):
+      name: getContentTypeInternal

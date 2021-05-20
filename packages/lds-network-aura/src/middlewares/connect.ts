@@ -4,6 +4,7 @@ import {
     COMMERCE_BASE_URI,
     GUIDANCE_BASE_URI,
     WAVE_BASE_URI,
+    CMS_BASE_URI,
 } from './connect-base';
 
 const COMMUNITIES_NAVIGATION_MENU_PATH = new RegExp(
@@ -104,6 +105,8 @@ const XMD_PATH = new RegExp(
 
 const WAVE_FOLDERS_PATH = new RegExp(`${WAVE_BASE_URI}/folders$`, 'i');
 
+const GET_CONTENT_TYPE_INTERNAL_PATH = new RegExp(`${CMS_BASE_URI}/types/([A-Z0-9_]){1,80}$`, 'i');
+
 const LIST_CONTENT_INTERNAL_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/managed-content/delivery/contents`,
     'i'
@@ -140,6 +143,14 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && COMMUNITIES_NAVIGATION_MENU_PATH.test(path),
         transport: {
             controller: 'NavigationMenuController.getCommunityNavigationMenu',
+        },
+    },
+    getContentTypeInternal: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CMS_BASE_URI) && GET_CONTENT_TYPE_INTERNAL_PATH.test(path),
+        transport: {
+            controller: 'ManagedContentTypeController.getContentTypeSchema',
         },
     },
     listContentInternal: {

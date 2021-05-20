@@ -1,0 +1,84 @@
+{
+    "namespacePrefix": "sfdc_cms",
+    "developerName": "news",
+    "label": "Sample Managed Content Type",
+    "description": "Managed Content Type",
+    "id": "",
+    "schema": {
+        "additionalProperties": "false",
+        "type": "object",
+        "definitions": {
+            "cms": {
+                "richTextType": {
+                    "contentMediaType": "text/html",
+                    "x-schemaVersion": "1.0.0",
+                    "type": "string",
+                    "maxLength": "100000"
+                },
+                "textAreaType": {
+                    "x-schemaVersion": "1.0.0",
+                    "type": "string",
+                    "maxLength": "4000"
+                },
+                "referenceType": {
+                    "x-schemaVersion": "1.0.0",
+                    "description": "It's all about image node",
+                    "title": "Banner Image",
+                    "type": "object",
+                    "properties": {
+                        "fileName": {
+                            "title": "File Name",
+                            "type": "string"
+                        },
+                        "ref": {
+                            "x-cms-contentLink": {
+                                "contentType": "cms_image"
+                            },
+                            "title": "ref",
+                            "type": "string"
+                        },
+                        "description": {
+                            "title": "File Description",
+                            "type": "string"
+                        },
+                        "mimeType": {
+                            "title": "Mime Type",
+                            "type": "string"
+                        },
+                        "url": {
+                            "title": "URL",
+                            "type": "string"
+                        }
+                    }
+                },
+                "textType": {
+                    "x-schemaVersion": "1.0.0",
+                    "type": "string",
+                    "maxLength": "250",
+                    "$id": "defs:cms/textType"
+                }
+            }
+        },
+        "properties": {
+            "bannerImage": {
+                "description": "It's all about image node",
+                "title": "Banner Image",
+                "$ref": "#/definitions/cms/referenceType"
+            },
+            "title": {
+                "title": "Title",
+                "$ref": "#/definitions/cms/textType"
+            },
+            "body": {
+                "title": "Body",
+                "$ref": "#/definitions/cms/richTextType"
+            },
+            "excerpt": {
+                "description": "Excerpts display as summary or teaser text on compilation pages. Excerpts give your customers a quick sense of what your post is about so they can quickly decide whether or not to view the full article.",
+                "title": "Excerpt",
+                "$ref": "#/definitions/cms/textAreaType"
+            }
+        }
+    },
+    "views": []
+}

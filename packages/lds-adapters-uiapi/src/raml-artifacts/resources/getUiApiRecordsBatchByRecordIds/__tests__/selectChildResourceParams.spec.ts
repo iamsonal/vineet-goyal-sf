@@ -45,7 +45,7 @@ describe('selectChildResourceParams', () => {
     });
 
     beforeEach(() => {
-        reader = new Reader({}, {}, {});
+        reader = new Reader({}, {}, {}, {});
     });
 
     afterEach(() => {

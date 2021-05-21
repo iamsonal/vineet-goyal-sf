@@ -8,6 +8,7 @@ import { BatchRepresentation } from '../../../generated/types/BatchRepresentatio
 import { BatchResultRepresentation } from '../../../generated/types/BatchResultRepresentation';
 import { RecordRepresentation } from '../../../generated/types/RecordRepresentation';
 import { buildRecordSelector } from '../../../wire/getRecord/GetRecordFields';
+import { nonCachedErrors } from './ingestSuccessChildResourceParams';
 
 export function selectChildResourceParams(
     _luvio: Luvio,
@@ -28,6 +29,7 @@ export function selectChildResourceParams(
                 reader.enterPath(i);
                 const childResource = childResources[i];
                 const childKey = getUiApiRecordsByRecordId_keyBuilder(childResource);
+                const isMissingDataBeforeChildRead = reader.isMissingData;
                 const childSnapshot = reader.read<RecordRepresentation>(
                     buildRecordSelector(
                         childResource.urlParams.recordId,
@@ -38,6 +40,10 @@ export function selectChildResourceParams(
                 const childSink = {} as BatchResultRepresentation;
                 reader.seenIds[childKey] = true;
                 switch (childSnapshot.state) {
+                    case 'Stale':
+                        reader.markStale();
+                    // Stale needs envelope bodies filled in so don't break
+                    // eslint-disable-next-line no-fallthrough
                     case 'Fulfilled':
                         reader.enterPath(envelopeStatusCodePath);
                         reader.assignScalar(envelopeStatusCodePath, childSink, 200);
@@ -63,22 +69,53 @@ export function selectChildResourceParams(
                         reader.exitPath();
                         break;
                     case 'Unfulfilled':
+                        // if child snapshot doesn't have any data then
+                        // that means the child record key is missing
                         if (childSnapshot.data === undefined) {
-                            reader.markMissingLink(childKey);
+                            if (reader.baseSnapshot === undefined) {
+                                // not a rebuild, mark as missing and move on
+                                reader.markMissingLink(childKey);
+                                break;
+                            }
+
+                            // On rebuilds we have to check if there is a non-cached
+                            // error that we know about.  If we don't do this then
+                            // rebuilds will go into endless refresh loop if a child
+                            // has non-cached errors (since the top-level composite
+                            // snapshot will look like an Unfulfilled snapshot
+                            // instead of an error snapshot).
+                            const nonCachedError = nonCachedErrors[childKey];
+
+                            if (
+                                nonCachedError === undefined ||
+                                nonCachedError.expiration < reader.timestamp
+                            ) {
+                                reader.markMissingLink(childKey);
+                            } else {
+                                // if this child error was the only reason the reader
+                                // is marked as missing then we want to undo that
+                                if (isMissingDataBeforeChildRead === false) {
+                                    reader.unMarkMissing();
+                                }
+
+                                // put status code and body into reader path
+                                const { response: nonCachedBody, status: nonCachedStatus } =
+                                    nonCachedError;
+                                reader.enterPath(envelopeStatusCodePath);
+                                reader.assignScalar(
+                                    envelopeStatusCodePath,
+                                    childSink,
+                                    nonCachedStatus
+                                );
+                                reader.exitPath();
+                                reader.enterPath(envelopeBodyPath);
+                                reader.assignNonScalar(childSink, envelopeBodyPath, nonCachedBody);
+                                reader.exitPath();
+                            }
                         }
                         break;
                     case 'Pending':
                         reader.markPending();
-                        break;
-                    case 'Stale':
-                        reader.markStale();
-                        reader.seenIds[childKey] = true;
-                        reader.enterPath(envelopeStatusCodePath);
-                        reader.assignScalar(envelopeStatusCodePath, childSink, 200);
-                        reader.exitPath();
-                        reader.enterPath(envelopeBodyPath);
-                        reader.assignNonScalar(childSink, envelopeBodyPath, childSnapshot.data);
-                        reader.exitPath();
                         break;
                 }
                 ObjectFreeze(childSink);

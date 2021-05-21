@@ -1,4 +1,4 @@
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import { getMock as globalGetMock, setupElement, clone } from 'test-util';
 import { mockGetRecordsNetwork, mockGetRecordNetwork, expireRecords } from 'uiapi-test-util';
 import GetRecords from '../lwc/get-records';
 import RecordFields from '../../../getRecord/__karma__/lwc/record-fields';
@@ -229,23 +229,11 @@ describe('getRecords LDS adapter', () => {
             results: [
                 {
                     statusCode: 404,
-                    result: {
-                        status: 404,
-                        body: [{ errorCode: 'NOT_FOUND', message: 'Resource not found.' }],
-                        ok: false,
-                        statusText: 'Not Found',
-                        headers: {},
-                    },
+                    result: [{ errorCode: 'NOT_FOUND', message: 'Resource not found.' }],
                 },
                 {
                     statusCode: 404,
-                    result: {
-                        status: 404,
-                        body: [{ errorCode: 'NOT_FOUND', message: 'Resource not found.' }],
-                        ok: false,
-                        statusText: 'Not Found',
-                        headers: {},
-                    },
+                    result: [{ errorCode: 'NOT_FOUND', message: 'Resource not found.' }],
                 },
             ],
         };
@@ -270,28 +258,90 @@ describe('getRecords LDS adapter', () => {
 
         const element = await setupElement(config, GetRecords);
         const actual = element.getWiredData();
+        const errorResult = mockData.results[0].result;
         const validResult = mockData.results[1].result;
-        const errorResult = {
+        const errorResultEnvelope = {
             statusCode: 404,
-            result: {
-                status: 404,
-                body: [{ errorCode: 'NOT_FOUND', message: 'Resource not found.' }],
-                ok: false,
-                statusText: 'Not Found',
-                headers: {},
-            },
+            result: errorResult,
         };
         const response = {
             results: [
-                errorResult,
+                errorResultEnvelope,
                 {
                     statusCode: 200,
                     result: validResult,
                 },
-                errorResult,
+                errorResultEnvelope,
             ],
         };
         expect(actual).toEqualSnapshotWithoutEtags(response);
+    });
+    it('returns mix of 404, 200, and 403 in same order as input', async () => {
+        const mockData = getMock('records-multiple-errors-mix404-403');
+        const updatedMockData = clone(mockData);
+        updatedMockData.results[1].result.fields.Site.value = 'newValue';
+
+        const errorId404 = '001Z1000002GSZjIAO';
+        const errorId403 = '001X1000002GSZjIAO';
+        const validId = getIdsFromGetRecordsMock(mockData).filter((val) => val !== undefined)[0];
+        const config = {
+            records: [
+                {
+                    recordIds: [errorId404, validId, errorId403],
+                    fields: [ACCOUNT_SITE_FIELD_STRING],
+                },
+            ],
+        };
+
+        mockGetRecordsNetwork(config, [mockData, updatedMockData]);
+
+        const element = await setupElement(config, GetRecords);
+
+        const actual = element.getWiredData();
+
+        const response = {
+            results: [
+                {
+                    statusCode: 404,
+                    result: mockData.results[0].result,
+                },
+                {
+                    statusCode: 200,
+                    result: mockData.results[1].result,
+                },
+                {
+                    statusCode: 403,
+                    result: mockData.results[2].result,
+                },
+            ],
+        };
+        expect(actual).toEqualSnapshotWithoutEtags(response);
+
+        // have the valid response change a field value and add 2nd element, we
+        // should see first element's values updated
+        const element2 = await setupElement(config, GetRecords);
+
+        const element2Data = element2.getWiredData();
+        const updatedElementData = element.getWiredData();
+        const updatedResponse = {
+            results: [
+                {
+                    statusCode: 404,
+                    result: updatedMockData.results[0].result,
+                },
+                {
+                    statusCode: 200,
+                    result: updatedMockData.results[1].result,
+                },
+                {
+                    statusCode: 403,
+                    result: updatedMockData.results[2].result,
+                },
+            ],
+        };
+
+        expect(element2Data).toEqualSnapshotWithoutEtags(updatedResponse);
+        expect(updatedElementData).toEqualSnapshotWithoutEtags(updatedResponse);
     });
     it('refetches all records if two are cached and one is new ', async () => {
         const recordMock1 = getMock('record-single-record-Account');

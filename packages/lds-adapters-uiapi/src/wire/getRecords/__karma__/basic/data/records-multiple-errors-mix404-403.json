@@ -1,0 +1,44 @@
+{
+    "hasErrors": true,
+    "results": [
+        {
+            "result": [
+                {
+                    "errorCode": "NOT_FOUND",
+                    "message": "Resource not found."
+                }
+            ],
+            "statusCode": 404
+        },
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "7bc04155304fc3bda53fc258ffd4c96b",
+                "fields": {
+                    "Site": {
+                        "displayValue": null,
+                        "value": null
+                    }
+                },
+                "id": "001T1000002GaXCIA0",
+                "lastModifiedById": "005T1000000Huh7IAC",
+                "lastModifiedDate": "2021-04-06T23:46:16.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2021-04-06T23:46:16.000Z",
+                "weakEtag": 1617752776000
+            },
+            "statusCode": 200
+        },
+        {
+            "result": [
+                {
+                    "errorCode": "FORBIDDEN",
+                    "message": "You don&#39;t have access to this record. Ask your administrator for help or to request access."
+                }
+            ],
+            "statusCode": 403
+        }
+    ]
+}

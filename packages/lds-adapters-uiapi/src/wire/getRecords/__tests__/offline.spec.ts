@@ -1,4 +1,11 @@
-import { Luvio, Store, Environment, NetworkAdapter } from '@luvio/engine';
+import {
+    Luvio,
+    Store,
+    Environment,
+    NetworkAdapter,
+    Snapshot,
+    PendingSnapshot,
+} from '@luvio/engine';
 import {
     buildMockNetworkAdapter,
     buildSuccessMockPayload,
@@ -66,6 +73,9 @@ async function populateDurableStore() {
     );
 
     const adapter = getRecordsAdapterFactory(luvio);
+
+    // TODO - W-9051409 we don't need to check for Promises once custom adapters
+    // are updated to not use resolveUnfulfilledSnapshot
     const snapshotOrPromise = adapter({
         records: [
             {
@@ -73,11 +83,15 @@ async function populateDurableStore() {
                 fields: recordFields_Account,
             },
         ],
-    }) as Promise<any>;
-    expect(snapshotOrPromise).toBeInstanceOf(Promise);
+    });
+    let result: Snapshot<any>;
+    if ('then' in snapshotOrPromise) {
+        result = await snapshotOrPromise;
+    } else {
+        result = await luvio.resolvePendingSnapshot(snapshotOrPromise as PendingSnapshot<any, any>);
+    }
+    expect(result.state).toBe('Fulfilled');
 
-    const result = await snapshotOrPromise;
-    expect(result.state).toEqual('Fulfilled');
     const callCount = getMockNetworkAdapterCallCount(network);
     expect(callCount).toBe(1);
 
@@ -85,13 +99,6 @@ async function populateDurableStore() {
     env.dispose();
 
     return durableStore;
-}
-
-// This is required because broadcast does not await the write to
-// durable store so we need to make sure the microtask queue is emptied
-// before checking the durable store for expected result
-function flushPromises() {
-    return new Promise((resolve) => setImmediate(resolve));
 }
 
 describe('getRecords with fields offline', () => {
@@ -133,16 +140,25 @@ describe('getRecords with fields offline', () => {
         expect(store.records[recordKey1]).toBeUndefined();
 
         const adapter = getRecordsAdapterFactory(luvio);
-        const result = await (adapter({
+
+        // TODO - W-9051409 we don't need to check for Promises once custom adapters
+        // are updated to not use resolveUnfulfilledSnapshot
+        const snapshotOrPromise = adapter({
             records: [
                 {
                     recordIds: [recordId_Account1, recordId_Account2],
                     fields: ['Account.Id', 'Account.NickName', 'Account.Color'],
                 },
             ],
-        }) as Promise<any>);
-        await flushPromises();
-
+        });
+        let result: Snapshot<any>;
+        if ('then' in snapshotOrPromise) {
+            result = await snapshotOrPromise;
+        } else {
+            result = await luvio.resolvePendingSnapshot(
+                snapshotOrPromise as PendingSnapshot<any, any>
+            );
+        }
         expect(result.state).toEqual('Fulfilled');
 
         const mergedFields = ['Id', 'Name', 'NickName', 'Color'];

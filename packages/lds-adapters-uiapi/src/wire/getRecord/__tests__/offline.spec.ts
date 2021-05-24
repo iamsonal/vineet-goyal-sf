@@ -1,4 +1,11 @@
-import { Luvio, Store, Environment, NetworkAdapter } from '@luvio/engine';
+import {
+    Luvio,
+    Store,
+    Environment,
+    NetworkAdapter,
+    Snapshot,
+    PendingSnapshot,
+} from '@luvio/engine';
 import {
     buildMockNetworkAdapter,
     buildSuccessMockPayload,
@@ -58,14 +65,21 @@ async function populateDurableStore() {
     );
 
     const adapter = getRecordAdapterFactory(luvio);
+
+    // TODO - W-9051409 we don't need to check for Promises once custom adapters
+    // are updated to not use resolveUnfulfilledSnapshot
     const snapshotOrPromise = adapter({
         recordId: recordId_Account,
         fields: recordFields_Account,
-    }) as Promise<any>;
-    expect(snapshotOrPromise).toBeInstanceOf(Promise);
+    });
+    let result: Snapshot<any>;
+    if ('then' in snapshotOrPromise) {
+        result = await snapshotOrPromise;
+    } else {
+        result = await luvio.resolvePendingSnapshot(snapshotOrPromise as PendingSnapshot<any, any>);
+    }
+    expect(result.state).toBe('Fulfilled');
 
-    const result = await snapshotOrPromise;
-    expect(result.state).toEqual('Fulfilled');
     const callCount = getMockNetworkAdapterCallCount(network);
     expect(callCount).toBe(1);
     return durableStore;

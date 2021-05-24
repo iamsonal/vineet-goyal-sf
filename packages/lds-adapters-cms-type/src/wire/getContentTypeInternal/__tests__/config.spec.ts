@@ -7,18 +7,14 @@ describe('input config validation', () => {
         );
     });
 
-    it('calls dispatchResourceRequest on valid input', async () => {
-        const mockData = {};
+    it('calls storeLookup on valid input', async () => {
         const mockLds = {
-            dispatchResourceRequest: jest.fn().mockReturnValue({ then: () => {} }),
-            storeLookup: jest.fn().mockReturnValue({ state: 'Fulfilled', data: mockData }),
-            storeIngest: jest.fn(),
-            storeBroadcast: jest.fn(),
-            snapshotAvailable: jest.fn(),
+            storeLookup: jest.fn().mockReturnValue({ state: 'Fulfilled', data: {} }),
+            snapshotAvailable: jest.fn().mockReturnValue(true),
         };
         await getContentTypeInternal(mockLds as any)({
             contentTypeIdOrFQN: 'news',
         });
-        expect(mockLds.dispatchResourceRequest.mock.calls.length).toBe(1);
+        expect(mockLds.storeLookup.mock.calls.length).toBe(1);
     });
 });

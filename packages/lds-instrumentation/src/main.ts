@@ -327,8 +327,8 @@ export class Instrumentation {
             const startTime = Date.now();
             this.incrementAdapterRequestMetric(wireAdapterRequestMetric);
             const result = adapter(config);
-            // In the case where the adapter returns a Snapshot it is constructed out of the store
-            // (cache hit) whereas a Promise<Snapshot> indicates a network request (cache miss).
+            // In the case where the adapter returns a non-Pending Snapshot it is constructed out of the store
+            // (cache hit) whereas a Promise<Snapshot> or Pending Snapshot indicates a network request (cache miss).
             //
             // Note: we can't do a plain instanceof check for a promise here since the Promise may
             // originate from another javascript realm (for example: in jest test). Instead we use a
@@ -344,7 +344,10 @@ export class Instrumentation {
             //      ([in-memory cache hit count] + [store cache hit count]) / ([in-memory cache hit count] + [in-memory cache miss count])
 
             // if result === null then config is insufficient/invalid so do not log
-            if (result !== null && 'then' in result!) {
+            if (
+                result !== null &&
+                ('then' in result! || (result as Snapshot<D>).state === 'Pending')
+            ) {
                 (result as Promise<Snapshot<D>>).then((_snapshot: Snapshot<D>) => {
                     timerMetricAddDuration(
                         cacheMissDurationByAdapterMetric,

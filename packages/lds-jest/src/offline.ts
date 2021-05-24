@@ -1,5 +1,13 @@
 import timekeeper from 'timekeeper';
-import { Luvio, Store, Environment, NetworkAdapter, AdapterFactory } from '@luvio/engine';
+import {
+    Luvio,
+    Store,
+    Environment,
+    NetworkAdapter,
+    AdapterFactory,
+    PendingSnapshot,
+    Snapshot,
+} from '@luvio/engine';
 import {
     makeDurable,
     makeOffline,
@@ -66,8 +74,18 @@ export async function populateDurableStore<Config, DataType>(
         buildMockNetworkAdapter([payload])
     );
     const adapter = adapterFactory(luvio);
-    const result = await (adapter(config) as Promise<any>);
+
+    // TODO - W-9051409 we don't need to check for Promises once custom adapters
+    // are updated to not use resolveUnfulfilledSnapshot
+    const snapshotOrPromise = adapter(config)!;
+    let result: Snapshot<any>;
+    if ('then' in snapshotOrPromise) {
+        result = await snapshotOrPromise;
+    } else {
+        result = await luvio.resolvePendingSnapshot(snapshotOrPromise as PendingSnapshot<any, any>);
+    }
     expect(result.state).toBe('Fulfilled');
+
     const callCount = getMockNetworkAdapterCallCount(network);
     expect(callCount).toBe(1);
 
@@ -91,10 +109,33 @@ export async function testDataEmittedWhenStale<Config, DataType>(
         options
     );
     const adapter = adapterFactory(luvio);
-    const result = await (adapter(config) as Promise<any>);
+
+    // TODO - W-9051409 we don't need to check for Promises once custom adapters
+    // are updated to not use resolveUnfulfilledSnapshot
+    const snapshotOrPromise = adapter(config)!;
+    let result: Snapshot<any>;
+    if ('then' in snapshotOrPromise) {
+        result = await snapshotOrPromise;
+    } else {
+        result = await luvio.resolvePendingSnapshot(snapshotOrPromise as PendingSnapshot<any, any>);
+    }
     expect(result.state).toBe('Fulfilled');
+
     timekeeper.travel(Date.now() + ttl + 1);
-    const staleResult = await (adapter(config) as Promise<any>);
+
+    // TODO - W-9051409 we don't need to check for Promises once custom adapters
+    // are updated to not use resolveUnfulfilledSnapshot
+    const staleSnapshotOrPromise = adapter(config)!;
+    let staleResult: Snapshot<any>;
+    if ('then' in staleSnapshotOrPromise) {
+        staleResult = await staleSnapshotOrPromise;
+    } else if (staleSnapshotOrPromise.state === 'Pending') {
+        staleResult = await luvio.resolvePendingSnapshot(
+            staleSnapshotOrPromise as PendingSnapshot<any, any>
+        );
+    } else {
+        staleResult = staleSnapshotOrPromise;
+    }
     expect(staleResult.state).toBe('Stale');
 
     // makeOffline will kick off a refresh, wait for that to ensure it doesn't
@@ -115,8 +156,18 @@ export async function testDurableHitDoesNotHitNetwork<Config, DataType>(
         options
     );
     const adapter = adapterFactory(luvio);
-    const result = await (adapter(config) as Promise<any>);
+
+    // TODO - W-9051409 we don't need to check for Promises once custom adapters
+    // are updated to not use resolveUnfulfilledSnapshot
+    const snapshotOrPromise = adapter(config)!;
+    let result: Snapshot<any>;
+    if ('then' in snapshotOrPromise) {
+        result = await snapshotOrPromise;
+    } else {
+        result = await luvio.resolvePendingSnapshot(snapshotOrPromise as PendingSnapshot<any, any>);
+    }
     expect(result.state).toBe('Fulfilled');
+
     const callCount = getMockNetworkAdapterCallCount(network);
     expect(callCount).toBe(0);
 

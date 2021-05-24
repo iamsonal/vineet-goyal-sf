@@ -13,6 +13,10 @@ import { getTrackedFields, convertFieldsToTrie } from '../../util/records';
 import { getRecordByFields } from './GetRecordFields';
 import { getRecordLayoutType, GetRecordLayoutTypeConfig } from './GetRecordLayoutType';
 import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
+import {
+    getTrackedFieldDepthOnNotifyChange,
+    getTrackedFieldLeafNodeIdOnly,
+} from '../../configuration';
 
 // Custom adapter config due to `unsupported` items
 const GET_RECORD_ADAPTER_CONFIG: AdapterValidationConfig = {
@@ -86,7 +90,11 @@ export const notifyChangeFactory = (luvio: Luvio) => {
             const representation: RecordRepresentation = (
                 node as GraphNode<RecordRepresentation>
             ).retrieve();
-            const optionalFields = getTrackedFields(key, luvio.getNode(key));
+
+            const optionalFields = getTrackedFields(key, luvio.getNode(key), {
+                maxDepth: getTrackedFieldDepthOnNotifyChange(),
+                onlyFetchLeafNodeId: getTrackedFieldLeafNodeIdOnly(),
+            });
             const refreshRequest = createResourceRequestFromRepresentation(
                 representation,
                 optionalFields

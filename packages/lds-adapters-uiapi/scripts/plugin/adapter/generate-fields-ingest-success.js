@@ -15,7 +15,15 @@ function generateFieldsIngestSuccess(adapter, resource, def, state) {
         CONVERT_FIELDS_TO_TRIE_IMPORT,
         GET_TRACKED_FIELDS,
         LUVIO_IMPORT,
+        CONFIGURATION_TRACKED_FIELDS_CACHE_MISS_DEPTH,
+        CONFIGURATION_TRACKED_FIELDS_LEAF_NODE_ID_ONLY,
     } = importsMap;
+
+    const trackedFieldsConfiguration = deindent`
+        {
+            maxDepth: ${CONFIGURATION_TRACKED_FIELDS_CACHE_MISS_DEPTH}(),
+            onlyFetchLeafNodeId: ${CONFIGURATION_TRACKED_FIELDS_LEAF_NODE_ID_ONLY}()
+        }`;
 
     const optionalFieldsTrieStatement =
         def.optionalFields === null
@@ -25,9 +33,10 @@ function generateFieldsIngestSuccess(adapter, resource, def, state) {
           ${GET_TRACKED_FIELDS}(
               key,
               luvio.getNode(key),
+              trackedFieldsConfig,
               config.${def.optionalFields.configName}
           )
-      );
+      )
   `;
 
     const fieldsTrieStatement =
@@ -36,7 +45,7 @@ function generateFieldsIngestSuccess(adapter, resource, def, state) {
             : deindent`
       ${CONVERT_FIELDS_TO_TRIE_IMPORT}(
           config.${def.fields.configName}
-      );
+      )
   `;
 
     const returnTypeInterface = importRamlArtifact(
@@ -60,6 +69,7 @@ function generateFieldsIngestSuccess(adapter, resource, def, state) {
           const resourceParams = ${createResourceParamsIdentifier}(config);
           const request = ${createResourceRequestIdentifier}(resourceParams);
           const key = ${adapterKeyImport}(luvio, config);
+          const trackedFieldsConfig = ${trackedFieldsConfiguration};
           const optionalFieldsTrie = ${optionalFieldsTrieStatement};
           const fieldsTrie = ${fieldsTrieStatement};
           return luvio.dispatchResourceRequest<${returnTypeInterface}>(request, override)

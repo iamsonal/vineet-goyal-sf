@@ -23,6 +23,7 @@ import {
     isSuperRecordFieldTrie,
     extractRecordIds,
     RecordFieldTrie,
+    TrackedFieldsConfig,
 } from '../records';
 
 import record from './data/sampleRecord';
@@ -58,6 +59,11 @@ function buildDeepRecord(): RecordRepresentation {
 }
 
 describe('getTrackedFields', () => {
+    const trackedFieldsConfig: TrackedFieldsConfig = {
+        maxDepth: 5,
+        onlyFetchLeafNodeId: false,
+    };
+
     it('should return correct tracked fields', () => {
         const store = new Store();
         const luvio = new Luvio(new Environment(store, () => Promise.reject()));
@@ -74,7 +80,7 @@ describe('getTrackedFields', () => {
             0
         );
         const key = keyBuilder({ recordId: record.id });
-        const fields = getTrackedFields(key, luvio.getNode(key), []);
+        const fields = getTrackedFields(key, luvio.getNode(key), trackedFieldsConfig, []);
         expect(fields).toEqual([
             'Account.CreatedDate',
             'Account.Name',
@@ -101,7 +107,9 @@ describe('getTrackedFields', () => {
             0
         );
         const key = keyBuilder({ recordId: record.id });
-        const fields = getTrackedFields(key, luvio.getNode(key), ['Account.Foo']);
+        const fields = getTrackedFields(key, luvio.getNode(key), trackedFieldsConfig, [
+            'Account.Foo',
+        ]);
         expect(fields).toEqual([
             'Account.CreatedDate',
             'Account.Foo',
@@ -129,7 +137,9 @@ describe('getTrackedFields', () => {
             0
         );
         const key = keyBuilder({ recordId: record.id });
-        const fields = getTrackedFields(key, luvio.getNode(key), ['Account.Name']);
+        const fields = getTrackedFields(key, luvio.getNode(key), trackedFieldsConfig, [
+            'Account.Name',
+        ]);
         expect(fields).toEqual([
             'Account.CreatedDate',
             'Account.Name',
@@ -157,7 +167,7 @@ describe('getTrackedFields', () => {
         );
 
         const key = keyBuilder({ recordId: recursiveRecord.id });
-        const fields = getTrackedFields(key, luvio.getNode(key), []);
+        const fields = getTrackedFields(key, luvio.getNode(key), trackedFieldsConfig, []);
         expect(fields).toEqual(['User.CreatedById', 'User.Email', 'User.Id', 'User.Name']);
     });
 
@@ -178,7 +188,7 @@ describe('getTrackedFields', () => {
         );
 
         const key = keyBuilder({ recordId: recursiveRecordDifferentPaths.id });
-        const fields = getTrackedFields(key, luvio.getNode(key), []);
+        const fields = getTrackedFields(key, luvio.getNode(key), trackedFieldsConfig, []);
         expect(fields).toEqual([
             'User.CreatedBy.CreatedById',
             'User.CreatedBy.Id',
@@ -212,7 +222,7 @@ describe('getTrackedFields', () => {
         );
 
         const key = keyBuilder({ recordId: record.id });
-        const fields = getTrackedFields(key, luvio.getNode(key), []);
+        const fields = getTrackedFields(key, luvio.getNode(key), trackedFieldsConfig, []);
         expect(fields).toEqual([
             'TestD__c.TestC__c',
             'TestD__c.TestC__r.Id',
@@ -257,13 +267,23 @@ describe('getTrackedFields', () => {
         // Record with 6 depth relationship field (boundary value)
         // Name: Dep6, RecordId: a00xx000000bnVlAAI
         const dep6Key = keyBuilder({ recordId: 'a00xx000000bnVlAAI' });
-        const dep6Fields = getTrackedFields(dep6Key, luvio.getNode(dep6Key), []);
+        const dep6Fields = getTrackedFields(
+            dep6Key,
+            luvio.getNode(dep6Key),
+            trackedFieldsConfig,
+            []
+        );
         expect(dep6Fields).toEqual(expectedFields);
 
         // Record with 7 depth relationship field
         // Name: Dep7, RecordId: a00xx000000bnXNAAY
         const dep7key = keyBuilder({ recordId: 'a00xx000000bnXNAAY' });
-        const dep7Fields = getTrackedFields(dep7key, luvio.getNode(dep7key), []);
+        const dep7Fields = getTrackedFields(
+            dep7key,
+            luvio.getNode(dep7key),
+            trackedFieldsConfig,
+            []
+        );
         expectedFields.push(
             'Department__c.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__r.ParentDepartment__c'
         );
@@ -278,7 +298,12 @@ describe('getTrackedFields', () => {
         // Record with 7 depth relationship fields
         // Name: SP-5089528, RecordId: a1nxx000001hGmbAAE
         const dep6Key = keyBuilder({ recordId: 'a1nxx000001hGmbAAE' });
-        const dep6Fields = getTrackedFields(dep6Key, luvio.getNode(dep6Key), []);
+        const dep6Fields = getTrackedFields(
+            dep6Key,
+            luvio.getNode(dep6Key),
+            trackedFieldsConfig,
+            []
+        );
         const violators = dep6Fields.filter((field) => field.split('.').length > 7); // root + 6
         expect(violators.length).toEqual(0);
     });
@@ -304,7 +329,12 @@ describe('getTrackedFields', () => {
         // Record with 6-level depth parent relationship field (boundary value)
         // Top parent record: 001RM00000558MnYAI
         const dep6key = keyBuilder({ recordId: '001RM00000558MhYAI' });
-        const dep6Fields = getTrackedFields(dep6key, luvio.getNode(dep6key), []);
+        const dep6Fields = getTrackedFields(
+            dep6key,
+            luvio.getNode(dep6key),
+            trackedFieldsConfig,
+            []
+        );
         expect(dep6Fields).toEqual(expectedFields);
     });
 
@@ -334,7 +364,12 @@ describe('getTrackedFields', () => {
         // Record with 6-level depth parent relationship field (boundary value)
         // Top parent record: 001RM00000558MnYAI
         const dep6Key = keyBuilder({ recordId: '001RM00000558MhYAI' });
-        const dep6Fields = getTrackedFields(dep6Key, luvio.getNode(dep6Key), []);
+        const dep6Fields = getTrackedFields(
+            dep6Key,
+            luvio.getNode(dep6Key),
+            trackedFieldsConfig,
+            []
+        );
         expect(dep6Fields).toEqual(expectedFields);
     });
 
@@ -350,7 +385,37 @@ describe('getTrackedFields', () => {
             [key]: data,
         };
         const luvio = new Luvio(new Environment(store, () => Promise.reject()));
-        expect(getTrackedFields(key, luvio.getNode(key)).length).toBe(0);
+        expect(getTrackedFields(key, luvio.getNode(key), trackedFieldsConfig).length).toBe(0);
+    });
+});
+
+describe('getTrackedFields, with new behavior', () => {
+    const trackedFieldsConfig: TrackedFieldsConfig = {
+        maxDepth: 1,
+        onlyFetchLeafNodeId: true,
+    };
+
+    it('should not include fields more than 1 level deep', () => {
+        const record = buildDeepRecord();
+
+        const store = new Store();
+        const luvio = new Luvio(new Environment(store, () => Promise.reject()));
+
+        ingest(
+            record,
+            {
+                fullPath: keyBuilder({ recordId: record.id }),
+                parent: null,
+                propertyName: '',
+            },
+            luvio,
+            store,
+            0
+        );
+
+        const key = keyBuilder({ recordId: record.id });
+        const fields = getTrackedFields(key, luvio.getNode(key), trackedFieldsConfig, []);
+        expect(fields).toEqual(['TestD__c.TestC__c', 'TestD__c.TestC__r.Id']);
     });
 });
 
@@ -384,6 +449,11 @@ describe('extractTrackedFields', () => {
 });
 
 describe('extractTrackedFieldsToTrie', () => {
+    const trackedFieldsConfig: TrackedFieldsConfig = {
+        maxDepth: 5,
+        onlyFetchLeafNodeId: false,
+    };
+
     it('should not include fields more than 6 levels deep', () => {
         const record = buildDeepRecord();
 
@@ -399,7 +469,7 @@ describe('extractTrackedFieldsToTrie', () => {
             children: {},
         };
 
-        extractTrackedFieldsToTrie(recordKey, node, root);
+        extractTrackedFieldsToTrie(recordKey, node, root, trackedFieldsConfig);
 
         const fields = convertTrieToFields(root);
         expect(fields).toEqual([

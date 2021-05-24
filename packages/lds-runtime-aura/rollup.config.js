@@ -18,6 +18,8 @@ const ldsEngine = {
         '@salesforce/lds-default-luvio',
         '@salesforce/lds-instrumentation',
         '@salesforce/lds-network-aura',
+        '@salesforce/lds-adapters-uiapi',
+        '@salesforce/gate/lds.useNewTrackedFieldBehavior',
     ],
 
     output: {
@@ -31,6 +33,7 @@ const ldsEngine = {
             '@salesforce/lds-default-luvio': 'force/ldsEngine',
             '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
             '@salesforce/lds-network-aura': 'force/ldsNetwork',
+            '@salesforce/lds-adapters-uiapi': 'force/ldsAdaptersUiapi',
         },
     },
     plugins: [

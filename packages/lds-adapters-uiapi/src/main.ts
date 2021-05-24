@@ -63,3 +63,15 @@ export { responseRecordRepresentationRetrievers } from './generated/records/retr
 // Exposing this helper method so we can build record selectors from our @salesforce/lds-drafts package
 // TODO W-8235671 we should move common record utilities to @salesforce/uiapi-record-utils
 export { buildSelectionFromFields } from './selectors/record';
+
+// Exposing this configuration methods for new tracked field values change
+export {
+    setTrackedFieldDepthOnCacheMiss,
+    getTrackedFieldDepthOnCacheMiss,
+    setTrackedFieldDepthOnCacheMergeConflict,
+    getTrackedFieldDepthOnCacheMergeConflict,
+    setTrackedFieldDepthOnNotifyChange,
+    getTrackedFieldDepthOnNotifyChange,
+    setTrackedFieldLeafNodeIdOnly,
+    getTrackedFieldLeafNodeIdOnly,
+} from './configuration';

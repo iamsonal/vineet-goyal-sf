@@ -22,6 +22,7 @@
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat",
         "test:unit": "jest",
+        "test:unit:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand",
         "test:size": "bundlesize",
         "test:overrides": "jest --testPathPattern=src/overrides",
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-uiapi",

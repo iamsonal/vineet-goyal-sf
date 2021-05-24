@@ -1,0 +1,76 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "9edeb38c5a777dd2cb920c93f9b98087",
+    "fields": {
+        "CreatedBy": {
+            "displayValue": "User User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "d376fbaf1dc71ce6ed8906407bc7c064",
+                "fields": {
+                    "CreatedBy": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "393149fddc6245d7ecb22d997524b953",
+                            "fields": {
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005xx000001XD7ZAAW"
+                                }
+                            },
+                            "id": "005xx000001XD7ZAAW",
+                            "lastModifiedById": "005xx000001XD7ZAAW",
+                            "lastModifiedDate": "2021-05-21T13:50:39.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2021-05-21T14:26:16.000Z",
+                            "weakEtag": 1621607176000
+                        }
+                    },
+                    "CreatedById": {
+                        "displayValue": null,
+                        "value": "005xx000001XD7ZAAW"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005xx000001XD7ZAAW"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "User User"
+                    }
+                },
+                "id": "005xx000001XD7ZAAW",
+                "lastModifiedById": "005xx000001XD7ZAAW",
+                "lastModifiedDate": "2021-05-21T13:50:39.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2021-05-21T14:26:16.000Z",
+                "weakEtag": 1621607176000
+            }
+        },
+        "CreatedById": {
+            "displayValue": null,
+            "value": "005xx000001XD7ZAAW"
+        },
+        "FiscalYear": {
+            "displayValue": null,
+            "value": 2007
+        },
+        "Id": {
+            "displayValue": null,
+            "value": "006xx000001a7oQAAQ"
+        }
+    },
+    "id": "006xx000001a7oQAAQ",
+    "lastModifiedById": "005xx000001XD7ZAAW",
+    "lastModifiedDate": "2021-05-21T13:50:39.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2021-05-21T13:50:39.000Z",
+    "weakEtag": 1621605039000
+}

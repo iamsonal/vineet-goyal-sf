@@ -12,9 +12,14 @@ import {
     RecordFieldTrie,
     convertTrieToFields,
     isSuperRecordFieldTrie,
+    TrackedFieldsConfig,
 } from '../../util/records';
 import { ObjectKeys } from '../../util/language';
 import { RecordConflictMap } from './resolveConflict';
+import {
+    getTrackedFieldDepthOnCacheMergeConflict,
+    getTrackedFieldLeafNodeIdOnly,
+} from '../../configuration';
 
 const INCOMING_WEAKETAG_0_KEY = 'incoming-weaketag-0';
 const EXISTING_WEAKETAG_0_KEY = 'existing-weaketag-0';
@@ -161,8 +166,23 @@ function mergeRecordConflict(
     const recordKey = recordRepKeyBuilder({
         recordId: incoming.id,
     });
-    extractTrackedFieldsToTrie(recordKey, incomingNode, incomingTrackedFieldsTrieRoot);
-    extractTrackedFieldsToTrie(recordKey, existingNode, existingTrackedFieldsTrieRoot);
+
+    const trackedFieldsConfig: TrackedFieldsConfig = {
+        maxDepth: getTrackedFieldDepthOnCacheMergeConflict(),
+        onlyFetchLeafNodeId: getTrackedFieldLeafNodeIdOnly(),
+    };
+    extractTrackedFieldsToTrie(
+        recordKey,
+        incomingNode,
+        incomingTrackedFieldsTrieRoot,
+        trackedFieldsConfig
+    );
+    extractTrackedFieldsToTrie(
+        recordKey,
+        existingNode,
+        existingTrackedFieldsTrieRoot,
+        trackedFieldsConfig
+    );
 
     if (incoming.weakEtag > existing.weakEtag) {
         return mergeAndRefreshHigherVersionRecord(

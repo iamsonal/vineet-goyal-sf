@@ -74,6 +74,16 @@ describe('SFDC exports', () => {
             'ingestRecord',
             'keyBuilderObjectInfo',
             'keyBuilderRecord',
+
+            /** Configuration functions */
+            'getTrackedFieldDepthOnCacheMergeConflict',
+            'getTrackedFieldDepthOnCacheMiss',
+            'getTrackedFieldDepthOnNotifyChange',
+            'getTrackedFieldLeafNodeIdOnly',
+            'setTrackedFieldDepthOnCacheMergeConflict',
+            'setTrackedFieldDepthOnCacheMiss',
+            'setTrackedFieldDepthOnNotifyChange',
+            'setTrackedFieldLeafNodeIdOnly',
         ].sort();
 
         it('should only export allowlisted items', () => {

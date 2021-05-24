@@ -114,3 +114,15 @@ export {
     keyBuilder as keyBuilderObjectInfo,
     ingest as ingestObjectInfo,
 } from './generated/types/ObjectInfoRepresentation';
+
+// Expose the configuration methods
+export {
+    setTrackedFieldDepthOnCacheMiss,
+    getTrackedFieldDepthOnCacheMiss,
+    setTrackedFieldDepthOnCacheMergeConflict,
+    getTrackedFieldDepthOnCacheMergeConflict,
+    setTrackedFieldDepthOnNotifyChange,
+    getTrackedFieldDepthOnNotifyChange,
+    setTrackedFieldLeafNodeIdOnly,
+    getTrackedFieldLeafNodeIdOnly,
+} from '../src/main';

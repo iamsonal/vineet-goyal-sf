@@ -4,6 +4,12 @@ import timekeeper from 'timekeeper';
 import sinon from 'sinon';
 import { karmaNetworkAdapter } from 'lds-engine';
 import { mockNetworkOnce, mockNetworkSequence } from 'test-util';
+import {
+    setTrackedFieldLeafNodeIdOnly,
+    setTrackedFieldDepthOnNotifyChange,
+    setTrackedFieldDepthOnCacheMergeConflict,
+    setTrackedFieldDepthOnCacheMiss,
+} from 'lds-adapters-uiapi';
 
 import {
     FormFactor,
@@ -38,6 +44,10 @@ const URL_BASE = `/ui-api`;
 // FIXME: update to a real value once TTL is implemented
 const LIST_UI_TTL = 60 * 1000;
 const LOOKUP_RECORDS_TTL = 2 * 60 * 1000;
+
+// Configuration options for tracked fields depth
+const LEAF_NODE_ID_ONLY_DEPTH = 1;
+const DEFAULT_DEPTH = 5;
 
 function mockCreateRecordNetwork(config, mockData) {
     const { useDefaultRule, triggerOtherEmail, triggerUserEmail, ...body } = config;
@@ -896,6 +906,15 @@ function extractRelatedListsBatchParamsFromMockData(mockData) {
     }
 }
 
+function setTrackedFieldsConfig(_includeLeafNodeIdOnly) {
+    const depth = _includeLeafNodeIdOnly ? LEAF_NODE_ID_ONLY_DEPTH : DEFAULT_DEPTH;
+
+    setTrackedFieldLeafNodeIdOnly(_includeLeafNodeIdOnly);
+    setTrackedFieldDepthOnCacheMiss(depth);
+    setTrackedFieldDepthOnCacheMergeConflict(depth);
+    setTrackedFieldDepthOnNotifyChange(depth);
+}
+
 export {
     // constants
     FormFactor,
@@ -962,4 +981,5 @@ export {
     extractRecordFields,
     convertRelatedListsBatchParamsToResourceParams,
     extractRelatedListsBatchParamsFromMockData,
+    setTrackedFieldsConfig,
 };

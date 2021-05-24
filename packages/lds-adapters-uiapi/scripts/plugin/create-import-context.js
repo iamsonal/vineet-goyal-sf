@@ -12,6 +12,7 @@ const src_helpers_RecordRepresentation_resolveConflict = path.join(
     'RecordRepresentation',
     'resolveConflict'
 );
+const src_configuration = path.join(cwd, 'src', 'configuration');
 
 function createImportsMap(importContext) {
     const { namedImport, importAbsolutePath } = importContext;
@@ -65,6 +66,16 @@ function createImportsMap(importContext) {
         GENERATE_FIELDS_SELECTION: importAbsolutePath(
             src_util_select_records,
             'generateFieldsSelection'
+        ),
+
+        // configuration
+        CONFIGURATION_TRACKED_FIELDS_CACHE_MISS_DEPTH: importAbsolutePath(
+            src_configuration,
+            'getTrackedFieldDepthOnCacheMiss'
+        ),
+        CONFIGURATION_TRACKED_FIELDS_LEAF_NODE_ID_ONLY: importAbsolutePath(
+            src_configuration,
+            'getTrackedFieldLeafNodeIdOnly'
         ),
     };
 }

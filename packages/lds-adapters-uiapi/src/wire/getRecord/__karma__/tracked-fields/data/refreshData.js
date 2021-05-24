@@ -11,6 +11,9 @@ const accountId = await helpers.getAccountByName(ACCOUNT_NAME);
 const OPPORTUNITY_NAME = 'Burlington Textiles Weaving Plant Generator';
 const opportunityId = await helpers.getOpportunityByName(OPPORTUNITY_NAME);
 
+const LIST_VIEW_NAME = 'All Opportunities';
+const listViewId = await helpers.getListViewByName(LIST_VIEW_NAME);
+
 // Opportunity record data
 [
     {
@@ -25,6 +28,15 @@ const opportunityId = await helpers.getOpportunityByName(OPPORTUNITY_NAME);
         filename: 'record-Opportunity-fields-Opportunity.Name,Opportunity.Id',
         params: '?fields=Opportunity.Name,Opportunity.Id',
     },
+    {
+        filename:
+            'record-Opportunity-fields-Opportunity.FiscalYear,Opportunity.Id,Opportunity.CreatedBy.Id,Opportunity.CreatedBy.Name,Opportunity.CreatedBy.CreatedBy.Id',
+        params: '?fields=Opportunity.FiscalYear,Opportunity.Id,Opportunity.CreatedBy.Id,Opportunity.CreatedBy.Name,Opportunity.CreatedBy.CreatedBy.Id',
+    },
+    {
+        filename: 'record-list-tracked-fields-new',
+        params: '?fields=Opportunity.Account.Id,Opportunity.AccountId,Opportunity.Amount,Opportunity.CloseDate,Opportunity.CreatedBy.Id,Opportunity.CreatedById,Opportunity.CreatedDate,Opportunity.FiscalYear,Opportunity.Id,Opportunity.LastModifiedById,Opportunity.LastModifiedDate,Opportunity.Name,Opportunity.Owner.Id,Opportunity.OwnerId,Opportunity.StageName,Opportunity.SystemModstamp',
+    },
 ].forEach(async ({ params, filename }) => {
     await helpers.requestGetAndSave(
         `/ui-api/records/${opportunityId}${params}`,
@@ -32,7 +44,7 @@ const opportunityId = await helpers.getOpportunityByName(OPPORTUNITY_NAME);
     );
 });
 
-// Account record data
+// // Account record data
 [
     {
         filename:
@@ -46,7 +58,7 @@ const opportunityId = await helpers.getOpportunityByName(OPPORTUNITY_NAME);
     );
 });
 
-// Opportunity lookup data
+// // Opportunity lookup data
 [
     {
         filename: 'lookup-records-Opportunity-Opportunity.AccountId-Account',
@@ -57,6 +69,20 @@ const opportunityId = await helpers.getOpportunityByName(OPPORTUNITY_NAME);
 ].forEach(async ({ objectApiName, fieldApiName, targetApiName, filename }) => {
     await helpers.requestGetAndSave(
         `/ui-api/lookups/${objectApiName}/${fieldApiName}/${targetApiName}`,
+        path.join(rootDir, `${filename}.json`)
+    );
+});
+
+// List UI
+[
+    {
+        filename: 'list-ui-All-Opportunities-pageToken-0-pageSize-1',
+        endpoint: 'list-ui',
+        params: 'pageToken=0&pageSize=1',
+    },
+].forEach(async ({ filename, endpoint, params }) => {
+    await helpers.requestGetAndSave(
+        `/ui-api/${endpoint}/${listViewId}?${params}`,
         path.join(rootDir, `${filename}.json`)
     );
 });

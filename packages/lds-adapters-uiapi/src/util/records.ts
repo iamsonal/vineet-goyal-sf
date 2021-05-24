@@ -60,6 +60,11 @@ export interface RecordFieldTrie {
     optional?: boolean;
 }
 
+export interface TrackedFieldsConfig {
+    maxDepth: number;
+    onlyFetchLeafNodeId: boolean;
+}
+
 export function isGraphNode(node: ProxyGraphNode<unknown>): node is GraphNode<unknown> {
     return node !== null && node.type === 'Node';
 }
@@ -145,10 +150,23 @@ export function extractTrackedFields(
     return fieldsList;
 }
 
+function addScalarFieldId(current: RecordFieldTrie) {
+    let leafNodeIdKey = 'Id';
+    if (current.children[leafNodeIdKey] === undefined) {
+        current.children = {
+            [leafNodeIdKey]: {
+                name: leafNodeIdKey,
+                children: {},
+            },
+        };
+    }
+}
+
 export function extractTrackedFieldsToTrie(
     recordId: string,
     node: ProxyGraphNode<FieldMapRepresentationNormalized, FieldMapRepresentation>,
     root: RecordFieldTrie,
+    config: TrackedFieldsConfig,
     visitedRecordIds: Record<string, boolean> = {},
     depth: number = 0
 ) {
@@ -200,8 +218,13 @@ export function extractTrackedFieldsToTrie(
                 continue;
             }
 
+            const { maxDepth, onlyFetchLeafNodeId } = config;
+
             if (field.isScalar('value') === false) {
-                if (depth + 1 > MAX_RECORD_DEPTH) {
+                if (depth + 1 > maxDepth) {
+                    if (onlyFetchLeafNodeId === true) {
+                        addScalarFieldId(current);
+                    }
                     continue;
                 }
 
@@ -219,6 +242,7 @@ export function extractTrackedFieldsToTrie(
                     spanningLink.data.__ref!,
                     spanning,
                     next,
+                    config,
                     spanningVisitedRecordIds,
                     depth + 1
                 );
@@ -232,8 +256,14 @@ export function extractTrackedFieldsToTrie(
                 // Ideally, it should only skip relationship field. However,
                 // on the client, there is not a reliable way to determine the
                 // the field type.
-                if (depth === MAX_RECORD_DEPTH && field.scalar('value') === null) {
-                    continue;
+                if (depth === maxDepth) {
+                    if (onlyFetchLeafNodeId === true) {
+                        addScalarFieldId(current);
+                        continue;
+                    }
+                    if (field.scalar('value') === null) {
+                        continue;
+                    }
                 }
 
                 const state = fieldValueRep.linkData();
@@ -352,6 +382,7 @@ function mergeFieldsTries(rootA: RecordFieldTrie, rootB: RecordFieldTrie) {
 export function getTrackedFields(
     key: string,
     graphNode: ProxyGraphNode<FieldMapRepresentationNormalized, FieldMapRepresentation>,
+    config: TrackedFieldsConfig,
     fieldsFromConfig?: string[]
 ): string[] {
     const fieldsList = fieldsFromConfig === undefined ? [] : [...fieldsFromConfig];
@@ -364,7 +395,7 @@ export function getTrackedFields(
         name,
         children: {},
     };
-    extractTrackedFieldsToTrie(key, graphNode, root);
+    extractTrackedFieldsToTrie(key, graphNode, root, config);
 
     const rootFromConfig = {
         name,

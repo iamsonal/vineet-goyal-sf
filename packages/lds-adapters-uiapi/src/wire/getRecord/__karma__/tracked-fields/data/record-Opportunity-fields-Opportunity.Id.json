@@ -1,18 +1,18 @@
 {
     "apiName": "Opportunity",
     "childRelationships": {},
-    "eTag": "b936a81a50f18d1a8b49ea2157cc820f",
+    "eTag": "d30f1886dfe0ac7ea9a1466f93579a0b",
     "fields": {
         "Id": {
             "displayValue": null,
-            "value": "006T10000023ZEJIA2"
+            "value": "006xx000001a7oQAAQ"
         }
     },
-    "id": "006T10000023ZEJIA2",
-    "lastModifiedById": "005T1000000Huh7IAC",
-    "lastModifiedDate": "2021-04-06T23:46:16.000Z",
+    "id": "006xx000001a7oQAAQ",
+    "lastModifiedById": "005xx000001XD7ZAAW",
+    "lastModifiedDate": "2021-05-21T13:50:39.000Z",
     "recordTypeId": "012000000000000AAA",
     "recordTypeInfo": null,
-    "systemModstamp": "2021-04-06T23:46:16.000Z",
-    "weakEtag": 1617752776000
+    "systemModstamp": "2021-05-21T13:50:39.000Z",
+    "weakEtag": 1621605039000
 }

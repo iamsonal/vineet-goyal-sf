@@ -20,6 +20,10 @@ import { buildSelectionFromFields } from '../../selectors/record';
 import { difference } from '../../validation/utils';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
 import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
+import {
+    getTrackedFieldDepthOnCacheMiss,
+    getTrackedFieldLeafNodeIdOnly,
+} from '../../configuration';
 
 // used by getUiApiRecordsBatchByRecordIds#selectChildResourceParams
 export function buildRecordSelector(
@@ -53,7 +57,16 @@ function prepareRequest(luvio: Luvio, config: GetRecordConfig) {
 
     // Should this go into the coersion logic?
     const key = keyBuilder(createResourceParams(config));
-    const allTrackedFields = getTrackedFields(key, luvio.getNode(key), config.optionalFields);
+
+    const allTrackedFields = getTrackedFields(
+        key,
+        luvio.getNode(key),
+        {
+            maxDepth: getTrackedFieldDepthOnCacheMiss(),
+            onlyFetchLeafNodeId: getTrackedFieldLeafNodeIdOnly(),
+        },
+        config.optionalFields
+    );
     const optionalFields =
         fields === undefined ? allTrackedFields : difference(allTrackedFields, fields);
     const params = createResourceParams({

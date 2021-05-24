@@ -35,6 +35,10 @@ import {
     keyBuilderFromType as templateKeyBuilderFromType,
 } from '../../generated/types/RecordDefaultsTemplateCloneRepresentation';
 import { createFieldsIngestSuccess as resourceCreateFieldsIngest } from '../../generated/fields/resources/getUiApiRecordDefaultsTemplateCloneByRecordId';
+import {
+    getTrackedFieldDepthOnCacheMiss,
+    getTrackedFieldLeafNodeIdOnly,
+} from '../../configuration';
 
 const DEFAULT_RECORD_TYPE_ID_KEY = 'defaultRecordTypeId';
 
@@ -91,6 +95,10 @@ const buildNetworkSnapshot: (
                       optionalFields: getTrackedFields(
                           templateRecordKey,
                           luvio.getNode(templateRecordKey),
+                          {
+                              maxDepth: getTrackedFieldDepthOnCacheMiss(),
+                              onlyFetchLeafNodeId: getTrackedFieldLeafNodeIdOnly(),
+                          },
                           config.optionalFields
                       ),
                   },

@@ -1,0 +1,43 @@
+{
+    "name": "@salesforce/lds-adapters-cms-authoring",
+    "version": "1.12.1",
+    "description": "Wire adapters for CMS authoring APIs",
+    "license": "MIT",
+    "main": "dist/umd/es2018/cms-authoring.js",
+    "module": "dist/es/es2018/cms-authoring.js",
+    "types": "dist/types/src/generated/artifacts/main.d.ts",
+    "files": [
+        "dist",
+        "sfdc",
+        "src/raml/*"
+    ],
+    "contributors": [
+        "atrushchankou@salesforce.com"
+    ],
+    "scripts": {
+        "build": "yarn build:raml && yarn build:services && yarn build:karma",
+        "build:karma": "rollup --config rollup.config.karma.js",
+        "build:raml": "luvio generate src/raml/luvio.raml src/generated -p '../lds-compiler-plugins'",
+        "build:services": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist sfdc src/generated karma/dist",
+        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-cms-authoring",
+        "release:corejar": "yarn build && packages/core-build/scripts/core.js --adapter=lds-adapters-cms-authoring",
+        "start": "karma start",
+        "_test": "karma start --single-run",
+        "_test:compat": "karma start --single-run --compat",
+        "_test:unit": "jest"
+    },
+    "publishConfig": {
+        "registry": "https://npm.lwcjs.org"
+    },
+    "dependencies": {
+        "@salesforce/lds-bindings": "1.12.1"
+    },
+    "devDependencies": {
+        "@luvio/cli": "^0.32.3",
+        "@luvio/compiler": "^0.32.3",
+        "@luvio/engine": "^0.32.3",
+        "@luvio/lwc-luvio": "^0.32.3",
+        "@salesforce/lds-karma": "1.12.1"
+    }
+}

@@ -24,12 +24,13 @@ export function selectChildResourceParams(
         read: (reader: Reader<any>) => {
             const sink = {} as BatchRepresentation;
             reader.enterPath(envelopePath);
+            const timestamp = reader.getTimeStamp();
             const results = [] as BatchRepresentation['results'];
             for (let i = 0, len = childResources.length; i < len; i += 1) {
                 reader.enterPath(i);
                 const childResource = childResources[i];
                 const childKey = getUiApiRecordsByRecordId_keyBuilder(childResource);
-                const isMissingDataBeforeChildRead = reader.isMissingData;
+                const isMissingDataBeforeChildRead = reader.getIsDataMissing();
                 const childSnapshot = reader.read<RecordRepresentation>(
                     buildRecordSelector(
                         childResource.urlParams.recordId,
@@ -38,7 +39,7 @@ export function selectChildResourceParams(
                     )
                 );
                 const childSink = {} as BatchResultRepresentation;
-                reader.seenIds[childKey] = true;
+                reader.markSeenId(childKey);
                 switch (childSnapshot.state) {
                     case 'Stale':
                         reader.markStale();
@@ -72,7 +73,7 @@ export function selectChildResourceParams(
                         // if child snapshot doesn't have any data then
                         // that means the child record key is missing
                         if (childSnapshot.data === undefined) {
-                            if (reader.baseSnapshot === undefined) {
+                            if (reader.isRebuilding() === false) {
                                 // not a rebuild, mark as missing and move on
                                 reader.markMissingLink(childKey);
                                 break;
@@ -88,7 +89,7 @@ export function selectChildResourceParams(
 
                             if (
                                 nonCachedError === undefined ||
-                                nonCachedError.expiration < reader.timestamp
+                                nonCachedError.expiration < timestamp
                             ) {
                                 reader.markMissingLink(childKey);
                             } else {

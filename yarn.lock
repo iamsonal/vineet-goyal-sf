@@ -3613,19 +3613,19 @@
     npmlog "^4.1.2"
     write-file-atomic "^2.3.0"
 
-"@luvio/adapter-test-library@0.33.0":
-  version "0.33.0"
-  resolved "https://registry.yarnpkg.com/@luvio/adapter-test-library/-/adapter-test-library-0.33.0.tgz#0b8b4c711939fd539fab54621e18071c75acb19e"
-  integrity sha512-zTWjnP5yHlXAVWR126H4tMwFfkDDGOjG0Dmz3/5B44LRvwIt+isP9f4dJUgi594Eg0sya2moSoTSc3qZ2glbng==
+"@luvio/adapter-test-library@0.33.1":
+  version "0.33.1"
+  resolved "https://registry.yarnpkg.com/@luvio/adapter-test-library/-/adapter-test-library-0.33.1.tgz#6f3fbfcbbaa15889942b4a652a2df98e1e091423"
+  integrity sha512-sMR2ltKrQNO08IrfNKz5lzWOepuiT733HyHsEZmzjwEz05sJxG6on3d4YZsCw55CV2LZaTGBl2+0z9RIOqosdw==
   dependencies:
     sinon "^7.5.0"
 
-"@luvio/cli@0.33.0":
-  version "0.33.0"
-  resolved "https://registry.yarnpkg.com/@luvio/cli/-/cli-0.33.0.tgz#38af6654cdd5be32adb6ba617c466042b3310eae"
-  integrity sha512-rJFTVsE8ry3Opy2QNctOiJxSwyqdz5n9hB0ilz2COLDkB/RKcEKB/oWFWRyUqM7jevb7kYaj4yZtalPdn9MXEA==
+"@luvio/cli@0.33.1":
+  version "0.33.1"
+  resolved "https://registry.yarnpkg.com/@luvio/cli/-/cli-0.33.1.tgz#1c2e5e41fad6abac5677d00e987f88eeec8ef16b"
+  integrity sha512-GeDZw4pl+mV1K0YPStZvagIzCuliNKPnSEdFwXqtOtdhV3n381PsrwyNMD9dQcK1KioTwTgyT/sJ0gdYM0LPEg==
   dependencies:
-    "@luvio/compiler" "0.33.0"
+    "@luvio/compiler" "0.33.1"
     "@oclif/command" "^1.5.19"
     "@oclif/config" "^1.13.3"
     "@oclif/plugin-help" "^2.2.1"
@@ -3633,31 +3633,31 @@
     strip-ansi "^6.0.0"
     text-table "^0.2.0"
 
-"@luvio/compiler@0.33.0":
-  version "0.33.0"
-  resolved "https://registry.yarnpkg.com/@luvio/compiler/-/compiler-0.33.0.tgz#31df9112baeb5b96c65a312674cb26068fba09b4"
-  integrity sha512-qoNuW+yneun04ppmyF8HHIcsYTZRH1bHd9J0/54DxWOxoPPa6BVwd+rXs9h+STpHBKNevMSEM2QqIkbi4Uurqw==
+"@luvio/compiler@0.33.1":
+  version "0.33.1"
+  resolved "https://registry.yarnpkg.com/@luvio/compiler/-/compiler-0.33.1.tgz#cd758aa8507bc2ffe52abfe681cc03029858ac0d"
+  integrity sha512-8xIww2DgvhhVmgzhnUUGJm5TUT3b1jRPuaFGGZNBpdp+i3OJr+YZ5r5UGETEOKlI/Wd4xvpW3AK4hs9gciL9kA==
   dependencies:
     amf-client-js "4.2.0"
 
-"@luvio/engine@0.33.0":
-  version "0.33.0"
-  resolved "https://registry.yarnpkg.com/@luvio/engine/-/engine-0.33.0.tgz#b0f1b3490453293ed7cdd2ad04d845f2e7522291"
-  integrity sha512-8yuOYqwbLxbz79pzNUekRE3Bncye2fbhG4/9AYgZ2ey7lOkIGkzewyxZ8/RDU/CXdcs+IW5XtaVu0lfHIrunug==
+"@luvio/engine@0.33.1":
+  version "0.33.1"
+  resolved "https://registry.yarnpkg.com/@luvio/engine/-/engine-0.33.1.tgz#93054283dcad8d77249a5c0914f8abd01d76a75d"
+  integrity sha512-q8+hpgYcXvmhSYtM+k5SOEyMxFLSIK28v9RyK419I92NuUurg4G/qwNT6fz/O09sCyldiKOORVSqhooA2rlLbg==
 
-"@luvio/environments@0.33.0":
-  version "0.33.0"
-  resolved "https://registry.yarnpkg.com/@luvio/environments/-/environments-0.33.0.tgz#6aadb4480c40de617eb79c6abf7b2d5de0698a48"
-  integrity sha512-gx+1YePD9UcFVJvE/SEmH9hqo9TWmjoFzgBTkPofO/gv46MVvt/MMCOJL1g7DBMbCX3+9k3g6kwtAoKO5DGMww==
+"@luvio/environments@0.33.1":
+  version "0.33.1"
+  resolved "https://registry.yarnpkg.com/@luvio/environments/-/environments-0.33.1.tgz#6ec492beeb81320c3d72a5e00c0edadb4b9a0625"
+  integrity sha512-D4+Jlj1Lh6mAReCttZic65S3invUFCdn1OPEt6YeZCFY77XvECsw4bqkN7GS0XEZANw4vlz6sorb8gaDthakOw==
   dependencies:
-    "@luvio/engine" "0.33.0"
+    "@luvio/engine" "0.33.1"
 
-"@luvio/lwc-luvio@0.33.0":
-  version "0.33.0"
-  resolved "https://registry.yarnpkg.com/@luvio/lwc-luvio/-/lwc-luvio-0.33.0.tgz#9440f44ce4a77d2c3239cc7f079d800ed6af14d0"
-  integrity sha512-ZsiP6WoBERhLTYO0v8wZgfXPU2G4dE3TPjfKz4OOSt7pZMN3W7kwIoX2F8pFrLkXXvR2VWfkEobMy+96z2Tqzg==
+"@luvio/lwc-luvio@0.33.1":
+  version "0.33.1"
+  resolved "https://registry.yarnpkg.com/@luvio/lwc-luvio/-/lwc-luvio-0.33.1.tgz#088b0c85bb7f039c52a0daaed3958615d36c4847"
+  integrity sha512-8f92XYxxOf18YQzvA55gbUlmYj85AP256mabRByipM+VwdGjPaMas8G9E92rwwVf1BCMb3ONWdy1CFPZNpi60g==
   dependencies:
-    "@luvio/engine" "0.33.0"
+    "@luvio/engine" "0.33.1"
     "@lwc/engine-core" "^1.7.5"
 
 "@lwc/babel-plugin-component@1.7.14":

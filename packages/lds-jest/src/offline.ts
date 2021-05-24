@@ -35,8 +35,8 @@ export function buildOfflineLuvio(
     options: OfflineOptions = {}
 ) {
     const { compositeRetrievers, customEnvironment, reviveRetrievers } = options;
-
-    const store = new Store();
+    // TODO: use default scheduler
+    const store = new Store({ scheduler: () => {} });
     let env = makeDurable(makeOffline(new Environment(store, network)), {
         durableStore,
         reviveRetrievers: reviveRetrievers || [],

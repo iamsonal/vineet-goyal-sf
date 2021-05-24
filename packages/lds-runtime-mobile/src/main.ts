@@ -62,7 +62,7 @@ const getDraftActionForRecordKeys = (keys: string[]) => {
 const { newRecordId, isGenerated } = recordIdGenerator(userId);
 
 // non-draft-aware base services
-//todo:
+// TODO: use default scheduler
 const storeOptions = {
     scheduler: () => {},
 };

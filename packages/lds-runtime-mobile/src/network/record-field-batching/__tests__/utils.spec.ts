@@ -1,4 +1,5 @@
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import { ScopedFieldsCollection } from '../ScopedFields';
 import {
     buildAggregateUiUrl,
     buildCompositeRequestByFields,
@@ -7,6 +8,7 @@ import {
     UiApiParams,
     createAggregateBatchRequestInfo,
     mergeAggregateUiResponse,
+    MAX_STRING_LENGTH_PER_CHUNK,
 } from '../utils';
 import {
     BASE_URI,
@@ -633,16 +635,16 @@ describe('record-field-batching utils', () => {
     describe('buildCompositeRequestByFields', () => {
         const referenceId = 'mockId';
         it('should build a CompositeRequest with a getRecord input', () => {
-            const fields = ['Name', 'Id', 'Cars__c', 'Cars__r.Name'];
+            const fieldCollection = ScopedFieldsCollection.fromQueryParameterValue(
+                'Name,Id,Cars__c,Cars__r.Name'
+            ).split();
 
             const actualCompositeRequest = buildCompositeRequestByFields(
                 referenceId,
                 buildResourceRequest({}),
                 {
-                    fieldsArray: fields,
-                    optionalFieldsArray: [],
-                    optionalFieldsLength: 0,
-                    fieldsLength: fields.join(',').length,
+                    fieldCollection,
+                    optionalFieldCollection: undefined,
                 }
             );
 
@@ -652,17 +654,18 @@ describe('record-field-batching utils', () => {
         });
 
         it('should create multiple chunks with fields and optionalFields', () => {
-            const fields = ['Name', 'Id', 'Cars__c', 'Cars__r.Name'];
-            const optionalFields = ['Parent_Account__c'];
+            const fieldCollection = ScopedFieldsCollection.fromQueryParameterValue(
+                'Name,Id,Cars__c,Cars__r.Name'
+            ).split();
+            const optionalFieldCollection =
+                ScopedFieldsCollection.fromQueryParameterValue('Parent_Account__c').split();
 
             const actualCompositeRequest = buildCompositeRequestByFields(
                 referenceId,
                 buildResourceRequest({}),
                 {
-                    fieldsArray: fields,
-                    optionalFieldsArray: optionalFields,
-                    optionalFieldsLength: optionalFields.join(',').length,
-                    fieldsLength: fields.join(',').length,
+                    fieldCollection,
+                    optionalFieldCollection,
                 }
             );
 
@@ -674,16 +677,16 @@ describe('record-field-batching utils', () => {
         });
 
         it('should create multiple chunks with a large amount of fields', () => {
-            const fields = generateMockedRecordFields(500, 'CrazyHugeCustomFieldName__c');
+            const fieldCollection = ScopedFieldsCollection.fromQueryParameterValue(
+                generateMockedRecordFields(500, 'CrazyHugeCustomFieldName__c').join(',')
+            ).split();
 
             const actualCompositeRequest = buildCompositeRequestByFields(
                 referenceId,
                 buildResourceRequest({}),
                 {
-                    fieldsArray: fields,
-                    optionalFieldsArray: [],
-                    optionalFieldsLength: 0,
-                    fieldsLength: fields.join(',').length,
+                    fieldCollection,
+                    optionalFieldCollection: undefined,
                 }
             );
 
@@ -733,10 +736,19 @@ describe('record-field-batching utils', () => {
                 endpoint
             );
 
-            expect(subject.fieldsArray.length).toEqual(1000);
-            expect(subject.optionalFieldsArray.length).toEqual(1000);
-            expect(subject.fieldsString.length).toEqual(17889);
-            expect(subject.optionalFieldsString.length).toEqual(17889);
+            expect(subject.fieldCollection.length).toBe(2);
+            const chunK1Length = subject.fieldCollection[0].toQueryParameterValue().length;
+            const chunk2Length = subject.fieldCollection[1].toQueryParameterValue().length;
+            expect(chunK1Length + chunk2Length).toBe(17888);
+            expect(chunK1Length).toBeLessThan(MAX_STRING_LENGTH_PER_CHUNK);
+            expect(chunk2Length).toBeLessThan(MAX_STRING_LENGTH_PER_CHUNK);
+
+            expect(subject.optionalFieldCollection.length).toBe(2);
+            const chunK3Length = subject.optionalFieldCollection[0].toQueryParameterValue().length;
+            const chunk4Length = subject.optionalFieldCollection[1].toQueryParameterValue().length;
+            expect(chunK3Length + chunk4Length).toBe(17888);
+            expect(chunK3Length).toBeLessThan(MAX_STRING_LENGTH_PER_CHUNK);
+            expect(chunk4Length).toBeLessThan(MAX_STRING_LENGTH_PER_CHUNK);
         });
     });
 

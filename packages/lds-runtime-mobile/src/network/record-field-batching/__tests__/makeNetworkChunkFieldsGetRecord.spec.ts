@@ -1,21 +1,34 @@
-import { FetchResponse, HttpStatusCode } from '@luvio/engine';
+import { HttpStatusCode } from '@luvio/engine';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
-import { makeNetworkAdapterBatchRecordFields } from '../makeNetworkAdapterBatchRecordFields';
-import { CompositeRequest, CompositeResponseEnvelope } from '../utils';
-import { BASE_URI, generateMockedRecordFields, verifyRequestBasePath } from './testUtils';
-import { wrapFieldsInRecordObject } from './testUtils';
+import { makeNetworkAdapterChunkRecordFields } from '../makeNetworkAdapterChunkRecordFields';
+import {
+    GetRecordAggregateResponse,
+    mergeGetRecordResult,
+} from '../makeNetworkChunkFieldsGetRecord';
+import { CompositeRequest } from '../utils';
+import {
+    BASE_URI,
+    ACCOUNT_ID_FIELD_STRING,
+    ACCOUNT_NAME_FIELD_STRING,
+    ACCOUNT_ID1,
+    ACCOUNT1_WITH_ID,
+    ACCOUNT1_WITH_NAME,
+    UIAPI_ERROR_INVALID_FIELD_NAME1,
+    UIAPI_ERROR_INVALID_FIELD_NAME2,
+    generateMockedRecordFields,
+    verifyRequestBasePath,
+    wrapFieldsInRecordObject,
+    generateFetchResponse,
+} from './testUtils';
 
-const RECORD_ID = '001x0000004u7cZAAQ';
-const ACCOUNT_ID_FIELD_STRING = 'Account.Id';
-const ACCOUNT_NAME_FIELD_STRING = 'Account.Name';
-const GET_RECORD_BASE_PATH = `/ui-api/records/${RECORD_ID}`;
+const GET_RECORD_BASE_PATH = `/ui-api/records/${ACCOUNT_ID1}`;
 
 describe('makeNetworkBatchGetRecordFields', () => {
     let baseNetwork;
     let network;
     beforeEach(() => {
         baseNetwork = jest.fn();
-        network = makeNetworkAdapterBatchRecordFields(baseNetwork);
+        network = makeNetworkAdapterChunkRecordFields(baseNetwork);
     });
 
     describe('execute request does not go aggregate ui', () => {
@@ -95,7 +108,7 @@ describe('makeNetworkBatchGetRecordFields', () => {
             const responseChunk1 = wrapFieldsInRecordObject({
                 Id: {
                     displayValue: null,
-                    value: RECORD_ID,
+                    value: ACCOUNT_ID1,
                 },
             });
             const responseChunk2 = wrapFieldsInRecordObject({
@@ -105,24 +118,14 @@ describe('makeNetworkBatchGetRecordFields', () => {
                 },
             });
 
-            const mockCompositeResponse: FetchResponse<
-                CompositeResponseEnvelope<RecordRepresentation>
-            > = {
-                status: HttpStatusCode.Ok,
-                body: {
-                    compositeResponse: [
-                        { body: responseChunk1, httpStatusCode: HttpStatusCode.Ok },
-                        { body: responseChunk2, httpStatusCode: HttpStatusCode.Ok },
-                    ],
-                },
-                statusText: 'success',
-                ok: true,
-                headers: null,
-            };
+            const mockCompositeResponse: GetRecordAggregateResponse = generateFetchResponse([
+                { body: responseChunk1, httpStatusCode: HttpStatusCode.Ok },
+                { body: responseChunk2, httpStatusCode: HttpStatusCode.Ok },
+            ]);
 
             const mockNetworkAdapter = jest.fn().mockResolvedValue(mockCompositeResponse);
             const lengthAwareNetworkAdapter =
-                makeNetworkAdapterBatchRecordFields(mockNetworkAdapter);
+                makeNetworkAdapterChunkRecordFields(mockNetworkAdapter);
 
             const queryParams = {
                 fields: generateMockedRecordFields(400),
@@ -151,7 +154,7 @@ describe('makeNetworkBatchGetRecordFields', () => {
                 wrapFieldsInRecordObject({
                     Id: {
                         displayValue: null,
-                        value: RECORD_ID,
+                        value: ACCOUNT_ID1,
                     },
                     Name: {
                         displayValue: 'Costco Richmond',
@@ -159,6 +162,57 @@ describe('makeNetworkBatchGetRecordFields', () => {
                     },
                 })
             );
+        });
+    });
+
+    describe('merge batch records Fields', () => {
+        /**
+         * verify two successful results fields got merged
+         */
+        it('merge success result with second success result', () => {
+            const merged = mergeGetRecordResult(ACCOUNT1_WITH_ID, ACCOUNT1_WITH_NAME);
+            expect((merged as RecordRepresentation).fields).toEqual({
+                Id: { displayValue: null, value: '001x0000004u7cZAAQ' },
+                Name: { displayValue: 'Costco', value: 'Costco' },
+            });
+        });
+
+        /**
+         * verifythe error result is kept when merging a successful result
+         * into the error result
+         */
+        it('merge error result with success result', () => {
+            const merged = mergeGetRecordResult(
+                [UIAPI_ERROR_INVALID_FIELD_NAME1],
+                ACCOUNT1_WITH_ID
+            );
+            expect(merged).toEqual([UIAPI_ERROR_INVALID_FIELD_NAME1]);
+        });
+
+        /**
+         *verify the error result is kept when merging an error result
+         * into a successful result
+         */
+        it('merge success batch result with error batch result ', () => {
+            const merged = mergeGetRecordResult(ACCOUNT1_WITH_ID, [
+                UIAPI_ERROR_INVALID_FIELD_NAME1,
+            ]);
+            expect(merged).toEqual([UIAPI_ERROR_INVALID_FIELD_NAME1]);
+        });
+
+        /**
+         * verify the first error batch result is kept when merging an error batch result
+         * into an error batch result
+         */
+        it('merge error batch result with error batch result ', () => {
+            const merged = mergeGetRecordResult(
+                [UIAPI_ERROR_INVALID_FIELD_NAME1],
+                [UIAPI_ERROR_INVALID_FIELD_NAME2]
+            );
+            expect(merged).toEqual([
+                UIAPI_ERROR_INVALID_FIELD_NAME1,
+                UIAPI_ERROR_INVALID_FIELD_NAME2,
+            ]);
         });
     });
 });

@@ -20,7 +20,7 @@ import userId from '@salesforce/user/Id';
 import { recordIdGenerator } from './RecordIdGenerator';
 
 import { NimbusNetworkAdapter } from './network/NimbusNetworkAdapter';
-import { makeNetworkAdapterBatchRecordFields } from './network/record-field-batching/makeNetworkAdapterBatchRecordFields';
+import { makeNetworkAdapterChunkRecordFields } from './network/record-field-batching/makeNetworkAdapterChunkRecordFields';
 import { NimbusDurableStore } from './NimbusDurableStore';
 import { buildLdsDraftQueue } from './DraftQueueFactory';
 import { buildInternalAdapters } from './utils/adapters';
@@ -67,7 +67,8 @@ const storeOptions = {
     scheduler: () => {},
 };
 const store = new Store(storeOptions);
-const networkAdapter = makeNetworkAdapterBatchRecordFields(NimbusNetworkAdapter);
+const networkAdapter = makeNetworkAdapterChunkRecordFields(NimbusNetworkAdapter);
+
 const baseDurableStore = new NimbusDurableStore();
 const internalAdapterDurableStore = makeRecordDenormalizingDurableStore(baseDurableStore, store);
 

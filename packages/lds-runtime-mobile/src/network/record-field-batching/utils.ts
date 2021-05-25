@@ -1,7 +1,9 @@
 import { ResourceRequest, HttpStatusCode, FetchResponse } from '@luvio/engine';
 import {
     RecordRepresentation,
+    BatchRepresentation,
     RelatedListRecordCollectionRepresentation,
+    RelatedListRecordCollectionBatchRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
 import {
     ArrayIsArray,
@@ -10,6 +12,9 @@ import {
     ObjectEntries,
     ObjectKeys,
 } from '../../utils/language';
+
+import { GetRecordResult } from './makeNetworkChunkFieldsGetRecord';
+import { ScopedFieldsCollection } from './ScopedFields';
 
 export const MAX_STRING_LENGTH_PER_CHUNK = 10000;
 
@@ -28,6 +33,12 @@ export interface UiApiParams {
     clientOptions?: UiApiClientOptions;
 }
 
+export interface UiApiError {
+    errorCode: string;
+    message: string;
+}
+
+export type UiApiErrorResponse = Array<UiApiError>;
 export type CompositeResponse<T> = {
     body: T;
     httpStatusCode: HttpStatusCode.Ok;
@@ -42,12 +53,29 @@ export interface CompositeResponseEnvelope<T> {
  */
 type SupportedAggregateRepresentation<T> = Extract<
     T,
-    RelatedListRecordCollectionRepresentation | RecordRepresentation
+    | GetRecordResult
+    | BatchRepresentation
+    | RelatedListRecordCollectionRepresentation
+    | RelatedListRecordCollectionBatchRepresentation
 >;
 
 export type AggregateResponse<T> = FetchResponse<
     CompositeResponseEnvelope<SupportedAggregateRepresentation<T>>
 >;
+
+/**
+ * Supported batch representation
+ */
+type SupportedBatchRepresentation =
+    | RelatedListRecordCollectionBatchRepresentation
+    | BatchRepresentation;
+
+/**
+ * Supported batch representation
+ */
+type SupportedBatchCollectionRepresentation =
+    | RelatedListRecordCollectionRepresentation
+    | RecordRepresentation;
 
 interface MergerError {
     error: string;
@@ -162,6 +190,34 @@ export function mergeRecordFields(
     return first;
 }
 
+export function mergeBatchRecordsFields(
+    first: SupportedBatchRepresentation,
+    second: SupportedBatchRepresentation,
+    collectionMergeFunc: (
+        first: SupportedBatchCollectionRepresentation,
+        second: SupportedBatchCollectionRepresentation
+    ) => SupportedBatchCollectionRepresentation
+): SupportedBatchRepresentation {
+    const { results: targetResults } = first;
+    const { results: sourceResults } = second;
+    for (let i = 0, len = targetResults.length; i < len; i += 1) {
+        const targetResult = targetResults[i];
+        const sourceResult = sourceResults[i];
+
+        if (targetResult.statusCode !== HttpStatusCode.Ok) continue;
+        if (sourceResult.statusCode !== HttpStatusCode.Ok) {
+            targetResults[i] = sourceResult;
+            continue;
+        }
+
+        collectionMergeFunc(
+            targetResult.result as SupportedBatchCollectionRepresentation,
+            sourceResult.result as SupportedBatchCollectionRepresentation
+        );
+    }
+    return first;
+}
+
 /**
  * Check to see if we have fields that are > max allowed characters long
  * @param resourceRequest resource request to check
@@ -196,11 +252,23 @@ export function createAggregateBatchRequestInfo(
 
     const fieldsString = fieldsArray.join(',');
     const optionalFieldsString = optionalFieldsArray.join(',');
-    if (!shouldUseAggregateUiForFields(fieldsString, optionalFieldsString)) {
+    const shouldUseAggregate = shouldUseAggregateUiForFields(fieldsString, optionalFieldsString);
+
+    if (!shouldUseAggregate) {
         return undefined;
     }
 
-    return { fieldsArray, optionalFieldsArray, fieldsString, optionalFieldsString };
+    const fieldCollection = ScopedFieldsCollection.fromQueryParameterValue(fieldsString).split(
+        MAX_STRING_LENGTH_PER_CHUNK
+    );
+    const optionalFieldCollection = ScopedFieldsCollection.fromQueryParameterValue(
+        optionalFieldsString
+    ).split(MAX_STRING_LENGTH_PER_CHUNK);
+
+    return {
+        fieldCollection,
+        optionalFieldCollection,
+    };
 }
 
 export function createAggregateUiRequest(
@@ -225,63 +293,44 @@ export function buildCompositeRequestByFields(
     referenceId: string,
     resourceRequest: ResourceRequest,
     recordsCompositeRequest: {
-        fieldsArray: Array<string>;
-        optionalFieldsArray: Array<string>;
-        fieldsLength: number;
-        optionalFieldsLength: number;
+        fieldCollection: ScopedFieldsCollection[] | undefined;
+        optionalFieldCollection: ScopedFieldsCollection[] | undefined;
     }
 ): CompositeRequest[] {
-    const { fieldsArray, optionalFieldsArray, fieldsLength, optionalFieldsLength } =
-        recordsCompositeRequest;
-    // Formula:  # of fields per chunk = floor( max length per chunk / avg field length)
-    const averageFieldStringLength = Math.floor(
-        (fieldsLength + optionalFieldsLength) / (fieldsArray.length + optionalFieldsArray.length)
-    );
-    const fieldsPerChunk = Math.floor(MAX_STRING_LENGTH_PER_CHUNK / averageFieldStringLength);
-
-    const fieldsChunks: string[][] = [];
-    const optionalFieldsChunks: string[][] = [];
-
-    for (let i = 0, len = fieldsArray.length; i < len; i += fieldsPerChunk) {
-        const newChunk = <string[]>fieldsArray.slice(i, i + fieldsPerChunk);
-        ArrayPrototypePush.call(fieldsChunks, newChunk);
-    }
-
-    for (let i = 0, len = optionalFieldsArray.length; i < len; i += fieldsPerChunk) {
-        const newChunk = <string[]>optionalFieldsArray.slice(i, i + fieldsPerChunk);
-        ArrayPrototypePush.call(optionalFieldsChunks, newChunk);
-    }
-
+    const { fieldCollection, optionalFieldCollection } = recordsCompositeRequest;
     const compositeRequest: CompositeRequest[] = [];
+    if (fieldCollection !== undefined) {
+        for (let i = 0, len = fieldCollection.length; i < len; i += 1) {
+            const fieldChunk = fieldCollection[i].toQueryParams();
+            const url = buildAggregateUiUrl(
+                {
+                    fields: fieldChunk,
+                },
+                resourceRequest
+            );
 
-    for (let i = 0, len = fieldsChunks.length; i < len; i += 1) {
-        const fieldChunk = fieldsChunks[i];
-        const url = buildAggregateUiUrl(
-            {
-                fields: fieldChunk,
-            },
-            resourceRequest
-        );
-
-        ArrayPrototypePush.call(compositeRequest, {
-            url,
-            referenceId: `${referenceId}_fields_${i}`,
-        });
+            ArrayPrototypePush.call(compositeRequest, {
+                url,
+                referenceId: `${referenceId}_fields_${i}`,
+            });
+        }
     }
 
-    for (let i = 0, len = optionalFieldsChunks.length; i < len; i += 1) {
-        const fieldChunk = optionalFieldsChunks[i];
-        const url = buildAggregateUiUrl(
-            {
-                optionalFields: fieldChunk,
-            },
-            resourceRequest
-        );
+    if (optionalFieldCollection !== undefined) {
+        for (let i = 0, len = optionalFieldCollection.length; i < len; i += 1) {
+            const fieldChunk = optionalFieldCollection[i].toQueryParams();
+            const url = buildAggregateUiUrl(
+                {
+                    optionalFields: fieldChunk,
+                },
+                resourceRequest
+            );
 
-        ArrayPrototypePush.call(compositeRequest, {
-            url,
-            referenceId: `${referenceId}_optionalFields_${i}`,
-        });
+            ArrayPrototypePush.call(compositeRequest, {
+                url,
+                referenceId: `${referenceId}_optionalFields_${i}`,
+            });
+        }
     }
 
     return compositeRequest;

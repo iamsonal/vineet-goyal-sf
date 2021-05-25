@@ -1,6 +1,49 @@
 import { FetchResponse, HttpStatusCode, ResourceRequest } from '@luvio/engine';
-import { FieldValueRepresentation } from '@salesforce/lds-adapters-uiapi';
-import { CompositeResponse, CompositeResponseEnvelope } from '../utils';
+import {
+    FieldValueRepresentation,
+    RelatedListRecordCollectionRepresentation,
+} from '@salesforce/lds-adapters-uiapi';
+import { CompositeResponse, CompositeResponseEnvelope, UiApiError } from '../utils';
+
+export const ACCOUNT_ID1 = '001x0000004u7cZAAQ';
+export const ACCOUNT_ID2 = '001x0000005u7cZAAQ';
+export const CONTACT_ID1 = '003R000000MTvmYIAT';
+export const CONTACT_ID2 = '003R000001MTvmYIAT';
+export const OPPORTUNITY_ID1 = '006R0000003NGq7IAG';
+export const OPPORTUNITY_ID2 = '006R0000004NGq7IAG';
+export const ACCOUNT_ID_FIELD_STRING = 'Account.Id';
+export const ACCOUNT_NAME_FIELD_STRING = 'Account.Name';
+export const CONTACT_ID_FIELD_STRING = 'Contact.Id';
+export const CONTACT_NAME_FIELD_STRING = 'Contact.Name';
+
+export const ACCOUNT_INVALID_NAME1 = 'Account.NoName1';
+export const ACCOUNT_INVALID_NAME2 = 'Account.NoName2';
+
+export const ACCOUNT1_WITH_ID = wrapFieldsInRecordObject(
+    { Id: { displayValue: null, value: ACCOUNT_ID1 } },
+    ACCOUNT_ID1
+);
+export const ACCOUNT1_WITH_NAME = wrapFieldsInRecordObject(
+    { Name: { displayValue: 'Costco', value: 'Costco' } },
+    ACCOUNT_ID1
+);
+export const ACCOUNT2_WITH_ID = wrapFieldsInRecordObject(
+    { Id: { displayValue: null, value: ACCOUNT_ID2 } },
+    ACCOUNT_ID2
+);
+export const ACCOUNT2_WITH_NAME = wrapFieldsInRecordObject(
+    { Name: { displayValue: 'Frys', value: 'Frys' } },
+    ACCOUNT_ID2
+);
+export const UIAPI_ERROR_INVALID_FIELD_NAME1: UiApiError = {
+    errorCode: 'INVALID_FIELD',
+    message: `no such column ${ACCOUNT_INVALID_NAME1}`,
+};
+export const UIAPI_ERROR_INVALID_FIELD_NAME2: UiApiError = {
+    errorCode: 'INVALID_FIELD',
+    message: `no such column ${ACCOUNT_INVALID_NAME2}`,
+};
+
 export const BASE_URI = '/services/data/v53.0';
 
 export function generateMockedRecordFields(
@@ -50,13 +93,16 @@ export function verifyRequestBasePath(request: ResourceRequest, expectedBasePath
     expect(request.basePath).toBe(expectedBasePath);
 }
 
-export function wrapFieldsInRecordObject(fields: { [key: string]: FieldValueRepresentation }) {
+export function wrapFieldsInRecordObject(
+    fields: { [key: string]: FieldValueRepresentation },
+    id: string = 'oppy'
+) {
     return {
         apiName: 'foo',
         childRelationships: {},
         eTag: 'eTag',
         fields: fields,
-        id: 'oppy',
+        id: id,
         systemModstamp: '01-01-1970',
         lastModifiedById: 'user',
         lastModifiedDate: '01-01-1970',
@@ -80,13 +126,21 @@ export function wrapFieldsInRelatedRecordObject(
     arrays: {
         fields: string[];
         optionalFields: string[];
-    }
-) {
+    },
+    parentRecordId: String = ACCOUNT_ID1
+): RelatedListRecordCollectionRepresentation {
+    const queryFields = arrays.fields.length > 0 ? `fields=${arrays.fields.join(',')}&` : '';
+    const queryOptionalFields =
+        arrays.optionalFields.length > 0
+            ? `optionalFields=${arrays.optionalFields.join(',')}&`
+            : '';
+    const currentPageUrl = `/services/data/v51.0/ui-api/related-list-records/${parentRecordId}/Contacts?${queryFields}${queryOptionalFields}pageSize=50&pageToken=1`;
+    const nextPageUrl = `/services/data/v51.0/ui-api/related-list-records/${parentRecordId}/Contacts?${queryFields}${queryOptionalFields}pageSize=50&pageToken=2`;
+    const previousPageUrl = `/services/data/v51.0/ui-api/related-list-records/${parentRecordId}/Contacts?${queryFields}${queryOptionalFields}pageSize=50&pageToken=0`;
     return {
         count: 1,
         currentPageToken: '0',
-        currentPageUrl:
-            '/services/data/v51.0/ui-api/related-list-records/001x0000004u7cZAAQ/Contacts?fields=Contact.Id%&optionalFields=Contact.Name&pageSize=50&pageToken=0',
+        currentPageUrl,
         fields: arrays.fields,
         listInfoETag: null,
         listReference: {
@@ -100,11 +154,11 @@ export function wrapFieldsInRelatedRecordObject(
             type: 'relatedList',
         },
         nextPageToken: null,
-        nextPageUrl: null,
+        nextPageUrl,
         optionalFields: arrays.optionalFields,
         pageSize: 50,
         previousPageToken: null,
-        previousPageUrl: null,
+        previousPageUrl,
         records: [
             {
                 apiName: 'Contact',

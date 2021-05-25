@@ -1,7 +1,7 @@
 const { keys, create, assign, entries } = Object;
 const { stringify, parse } = JSON;
 const { push, join } = Array.prototype;
-const { isArray } = Array;
+const { isArray, from } = Array;
 
 export {
     // Object
@@ -14,6 +14,7 @@ export {
     join as ArrayPrototypeJoin,
     // Array
     isArray as ArrayIsArray,
+    from as ArrayFrom,
     // JSON
     stringify as JSONStringify,
     parse as JSONParse,

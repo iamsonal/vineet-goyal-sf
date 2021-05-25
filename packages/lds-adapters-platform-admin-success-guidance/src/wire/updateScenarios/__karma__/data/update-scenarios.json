@@ -1,0 +1,39 @@
+{
+    "assistantGroup": "sfdc_internal_test",
+    "scenarios": [
+        {
+            "assistantGroup": "sfdc_internal_test",
+            "icon": "/projRes/ui-admin-success-components/img/tempicon.png",
+            "id": "test_scenario",
+            "labels": {
+                "description": "This is a test scenario fetched with getScenarios(...)",
+                "title": "Scenario 1 (LDS Wire) "
+            },
+            "progress": 50.5,
+            "numberOfSteps": 12,
+            "isDeactivated": false,
+            "isArchived": false,
+            "isPreview": false,
+            "completionDate": "3921-07-01T00:00:00.000Z",
+            "questionnaireIds": ["test_csg_questions"],
+            "status": "NotStarted"
+        },
+        {
+            "assistantGroup": "sfdc_internal_test",
+            "icon": "/projRes/ui-admin-success-components/img/tempicon.png",
+            "id": "test_scenario_2",
+            "labels": {
+                "description": "This is a test scenario fetched with getScenarios(...)",
+                "title": "Scenario 1 (LDS Wire) "
+            },
+            "progress": 50.5,
+            "numberOfSteps": 12,
+            "isDeactivated": false,
+            "isArchived": false,
+            "isPreview": false,
+            "completionDate": "3921-07-01T00:00:00.000Z",
+            "questionnaireIds": ["test_csg_questions"],
+            "status": "NotStarted"
+        }
+    ]
+}

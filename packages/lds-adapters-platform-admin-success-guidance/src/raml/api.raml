@@ -297,17 +297,34 @@ types:
     description: An Input Representation for a Lightning Assistant scenario.
     type: object
     properties:
-      status:
-        description: Input current status when interacting with a scenario.
-        type: string
-        enum:
-          - Completed
-          - InProgress
-          - NotStarted
+      isArchived:
+        description: Input current archive value when interacting with a scenario.
+        type: boolean
+  LightningAssistantScenarioListInputRepresentation:
+    description: An Input Representation for a Lightning Assistant Scenario List.
+    type: object
+    properties:
+      scenarios:
+        description: Input List for Lightning Assistant Scenarios
+        type: object
+        properties:
+          //:
+            type: object
+  # TODO Hand Rolled 'ScenarioData' W-9311618 and W-9311623
+  ScenarioData:
+    description: A Wrapper around the LightningAssistantScenarioListInputRepresentation
+    type: object
+    properties:
+      scenarioData:
+        description: The Oas Body Name for Questionnaire Data.
+        type: LightningAssistantScenarioListInputRepresentation
   LightningAssistantScenarioListRepresentation:
     description: List of Scenarios for the Lightning Assistant
     type: object
     properties:
+      assistantGroup:
+        description: The Lightning Assistant group this Assistant belongs in
+        type: string
       scenarios:
         description: List of scenarios
         type: array
@@ -331,6 +348,9 @@ types:
       id:
         description: The id of this scenario
         type: string
+      isArchived:
+        description: Whether the scenario is archived or not
+        type: boolean
       isDeactivated:
         description: Whether the scenario is deactivated or not
         type: boolean
@@ -543,6 +563,20 @@ types:
           body:
             application/json:
               type: LightningAssistantScenarioListRepresentation
+    patch:
+      description: Save the Guidance Center Scenarios
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: LightningAssistantScenarioListRepresentation
+      body:
+        application/json:
+          # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
+          type: ScenarioData
+          # TODO: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
+          (oas-body-name): scenarioData
     uriParameters:
       assistantGroup:
         type: string

@@ -13,13 +13,13 @@ export function clone(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
-export function mockGetActiveQuestionnairesNetworkOnce(config, mockData) {
-    const paramMatch = getActiveQuestionnaireMatcher(config);
+export function mockGetQuestionnairesNetworkOnce(config, mockData) {
+    const paramMatch = getQuestionnairesMatcher(config);
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-export function mockGetActiveQuestionnairesNetworkErrorOnce(config, mockData) {
-    const paramMatch = getActiveQuestionnaireMatcher(config);
+export function mockGetQuestionnairesNetworkErrorOnce(config, mockData) {
+    const paramMatch = getQuestionnairesMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
@@ -63,13 +63,23 @@ export function mockSaveQuestionnaireNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-export function mockGetActiveScenariosNetworkOnce(config, mockData) {
-    const paramMatch = getActiveScenariosMatcher(config);
+export function mockGetScenariosNetworkOnce(config, mockData) {
+    const paramMatch = getScenariosMatcher(config);
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-export function mockGetActiveScenariosNetworkErrorOnce(config, mockData) {
-    const paramMatch = getActiveScenariosMatcher(config);
+export function mockGetScenariosNetworkErrorOnce(config, mockData) {
+    const paramMatch = getScenariosMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockUpdateScenariosNetworkOnce(config, mockData) {
+    const paramMatch = getUpdateScenariosMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockUpdateScenariosNetworkErrorOnce(config, mockData) {
+    const paramMatch = getUpdateScenariosMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
@@ -86,7 +96,7 @@ function getQuestionnaireMatcher(config) {
     });
 }
 
-function getActiveQuestionnaireMatcher(config) {
+function getQuestionnairesMatcher(config) {
     let { assistantGroup, scenarioId } = config;
 
     return sinon.match({
@@ -144,13 +154,26 @@ function getSaveQuestionnaireMatcher(config) {
     });
 }
 
-function getActiveScenariosMatcher(config) {
+function getScenariosMatcher(config) {
     let { assistantGroup } = config;
 
     return sinon.match({
         body: null,
         headers: {},
         method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/assistant/${assistantGroup}/scenarios`,
+        queryParams: {},
+    });
+}
+
+function getUpdateScenariosMatcher(config) {
+    let { assistantGroup, scenarioData } = config;
+
+    return sinon.match({
+        body: { scenarioData },
+        headers: {},
+        method: 'patch',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/assistant/${assistantGroup}/scenarios`,
         queryParams: {},

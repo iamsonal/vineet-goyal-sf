@@ -3585,6 +3585,33 @@ describe('routes', () => {
         );
     });
 
+    describe('patch /assistant/{id}/scenarios', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE/scenarios`,
+                body: { scenarioData: { data: 'data' } },
+            },
+            [
+                'LightningExperienceAssistantPlatformController.saveScenarios',
+                {
+                    scenarioData: { data: 'data' },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'patch',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE/scenarios`,
+            },
+            {}
+        );
+    });
+
     describe('get /wave/dataconnectors/{connectorIdOrApiName}', () => {
         testControllerInput(
             {

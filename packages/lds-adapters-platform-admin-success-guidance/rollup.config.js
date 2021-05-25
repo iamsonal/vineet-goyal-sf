@@ -5,7 +5,7 @@ import path from 'path';
 
 import * as packageJson from './package.json';
 
-const sfdcEntry = path.join(__dirname, 'src', 'generated', 'artifacts', 'sfdc.ts');
+const sfdcEntry = path.join(__dirname, 'src', 'sfdc.ts');
 const entry = path.join(__dirname, 'src', 'generated', 'artifacts', 'main.ts');
 
 export default rollup({

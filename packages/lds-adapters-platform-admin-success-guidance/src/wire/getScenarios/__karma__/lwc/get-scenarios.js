@@ -1,7 +1,7 @@
 import { api, LightningElement, wire, track } from 'lwc';
-import { getActiveScenarios } from 'lds-adapters-platform-admin-success-guidance';
+import { getScenarios } from 'lds-adapters-platform-admin-success-guidance';
 
-export default class GetActiveScenarios extends LightningElement {
+export default class GetScenarios extends LightningElement {
     wirePushCount = -1;
 
     @track scenarios;
@@ -9,17 +9,17 @@ export default class GetActiveScenarios extends LightningElement {
 
     @api assistantGroup;
 
-    @wire(getActiveScenarios, {
+    @wire(getScenarios, {
         assistantGroup: '$assistantGroup',
     })
-    onGetActiveScenarios({ data, error }) {
+    onGetScenarios({ data, error }) {
         this.scenarios = data;
         this.error = error;
         this.wirePushCount += 1;
     }
 
     @api
-    getWiredActiveScenarios() {
+    getWiredScenarios() {
         return this.scenarios;
     }
 

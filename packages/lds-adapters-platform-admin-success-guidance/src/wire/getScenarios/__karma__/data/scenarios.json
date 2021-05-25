@@ -1,7 +1,8 @@
 {
+    "assistantGroup": "assistantGroupName",
     "scenarios": [
         {
-            "assistantGroup": "sfdc_internal_test",
+            "assistantGroup": "assistantGroupName",
             "icon": "/projRes/ui-admin-success-components/img/tempicon.png",
             "id": "test_scenario",
             "labels": {
@@ -11,6 +12,7 @@
             "progress": 50.5,
             "numberOfSteps": 12,
             "isDeactivated": false,
+            "isArchived": false,
             "isPreview": false,
             "completionDate": "3921-07-01T00:00:00.000Z",
             "questionnaireIds": ["test_csg_questions"],

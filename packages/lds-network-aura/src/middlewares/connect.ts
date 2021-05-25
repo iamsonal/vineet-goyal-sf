@@ -42,12 +42,12 @@ const GET_GUIDANCE_QUESTIONNAIRE_PATH = new RegExp(
     'i'
 );
 
-const GET_GUIDANCE_ACTIVE_QUESTIONNAIRES_PATH = new RegExp(
+const GET_GUIDANCE_QUESTIONNAIRES_PATH = new RegExp(
     `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){1,64}/questionnaires$`,
     'i'
 );
 
-const GET_GUIDANCE_ACTIVE_SCENARIOS_PATH = new RegExp(
+const GET_GUIDANCE_SCENARIOS_PATH = new RegExp(
     `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){1,64}/scenarios$`,
     'i'
 );
@@ -264,11 +264,10 @@ const guidance: ApiFamily = {
             controller: 'LightningExperienceAssistantPlatformController.saveAssistant',
         },
     },
-    getGuidanceActiveQuestionnaires: {
+    getGuidanceQuestionnaires: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(GUIDANCE_BASE_URI) &&
-            GET_GUIDANCE_ACTIVE_QUESTIONNAIRES_PATH.test(path),
+            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_QUESTIONNAIRES_PATH.test(path),
         transport: {
             controller: 'LightningExperienceAssistantPlatformController.getActiveQuestionnaires',
         },
@@ -289,12 +288,21 @@ const guidance: ApiFamily = {
             controller: 'LightningExperienceAssistantPlatformController.saveQuestionnaire',
         },
     },
-    getGuidanceActiveScenarios: {
+    getGuidanceScenarios: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_ACTIVE_SCENARIOS_PATH.test(path),
+            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_SCENARIOS_PATH.test(path),
         transport: {
             controller: 'LightningExperienceAssistantPlatformController.getActiveScenarios',
+        },
+    },
+
+    updateGuidanceScenarios: {
+        method: 'patch',
+        predicate: (path: string) =>
+            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_SCENARIOS_PATH.test(path),
+        transport: {
+            controller: 'LightningExperienceAssistantPlatformController.saveScenarios',
         },
     },
 };

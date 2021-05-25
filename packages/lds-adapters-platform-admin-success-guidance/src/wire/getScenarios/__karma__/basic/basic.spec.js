@@ -1,42 +1,42 @@
-import GetActiveScenarios from '../lwc/get-active-scenarios';
+import GetScenarios from '../lwc/get-scenarios';
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     clone,
-    mockGetActiveScenariosNetworkOnce,
-    mockGetActiveScenariosNetworkErrorOnce,
+    mockGetScenariosNetworkOnce,
+    mockGetScenariosNetworkErrorOnce,
 } from 'platform-admin-success-guidance-test-util';
 
-const MOCK_PREFIX = 'wire/getActiveScenarios/__karma__/data/';
+const MOCK_PREFIX = 'wire/getScenarios/__karma__/data/';
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
 }
 
 describe('basic', () => {
-    it('gets basic active scenario list', async () => {
-        const mock = getMock('active-scenarios');
+    it('gets basic scenario list', async () => {
+        const mock = getMock('scenarios');
         const config = { assistantGroup: 'assistantGroupName' };
-        mockGetActiveScenariosNetworkOnce(config, mock);
+        mockGetScenariosNetworkOnce(config, mock);
 
-        const el = await setupElement(config, GetActiveScenarios);
+        const el = await setupElement(config, GetScenarios);
         expect(el.pushCount()).toBe(1);
-        expect(clone(el.getWiredActiveScenarios())).toEqual(mock);
+        expect(clone(el.getWiredScenarios())).toEqual(mock);
     });
 
     it('does not fetch a second time', async () => {
-        const mock = getMock('active-scenarios');
+        const mock = getMock('scenarios');
         const config = { assistantGroup: 'assistantGroupName' };
-        mockGetActiveScenariosNetworkOnce(config, mock);
+        mockGetScenariosNetworkOnce(config, mock);
 
-        const el = await setupElement(config, GetActiveScenarios);
+        const el = await setupElement(config, GetScenarios);
         expect(el.pushCount()).toBe(1);
-        expect(clone(el.getWiredActiveScenarios())).toEqual(mock);
+        expect(clone(el.getWiredScenarios())).toEqual(mock);
 
         // second element should receive a value from LDS
         // even though it only mocked the network traffic once
-        const el2 = await setupElement(config, GetActiveScenarios);
+        const el2 = await setupElement(config, GetScenarios);
         expect(el2.pushCount()).toBe(1);
-        expect(clone(el.getWiredActiveScenarios())).toEqual(mock);
+        expect(clone(el.getWiredScenarios())).toEqual(mock);
     });
 
     it('displays error when network request 404s', async () => {
@@ -52,9 +52,9 @@ describe('basic', () => {
                 },
             ],
         };
-        mockGetActiveScenariosNetworkErrorOnce(config, mock);
+        mockGetScenariosNetworkErrorOnce(config, mock);
 
-        const el = await setupElement(config, GetActiveScenarios);
+        const el = await setupElement(config, GetScenarios);
         expect(el.pushCount()).toBe(1);
         expect(clone(el.getError())).toEqual(mock);
     });

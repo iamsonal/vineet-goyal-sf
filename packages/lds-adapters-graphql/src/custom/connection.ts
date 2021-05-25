@@ -18,7 +18,8 @@ import {
     followLink,
 } from '../type/Selection';
 import { GqlRecord } from './record';
-import { serializeArguments } from '../type/Argument';
+import { serializeAndSortArguments } from '../type/Argument';
+import { adapterApiFamily } from '../constants';
 import { LuvioFieldNode } from '@salesforce/lds-graphql-parser/dist/ast';
 
 interface GqlEdge {
@@ -35,10 +36,10 @@ export const CUSTOM_FIELD_NODE_TYPE = 'Connection';
 function keyBuilder(ast: LuvioSelectionCustomFieldNode) {
     const { arguments: args, name } = ast;
     if (args === undefined) {
-        return `gql::${CUSTOM_FIELD_NODE_TYPE}::${name}()`;
+        return `${adapterApiFamily}::${CUSTOM_FIELD_NODE_TYPE}::${name}()`;
     }
-    const serialized = serializeArguments(args);
-    return `gql::${CUSTOM_FIELD_NODE_TYPE}::${name}(${serialized})`;
+    const serialized = serializeAndSortArguments(args);
+    return `${adapterApiFamily}::${CUSTOM_FIELD_NODE_TYPE}::${name}(${serialized})`;
 }
 
 function selectEdges(builder: Reader<any>, ast: LuvioFieldNode, links: StoreLink[]) {

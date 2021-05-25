@@ -180,6 +180,575 @@ describe('Document', () => {
                 errors: [],
             });
         });
+        it('should return same data if arguments are different order', () => {
+            const ast1 = {
+                kind: 'Document',
+                definitions: [
+                    {
+                        kind: 'OperationDefinition',
+                        operation: 'query',
+                        luvioSelections: [
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'uiapi',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'query',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'CustomFieldSelection',
+                                                name: 'Account',
+                                                type: 'Connection',
+                                                luvioSelections: [
+                                                    {
+                                                        kind: 'ObjectFieldSelection',
+                                                        name: 'edges',
+                                                        luvioSelections: [
+                                                            {
+                                                                kind: 'CustomFieldSelection',
+                                                                name: 'node',
+                                                                type: 'Record',
+                                                                luvioSelections: [
+                                                                    {
+                                                                        kind: 'ScalarFieldSelection',
+                                                                        name: 'Id',
+                                                                    },
+                                                                    {
+                                                                        kind: 'ObjectFieldSelection',
+                                                                        name: 'Name',
+                                                                        luvioSelections: [
+                                                                            {
+                                                                                kind: 'ScalarFieldSelection',
+                                                                                name: 'value',
+                                                                            },
+                                                                            {
+                                                                                kind: 'ScalarFieldSelection',
+                                                                                name: 'displayValue',
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                    {
+                                                                        kind: 'CustomFieldSelection',
+                                                                        name: 'Owner',
+                                                                        type: 'Record',
+                                                                        luvioSelections: [
+                                                                            {
+                                                                                kind: 'ObjectFieldSelection',
+                                                                                name: 'Name',
+                                                                                luvioSelections: [
+                                                                                    {
+                                                                                        kind: 'ScalarFieldSelection',
+                                                                                        name: 'value',
+                                                                                    },
+                                                                                    {
+                                                                                        kind: 'ScalarFieldSelection',
+                                                                                        name: 'displayValue',
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                            {
+                                                                                kind: 'CustomFieldSelection',
+                                                                                name: 'LastModifiedBy',
+                                                                                type: 'Record',
+                                                                                luvioSelections: [
+                                                                                    {
+                                                                                        kind: 'ScalarFieldSelection',
+                                                                                        name: 'Id',
+                                                                                    },
+                                                                                    {
+                                                                                        kind: 'ObjectFieldSelection',
+                                                                                        name: 'Name',
+                                                                                        luvioSelections:
+                                                                                            [
+                                                                                                {
+                                                                                                    kind: 'ScalarFieldSelection',
+                                                                                                    name: 'value',
+                                                                                                },
+                                                                                                {
+                                                                                                    kind: 'ScalarFieldSelection',
+                                                                                                    name: 'displayValue',
+                                                                                                },
+                                                                                            ],
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                                arguments: [
+                                                    {
+                                                        kind: 'Argument',
+                                                        name: 'where',
+                                                        value: {
+                                                            kind: 'ObjectValue',
+                                                            fields: {
+                                                                Owner: {
+                                                                    kind: 'ObjectValue',
+                                                                    fields: {
+                                                                        Name: {
+                                                                            kind: 'ObjectValue',
+                                                                            fields: {
+                                                                                like: {
+                                                                                    kind: 'StringValue',
+                                                                                    value: 'Admin User',
+                                                                                },
+                                                                            },
+                                                                        },
+                                                                        LastModifiedBy: {
+                                                                            kind: 'ObjectValue',
+                                                                            fields: {
+                                                                                Name: {
+                                                                                    kind: 'ObjectValue',
+                                                                                    fields: {
+                                                                                        like: {
+                                                                                            kind: 'StringValue',
+                                                                                            value: 'Admin User',
+                                                                                        },
+                                                                                    },
+                                                                                },
+                                                                                CreatedBy: {
+                                                                                    kind: 'ObjectValue',
+                                                                                    fields: {
+                                                                                        Name: {
+                                                                                            kind: 'ObjectValue',
+                                                                                            fields: {
+                                                                                                like: {
+                                                                                                    kind: 'StringValue',
+                                                                                                    value: 'Admin User',
+                                                                                                },
+                                                                                            },
+                                                                                        },
+                                                                                    },
+                                                                                },
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                },
+                                                                Name: {
+                                                                    kind: 'ObjectValue',
+                                                                    fields: {
+                                                                        like: {
+                                                                            kind: 'StringValue',
+                                                                            value: 'Account%',
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                    {
+                                                        kind: 'Argument',
+                                                        name: 'orderBy',
+                                                        value: {
+                                                            kind: 'ObjectValue',
+                                                            fields: {
+                                                                Name: {
+                                                                    kind: 'ObjectValue',
+                                                                    fields: {
+                                                                        order: {
+                                                                            kind: 'EnumValue',
+                                                                            value: 'ASC',
+                                                                        },
+                                                                    },
+                                                                },
+                                                                CreatedDate: {
+                                                                    kind: 'ObjectValue',
+                                                                    fields: {
+                                                                        order: {
+                                                                            kind: 'EnumValue',
+                                                                            value: 'DESC',
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                    {
+                                                        kind: 'Argument',
+                                                        name: 'first',
+                                                        value: {
+                                                            kind: 'IntValue',
+                                                            value: '1',
+                                                        },
+                                                    },
+                                                    {
+                                                        kind: 'Argument',
+                                                        name: 'scope',
+                                                        value: {
+                                                            kind: 'EnumValue',
+                                                            value: 'EVERYTHING',
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const ast2 = {
+                kind: 'Document',
+                definitions: [
+                    {
+                        kind: 'OperationDefinition',
+                        operation: 'query',
+                        luvioSelections: [
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'uiapi',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'query',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'CustomFieldSelection',
+                                                name: 'Account',
+                                                type: 'Connection',
+                                                luvioSelections: [
+                                                    {
+                                                        kind: 'ObjectFieldSelection',
+                                                        name: 'edges',
+                                                        luvioSelections: [
+                                                            {
+                                                                kind: 'CustomFieldSelection',
+                                                                name: 'node',
+                                                                type: 'Record',
+                                                                luvioSelections: [
+                                                                    {
+                                                                        kind: 'ScalarFieldSelection',
+                                                                        name: 'Id',
+                                                                    },
+                                                                    {
+                                                                        kind: 'ObjectFieldSelection',
+                                                                        name: 'Name',
+                                                                        luvioSelections: [
+                                                                            {
+                                                                                kind: 'ScalarFieldSelection',
+                                                                                name: 'value',
+                                                                            },
+                                                                            {
+                                                                                kind: 'ScalarFieldSelection',
+                                                                                name: 'displayValue',
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                    {
+                                                                        kind: 'CustomFieldSelection',
+                                                                        name: 'Owner',
+                                                                        type: 'Record',
+                                                                        luvioSelections: [
+                                                                            {
+                                                                                kind: 'ObjectFieldSelection',
+                                                                                name: 'Name',
+                                                                                luvioSelections: [
+                                                                                    {
+                                                                                        kind: 'ScalarFieldSelection',
+                                                                                        name: 'value',
+                                                                                    },
+                                                                                    {
+                                                                                        kind: 'ScalarFieldSelection',
+                                                                                        name: 'displayValue',
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                            {
+                                                                                kind: 'CustomFieldSelection',
+                                                                                name: 'LastModifiedBy',
+                                                                                type: 'Record',
+                                                                                luvioSelections: [
+                                                                                    {
+                                                                                        kind: 'ScalarFieldSelection',
+                                                                                        name: 'Id',
+                                                                                    },
+                                                                                    {
+                                                                                        kind: 'ObjectFieldSelection',
+                                                                                        name: 'Name',
+                                                                                        luvioSelections:
+                                                                                            [
+                                                                                                {
+                                                                                                    kind: 'ScalarFieldSelection',
+                                                                                                    name: 'value',
+                                                                                                },
+                                                                                                {
+                                                                                                    kind: 'ScalarFieldSelection',
+                                                                                                    name: 'displayValue',
+                                                                                                },
+                                                                                            ],
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                                arguments: [
+                                                    {
+                                                        kind: 'Argument',
+                                                        name: 'orderBy',
+                                                        value: {
+                                                            kind: 'ObjectValue',
+                                                            fields: {
+                                                                CreatedDate: {
+                                                                    kind: 'ObjectValue',
+                                                                    fields: {
+                                                                        order: {
+                                                                            kind: 'EnumValue',
+                                                                            value: 'DESC',
+                                                                        },
+                                                                    },
+                                                                },
+                                                                Name: {
+                                                                    kind: 'ObjectValue',
+                                                                    fields: {
+                                                                        order: {
+                                                                            kind: 'EnumValue',
+                                                                            value: 'ASC',
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                    {
+                                                        kind: 'Argument',
+                                                        name: 'first',
+                                                        value: {
+                                                            kind: 'IntValue',
+                                                            value: '1',
+                                                        },
+                                                    },
+                                                    {
+                                                        kind: 'Argument',
+                                                        name: 'scope',
+                                                        value: {
+                                                            kind: 'EnumValue',
+                                                            value: 'EVERYTHING',
+                                                        },
+                                                    },
+                                                    {
+                                                        kind: 'Argument',
+                                                        name: 'where',
+                                                        value: {
+                                                            kind: 'ObjectValue',
+                                                            fields: {
+                                                                Name: {
+                                                                    kind: 'ObjectValue',
+                                                                    fields: {
+                                                                        like: {
+                                                                            kind: 'StringValue',
+                                                                            value: 'Account%',
+                                                                        },
+                                                                    },
+                                                                },
+                                                                Owner: {
+                                                                    kind: 'ObjectValue',
+                                                                    fields: {
+                                                                        Name: {
+                                                                            kind: 'ObjectValue',
+                                                                            fields: {
+                                                                                like: {
+                                                                                    kind: 'StringValue',
+                                                                                    value: 'Admin User',
+                                                                                },
+                                                                            },
+                                                                        },
+                                                                        LastModifiedBy: {
+                                                                            kind: 'ObjectValue',
+                                                                            fields: {
+                                                                                Name: {
+                                                                                    kind: 'ObjectValue',
+                                                                                    fields: {
+                                                                                        like: {
+                                                                                            kind: 'StringValue',
+                                                                                            value: 'Admin User',
+                                                                                        },
+                                                                                    },
+                                                                                },
+                                                                                CreatedBy: {
+                                                                                    kind: 'ObjectValue',
+                                                                                    fields: {
+                                                                                        Name: {
+                                                                                            kind: 'ObjectValue',
+                                                                                            fields: {
+                                                                                                like: {
+                                                                                                    kind: 'StringValue',
+                                                                                                    value: 'Admin User',
+                                                                                                },
+                                                                                            },
+                                                                                        },
+                                                                                    },
+                                                                                },
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const data = {
+                uiapi: {
+                    query: {
+                        Account: {
+                            edges: [
+                                {
+                                    node: {
+                                        Id: '001RM000005BJPYYA4',
+                                        Name: { value: 'Account0-Test', displayValue: null },
+                                        Owner: {
+                                            Name: { value: 'Admin User', displayValue: null },
+                                            LastModifiedBy: {
+                                                Id: '005RM000002492xYAA',
+                                                Name: { value: 'Admin User', displayValue: null },
+                                            },
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
+            };
+
+            const store = new Store();
+            store.records = {
+                'UiApi::RecordRepresentation:001RM000005BJPYYA4__fields__Name': {
+                    value: 'Account0-Test',
+                    displayValue: null,
+                },
+                'UiApi::RecordRepresentation:005RM000002492xYAA__fields__Name': {
+                    value: 'Admin User',
+                    displayValue: null,
+                },
+                'UiApi::RecordRepresentation:005RM000002492xYAA': {
+                    apiName: 'User',
+                    eTag: '',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-02-20T06:31:45.000Z',
+                    systemModstamp: '2021-05-19T14:29:47.000Z',
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    childRelationships: {},
+                    id: '005RM000002492xYAA',
+                    weakEtag: 1621434587000,
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:005RM000002492xYAA__fields__Name',
+                        },
+                        LastModifiedBy: {
+                            __ref: 'UiApi::RecordRepresentation:005RM000002492xYAA__fields__LastModifiedBy',
+                        },
+                    },
+                },
+                'UiApi::RecordRepresentation:005RM000002492xYAA__fields__LastModifiedBy': {
+                    displayValue: 'Admin User',
+                    value: { __ref: 'UiApi::RecordRepresentation:005RM000002492xYAA' },
+                },
+                'UiApi::RecordRepresentation:001RM000005BJPYYA4__fields__Owner': {
+                    displayValue: 'Admin User',
+                    value: { __ref: 'UiApi::RecordRepresentation:005RM000002492xYAA' },
+                },
+                'UiApi::RecordRepresentation:001RM000005BJPYYA4': {
+                    apiName: 'Account',
+                    eTag: '',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-05-01T00:35:22.000Z',
+                    systemModstamp: '2021-05-01T00:35:23.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                    childRelationships: {},
+                    id: '001RM000005BJPYYA4',
+                    weakEtag: 1619829323000,
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000005BJPYYA4__fields__Name',
+                        },
+                        Owner: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000005BJPYYA4__fields__Owner',
+                        },
+                    },
+                },
+                'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})__edges__0':
+                    {
+                        node: { __ref: 'UiApi::RecordRepresentation:001RM000005BJPYYA4' },
+                    },
+                'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})__edges':
+                    [
+                        {
+                            __ref: 'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})__edges__0',
+                        },
+                    ],
+                'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})':
+                    {
+                        edges: {
+                            __ref: 'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})__edges',
+                        },
+                    },
+                fullpath__uiapi__query: {
+                    Account: {
+                        __ref: 'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})',
+                    },
+                },
+                fullpath__uiapi: { query: { __ref: 'fullpath__uiapi__query' } },
+                fullpath: { uiapi: { __ref: 'fullpath__uiapi' } },
+            };
+
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const snap1 = luvio.storeLookup({
+                recordId: 'fullpath',
+                node: {
+                    kind: 'Fragment',
+                    synthetic: false,
+                    reader: true,
+                    read: createRead(ast1),
+                },
+                variables: {},
+            });
+            const snap2 = luvio.storeLookup({
+                recordId: 'fullpath',
+                node: {
+                    kind: 'Fragment',
+                    synthetic: false,
+                    reader: true,
+                    read: createRead(ast2),
+                },
+                variables: {},
+            });
+
+            expect(snap1.data).toEqual({
+                data,
+                errors: [],
+            });
+            expect(snap1.data).toEqual(snap2.data);
+        });
     });
 
     describe('ingest', () => {

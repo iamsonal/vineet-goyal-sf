@@ -7,6 +7,7 @@ import {
     LuvioValueNode,
     StringValueNode,
 } from '@salesforce/lds-graphql-parser';
+import { sortAndCopyUsingObjectKey } from '../util/sortUsingKey';
 
 const { keys } = Object;
 
@@ -14,7 +15,7 @@ function serializeValueNode(valueDefinition: LuvioValueNode): string {
     const { kind } = valueDefinition;
     switch (kind) {
         case 'ObjectValue':
-            return serializeObjectValueNode(valueDefinition as LuvioObjectValueNode);
+            return serializeAndSortObjectValueNode(valueDefinition as LuvioObjectValueNode);
         case 'StringValue':
             return serializeStringValueNode(valueDefinition as StringValueNode);
         case 'NullValue':
@@ -35,10 +36,10 @@ function serializeStringValueNode(literalValueNode: StringValueNode) {
     return `"${literalValueNode.value}"`;
 }
 
-function serializeObjectValueNode(objectValueDefinition: LuvioObjectValueNode) {
+function serializeAndSortObjectValueNode(objectValueDefinition: LuvioObjectValueNode) {
     const { fields } = objectValueDefinition;
     let str = '';
-    const fieldKeys = keys(fields);
+    const fieldKeys = keys(fields).sort();
     for (let i = 0, len = fieldKeys.length; i < len; i += 1) {
         const fieldKey = fieldKeys[i];
         str = `${str}{${fieldKey}:${serializeValueNode(fields[fieldKey])}}`;
@@ -54,14 +55,14 @@ export function serialize(arg: LuvioArgumentNode): string {
     return `${name}:${serializeValueNode(value)}`;
 }
 
-export function serializeArguments(args: LuvioArgumentNode[]): string {
+export function serializeAndSortArguments(args: LuvioArgumentNode[]): string {
+    const sortedArgs = sortAndCopyUsingObjectKey(args, 'name');
     let str = '';
-    for (let i = 0, len = args.length; i < len; i += 1) {
-        str = `${str}${serialize(args[i])}`;
+    for (let i = 0, len = sortedArgs.length; i < len; i += 1) {
+        str = `${str}${serialize(sortedArgs[i])}`;
         if (len > 1 && i < len - 1) {
             str = `${str},`;
         }
     }
-
     return str;
 }

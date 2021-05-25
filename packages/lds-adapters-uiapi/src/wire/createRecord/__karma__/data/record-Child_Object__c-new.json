@@ -1,0 +1,117 @@
+{
+    "apiName": "Child_Object__c",
+    "childRelationships": {},
+    "eTag": "cb1547045971ea97e7fb91671ff211f3",
+    "fields": {
+        "CreatedBy": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "3f2b75f6686839e74dc49c76dec030df",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005xx000001X7TZAA0"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Admin User"
+                    }
+                },
+                "id": "005xx000001X7TZAA0",
+                "lastModifiedById": "005xx000001X7TZAA0",
+                "lastModifiedDate": "2021-05-20T20:40:19.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2021-05-21T18:53:20.000Z",
+                "weakEtag": 1621623200000
+            }
+        },
+        "CreatedById": {
+            "displayValue": null,
+            "value": "005xx000001X7TZAA0"
+        },
+        "CreatedDate": {
+            "displayValue": "5/21/2021, 12:52 PM",
+            "value": "2021-05-21T19:52:17.000Z"
+        },
+        "CurrencyIsoCode": {
+            "displayValue": "USD - U.S. Dollar",
+            "value": "USD"
+        },
+        "LastModifiedBy": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "3f2b75f6686839e74dc49c76dec030df",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005xx000001X7TZAA0"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Admin User"
+                    }
+                },
+                "id": "005xx000001X7TZAA0",
+                "lastModifiedById": "005xx000001X7TZAA0",
+                "lastModifiedDate": "2021-05-20T20:40:19.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2021-05-21T18:53:20.000Z",
+                "weakEtag": 1621623200000
+            }
+        },
+        "LastModifiedById": {
+            "displayValue": null,
+            "value": "005xx000001X7TZAA0"
+        },
+        "LastModifiedDate": {
+            "displayValue": "5/21/2021, 12:52 PM",
+            "value": "2021-05-21T19:52:17.000Z"
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "2"
+        },
+        "Parent_Object__c": {
+            "displayValue": null,
+            "value": "a06xx000001a2lIAAQ"
+        },
+        "Parent_Object__r": {
+            "displayValue": "1",
+            "value": {
+                "apiName": "Parent_Object__c",
+                "childRelationships": {},
+                "eTag": "6736a11f0bee5ab04cf660b932a5e145",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "a06xx000001a2lIAAQ"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "1"
+                    }
+                },
+                "id": "a06xx000001a2lIAAQ",
+                "lastModifiedById": "005xx000001X7TZAA0",
+                "lastModifiedDate": "2021-05-21T19:52:17.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2021-05-21T19:52:17.000Z",
+                "weakEtag": 1621626737000
+            }
+        }
+    },
+    "id": "a07xx000000bnevAAA",
+    "lastModifiedById": "005xx000001X7TZAA0",
+    "lastModifiedDate": "2021-05-21T19:52:17.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2021-05-21T19:52:17.000Z",
+    "weakEtag": 1621626737000
+}

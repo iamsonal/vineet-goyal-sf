@@ -1,0 +1,26 @@
+{
+    "apiName": "Parent_Object__c",
+    "childRelationships": {},
+    "eTag": "a11df5090256a653e24244e44b0c9e11",
+    "fields": {
+        "Child_Object_Count__c": {
+            "displayValue": null,
+            "value": 2.0
+        },
+        "Id": {
+            "displayValue": null,
+            "value": "a06xx000001a2lIAAQ"
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "1"
+        }
+    },
+    "id": "a06xx000001a2lIAAQ",
+    "lastModifiedById": "005xx000001X7TZAA0",
+    "lastModifiedDate": "2021-05-21T23:21:52.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2021-05-21T23:21:52.000Z",
+    "weakEtag": 1621639312000
+}

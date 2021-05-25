@@ -1,5 +1,5 @@
 import { updateRecord } from 'lds-adapters-uiapi';
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import { getMock as globalGetMock, setupElement, clone } from 'test-util';
 import {
     expireRecords,
     extractRecordFields,
@@ -115,6 +115,74 @@ describe('update record', () => {
 
         expect(wireA.pushCount()).toBe(2);
         expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(expected);
+    });
+
+    it('refreshes spanning record when update causes that record to change', async () => {
+        const childMock = getMock('record-Child_Object__c');
+        const childConfig = {
+            recordId: childMock.id,
+            fields: [
+                'Child_Object__c.Id',
+                'Child_Object__c.Name',
+                'Child_Object__c.Parent_Object__c',
+                'Child_Object__c.Parent_Object__r.Id',
+                'Child_Object__c.Parent_Object__r.Name',
+            ],
+        };
+
+        const childRefreshMock = getMock('record-Child_Object__c-updated');
+        const childRefreshConfig = {
+            recordId: childRefreshMock.id,
+            optionalFields: [
+                'Child_Object__c.Id',
+                'Child_Object__c.Name',
+                'Child_Object__c.Parent_Object__c',
+                'Child_Object__c.Parent_Object__r.Id',
+                'Child_Object__c.Parent_Object__r.Name',
+            ],
+        };
+
+        const parentMock = getMock('record-Parent_Object__c-fields-all-old');
+        const parentConfig = {
+            recordId: parentMock.id,
+            fields: ['Parent_Object__c.Child_Object_Count__c'],
+        };
+        const parentRefreshMock = getMock('record-Parent_Object__c-fields-all-updated');
+        const parentRecordRefreshConfig = {
+            recordId: parentMock.id,
+            optionalFields: [
+                'Parent_Object__c.Child_Object_Count__c',
+                'Parent_Object__c.Id',
+                'Parent_Object__c.Name',
+            ],
+        };
+
+        mockGetRecordNetwork(childConfig, childMock);
+        mockGetRecordNetwork(childRefreshConfig, childRefreshMock);
+        mockGetRecordNetwork(parentConfig, parentMock);
+        mockGetRecordNetwork(parentRecordRefreshConfig, parentRefreshMock);
+
+        const mockUpdatedResponse = getMock('record-Child_Object__c-updated');
+        const updateParams = {
+            apiName: 'Child_Object__c',
+            fields: {
+                Id: 'a07xx000000bn73AAA',
+                Name: '2',
+            },
+        };
+
+        mockUpdateRecordNetwork(updateParams.fields.Id, updateParams, mockUpdatedResponse);
+
+        const parentRecord = await setupElement(parentConfig, RecordFields);
+        await setupElement(childConfig, RecordFields);
+        await updateRecord(updateParams);
+
+        const parentRecordDeletedIdName = clone(parentRefreshMock);
+        delete parentRecordDeletedIdName.fields.Id;
+        delete parentRecordDeletedIdName.fields.Name;
+
+        expect(parentRecord.pushCount()).toBe(2);
+        expect(parentRecord.getWiredData()).toEqualSnapshotWithoutEtags(parentRecordDeletedIdName);
     });
 
     it('does not refresh record when all known fields are returned in the update response', async () => {

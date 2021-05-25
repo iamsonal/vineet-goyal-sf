@@ -1,0 +1,47 @@
+{
+    "apiName": "Child_Object__c",
+    "childRelationships": {},
+    "eTag": "fda550cc96570337565bed4b9dc516d7",
+    "fields": {
+        "Name": {
+            "displayValue": null,
+            "value": "2"
+        },
+        "Parent_Object__c": {
+            "displayValue": null,
+            "value": "a06xx000001a2lIAAQ"
+        },
+        "Parent_Object__r": {
+            "displayValue": "1",
+            "value": {
+                "apiName": "Parent_Object__c",
+                "childRelationships": {},
+                "eTag": "a11df5090256a653e24244e44b0c9e11",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "a06xx000001a2lIAAQ"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "1"
+                    }
+                },
+                "id": "a06xx000001a2lIAAQ",
+                "lastModifiedById": "005xx000001X7TZAA0",
+                "lastModifiedDate": "2021-05-21T23:21:52.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2021-05-21T23:21:52.000Z",
+                "weakEtag": 1621639312000
+            }
+        }
+    },
+    "id": "a07xx000000bn73AAA",
+    "lastModifiedById": "005xx000001X7TZAA0",
+    "lastModifiedDate": "2021-05-21T23:12:59.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2021-05-21T23:12:59.000Z",
+    "weakEtag": 1621638779000
+}

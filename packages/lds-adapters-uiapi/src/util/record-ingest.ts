@@ -27,7 +27,7 @@ function getChildRecordFieldTrie(parent: RecordFieldTrie, key: string): RecordFi
 export function createFieldsIngestion(
     fieldsTrie: RecordFieldTrie,
     optionalFieldsTrie: RecordFieldTrie,
-    recordConflictMap: RecordConflictMap
+    recordConflictMap?: RecordConflictMap
 ): ResourceIngest {
     return (
         data: FieldValueRepresentation,
@@ -66,7 +66,7 @@ export function createFieldsIngestion(
 function createChildRecordNormalize(
     fieldsTrie: RecordFieldTrie,
     optionalFieldsTrie: RecordFieldTrie,
-    recordConflictMap: RecordConflictMap
+    recordConflictMap?: RecordConflictMap
 ) {
     return dynamicNormalize_RecordRepresentation({
         childRelationships: ingest_RecordCollectionRepresentation,
@@ -82,7 +82,7 @@ export const createRecordIngest = (
     const childNormalize = createChildRecordNormalize(
         fieldsTrie,
         optionalFieldsTrie,
-        recordConflictMap || {}
+        recordConflictMap
     );
     return (
         input: RecordRepresentation,

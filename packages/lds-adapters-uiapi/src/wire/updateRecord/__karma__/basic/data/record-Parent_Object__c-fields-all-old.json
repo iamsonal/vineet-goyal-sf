@@ -1,0 +1,18 @@
+{
+    "apiName": "Parent_Object__c",
+    "childRelationships": {},
+    "eTag": "4740257dcd01377fa9332833186e8529",
+    "fields": {
+        "Child_Object_Count__c": {
+            "displayValue": null,
+            "value": 1.0
+        }
+    },
+    "id": "a06xx000001a2lIAAQ",
+    "lastModifiedById": "005xx000001X7TZAA0",
+    "lastModifiedDate": "2021-05-21T23:09:55.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2021-05-21T23:09:55.000Z",
+    "weakEtag": 1621638595000
+}

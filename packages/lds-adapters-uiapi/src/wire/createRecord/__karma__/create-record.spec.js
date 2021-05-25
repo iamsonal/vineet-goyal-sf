@@ -1,4 +1,4 @@
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import { getMock as globalGetMock, setupElement, clone } from 'test-util';
 import { expireRecords, mockCreateRecordNetwork, mockGetRecordNetwork } from 'uiapi-test-util';
 import { createRecord } from 'lds-adapters-uiapi';
 
@@ -120,6 +120,56 @@ describe('createRecord', () => {
 
         expect(element.pushCount()).toBe(1);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockRecordGet);
+    });
+
+    /*
+     * The schema for this is as follows:
+     * Parent_Object__c has a Roll-Up Summary Field to COUNT the number of Child_Object__c children
+     *   --> Parent_Object__c.Child_Object_Count__c
+     * Child_Object__c has a master-detail lookup to Parent_Object__c
+     *   --> Child_Object__c.Parent_Object__r
+     */
+    it('should resolve record merge conflicts when the payload contains updated spanning record', async () => {
+        const childMockRecord = getMock('record-Child_Object__c-new');
+        const childRecordConfig = {
+            allowSaveOnDuplicate: false,
+            apiName: 'Child_Object__c',
+            fields: {
+                CurrencyIsoCode: 'USD',
+                Name: '4',
+                Parent_Object__c: 'a06xx000001a2lIAAQ',
+            },
+        };
+        mockCreateRecordNetwork(childRecordConfig, childMockRecord);
+
+        const parentMockRecordGetOld = getMock('record-Parent_Object__c-fields-all-old');
+        const recordId = parentMockRecordGetOld.id;
+        const parentMockRecordGetUpdated = getMock('record-Parent_Object__c-fields-all-updated');
+        const parentRecordConfig = {
+            recordId,
+            fields: ['Parent_Object__c.Child_Object_Count__c'],
+        };
+        const recordConfigRefresh = {
+            recordId,
+            optionalFields: [
+                'Parent_Object__c.Child_Object_Count__c',
+                'Parent_Object__c.Id',
+                'Parent_Object__c.Name',
+            ],
+        };
+        mockGetRecordNetwork(parentRecordConfig, parentMockRecordGetOld);
+        mockGetRecordNetwork(recordConfigRefresh, parentMockRecordGetUpdated);
+
+        // Request ParentObject, create ChildObject
+        const element = await setupElement(parentRecordConfig, RecordFields);
+        await createRecord(childRecordConfig);
+
+        const parentMockRecordWithoutNameId = clone(parentMockRecordGetUpdated);
+        delete parentMockRecordWithoutNameId.fields.Id;
+        delete parentMockRecordWithoutNameId.fields.Name;
+
+        expect(element.pushCount()).toBe(2);
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(parentMockRecordWithoutNameId);
     });
 });
 

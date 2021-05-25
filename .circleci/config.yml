@@ -200,6 +200,6 @@ workflows:
       - test_integration:
           requires:
             - build_and_test
-      - perf_and_compare:
-          requires:
-            - build_and_test
+#      - perf_and_compare:
+#          requires:
+#            - build_and_test

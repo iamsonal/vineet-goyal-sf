@@ -5,6 +5,7 @@ import RelatedListRecordsSingle from '../../../getRelatedListRecords/__karma__/l
 // import RelatedListRecords from '../../getRelatedListRecords/lwc/related-list-basic';
 import {
     expireRecords,
+    expireRelatedListRecordCollection,
     mockGetRelatedListRecordsBatchNetwork,
     mockGetRelatedListRecordsNetwork,
     convertRelatedListsBatchParamsToResourceParams,
@@ -99,6 +100,25 @@ describe('batching', () => {
         await setupElement(params, RelatedListRecordsBatch);
 
         expireRecords();
+        // second component should have the updated data by hitting network
+        const element = await setupElement(params, RelatedListRecordsBatch);
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toBeImmutable();
+    });
+
+    it('returns updated result when cached data is expired with no record linking', async () => {
+        const mockData = getMock('related-list-records-standard-defaults-Custom');
+        const noRecordsMockData = getMock('related-list-no-records-Custom');
+
+        const params = extractRelatedListsBatchParamsFromMockData(mockData);
+        const resourceConfig = convertRelatedListsBatchParamsToResourceParams(params);
+
+        mockGetRelatedListRecordsBatchNetwork(resourceConfig, [noRecordsMockData, mockData]);
+
+        // populate cache
+        await setupElement(params, RelatedListRecordsBatch);
+
+        expireRelatedListRecordCollection();
         // second component should have the updated data by hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);

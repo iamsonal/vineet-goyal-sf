@@ -43,3 +43,5 @@ export { TTL as NAV_ITEMS_TTL } from '../src/generated/types/NavItemRepresentati
 export { TTL as DUPLICATES_TTL } from '../src/generated/types/DuplicatesRepresentation';
 
 export { TTL as DUPLICATE_CONFIGURATION_TTL } from '../src/generated/types/DuplicatesConfigurationRepresentation';
+
+export { TTL as RELATED_LIST_RECORD_COLLECTION_TTL } from '../src/generated/types/RelatedListRecordCollectionRepresentation';

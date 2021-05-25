@@ -35,6 +35,7 @@ import {
     NAV_ITEMS_TTL,
     DUPLICATE_CONFIGURATION_TTL,
     DUPLICATES_TTL,
+    RELATED_LIST_RECORD_COLLECTION_TTL,
 } from './dist/uiapi-constants';
 
 const API_VERSION = 'v53.0';
@@ -783,6 +784,14 @@ function expireCloneTemplateRepresentation() {
     timekeeper.travel(Date.now() + CLONE_TEMPLATE_REPRESENTATION_TTL + 1);
 }
 
+/**
+ * Force a cache expiration for related list record collection by fast-forwarding time past the
+ * standard related list record collection TTL.
+ */
+function expireRelatedListRecordCollection() {
+    timekeeper.travel(Date.now() + RELATED_LIST_RECORD_COLLECTION_TTL + 1);
+}
+
 function isSpanningRecord(value) {
     return value !== null && typeof value === 'object';
 }
@@ -944,6 +953,7 @@ export {
     expireNavItems,
     expireDuplicateConfiguration,
     expireDuplicatesRepresentation,
+    expireRelatedListRecordCollection,
     // network mock utils
     mockCreateRecordNetwork,
     mockDeleteRecordNetwork,

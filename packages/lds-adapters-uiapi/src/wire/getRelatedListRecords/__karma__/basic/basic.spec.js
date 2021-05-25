@@ -1,6 +1,7 @@
 import { deleteRecord } from 'lds-adapters-uiapi';
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
+    expireRelatedListRecordCollection,
     mockDeleteRecordNetwork,
     mockGetRelatedListRecordsNetwork,
 } from '../../../../../karma/uiapi-test-util';
@@ -224,5 +225,25 @@ describe('basic', () => {
 
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(refreshedMockData);
         expect(element.pushCount()).toBe(2);
+    });
+
+    it('returns updated result when cached data is expired with no record linking', async () => {
+        const mockData = getMock('related-list-records-Custom');
+        const noRecordsMockData = getMock('related-list-no-records-Custom');
+        const resourceConfig = {
+            parentRecordId: mockData.listReference.inContextOfRecordId,
+            relatedListId: mockData.listReference.relatedListId,
+            fields: mockData.fields,
+        };
+        mockGetRelatedListRecordsNetwork(resourceConfig, [noRecordsMockData, mockData]);
+
+        // populate cache
+        await setupElement(resourceConfig, RelatedListBasic);
+
+        expireRelatedListRecordCollection();
+        // second component should have the updated data by hitting network
+        const element = await setupElement(resourceConfig, RelatedListBasic);
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+        expect(element.getWiredData()).toBeImmutable();
     });
 });

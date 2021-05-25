@@ -1,0 +1,60 @@
+{
+    "results": [
+        {
+            "result": {
+                "count": 0,
+                "currentPageToken": "0",
+                "currentPageUrl": "/services/data/v53.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom02s__r?pageSize=50&pageToken=0",
+                "fields": [],
+                "listInfoETag": null,
+                "listReference": {
+                    "id": null,
+                    "inContextOfRecordId": "a00RM0000004aVwYAI",
+                    "listViewApiName": null,
+                    "objectApiName": null,
+                    "parentObjectApiName": "CwcCustom00__c",
+                    "recordTypeId": null,
+                    "relatedListId": "CwcCustom02s__r",
+                    "type": "relatedList"
+                },
+                "nextPageToken": null,
+                "nextPageUrl": null,
+                "optionalFields": [],
+                "pageSize": 50,
+                "previousPageToken": null,
+                "previousPageUrl": null,
+                "records": [],
+                "sortBy": []
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "count": 0,
+                "currentPageToken": "0",
+                "currentPageUrl": "/services/data/v53.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?pageSize=50&pageToken=0",
+                "fields": [],
+                "listInfoETag": null,
+                "listReference": {
+                    "id": null,
+                    "inContextOfRecordId": "a00RM0000004aVwYAI",
+                    "listViewApiName": null,
+                    "objectApiName": null,
+                    "parentObjectApiName": "CwcCustom00__c",
+                    "recordTypeId": null,
+                    "relatedListId": "CwcCustom01s__r",
+                    "type": "relatedList"
+                },
+                "nextPageToken": null,
+                "nextPageUrl": null,
+                "optionalFields": [],
+                "pageSize": 50,
+                "previousPageToken": null,
+                "previousPageUrl": null,
+                "records": [],
+                "sortBy": []
+            },
+            "statusCode": 200
+        }
+    ]
+}

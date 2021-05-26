@@ -20,7 +20,7 @@ import {
 import { GqlRecord } from './record';
 import { serializeAndSortArguments } from '../type/Argument';
 import { adapterApiFamily } from '../constants';
-import { LuvioFieldNode } from '@salesforce/lds-graphql-parser/dist/ast';
+import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
 
 interface GqlEdge {
     node: GqlRecord;

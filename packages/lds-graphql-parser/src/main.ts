@@ -16,6 +16,7 @@ import {
     LuvioSelectionObjectFieldNode,
     LuvioSelectionScalarFieldNode,
     LuvioValueNode,
+    LuvioFieldNode,
 } from './ast';
 import { transform } from './document';
 
@@ -42,4 +43,5 @@ export {
     LuvioSelectionObjectFieldNode,
     LuvioSelectionScalarFieldNode,
     LuvioValueNode,
+    LuvioFieldNode,
 };

@@ -4,10 +4,7 @@ import {
     LuvioSelectionCustomFieldNode,
     LuvioSelectionObjectFieldNode,
 } from '@salesforce/lds-graphql-parser';
-import {
-    LuvioFieldNode,
-    LuvioOperationDefinitionNode,
-} from '@salesforce/lds-graphql-parser/dist/ast';
+import { LuvioFieldNode, LuvioOperationDefinitionNode } from '@salesforce/lds-graphql-parser';
 import { createIngest as createCustomFieldIngest } from './CustomField';
 import {
     createIngest as objectFieldCreateIngest,

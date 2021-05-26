@@ -1,6 +1,7 @@
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import { mockGraphqlNetwork, parseQuery } from 'graphql-test-util';
 import { graphQLImperative } from 'lds-adapters-graphql';
+import { luvio } from 'ldsEngine';
 
 import GetRecord from '../lwc/get-record';
 
@@ -103,7 +104,8 @@ describe('graphql', () => {
                 variables: {},
             };
 
-            const snapshot = await graphQLImperative(graphqlConfig);
+            const pending = graphQLImperative(graphqlConfig);
+            const snapshot = await luvio.resolvePendingSnapshot(pending);
             expect(snapshot.data).toEqual(expectedData);
         });
     });
@@ -194,10 +196,11 @@ describe('graphql', () => {
                 variables: {},
             };
 
-            const snapshot = await graphQLImperative(graphqlConfig);
+            const pending = graphQLImperative(graphqlConfig);
+            const snapshot = await luvio.resolvePendingSnapshot(pending);
             expect(snapshot.data).toEqual(expectedData);
 
-            const secondSnapshot = await graphQLImperative(graphqlConfig);
+            const secondSnapshot = graphQLImperative(graphqlConfig);
             expect(secondSnapshot.data).toEqual(expectedData);
         });
 
@@ -285,7 +288,8 @@ describe('graphql', () => {
                 variables: {},
             };
 
-            await graphQLImperative(graphqlConfig);
+            const pending = graphQLImperative(graphqlConfig);
+            await luvio.resolvePendingSnapshot(pending);
             const cachedDataAst = parseQuery(`
                 query {
                     uiapi {
@@ -304,7 +308,7 @@ describe('graphql', () => {
                 }
             `);
 
-            const secondSnapshot = await graphQLImperative({
+            const secondSnapshot = graphQLImperative({
                 query: cachedDataAst,
                 variables: {},
             });
@@ -480,10 +484,12 @@ describe('graphql', () => {
                 variables: {},
             };
 
-            const snapshot = await graphQLImperative(graphqlConfig);
+            const pending = graphQLImperative(graphqlConfig);
+            const snapshot = await luvio.resolvePendingSnapshot(pending);
             expect(snapshot.data).toEqual(expectedData);
 
-            const snapshot2 = await graphQLImperative(secondGraphQLConfig);
+            const pending2 = graphQLImperative(secondGraphQLConfig);
+            const snapshot2 = await luvio.resolvePendingSnapshot(pending2);
             expect(snapshot2.data).toEqual(expectedDataTwo);
         });
 
@@ -656,10 +662,12 @@ describe('graphql', () => {
                 variables: {},
             };
 
-            const snapshot = await graphQLImperative(graphqlConfig);
+            const pending = graphQLImperative(graphqlConfig);
+            const snapshot = await luvio.resolvePendingSnapshot(pending);
             expect(snapshot.data).toEqual(expectedData);
 
-            const snapshot2 = await graphQLImperative(secondGraphQLConfig);
+            const pending2 = graphQLImperative(secondGraphQLConfig);
+            const snapshot2 = await luvio.resolvePendingSnapshot(pending2);
             expect(snapshot2.data).toEqual(expectedDataTwo);
 
             const cachedDataAst = parseQuery(`
@@ -705,7 +713,7 @@ describe('graphql', () => {
                 errors: [],
             };
 
-            const thirdSnapshot = await graphQLImperative({
+            const thirdSnapshot = graphQLImperative({
                 query: cachedDataAst,
                 variables: {},
             });
@@ -800,7 +808,8 @@ describe('graphql', () => {
                     variables: {},
                 };
 
-                const snapshot = await graphQLImperative(graphqlConfig);
+                const pending = graphQLImperative(graphqlConfig);
+                const snapshot = await luvio.resolvePendingSnapshot(pending);
                 expect(snapshot.data).toEqual(expectedData);
 
                 const getRecord = await setupElement(

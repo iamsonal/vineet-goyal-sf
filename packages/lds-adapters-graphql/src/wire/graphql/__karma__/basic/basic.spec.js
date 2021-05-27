@@ -721,6 +721,209 @@ describe('graphql', () => {
         });
     });
 
+    describe('missing links', () => {
+        it('should handle when nested spanning field is not present', async () => {
+            const ast = parseQuery(`
+                query {
+                    uiapi {
+                        query {
+                            Account(
+                                where: { Name: { like: "Account1" } }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name { value, displayValue }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const ast2 = parseQuery(`
+                {
+                    uiapi {
+                        query {
+                            Account(where: {Name: {like: "Account1"}}
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Owner @resource(type: "Record") {
+                                            Name {
+                                                value
+                                                displayValue
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQueryOne = `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) {
+                                edges {
+                                    node {
+                                        Id,
+                                        WeakEtag,
+                                        Name { value, displayValue }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename,
+                    ApiName,
+                    WeakEtag,
+                    Id,
+                    DisplayValue,
+                    SystemModstamp { value }
+                    LastModifiedById { value }
+                    LastModifiedDate { value }
+                    RecordTypeId(fallback: true) { value }
+                }
+            `;
+
+            const expectedQueryTwo = `
+            {
+                uiapi {
+                  query {
+                    Account(where: {Name: {like: "Account1"}}) {
+                      edges {
+                        node {
+                          Id,
+                          WeakEtag,
+                          Owner {
+                            Id,
+                            WeakEtag,
+                            Name {
+                              value
+                              displayValue
+                            }
+                            ...defaultRecordFields
+                          }
+                          ...defaultRecordFields
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+
+              fragment defaultRecordFields on Record {
+                __typename
+                ApiName
+                WeakEtag
+                Id
+                DisplayValue
+                SystemModstamp {
+                  value
+                }
+                LastModifiedById {
+                  value
+                }
+                LastModifiedDate {
+                  value
+                }
+                RecordTypeId(fallback: true) {
+                  value
+                }
+              }
+            `;
+
+            const networkData = getMock('RecordQuery-Account-fields-Name');
+            const networkDataTwo = getMock('RecordQuery-Account-fields-Owner.Name');
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            Account: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Name: {
+                                                value: 'Account1',
+                                                displayValue: null,
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            const expectedDataTwo = {
+                data: {
+                    uiapi: {
+                        query: {
+                            Account: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Owner: {
+                                                Name: {
+                                                    value: 'Admin User',
+                                                    displayValue: null,
+                                                },
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQueryOne,
+                    variables: {},
+                },
+                networkData
+            );
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQueryTwo,
+                    variables: {},
+                },
+                networkDataTwo
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const secondGraphQLConfig = {
+                query: ast2,
+                variables: {},
+            };
+
+            const pending = graphQLImperative(graphqlConfig);
+            const snapshot = await luvio.resolvePendingSnapshot(pending);
+            expect(snapshot.data).toEqual(expectedData);
+
+            const pending2 = graphQLImperative(secondGraphQLConfig);
+            const snapshot2 = await luvio.resolvePendingSnapshot(pending2);
+            expect(snapshot2.data).toEqual(expectedDataTwo);
+        });
+    });
+
     describe('Record representation', () => {
         describe('getRecord', () => {
             it('should be a CACHE HIT if getRecord requests a record with same fields fetched from GQL', async () => {

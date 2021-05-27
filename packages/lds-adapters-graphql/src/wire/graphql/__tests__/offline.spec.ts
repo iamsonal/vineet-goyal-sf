@@ -13,8 +13,7 @@ const requestArgs: MockPayload['networkArgs'] = {
 const payload: MockPayload = buildSuccessMockPayload(requestArgs, mockData_Account_fields_Name);
 
 describe('graphQL adapter offline', () => {
-    // TODO - re-enable this once GQL adapter implements missingLink logic
-    xit('does not hit the network when durable store is populated', async () => {
+    it('does not hit the network when durable store is populated', async () => {
         const ast = parseAndVisit(`
                 query {
                     uiapi {

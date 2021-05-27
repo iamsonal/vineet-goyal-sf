@@ -1,12 +1,4 @@
-import {
-    IngestPath,
-    Luvio,
-    Reader,
-    ReaderFragment,
-    ResourceIngest,
-    Store,
-    StoreLink,
-} from '@luvio/engine';
+import { IngestPath, Luvio, Reader, ReaderFragment, ResourceIngest, Store } from '@luvio/engine';
 import {
     LuvioSelectionCustomFieldNode,
     LuvioSelectionNode,
@@ -242,28 +234,45 @@ function assignSelection(
                 break;
             }
 
-            const resolved = resolveLink(builder, field.value as StoreLink);
+            const resolved = resolveLink(builder, field.value);
+            if (resolved === undefined) {
+                break;
+            }
             sink[selectionName] = getNonSpanningField(
                 sel as LuvioSelectionObjectFieldNode,
                 builder,
-                resolved
+                resolved.value
             );
             break;
         }
         case 'CustomFieldSelection': {
             const field = fields[selectionName];
-            const resolved = resolveLink(builder, field) as FieldValueRepresentationNormalized;
-            const { value } = resolved;
-            const resolvedSpanningRecord = resolveLink(
+            const resolvedParentFieldValue = resolveLink<FieldValueRepresentationNormalized>(
                 builder,
-                value as StoreLink
-            ) as RecordRepresentationNormalized;
+                field
+            );
+            if (resolvedParentFieldValue === undefined) {
+                break;
+            }
+            const { value: spanningFieldResult } = resolvedParentFieldValue;
+            const { value: spanningFieldValue } = spanningFieldResult;
+            if (spanningFieldValue === null || typeof spanningFieldValue !== 'object') {
+                throw new Error('TODO: handle NULL spanning field');
+            }
+
+            const resolvedSpanningRecordValue = resolveLink<RecordRepresentationNormalized>(
+                builder,
+                spanningFieldValue
+            );
+            if (resolvedSpanningRecordValue === undefined) {
+                break;
+            }
             sink[selectionName] = getCustomSelection(
                 sel as LuvioSelectionCustomFieldNode,
                 builder,
                 {
-                    source: resolvedSpanningRecord,
-                    parentFieldValue: resolved,
+                    source: resolvedSpanningRecordValue.value,
+                    parentFieldValue: spanningFieldResult,
                 }
             );
         }

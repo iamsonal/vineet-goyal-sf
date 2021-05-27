@@ -1,8 +1,196 @@
-import { Environment, Luvio, Store } from '@luvio/engine';
+import { Environment, Luvio, Store, UnfulfilledSnapshot } from '@luvio/engine';
 import { LuvioSelectionCustomFieldNode } from '@salesforce/lds-graphql-parser';
-import { createIngest } from '../connection';
+import { createIngest, createRead } from '../connection';
 
 describe('GQL Connection', () => {
+    describe('read', () => {
+        it('should mark missing path in edges array correctly', () => {
+            const selection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'Account',
+                type: 'Connection',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'edges',
+                        luvioSelections: [
+                            {
+                                kind: 'CustomFieldSelection',
+                                name: 'node',
+                                type: 'Record',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'Name',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'value',
+                                            },
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'displayValue',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+                arguments: [
+                    {
+                        kind: 'Argument',
+                        name: 'where',
+                        value: {
+                            kind: 'ObjectValue',
+                            fields: {
+                                Name: {
+                                    kind: 'ObjectValue',
+                                    fields: {
+                                        like: {
+                                            kind: 'StringValue',
+                                            value: 'Account1',
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                ],
+            };
+
+            const store = new Store();
+            store.records = {
+                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                    edges: {
+                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                    },
+                },
+                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                    {
+                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                    },
+                ],
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const snap = luvio.storeLookup({
+                recordId: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
+                node: {
+                    kind: 'Fragment',
+                    synthetic: false,
+                    reader: true,
+                    read: createRead(selection),
+                },
+                variables: {},
+            }) as UnfulfilledSnapshot<any, any>;
+
+            expect(snap.missingPaths).toEqual({
+                'edges.0': true,
+            });
+        });
+
+        it('should mark missing path in nodes in edges array', () => {
+            const selection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'Account',
+                type: 'Connection',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'edges',
+                        luvioSelections: [
+                            {
+                                kind: 'CustomFieldSelection',
+                                name: 'node',
+                                type: 'Record',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'Name',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'value',
+                                            },
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'displayValue',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+                arguments: [
+                    {
+                        kind: 'Argument',
+                        name: 'where',
+                        value: {
+                            kind: 'ObjectValue',
+                            fields: {
+                                Name: {
+                                    kind: 'ObjectValue',
+                                    fields: {
+                                        like: {
+                                            kind: 'StringValue',
+                                            value: 'Account1',
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                ],
+            };
+
+            const store = new Store();
+            store.records = {
+                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                    edges: {
+                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                    },
+                },
+                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                    {
+                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                    },
+                ],
+                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
+                    node: {
+                        __ref: 'missingRef',
+                    },
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const snap = luvio.storeLookup({
+                recordId: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
+                node: {
+                    kind: 'Fragment',
+                    synthetic: false,
+                    reader: true,
+                    read: createRead(selection),
+                },
+                variables: {},
+            }) as UnfulfilledSnapshot<any, any>;
+
+            expect(snap.missingPaths).toEqual({
+                'edges.0.node': true,
+            });
+        });
+    });
     describe('ingest', () => {
         it('should ingest connection correctly', () => {
             const selection: LuvioSelectionCustomFieldNode = {

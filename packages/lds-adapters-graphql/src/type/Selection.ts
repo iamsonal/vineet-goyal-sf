@@ -1,4 +1,10 @@
-import { Reader, ReaderFragment, ResourceIngest, StoreLink } from '@luvio/engine';
+import {
+    Reader,
+    ReaderFragment,
+    ResourceIngest,
+    StoreLink,
+    StoreResolveResultFound,
+} from '@luvio/engine';
 import {
     LuvioSelectionNode,
     LuvioSelectionCustomFieldNode,
@@ -13,6 +19,7 @@ import {
 import { createRead as operationCreateRead } from './Operation';
 import { createRead as connectionCreateRead } from '../custom/connection';
 import { createRead as recordCreateRead } from '../custom/record';
+import { StoreResolveResult } from '@luvio/engine/dist/es/es2018/reader/resolve';
 
 function createCustomFieldRead(sel: LuvioSelectionCustomFieldNode): ReaderFragment['read'] {
     if (sel.type === 'Connection') {
@@ -57,12 +64,55 @@ export function propertyLookup(
     } as PropertyLookupResultPresent;
 }
 
-export function resolveLink(builder: Reader<any>, storeLink: StoreLink) {
-    const { __ref } = storeLink;
-    const lookup = builder.storeLookup(__ref as string);
-    if (lookup === undefined) {
-        throw new Error('TODO: implement missing link logic');
+function markStoreResolveResultSeen(builder: Reader<any>, state: StoreResolveResult<unknown>) {
+    const { redirects, resolvedKey } = state;
+    builder.markSeenId(resolvedKey);
+
+    const { length: len } = redirects;
+    if (len === 0) {
+        return;
     }
+
+    for (let i = 0; i < len; i += 1) {
+        builder.markSeenId(redirects[i]);
+    }
+}
+
+export function resolveLink<D>(
+    builder: Reader<any>,
+    storeLink: StoreLink
+): StoreResolveResultFound<D> | undefined {
+    const { StoreLinkStateValues, StoreResolveResultState } = builder;
+    const linkState = builder.getLinkState(storeLink);
+
+    switch (linkState.state) {
+        case StoreLinkStateValues.RefNotPresent:
+        case StoreLinkStateValues.NotPresent:
+        case StoreLinkStateValues.Missing:
+            builder.markMissing();
+            return;
+        case StoreLinkStateValues.Pending:
+            builder.markPending();
+            return;
+        case StoreLinkStateValues.Null:
+            throw new Error(`TODO: Invalid Link State. Link on "${builder.currentPath.fullPath}"}`);
+    }
+
+    const { key: __ref } = linkState;
+    const lookup = builder.storeLookup<D>(__ref);
+    markStoreResolveResultSeen(builder, lookup);
+
+    switch (lookup.state) {
+        case StoreResolveResultState.NotPresent:
+            builder.markMissingLink(__ref);
+            return;
+        case StoreResolveResultState.Stale:
+            builder.markStale();
+            return;
+        case StoreResolveResultState.Error:
+            throw new Error('TODO: Implement error links');
+    }
+
     return lookup;
 }
 
@@ -71,15 +121,19 @@ export function followLink(
     builder: Reader<any>,
     storeLink: StoreLink
 ) {
-    const lookup = resolveLink(builder, storeLink);
+    const linkState = resolveLink(builder, storeLink);
+    if (linkState === undefined) {
+        return;
+    }
 
+    const { value } = linkState;
     switch (sel.kind) {
         case 'ObjectFieldSelection':
-            return objectFieldCreateRead(sel)(lookup, builder);
+            return objectFieldCreateRead(sel)(value, builder);
         case 'OperationDefinition':
-            return operationCreateRead(sel)(lookup, builder);
+            return operationCreateRead(sel)(value, builder);
         case 'CustomFieldSelection':
-            return createCustomFieldRead(sel)(lookup, builder);
+            return createCustomFieldRead(sel)(value, builder);
         default:
             throw new Error(`Type not implemented: "${sel.kind}"`);
     }

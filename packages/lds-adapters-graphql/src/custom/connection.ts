@@ -45,9 +45,11 @@ function keyBuilder(ast: LuvioSelectionCustomFieldNode) {
 function selectEdges(builder: Reader<any>, ast: LuvioFieldNode, links: StoreLink[]) {
     const sink: any[] = [];
     for (let i = 0, len = links.length; i < len; i += 1) {
+        builder.enterPath(i);
         const link = links[i];
         const resolved = followLink(ast, builder, link);
         builder.assignNonScalar(sink, i, resolved);
+        builder.exitPath();
     }
     return sink;
 }
@@ -61,10 +63,14 @@ export const createRead: (ast: LuvioSelectionCustomFieldNode) => ReaderFragment[
         for (let i = 0, len = selections.length; i < len; i += 1) {
             const sel = getLuvioFieldNodeSelection(selections[i]);
             const { name } = sel;
-            const edges = resolveLink(builder, source[name]) as StoreLink[];
             builder.enterPath(name);
+            const edges = resolveLink<StoreLink[]>(builder, source[name]);
+            if (edges === undefined) {
+                builder.exitPath();
+                break;
+            }
             if (name === PROPERTY_NAME_EDGES) {
-                const data = selectEdges(builder, sel, edges);
+                const data = selectEdges(builder, sel, edges.value);
                 builder.assignNonScalar(sink, name, data);
             } else {
                 throw new Error('Not supported');

@@ -38,16 +38,14 @@ interface DefaultRecordFields {
     };
 }
 
+type SpanningGqlRecord = (DefaultRecordFields & Record<string, GqlRecordField>) | null;
 export type CustomDataType = GqlRecord | GqlConnection;
-
 interface GqlRecordField {
     value?: string;
     displayValue?: string;
 }
 
-export type GqlRecord = DefaultRecordFields & {
-    [key: string]: DefaultRecordFields | GqlRecordField;
-};
+export type GqlRecord = DefaultRecordFields & Record<string, SpanningGqlRecord | GqlRecordField>;
 
 export const CUSTOM_FIELD_NODE_TYPE = 'Record';
 
@@ -58,15 +56,24 @@ function collectObjectFieldSelection(data: GqlRecordField): FieldValueRepresenta
     };
 }
 
-function customTypeIsGqlRecord(
+function childTypeIsSpanningGqlRecord(
     sel: LuvioSelectionCustomFieldNode,
-    _data: CustomDataType
-): _data is GqlRecord {
+    _data: CustomDataType | SpanningGqlRecord
+): _data is SpanningGqlRecord {
     return sel.type === CUSTOM_FIELD_NODE_TYPE;
 }
 
-function formatCustomFieldSelection(sel: LuvioSelectionCustomFieldNode, data: CustomDataType) {
-    if (customTypeIsGqlRecord(sel, data)) {
+function formatSpanningCustomFieldSelection(
+    sel: LuvioSelectionCustomFieldNode,
+    data: CustomDataType
+) {
+    if (childTypeIsSpanningGqlRecord(sel, data)) {
+        if (data === null) {
+            return {
+                displayValue: null,
+                value: null,
+            };
+        }
         return {
             displayValue: data.DisplayValue,
             value: convertToRecordRepresentation(sel, data),
@@ -107,7 +114,7 @@ export function convertToRecordRepresentation(
                 break;
             }
             case 'CustomFieldSelection': {
-                fieldsBag[name] = formatCustomFieldSelection(sel, data as CustomDataType);
+                fieldsBag[name] = formatSpanningCustomFieldSelection(sel, data as CustomDataType);
                 break;
             }
         }
@@ -257,7 +264,8 @@ function assignSelection(
             const { value: spanningFieldResult } = resolvedParentFieldValue;
             const { value: spanningFieldValue } = spanningFieldResult;
             if (spanningFieldValue === null || typeof spanningFieldValue !== 'object') {
-                throw new Error('TODO: handle NULL spanning field');
+                sink[selectionName] = null;
+                break;
             }
 
             const resolvedSpanningRecordValue = resolveLink<RecordRepresentationNormalized>(

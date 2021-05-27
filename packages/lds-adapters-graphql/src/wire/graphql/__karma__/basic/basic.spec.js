@@ -1043,4 +1043,112 @@ describe('graphql', () => {
             });
         });
     });
+
+    describe('null spanning records', () => {
+        it('should ingest null spanning records correctly', async () => {
+            const ast = parseQuery(`
+                {
+                    uiapi {
+                        query {
+                            Account(where: {Name: {like: "Add One More Account"}}) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Parent @resource(type: "Record") {
+                                            Name {
+                                                value
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQuery = `
+                {
+                    uiapi {
+                        query {
+                            Account(where: {Name: {like: "Add One More Account"}}) {
+                                edges {
+                                    node {
+                                        Id
+                                        WeakEtag
+                                        Parent {
+                                            Id
+                                            WeakEtag
+                                            Name {
+                                                value
+                                            }
+                                            ...defaultRecordFields
+                                        }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
+                }
+            `;
+
+            const mock = getMock('RecordQuery-Account-fields-null-Parent');
+
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            Account: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Parent: null,
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                mock
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const pending = graphQLImperative(graphqlConfig);
+            const snapshot = await luvio.resolvePendingSnapshot(pending);
+            expect(snapshot.data).toEqual(expectedData);
+        });
+    });
 });

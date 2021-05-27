@@ -1,23 +1,18 @@
-import { Luvio, Store, Environment } from '@luvio/engine';
-import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
-import networkAdapter from '@salesforce/lds-network-aura';
-import { instrumentation, setupInstrumentation } from '@salesforce/lds-instrumentation';
-import { setupMetadataWatcher } from './metadata';
+import { Environment, Luvio, Store } from '@luvio/engine';
 import ldsTrackedFieldsBehaviorGate from '@salesforce/gate/lds.useNewTrackedFieldBehavior';
-import {
-    setTrackedFieldLeafNodeIdOnly,
-    setTrackedFieldDepthOnNotifyChange,
-    setTrackedFieldDepthOnCacheMergeConflict,
-    setTrackedFieldDepthOnCacheMiss,
-} from '@salesforce/lds-adapters-uiapi';
+import { configuration as ldsAdaptersUiapiConfig } from '@salesforce/lds-adapters-uiapi';
+import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
+import { instrumentation, setupInstrumentation } from '@salesforce/lds-instrumentation';
+import networkAdapter from '@salesforce/lds-network-aura';
+import { setupMetadataWatcher } from './metadata';
 
 function setTrackedFieldsConfig(includeLeafNodeIdOnly: boolean): void {
     const depth = includeLeafNodeIdOnly ? 1 : 5;
 
-    setTrackedFieldLeafNodeIdOnly(includeLeafNodeIdOnly);
-    setTrackedFieldDepthOnCacheMiss(depth);
-    setTrackedFieldDepthOnCacheMergeConflict(depth);
-    setTrackedFieldDepthOnNotifyChange(depth);
+    ldsAdaptersUiapiConfig.setTrackedFieldLeafNodeIdOnly(includeLeafNodeIdOnly);
+    ldsAdaptersUiapiConfig.setTrackedFieldDepthOnCacheMiss(depth);
+    ldsAdaptersUiapiConfig.setTrackedFieldDepthOnCacheMergeConflict(depth);
+    ldsAdaptersUiapiConfig.setTrackedFieldDepthOnNotifyChange(depth);
 }
 
 export default function ldsEngineCreator() {

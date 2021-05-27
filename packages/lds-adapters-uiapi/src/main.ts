@@ -64,14 +64,5 @@ export { responseRecordRepresentationRetrievers } from './generated/records/retr
 // TODO W-8235671 we should move common record utilities to @salesforce/uiapi-record-utils
 export { buildSelectionFromFields } from './selectors/record';
 
-// Exposing this configuration methods for new tracked field values change
-export {
-    setTrackedFieldDepthOnCacheMiss,
-    getTrackedFieldDepthOnCacheMiss,
-    setTrackedFieldDepthOnCacheMergeConflict,
-    getTrackedFieldDepthOnCacheMergeConflict,
-    setTrackedFieldDepthOnNotifyChange,
-    getTrackedFieldDepthOnNotifyChange,
-    setTrackedFieldLeafNodeIdOnly,
-    getTrackedFieldLeafNodeIdOnly,
-} from './configuration';
+// Exposing the configuration object for new tracked field values change
+export { configuration } from './configuration';

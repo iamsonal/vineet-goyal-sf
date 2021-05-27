@@ -15,14 +15,13 @@ function generateFieldsIngestSuccess(adapter, resource, def, state) {
         CONVERT_FIELDS_TO_TRIE_IMPORT,
         GET_TRACKED_FIELDS,
         LUVIO_IMPORT,
-        CONFIGURATION_TRACKED_FIELDS_CACHE_MISS_DEPTH,
-        CONFIGURATION_TRACKED_FIELDS_LEAF_NODE_ID_ONLY,
+        CONFIGURATION_OBJECT,
     } = importsMap;
 
     const trackedFieldsConfiguration = deindent`
         {
-            maxDepth: ${CONFIGURATION_TRACKED_FIELDS_CACHE_MISS_DEPTH}(),
-            onlyFetchLeafNodeId: ${CONFIGURATION_TRACKED_FIELDS_LEAF_NODE_ID_ONLY}()
+            maxDepth: ${CONFIGURATION_OBJECT}.getTrackedFieldDepthOnCacheMiss(),
+            onlyFetchLeafNodeId: ${CONFIGURATION_OBJECT}.getTrackedFieldLeafNodeIdOnly()
         }`;
 
     const optionalFieldsTrieStatement =

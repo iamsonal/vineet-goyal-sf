@@ -37,10 +37,7 @@ import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
 import { keyBuilderFromType } from '../../generated/types/RecordDefaultsTemplateCreateRepresentation';
 import { createFieldsIngestSuccess as resourceCreateFieldsIngest } from '../../generated/fields/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
-import {
-    getTrackedFieldDepthOnCacheMiss,
-    getTrackedFieldLeafNodeIdOnly,
-} from '../../configuration';
+import { configuration } from '../../configuration';
 
 function buildRecordTypeIdContextKey(objectApiName: string): string {
     return `DEFAULTS::recordTypeId:${objectApiName}`;
@@ -90,8 +87,8 @@ function prepareRequest(
                 recordTemplateKey,
                 luvio.getNode(recordTemplateKey),
                 {
-                    maxDepth: getTrackedFieldDepthOnCacheMiss(),
-                    onlyFetchLeafNodeId: getTrackedFieldLeafNodeIdOnly(),
+                    maxDepth: configuration.getTrackedFieldDepthOnCacheMiss(),
+                    onlyFetchLeafNodeId: configuration.getTrackedFieldLeafNodeIdOnly(),
                 },
                 config.optionalFields
             ),
@@ -130,8 +127,8 @@ function onResourceResponseSuccess(
         templateRecordKey,
         luvio.getNode(templateRecordKey),
         {
-            maxDepth: getTrackedFieldDepthOnCacheMiss(),
-            onlyFetchLeafNodeId: getTrackedFieldLeafNodeIdOnly(),
+            maxDepth: configuration.getTrackedFieldDepthOnCacheMiss(),
+            onlyFetchLeafNodeId: configuration.getTrackedFieldLeafNodeIdOnly(),
         },
         optionalFields
     );

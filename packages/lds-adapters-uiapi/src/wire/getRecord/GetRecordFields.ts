@@ -20,10 +20,7 @@ import { buildSelectionFromFields } from '../../selectors/record';
 import { difference } from '../../validation/utils';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
 import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
-import {
-    getTrackedFieldDepthOnCacheMiss,
-    getTrackedFieldLeafNodeIdOnly,
-} from '../../configuration';
+import { configuration } from '../../configuration';
 
 // used by getUiApiRecordsBatchByRecordIds#selectChildResourceParams
 export function buildRecordSelector(
@@ -62,8 +59,8 @@ function prepareRequest(luvio: Luvio, config: GetRecordConfig) {
         key,
         luvio.getNode(key),
         {
-            maxDepth: getTrackedFieldDepthOnCacheMiss(),
-            onlyFetchLeafNodeId: getTrackedFieldLeafNodeIdOnly(),
+            maxDepth: configuration.getTrackedFieldDepthOnCacheMiss(),
+            onlyFetchLeafNodeId: configuration.getTrackedFieldLeafNodeIdOnly(),
         },
         config.optionalFields
     );

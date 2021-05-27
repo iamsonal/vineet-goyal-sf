@@ -29,36 +29,40 @@ let trackedFieldDepthOnNotifyChange = 5;
  */
 let trackedFieldLeafNodeIdOnly = false;
 
-export function setTrackedFieldDepthOnCacheMiss(_trackedFieldDepthOnCacheMiss: number): void {
-    trackedFieldDepthOnCacheMiss = _trackedFieldDepthOnCacheMiss;
-}
+/**
+ * Defines the configuration API and is exposed internally as well as externally.
+ */
+export const configuration = {
+    setTrackedFieldDepthOnCacheMiss: function (_trackedFieldDepthOnCacheMiss: number): void {
+        trackedFieldDepthOnCacheMiss = _trackedFieldDepthOnCacheMiss;
+    },
 
-export function getTrackedFieldDepthOnCacheMiss(): number {
-    return trackedFieldDepthOnCacheMiss;
-}
+    getTrackedFieldDepthOnCacheMiss: function (): number {
+        return trackedFieldDepthOnCacheMiss;
+    },
 
-export function setTrackedFieldDepthOnCacheMergeConflict(
-    _trackedFieldDepthOnCacheMergeConflict: number
-): void {
-    trackedFieldDepthOnCacheMergeConflict = _trackedFieldDepthOnCacheMergeConflict;
-}
+    setTrackedFieldDepthOnCacheMergeConflict: function (
+        _trackedFieldDepthOnCacheMergeConflict: number
+    ): void {
+        trackedFieldDepthOnCacheMergeConflict = _trackedFieldDepthOnCacheMergeConflict;
+    },
 
-export function getTrackedFieldDepthOnCacheMergeConflict(): number {
-    return trackedFieldDepthOnCacheMergeConflict;
-}
+    getTrackedFieldDepthOnCacheMergeConflict: function (): number {
+        return trackedFieldDepthOnCacheMergeConflict;
+    },
+    setTrackedFieldDepthOnNotifyChange: function (_trackedFieldDepthOnNotifyChange: number): void {
+        trackedFieldDepthOnNotifyChange = _trackedFieldDepthOnNotifyChange;
+    },
 
-export function setTrackedFieldDepthOnNotifyChange(_trackedFieldDepthOnNotifyChange: number): void {
-    trackedFieldDepthOnNotifyChange = _trackedFieldDepthOnNotifyChange;
-}
+    getTrackedFieldDepthOnNotifyChange: function (): number {
+        return trackedFieldDepthOnNotifyChange;
+    },
 
-export function getTrackedFieldDepthOnNotifyChange(): number {
-    return trackedFieldDepthOnNotifyChange;
-}
+    setTrackedFieldLeafNodeIdOnly: function (_trackedFieldLeafNodeIdOnly: boolean): void {
+        trackedFieldLeafNodeIdOnly = _trackedFieldLeafNodeIdOnly;
+    },
 
-export function setTrackedFieldLeafNodeIdOnly(_trackedFieldLeafNodeIdOnly: boolean): void {
-    trackedFieldLeafNodeIdOnly = _trackedFieldLeafNodeIdOnly;
-}
-
-export function getTrackedFieldLeafNodeIdOnly(): boolean {
-    return trackedFieldLeafNodeIdOnly;
-}
+    getTrackedFieldLeafNodeIdOnly: function (): boolean {
+        return trackedFieldLeafNodeIdOnly;
+    },
+};

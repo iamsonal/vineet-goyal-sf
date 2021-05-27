@@ -115,14 +115,5 @@ export {
     ingest as ingestObjectInfo,
 } from './generated/types/ObjectInfoRepresentation';
 
-// Expose the configuration methods
-export {
-    setTrackedFieldDepthOnCacheMiss,
-    getTrackedFieldDepthOnCacheMiss,
-    setTrackedFieldDepthOnCacheMergeConflict,
-    getTrackedFieldDepthOnCacheMergeConflict,
-    setTrackedFieldDepthOnNotifyChange,
-    getTrackedFieldDepthOnNotifyChange,
-    setTrackedFieldLeafNodeIdOnly,
-    getTrackedFieldLeafNodeIdOnly,
-} from '../src/main';
+// Expose the configuration object
+export { configuration } from '../src/main';

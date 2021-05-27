@@ -16,10 +16,7 @@ import {
 } from '../../util/records';
 import { ObjectKeys } from '../../util/language';
 import { RecordConflictMap } from './resolveConflict';
-import {
-    getTrackedFieldDepthOnCacheMergeConflict,
-    getTrackedFieldLeafNodeIdOnly,
-} from '../../configuration';
+import { configuration } from '../../configuration';
 
 const INCOMING_WEAKETAG_0_KEY = 'incoming-weaketag-0';
 const EXISTING_WEAKETAG_0_KEY = 'existing-weaketag-0';
@@ -168,8 +165,8 @@ function mergeRecordConflict(
     });
 
     const trackedFieldsConfig: TrackedFieldsConfig = {
-        maxDepth: getTrackedFieldDepthOnCacheMergeConflict(),
-        onlyFetchLeafNodeId: getTrackedFieldLeafNodeIdOnly(),
+        maxDepth: configuration.getTrackedFieldDepthOnCacheMergeConflict(),
+        onlyFetchLeafNodeId: configuration.getTrackedFieldLeafNodeIdOnly(),
     };
     extractTrackedFieldsToTrie(
         recordKey,

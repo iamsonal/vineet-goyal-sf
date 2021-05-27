@@ -4,12 +4,7 @@ import timekeeper from 'timekeeper';
 import sinon from 'sinon';
 import { karmaNetworkAdapter } from 'lds-engine';
 import { mockNetworkOnce, mockNetworkSequence } from 'test-util';
-import {
-    setTrackedFieldLeafNodeIdOnly,
-    setTrackedFieldDepthOnNotifyChange,
-    setTrackedFieldDepthOnCacheMergeConflict,
-    setTrackedFieldDepthOnCacheMiss,
-} from 'lds-adapters-uiapi';
+import { configuration } from 'lds-adapters-uiapi';
 
 import {
     FormFactor,
@@ -918,10 +913,10 @@ function extractRelatedListsBatchParamsFromMockData(mockData) {
 function setTrackedFieldsConfig(_includeLeafNodeIdOnly) {
     const depth = _includeLeafNodeIdOnly ? LEAF_NODE_ID_ONLY_DEPTH : DEFAULT_DEPTH;
 
-    setTrackedFieldLeafNodeIdOnly(_includeLeafNodeIdOnly);
-    setTrackedFieldDepthOnCacheMiss(depth);
-    setTrackedFieldDepthOnCacheMergeConflict(depth);
-    setTrackedFieldDepthOnNotifyChange(depth);
+    configuration.setTrackedFieldLeafNodeIdOnly(_includeLeafNodeIdOnly);
+    configuration.setTrackedFieldDepthOnCacheMiss(depth);
+    configuration.setTrackedFieldDepthOnCacheMergeConflict(depth);
+    configuration.setTrackedFieldDepthOnNotifyChange(depth);
 }
 
 export {

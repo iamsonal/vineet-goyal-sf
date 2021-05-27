@@ -19,10 +19,7 @@ import {
     ingestError as getRecord_onResourceError,
 } from '../../../wire/getRecord/GetRecordFields';
 import { getTrackedFields } from '../../../util/records';
-import {
-    getTrackedFieldDepthOnCacheMiss,
-    getTrackedFieldLeafNodeIdOnly,
-} from '../../../configuration';
+import { configuration } from '../../../configuration';
 
 export const nonCachedErrors: {
     [key: string]: { expiration: number; response: any; status: number } | undefined;
@@ -59,8 +56,8 @@ export function ingestSuccessChildResourceParams(
                 childKey,
                 luvio.getNode(childKey),
                 {
-                    maxDepth: getTrackedFieldDepthOnCacheMiss(),
-                    onlyFetchLeafNodeId: getTrackedFieldLeafNodeIdOnly(),
+                    maxDepth: configuration.getTrackedFieldDepthOnCacheMiss(),
+                    onlyFetchLeafNodeId: configuration.getTrackedFieldLeafNodeIdOnly(),
                 },
                 childResourceParams.queryParams.optionalFields
             );

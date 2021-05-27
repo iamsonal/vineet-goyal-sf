@@ -69,14 +69,7 @@ function createImportsMap(importContext) {
         ),
 
         // configuration
-        CONFIGURATION_TRACKED_FIELDS_CACHE_MISS_DEPTH: importAbsolutePath(
-            src_configuration,
-            'getTrackedFieldDepthOnCacheMiss'
-        ),
-        CONFIGURATION_TRACKED_FIELDS_LEAF_NODE_ID_ONLY: importAbsolutePath(
-            src_configuration,
-            'getTrackedFieldLeafNodeIdOnly'
-        ),
+        CONFIGURATION_OBJECT: importAbsolutePath(src_configuration, 'configuration'),
     };
 }
 

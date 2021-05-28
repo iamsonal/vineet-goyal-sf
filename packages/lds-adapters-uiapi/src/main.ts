@@ -18,7 +18,9 @@ export {
 } from './generated/types/RecordRepresentation';
 // TODO - W-9051409 - remove this export after custom composite adapters no longer use resolveUnfulfilledSnapshot
 export { keyBuilderFromType as keyBuilderFromTypeRecord } from './generated/types/RecordRepresentation';
+export { createRecordIngest } from './util/record-ingest';
 export { ingest as ingestRecord } from './raml-artifacts/types/RecordRepresentation/ingest';
+
 export {
     ObjectInfoRepresentation,
     keyBuilder as keyBuilderObjectInfo,

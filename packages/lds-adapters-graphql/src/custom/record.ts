@@ -6,7 +6,7 @@ import {
 } from '@salesforce/lds-graphql-parser';
 import {
     RecordRepresentation,
-    ingestRecord,
+    createRecordIngest,
     RecordRepresentationNormalized,
     FieldValueRepresentationNormalized,
     FieldValueRepresentation,
@@ -19,6 +19,7 @@ import {
     PropertyLookupResultState,
 } from '../type/Selection';
 
+type RecordFieldTrie = Parameters<typeof createRecordIngest>[0];
 interface DefaultRecordFields {
     ApiName: string;
     Id: string;
@@ -41,8 +42,8 @@ interface DefaultRecordFields {
 type SpanningGqlRecord = (DefaultRecordFields & Record<string, GqlRecordField>) | null;
 export type CustomDataType = GqlRecord | GqlConnection;
 interface GqlRecordField {
-    value?: string;
-    displayValue?: string;
+    value?: string | null;
+    displayValue?: string | null;
 }
 
 export type GqlRecord = DefaultRecordFields & Record<string, SpanningGqlRecord | GqlRecordField>;
@@ -63,20 +64,57 @@ function childTypeIsSpanningGqlRecord(
     return sel.type === CUSTOM_FIELD_NODE_TYPE;
 }
 
+function convertAstToTrie(ast: LuvioSelectionCustomFieldNode): RecordFieldTrie {
+    const selections = ast.luvioSelections === undefined ? [] : ast.luvioSelections;
+    const children: RecordFieldTrie['children'] = {};
+    const trie: RecordFieldTrie = {
+        name: ast.name,
+        children,
+    };
+
+    for (let i = 0, len = selections.length; i < len; i += 1) {
+        const sel = getLuvioFieldNodeSelection(selections[i]);
+        const { name: selName, kind } = sel;
+
+        switch (kind) {
+            case 'ObjectFieldSelection': {
+                children[selName] = {
+                    name: selName,
+                    children: {},
+                };
+                break;
+            }
+            case 'CustomFieldSelection': {
+                children[selName] = convertAstToTrie(sel as LuvioSelectionCustomFieldNode);
+                break;
+            }
+        }
+    }
+
+    return trie;
+}
+
 function formatSpanningCustomFieldSelection(
     sel: LuvioSelectionCustomFieldNode,
     data: CustomDataType
-) {
+): { value: FieldValueRepresentation; trie: RecordFieldTrie } {
     if (childTypeIsSpanningGqlRecord(sel, data)) {
         if (data === null) {
             return {
-                displayValue: null,
-                value: null,
+                value: {
+                    displayValue: null,
+                    value: null,
+                },
+                trie: convertAstToTrie(sel),
             };
         }
+        const { recordRepresentation, fieldsTrie } = convertToRecordRepresentation(sel, data);
         return {
-            displayValue: data.DisplayValue,
-            value: convertToRecordRepresentation(sel, data),
+            trie: fieldsTrie,
+            value: {
+                displayValue: data.DisplayValue,
+                value: recordRepresentation,
+            },
         };
     }
 
@@ -86,7 +124,7 @@ function formatSpanningCustomFieldSelection(
 export function convertToRecordRepresentation(
     ast: LuvioSelectionCustomFieldNode,
     record: GqlRecord
-): RecordRepresentation {
+): { recordRepresentation: RecordRepresentation; fieldsTrie: RecordFieldTrie } {
     const {
         Id,
         WeakEtag,
@@ -102,6 +140,12 @@ export function convertToRecordRepresentation(
         throw new Error('Undefined selections');
     }
 
+    const trieChildren: RecordFieldTrie['children'] = {};
+    const trie: RecordFieldTrie = {
+        name: ApiName,
+        children: trieChildren,
+    };
+
     const fieldsBag: RecordRepresentation['fields'] = {};
     for (let i = 0, len = luvioSelections.length; i < len; i += 1) {
         const sel = getLuvioFieldNodeSelection(luvioSelections[i]);
@@ -110,11 +154,20 @@ export function convertToRecordRepresentation(
 
         switch (sel.kind) {
             case 'ObjectFieldSelection': {
+                trieChildren[name] = {
+                    name,
+                    children: {},
+                };
                 fieldsBag[name] = collectObjectFieldSelection(data as GqlRecordField);
                 break;
             }
             case 'CustomFieldSelection': {
-                fieldsBag[name] = formatSpanningCustomFieldSelection(sel, data as CustomDataType);
+                const { value, trie } = formatSpanningCustomFieldSelection(
+                    sel,
+                    data as CustomDataType
+                );
+                trieChildren[name] = trie;
+                fieldsBag[name] = value;
                 break;
             }
         }
@@ -133,7 +186,11 @@ export function convertToRecordRepresentation(
         weakEtag: WeakEtag,
         fields: fieldsBag,
     };
-    return rep;
+
+    return {
+        recordRepresentation: rep,
+        fieldsTrie: trie,
+    };
 }
 
 export const defaultRecordFieldsFragmentName = 'defaultRecordFields';
@@ -144,8 +201,17 @@ export const createIngest: (ast: LuvioSelectionCustomFieldNode) => ResourceInges
     ast: LuvioSelectionCustomFieldNode
 ) => {
     return (data: GqlRecord, path: IngestPath, luvio: Luvio, store: Store, timestamp: number) => {
-        const recordRep = convertToRecordRepresentation(ast, data);
-        return ingestRecord(recordRep, path, luvio, store, timestamp);
+        const { recordRepresentation, fieldsTrie } = convertToRecordRepresentation(ast, data);
+        const ingestRecord = createRecordIngest(
+            fieldsTrie,
+            {
+                name: recordRepresentation.apiName,
+                children: {},
+            },
+            {}
+        );
+
+        return ingestRecord(recordRepresentation, path, luvio, store, timestamp);
     };
 };
 

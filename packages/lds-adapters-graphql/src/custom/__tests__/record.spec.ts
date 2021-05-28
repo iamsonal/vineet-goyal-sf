@@ -71,7 +71,19 @@ describe('GQL Record', () => {
                 recordTypeInfo: null,
             };
 
-            expect(convertToRecordRepresentation(ast, gql)).toEqual(recordRep);
+            const result = convertToRecordRepresentation(ast, gql);
+            expect(result).toEqual({
+                recordRepresentation: recordRep,
+                fieldsTrie: {
+                    name: 'Account',
+                    children: {
+                        Name: {
+                            name: 'Name',
+                            children: {},
+                        },
+                    },
+                },
+            });
         });
 
         it('should correctly convert to RecordRepresentation when contains spanning record', () => {
@@ -200,7 +212,28 @@ describe('GQL Record', () => {
                 recordTypeInfo: null,
             };
 
-            expect(convertToRecordRepresentation(ast, gql)).toEqual(recordRep);
+            const result = convertToRecordRepresentation(ast, gql);
+            expect(result).toEqual({
+                recordRepresentation: recordRep,
+                fieldsTrie: {
+                    name: 'Account',
+                    children: {
+                        Name: {
+                            name: 'Name',
+                            children: {},
+                        },
+                        Owner: {
+                            name: 'User',
+                            children: {
+                                Name: {
+                                    name: 'Name',
+                                    children: {},
+                                },
+                            },
+                        },
+                    },
+                },
+            });
         });
 
         it('should correctly convert to RecordRepresentation when contains null spanning record', () => {
@@ -291,7 +324,166 @@ describe('GQL Record', () => {
                 recordTypeInfo: null,
             };
 
-            expect(convertToRecordRepresentation(ast, gql)).toEqual(recordRep);
+            const result = convertToRecordRepresentation(ast, gql);
+            expect(result).toEqual({
+                recordRepresentation: recordRep,
+                fieldsTrie: {
+                    name: 'Account',
+                    children: {
+                        Name: {
+                            name: 'Name',
+                            children: {},
+                        },
+                        Owner: {
+                            name: 'Owner',
+                            children: {
+                                Name: {
+                                    name: 'Name',
+                                    children: {},
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+        });
+
+        it('should correctly convert to RecordRepresentation when contains null spanning record with multiple levels of children', () => {
+            const ast: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'node',
+                type: 'Record',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'Name',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'displayValue',
+                            },
+                        ],
+                    },
+                    {
+                        kind: 'CustomFieldSelection',
+                        name: 'Owner',
+                        type: 'Record',
+                        luvioSelections: [
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'Name',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ScalarFieldSelection',
+                                        name: 'value',
+                                    },
+                                ],
+                            },
+                            {
+                                kind: 'CustomFieldSelection',
+                                name: 'Boss',
+                                type: 'Record',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'BossName',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'value',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const gql: GqlRecord = {
+                Id: '001RM000004uuhnYAA',
+                WeakEtag: 1615493739000,
+                Name: {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                Owner: null,
+                __typename: 'Account',
+                ApiName: 'Account',
+                DisplayValue: 'Account1',
+                SystemModstamp: {
+                    value: '2021-03-11T20:15:39.000Z',
+                },
+                LastModifiedById: {
+                    value: '005RM000002492xYAA',
+                },
+                LastModifiedDate: {
+                    value: '2021-03-11T20:15:39.000Z',
+                },
+                RecordTypeId: {
+                    value: '012RM000000E79WYAS',
+                },
+            } as GqlRecord;
+
+            const recordRep: RecordRepresentation = {
+                apiName: 'Account',
+                childRelationships: {},
+                eTag: '',
+                id: '001RM000004uuhnYAA',
+                weakEtag: 1615493739000,
+                fields: {
+                    Name: {
+                        value: 'Account1',
+                        displayValue: null,
+                    },
+                    Owner: {
+                        value: null,
+                        displayValue: null,
+                    },
+                },
+                systemModstamp: '2021-03-11T20:15:39.000Z',
+                lastModifiedById: '005RM000002492xYAA',
+                lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                recordTypeId: '012RM000000E79WYAS',
+                recordTypeInfo: null,
+            };
+
+            const result = convertToRecordRepresentation(ast, gql);
+            expect(result).toEqual({
+                recordRepresentation: recordRep,
+                fieldsTrie: {
+                    name: 'Account',
+                    children: {
+                        Name: {
+                            name: 'Name',
+                            children: {},
+                        },
+                        Owner: {
+                            name: 'Owner',
+                            children: {
+                                Name: {
+                                    name: 'Name',
+                                    children: {},
+                                },
+                                Boss: {
+                                    name: 'Boss',
+                                    children: {
+                                        BossName: {
+                                            name: 'BossName',
+                                            children: {},
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            });
         });
     });
 
@@ -623,6 +815,9 @@ describe('GQL Record', () => {
                     fields: {
                         Parent: {
                             __ref: 'UiApi::RecordRepresentation:001RM000005BJPTYA4__fields__Parent',
+                            data: {
+                                fields: ['Name'],
+                            },
                         },
                     },
                     systemModstamp: '2021-05-01T00:31:22.000Z',

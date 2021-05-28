@@ -13,7 +13,6 @@ import {
 } from '@salesforce/lds-instrumentation';
 
 import { throttle } from './sfdc-util/throttle';
-
 import {
     GetRecordNotifyChange,
     updateLayoutUserStateAdapterFactory,
@@ -110,6 +109,7 @@ export {
 // TODO W-5971944 - remove the ADS bridge and these exports
 export { keyBuilder as keyBuilderRecord } from './generated/types/RecordRepresentation';
 export { ingest as ingestRecord } from './raml-artifacts/types/RecordRepresentation/ingest';
+export { createRecordIngest } from './util/record-ingest';
 export {
     keyBuilder as keyBuilderObjectInfo,
     ingest as ingestObjectInfo,

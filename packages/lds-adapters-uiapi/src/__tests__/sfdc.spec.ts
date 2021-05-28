@@ -15,6 +15,7 @@ describe('SFDC exports', () => {
         const allowList = [
             /** UI API exports */
             'createRecord',
+            'createRecordIngest',
             'deleteRecord',
             'getLayout',
             'getLayoutUserState',

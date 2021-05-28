@@ -485,6 +485,158 @@ describe('GQL Record', () => {
                 },
             });
         });
+
+        it('should correctly convert to RecordRepresentation when containing aliases', () => {
+            const ast: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'node',
+                type: 'Record',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'Name',
+                        alias: 'MyName',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'displayValue',
+                            },
+                        ],
+                    },
+                    {
+                        kind: 'CustomFieldSelection',
+                        name: 'Owner',
+                        alias: 'MyOwner',
+                        type: 'Record',
+                        luvioSelections: [
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'Name',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ScalarFieldSelection',
+                                        name: 'value',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const gqlRecord: GqlRecord = {
+                Id: '001RM000004uuhnYAA',
+                WeakEtag: 1615493739000,
+                MyName: {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                MyOwner: {
+                    ApiName: 'User',
+                    Id: '005RM000002492xYAA',
+                    WeakEtag: 1616602434000,
+                    DisplayValue: 'Owner',
+                    Name: {
+                        value: 'Admin User',
+                        displayValue: 'display value',
+                    },
+                    SystemModstamp: {
+                        value: '2021-03-11T20:15:39.000Z',
+                    },
+                    LastModifiedById: {
+                        value: '005RM000002492xYAA',
+                    },
+                    LastModifiedDate: {
+                        value: '2021-03-11T20:15:39.000Z',
+                    },
+                    RecordTypeId: {
+                        value: '012RM000000E79WYAS',
+                    },
+                },
+                __typename: 'Account',
+                ApiName: 'Account',
+                DisplayValue: 'Account1',
+                SystemModstamp: {
+                    value: '2021-03-11T20:15:39.000Z',
+                },
+                LastModifiedById: {
+                    value: '005RM000002492xYAA',
+                },
+                LastModifiedDate: {
+                    value: '2021-03-11T20:15:39.000Z',
+                },
+                RecordTypeId: {
+                    value: '012RM000000E79WYAS',
+                },
+            } as GqlRecord;
+
+            const recordRep: RecordRepresentation = {
+                apiName: 'Account',
+                childRelationships: {},
+                eTag: '',
+                id: '001RM000004uuhnYAA',
+                weakEtag: 1615493739000,
+                fields: {
+                    Name: {
+                        value: 'Account1',
+                        displayValue: null,
+                    },
+                    Owner: {
+                        displayValue: 'Owner',
+                        value: {
+                            apiName: 'User',
+                            childRelationships: {},
+                            eTag: '',
+                            id: '005RM000002492xYAA',
+                            weakEtag: 1616602434000,
+                            fields: {
+                                Name: {
+                                    value: 'Admin User',
+                                    displayValue: 'display value',
+                                },
+                            },
+                            systemModstamp: '2021-03-11T20:15:39.000Z',
+                            lastModifiedById: '005RM000002492xYAA',
+                            lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                            recordTypeId: '012RM000000E79WYAS',
+                            recordTypeInfo: null,
+                        },
+                    },
+                },
+                systemModstamp: '2021-03-11T20:15:39.000Z',
+                lastModifiedById: '005RM000002492xYAA',
+                lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                recordTypeId: '012RM000000E79WYAS',
+                recordTypeInfo: null,
+            };
+
+            const result = convertToRecordRepresentation(ast, gqlRecord);
+            expect(result).toEqual({
+                recordRepresentation: recordRep,
+                fieldsTrie: {
+                    name: 'Account',
+                    children: {
+                        Name: {
+                            name: 'Name',
+                            children: {},
+                        },
+                        Owner: {
+                            name: 'User',
+                            children: {
+                                Name: {
+                                    name: 'Name',
+                                    children: {},
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+        });
     });
 
     describe('ingest', () => {
@@ -1173,6 +1325,149 @@ describe('GQL Record', () => {
                 },
                 Owner: {
                     DisplayValue: 'Owner',
+                    Id: '005RM000002492xYAA',
+                    Name: {
+                        value: 'Admin User',
+                    },
+                },
+            };
+
+            const snap = luvio.storeLookup({
+                recordId: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
+                node: {
+                    kind: 'Fragment',
+                    synthetic: false,
+                    reader: true,
+                    read: createRead(selection),
+                },
+                variables: {},
+            });
+            expect(snap.data).toEqual(expected);
+        });
+
+        it('should denormalize RecordRepresentation correctly when containing aliases', () => {
+            const selection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'node',
+                type: 'Record',
+                luvioSelections: [
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: 'Id',
+                        alias: 'MyId',
+                    },
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'Name',
+                        alias: 'MyName',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'displayValue',
+                            },
+                        ],
+                    },
+                    {
+                        kind: 'CustomFieldSelection',
+                        name: 'Owner',
+                        type: 'Record',
+                        alias: 'MyOwner',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'Id',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'ApiName',
+                            },
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'Name',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ScalarFieldSelection',
+                                        name: 'value',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const store = new Store();
+            store.records = {
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
+                    apiName: 'Account',
+                    id: '001RM000004uuhnYAA',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1615493739000,
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name',
+                        },
+                        Owner: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Owner',
+                        },
+                    },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Owner': {
+                    displayValue: 'Owner',
+                    value: {
+                        __ref: 'UiApi::RecordRepresentation:005RM000002492xYAA',
+                    },
+                },
+                'UiApi::RecordRepresentation:005RM000002492xYAA': {
+                    apiName: 'User',
+                    id: '005RM000002492xYAA',
+                    weakEtag: 1616602434000,
+                    eTag: '',
+                    childRelationships: {},
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:005RM000002492xYAA__fields__Name',
+                        },
+                    },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                },
+                'UiApi::RecordRepresentation:005RM000002492xYAA__fields__Name': {
+                    value: 'Admin User',
+                    displayValue: 'display value',
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const expected = {
+                MyId: '001RM000004uuhnYAA',
+                MyName: {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                MyOwner: {
+                    ApiName: 'User',
                     Id: '005RM000002492xYAA',
                     Name: {
                         value: 'Admin User',

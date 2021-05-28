@@ -149,16 +149,17 @@ export function convertToRecordRepresentation(
     const fieldsBag: RecordRepresentation['fields'] = {};
     for (let i = 0, len = luvioSelections.length; i < len; i += 1) {
         const sel = getLuvioFieldNodeSelection(luvioSelections[i]);
-        const { name } = sel;
-        const data = record[name];
+        const { name: fieldName, alias } = sel;
+        const propertyName = alias === undefined ? fieldName : alias;
+        const data = record[propertyName];
 
         switch (sel.kind) {
             case 'ObjectFieldSelection': {
-                trieChildren[name] = {
-                    name,
+                trieChildren[fieldName] = {
+                    name: fieldName,
                     children: {},
                 };
-                fieldsBag[name] = collectObjectFieldSelection(data as GqlRecordField);
+                fieldsBag[fieldName] = collectObjectFieldSelection(data as GqlRecordField);
                 break;
             }
             case 'CustomFieldSelection': {
@@ -166,8 +167,8 @@ export function convertToRecordRepresentation(
                     sel,
                     data as CustomDataType
                 );
-                trieChildren[name] = trie;
-                fieldsBag[name] = value;
+                trieChildren[fieldName] = trie;
+                fieldsBag[fieldName] = value;
                 break;
             }
         }
@@ -291,13 +292,14 @@ function assignSelection(
     state: RecordDenormalizationState
 ) {
     const sel = getLuvioFieldNodeSelection(selection);
-    const { name: selectionName, kind } = sel;
+    const { name: selectionName, kind, alias } = sel;
+    const propertyName = alias === undefined ? selectionName : alias;
     const { source, sink } = state;
     const { fields } = source;
     builder.enterPath(selectionName);
     switch (kind) {
         case 'ScalarFieldSelection': {
-            builder.assignScalar(selectionName, sink, getScalarValue(selectionName, state));
+            builder.assignScalar(propertyName, sink, getScalarValue(selectionName, state));
             break;
         }
         case 'ObjectFieldSelection': {
@@ -311,7 +313,7 @@ function assignSelection(
             if (resolved === undefined) {
                 break;
             }
-            sink[selectionName] = getNonSpanningField(
+            sink[propertyName] = getNonSpanningField(
                 sel as LuvioSelectionObjectFieldNode,
                 builder,
                 resolved.value
@@ -341,14 +343,10 @@ function assignSelection(
             if (resolvedSpanningRecordValue === undefined) {
                 break;
             }
-            sink[selectionName] = getCustomSelection(
-                sel as LuvioSelectionCustomFieldNode,
-                builder,
-                {
-                    source: resolvedSpanningRecordValue.value,
-                    parentFieldValue: spanningFieldResult,
-                }
-            );
+            sink[propertyName] = getCustomSelection(sel as LuvioSelectionCustomFieldNode, builder, {
+                source: resolvedSpanningRecordValue.value,
+                parentFieldValue: spanningFieldResult,
+            });
         }
     }
     builder.exitPath();

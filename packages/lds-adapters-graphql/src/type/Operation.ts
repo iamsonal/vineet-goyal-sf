@@ -17,11 +17,12 @@ export const createRead: (ast: LuvioOperationDefinitionNode) => ReaderFragment['
         const sink = {};
         for (let i = 0, len = selections.length; i < len; i += 1) {
             const sel = getLuvioFieldNodeSelection(selections[i]);
-            const { name } = sel;
-            reader.enterPath(name);
-            const childValue = source[name];
+            const { name: fieldName, alias } = sel;
+            const propertyName = alias === undefined ? fieldName : alias;
+            reader.enterPath(fieldName);
+            const childValue = source[fieldName];
             const data = followLink(sel, reader, childValue);
-            reader.assignNonScalar(sink, name, data);
+            reader.assignNonScalar(sink, propertyName, data);
             reader.exitPath();
         }
         return sink;
@@ -40,8 +41,9 @@ export function createIngest(ast: LuvioOperationDefinitionNode): ResourceIngest 
         const key = path.fullPath;
         for (let i = 0, len = selections.length; i < len; i += 1) {
             const sel = getLuvioFieldNodeSelection(selections[i]);
-            const propertyName = sel.name;
-            data[propertyName] = selectionCreateIngest(sel)(
+            const { name: fieldName, alias } = sel;
+            const propertyName = alias === undefined ? fieldName : alias;
+            data[fieldName] = selectionCreateIngest(sel)(
                 data[propertyName],
                 {
                     parent: {
@@ -49,13 +51,16 @@ export function createIngest(ast: LuvioOperationDefinitionNode): ResourceIngest 
                         key,
                         data,
                     },
-                    fullPath: `${key}__${propertyName}`,
+                    fullPath: `${key}__${fieldName}`,
                     propertyName,
                 },
                 luvio,
                 store,
                 timestamp
             );
+            if (fieldName !== propertyName && data[propertyName] !== undefined) {
+                delete data[propertyName];
+            }
         }
 
         const existing = store.records[key];

@@ -725,6 +725,557 @@ describe('graphql', () => {
         });
     });
 
+    describe('aliasing', () => {
+        xit('should not hit network when all data is in cache', async () => {
+            const astOne = parseQuery(`
+                query {
+                    ApiOne: uiapi {
+                        query {
+                            AccountOne: Account(
+                                where: { Name: { like: "Account1" } }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        NameOne: Name { value, displayValue }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const astTwo = parseQuery(`
+                query {
+                    ApiTwo: uiapi {
+                        query {
+                            AccountTwo: Account(
+                                where: { Name: { like: "Account1" } }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        NameTwo: Name { value, displayValue }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedDataOne = {
+                data: {
+                    ApiOne: {
+                        query: {
+                            AccountOne: {
+                                edges: [
+                                    {
+                                        node: {
+                                            NameOne: {
+                                                value: 'Account1',
+                                                displayValue: null,
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            const expectedDataTwo = {
+                data: {
+                    ApiTwo: {
+                        query: {
+                            AccountTwo: {
+                                edges: [
+                                    {
+                                        node: {
+                                            NameTwo: {
+                                                value: 'Account1',
+                                                displayValue: null,
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            const expectedQuery = `
+                query {
+                    ApiOne: uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) {
+                                edges {
+                                    node {
+                                        Id,
+                                        WeakEtag,
+                                        Name { value, displayValue }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename,
+                    ApiName,
+                    WeakEtag,
+                    Id,
+                    DisplayValue,
+                    SystemModstamp { value }
+                    LastModifiedById { value }
+                    LastModifiedDate { value }
+                    RecordTypeId(fallback: true) { value }
+                }
+            `;
+
+            const networkData = getMock('RecordQuery-Account-fields-Name-aliased');
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                networkData
+            );
+
+            const graphqlConfigOne = {
+                query: astOne,
+                variables: {},
+            };
+
+            const graphqlConfigTwo = {
+                query: astTwo,
+                variables: {},
+            };
+
+            const pending = graphQLImperative(graphqlConfigOne);
+            const snapshot = await luvio.resolvePendingSnapshot(pending);
+            expect(snapshot.data).toEqual(expectedDataOne);
+
+            const secondSnapshot = await graphQLImperative(graphqlConfigTwo);
+            expect(secondSnapshot.data).toEqual(expectedDataTwo);
+        });
+
+        xit('should not hit network when merged data in cache is requested', async () => {
+            const ast = parseQuery(`
+                query {
+                    ApiOne: uiapi {
+                        query {
+                            Account(
+                                where: { Name: { like: "Account1" } }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name { value, displayValue }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    ApiTwo: uiapi {
+                        query {
+                            Account(
+                                where: { Name: { like: "Account1" } }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Phone { value, displayValue }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedData = {
+                data: {
+                    ApiOne: {
+                        query: {
+                            Account: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Name: {
+                                                value: 'Account1',
+                                                displayValue: null,
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                    ApiTwo: {
+                        query: {
+                            Account: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Phone: {
+                                                value: '1234567',
+                                                displayValue: null,
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            const expectedQuery = `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) {
+                                edges {
+                                    node {
+                                        Id,
+                                        WeakEtag,
+                                        Name { value, displayValue }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) {
+                                edges {
+                                    node {
+                                        Id,
+                                        WeakEtag,
+                                        Phone { value, displayValue }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename,
+                    ApiName,
+                    WeakEtag,
+                    Id,
+                    DisplayValue,
+                    SystemModstamp { value }
+                    LastModifiedById { value }
+                    LastModifiedDate { value }
+                    RecordTypeId(fallback: true) { value }
+                }
+            `;
+
+            const networkData = getMock('RecordQuery-Account-fields-Name-Phone-aliased');
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                networkData
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const pending = graphQLImperative(graphqlConfig);
+            const snapshot = await luvio.resolvePendingSnapshot(pending);
+            expect(snapshot.data).toEqual(expectedData);
+
+            const cachedDataAst = parseQuery(`
+                query {
+                    ApiThree: uiapi {
+                        query {
+                            AccountThree: Account(
+                                where: { Name: { like: "Account1" } }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        NameThree: Name { value }
+                                        PhoneThree: Phone { value }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedDataCached = {
+                data: {
+                    ApiThree: {
+                        query: {
+                            AccountThree: {
+                                edges: [
+                                    {
+                                        node: {
+                                            NameThree: {
+                                                value: 'Account1',
+                                            },
+                                            PhoneThree: {
+                                                value: '1234567',
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            const secondSnapshot = await graphQLImperative({
+                query: cachedDataAst,
+                variables: {},
+            });
+            expect(secondSnapshot.data).toEqual(expectedDataCached);
+        });
+
+        xit('should not hit network when data from multiple requests in cache is requested', async () => {
+            const astOne = parseQuery(`
+                query {
+                    ApiOne: uiapi {
+                        query {
+                            AccountOne: Account(
+                                where: { Name: { like: "Account1" } }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        NameOne: Name { value, displayValue }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const astTwo = parseQuery(`
+                query {
+                    ApiTwo: uiapi {
+                        query {
+                            AccountTwo: Account(
+                                where: { Name: { like: "Account1" } }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        PhoneTwo: Phone { value, displayValue }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedDataOne = {
+                data: {
+                    ApiOne: {
+                        query: {
+                            AccountOne: {
+                                edges: [
+                                    {
+                                        node: {
+                                            NameOne: {
+                                                value: 'Account1',
+                                                displayValue: null,
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            const expectedDataTwo = {
+                data: {
+                    ApiTwo: {
+                        query: {
+                            AccountTwo: {
+                                edges: [
+                                    {
+                                        node: {
+                                            PhoneTwo: {
+                                                value: '1234567',
+                                                displayValue: null,
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            const expectedQueryOne = `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) {
+                                edges {
+                                    node {
+                                        Id,
+                                        WeakEtag,
+                                        Name { value, displayValue }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename,
+                    ApiName,
+                    WeakEtag,
+                    Id,
+                    DisplayValue,
+                    SystemModstamp { value }
+                    LastModifiedById { value }
+                    LastModifiedDate { value }
+                    RecordTypeId(fallback: true) { value }
+                }
+            `;
+
+            const expectedQueryTwo = `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) {
+                                edges {
+                                    node {
+                                        Id,
+                                        WeakEtag,
+                                        Phone { value, displayValue }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename,
+                    ApiName,
+                    WeakEtag,
+                    Id,
+                    DisplayValue,
+                    SystemModstamp { value }
+                    LastModifiedById { value }
+                    LastModifiedDate { value }
+                    RecordTypeId(fallback: true) { value }
+                }
+            `;
+
+            const networkDataOne = getMock('RecordQuery-Account-fields-Name-aliased');
+            const networkDataTwo = getMock('RecordQuery-Account-fields-Phone-aliased');
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQueryOne,
+                    variables: {},
+                },
+                networkDataOne
+            );
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQueryTwo,
+                    variables: {},
+                },
+                networkDataTwo
+            );
+
+            const graphqlConfigOne = {
+                query: astOne,
+                variables: {},
+            };
+
+            const graphQLConfigTwo = {
+                query: astTwo,
+                variables: {},
+            };
+
+            const pending = graphQLImperative(graphqlConfigOne);
+            const snapshot = await luvio.resolvePendingSnapshot(pending);
+            expect(snapshot.data).toEqual(expectedDataOne);
+
+            const pending2 = graphQLImperative(graphQLConfigTwo);
+            const snapshot2 = await luvio.resolvePendingSnapshot(pending2);
+            expect(snapshot2.data).toEqual(expectedDataTwo);
+
+            const cachedDataAst = parseQuery(`
+                query {
+                    ApiThree: uiapi {
+                        query {
+                            AccountThree: Account(
+                                where: { Name: { like: "Account1" } }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        NameThree: Name { value }
+                                        PhoneThree: Phone { value }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedDataCached = {
+                data: {
+                    ApiThree: {
+                        query: {
+                            AccountThree: {
+                                edges: [
+                                    {
+                                        node: {
+                                            NameThree: {
+                                                value: 'Account1',
+                                            },
+                                            PhoneThree: {
+                                                value: '1234567',
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            const thirdSnapshot = await graphQLImperative({
+                query: cachedDataAst,
+                variables: {},
+            });
+            expect(thirdSnapshot.data).toEqual(expectedDataCached);
+        });
+    });
+
     describe('missing links', () => {
         it('should handle when nested spanning field is not present', async () => {
             const ast = parseQuery(`

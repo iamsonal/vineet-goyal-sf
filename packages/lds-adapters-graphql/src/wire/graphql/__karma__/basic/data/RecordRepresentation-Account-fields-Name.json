@@ -1,0 +1,24 @@
+{
+    "apiName": "Account",
+    "childRelationships": {},
+    "eTag": "41f84375a417db728ffba635a8b9bdea",
+    "fields": {
+        "Name": {
+            "displayValue": null,
+            "value": "Changed Name!"
+        }
+    },
+    "id": "001RM000004uuhnYAA",
+    "lastModifiedById": "005RM000002492xYAA",
+    "lastModifiedDate": "2021-05-21T23:07:16.000Z",
+    "recordTypeId": "012RM000000E79WYAS",
+    "recordTypeInfo": {
+        "available": true,
+        "defaultRecordTypeMapping": true,
+        "master": false,
+        "name": "CustomRecordType1",
+        "recordTypeId": "012RM000000E79WYAS"
+    },
+    "systemModstamp": "2021-05-21T23:07:16.000Z",
+    "weakEtag": 1621638436000
+}

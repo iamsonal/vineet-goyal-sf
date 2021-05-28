@@ -182,7 +182,7 @@ function getNonSpanningField(
         if (kind !== 'ScalarFieldSelection') {
             throw new Error(`Unexpected kind "${kind}"`);
         }
-        sink[name] = source[name] as any;
+        builder.assignScalar(name, sink, source[name]);
         builder.exitPath();
     }
 
@@ -231,7 +231,7 @@ function assignSelection(
     builder.enterPath(selectionName);
     switch (kind) {
         case 'ScalarFieldSelection': {
-            sink[selectionName] = getScalarValue(selectionName, state);
+            builder.assignScalar(selectionName, sink, getScalarValue(selectionName, state));
             break;
         }
         case 'ObjectFieldSelection': {

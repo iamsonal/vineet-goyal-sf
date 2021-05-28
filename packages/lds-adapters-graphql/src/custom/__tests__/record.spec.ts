@@ -1,4 +1,4 @@
-import { Environment, Luvio, Store } from '@luvio/engine';
+import { Environment, FulfilledSnapshot, Luvio, Store } from '@luvio/engine';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { LuvioSelectionCustomFieldNode } from '@salesforce/lds-graphql-parser';
 import { GqlRecord, createIngest, convertToRecordRepresentation, createRead } from '../record';
@@ -1107,6 +1107,158 @@ describe('GQL Record', () => {
                 variables: {},
             });
             expect(snap.data).toEqual(expected);
+        });
+
+        it('should mark all seen ids properly', () => {
+            const store = new Store();
+            store.records = {
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
+                    id: '001RM000004uuhnYAA',
+                    childRelationships: {},
+                    eTag: '',
+                    apiName: 'Account',
+                    weakEtag: 1615493739000,
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name',
+                        },
+                    },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const selection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'node',
+                type: 'Record',
+                luvioSelections: [
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: 'Id',
+                    },
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'Name',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'displayValue',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const snap = luvio.storeLookup({
+                recordId: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
+                node: {
+                    kind: 'Fragment',
+                    synthetic: false,
+                    reader: true,
+                    read: createRead(selection),
+                },
+                variables: {},
+            }) as FulfilledSnapshot<any, any>;
+            expect(snap.seenRecords).toEqual({
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': true,
+            });
+        });
+    });
+
+    describe('subscription', () => {
+        it('should emit a new snapshot when underlying data has changed', () => {
+            const store = new Store();
+            store.records = {
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
+                    id: '001RM000004uuhnYAA',
+                    childRelationships: {},
+                    eTag: '',
+                    apiName: 'Account',
+                    weakEtag: 1615493739000,
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name',
+                        },
+                    },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const selection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'node',
+                type: 'Record',
+                luvioSelections: [
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: 'Id',
+                    },
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'Name',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'displayValue',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const snap = luvio.storeLookup({
+                recordId: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
+                node: {
+                    kind: 'Fragment',
+                    synthetic: false,
+                    reader: true,
+                    read: createRead(selection),
+                },
+                variables: {},
+            }) as FulfilledSnapshot<any, any>;
+            const spy = jest.fn();
+            luvio.storeSubscribe(snap, spy);
+
+            luvio.storePublish('UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name', {
+                value: 'Updated!',
+                displayValue: 'new',
+            });
+            luvio.storeBroadcast();
+            expect(spy).toHaveBeenCalledTimes(1);
         });
     });
 });

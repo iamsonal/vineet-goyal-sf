@@ -1,10 +1,14 @@
 import { getMock as globalGetMock, setupElement } from 'test-util';
-import { mockGraphqlNetwork, parseQuery } from 'graphql-test-util';
+import sinon from 'sinon';
+import {
+    mockGraphqlNetwork,
+    parseQuery,
+    expireRecords,
+    mockGetRecordNetwork,
+} from 'graphql-test-util';
 import { graphQLImperative } from 'lds-adapters-graphql';
 import { luvio } from 'ldsEngine';
-
 import GetRecord from '../lwc/get-record';
-
 const MOCK_PREFIX = 'wire/graphql/__karma__/basic/data/';
 
 function getMock(filename) {
@@ -1041,6 +1045,119 @@ describe('graphql', () => {
                     recordTypeInfo: null,
                 });
             });
+
+            it('should emit changes to graphql adapter when getRecord returns updated fields', async () => {
+                const ast = parseQuery(`
+                    query {
+                        uiapi {
+                            query {
+                                Account(
+                                    where: { Name: { like: "Account1" } }
+                                ) @connection {
+                                    edges {
+                                        node @resource(type: "Record") {
+                                            Name { value, displayValue }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                `);
+
+                const expectedQuery = `
+                    query {
+                        uiapi {
+                            query {
+                                Account(where: { Name: { like: "Account1" } }) {
+                                    edges {
+                                        node {
+                                            Id,
+                                            WeakEtag,
+                                            Name { value, displayValue }
+                                            ...defaultRecordFields
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    fragment defaultRecordFields on Record {
+                        __typename,
+                        ApiName,
+                        WeakEtag,
+                        Id,
+                        DisplayValue,
+                        SystemModstamp { value }
+                        LastModifiedById { value }
+                        LastModifiedDate { value }
+                        RecordTypeId(fallback: true) { value }
+                    }
+                `;
+
+                const networkData = getMock('RecordQuery-Account-fields-Name');
+                const updatedRecordRep = getMock('RecordRepresentation-Account-fields-Name');
+
+                mockGraphqlNetwork(
+                    {
+                        query: expectedQuery,
+                        variables: {},
+                    },
+                    networkData
+                );
+
+                const graphqlConfig = {
+                    query: ast,
+                    variables: {},
+                };
+
+                mockGetRecordNetwork(
+                    {
+                        recordId: '001RM000004uuhnYAA',
+                        fields: ['Account.Name'],
+                    },
+                    updatedRecordRep
+                );
+
+                const pending = graphQLImperative(graphqlConfig);
+                const snapshot = await luvio.resolvePendingSnapshot(pending);
+                const spy = sinon.spy();
+                luvio.storeSubscribe(snapshot, spy);
+
+                expireRecords();
+                await setupElement(
+                    {
+                        recordId: '001RM000004uuhnYAA',
+                        fields: ['Account.Name'],
+                    },
+                    GetRecord
+                );
+                expect(spy.callCount).toBe(1);
+
+                expect(spy.firstCall.args[0].data).toEqual({
+                    data: {
+                        uiapi: {
+                            query: {
+                                Account: {
+                                    edges: [
+                                        {
+                                            node: {
+                                                Name: {
+                                                    value: updatedRecordRep.fields.Name.value,
+                                                    displayValue:
+                                                        updatedRecordRep.fields.Name.displayValue,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                    errors: [],
+                });
+            });
         });
     });
 
@@ -1090,7 +1207,6 @@ describe('graphql', () => {
                         }
                     }
                 }
-
                 fragment defaultRecordFields on Record {
                     __typename
                     ApiName

@@ -39,7 +39,7 @@ function mockGetRecordNetwork(config, mockData) {
 
     const paramMatch = sinon.match({
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/records/${recordId}`,
+        basePath: `/ui-api/records/${recordId}`,
         queryParams,
     });
 

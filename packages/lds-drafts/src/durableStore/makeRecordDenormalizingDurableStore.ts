@@ -298,6 +298,10 @@ export function makeRecordDenormalizingDurableStore(
             // don't include link information
             const denormalizedRecord = denormalizedEntry.data;
 
+            if (isStoreRecordError(denormalizedRecord)) {
+                return undefined;
+            }
+
             return {
                 ...denormalizedRecord,
                 links: undefined,

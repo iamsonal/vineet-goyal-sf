@@ -68,5 +68,42 @@ describe('mobile runtime integration tests', () => {
             expect(snapshot2.data.results.length).toBe(2);
             expect(snapshot2.data.results[0].result.id).toBe(id1);
         });
+
+        it('emits a value on a 400 response', async () => {
+            const id1 = '001xx000003Gn4WAAS';
+            const config = {
+                records: [
+                    {
+                        recordIds: [id1],
+                        optionalFields: ['Account.Id', 'Account.Name'],
+                    },
+                ],
+            };
+
+            let errorResponseBody = {
+                hasErrors: true,
+                results: [
+                    {
+                        result: [
+                            {
+                                errorCode: 'INVALID_TYPE',
+                                message: 'Object UserRole is not supported in UI API',
+                            },
+                        ],
+                        statusCode: 400,
+                    },
+                ],
+            };
+
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(errorResponseBody),
+            });
+
+            const snapshot = await getRecords(config);
+            expect(snapshot.state).toBe('Fulfilled');
+            expect(snapshot.data.results[0]).toStrictEqual(errorResponseBody.results[0]);
+        });
     });
 });

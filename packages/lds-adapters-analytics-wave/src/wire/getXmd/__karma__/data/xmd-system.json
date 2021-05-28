@@ -28,6 +28,7 @@
             },
             "firstDayOfWeek": -1,
             "fiscalMonthOffset": 0,
+            "format": "MM/dd/yy",
             "fullyQualifiedName": "Year",
             "isYearEndFiscalYear": true,
             "label": "Year",

@@ -18,6 +18,7 @@
         "start": "karma start",
         "test": "karma start --single-run",
         "test:compat": "karma start --single-run --compat",
+        "test:headless": "karma start --single-run --browsers ChromeHeadless",
         "test:unit": "jest",
         "test:unit:debug": "node --inspect-brk ../../node_modules/jest/bin/jest.js --config ./jest.config.js --runInBand",
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-graphql"

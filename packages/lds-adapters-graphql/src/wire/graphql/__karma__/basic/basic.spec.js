@@ -7,8 +7,10 @@ import {
     mockGetRecordNetwork,
 } from 'graphql-test-util';
 import { graphQLImperative } from 'lds-adapters-graphql';
-import { luvio } from 'ldsEngine';
+import { luvio } from 'lds-engine';
+
 import GetRecord from '../lwc/get-record';
+
 const MOCK_PREFIX = 'wire/graphql/__karma__/basic/data/';
 
 function getMock(filename) {
@@ -49,8 +51,6 @@ describe('graphql', () => {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Id,
-                                        WeakEtag,
                                         Name { value, displayValue}
                                         ...defaultRecordFields
                                     }
@@ -141,8 +141,6 @@ describe('graphql', () => {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Id,
-                                        WeakEtag,
                                         Name { value, displayValue }
                                         ...defaultRecordFields
                                     }
@@ -234,8 +232,6 @@ describe('graphql', () => {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Id,
-                                        WeakEtag,
                                         Name { value, displayValue}
                                         ...defaultRecordFields
                                     }
@@ -363,8 +359,6 @@ describe('graphql', () => {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Id,
-                                        WeakEtag,
                                         Name { value, displayValue }
                                         ...defaultRecordFields
                                     }
@@ -393,8 +387,6 @@ describe('graphql', () => {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Id,
-                                        WeakEtag,
                                         Phone { value, displayValue }
                                         ...defaultRecordFields
                                     }
@@ -541,8 +533,6 @@ describe('graphql', () => {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Id,
-                                        WeakEtag,
                                         Name { value, displayValue }
                                         ...defaultRecordFields
                                     }
@@ -571,8 +561,6 @@ describe('graphql', () => {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Id,
-                                        WeakEtag,
                                         Phone { value, displayValue }
                                         ...defaultRecordFields
                                     }
@@ -1325,8 +1313,6 @@ describe('graphql', () => {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Id,
-                                        WeakEtag,
                                         Name { value, displayValue }
                                         ...defaultRecordFields
                                     }
@@ -1355,11 +1341,7 @@ describe('graphql', () => {
                     Account(where: {Name: {like: "Account1"}}) {
                       edges {
                         node {
-                          Id,
-                          WeakEtag,
                           Owner {
-                            Id,
-                            WeakEtag,
                             Name {
                               value
                               displayValue
@@ -1507,8 +1489,6 @@ describe('graphql', () => {
                                 Account(where: { Name: { like: "Account1" } }) {
                                     edges {
                                         node {
-                                            Id,
-                                            WeakEtag,
                                             Name { value, displayValue }
                                             ...defaultRecordFields
                                         }
@@ -1623,8 +1603,6 @@ describe('graphql', () => {
                                 Account(where: { Name: { like: "Account1" } }) {
                                     edges {
                                         node {
-                                            Id,
-                                            WeakEtag,
                                             Name { value, displayValue }
                                             ...defaultRecordFields
                                         }
@@ -1741,11 +1719,7 @@ describe('graphql', () => {
                             Account(where: {Name: {like: "Add One More Account"}}) {
                                 edges {
                                     node {
-                                        Id
-                                        WeakEtag
                                         Parent {
-                                            Id
-                                            WeakEtag
                                             Name {
                                                 value
                                             }

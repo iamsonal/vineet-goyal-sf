@@ -16,9 +16,6 @@ import {
 } from '@salesforce/lds-graphql-parser';
 import { defaultRecordFieldsFragmentName, defaultRecordFieldsFragment } from '../custom/record';
 
-const RECORD_ID_FIELD = 'Id';
-const RECORD_WEAK_ETAG_FIELD = 'WeakEtag';
-
 const { keys } = Object;
 
 function serializeValueNode(valueDefinition: LuvioValueNode) {
@@ -87,42 +84,6 @@ function serializeSelections(selections: LuvioSelectionNode[] | undefined, state
     return str;
 }
 
-const RECORD_ID_SCALAR_FIELD_SELECTION: LuvioSelectionScalarFieldNode = {
-    kind: 'ScalarFieldSelection',
-    name: RECORD_ID_FIELD,
-};
-
-const RECORD_WEAK_ETAG_FIELD_SELECTION: LuvioSelectionScalarFieldNode = {
-    kind: 'ScalarFieldSelection',
-    name: RECORD_WEAK_ETAG_FIELD,
-};
-
-const REQUIRED_RECORD_FIELDS: {
-    fieldNames: string[];
-    selections: { [key: string]: LuvioSelectionScalarFieldNode };
-} = {
-    fieldNames: [RECORD_ID_FIELD, RECORD_WEAK_ETAG_FIELD],
-    selections: {
-        [RECORD_ID_FIELD]: RECORD_ID_SCALAR_FIELD_SELECTION,
-        [RECORD_WEAK_ETAG_FIELD]: RECORD_WEAK_ETAG_FIELD_SELECTION,
-    },
-};
-
-const { fieldNames: REQUIRED_FIELD_NAMES, selections: REQUIRED_RECORD_SELECTIONS } =
-    REQUIRED_RECORD_FIELDS;
-const { length: REQUIRED_RECORD_FIELDS_LEN } = REQUIRED_FIELD_NAMES;
-
-function serializeRequiredRecordFields(currentString: string, presentFields: Record<string, true>) {
-    let str = '';
-    for (let i = 0; i < REQUIRED_RECORD_FIELDS_LEN; i += 1) {
-        const fieldName = REQUIRED_FIELD_NAMES[i];
-        if (presentFields[fieldName] !== true) {
-            str = `${str}${serializeScalarFieldNode(REQUIRED_RECORD_SELECTIONS[fieldName])}`;
-        }
-    }
-    return `${str}${currentString}`;
-}
-
 function serializeRecordSelections(
     selections: LuvioSelectionNode[] | undefined,
     state: SerializeState
@@ -139,7 +100,7 @@ function serializeRecordSelections(
         str = `${str}${def}`;
     }
 
-    return serializeRequiredRecordFields(str, fields);
+    return str;
 }
 
 function serializeFieldNode(def: LuvioSelectionNode, state: SerializeState) {
@@ -174,7 +135,10 @@ function serializeCustomFieldConnection(def: LuvioSelectionCustomFieldNode, stat
     )} }`;
 }
 
-function serializeCustomFieldRecord(def: LuvioSelectionCustomFieldNode, state: SerializeState) {
+export function serializeCustomFieldRecord(
+    def: LuvioSelectionCustomFieldNode,
+    state: SerializeState
+) {
     const { name, luvioSelections } = def;
     if (state.fragments[defaultRecordFieldsFragmentName] === undefined) {
         state.fragments[defaultRecordFieldsFragmentName] = defaultRecordFieldsFragment;

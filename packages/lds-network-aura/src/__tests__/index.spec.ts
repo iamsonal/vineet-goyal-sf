@@ -4903,11 +4903,11 @@ describe('routes', () => {
         );
     });
 
-    describe('get /connect/cms/types/{contentTypeIdOrFQN}', () => {
+    describe('get /connect/cms/content-types/{contentTypeFQN}', () => {
         testControllerInput(
             {
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/cms/types/news`,
+                basePath: `/cms/content-types/news`,
             },
             [
                 'ManagedContentTypeController.getContentTypeSchema',
@@ -4918,13 +4918,13 @@ describe('routes', () => {
 
         testRejectFetchResponse({
             baseUri: CONNECT_BASE_URI,
-            basePath: `/cms/types/news`,
+            basePath: `/cms/content-types/news`,
         });
 
         testResolveResponse(
             {
                 baseUri: CONNECT_BASE_URI,
-                basePath: `/cms/types/news`,
+                basePath: `/cms/content-types/news`,
             },
             {}
         );

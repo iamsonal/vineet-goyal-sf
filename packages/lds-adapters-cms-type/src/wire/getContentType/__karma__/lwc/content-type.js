@@ -1,15 +1,15 @@
 import { LightningElement, wire, api } from 'lwc';
-import { getContentTypeInternal } from 'lds-adapters-cms-type';
+import { getContentType } from 'lds-adapters-cms-type';
 
-export default class GetContentTypeInternal extends LightningElement {
+export default class ContentType extends LightningElement {
     wirePushCount = -1;
 
-    @api contentTypeIdOrFQN;
+    @api contentTypeFQN;
 
-    @wire(getContentTypeInternal, {
-        contentTypeIdOrFQN: '$contentTypeIdOrFQN',
+    @wire(getContentType, {
+        contentTypeFQN: '$contentTypeFQN',
     })
-    onGetContentTypeInternal(results) {
+    onGetContentType(results) {
         this.data = results.data;
         this.error = results.error;
         this.wirePushCount += 1;

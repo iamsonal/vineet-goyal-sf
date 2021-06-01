@@ -9,8 +9,8 @@ const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/connect`;
 const CONTENT_TYPE_TTL = 3600000;
 
-function mockGetContentTypeInternal(config, mockData) {
-    const paramMatch = getContentTypeInternalMatcher(config);
+function mockgetContentType(config, mockData) {
+    const paramMatch = getContentTypeMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {
@@ -18,19 +18,19 @@ function mockGetContentTypeInternal(config, mockData) {
     }
 }
 
-function mockGetContentTypeInternalErrorOnce(config, mockData) {
-    const paramMatch = getContentTypeInternalMatcher(config);
+function mockgetContentTypeErrorOnce(config, mockData) {
+    const paramMatch = getContentTypeMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
-function getContentTypeInternalMatcher(config) {
-    let { contentTypeIdOrFQN } = config;
+function getContentTypeMatcher(config) {
+    let { contentTypeFQN } = config;
     return sinon.match({
         body: null,
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `${URL_BASE}/cms/types/${contentTypeIdOrFQN}`,
+        basePath: `${URL_BASE}/cms/content-types/${contentTypeFQN}`,
         queryParams: {},
     });
 }
@@ -48,8 +48,8 @@ function expireContentType() {
 }
 
 export {
-    mockGetContentTypeInternal,
-    mockGetContentTypeInternalErrorOnce,
+    mockgetContentType,
+    mockgetContentTypeErrorOnce,
     expireContentType,
     clearContentTypeCache,
 };

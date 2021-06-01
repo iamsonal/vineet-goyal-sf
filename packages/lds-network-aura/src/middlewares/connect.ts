@@ -106,7 +106,10 @@ const XMD_PATH = new RegExp(
 
 const WAVE_FOLDERS_PATH = new RegExp(`${WAVE_BASE_URI}/folders$`, 'i');
 
-const GET_CONTENT_TYPE_INTERNAL_PATH = new RegExp(`${CMS_BASE_URI}/types/([A-Z0-9_]){1,80}$`, 'i');
+const GET_CONTENT_TYPE_INTERNAL_PATH = new RegExp(
+    `${CMS_BASE_URI}/content-types/([A-Z0-9_]){1,80}$`,
+    'i'
+);
 
 const LIST_CONTENT_INTERNAL_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/managed-content/delivery/contents`,
@@ -148,7 +151,7 @@ const connect: ApiFamily = {
             controller: 'NavigationMenuController.getCommunityNavigationMenu',
         },
     },
-    getContentTypeInternal: {
+    getContentType: {
         method: 'get',
         predicate: (path: string) =>
             path.startsWith(CMS_BASE_URI) && GET_CONTENT_TYPE_INTERNAL_PATH.test(path),

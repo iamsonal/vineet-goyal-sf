@@ -1,14 +1,14 @@
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
-    mockGetContentTypeInternal,
-    mockGetContentTypeInternalErrorOnce,
+    mockgetContentType,
+    mockgetContentTypeErrorOnce,
     expireContentType,
 } from 'cms-type-test-util';
-import GetContentTypeInternal from '../lwc/get-content-type-internal';
+import ContentType from '../lwc/content-type';
 
-const MOCK_PREFIX = 'wire/getContentTypeInternal/__karma__/data/';
+const MOCK_PREFIX = 'wire/getContentType/__karma__/data/';
 const TEST_CONFIG = {
-    contentTypeIdOrFQN: 'news',
+    contentTypeFQN: 'news',
 };
 
 function getMock(filename) {
@@ -18,8 +18,8 @@ function getMock(filename) {
 describe('basic', () => {
     it('get contenttype for given contenttype fqn', async () => {
         const mock = getMock('contentType');
-        mockGetContentTypeInternal(TEST_CONFIG, mock);
-        const el = await setupElement(TEST_CONFIG, GetContentTypeInternal);
+        mockgetContentType(TEST_CONFIG, mock);
+        const el = await setupElement(TEST_CONFIG, ContentType);
         expect(el.pushCount()).toBe(1);
         expect(el.contentType).toEqual(mock);
     });
@@ -28,15 +28,15 @@ describe('basic', () => {
         const mock = getMock('contentType');
 
         // Mock network request once only
-        mockGetContentTypeInternal(TEST_CONFIG, mock);
+        mockgetContentType(TEST_CONFIG, mock);
 
-        const el = await setupElement(TEST_CONFIG, GetContentTypeInternal);
+        const el = await setupElement(TEST_CONFIG, ContentType);
         expect(el.pushCount()).toBe(1);
         expect(el.contentType).toEqual(mock);
 
         // second element should receive a value from LDS
         // even though it only mocked the network request once
-        const el2 = await setupElement(TEST_CONFIG, GetContentTypeInternal);
+        const el2 = await setupElement(TEST_CONFIG, ContentType);
         expect(el2.pushCount()).toBe(1);
         expect(el2.contentType).toEqual(mock);
     });
@@ -45,16 +45,16 @@ describe('basic', () => {
         const mock = getMock('contentType');
 
         const config2 = {
-            contentTypeIdOrFQN: 'blog',
+            contentTypeFQN: 'blog',
         };
 
-        mockGetContentTypeInternal(TEST_CONFIG, mock);
-        mockGetContentTypeInternal(config2, mock);
+        mockgetContentType(TEST_CONFIG, mock);
+        mockgetContentType(config2, mock);
 
-        const el1 = await setupElement(TEST_CONFIG, GetContentTypeInternal);
+        const el1 = await setupElement(TEST_CONFIG, ContentType);
         expect(el1.contentType).toEqual(mock);
 
-        const el2 = await setupElement(config2, GetContentTypeInternal);
+        const el2 = await setupElement(config2, ContentType);
         expect(el2.contentType).toEqual(mock);
 
         // Each element receive 1 push
@@ -65,16 +65,16 @@ describe('basic', () => {
     it('should hit network if contentType is available but expired', async () => {
         const mock = getMock('contentType');
 
-        mockGetContentTypeInternal(TEST_CONFIG, [mock, mock]);
+        mockgetContentType(TEST_CONFIG, [mock, mock]);
 
-        const el1 = await setupElement(TEST_CONFIG, GetContentTypeInternal);
+        const el1 = await setupElement(TEST_CONFIG, ContentType);
 
         expect(el1.pushCount()).toBe(1);
         expect(el1.contentType).toEqualSnapshotWithoutEtags(mock);
 
         expireContentType();
 
-        const el2 = await setupElement(TEST_CONFIG, GetContentTypeInternal);
+        const el2 = await setupElement(TEST_CONFIG, ContentType);
 
         expect(el2.pushCount()).toBe(1);
         expect(el2.contentType).toEqualSnapshotWithoutEtags(mock);
@@ -96,9 +96,9 @@ describe('basic', () => {
             ],
         };
 
-        mockGetContentTypeInternalErrorOnce(TEST_CONFIG, mock);
+        mockgetContentTypeErrorOnce(TEST_CONFIG, mock);
 
-        const el = await setupElement(TEST_CONFIG, GetContentTypeInternal);
+        const el = await setupElement(TEST_CONFIG, ContentType);
         expect(el.pushCount()).toBe(1);
         expect(el.getError().body).toEqual(mock);
     });
@@ -111,7 +111,7 @@ describe('basic', () => {
             },
         ];
 
-        mockGetContentTypeInternal(TEST_CONFIG, [
+        mockgetContentType(TEST_CONFIG, [
             {
                 reject: true,
                 status: 404,
@@ -133,11 +133,11 @@ describe('basic', () => {
             ],
         };
 
-        const elm = await setupElement(TEST_CONFIG, GetContentTypeInternal);
+        const elm = await setupElement(TEST_CONFIG, ContentType);
         expect(elm.getError()).toEqual(expectedError);
         expect(elm.getError()).toBeImmutable();
 
-        const secondElm = await setupElement(TEST_CONFIG, GetContentTypeInternal);
+        const secondElm = await setupElement(TEST_CONFIG, ContentType);
         expect(secondElm.getError()).toEqual(expectedError);
         expect(secondElm.getError()).toBeImmutable();
     });
@@ -152,7 +152,7 @@ describe('basic', () => {
             },
         ];
 
-        mockGetContentTypeInternal(TEST_CONFIG, [
+        mockgetContentType(TEST_CONFIG, [
             {
                 reject: true,
                 status: 404,
@@ -170,12 +170,12 @@ describe('basic', () => {
             body: mockError,
         };
 
-        const elm = await setupElement(TEST_CONFIG, GetContentTypeInternal);
+        const elm = await setupElement(TEST_CONFIG, ContentType);
         expect(elm.getError()).toEqual(expectedError);
 
         expireContentType();
 
-        const secondElm = await setupElement(TEST_CONFIG, GetContentTypeInternal);
+        const secondElm = await setupElement(TEST_CONFIG, ContentType);
         expect(secondElm.getError()).toBeUndefined();
         expect(secondElm.contentType).toEqual(contentTypeMock);
     });

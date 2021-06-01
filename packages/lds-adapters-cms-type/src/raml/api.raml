@@ -495,7 +495,7 @@ types:
     type: object
     properties:
       channelIds:
-        description: The target channel to publish content to.
+        description: '[Optional] The target channel to publish content to.'
         type: array
         items:
           type: string
@@ -534,17 +534,17 @@ types:
         type: string
       targetId:
         description: Target Entity Id
-        type: string
+        type: string | nil
   ManagedContentDeploymentRepresentation:
     description: Information about a Deployment
     type: object
     properties:
       createdBy:
         description: ManagedContentDeployment record creator user Id
-        type: string
+        type: string | nil
       deploymentDescription:
         description: ManagedContentDeployment Description
-        type: string
+        type: string | nil
       deploymentId:
         description: ManagedContentDeployment Entity Id
         type: string
@@ -555,16 +555,16 @@ types:
           type: ManagedContentDeploymentItemRepresentation
       deploymentName:
         description: ManagedContentDeployment Name
-        type: string
+        type: string | nil
       deploymentStatus:
         description: ManagedContentDeployment Status
-        type: string
+        type: string | nil
       lastModifiedBy:
         description: ManagedContentDeployment record Last Modified user Id
-        type: string
+        type: string | nil
       scheduledDate:
         description: ManagedContentDeployment Scheduled Date
-        type: string
+        type: string | nil
   ManagedContentDetailCollectionRepresentation:
     description: Collection of ManagedContentDetailCollection
     type: object
@@ -1369,24 +1369,30 @@ types:
       description:
         description: Text description for the ManagedContentType
         type: string
+        required: false # TODO W-8891123 Hand rolled
       developerName:
         description: Developer Name of the ManagedContentType
         type: string
-      id:
-        description: ID of the ManagedContentType
-        type: string
+        required: false # TODO W-8891123 Hand rolled
       label:
         description: Display name of the ManagedContentType
         type: string
+        required: false # TODO W-8891123 Hand rolled
       namespacePrefix:
         description: Namespace prefix for the ManagedContentType
         type: string
+        required: false # TODO W-8891123 Hand rolled
       schema:
         description: JSON Schema representation of the ManagedContentType
-        type: any # TODO hand rolled. W-8252808
+        type: object
+        properties:
+          //:
+            type: any # TODO hand rolled. TD-0100382
+        required: false # TODO W-8891123 Hand rolled
       views:
         description: Views Representing the ManagedContentType
         type: array
+        required: false # TODO W-8891123 Hand rolled
         items:
           type: ManagedContentTypeViewRepresentation
   ManagedContentTypeSearchableCollectionRepresentation:
@@ -1447,31 +1453,16 @@ types:
       namespacePrefix:
         description: Unique namespace prefix of a managed content type.
         type: string
-  ManagedContentTypeViewInfoRepresentation:
-    description: Representation of a single instance of managed content type view
-    type: object
-    properties:
-      components:
-        description: List of the components mapping to the schema $ref definitions
-        type: array
-        items:
-          type: any # TODO hand rolled. W-8252808
-      definition:
-        description: Component definition associated with this view
-        type: string
-      renderers:
-        description: Renderer overrides for the view properties
-        type: object
-        properties:
-          //:
-            type: object
   ManagedContentTypeViewRepresentation:
     description: Representation of managed content type view list
     type: object
     properties:
       view:
-        description: View associated with the ManagedContentType.
-        type: ManagedContentTypeViewInfoRepresentation
+        description: View associated with the schema
+        type: object
+        properties:
+          //:
+            type: any # TODO hand rolled. TD-0100382
       viewMode:
         description: View Mode of current view.
         type: string
@@ -1482,7 +1473,7 @@ types:
         description: View type of current view.
         type: string
         enum:
-          - LightingView
+          - LightningView
   ManagedContentUserSummaryRepresentation:
     description: Information about a user who created/modified content.
     type: object
@@ -1987,43 +1978,26 @@ types:
         application/json:
           type: ManagedContentInputRepresentation
           (oas-body-name): ManagedContentInputParam
-    /variants/{variantId}:
-      put:
-        description: Replace a managed content variant.
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: ManagedContentVariantRepresentation
-        body:
-          application/json:
-            type: ManagedContentVariantUpdateInputRepresentation
-            (oas-body-name): ManagedContentVariantInputParam
-      uriParameters:
-        variantId:
+  /contents/{contentKeyOrId}:
+    get:
+      description: Gets existing managed content for provided version.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ManagedContentDocumentRepresentation
+      queryParameters:
+        version:
+          description: An 18-character unique Salesforce identifier for the content
+            version.
           type: string
-          required: true
-    /{contentKeyOrId}:
-      get:
-        description: Gets existing managed content for provided version.
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: ManagedContentDocumentRepresentation
-        queryParameters:
-          version:
-            description: An 18-character unique Salesforce identifier for the content
-              version.
-            type: string
-            required: false
-      uriParameters:
-        contentKeyOrId:
-          description: A unique identifier or ID of a content.
-          type: string
-          required: true
+          required: false
+    uriParameters:
+      contentKeyOrId:
+        description: A unique identifier or ID of a content.
+        type: string
+        required: true
   /delivery:
     /channels/{channelId}/variants:
       post:
@@ -2508,6 +2482,60 @@ types:
           managedContentVersionId:
             type: string
             required: true
+    /content-types/{contentTypeFQN}:
+      get:
+        description: Gets the actual JSON Schema associated with the specified content
+          type fully qualified name, after transformation using the provided filters.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentTypeSchemaRepresentation
+        queryParameters:
+          includeSchemaDefinitions:
+            description: Generate Inline Schema Definitions
+            type: boolean
+            required: false
+          viewMode:
+            description: View/Edit Mode
+            type: array
+            required: false
+            items:
+              type: string
+              enum:
+                - Edit
+                - View
+              (oas-collectionFormat): csv
+      uriParameters:
+        contentTypeFQN:
+          type: string
+          required: true
+    /contents/variants/{variantId}:
+      get:
+        description: Gets a managed content variant by Id.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentVariantRepresentation
+      put:
+        description: Replace a managed content variant.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentVariantRepresentation
+        body:
+          application/json:
+            type: ManagedContentVariantUpdateInputRepresentation
+            (oas-body-name): ManagedContentVariantInputParam
+      uriParameters:
+        variantId:
+          type: string
+          required: true
     /delivery:
       /channels:
         get:
@@ -2842,36 +2870,6 @@ types:
             required: false
       uriParameters:
         deploymentId:
-          type: string
-          required: true
-    /types/{contentTypeIdOrFQN}:
-      get:
-        description: Gets the actual JSON Schema associated with the specified content
-          type id or developer name, after transformation using the provided filters.
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: ManagedContentTypeSchemaRepresentation
-        queryParameters:
-          includeSchemaDefinitions:
-            description: Generate Inline Schema Definitions
-            type: boolean
-            required: false
-            default: true
-          viewMode:
-            description: View/Edit Mode
-            type: array
-            required: false
-            items:
-              type: string
-              enum:
-                - Edit
-                - View
-              (oas-collectionFormat): csv
-      uriParameters:
-        contentTypeIdOrFQN:
           type: string
           required: true
   /communities/{communityId}/managed-content/delivery:

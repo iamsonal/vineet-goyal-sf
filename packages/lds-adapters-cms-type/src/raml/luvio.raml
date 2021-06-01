@@ -11,7 +11,7 @@ types:
     (luvio.ttl): 3600000
     (luvio.opaque): true
 
-/connect/cms/types/{contentTypeIdOrFQN}:
+/connect/cms/content-types/{contentTypeFQN}:
   get:
     (luvio.adapter):
-      name: getContentTypeInternal
+      name: getContentType

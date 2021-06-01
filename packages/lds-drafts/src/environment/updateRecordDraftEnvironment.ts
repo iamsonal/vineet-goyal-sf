@@ -3,6 +3,7 @@ import { DurableEnvironment } from '@luvio/environments';
 import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { GetRecordConfig } from '@salesforce/lds-adapters-uiapi/dist/types/src/generated/adapters/getRecord';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
+import { createLDSAction } from '../actionHandlers/LDSActionHandler';
 import {
     createBadRequestResponse,
     createDraftSynthesisErrorResponse,
@@ -161,7 +162,7 @@ export function updateRecordDraftEnvironment(
     }
 
     function enqueueRequest(request: ResourceRequest, key: string, targetId: string) {
-        return draftQueue.enqueue(request, key, targetId).then(() => {
+        return draftQueue.enqueue(createLDSAction(targetId, key, request)).then(() => {
             // TODO: [W-8195289] Draft edited records should include all fields in the Full/View layout if possible
             const fields = getRecordFieldsFromRecordRequest(request);
             if (fields === undefined) {

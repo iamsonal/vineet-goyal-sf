@@ -1,5 +1,6 @@
-import { Environment, Store } from '@luvio/engine';
+import { Environment, ResourceRequest, Store } from '@luvio/engine';
 import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
 import {
     DraftAction,
     DraftActionStatus,
@@ -65,14 +66,15 @@ describe('draft environment record utilities', () => {
         it('builds sythetic record with fields', () => {
             const timestamp = Date.now();
             const actionId = 'foo';
-            const action: DraftAction<RecordRepresentation> = {
+            const action: DraftAction<RecordRepresentation, any> = {
                 tag: STORE_KEY_DRAFT_RECORD,
                 targetId: DRAFT_RECORD_ID,
                 timestamp,
                 id: actionId,
                 metadata: {},
                 status: DraftActionStatus.Pending,
-                request: {
+                handler: LDS_ACTION_HANDLER_ID,
+                data: {
                     method: 'post',
                     body: {
                         apiName: 'Account',
@@ -334,7 +336,7 @@ describe('draft environment record utilities', () => {
 
             const result = replayDraftsOnRecord(
                 record,
-                [{ id: '123', request: { method: 'delete' } } as any],
+                [{ id: '123', data: { method: 'delete' } } as any],
                 CURRENT_USER_ID
             );
 
@@ -503,11 +505,11 @@ describe('draft environment record utilities', () => {
             expect(operations[0].type).toBe(QueueOperationType.Delete);
             expect(operations[1].type).toBe(QueueOperationType.Add);
             expect((operations[1] as any).action.request.basePath).toBe(
-                completedAction.request.basePath
+                completedAction.data.basePath
             );
             expect(operations[2].type).toBe(QueueOperationType.Delete);
             expect((operations[3] as any).action.request.basePath).toBe(
-                completedAction.request.basePath
+                completedAction.data.basePath
             );
         });
 
@@ -524,14 +526,15 @@ describe('draft environment record utilities', () => {
                 tag: draftKey,
             };
 
-            const actionWithBodyDraftReference: PendingDraftAction<unknown> = {
+            const actionWithBodyDraftReference: PendingDraftAction<unknown, ResourceRequest> = {
                 id: new Date().getUTCMilliseconds().toString(),
                 targetId: 'targetId',
                 metadata: {},
                 status: DraftActionStatus.Pending,
                 tag: record2Key,
                 timestamp: 12345,
-                request: {
+                handler: LDS_ACTION_HANDLER_ID,
+                data: {
                     baseUri: '/services/data/v53.0',
                     basePath: `/ui-api/records/${record2Id}`,
                     method: 'patch',

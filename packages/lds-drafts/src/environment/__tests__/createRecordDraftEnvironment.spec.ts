@@ -1,6 +1,7 @@
 import { HttpStatusCode } from '@luvio/engine';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
+import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
 import { DRAFT_ERROR_CODE } from '../../DraftFetchResponse';
 import { getRecordKeyForId } from '../../utils/records';
 import {
@@ -137,11 +138,12 @@ describe('draft environment tests', () => {
 
             await draftEnvironment.dispatchResourceRequest(request);
 
-            expect(draftQueue.enqueue).toBeCalledWith(
-                request,
-                assignedDraftIdStoreKey,
-                CREATE_DRAFT_RECORD_ID
-            );
+            expect(draftQueue.enqueue).toBeCalledWith({
+                data: request,
+                tag: assignedDraftIdStoreKey,
+                targetId: CREATE_DRAFT_RECORD_ID,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
         });
 
         it('throws if durable store rejects', async () => {
@@ -272,11 +274,12 @@ describe('draft environment tests', () => {
 
             await draftEnvironment.dispatchResourceRequest(request);
 
-            expect(draftQueue.enqueue).toBeCalledWith(
-                expectedRequest,
-                STORE_KEY_DRAFT_RECORD,
-                CREATE_DRAFT_RECORD_ID
-            );
+            expect(draftQueue.enqueue).toBeCalledWith({
+                data: expectedRequest,
+                tag: STORE_KEY_DRAFT_RECORD,
+                targetId: CREATE_DRAFT_RECORD_ID,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
         });
     });
 });

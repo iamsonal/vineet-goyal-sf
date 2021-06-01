@@ -6,7 +6,12 @@ import {
     DraftQueueState,
     DraftAction,
 } from '../DraftQueue';
-import { DraftActionOperationType, DraftManager, DraftQueueOperationType } from '../DraftManager';
+import {
+    DraftActionOperationType,
+    DraftManager,
+    DraftQueueItem,
+    DraftQueueOperationType,
+} from '../DraftManager';
 import {
     createDeleteDraftAction,
     createCompletedDraftAction,
@@ -15,7 +20,10 @@ import {
     createPostDraftAction,
     createUnsupportedRequestDraftAction,
     DEFAULT_TIME_STAMP,
+    createErrorRequestDraftAction,
 } from './test-utils';
+import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import { CustomActionData, CustomActionResult } from '../actionHandlers/CustomActionHandler';
 
 let globalDraftQueueListener: DraftQueueChangeListener;
 
@@ -147,7 +155,8 @@ describe('DraftManager', () => {
 
         it('throws error if Request is not supported method', async () => {
             const badRequest = createUnsupportedRequestDraftAction('12345', 'stuff');
-            mockDraftQueue.getQueueActions = () => Promise.resolve([badRequest]);
+            mockDraftQueue.getQueueActions = () =>
+                Promise.resolve([badRequest as DraftAction<RecordRepresentation, unknown>]);
 
             try {
                 await manager.getQueue();
@@ -155,6 +164,17 @@ describe('DraftManager', () => {
                 expect(error.message).toBe(
                     'get is an unsupported request method type for DraftQueue.'
                 );
+            }
+        });
+
+        it('throws error if Request is undefined', async () => {
+            const badRequest = createErrorRequestDraftAction('12345', 'stuff');
+            mockDraftQueue.getQueueActions = () => Promise.resolve([badRequest]);
+
+            try {
+                await manager.getQueue();
+            } catch (error) {
+                expect(error.message).toBe('action has no data found');
             }
         });
     });
@@ -314,7 +334,9 @@ describe('DraftManager', () => {
     describe('swap action', () => {
         it('successfully swaps actions', async () => {
             const editAction = createEditDraftAction('mock123', 'mockKey', 'hi', 12355);
-            const swapSpy = jest.fn((actionId, forActionId): Promise<DraftAction<unknown>> => {
+            const swapSpy = jest.fn((actionId, forActionId): Promise<
+                DraftAction<unknown, unknown>
+            > => {
                 expect(actionId).toBe('mockIdOne');
                 expect(forActionId).toBe('mockIdTwo');
                 return Promise.resolve(editAction);
@@ -328,7 +350,9 @@ describe('DraftManager', () => {
 
     describe('metadata', () => {
         it('calls draft queue metadata when saving', async (done) => {
-            const metadataSpy = jest.fn((actionId, metadata): Promise<DraftAction<unknown>> => {
+            const metadataSpy = jest.fn((actionId, metadata): Promise<
+                DraftAction<unknown, unknown>
+            > => {
                 expect(actionId).toBe('foo');
                 expect(metadata).toEqual({ bar: 'baz' });
                 done();
@@ -344,11 +368,80 @@ describe('DraftManager', () => {
             expect(updatedItem.metadata.bar).toBe('baz');
         });
     });
+
+    describe('addCustomAction', () => {
+        it('throws error if no handlerId exists', async () => {
+            mockDraftQueue.enqueue = jest.fn().mockRejectedValue('No handler found for abc');
+            await expect(manager.addCustomAction('abc', '1234', '1234', {})).rejects.toBe(
+                'No handler found for abc'
+            );
+        });
+
+        it('returns DraftQueueItem of added item', async () => {
+            const action: DraftAction<unknown, CustomActionData> = {
+                data: { some: 'data' },
+                handler: 'custom',
+                id: '1234',
+                metadata: {},
+                status: DraftActionStatus.Pending,
+                tag: '1234',
+                targetId: '1234',
+                timestamp: Date.now(),
+            };
+            mockDraftQueue.enqueue = jest.fn().mockResolvedValue(action);
+
+            const subject = await manager.addCustomAction(
+                action.handler,
+                action.targetId,
+                action.tag,
+                action.data
+            );
+            expect(subject).toMatchObject({
+                id: '1234',
+                metadata: {},
+                operationType: 'custom',
+                state: 'pending',
+                targetId: '1234',
+            });
+        });
+    });
+
+    describe('setCustomActionExecutor', () => {
+        it('throws error because handler id already exists', async () => {
+            mockDraftQueue.addCustomHandler = jest
+                .fn()
+                .mockRejectedValue('Unable to add handler to id: 1234 because it already exists.');
+            await expect(
+                manager.setCustomActionExecutor(
+                    '1234',
+                    (_item: DraftQueueItem, _completed: (result: CustomActionResult) => void) => {}
+                )
+            ).rejects.toBe('Unable to add handler to id: 1234 because it already exists.');
+        });
+
+        it('returns unregister function', async () => {
+            mockDraftQueue.addCustomHandler = jest.fn().mockResolvedValue(() => {});
+            const unsub = await manager.setCustomActionExecutor(
+                '1234',
+                (_item: DraftQueueItem, _completed: (result: CustomActionResult) => void) => {}
+            );
+
+            unsub();
+            expect(mockDraftQueue.removeHandler).toBeCalledTimes(1);
+            expect(mockDraftQueue.removeHandler).toBeCalledWith('1234');
+        });
+    });
 });
 
 const MockDraftQueue = jest.fn(
     () =>
         ({
+            addCustomHandler: jest.fn(),
+            addHandler: jest.fn(),
+            removeHandler: jest.fn(),
+            enqueueExternalAction: jest.fn(),
+            externalActionCompleted: jest.fn(),
+            registerExternalActionListener: jest.fn(),
             enqueue: jest.fn(),
             getActionsForTags: jest.fn(),
             processNextAction: jest.fn(),

@@ -2,6 +2,7 @@ import { Environment, ResourceRequest } from '@luvio/engine';
 import { DurableEnvironment } from '@luvio/environments';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
+import { createLDSAction } from '../actionHandlers/LDSActionHandler';
 import { createBadRequestResponse, createDeletedResponse } from '../DraftFetchResponse';
 import { ObjectCreate } from '../utils/language';
 import {
@@ -81,10 +82,13 @@ export function deleteRecordDraftEnvironment(
             }) as any;
         }
 
-        return draftQueue.enqueue(resolvedResourceRequest, key, targetId).then(() => {
-            draftDeleteSet.add(key);
-            return createDeletedResponse() as any;
-        });
+        // resolvedResourceRequest, key, targetId;
+        return draftQueue
+            .enqueue(createLDSAction(targetId, key, resolvedResourceRequest))
+            .then(() => {
+                draftDeleteSet.add(key);
+                return createDeletedResponse() as any;
+            });
     };
 
     const storeEvict: DurableEnvironment['storeEvict'] = function (key: string) {

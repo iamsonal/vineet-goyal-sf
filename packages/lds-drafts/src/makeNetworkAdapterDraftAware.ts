@@ -28,7 +28,9 @@ function applyDraftsToResponse(
         // each record because it sits at a different spot in memory
         for (let j = 0; j < retrievedRecordsLength; j++) {
             const { cacheKey, data } = records[j];
-            const drafts = actions[cacheKey] as Readonly<DraftAction<RecordRepresentation>[]>;
+            const drafts = actions[cacheKey] as Readonly<
+                DraftAction<RecordRepresentation, unknown>[]
+            >;
 
             if (drafts !== undefined && drafts.length > 0) {
                 records[j].data = replayDraftsOnRecord(data, [...drafts], userId);

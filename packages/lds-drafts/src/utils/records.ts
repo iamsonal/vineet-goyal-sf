@@ -28,6 +28,7 @@ import {
     extractRecordIdFromStoreKey,
 } from '@salesforce/lds-uiapi-record-utils';
 import { DraftIdMappingEntry, QueueOperation, QueueOperationType } from '../DraftQueue';
+import { isLDSDraftAction } from '../actionHandlers/LDSActionHandler';
 
 type DraftFields = { [key: string]: boolean | number | string | null };
 
@@ -44,6 +45,10 @@ const DEFAULT_FIELD_ID = 'Id';
 const DEFAULT_FIELD_LAST_MODIFIED_BY_ID = 'LastModifiedById';
 const DEFAULT_FIELD_LAST_MODIFIED_DATE = 'LastModifiedDate';
 const DEFAULT_FIELD_OWNER_ID = 'OwnerId';
+
+export function isDraftActionStoreRecordKey(key: string) {
+    return DRAFT_ACTION_KEY_REGEXP.test(key);
+}
 
 // TODO W-8220618 - remove this once generated RecordRepresentation has drafts node on it
 export interface DraftRecordRepresentation extends RecordRepresentation {
@@ -140,11 +145,11 @@ export function buildRecordFieldValueRepresentationsFromDraftFields(fields: Draf
  * @param createdDate A string of the date the record was created
  */
 export function buildSyntheticRecordRepresentation(
-    action: DraftAction<RecordRepresentation>,
+    action: DraftAction<RecordRepresentation, ResourceRequest>,
     userId: string
 ): DurableRecordRepresentation {
-    const { timestamp, request, targetId: recordId, tag: recordKey, id: actionId } = action;
-    const { body } = request;
+    const { timestamp, data, targetId: recordId, tag: recordKey, id: actionId } = action;
+    const { body } = data;
     const { apiName } = body;
 
     const fields = buildRecordFieldValueRepresentationsFromDraftFields(body.fields);
@@ -353,7 +358,7 @@ export function extractRecordApiNameFromStore(key: string, env: Environment): st
  */
 export function replayDraftsOnRecord<U extends DraftRecordRepresentation>(
     record: U,
-    drafts: DraftAction<RecordRepresentation>[],
+    drafts: DraftAction<RecordRepresentation, unknown>[],
     userId: string
 ): U {
     if (drafts.length === 0) {
@@ -366,7 +371,7 @@ export function replayDraftsOnRecord<U extends DraftRecordRepresentation>(
     if (draft === undefined) {
         return record;
     }
-    const method = draft.request.method;
+    const method = draft.data.method;
 
     if (method === 'post') {
         throw Error('a post draft action cannot exist on an existing record');
@@ -391,7 +396,7 @@ export function replayDraftsOnRecord<U extends DraftRecordRepresentation>(
         return record;
     }
 
-    const fields = draft.request.body.fields;
+    const fields = draft.data.body.fields;
     const draftFields = buildRecordFieldValueRepresentationsFromDraftFields(fields);
 
     const keys = ObjectKeys(draftFields);
@@ -449,8 +454,8 @@ export function isStoreRecordError(storeRecord: unknown): storeRecord is StoreRe
  * @param queue The remaining queue items
  */
 export function updateQueueOnPost(
-    completedAction: CompletedDraftAction<unknown>,
-    queue: DraftAction<unknown>[]
+    completedAction: CompletedDraftAction<unknown, unknown>,
+    queue: DraftAction<unknown, unknown>[]
 ): QueueOperation[] {
     const queueOperations: QueueOperation[] = [];
     const { response } = completedAction;
@@ -468,54 +473,61 @@ export function updateQueueOnPost(
 
     for (let i = 0; i < length; i++) {
         const queueAction = queue[i];
-        const { tag: queueActionTag, request: queueActionRequest, id: queueActionId } = queueAction;
-        const { basePath, body } = queueActionRequest;
-        const stringifiedBody = JSONStringify(body);
-        const needsReplace = basePath.search(draftId) >= 0 || stringifiedBody.search(draftId) >= 0;
+        if (isLDSDraftAction(queueAction)) {
+            const {
+                tag: queueActionTag,
+                data: queueActionRequest,
+                id: queueActionId,
+            } = queueAction;
+            const { basePath, body } = queueActionRequest;
+            const stringifiedBody = JSONStringify(body);
+            const needsReplace =
+                basePath.search(draftId) >= 0 || stringifiedBody.search(draftId) >= 0;
 
-        if (needsReplace) {
-            const queueActionKey = buildDraftDurableStoreKey(queueActionTag, queueActionId);
-            const updatedBasePath = basePath.replace(draftId, canonicalRecordId);
-            const updatedBody = stringifiedBody.replace(draftId, canonicalRecordId);
+            if (needsReplace) {
+                const queueActionKey = buildDraftDurableStoreKey(queueActionTag, queueActionId);
+                const updatedBasePath = basePath.replace(draftId, canonicalRecordId);
+                const updatedBody = stringifiedBody.replace(draftId, canonicalRecordId);
 
-            // if the action is performed on a previous draft id, we need to replace the action
-            // with a new one at the updated canonical key
-            if (queueActionTag === draftKey) {
-                const canonicalRecordKey = keyBuilderRecord({ recordId: canonicalRecordId });
+                // if the action is performed on a previous draft id, we need to replace the action
+                // with a new one at the updated canonical key
+                if (queueActionTag === draftKey) {
+                    const canonicalRecordKey = keyBuilderRecord({ recordId: canonicalRecordId });
 
-                const updatedAction = {
-                    ...queueAction,
-                    tag: canonicalRecordKey,
-                    request: {
-                        ...queueActionRequest,
-                        basePath: updatedBasePath,
-                        body: JSONParse(updatedBody),
-                    },
-                };
-                // item needs to be replaced with a new item at the new record key
-                queueOperations.push({
-                    type: QueueOperationType.Delete,
-                    key: queueActionKey,
-                });
-                queueOperations.push({
-                    type: QueueOperationType.Add,
-                    action: updatedAction,
-                });
-            } else {
-                const updatedAction = {
-                    ...queueAction,
-                    request: {
-                        ...queueActionRequest,
-                        basePath: updatedBasePath,
-                        body: JSONParse(updatedBody),
-                    },
-                };
-                // item needs to be updated
-                queueOperations.push({
-                    type: QueueOperationType.Update,
-                    key: queueActionKey,
-                    action: updatedAction,
-                });
+                    const updatedAction = {
+                        ...queueAction,
+                        tag: canonicalRecordKey,
+                        request: {
+                            ...queueActionRequest,
+                            basePath: updatedBasePath,
+                            body: JSONParse(updatedBody),
+                        },
+                    };
+                    // item needs to be replaced with a new item at the new record key
+                    queueOperations.push({
+                        type: QueueOperationType.Delete,
+                        key: queueActionKey,
+                    });
+                    queueOperations.push({
+                        type: QueueOperationType.Add,
+                        action: updatedAction,
+                    });
+                } else {
+                    const updatedAction = {
+                        ...queueAction,
+                        request: {
+                            ...queueActionRequest,
+                            basePath: updatedBasePath,
+                            body: JSONParse(updatedBody),
+                        },
+                    };
+                    // item needs to be updated
+                    queueOperations.push({
+                        type: QueueOperationType.Update,
+                        key: queueActionKey,
+                        action: updatedAction,
+                    });
+                }
             }
         }
     }
@@ -528,8 +540,10 @@ export function updateQueueOnPost(
  * and returns a mapping entry
  * @param action the completed action containing the request and response
  */
-export function createIdDraftMapping(action: CompletedDraftAction<unknown>): DraftIdMappingEntry {
-    const { response } = action as CompletedDraftAction<RecordRepresentation>;
+export function createIdDraftMapping(
+    action: CompletedDraftAction<unknown, unknown>
+): DraftIdMappingEntry {
+    const { response } = action as CompletedDraftAction<RecordRepresentation, unknown>;
     const draftKey = action.tag;
     const { id } = response.body;
     if (id === undefined) {

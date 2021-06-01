@@ -26,6 +26,7 @@ import {
     buildErrorMockPayload,
     setNetworkConnectivity,
     ConnectivityState,
+    setMockNetworkPayloads,
 } from '@luvio/adapter-test-library';
 import { ObjectKeys } from '../utils/language';
 import { DurableStoreEntry, DurableStoreEntries } from '@luvio/environments';
@@ -36,6 +37,20 @@ import {
     getRecordIdFromRecordRequest,
     getRecordKeyFromRecordRequest,
 } from '../utils/records';
+import { LDS_ACTION_HANDLER_ID } from '../actionHandlers/LDSActionHandler';
+import { ActionHandler } from '../actionHandlers/ActionHandler';
+import {
+    CustomActionExecutor,
+    CustomActionResult,
+    CustomActionResultType,
+} from '../actionHandlers/CustomActionHandler';
+
+const MockHandler: ActionHandler<string> = {
+    buildPendingAction: jest.fn(),
+    handle: jest.fn(),
+    replaceAction: jest.fn(),
+    storeOperationsForUploadedDraft: jest.fn(),
+};
 
 const DEFAULT_PATCH_REQUEST: ResourceRequest = {
     method: 'patch',
@@ -137,7 +152,12 @@ describe('DurableDraftQueue', () => {
             draftQueue.registerOnChangedListener(listener);
             const draftId = 'fooId';
 
-            await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftId, draftId);
+            await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: draftId,
+                targetId: draftId,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
         });
 
         it('starts a new action when one completes when in started state', async (done) => {
@@ -159,8 +179,18 @@ describe('DurableDraftQueue', () => {
             const draftId = 'fooId';
             const draftIdTwo = 'barId';
 
-            await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftId, draftId);
-            await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftIdTwo, draftId);
+            await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: draftId,
+                targetId: draftId,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
+            await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: draftIdTwo,
+                targetId: draftId,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             draftQueue.startQueue();
         });
 
@@ -175,7 +205,13 @@ describe('DurableDraftQueue', () => {
                 headers: {},
             };
 
-            const network = buildMockNetworkAdapter([]);
+            const args: MockPayload['networkArgs'] = {
+                method: 'patch',
+                basePath: '/blah',
+            };
+            const successPayload: MockPayload = buildSuccessMockPayload(args, {});
+
+            const network = buildMockNetworkAdapter([successPayload]);
             setNetworkConnectivity(network, ConnectivityState.Offline);
             const durableStore = new MockDurableStore();
             const draftQueue = new DurableDraftQueue(
@@ -224,7 +260,12 @@ describe('DurableDraftQueue', () => {
             };
             draftQueue.registerOnChangedListener(listener);
 
-            await draftQueue.enqueue(request, DEFAULT_TAG, 'targetId');
+            await draftQueue.enqueue({
+                data: request,
+                tag: DEFAULT_TAG,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
         });
     });
 
@@ -272,11 +313,169 @@ describe('DurableDraftQueue', () => {
             draftQueue.registerOnChangedListener(listener);
             const draftId = 'fooId';
 
-            await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftId, draftId);
+            await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: draftId,
+                targetId: draftId,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
+        });
+    });
+
+    describe('addHandler', () => {
+        let draftQueue: DurableDraftQueue;
+
+        beforeEach(() => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            draftQueue = new DurableDraftQueue(
+                durableStore,
+                network,
+                mockQueuePostHandler,
+                mockDraftIdHandler
+            );
+        });
+
+        it('it adds a handler', async () => {
+            await draftQueue.addHandler('123', MockHandler);
+
+            const subject = (draftQueue as any).handlers;
+            expect(ObjectKeys(subject).length).toBe(2);
+            expect(subject['123']).toBe(MockHandler);
+        });
+
+        it('throws if handler already exists', async () => {
+            await draftQueue.addHandler('123', MockHandler);
+            await expect(draftQueue.addHandler('123', MockHandler)).rejects.toBe(
+                'Unable to add handler to id: 123 because it already exists.'
+            );
+        });
+    });
+
+    describe('removeHandler', () => {
+        let draftQueue: DurableDraftQueue;
+
+        beforeEach(() => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            draftQueue = new DurableDraftQueue(
+                durableStore,
+                network,
+                mockQueuePostHandler,
+                mockDraftIdHandler
+            );
+        });
+
+        it('removes handler if it exists', async () => {
+            await draftQueue.addHandler('123', MockHandler);
+            expect(ObjectKeys((draftQueue as any).handlers).length).toBe(2);
+
+            await draftQueue.removeHandler('123');
+            expect(ObjectKeys((draftQueue as any).handlers).length).toBe(1);
+        });
+
+        it('does nothing if handler doesnt exist', async () => {
+            expect(ObjectKeys((draftQueue as any).handlers).length).toBe(1);
+            await draftQueue.removeHandler('123');
+            expect(ObjectKeys((draftQueue as any).handlers).length).toBe(1);
+        });
+    });
+
+    describe('addCustomHandler', () => {
+        let draftQueue: DurableDraftQueue;
+
+        beforeEach(() => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            draftQueue = new DurableDraftQueue(
+                durableStore,
+                network,
+                mockQueuePostHandler,
+                mockDraftIdHandler
+            );
+        });
+
+        it('adds custom handler to handlers', async () => {
+            const callback: CustomActionExecutor = (
+                _action: DraftAction<unknown, unknown>,
+                _completed: (result: CustomActionResult) => void
+            ) => {};
+
+            expect(ObjectKeys((draftQueue as any).handlers).length).toBe(1);
+            await draftQueue.addCustomHandler('custom', callback);
+            expect(ObjectKeys((draftQueue as any).handlers).length).toBe(2);
+            await draftQueue.addCustomHandler('custom2', callback);
+            expect(ObjectKeys((draftQueue as any).handlers).length).toBe(3);
+        });
+
+        it('rejects if handler id already exists', async () => {
+            const callback: CustomActionExecutor = (
+                _action: DraftAction<unknown, unknown>,
+                _completed: (result: CustomActionResult) => void
+            ) => {};
+
+            expect(ObjectKeys((draftQueue as any).handlers).length).toBe(1);
+            await draftQueue.addCustomHandler('custom', callback);
+            expect(ObjectKeys((draftQueue as any).handlers).length).toBe(2);
+            await expect(draftQueue.addCustomHandler('custom', callback)).rejects.toBe(
+                'Unable to add handler to id: custom because it already exists.'
+            );
+            expect(ObjectKeys((draftQueue as any).handlers).length).toBe(2);
+        });
+
+        it('gets a callback', async () => {
+            const myAction: PendingDraftAction<unknown, unknown> = {
+                data: undefined,
+                handler: 'custom',
+                id: '1234',
+                metadata: {},
+                status: DraftActionStatus.Pending,
+                tag: '1234',
+                targetId: '1234',
+                timestamp: Date.now(),
+            };
+
+            const callback: CustomActionExecutor = (
+                action: DraftAction<unknown, unknown>,
+                completed: (result: CustomActionResult) => void
+            ) => {
+                expect(action).toBe(myAction);
+                completed({
+                    id: '1234',
+                    type: CustomActionResultType.SUCCESS,
+                });
+            };
+
+            await draftQueue.addCustomHandler('custom', callback);
+            callback(myAction, (result) => {
+                expect(result).toStrictEqual({
+                    id: '1234',
+                    type: CustomActionResultType.SUCCESS,
+                });
+            });
         });
     });
 
     describe('enqueue', () => {
+        it('throws error if no handler exists for action', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(
+                durableStore,
+                network,
+                mockQueuePostHandler,
+                mockDraftIdHandler
+            );
+            await expect(
+                draftQueue.enqueue({
+                    data: {},
+                    tag: 'fooId',
+                    targetId: 'fooId',
+                    handler: 'unknown',
+                })
+            ).rejects.toBe('No handler for unknown');
+        });
+
         it('creates timestamp in the draft action when created', async () => {
             jest.spyOn(global.Date, 'now').mockImplementationOnce(() => {
                 return 12345;
@@ -292,7 +491,12 @@ describe('DurableDraftQueue', () => {
             );
             const draftId = 'fooId';
 
-            const action = await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftId, draftId);
+            const action = await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: draftId,
+                targetId: draftId,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
 
             expect(action.timestamp).toEqual(12345);
         });
@@ -308,11 +512,21 @@ describe('DurableDraftQueue', () => {
             );
             const draftId = 'fooId';
 
-            await draftQueue.enqueue(DEFAULT_POST_REQUEST, draftId, draftId);
+            await draftQueue.enqueue({
+                data: DEFAULT_POST_REQUEST,
+                tag: draftId,
+                targetId: draftId,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
 
             await expect(
-                draftQueue.enqueue(DEFAULT_POST_REQUEST, draftId, draftId)
-            ).rejects.toEqual(Error('Cannot enqueue a POST draft action with an existing tag'));
+                draftQueue.enqueue({
+                    data: DEFAULT_POST_REQUEST,
+                    tag: draftId,
+                    targetId: draftId,
+                    handler: LDS_ACTION_HANDLER_ID,
+                })
+            ).rejects.toThrowError('Cannot enqueue a POST draft action with an existing tag');
         });
         it('cannot publish draft action after a delete action is added', async () => {
             const network = buildMockNetworkAdapter([]);
@@ -325,8 +539,8 @@ describe('DurableDraftQueue', () => {
             );
             const draftId = 'fooId';
 
-            await draftQueue.enqueue(
-                {
+            await draftQueue.enqueue({
+                data: {
                     method: 'post',
                     basePath: 'blah',
                     baseUri: 'blahuri',
@@ -335,12 +549,13 @@ describe('DurableDraftQueue', () => {
                     urlParams: {},
                     headers: {},
                 },
-                draftId,
-                draftId
-            );
+                tag: draftId,
+                targetId: draftId,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
 
-            await draftQueue.enqueue(
-                {
+            await draftQueue.enqueue({
+                data: {
                     method: 'delete',
                     basePath: 'blah',
                     baseUri: 'blahuri',
@@ -349,13 +564,14 @@ describe('DurableDraftQueue', () => {
                     urlParams: {},
                     headers: {},
                 },
-                draftId,
-                draftId
-            );
+                tag: draftId,
+                targetId: draftId,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
 
             await expect(
-                draftQueue.enqueue(
-                    {
+                draftQueue.enqueue({
+                    data: {
                         method: 'patch',
                         basePath: 'blah',
                         baseUri: 'blahuri',
@@ -364,10 +580,11 @@ describe('DurableDraftQueue', () => {
                         urlParams: {},
                         headers: {},
                     },
-                    draftId,
-                    draftId
-                )
-            ).rejects.toEqual(Error('Cannot enqueue a draft action for a deleted record'));
+                    tag: draftId,
+                    targetId: draftId,
+                    handler: LDS_ACTION_HANDLER_ID,
+                })
+            ).rejects.toThrowError('Cannot enqueue a draft action for a deleted record');
         });
 
         it('calls the durable store when enqueuing', async () => {
@@ -380,7 +597,12 @@ describe('DurableDraftQueue', () => {
                 mockDraftIdHandler
             );
 
-            await draftQueue.enqueue(createPatchRequest(), DEFAULT_TAG, 'targetId');
+            await draftQueue.enqueue({
+                data: createPatchRequest(),
+                tag: DEFAULT_TAG,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             const allEntries = await durableStore.getAllEntries(DRAFT_SEGMENT);
             expect(ObjectKeys(allEntries).length).toEqual(1);
         });
@@ -395,10 +617,20 @@ describe('DurableDraftQueue', () => {
                 mockDraftIdHandler
             );
 
-            await draftStore.enqueue(createPatchRequest(), DEFAULT_TAG, 'targetId');
+            await draftStore.enqueue({
+                data: createPatchRequest(),
+                tag: DEFAULT_TAG,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             const secondPatch = createPatchRequest();
             secondPatch.body.fields.Name = 'Acme 2';
-            await draftStore.enqueue(secondPatch, DEFAULT_TAG, 'targetId');
+            await draftStore.enqueue({
+                data: secondPatch,
+                tag: DEFAULT_TAG,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             const allEntries = await durableStore.getAllEntries(DRAFT_SEGMENT);
             expect(ObjectKeys(allEntries).length).toEqual(2);
 
@@ -424,7 +656,12 @@ describe('DurableDraftQueue', () => {
             const tag = getRecordKeyFromRecordRequest(request);
             const targetId = getRecordIdFromRecordRequest(request);
 
-            const action = await draftQueue.enqueue(request, tag, targetId);
+            const action = await draftQueue.enqueue({
+                data: request,
+                tag,
+                targetId,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
 
             expect(action.targetId).toEqual(RECORD_ID);
         });
@@ -446,7 +683,12 @@ describe('DurableDraftQueue', () => {
             );
             setNetworkConnectivity(network, ConnectivityState.Offline);
 
-            await draftQueue.enqueue(createPostRequest(), DEFAULT_TAG, 'targetId');
+            await draftQueue.enqueue({
+                data: createPostRequest(),
+                tag: DEFAULT_TAG,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
 
             const actions = await draftQueue.getActionsForTags({
                 [DEFAULT_TAG]: true,
@@ -467,8 +709,18 @@ describe('DurableDraftQueue', () => {
             );
             setNetworkConnectivity(network, ConnectivityState.Offline);
 
-            await draftQueue.enqueue(createPostRequest(), DEFAULT_TAG, 'targetId');
-            await draftQueue.enqueue(createPostRequest(), 'testTagTwo', 'targetIdTwo');
+            await draftQueue.enqueue({
+                data: createPostRequest(),
+                tag: DEFAULT_TAG,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
+            await draftQueue.enqueue({
+                data: createPostRequest(),
+                tag: 'testTagTwo',
+                targetId: 'targetIdTwo',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
 
             const actions = await draftQueue.getActionsForTags({
                 [DEFAULT_TAG]: true,
@@ -596,7 +848,12 @@ describe('DurableDraftQueue', () => {
                 mockQueuePostHandler,
                 mockDraftIdHandler
             );
-            await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, DEFAULT_TAG, 'targetId');
+            await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: DEFAULT_TAG,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
 
             const allDrafts = await durableStore.getAllEntries(DRAFT_SEGMENT);
             expect(ObjectKeys(allDrafts).length).toEqual(1);
@@ -631,7 +888,12 @@ describe('DurableDraftQueue', () => {
                 mockQueuePostHandler,
                 mockDraftIdHandler
             );
-            await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, DEFAULT_TAG, 'targetId');
+            await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: DEFAULT_TAG,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
 
             const firstCallResult = await draftQueue.processNextAction();
             expect(firstCallResult).toEqual(ProcessActionResult.ACTION_SUCCEEDED);
@@ -664,7 +926,12 @@ describe('DurableDraftQueue', () => {
                 mockDraftIdHandler
             );
 
-            await draftQueue.enqueue(request, DEFAULT_TAG, 'targetId');
+            await draftQueue.enqueue({
+                data: request,
+                tag: DEFAULT_TAG,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             const result = await draftQueue.processNextAction();
 
             expect(result).toEqual(ProcessActionResult.ACTION_ERRORED);
@@ -710,7 +977,12 @@ describe('DurableDraftQueue', () => {
                 mockDraftIdHandler
             );
 
-            const { id } = await draftQueue.enqueue(request, DEFAULT_TAG, 'targetId');
+            const { id } = await draftQueue.enqueue({
+                data: request,
+                tag: DEFAULT_TAG,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             const result = await draftQueue.processNextAction();
             const entryId = buildDraftDurableStoreKey(DEFAULT_TAG, id);
 
@@ -722,7 +994,12 @@ describe('DurableDraftQueue', () => {
         });
 
         it('network error puts action back in pending', async () => {
-            const network = buildMockNetworkAdapter([]);
+            const args: MockPayload['networkArgs'] = {
+                method: 'patch',
+                basePath: '/blah',
+            };
+            const successPayload: MockPayload = buildSuccessMockPayload(args, {});
+            const network = buildMockNetworkAdapter([successPayload]);
             setNetworkConnectivity(network, ConnectivityState.Offline);
             const durableStore = new MockDurableStore();
             const draftQueue = new DurableDraftQueue(
@@ -732,10 +1009,25 @@ describe('DurableDraftQueue', () => {
                 mockDraftIdHandler
             );
 
-            const action1 = await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, 'tag1', 'targetIdOne');
+            const action1 = await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: 'tag1',
+                targetId: 'targetIdOne',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             // put a couple more actions in the queue to ensure ordering is maintained
-            await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, 'tag2', 'targetIdTwo');
-            await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, 'tag3', 'targetIdThree');
+            await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: 'tag2',
+                targetId: 'targetIdTwo',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
+            await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: 'tag3',
+                targetId: 'targetIdThree',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
 
             const result = await draftQueue.processNextAction();
 
@@ -744,9 +1036,11 @@ describe('DurableDraftQueue', () => {
             const allDrafts = await durableStore.getAllEntries(DRAFT_SEGMENT);
             const durableEntryKeys = Object.keys(allDrafts).sort();
             expect(durableEntryKeys.length).toEqual(3);
-            const actionFromDurable = allDrafts[durableEntryKeys[0]].data as DraftAction<any>;
+            const actionFromDurable = allDrafts[durableEntryKeys[0]].data as DraftAction<any, any>;
             expect(actionFromDurable.status).toEqual(DraftActionStatus.Pending);
             expect(actionFromDurable).toEqual(action1);
+
+            setNetworkConnectivity(network, ConnectivityState.Online);
         });
 
         it('processes actions in the right order', async () => {
@@ -761,8 +1055,18 @@ describe('DurableDraftQueue', () => {
 
             const firstRequest = { ...DEFAULT_PATCH_REQUEST, basePath: '/z' };
             const secondRequest = { ...DEFAULT_PATCH_REQUEST, basePath: '/a' };
-            await draftQueue.enqueue(firstRequest, 'z', 'targetIdOne');
-            await draftQueue.enqueue(secondRequest, 'a', 'targetIdTwo');
+            await draftQueue.enqueue({
+                data: firstRequest,
+                tag: 'z',
+                targetId: 'targetIdOne',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
+            await draftQueue.enqueue({
+                data: secondRequest,
+                tag: 'a',
+                targetId: 'targetIdTwo',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
 
             await draftQueue.processNextAction();
             expect(network).toBeCalledWith(firstRequest);
@@ -805,7 +1109,12 @@ describe('DurableDraftQueue', () => {
                     jest.fn().mockReturnValue(mockQueueOperations),
                     jest.fn().mockReturnValue({ canonicalKey: 'foo', draftKey: 'bar' })
                 );
-                await draftQueue.enqueue(DEFAULT_POST_REQUEST, DEFAULT_TAG, 'fooId');
+                await draftQueue.enqueue({
+                    data: DEFAULT_POST_REQUEST,
+                    tag: DEFAULT_TAG,
+                    targetId: 'fooId',
+                    handler: LDS_ACTION_HANDLER_ID,
+                });
                 const result = await draftQueue.processNextAction();
                 expect(result).toEqual(ProcessActionResult.ACTION_SUCCEEDED);
                 expect(durableStore.segments['DRAFT']['bar__DraftAction__foo']).toBeDefined();
@@ -829,7 +1138,12 @@ describe('DurableDraftQueue', () => {
                     jest.fn().mockReturnValue(mockQueueOperations),
                     jest.fn().mockReturnValue({ canonicalKey: 'foo', draftKey: 'bar' })
                 );
-                await draftQueue.enqueue(DEFAULT_POST_REQUEST, DEFAULT_TAG, 'fooId');
+                await draftQueue.enqueue({
+                    data: DEFAULT_POST_REQUEST,
+                    tag: DEFAULT_TAG,
+                    targetId: 'fooId',
+                    handler: LDS_ACTION_HANDLER_ID,
+                });
                 const result = await draftQueue.processNextAction();
                 expect(result).toEqual(ProcessActionResult.ACTION_SUCCEEDED);
                 expect(
@@ -857,14 +1171,19 @@ describe('DurableDraftQueue', () => {
                     mockQueuePostHandler,
                     mockDraftIdHandler
                 );
-                await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftId, draftId);
+                await draftQueue.enqueue({
+                    data: DEFAULT_PATCH_REQUEST,
+                    tag: draftId,
+                    targetId: draftId,
+                    handler: LDS_ACTION_HANDLER_ID,
+                });
                 await draftQueue.processNextAction();
                 expect(foundStatus).toBe(DraftActionStatus.Pending);
                 expect(foundId).toBe(draftId);
             });
 
             it('reports action as uploading while being processed in the network adapter', async () => {
-                let action: DraftAction<unknown> = undefined;
+                let action: DraftAction<unknown, unknown> = undefined;
                 const durableStore = new MockDurableStore();
                 const network = jest.fn();
                 const draftQueue = new DurableDraftQueue(
@@ -878,7 +1197,12 @@ describe('DurableDraftQueue', () => {
                     action = actions[0];
                 });
                 const draftId = 'fooId';
-                await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftId, draftId);
+                await draftQueue.enqueue({
+                    data: DEFAULT_PATCH_REQUEST,
+                    tag: draftId,
+                    targetId: draftId,
+                    handler: LDS_ACTION_HANDLER_ID,
+                });
                 await draftQueue.processNextAction();
                 expect(action).toBeDefined();
                 expect(action.status).toBe(DraftActionStatus.Uploading);
@@ -899,7 +1223,12 @@ describe('DurableDraftQueue', () => {
             const listener = jest.fn();
             draftQueue.registerOnChangedListener(listener);
             const draftId = 'fooId';
-            await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftId, draftId);
+            await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: draftId,
+                targetId: draftId,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             expect(listener).toBeCalledTimes(2);
             expect(listener.mock.calls[0][0].type).toBe(DraftQueueEventType.ActionAdding);
             expect(listener.mock.calls[1][0].type).toBe(DraftQueueEventType.ActionAdded);
@@ -914,11 +1243,12 @@ describe('DurableDraftQueue', () => {
                 mockQueuePostHandler,
                 mockDraftIdHandler
             );
-            const draftAction = await draftQueue.enqueue(
-                DEFAULT_PATCH_REQUEST,
-                DEFAULT_TAG,
-                'targetId'
-            );
+            const draftAction = await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: DEFAULT_TAG,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
 
             let deletingCalled = false;
             let deletedCalled = false;
@@ -948,7 +1278,12 @@ describe('DurableDraftQueue', () => {
             const listener = jest.fn();
             draftQueue.registerOnChangedListener(listener);
             const firstRequest = { ...DEFAULT_PATCH_REQUEST, basePath: '/z' };
-            await draftQueue.enqueue(firstRequest, 'z', 'targetId');
+            await draftQueue.enqueue({
+                data: firstRequest,
+                tag: 'z',
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             await draftQueue.processNextAction();
             expect(listener).toBeCalledTimes(5);
             expect(listener.mock.calls[0][0].type).toBe(DraftQueueEventType.ActionAdding);
@@ -960,6 +1295,11 @@ describe('DurableDraftQueue', () => {
 
         it('is called when item errors', async () => {
             const completedSpy = jest.fn();
+            const args: MockPayload['networkArgs'] = {
+                method: 'patch',
+                basePath: '/z',
+            };
+            const successPayload: MockPayload = buildSuccessMockPayload(args, {});
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftQueue = new DurableDraftQueue(
@@ -970,7 +1310,12 @@ describe('DurableDraftQueue', () => {
             );
             draftQueue.registerOnChangedListener(completedSpy);
             const firstRequest = { ...DEFAULT_PATCH_REQUEST, basePath: '/z' };
-            await draftQueue.enqueue(firstRequest, 'z', 'targetId');
+            await draftQueue.enqueue({
+                data: firstRequest,
+                tag: 'z',
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             await draftQueue.startQueue();
             expect(completedSpy).toBeCalledTimes(4);
             expect(completedSpy.mock.calls[0][0].type).toBe(DraftQueueEventType.ActionAdding);
@@ -978,6 +1323,8 @@ describe('DurableDraftQueue', () => {
             expect(completedSpy.mock.calls[2][0].type).toBe(DraftQueueEventType.ActionRunning);
             expect(completedSpy.mock.calls[3][0].type).toBe(DraftQueueEventType.ActionRetrying);
             await draftQueue.stopQueue();
+            //set a response so it isnt in a loop
+            setMockNetworkPayloads(network, [successPayload]);
         });
     });
 
@@ -990,9 +1337,11 @@ describe('DurableDraftQueue', () => {
             request: DEFAULT_PATCH_REQUEST,
             timestamp: 2,
             metadata: {},
+            status: DraftActionStatus.Pending,
+            handler: LDS_ACTION_HANDLER_ID,
         };
 
-        const setup = (testActions: DraftAction<unknown>[] = []) => {
+        const setup = (testActions: DraftAction<unknown, unknown>[] = []) => {
             const durableStore = new MockDurableStore();
             const evictSpy = jest.spyOn(durableStore, 'evictEntries');
 
@@ -1022,9 +1371,10 @@ describe('DurableDraftQueue', () => {
         });
 
         it('throws an error if the removed action is uploading', async () => {
-            const testAction: UploadingDraftAction<unknown> = {
+            const testAction: UploadingDraftAction<unknown, unknown> = {
                 ...baseAction,
                 status: DraftActionStatus.Uploading,
+                data: undefined,
             };
 
             const { draftQueue } = setup([testAction]);
@@ -1037,9 +1387,10 @@ describe('DurableDraftQueue', () => {
         });
 
         it('calls evict entries with correct durable store key', async () => {
-            const testAction: PendingDraftAction<unknown> = {
+            const testAction: PendingDraftAction<unknown, unknown> = {
                 ...baseAction,
                 status: DraftActionStatus.Pending,
+                data: DEFAULT_PATCH_REQUEST,
             };
 
             const { draftQueue, evictSpy, durableStore } = setup([testAction]);
@@ -1055,43 +1406,45 @@ describe('DurableDraftQueue', () => {
         });
 
         it('deletes related draft edits on draft-create delete', async () => {
-            const testAction1: PendingDraftAction<unknown> = {
+            const testAction1: PendingDraftAction<unknown, unknown> = {
                 ...baseAction,
                 id: '101',
                 tag: 'UiApi::RecordRepresentation:target110',
                 targetId: 'target110',
-                request: DEFAULT_POST_REQUEST,
+                data: DEFAULT_POST_REQUEST,
                 status: DraftActionStatus.Pending,
             };
-            const testAction2: PendingDraftAction<unknown> = {
+            const testAction2: PendingDraftAction<unknown, unknown> = {
                 ...baseAction,
                 id: '102',
                 tag: 'UiApi::RecordRepresentation:target110',
                 targetId: 'target110',
-                request: { ...DEFAULT_PATCH_REQUEST, basePath: '/basePath/target110' },
+                data: { ...DEFAULT_PATCH_REQUEST, basePath: '/basePath/target110' },
                 status: DraftActionStatus.Pending,
             };
-            const testAction3: PendingDraftAction<unknown> = {
+            const testAction3: PendingDraftAction<unknown, unknown> = {
                 ...baseAction,
                 id: '103',
                 tag: 'UiApi::RecordRepresentation:target110',
                 targetId: 'target110',
-                request: { ...DEFAULT_PATCH_REQUEST, basePath: '/basePath/target110' },
+                data: { ...DEFAULT_PATCH_REQUEST, basePath: '/basePath/target110' },
                 status: DraftActionStatus.Pending,
             };
-            const testAction4: PendingDraftAction<unknown> = {
+            const testAction4: PendingDraftAction<unknown, unknown> = {
                 ...baseAction,
                 id: '104',
                 tag: 'UiApi::RecordRepresentation:target140',
                 targetId: 'target140',
                 status: DraftActionStatus.Pending,
+                data: undefined,
             };
-            const testAction5: PendingDraftAction<unknown> = {
+            const testAction5: PendingDraftAction<unknown, unknown> = {
                 ...baseAction,
                 id: '105',
                 tag: 'UiApi::RecordRepresentation:target150',
                 targetId: 'target150',
                 status: DraftActionStatus.Pending,
+                data: undefined,
             };
 
             const { draftQueue, evictSpy } = setup([
@@ -1111,43 +1464,45 @@ describe('DurableDraftQueue', () => {
         });
 
         it('does not delete related draft edits on draft-edit delete', async () => {
-            const testAction1: PendingDraftAction<unknown> = {
+            const testAction1: PendingDraftAction<unknown, unknown> = {
                 ...baseAction,
                 id: '101',
                 tag: 'UiApi::RecordRepresentation:target110',
                 targetId: 'target110',
-                request: DEFAULT_POST_REQUEST,
+                data: DEFAULT_POST_REQUEST,
                 status: DraftActionStatus.Pending,
             };
-            const testAction2: PendingDraftAction<unknown> = {
+            const testAction2: PendingDraftAction<unknown, unknown> = {
                 ...baseAction,
                 id: '102',
                 tag: 'UiApi::RecordRepresentation:target110',
                 targetId: 'target110',
-                request: { ...DEFAULT_PATCH_REQUEST, basePath: '/basePath/target110' },
+                data: { ...DEFAULT_PATCH_REQUEST, basePath: '/basePath/target110' },
                 status: DraftActionStatus.Pending,
             };
-            const testAction3: PendingDraftAction<unknown> = {
+            const testAction3: PendingDraftAction<unknown, unknown> = {
                 ...baseAction,
                 id: '103',
                 tag: 'UiApi::RecordRepresentation:target110',
                 targetId: 'target110',
-                request: { ...DEFAULT_PATCH_REQUEST, basePath: '/basePath/target110' },
+                data: { ...DEFAULT_PATCH_REQUEST, basePath: '/basePath/target110' },
                 status: DraftActionStatus.Pending,
             };
-            const testAction4: PendingDraftAction<unknown> = {
+            const testAction4: PendingDraftAction<unknown, unknown> = {
                 ...baseAction,
                 id: '104',
                 tag: 'UiApi::RecordRepresentation:target140',
                 targetId: 'target140',
                 status: DraftActionStatus.Pending,
+                data: undefined,
             };
-            const testAction5: PendingDraftAction<unknown> = {
+            const testAction5: PendingDraftAction<unknown, unknown> = {
                 ...baseAction,
                 id: '105',
                 tag: 'UiApi::RecordRepresentation:target150',
                 targetId: 'target150',
                 status: DraftActionStatus.Pending,
+                data: undefined,
             };
 
             const { draftQueue, evictSpy } = setup([
@@ -1165,10 +1520,11 @@ describe('DurableDraftQueue', () => {
         });
 
         it('restarts queue if removing an errored item', async () => {
-            const errorAction: ErrorDraftAction<unknown> = {
+            const errorAction: ErrorDraftAction<unknown, unknown> = {
                 ...baseAction,
                 status: DraftActionStatus.Error,
                 error: 'some error',
+                data: DEFAULT_PATCH_REQUEST,
             };
 
             const { draftQueue, evictSpy, durableStore } = setup([errorAction]);
@@ -1195,9 +1551,19 @@ describe('DurableDraftQueue', () => {
                 mockQueuePostHandler,
                 mockDraftIdHandler
             );
-            const draftTag = 'UiApi::RecordRepresentation:Res1D505SS6iztdRYA';
-            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'targetId');
-            const actionTwo = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'targetId');
+            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const actionOne = await draftQueue.enqueue({
+                data: UPDATE_REQUEST,
+                tag: draftTag,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
+            const actionTwo = await draftQueue.enqueue({
+                data: UPDATE_REQUEST,
+                tag: draftTag,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(2);
             await draftQueue.replaceAction(actionOne.id, actionTwo.id);
@@ -1217,11 +1583,21 @@ describe('DurableDraftQueue', () => {
                 mockQueuePostHandler,
                 mockDraftIdHandler
             );
-            const draftTag = 'UiApi::RecordRepresentation:fooId';
-            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'targetId');
+            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const actionOne = await draftQueue.enqueue({
+                data: UPDATE_REQUEST,
+                tag: draftTag,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             const secondUpdate = { ...UPDATE_REQUEST };
             secondUpdate.baseUri = 'secondTestURI';
-            const actionTwo = await draftQueue.enqueue(secondUpdate, draftTag, 'targetId');
+            const actionTwo = await draftQueue.enqueue({
+                data: secondUpdate,
+                tag: draftTag,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(2);
             let deletingCalled = false;
@@ -1230,16 +1606,16 @@ describe('DurableDraftQueue', () => {
             let updatedCalled = false;
             draftQueue.registerOnChangedListener((event): Promise<void> => {
                 if (event.type === DraftQueueEventType.ActionDeleting) {
-                    expect(event.action.request).toEqual(secondUpdate);
+                    expect(event.action.data).toEqual(secondUpdate);
                     deletingCalled = true;
                 } else if (event.type === DraftQueueEventType.ActionDeleted) {
-                    expect(event.action.request).toEqual(secondUpdate);
+                    expect(event.action.data).toEqual(secondUpdate);
                     deletedCalled = true;
                 } else if (event.type === DraftQueueEventType.ActionUpdating) {
-                    expect(event.action.request).toEqual(UPDATE_REQUEST);
+                    expect(event.action.data).toEqual(UPDATE_REQUEST);
                     updatingCalled = true;
                 } else if (event.type === DraftQueueEventType.ActionUpdated) {
-                    expect(event.action.request).toEqual(secondUpdate);
+                    expect(event.action.data).toEqual(secondUpdate);
                     updatedCalled = true;
                 }
                 return Promise.resolve();
@@ -1264,8 +1640,18 @@ describe('DurableDraftQueue', () => {
                 mockDraftIdHandler
             );
             const draftTag = 'UiAPI::RecordRepresentation::fooId';
-            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'targetId');
-            await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
+            const actionOne = await draftQueue.enqueue({
+                data: UPDATE_REQUEST,
+                tag: draftTag,
+                targetId: 'targetId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
+            await draftQueue.enqueue({
+                data: UPDATE_REQUEST,
+                tag: draftTag,
+                targetId: 'fooId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(2);
             let result = draftQueue.replaceAction(actionOne.id, actionOne.id);
@@ -1281,9 +1667,14 @@ describe('DurableDraftQueue', () => {
                 mockDraftIdHandler
             );
             const draftTag = 'UiAPI::RecordRepresentation::fooId';
-            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
+            const actionOne = await draftQueue.enqueue({
+                data: UPDATE_REQUEST,
+                tag: draftTag,
+                targetId: 'fooId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             const result = draftQueue.replaceAction(actionOne.id, 'blah');
-            await expect(result).rejects.toBe('One or both actions does not exist');
+            await expect(result).rejects.toThrowError('One or both actions does not exist');
         });
 
         it('rejects on non-matching target ids', async () => {
@@ -1297,12 +1688,24 @@ describe('DurableDraftQueue', () => {
             );
             const draftTag = 'UiAPI::RecordRepresentation::fooId';
             const draftTagTwo = 'UiAPI::RecordRepresentation::barId';
-            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
-            const actionTwo = await draftQueue.enqueue(UPDATE_REQUEST, draftTagTwo, 'barId');
+            const actionOne = await draftQueue.enqueue({
+                data: UPDATE_REQUEST,
+                tag: draftTag,
+                targetId: 'fooId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
+            const actionTwo = await draftQueue.enqueue({
+                data: UPDATE_REQUEST,
+                tag: draftTagTwo,
+                targetId: 'barId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(2);
             const result = draftQueue.replaceAction(actionOne.id, actionTwo.id);
-            await expect(result).rejects.toBe('Cannot swap actions targeting different targets');
+            await expect(result).rejects.toThrowError(
+                'Cannot swap actions targeting different targets'
+            );
         });
 
         it('does not swap an in progress draft', async () => {
@@ -1312,24 +1715,26 @@ describe('DurableDraftQueue', () => {
             const secondId = '1';
             const firstDurableId = 'firstDurable';
             const secondDurableId = 'secondDurable';
-            const inProgressAction: PendingDraftAction<unknown> = {
+            const inProgressAction: PendingDraftAction<unknown, unknown> = {
                 id: firstId,
                 targetId: firstId,
                 status: DraftActionStatus.Pending,
-                request: createPatchRequest(),
+                data: createPatchRequest(),
                 tag: 'UiAPI::RecordRepresentation::fooId',
                 timestamp: Date.now(),
                 metadata: {},
+                handler: LDS_ACTION_HANDLER_ID,
             };
             const firstEntry: DurableStoreEntry = { data: inProgressAction };
-            const pendingAction: PendingDraftAction<unknown> = {
+            const pendingAction: PendingDraftAction<unknown, unknown> = {
                 id: secondId,
                 targetId: secondId,
                 status: DraftActionStatus.Pending,
-                request: createPatchRequest(),
+                data: createPatchRequest(),
                 tag: 'UiAPI::RecordRepresentation::fooId',
                 timestamp: Date.now(),
                 metadata: {},
+                handler: LDS_ACTION_HANDLER_ID,
             };
             const secondEntry: DurableStoreEntry = { data: pendingAction };
             let entries: DurableStoreEntries<unknown> = { [firstDurableId]: firstEntry };
@@ -1349,7 +1754,9 @@ describe('DurableDraftQueue', () => {
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(2);
             let result = draftQueue.replaceAction(actions[0].id, actions[1].id);
-            await expect(result).rejects.toBe('Cannot replace an draft action that is uploading');
+            await expect(result).rejects.toThrowError(
+                'Cannot replace an draft action that is uploading'
+            );
         });
 
         it('rejects when replacing with a non-pending action', async () => {
@@ -1359,25 +1766,27 @@ describe('DurableDraftQueue', () => {
             const secondId = '1';
             const firstDurableId = 'firstDurable';
             const secondDurableId = 'secondDurable';
-            const pendingAction: PendingDraftAction<unknown> = {
+            const pendingAction: PendingDraftAction<unknown, unknown> = {
                 id: firstId,
                 targetId: firstId,
                 status: DraftActionStatus.Pending,
-                request: createPatchRequest(),
+                data: createPatchRequest(),
                 tag: 'UiAPI::RecordRepresentation::fooId',
                 timestamp: Date.now(),
                 metadata: {},
+                handler: LDS_ACTION_HANDLER_ID,
             };
             const firstEntry: DurableStoreEntry = { data: pendingAction };
-            const nonPendingAction: ErrorDraftAction<unknown> = {
+            const nonPendingAction: ErrorDraftAction<unknown, unknown> = {
                 id: secondId,
                 targetId: secondId,
                 status: DraftActionStatus.Error,
-                request: createPatchRequest(),
+                data: createPatchRequest(),
                 tag: 'UiAPI::RecordRepresentation::fooId',
                 timestamp: Date.now(),
                 error: {},
                 metadata: {},
+                handler: LDS_ACTION_HANDLER_ID,
             };
             const secondEntry: DurableStoreEntry = { data: nonPendingAction };
             let entries: DurableStoreEntries<unknown> = { [firstDurableId]: firstEntry };
@@ -1394,7 +1803,7 @@ describe('DurableDraftQueue', () => {
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(2);
             let result = draftQueue.replaceAction(actions[0].id, actions[1].id);
-            await expect(result).rejects.toBe('Cannot replace with a non-pending action');
+            await expect(result).rejects.toThrowError('Cannot replace with a non-pending action');
         });
 
         it('sets a replaced item to pending', async () => {
@@ -1404,27 +1813,29 @@ describe('DurableDraftQueue', () => {
             const secondId = '1';
             const firstDurableId = 'firstDurable';
             const secondDurableId = 'secondDurable';
-            const inProgressAction: ErrorDraftAction<unknown> = {
+            const inProgressAction: ErrorDraftAction<unknown, unknown> = {
                 id: firstId,
                 targetId: firstId,
                 status: DraftActionStatus.Error,
-                request: createPatchRequest(),
-                tag: 'UiApi::RecordRepresentation:fooId',
+                data: createPatchRequest(),
+                tag: 'UiAPI::RecordRepresentation::fooId',
                 timestamp: Date.now(),
                 metadata: {},
                 error: {},
+                handler: LDS_ACTION_HANDLER_ID,
             };
             const firstEntry: DurableStoreEntry = { data: inProgressAction };
             let secondPatchRequest = createPatchRequest();
             secondPatchRequest.body.fields.Name = 'Second Name';
-            const pendingAction: PendingDraftAction<unknown> = {
+            const pendingAction: PendingDraftAction<unknown, unknown> = {
                 id: secondId,
                 targetId: secondId,
                 status: DraftActionStatus.Pending,
-                request: secondPatchRequest,
-                tag: 'UiApi::RecordRepresentation:fooId',
+                data: secondPatchRequest,
+                tag: 'UiAPI::RecordRepresentation::fooId',
                 timestamp: Date.now(),
                 metadata: {},
+                handler: LDS_ACTION_HANDLER_ID,
             };
             const secondEntry: DurableStoreEntry = { data: pendingAction };
             let entries: DurableStoreEntries<unknown> = { [firstDurableId]: firstEntry };
@@ -1440,13 +1851,18 @@ describe('DurableDraftQueue', () => {
             );
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(2);
-            const actionToReplace = actions[0];
-            expect(actionToReplace.request.body.fields.Name).toBe('Acme');
-            const replacingAction = actions[1];
-            expect(replacingAction.request.body.fields.Name).toBe('Second Name');
-            let result = await draftQueue.replaceAction(actionToReplace.id, replacingAction.id);
+            const actionToReplace = actions[0] as DraftAction<unknown, ResourceRequest>;
+            expect(actionToReplace.data.body.fields.Name).toBe('Acme');
+
+            const replacingAction = actions[1] as DraftAction<unknown, ResourceRequest>;
+            expect(replacingAction.data.body.fields.Name).toBe('Second Name');
+
+            let result = (await draftQueue.replaceAction(
+                actionToReplace.id,
+                replacingAction.id
+            )) as DraftAction<unknown, ResourceRequest>;
             expect(result.status).toBe(DraftActionStatus.Pending);
-            expect(result.request.body.fields.Name).toBe('Second Name');
+            expect(result.data.body.fields.Name).toBe('Second Name');
         });
 
         it('does not start queue while replacing an action', async () => {
@@ -1473,9 +1889,19 @@ describe('DurableDraftQueue', () => {
                 return Promise.resolve();
             });
             durableStore.evictEntries = evictSpy;
-            const draftTag = 'UiApi::RecordRepresentation:fooId';
-            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
-            const actionTwo = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
+            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const actionOne = await draftQueue.enqueue({
+                data: UPDATE_REQUEST,
+                tag: draftTag,
+                targetId: 'fooId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
+            const actionTwo = await draftQueue.enqueue({
+                data: UPDATE_REQUEST,
+                tag: draftTag,
+                targetId: 'fooId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(2);
             await draftQueue.replaceAction(actionOne.id, actionTwo.id);
@@ -1519,9 +1945,19 @@ describe('DurableDraftQueue', () => {
             let startSpy = jest.fn(() => {
                 return Promise.resolve();
             });
-            const draftTag = 'UiApi::RecordRepresentation:fooId';
-            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
-            const actionTwo = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
+            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const actionOne = await draftQueue.enqueue({
+                data: UPDATE_REQUEST,
+                tag: draftTag,
+                targetId: 'fooId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
+            const actionTwo = await draftQueue.enqueue({
+                data: UPDATE_REQUEST,
+                tag: draftTag,
+                targetId: 'fooId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(2);
             await draftQueue.replaceAction(actionOne.id, actionTwo.id);
@@ -1540,15 +1976,25 @@ describe('DurableDraftQueue', () => {
                 mockQueuePostHandler,
                 mockDraftIdHandler
             );
-            let secondReplace: Promise<DraftAction<unknown>>;
+            let secondReplace: Promise<DraftAction<unknown, unknown>>;
             let evictSpy = jest.fn(() => {
                 secondReplace = draftQueue.replaceAction('foo', 'bar');
                 return Promise.resolve();
             });
             durableStore.evictEntries = evictSpy;
-            const draftTag = 'UiApi::RecordRepresentation:fooId';
-            const actionOne = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
-            const actionTwo = await draftQueue.enqueue(UPDATE_REQUEST, draftTag, 'fooId');
+            const draftTag = 'UiAPI::RecordRepresentation::fooId';
+            const actionOne = await draftQueue.enqueue({
+                data: UPDATE_REQUEST,
+                tag: draftTag,
+                targetId: 'fooId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
+            const actionTwo = await draftQueue.enqueue({
+                data: UPDATE_REQUEST,
+                tag: draftTag,
+                targetId: 'fooId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(2);
             await draftQueue.replaceAction(actionOne.id, actionTwo.id);
@@ -1569,28 +2015,30 @@ describe('DurableDraftQueue', () => {
                 mockDraftIdHandler
             );
 
-            const errorAction: ErrorDraftAction<unknown> = {
+            const errorAction: ErrorDraftAction<unknown, unknown> = {
                 id: '123456',
                 targetId: 'testTargetId',
-                tag: DEFAULT_TAG,
-                request: DEFAULT_PATCH_REQUEST,
+                tag: 'testActionTag',
+                data: DEFAULT_PATCH_REQUEST,
                 timestamp: 2,
                 metadata: {},
                 status: DraftActionStatus.Error,
                 error: 'mock error',
+                handler: LDS_ACTION_HANDLER_ID,
             };
 
-            const pendingAction: PendingDraftAction<unknown> = {
+            const pendingAction: PendingDraftAction<unknown, unknown> = {
                 id: '654321',
                 targetId: 'testTargetId',
-                tag: DEFAULT_TAG,
-                request: DEFAULT_PATCH_REQUEST,
+                tag: 'testActionTag',
+                data: DEFAULT_PATCH_REQUEST,
                 timestamp: 2,
                 metadata: {},
                 status: DraftActionStatus.Pending,
+                handler: LDS_ACTION_HANDLER_ID,
             };
 
-            const entries: DurableStoreEntries<DraftAction<unknown>> = {
+            const entries: DurableStoreEntries<DraftAction<unknown, unknown>> = {
                 [`${errorAction.tag}__DraftAction__${errorAction.id}`]: { data: errorAction },
                 [`${pendingAction.tag}__DraftAction__${pendingAction.id}`]: { data: pendingAction },
             };
@@ -1618,7 +2066,12 @@ describe('DurableDraftQueue', () => {
                 mockDraftIdHandler
             );
             const draftId = 'fooId';
-            let action = await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftId, 'fooId');
+            let action = (await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: draftId,
+                targetId: 'fooId',
+                handler: LDS_ACTION_HANDLER_ID,
+            })) as DraftAction<unknown, unknown>;
             expect(ObjectKeys(action.metadata).length).toBe(0);
 
             const newMetadata = { foo: 'bar', anotherItem: 'anotherValue' };
@@ -1647,7 +2100,12 @@ describe('DurableDraftQueue', () => {
                 mockDraftIdHandler
             );
             const draftId = 'fooId';
-            let action = await draftQueue.enqueue(request, draftId, 'fooId');
+            let action = (await draftQueue.enqueue({
+                data: request,
+                tag: draftId,
+                targetId: 'fooId',
+                handler: LDS_ACTION_HANDLER_ID,
+            })) as DraftAction<unknown, unknown>;
             expect(ObjectKeys(action.metadata).length).toBe(0);
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(1);
@@ -1668,7 +2126,12 @@ describe('DurableDraftQueue', () => {
                 mockDraftIdHandler
             );
             const draftId = 'fooId';
-            let action = await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftId, 'fooId');
+            let action = await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: draftId,
+                targetId: 'fooId',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             expect(ObjectKeys(action.metadata).length).toBe(0);
 
             const newMetadata = { foo: ['bar', 'baz'] } as any;
@@ -1714,7 +2177,12 @@ describe('DurableDraftQueue', () => {
                 }
                 return Promise.resolve();
             });
-            let action = await draftQueue.enqueue(DEFAULT_PATCH_REQUEST, draftId, draftId);
+            let action = (await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: draftId,
+                targetId: draftId,
+                handler: LDS_ACTION_HANDLER_ID,
+            })) as DraftAction<unknown, unknown>;
             expect(ObjectKeys(action.metadata).length).toBe(0);
 
             await draftQueue.setMetadata(action.id, newMetadata);
@@ -1724,129 +2192,6 @@ describe('DurableDraftQueue', () => {
             expect(action.metadata).toEqual(newMetadata);
             expect(updatedCalled).toBe(true);
             expect(updatingCalled).toBe(true);
-        });
-    });
-
-    describe('storeOperationsForUploadedDraft', () => {
-        const addQueueOperation: QueueOperation = {
-            type: QueueOperationType.Add,
-            action: {
-                id: 'foo',
-                tag: 'bar',
-            } as any,
-        };
-
-        const updateQueueOperation: QueueOperation = {
-            type: QueueOperationType.Update,
-            action: {
-                id: 'buz',
-                tag: 'baz',
-            } as any,
-            key: 'baz__DraftAction__buz',
-        };
-
-        const deleteQueueOperation: QueueOperation = {
-            type: QueueOperationType.Delete,
-            key: 'one__DraftAction__1',
-        };
-
-        const evictOperation = {
-            ids: ['myTag__DraftAction__100'],
-            segment: 'DRAFT',
-            type: 'evictEntries',
-        };
-
-        const evictOperation2 = {
-            ids: ['one__DraftAction__1'],
-            segment: 'DRAFT',
-            type: 'evictEntries',
-        };
-
-        const setOperation = {
-            entries: {
-                bar__DraftAction__foo: {
-                    data: { id: 'foo', tag: 'bar' },
-                },
-                baz__DraftAction__buz: {
-                    data: { id: 'buz', tag: 'baz' },
-                },
-            },
-            segment: 'DRAFT',
-            type: 'setEntries',
-        };
-
-        const draftIdMappingOperation = {
-            entries: {
-                ['DraftIdMapping::draft_1::canonical_1']: {
-                    data: {
-                        canonicalKey: 'canonical_1',
-                        draftKey: 'draft_1',
-                    },
-                    expiration: {
-                        fresh: expect.any(Number),
-                        stale: expect.any(Number),
-                    },
-                },
-            },
-            segment: 'DRAFT_ID_MAPPINGS',
-            type: 'setEntries',
-        };
-
-        const createAction = { id: '100', tag: 'myTag', request: { method: 'post' } };
-        const updateAction = { id: '100', tag: 'myTag', request: { method: 'patch' } };
-
-        const setupDraftQueue = (queueOperations: QueueOperation[] = []) => {
-            const durableStore = new MockDurableStore();
-
-            const draftQueue = new DurableDraftQueue(
-                durableStore,
-                buildMockNetworkAdapter([]),
-                jest.fn().mockReturnValue(queueOperations),
-                jest.fn().mockReturnValue({ canonicalKey: 'canonical_1', draftKey: 'draft_1' })
-            );
-
-            return draftQueue;
-        };
-
-        it('produces mapping IDs and evict for create action', async () => {
-            const storeOperations = setupDraftQueue().storeOperationsForUploadedDraft(
-                [],
-                createAction as any
-            );
-
-            expect(storeOperations).toEqual([draftIdMappingOperation, evictOperation]);
-        });
-
-        it('does not produce mapping IDs for update action', async () => {
-            const storeOperations = setupDraftQueue().storeOperationsForUploadedDraft(
-                [],
-                updateAction as any
-            );
-
-            expect(storeOperations).toEqual([evictOperation]);
-        });
-
-        it('does not include QueueOperations for an update', async () => {
-            const storeOperations = setupDraftQueue([
-                addQueueOperation,
-            ]).storeOperationsForUploadedDraft([], updateAction as any);
-
-            expect(storeOperations).toEqual([evictOperation]);
-        });
-
-        it('does include QueueOperations for a create', async () => {
-            const storeOperations = setupDraftQueue([
-                addQueueOperation,
-                updateQueueOperation,
-                deleteQueueOperation,
-            ]).storeOperationsForUploadedDraft([], createAction as any);
-
-            expect(storeOperations).toEqual([
-                setOperation,
-                evictOperation2,
-                draftIdMappingOperation,
-                evictOperation,
-            ]);
         });
     });
 });

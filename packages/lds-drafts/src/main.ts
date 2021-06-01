@@ -10,6 +10,8 @@ export {
     ProcessActionResult,
     DraftActionMap,
     DraftQueueChangeListener,
+    Action,
+    DraftActionMetadata,
 } from './DraftQueue';
 export { makeNetworkAdapterDraftAware } from './makeNetworkAdapterDraftAware';
 export { updateQueueOnPost, createIdDraftMapping } from './utils/records';
@@ -20,3 +22,5 @@ export {
     DraftActionOperationType,
     DraftQueueItem,
 } from './DraftManager';
+export { ActionHandler } from './actionHandlers/ActionHandler';
+export { CustomActionExecutor } from './actionHandlers/CustomActionHandler';

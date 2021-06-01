@@ -1,4 +1,6 @@
-import { ResourceRequest, FetchResponse } from '@luvio/engine';
+import { FetchResponse } from '@luvio/engine';
+import { ActionHandler } from './actionHandlers/ActionHandler';
+import { CustomActionExecutor } from './actionHandlers/CustomActionHandler';
 
 export enum DraftActionStatus {
     Pending = 'pending',
@@ -7,53 +9,65 @@ export enum DraftActionStatus {
     Completed = 'completed',
 }
 
+export interface Action<Data> {
+    targetId: string;
+    tag: string;
+    handler: string;
+    data: Data;
+}
+
 export type DraftActionMetadata = { [key: string]: string };
-interface BaseDraftAction<T> {
+interface BaseDraftAction<Response, Data> {
     status: DraftActionStatus;
     id: string;
     targetId: string;
     tag: string;
-    request: ResourceRequest;
     /** Timestamp as unix epoch time */
     timestamp: number;
     metadata: DraftActionMetadata;
+    data: Data;
+    handler: string;
 }
 
-export interface CompletedDraftAction<T> extends BaseDraftAction<T> {
+export interface CompletedDraftAction<Response, Data> extends BaseDraftAction<Response, Data> {
     status: DraftActionStatus.Completed;
-    response: FetchResponse<T>;
+    response: FetchResponse<Response>;
 }
 
-export interface PendingDraftAction<T> extends BaseDraftAction<T> {
+export interface PendingDraftAction<Response, Data> extends BaseDraftAction<Response, Data> {
     status: DraftActionStatus.Pending;
 }
 
-export interface ErrorDraftAction<T> extends BaseDraftAction<T> {
+export interface ErrorDraftAction<Response, Data> extends BaseDraftAction<Response, Data> {
     status: DraftActionStatus.Error;
     error: any;
 }
 
-export interface UploadingDraftAction<T> extends BaseDraftAction<T> {
+export interface UploadingDraftAction<Response, Data> extends BaseDraftAction<Response, Data> {
     status: DraftActionStatus.Uploading;
 }
 
-export function isDraftCompleted<T>(draft: BaseDraftAction<T>): draft is CompletedDraftAction<T> {
+export function isDraftCompleted<Response, Data>(
+    draft: BaseDraftAction<Response, Data>
+): draft is CompletedDraftAction<Response, Data> {
     return draft.status === DraftActionStatus.Completed;
 }
 
-export function isDraftError<T>(draft: BaseDraftAction<T>): draft is ErrorDraftAction<T> {
+export function isDraftError<Response, Data>(
+    draft: BaseDraftAction<Response, Data>
+): draft is ErrorDraftAction<Response, Data> {
     return draft.status === DraftActionStatus.Error;
 }
 
-export type DraftAction<T> =
-    | CompletedDraftAction<T>
-    | PendingDraftAction<T>
-    | ErrorDraftAction<T>
-    | UploadingDraftAction<T>;
+export type DraftAction<Response, Data> =
+    | CompletedDraftAction<Response, Data>
+    | PendingDraftAction<Response, Data>
+    | ErrorDraftAction<Response, Data>
+    | UploadingDraftAction<Response, Data>;
 
 export type DraftQueueChangeListener = (event: DraftQueueEvent) => Promise<void>;
 
-export type DraftActionMap = { [tag: string]: Readonly<DraftAction<unknown>>[] };
+export type DraftActionMap = { [tag: string]: Readonly<DraftAction<unknown, unknown>>[] };
 
 export enum ProcessActionResult {
     // non-2xx network error, requires user intervention
@@ -73,6 +87,9 @@ export enum ProcessActionResult {
 
     // queue is blocked on an error that requires user intervention
     BLOCKED_ON_ERROR = 'BLOCKED_ON_ERROR',
+
+    //waiting for user to execute custom action
+    CUSTOM_ACTION_WAITING = 'CUSTOM_ACTION_WAITING',
 }
 
 export type ObjectAsSet = { [key: string]: true };
@@ -146,42 +163,42 @@ export enum DraftQueueEventType {
 
 export interface DraftQueueAddEvent {
     type: DraftQueueEventType.ActionAdded | DraftQueueEventType.ActionAdding;
-    action: PendingDraftAction<unknown>;
+    action: PendingDraftAction<unknown, unknown>;
 }
 
 export interface DraftQueueDeleteEvent {
     type: DraftQueueEventType.ActionDeleted | DraftQueueEventType.ActionDeleting;
-    action: DraftAction<unknown>;
+    action: DraftAction<unknown, unknown>;
 }
 
 export interface DraftQueueCompleteEvent {
     type: DraftQueueEventType.ActionCompleting | DraftQueueEventType.ActionCompleted;
-    action: CompletedDraftAction<unknown>;
+    action: CompletedDraftAction<unknown, unknown>;
 }
 
 export interface DraftQueueActionRunningEvent {
     type: DraftQueueEventType.ActionRunning;
-    action: UploadingDraftAction<unknown>;
+    action: UploadingDraftAction<unknown, unknown>;
 }
 
 export interface DraftQueueActionFailedEvent {
     type: DraftQueueEventType.ActionFailed;
-    action: ErrorDraftAction<unknown>;
+    action: ErrorDraftAction<unknown, unknown>;
 }
 
 export interface DraftQueueActionRetryEvent {
     type: DraftQueueEventType.ActionRetrying;
-    action: PendingDraftAction<unknown>;
+    action: PendingDraftAction<unknown, unknown>;
 }
 
 export interface DraftQueueActionUpdatingEvent {
     type: DraftQueueEventType.ActionUpdating;
-    action: DraftAction<unknown>;
+    action: DraftAction<unknown, unknown>;
 }
 
 export interface DraftQueueActionUpdatedEvent {
     type: DraftQueueEventType.ActionUpdated;
-    action: DraftAction<unknown>;
+    action: DraftAction<unknown, unknown>;
 }
 
 export type DraftQueueEvent =
@@ -202,7 +219,7 @@ export enum QueueOperationType {
 
 interface AddQueueOperation {
     type: QueueOperationType.Add;
-    action: DraftAction<unknown>;
+    action: DraftAction<unknown, unknown>;
 }
 
 interface DeleteQueueOperation {
@@ -213,7 +230,7 @@ interface DeleteQueueOperation {
 interface UpdateQueueOperation {
     type: QueueOperationType.Update;
     key: string;
-    action: DraftAction<unknown>;
+    action: DraftAction<unknown, unknown>;
 }
 
 export interface DraftIdMappingEntry {
@@ -226,12 +243,30 @@ export type QueueOperation = UpdateQueueOperation | AddQueueOperation | DeleteQu
 export interface DraftQueue {
     /**
      * Enqueues a ResourceRequest into the DraftQueue
-     * @param request The resource request to enqueue
-     * @param tag The tag to associate the resource request with. This tag can be used to query all draft actions associated with it
-     * @param targetId The unique id of the target of this draft action
+     * @param Action The action to process in the queue
      * @returns A promise including the action created for the request
      */
-    enqueue<T>(request: ResourceRequest, tag: string, targetId: string): Promise<DraftAction<T>>;
+    enqueue<Response, Data>(action: Action<Data>): Promise<DraftAction<Response, Data>>;
+
+    /**
+     * add a new handler to the draft queue to process the data in the actions
+     * @param id identifier to the handler
+     * @param handler ActionHandler to process action
+     */
+    addHandler<Data>(id: string, handler: ActionHandler<Data>): Promise<void>;
+
+    /**
+     * Creates a ActionHandler<CustomActionData> with a callback to let the DraftQueue know when it has been processed
+     * @param id identifier of the handler
+     * @param executor callback to inform DraftQueue it is complete
+     */
+    addCustomHandler(id: string, executor: CustomActionExecutor): Promise<void>;
+
+    /**
+     * Removes an added ActionHandler
+     * @param id identifier of the handler
+     */
+    removeHandler(id: string): Promise<void>;
 
     /**
      * Retrieves ordered actions for all requested tags
@@ -255,7 +290,7 @@ export interface DraftQueue {
     /**
      * Get the current list of draft actions in queue
      */
-    getQueueActions(): Promise<DraftAction<unknown>[]>;
+    getQueueActions(): Promise<DraftAction<unknown, unknown>[]>;
 
     /** The current state of the DraftQueue */
     getQueueState(): DraftQueueState;
@@ -275,7 +310,7 @@ export interface DraftQueue {
      * @param actionId The id of the draft action to replace
      * @param withActionId The id of the draft action that will replace the other
      */
-    replaceAction(actionId: string, withActionId: string): Promise<DraftAction<unknown>>;
+    replaceAction(actionId: string, withActionId: string): Promise<DraftAction<unknown, unknown>>;
 
     /** Set the draft queue state to Started and process the next item */
     startQueue(): Promise<void>;
@@ -290,5 +325,8 @@ export interface DraftQueue {
      * @param actionId The id of the draft action to set metadata on
      * @param metadata The metadata to set on the specified action
      */
-    setMetadata(actionId: string, metadata: DraftActionMetadata): Promise<DraftAction<unknown>>;
+    setMetadata(
+        actionId: string,
+        metadata: DraftActionMetadata
+    ): Promise<DraftAction<unknown, unknown>>;
 }

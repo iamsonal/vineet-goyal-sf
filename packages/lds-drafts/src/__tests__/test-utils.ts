@@ -1,4 +1,4 @@
-import { HttpStatusCode } from '@luvio/engine';
+import { HttpStatusCode, ResourceRequest } from '@luvio/engine';
 import { DurableStore } from '@luvio/environments';
 import {
     FieldValueRepresentation,
@@ -6,6 +6,7 @@ import {
     RecordRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
 import { buildRecordFieldStoreKey } from '@salesforce/lds-uiapi-record-utils';
+import { LDS_ACTION_HANDLER_ID } from '../actionHandlers/LDSActionHandler';
 
 import {
     DraftAction,
@@ -143,7 +144,7 @@ export function createEditDraftAction(
     recordKey: string,
     nameValue: string = DEFAULT_NAME_FIELD_VALUE,
     timestamp: number = DEFAULT_TIME_STAMP
-): PendingDraftAction<RecordRepresentation> {
+): PendingDraftAction<RecordRepresentation, ResourceRequest> {
     const newDraftId = generateUniqueDraftActionId(createdDraftIds);
     createdDraftIds.push(newDraftId);
     return {
@@ -152,7 +153,8 @@ export function createEditDraftAction(
         status: DraftActionStatus.Pending,
         tag: recordKey,
         timestamp: timestamp,
-        request: {
+        handler: LDS_ACTION_HANDLER_ID,
+        data: {
             baseUri: '/services/data/v53.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'patch',
@@ -171,7 +173,7 @@ export function createPostDraftAction(
     nameValue: string = DEFAULT_NAME_FIELD_VALUE,
     apiName: string = DEFAULT_API_NAME,
     timestamp: number = DEFAULT_TIME_STAMP
-): DraftAction<RecordRepresentation> {
+): DraftAction<RecordRepresentation, ResourceRequest> {
     const newDraftId = generateUniqueDraftActionId(createdDraftIds);
     createdDraftIds.push(newDraftId);
     return {
@@ -180,7 +182,8 @@ export function createPostDraftAction(
         status: DraftActionStatus.Pending,
         tag: recordKey,
         timestamp: timestamp,
-        request: {
+        handler: LDS_ACTION_HANDLER_ID,
+        data: {
             baseUri: '/services/data/v53.0',
             basePath: `/ui-api/records`,
             method: 'post',
@@ -197,7 +200,7 @@ export function createDeleteDraftAction(
     recordId: string,
     recordKey: string,
     timestamp: number = DEFAULT_TIME_STAMP
-): DraftAction<RecordRepresentation> {
+): DraftAction<RecordRepresentation, ResourceRequest> {
     const newDraftId = generateUniqueDraftActionId(createdDraftIds);
     createdDraftIds.push(newDraftId);
     return {
@@ -206,7 +209,8 @@ export function createDeleteDraftAction(
         status: DraftActionStatus.Pending,
         tag: recordKey,
         timestamp: timestamp,
-        request: {
+        handler: LDS_ACTION_HANDLER_ID,
+        data: {
             baseUri: '/services/data/v53.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'delete',
@@ -223,7 +227,7 @@ export function createErrorDraftAction(
     recordId: string,
     recordKey: string,
     timestamp: number = DEFAULT_TIME_STAMP
-): ErrorDraftAction<RecordRepresentation> {
+): ErrorDraftAction<RecordRepresentation, ResourceRequest> {
     const newDraftId = generateUniqueDraftActionId(createdDraftIds);
     createdDraftIds.push(newDraftId);
     return {
@@ -239,7 +243,8 @@ export function createErrorDraftAction(
         },
         tag: recordKey,
         timestamp: timestamp,
-        request: {
+        handler: LDS_ACTION_HANDLER_ID,
+        data: {
             baseUri: '/services/data/v53.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'delete',
@@ -256,7 +261,7 @@ export function createCompletedDraftAction(
     recordId: string,
     recordKey: string,
     timestamp: number = DEFAULT_TIME_STAMP
-): CompletedDraftAction<RecordRepresentation> {
+): CompletedDraftAction<RecordRepresentation, ResourceRequest> {
     const newDraftId = generateUniqueDraftActionId(createdDraftIds);
     createdDraftIds.push(newDraftId);
     return {
@@ -272,7 +277,8 @@ export function createCompletedDraftAction(
         },
         tag: recordKey,
         timestamp: timestamp,
-        request: {
+        handler: LDS_ACTION_HANDLER_ID,
+        data: {
             baseUri: '/services/data/v53.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'delete',
@@ -318,14 +324,15 @@ export function createUnsupportedRequestDraftAction(
     recordId: string,
     recordKey: string,
     timestamp: number = DEFAULT_TIME_STAMP
-): DraftAction<RecordRepresentation> {
+): DraftAction<RecordRepresentation, ResourceRequest> {
     return {
         id: new Date().getUTCMilliseconds().toString(),
         status: DraftActionStatus.Pending,
         tag: recordKey,
         timestamp: timestamp,
         targetId: recordId,
-        request: {
+        handler: LDS_ACTION_HANDLER_ID,
+        data: {
             baseUri: '/services/data/v53.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'get',
@@ -335,6 +342,24 @@ export function createUnsupportedRequestDraftAction(
             headers: {},
         },
         metadata: {},
+    };
+}
+
+export function createErrorRequestDraftAction(
+    recordId: string,
+    recordKey: string,
+    timestamp: number = DEFAULT_TIME_STAMP
+): ErrorDraftAction<RecordRepresentation, unknown> {
+    return {
+        id: new Date().getUTCMilliseconds().toString(),
+        status: DraftActionStatus.Error,
+        tag: recordKey,
+        timestamp: timestamp,
+        targetId: recordId,
+        handler: LDS_ACTION_HANDLER_ID,
+        data: undefined,
+        metadata: {},
+        error: '',
     };
 }
 

@@ -1,3 +1,5 @@
+import { CustomActionResult } from './actionHandlers/CustomActionHandler';
+import { isLDSDraftAction } from './actionHandlers/LDSActionHandler';
 import {
     DraftActionStatus,
     DraftQueue,
@@ -6,6 +8,7 @@ import {
     DraftQueueState,
     DraftQueueEvent,
     DraftQueueEventType,
+    DraftActionMetadata,
 } from './DraftQueue';
 import { ArrayIsArray, JSONStringify } from './utils/language';
 
@@ -20,6 +23,10 @@ export interface DraftManagerState {
 }
 
 export type DraftQueueItemMetadata = { [key: string]: string };
+export type DraftManagerCustomActionExecutor = (
+    item: DraftQueueItem,
+    completed: (result: CustomActionResult) => void
+) => void;
 
 /**
  * An item in the draft queue that loosely maps to
@@ -65,6 +72,7 @@ export enum DraftActionOperationType {
     Create = 'create',
     Update = 'update',
     Delete = 'delete',
+    Custom = 'custom',
 }
 
 export enum DraftQueueOperationType {
@@ -92,19 +100,27 @@ export declare type DraftQueueListener = (
  * valid method type for DraftQueue or else it is undefined.
  * @param action
  */
-function getOperationTypeFrom(action: DraftAction<unknown>): DraftActionOperationType {
-    switch (action.request.method) {
-        case 'put':
-        case 'patch':
-            return DraftActionOperationType.Update;
-        case 'post':
-            return DraftActionOperationType.Create;
-        case 'delete':
-            return DraftActionOperationType.Delete;
-        default:
-            throw new Error(
-                `${action.request.method} is an unsupported request method type for DraftQueue.`
-            );
+function getOperationTypeFrom(action: DraftAction<unknown, unknown>): DraftActionOperationType {
+    if (isLDSDraftAction(action)) {
+        if (action.data !== undefined && action.data.method !== undefined) {
+            switch (action.data.method) {
+                case 'put':
+                case 'patch':
+                    return DraftActionOperationType.Update;
+                case 'post':
+                    return DraftActionOperationType.Create;
+                case 'delete':
+                    return DraftActionOperationType.Delete;
+                default:
+                    throw new Error(
+                        `${action.data.method} is an unsupported request method type for DraftQueue.`
+                    );
+            }
+        } else {
+            throw new Error(`action has no data found`);
+        }
+    } else {
+        return DraftActionOperationType.Custom;
     }
 }
 
@@ -120,7 +136,6 @@ function toQueueState(queue: DraftQueue): (states: DraftQueueItem[]) => DraftMan
 export class DraftManager {
     private draftQueue: DraftQueue;
     private listeners: DraftQueueListener[] = [];
-
     constructor(draftQueue: DraftQueue) {
         this.draftQueue = draftQueue;
 
@@ -158,6 +173,30 @@ export class DraftManager {
             default:
                 throw Error('Unsupported event type');
         }
+    }
+
+    /**
+     * Enqueue a custom action on the DraftQueue for a handler
+     * @param handler the handler's id
+     * @param targetId
+     * @param tag - the key to group with in durable store
+     * @param metadata
+     * @returns
+     */
+    addCustomAction(
+        handler: string,
+        targetId: string,
+        tag: string,
+        metadata: DraftActionMetadata
+    ): Promise<DraftQueueItem> {
+        return this.draftQueue
+            .enqueue({
+                data: metadata,
+                handler,
+                targetId,
+                tag,
+            })
+            .then(this.buildDraftQueueItem);
     }
 
     /**
@@ -206,7 +245,29 @@ export class DraftManager {
         };
     }
 
-    private buildDraftQueueItem(action: DraftAction<unknown>): DraftQueueItem {
+    /**
+     * Creates a custom action handler for the given handler
+     * @param handlerId
+     * @param executor
+     * @returns
+     */
+    setCustomActionExecutor(
+        handlerId: string,
+        executor: DraftManagerCustomActionExecutor
+    ): Promise<() => Promise<void>> {
+        return this.draftQueue
+            .addCustomHandler(handlerId, (action, completed) => {
+                executor(this.buildDraftQueueItem(action), completed);
+            })
+            .then(() => {
+                return () => {
+                    this.draftQueue.removeHandler(handlerId);
+                    return Promise.resolve();
+                };
+            });
+    }
+
+    private buildDraftQueueItem(action: DraftAction<unknown, unknown>): DraftQueueItem {
         const operationType = getOperationTypeFrom(action);
         const { id, status, timestamp, targetId, metadata } = action;
         const item: DraftQueueItem = {

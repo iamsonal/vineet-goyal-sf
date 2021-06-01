@@ -3,6 +3,7 @@ import { NimbusDraftQueue } from '../NimbusDraftQueue';
 import { DraftQueue as DraftQueueProxy } from '@mobileplatform/nimbus-plugin-lds';
 import { JSONStringify } from '../utils/language';
 import { DraftAction, DraftActionStatus } from '@salesforce/lds-drafts';
+import { LDS_ACTION_HANDLER_ID } from '@salesforce/lds-drafts/src/actionHandlers/LDSActionHandler';
 
 export function mockNimbusDraftQueueGlobal() {
     const mock: DraftQueueProxy = {
@@ -34,14 +35,15 @@ const resourceRequest: ResourceRequest = {
     urlParams: { id: '123' },
 };
 
-const draftAction: DraftAction<any> = {
+const draftAction: DraftAction<any, ResourceRequest> = {
     status: DraftActionStatus.Pending,
     id: 'foo',
     targetId: 'fooId',
     tag: 'foo',
-    request: resourceRequest,
+    data: resourceRequest,
     timestamp: 12345,
     metadata: {},
+    handler: LDS_ACTION_HANDLER_ID,
 };
 
 describe('NimbusDraftQueue', () => {
@@ -52,7 +54,12 @@ describe('NimbusDraftQueue', () => {
             const nimbusQueue = new NimbusDraftQueue();
             const tag = 'foo';
             const targetId = 'fooId';
-            nimbusQueue.enqueue(resourceRequest, tag, targetId);
+            nimbusQueue.enqueue({
+                data: resourceRequest,
+                tag,
+                targetId,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             expect(nimbusMock.enqueue).toBeCalledTimes(1);
             expect((nimbusMock.enqueue as jest.Mock<any>).mock.calls[0][0]).toEqual(
                 JSONStringify(resourceRequest)
@@ -79,7 +86,12 @@ describe('NimbusDraftQueue', () => {
             const nimbusQueue = new NimbusDraftQueue();
             const tag = 'foo';
             const targetId = 'fooId';
-            const action = await nimbusQueue.enqueue(resourceRequest, tag, targetId);
+            const action = await nimbusQueue.enqueue({
+                data: resourceRequest,
+                tag,
+                targetId,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             expect(action).toEqual(draftAction);
         });
 
@@ -96,9 +108,14 @@ describe('NimbusDraftQueue', () => {
                     }
                 );
             const nimbusQueue = new NimbusDraftQueue();
-            await expect(nimbusQueue.enqueue(resourceRequest, 'foo', 'fooId')).rejects.toEqual(
-                error
-            );
+            await expect(
+                nimbusQueue.enqueue({
+                    data: resourceRequest,
+                    tag: 'foo',
+                    targetId: 'fooId',
+                    handler: LDS_ACTION_HANDLER_ID,
+                })
+            ).rejects.toEqual(error);
         });
     });
 

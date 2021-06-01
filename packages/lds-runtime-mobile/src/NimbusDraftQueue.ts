@@ -1,7 +1,6 @@
 // so eslint doesn't complain about nimbus
 /* global __nimbus */
 
-import { ResourceRequest } from '@luvio/engine';
 import {
     DraftAction,
     DraftQueue,
@@ -9,8 +8,11 @@ import {
     ProcessActionResult,
     DraftQueueState,
     DraftQueueChangeListener,
+    Action,
+    DraftActionMetadata,
+    ActionHandler,
+    CustomActionExecutor,
 } from '@salesforce/lds-drafts';
-import { DraftActionMetadata } from '@salesforce/lds-drafts/dist/DraftQueue';
 import { JSONParse, JSONStringify, ObjectKeys } from './utils/language';
 
 /**
@@ -21,15 +23,16 @@ import { JSONParse, JSONStringify, ObjectKeys } from './utils/language';
  * to a concrete implementation running in jscore.
  */
 export class NimbusDraftQueue implements DraftQueue {
-    enqueue<T>(request: ResourceRequest, tag: string, targetId: string): Promise<DraftAction<T>> {
-        const serializedRequest = JSONStringify(request);
+    enqueue<Response, Data>(action: Action<Data>): Promise<DraftAction<Response, Data>> {
+        const { data, tag, targetId } = action;
+        const serializedRequest = JSONStringify(data);
         return new Promise((resolve, reject) => {
             __nimbus.plugins.LdsDraftQueue.enqueue(
                 serializedRequest,
                 tag,
                 targetId,
                 (serializedAction) => {
-                    const response = JSONParse(serializedAction) as DraftAction<T>;
+                    const response = JSONParse(serializedAction) as DraftAction<Response, Data>;
                     resolve(response);
                 },
                 (serializedError) => {
@@ -65,7 +68,7 @@ export class NimbusDraftQueue implements DraftQueue {
         return Promise.reject('Cannot call processNextAction from the NimbusDraftQueue');
     }
 
-    getQueueActions(): Promise<DraftAction<unknown>[]> {
+    getQueueActions(): Promise<DraftAction<unknown, unknown>[]> {
         return Promise.reject('Cannot call getQueueActions from the NimbusDraftQueue');
     }
 
@@ -85,11 +88,29 @@ export class NimbusDraftQueue implements DraftQueue {
         return Promise.reject('Cannot call stopQueue from the NimbusDraftQueue');
     }
 
-    replaceAction(_actionId: string, _withActionId: string): Promise<DraftAction<unknown>> {
+    replaceAction(
+        _actionId: string,
+        _withActionId: string
+    ): Promise<DraftAction<unknown, unknown>> {
         return Promise.reject('Cannot call replaceAction from the NimbusDraftQueue');
     }
 
-    setMetadata(_actionId: string, _metadata: DraftActionMetadata): Promise<DraftAction<unknown>> {
+    setMetadata(
+        _actionId: string,
+        _metadata: DraftActionMetadata
+    ): Promise<DraftAction<unknown, unknown>> {
+        return Promise.reject('Cannot call setMetadata from the NimbusDraftQueue');
+    }
+
+    addHandler<Data>(_id: string, _handler: ActionHandler<Data>): Promise<void> {
+        return Promise.reject('Cannot call setMetadata from the NimbusDraftQueue');
+    }
+
+    addCustomHandler(_id: string, _executor: CustomActionExecutor): Promise<void> {
+        return Promise.reject('Cannot call setMetadata from the NimbusDraftQueue');
+    }
+
+    removeHandler(_id: string): Promise<void> {
         return Promise.reject('Cannot call setMetadata from the NimbusDraftQueue');
     }
 }

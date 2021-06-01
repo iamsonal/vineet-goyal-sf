@@ -1,3 +1,4 @@
+import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
 import {
     createDeleteRequest,
     mockDurableStoreResponse,
@@ -28,7 +29,12 @@ describe('draft environment tests', () => {
                 mockDurableStoreResponse(durableStore);
                 const request = createDeleteRequest();
                 await draftEnvironment.dispatchResourceRequest(request);
-                expect(draftQueue.enqueue).toBeCalledWith(request, STORE_KEY_RECORD, RECORD_ID);
+                expect(draftQueue.enqueue).toBeCalledWith({
+                    data: request,
+                    tag: STORE_KEY_RECORD,
+                    targetId: RECORD_ID,
+                    handler: LDS_ACTION_HANDLER_ID,
+                });
             });
         });
     });

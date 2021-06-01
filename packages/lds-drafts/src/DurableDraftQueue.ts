@@ -15,57 +15,53 @@ import {
     UploadingDraftAction,
     QueueOperation,
     DraftIdMappingEntry,
-    QueueOperationType,
     DraftActionMetadata,
+    Action,
+    isDraftError,
 } from './DraftQueue';
-import { ResourceRequest, NetworkAdapter, FetchResponse } from '@luvio/engine';
+import { NetworkAdapter, FetchResponse } from '@luvio/engine';
 import { ObjectKeys } from './utils/language';
-import {
-    DurableStore,
-    DurableStoreEntries,
-    DurableStoreEntry,
-    DurableStoreOperation,
-    DurableStoreOperationType,
-} from '@luvio/environments';
+import { DurableStore, DurableStoreEntries, DurableStoreEntry } from '@luvio/environments';
 import { buildDraftDurableStoreKey } from './utils/records';
+import { CustomActionExecutor, customActionHandler } from './actionHandlers/CustomActionHandler';
+import {
+    isLDSDraftAction,
+    ldsActionHandler,
+    LDS_ACTION_HANDLER_ID,
+} from './actionHandlers/LDSActionHandler';
+import { ActionHandler } from './actionHandlers/ActionHandler';
 
 export const DRAFT_SEGMENT = 'DRAFT';
 export const DRAFT_ID_MAPPINGS_SEGMENT = 'DRAFT_ID_MAPPINGS';
-
-// retain draft id mappings for 30 days
-const MAPPING_TTL = 30 * 24 * 60 * 60 * 1000;
-
-function createDraftMappingEntryKey(draftKey: string, canonicalKey: string) {
-    return `DraftIdMapping::${draftKey}::${canonicalKey}`;
-}
 
 /**
  * Returns an array of keys for DraftActions that should be deleted, since the draft-create that they
  * are related to is being deleted.
  */
 function getRelatedDraftKeysForDelete(
-    deletedAction: DraftAction<unknown>,
-    queue: DraftAction<unknown>[]
+    deletedAction: DraftAction<unknown, unknown>,
+    queue: DraftAction<unknown, unknown>[]
 ): string[] {
     const relatedKeysToDelete: string[] = [];
     // only look to delete related drafts of deleted draft-creates
-    if (deletedAction.request.method !== 'post') {
-        return relatedKeysToDelete;
-    }
+    if (isLDSDraftAction(deletedAction)) {
+        if (deletedAction.data.method !== 'post') {
+            return relatedKeysToDelete;
+        }
+        const deletedActionTargetId = deletedAction.targetId;
+        const { length } = queue;
 
-    const deletedActionTargetId = deletedAction.targetId;
-    const { length } = queue;
+        for (let i = 0; i < length; i++) {
+            const queueAction = queue[i];
+            const { tag, id, targetId } = queueAction;
+            // a related draft action needs to be set for deletion if its targetId is the same as the
+            // deleted action's targetId.  Also check that the queueAction is not the deletedAction itself.
+            const needsDelete = targetId === deletedActionTargetId && queueAction !== deletedAction;
 
-    for (let i = 0; i < length; i++) {
-        const queueAction = queue[i];
-        const { tag, id, targetId } = queueAction;
-        // a related draft action needs to be set for deletion if its targetId is the same as the
-        // deleted action's targetId.  Also check that the queueAction is not the deletedAction itself.
-        const needsDelete = targetId === deletedActionTargetId && queueAction !== deletedAction;
-
-        if (needsDelete) {
-            const draftKey = buildDraftDurableStoreKey(tag, id);
-            relatedKeysToDelete.push(draftKey);
+            if (needsDelete) {
+                const draftKey = buildDraftDurableStoreKey(tag, id);
+                relatedKeysToDelete.push(draftKey);
+            }
         }
     }
 
@@ -99,24 +95,20 @@ export function generateUniqueDraftActionId(existingIds: string[]) {
     return newId.toString();
 }
 
-function isErrorFetchResponse<T>(error: unknown): error is FetchResponse<T> {
-    return typeof error === 'object' && error !== null && 'status' in error;
-}
-
 /**
  * Returns a list of queue actions that should be taken after a POST action is successfully
  * uploaded
  */
-type QueuePostHandler = (
-    completedPost: CompletedDraftAction<unknown>,
-    queue: DraftAction<unknown>[]
+export type QueuePostHandler = (
+    completedPost: CompletedDraftAction<unknown, unknown>,
+    queue: DraftAction<unknown, unknown>[]
 ) => QueueOperation[];
 
 /**
  * Extracts a mapping of a draft key to a canonical key given a completed draft action
  */
-type CreateDraftIdMappingHandler = (
-    completedPost: CompletedDraftAction<unknown>
+export type CreateDraftIdMappingHandler = (
+    completedPost: CompletedDraftAction<unknown, unknown>
 ) => DraftIdMappingEntry;
 
 export class DurableDraftQueue implements DraftQueue {
@@ -124,15 +116,14 @@ export class DurableDraftQueue implements DraftQueue {
     private minimumRetryInterval: number = 250;
     private maximumRetryInterval: number = 32000;
     private durableStore: DurableStore;
-    private networkAdapter: NetworkAdapter;
     private draftQueueChangedListeners: DraftQueueChangeListener[] = [];
     private state = DraftQueueState.Stopped;
     private userState = DraftQueueState.Stopped;
     private processingAction?: Promise<ProcessActionResult>;
-    private updateQueueOnPostCompletion: QueuePostHandler;
-    private createDraftIdMapping: CreateDraftIdMappingHandler;
-    private replacingAction?: Promise<DraftAction<unknown>>;
+    private replacingAction?: Promise<DraftAction<unknown, unknown>>;
     private uploadingActionId?: String = undefined;
+
+    private handlers: { [id: string]: ActionHandler<unknown> } = {};
 
     constructor(
         store: DurableStore,
@@ -141,9 +132,39 @@ export class DurableDraftQueue implements DraftQueue {
         createDraftIdMapping: CreateDraftIdMappingHandler
     ) {
         this.durableStore = store;
-        this.networkAdapter = network;
-        this.updateQueueOnPostCompletion = updateQueueOnPostCompletion;
-        this.createDraftIdMapping = createDraftIdMapping;
+
+        this.addHandler(
+            LDS_ACTION_HANDLER_ID,
+            ldsActionHandler(
+                network,
+                updateQueueOnPostCompletion,
+                createDraftIdMapping,
+                this.actionCompleted.bind(this),
+                this.actionFailed.bind(this)
+            )
+        );
+    }
+
+    addHandler<Data>(id: string, handler: ActionHandler<Data>) {
+        if (this.handlers[id] !== undefined) {
+            return Promise.reject(`Unable to add handler to id: ${id} because it already exists.`);
+        }
+        this.handlers[id] = handler;
+        return Promise.resolve();
+    }
+
+    removeHandler(id: string) {
+        delete this.handlers[id];
+        return Promise.resolve();
+    }
+
+    addCustomHandler(id: string, executor: CustomActionExecutor) {
+        const handler = customActionHandler(
+            executor,
+            this.actionCompleted.bind(this),
+            this.actionFailed.bind(this)
+        );
+        return this.addHandler(id, handler);
     }
 
     getQueueState(): DraftQueueState {
@@ -189,21 +210,11 @@ export class DurableDraftQueue implements DraftQueue {
         return Promise.resolve();
     }
 
-    actionsForTag(tag: string, queue: DraftAction<unknown>[]): DraftAction<unknown>[] {
-        return queue.filter((action) => action.tag === tag);
-    }
-
-    deleteActionsForTag(tag: string, queue: DraftAction<unknown>[]): DraftAction<unknown>[] {
-        return this.actionsForTag(tag, queue).filter(
-            (action) => action.request.method === 'delete'
-        );
-    }
-
-    getQueueActions(): Promise<DraftAction<unknown>[]> {
+    getQueueActions(): Promise<DraftAction<unknown, unknown>[]> {
         return this.durableStore
-            .getAllEntries<DraftAction<unknown>>(DRAFT_SEGMENT)
+            .getAllEntries<DraftAction<unknown, unknown>>(DRAFT_SEGMENT)
             .then((durableEntries) => {
-                const queue: DraftAction<unknown>[] = [];
+                const queue: DraftAction<unknown, unknown>[] = [];
                 if (durableEntries === undefined) {
                     return queue;
                 }
@@ -234,42 +245,34 @@ export class DurableDraftQueue implements DraftQueue {
             });
     }
 
-    enqueue<T>(request: ResourceRequest, tag: string, targetId: string): Promise<DraftAction<T>> {
+    enqueue<Response, Data>(action: Action<Data>): Promise<DraftAction<Response, Data>> {
         return this.getQueueActions().then((queue) => {
-            if (request.method === 'post' && this.actionsForTag(tag, queue).length > 0) {
-                throw new Error('Cannot enqueue a POST draft action with an existing tag');
+            const handler = this.handlers[action.handler] as ActionHandler<Data>;
+            if (handler === undefined) {
+                return Promise.reject(`No handler for ${action.handler}`);
             }
 
-            if (this.deleteActionsForTag(tag, queue).length > 0) {
-                throw new Error('Cannot enqueue a draft action for a deleted record');
-            }
-
-            const id = generateUniqueDraftActionId(queue.map((a) => a.id));
+            const pendingAction = handler.buildPendingAction(action, queue);
+            const { tag, id } = pendingAction;
             const durableStoreId = buildDraftDurableStoreKey(tag, id);
-            const action: PendingDraftAction<T> = {
-                id,
-                targetId,
-                status: DraftActionStatus.Pending,
-                request,
-                tag,
-                timestamp: Date.now(),
-                metadata: {},
+
+            const entry: DurableStoreEntry<DraftAction<Response, Data>> = { data: pendingAction };
+            const entries: DurableStoreEntries<DraftAction<Response, Data>> = {
+                [durableStoreId]: entry,
             };
-            const entry: DurableStoreEntry<DraftAction<T>> = { data: action };
-            const entries: DurableStoreEntries<DraftAction<T>> = { [durableStoreId]: entry };
             this.notifyChangedListeners({
                 type: DraftQueueEventType.ActionAdding,
-                action: action,
+                action: pendingAction,
             });
             return this.durableStore.setEntries(entries, DRAFT_SEGMENT).then(() => {
                 this.notifyChangedListeners({
                     type: DraftQueueEventType.ActionAdded,
-                    action: action,
+                    action: pendingAction,
                 });
                 if (this.state === DraftQueueState.Started) {
                     this.processNextAction();
                 }
-                return action;
+                return pendingAction;
             });
         });
     }
@@ -304,6 +307,56 @@ export class DurableDraftQueue implements DraftQueue {
         };
     }
 
+    actionCompleted(action: CompletedDraftAction<unknown, unknown>) {
+        // notify that consumers that this action is completed and about to be removed from the draft queue
+        return this.notifyChangedListeners({
+            type: DraftQueueEventType.ActionCompleting,
+            action,
+        })
+            .then(() => this.getQueueActions())
+            .then((queue) =>
+                this.handlers[action.handler].storeOperationsForUploadedDraft(queue, action)
+            )
+            .then((operations) => this.durableStore.batchOperations(operations))
+            .then(() => {
+                this.retryIntervalMilliseconds = 0;
+                this.uploadingActionId = undefined;
+                // process action success
+                return this.notifyChangedListeners({
+                    type: DraftQueueEventType.ActionCompleted,
+                    action,
+                }).then(() => {
+                    if (this.state === DraftQueueState.Started) {
+                        this.processNextAction();
+                    }
+                });
+            });
+    }
+
+    actionFailed(action: DraftAction<unknown, unknown>, retry: boolean) {
+        this.uploadingActionId = undefined;
+        if (retry) {
+            this.state = DraftQueueState.Waiting;
+            return this.notifyChangedListeners({
+                type: DraftQueueEventType.ActionRetrying,
+                action: action as PendingDraftAction<unknown, unknown>,
+            }).then(() => {
+                this.scheduleRetry();
+            });
+        } else if (isDraftError(action)) {
+            return this.handleServerError(action, action.error);
+        }
+        return Promise.resolve();
+    }
+
+    handle(action: DraftAction<unknown, unknown>): Promise<ProcessActionResult> {
+        const handler = this.handlers[action.handler];
+        if (handler === undefined) {
+            return Promise.reject(`No handler for ${action.handler}.`);
+        }
+        return handler.handle(action);
+    }
+
     processNextAction(): Promise<ProcessActionResult> {
         if (this.processingAction !== undefined) {
             return this.processingAction;
@@ -314,8 +367,7 @@ export class DurableDraftQueue implements DraftQueue {
                 this.processingAction = undefined;
                 return ProcessActionResult.NO_ACTION_TO_PROCESS;
             }
-
-            const { status, id, request } = action;
+            const { status, id } = action;
 
             if (status === DraftActionStatus.Error) {
                 this.state = DraftQueueState.Error;
@@ -338,111 +390,46 @@ export class DurableDraftQueue implements DraftQueue {
 
             this.notifyChangedListeners({
                 type: DraftQueueEventType.ActionRunning,
-                action: action as UploadingDraftAction<unknown>,
+                action: action as UploadingDraftAction<unknown, unknown>,
             });
 
-            return this.networkAdapter(request)
-                .then(this.handleDraftUploaded(action as UploadingDraftAction<unknown>))
-                .catch((err: unknown) => {
-                    this.uploadingActionId = undefined;
-                    // if the error is a FetchResponse shape then it's a bad request
-                    if (isErrorFetchResponse(err)) {
-                        return this.handleServerError(action, err);
-                    }
-
-                    // if we got here then it's a network error,
-                    if (this.state === DraftQueueState.Stopped) {
-                        return ProcessActionResult.NETWORK_ERROR;
-                    }
-
-                    return this.handleNetworkError(action);
-                });
+            return this.handle(action);
         });
         return this.processingAction;
     }
 
-    private handleDraftUploaded =
-        (action: UploadingDraftAction<unknown>) => (response: FetchResponse<unknown>) => {
-            const completedAction: CompletedDraftAction<unknown> = {
-                ...action,
-                status: DraftActionStatus.Completed,
-                response,
-            };
-
-            // notify that consumers that this action is completed and about to be removed from the draft queue
-            return this.notifyChangedListeners({
-                type: DraftQueueEventType.ActionCompleting,
-                action: completedAction,
-            })
-                .then(() => this.getQueueActions())
-                .then((queue) => this.storeOperationsForUploadedDraft(queue, completedAction))
-                .then((operations) => this.durableStore.batchOperations(operations))
-                .then(() => {
-                    this.retryIntervalMilliseconds = 0;
-                    this.uploadingActionId = undefined;
-                    // process action success
-                    return this.notifyChangedListeners({
-                        type: DraftQueueEventType.ActionCompleted,
-                        action: completedAction,
-                    }).then(() => {
-                        if (this.state === DraftQueueState.Started) {
-                            this.processNextAction();
-                        }
-                        return ProcessActionResult.ACTION_SUCCEEDED;
-                    });
-                });
-        };
-
     private handleServerError(
-        action: DraftAction<unknown>,
+        action: DraftAction<unknown, unknown>,
         error: FetchResponse<unknown>
-    ): Promise<ProcessActionResult> {
+    ): Promise<void> {
         return this.getQueueActions().then((queue) => {
             const { id, tag } = action;
             const durableEntryKey = buildDraftDurableStoreKey(tag, id);
             const localAction = queue.filter((qAction) => qAction.id === action.id)[0];
-            let newMetadata = undefined;
+            let newMetadata = {};
             if (localAction !== undefined) {
                 newMetadata = localAction.metadata || {};
-            } else {
-                newMetadata = {};
             }
 
-            const errorAction: ErrorDraftAction<unknown> = {
+            const errorAction: ErrorDraftAction<unknown, unknown> = {
                 ...action,
                 status: DraftActionStatus.Error,
                 error,
                 metadata: newMetadata,
             };
-            const entry: DurableStoreEntry<DraftAction<unknown>> = {
+            const entry: DurableStoreEntry<DraftAction<unknown, unknown>> = {
                 data: errorAction,
             };
-            const entries: DurableStoreEntries<DraftAction<unknown>> = {
+            const entries: DurableStoreEntries<DraftAction<unknown, unknown>> = {
                 [durableEntryKey]: entry,
             };
-            return this.durableStore
-                .setEntries(entries, DRAFT_SEGMENT)
-                .then(() => {
-                    this.state = DraftQueueState.Error;
-                    return this.notifyChangedListeners({
-                        type: DraftQueueEventType.ActionFailed,
-                        action: errorAction,
-                    });
-                })
-                .then(() => {
-                    return ProcessActionResult.ACTION_ERRORED;
+            return this.durableStore.setEntries(entries, DRAFT_SEGMENT).then(() => {
+                this.state = DraftQueueState.Error;
+                return this.notifyChangedListeners({
+                    type: DraftQueueEventType.ActionFailed,
+                    action: errorAction,
                 });
-        });
-    }
-
-    private handleNetworkError(action: DraftAction<unknown>): Promise<ProcessActionResult> {
-        this.state = DraftQueueState.Waiting;
-        return this.notifyChangedListeners({
-            type: DraftQueueEventType.ActionRetrying,
-            action: action as PendingDraftAction<unknown>,
-        }).then(() => {
-            this.scheduleRetry();
-            return ProcessActionResult.NETWORK_ERROR;
+            });
         });
     }
 
@@ -504,7 +491,7 @@ export class DurableDraftQueue implements DraftQueue {
         });
     }
 
-    replaceAction(actionId: string, withActionId: string): Promise<DraftAction<unknown>> {
+    replaceAction(actionId: string, withActionId: string): Promise<DraftAction<unknown, unknown>> {
         // ids must be unique
         if (actionId === withActionId) {
             return Promise.reject('Swapped and swapping action ids cannot be the same');
@@ -515,52 +502,31 @@ export class DurableDraftQueue implements DraftQueue {
         }
         return this.stopQueueManually().then(() => {
             const replacing = this.getQueueActions().then((actions) => {
-                // get the action to replace
-                const actionToReplace = actions.filter((action) => action.id === actionId)[0];
-                // get the replacing action
-                const replacingAction = actions.filter((action) => action.id === withActionId)[0];
-                // reject if either action is undefined
-                if (actionToReplace === undefined || replacingAction === undefined) {
-                    return Promise.reject('One or both actions does not exist');
+                const first = actions.filter((action) => action.id === actionId)[0];
+                if (first === undefined) {
+                    return Promise.reject('No action to replace');
                 }
-                // reject if either action is uploading
-                if (
-                    actionToReplace.id === this.uploadingActionId ||
-                    replacingAction.id === this.uploadingActionId
-                ) {
-                    return Promise.reject('Cannot replace an draft action that is uploading');
-                }
-                // reject if these two draft actions aren't acting on the same target
-                if (actionToReplace.tag !== replacingAction.tag) {
-                    return Promise.reject('Cannot swap actions targeting different targets');
-                }
-                // reject if the replacing action is not pending
-                if (replacingAction.status !== DraftActionStatus.Pending) {
-                    return Promise.reject('Cannot replace with a non-pending action');
-                }
-                const actionToReplaceCopy: PendingDraftAction<unknown> = {
-                    ...actionToReplace,
-                    status: DraftActionStatus.Pending,
-                };
 
-                actionToReplace.request = replacingAction.request;
-                actionToReplace.status = DraftActionStatus.Pending;
+                const { original, actionToReplace, replacingAction } = this.handlers[
+                    first.handler
+                ].replaceAction(actionId, withActionId, this.uploadingActionId, actions);
+
                 // TODO: W-8873834 - Will add batching support to durable store
                 // we should use that here to remove and set both actions in one operation
                 return this.removeDraftAction(replacingAction.id).then(() => {
-                    const entry: DurableStoreEntry<PendingDraftAction<unknown>> = {
-                        data: actionToReplace as PendingDraftAction<unknown>,
+                    const entry: DurableStoreEntry<PendingDraftAction<unknown, unknown>> = {
+                        data: actionToReplace as PendingDraftAction<unknown, unknown>,
                     };
                     const durableEntryKey = buildDraftDurableStoreKey(
                         actionToReplace.tag,
                         actionToReplace.id
                     );
-                    const entries: DurableStoreEntries<PendingDraftAction<unknown>> = {
+                    const entries: DurableStoreEntries<PendingDraftAction<unknown, unknown>> = {
                         [durableEntryKey]: entry,
                     };
                     return this.notifyChangedListeners({
                         type: DraftQueueEventType.ActionUpdating,
-                        action: actionToReplaceCopy,
+                        action: original,
                     }).then(() => {
                         return this.durableStore.setEntries(entries, DRAFT_SEGMENT).then(() => {
                             return this.notifyChangedListeners({
@@ -588,7 +554,10 @@ export class DurableDraftQueue implements DraftQueue {
         });
     }
 
-    setMetadata(actionId: string, metadata: DraftActionMetadata): Promise<DraftAction<unknown>> {
+    setMetadata(
+        actionId: string,
+        metadata: DraftActionMetadata
+    ): Promise<DraftAction<unknown, unknown>> {
         const keys = ObjectKeys(metadata);
         const compatibleKeys = keys.filter((key): boolean => {
             const value = metadata[key];
@@ -610,8 +579,8 @@ export class DurableDraftQueue implements DraftQueue {
             }).then(() => {
                 action.metadata = metadata;
                 const durableStoreId = buildDraftDurableStoreKey(action.tag, action.id);
-                const entry: DurableStoreEntry<DraftAction<unknown>> = { data: action };
-                const entries: DurableStoreEntries<DraftAction<unknown>> = {
+                const entry: DurableStoreEntry<DraftAction<unknown, unknown>> = { data: action };
+                const entries: DurableStoreEntries<DraftAction<unknown, unknown>> = {
                     [durableStoreId]: entry,
                 };
                 return this.durableStore.setEntries(entries, DRAFT_SEGMENT).then(() => {
@@ -635,103 +604,5 @@ export class DurableDraftQueue implements DraftQueue {
         setTimeout((): void => {
             this.processNextAction();
         }, this.retryIntervalMilliseconds);
-    }
-
-    /**
-     * Invoked after the queue completes a POST action and creates a resource on the server.
-     * Entities further down the queue may need to be updated after a resource is created on
-     * the server as they may contain references to the created item.
-     * The DraftQueue is unaware of the contents of the DraftActions so it calls out to the consumer with the
-     * completed action and the remaining queue items. The consumer will process the completed action and indicate what
-     * queue operations the DraftQueue must take to update its entries with the new entity id
-     * @param action the action that just completed
-     * @param queue the current queue DraftActions
-     */
-    storeOperationsForUploadedDraft(
-        queue: DraftAction<unknown>[],
-        action: CompletedDraftAction<unknown>
-    ): DurableStoreOperation<DraftIdMappingEntry | DraftAction<unknown>>[] {
-        const { request, tag, id } = action;
-        const storeOperations: DurableStoreOperation<DraftIdMappingEntry | DraftAction<unknown>>[] =
-            [];
-
-        if (request.method === 'post') {
-            const queueOperations = this.updateQueueOnPostCompletion(action, queue);
-            storeOperations.push(
-                ...this.mapQueueOperationsToDurableStoreOperations(queueOperations)
-            );
-
-            const mapping = this.createDraftIdMapping(action);
-            const { draftKey, canonicalKey } = mapping;
-            const expiration = Date.now() + MAPPING_TTL;
-            const entryKey = createDraftMappingEntryKey(draftKey, canonicalKey);
-            const mappingEntries = {
-                [entryKey]: {
-                    data: mapping,
-                    expiration: { fresh: expiration, stale: expiration },
-                },
-            };
-
-            storeOperations.push({
-                entries: mappingEntries,
-                type: DurableStoreOperationType.SetEntries,
-                segment: DRAFT_ID_MAPPINGS_SEGMENT,
-            });
-        }
-
-        //delete the action from the store
-        const durableEntryKey = buildDraftDurableStoreKey(tag, id);
-        storeOperations.push({
-            ids: [durableEntryKey],
-            type: DurableStoreOperationType.EvictEntries,
-            segment: DRAFT_SEGMENT,
-        });
-
-        return storeOperations;
-    }
-
-    /**
-     * Maps an array of QueueOperations to DurableStoreOperations
-     * @param queueOperations list of queue operations to map
-     */
-    private mapQueueOperationsToDurableStoreOperations(
-        queueOperations: QueueOperation[]
-    ): DurableStoreOperation<DraftAction<unknown>>[] {
-        const setEntries: DurableStoreEntries<DraftAction<unknown>> = {};
-        const evictEntries: string[] = [];
-        for (let i = 0, len = queueOperations.length; i < len; i++) {
-            const operation = queueOperations[i];
-            if (operation.type === QueueOperationType.Delete) {
-                evictEntries.push(operation.key);
-            } else {
-                let key = '';
-                if (operation.type === QueueOperationType.Add) {
-                    key = buildDraftDurableStoreKey(operation.action.tag, operation.action.id);
-                } else {
-                    key = operation.key;
-                }
-                setEntries[key] = { data: operation.action };
-            }
-        }
-
-        const storeOperations: DurableStoreOperation<DraftAction<unknown>>[] = [];
-
-        if (ObjectKeys(setEntries).length > 0) {
-            storeOperations.push({
-                entries: setEntries,
-                type: DurableStoreOperationType.SetEntries,
-                segment: DRAFT_SEGMENT,
-            });
-        }
-
-        if (evictEntries.length > 0) {
-            storeOperations.push({
-                ids: evictEntries,
-                type: DurableStoreOperationType.EvictEntries,
-                segment: DRAFT_SEGMENT,
-            });
-        }
-
-        return storeOperations;
     }
 }

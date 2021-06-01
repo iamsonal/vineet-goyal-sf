@@ -12,6 +12,7 @@ import {
 } from './test-utils';
 import mockGetRecord from './mockData/record-Account-fields-Account.Id,Account.Name.json';
 import { clone } from '../../utils/clone';
+import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
 
 describe('draft environment tests', () => {
     describe('updateRecord', () => {
@@ -24,7 +25,12 @@ describe('draft environment tests', () => {
             mockDurableStoreResponse(durableStore);
             const request = createPatchRequest();
             await draftEnvironment.dispatchResourceRequest(request);
-            expect(draftQueue.enqueue).toBeCalledWith(request, STORE_KEY_RECORD, RECORD_ID);
+            expect(draftQueue.enqueue).toBeCalledWith({
+                data: request,
+                tag: STORE_KEY_RECORD,
+                targetId: RECORD_ID,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
         });
 
         it('record gets evicted from store prior to revival', async () => {
@@ -95,7 +101,12 @@ describe('draft environment tests', () => {
                 basePath: '/ui-api/records/bar',
                 urlParams: { recordId: 'bar' },
             };
-            expect(draftQueue.enqueue).toBeCalledWith(expectedRequest, redirected2Key, 'bar');
+            expect(draftQueue.enqueue).toBeCalledWith({
+                data: expectedRequest,
+                tag: redirected2Key,
+                targetId: 'bar',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
         });
 
         it('throws if durable store rejects', async () => {
@@ -258,7 +269,12 @@ describe('draft environment tests', () => {
                     recordId: RECORD_ID,
                 },
             };
-            expect(draftQueue.enqueue).toBeCalledWith(expectedRequest, STORE_KEY_RECORD, RECORD_ID);
+            expect(draftQueue.enqueue).toBeCalledWith({
+                data: expectedRequest,
+                tag: STORE_KEY_RECORD,
+                targetId: RECORD_ID,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
         });
 
         it('throws error when request has no recordId', async () => {
@@ -307,7 +323,12 @@ describe('draft environment tests', () => {
             );
 
             expect(adapters.getRecord).toBeCalledTimes(1);
-            expect(enqueueSpy).toBeCalledWith(request, STORE_KEY_RECORD, RECORD_ID);
+            expect(enqueueSpy).toBeCalledWith({
+                data: request,
+                tag: STORE_KEY_RECORD,
+                targetId: RECORD_ID,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             expect(network).toBeCalledTimes(1);
             expect(response.status).toBe(200);
             const record = response.body;

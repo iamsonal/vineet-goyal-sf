@@ -2,6 +2,7 @@ import { Environment, ResourceRequest } from '@luvio/engine';
 import { DurableEnvironment } from '@luvio/environments';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
+import { createLDSAction } from '../actionHandlers/LDSActionHandler';
 import {
     createBadRequestResponse,
     createDraftSynthesisErrorResponse,
@@ -88,19 +89,21 @@ export function createRecordDraftEnvironment(
                 throw createBadRequestResponse({ message: 'fields are missing' });
             }
 
-            return draftQueue.enqueue(resolvedResourceRequest, key, recordId).then(() => {
-                return durableStore
-                    .getDenormalizedRecord(key)
-                    .catch(() => {
-                        throw createInternalErrorResponse();
-                    })
-                    .then((record) => {
-                        if (record === undefined) {
-                            throw createDraftSynthesisErrorResponse();
-                        }
-                        return createOkResponse(record) as any;
-                    });
-            });
+            return draftQueue
+                .enqueue(createLDSAction(recordId, key, resolvedResourceRequest))
+                .then(() => {
+                    return durableStore
+                        .getDenormalizedRecord(key)
+                        .catch(() => {
+                            throw createInternalErrorResponse();
+                        })
+                        .then((record) => {
+                            if (record === undefined) {
+                                throw createDraftSynthesisErrorResponse();
+                            }
+                            return createOkResponse(record) as any;
+                        });
+                });
         });
     };
 

@@ -7,7 +7,8 @@ import {
     DurableStoreOperationType,
 } from '@luvio/environments';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
-import { DraftAction, DraftActionMap } from '../DraftQueue';
+import { isLDSDraftAction } from '../actionHandlers/LDSActionHandler';
+import { DraftAction, DraftActionMap, DraftActionStatus } from '../DraftQueue';
 import { DRAFT_SEGMENT } from '../DurableDraftQueue';
 import { ObjectCreate, ObjectKeys } from '../utils/language';
 import {
@@ -15,13 +16,15 @@ import {
     DraftRecordRepresentation,
     DurableRecordRepresentation,
     extractRecordKeyFromDraftDurableStoreKey,
+    isDraftActionStoreRecordKey,
     replayDraftsOnRecord,
 } from '../utils/records';
+import { ResourceRequest } from '@luvio/engine';
 
 type GetDraftActionsForRecords = (keys: string[]) => Promise<DraftActionMap>;
 
 function persistDraftCreates(
-    entries: DurableStoreEntries<DraftAction<RecordRepresentation>>,
+    entries: DurableStoreEntries<DraftAction<RecordRepresentation, ResourceRequest>>,
     durableStore: DurableStore,
     userId: string
 ) {
@@ -33,7 +36,7 @@ function persistDraftCreates(
         const key = keys[i];
         const entry = entries[key];
         const action = entry.data;
-        if (action.request.method === 'post') {
+        if (action.data.method === 'post') {
             const syntheticRecord = buildSyntheticRecordRepresentation(action, userId);
             draftCreates[action.tag] = { data: syntheticRecord };
             shouldWrite = true;
@@ -101,18 +104,24 @@ function resolveDrafts(
                     let baseRecord = removeDrafts(record);
 
                     const drafts =
-                        (actions[recordKey] as Readonly<DraftAction<RecordRepresentation>[]>) || [];
+                        (actions[recordKey] as Readonly<
+                            DraftAction<RecordRepresentation, unknown>[]
+                        >) || [];
                     if (drafts === undefined || drafts.length === 0) {
                         updatedRecords[recordKey] = { data: baseRecord, expiration };
                     } else {
                         const replayDrafts = [...drafts];
 
                         // if the first draft in the queue is a create, we need to generate a synthetic record
-                        if (drafts[0].request.method === 'post') {
-                            baseRecord = buildSyntheticRecordRepresentation(drafts[0], userId);
-                            // remove the first item and and replay any other drafts on the record we just synthetically built
-                            replayDrafts.shift();
+                        const first = drafts[0];
+                        if (isLDSDraftAction(first)) {
+                            if (first.data.method === 'post') {
+                                baseRecord = buildSyntheticRecordRepresentation(first, userId);
+                                // remove the first item and and replay any other drafts on the record we just synthetically built
+                                replayDrafts.shift();
+                            }
                         }
+
                         const resolvedRecord = replayDraftsOnRecord(
                             baseRecord,
                             replayDrafts,
@@ -154,6 +163,20 @@ function removeDrafts(record: DurableRecordRepresentation): DurableRecordReprese
     return { ...record, drafts: undefined, fields: updatedFields };
 }
 
+function isEntryDraftAction(
+    entry: DurableStoreEntry<any>,
+    key: string
+): entry is DurableStoreEntry<DraftAction<RecordRepresentation, unknown>> {
+    return (
+        entry.data.status !== undefined &&
+        (entry.data.status === DraftActionStatus.Completed ||
+            entry.data.status === DraftActionStatus.Error ||
+            entry.data.status === DraftActionStatus.Pending ||
+            entry.data.status === DraftActionStatus.Uploading) &&
+        isDraftActionStoreRecordKey(key)
+    );
+}
+
 /**
  * Higher order function that observes changes made to the draft store and updates relevant records
  * in the store with their current draft state
@@ -175,13 +198,25 @@ export function makeDurableStoreDraftAware(
             return durableStore.setEntries(entries, segment);
         }
 
+        const draftEntries: DurableStoreEntries<
+            DraftAction<RecordRepresentation, ResourceRequest>
+        > = {};
+        const keys = ObjectKeys(entries);
+        for (let i = 0, len = keys.length; i < len; i++) {
+            const key = keys[i];
+            const entry = entries[key];
+            if (isEntryDraftAction(entry, key)) {
+                if (isLDSDraftAction(entry.data)) {
+                    draftEntries[key] = entry as DurableStoreEntry<
+                        DraftAction<RecordRepresentation, ResourceRequest>
+                    >;
+                }
+            }
+        }
+
         // change made to a draft action require affected records to be resolved
         return durableStore.setEntries(entries, segment).then(() => {
-            return persistDraftCreates(
-                entries as unknown as DurableStoreEntries<DraftAction<RecordRepresentation>>,
-                durableStore,
-                userId
-            ).then(() => {
+            return persistDraftCreates(draftEntries, durableStore, userId).then(() => {
                 return onDraftEntriesChanged(
                     ObjectKeys(entries),
                     durableStore,
@@ -226,15 +261,24 @@ export function makeDurableStoreDraftAware(
             ) {
                 const keys = ObjectKeys(operation.entries);
                 changedDraftKeys = changedDraftKeys.concat(keys);
-                persistOperations.push(
-                    persistDraftCreates(
-                        operation.entries as unknown as DurableStoreEntries<
-                            DraftAction<RecordRepresentation>
-                        >,
-                        durableStore,
-                        userId
-                    )
-                );
+
+                for (let i = 0, len = keys.length; i < len; i++) {
+                    const key = keys[i];
+                    const entry = operation.entries[key];
+                    if (isEntryDraftAction(entry, key)) {
+                        if (isLDSDraftAction(entry.data)) {
+                            persistOperations.push(
+                                persistDraftCreates(
+                                    operation.entries as unknown as DurableStoreEntries<
+                                        DraftAction<RecordRepresentation, ResourceRequest>
+                                    >,
+                                    durableStore,
+                                    userId
+                                )
+                            );
+                        }
+                    }
+                }
             }
         }
         return durableStore.batchOperations(operations).then(() => {

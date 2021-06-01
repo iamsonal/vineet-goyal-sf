@@ -25,6 +25,7 @@ import { getRecordsDraftEnvironment } from './getRecordsDraftEnvironment';
 import { RecordDenormalizingDurableStore } from '../durableStore/makeRecordDenormalizingDurableStore';
 import { DRAFT_ID_MAPPINGS_SEGMENT } from '../DurableDraftQueue';
 import { ObjectKeys } from '../utils/language';
+import { isLDSDraftAction } from '../actionHandlers/LDSActionHandler';
 
 type AllDraftEnvironmentOptions = DraftEnvironmentOptions & UpdateRecordDraftEnvironmentOptions;
 
@@ -64,32 +65,35 @@ export function makeEnvironmentDraftAware(
 
     function onDraftActionCompleting(event: DraftQueueCompleteEvent) {
         const { action } = event;
-        const { request, tag } = action;
-        const { method } = request;
+        if (isLDSDraftAction(action)) {
+            const { data: request, tag } = action;
+            const { method } = request;
 
-        if (method === 'delete') {
-            env.storeEvict(tag);
-            env.storeBroadcast(env.rebuildSnapshot, env.snapshotAvailable);
-            return Promise.resolve();
+            if (method === 'delete') {
+                env.storeEvict(tag);
+                env.storeBroadcast(env.rebuildSnapshot, env.snapshotAvailable);
+                return Promise.resolve();
+            }
+            return draftAwareHandleResponse(
+                request,
+                action.response,
+                draftQueue,
+                recordResponseRetrievers,
+                userId
+            ).then((response) => {
+                const record = response.body as RecordRepresentation;
+                const key = keyBuilderRecord({ recordId: record.id });
+                const path = {
+                    fullPath: key,
+                    parent: null,
+                    propertyName: null,
+                };
+
+                ingestFunc(record, path, store, Date.now());
+                env.storeBroadcast(env.rebuildSnapshot, env.snapshotAvailable);
+            });
         }
-        return draftAwareHandleResponse(
-            request,
-            action.response,
-            draftQueue,
-            recordResponseRetrievers,
-            userId
-        ).then((response) => {
-            const record = response.body as RecordRepresentation;
-            const key = keyBuilderRecord({ recordId: record.id });
-            const path = {
-                fullPath: key,
-                parent: null,
-                propertyName: null,
-            };
-
-            ingestFunc(record, path, store, Date.now());
-            env.storeBroadcast(env.rebuildSnapshot, env.snapshotAvailable);
-        });
+        return Promise.resolve();
     }
 
     function onDraftActionCompleted(event: DraftQueueCompleteEvent) {

@@ -29,6 +29,10 @@ function ldsParamsToString(params: ResourceRequest['queryParams']): Request['que
         } else {
             returnParams[key] = `${value}`;
         }
+
+        if (isObject(value) === true && ObjectKeys(value).length > 0) {
+            returnParams[key] = JSONStringify(value);
+        }
     }
 
     return returnParams;
@@ -70,6 +74,11 @@ function methodFromResourceRequestMethod(method: string) {
 
 function isStatusOk(status: number): boolean {
     return status >= 200 && status <= 299;
+}
+
+// adapted from adapter-utils untrustedIsObject
+function isObject(value: unknown) {
+    return typeof value === 'object' && value !== null && ArrayIsArray(value) === false;
 }
 
 function stringifyIfPresent(value: any | null): string | null {

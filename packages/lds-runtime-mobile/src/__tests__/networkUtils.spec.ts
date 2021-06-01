@@ -49,6 +49,28 @@ describe('networkUtils', () => {
             });
         });
 
+        it('handles queryParam with JSON object', () => {
+            const resourceRequest: ResourceRequest = {
+                baseUri: '/base/uri',
+                basePath: '/foo',
+                method: 'get',
+                body: null,
+                headers: {},
+                queryParams: { qObject: { test1: 1, test2: 2 } },
+                urlParams: {},
+            };
+
+            const result = buildNimbusNetworkPluginRequest(resourceRequest);
+
+            expect(result).toEqual({
+                method: 'GET',
+                body: null,
+                headers: {},
+                path: '/base/uri/foo',
+                queryParams: { qObject: '{"test1":1,"test2":2}' },
+            });
+        });
+
         it('handles queryParam with undefined values', () => {
             const resourceRequest: ResourceRequest = {
                 baseUri: '/base/uri',

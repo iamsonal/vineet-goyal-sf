@@ -28,7 +28,7 @@ describe('GQL Record', () => {
                 ],
             };
 
-            const gql = {
+            const gqlRecord: GqlRecord = {
                 Id: '001RM000004uuhnYAA',
                 WeakEtag: 1615493739000,
                 Name: {
@@ -50,7 +50,7 @@ describe('GQL Record', () => {
                 RecordTypeId: {
                     value: '012RM000000E79WYAS',
                 },
-            } as GqlRecord;
+            };
 
             const recordRep: RecordRepresentation = {
                 apiName: 'Account',
@@ -71,7 +71,7 @@ describe('GQL Record', () => {
                 recordTypeInfo: null,
             };
 
-            const result = convertToRecordRepresentation(ast, gql);
+            const result = convertToRecordRepresentation(ast, gqlRecord);
             expect(result).toEqual({
                 recordRepresentation: recordRep,
                 fieldsTrie: {
@@ -126,7 +126,7 @@ describe('GQL Record', () => {
                 ],
             };
 
-            const gql: GqlRecord = {
+            const gqlRecord: GqlRecord = {
                 Id: '001RM000004uuhnYAA',
                 WeakEtag: 1615493739000,
                 Name: {
@@ -170,7 +170,7 @@ describe('GQL Record', () => {
                 RecordTypeId: {
                     value: '012RM000000E79WYAS',
                 },
-            } as GqlRecord;
+            };
 
             const recordRep: RecordRepresentation = {
                 apiName: 'Account',
@@ -212,7 +212,7 @@ describe('GQL Record', () => {
                 recordTypeInfo: null,
             };
 
-            const result = convertToRecordRepresentation(ast, gql);
+            const result = convertToRecordRepresentation(ast, gqlRecord);
             expect(result).toEqual({
                 recordRepresentation: recordRep,
                 fieldsTrie: {
@@ -276,7 +276,7 @@ describe('GQL Record', () => {
                 ],
             };
 
-            const gql: GqlRecord = {
+            const gqlRecord: GqlRecord = {
                 Id: '001RM000004uuhnYAA',
                 WeakEtag: 1615493739000,
                 Name: {
@@ -299,7 +299,7 @@ describe('GQL Record', () => {
                 RecordTypeId: {
                     value: '012RM000000E79WYAS',
                 },
-            } as GqlRecord;
+            };
 
             const recordRep: RecordRepresentation = {
                 apiName: 'Account',
@@ -324,7 +324,7 @@ describe('GQL Record', () => {
                 recordTypeInfo: null,
             };
 
-            const result = convertToRecordRepresentation(ast, gql);
+            const result = convertToRecordRepresentation(ast, gqlRecord);
             expect(result).toEqual({
                 recordRepresentation: recordRep,
                 fieldsTrie: {
@@ -405,7 +405,7 @@ describe('GQL Record', () => {
                 ],
             };
 
-            const gql: GqlRecord = {
+            const gqlRecord: GqlRecord = {
                 Id: '001RM000004uuhnYAA',
                 WeakEtag: 1615493739000,
                 Name: {
@@ -428,7 +428,7 @@ describe('GQL Record', () => {
                 RecordTypeId: {
                     value: '012RM000000E79WYAS',
                 },
-            } as GqlRecord;
+            };
 
             const recordRep: RecordRepresentation = {
                 apiName: 'Account',
@@ -453,7 +453,7 @@ describe('GQL Record', () => {
                 recordTypeInfo: null,
             };
 
-            const result = convertToRecordRepresentation(ast, gql);
+            const result = convertToRecordRepresentation(ast, gqlRecord);
             expect(result).toEqual({
                 recordRepresentation: recordRep,
                 fieldsTrie: {
@@ -572,7 +572,7 @@ describe('GQL Record', () => {
                 RecordTypeId: {
                     value: '012RM000000E79WYAS',
                 },
-            } as GqlRecord;
+            };
 
             const recordRep: RecordRepresentation = {
                 apiName: 'Account',
@@ -685,7 +685,7 @@ describe('GQL Record', () => {
                 RecordTypeId: {
                     value: '012RM000000E79WYAS',
                 },
-            } as GqlRecord;
+            };
 
             const store = new Store();
             const luvio = new Luvio(
@@ -771,7 +771,7 @@ describe('GQL Record', () => {
                 ],
             };
 
-            const data: GqlRecord = {
+            const gqlRecord: GqlRecord = {
                 Id: '001RM000004uuhnYAA',
                 WeakEtag: 1615493739000,
                 Name: {
@@ -815,7 +815,7 @@ describe('GQL Record', () => {
                 RecordTypeId: {
                     value: '012RM000000E79WYAS',
                 },
-            } as GqlRecord;
+            };
 
             const store = new Store();
             const luvio = new Luvio(
@@ -825,7 +825,7 @@ describe('GQL Record', () => {
             );
 
             createIngest(selection)(
-                data,
+                gqlRecord,
                 {
                     parent: null,
                     propertyName: null,
@@ -917,7 +917,7 @@ describe('GQL Record', () => {
                 ],
             };
 
-            const data: GqlRecord = {
+            const gqlRecord: GqlRecord = {
                 Parent: null,
                 __typename: 'Account',
                 ApiName: 'Account',
@@ -936,7 +936,7 @@ describe('GQL Record', () => {
                 RecordTypeId: {
                     value: '012RM000000E79WYAS',
                 },
-            } as GqlRecord;
+            };
 
             const store = new Store();
             const luvio = new Luvio(
@@ -946,7 +946,7 @@ describe('GQL Record', () => {
             );
 
             createIngest(ast)(
-                data,
+                gqlRecord,
                 {
                     parent: null,
                     propertyName: null,

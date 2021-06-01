@@ -20,39 +20,42 @@ import {
 } from '../type/Selection';
 
 type RecordFieldTrie = Parameters<typeof createRecordIngest>[0];
+
+type GqlScalarField = string | number | boolean;
+
+interface GqlRecordFieldValue {
+    value?: string | null;
+    displayValue?: GqlScalarField | null;
+}
+
+interface GqlRecordStringFieldValue {
+    value: string;
+    displayValue?: string | null;
+}
+
 interface DefaultRecordFields {
     ApiName: string;
     Id: string;
     WeakEtag: number;
     DisplayValue: string | null;
-    RecordTypeId: null | {
-        value: string;
-    };
-    LastModifiedById: {
-        value: string;
-    };
-    LastModifiedDate: {
-        value: string;
-    };
-    SystemModstamp: {
-        value: string;
-    };
+    RecordTypeId: GqlRecordStringFieldValue | null;
+    LastModifiedById: GqlRecordStringFieldValue;
+    LastModifiedDate: GqlRecordStringFieldValue;
+    SystemModstamp: GqlRecordStringFieldValue;
 }
 
-type SpanningGqlRecord = (DefaultRecordFields & Record<string, GqlRecordField>) | null;
+type SpanningGqlRecord = GqlRecord | null;
+
 export type CustomDataType = GqlRecord | GqlConnection;
-interface GqlRecordField {
-    value?: string | null;
-    displayValue?: string | null;
+export interface GqlRecord extends DefaultRecordFields {
+    [key: string]: GqlScalarField | GqlRecordFieldValue | CustomDataType | null;
 }
-
-export type GqlRecord = DefaultRecordFields & Record<string, SpanningGqlRecord | GqlRecordField>;
 
 export const CUSTOM_FIELD_NODE_TYPE = 'Record';
 
-function collectObjectFieldSelection(data: GqlRecordField): FieldValueRepresentation {
+function collectObjectFieldSelection(data: GqlRecordFieldValue): FieldValueRepresentation {
     return {
-        value: data.value as string,
+        value: data.value as GqlScalarField,
         displayValue: data.displayValue as string,
     };
 }
@@ -159,7 +162,7 @@ export function convertToRecordRepresentation(
                     name: fieldName,
                     children: {},
                 };
-                fieldsBag[fieldName] = collectObjectFieldSelection(data as GqlRecordField);
+                fieldsBag[fieldName] = collectObjectFieldSelection(data as GqlRecordFieldValue);
                 break;
             }
             case 'CustomFieldSelection': {
@@ -236,7 +239,7 @@ function getNonSpanningField(
     builder: Reader<any>,
     source: any
 ) {
-    const sink: GqlRecordField = {};
+    const sink: GqlRecordFieldValue = {};
     const { luvioSelections } = sel;
     if (luvioSelections === undefined) {
         throw new Error('Empty selections not supported');
@@ -244,7 +247,7 @@ function getNonSpanningField(
     for (let i = 0, len = luvioSelections.length; i < len; i += 1) {
         const sel = getLuvioFieldNodeSelection(luvioSelections[i]);
         const { kind } = sel;
-        const name = sel.name as keyof GqlRecordField;
+        const name = sel.name as keyof GqlRecordFieldValue;
         builder.enterPath(name);
         if (kind !== 'ScalarFieldSelection') {
             throw new Error(`Unexpected kind "${kind}"`);

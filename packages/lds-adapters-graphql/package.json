@@ -21,6 +21,7 @@
         "test:headless": "karma start --single-run --browsers ChromeHeadless",
         "test:unit": "jest",
         "test:unit:debug": "node --inspect-brk ../../node_modules/jest/bin/jest.js --config ./jest.config.js --runInBand",
+        "test:size": "bundlesize",
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-graphql"
     },
     "dependencies": {
@@ -32,5 +33,12 @@
         "@salesforce/lds-graphql-parser": "1.15.0",
         "@salesforce/lds-jest": "1.15.0",
         "@salesforce/lds-karma": "1.15.0"
-    }
+    },
+    "bundlesize": [
+        {
+            "path": "./sfdc/index.js",
+            "maxSize": "15 kB",
+            "compression": "brotli"
+        }
+    ]
 }

@@ -1,18 +1,10 @@
 import { Luvio, Store, Environment } from '@luvio/engine';
-import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
-import { ingestRecord } from '@salesforce/lds-adapters-uiapi';
+import { keyBuilderRecord, ingestRecord } from '@salesforce/lds-adapters-uiapi';
+import { timerMetricAddDuration as timerMetricAddDurationSpy } from '@salesforce/lds-instrumentation';
+import { expect } from '@jest/globals';
 
 import AdsBridge from '../ads-bridge';
 import { addObjectInfo, addRecord, createObjectInfo, createRecord } from './test-utils';
-
-function createBridge() {
-    const store = new Store();
-    const environment = new Environment(store, () => Promise.resolve());
-    const luvio = new Luvio(environment);
-    const bridge = new AdsBridge(luvio);
-
-    return { store, luvio, bridge };
-}
 
 jest.mock('@salesforce/lds-instrumentation', () => {
     return {
@@ -20,7 +12,14 @@ jest.mock('@salesforce/lds-instrumentation', () => {
     };
 });
 
-import { timerMetricAddDuration as timerMetricAddDurationSpy } from '@salesforce/lds-instrumentation';
+function createBridge() {
+    const store = new Store();
+    const environment = new Environment(store, jest.fn());
+    const luvio = new Luvio(environment);
+    const bridge = new AdsBridge(luvio);
+
+    return { store, luvio, bridge };
+}
 
 // constants for record type tests
 const MASTER_RECORD_TYPE_ID = '012000000000000AAA';
@@ -46,7 +45,7 @@ function queryRecord(luvio: Luvio, { recordId }: { recordId: string }): any {
 }
 
 beforeEach(() => {
-    timerMetricAddDurationSpy.mockClear();
+    (timerMetricAddDurationSpy as jest.Mock<any, any>).mockClear();
 });
 
 describe('AdsBridge', () => {
@@ -251,6 +250,166 @@ describe('AdsBridge', () => {
                         },
                     },
                 },
+            });
+        });
+
+        describe('record refresh', () => {
+            it('should refresh updated record when merge conflicts', () => {
+                const { bridge, luvio } = createBridge();
+                addRecord(
+                    luvio,
+                    createRecord({
+                        id: '123',
+                        weakEtag: 1,
+                        fields: {
+                            Foo: {
+                                value: 'foo',
+                                displayValue: null,
+                            },
+                            Bar: {
+                                value: 'bar',
+                                displayValue: null,
+                            },
+                        },
+                    })
+                );
+
+                luvio.dispatchResourceRequest = jest.fn().mockResolvedValueOnce({
+                    body: createRecord({
+                        id: '123',
+                        weakEtag: 2,
+                        fields: {
+                            Foo: {
+                                value: 'foo',
+                                displayValue: null,
+                            },
+                            Bar: {
+                                value: 'bar2',
+                                displayValue: null,
+                            },
+                        },
+                    }),
+                });
+
+                bridge.addRecords([
+                    createRecord({
+                        id: '123',
+                        weakEtag: 2,
+                        fields: {
+                            Bar: {
+                                value: 'bar2',
+                                displayValue: null,
+                            },
+                        },
+                    }),
+                ]);
+
+                const record = queryRecord(luvio, { recordId: '123' });
+                expect(record).toMatchObject({
+                    data: {
+                        fields: {
+                            Bar: {
+                                value: 'bar2',
+                                displayValue: null,
+                            },
+                            Foo: {
+                                __ref: undefined,
+                                pending: true,
+                            },
+                        },
+                        weakEtag: 2,
+                    },
+                });
+                expect(luvio.dispatchResourceRequest).toHaveBeenCalledTimes(1);
+                expect(luvio.dispatchResourceRequest).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        basePath: '/ui-api/records/123',
+                        method: 'get',
+                    })
+                );
+            });
+
+            it('should refresh updated spanning record when merge conflicts', () => {
+                const { bridge, luvio } = createBridge();
+                addRecord(
+                    luvio,
+                    createRecord({
+                        id: '456',
+                        weakEtag: 1,
+                        fields: {
+                            Foo: {
+                                value: 'foo',
+                                displayValue: null,
+                            },
+                            Bar: {
+                                value: 'bar',
+                                displayValue: null,
+                            },
+                        },
+                    })
+                );
+
+                luvio.dispatchResourceRequest = jest.fn().mockResolvedValueOnce({
+                    body: createRecord({
+                        id: '456',
+                        weakEtag: 2,
+                        fields: {
+                            Foo: {
+                                value: 'foo',
+                                displayValue: null,
+                            },
+                            Bar: {
+                                value: 'bar2',
+                                displayValue: null,
+                            },
+                        },
+                    }),
+                });
+
+                bridge.addRecords([
+                    createRecord({
+                        id: '123',
+                        fields: {
+                            Child: {
+                                displayValue: null,
+                                value: createRecord({
+                                    id: '456',
+                                    weakEtag: 2,
+                                    fields: {
+                                        Bar: {
+                                            value: 'bar2',
+                                            displayValue: null,
+                                        },
+                                    },
+                                }),
+                            },
+                        },
+                    }),
+                ]);
+
+                const record = queryRecord(luvio, { recordId: '456' });
+                expect(record).toMatchObject({
+                    data: {
+                        fields: {
+                            Bar: {
+                                value: 'bar2',
+                                displayValue: null,
+                            },
+                            Foo: {
+                                __ref: undefined,
+                                pending: true,
+                            },
+                        },
+                        weakEtag: 2,
+                    },
+                });
+                expect(luvio.dispatchResourceRequest).toHaveBeenCalledTimes(1);
+                expect(luvio.dispatchResourceRequest).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        basePath: '/ui-api/records/456',
+                        method: 'get',
+                    })
+                );
             });
         });
 

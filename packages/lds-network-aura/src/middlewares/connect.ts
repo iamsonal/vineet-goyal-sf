@@ -5,6 +5,7 @@ import {
     GUIDANCE_BASE_URI,
     WAVE_BASE_URI,
     CMS_BASE_URI,
+    CMS_NON_CONNECT_BASE_URI,
 } from './connect-base';
 
 const COMMUNITIES_NAVIGATION_MENU_PATH = new RegExp(
@@ -117,6 +118,8 @@ const LIST_CONTENT_PATH = new RegExp(
     'i'
 );
 
+const CREATE_DEPLOYMENT_PATH = new RegExp(`${CMS_NON_CONNECT_BASE_URI}/deployments`, 'i');
+
 const RECORD_SEO_PROPERTIES_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/seo/properties/([^\\s]){1,128}`,
     'i'
@@ -167,6 +170,14 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && LIST_CONTENT_PATH.test(path),
         transport: {
             controller: 'ManagedContentController.getManagedContentByTopicsAndContentKeys',
+        },
+    },
+    createDeployment: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CMS_NON_CONNECT_BASE_URI) && CREATE_DEPLOYMENT_PATH.test(path),
+        transport: {
+            controller: 'ManagedContentController.createDeployment',
         },
     },
     getRecordSeoProperties: {

@@ -23,12 +23,9 @@
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-cms-authoring",
         "release:corejar": "yarn build && packages/core-build/scripts/core.js --adapter=lds-adapters-cms-authoring",
         "start": "karma start",
-        "_test": "karma start --single-run",
-        "_test:compat": "karma start --single-run --compat",
-        "_test:unit": "jest"
-    },
-    "publishConfig": {
-        "registry": "https://npm.lwcjs.org"
+        "test": "karma start --single-run",
+        "test:compat": "karma start --single-run --compat",
+        "test:unit": "jest"
     },
     "dependencies": {
         "@salesforce/lds-bindings": "1.15.0"

@@ -1,0 +1,18 @@
+{
+    "createdBy": "005xx000001X7QLAA0",
+    "deploymentDescription": "Unpublish - perm",
+    "deploymentId": "0jkxx00000004d7AAB",
+    "deploymentItems": [
+        {
+            "action": "Unpublish",
+            "deploymentId": "0jkxx00000004d7AAB",
+            "deploymentItemId": "0jlxx00000004QDAAZ",
+            "snapshotId": "5OUxx0000004IeGGAU",
+            "targetId": "null"
+        }
+    ],
+    "deploymentName": "00000098",
+    "deploymentStatus": "CANCELED",
+    "lastModifiedBy": "005xx000001X7QLAA0",
+    "scheduledDate": "2021-09-20T15:53:00.000Z"
+}

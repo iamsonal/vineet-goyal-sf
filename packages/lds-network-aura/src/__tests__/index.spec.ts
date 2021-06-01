@@ -8,6 +8,7 @@ import {
     CONNECT_BASE_URI,
     GUIDANCE_BASE_URI,
     WAVE_BASE_URI,
+    CMS_NON_CONNECT_BASE_URI,
 } from '../middlewares/connect-base';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 import { ControllerInvoker } from '../middlewares/utils';
@@ -5050,6 +5051,83 @@ describe('routes', () => {
                 eventPayload: null,
                 orchestrationInstanceId: '0jExx000000001d',
                 stepInstanceId: '0jLxx000000001f',
+            }
+        );
+    });
+
+    describe('post /cms/deployments', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CMS_NON_CONNECT_BASE_URI,
+                basePath: `/deployments`,
+                body: {
+                    DeploymentInput: {
+                        contentSpaceId: '0Zux0000000KykTCAS',
+                    },
+                },
+            },
+            [
+                'ManagedContentController.createDeployment',
+                {
+                    DeploymentInput: {
+                        contentSpaceId: '0Zux0000000KykTCAS',
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                createdBy: null,
+                deploymentDescription: null,
+                deploymentId: '0jkxx00000004d7AAA',
+                deploymentItems: [
+                    {
+                        action: 'Unpublish',
+                        deploymentId: '0jkxx00000004d7AAA',
+                        deploymentItemId: '0jlxx00000004QDAAY',
+                        snapshotId: '5OUxx0000004IeGGAU',
+                        targetId: null,
+                    },
+                ],
+                deploymentName: null,
+                deploymentStatus: null,
+                lastModifiedBy: null,
+                scheduledDate: null,
+            }
+        );
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CMS_NON_CONNECT_BASE_URI,
+            basePath: `/deployments`,
+        });
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CMS_NON_CONNECT_BASE_URI,
+                basePath: `/deployments`,
+                body: {
+                    DeploymentInput: {
+                        contentSpaceId: '0Zux0000000KykTCAS',
+                    },
+                },
+            },
+            {
+                createdBy: null,
+                deploymentDescription: null,
+                deploymentId: '0jkxx00000004d7AAA',
+                deploymentItems: [
+                    {
+                        action: 'Unpublish',
+                        deploymentId: '0jkxx00000004d7AAA',
+                        deploymentItemId: '0jlxx00000004QDAAY',
+                        snapshotId: '5OUxx0000004IeGGAU',
+                        targetId: null,
+                    },
+                ],
+                deploymentName: null,
+                deploymentStatus: null,
+                lastModifiedBy: null,
+                scheduledDate: null,
             }
         );
     });

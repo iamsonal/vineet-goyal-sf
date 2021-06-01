@@ -506,27 +506,38 @@ types:
     type: object
     properties:
       channelIds:
-        description: The target channel to publish content to.
+        description: '[Optional] The target channel to publish content to.'
         type: array
         items:
           type: string
+        required: false # TODO handrolled W-9314597
       contentIds:
         description: '[Optional] The content to publish.'
         type: array
         items:
           type: string
+        required: false # TODO handrolled W-9314597
       contentSpaceId:
         description: The content space to publish content from.
         type: string
       description:
         description: Description for deployment.
         type: string
+        required: false # TODO handrolled W-9314597
       executeStagedDeployments:
         description: '[Optional] Execute all staged deployments.'
         type: boolean
+        required: false # TODO handrolled W-9314597
       scheduledDate:
         description: '[Optional] Scheduled date for deployment.'
         type: string
+        required: false # TODO handrolled W-9314597
+  ManagedContentDeploymentInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: wrapper for Input required for creating a deployment
+    type: object
+    properties:
+      DeploymentInput:
+        type: ManagedContentDeploymentInputRepresentation
   ManagedContentDeploymentItemRepresentation:
     description: Information about a deploymentItem
     type: object
@@ -545,17 +556,17 @@ types:
         type: string
       targetId:
         description: Target Entity Id
-        type: string
+        type: string | nil
   ManagedContentDeploymentRepresentation:
     description: Information about a Deployment
     type: object
     properties:
       createdBy:
         description: ManagedContentDeployment record creator user Id
-        type: string
+        type: string | nil
       deploymentDescription:
         description: ManagedContentDeployment Description
-        type: string
+        type: string | nil
       deploymentId:
         description: ManagedContentDeployment Entity Id
         type: string
@@ -566,16 +577,16 @@ types:
           type: ManagedContentDeploymentItemRepresentation
       deploymentName:
         description: ManagedContentDeployment Name
-        type: string
+        type: string | nil
       deploymentStatus:
         description: ManagedContentDeployment Status
-        type: string
+        type: string | nil
       lastModifiedBy:
         description: ManagedContentDeployment record Last Modified user Id
-        type: string
+        type: string | nil
       scheduledDate:
         description: ManagedContentDeployment Scheduled Date
-        type: string
+        type: string | nil
   ManagedContentDetailCollectionRepresentation:
     description: Collection of ManagedContentDetailCollection
     type: object
@@ -1910,159 +1921,90 @@ types:
     type: object
   ReferenceRepresentation: # TODO hand rolled. W-9275452
     type: object
-/:
-  /cms:
-    /contents:
-      post:
-        description: Create Managed Content for Json store
+/cms: #TODO hand rolled  W-9314692
+  /contents:
+    post:
+      description: Create Managed Content for Json store
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ManagedContentDocumentRepresentation
+      body:
+        application/json:
+          type: ManagedContentInputRepresentation
+          #required: false # TODO hand rolled. W-9275477
+          (oas-body-name): ManagedContentInputParam
+    /variants/{variantId}:
+      put:
+        description: Replace a managed content variant.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentVariantRepresentation
+        body:
+          application/json:
+            type: ManagedContentVariantUpdateInputRepresentation
+            #required: false # TODO hand rolled. W-9275477
+            (oas-body-name): ManagedContentVariantInputParam
+      uriParameters:
+        variantId:
+          type: string
+          required: true
+    /{contentKeyOrId}:
+      get:
+        description: Gets existing managed content for provided version.
         responses:
           '200':
             description: Success
             body:
               application/json:
                 type: ManagedContentDocumentRepresentation
-        body:
-          application/json:
-            type: ManagedContentInputRepresentation
-            #required: false # TODO hand rolled. W-9275477
-            (oas-body-name): ManagedContentInputParam
-      /variants/{variantId}:
-        put:
-          description: Replace a managed content variant.
-          responses:
-            '200':
-              description: Success
-              body:
-                application/json:
-                  type: ManagedContentVariantRepresentation
-          body:
-            application/json:
-              type: ManagedContentVariantUpdateInputRepresentation
-              #required: false # TODO hand rolled. W-9275477
-              (oas-body-name): ManagedContentVariantInputParam
-        uriParameters:
-          variantId:
+        queryParameters:
+          version:
+            description: An 18-character unique Salesforce identifier for the content
+              version.
             type: string
-            required: true
-      /{contentKeyOrId}:
-        get:
-          description: Gets existing managed content for provided version.
-          responses:
-            '200':
-              description: Success
-              body:
-                application/json:
-                  type: ManagedContentDocumentRepresentation
-          queryParameters:
-            version:
-              description: An 18-character unique Salesforce identifier for the content
-                version.
-              type: string
-              required: false
-        uriParameters:
-          contentKeyOrId:
-            description: A unique identifier or ID of a content.
-            type: string
-            required: true
-    /delivery:
-      /channels/{channelId}/variants:
-        post:
-          description: Get a list of variants published to a channel filtered by a
-            variant key and list of contentIds
-          responses:
-            '200':
-              description: Success
-              body:
-                application/json:
-                  type: MCDeliveryV2VariantCollectionRepresentation
-          body:
-            application/json:
-              type: MCDeliveryV2VariantInputRepresentation
-              #required: false # TODO hand rolled. W-9275477
-              (oas-body-name): MCVariantDeliveryByContentIdAndVariantKey
-        uriParameters:
-          channelId:
-            type: string
-            required: true
-      /{targetId}/collection/{collectionNameOrContentKey}:
-        get:
-          description: Get list of collection items.
-          responses:
-            '200':
-              description: Success
-              body:
-                application/json:
-                  type: MContentCollectionRepresentation
-          queryParameters:
-            language:
-              type: string
-              required: false
-            page:
-              type: integer
-              required: false
-            pageSize:
-              type: integer
-              required: false
-        uriParameters:
-          collectionNameOrContentKey:
-            type: string
-            required: true
-          targetId:
-            type: string
-            required: true
-      /{targetId}/collection/{collectionNameOrContentKey}/metadata:
-        get:
-          description: Get collection metadata.
-          responses:
-            '200':
-              description: Success
-              body:
-                application/json:
-                  type: MContentCollectionMetadataRepresentation
-          queryParameters:
-            language:
-              type: string
-              required: false
-        uriParameters:
-          collectionNameOrContentKey:
-            type: string
-            required: true
-          targetId:
-            type: string
-            required: true
-    /deployments:
-      get:
-        description: Get deployments Information for the given space or ManagedContentVersion
-          or deploymentId
+            required: false
+      uriParameters:
+        contentKeyOrId:
+          description: A unique identifier or ID of a content.
+          type: string
+          required: true
+  /delivery:
+    /channels/{channelId}/variants:
+      post:
+        description: Get a list of variants published to a channel filtered by a
+          variant key and list of contentIds
         responses:
           '200':
             description: Success
             body:
               application/json:
-                type: ManagedContentDeploymentCollectionRepresentation
+                type: MCDeliveryV2VariantCollectionRepresentation
+        body:
+          application/json:
+            type: MCDeliveryV2VariantInputRepresentation
+            #required: false # TODO hand rolled. W-9275477
+            (oas-body-name): MCVariantDeliveryByContentIdAndVariantKey
+      uriParameters:
+        channelId:
+          type: string
+          required: true
+    /{targetId}/collection/{collectionNameOrContentKey}:
+      get:
+        description: Get list of collection items.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: MContentCollectionRepresentation
         queryParameters:
-          contentSpaceId:
-            type: string
-            required: false
-          deploymentId:
-            type: string
-            required: false
-          deploymentStatus:
-            type: string
-            required: false
-            enum:
-              - Canceled
-              - Created
-              - Deployed
-              - Error
-              - Staged
-          deploymentType:
-            type: string
-            required: false
-            enum:
-              - Publish
-              - Unpublish
-          managedContentVersionId:
+          language:
             type: string
             required: false
           page:
@@ -2071,193 +2013,262 @@ types:
           pageSize:
             type: integer
             required: false
-      post:
-        description: Create a deployment to a specific channel
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: ManagedContentDeploymentRepresentation
-        body:
-          application/json:
-            type: ManagedContentDeploymentInputRepresentation
-            #required: false # TODO hand rolled. W-9275477
-            (oas-body-name): DeploymentInput
-    /deployments/{deploymentId}:
-      delete:
-        description: Delete and cleanup all resources used by a deployment
-        responses:
-          '200':
-            description: Success
-      patch:
-        description: Patch a deployment
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: ManagedContentDeploymentRepresentation
       uriParameters:
-        deploymentId:
+        collectionNameOrContentKey:
           type: string
           required: true
-    /site-author/content:
-      /content-keys:
+        targetId:
+          type: string
+          required: true
+    /{targetId}/collection/{collectionNameOrContentKey}/metadata:
+      get:
+        description: Get collection metadata.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: MContentCollectionMetadataRepresentation
+        queryParameters:
+          language:
+            type: string
+            required: false
+      uriParameters:
+        collectionNameOrContentKey:
+          type: string
+          required: true
+        targetId:
+          type: string
+          required: true
+  /deployments:
+    get:
+      description: Get deployments Information for the given space or ManagedContentVersion
+        or deploymentId
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ManagedContentDeploymentCollectionRepresentation
+      queryParameters:
+        contentSpaceId:
+          type: string
+          required: false
+        deploymentId:
+          type: string
+          required: false
+        deploymentStatus:
+          type: string
+          required: false
+          enum:
+            - Canceled
+            - Created
+            - Deployed
+            - Error
+            - Staged
+        deploymentType:
+          type: string
+          required: false
+          enum:
+            - Publish
+            - Unpublish
+        managedContentVersionId:
+          type: string
+          required: false
+        page:
+          type: integer
+          required: false
+        pageSize:
+          type: integer
+          required: false
+    post:
+      description: Create a deployment to a specific channel
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ManagedContentDeploymentRepresentation
+      body:
+        application/json:
+          type: ManagedContentDeploymentInputWrapperRepresentation # TODO Hand-rolled W-8334626
+          #required: false # TODO hand rolled. W-9275477
+          (oas-body-name): DeploymentInput
+  /deployments/{deploymentId}:
+    delete:
+      description: Delete and cleanup all resources used by a deployment
+      responses:
+        '200':
+          description: Success
+    patch:
+      description: Patch a deployment
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ManagedContentDeploymentRepresentation
+    uriParameters:
+      deploymentId:
+        type: string
+        required: true
+  /site-author/content:
+    /content-keys:
+      get:
+        description: Get the managed content versions, can include children and
+          maked for delete versions
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: MCSiteContentCollectionRepresentation
+        queryParameters:
+          contentKeys:
+            type: array
+            required: false
+            items:
+              type: string
+              (oas-collectionFormat): csv
+          includeChildren:
+            type: string
+            required: false
+          includeMarkForDeleted:
+            type: string
+            required: false
+    /{contentKey}:
+      delete:
+        description: Delete a Managed Content.
+        responses:
+          '200':
+            description: Success
+        queryParameters:
+          deleteType:
+            type: string
+            required: false
+      get:
+        description: Get a managed content version, can include children
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: MCSiteContentRepresentation
+        queryParameters:
+          includeChildren:
+            type: string
+            required: false
+      uriParameters:
+        contentKey:
+          type: string
+          required: true
+      /node/{contentNode}:
         get:
-          description: Get the managed content versions, can include children and
-            maked for delete versions
+          description: Get a managed content node for the top level content key
           responses:
             '200':
               description: Success
               body:
                 application/json:
-                  type: MCSiteContentCollectionRepresentation
+                  type: ManagedContentVersionSiteNodeRepresentation
+        uriParameters:
+          contentKey:
+            type: string
+            required: true
+          contentNode:
+            type: string
+            required: true
+      /nodes:
+        get:
+          description: Get managed content nodes for the top level content key and
+            given nodeIds
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentVersionSiteNodeCollectionRepresentation
           queryParameters:
-            contentKeys:
+            contentNodes:
               type: array
               required: false
               items:
                 type: string
                 (oas-collectionFormat): csv
-            includeChildren:
-              type: string
-              required: false
-            includeMarkForDeleted:
-              type: string
-              required: false
-      /{contentKey}:
-        delete:
-          description: Delete a Managed Content.
-          responses:
-            '200':
-              description: Success
-          queryParameters:
-            deleteType:
-              type: string
-              required: false
-        get:
-          description: Get a managed content version, can include children
-          responses:
-            '200':
-              description: Success
-              body:
-                application/json:
-                  type: MCSiteContentRepresentation
-          queryParameters:
-            includeChildren:
-              type: string
-              required: false
         uriParameters:
           contentKey:
             type: string
             required: true
-        /node/{contentNode}:
-          get:
-            description: Get a managed content node for the top level content key
-            responses:
-              '200':
-                description: Success
-                body:
-                  application/json:
-                    type: ManagedContentVersionSiteNodeRepresentation
-          uriParameters:
-            contentKey:
-              type: string
-              required: true
-            contentNode:
-              type: string
-              required: true
-        /nodes:
-          get:
-            description: Get managed content nodes for the top level content key and
-              given nodeIds
-            responses:
-              '200':
-                description: Success
-                body:
-                  application/json:
-                    type: ManagedContentVersionSiteNodeCollectionRepresentation
-            queryParameters:
-              contentNodes:
-                type: array
-                required: false
-                items:
-                  type: string
-                  (oas-collectionFormat): csv
-          uriParameters:
-            contentKey:
-              type: string
-              required: true
-    /site-delivery/{channelId}/contents:
-      /content-keys:
-        post:
-          description: Get the contents published to a site by their content keys
-          responses:
-            '200':
-              description: Success
-              body:
-                application/json:
-                  type: MCSiteContentCollectionRepresentation
-          body:
-            application/json:
-              type: MCSiteDeliveryByContentKeysInputRepresentation
-              #required: false # TODO hand rolled. W-9275477
-              (oas-body-name): SiteDeliveryByContentKeys
-        uriParameters:
-          channelId:
-            type: string
-            required: true
-      /content-types:
-        post:
-          description: Get the contents published to a site by their content types
-          responses:
-            '200':
-              description: Success
-              body:
-                application/json:
-                  type: ManagedContentCollectionRepresentation
-          body:
-            application/json:
-              type: MCSiteDeliveryByContentTypesInputRepresentation
-              #required: false # TODO hand rolled. W-9275477
-              (oas-body-name): SiteDeliveryByContentTypes
-        uriParameters:
-          channelId:
-            type: string
-            required: true
-      /node-ids:
-        post:
-          description: Get the nodes in a content published to a site by their node
-            ids
-          responses:
-            '200':
-              description: Success
-              body:
-                application/json:
-                  type: MCSiteNodeCollectionRepresentation
-          body:
-            application/json:
-              type: MCSiteDeliveryByNodesInputRepresentation
-              #required: false # TODO hand rolled. W-9275477
-              (oas-body-name): SiteDeliveryByNodeIds
-        uriParameters:
-          channelId:
-            type: string
-            required: true
-    /spaces/{contentSpaceId}:
-      get:
-        description: Get a specific ManagedContentSpace record
+  /site-delivery/{channelId}/contents:
+    /content-keys:
+      post:
+        description: Get the contents published to a site by their content keys
         responses:
           '200':
             description: Success
             body:
               application/json:
-                type: ManagedContentSpaceRepresentation
+                type: MCSiteContentCollectionRepresentation
+        body:
+          application/json:
+            type: MCSiteDeliveryByContentKeysInputRepresentation
+            #required: false # TODO hand rolled. W-9275477
+            (oas-body-name): SiteDeliveryByContentKeys
       uriParameters:
-        contentSpaceId:
+        channelId:
           type: string
           required: true
+    /content-types:
+      post:
+        description: Get the contents published to a site by their content types
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: ManagedContentCollectionRepresentation
+        body:
+          application/json:
+            type: MCSiteDeliveryByContentTypesInputRepresentation
+            #required: false # TODO hand rolled. W-9275477
+            (oas-body-name): SiteDeliveryByContentTypes
+      uriParameters:
+        channelId:
+          type: string
+          required: true
+    /node-ids:
+      post:
+        description: Get the nodes in a content published to a site by their node
+          ids
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: MCSiteNodeCollectionRepresentation
+        body:
+          application/json:
+            type: MCSiteDeliveryByNodesInputRepresentation
+            #required: false # TODO hand rolled. W-9275477
+            (oas-body-name): SiteDeliveryByNodeIds
+      uriParameters:
+        channelId:
+          type: string
+          required: true
+  /spaces/{contentSpaceId}:
+    get:
+      description: Get a specific ManagedContentSpace record
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ManagedContentSpaceRepresentation
+    uriParameters:
+      contentSpaceId:
+        type: string
+        required: true
+/:
   /connect:
     /cms:
       /channels/{channelId}/searchable-content-types:

@@ -4,4 +4,91 @@ extends: ./api.raml
 uses:
   luvio: luvio://annotations.raml
 
-(luvio.keyPrefix): 'cms-authoring'
+(luvio.keyPrefix): 'CMSAuthoring::'
+
+types:
+  ManagedContentDeploymentRepresentation:
+    (luvio.ttl): 1000
+    (luvio.opaque): true
+    (luvio.key):
+      id: deploymentId
+
+/cms/deployments:
+  post:
+    (luvio.adapter):
+      name: createDeployment
+      tests:
+        validConfigs:
+          - |
+            { "DeploymentInput": 
+              {
+                "contentSpaceId": "0Zux0000000KykTCAS",
+                "channelIds": 
+                  [
+                    "0apx0000000GmanAAC"
+                  ],
+                "description": "Test Description",
+                "contentIds": 
+                  [
+                    "0apx0000000GmanAAC"
+                  ],
+                "executeStagedDeployments": false,
+                "scheduledDate": "2021-03-23T17:14:00.000Z"
+              }
+            }
+          - |
+            { "DeploymentInput": 
+              {
+                "contentSpaceId": "0Zux0000000KykTCAS",
+                "channelIds": 
+                  [
+                  ],
+                "description": "Test Description",
+                "contentIds": 
+                  [
+                  ],
+                "executeStagedDeployments": false,
+                "scheduledDate": "2021-03-23T17:14:00.000Z"
+              }
+            }
+          - |
+            { "DeploymentInput": 
+              {
+                "contentSpaceId": "0Zux0000000KykTCAS"
+              }
+            }
+        invalidConfigs:
+          - |
+            { 
+              "contentSpaceId": "0Zux0000000KykTCAS"
+            }
+          - |
+            { "contentSpaceId": "0Zux0000000KykTCAS",
+              "channelIds": 
+                [
+                  "0apx0000000GmanAAC"
+                ],
+              "description": "Test Description",
+              "contentIds": 
+                [
+                  "0apx0000000GmanAAC"
+                ],
+              "executeStagedDeployments": false,
+              "scheduledDate": "2021-03-23T17:14:00.000Z"
+            }
+          - |
+            { "DeploymentInput": 
+              {
+                "channelIds": 
+                  [
+                    "0apx0000000GmanAAC"
+                  ],
+                "description": "Test Description",
+                "contentIds": 
+                  [
+                    "0apx0000000GmanAAC"
+                  ],
+                "executeStagedDeployments": false,
+                "scheduledDate": "2021-03-23T17:14:00.000Z"
+              }
+            }

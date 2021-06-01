@@ -1,0 +1,18 @@
+{
+    "createdBy": null,
+    "deploymentDescription": null,
+    "deploymentId": "0jkxx00000004d7AAA",
+    "deploymentItems": [
+        {
+            "action": "Unpublish",
+            "deploymentId": "0jkxx00000004d7AAA",
+            "deploymentItemId": "0jlxx00000004QDAAY",
+            "snapshotId": "5OUxx0000004IeGGAU",
+            "targetId": null
+        }
+    ],
+    "deploymentName": null,
+    "deploymentStatus": null,
+    "lastModifiedBy": null,
+    "scheduledDate": null
+}

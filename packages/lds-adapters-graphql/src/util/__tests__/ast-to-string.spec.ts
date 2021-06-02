@@ -253,6 +253,98 @@ describe('AST to string', () => {
         });
     });
 
+    it('should create correct graphql query when using aliases', () => {
+        const ast: LuvioDocumentNode = {
+            kind: 'Document',
+            definitions: [
+                {
+                    kind: 'OperationDefinition',
+                    operation: 'query',
+                    variableDefinitions: [],
+                    name: 'operationName',
+                    luvioSelections: [
+                        {
+                            kind: 'ObjectFieldSelection',
+                            name: 'uiapi',
+                            alias: 'MyApi',
+                            luvioSelections: [
+                                {
+                                    kind: 'ObjectFieldSelection',
+                                    name: 'query',
+                                    luvioSelections: [
+                                        {
+                                            kind: 'CustomFieldSelection',
+                                            name: 'Account',
+                                            type: 'Connection',
+                                            alias: 'MyAccount',
+                                            luvioSelections: [
+                                                {
+                                                    kind: 'ObjectFieldSelection',
+                                                    name: 'edges',
+                                                    luvioSelections: [
+                                                        {
+                                                            kind: 'CustomFieldSelection',
+                                                            name: 'node',
+                                                            type: 'Record',
+                                                            alias: 'MyNode',
+                                                            luvioSelections: [
+                                                                {
+                                                                    kind: 'ObjectFieldSelection',
+                                                                    name: 'Name',
+                                                                    alias: 'MyName',
+                                                                    luvioSelections: [
+                                                                        {
+                                                                            kind: 'ScalarFieldSelection',
+                                                                            name: 'value',
+                                                                            alias: 'MyValue',
+                                                                        },
+                                                                        {
+                                                                            kind: 'ScalarFieldSelection',
+                                                                            name: 'displayValue',
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                            arguments: [
+                                                {
+                                                    kind: 'Argument',
+                                                    name: 'where',
+                                                    value: {
+                                                        kind: 'ObjectValue',
+                                                        fields: {
+                                                            Name: {
+                                                                kind: 'ObjectValue',
+                                                                fields: {
+                                                                    like: {
+                                                                        kind: 'StringValue',
+                                                                        value: 'Account1',
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const expectedQuery = `query { MyApi: uiapi { query { MyAccount: Account(where:  { Name:  { like: "Account1" } }) { edges { MyNode: node { MyName: Name { MyValue: value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+
+        const actual = astToString(ast);
+        expect(actual).toEqual(expectedQuery);
+    });
+
     describe('Record, default field values', () => {
         it('should add default field values to spanning fields on a Record', () => {
             const ast: LuvioDocumentNode = {

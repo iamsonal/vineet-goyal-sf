@@ -714,7 +714,7 @@ describe('graphql', () => {
     });
 
     describe('aliasing', () => {
-        xit('should not hit network when all data is in cache', async () => {
+        it('should not hit network when all data is in cache', async () => {
             const astOne = parseQuery(`
                 query {
                     ApiOne: uiapi {
@@ -799,12 +799,10 @@ describe('graphql', () => {
                 query {
                     ApiOne: uiapi {
                         query {
-                            Account(where: { Name: { like: "Account1" } }) {
+                            AccountOne: Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Id,
-                                        WeakEtag,
-                                        Name { value, displayValue }
+                                        NameOne: Name { value, displayValue }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -852,7 +850,7 @@ describe('graphql', () => {
             expect(secondSnapshot.data).toEqual(expectedDataTwo);
         });
 
-        xit('should not hit network when merged data in cache is requested', async () => {
+        it('should not hit network when merged data in cache is requested', async () => {
             const ast = parseQuery(`
                 query {
                     ApiOne: uiapi {
@@ -924,13 +922,11 @@ describe('graphql', () => {
 
             const expectedQuery = `
                 query {
-                    uiapi {
+                    ApiOne: uiapi {
                         query {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Id,
-                                        WeakEtag,
                                         Name { value, displayValue }
                                         ...defaultRecordFields
                                     }
@@ -938,13 +934,11 @@ describe('graphql', () => {
                             }
                         }
                     }
-                    uiapi {
+                    ApiTwo: uiapi {
                         query {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Id,
-                                        WeakEtag,
                                         Phone { value, displayValue }
                                         ...defaultRecordFields
                                     }
@@ -1035,7 +1029,7 @@ describe('graphql', () => {
             expect(secondSnapshot.data).toEqual(expectedDataCached);
         });
 
-        xit('should not hit network when data from multiple requests in cache is requested', async () => {
+        it('should not hit network when data from multiple requests in cache is requested', async () => {
             const astOne = parseQuery(`
                 query {
                     ApiOne: uiapi {
@@ -1118,14 +1112,12 @@ describe('graphql', () => {
 
             const expectedQueryOne = `
                 query {
-                    uiapi {
+                    ApiOne: uiapi {
                         query {
-                            Account(where: { Name: { like: "Account1" } }) {
+                            AccountOne: Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Id,
-                                        WeakEtag,
-                                        Name { value, displayValue }
+                                        NameOne: Name { value, displayValue }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -1148,14 +1140,12 @@ describe('graphql', () => {
 
             const expectedQueryTwo = `
                 query {
-                    uiapi {
+                    ApiTwo: uiapi {
                         query {
-                            Account(where: { Name: { like: "Account1" } }) {
+                            AccountTwo: Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Id,
-                                        WeakEtag,
-                                        Phone { value, displayValue }
+                                        PhoneTwo: Phone { value, displayValue }
                                         ...defaultRecordFields
                                     }
                                 }

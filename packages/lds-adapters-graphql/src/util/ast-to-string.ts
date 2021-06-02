@@ -13,6 +13,7 @@ import {
     LuvioSelectionObjectFieldNode,
     LuvioSelectionScalarFieldNode,
     LuvioValueNode,
+    LuvioFieldNode,
 } from '@salesforce/lds-graphql-parser';
 import {
     defaultRecordFieldsFragmentName,
@@ -77,6 +78,11 @@ function serializeArgument(argDefinition: LuvioArgumentNode) {
     return `${name}: ${serializeValueNode(value)}`;
 }
 
+function serializeFieldNodeName(node: LuvioFieldNode): string {
+    const { name, alias } = node;
+    return alias === undefined ? `${name}` : `${alias}: ${name}`;
+}
+
 function serializeSelections(selections: LuvioSelectionNode[] | undefined, state: SerializeState) {
     if (selections === undefined) {
         return '';
@@ -129,18 +135,21 @@ function serializeFieldNode(def: LuvioSelectionNode, state: SerializeState) {
 }
 
 function serializeScalarFieldNode(def: LuvioSelectionScalarFieldNode) {
-    return `${def.name}, `;
+    return `${serializeFieldNodeName(def)}, `;
 }
 
 function serializeObjectFieldNode(def: LuvioSelectionObjectFieldNode, state: SerializeState) {
     const { luvioSelections, arguments: defArgs } = def;
     const args = defArgs === undefined ? '' : `(${serializeArguments(defArgs)})`;
-    return `${def.name}${args} { ${serializeSelections(luvioSelections, state)} }`;
+    return `${serializeFieldNodeName(def)}${args} { ${serializeSelections(
+        luvioSelections,
+        state
+    )} }`;
 }
 
 function serializeCustomFieldConnection(def: LuvioSelectionCustomFieldNode, state: SerializeState) {
-    const { name, luvioSelections, arguments: args } = def;
-    return `${name}(${serializeArguments(args)}) { ${serializeSelections(
+    const { luvioSelections, arguments: args } = def;
+    return `${serializeFieldNodeName(def)}(${serializeArguments(args)}) { ${serializeSelections(
         luvioSelections,
         state
     )} }`;
@@ -179,18 +188,21 @@ function serializeRecordFieldValue(def: LuvioSelectionObjectFieldNode): string {
         fields[sel.name] = true;
         str = `${str}${serializeScalarFieldNode(sel as LuvioSelectionScalarFieldNode)}`;
     }
-    return `${def.name}${args} { ${appendRecordDefaultFieldValues(str, fields)} }`;
+    return `${serializeFieldNodeName(def)}${args} { ${appendRecordDefaultFieldValues(
+        str,
+        fields
+    )} }`;
 }
 
 export function serializeCustomFieldRecord(
     def: LuvioSelectionCustomFieldNode,
     state: SerializeState
 ) {
-    const { name, luvioSelections } = def;
+    const { luvioSelections } = def;
     if (state.fragments[defaultRecordFieldsFragmentName] === undefined) {
         state.fragments[defaultRecordFieldsFragmentName] = defaultRecordFieldsFragment;
     }
-    return `${name} { ${serializeRecordSelections(
+    return `${serializeFieldNodeName(def)} { ${serializeRecordSelections(
         luvioSelections,
         state
     )} ...${defaultRecordFieldsFragmentName} }`;

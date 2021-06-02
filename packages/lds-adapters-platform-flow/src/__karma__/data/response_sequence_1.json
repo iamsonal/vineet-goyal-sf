@@ -1,0 +1,134 @@
+[
+    {
+        "error": null,
+        "response": {
+            "interviewStatus": "STARTED",
+            "flowLabel": "Simple flow",
+            "helpText": null,
+            "locationName": "Initial_Screen",
+            "showHeader": true,
+            "showFooter": true,
+            "localActionName": null,
+            "localActionOutputs": null,
+            "pausedText": null,
+            "serializedEncodedState": "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",
+            "apiVersionRuntime": 53.0,
+            "localActionInputs": null,
+            "guid": "244a840a3c94d1a7ff667a103417988905787-7f35",
+            "outputVariables": null,
+            "fields": [
+                {
+                    "outputs": null,
+                    "isRequired": false,
+                    "helpText": null,
+                    "metadataValues": null,
+                    "inputs": null,
+                    "dataType": "STRING",
+                    "errorMessage": null,
+                    "label": "<p>Some display text</p>",
+                    "name": "DisplayText1",
+                    "triggersUpdate": false,
+                    "choices": null,
+                    "contextMap": null,
+                    "fields": [],
+                    "value": null,
+                    "fieldType": "DISPLAY_TEXT",
+                    "visibilityRule": null
+                },
+                {
+                    "outputs": null,
+                    "isRequired": false,
+                    "helpText": null,
+                    "metadataValues": null,
+                    "inputs": null,
+                    "dataType": "STRING",
+                    "errorMessage": null,
+                    "label": "Text Input 1",
+                    "name": "Text_Input_1",
+                    "triggersUpdate": false,
+                    "choices": null,
+                    "contextMap": null,
+                    "fields": [],
+                    "value": "Some default text value",
+                    "fieldType": "INPUT",
+                    "visibilityRule": null
+                }
+            ],
+            "actions": [
+                {
+                    "id": "FINISH",
+                    "label": "Finish"
+                },
+                {
+                    "id": "NEXT",
+                    "label": "Next"
+                }
+            ],
+            "errors": null
+        }
+    },
+    {
+        "error": null,
+        "response": {
+            "interviewStatus": "STARTED",
+            "flowLabel": "Simple flow",
+            "helpText": null,
+            "locationName": "Initial_Screen",
+            "showHeader": true,
+            "showFooter": true,
+            "localActionName": null,
+            "localActionOutputs": null,
+            "pausedText": null,
+            "serializedEncodedState": "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",
+            "apiVersionRuntime": 53.0,
+            "localActionInputs": null,
+            "guid": "244a840a3c94d1a7ff667a103417988905787-7f35",
+            "outputVariables": null,
+            "fields": [
+                {
+                    "outputs": null,
+                    "isRequired": false,
+                    "helpText": null,
+                    "metadataValues": null,
+                    "inputs": null,
+                    "dataType": "STRING",
+                    "errorMessage": null,
+                    "label": "<p>Some other display text</p>",
+                    "name": "DisplayText1",
+                    "triggersUpdate": false,
+                    "choices": null,
+                    "contextMap": null,
+                    "fields": [],
+                    "value": null,
+                    "fieldType": "DISPLAY_TEXT",
+                    "visibilityRule": null
+                },
+                {
+                    "outputs": null,
+                    "isRequired": false,
+                    "helpText": null,
+                    "metadataValues": null,
+                    "inputs": null,
+                    "dataType": "STRING",
+                    "errorMessage": null,
+                    "label": "Text Input 4",
+                    "name": "Text_Input_4",
+                    "triggersUpdate": false,
+                    "choices": null,
+                    "contextMap": null,
+                    "fields": [],
+                    "value": "Some default text value for text 4",
+                    "fieldType": "INPUT",
+                    "visibilityRule": null
+                }
+            ],
+            "actions": [
+                {
+                    "id": "FINISH",
+                    "label": "Finish"
+                }
+            ],
+            "errors": null
+        }
+    }
+]

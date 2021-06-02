@@ -5268,6 +5268,198 @@ describe('routes', () => {
         );
     });
 
+    describe('post /connect/interaction/runtime/startFlow', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interaction/runtime/flow1/startFlow`,
+                body: {
+                    flowVersionId: '123',
+                },
+            },
+            [
+                'FlowRuntimeConnectController.startFlow',
+                {
+                    flowVersionId: '123',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                error: null,
+                response: {
+                    interviewStatus: 'STARTED',
+                    flowLabel: 'Simple flow',
+                    locationName: 'Initial_Screen',
+                    showHeader: true,
+                    showFooter: true,
+                    serializedEncodedState: 'AAAAW=',
+                    apiVersionRuntime: 53.0,
+                    guid: '244a840a3c94d1a7ff667a103417988905787-7f35',
+                    fields: [
+                        {
+                            isRequired: false,
+                            dataType: 'STRING',
+                            label: '<p>Some display text</p>',
+                            name: 'DisplayText1',
+                            triggersUpdate: false,
+                            fields: [],
+                            fieldType: 'DISPLAY_TEXT',
+                        },
+                    ],
+                    actions: [
+                        {
+                            id: 'FINISH',
+                            label: 'Finish',
+                        },
+                    ],
+                    errors: null,
+                },
+            }
+        );
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/interaction/runtime/flow1/startFlow`,
+        });
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interaction/runtime/flow1/startFlow`,
+            },
+            {}
+        );
+    });
+
+    describe('post /connect/interaction/runtime/navigateFlow', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interaction/runtime/flow1/navigateFlow`,
+                body: {
+                    action: 'NEXT',
+                },
+            },
+            [
+                'FlowRuntimeConnectController.navigateFlow',
+                {
+                    action: 'NEXT',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                error: null,
+                response: {
+                    interviewStatus: 'STARTED',
+                    flowLabel: 'Simple flow',
+                    locationName: 'Initial_Screen',
+                    showHeader: true,
+                    showFooter: true,
+                    serializedEncodedState: 'AAAAW=',
+                    apiVersionRuntime: 53.0,
+                    guid: '244a840a3c94d1a7ff667a103417988905787-7f35',
+                    fields: [
+                        {
+                            isRequired: false,
+                            dataType: 'STRING',
+                            label: '<p>Some display text</p>',
+                            name: 'DisplayText1',
+                            triggersUpdate: false,
+                            fields: [],
+                            fieldType: 'DISPLAY_TEXT',
+                        },
+                    ],
+                    actions: [
+                        {
+                            id: 'FINISH',
+                            label: 'Finish',
+                        },
+                    ],
+                    errors: null,
+                },
+            }
+        );
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/interaction/runtime/flow1/navigateFlow`,
+        });
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interaction/runtime/flow1/navigateFlow`,
+            },
+            {}
+        );
+    });
+
+    describe('post /connect/interaction/runtime/resumeFlow', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interaction/runtime/flow1/resumeFlow`,
+                body: {
+                    pausedInterviewId: '123',
+                },
+            },
+            [
+                'FlowRuntimeConnectController.resumeFlow',
+                {
+                    pausedInterviewId: '123',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                error: null,
+                response: {
+                    interviewStatus: 'STARTED',
+                    flowLabel: 'Simple flow',
+                    locationName: 'Initial_Screen',
+                    showHeader: true,
+                    showFooter: true,
+                    serializedEncodedState: 'AAAAW=',
+                    apiVersionRuntime: 53.0,
+                    guid: '244a840a3c94d1a7ff667a103417988905787-7f35',
+                    fields: [
+                        {
+                            isRequired: false,
+                            dataType: 'STRING',
+                            label: '<p>Some display text</p>',
+                            name: 'DisplayText1',
+                            triggersUpdate: false,
+                            fields: [],
+                            fieldType: 'DISPLAY_TEXT',
+                        },
+                    ],
+                    actions: [
+                        {
+                            id: 'FINISH',
+                            label: 'Finish',
+                        },
+                    ],
+                    errors: null,
+                },
+            }
+        );
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/interaction/runtime/flow1/resumeFlow`,
+        });
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/interaction/runtime/flow1/resumeFlow`,
+            },
+            {}
+        );
+    });
+
     // [IMPORTANT] this test has to be the last one in the suite to verify all registered routes have corresponding tests
     it.each(Object.keys(testedRoutes).map((key) => key.split(':')))(
         '%s %s route tested',

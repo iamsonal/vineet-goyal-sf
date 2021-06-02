@@ -1,0 +1,159 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Flow Adapter API
+version: '53.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v53.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  FlowRuntimeRunFlowRepresentation:
+    type: object
+    properties:
+      flowVersionId:
+        type: string
+        required: true
+      arguments:
+        type: string
+        required: false
+      enableTrace:
+        type: boolean
+        required: false
+      enableRollbackMode:
+        type: boolean
+        required: false
+      debugAsUserId:
+        type: string
+        required: false
+
+  FlowRuntimeHashbagRepresentation:
+    type: object
+    properties:
+      //:
+        type: any
+
+  FlowRuntimeNavigationFieldValue:
+    type: object
+    properties:
+      field:
+        type: string
+        required: true
+      isVisible:
+        type: boolean
+        required: true
+      value:
+        type: any
+        required: false
+
+  FlowRuntimeNavigateFlowRepresentation:
+    type: object
+    properties:
+      action:
+        type: string
+        required: true
+      serializedState:
+        type: string
+        required: true
+      fields:
+        type: array
+        required: false
+        items:
+          type: FlowRuntimeNavigationFieldValue
+      uiElementVisited:
+        type: boolean
+        required: false
+      enableTrace:
+        type: boolean
+        required: false
+      lcErrors:
+        type: FlowRuntimeHashbagRepresentation
+        required: false
+
+  FlowRuntimeResumeFlowRepresentation:
+    type: object
+    properties:
+      pausedInterviewId:
+        type: string
+        required: true
+
+  FlowRuntimeNavigationResult:
+    type: object
+    properties:
+      //:
+        type: any
+
+  FlowRuntimeResponseRepresentation:
+    type: object
+    properties:
+      error:
+        type: any
+        required: false
+      response:
+        type: FlowRuntimeNavigationResult
+        required: false
+
+/connect/interaction/runtime/{flowDevName}/startFlow:
+  post:
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: FlowRuntimeResponseRepresentation
+    body:
+      application/json:
+        type: FlowRuntimeRunFlowRepresentation
+  uriParameters:
+    flowDevName:
+      type: string
+      required: true
+
+/connect/interaction/runtime/{flowDevName}/navigateFlow:
+  post:
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: FlowRuntimeResponseRepresentation
+    body:
+      application/json:
+        type: FlowRuntimeNavigateFlowRepresentation
+  uriParameters:
+    flowDevName:
+      type: string
+      required: true
+
+/connect/interaction/runtime/{flowDevName}/resumeFlow:
+  post:
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: FlowRuntimeResponseRepresentation
+    body:
+      application/json:
+        type: FlowRuntimeResumeFlowRepresentation
+  uriParameters:
+    flowDevName:
+      type: string
+      required: true

@@ -1,0 +1,30 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'FlowRuntime::'
+(luvio.ttl): 2592000000
+
+types:
+  FlowRuntimeResponseRepresentation:
+    (luvio.opaque): true
+
+/connect/interaction/runtime/{flowDevName}/startFlow:
+  post:
+    (luvio.adapter):
+      name: startFlow
+    (luvio.method): get
+
+/connect/interaction/runtime/{flowDevName}/navigateFlow:
+  post:
+    (luvio.adapter):
+      name: navigateFlow
+    (luvio.method): get
+
+/connect/interaction/runtime/{flowDevName}/resumeFlow:
+  post:
+    (luvio.adapter):
+      name: resumeFlow
+    (luvio.method): get

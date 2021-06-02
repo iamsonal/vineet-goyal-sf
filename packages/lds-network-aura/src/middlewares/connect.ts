@@ -6,6 +6,7 @@ import {
     WAVE_BASE_URI,
     CMS_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
+    INTERACTION_BASE_URI,
 } from './connect-base';
 
 const COMMUNITIES_NAVIGATION_MENU_PATH = new RegExp(
@@ -141,6 +142,19 @@ const GET_ORCHESTRATION_INSTANCE_PATH = new RegExp(
     'i'
 );
 const SITES_SEARCH_PATH = new RegExp(`${CONNECT_BASE_URI}/sites/([A-Z0-9]){15,18}/search`, 'i');
+
+const INTERACTION_RUNTIME_RUN_FLOW_PATH = new RegExp(
+    `^${INTERACTION_BASE_URI}/runtime/.+/startFlow$`,
+    'i'
+);
+const INTERACTION_RUNTIME_NAVIGATE_FLOW_PATH = new RegExp(
+    `^${INTERACTION_BASE_URI}/runtime/.+/navigateFlow$`,
+    'i'
+);
+const INTERACTION_RUNTIME_RESUME_FLOW_PATH = new RegExp(
+    `^${INTERACTION_BASE_URI}/runtime/.+/resumeFlow$`,
+    'i'
+);
 
 const connect: ApiFamily = {
     getCommunityNavigationMenu: {
@@ -552,7 +566,37 @@ const analytics: ApiFamily = {
     },
 };
 
+const flow: ApiFamily = {
+    startFlow: {
+        method: 'post',
+        predicate: (path) =>
+            path.startsWith(INTERACTION_BASE_URI) && INTERACTION_RUNTIME_RUN_FLOW_PATH.test(path),
+        transport: {
+            controller: 'FlowRuntimeConnectController.startFlow',
+        },
+    },
+    navigateFlow: {
+        method: 'post',
+        predicate: (path) =>
+            path.startsWith(INTERACTION_BASE_URI) &&
+            INTERACTION_RUNTIME_NAVIGATE_FLOW_PATH.test(path),
+        transport: {
+            controller: 'FlowRuntimeConnectController.navigateFlow',
+        },
+    },
+    resumeFlow: {
+        method: 'post',
+        predicate: (path) =>
+            path.startsWith(INTERACTION_BASE_URI) &&
+            INTERACTION_RUNTIME_RESUME_FLOW_PATH.test(path),
+        transport: {
+            controller: 'FlowRuntimeConnectController.resumeFlow',
+        },
+    },
+};
+
 registerApiFamilyRoutes(connect);
 registerApiFamilyRoutes(commerce);
 registerApiFamilyRoutes(guidance);
 registerApiFamilyRoutes(analytics);
+registerApiFamilyRoutes(flow);

@@ -70,11 +70,15 @@ const store = new Store(storeOptions);
 const networkAdapter = makeNetworkAdapterChunkRecordFields(NimbusNetworkAdapter);
 
 const baseDurableStore = new NimbusDurableStore();
-const internalAdapterDurableStore = makeRecordDenormalizingDurableStore(baseDurableStore, store);
 
 // specific adapters
+const internalAdapterStore = new Store();
+const internalAdapterDurableStore = makeRecordDenormalizingDurableStore(
+    baseDurableStore,
+    internalAdapterStore
+);
 const { getObjectInfo, getRecord } = buildInternalAdapters(
-    store,
+    internalAdapterStore,
     networkAdapter,
     internalAdapterDurableStore
 );

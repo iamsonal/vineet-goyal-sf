@@ -6,11 +6,13 @@ export default class GetReplicatedDatasets extends LightningElement {
 
     @api category;
     @api connector;
+    @api q;
     @api sourceObject;
 
     @wire(getReplicatedDatasets, {
         category: '$category',
         connector: '$connector',
+        q: '$q',
         sourceObject: '$sourceObject',
     })
     onGetReplicatedDatasets({ data, error }) {

@@ -4559,6 +4559,7 @@ describe('routes', () => {
                     queryParams: {
                         category: 'Input',
                         connector: 'SFDC_LOCAL',
+                        q: 'Oppor',
                         sourceObject: 'Opportunity',
                     },
                 },
@@ -4567,6 +4568,7 @@ describe('routes', () => {
                     {
                         category: 'Input',
                         connector: 'SFDC_LOCAL',
+                        q: 'Oppor',
                         sourceObject: 'Opportunity',
                     },
                     { background: false, hotspot: true, longRunning: false },

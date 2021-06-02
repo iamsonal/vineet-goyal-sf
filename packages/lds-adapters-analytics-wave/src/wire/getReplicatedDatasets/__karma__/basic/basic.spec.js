@@ -52,6 +52,16 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
+    it('gets replicated datasets with search query param', async () => {
+        const mock = getMock('replicated-datasets-opportunity-label');
+        const config = { q: 'Oppor' };
+        mockGetReplicatedDatasetsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetReplicatedDatasets);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
     it('does not fetch a second time', async () => {
         const mock = getMock('replicated-datasets');
         const config = {};

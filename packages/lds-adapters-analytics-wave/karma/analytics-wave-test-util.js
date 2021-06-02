@@ -566,7 +566,7 @@ function mockGetReplicatedDatasetsNetworkErrorOnce(config, mockData) {
 }
 
 function getReplicatedDatasetsMatcher(config) {
-    let { category, connector, sourceObject } = config;
+    let { category, connector, q, sourceObject } = config;
     return sinon.match({
         body: null,
         headers: {},
@@ -576,6 +576,7 @@ function getReplicatedDatasetsMatcher(config) {
         queryParams: {
             category,
             connector,
+            q,
             sourceObject,
         },
     });

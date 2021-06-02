@@ -1,40 +1,139 @@
 #%RAML 1.0
+securitySchemes:
+  OAuth:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://login.salesforce.com/services/oauth2/authorize
+      accessTokenUri: https://login.salesforce.com/services/oauth2/token
+      authorizationGrants:
+        - authorization_code
+    describedBy:
+      responses:
+        '401':
+          description: Bad or expired token.
+        '403':
+          description: Bad OAuth request.
+      headers:
+        Authorization:
+          description: Used to send a valid OAuth 2 access token.
+          example: 00Dxx0000001gEb!AQ4AQLlMunyjVCe5qEdoFJOtZG8fiypuvjsVZMqKHZFmKgv3SEfompm3_JBzYeAEdDbvV_o5q4oxo.Ese_5jI2E1lDjDDUZ
+          type: string
+  SID Cookie:
+    type: Basic Authentication
+    describedBy:
+      headers:
+        Cookie:
+          description: sid
+          example: 00DT0000000Dpvc!AQYAQG9Ut2qLrt7dV0Jh1z.nan7W04yLGUnBiKRxp6oaDQ4B988Wh24yhtnNHB3innkFy7Sd0HTAiBRh487mZ7p1.GT7td3r
+          type: string
+    settings: {}
 title: Apex Adapter API
-
 types:
-  ApexActionRequestRepresentation:
-    description: Apex action input parameters
+  ApexMethodExecuteRequest:
+    description: A JSON Object representing the parameters of an apex method as name-value pairs.
+    example:
+      strict: true
+      value:
+        paramName1: paramValue1
+        paramName2: paramValue2
     type: object
+  ApexMethodExecuteErrorResponse:
+    description: Response in case of an error.
     properties:
-      namespace:
-        description: 'The namespace of the Apex controller.'
-        type: string | nil
-      classname:
-        description: 'The class name of the Apex controller.'
+      errorMessage:
+        example: User has insufficient permissions
         type: string
-      method:
-        description: 'The method of the Apex controller.'
+      debugInfo?:
+        example: "Cause: system.security.NoAccessException: Current user doesn't have access to entity. Check access before calling getApiName()"
         type: string
-      isContinuation:
-        description: 'Whether the Apex method returns a continuation.'
-        type: boolean
-      params:
-        description: 'The parameters of the apex action for which a value is being fetched.'
-        type: any
-      cacheable:
-        description: 'Whether or not it is from a wire adapter call.'
-        type: boolean
-
-/apex:
+  ApexClassIdentifierWithoutNamespace:
+    description: Apex non-namespaced class identifier.
+    example: GreetingController
+    type: string
+  ApexClassIdentifierWithNamespace:
+    description: Apex namespaced class identifier.
+    example: myNS__GreetingController
+    type: string
+baseUri: /lwr/v53.0/apex
+description: |
+  Execute @AuraEnabled Apex Method.
+mediaType:
+  - application/json
+version: v1
+protocols:
+  - HTTPS
+securedBy:
+  - OAuth
+  - SID Cookie
+/{apexClass}/{apexMethod}:
   post:
-    responses:
-      '200':
-        description: Success
-        headers:
-          cachable:
-            description: 'whether or not it is cachable.'
-            type: boolean
-        # empty body because the body type is any
+    description: Invoke @AuraEnabled method on Apex Class
+    displayName: Invoke Apex Class Method (using imperative call from LWC)
+    headers:
+      X-SFDC-Allow-Continuation?:
+        example: 'true'
+        type: string
     body:
       application/json:
-        type: ApexActionRequestRepresentation
+        type: ApexMethodExecuteRequest
+    securedBy:
+      - OAuth
+      - SID Cookie
+    responses:
+      '200':
+        headers:
+          Cache-Control:
+            example: 'no-cache'
+        description: Apex Method Response
+        # empty body because the body type is any
+      '400':
+        description: Returned when there is something wrong with the request like misnamed parameters.
+        body:
+          application/json:
+            type: ApexMethodExecuteErrorResponse
+      '404':
+        description: If the apex class or method cannot be found. This can also be returned if the user does not permission to access the apex class.
+      '500':
+        description: Returned when the apex method execution results in an error.
+        body:
+          application/json:
+            type: ApexMethodExecuteErrorResponse
+  get:
+    displayName: Invoke Cacheable Apex Class Method (using @wire call from LWC)
+    description: Invoke @AuraEnabled(cacheable = true) method on Apex Class
+    headers:
+      X-SFDC-Allow-Continuation?:
+        example: 'true'
+        type: string
+    securedBy:
+      - OAuth
+      - SID Cookie
+    responses:
+      '200':
+        headers:
+          Cache-Control:
+            example: 'private max-age=30'
+        # empty body because the body type is any
+      '400':
+        description: Returned if the apex method is not cacheable or if there is something else wrong with the request like misnamed parameters.
+        body:
+          application/json:
+            type: ApexMethodExecuteErrorResponse
+      '404':
+        description: If the apex class or method cannot be found. This can also be returned if the user does not permission to access the apex class.
+      '500':
+        description: Returned when the apex method execution results in an error.
+        body:
+          application/json:
+            type: ApexMethodExecuteErrorResponse
+    queryParameters:
+      methodParams?:
+        type: ApexMethodExecuteRequest
+  uriParameters:
+    apexMethod:
+      description: Name of the Apex Method
+      example: getGreeting
+      type: string
+    apexClass:
+      description: Apex Class Name (can include a namespace prefix separated by __)
+      type: ApexClassIdentifierWithNamespace | ApexClassIdentifierWithoutNamespace

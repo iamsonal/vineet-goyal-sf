@@ -1,5 +1,5 @@
 import { getMock as globalGetMock, setupElement } from 'test-util';
-import { expireApex, mockApexNetwork, mockApexNetworkOnce } from 'apex-test-util';
+import { CACHE_CONTROL, expireApex, mockApexNetwork, mockApexNetworkOnce } from 'apex-test-util';
 import { getSObjectValue } from 'lds-adapters-apex';
 
 import Imperative from '../lwc/imperative';
@@ -8,24 +8,33 @@ import WiredCustomProp from '../lwc/wiredCustomProp';
 
 const MOCK_PREFIX = 'wire/getApex/__karma__/data/';
 
+const BASE_URI = '/lwr/v53.0/apex';
+const BASE_PATH = '/ContactController/getContactList';
+
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
 }
 
-const requestBody = {
-    namespace: '',
-    classname: 'ContactController',
-    method: 'getContactList',
-    isContinuation: false,
-    params: {},
-    cacheable: true,
+const request = {
+    baseUri: BASE_URI,
+    basePath: BASE_PATH,
+    method: 'get',
+    body: null,
+    urlParams: {
+        apexMethod: 'getContactList',
+        apexClass: 'ContactController',
+    },
+    queryParams: {},
+    headers: {
+        'X-SFDC-Allow-Continuation': 'false',
+    },
 };
-const mockHeaders = { cacheable: true };
+const mockHeaders = { [CACHE_CONTROL]: 'private' };
 
 describe('Apex getSObjectValue', () => {
     it('returns Contact.Name from sObject response', async () => {
         const mockApex = getMock('apex-getContactList');
-        mockApexNetworkOnce(requestBody, mockApex, mockHeaders);
+        mockApexNetworkOnce(request, mockApex, mockHeaders);
 
         const element = await setupElement({}, Wired);
 
@@ -47,7 +56,7 @@ describe('Apex getSObjectValue', () => {
 
     it('returns undefined for field that is not in sObject', async () => {
         const mockApex = getMock('apex-getContactList');
-        mockApexNetworkOnce(requestBody, mockApex, mockHeaders);
+        mockApexNetworkOnce(request, mockApex, mockHeaders);
 
         const element = await setupElement({}, Wired);
 
@@ -62,7 +71,7 @@ describe('Apex getSObjectValue', () => {
 describe('@wire Apex call', () => {
     it('returns data', async () => {
         const mockApex = getMock('apex-getContactList');
-        mockApexNetworkOnce(requestBody, mockApex, mockHeaders);
+        mockApexNetworkOnce(request, mockApex, mockHeaders);
 
         const element = await setupElement({}, Wired);
 
@@ -71,7 +80,7 @@ describe('@wire Apex call', () => {
 
     it('returns error', async () => {
         const mockApexError = getMock('apex-getContactList-wiredError');
-        mockApexNetwork(requestBody, { reject: true, data: mockApexError }, mockHeaders);
+        mockApexNetwork(request, { reject: true, data: mockApexError }, mockHeaders);
 
         const element = await setupElement({}, Wired);
 
@@ -86,7 +95,7 @@ describe('@wire Apex call', () => {
 
     it('uses cached data when cacheable is set in response', async () => {
         const mockApex = getMock('apex-getContactList');
-        mockApexNetworkOnce(requestBody, mockApex, mockHeaders);
+        mockApexNetworkOnce(request, mockApex, mockHeaders);
 
         await setupElement({}, Wired);
 
@@ -98,11 +107,7 @@ describe('@wire Apex call', () => {
     it('issues a new network request when cacheable is not set in response', async () => {
         const mockApex = getMock('apex-getContactList');
 
-        mockApexNetwork(
-            requestBody,
-            [mockApex, mockApex],
-            [{ cacheable: false }, { cacheable: true }]
-        );
+        mockApexNetwork(request, [mockApex, mockApex], [{ cacheable: false }, { cacheable: true }]);
 
         await setupElement({}, Wired);
 
@@ -113,7 +118,7 @@ describe('@wire Apex call', () => {
     it('refreshes data', async () => {
         const mockApex1 = getMock('apex-getContactList');
         const mockApex2 = mockApex1.slice(mockApex1.length - 1);
-        mockApexNetwork(requestBody, [mockApex1, mockApex2], [mockHeaders, mockHeaders]);
+        mockApexNetwork(request, [mockApex1, mockApex2], [mockHeaders, mockHeaders]);
 
         const element = await setupElement({}, Wired);
 
@@ -129,7 +134,7 @@ describe('@wire Apex call', () => {
     it('does not emit same refreshed data', async () => {
         const mockApex1 = getMock('apex-getContactList');
         const mockApex2 = getMock('apex-getContactList');
-        mockApexNetwork(requestBody, [mockApex1, mockApex2], [mockHeaders, mockHeaders]);
+        mockApexNetwork(request, [mockApex1, mockApex2], [mockHeaders, mockHeaders]);
 
         const element = await setupElement({}, Wired);
 
@@ -142,16 +147,21 @@ describe('@wire Apex call', () => {
 
     it('uses cache of imperative', async () => {
         const mockApex = getMock('apex-getContactList');
-        const imperativeRequestBody = {
-            namespace: '',
-            classname: 'ContactController',
-            method: 'getContactList',
-            isContinuation: false,
-            params: undefined,
-            cacheable: false,
+        const imperativeRequest = {
+            baseUri: BASE_URI,
+            basePath: BASE_PATH,
+            method: 'post',
+            body: undefined,
+            urlParams: {
+                apexMethod: 'getContactList',
+                apexClass: 'ContactController',
+            },
+            headers: {
+                'X-SFDC-Allow-Continuation': 'false',
+            },
         };
 
-        mockApexNetworkOnce(imperativeRequestBody, mockApex, mockHeaders);
+        mockApexNetworkOnce(imperativeRequest, mockApex, mockHeaders);
 
         await (await setupElement({}, Imperative)).getContacts();
 
@@ -165,7 +175,7 @@ describe('@wire Apex call', () => {
     it('makes network request after cache TTLs out', async () => {
         const mockApex1 = getMock('apex-getContactList');
         const mockApex2 = mockApex1.slice(1);
-        mockApexNetwork(requestBody, [mockApex1, mockApex2], [mockHeaders, mockHeaders]);
+        mockApexNetwork(request, [mockApex1, mockApex2], [mockHeaders, mockHeaders]);
 
         await setupElement({}, Wired);
 

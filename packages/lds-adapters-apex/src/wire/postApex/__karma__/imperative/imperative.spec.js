@@ -1,31 +1,39 @@
 import { getMock as globalGetMock, setupElement } from 'test-util';
-import { expireApex, mockApexNetwork, mockApexNetworkOnce } from 'apex-test-util';
+import { CACHE_CONTROL, expireApex, mockApexNetwork, mockApexNetworkOnce } from 'apex-test-util';
 
 import Imperative from '../lwc/imperative';
 import Wired from '../lwc/wired';
 
-const MOCK_PREFIX = 'wire/getApex/__karma__/data/';
+const MOCK_PREFIX = 'wire/postApex/__karma__/data/';
+
+const BASE_URI = '/lwr/v53.0/apex';
+const BASE_PATH = '/ContactController/getContactList';
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
 }
 
-const requestBody = {
-    namespace: '',
-    classname: 'ContactController',
-    method: 'getContactList',
-    isContinuation: false,
-    params: undefined,
-    cacheable: false,
+const request = {
+    baseUri: BASE_URI,
+    basePath: BASE_PATH,
+    method: 'post',
+    body: undefined,
+    urlParams: {
+        apexMethod: 'getContactList',
+        apexClass: 'ContactController',
+    },
+    headers: {
+        'X-SFDC-Allow-Continuation': false,
+    },
 };
 
-const mockCacheableHeaders = { cacheable: true };
-const mockNonCacheableHeaders = { cacheable: false };
+const mockCacheableHeaders = { [CACHE_CONTROL]: 'private' };
+const mockNonCacheableHeaders = { [CACHE_CONTROL]: 'no-cache' };
 
 describe('imperative Apex call', () => {
     it('returns immutable data for cacheable apex function', async () => {
         const mockApex = getMock('apex-getContactList');
-        mockApexNetworkOnce(requestBody, mockApex, mockCacheableHeaders);
+        mockApexNetworkOnce(request, mockApex, mockCacheableHeaders);
 
         const element = await setupElement({}, Imperative);
         const contacts = await element.getContacts();
@@ -36,7 +44,7 @@ describe('imperative Apex call', () => {
 
     it('returns mutable data for non-cacheable apex function', async () => {
         const mockApex = getMock('apex-getContactList');
-        mockApexNetworkOnce(requestBody, mockApex, mockNonCacheableHeaders);
+        mockApexNetworkOnce(request, mockApex, mockNonCacheableHeaders);
 
         const element = await setupElement({}, Imperative);
         const contacts = await element.getContacts();
@@ -47,7 +55,7 @@ describe('imperative Apex call', () => {
 
     it('returns immutable error', async () => {
         const mockApexError = getMock('apex-getContactList-imperativeError');
-        mockApexNetwork(requestBody, { reject: true, data: mockApexError }, mockCacheableHeaders);
+        mockApexNetwork(request, { reject: true, data: mockApexError }, mockCacheableHeaders);
 
         const element = await setupElement({}, Imperative);
         const error = await element.getContacts();
@@ -57,7 +65,7 @@ describe('imperative Apex call', () => {
 
     it('uses cached data when cacheable is set in response', async () => {
         const mockApex = getMock('apex-getContactList');
-        mockApexNetworkOnce(requestBody, mockApex, mockCacheableHeaders);
+        mockApexNetworkOnce(request, mockApex, mockCacheableHeaders);
 
         await setupElement({}, Imperative);
 
@@ -69,11 +77,7 @@ describe('imperative Apex call', () => {
 
     it('issues a new network request when cacheable is not set in response', async () => {
         const mockApex = getMock('apex-getContactList');
-        mockApexNetwork(
-            requestBody,
-            [mockApex, mockApex],
-            [{ cacheable: false }, { cacheable: true }]
-        );
+        mockApexNetwork(request, [mockApex, mockApex], [{ cacheable: false }, { cacheable: true }]);
 
         const element = await setupElement({}, Imperative);
         await element.getContacts();
@@ -83,7 +87,7 @@ describe('imperative Apex call', () => {
 
     it('throws an error when trying to refresh non-cacheable apex data', async () => {
         const mockApex = getMock('apex-getContactList');
-        mockApexNetworkOnce(requestBody, mockApex, mockCacheableHeaders);
+        mockApexNetworkOnce(request, mockApex, mockCacheableHeaders);
 
         const element = await setupElement({}, Imperative);
         const contacts = await element.getContacts();
@@ -94,15 +98,23 @@ describe('imperative Apex call', () => {
 
     it('uses cache of @wire', async () => {
         const mockApex = getMock('apex-getContactList');
-        const wiredRequestBody = {
-            namespace: '',
-            classname: 'ContactController',
-            method: 'getContactList',
-            isContinuation: false,
-            params: {},
-            cacheable: true,
+        const wiredRequest = {
+            baseUri: BASE_URI,
+            basePath: BASE_PATH,
+            method: 'get',
+            body: null,
+            urlParams: {
+                apexMethod: 'getContactList',
+                apexClass: 'ContactController',
+            },
+            queryParams: {
+                methodParams: {},
+            },
+            headers: {
+                'X-SFDC-Allow-Continuation': 'false',
+            },
         };
-        mockApexNetworkOnce(wiredRequestBody, mockApex, mockCacheableHeaders);
+        mockApexNetworkOnce(wiredRequest, mockApex, mockCacheableHeaders);
 
         await setupElement({}, Wired);
 
@@ -118,7 +130,7 @@ describe('imperative Apex call', () => {
         const mockApex1 = getMock('apex-getContactList');
         const mockApex2 = mockApex1.slice(1);
         mockApexNetwork(
-            requestBody,
+            request,
             [mockApex1, mockApex2],
             [mockCacheableHeaders, mockCacheableHeaders]
         );

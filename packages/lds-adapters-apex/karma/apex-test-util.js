@@ -9,6 +9,8 @@ import { mockNetworkOnce, mockNetworkSequence } from 'test-util';
 // TTL should be imported from generated code, once we can define it on RAML.
 const APEX_TTL = 5 * 60 * 1000;
 
+const CACHE_CONTROL = 'Cache-Control';
+
 /**
  * Force a cache expiration for actions by fast-forwarding time past the
  * standard Apex TTL.
@@ -20,18 +22,12 @@ function expireApex() {
 /**
  * Mock a single successful network request to return a given payload.
  *
- * @param {object} body The 'body' property of Apex network request.
+ * @param {object} request The Apex network request.
  * @param {object} mockData The data payload to return when the mock is called.
  * @param {array} responseHeaders The headers to return when the mock is called.
  */
-function mockApexNetworkOnce(body, mockData, responseHeaders) {
-    const matchParams = sinon.match({
-        basePath: '/apex',
-        method: 'post',
-        body: { ...body },
-        headers: {},
-    });
-
+function mockApexNetworkOnce(request, mockData, responseHeaders) {
+    const matchParams = apexMatcher(request);
     mockNetworkOnce(karmaNetworkAdapter, matchParams, mockData, responseHeaders);
 }
 
@@ -42,19 +38,14 @@ function mockApexNetworkOnce(body, mockData, responseHeaders) {
  * ```mockApexNetworkOnce``` instead.
  * It can also be used when the test expects a reject network reponse.
  *
- * @param {object} body The 'body' property of Apex network request.
+ * @param {object} request The Apex network request.
  * @param {array|object} mockData The data payload to return when the mock is called.
  * To reject a network call, provide the data as an object with 'reject' property
  * ```{ reject: true, data: mockData }```.
  * @param {array} responseHeaders The headers to return when the mock is called.
  */
-function mockApexNetwork(body, mockData, responseHeaders) {
-    const matchParams = sinon.match({
-        basePath: '/apex',
-        method: 'post',
-        body: { ...body },
-        headers: {},
-    });
+function mockApexNetwork(request, mockData, responseHeaders) {
+    const matchParams = apexMatcher(request);
 
     mockNetworkSequence(
         karmaNetworkAdapter,
@@ -64,4 +55,11 @@ function mockApexNetwork(body, mockData, responseHeaders) {
     );
 }
 
-export { expireApex, mockApexNetworkOnce, mockApexNetwork };
+function apexMatcher(request) {
+    // Removing headers from match value, since it doesn't like "X-SFDC-Allow-Continuation"
+    const req = { ...request };
+    delete req.headers;
+    return sinon.match(req);
+}
+
+export { CACHE_CONTROL, expireApex, mockApexNetworkOnce, mockApexNetwork };

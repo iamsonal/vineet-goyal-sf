@@ -11,21 +11,18 @@ import {
     StaleSnapshot,
     UnfulfilledSnapshot,
 } from '@luvio/engine';
-import {
-    AdapterValidationConfig,
-    snapshotRefreshOptions,
-    SNAPSHOT_STATE_UNFULFILLED,
-    stableJSONStringify,
-} from '../../generated/adapters/adapter-utils';
+import { stableJSONStringify } from '../../util/utils';
 import {
     createResourceRequest,
     ResourceRequestConfig,
-} from '../../generated/resources/getByApexMethodAndApexClass';
+} from '../../generated/resources/postByApexMethodAndApexClass';
+import { SNAPSHOT_STATE_UNFULFILLED } from '../../generated/adapters/adapter-utils';
 import {
     apexResponseIngest,
     apexClassnameBuilder,
     ApexAdapterConfig,
     ApexInvokerParams,
+    CACHE_CONTROL,
     configBuilder,
     keyBuilder,
     KEY_DELIM,
@@ -34,25 +31,13 @@ import {
     validateAdapterConfig,
 } from '../../util/shared';
 
-export const adapterName = 'getByApexMethodAndApexClass';
-
-export const getByApexMethodAndApexClass_ConfigPropertyNames: AdapterValidationConfig = {
-    displayName: 'getByApexMethodAndApexClass',
-    parameters: {
-        required: ['apexMethod', 'apexClass'],
-        optional: ['methodParams', 'xSFDCAllowContinuation'],
-    },
-};
-
 export function createResourceParams(config: ApexAdapterConfig): ResourceRequestConfig {
     return {
         urlParams: {
             apexMethod: config.apexMethod,
             apexClass: config.apexClass,
         },
-        queryParams: {
-            methodParams: config.methodParams,
-        },
+        body: config.methodParams,
         headers: {
             xSFDCAllowContinuation: config.xSFDCAllowContinuation,
         },
@@ -65,9 +50,7 @@ export function keyBuilderFromResourceParams(params: ResourceRequestConfig): str
         classname,
         params.urlParams.apexMethod,
         params.headers.xSFDCAllowContinuation,
-        isEmptyParam(params.queryParams.methodParams)
-            ? ''
-            : stableJSONStringify(params.queryParams.methodParams),
+        isEmptyParam(params.body) ? '' : stableJSONStringify(params.body),
     ].join(KEY_DELIM);
 }
 
@@ -106,25 +89,44 @@ export function ingestSuccess(
     return snapshot as FulfilledSnapshot<any, any> | StaleSnapshot<any, any>;
 }
 
+function isCacheable(luvio: Luvio, config: ApexAdapterConfig) {
+    const { apexClass, apexMethod, xSFDCAllowContinuation, methodParams } = config;
+    const recordId = keyBuilder(apexClass, apexMethod, xSFDCAllowContinuation, methodParams);
+    const cacheableSnap = luvio.storeLookup<{ [CACHE_CONTROL]: string }>({
+        recordId: recordId + '_cacheable',
+        node: {
+            kind: 'Fragment',
+            private: [],
+            selections: [
+                {
+                    kind: 'Scalar',
+                    name: CACHE_CONTROL,
+                },
+            ],
+        },
+        variables: {},
+    });
+
+    // adapter always storeIngest the response, but only cacheable response should be used
+    if (cacheableSnap.state !== 'Fulfilled' || cacheableSnap.data[CACHE_CONTROL] === 'no-cache') {
+        return false;
+    }
+    return true;
+}
+
 function buildInMemorySnapshot(luvio: Luvio, config: ApexAdapterConfig) {
     const { apexClass, apexMethod, xSFDCAllowContinuation, methodParams } = config;
     const recordId = keyBuilder(apexClass, apexMethod, xSFDCAllowContinuation, methodParams);
 
-    return luvio.storeLookup<any>(
-        {
-            recordId: recordId,
-            node: {
-                kind: 'Fragment',
-                opaque: true,
-                private: [],
-            },
-            variables: {},
+    return luvio.storeLookup<any>({
+        recordId: recordId,
+        node: {
+            kind: 'Fragment',
+            opaque: true,
+            private: [],
         },
-        {
-            config,
-            resolve: () => buildNetworkSnapshot(luvio, config, snapshotRefreshOptions),
-        }
-    );
+        variables: {},
+    });
 }
 
 export function resolveUnfulfilledSnapshot(
@@ -146,7 +148,7 @@ export function resolveUnfulfilledSnapshot(
 
 export function onResourceResponseSuccess(
     luvio: Luvio,
-    config: ApexAdapterConfig,
+    _config: ApexAdapterConfig,
     resourceParams: ResourceRequestConfig,
     response: ResourceResponse<any>
 ) {
@@ -157,10 +159,7 @@ export function onResourceResponseSuccess(
         variables: {},
     };
     if (shouldCache(response)) {
-        const snapshot = ingestSuccess(luvio, resourceParams, response, {
-            config,
-            resolve: () => buildNetworkSnapshot(luvio, config, snapshotRefreshOptions),
-        });
+        const snapshot = ingestSuccess(luvio, resourceParams, response);
         luvio.storeBroadcast();
         return snapshot;
     }
@@ -178,14 +177,11 @@ export function onResourceResponseSuccess(
 
 export function onResourceResponseError(
     luvio: Luvio,
-    config: ApexAdapterConfig,
+    _config: ApexAdapterConfig,
     _resourceParams: ResourceRequestConfig,
     response: FetchResponse<unknown>
 ) {
-    return luvio.errorSnapshot(response, {
-        config,
-        resolve: () => buildNetworkSnapshot(luvio, config, snapshotRefreshOptions),
-    });
+    return luvio.errorSnapshot(response);
 }
 
 export function buildNetworkSnapshot(
@@ -205,12 +201,25 @@ export function buildNetworkSnapshot(
     );
 }
 
-export const factory = (luvio: Luvio, invokerParams: ApexInvokerParams): Adapter<any, any> => {
+export const invoker = (luvio: Luvio, invokerParams: ApexInvokerParams) => {
     const { namespace, classname, method, isContinuation } = invokerParams;
-    return getApexAdapterFactory(luvio, namespace, classname, method, isContinuation);
+    const ldsAdapter = postApexAdapterFactory(luvio, namespace, classname, method, isContinuation);
+    return getInvoker(ldsAdapter);
 };
 
-function getApexAdapterFactory(
+function getInvoker(ldsAdapter: Adapter<any, any>) {
+    return (config: unknown) => {
+        const snapshotOrPromise = ldsAdapter(config);
+        return Promise.resolve(snapshotOrPromise!).then((snapshot: Snapshot<any>) => {
+            if (snapshot.state === 'Error') {
+                throw snapshot.error;
+            }
+            return snapshot.data!;
+        });
+    };
+}
+
+function postApexAdapterFactory(
     luvio: Luvio,
     namespace: string,
     classname: string,
@@ -231,15 +240,17 @@ function getApexAdapterFactory(
             isContinuation
         );
 
-        const cacheSnapshot = buildInMemorySnapshot(luvio, configPlus);
+        if (isCacheable(luvio, configPlus)) {
+            const cacheSnapshot = buildInMemorySnapshot(luvio, configPlus);
 
-        // Cache Hit
-        if (luvio.snapshotAvailable(cacheSnapshot) === true) {
-            return cacheSnapshot;
-        }
+            // Cache Hit
+            if (luvio.snapshotAvailable(cacheSnapshot) === true) {
+                return cacheSnapshot;
+            }
 
-        if (cacheSnapshot.state === SNAPSHOT_STATE_UNFULFILLED) {
-            return resolveUnfulfilledSnapshot(luvio, configPlus, cacheSnapshot);
+            if (cacheSnapshot.state === SNAPSHOT_STATE_UNFULFILLED) {
+                return resolveUnfulfilledSnapshot(luvio, configPlus, cacheSnapshot);
+            }
         }
 
         return buildNetworkSnapshot(luvio, configPlus);

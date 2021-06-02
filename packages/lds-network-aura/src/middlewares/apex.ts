@@ -3,15 +3,56 @@ import { ActionConfig, executeGlobalController } from 'aura';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 import appRouter from '../router';
 
-const APEX_BASE_URI = '/apex';
+export const LWR_APEX_BASE_URI = '/lwr/v53.0/apex';
 const ApexController = 'ApexActionController.execute';
+const CACHE_CONTROL = 'Cache-Control';
+interface apexActionParams {
+    namespace: string | null;
+    classname: string;
+    method: string;
+    isContinuation: boolean;
+    params: any;
+    cacheable: boolean;
+}
 
-function executeApex(resourceRequest: ResourceRequest): Promise<any> {
-    const { body } = resourceRequest;
-    return dispatchApexAction(ApexController, body, {
+function splitNamespaceClassname(classname: string): [string | null, string] {
+    const split = classname.split('__');
+    return split.length > 1 ? [split[0], split[1]] : ['', split[0]];
+}
+
+function executePostApex(resourceRequest: ResourceRequest): Promise<any> {
+    const { urlParams, body, headers } = resourceRequest;
+    const [namespace, classname] = splitNamespaceClassname(urlParams.apexClass as string);
+    const params: apexActionParams = {
+        namespace,
+        classname,
+        method: urlParams.apexMethod as string,
+        isContinuation: headers.xSFDCAllowContinuation ? true : false,
+        params: body.methodParams,
+        cacheable: false,
+    };
+    return dispatchApexAction(ApexController, params, {
         background: false,
         hotspot: false,
-        longRunning: body.isContinuation,
+        longRunning: params.isContinuation,
+    });
+}
+
+function executeGetApex(resourceRequest: ResourceRequest): Promise<any> {
+    const { urlParams, queryParams, headers } = resourceRequest;
+    const [namespace, classname] = splitNamespaceClassname(urlParams.apexClass as string);
+    const params: apexActionParams = {
+        namespace,
+        classname,
+        method: urlParams.apexMethod as string,
+        isContinuation: headers.xSFDCAllowContinuation ? true : false,
+        params: queryParams.methodParams,
+        cacheable: true,
+    };
+    return dispatchApexAction(ApexController, params, {
+        background: false,
+        hotspot: false,
+        longRunning: params.isContinuation,
     });
 }
 
@@ -30,14 +71,12 @@ function dispatchApexAction(
     return executeGlobalController(endpoint, params, config).then(
         (body: ApexResponse) => {
             // massage aura action response to
-            //  headers: { cacheable }
+            //  headers: { 'Cache-Control' }
             //  body: returnValue
             return new AuraFetchResponse(
                 HttpStatusCode.Ok,
                 body.returnValue === undefined ? null : body.returnValue,
-                // Headers expects properties of [name: string]: string
-                // However this is a synthetic header and we want to keep the boolean
-                { cacheable: body.cacheable as any }
+                { [CACHE_CONTROL]: body.cacheable === true ? 'private' : 'no-cache' }
             );
         },
         (err) => {
@@ -53,4 +92,5 @@ function dispatchApexAction(
     );
 }
 
-appRouter.post((path: string) => path === APEX_BASE_URI, executeApex);
+appRouter.post((path: string) => path.startsWith(LWR_APEX_BASE_URI), executePostApex);
+appRouter.get((path: string) => path.startsWith(LWR_APEX_BASE_URI), executeGetApex);

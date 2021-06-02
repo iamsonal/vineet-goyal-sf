@@ -1,6 +1,6 @@
-import { factory as getApex, createResourceParams, keyBuilderFromResourceParams } from '../index';
+import { invoker as postApex, createResourceParams, keyBuilderFromResourceParams } from '../index';
 
-describe('getApex', () => {
+describe('postApex', () => {
     it('calls storeLookup on valid input', async () => {
         const mockInvokerParams = {
             namespace: '',
@@ -12,10 +12,10 @@ describe('getApex', () => {
             storeLookup: jest.fn().mockReturnValue({ state: 'Fulfilled', data: {} }),
             snapshotAvailable: jest.fn().mockReturnValue(true),
         };
-        await getApex(mockLds as any, mockInvokerParams)({});
-        expect(mockLds.storeLookup.mock.calls.length).toBe(1);
+        await postApex(mockLds as any, mockInvokerParams)({});
+        expect(mockLds.storeLookup.mock.calls.length).toBe(2);
     });
-    it('calls resolveUnfulfilledSnapshot when Snapshot is Unfulfilled', async () => {
+    it('calls buildNetworkSnapshot when isCacheable returns false', async () => {
         const mockInvokerParams = {
             namespace: '',
             classname: 'TestController',
@@ -25,11 +25,11 @@ describe('getApex', () => {
         const mockLds = {
             storeLookup: jest.fn().mockReturnValue({ state: 'Unfulfilled', data: {} }),
             snapshotAvailable: jest.fn().mockReturnValue(false),
-            resolveUnfulfilledSnapshot: jest.fn().mockResolvedValueOnce({}),
+            dispatchResourceRequest: jest.fn().mockResolvedValueOnce({}),
         };
-        await getApex(mockLds as any, mockInvokerParams)({});
+        await postApex(mockLds as any, mockInvokerParams)({});
         expect(mockLds.storeLookup.mock.calls.length).toBe(1);
-        expect(mockLds.resolveUnfulfilledSnapshot.mock.calls.length).toBe(1);
+        expect(mockLds.dispatchResourceRequest.mock.calls.length).toBe(1);
     });
 });
 describe('keyBuilderFromResourceParams', () => {

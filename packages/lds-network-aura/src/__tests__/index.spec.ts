@@ -3,6 +3,7 @@ import * as aura from 'aura';
 import auraStorage from 'aura-storage';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 import networkAdapter from '../main';
+import { LWR_APEX_BASE_URI } from '../middlewares/apex';
 import {
     COMMERCE_BASE_URI,
     CONNECT_BASE_URI,
@@ -1263,30 +1264,23 @@ describe('routes', () => {
         );
     });
 
-    describe('post /apex', () => {
-        it('invokes the right controller', async () => {
-            const fn = jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce({});
-
-            await networkAdapter({
-                method: 'post',
-                baseUri: '',
-                basePath: '/apex',
-                body: {
-                    namespace: '',
-                    classname: 'ContactController',
-                    method: 'getContactList',
-                    params: undefined,
-                    cacheable: true,
-                    isContinuation: false,
+    describe('get /lwr/{apiVersion}/apex', () => {
+        testControllerInput(
+            {
+                baseUri: LWR_APEX_BASE_URI,
+                basePath: '/ContactController/getContactList',
+                method: 'get',
+                body: null,
+                urlParams: {
+                    apexMethod: 'getContactList',
+                    apexClass: 'ContactController',
                 },
                 queryParams: {},
-                urlParams: {},
-                key: 'key',
-                headers: null,
-                ingest: (() => {}) as any,
-            });
-
-            expect(fn).toHaveBeenCalledWith(
+                headers: {
+                    'X-SFDC-Allow-Continuation': 'false',
+                },
+            },
+            [
                 'ApexActionController.execute',
                 {
                     namespace: '',
@@ -1296,29 +1290,57 @@ describe('routes', () => {
                     cacheable: true,
                     isContinuation: false,
                 },
-                { background: false, hotspot: false, longRunning: false }
-            );
-        });
+                { background: false, hotspot: false, longRunning: false },
+            ]
+        );
+
+        // tests classname with namespace
+        testControllerInput(
+            {
+                baseUri: LWR_APEX_BASE_URI,
+                basePath: '/ns__ContactController/getContactList',
+                method: 'get',
+                body: null,
+                urlParams: {
+                    apexMethod: 'getContactList',
+                    apexClass: 'ns__ContactController',
+                },
+                queryParams: {},
+                headers: {
+                    'X-SFDC-Allow-Continuation': 'false',
+                },
+            },
+            [
+                'ApexActionController.execute',
+                {
+                    namespace: 'ns',
+                    classname: 'ContactController',
+                    method: 'getContactList',
+                    params: undefined,
+                    cacheable: true,
+                    isContinuation: false,
+                },
+                { background: false, hotspot: false, longRunning: false },
+            ]
+        );
 
         it('handles response with no returnValue', async () => {
             jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce({ cacheable: true });
 
             const res = await networkAdapter({
-                method: 'post',
-                baseUri: '',
-                basePath: '/apex',
-                body: {
-                    namespace: '',
-                    classname: 'TestController',
-                    method: 'getVoid',
-                    params: undefined,
-                    cacheable: true,
-                    isContinuation: false,
+                baseUri: LWR_APEX_BASE_URI,
+                basePath: '/ContactController/getVoid',
+                method: 'get',
+                body: null,
+                urlParams: {
+                    apexMethod: 'getVoid',
+                    apexClass: 'ContactController',
                 },
                 queryParams: {},
-                urlParams: {},
+                headers: {
+                    'X-SFDC-Allow-Continuation': 'false',
+                },
                 key: 'key',
-                headers: null,
                 ingest: (() => {}) as any,
             });
 
@@ -1326,7 +1348,94 @@ describe('routes', () => {
             expect(res).toMatchObject({
                 status: 200,
                 body: null,
-                headers: { cacheable: true },
+                headers: { 'Cache-Control': 'private' },
+            });
+        });
+    });
+
+    describe('post /lwr/{apiVersion}/apex', () => {
+        testControllerInput(
+            {
+                baseUri: LWR_APEX_BASE_URI,
+                basePath: '/ContactController/getContactList',
+                method: 'post',
+                body: {},
+                queryParams: {},
+                urlParams: {
+                    apexMethod: 'getContactList',
+                    apexClass: 'ContactController',
+                },
+                headers: {
+                    'X-SFDC-Allow-Continuation': 'false',
+                },
+            },
+            [
+                'ApexActionController.execute',
+                {
+                    namespace: '',
+                    classname: 'ContactController',
+                    method: 'getContactList',
+                    params: undefined,
+                    cacheable: false,
+                    isContinuation: false,
+                },
+                { background: false, hotspot: false, longRunning: false },
+            ]
+        );
+
+        // tests classname with namespace
+        testControllerInput(
+            {
+                baseUri: LWR_APEX_BASE_URI,
+                basePath: '/ns__ContactController/getContactList',
+                method: 'post',
+                body: {},
+                queryParams: {},
+                urlParams: {
+                    apexMethod: 'getContactList',
+                    apexClass: 'ns__ContactController',
+                },
+                headers: {
+                    'X-SFDC-Allow-Continuation': 'false',
+                },
+            },
+            [
+                'ApexActionController.execute',
+                {
+                    namespace: 'ns',
+                    classname: 'ContactController',
+                    method: 'getContactList',
+                    params: undefined,
+                    cacheable: false,
+                    isContinuation: false,
+                },
+                { background: false, hotspot: false, longRunning: false },
+            ]
+        );
+
+        it('handles response with no returnValue', async () => {
+            jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce({ cacheable: true });
+
+            const res = await networkAdapter({
+                baseUri: LWR_APEX_BASE_URI,
+                basePath: '/ContactController/getVoid',
+                method: 'post',
+                body: {},
+                queryParams: {},
+                urlParams: {
+                    apexMethod: 'getVoid',
+                    apexClass: 'ContactController',
+                },
+                headers: {
+                    'X-SFDC-Allow-Continuation': 'false',
+                },
+            });
+
+            expect(res).toBeInstanceOf(AuraFetchResponse);
+            expect(res).toMatchObject({
+                status: 200,
+                body: null,
+                headers: { 'Cache-Control': 'private' },
             });
         });
     });

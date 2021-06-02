@@ -1,2 +1,3 @@
-export { factory as GenerateGetApexWireAdapter, invoker as GetApexInvoker } from './wire/getApex';
+export { factory as GetApexWireAdapterFactory } from './wire/getApex';
+export { invoker as GetApexInvoker } from './wire/postApex';
 export { getSObjectValue } from './lds-apex-static-utils';

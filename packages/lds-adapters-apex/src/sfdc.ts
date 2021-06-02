@@ -1,4 +1,4 @@
-import { GetApexInvoker, GenerateGetApexWireAdapter } from './main';
+import { GetApexInvoker, GetApexWireAdapterFactory } from './main';
 import { REFRESH_APEX_KEY } from '@salesforce/lds-instrumentation';
 import {
     bindWireRefresh,
@@ -45,7 +45,7 @@ export const getApexInvoker = function (
     invokeApexImperative.adapter = createWireAdapterConstructor(
         luvio,
         (luvio) =>
-            GenerateGetApexWireAdapter(luvio, { namespace, classname, method, isContinuation }),
+            GetApexWireAdapterFactory(luvio, { namespace, classname, method, isContinuation }),
         { apiFamily: 'Apex', name: adapterName }
     );
     return invokeApexImperative;

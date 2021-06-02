@@ -28,7 +28,7 @@ function executePostApex(resourceRequest: ResourceRequest): Promise<any> {
         classname,
         method: urlParams.apexMethod as string,
         isContinuation: headers.xSFDCAllowContinuation ? true : false,
-        params: body.methodParams,
+        params: body,
         cacheable: false,
     };
     return dispatchApexAction(ApexController, params, {

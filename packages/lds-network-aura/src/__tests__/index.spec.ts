@@ -1324,6 +1324,42 @@ describe('routes', () => {
             ]
         );
 
+        // tests with method params
+        const mockMethodParams = {
+            param1: 1,
+            param2: '2',
+        };
+        testControllerInput(
+            {
+                baseUri: LWR_APEX_BASE_URI,
+                basePath: '/ContactController/getContactList',
+                method: 'get',
+                body: null,
+                urlParams: {
+                    apexMethod: 'getContactList',
+                    apexClass: 'ContactController',
+                },
+                queryParams: {
+                    methodParams: mockMethodParams,
+                },
+                headers: {
+                    'X-SFDC-Allow-Continuation': 'false',
+                },
+            },
+            [
+                'ApexActionController.execute',
+                {
+                    namespace: '',
+                    classname: 'ContactController',
+                    method: 'getContactList',
+                    params: mockMethodParams,
+                    cacheable: true,
+                    isContinuation: false,
+                },
+                { background: false, hotspot: false, longRunning: false },
+            ]
+        );
+
         it('handles response with no returnValue', async () => {
             jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce({ cacheable: true });
 
@@ -1375,7 +1411,7 @@ describe('routes', () => {
                     namespace: '',
                     classname: 'ContactController',
                     method: 'getContactList',
-                    params: undefined,
+                    params: {},
                     cacheable: false,
                     isContinuation: false,
                 },
@@ -1405,7 +1441,41 @@ describe('routes', () => {
                     namespace: 'ns',
                     classname: 'ContactController',
                     method: 'getContactList',
-                    params: undefined,
+                    params: {},
+                    cacheable: false,
+                    isContinuation: false,
+                },
+                { background: false, hotspot: false, longRunning: false },
+            ]
+        );
+
+        // tests with method params
+        const mockMethodParams = {
+            param1: 1,
+            param2: '2',
+        };
+        testControllerInput(
+            {
+                baseUri: LWR_APEX_BASE_URI,
+                basePath: '/ContactController/getContactList',
+                method: 'post',
+                body: mockMethodParams,
+                queryParams: {},
+                urlParams: {
+                    apexMethod: 'getContactList',
+                    apexClass: 'ContactController',
+                },
+                headers: {
+                    'X-SFDC-Allow-Continuation': 'false',
+                },
+            },
+            [
+                'ApexActionController.execute',
+                {
+                    namespace: '',
+                    classname: 'ContactController',
+                    method: 'getContactList',
+                    params: mockMethodParams,
                     cacheable: false,
                     isContinuation: false,
                 },

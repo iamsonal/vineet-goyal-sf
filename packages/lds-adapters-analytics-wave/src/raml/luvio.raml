@@ -19,6 +19,11 @@ types:
   ReplicatedFieldCollectionRepresentation:
     (luvio.key):
       id: replicatedDataset.id
+  RestoreDatasetVersionRepresentation:
+    (luvio.key):
+      # This representation is only used in the response of an RPC like endpoint
+      # Use url as key since we won't look up this data
+      id: url
 
 /wave:
   /asset/{assetId}/schedule:
@@ -46,6 +51,14 @@ types:
     patch:
       (luvio.adapter):
         name: updateDataConnector
+    /ingest:
+      post:
+        (luvio.adapter):
+          name: ingestDataConnector
+    /status:
+      get:
+        (luvio.adapter):
+          name: getDataConnectorStatus
   /dataConnectorTypes:
     get:
       (luvio.adapter):

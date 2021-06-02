@@ -3875,6 +3875,54 @@ describe('routes', () => {
         );
     });
 
+    describe('post /wave/dataconnectors/{connectorIdOrApiName}/ingest', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS700000001YxKAI/ingest`,
+            },
+            [
+                'WaveController.ingestDataConnector',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS700000001YxKAI/ingest`,
+            },
+            {}
+        );
+    });
+
+    describe('get /wave/dataconnectors/{connectorIdOrApiName}/status', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS700000001YxKAI/status`,
+            },
+            [
+                'WaveController.getDataConnectorStatus',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS700000001YxKAI/status`,
+            },
+            {}
+        );
+    });
+
     describe('get /wave/dataconnectors', () => {
         testControllerInput(
             {

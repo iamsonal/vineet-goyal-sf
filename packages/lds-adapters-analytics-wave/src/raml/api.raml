@@ -595,6 +595,22 @@ types:
         description: Target connector associated with the current source connector.
         required: false # TODO Hand-rolled W-8253396
         type: AssetReferenceRepresentation
+  DataConnectorStatusRepresentation:
+    description: A representation for the status of a connection.
+    type: object
+    properties:
+      message:
+        description: Message from testing a connection
+        type: string
+      status:
+        description: Result from testing a connection
+        type: string
+        enum:
+          - Failure
+          - Success
+      url:
+        description: The URL to get the collection.
+        type: string
   DataConnectorTypeCollectionRepresentation:
     description: A list of Data Connector Types.
     type: object
@@ -1700,6 +1716,16 @@ types:
         type: AssetReferenceRepresentation
       url:
         description: URL to get the collection.
+        type: string
+  RestoreDatasetVersionRepresentation:
+    description: Representation of a dataset version restore.
+    type: object
+    properties:
+      message:
+        description: Collection of dataset versions for a particular dataset.
+        type: string
+      url:
+        description: URL to get the status.
         type: string
   SaqlQueryInputRepresentation:
     description: A Wave query written in SAQL
@@ -2954,6 +2980,32 @@ types:
       connectorIdOrApiName:
         type: string
         required: true
+    /ingest:
+      post:
+        description: Triggers a 'run now' for given connectionID
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: RestoreDatasetVersionRepresentation
+      uriParameters:
+        connectorIdOrApiName:
+          type: string
+          required: true
+    /status:
+      get:
+        description: Checks status of a connection
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: DataConnectorStatusRepresentation
+      uriParameters:
+        connectorIdOrApiName:
+          type: string
+          required: true
   /dataConnectorTypes:
     get:
       description: A collection of Wave Data Connector Types.

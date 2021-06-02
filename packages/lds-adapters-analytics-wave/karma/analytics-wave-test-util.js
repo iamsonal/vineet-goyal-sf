@@ -181,6 +181,62 @@ function updateDataConnectorMatcher(config) {
     });
 }
 
+// Data connector ingest
+function mockIngestDataConnectorNetworkOnce(config, mockData) {
+    const paramMatch = ingestDataConnectorMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockIngestDataConnectorNetworkErrorOnce(config, mockData) {
+    const paramMatch = ingestDataConnectorMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function ingestDataConnectorMatcher(config) {
+    const { connectorIdOrApiName } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataConnectors/${connectorIdOrApiName}/ingest`,
+        queryParams: {},
+    });
+}
+
+// Data connector status
+function mockGetDataConnectorStatusNetworkOnce(config, mockData) {
+    const paramMatch = getDataConnectorStatusMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDataConnectorStatusNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDataConnectorStatusMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDataConnectorStatusMatcher(config) {
+    const { connectorIdOrApiName } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataConnectors/${connectorIdOrApiName}/status`,
+        queryParams: {},
+    });
+}
+
 // Data connector types
 function mockGetDataConnectorTypesNetworkOnce(config, mockData) {
     const paramMatch = getDataConnectorTypesMatcher(config);
@@ -252,10 +308,10 @@ function mockCreateDataflowJobNetworkErrorOnce(config, mockData) {
 }
 
 function createDataflowJobMatcher(config) {
-    let { command, dataflowId } = config;
+    const { dataflowJob } = config;
 
     return sinon.match({
-        body: { command, dataflowId },
+        body: { dataflowJob },
         headers: {},
         method: 'post',
         baseUri: BASE_URI,
@@ -872,6 +928,10 @@ export {
     mockGetDataConnectorsNetworkErrorOnce,
     mockGetDataConnectorTypesNetworkOnce,
     mockGetDataConnectorTypesNetworkErrorOnce,
+    mockIngestDataConnectorNetworkOnce,
+    mockIngestDataConnectorNetworkErrorOnce,
+    mockGetDataConnectorStatusNetworkOnce,
+    mockGetDataConnectorStatusNetworkErrorOnce,
     mockGetDataflowJobsNetworkOnce,
     mockGetDataflowJobsNetworkErrorOnce,
     mockCreateDataflowJobNetworkOnce,

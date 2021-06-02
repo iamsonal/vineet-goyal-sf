@@ -1722,6 +1722,7 @@ describe('graphql', () => {
                                         Parent {
                                             Name {
                                                 value
+                                                displayValue
                                             }
                                             ...defaultRecordFields
                                         }

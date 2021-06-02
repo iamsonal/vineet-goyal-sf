@@ -14,9 +14,15 @@ import {
     LuvioSelectionScalarFieldNode,
     LuvioValueNode,
 } from '@salesforce/lds-graphql-parser';
-import { defaultRecordFieldsFragmentName, defaultRecordFieldsFragment } from '../custom/record';
+import {
+    defaultRecordFieldsFragmentName,
+    defaultRecordFieldsFragment,
+    RECORD_DEFAULT_FIELD_VALUES,
+} from '../custom/record';
+import { getLuvioFieldNodeSelection } from '../type/Selection';
 
 const { keys } = Object;
+const KIND_OBJECT_FIELD_SELECTION = 'ObjectFieldSelection';
 
 function serializeValueNode(valueDefinition: LuvioValueNode) {
     const { kind } = valueDefinition;
@@ -94,9 +100,14 @@ function serializeRecordSelections(
     let str = '';
     const fields: Record<string, true> = {};
     for (let i = 0, len = selections.length; i < len; i += 1) {
-        const sel = selections[i];
-        fields[(sel as any).name] = true;
-        const def = serializeFieldNode(sel, state);
+        const sel = getLuvioFieldNodeSelection(selections[i]);
+        const { name, kind } = sel;
+        fields[name] = true;
+        // We are assuming that any ObjectFieldSelection in Record implements FieldValue type
+        const def =
+            kind === KIND_OBJECT_FIELD_SELECTION
+                ? serializeRecordFieldValue(sel as LuvioSelectionObjectFieldNode)
+                : serializeFieldNode(sel, state);
         str = `${str}${def}`;
     }
 
@@ -133,6 +144,42 @@ function serializeCustomFieldConnection(def: LuvioSelectionCustomFieldNode, stat
         luvioSelections,
         state
     )} }`;
+}
+
+function getLuvioSelections(
+    luvioSelections: LuvioSelectionNode[] | undefined
+): LuvioSelectionNode[] {
+    return luvioSelections === undefined ? [] : luvioSelections;
+}
+
+function appendRecordDefaultFieldValues(
+    fieldValues: string,
+    fieldValuesMap: Record<string, true>
+): string {
+    let str = fieldValues;
+    for (let i = 0, len = RECORD_DEFAULT_FIELD_VALUES.length; i < len; i++) {
+        const defaultField = RECORD_DEFAULT_FIELD_VALUES[i];
+
+        if (fieldValuesMap[defaultField] !== true) {
+            str = `${str}${defaultField}, `;
+        }
+    }
+    return str;
+}
+
+function serializeRecordFieldValue(def: LuvioSelectionObjectFieldNode): string {
+    const { luvioSelections, arguments: defArgs } = def;
+    const args = defArgs === undefined ? '' : `(${serializeArguments(defArgs)})`;
+    const fields: Record<string, true> = {};
+    const selections = getLuvioSelections(luvioSelections);
+
+    let str = ``;
+    for (let i = 0, len = selections.length; i < len; i++) {
+        const sel = getLuvioFieldNodeSelection(selections[i]);
+        fields[sel.name] = true;
+        str = `${str}${serializeScalarFieldNode(sel as LuvioSelectionScalarFieldNode)}`;
+    }
+    return `${def.name}${args} { ${appendRecordDefaultFieldValues(str, fields)} }`;
 }
 
 export function serializeCustomFieldRecord(

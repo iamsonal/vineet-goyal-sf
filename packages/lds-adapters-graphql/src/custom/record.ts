@@ -53,6 +53,8 @@ export interface GqlRecord extends DefaultRecordFields {
 
 export const CUSTOM_FIELD_NODE_TYPE = 'Record';
 
+export const RECORD_DEFAULT_FIELD_VALUES = ['value', 'displayValue'];
+
 function collectObjectFieldSelection(data: GqlRecordFieldValue): FieldValueRepresentation {
     return {
         value: data.value as GqlScalarField,

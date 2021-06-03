@@ -99,10 +99,17 @@ export const createRecordIngest = (
         }
 
         const key = keyBuilderFromType(input);
+        let existingRecord = store.records[key];
+        // do not ingest locked records
+        if (existingRecord !== undefined && existingRecord.__type === 'locked') {
+            path.state.result.type = 'locked';
+            return createLink(key);
+        }
         const recordPath = {
             fullPath: key,
             parent: path.parent,
             propertyName: path.propertyName,
+            state: path.state,
         } as IngestPath;
 
         let incomingRecord = childNormalize(
@@ -114,8 +121,8 @@ export const createRecordIngest = (
             timestamp
         );
 
-        const existingRecord = store.records[key];
-
+        // read from the store again since it might have been ingested as a nested child ref
+        existingRecord = store.records[key];
         incomingRecord = merge(existingRecord, incomingRecord, luvio, path, recordConflictMap);
 
         if (existingRecord === undefined || equals(existingRecord, incomingRecord) === false) {

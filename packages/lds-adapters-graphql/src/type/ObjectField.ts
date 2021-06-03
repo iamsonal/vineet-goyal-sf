@@ -56,6 +56,7 @@ export const createIngest: (ast: LuvioSelectionObjectFieldNode) => ResourceInges
                 },
                 propertyName,
                 fullPath: propertyFullPath,
+                state: path.state,
             };
             if (sel.kind === 'ObjectFieldSelection') {
                 data[fieldName] = createIngest(sel)(

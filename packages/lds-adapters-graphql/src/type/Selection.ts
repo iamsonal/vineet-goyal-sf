@@ -109,6 +109,9 @@ export function resolveLink<D>(
         case StoreResolveResultState.Stale:
             builder.markStale();
             return;
+        case StoreResolveResultState.Locked:
+            builder.markLocked();
+            return;
         case StoreResolveResultState.Error:
             throw new Error('TODO: Implement error links');
     }

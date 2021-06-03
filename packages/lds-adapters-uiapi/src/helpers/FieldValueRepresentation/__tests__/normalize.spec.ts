@@ -23,6 +23,7 @@ describe('normalize', () => {
         fullPath: 'some_path',
         parent: null,
         propertyName: '',
+        state: { result: { type: 'success' } },
     };
 
     const dynamicIngestValue: StoreLink = {
@@ -119,6 +120,7 @@ describe('normalize', () => {
                         existing,
                     },
                     propertyName: 'value',
+                    state: { result: { type: 'success' } },
                 },
                 luvio,
                 store,
@@ -153,6 +155,7 @@ describe('normalize', () => {
                         existing,
                     },
                     propertyName: 'value',
+                    state: { result: { type: 'success' } },
                 },
                 luvio,
                 store,

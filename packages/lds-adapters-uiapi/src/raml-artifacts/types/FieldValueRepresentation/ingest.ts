@@ -31,6 +31,13 @@ export function makeIngest(
 
         const key = path.fullPath;
 
+        let existingRecord = store.records[key];
+        // do not ingest locked records
+        if (existingRecord !== undefined && existingRecord.__type === 'locked') {
+            path.state.result.type = 'locked';
+            return createLink(key);
+        }
+
         let incomingRecord = helpers_FieldValueRepresentation_normalize_default(
             input,
             store.records[key],
@@ -38,6 +45,7 @@ export function makeIngest(
                 fullPath: key,
                 parent: path.parent,
                 propertyName: path.propertyName,
+                state: path.state,
             } as IngestPath,
             luvio,
             store,
@@ -46,7 +54,9 @@ export function makeIngest(
             optionalFieldsTrie,
             recordConflictMap
         );
-        const existingRecord = store.records[key];
+
+        // read again after children ingested in case of a circular ref
+        existingRecord = store.records[key];
 
         incomingRecord = helpers_FieldValueRepresentation_merge_default(
             existingRecord,

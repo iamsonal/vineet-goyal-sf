@@ -53,6 +53,7 @@ export function createIngest(ast: LuvioOperationDefinitionNode): ResourceIngest 
                     },
                     fullPath: `${key}__${fieldName}`,
                     propertyName,
+                    state: path.state,
                 },
                 luvio,
                 store,

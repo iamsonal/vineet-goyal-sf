@@ -222,7 +222,7 @@ export function ingestSuccess(
         }
     }
 
-    const snapshotStateFulfilled = 'Fulfilled';
+    let snapshotState = 'Fulfilled';
     const key = keyBuilder(resourceParams);
     const childSnapshotDataResponses: RelatedListRecordCollectionBatchRepresentation['results'] =
         [];
@@ -256,6 +256,10 @@ export function ingestSuccess(
                 ...childSnapshot.seenRecords,
                 [childSnapshot.recordId]: true,
             };
+            if (childSnapshot.state === 'Pending') {
+                snapshotState = 'Pending';
+                break;
+            }
             const childValue = {
                 statusCode: childStatusCode,
                 result: childSnapshot.data,
@@ -298,7 +302,7 @@ export function ingestSuccess(
     return {
         recordId: key,
         data: childSnapshotData,
-        state: snapshotStateFulfilled,
+        state: snapshotState,
         seenRecords: seenRecords,
         select: {
             recordId: key,

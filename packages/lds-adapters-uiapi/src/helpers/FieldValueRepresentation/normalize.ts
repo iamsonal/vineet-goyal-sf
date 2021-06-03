@@ -33,6 +33,7 @@ export default function normalize(
                     key: path.fullPath,
                     existing: existing,
                 },
+                state: { result: { type: 'success' } },
             },
             luvio,
             store,

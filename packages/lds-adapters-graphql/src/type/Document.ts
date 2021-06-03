@@ -47,6 +47,7 @@ export function createIngest(ast: LuvioDocumentNode): ResourceIngest {
                     parent: null,
                     fullPath: key,
                     propertyName: null,
+                    state: path.state,
                 },
                 luvio,
                 store,

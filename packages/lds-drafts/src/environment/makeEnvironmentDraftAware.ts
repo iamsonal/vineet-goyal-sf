@@ -83,10 +83,11 @@ export function makeEnvironmentDraftAware(
             ).then((response) => {
                 const record = response.body as RecordRepresentation;
                 const key = keyBuilderRecord({ recordId: record.id });
-                const path = {
+                const path: IngestPath = {
                     fullPath: key,
                     parent: null,
                     propertyName: null,
+                    state: { result: { type: 'success' } },
                 };
 
                 ingestFunc(record, path, store, Date.now());

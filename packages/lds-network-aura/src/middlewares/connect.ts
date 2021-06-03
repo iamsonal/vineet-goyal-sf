@@ -122,6 +122,11 @@ const GET_CONTENT_TYPE_INTERNAL_PATH = new RegExp(
     'i'
 );
 
+const GET_MANAGED_CONTENT_VARIANT_PATH = new RegExp(
+    `${CMS_BASE_URI}/contents/variants/([A-Z0-9_]){1,80}$`,
+    'i'
+);
+
 const LIST_CONTENT_INTERNAL_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/managed-content/delivery/contents`,
     'i'
@@ -173,6 +178,15 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && COMMUNITIES_NAVIGATION_MENU_PATH.test(path),
         transport: {
             controller: 'NavigationMenuController.getCommunityNavigationMenu',
+        },
+    },
+
+    getManagedContentVariant: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CMS_BASE_URI) && GET_MANAGED_CONTENT_VARIANT_PATH.test(path),
+        transport: {
+            controller: 'ManagedContentController.getManagedContentVariant',
         },
     },
     getContentType: {

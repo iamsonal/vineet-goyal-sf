@@ -5159,6 +5159,33 @@ describe('routes', () => {
         );
     });
 
+    describe('get /connect/cms/contents/variants/{managedContentVariantId}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/contents/variants/9Psxx0000004CKKCA2`,
+            },
+            [
+                'ManagedContentController.getManagedContentVariant',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/cms/contents/variants/9Psxx0000004CKKCA2`,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/contents/variants/9Psxx0000004CKKCA2`,
+            },
+            {}
+        );
+    });
+
     describe('get /connect/interaction/orchestration/instances', () => {
         testControllerInput(
             {

@@ -12,6 +12,9 @@ types:
     (luvio.opaque): true
     (luvio.key):
       id: deploymentId
+  ManagedContentVariantRepresentation:
+    (luvio.ttl): 3600000
+    (luvio.opaque): true
 
 /cms/deployments:
   post:
@@ -92,3 +95,9 @@ types:
                 "scheduledDate": "2021-03-23T17:14:00.000Z"
               }
             }
+/connect:
+  /cms:
+    /contents/variants/{variantId}:
+      get:
+        (luvio.adapter):
+          name: getManagedContentVariant

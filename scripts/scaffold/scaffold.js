@@ -134,13 +134,8 @@ function generate(config) {
     fs.writeFileSync(mocksReadmePath, ldsMocksReadMeTemplate);
 }
 
-function getPackageNamespace(cloud) {
-    switch (cloud) {
-        case 'Platform':
-            return '@salesforce';
-        default:
-            return `@${cloud.toLowerCase()}`;
-    }
+function getPackageNamespace() {
+    return '@salesforce';
 }
 
 function getPackageName(cloud, family) {

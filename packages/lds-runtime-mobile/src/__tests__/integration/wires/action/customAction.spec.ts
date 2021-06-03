@@ -14,6 +14,7 @@ import {
     MockNimbusNetworkAdapter,
     mockNimbusNetworkGlobal,
 } from '../../../MockNimbusNetworkAdapter';
+import { flushPromises } from '../../../testUtils';
 
 import mockAccount from '../data/record-Account-fields-Account.Id,Account.Name.json';
 
@@ -49,6 +50,9 @@ describe('mobile runtime integration tests on actions', () => {
         draftQueue = runtime.draftQueue;
         draftQueue.stopQueue();
         (luvio as any).environment.store.reset();
+
+        // each test sets its own custom handler, remove before next test
+        draftQueue.removeHandler(CUSTOM_HANDLER);
 
         createRecord = createRecordAdapterFactory(luvio);
 
@@ -87,9 +91,6 @@ describe('mobile runtime integration tests on actions', () => {
                     id: action.id,
                     type: CustomActionResultType.SUCCESS,
                 });
-
-                const actions = await draftQueue.getQueueActions();
-                expect(actions.length).toBe(0);
             }
         );
 
@@ -97,6 +98,12 @@ describe('mobile runtime integration tests on actions', () => {
 
         expect((await draftQueue.getQueueActions()).length).toBe(1);
         await draftQueue.processNextAction();
+
+        // wait for completed handlers to be called
+        await flushPromises();
+
+        const actions = await draftQueue.getQueueActions();
+        expect(actions.length).toBe(0);
     });
 
     it('only handles custom actions', async () => {
@@ -110,12 +117,8 @@ describe('mobile runtime integration tests on actions', () => {
                     id: action.id,
                     type: CustomActionResultType.SUCCESS,
                 });
-                const actions = await draftQueue.getQueueActions();
-                expect(actions.length).toBe(0);
             }
         );
-
-        await draftQueue.startQueue();
 
         await createRecord({
             apiName: API_NAME,
@@ -134,5 +137,11 @@ describe('mobile runtime integration tests on actions', () => {
 
         expect(result).toBe(ProcessActionResult.ACTION_SUCCEEDED);
         expect(result2).toBe(ProcessActionResult.CUSTOM_ACTION_WAITING);
+
+        // wait for completed handlers to be called
+        await flushPromises();
+
+        const actions = await draftQueue.getQueueActions();
+        expect(actions.length).toBe(0);
     });
 });

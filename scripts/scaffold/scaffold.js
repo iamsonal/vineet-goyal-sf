@@ -212,6 +212,7 @@ module.exports = class CreateApiFamily extends Command {
                     'Marketing',
                     'Mule',
                     'Platform',
+                    'Revenue',
                     'Sales',
                 ],
             },

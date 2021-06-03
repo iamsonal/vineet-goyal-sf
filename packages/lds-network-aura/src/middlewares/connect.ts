@@ -7,6 +7,7 @@ import {
     CMS_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
     INTERACTION_BASE_URI,
+    BILLING_BASE_URI,
 } from './connect-base';
 
 const COMMUNITIES_NAVIGATION_MENU_PATH = new RegExp(
@@ -168,6 +169,11 @@ const INTERACTION_RUNTIME_NAVIGATE_FLOW_PATH = new RegExp(
 );
 const INTERACTION_RUNTIME_RESUME_FLOW_PATH = new RegExp(
     `^${INTERACTION_BASE_URI}/runtime/.+/resumeFlow$`,
+    'i'
+);
+
+const POST_BATCH_PAYMENTS_SCHEDULERS_PATH = new RegExp(
+    `${BILLING_BASE_URI}/batch/payments/schedulers`,
     'i'
 );
 
@@ -635,8 +641,20 @@ const flow: ApiFamily = {
     },
 };
 
+const billing: ApiFamily = {
+    createPaymentsBatchScheduler: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(BILLING_BASE_URI) && POST_BATCH_PAYMENTS_SCHEDULERS_PATH.test(path),
+        transport: {
+            controller: 'BillingBatchApplicationController.createPaymentsBatchScheduler',
+        },
+    },
+};
+
 registerApiFamilyRoutes(connect);
 registerApiFamilyRoutes(commerce);
 registerApiFamilyRoutes(guidance);
 registerApiFamilyRoutes(analytics);
 registerApiFamilyRoutes(flow);
+registerApiFamilyRoutes(billing);

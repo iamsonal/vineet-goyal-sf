@@ -10,6 +10,7 @@ import {
     GUIDANCE_BASE_URI,
     WAVE_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
+    BILLING_BASE_URI,
 } from '../middlewares/connect-base';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 import { ControllerInvoker } from '../middlewares/utils';
@@ -5604,6 +5605,104 @@ describe('routes', () => {
                 basePath: `/interaction/runtime/flow1/resumeFlow`,
             },
             {}
+        );
+    });
+
+    describe('post /billing/batch/payments/schedulers', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: BILLING_BASE_URI,
+                basePath: `/batch/payments/schedulers`,
+                body: {
+                    PaymentsBatchSchedulerInput: {
+                        schedulerName: 'Batch Scheduler',
+                        startDate: '2021-05-11T05:01:06.000Z',
+                        endDate: '2021-05-15T05:01:06.000Z',
+                        preferredTime: '10:00 AM',
+                        frequencyCadence: 'Monthly',
+                        recursEveryMonthOnDay: '28',
+                        criteriaExpression: '1 AND 2',
+                        status: 'Scheduled',
+                        filterCriteria: [
+                            {
+                                objectName: 'PaymentSchedule',
+                                fieldName: 'ReferenceEntityAccount',
+                                operation: 'Equals',
+                                value: '001xx000003GiznAAC',
+                                criteriaSequence: 1,
+                            },
+                            {
+                                objectName: 'PaymentGateway',
+                                fieldName: 'Id',
+                                operation: 'Equals',
+                                value: '0b0xx000000035xAAA',
+                                criteriaSequence: 2,
+                            },
+                        ],
+                    },
+                },
+            },
+            [
+                'BillingBatchApplicationController.createPaymentsBatchScheduler',
+                {
+                    PaymentsBatchSchedulerInput: {
+                        schedulerName: 'Batch Scheduler',
+                        startDate: '2021-05-11T05:01:06.000Z',
+                        endDate: '2021-05-15T05:01:06.000Z',
+                        preferredTime: '10:00 AM',
+                        frequencyCadence: 'Monthly',
+                        recursEveryMonthOnDay: '28',
+                        criteriaExpression: '1 AND 2',
+                        status: 'Scheduled',
+                        filterCriteria: [
+                            {
+                                objectName: 'PaymentSchedule',
+                                fieldName: 'ReferenceEntityAccount',
+                                operation: 'Equals',
+                                value: '001xx000003GiznAAC',
+                                criteriaSequence: 1,
+                            },
+                            {
+                                objectName: 'PaymentGateway',
+                                fieldName: 'Id',
+                                operation: 'Equals',
+                                value: '0b0xx000000035xAAA',
+                                criteriaSequence: 2,
+                            },
+                        ],
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                schedulerDetails: {
+                    billingBatchFilterCriteriaId: ['5BCR000000000K2OAI', '5BCR000000000KCOAY'],
+                    billingBatchSchedulerId: '5BSR00000000030OAA',
+                },
+                paymentBatchRunCriteriaId: '5PCR000000000HvOAI',
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: BILLING_BASE_URI,
+            basePath: `/batch/payments/schedulers`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: BILLING_BASE_URI,
+                basePath: `/batch/payments/schedulers`,
+            },
+            {
+                schedulerDetails: {
+                    billingBatchFilterCriteriaId: ['5BCR000000000K2OAI', '5BCR000000000KCOAY'],
+                    billingBatchSchedulerId: '5BSR00000000030OAA',
+                },
+                paymentBatchRunCriteriaId: '5PCR000000000HvOAI',
+            }
         );
     });
 

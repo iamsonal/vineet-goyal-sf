@@ -1,0 +1,148 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '53.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v53.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  BatchFilterCriteriaInputRepresentation:
+    description: Billing Batch Filter Criteria Input Representation
+    type: object
+    properties:
+      criteriaSequence:
+        description: Sequence number for the criteria
+        type: integer
+      fieldName:
+        description: Field Name
+        type: string
+        enum:
+          - Id
+          - ReferenceEntityAccount
+      objectName:
+        description: Object Name
+        type: string
+        enum:
+          - PaymentGateway
+          - PaymentSchedule
+      operation:
+        description: Operation to be performed
+        type: string
+        enum:
+          - Equals
+      value:
+        description: Value to be compared
+        type: string
+  BillingBatchSchedulerOutputRepresentation:
+    description: Billing Batch Scheduler Output Representation
+    type: object
+    properties:
+      billingBatchFilterCriteriaId:
+        description: List of Billing Batch Filter Criteria IDs
+        type: array
+        items:
+          type: string
+      billingBatchSchedulerId:
+        description: Billing Batch Scheduler Id
+        type: string
+
+  PaymentsBatchSchedulerInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for payment batch scheduler input representation
+    type: object
+    properties:
+      PaymentsBatchSchedulerInput:
+        type: PaymentsBatchSchedulerInputRepresentation
+        description: Payments Batch Scheduler Input Representation
+  PaymentsBatchSchedulerInputRepresentation:
+    description: Payments Batch Scheduler Input Representation
+    type: ScheduleOptionsInputRepresentation
+    properties:
+      criteriaExpression:
+        description: Filter Criteria Expression
+        type: string
+        required: false # TODO handrolled W-9314597
+      filterCriteria:
+        description: List of filter criteria line items
+        type: array
+        required: false # TODO handrolled W-9314597
+        items:
+          type: object
+  PaymentsBatchSchedulerOutputRepresentation:
+    description: Payments Batch Scheduler Output Representation
+    type: object
+    properties:
+      paymentBatchRunCriteriaId:
+        description: Payment Batch Run Criteria Id
+        type: string
+      schedulerDetails:
+        description: Billing Batch Scheduler Details
+        type: BillingBatchSchedulerOutputRepresentation
+  ScheduleOptionsInputRepresentation:
+    description: Batch Scheduler Options Input Representation
+    discriminator: schedulerName # TODO hand rolled. W-9275787
+    type: object
+    properties:
+      endDate:
+        description: Batch Job End Date
+        type: string
+        required: false # TODO handrolled W-9314597
+      frequencyCadence:
+        description: Frequency Cadence for the Batch Job
+        type: string
+        enum:
+          - Daily
+          - Monthly
+          - Once
+      preferredTime:
+        description: Batch Job Preferred Run Time
+        type: string
+      recursEveryMonthOnDay:
+        description: Batch Job Recurrence Day for Monthly Frequency Option
+        type: string
+        required: false # TODO handrolled W-9314597
+      schedulerName:
+        description: Name of the batch scheduler
+        type: string
+      startDate:
+        description: Batch Job Start Date
+        type: string
+      status:
+        description: Scheduler Status for the Batch Job
+        type: string
+        enum:
+          - Canceled
+          - Scheduled
+          - Unscheduled
+/billing/batch/payments/schedulers:
+  post:
+    description: Create Payments Batch Job Scheduler
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: PaymentsBatchSchedulerOutputRepresentation
+    body:
+      application/json:
+        type: PaymentsBatchSchedulerInputWrapperRepresentation
+        #required: false # TODO handrolled W-9314597
+        (oas-body-name): PaymentsBatchSchedulerInput

@@ -10,7 +10,7 @@
         "resourceUrl": "/services/data/v53.0/connect/cms/spaces/0Zuxx0000000001CAA"
     },
     "contentType": {
-        "developerName": "news"
+        "fullyQualifiedName": "news"
     },
     "createdBy": {
         "id": "005xx000001X7fNAAS",

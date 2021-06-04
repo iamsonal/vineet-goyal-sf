@@ -2,6 +2,9 @@
  * @jest-environment jsdom
  */
 
+import { Adapter } from '@luvio/engine';
+import timekeeper from 'timekeeper';
+
 import {
     Instrumentation,
     LightningInteractionSchema,
@@ -15,7 +18,6 @@ import {
 import { REFRESH_ADAPTER_EVENT } from '@luvio/lwc-luvio';
 import { stableJSONStringify } from '../utils/utils';
 import { LRUCache } from '../utils/lru-cache';
-import timekeeper from 'timekeeper';
 
 jest.mock('instrumentation/service', () => {
     const spies = {
@@ -139,8 +141,9 @@ describe('instrumentation', () => {
             expect(instrumentationServiceSpies.interaction).toHaveBeenCalledTimes(1);
         });
     });
+
     describe('cache misses out of ttl', () => {
-        it('should not log metrics when getRecord adapter has a cache hit on existing value within TTL', () => {
+        it('should not log metrics when getRecord adapter has a cache hit on existing value within TTL', async () => {
             const mockGetRecordAdapter = (config) => {
                 if (config.cacheHit) {
                     return {};
@@ -169,7 +172,7 @@ describe('instrumentation', () => {
             // Cache Miss #1
             const now = Date.now();
             timekeeper.freeze(now);
-            instrumentedAdapter(getRecordConfig);
+            const snapshotPromise = instrumentedAdapter(getRecordConfig);
 
             expect(instrumentationServiceSpies.cacheStatsLogHitsSpy).toHaveBeenCalledTimes(0);
             expect(instrumentationServiceSpies.cacheStatsLogMissesSpy).toHaveBeenCalledTimes(1);
@@ -180,6 +183,10 @@ describe('instrumentation', () => {
             expect((instrumentation as any).adapterCacheMisses.size).toEqual(1);
             expect((instrumentation as any).adapterCacheMisses.get(recordKey)).toEqual(now);
 
+            // ensure timer is called after snapshot promise is resolved
+            await snapshotPromise;
+            expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
+
             // Cache Hit
             // Expected: Increment of cacheStatsLogHits, all cache miss metrics stay unchanged.
             instrumentedAdapter(getRecordConfigCacheHit);
@@ -189,7 +196,7 @@ describe('instrumentation', () => {
             expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
                 1
             );
-            expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
+            expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(2);
             expect((instrumentation as any).adapterCacheMisses.size).toEqual(1);
             expect((instrumentation as any).adapterCacheMisses.get(recordKey)).toEqual(now);
 
@@ -376,6 +383,56 @@ describe('instrumentation', () => {
                     }
                 )
             ).toEqual(expectedCacheStatsCalls);
+        });
+    });
+
+    describe('instrumentedAdapter', () => {
+        it('logs cache miss when adapter returns a Promise', async () => {
+            const mockAdapter = ((config) => {
+                if (config.cacheHit === true) {
+                    return {};
+                } else {
+                    return Promise.resolve({});
+                }
+            }) as Adapter<any, any>;
+
+            const instrumentedAdapter = instrumentation.instrumentAdapter(mockAdapter, {
+                apiFamily: 'UiApi',
+                name: 'getFoo',
+            });
+
+            await instrumentedAdapter({ cacheHit: false });
+
+            expect(instrumentationServiceSpies.cacheStatsLogHitsSpy).toHaveBeenCalledTimes(0);
+            expect(instrumentationServiceSpies.cacheStatsLogMissesSpy).toHaveBeenCalledTimes(1);
+            expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
+
+            // no TTL provided so these metrics should be 0
+            expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
+                0
+            );
+            expect((instrumentation as any).adapterCacheMisses.size).toEqual(0);
+        });
+
+        it('logs nothings when adapter returns null', async () => {
+            const mockAdapter = (() => {
+                return null;
+            }) as Adapter<any, any>;
+
+            const instrumentedAdapter = instrumentation.instrumentAdapter(mockAdapter, {
+                apiFamily: 'UiApi',
+                name: 'getFoo',
+            });
+
+            await instrumentedAdapter({});
+
+            expect(instrumentationServiceSpies.cacheStatsLogHitsSpy).toHaveBeenCalledTimes(0);
+            expect(instrumentationServiceSpies.cacheStatsLogMissesSpy).toHaveBeenCalledTimes(0);
+            expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(0);
+            expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
+                0
+            );
+            expect((instrumentation as any).adapterCacheMisses.size).toEqual(0);
         });
     });
 

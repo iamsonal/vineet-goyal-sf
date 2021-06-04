@@ -60,7 +60,7 @@ import {
 
 import { ObjectKeys } from './utils/language';
 import { LRUCache } from './utils/lru-cache';
-import { stableJSONStringify } from './utils/utils';
+import { isPromise, stableJSONStringify } from './utils/utils';
 interface RecordApiNameChangeCounters {
     [apiName: string]: Counter;
 }
@@ -344,11 +344,8 @@ export class Instrumentation {
             //      ([in-memory cache hit count] + [store cache hit count]) / ([in-memory cache hit count] + [in-memory cache miss count])
 
             // if result === null then config is insufficient/invalid so do not log
-            if (
-                result !== null &&
-                ('then' in result! || (result as Snapshot<D>).state === 'Pending')
-            ) {
-                (result as Promise<Snapshot<D>>).then((_snapshot: Snapshot<D>) => {
+            if (isPromise(result)) {
+                result.then((_snapshot: Snapshot<D>) => {
                     timerMetricAddDuration(
                         cacheMissDurationByAdapterMetric,
                         Date.now() - startTime

@@ -1,0 +1,18 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "beb5c14e3752c83b376646b0cf712baf",
+    "fields": {
+        "Id": {
+            "displayValue": null,
+            "value": "006RM000003UQ0AYAW"
+        }
+    },
+    "id": "006RM000003UQ0AYAW",
+    "lastModifiedById": "005RM000002492xYAA",
+    "lastModifiedDate": "2021-06-03T22:39:02.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2021-06-03T22:39:02.000Z",
+    "weakEtag": 1622759942000
+}

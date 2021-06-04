@@ -1678,6 +1678,132 @@ describe('graphql', () => {
                 });
             });
         });
+
+        describe('Tracked fields', () => {
+            it('should fetch record with all tracked fields collected from getRecord wire', async () => {
+                const query = parseQuery(`
+                    query {
+                        uiapi {
+                            query {
+                                Opportunity(where: {Name: {eq: "Opp1"}}) @connection {
+                                    edges {
+                                        node @resource(type: "Record") {
+                                            Name {
+                                                value
+                                                displayValue
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                `);
+
+                const expectedQuery = `
+                    query {
+                        uiapi {
+                            query {
+                                Opportunity(where: {Name: {eq: "Opp1"}}) {
+                                    edges {
+                                        node {
+                                            Name {
+                                                value
+                                                displayValue
+                                            }
+                                            ...defaultRecordFields
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    fragment defaultRecordFields on Record {
+                        __typename
+                        ApiName
+                        WeakEtag
+                        Id
+                        DisplayValue
+                        SystemModstamp { value }
+                        LastModifiedById { value }
+                        LastModifiedDate { value }
+                        RecordTypeId(fallback: true) { value }
+                    }
+                `;
+
+                const networkData = getMock('RecordQuery-Opportunity-fields-Name');
+                const recordRepMock = getMock(
+                    'RecordRepresentation-Opportunity-fields-Opportunity.Id'
+                );
+                const recordRepUpdated = getMock(
+                    'RecordRepresentation-Opportunity-fields-Opportunity.Name,Opportunity.Id'
+                );
+
+                mockGetRecordNetwork(
+                    {
+                        recordId: recordRepMock.id,
+                        fields: ['Opportunity.Id'],
+                    },
+                    recordRepMock
+                );
+
+                mockGetRecordNetwork(
+                    {
+                        recordId: recordRepMock.id,
+                        optionalFields: ['Opportunity.Id', 'Opportunity.Name'],
+                    },
+                    recordRepUpdated
+                );
+
+                mockGraphqlNetwork(
+                    {
+                        query: expectedQuery,
+                        variables: {},
+                    },
+                    networkData
+                );
+
+                const pending = graphQLImperative({
+                    query,
+                    variables: {},
+                });
+                const snapshot = await luvio.resolvePendingSnapshot(pending);
+                const spy = sinon.spy();
+                luvio.storeSubscribe(snapshot, spy);
+
+                await setupElement(
+                    {
+                        recordId: recordRepMock.id,
+                        fields: ['Opportunity.Id'],
+                    },
+                    GetRecord
+                );
+
+                expect(spy.callCount).toBe(1);
+                expect(spy.lastCall.args[0].data).toEqual({
+                    data: {
+                        uiapi: {
+                            query: {
+                                Opportunity: {
+                                    edges: [
+                                        {
+                                            node: {
+                                                Name: {
+                                                    value: 'Opp1-changed1',
+                                                    displayValue: null,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                    errors: [],
+                });
+            });
+        });
     });
 
     describe('null spanning records', () => {

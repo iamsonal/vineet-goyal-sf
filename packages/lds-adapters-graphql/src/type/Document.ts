@@ -25,10 +25,12 @@ export const createRead: (ast: LuvioDocumentNode) => ReaderFragment['read'] = (
                 ...data,
             };
         }
-        return {
-            data: sink,
-            errors: [],
-        };
+
+        const gqlData = {};
+        builder.assignNonScalar(gqlData, 'data', sink);
+        builder.assignNonScalar(gqlData, 'errors', []);
+
+        return gqlData;
     };
 };
 export function createIngest(ast: LuvioDocumentNode): ResourceIngest {

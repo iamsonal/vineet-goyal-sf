@@ -318,11 +318,12 @@ function assignSelection(
             if (resolved === undefined) {
                 break;
             }
-            sink[propertyName] = getNonSpanningField(
+            const data = getNonSpanningField(
                 sel as LuvioSelectionObjectFieldNode,
                 builder,
                 resolved.value
             );
+            builder.assignNonScalar(sink, propertyName, data);
             break;
         }
         case 'CustomFieldSelection': {
@@ -348,10 +349,11 @@ function assignSelection(
             if (resolvedSpanningRecordValue === undefined) {
                 break;
             }
-            sink[propertyName] = getCustomSelection(sel as LuvioSelectionCustomFieldNode, builder, {
+            const data = getCustomSelection(sel as LuvioSelectionCustomFieldNode, builder, {
                 source: resolvedSpanningRecordValue.value,
                 parentFieldValue: spanningFieldResult,
             });
+            builder.assignNonScalar(sink, propertyName, data);
         }
     }
     builder.exitPath();

@@ -43,19 +43,20 @@ describe('basic', () => {
 
     it('fetches a second time, i.e. cache miss for another component with different config', async () => {
         const mock = getMock('variant');
+        const mock2 = getMock('variant2');
 
         const config2 = {
-            variantId: '9Psxx0000004CKKCA3',
+            variantId: '9Psxx0000004CKKCA8',
         };
 
         mockGetManagedContentVariant(TEST_CONFIG, mock);
-        mockGetManagedContentVariant(config2, mock);
+        mockGetManagedContentVariant(config2, mock2);
 
         const el1 = await setupElement(TEST_CONFIG, GetManagedContentVariant);
         expect(el1.variant).toEqual(mock);
 
         const el2 = await setupElement(config2, GetManagedContentVariant);
-        expect(el2.variant).toEqual(mock);
+        expect(el2.variant).toEqual(mock2);
 
         // Each element receive 1 push
         expect(el1.pushCount()).toBe(1);

@@ -128,6 +128,8 @@ const GET_MANAGED_CONTENT_VARIANT_PATH = new RegExp(
     'i'
 );
 
+const REPLACE_MANAGED_CONTENT_VARIANT_PATH = GET_MANAGED_CONTENT_VARIANT_PATH;
+
 const LIST_CONTENT_INTERNAL_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/managed-content/delivery/contents`,
     'i'
@@ -139,6 +141,8 @@ const LIST_CONTENT_PATH = new RegExp(
 );
 
 const CREATE_DEPLOYMENT_PATH = new RegExp(`${CMS_NON_CONNECT_BASE_URI}/deployments`, 'i');
+
+const CREATE_MANAGED_CONTENT_PATH = new RegExp(`${CMS_NON_CONNECT_BASE_URI}/contents`, 'i');
 
 const RECORD_SEO_PROPERTIES_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/seo/properties/([^\\s]){1,128}`,
@@ -227,6 +231,14 @@ const connect: ApiFamily = {
             controller: 'ManagedContentController.createDeployment',
         },
     },
+    createManagedContent: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CMS_NON_CONNECT_BASE_URI) && CREATE_MANAGED_CONTENT_PATH.test(path),
+        transport: {
+            controller: 'ManagedContentController.createManagedContent',
+        },
+    },
     getRecordSeoProperties: {
         method: 'get',
         predicate: (path: string) =>
@@ -266,6 +278,14 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && SITES_SEARCH_PATH.test(path),
         transport: {
             controller: 'SitesController.searchSite',
+        },
+    },
+    replaceManagedContentVariant: {
+        method: 'put',
+        predicate: (path: string) =>
+            path.startsWith(CMS_BASE_URI) && REPLACE_MANAGED_CONTENT_VARIANT_PATH.test(path),
+        transport: {
+            controller: 'ManagedContentController.replaceManagedContentVariant',
         },
     },
 };

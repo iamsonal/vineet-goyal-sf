@@ -1,0 +1,12 @@
+{
+    "variantId": "9Psxx0000004DwKCAU",
+    "ManagedContentVariantInputParam": {
+        "title": "hello authoring 2.0",
+        "urlName": "testurl",
+        "contentBody": {
+            "title": "hello authoring 2.0",
+            "body": "test body",
+            "excerpt": "test excerpt"
+        }
+    }
+}

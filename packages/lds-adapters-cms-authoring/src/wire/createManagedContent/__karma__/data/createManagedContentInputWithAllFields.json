@@ -1,0 +1,13 @@
+{
+    "ManagedContentInputParam": {
+        "contentSpaceOrFolderId": "0Zuxx00000001DpCAI",
+        "contentType": "news",
+        "title": "hello authoring 2.0",
+        "urlName": "testurl",
+        "contentBody": {
+            "title": "hello authoring 2.0",
+            "body": "test body",
+            "excerpt": "test excerpt"
+        }
+    }
+}

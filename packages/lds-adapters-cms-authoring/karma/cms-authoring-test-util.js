@@ -86,6 +86,77 @@ function expireManagedContentVariant() {
     timekeeper.travel(Date.now() + MANAGED_CONTENT_VARIANT_TTL + 1);
 }
 
+function getCreateManagedContentsMatcher(config) {
+    var contentSpaceOrFolderId = config.contentSpaceOrFolderId,
+        contentType = config.contentType,
+        title = config.title,
+        urlName = config.urlName,
+        contentBody = config.contentBody;
+    return sinon.match({
+        body: {
+            contentSpaceOrFolderId: contentSpaceOrFolderId,
+            contentType: contentType,
+            title: title,
+            urlName: urlName,
+            contentBody: contentBody,
+        },
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: '/cms/contents',
+        queryParams: {},
+    });
+}
+
+function mockCreateManagedContent(config, mockData) {
+    var paramMatch = getCreateManagedContentsMatcher(config);
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockCreateManagedContentErrorOnce(config, mockData) {
+    var paramMatch = getCreateManagedContentsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getReplaceManagedContentsVaraiantsMatcher(config) {
+    var variantId = config.variantId,
+        title = config.title,
+        urlName = config.urlName,
+        contentBody = config.contentBody;
+    return sinon.match({
+        body: {
+            title: title,
+            urlName: urlName,
+            contentBody: contentBody,
+        },
+        headers: {},
+        method: 'put',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/cms/contents/variants/${variantId}`,
+        queryParams: {},
+    });
+}
+
+function mockReplaceManagedContentVariant(config, mockData) {
+    var paramMatch = getReplaceManagedContentsVaraiantsMatcher(config);
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockReplaceManagedContentVariantErrorOnce(config, mockData) {
+    var paramMatch = getReplaceManagedContentsVaraiantsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 export {
     getCreateDeploymentsMatcher,
     mockCreateDeployment,
@@ -94,4 +165,10 @@ export {
     mockGetManagedContentVariantErrorOnce,
     expireManagedContentVariant,
     clearManagedContentVariantCache,
+    getCreateManagedContentsMatcher,
+    mockCreateManagedContent,
+    mockCreateManagedContentErrorOnce,
+    getReplaceManagedContentsVaraiantsMatcher,
+    mockReplaceManagedContentVariant,
+    mockReplaceManagedContentVariantErrorOnce,
 };

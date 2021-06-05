@@ -5187,6 +5187,140 @@ describe('routes', () => {
         );
     });
 
+    describe('put /connect/cms/contents/variants/{variantId}', () => {
+        testControllerInput(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/contents/variants/9Psxx0000004DwKCAU`,
+                body: {
+                    variantId: '9Psxx0000004DwKCAU',
+                    ManagedContentVariantInputParam: {
+                        title: 'hello authoring 2.0',
+                        urlName: 'testurl',
+                        contentBody: {
+                            title: 'hello authoring 2.0',
+                            body: 'test body',
+                            excerpt: 'test excerpt',
+                        },
+                    },
+                },
+            },
+            [
+                'ManagedContentController.replaceManagedContentVariant',
+                {
+                    variantId: '9Psxx0000004DwKCAU',
+                    ManagedContentVariantInputParam: {
+                        title: 'hello authoring 2.0',
+                        urlName: 'testurl',
+                        contentBody: {
+                            title: 'hello authoring 2.0',
+                            body: 'test body',
+                            excerpt: 'test excerpt',
+                        },
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                contentBody: {
+                    title: 'Test authoring 2.0 - 1(update)',
+                    body: '<html><body>test body 1</body></html>',
+                    excerpt: 'test excerpt  1',
+                },
+                contentKey: 'MCP5UIGCCS3NHDVLFJFTC47QR5OM',
+                contentSpace: {
+                    id: '0Zuxx000000009hCAA',
+                    resourceUrl: '/services/data/v53.0/connect/cms/spaces/0Zuxx000000009h',
+                },
+                contentType: {
+                    fullyQualifiedName: 'news',
+                },
+                createdBy: {
+                    id: '005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fN',
+                },
+                createdDate: '2021-06-04T09:21:31.000Z',
+                folder: {
+                    id: '9Puxx0000004CSOCA2',
+                    resourceUrl: '/services/data/v53.0/connect/cms/folders/9Puxx0000004CSO',
+                },
+                isPublished: false,
+                language: 'en_US',
+                lastModifiedBy: {
+                    id: '005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fN',
+                },
+                lastModifiedDate: '2021-06-04T11:55:24.000Z',
+                managedContentId: '20Yxx0000011SooEAE',
+                managedContentVariantId: '9Psxx0000004DwKCAU',
+                managedContentVersionId: '5OUxx0000004E60GAE',
+                title: 'Test authoring 2.0 - 1(replace)',
+                urlName: 'testurl-1-update',
+            }
+        );
+        testRejectFetchResponse({
+            method: 'put',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/cms/contents/variants/9Psxx0000004DwKCAU`,
+        });
+        testResolveResponse(
+            {
+                method: 'put',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/contents/variants/9Psxx0000004DwKCAU`,
+                body: {
+                    variantId: '9Psxx0000004DwKCAU',
+                    ManagedContentVariantInputParam: {
+                        title: 'hello authoring 2.0',
+                        urlName: 'testurl',
+                        contentBody: {
+                            title: 'hello authoring 2.0',
+                            body: 'test body',
+                            excerpt: 'test excerpt',
+                        },
+                    },
+                },
+            },
+            {
+                contentBody: {
+                    title: 'Test authoring 2.0 - 1(update)',
+                    body: '<html><body>test body 1</body></html>',
+                    excerpt: 'test excerpt  1',
+                },
+                contentKey: 'MCP5UIGCCS3NHDVLFJFTC47QR5OM',
+                contentSpace: {
+                    id: '0Zuxx000000009hCAA',
+                    resourceUrl: '/services/data/v53.0/connect/cms/spaces/0Zuxx000000009h',
+                },
+                contentType: {
+                    fullyQualifiedName: 'news',
+                },
+                createdBy: {
+                    id: '005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fN',
+                },
+                createdDate: '2021-06-04T09:21:31.000Z',
+                folder: {
+                    id: '9Puxx0000004CSOCA2',
+                    resourceUrl: '/services/data/v53.0/connect/cms/folders/9Puxx0000004CSO',
+                },
+                isPublished: false,
+                language: 'en_US',
+                lastModifiedBy: {
+                    id: '005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fN',
+                },
+                lastModifiedDate: '2021-06-04T11:55:24.000Z',
+                managedContentId: '20Yxx0000011SooEAE',
+                managedContentVariantId: '9Psxx0000004DwKCAU',
+                managedContentVersionId: '5OUxx0000004E60GAE',
+                title: 'Test authoring 2.0 - 1(replace)',
+                urlName: 'testurl-1-update',
+            }
+        );
+    });
+
     describe('get /connect/interaction/orchestration/instances', () => {
         testControllerInput(
             {
@@ -5385,6 +5519,141 @@ describe('routes', () => {
                 deploymentStatus: null,
                 lastModifiedBy: null,
                 scheduledDate: null,
+            }
+        );
+    });
+
+    describe('post /cms/contents', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CMS_NON_CONNECT_BASE_URI,
+                basePath: `/contents`,
+                body: {
+                    ManagedContentInputParam: {
+                        contentSpaceOrFolderId: '0Zuxx00000001DpCAI',
+                        contentType: 'news',
+                        title: 'hello authoring 2.0',
+                        urlName: 'testurl',
+                        contentBody: {
+                            title: 'hello authoring 2.0',
+                            body: 'test body',
+                            excerpt: 'test excerpt',
+                        },
+                    },
+                },
+            },
+            [
+                'ManagedContentController.createManagedContent',
+                {
+                    ManagedContentInputParam: {
+                        contentSpaceOrFolderId: '0Zuxx00000001DpCAI',
+                        contentType: 'news',
+                        title: 'hello authoring 2.0',
+                        urlName: 'testurl',
+                        contentBody: {
+                            title: 'hello authoring 2.0',
+                            body: 'test body',
+                            excerpt: 'test excerpt',
+                        },
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                contentBody: {
+                    title: 'Test authoring 2.0 - 1',
+                    body: '<html><body>test body 1</body></html>',
+                    excerpt: 'test excerpt  1',
+                },
+                contentKey: 'MCFXA42Q4MHNCKXER4YOLK4SE5KQ',
+                contentSpace: {
+                    id: '0Zuxx000000009hCAA',
+                    resourceUrl: '/services/data/v53.0/connect/cms/spaces/0Zuxx000000009hCAA',
+                },
+                contentType: {
+                    fullyQualifiedName: 'news',
+                },
+                createdBy: {
+                    id: '005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fNAAS',
+                },
+                createdDate: '2021-06-04T09:13:35.000Z',
+                folder: {
+                    id: '9Puxx0000004CSOCA2',
+                    resourceUrl: '/services/data/v53.0/connect/cms/folders/9Puxx0000004CSOCA2',
+                },
+                language: 'en_US',
+                lastModifiedBy: {
+                    id: '005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fNAAS',
+                },
+                lastModifiedDate: '2021-06-04T09:13:35.000Z',
+                managedContentId: '20Yxx0000011SjyEAE',
+                managedContentVariantId: '9Psxx0000004DrUCAU',
+                managedContentVersionId: '5OUxx0000004E1AGAU',
+                title: 'Test authoring 2.0 - 1',
+                urlName: 'testurl-1',
+            }
+        );
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CMS_NON_CONNECT_BASE_URI,
+            basePath: `/contents`,
+        });
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CMS_NON_CONNECT_BASE_URI,
+                basePath: `/contents`,
+                body: {
+                    ManagedContentInputParam: {
+                        contentSpaceOrFolderId: '0Zuxx00000001DpCAI',
+                        contentType: 'news',
+                        title: 'hello authoring 2.0',
+                        urlName: 'testurl',
+                        contentBody: {
+                            title: 'hello authoring 2.0',
+                            body: 'test body',
+                            excerpt: 'test excerpt',
+                        },
+                    },
+                },
+            },
+            {
+                contentBody: {
+                    title: 'Test authoring 2.0 - 1',
+                    body: '<html><body>test body 1</body></html>',
+                    excerpt: 'test excerpt  1',
+                },
+                contentKey: 'MCFXA42Q4MHNCKXER4YOLK4SE5KQ',
+                contentSpace: {
+                    id: '0Zuxx000000009hCAA',
+                    resourceUrl: '/services/data/v53.0/connect/cms/spaces/0Zuxx000000009hCAA',
+                },
+                contentType: {
+                    fullyQualifiedName: 'news',
+                },
+                createdBy: {
+                    id: '005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fNAAS',
+                },
+                createdDate: '2021-06-04T09:13:35.000Z',
+                folder: {
+                    id: '9Puxx0000004CSOCA2',
+                    resourceUrl: '/services/data/v53.0/connect/cms/folders/9Puxx0000004CSOCA2',
+                },
+                language: 'en_US',
+                lastModifiedBy: {
+                    id: '005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fNAAS',
+                },
+                lastModifiedDate: '2021-06-04T09:13:35.000Z',
+                managedContentId: '20Yxx0000011SjyEAE',
+                managedContentVariantId: '9Psxx0000004DrUCAU',
+                managedContentVersionId: '5OUxx0000004E1AGAU',
+                title: 'Test authoring 2.0 - 1',
+                urlName: 'testurl-1',
             }
         );
     });

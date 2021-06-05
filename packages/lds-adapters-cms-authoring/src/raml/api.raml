@@ -716,7 +716,7 @@ types:
         type: object
         properties:
           //:
-            type: object
+            type: string
       contentKey:
         description: Globally unique identifier of a managed content and doesn't change
           when managed content is moved between production and sandbox environments.
@@ -817,6 +817,12 @@ types:
       publishedVersionId:
         description: The published version id of the managed content.
         type: string
+  ManagedContentInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: wrapper for Input required for creating a variant
+    type: object
+    properties:
+      ManagedContentInputParam:
+        type: ManagedContentInputRepresentation
   ManagedContentInputRepresentation:
     description: 'Input representation for a managed content '
     type: object
@@ -826,7 +832,7 @@ types:
         type: object
         properties:
           //:
-            type: object
+            type: string
       contentSpaceOrFolderId:
         description: Content space or folder id where content will be created.
         type: string
@@ -1716,6 +1722,12 @@ types:
       urlName:
         description: The content url name of the managed content.
         type: string
+  ManagedContentVariantUpdateInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: wrapper for Input required for replacing variant
+    type: object
+    properties:
+      ManagedContentVariantInputParam:
+        type: ManagedContentVariantUpdateInputRepresentation
   ManagedContentVariantUpdateInputRepresentation:
     description: Input representation of a managed content variant for PUT request
     type: object
@@ -1725,7 +1737,7 @@ types:
         type: object
         properties:
           //:
-            type: object
+            type: string # TODO Hand-rolled W-9288020
       title:
         description: The title of the managed content variant
         type: string
@@ -2144,7 +2156,7 @@ types:
               type: ManagedContentDocumentRepresentation
       body:
         application/json:
-          type: ManagedContentInputRepresentation
+          type: ManagedContentInputWrapperRepresentation
           #required: false # TODO hand rolled. W-9275477
           (oas-body-name): ManagedContentInputParam
   /contents/{contentKeyOrId}:
@@ -2720,7 +2732,7 @@ types:
                 type: ManagedContentVariantRepresentation
         body:
           application/json:
-            type: ManagedContentVariantUpdateInputRepresentation
+            type: ManagedContentVariantUpdateInputWrapperRepresentation
             #required: false # TODO hand rolled. W-9275477
             (oas-body-name): ManagedContentVariantInputParam
       uriParameters:

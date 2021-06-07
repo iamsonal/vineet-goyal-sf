@@ -24,6 +24,10 @@ types:
       # This representation is only used in the response of an RPC like endpoint
       # Use url as key since we won't look up this data
       id: url
+  SourceObjectRepresentation:
+    (luvio.key):
+      connectorIdOrApiName: dataConnector.id # Only support id for now
+      SourceObjectName: name
 
 /wave:
   /asset/{assetId}/schedule:
@@ -51,6 +55,17 @@ types:
     patch:
       (luvio.adapter):
         name: updateDataConnector
+    /sourceObjects:
+      get:
+        (luvio.adapter):
+          name: getDataConnectorSourceObjects
+    /sourceObjects/{sourceObjectName}:
+      get:
+        (luvio.adapter):
+          name: getDataConnectorSourceObject
+        (luvio.key):
+          connectorIdOrApiName: urlParams.connectorIdOrApiName
+          SourceObjectName: urlParams.sourceObjectName
     /ingest:
       post:
         (luvio.adapter):

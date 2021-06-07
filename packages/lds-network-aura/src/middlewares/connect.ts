@@ -59,7 +59,17 @@ const ANALYTICS_LIMITS_PATH = new RegExp(`${WAVE_BASE_URI}/limits$`, 'i');
 
 const DATA_CONNECTORS_PATH = new RegExp(`${WAVE_BASE_URI}/dataconnectors$`, 'i');
 
-const DATA_CONNECTOR_PATH = new RegExp(`${WAVE_BASE_URI}/dataconnectors/([A-Z0-9_]){15,18}$`, 'i');
+const DATA_CONNECTOR_PATH = new RegExp(`${WAVE_BASE_URI}/dataconnectors/([A-Z0-9]){15,18}$`, 'i');
+
+const DATA_CONNECTOR_SOURCE_OBJECTS_PATH = new RegExp(
+    `${WAVE_BASE_URI}/dataconnectors/([A-Z0-9]){15,18}/sourceObjects$`,
+    'i'
+);
+
+const DATA_CONNECTOR_SOURCE_OBJECT_PATH = new RegExp(
+    `${WAVE_BASE_URI}/dataconnectors/([A-Z0-9]){15,18}/sourceObjects/.{1,255}$`,
+    'i'
+);
 
 const INGEST_DATA_CONNECTOR_PATH = new RegExp(
     `${WAVE_BASE_URI}/dataconnectors/([A-Z0-9_]){15,18}/ingest$`,
@@ -75,15 +85,15 @@ const DATA_CONNECTOR_TYPES_PATH = new RegExp(`${WAVE_BASE_URI}/dataConnectorType
 
 const DATAFLOW_JOBS_PATH = new RegExp(`${WAVE_BASE_URI}/dataflowjobs$`, 'i');
 
-const DATAFLOW_JOB_PATH = new RegExp(`${WAVE_BASE_URI}/dataflowjobs/([A-Z0-9_]){15,18}$`, 'i');
+const DATAFLOW_JOB_PATH = new RegExp(`${WAVE_BASE_URI}/dataflowjobs/([A-Z0-9]){15,18}$`, 'i');
 
 const DATAFLOW_JOB_NODES_PATH = new RegExp(
-    `${WAVE_BASE_URI}/dataflowjobs/([A-Z0-9_]){15,18}/nodes$`,
+    `${WAVE_BASE_URI}/dataflowjobs/([A-Z0-9]){15,18}/nodes$`,
     'i'
 );
 
 const DATAFLOW_JOB_NODE_PATH = new RegExp(
-    `${WAVE_BASE_URI}/dataflowjobs/([A-Z0-9_]){15,18}/nodes/([A-Z0-9_]){15,18}$`,
+    `${WAVE_BASE_URI}/dataflowjobs/([A-Z0-9]){15,18}/nodes/([A-Z0-9]){15,18}$`,
     'i'
 );
 
@@ -91,21 +101,21 @@ const EXECUTE_QUERY_PATH = new RegExp(`${WAVE_BASE_URI}/query`, 'i');
 
 const RECIPES_PATH = new RegExp(`${WAVE_BASE_URI}/recipes$`, 'i');
 
-const RECIPE_PATH = new RegExp(`${WAVE_BASE_URI}/recipes/([A-Z0-9_]){15,18}$`, 'i');
+const RECIPE_PATH = new RegExp(`${WAVE_BASE_URI}/recipes/([A-Z0-9]){15,18}$`, 'i');
 
 const REPLICATED_DATASETS_PATH = new RegExp(`${WAVE_BASE_URI}/replicatedDatasets$`, 'i');
 
 const REPLICATED_DATASET_PATH = new RegExp(
-    `${WAVE_BASE_URI}/replicatedDatasets/([A-Z0-9_]){15,18}$`,
+    `${WAVE_BASE_URI}/replicatedDatasets/([A-Z0-9]){15,18}$`,
     'i'
 );
 
 const REPLICATED_FIELDS_PATH = new RegExp(
-    `${WAVE_BASE_URI}/replicatedDatasets/([A-Z0-9_]){15,18}/fields$`,
+    `${WAVE_BASE_URI}/replicatedDatasets/([A-Z0-9]){15,18}/fields$`,
     'i'
 );
 
-const SCHEDULE_PATH = new RegExp(`${WAVE_BASE_URI}/asset/([A-Z0-9_]){15,18}/schedule$`, 'i');
+const SCHEDULE_PATH = new RegExp(`${WAVE_BASE_URI}/asset/([A-Z0-9]){15,18}/schedule$`, 'i');
 
 const DATASETS_PATH = new RegExp(`${WAVE_BASE_URI}/datasets$`, 'i');
 
@@ -432,6 +442,22 @@ const analytics: ApiFamily = {
             path.startsWith(WAVE_BASE_URI) && DATA_CONNECTOR_PATH.test(path),
         transport: {
             controller: 'WaveController.updateDataConnector',
+        },
+    },
+    getDataConnectorSourceObjects: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && DATA_CONNECTOR_SOURCE_OBJECTS_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getDataConnectorSourceObjects',
+        },
+    },
+    getDataConnectorSourceObject: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(WAVE_BASE_URI) && DATA_CONNECTOR_SOURCE_OBJECT_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getDataConnectorSourceObject',
         },
     },
     ingestDataConnector: {

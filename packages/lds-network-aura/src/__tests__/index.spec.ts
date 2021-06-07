@@ -4019,6 +4019,77 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/dataconnectors/{connectorIdOrApiName}/sourceObjects', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0Itxx0000004C92CAE/sourceObjects`,
+            },
+            [
+                'WaveController.getDataConnectorSourceObjects',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/dataconnectors/0Itxx0000004C92CAE/sourceObjects`,
+                    queryParams: {
+                        page: 'eyJwYWdlU2l6ZSI6NSwic29ydE9yZGVyIjoiTkFNRSIsImxhc3RJZCI6IjAwMDAwMDAwMDAwMDAwMCIsImxhc3ROYW1lIjoiQUlBcHBsaWNhdGlvbiJ9',
+                        pageSize: 5,
+                    },
+                },
+                [
+                    'WaveController.getDataConnectorSourceObjects',
+                    {
+                        pageParam:
+                            'eyJwYWdlU2l6ZSI6NSwic29ydE9yZGVyIjoiTkFNRSIsImxhc3RJZCI6IjAwMDAwMDAwMDAwMDAwMCIsImxhc3ROYW1lIjoiQUlBcHBsaWNhdGlvbiJ9',
+                        pageSize: 5,
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0Itxx0000004C92CAE/sourceObjects`,
+            },
+            {}
+        );
+    });
+
+    describe('get /wave/dataconnectors/{connectorIdOrApiName}/sourceObjects/{sourceObjectName}', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS700000001YxKAI/sourceObjects/AIApplication`,
+            },
+            [
+                'WaveController.getDataConnectorSourceObject',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS700000001YxKAI/sourceObjects/AIApplication`,
+            },
+            {}
+        );
+    });
+
     describe('get /wave/dataConnectorTypes', () => {
         testControllerInput(
             {

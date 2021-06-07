@@ -1999,6 +1999,66 @@ types:
         description: Select or drop fields
         type: string
         required: false # TODO Hand-rolled W-8253396
+  SourceObjectCollectionRepresentation:
+    description: A paged list of Source Objects.
+    type: object
+    properties:
+      nextPageUrl:
+        description: URL to get the next page of contents in the collection.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      sourceObjects:
+        description: A list of Source Objects.
+        type: array
+        items:
+          type: SourceObjectRepresentation
+      totalSize:
+        description: Gets the total count of the elements in the collection irrespective
+          of the page.
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      url:
+        description: URL to get the collection.
+        type: string
+  SourceObjectRepresentation:
+    description: A Source Object represents a specific category or type of data that
+      the Data Connector knows about. When a Source Object is replicated into Wave,
+      it can be use to create Datasets.
+    type: object
+    properties:
+      accessDeniedReason:
+        description: In the event that this Source Object is inaccessible, this property
+          contains a messagedescribing the reason.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      accessible:
+        description: If this property is present and false, the Source Object is inaccessible
+          and cannot be  replicated. Check the accessDeniedReason property for more
+          information.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      dataConnector:
+        description: A reference to the data connector that the source object belongs
+          to
+        type: AssetReferenceRepresentation
+      dataPreviewUrl:
+        description: The URL to get the data preview associated with source object
+        type: string
+      fieldsUrl:
+        description: The URL to get the list of Source Fields that this Source Object
+          has.
+        type: string
+      name:
+        description: The external name of this Source Object. The specifics will depend
+          on the connector type.
+        type: string
+      replicated:
+        description: Indicates if this Source Object is currently replicated by Wave
+          or not.
+        type: boolean
+      url:
+        description: The URL to get this Source Object.
+        type: string
   TemplateOptionsRepresentation:
     description: Representation for the options used on the last action performed
       on a templated Wave Application.
@@ -2980,6 +3040,42 @@ types:
       connectorIdOrApiName:
         type: string
         required: true
+    /sourceObjects:
+      get:
+        description: Get a list of all the Source Objects that the named Data Connector
+          knows about.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SourceObjectCollectionRepresentation
+        queryParameters:
+          page:
+            type: string
+            required: false
+          pageSize:
+            type: integer
+            required: false
+      uriParameters:
+        connectorIdOrApiName:
+          type: string
+    /sourceObjects/{sourceObjectName}:
+      get:
+        description: Get a single Source Object by name.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SourceObjectRepresentation
+      uriParameters:
+        connectorIdOrApiName:
+          type: string
+          required: true
+        sourceObjectName:
+          type: string
+          required: true
     /ingest:
       post:
         description: Triggers a 'run now' for given connectionID

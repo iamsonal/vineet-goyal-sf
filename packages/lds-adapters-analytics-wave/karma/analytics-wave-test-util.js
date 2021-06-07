@@ -181,6 +181,65 @@ function updateDataConnectorMatcher(config) {
     });
 }
 
+// Data connector source objects
+function mockGetDataConnectorSourceObjectsNetworkOnce(config, mockData) {
+    const paramMatch = getDataConnectorSourceObjectsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDataConnectorSourceObjectsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDataConnectorSourceObjectsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDataConnectorSourceObjectsMatcher(config) {
+    const { connectorIdOrApiName, page, pageSize } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataConnectors/${connectorIdOrApiName}/sourceObjects`,
+        queryParams: {
+            page,
+            pageSize,
+        },
+    });
+}
+
+// Data connector source object
+function mockGetDataConnectorSourceObjectNetworkOnce(config, mockData) {
+    const paramMatch = getDataConnectorSourceObjectMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDataConnectorSourceObjectNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDataConnectorSourceObjectMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDataConnectorSourceObjectMatcher(config) {
+    const { connectorIdOrApiName, sourceObjectName } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataConnectors/${connectorIdOrApiName}/sourceObjects/${sourceObjectName}`,
+        queryParams: {},
+    });
+}
+
 // Data connector ingest
 function mockIngestDataConnectorNetworkOnce(config, mockData) {
     const paramMatch = ingestDataConnectorMatcher(config);
@@ -926,6 +985,10 @@ export {
     mockUpdateDataConnectorNetworkErrorOnce,
     mockGetDataConnectorsNetworkOnce,
     mockGetDataConnectorsNetworkErrorOnce,
+    mockGetDataConnectorSourceObjectNetworkOnce,
+    mockGetDataConnectorSourceObjectNetworkErrorOnce,
+    mockGetDataConnectorSourceObjectsNetworkOnce,
+    mockGetDataConnectorSourceObjectsNetworkErrorOnce,
     mockGetDataConnectorTypesNetworkOnce,
     mockGetDataConnectorTypesNetworkErrorOnce,
     mockIngestDataConnectorNetworkOnce,

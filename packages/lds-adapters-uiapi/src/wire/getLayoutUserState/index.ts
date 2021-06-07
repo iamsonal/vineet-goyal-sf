@@ -159,8 +159,9 @@ function onResourceResponseSuccess(
         recordLayoutUserStateRepresentationIngest,
         body
     );
+    const snapshot = buildInMemorySnapshot(luvio, config);
     luvio.storeBroadcast();
-    return buildInMemorySnapshot(luvio, config);
+    return snapshot;
 }
 
 function onResourceResponseError(

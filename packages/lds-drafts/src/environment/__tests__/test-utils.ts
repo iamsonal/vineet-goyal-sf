@@ -23,7 +23,7 @@ export function setupDraftEnvironment(
 ) {
     const { mockNetworkResponse } = setupOptions;
     const store = new Store();
-    const network = jest.fn().mockResolvedValue(mockNetworkResponse ?? {});
+    const network = jest.fn().mockResolvedValue(mockNetworkResponse || {});
     let durableStore: DurableStore = new MockDurableStore();
 
     const draftQueue: DraftQueue = {
@@ -66,10 +66,10 @@ export function setupDraftEnvironment(
             generateId: (prefix: string) => {
                 return `${prefix}${DRAFT_RECORD_ID.substring(4, DRAFT_RECORD_ID.length)}`;
             },
-            isDraftId: setupOptions.isDraftId ?? ((id) => id === DRAFT_RECORD_ID),
+            isDraftId: setupOptions.isDraftId || ((id) => id === DRAFT_RECORD_ID),
             getRecord: adapters.getRecord,
-            prefixForApiName: setupOptions.prefixForApiName ?? jest.fn(),
-            apiNameForPrefix: setupOptions.apiNameForPrefix ?? jest.fn(),
+            prefixForApiName: setupOptions.prefixForApiName || jest.fn(),
+            apiNameForPrefix: setupOptions.apiNameForPrefix || jest.fn(),
             recordResponseRetrievers: undefined,
             userId: 'testUserId',
             registerDraftKeyMapping: registerDraftKeyMapping,

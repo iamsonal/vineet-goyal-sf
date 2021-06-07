@@ -3,6 +3,7 @@ import {
     ObjectFreeze,
     getFetchResponseStatusText,
     ObjectCreate,
+    ObjectKeys,
 } from '../../../generated/adapters/adapter-utils';
 import {
     keyBuilder as getUiApiRecordsByRecordId_keyBuilder,
@@ -33,6 +34,7 @@ export function ingestSuccessChildResourceParams(
     childSnapshotData: BatchRepresentation;
     seenRecords: { [key: string]: boolean };
     snapshotState: string;
+    hasOnlyNonCachedErrors: boolean;
 } {
     const childSnapshotDataResponses: BatchRepresentation['results'] = [];
     let seenRecords: FulfilledSnapshot<BatchRepresentation, {}>['seenRecords'] = {};
@@ -136,5 +138,14 @@ export function ingestSuccessChildResourceParams(
         results: childSnapshotDataResponses,
     };
 
-    return { childSnapshotData: ObjectFreeze(childSnapshotData), seenRecords, snapshotState };
+    const nonCachedErrorLength = ObjectKeys(nonCachedErrors).length;
+    const hasOnlyNonCachedErrors =
+        nonCachedErrorLength > 0 && childSnapshotDataResponses.length === nonCachedErrorLength;
+
+    return {
+        childSnapshotData: ObjectFreeze(childSnapshotData),
+        seenRecords,
+        snapshotState,
+        hasOnlyNonCachedErrors,
+    };
 }

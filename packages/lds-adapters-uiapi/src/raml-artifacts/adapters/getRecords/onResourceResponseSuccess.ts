@@ -1,4 +1,4 @@
-import { FulfilledSnapshot, Luvio, ResourceResponse } from '@luvio/engine';
+import { CompositeFulfilledSnapshot, Luvio, ResourceResponse } from '@luvio/engine';
 import { buildNetworkSnapshot } from '../../../generated/adapters/getRecords';
 import { snapshotRefreshOptions } from '../../../generated/adapters/adapter-utils';
 import {
@@ -31,11 +31,8 @@ export function onResourceResponseSuccess(
     }
     const snapshotStateFulfilled = 'Fulfilled';
     const key = keyBuilder(resourceParams);
-    const { childSnapshotData, seenRecords } = ingestSuccessChildResourceParams(
-        luvio,
-        childResourceParamsArray,
-        childEnvelopes
-    );
+    const { childSnapshotData, seenRecords, hasOnlyNonCachedErrors } =
+        ingestSuccessChildResourceParams(luvio, childResourceParamsArray, childEnvelopes);
     const snapshot = {
         recordId: key,
         data: childSnapshotData,
@@ -51,7 +48,8 @@ export function onResourceResponseSuccess(
             resolve: () => buildNetworkSnapshot(luvio, config, snapshotRefreshOptions),
         },
         variables: {},
-    } as FulfilledSnapshot<BatchRepresentation, any>;
+        hasOnlyNonCachedErrors,
+    } as CompositeFulfilledSnapshot<BatchRepresentation, any>;
 
     luvio.storeBroadcast();
     return snapshot;

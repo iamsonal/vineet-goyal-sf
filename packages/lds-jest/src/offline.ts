@@ -67,10 +67,13 @@ export function buildOfflineLuvio(
 export async function populateDurableStore<Config, DataType>(
     adapterFactory: AdapterFactory<Config, DataType>,
     config: Config,
-    payload: MockPayload
+    payload: MockPayload,
+    options: { existingDurableStore?: MockDurableStore } = {}
 ) {
     const { durableStore, luvio, network, env } = buildOfflineLuvio(
-        new MockDurableStore(),
+        options.existingDurableStore !== undefined
+            ? options.existingDurableStore
+            : new MockDurableStore(),
         buildMockNetworkAdapter([payload])
     );
     const adapter = adapterFactory(luvio);
@@ -148,7 +151,7 @@ export async function testDurableHitDoesNotHitNetwork<Config, DataType>(
     config: Config,
     payload: MockPayload,
     options: OfflineOptions = {}
-) {
+): Promise<Snapshot<DataType, any>> {
     const durableStore = await populateDurableStore(adapterFactory, config, payload);
     const { luvio, network } = buildOfflineLuvio(
         durableStore,
@@ -160,7 +163,7 @@ export async function testDurableHitDoesNotHitNetwork<Config, DataType>(
     // TODO - W-9051409 we don't need to check for Promises once custom adapters
     // are updated to not use resolveUnfulfilledSnapshot
     const snapshotOrPromise = adapter(config)!;
-    let result: Snapshot<any>;
+    let result: Snapshot<DataType>;
     if ('then' in snapshotOrPromise) {
         result = await snapshotOrPromise;
     } else {
@@ -173,4 +176,6 @@ export async function testDurableHitDoesNotHitNetwork<Config, DataType>(
 
     // ensure no outstanding promises throw errors
     await flushPromises();
+
+    return result;
 }

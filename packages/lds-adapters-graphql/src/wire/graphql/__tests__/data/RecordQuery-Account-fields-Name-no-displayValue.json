@@ -1,0 +1,37 @@
+{
+    "data": {
+        "uiapi": {
+            "query": {
+                "Account": {
+                    "edges": [
+                        {
+                            "node": {
+                                "Id": "001RM000004uuhnYAA",
+                                "WeakEtag": 1615493739000,
+                                "Name": {
+                                    "value": "Account1"
+                                },
+                                "__typename": "Account",
+                                "ApiName": "Account",
+                                "DisplayValue": "Account1",
+                                "SystemModstamp": {
+                                    "value": "2021-03-11T20:15:39.000Z"
+                                },
+                                "LastModifiedById": {
+                                    "value": "005RM000002492xYAA"
+                                },
+                                "LastModifiedDate": {
+                                    "value": "2021-03-11T20:15:39.000Z"
+                                },
+                                "RecordTypeId": {
+                                    "value": "012RM000000E79WYAS"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "errors": []
+}

@@ -27,7 +27,8 @@
                     "progress": "NotStarted",
                     "action": {
                         "actionType": "NoAction"
-                    }
+                    },
+                    "tags": ["premier"]
                 },
                 {
                     "action": {
@@ -40,9 +41,11 @@
                     "labels": {
                         "title": "Explore Salesforce Setup"
                     },
-                    "progress": "Completed"
+                    "progress": "Completed",
+                    "tags": []
                 }
-            ]
+            ],
+            "tags": []
         },
         {
             "action": {
@@ -60,7 +63,8 @@
                 "description": "See how the utility bar actions can be customized."
             },
             "progress": "NotStarted",
-            "steps": []
+            "steps": [],
+            "tags": ["premier"]
         },
         {
             "action": {
@@ -75,7 +79,8 @@
                 "description": "Watch a video about how the setup assistant helps you get started with Salesforce."
             },
             "progress": "NotStarted",
-            "steps": []
+            "steps": [],
+            "tags": []
         },
         {
             "action": {
@@ -90,7 +95,8 @@
                 "description": "Customize sales stages for your company&#39;s opportunities so your sales team can close deals faster."
             },
             "progress": "NotStarted",
-            "steps": []
+            "steps": [],
+            "tags": []
         },
         {
             "action": {
@@ -106,7 +112,8 @@
                 "description": "Follow our best practices to get your users engaged with Salesforce."
             },
             "progress": "NotStarted",
-            "steps": []
+            "steps": [],
+            "tags": []
         }
     ]
 }

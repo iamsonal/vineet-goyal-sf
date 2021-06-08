@@ -145,6 +145,11 @@ types:
         type: array
         items:
           type: LightningAssistantStepRepresentation
+      tags:
+        description: Tags associated with this item
+        type: array
+        items:
+          type: string
   LightningAssistantLinkActionRepresentation:
     description: A Link Action representation
     discriminatorValue: Link
@@ -415,6 +420,11 @@ types:
         type: string
         # TODO Hand-rolled W-8253396
         required: false
+      tags:
+        description: Tags associated with this item
+        type: array
+        items:
+          type: string
   LightningAssistantTrailheadActionRepresentation:
     description: A Trailhead Action Representation
     discriminatorValue: TlxModule

@@ -1909,4 +1909,37 @@ describe('graphql', () => {
             expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
         });
     });
+
+    describe('Errors', () => {
+        it('should emit error responses to the user', async () => {
+            const mock = getMock('ErrorQuery-invalid-field');
+            const query = `
+                {
+                    uiapi {
+                        query {
+                            asd
+                        }
+                    }
+                }
+            `;
+            const invalidQuery = parseQuery(query);
+
+            mockGraphqlNetwork(
+                {
+                    query: query,
+                    variables: {},
+                },
+                mock
+            );
+
+            const graphqlConfig = {
+                query: invalidQuery,
+                variables: {},
+            };
+
+            const pending = await graphQLImperative(graphqlConfig);
+            const snapshot = await luvio.resolvePendingSnapshot(pending);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(mock);
+        });
+    });
 });

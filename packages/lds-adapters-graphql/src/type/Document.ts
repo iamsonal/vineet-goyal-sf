@@ -5,7 +5,10 @@ import {
     createRead as operationCreateRead,
 } from './Operation';
 
-type GqlDocument = any;
+export type GraphQL = {
+    data: any;
+    errors: unknown[];
+};
 
 export const createRead: (ast: LuvioDocumentNode) => ReaderFragment['read'] = (
     ast: LuvioDocumentNode
@@ -35,7 +38,7 @@ export const createRead: (ast: LuvioDocumentNode) => ReaderFragment['read'] = (
 };
 export function createIngest(ast: LuvioDocumentNode): ResourceIngest {
     const definitions = ast.definitions === undefined ? [] : ast.definitions;
-    return (data: GqlDocument, path: IngestPath, luvio: Luvio, store: Store, timestamp: number) => {
+    return (data: GraphQL, path: IngestPath, luvio: Luvio, store: Store, timestamp: number) => {
         const key = path.fullPath;
         for (let i = 0, len = definitions.length; i < len; i += 1) {
             const def = definitions[i];

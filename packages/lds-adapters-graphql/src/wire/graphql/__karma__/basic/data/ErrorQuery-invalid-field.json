@@ -1,0 +1,15 @@
+{
+    "data": {},
+    "errors": [
+        {
+            "locations": [
+                {
+                    "column": 29,
+                    "line": 4
+                }
+            ],
+            "message": "Validation error of type FieldUndefined: Field 'asd' in type 'RecordQuery' is undefined @ 'uiapi/query/asd'",
+            "paths": []
+        }
+    ]
+}

@@ -2,6 +2,7 @@ import {
     AdapterFactory,
     FetchResponse,
     Luvio,
+    Reader,
     ReaderFragment,
     ResourceRequest,
     Snapshot,
@@ -9,7 +10,7 @@ import {
 } from '@luvio/engine';
 import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
 import { astToString } from './util/ast-to-string';
-import { createIngest, createRead } from './type/Document';
+import { GraphQL, createIngest, createRead } from './type/Document';
 interface GraphQlConfig {
     query: LuvioDocumentNode;
     variables: Record<string, string | number | boolean>;
@@ -28,13 +29,68 @@ function buildSnapshotRefresh(
     };
 }
 
+function createFragment(query: LuvioDocumentNode): ReaderFragment {
+    return {
+        kind: 'Fragment',
+        synthetic: false,
+        reader: true,
+        read: createRead(query),
+    };
+}
+
+const { isArray: ArrayIsArray } = Array;
+const { keys: ObjectKeys, freeze: ObjectFreeze } = Object;
+
+function deepFreeze(value: unknown) {
+    // No need to freeze primitives
+    if (typeof value !== 'object' || value === null) {
+        return;
+    }
+    if (ArrayIsArray(value)) {
+        for (let i = 0, len = value.length; i < len; i += 1) {
+            deepFreeze(value[i]);
+        }
+    } else {
+        const keys = ObjectKeys(value) as Array<keyof typeof value>;
+
+        for (let i = 0, len = keys.length; i < len; i += 1) {
+            const v = value[keys[i]];
+            deepFreeze(v);
+        }
+    }
+    return ObjectFreeze(value);
+}
+
 function onResourceResponseSuccess(
     luvio: Luvio,
     config: GraphQlConfig,
-    response: FetchResponse<any>,
+    response: FetchResponse<GraphQL>,
     fragment: ReaderFragment
 ) {
     const { query } = config;
+    const { body } = response;
+    if (body.errors.length > 0) {
+        return luvio.storeLookup({
+            recordId: 'graphql',
+            node: {
+                kind: 'Fragment',
+                synthetic: true,
+                reader: true,
+                read: (reader: Reader<any>) => {
+                    const sink = {};
+                    reader.enterPath('data');
+                    reader.assignNonScalar(sink, 'data', body.data);
+                    reader.exitPath();
+                    reader.enterPath('errors');
+                    reader.assignNonScalar(sink, 'errors', deepFreeze(body.errors));
+                    reader.exitPath();
+                    return sink;
+                },
+            },
+            variables: {},
+        });
+    }
+
     const ingest = createIngest(query);
     luvio.storeIngest('graphql', ingest, response.body.data);
 
@@ -86,12 +142,7 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQlConfig, unknown> = (lu
 
         const { query } = validatedConfig;
 
-        const fragment: ReaderFragment = {
-            kind: 'Fragment',
-            synthetic: false,
-            reader: true,
-            read: createRead(query),
-        };
+        const fragment: ReaderFragment = createFragment(query);
 
         const snapshot = luvio.storeLookup(
             {

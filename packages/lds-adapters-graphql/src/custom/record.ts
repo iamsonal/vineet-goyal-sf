@@ -338,7 +338,7 @@ function assignSelection(
             const { value: spanningFieldResult } = resolvedParentFieldValue;
             const { value: spanningFieldValue } = spanningFieldResult;
             if (spanningFieldValue === null || typeof spanningFieldValue !== 'object') {
-                sink[selectionName] = null;
+                sink[propertyName] = null;
                 break;
             }
 

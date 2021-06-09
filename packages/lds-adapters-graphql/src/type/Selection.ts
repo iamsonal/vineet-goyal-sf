@@ -95,7 +95,7 @@ export function resolveLink<D>(
             builder.markPending();
             return;
         case StoreLinkStateValues.Null:
-            throw new Error(`TODO: Invalid Link State. Link on "${builder.currentPath.fullPath}"}`);
+            throw new Error(`TODO: Invalid Link State. Link on "${builder.currentPath.fullPath}"`);
     }
 
     const { key: __ref } = linkState;

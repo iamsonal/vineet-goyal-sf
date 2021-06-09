@@ -766,4 +766,215 @@ describe('ObjectField', () => {
             expect(snap.data).toEqual(data);
         });
     });
+
+    describe('Error Scenarios', () => {
+        it('should return unfulfilled when object field in query, scalar value in cache', () => {
+            const ast: LuvioSelectionObjectFieldNode = {
+                kind: 'ObjectFieldSelection',
+                name: 'node',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'Name',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'displayValue',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const store = new Store();
+            store.records = {
+                'gql::Record::001RM000004uuhnYAA': {
+                    Id: '001RM000004uuhnYAA',
+                    WeakEtag: 1615493739000,
+                    Name: 'Account1',
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const data = {
+                Name: undefined,
+            };
+
+            const selector: Selector<any> = {
+                recordId: 'gql::Record::001RM000004uuhnYAA',
+                node: {
+                    kind: 'Fragment',
+                    reader: true,
+                    synthetic: false,
+                    read: createRead(ast),
+                },
+                variables: {},
+            };
+
+            const snap = luvio.storeLookup(selector);
+            expect(snap.state).toEqual('Unfulfilled');
+            expect(snap.data).toEqual(data);
+        });
+
+        it('should throw error when scalar field in query, object value in cache', () => {
+            const ast: LuvioSelectionObjectFieldNode = {
+                kind: 'ObjectFieldSelection',
+                name: 'node',
+                luvioSelections: [
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: 'Name',
+                    },
+                ],
+            };
+
+            const expectedErrorMessage =
+                'Scalar requested at "Name" but is instead an object at "gql::Record::001RM000004uuhnYAA__Name"';
+
+            const store = new Store();
+            store.records = {
+                'gql::Record::001RM000004uuhnYAA__Name': {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                'gql::Record::001RM000004uuhnYAA': {
+                    Id: '001RM000004uuhnYAA',
+                    WeakEtag: 1615493739000,
+                    Name: {
+                        __ref: 'gql::Record::001RM000004uuhnYAA__Name',
+                    },
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const selector: Selector<any> = {
+                recordId: 'gql::Record::001RM000004uuhnYAA',
+                node: {
+                    kind: 'Fragment',
+                    reader: true,
+                    synthetic: false,
+                    read: createRead(ast),
+                },
+                variables: {},
+            };
+
+            expect(() => {
+                luvio.storeLookup(selector);
+            }).toThrow(expectedErrorMessage);
+        });
+
+        it('should throw error when object field in query, null scalar value in cache', () => {
+            const ast: LuvioSelectionObjectFieldNode = {
+                kind: 'ObjectFieldSelection',
+                name: 'node',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'Name',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'displayValue',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const store = new Store();
+            store.records = {
+                'gql::Record::001RM000004uuhnYAA': {
+                    Id: '001RM000004uuhnYAA',
+                    WeakEtag: 1615493739000,
+                    Name: null,
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const expectedErrorMessage = 'TODO: Invalid Link State. Link on "Name"';
+
+            const selector: Selector<any> = {
+                recordId: 'gql::Record::001RM000004uuhnYAA',
+                node: {
+                    kind: 'Fragment',
+                    reader: true,
+                    synthetic: false,
+                    read: createRead(ast),
+                },
+                variables: {},
+            };
+
+            expect(() => {
+                luvio.storeLookup(selector);
+            }).toThrow(expectedErrorMessage);
+        });
+
+        it('should throw error when scalar field in query, object null value in cache', () => {
+            const ast: LuvioSelectionObjectFieldNode = {
+                kind: 'ObjectFieldSelection',
+                name: 'node',
+                luvioSelections: [
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: 'Name',
+                    },
+                ],
+            };
+
+            const expectedErrorMessage =
+                'Scalar requested at "Name" but is instead an object at "gql::Record::001RM000004uuhnYAA__Name"';
+
+            const store = new Store();
+            store.records = {
+                'gql::Record::001RM000004uuhnYAA__Name': null,
+                'gql::Record::001RM000004uuhnYAA': {
+                    Id: '001RM000004uuhnYAA',
+                    WeakEtag: 1615493739000,
+                    Name: {
+                        __ref: 'gql::Record::001RM000004uuhnYAA__Name',
+                    },
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const selector: Selector<any> = {
+                recordId: 'gql::Record::001RM000004uuhnYAA',
+                node: {
+                    kind: 'Fragment',
+                    reader: true,
+                    synthetic: false,
+                    read: createRead(ast),
+                },
+                variables: {},
+            };
+
+            expect(() => {
+                luvio.storeLookup(selector);
+            }).toThrow(expectedErrorMessage);
+        });
+    });
 });

@@ -3,6 +3,7 @@ import { LuvioSelectionObjectFieldNode } from '@salesforce/lds-graphql-parser';
 import { getLuvioFieldNodeSelection, followLink } from './Selection';
 import { createIngest as customFieldCreateIngest } from './CustomField';
 import merge from '../util/merge';
+import { readScalarFieldSelection } from './ScalarField';
 
 export const createRead: (ast: LuvioSelectionObjectFieldNode) => ReaderFragment['read'] = (
     ast: LuvioSelectionObjectFieldNode
@@ -17,7 +18,7 @@ export const createRead: (ast: LuvioSelectionObjectFieldNode) => ReaderFragment[
             builder.enterPath(fieldName);
             switch (sel.kind) {
                 case 'ScalarFieldSelection':
-                    builder.readScalar(fieldName, source, sink);
+                    readScalarFieldSelection(builder, source, fieldName, sink);
                     break;
                 default: {
                     const data = followLink(sel, builder, source[fieldName]);

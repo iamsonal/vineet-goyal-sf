@@ -1803,6 +1803,135 @@ describe('graphql', () => {
                     errors: [],
                 });
             });
+
+            it('should refresh data when gql returns old records', async () => {
+                const query = parseQuery(`
+                    query {
+                        uiapi {
+                            query {
+                                Opportunity(where: {Name: {eq: "Opp1"}}) @connection {
+                                    edges {
+                                        node @resource(type: "Record") {
+                                            Name {
+                                                value
+                                                displayValue
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                `);
+
+                const expectedQuery = `
+                    query {
+                        uiapi {
+                            query {
+                                Opportunity(where: {Name: {eq: "Opp1"}}) {
+                                    edges {
+                                        node {
+                                            Name {
+                                                value
+                                                displayValue
+                                            }
+                                            ...defaultRecordFields
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    fragment defaultRecordFields on Record {
+                        __typename
+                        ApiName
+                        WeakEtag
+                        Id
+                        DisplayValue
+                        SystemModstamp { value }
+                        LastModifiedById { value }
+                        LastModifiedDate { value }
+                        RecordTypeId(fallback: true) { value }
+                    }
+                `;
+
+                // Lowest WeakEtag
+                const networkData = getMock('RecordQuery-Opportunity-fields-Name');
+
+                // Higher WeakEtag
+                const recordRepMock = getMock(
+                    'RecordRepresentation-Opportunity-fields-Opportunity.Id'
+                );
+
+                // Same WeakEtag as recordRepMock (Higher)
+                const recordRepUpdated = getMock(
+                    'RecordRepresentation-Opportunity-fields-Opportunity.Name,Opportunity.Id'
+                );
+
+                mockGetRecordNetwork(
+                    {
+                        recordId: recordRepMock.id,
+                        fields: ['Opportunity.Id'],
+                    },
+                    recordRepMock
+                );
+
+                mockGetRecordNetwork(
+                    {
+                        recordId: recordRepMock.id,
+                        optionalFields: ['Opportunity.Id', 'Opportunity.Name'],
+                    },
+                    recordRepUpdated
+                );
+
+                mockGraphqlNetwork(
+                    {
+                        query: expectedQuery,
+                        variables: {},
+                    },
+                    networkData
+                );
+
+                // Load Higher WeakEtag
+                await setupElement(
+                    {
+                        recordId: recordRepMock.id,
+                        fields: ['Opportunity.Id'],
+                    },
+                    GetRecord
+                );
+
+                // Load Lower WeakEtag
+                // Will trigger refresh that loads recordRepUpdated
+                const pending = graphQLImperative({
+                    query,
+                    variables: {},
+                });
+                const snapshot = await luvio.resolvePendingSnapshot(pending);
+
+                expect(snapshot.data).toEqual({
+                    data: {
+                        uiapi: {
+                            query: {
+                                Opportunity: {
+                                    edges: [
+                                        {
+                                            node: {
+                                                Name: {
+                                                    value: 'Opp1-changed1',
+                                                    displayValue: null,
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                    errors: [],
+                });
+            });
         });
     });
 

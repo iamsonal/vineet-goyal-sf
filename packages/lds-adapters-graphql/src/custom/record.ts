@@ -6,7 +6,7 @@ import {
 } from '@salesforce/lds-graphql-parser';
 import {
     RecordRepresentation,
-    createRecordIngest,
+    createIngestRecordWithFields,
     RecordRepresentationNormalized,
     FieldValueRepresentationNormalized,
     FieldValueRepresentation,
@@ -19,7 +19,7 @@ import {
     PropertyLookupResultState,
 } from '../type/Selection';
 
-type RecordFieldTrie = Parameters<typeof createRecordIngest>[0];
+type RecordFieldTrie = Parameters<typeof createIngestRecordWithFields>[0];
 
 type GqlScalarField = string | number | boolean;
 
@@ -208,14 +208,10 @@ export const createIngest: (ast: LuvioSelectionCustomFieldNode) => ResourceInges
 ) => {
     return (data: GqlRecord, path: IngestPath, luvio: Luvio, store: Store, timestamp: number) => {
         const { recordRepresentation, fieldsTrie } = convertToRecordRepresentation(ast, data);
-        const ingestRecord = createRecordIngest(
-            fieldsTrie,
-            {
-                name: recordRepresentation.apiName,
-                children: {},
-            },
-            {}
-        );
+        const ingestRecord = createIngestRecordWithFields(fieldsTrie, {
+            name: recordRepresentation.apiName,
+            children: {},
+        });
 
         return ingestRecord(recordRepresentation, path, luvio, store, timestamp);
     };
@@ -310,6 +306,7 @@ function assignSelection(
         case 'ObjectFieldSelection': {
             // regular field, not spanning
             const field = propertyLookup(builder, selectionName, fields);
+
             if (field.state === PropertyLookupResultState.Missing) {
                 break;
             }
@@ -332,6 +329,7 @@ function assignSelection(
                 builder,
                 field
             );
+
             if (resolvedParentFieldValue === undefined) {
                 break;
             }

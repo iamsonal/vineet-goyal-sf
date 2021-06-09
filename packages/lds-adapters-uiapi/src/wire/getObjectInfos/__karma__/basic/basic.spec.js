@@ -236,6 +236,31 @@ describe('getObjectInfos', () => {
         expect(comp.getWiredData()).toEqualSnapshotWithoutEtags(refreshData);
     });
 
+    it('should refresh data more than once', async () => {
+        const mockData = getMock('object-Account-Opportunity');
+        const refreshData = getMock('object-Account-Opportunity');
+        refreshData.results[0].result.eTag = 'e7c7f7e02c57bdcfa9d751b5a508f907';
+        const secondRefreshData = getMock('object-Account-Opportunity');
+        secondRefreshData.results[0].result.eTag = 'secondRefresh';
+
+        const resourceConfig = { objectApiNames: ['Account', 'Opportunity'] };
+        mockGetObjectInfosNetwork(resourceConfig, [mockData, refreshData, secondRefreshData]);
+
+        const comp = await setupElement(resourceConfig, ObjectInfos);
+        expect(comp.pushCount()).toBe(1);
+        expect(comp.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+
+        await comp.refresh();
+
+        expect(comp.pushCount()).toBe(2);
+        expect(comp.getWiredData()).toEqualSnapshotWithoutEtags(refreshData);
+
+        await comp.refresh();
+
+        expect(comp.pushCount()).toBe(3);
+        expect(comp.getWiredData()).toEqualSnapshotWithoutEtags(secondRefreshData);
+    });
+
     it('should refresh @tracked object infos', async () => {
         const mockData = getMock('object-Account-Opportunity');
         const refreshData = getMock('object-Account-Opportunity');

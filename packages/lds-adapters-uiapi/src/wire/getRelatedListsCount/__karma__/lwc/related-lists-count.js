@@ -5,7 +5,7 @@
  */
 
 import { LightningElement, wire, api } from 'lwc';
-import { getRelatedListsCount } from 'lds-adapters-uiapi';
+import { getRelatedListsCount, refresh } from 'lds-adapters-uiapi';
 
 export default class RelatedListsCount extends LightningElement {
     @api parentRecordId;
@@ -34,5 +34,9 @@ export default class RelatedListsCount extends LightningElement {
     @api
     pushCount() {
         return this.wirePushCount;
+    }
+
+    @api refresh() {
+        return refresh(this.getRelatedListsCount);
     }
 }

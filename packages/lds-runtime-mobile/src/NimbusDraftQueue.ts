@@ -24,11 +24,12 @@ import { JSONParse, JSONStringify, ObjectKeys } from './utils/language';
  */
 export class NimbusDraftQueue implements DraftQueue {
     enqueue<Response, Data>(action: Action<Data>): Promise<DraftAction<Response, Data>> {
-        const { data, tag, targetId } = action;
-        const serializedRequest = JSONStringify(data);
+        const { tag, targetId } = action;
+        const serializedAction = JSONStringify(action);
+        // TODO: W-9400488 - remove tag and targetId parameters when interface is updated
         return new Promise((resolve, reject) => {
             __nimbus.plugins.LdsDraftQueue.enqueue(
-                serializedRequest,
+                serializedAction,
                 tag,
                 targetId,
                 (serializedAction) => {

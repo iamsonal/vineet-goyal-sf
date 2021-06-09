@@ -1,7 +1,7 @@
 import { ResourceRequest } from '@luvio/engine';
 import { NimbusDraftQueue } from '../NimbusDraftQueue';
 import { DraftQueue as DraftQueueProxy } from '@mobileplatform/nimbus-plugin-lds';
-import { JSONStringify } from '../utils/language';
+import { JSONParse, JSONStringify } from '../utils/language';
 import { DraftAction, DraftActionStatus } from '@salesforce/lds-drafts';
 import { LDS_ACTION_HANDLER_ID } from '@salesforce/lds-drafts/src/actionHandlers/LDSActionHandler';
 
@@ -61,9 +61,12 @@ describe('NimbusDraftQueue', () => {
                 handler: LDS_ACTION_HANDLER_ID,
             });
             expect(nimbusMock.enqueue).toBeCalledTimes(1);
-            expect((nimbusMock.enqueue as jest.Mock<any>).mock.calls[0][0]).toEqual(
-                JSONStringify(resourceRequest)
-            );
+            expect(JSONParse((nimbusMock.enqueue as jest.Mock<any>).mock.calls[0][0])).toEqual({
+                tag: tag,
+                targetId: targetId,
+                data: resourceRequest,
+                handler: LDS_ACTION_HANDLER_ID,
+            });
             expect((nimbusMock.enqueue as jest.Mock<any>).mock.calls[0][1]).toEqual(tag);
             expect((nimbusMock.enqueue as jest.Mock<any>).mock.calls[0][2]).toEqual(targetId);
         });

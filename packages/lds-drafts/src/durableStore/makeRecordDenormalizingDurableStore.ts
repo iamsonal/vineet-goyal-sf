@@ -51,7 +51,7 @@ function normalizeRecordFields(
         // field is undefined for missing links
         if (field !== undefined) {
             const fieldKey = buildRecordFieldStoreKey(key, fieldName);
-            returnEntries[fieldKey] = { data: field };
+            returnEntries[fieldKey] = { data: field as FieldValueRepresentation };
         }
 
         // we need to restore the undefined __ref node as it is

@@ -51,6 +51,13 @@ describe('makeDurableStoreDraftAware', () => {
                     Name: NAME_VALUE,
                 });
                 const createAction = createPostDraftAction(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_ID);
+                durableRecord.drafts = {
+                    created: true,
+                    edited: false,
+                    deleted: false,
+                    serverValues: {},
+                    draftActionIds: [createAction.id],
+                };
 
                 const { durableStore, baseDurableStore } = setupDraftStore({
                     [STORE_KEY_DRAFT_RECORD]: [createAction],
@@ -125,6 +132,13 @@ describe('makeDurableStoreDraftAware', () => {
                     Name: NAME_VALUE,
                 });
                 const createAction = createPostDraftAction(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_ID);
+                durableRecord.drafts = {
+                    created: true,
+                    edited: false,
+                    deleted: false,
+                    serverValues: {},
+                    draftActionIds: [createAction.id],
+                };
                 const customAction: DraftAction<unknown, CustomActionData> = {
                     data: {
                         mock: 'data',
@@ -249,6 +263,13 @@ describe('makeDurableStoreDraftAware', () => {
                     STORE_KEY_DRAFT_RECORD,
                     updatedName
                 );
+                durableRecord.drafts = {
+                    created: true,
+                    edited: true,
+                    deleted: false,
+                    serverValues: {},
+                    draftActionIds: [createAction.id, updateAction.id],
+                };
 
                 const { durableStore, baseDurableStore } = setupDraftStore({
                     [STORE_KEY_DRAFT_RECORD]: [createAction, updateAction],
@@ -348,7 +369,16 @@ describe('makeDurableStoreDraftAware', () => {
             const durableRecord = buildDurableRecordRepresentation(RECORD_ID, {
                 Name: NAME_VALUE,
             });
+
             const createAction = createPostDraftAction(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_ID);
+
+            durableRecord.drafts = {
+                created: true,
+                edited: false,
+                deleted: false,
+                serverValues: {},
+                draftActionIds: [createAction.id],
+            };
 
             const { durableStore, baseDurableStore } = setupDraftStore({
                 [STORE_KEY_DRAFT_RECORD]: [createAction],

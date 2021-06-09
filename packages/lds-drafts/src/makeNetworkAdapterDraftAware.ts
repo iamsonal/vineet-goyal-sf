@@ -29,7 +29,7 @@ function applyDraftsToResponse(
         for (let j = 0; j < retrievedRecordsLength; j++) {
             const { cacheKey, data } = records[j];
             const drafts = actions[cacheKey] as Readonly<
-                DraftAction<RecordRepresentation, unknown>[]
+                DraftAction<RecordRepresentation, ResourceRequest>[]
             >;
 
             if (drafts !== undefined && drafts.length > 0) {

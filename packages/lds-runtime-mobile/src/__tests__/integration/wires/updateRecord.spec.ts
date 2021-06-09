@@ -116,9 +116,6 @@ describe('mobile runtime integration tests', () => {
             expect(callbackSpy).toBeCalledTimes(1);
             // ensure the getRecord callback was invoked with updated draft data value
             expect(callbackSpy.mock.calls[0][0].data.fields.Name.value).toBe(updatedName);
-            expect(callbackSpy.mock.calls[0][0].data.drafts.serverValues.Name.value).toBe(
-                orginalName
-            );
         });
 
         it('getRecord includes draft overlay on stale response', async () => {

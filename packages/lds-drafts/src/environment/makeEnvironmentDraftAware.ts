@@ -97,21 +97,11 @@ export function makeEnvironmentDraftAware(
         return Promise.resolve();
     }
 
-    function onDraftActionCompleted(event: DraftQueueCompleteEvent) {
-        return env.reviveRecordsToStore([event.action.tag]).then(() => {
-            env.storeBroadcast(env.rebuildSnapshot, env.snapshotAvailable);
-        });
-    }
-
     // register for when the draft queue completes an upload so we can properly
     // update subscribers
     draftQueue.registerOnChangedListener((event: DraftQueueEvent): Promise<void> => {
         if (event.type === DraftQueueEventType.ActionCompleting) {
             return onDraftActionCompleting(event);
-        }
-
-        if (event.type === DraftQueueEventType.ActionCompleted) {
-            return onDraftActionCompleted(event);
         }
 
         return Promise.resolve();

@@ -18,23 +18,25 @@ import {
     ArrayPrototypeShift,
     JSONParse,
     JSONStringify,
+    ObjectAssign,
     ObjectKeys,
 } from './language';
 import { Selector, PathSelection } from '@luvio/engine';
 import { CompletedDraftAction, DraftAction } from '../main';
-import { RecordInputRepresentation } from '@salesforce/lds-adapters-uiapi/dist/types/src/generated/types/RecordInputRepresentation';
 import {
     buildRecordFieldStoreKey,
     extractRecordIdFromStoreKey,
 } from '@salesforce/lds-uiapi-record-utils';
 import { DraftIdMappingEntry, QueueOperation, QueueOperationType } from '../DraftQueue';
 import { isLDSDraftAction } from '../actionHandlers/LDSActionHandler';
+import { DurableStoreEntry } from '@luvio/environments';
 
-type DraftFields = { [key: string]: boolean | number | string | null };
+type ScalarFieldType = boolean | number | string | null;
+type DraftFields = { [key: string]: ScalarFieldType };
 
 interface ScalarFieldRepresentationValue {
     displayValue: string | null;
-    value: RecordInputRepresentation['fields'];
+    value: ScalarFieldType;
 }
 
 const DRAFT_ACTION_KEY_JUNCTION = '__DraftAction__';
@@ -55,7 +57,8 @@ export interface DraftRecordRepresentation extends RecordRepresentation {
     drafts?: DraftRepresentation;
 }
 
-export interface DurableRecordRepresentation extends DraftRecordRepresentation {
+export interface DurableRecordRepresentation extends Omit<DraftRecordRepresentation, 'fields'> {
+    fields: { [key: string]: ScalarFieldRepresentationValue | StoreLink };
     links: { [key: string]: StoreLink };
 }
 
@@ -123,7 +126,7 @@ export function isDraftRecordRepresentationNormalized(
  */
 export function buildRecordFieldValueRepresentationsFromDraftFields(fields: DraftFields) {
     const keys = ObjectKeys(fields);
-    const recordFields: { [key: string]: FieldValueRepresentation } = {};
+    const recordFields: { [key: string]: ScalarFieldRepresentationValue } = {};
     for (let i = 0, len = keys.length; i < len; i++) {
         const key = keys[i];
         const draftField = fields[key];
@@ -351,20 +354,34 @@ export function extractRecordApiNameFromStore(key: string, env: Environment): st
 }
 
 /**
- * Replays an ordered draft list on top of a record
+ * Replays an ordered draft list on top of a record. If undefined is passed in, the first draft must
+ * be a POST action
  * @param record The base record to apply drafts to
  * @param drafts The list of drafts to apply to the record
  * @param userId The current user id, will be the last modified id
  */
-export function replayDraftsOnRecord<U extends DraftRecordRepresentation>(
-    record: U,
-    drafts: DraftAction<RecordRepresentation, unknown>[],
+export function replayDraftsOnRecord<
+    U extends DurableRecordRepresentation | DraftRecordRepresentation
+>(
+    record: U | undefined,
+    drafts: DraftAction<RecordRepresentation, ResourceRequest>[],
     userId: string
 ): U {
+    if (record === undefined) {
+        if (drafts.length === 0) {
+            throw Error('cannot synthesize a record without a post draft action');
+        }
+        const postAction = drafts[0];
+        if (postAction.data.method !== 'post') {
+            throw Error('cannot synthesize a record without a post draft action');
+        }
+        const syntheticRecord = buildSyntheticRecordRepresentation(postAction, userId) as U;
+        drafts.shift();
+        return replayDraftsOnRecord(syntheticRecord, drafts, userId);
+    }
     if (drafts.length === 0) {
         return record;
     }
-    const draftIds = drafts.filter((d) => d !== undefined).map((d) => d.id);
 
     // remove the next item from the front of the queue
     const draft = ArrayPrototypeShift.call(drafts);
@@ -384,8 +401,10 @@ export function replayDraftsOnRecord<U extends DraftRecordRepresentation>(
             edited: false,
             deleted: false,
             serverValues: {},
-            draftActionIds: draftIds,
+            draftActionIds: [draft.id],
         };
+    } else {
+        record.drafts.draftActionIds = [...record.drafts.draftActionIds, draft.id];
     }
 
     if (method === 'delete') {
@@ -402,7 +421,8 @@ export function replayDraftsOnRecord<U extends DraftRecordRepresentation>(
     const keys = ObjectKeys(draftFields);
     for (let i = 0, len = keys.length; i < len; i++) {
         const key = keys[i];
-        if (record.drafts.serverValues[key] === undefined) {
+        // don't apply server values to draft created records
+        if (record.drafts.created === false && record.drafts.serverValues[key] === undefined) {
             record.drafts.serverValues[key] = record.fields[key] as any;
         }
         record.fields[key] = draftFields[key];
@@ -586,4 +606,171 @@ export function filterRecordFields(
         }
     }
     return { ...record, fields: filteredFields };
+}
+
+/**
+ * Merges an existing durable store with an incoming one
+ * @param existing Existing record in the durable store
+ * @param incoming Incoming record being written to the durable store
+ * @param drafts ordered drafts associated with the record
+ * @param refreshRecordByFields function to refresh a record by fields
+ * @returns
+ */
+export function durableMerge(
+    existing: DurableStoreEntry<DurableRecordRepresentation>,
+    incoming: DurableStoreEntry<DurableRecordRepresentation>,
+    drafts: DraftAction<RecordRepresentation, ResourceRequest>[],
+    userId: string,
+    refreshRecordByFields: (recordId: string, fields: string[]) => Promise<RecordRepresentation>
+): DurableStoreEntry<DurableRecordRepresentation> {
+    const { data: existingRecord } = existing;
+    const { data: incomingRecord } = incoming;
+
+    const existingWithoutDrafts = removeDrafts(existingRecord);
+    const incomingWithoutDrafts = removeDrafts(incomingRecord);
+
+    // merged will be undefined if we're dealing with a draft-create
+    let merged: DurableRecordRepresentation | undefined;
+    if (existingWithoutDrafts !== undefined && incomingWithoutDrafts !== undefined) {
+        merged = merge(existingWithoutDrafts, incomingWithoutDrafts, refreshRecordByFields);
+    }
+
+    const mergedWithDrafts = replayDraftsOnRecord(merged, drafts, userId);
+
+    return { data: mergedWithDrafts, expiration: incoming.expiration };
+}
+
+function merge(
+    existing: DurableRecordRepresentation,
+    incoming: DurableRecordRepresentation,
+    refreshRecordByFields: (recordId: string, fields: string[]) => Promise<RecordRepresentation>
+) {
+    const incomingWeakEtag = incoming.weakEtag;
+    const existingWeakEtag = existing.weakEtag;
+
+    if (incomingWeakEtag !== 0 && existingWeakEtag !== 0 && incomingWeakEtag !== existingWeakEtag) {
+        return mergeRecordConflict(existing, incoming, refreshRecordByFields);
+    }
+
+    const merged = {
+        ...incoming,
+        fields: { ...incoming.fields, ...existing.fields },
+        links: { ...incoming.links, ...existing.links },
+    };
+
+    return merged;
+}
+
+/**
+ * Resolves a conflict of an incoming and existing record in the durable store by keeping
+ * the newer version, applying drafts (if applicable) and kicking off a refresh of the unionized fields
+ * between the two records
+ * @param existing Existing durable store record
+ * @param incoming Incoming durable store record
+ * @param refreshRecordByFields Function to kick of a refresh of a record by fields
+ * @returns
+ */
+function mergeRecordConflict(
+    existing: DurableRecordRepresentation,
+    incoming: DurableRecordRepresentation,
+    refreshRecordByFields: (recordId: string, fields: string[]) => Promise<RecordRepresentation>
+) {
+    const incomingWeakEtag = incoming.weakEtag;
+    const existingWeakEtag = existing.weakEtag;
+
+    const existingFields = {};
+    const incomingFields = {};
+    const unionizedFieldSet = {};
+    extractFields(existing, existingFields);
+    extractFields(incoming, incomingFields);
+    ObjectAssign(unionizedFieldSet, incomingFields, existingFields);
+    const unionizedFieldArray = ObjectKeys(unionizedFieldSet);
+
+    // incoming newer, apply drafts (if applicable) and kick of network refresh for unioned fields
+    if (existingWeakEtag < incomingWeakEtag) {
+        if (isSuperset(incomingFields, existingFields) === false) {
+            // kick off an async refresh which will pull all unionized fields with the same version
+            refreshRecordByFields(incoming.id, unionizedFieldArray);
+        }
+        return incoming;
+    }
+
+    // existing newer, refresh with unioned fields
+    if (isSuperset(existingFields, incomingFields) === false) {
+        // kick off an async refresh which will pull all unionized fields with the same version
+        refreshRecordByFields(incoming.id, unionizedFieldArray);
+    }
+
+    return existing;
+}
+
+/**
+ * Checks to see if @param {setA} is a superset of @param {setB}
+ * @param setA The target superset
+ * @param setB The target subset
+ * @returns
+ */
+function isSuperset(setA: { [key: string]: true }, setB: { [key: string]: true }) {
+    const keys = ObjectKeys(setB);
+    for (let i = 0, len = keys.length; i < len; i++) {
+        const key = keys[i];
+        if (setA[key] !== true) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Extracts a list of fields from a @see {DurableRecordRepresentation} to a provided map. If the field
+ * is a spanning record, it includes the Id field of the nested record
+ * @param record
+ * @param fieldList
+ */
+function extractFields(record: DurableRecordRepresentation, fieldList: { [key: string]: true }) {
+    const fieldNames = ObjectKeys(record.fields);
+    const apiName = record.apiName;
+    for (let i = 0, len = fieldNames.length; i < len; i++) {
+        const fieldName = fieldNames[i];
+        const field = record.fields[fieldName] as any;
+        if (field.__ref === undefined) {
+            fieldList[`${apiName}.${fieldName}`] = true;
+        } else {
+            // include spanning Id field
+            fieldList[`${apiName}.${fieldName}.Id`] = true;
+        }
+    }
+}
+
+/**
+ * Restores a record to its last known server-state by removing any applied drafts it may have
+ * @param record record with drafts applied
+ * @returns
+ */
+export function removeDrafts(
+    record: DurableRecordRepresentation
+): DurableRecordRepresentation | undefined {
+    const { drafts, fields } = record;
+    if (drafts === undefined) {
+        return record;
+    }
+
+    if (drafts.created === true) {
+        return undefined;
+    }
+    const updatedFields: { [key: string]: any } = {};
+    const fieldNames = ObjectKeys(fields);
+    for (let i = 0, len = fieldNames.length; i < len; i++) {
+        const fieldName = fieldNames[i];
+        const field = fields[fieldName];
+
+        const originalField = drafts.serverValues[fieldName];
+        if (originalField !== undefined) {
+            updatedFields[fieldName] = originalField;
+        } else {
+            updatedFields[fieldName] = field;
+        }
+    }
+
+    return { ...record, drafts: undefined, fields: updatedFields };
 }

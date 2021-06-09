@@ -1,4 +1,5 @@
 import { Environment, ResourceRequest, Store } from '@luvio/engine';
+import { DurableStoreEntry } from '@luvio/environments';
 import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
 import {
@@ -22,6 +23,8 @@ import {
     DEFAULT_TIME_STAMP,
     createCompletedDraftAction,
     STORE_KEY_DRAFT_RECORD,
+    createPostDraftAction,
+    DEFAULT_DRAFT_TIMESTAMP_FORMATTED,
 } from '../../__tests__/test-utils';
 import {
     buildRecordFieldValueRepresentationsFromDraftFields,
@@ -34,6 +37,10 @@ import {
     buildDraftDurableStoreKey,
     extractRecordKeyFromDraftDurableStoreKey,
     updateQueueOnPost,
+    DurableRecordRepresentation,
+    durableMerge,
+    DraftRecordRepresentation,
+    removeDrafts,
 } from '../records';
 
 describe('draft environment record utilities', () => {
@@ -452,6 +459,57 @@ describe('draft environment record utilities', () => {
             );
             expect(result.drafts.draftActionIds.length).toBe(3);
         });
+
+        it('synthesizes record for draft create', () => {
+            const result = replayDraftsOnRecord(
+                undefined,
+                [createPostDraftAction(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_ID)],
+                ''
+            );
+            expect(result.drafts.created).toBe(true);
+            expect(result.drafts.draftActionIds.length).toBe(1);
+        });
+
+        it('throws if encountering a draft create as non first element', () => {
+            const record = buildDurableRecordRepresentation('123', {
+                Name: { value: 'oldName', displayValue: null },
+            });
+            expect(() => {
+                replayDraftsOnRecord(
+                    record,
+                    [createPostDraftAction(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_ID)],
+                    CURRENT_USER_ID
+                );
+            }).toThrowError();
+        });
+
+        it('throws if two posts are found', () => {
+            expect(() => {
+                replayDraftsOnRecord(
+                    undefined,
+                    [
+                        createPostDraftAction(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_ID),
+                        createEditDraftAction(DRAFT_RECORD_ID, STORE_KEY_DRAFT_RECORD, 'newName'),
+                        createPostDraftAction(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_ID),
+                    ],
+                    ''
+                );
+            }).toThrowError();
+        });
+
+        it('replays drafts on draft create', () => {
+            const result: DraftRecordRepresentation = replayDraftsOnRecord(
+                undefined,
+                [
+                    createPostDraftAction(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_ID),
+                    createEditDraftAction(DRAFT_RECORD_ID, STORE_KEY_DRAFT_RECORD, 'newName'),
+                ],
+                ''
+            );
+            expect(result.drafts.created).toBe(true);
+            expect(result.drafts.edited).toBe(true);
+            expect(result.drafts.draftActionIds.length).toBe(2);
+        });
     });
 
     describe('buildDraftActionKey', () => {
@@ -565,6 +623,1603 @@ describe('draft environment record utilities', () => {
 
             const operations = updateQueueOnPost(completedAction, queue);
             expect(operations.length).toBe(0);
+        });
+    });
+
+    describe('durableMerge', () => {
+        const draftName = 'Jason';
+        const draftId = 'draft-foo';
+        const draftTimetamp = Date.now();
+        const draftTimestampString = new Date(draftTimetamp).toISOString();
+
+        const draftEdit: DraftAction<RecordRepresentation, ResourceRequest> = {
+            id: draftId,
+            targetId: RECORD_ID,
+            status: DraftActionStatus.Pending,
+            tag: keyBuilderRecord({ recordId: RECORD_ID }),
+            timestamp: draftTimetamp,
+            handler: LDS_ACTION_HANDLER_ID,
+            data: {
+                baseUri: '/services/data/v53.0',
+                basePath: `/ui-api/records/${RECORD_ID}`,
+                method: 'patch',
+                body: { fields: { Name: draftName } },
+                urlParams: { recordId: RECORD_ID },
+                queryParams: {},
+                headers: {},
+            },
+            metadata: {},
+        };
+        it('merges fields and links for same weakEtag', () => {
+            const refreshSpy = jest.fn();
+            const existing: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Justin',
+                            displayValue: 'Justin',
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Name',
+                        },
+                    },
+                },
+            };
+            const incoming: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Justin',
+                            displayValue: 'Justin',
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Name',
+                        },
+                        Birthday: {
+                            __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Birthday',
+                        },
+                    },
+                },
+            };
+
+            const expected: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Justin',
+                            displayValue: 'Justin',
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Name',
+                        },
+                        Birthday: {
+                            __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Birthday',
+                        },
+                    },
+                },
+            };
+
+            const result = durableMerge(existing, incoming, [], '', refreshSpy);
+            expect(result).toEqual(expected);
+            expect(refreshSpy).toBeCalledTimes(0);
+        });
+        it('merges fields for same weakEtag keeps drafts', () => {
+            const refreshSpy = jest.fn();
+            const serverName = 'Justin';
+
+            const existing: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: draftName,
+                            displayValue: draftName,
+                        },
+                    },
+                    drafts: {
+                        created: false,
+                        edited: true,
+                        deleted: true,
+                        serverValues: {
+                            Name: {
+                                value: serverName,
+                                displayValue: serverName,
+                            },
+                        },
+                        draftActionIds: [draftId],
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const incoming: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: serverName,
+                            displayValue: serverName,
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const expected: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: draftName,
+                            displayValue: draftName,
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                        LastModifiedById: {
+                            displayValue: null,
+                            value: '',
+                        },
+                        LastModifiedDate: {
+                            displayValue: draftTimestampString,
+                            value: draftTimestampString,
+                        },
+                    },
+                    drafts: {
+                        created: false,
+                        edited: true,
+                        deleted: false,
+                        serverValues: {
+                            Name: {
+                                value: serverName,
+                                displayValue: serverName,
+                            },
+                        },
+                        draftActionIds: [draftId],
+                    },
+                    lastModifiedById: '',
+                    lastModifiedDate: draftTimestampString,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
+            expect(result).toEqual(expected);
+            expect(refreshSpy).toBeCalledTimes(0);
+        });
+        it('newer incoming overwrites existing and kicks off unionized field refresh', () => {
+            const refreshSpy = jest.fn();
+            const existing: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Justin',
+                            displayValue: 'Justin',
+                        },
+                        IsMad: {
+                            value: true,
+                            displayValue: '',
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+            const incoming: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Jason',
+                            displayValue: 'Jason',
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const expected: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Jason',
+                            displayValue: 'Jason',
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const result = durableMerge(existing, incoming, [], '', refreshSpy);
+            expect(result).toEqual(expected);
+            expect(refreshSpy).toBeCalledTimes(1);
+            expect(refreshSpy.mock.calls[0][0]).toBe('foo');
+            expect(refreshSpy.mock.calls[0][1]).toStrictEqual([
+                'Account.Name',
+                'Account.Birthday',
+                'Account.IsMad',
+            ]);
+        });
+        it('newer incoming overwrites existing but does not kick off refresh if fields are superset', () => {
+            const refreshSpy = jest.fn();
+            const existing: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Justin',
+                            displayValue: 'Justin',
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+            const incoming: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Jason',
+                            displayValue: 'Jason',
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const expected: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Jason',
+                            displayValue: 'Jason',
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const result = durableMerge(existing, incoming, [], '', refreshSpy);
+            expect(result).toEqual(expected);
+            expect(refreshSpy).toBeCalledTimes(0);
+        });
+        it('newer incoming overwrites existing and applies drafts', () => {
+            const refreshSpy = jest.fn();
+            const existingServerName = 'Justin';
+            const incomingServerName = 'Wes';
+
+            const existing: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: draftName,
+                            displayValue: draftName,
+                        },
+                        IsMad: {
+                            value: true,
+                            displayValue: '',
+                        },
+                    },
+                    drafts: {
+                        created: false,
+                        edited: true,
+                        deleted: true,
+                        serverValues: {
+                            Name: {
+                                value: existingServerName,
+                                displayValue: existingServerName,
+                            },
+                        },
+                        draftActionIds: [draftId],
+                    },
+                    lastModifiedById: '',
+                    lastModifiedDate: draftTimestampString,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+            const incoming: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: incomingServerName,
+                            displayValue: incomingServerName,
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const expected: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: draftName,
+                            displayValue: draftName,
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                        LastModifiedById: {
+                            displayValue: null,
+                            value: '',
+                        },
+                        LastModifiedDate: {
+                            displayValue: draftTimestampString,
+                            value: draftTimestampString,
+                        },
+                    },
+                    drafts: {
+                        created: false,
+                        edited: true,
+                        deleted: false,
+                        serverValues: {
+                            Name: {
+                                value: incomingServerName,
+                                displayValue: incomingServerName,
+                            },
+                        },
+                        draftActionIds: [draftId],
+                    },
+                    lastModifiedById: '',
+                    lastModifiedDate: draftTimestampString,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
+            expect(result).toEqual(expected);
+            expect(refreshSpy).toBeCalledTimes(1);
+            expect(refreshSpy.mock.calls[0][0]).toBe(RECORD_ID);
+            expect(refreshSpy.mock.calls[0][1]).toStrictEqual([
+                'Account.Name',
+                'Account.Birthday',
+                'Account.IsMad',
+            ]);
+        });
+        it('older incoming gets discarded and kicks off a unionized field refresh', () => {
+            const refreshSpy = jest.fn();
+            const originalName = 'Justin';
+
+            const existing: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: draftName,
+                            displayValue: draftName,
+                        },
+                        IsMad: {
+                            value: true,
+                            displayValue: '',
+                        },
+                        LastModifiedById: {
+                            displayValue: null,
+                            value: '',
+                        },
+                        LastModifiedDate: {
+                            displayValue: draftTimestampString,
+                            value: draftTimestampString,
+                        },
+                    },
+                    drafts: {
+                        created: false,
+                        edited: true,
+                        deleted: true,
+                        serverValues: {
+                            Name: {
+                                value: originalName,
+                                displayValue: originalName,
+                            },
+                        },
+                        draftActionIds: [draftId],
+                    },
+                    lastModifiedById: '',
+                    lastModifiedDate: draftTimestampString,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+            const incoming: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: 'Jason',
+                            displayValue: 'Jason',
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const expected: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: draftName,
+                            displayValue: draftName,
+                        },
+                        IsMad: {
+                            value: true,
+                            displayValue: '',
+                        },
+                        LastModifiedById: {
+                            displayValue: null,
+                            value: '',
+                        },
+                        LastModifiedDate: {
+                            displayValue: draftTimestampString,
+                            value: draftTimestampString,
+                        },
+                    },
+                    drafts: {
+                        created: false,
+                        edited: true,
+                        deleted: false,
+                        serverValues: {
+                            Name: {
+                                value: originalName,
+                                displayValue: originalName,
+                            },
+                        },
+                        draftActionIds: [draftId],
+                    },
+                    lastModifiedById: '',
+                    lastModifiedDate: draftTimestampString,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
+            expect(result).toEqual(expected);
+            expect(refreshSpy).toBeCalledTimes(1);
+            expect(refreshSpy.mock.calls[0][0]).toBe(RECORD_ID);
+            expect(refreshSpy.mock.calls[0][1]).toStrictEqual([
+                'Account.Name',
+                'Account.Birthday',
+                'Account.IsMad',
+                'Account.LastModifiedById',
+                'Account.LastModifiedDate',
+            ]);
+        });
+        it('older incoming gets discarded and does not kick of network refresh if fields are superset', () => {
+            const refreshSpy = jest.fn();
+            const serverName = 'Justin';
+
+            const existing: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: draftName,
+                            displayValue: draftName,
+                        },
+                        IsMad: {
+                            value: true,
+                            displayValue: '',
+                        },
+                        LastModifiedById: {
+                            displayValue: null,
+                            value: '',
+                        },
+                        LastModifiedDate: {
+                            displayValue: draftTimestampString,
+                            value: draftTimestampString,
+                        },
+                    },
+                    drafts: {
+                        created: false,
+                        edited: true,
+                        deleted: false,
+                        serverValues: {
+                            Name: {
+                                value: serverName,
+                                displayValue: serverName,
+                            },
+                        },
+                        draftActionIds: [draftId],
+                    },
+                    lastModifiedById: '',
+                    lastModifiedDate: draftTimestampString,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+            const incoming: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: 'Wes',
+                            displayValue: 'Wes',
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const expected: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: draftName,
+                            displayValue: draftName,
+                        },
+                        IsMad: {
+                            value: true,
+                            displayValue: '',
+                        },
+                        LastModifiedById: {
+                            displayValue: null,
+                            value: '',
+                        },
+                        LastModifiedDate: {
+                            displayValue: draftTimestampString,
+                            value: draftTimestampString,
+                        },
+                    },
+                    drafts: {
+                        created: false,
+                        edited: true,
+                        deleted: false,
+                        serverValues: {
+                            Name: {
+                                value: serverName,
+                                displayValue: serverName,
+                            },
+                        },
+                        draftActionIds: [draftId],
+                    },
+                    lastModifiedById: '',
+                    lastModifiedDate: draftTimestampString,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
+            expect(result).toEqual(expected);
+            expect(refreshSpy).toBeCalledTimes(0);
+        });
+        it('refresh contains spanning id fields', () => {
+            const refreshSpy = jest.fn();
+            const existing: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Justin',
+                            displayValue: 'Justin',
+                        },
+                        IsMad: {
+                            value: true,
+                            displayValue: '',
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+            const incoming: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Jason',
+                            displayValue: 'Jason',
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                        Owner: {
+                            __ref: 'SomeOtherRecord',
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const expected: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Jason',
+                            displayValue: 'Jason',
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                        Owner: {
+                            __ref: 'SomeOtherRecord',
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const result = durableMerge(existing, incoming, [], '', refreshSpy);
+            expect(result).toEqual(expected);
+            expect(refreshSpy).toBeCalledTimes(1);
+            expect(refreshSpy.mock.calls[0][0]).toBe('foo');
+            expect(refreshSpy.mock.calls[0][1]).toStrictEqual([
+                'Account.Name',
+                'Account.Birthday',
+                'Account.Owner.Id',
+                'Account.IsMad',
+            ]);
+        });
+        it('merged data gets incoming expiration applied', () => {
+            const refreshSpy = jest.fn();
+            const existing: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Justin',
+                            displayValue: 'Justin',
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+                expiration: { stale: 1, fresh: 1 },
+            };
+            const incoming: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Justin',
+                            displayValue: 'Justin',
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+                expiration: { stale: 2, fresh: 2 },
+            };
+
+            const expected: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: 'foo',
+                    fields: {
+                        Name: {
+                            value: 'Justin',
+                            displayValue: 'Justin',
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+                expiration: { stale: 2, fresh: 2 },
+            };
+
+            const result = durableMerge(existing, incoming, [], '', refreshSpy);
+            expect(result).toEqual(expected);
+        });
+
+        it('merge incoming record with drafts on it', () => {
+            const refreshSpy = jest.fn();
+            const existingServerName = 'Justin';
+            const incomingServerName = 'Wes';
+            const oldDraftName = 'DratName';
+
+            // existing has drafts on it
+            const existing: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: oldDraftName,
+                            displayValue: oldDraftName,
+                        },
+                        IsMad: {
+                            value: true,
+                            displayValue: '',
+                        },
+                    },
+                    drafts: {
+                        created: false,
+                        edited: true,
+                        deleted: true,
+                        serverValues: {
+                            Name: {
+                                value: existingServerName,
+                                displayValue: existingServerName,
+                            },
+                        },
+                        draftActionIds: ['some-old-draft'],
+                    },
+                    lastModifiedById: '',
+                    lastModifiedDate: draftTimestampString,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            // incoming has drafts on it
+            const incoming: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: draftName,
+                            displayValue: draftName,
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                    },
+                    drafts: {
+                        created: false,
+                        edited: true,
+                        deleted: true,
+                        serverValues: {
+                            Name: {
+                                value: incomingServerName,
+                                displayValue: incomingServerName,
+                            },
+                        },
+                        draftActionIds: [draftId],
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const expected: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: draftName,
+                            displayValue: draftName,
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                        LastModifiedById: {
+                            displayValue: null,
+                            value: '',
+                        },
+                        LastModifiedDate: {
+                            displayValue: draftTimestampString,
+                            value: draftTimestampString,
+                        },
+                    },
+                    drafts: {
+                        created: false,
+                        edited: true,
+                        deleted: false,
+                        serverValues: {
+                            Name: {
+                                value: incomingServerName,
+                                displayValue: incomingServerName,
+                            },
+                        },
+                        draftActionIds: [draftId],
+                    },
+                    lastModifiedById: '',
+                    lastModifiedDate: draftTimestampString,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
+            expect(result).toEqual(expected);
+            expect(refreshSpy).toBeCalledTimes(1);
+            expect(refreshSpy.mock.calls[0][0]).toBe(RECORD_ID);
+            expect(refreshSpy.mock.calls[0][1]).toStrictEqual([
+                'Account.Name',
+                'Account.Birthday',
+                'Account.IsMad',
+            ]);
+        });
+
+        it('newer incoming record with missing field but field has draft applied', () => {
+            const refreshSpy = jest.fn();
+            const serverName = 'Justin';
+
+            // existing has drafts on it
+            const existing: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 1,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: draftName,
+                            displayValue: draftName,
+                        },
+                        IsMad: {
+                            value: true,
+                            displayValue: '',
+                        },
+                        LastModifiedById: {
+                            displayValue: null,
+                            value: '',
+                        },
+                        LastModifiedDate: {
+                            displayValue: draftTimestampString,
+                            value: draftTimestampString,
+                        },
+                    },
+                    drafts: {
+                        created: false,
+                        edited: true,
+                        deleted: true,
+                        serverValues: {
+                            Name: {
+                                value: serverName,
+                                displayValue: serverName,
+                            },
+                        },
+                        draftActionIds: [draftId],
+                    },
+                    lastModifiedById: '',
+                    lastModifiedDate: draftTimestampString,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            // incoming does not have the Name field
+            const incoming: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: RECORD_ID,
+                    fields: {
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: null,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            // since we don't have an up to date Name field, it gets removed from serverValues
+            const expected: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: 2,
+                    id: RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: draftName,
+                            displayValue: draftName,
+                        },
+                        Birthday: {
+                            value: '09-17-1988',
+                            displayValue: null,
+                        },
+                        LastModifiedById: {
+                            displayValue: null,
+                            value: '',
+                        },
+                        LastModifiedDate: {
+                            displayValue: draftTimestampString,
+                            value: draftTimestampString,
+                        },
+                    },
+                    drafts: {
+                        created: false,
+                        edited: true,
+                        deleted: false,
+                        serverValues: {},
+                        draftActionIds: [draftId],
+                    },
+                    lastModifiedById: '',
+                    lastModifiedDate: draftTimestampString,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
+            expect(result).toEqual(expected);
+            expect(refreshSpy).toBeCalledTimes(1);
+            expect(refreshSpy.mock.calls[0][0]).toBe(RECORD_ID);
+            expect(refreshSpy.mock.calls[0][1]).toStrictEqual([
+                'Account.Birthday',
+                'Account.Name',
+                'Account.IsMad',
+                'Account.LastModifiedById',
+                'Account.LastModifiedDate',
+            ]);
+        });
+
+        it('merges draft created data properly', () => {
+            const refreshSpy = jest.fn();
+            const draftName = 'Justin';
+            const updatedDraftName = 'Jason';
+            const createDraft = createPostDraftAction(
+                STORE_KEY_DRAFT_RECORD,
+                DRAFT_RECORD_ID,
+                draftName
+            );
+            const updateDraft = createEditDraftAction(
+                DRAFT_RECORD_ID,
+                STORE_KEY_DRAFT_RECORD,
+                updatedDraftName
+            );
+
+            // existing is a draft create
+            const existing: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: -1,
+                    id: DRAFT_RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: draftName,
+                            displayValue: draftName,
+                        },
+                        LastModifiedById: {
+                            displayValue: null,
+                            value: '',
+                        },
+                        LastModifiedDate: {
+                            displayValue: DEFAULT_DRAFT_TIMESTAMP_FORMATTED,
+                            value: DEFAULT_DRAFT_TIMESTAMP_FORMATTED,
+                        },
+                    },
+                    drafts: {
+                        created: true,
+                        edited: false,
+                        deleted: false,
+                        serverValues: {},
+                        draftActionIds: [createDraft.id],
+                    },
+                    lastModifiedById: '',
+                    lastModifiedDate: DEFAULT_DRAFT_TIMESTAMP_FORMATTED,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            // incoming is the draft create with edit
+            const incoming: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: -1,
+                    id: DRAFT_RECORD_ID,
+                    fields: {
+                        Name: {
+                            value: updatedDraftName,
+                            displayValue: updatedDraftName,
+                        },
+                        LastModifiedById: {
+                            displayValue: null,
+                            value: '',
+                        },
+                        LastModifiedDate: {
+                            displayValue: DEFAULT_DRAFT_TIMESTAMP_FORMATTED,
+                            value: DEFAULT_DRAFT_TIMESTAMP_FORMATTED,
+                        },
+                    },
+                    drafts: {
+                        created: true,
+                        edited: true,
+                        deleted: false,
+                        serverValues: {},
+                        draftActionIds: [createDraft.id, updateDraft.id],
+                    },
+                    lastModifiedById: null,
+                    lastModifiedDate: DEFAULT_DRAFT_TIMESTAMP_FORMATTED,
+                    recordTypeId: '',
+                    recordTypeInfo: null,
+                    systemModstamp: null,
+                    links: {},
+                },
+            };
+
+            // since we don't have an up to date Name field, it gets removed from serverValues
+            const expected: DurableStoreEntry<DurableRecordRepresentation> = {
+                data: {
+                    apiName: 'Account',
+                    childRelationships: {},
+                    eTag: '',
+                    weakEtag: -1,
+                    id: DRAFT_RECORD_ID,
+                    fields: {
+                        CreatedById: { value: '', displayValue: null },
+                        CreatedDate: { value: 12345, displayValue: null },
+                        Id: { value: 'DRAxx000001XL1tAAG', displayValue: null },
+                        LastModifiedById: {
+                            displayValue: null,
+                            value: '',
+                        },
+                        LastModifiedDate: {
+                            displayValue: DEFAULT_DRAFT_TIMESTAMP_FORMATTED,
+                            value: DEFAULT_DRAFT_TIMESTAMP_FORMATTED,
+                        },
+                        Name: {
+                            value: updatedDraftName,
+                            displayValue: updatedDraftName,
+                        },
+                        OwnerId: { value: '', displayValue: null },
+                    },
+                    drafts: {
+                        created: true,
+                        edited: true,
+                        deleted: false,
+                        serverValues: {},
+                        draftActionIds: [createDraft.id, updateDraft.id],
+                    },
+                    lastModifiedById: '',
+                    lastModifiedDate: DEFAULT_DRAFT_TIMESTAMP_FORMATTED,
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    systemModstamp: DEFAULT_TIME_STAMP.toString(),
+                    links: {
+                        CreatedById: {
+                            __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__CreatedById',
+                        },
+                        CreatedDate: {
+                            __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__CreatedDate',
+                        },
+                        Id: { __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Id' },
+                        LastModifiedById: {
+                            __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__LastModifiedById',
+                        },
+                        LastModifiedDate: {
+                            __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__LastModifiedDate',
+                        },
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Name',
+                        },
+                        OwnerId: {
+                            __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__OwnerId',
+                        },
+                    },
+                },
+            };
+
+            const result = durableMerge(
+                existing,
+                incoming,
+                [createDraft, updateDraft],
+                '',
+                refreshSpy
+            );
+            expect(result).toEqual(expected);
+        });
+    });
+
+    describe('removeDrafts', () => {
+        it('restores server values from drafts node', () => {
+            const record: DurableRecordRepresentation = {
+                apiName: 'Account',
+                childRelationships: {},
+                eTag: '',
+                weakEtag: 1,
+                id: 'foo',
+                fields: {
+                    Name: {
+                        value: 'Justin',
+                        displayValue: 'Justin',
+                    },
+                },
+                drafts: {
+                    created: false,
+                    edited: true,
+                    deleted: false,
+                    serverValues: {
+                        Name: {
+                            value: 'Jason',
+                            displayValue: 'Jason',
+                        },
+                    },
+                    draftActionIds: ['foo'],
+                },
+                lastModifiedById: null,
+                lastModifiedDate: null,
+                recordTypeId: null,
+                recordTypeInfo: null,
+                systemModstamp: null,
+                links: {
+                    Name: {
+                        __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Name',
+                    },
+                },
+            };
+
+            const draftless = removeDrafts(record);
+            expect(draftless.drafts).toBeUndefined();
+            expect((draftless.fields.Name as any).value).toBe('Jason');
+            expect((draftless.fields.Name as any).displayValue).toBe('Jason');
+        });
+        it('returns undefined for draft created record', () => {
+            const record: DurableRecordRepresentation = {
+                apiName: 'Account',
+                childRelationships: {},
+                eTag: '',
+                weakEtag: 1,
+                id: 'foo',
+                fields: {
+                    Name: {
+                        value: 'Justin',
+                        displayValue: 'Justin',
+                    },
+                },
+                drafts: {
+                    created: true,
+                    edited: true,
+                    deleted: false,
+                    serverValues: {
+                        Name: {
+                            value: 'Jason',
+                            displayValue: 'Jason',
+                        },
+                    },
+                    draftActionIds: ['foo'],
+                },
+                lastModifiedById: null,
+                lastModifiedDate: null,
+                recordTypeId: null,
+                recordTypeInfo: null,
+                systemModstamp: null,
+                links: {
+                    Name: {
+                        __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Name',
+                    },
+                },
+            };
+
+            const draftless = removeDrafts(record);
+            expect(draftless).toBeUndefined();
+        });
+
+        it('returns record unmodified if no drafts applied', () => {
+            const record: DurableRecordRepresentation = {
+                apiName: 'Account',
+                childRelationships: {},
+                eTag: '',
+                weakEtag: 1,
+                id: 'foo',
+                fields: {
+                    Name: {
+                        value: 'Justin',
+                        displayValue: 'Justin',
+                    },
+                },
+                lastModifiedById: null,
+                lastModifiedDate: null,
+                recordTypeId: null,
+                recordTypeInfo: null,
+                systemModstamp: null,
+                links: {
+                    Name: {
+                        __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Name',
+                    },
+                },
+            };
+
+            const draftless = removeDrafts(record);
+            expect(draftless.drafts).toBeUndefined();
+            expect((draftless.fields.Name as any).value).toBe('Justin');
+            expect((draftless.fields.Name as any).displayValue).toBe('Justin');
+        });
+
+        it('does not modify a field that does not contain a draft change', () => {
+            const record: DurableRecordRepresentation = {
+                apiName: 'Account',
+                childRelationships: {},
+                eTag: '',
+                weakEtag: 1,
+                id: 'foo',
+                fields: {
+                    Name: {
+                        value: 'Justin',
+                        displayValue: 'Justin',
+                    },
+                    IsMad: {
+                        value: true,
+                        displayValue: null,
+                    },
+                },
+                drafts: {
+                    created: false,
+                    edited: true,
+                    deleted: false,
+                    serverValues: {
+                        Name: {
+                            value: 'Jason',
+                            displayValue: 'Jason',
+                        },
+                    },
+                    draftActionIds: ['foo'],
+                },
+                lastModifiedById: null,
+                lastModifiedDate: null,
+                recordTypeId: null,
+                recordTypeInfo: null,
+                systemModstamp: null,
+                links: {
+                    Name: {
+                        __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Name',
+                    },
+                    IsMad: {
+                        __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__IsMad',
+                    },
+                },
+            };
+
+            const draftless = removeDrafts(record);
+            expect(draftless.drafts).toBeUndefined();
+            expect((draftless.fields.Name as any).value).toBe('Jason');
+            expect((draftless.fields.IsMad as any).value).toBe(true);
+        });
+
+        it('handles draft deleted', () => {
+            const record: DurableRecordRepresentation = {
+                apiName: 'Account',
+                childRelationships: {},
+                eTag: '',
+                weakEtag: 1,
+                id: 'foo',
+                fields: {
+                    Name: {
+                        value: 'Justin',
+                        displayValue: 'Justin',
+                    },
+                },
+                drafts: {
+                    created: false,
+                    edited: true,
+                    deleted: true,
+                    serverValues: {},
+                    draftActionIds: ['foo'],
+                },
+                lastModifiedById: null,
+                lastModifiedDate: null,
+                recordTypeId: null,
+                recordTypeInfo: null,
+                systemModstamp: null,
+                links: {
+                    Name: {
+                        __ref: 'UiApi::RecordRepresentation:DRAxx000001XL1tAAG__fields__Name',
+                    },
+                },
+            };
+
+            const draftless = removeDrafts(record);
+            expect(draftless.drafts).toBeUndefined();
+            expect((draftless.fields.Name as any).value).toBe('Justin');
+            expect((draftless.fields.Name as any).displayValue).toBe('Justin');
         });
     });
 });

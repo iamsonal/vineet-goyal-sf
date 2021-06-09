@@ -13,10 +13,10 @@ import { DRAFT_SEGMENT } from '../DurableDraftQueue';
 import { ObjectCreate, ObjectKeys } from '../utils/language';
 import {
     buildSyntheticRecordRepresentation,
-    DraftRecordRepresentation,
     DurableRecordRepresentation,
     extractRecordKeyFromDraftDurableStoreKey,
     isDraftActionStoreRecordKey,
+    removeDrafts,
     replayDraftsOnRecord,
 } from '../utils/records';
 import { ResourceRequest } from '@luvio/engine';
@@ -29,7 +29,7 @@ function persistDraftCreates(
     userId: string
 ) {
     const keys = ObjectKeys(entries);
-    const draftCreates: DurableStoreEntries<DraftRecordRepresentation> = {};
+    const draftCreates: DurableStoreEntries<DurableRecordRepresentation> = {};
     let shouldWrite = false;
 
     for (let i = 0, len = keys.length; i < len; i++) {
@@ -101,26 +101,23 @@ function resolveDrafts(
                     }
 
                     const { data: record, expiration } = entry;
-                    let baseRecord = removeDrafts(record);
 
                     const drafts =
-                        (actions[recordKey] as Readonly<
-                            DraftAction<RecordRepresentation, unknown>[]
-                        >) || [];
+                        (actions[recordKey] as DraftAction<
+                            RecordRepresentation,
+                            ResourceRequest
+                        >[]) || [];
+
+                    const baseRecord = removeDrafts(record);
+
                     if (drafts === undefined || drafts.length === 0) {
+                        if (baseRecord === undefined) {
+                            // baseRecord doesn't exist and there's no drafts to apply
+                            continue;
+                        }
                         updatedRecords[recordKey] = { data: baseRecord, expiration };
                     } else {
                         const replayDrafts = [...drafts];
-
-                        // if the first draft in the queue is a create, we need to generate a synthetic record
-                        const first = drafts[0];
-                        if (isLDSDraftAction(first)) {
-                            if (first.data.method === 'post') {
-                                baseRecord = buildSyntheticRecordRepresentation(first, userId);
-                                // remove the first item and and replay any other drafts on the record we just synthetically built
-                                replayDrafts.shift();
-                            }
-                        }
 
                         const resolvedRecord = replayDraftsOnRecord(
                             baseRecord,
@@ -134,33 +131,6 @@ function resolveDrafts(
                 return durableStore.setEntries(updatedRecords, DefaultDurableSegment);
             });
         });
-}
-
-/**
- * Restores a record to its last known server-state by removing any applied drafts it may have
- * @param record record with drafts applied
- * @returns
- */
-function removeDrafts(record: DurableRecordRepresentation): DurableRecordRepresentation {
-    const { drafts, fields } = record;
-    if (drafts === undefined) {
-        return record;
-    }
-    const updatedFields: { [key: string]: any } = {};
-    const fieldNames = ObjectKeys(fields);
-    for (let i = 0, len = fieldNames.length; i < len; i++) {
-        const fieldName = fieldNames[i];
-        const field = fields[fieldName];
-
-        const originalField = drafts.serverValues[fieldName];
-        if (originalField !== undefined) {
-            updatedFields[fieldName] = originalField;
-        } else {
-            updatedFields[fieldName] = field;
-        }
-    }
-
-    return { ...record, drafts: undefined, fields: updatedFields };
 }
 
 function isEntryDraftAction(

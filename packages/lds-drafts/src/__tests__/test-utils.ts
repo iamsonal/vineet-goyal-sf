@@ -31,6 +31,8 @@ export const DEFAULT_API_NAME = 'Account';
 export const DEFAULT_NAME_FIELD_VALUE = 'Acme';
 export const DEFAULT_TIME_STAMP = 12345;
 
+export const DEFAULT_DRAFT_TIMESTAMP_FORMATTED = new Date(DEFAULT_TIME_STAMP).toISOString();
+
 export const NAME_VALUE = {
     displayValue: null,
     value: 'Justin',

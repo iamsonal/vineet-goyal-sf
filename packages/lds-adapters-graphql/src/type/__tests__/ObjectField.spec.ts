@@ -123,163 +123,268 @@ describe('ObjectField', () => {
             const snap = luvio.storeLookup(selector);
             expect(snap.data).toEqual(data);
         });
+
+        it('should return unfulfilled snapshot if scalar field is missing', () => {
+            const ast: LuvioSelectionObjectFieldNode = {
+                kind: 'ObjectFieldSelection',
+                name: 'root',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'parent',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'nonexisted',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const store = new Store();
+            store.records = {
+                'gql::root': {
+                    parent: {
+                        __ref: 'gql::root__parent',
+                    },
+                },
+                'gql::root__parent': {
+                    leaf: 'I am a scalar',
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const selector: Selector<any> = {
+                recordId: 'gql::root',
+                node: {
+                    kind: 'Fragment',
+                    reader: true,
+                    synthetic: false,
+                    read: createRead(ast),
+                },
+                variables: {},
+            };
+
+            const snap = luvio.storeLookup(selector);
+            expect(snap.state).toEqual('Unfulfilled');
+        });
     });
 
-    it('should ingest ObjectFieldSelection query correctly', () => {
-        const ast: LuvioSelectionObjectFieldNode = {
-            kind: 'ObjectFieldSelection',
-            name: 'query',
-            luvioSelections: [
-                {
-                    kind: 'CustomFieldSelection',
-                    name: 'Account',
-                    type: 'Connection',
-                    luvioSelections: [
-                        {
-                            kind: 'ObjectFieldSelection',
-                            name: 'edges',
-                            luvioSelections: [
-                                {
-                                    kind: 'CustomFieldSelection',
-                                    name: 'node',
-                                    type: 'Record',
-                                    luvioSelections: [
-                                        {
-                                            kind: 'ObjectFieldSelection',
-                                            name: 'Name',
-                                            luvioSelections: [
-                                                {
-                                                    kind: 'ScalarFieldSelection',
-                                                    name: 'value',
+    describe('Ingest', () => {
+        it('should ingest ObjectFieldSelection query correctly', () => {
+            const ast: LuvioSelectionObjectFieldNode = {
+                kind: 'ObjectFieldSelection',
+                name: 'query',
+                luvioSelections: [
+                    {
+                        kind: 'CustomFieldSelection',
+                        name: 'Account',
+                        type: 'Connection',
+                        luvioSelections: [
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'edges',
+                                luvioSelections: [
+                                    {
+                                        kind: 'CustomFieldSelection',
+                                        name: 'node',
+                                        type: 'Record',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'ObjectFieldSelection',
+                                                name: 'Name',
+                                                luvioSelections: [
+                                                    {
+                                                        kind: 'ScalarFieldSelection',
+                                                        name: 'value',
+                                                    },
+                                                    {
+                                                        kind: 'ScalarFieldSelection',
+                                                        name: 'displayValue',
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                        arguments: [
+                            {
+                                kind: 'Argument',
+                                name: 'where',
+                                value: {
+                                    kind: 'ObjectValue',
+                                    fields: {
+                                        Name: {
+                                            kind: 'ObjectValue',
+                                            fields: {
+                                                like: {
+                                                    kind: 'StringValue',
+                                                    value: 'Account1',
                                                 },
-                                                {
-                                                    kind: 'ScalarFieldSelection',
-                                                    name: 'displayValue',
-                                                },
-                                            ],
-                                        },
-                                    ],
-                                },
-                            ],
-                        },
-                    ],
-                    arguments: [
-                        {
-                            kind: 'Argument',
-                            name: 'where',
-                            value: {
-                                kind: 'ObjectValue',
-                                fields: {
-                                    Name: {
-                                        kind: 'ObjectValue',
-                                        fields: {
-                                            like: {
-                                                kind: 'StringValue',
-                                                value: 'Account1',
                                             },
                                         },
                                     },
                                 },
                             },
+                        ],
+                    },
+                ],
+            };
+
+            const data = {
+                Account: {
+                    edges: [
+                        {
+                            node: {
+                                Id: '001RM000004uuhnYAA',
+                                WeakEtag: 1615493739000,
+                                Name: {
+                                    value: 'Account1',
+                                    displayValue: null,
+                                },
+                                __typename: 'Account',
+                                ApiName: 'Account',
+                                DisplayValue: 'Account1',
+                                SystemModstamp: {
+                                    value: '2021-03-11T20:15:39.000Z',
+                                },
+                                LastModifiedById: {
+                                    value: '005RM000002492xYAA',
+                                },
+                                LastModifiedDate: {
+                                    value: '2021-03-11T20:15:39.000Z',
+                                },
+                                RecordTypeId: {
+                                    value: '012RM000000E79WYAS',
+                                },
+                            },
                         },
                     ],
                 },
-            ],
-        };
+            };
 
-        const data = {
-            Account: {
-                edges: [
-                    {
-                        node: {
-                            Id: '001RM000004uuhnYAA',
-                            WeakEtag: 1615493739000,
-                            Name: {
-                                value: 'Account1',
-                                displayValue: null,
-                            },
-                            __typename: 'Account',
-                            ApiName: 'Account',
-                            DisplayValue: 'Account1',
-                            SystemModstamp: {
-                                value: '2021-03-11T20:15:39.000Z',
-                            },
-                            LastModifiedById: {
-                                value: '005RM000002492xYAA',
-                            },
-                            LastModifiedDate: {
-                                value: '2021-03-11T20:15:39.000Z',
-                            },
-                            RecordTypeId: {
-                                value: '012RM000000E79WYAS',
-                            },
+            const store = new Store();
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            createIngest(ast)(
+                data,
+                {
+                    parent: null,
+                    fullPath: 'toplevel',
+                    propertyName: null,
+                    state: { result: { type: 'success' } },
+                },
+                luvio,
+                store,
+                0
+            );
+
+            expect(store.records).toEqual({
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
+                    id: '001RM000004uuhnYAA',
+                    childRelationships: {},
+                    eTag: '',
+                    apiName: 'Account',
+                    weakEtag: 1615493739000,
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name',
                         },
                     },
-                ],
-            },
-        };
-
-        const store = new Store();
-        const luvio = new Luvio(
-            new Environment(store, () => {
-                throw new Error('Not used');
-            })
-        );
-
-        createIngest(ast)(
-            data,
-            {
-                parent: null,
-                fullPath: 'toplevel',
-                propertyName: null,
-            },
-            luvio,
-            store,
-            0
-        );
-
-        expect(store.records).toEqual({
-            'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
-                id: '001RM000004uuhnYAA',
-                childRelationships: {},
-                eTag: '',
-                apiName: 'Account',
-                weakEtag: 1615493739000,
-                fields: {
-                    Name: {
-                        __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name',
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
+                    node: {
+                        __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                     },
                 },
-                systemModstamp: '2021-03-11T20:15:39.000Z',
-                lastModifiedById: '005RM000002492xYAA',
-                lastModifiedDate: '2021-03-11T20:15:39.000Z',
-                recordTypeId: '012RM000000E79WYAS',
-                recordTypeInfo: null,
-            },
-            'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': {
-                value: 'Account1',
-                displayValue: null,
-            },
-            'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
-                node: {
-                    __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
+                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                    {
+                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                    },
+                ],
+                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                    edges: {
+                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                    },
                 },
-            },
-            'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                toplevel: {
+                    Account: {
+                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
+                    },
+                },
+            });
+        });
+
+        it('should ingest null value for ObjectFieldSelection', () => {
+            const ast: LuvioSelectionObjectFieldNode = {
+                kind: 'ObjectFieldSelection',
+                name: 'root',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'parent',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'leaf',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const data = {
+                parent: null,
+            };
+
+            const store = new Store();
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            createIngest(ast)(
+                data,
                 {
-                    __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                    parent: null,
+                    fullPath: 'toplevel',
+                    propertyName: null,
+                    state: { result: { type: 'success' } },
                 },
-            ],
-            'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
-                edges: {
-                    __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                luvio,
+                store,
+                0
+            );
+
+            expect(store.records).toEqual({
+                toplevel: {
+                    parent: {
+                        __ref: 'toplevel__parent',
+                    },
                 },
-            },
-            toplevel: {
-                Account: {
-                    __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
-                },
-            },
+                toplevel__parent: null,
+            });
         });
     });
 

@@ -4,6 +4,7 @@ import { getLuvioFieldNodeSelection, followLink } from './Selection';
 import { createIngest as customFieldCreateIngest } from './CustomField';
 import merge from '../util/merge';
 import { readScalarFieldSelection } from './ScalarField';
+import { resolveIngestedPropertyName } from './Argument';
 
 export const createRead: (ast: LuvioSelectionObjectFieldNode) => ReaderFragment['read'] = (
     ast: LuvioSelectionObjectFieldNode
@@ -21,7 +22,7 @@ export const createRead: (ast: LuvioSelectionObjectFieldNode) => ReaderFragment[
                     readScalarFieldSelection(builder, source, fieldName, sink);
                     break;
                 default: {
-                    const data = followLink(sel, builder, source[fieldName]);
+                    const data = followLink(sel, builder, source[resolveIngestedPropertyName(sel)]);
                     builder.assignNonScalar(sink, propertyName, data);
                 }
             }
@@ -46,41 +47,38 @@ export const createIngest: (ast: LuvioSelectionObjectFieldNode) => ResourceInges
             }
 
             const { name: fieldName, alias } = sel;
-            const propertyName = alias === undefined ? fieldName : alias;
+            const readPropertyName = alias === undefined ? fieldName : alias;
             const propertyFullPath = `${fullPath}__${fieldName}`;
-
+            const writePropertyName = resolveIngestedPropertyName(sel);
             const childPath: IngestPath = {
                 parent: {
                     existing: null,
                     key: fullPath,
                     data,
                 },
-                propertyName,
+                propertyName: readPropertyName,
                 fullPath: propertyFullPath,
                 state: path.state,
             };
             if (sel.kind === 'ObjectFieldSelection') {
-                data[fieldName] = createIngest(sel)(
-                    data[propertyName],
+                data[writePropertyName] = createIngest(sel)(
+                    data[readPropertyName],
                     childPath,
                     luvio,
                     store,
                     timestamp
                 );
-                if (fieldName !== propertyName && data[propertyName] !== undefined) {
-                    delete data[propertyName];
-                }
             } else if (sel.kind === 'CustomFieldSelection') {
-                data[fieldName] = customFieldCreateIngest(sel)(
-                    data[propertyName],
+                data[writePropertyName] = customFieldCreateIngest(sel)(
+                    data[readPropertyName],
                     childPath,
                     luvio,
                     store,
                     timestamp
                 );
-                if (fieldName !== propertyName && data[propertyName] !== undefined) {
-                    delete data[propertyName];
-                }
+            }
+            if (writePropertyName !== readPropertyName && data[readPropertyName] !== undefined) {
+                delete data[readPropertyName];
             }
         }
 

@@ -328,7 +328,7 @@ describe('ObjectField', () => {
                     },
                 },
                 toplevel: {
-                    Account: {
+                    'Account(where:{Name:{like:"Account1"}})': {
                         __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
                     },
                 },

@@ -18,7 +18,7 @@ import {
     followLink,
 } from '../type/Selection';
 import { GqlRecord } from './record';
-import { serializeAndSortArguments } from '../type/Argument';
+import { resolveIngestedPropertyName, serializeAndSortArguments } from '../type/Argument';
 import { adapterApiFamily } from '../constants';
 import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
 
@@ -62,16 +62,19 @@ export const createRead: (ast: LuvioSelectionCustomFieldNode) => ReaderFragment[
         const sink = {};
         for (let i = 0, len = selections.length; i < len; i += 1) {
             const sel = getLuvioFieldNodeSelection(selections[i]);
-            const { name } = sel;
-            builder.enterPath(name);
-            const edges = resolveLink<StoreLink[]>(builder, source[name]);
+            if (sel.kind === 'ScalarFieldSelection') {
+                throw new Error('Unsupported Scalar selection on connection');
+            }
+            const readPropertyName = resolveIngestedPropertyName(sel);
+            builder.enterPath(readPropertyName);
+            const edges = resolveLink<StoreLink[]>(builder, source[readPropertyName]);
             if (edges === undefined) {
                 builder.exitPath();
                 break;
             }
-            if (name === PROPERTY_NAME_EDGES) {
+            if (readPropertyName === PROPERTY_NAME_EDGES) {
                 const data = selectEdges(builder, sel, edges.value);
-                builder.assignNonScalar(sink, name, data);
+                builder.assignNonScalar(sink, readPropertyName, data);
             } else {
                 throw new Error('Not supported');
             }
@@ -120,7 +123,10 @@ function ingestEdgeItem(
     for (let i = 0, len = selections.length; i < len; i += 1) {
         const sel = getLuvioFieldNodeSelection(selections[i]);
         const key = `${fullPath}__${i}`;
-        const propertyName = sel.name as keyof GqlEdge;
+        if (sel.kind === 'ScalarFieldSelection') {
+            throw new Error('Unsupported scalar field on Connection');
+        }
+        const propertyName = resolveIngestedPropertyName(sel) as keyof GqlEdge;
         const item = data[propertyName];
         data[propertyName] = selectionCreateIngest(sel)(
             item,

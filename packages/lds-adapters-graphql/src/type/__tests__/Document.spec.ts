@@ -143,7 +143,7 @@ describe('Document', () => {
                     },
                 },
                 fullpath__uiapi__query: {
-                    Account: {
+                    'Account(where:{Name:{like:"Account1"}})': {
                         __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
                     },
                 },
@@ -708,9 +708,10 @@ describe('Document', () => {
                         },
                     },
                 fullpath__uiapi__query: {
-                    Account: {
-                        __ref: 'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})',
-                    },
+                    'Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})':
+                        {
+                            __ref: 'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})',
+                        },
                 },
                 fullpath__uiapi: { query: { __ref: 'fullpath__uiapi__query' } },
                 fullpath: { uiapi: { __ref: 'fullpath__uiapi' } },
@@ -870,7 +871,7 @@ describe('Document', () => {
                     },
                 },
                 fullpath__uiapi__query: {
-                    Account: {
+                    'Account(where:{Name:{like:"Account1"}})': {
                         __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
                     },
                 },
@@ -1036,7 +1037,7 @@ describe('Document', () => {
                     },
                 },
                 fullpath__uiapi__query: {
-                    Account: {
+                    'Account(where:{Name:{like:"Account1"}})': {
                         __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
                     },
                 },
@@ -1179,7 +1180,7 @@ describe('Document', () => {
                     },
                 },
                 fullpath__uiapi__query: {
-                    Account: {
+                    'Account(where:{Name:{like:"Account1"}})': {
                         __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
                     },
                 },
@@ -1467,6 +1468,7 @@ describe('Document', () => {
                     fullPath: 'fullpath',
                     parent: null,
                     propertyName: null,
+                    state: undefined,
                 },
                 luvio,
                 store,
@@ -1511,8 +1513,302 @@ describe('Document', () => {
                     },
                 },
                 fullpath__uiapi__query: {
-                    Account: {
+                    'Account(where:{Name:{like:"Account1"}})': {
                         __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
+                    },
+                },
+                fullpath__uiapi: {
+                    query: {
+                        __ref: 'fullpath__uiapi__query',
+                    },
+                },
+                fullpath: {
+                    uiapi: {
+                        __ref: 'fullpath__uiapi',
+                    },
+                },
+            });
+        });
+
+        it('should correctly ingest document with aliases', () => {
+            const ast: LuvioDocumentNode = {
+                kind: 'Document',
+                definitions: [
+                    {
+                        kind: 'OperationDefinition',
+                        operation: 'query',
+                        variableDefinitions: [],
+                        name: 'operationName',
+                        luvioSelections: [
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'uiapi',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'query',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'CustomFieldSelection',
+                                                name: 'Account',
+                                                type: 'Connection',
+                                                luvioSelections: [
+                                                    {
+                                                        kind: 'ObjectFieldSelection',
+                                                        name: 'edges',
+                                                        luvioSelections: [
+                                                            {
+                                                                kind: 'CustomFieldSelection',
+                                                                name: 'node',
+                                                                type: 'Record',
+                                                                luvioSelections: [
+                                                                    {
+                                                                        kind: 'ObjectFieldSelection',
+                                                                        name: 'Name',
+                                                                        luvioSelections: [
+                                                                            {
+                                                                                kind: 'ScalarFieldSelection',
+                                                                                name: 'value',
+                                                                            },
+                                                                            {
+                                                                                kind: 'ScalarFieldSelection',
+                                                                                name: 'displayValue',
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                                arguments: [
+                                                    {
+                                                        kind: 'Argument',
+                                                        name: 'where',
+                                                        value: {
+                                                            kind: 'ObjectValue',
+                                                            fields: {
+                                                                Name: {
+                                                                    kind: 'ObjectValue',
+                                                                    fields: {
+                                                                        like: {
+                                                                            kind: 'StringValue',
+                                                                            value: 'Account1',
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                            {
+                                                kind: 'CustomFieldSelection',
+                                                name: 'Account',
+                                                type: 'Connection',
+                                                alias: 'foo',
+                                                luvioSelections: [
+                                                    {
+                                                        kind: 'ObjectFieldSelection',
+                                                        name: 'edges',
+                                                        luvioSelections: [
+                                                            {
+                                                                kind: 'CustomFieldSelection',
+                                                                name: 'node',
+                                                                type: 'Record',
+                                                                luvioSelections: [
+                                                                    {
+                                                                        kind: 'ObjectFieldSelection',
+                                                                        name: 'Name',
+                                                                        luvioSelections: [
+                                                                            {
+                                                                                kind: 'ScalarFieldSelection',
+                                                                                name: 'value',
+                                                                            },
+                                                                            {
+                                                                                kind: 'ScalarFieldSelection',
+                                                                                name: 'displayValue',
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                                arguments: [
+                                                    {
+                                                        kind: 'Argument',
+                                                        name: 'where',
+                                                        value: {
+                                                            kind: 'ObjectValue',
+                                                            fields: {
+                                                                Name: {
+                                                                    kind: 'ObjectValue',
+                                                                    fields: {
+                                                                        eq: {
+                                                                            kind: 'StringValue',
+                                                                            value: 'Account1',
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const data = {
+                uiapi: {
+                    query: {
+                        Account: {
+                            edges: [
+                                {
+                                    node: {
+                                        Id: '001RM000004uuhnYAA',
+                                        WeakEtag: 1615493739000,
+                                        Name: {
+                                            value: 'Account1',
+                                            displayValue: null,
+                                        },
+                                        __typename: 'Account',
+                                        ApiName: 'Account',
+                                        DisplayValue: 'Account1',
+                                        SystemModstamp: {
+                                            value: '2021-03-11T20:15:39.000Z',
+                                        },
+                                        LastModifiedById: {
+                                            value: '005RM000002492xYAA',
+                                        },
+                                        LastModifiedDate: {
+                                            value: '2021-03-11T20:15:39.000Z',
+                                        },
+                                        RecordTypeId: {
+                                            value: '012RM000000E79WYAS',
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                        foo: {
+                            edges: [
+                                {
+                                    node: {
+                                        Id: '001RM000004uuhnYAA',
+                                        WeakEtag: 1615493739000,
+                                        Name: {
+                                            value: 'Account1',
+                                            displayValue: null,
+                                        },
+                                        __typename: 'Account',
+                                        ApiName: 'Account',
+                                        DisplayValue: 'Account1',
+                                        SystemModstamp: {
+                                            value: '2021-03-11T20:15:39.000Z',
+                                        },
+                                        LastModifiedById: {
+                                            value: '005RM000002492xYAA',
+                                        },
+                                        LastModifiedDate: {
+                                            value: '2021-03-11T20:15:39.000Z',
+                                        },
+                                        RecordTypeId: {
+                                            value: '012RM000000E79WYAS',
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
+            };
+
+            const store = new Store();
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            createIngest(ast)(
+                data,
+                {
+                    fullPath: 'fullpath',
+                    parent: null,
+                    propertyName: null,
+                    state: undefined,
+                },
+                luvio,
+                store,
+                0
+            );
+
+            expect(store.records).toEqual({
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
+                    id: '001RM000004uuhnYAA',
+                    childRelationships: {},
+                    eTag: '',
+                    apiName: 'Account',
+                    weakEtag: 1615493739000,
+                    fields: {
+                        Name: {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name',
+                        },
+                    },
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
+                    node: {
+                        __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
+                    },
+                },
+                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                    {
+                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                    },
+                ],
+                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                    edges: {
+                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                    },
+                },
+                fullpath__uiapi__query: {
+                    'Account(where:{Name:{like:"Account1"}})': {
+                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
+                    },
+                    'Account(where:{Name:{eq:"Account1"}})': {
+                        __ref: 'gql::Connection::Account(where:{Name:{eq:"Account1"}})',
+                    },
+                },
+                'gql::Connection::Account(where:{Name:{eq:"Account1"}})': {
+                    edges: {
+                        __ref: 'gql::Connection::Account(where:{Name:{eq:"Account1"}})__edges',
+                    },
+                },
+                'gql::Connection::Account(where:{Name:{eq:"Account1"}})__edges': [
+                    {
+                        __ref: 'gql::Connection::Account(where:{Name:{eq:"Account1"}})__edges__0',
+                    },
+                ],
+                'gql::Connection::Account(where:{Name:{eq:"Account1"}})__edges__0': {
+                    node: {
+                        __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                     },
                 },
                 fullpath__uiapi: {

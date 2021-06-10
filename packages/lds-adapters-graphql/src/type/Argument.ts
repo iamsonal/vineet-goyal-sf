@@ -3,6 +3,7 @@ import {
     FloatValueNode,
     IntValueNode,
     LuvioArgumentNode,
+    LuvioFieldNode,
     LuvioObjectValueNode,
     LuvioValueNode,
     StringValueNode,
@@ -10,6 +11,20 @@ import {
 import { sortAndCopyUsingObjectKey } from '../util/sortUsingKey';
 
 const { keys } = Object;
+
+export function resolveIngestedPropertyName(sel: LuvioFieldNode) {
+    const { name: fieldName } = sel;
+    if (sel.kind === 'ScalarFieldSelection') {
+        return fieldName;
+    }
+
+    const { arguments: selectionArguments } = sel;
+    if (selectionArguments === undefined || selectionArguments.length === 0) {
+        return fieldName;
+    }
+
+    return `${fieldName}(${serializeAndSortArguments(selectionArguments)})`;
+}
 
 function serializeValueNode(valueDefinition: LuvioValueNode): string {
     const { kind } = valueDefinition;

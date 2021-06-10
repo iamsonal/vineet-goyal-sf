@@ -6,6 +6,7 @@ import {
     followLink,
 } from './Selection';
 import merge from '../util/merge';
+import { resolveIngestedPropertyName } from './Argument';
 
 type GqlOperation = any;
 
@@ -43,7 +44,11 @@ export function createIngest(ast: LuvioOperationDefinitionNode): ResourceIngest 
             const sel = getLuvioFieldNodeSelection(selections[i]);
             const { name: fieldName, alias } = sel;
             const propertyName = alias === undefined ? fieldName : alias;
-            data[fieldName] = selectionCreateIngest(sel)(
+            if (sel.kind === 'ScalarFieldSelection') {
+                throw new Error('Unsupported scalar on Operation');
+            }
+            const readPropertyName = resolveIngestedPropertyName(sel);
+            data[readPropertyName] = selectionCreateIngest(sel)(
                 data[propertyName],
                 {
                     parent: {

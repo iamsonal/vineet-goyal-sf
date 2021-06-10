@@ -241,7 +241,7 @@ describe('Operation', () => {
                     },
                 },
                 toplevel__uiapi__query: {
-                    Account: {
+                    'Account(where:{Name:{like:"Account1"}})': {
                         __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
                     },
                 },

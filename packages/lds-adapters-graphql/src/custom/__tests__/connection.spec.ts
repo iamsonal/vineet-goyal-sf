@@ -190,6 +190,127 @@ describe('GQL Connection', () => {
                 'edges.0.node': true,
             });
         });
+
+        it('should read scalars correctly', () => {
+            const ast = {
+                kind: 'CustomFieldSelection',
+                name: 'Opportunity',
+                type: 'Connection',
+                luvioSelections: [
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: '__typename',
+                    },
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'edges',
+                        luvioSelections: [
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'node',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'Name',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'value',
+                                            },
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'displayValue',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+                arguments: [
+                    {
+                        kind: 'Argument',
+                        name: 'where',
+                        value: {
+                            kind: 'ObjectValue',
+                            fields: {
+                                Name: {
+                                    kind: 'ObjectValue',
+                                    fields: {
+                                        like: {
+                                            kind: 'StringValue',
+                                            value: 'Opp1',
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                ],
+            };
+
+            const data = {
+                __typename: 'OpportunityConnection',
+                edges: [
+                    {
+                        node: {
+                            Name: {
+                                value: 'Opp1',
+                                displayValue: null,
+                            },
+                        },
+                    },
+                ],
+            };
+
+            const store = new Store();
+            store.records = {
+                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0__Name': {
+                    value: 'Opp1',
+                    displayValue: null,
+                },
+                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0': {
+                    Name: {
+                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0__Name',
+                    },
+                },
+                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0': {
+                    node: {
+                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0',
+                    },
+                },
+                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges': [
+                    {
+                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0',
+                    },
+                ],
+                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})': {
+                    __typename: 'OpportunityConnection',
+                    edges: {
+                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges',
+                    },
+                },
+            };
+
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const snap = luvio.storeLookup({
+                recordId: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})',
+                node: {
+                    kind: 'Fragment',
+                    synthetic: false,
+                    reader: true,
+                    read: createRead(ast),
+                },
+                variables: {},
+            });
+            expect(snap.data).toEqual(data);
+        });
     });
     describe('ingest', () => {
         it('should ingest connection correctly', () => {
@@ -762,6 +883,128 @@ describe('GQL Connection', () => {
                 'UiApi::RecordRepresentation:005RM000002492xYAA__fields__Name': {
                     value: 'Admin User',
                     displayValue: 'display value',
+                },
+            });
+        });
+
+        it('should ingest connection with scalars correctly', () => {
+            const ast = {
+                kind: 'CustomFieldSelection',
+                name: 'Opportunity',
+                type: 'Connection',
+                luvioSelections: [
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: '__typename',
+                    },
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'edges',
+                        luvioSelections: [
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'node',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'Name',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'value',
+                                            },
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'displayValue',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+                arguments: [
+                    {
+                        kind: 'Argument',
+                        name: 'where',
+                        value: {
+                            kind: 'ObjectValue',
+                            fields: {
+                                Name: {
+                                    kind: 'ObjectValue',
+                                    fields: {
+                                        like: {
+                                            kind: 'StringValue',
+                                            value: 'Opp1',
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                ],
+            };
+
+            const data = {
+                __typename: 'OpportunityConnection',
+                edges: [
+                    {
+                        node: {
+                            Name: {
+                                value: 'Opp1',
+                                displayValue: null,
+                            },
+                        },
+                    },
+                ],
+            };
+
+            const store = new Store();
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            createIngest(ast)(
+                data,
+                {
+                    parent: null,
+                    propertyName: null,
+                    fullPath: '',
+                    state: undefined,
+                },
+                luvio,
+                store,
+                0
+            );
+
+            expect(store.records).toEqual({
+                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0__Name': {
+                    value: 'Opp1',
+                    displayValue: null,
+                },
+                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0': {
+                    Name: {
+                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0__Name',
+                    },
+                },
+                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0': {
+                    node: {
+                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0',
+                    },
+                },
+                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges': [
+                    {
+                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0',
+                    },
+                ],
+                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})': {
+                    __typename: 'OpportunityConnection',
+                    edges: {
+                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges',
+                    },
                 },
             });
         });

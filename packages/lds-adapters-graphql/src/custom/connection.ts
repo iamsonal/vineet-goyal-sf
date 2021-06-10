@@ -21,6 +21,7 @@ import { GqlRecord } from './record';
 import { resolveIngestedPropertyName, serializeAndSortArguments } from '../type/Argument';
 import { adapterApiFamily } from '../constants';
 import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
+import { readScalarFieldSelection } from '../type/ScalarField';
 
 interface GqlEdge {
     node: GqlRecord;
@@ -62,8 +63,10 @@ export const createRead: (ast: LuvioSelectionCustomFieldNode) => ReaderFragment[
         const sink = {};
         for (let i = 0, len = selections.length; i < len; i += 1) {
             const sel = getLuvioFieldNodeSelection(selections[i]);
-            if (sel.kind === 'ScalarFieldSelection') {
-                throw new Error('Unsupported Scalar selection on connection');
+            const { name, kind } = sel;
+            if (kind === 'ScalarFieldSelection') {
+                readScalarFieldSelection(builder, source, name, sink);
+                continue;
             }
             const readPropertyName = resolveIngestedPropertyName(sel);
             builder.enterPath(readPropertyName);
@@ -206,7 +209,13 @@ export const createIngest: (ast: LuvioSelectionCustomFieldNode) => ResourceInges
     ) => {
         for (let i = 0, len = selections.length; i < len; i += 1) {
             const sel = getLuvioFieldNodeSelection(selections[i]);
+            const { kind } = sel;
             const propertyName = sel.name as keyof GqlConnection;
+
+            if (kind !== 'ObjectFieldSelection') {
+                continue;
+            }
+
             data[propertyName] = ingestConnectionProperty(
                 sel,
                 data[propertyName],

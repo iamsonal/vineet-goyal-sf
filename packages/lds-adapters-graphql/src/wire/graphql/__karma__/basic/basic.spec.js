@@ -112,6 +112,97 @@ describe('graphql', () => {
             const snapshot = await luvio.resolvePendingSnapshot(pending);
             expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
         });
+
+        it('should return scalars on @connection types correctly', async () => {
+            const ast = parseQuery(`
+                query {
+                    uiapi {
+                        query {
+                            Account(
+                                where: { Name: { like: "Account1" } }
+                            ) @connection {
+                                __typename
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name { value, displayValue }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQuery = `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) {
+                                __typename
+                                edges {
+                                    node {
+                                        Name { value, displayValue}
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename,
+                    ApiName,
+                    WeakEtag,
+                    Id,
+                    DisplayValue,
+                    SystemModstamp { value }
+                    LastModifiedById { value }
+                    LastModifiedDate { value }
+                    RecordTypeId(fallback: true) { value }
+                }
+            `;
+
+            const networkData = getMock('RecordQuery-Account-typename');
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            Account: {
+                                __typename: 'AccountConnection',
+                                edges: [
+                                    {
+                                        node: {
+                                            Name: {
+                                                value: 'Account1',
+                                                displayValue: null,
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                networkData
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const pending = graphQLImperative(graphqlConfig);
+            const snapshot = await luvio.resolvePendingSnapshot(pending);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+        });
     });
 
     describe('caching', () => {

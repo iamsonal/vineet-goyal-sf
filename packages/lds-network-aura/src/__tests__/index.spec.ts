@@ -1325,6 +1325,36 @@ describe('routes', () => {
             ]
         );
 
+        // tests with continuation true
+        testControllerInput(
+            {
+                baseUri: LWR_APEX_BASE_URI,
+                basePath: '/ContactController/getContactList',
+                method: 'get',
+                body: null,
+                urlParams: {
+                    apexMethod: 'getContactList',
+                    apexClass: 'ContactController',
+                },
+                queryParams: {},
+                headers: {
+                    'X-SFDC-Allow-Continuation': 'true',
+                },
+            },
+            [
+                'ApexActionController.execute',
+                {
+                    namespace: '',
+                    classname: 'ContactController',
+                    method: 'getContactList',
+                    params: undefined,
+                    cacheable: true,
+                    isContinuation: true,
+                },
+                { background: false, hotspot: false, longRunning: true },
+            ]
+        );
+
         // tests with method params
         const mockMethodParams = {
             param1: 1,
@@ -1447,6 +1477,36 @@ describe('routes', () => {
                     isContinuation: false,
                 },
                 { background: false, hotspot: false, longRunning: false },
+            ]
+        );
+
+        // tests continuation true
+        testControllerInput(
+            {
+                baseUri: LWR_APEX_BASE_URI,
+                basePath: '/ContactController/getContactList',
+                method: 'post',
+                body: {},
+                queryParams: {},
+                urlParams: {
+                    apexMethod: 'getContactList',
+                    apexClass: 'ContactController',
+                },
+                headers: {
+                    'X-SFDC-Allow-Continuation': 'true',
+                },
+            },
+            [
+                'ApexActionController.execute',
+                {
+                    namespace: '',
+                    classname: 'ContactController',
+                    method: 'getContactList',
+                    params: {},
+                    cacheable: false,
+                    isContinuation: true,
+                },
+                { background: false, hotspot: false, longRunning: true },
             ]
         );
 

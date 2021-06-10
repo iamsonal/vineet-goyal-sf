@@ -43,4 +43,14 @@ describe('keyBuilderFromResourceParams', () => {
         });
         expect(keyBuilderFromResourceParams(params)).toBe(expectedKey);
     });
+    it('returns correct cache key for ApexContinuation', () => {
+        const expectedKey = 'TestController:getString:true:{"foo":"bar","name":"LWC"}';
+        const params = createResourceParams({
+            apexMethod: 'getString',
+            apexClass: 'TestController',
+            methodParams: { name: 'LWC', foo: 'bar' },
+            xSFDCAllowContinuation: 'true',
+        });
+        expect(keyBuilderFromResourceParams(params)).toBe(expectedKey);
+    });
 });

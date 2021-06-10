@@ -6,6 +6,7 @@ import appRouter from '../router';
 export const LWR_APEX_BASE_URI = '/lwr/v53.0/apex';
 const ApexController = 'ApexActionController.execute';
 const CACHE_CONTROL = 'Cache-Control';
+const X_SFDC_ALLOW_CONTINUATION = 'X-SFDC-Allow-Continuation';
 interface apexActionParams {
     namespace: string | null;
     classname: string;
@@ -27,7 +28,7 @@ function executePostApex(resourceRequest: ResourceRequest): Promise<any> {
         namespace,
         classname,
         method: urlParams.apexMethod as string,
-        isContinuation: headers.xSFDCAllowContinuation ? true : false,
+        isContinuation: headers[X_SFDC_ALLOW_CONTINUATION] === 'true',
         params: body,
         cacheable: false,
     };
@@ -45,7 +46,7 @@ function executeGetApex(resourceRequest: ResourceRequest): Promise<any> {
         namespace,
         classname,
         method: urlParams.apexMethod as string,
-        isContinuation: headers.xSFDCAllowContinuation ? true : false,
+        isContinuation: headers[X_SFDC_ALLOW_CONTINUATION] === 'true',
         params: queryParams.methodParams,
         cacheable: true,
     };

@@ -3,7 +3,7 @@ import { ActionConfig, executeGlobalController } from 'aura';
 import { AuraFetchResponse } from '../AuraFetchResponse';
 import appRouter from '../router';
 
-export const LWR_APEX_BASE_URI = '/lwr/v53.0/apex';
+export const LWR_APEX_BASE_URI = '/lwr/apex/v53.0';
 const ApexController = 'ApexActionController.execute';
 const CACHE_CONTROL = 'Cache-Control';
 const X_SFDC_ALLOW_CONTINUATION = 'X-SFDC-Allow-Continuation';

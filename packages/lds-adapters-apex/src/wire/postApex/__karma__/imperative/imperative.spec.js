@@ -6,7 +6,7 @@ import Wired from '../lwc/wired';
 
 const MOCK_PREFIX = 'wire/postApex/__karma__/data/';
 
-const BASE_URI = '/lwr/v53.0/apex';
+const BASE_URI = '/lwr/apex/v53.0';
 const BASE_PATH = '/ContactController/getContactList';
 
 function getMock(filename) {

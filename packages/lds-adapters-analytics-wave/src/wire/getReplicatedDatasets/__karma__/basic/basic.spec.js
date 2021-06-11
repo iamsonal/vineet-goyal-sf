@@ -3,6 +3,7 @@ import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     mockGetReplicatedDatasetsNetworkOnce,
     mockGetReplicatedDatasetsNetworkErrorOnce,
+    expireAsset,
 } from 'analytics-wave-test-util';
 
 const MOCK_PREFIX = 'wire/getReplicatedDatasets/__karma__/data/';
@@ -126,5 +127,39 @@ describe('basic', () => {
         const el2 = await setupElement(config, GetReplicatedDatasets);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredError()).toEqual(mock);
+    });
+});
+
+describe('caching', () => {
+    it('returns cached result when cached data is available', async () => {
+        const mock = getMock('replicated-datasets');
+        const config = {};
+        mockGetReplicatedDatasetsNetworkOnce(config, mock);
+
+        // populate cache
+        await setupElement(config, GetReplicatedDatasets);
+
+        // second component should have the cached data without hitting network
+        const element = await setupElement(config, GetReplicatedDatasets);
+
+        expect(element.getWiredData()).toEqual(mock);
+    });
+
+    it('retrieves data from network when cached data is expired', async () => {
+        const mock = getMock('replicated-datasets');
+        const updatedData = getMock('replicated-datasets-category');
+        const config = {};
+        mockGetReplicatedDatasetsNetworkOnce(config, [mock, updatedData]);
+
+        // populate cache
+        await setupElement(config, GetReplicatedDatasets);
+
+        // expire cache
+        expireAsset();
+
+        // second component should retrieve from network with updated data
+        const element = await setupElement(config, GetReplicatedDatasets);
+
+        expect(element.getWiredData()).toEqual(updatedData);
     });
 });

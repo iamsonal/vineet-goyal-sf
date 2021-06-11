@@ -1,6 +1,10 @@
 import GetRecipe from '../lwc/get-recipe';
 import { getMock as globalGetMock, setupElement } from 'test-util';
-import { mockGetRecipeNetworkOnce, mockGetRecipeNetworkErrorOnce } from 'analytics-wave-test-util';
+import {
+    mockGetRecipeNetworkOnce,
+    mockGetRecipeNetworkErrorOnce,
+    expireAsset,
+} from 'analytics-wave-test-util';
 
 const MOCK_PREFIX = 'wire/getRecipe/__karma__/data/';
 
@@ -96,5 +100,38 @@ describe('basic', () => {
         const el2 = await setupElement(config, GetRecipe);
         expect(el2.getWiredError()).toEqual(mock);
         expect(el2.getWiredError()).toBeImmutable();
+    });
+});
+describe('caching', () => {
+    it('returns cached result when cached data is available', async () => {
+        const mock = getMock('recipe-r3');
+        const config = { id: mock.id };
+        mockGetRecipeNetworkOnce(config, mock);
+
+        // populate cache
+        await setupElement(config, GetRecipe);
+
+        // second component should have the cached data without hitting network
+        const element = await setupElement(config, GetRecipe);
+
+        expect(element.getWiredData()).toEqual(mock);
+    });
+
+    it('retrieves data from network when cached data is expired', async () => {
+        const mock = getMock('recipe-r3');
+        const updatedData = getMock('recipe-r3-2');
+        const config = { id: mock.id };
+        mockGetRecipeNetworkOnce(config, [mock, updatedData]);
+
+        // populate cache
+        await setupElement(config, GetRecipe);
+
+        // expire cache
+        expireAsset();
+
+        // second component should retrieve from network with updated data
+        const element = await setupElement(config, GetRecipe);
+
+        expect(element.getWiredData()).toEqual(updatedData);
     });
 });

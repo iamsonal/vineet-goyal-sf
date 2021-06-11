@@ -1,0 +1,59 @@
+{
+    "advancedProperties": [],
+    "connectionMode": "incremental",
+    "connector": {
+        "connectionProperties": [],
+        "connectorHandler": "Legacy",
+        "connectorType": "SfdcLocal",
+        "createdBy": {
+            "id": "005S7000000GHNKIA4",
+            "name": "Integration User",
+            "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+        },
+        "createdDate": "2021-03-23T17:03:48.000Z",
+        "description": "SFDC_LOCAL",
+        "id": "0ItS700000001YxKAI",
+        "ingestionSchedule": {
+            "assetId": "0ItS700000001YxKAI",
+            "daysOfWeek": [],
+            "frequency": "weekly",
+            "notificationLevel": "never"
+        },
+        "label": "SFDC_LOCAL",
+        "lastModifiedBy": {
+            "id": "005S7000000GHNKIA4",
+            "name": "Integration User",
+            "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+        },
+        "lastModifiedDate": "2021-03-23T17:03:48.000Z",
+        "name": "SFDC_LOCAL",
+        "type": "dataconnector",
+        "url": "/services/data/v53.0/wave/dataConnectors/0ItS700000001YxKAI"
+    },
+    "createdBy": {
+        "id": "005S7000000VQ6fIAG",
+        "name": "Admin User",
+        "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+    },
+    "createdDate": "2021-05-03T21:07:52.000Z",
+    "datasetId": "0FbS70000004W1PKAU",
+    "fieldCount": 0,
+    "fieldsUrl": "/services/data/v53.0/wave/replicatedDatasets/0IuS70000004CqIKAU/fields",
+    "filterApplied": false,
+    "id": "0IuS70000004CqIKAU",
+    "label": "Account",
+    "lastModifiedBy": {
+        "id": "005S7000000VQ6fIAG",
+        "name": "Admin User",
+        "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+    },
+    "lastModifiedDate": "2021-05-04T21:07:59.000Z",
+    "name": "Account",
+    "replicationDataflowId": "02KS70000004aIFMAY",
+    "rowLevelSharing": false,
+    "sourceObjectName": "Account",
+    "status": "new",
+    "supportedConnectionModes": ["full", "incremental", "periodicFull"],
+    "type": "replicateddataset",
+    "url": "/services/data/v53.0/wave/replicatedDatasets/0IuS70000004CqIKAU"
+}

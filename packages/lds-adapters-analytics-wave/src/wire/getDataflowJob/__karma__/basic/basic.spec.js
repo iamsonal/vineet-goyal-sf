@@ -3,6 +3,7 @@ import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     mockGetDataflowJobNetworkOnce,
     mockGetDataflowJobNetworkErrorOnce,
+    expireAsset,
 } from 'analytics-wave-test-util';
 
 const MOCK_PREFIX = 'wire/getDataflowJob/__karma__/data/';
@@ -89,5 +90,39 @@ describe('basic', () => {
         const el2 = await setupElement({ jobId: mock.id }, GetDataflowJob);
         expect(el2.getWiredError()).toEqual(mock);
         expect(el2.getWiredError()).toBeImmutable();
+    });
+});
+
+describe('caching', () => {
+    it('returns cached result when cached data is available', async () => {
+        const mock = getMock('dataflow-job');
+        const config = { dataflowjobId: mock.id };
+        mockGetDataflowJobNetworkOnce(config, mock);
+
+        // populate cache
+        await setupElement({ jobId: mock.id }, GetDataflowJob);
+
+        // second component should have the cached data without hitting network
+        const element = await setupElement({ jobId: mock.id }, GetDataflowJob);
+
+        expect(element.getWiredData()).toEqual(mock);
+    });
+
+    it('retrieves data from network when cached data is expired', async () => {
+        const mock = getMock('dataflow-job');
+        const config = { dataflowjobId: mock.id };
+        const updatedData = getMock('dataflow-job-2');
+        mockGetDataflowJobNetworkOnce(config, [mock, updatedData]);
+
+        // populate cache
+        await setupElement({ jobId: mock.id }, GetDataflowJob);
+
+        // expire cache
+        expireAsset();
+
+        // second component should retrieve from network with updated data
+        const element = await setupElement({ jobId: mock.id }, GetDataflowJob);
+
+        expect(element.getWiredData()).toEqual(updatedData);
     });
 });

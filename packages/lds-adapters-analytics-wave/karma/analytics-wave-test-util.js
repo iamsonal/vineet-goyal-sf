@@ -1,11 +1,13 @@
 import { karmaNetworkAdapter } from 'lds-engine';
 import { mockNetworkOnce, mockNetworkSequence, mockNetworkErrorOnce } from 'test-util';
+import timekeeper from 'timekeeper';
 
 import sinon from 'sinon';
 
 const API_VERSION = 'v53.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/wave`;
+const ASSET_TTL = 5000;
 
 // Execute Query
 function mockExecuteQueryNetworkOnce(config, mockData) {
@@ -971,6 +973,14 @@ function getXmdMatcher(config) {
     });
 }
 
+/**
+ * Force a cache expiration for baseWaveAsset types by fast-forwarding time past the
+ * standard TTL.
+ */
+function expireAsset() {
+    timekeeper.travel(Date.now() + ASSET_TTL + 1);
+}
+
 export {
     URL_BASE,
     mockExecuteQueryNetworkOnce,
@@ -1041,4 +1051,5 @@ export {
     mockGetWaveFoldersNetworkErrorOnce,
     mockGetXmdNetworkOnce,
     mockGetXmdNetworkErrorOnce,
+    expireAsset,
 };

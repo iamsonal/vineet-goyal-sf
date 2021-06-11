@@ -3,6 +3,7 @@ import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     mockGetDataflowJobNodeNetworkOnce,
     mockGetDataflowJobNodeNetworkErrorOnce,
+    expireAsset,
 } from 'analytics-wave-test-util';
 
 const MOCK_PREFIX = 'wire/getDataflowJobNode/__karma__/data/';
@@ -115,5 +116,55 @@ describe('basic', () => {
         const el2 = await setupElement(setupConfig, GetDataflowJobNode);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredError()).toEqual(mock);
+    });
+});
+
+describe('caching', () => {
+    it('returns cached result when cached data is available', async () => {
+        const mock = getMock('dataflow-job-node');
+        const jobMock = getMock('dataflow-job');
+        const config = {
+            dataflowjobId: jobMock.id,
+            nodeId: mock.id,
+        };
+        const setupConfig = {
+            jobId: jobMock.id,
+            nodeId: mock.id,
+        };
+        mockGetDataflowJobNodeNetworkOnce(config, mock);
+
+        // populate cache
+        await setupElement(setupConfig, GetDataflowJobNode);
+
+        // second component should have the cached data without hitting network
+        const element = await setupElement(setupConfig, GetDataflowJobNode);
+
+        expect(element.getWiredData()).toEqual(mock);
+    });
+
+    it('retrieves data from network when cached data is expired', async () => {
+        const mock = getMock('dataflow-job-node');
+        const jobMock = getMock('dataflow-job');
+        const updatedData = getMock('dataflow-job-node-2');
+        const config = {
+            dataflowjobId: jobMock.id,
+            nodeId: mock.id,
+        };
+        const setupConfig = {
+            jobId: jobMock.id,
+            nodeId: mock.id,
+        };
+        mockGetDataflowJobNodeNetworkOnce(config, [mock, updatedData]);
+
+        // populate cache
+        await setupElement(setupConfig, GetDataflowJobNode);
+
+        // expire cache
+        expireAsset();
+
+        // second component should retrieve from network with updated data
+        const element = await setupElement(setupConfig, GetDataflowJobNode);
+
+        expect(element.getWiredData()).toEqual(updatedData);
     });
 });

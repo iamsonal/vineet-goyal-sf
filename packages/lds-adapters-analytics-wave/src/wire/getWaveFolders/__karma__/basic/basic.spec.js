@@ -3,6 +3,7 @@ import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     mockGetWaveFoldersNetworkOnce,
     mockGetWaveFoldersNetworkErrorOnce,
+    expireAsset,
 } from 'analytics-wave-test-util';
 
 const MOCK_PREFIX = 'wire/getWaveFolders/__karma__/data/';
@@ -144,5 +145,39 @@ describe('basic', () => {
         const el2 = await setupElement(config, GetWaveFolders);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredError()).toEqual(mock);
+    });
+});
+
+describe('caching', () => {
+    it('returns cached result when cached data is available', async () => {
+        const mock = getMock('folders');
+        const config = {};
+        mockGetWaveFoldersNetworkOnce(config, mock);
+
+        // populate cache
+        await setupElement(config, GetWaveFolders);
+
+        // second component should have the cached data without hitting network
+        const element = await setupElement(config, GetWaveFolders);
+
+        expect(element.getWiredData()).toEqual(mock);
+    });
+
+    it('retrieves data from network when cached data is expired', async () => {
+        const mock = getMock('folders');
+        const updatedData = getMock('folders-page');
+        const config = {};
+        mockGetWaveFoldersNetworkOnce(config, [mock, updatedData]);
+
+        // populate cache
+        await setupElement(config, GetWaveFolders);
+
+        // expire cache
+        expireAsset();
+
+        // second component should retrieve from network with updated data
+        const element = await setupElement(config, GetWaveFolders);
+
+        expect(element.getWiredData()).toEqual(updatedData);
     });
 });

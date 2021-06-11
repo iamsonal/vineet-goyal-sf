@@ -1,0 +1,28 @@
+{
+    "conversionDetails": [],
+    "createdBy": {
+        "id": "",
+        "name": "",
+        "profilePhotoUrl": ""
+    },
+    "createdDate": "2020-11-16T19:48:57.000Z",
+    "dataflowLastUpdate": "2021-01-14T00:13:37.000Z",
+    "fileUrl": "/services/data/v53.0/wave/recipes/05vRM0000000324YAB/file",
+    "format": "R3",
+    "historiesUrl": "/services/data/v53.0/wave/recipes/05vRM0000000324YAB/histories",
+    "id": "05vRM0000000324YAB",
+    "label": "Test Local Opp",
+    "lastModifiedBy": {
+        "id": "",
+        "name": "",
+        "profilePhotoUrl": ""
+    },
+    "lastModifiedDate": "2020-11-16T19:55:36.000Z",
+    "name": "Test_Local_Opp",
+    "publishingTarget": "Dataset",
+    "scheduleType": "eventdriven",
+    "targetDataflowId": "02KRM0000002UY32AN",
+    "type": "recipe",
+    "url": "/services/data/v53.0/wave/recipes/05vRM0000000324YAB?format=R3",
+    "validationDetails": []
+}

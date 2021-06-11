@@ -149,7 +149,10 @@ function serializeObjectFieldNode(def: LuvioSelectionObjectFieldNode, state: Ser
 
 function serializeCustomFieldConnection(def: LuvioSelectionCustomFieldNode, state: SerializeState) {
     const { luvioSelections, arguments: args } = def;
-    return `${serializeFieldNodeName(def)}(${serializeArguments(args)}) { ${serializeSelections(
+    const argsString =
+        args === undefined || args.length === 0 ? '' : `(${serializeArguments(args)})`;
+
+    return `${serializeFieldNodeName(def)}${argsString} { ${serializeSelections(
         luvioSelections,
         state
     )} }`;

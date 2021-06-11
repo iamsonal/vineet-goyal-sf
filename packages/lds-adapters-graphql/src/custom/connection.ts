@@ -34,7 +34,7 @@ export type GqlConnection = {
 const PROPERTY_NAME_EDGES = 'edges';
 export const CUSTOM_FIELD_NODE_TYPE = 'Connection';
 
-function keyBuilder(ast: LuvioSelectionCustomFieldNode) {
+export function keyBuilder(ast: LuvioSelectionCustomFieldNode) {
     const { arguments: args, name } = ast;
     if (args === undefined) {
         return `${adapterApiFamily}::${CUSTOM_FIELD_NODE_TYPE}::${name}()`;
@@ -193,10 +193,10 @@ function ingestConnectionEdges(
     };
 }
 
-export const createIngest: (ast: LuvioSelectionCustomFieldNode) => ResourceIngest = (
-    ast: LuvioSelectionCustomFieldNode
+export const createIngest: (ast: LuvioSelectionCustomFieldNode, key: string) => ResourceIngest = (
+    ast: LuvioSelectionCustomFieldNode,
+    key: string
 ) => {
-    const key = keyBuilder(ast);
     const { luvioSelections } = ast;
     const selections = luvioSelections === undefined ? [] : luvioSelections;
 

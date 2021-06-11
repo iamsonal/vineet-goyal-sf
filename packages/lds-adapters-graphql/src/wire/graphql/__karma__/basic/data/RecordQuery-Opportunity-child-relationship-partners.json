@@ -1,0 +1,84 @@
+{
+    "data": {
+        "uiapi": {
+            "query": {
+                "Opportunity": {
+                    "edges": [
+                        {
+                            "node": {
+                                "Name": {
+                                    "value": "Opp1",
+                                    "displayValue": null
+                                },
+                                "Partners": {
+                                    "edges": [
+                                        {
+                                            "node": {
+                                                "ApiName": "Partner",
+                                                "__typename": "Partner",
+                                                "WeakEtag": 1610066170000,
+                                                "Id": "00IRM000000rArR2AU",
+                                                "DisplayValue": null,
+                                                "SystemModstamp": {
+                                                    "value": "2021-01-08T00:36:10.000Z"
+                                                },
+                                                "LastModifiedById": {
+                                                    "value": "005RM000002492xYAA"
+                                                },
+                                                "LastModifiedDate": {
+                                                    "value": "2021-01-08T00:36:10.000Z"
+                                                },
+                                                "RecordTypeId": {
+                                                    "value": null
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "node": {
+                                                "ApiName": "Partner",
+                                                "__typename": "Partner",
+                                                "WeakEtag": 1610066170000,
+                                                "Id": "00IRM000000rArS2AU",
+                                                "DisplayValue": null,
+                                                "SystemModstamp": {
+                                                    "value": "2021-01-08T00:36:10.000Z"
+                                                },
+                                                "LastModifiedById": {
+                                                    "value": "005RM000002492xYAA"
+                                                },
+                                                "LastModifiedDate": {
+                                                    "value": "2021-01-08T00:36:10.000Z"
+                                                },
+                                                "RecordTypeId": {
+                                                    "value": null
+                                                }
+                                            }
+                                        }
+                                    ]
+                                },
+                                "__typename": "Opportunity",
+                                "ApiName": "Opportunity",
+                                "WeakEtag": 1623169485000,
+                                "Id": "006RM000003UQ0AYAW",
+                                "DisplayValue": "Opp1",
+                                "SystemModstamp": {
+                                    "value": "2021-06-08T16:24:45.000Z"
+                                },
+                                "LastModifiedById": {
+                                    "value": "005RM000002492xYAA"
+                                },
+                                "LastModifiedDate": {
+                                    "value": "2021-06-08T16:24:45.000Z"
+                                },
+                                "RecordTypeId": {
+                                    "value": "012000000000000AAA"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "errors": []
+}

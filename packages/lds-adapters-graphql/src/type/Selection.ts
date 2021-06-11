@@ -78,11 +78,33 @@ function markStoreResolveResultSeen(builder: Reader<any>, state: StoreResolveRes
     }
 }
 
+export function resolveKey<D>(builder: Reader<any>, key: string) {
+    const { StoreResolveResultState } = builder;
+    const lookup = builder.storeLookup<D>(key);
+    markStoreResolveResultSeen(builder, lookup);
+
+    switch (lookup.state) {
+        case StoreResolveResultState.NotPresent:
+            builder.markMissingLink(key);
+            return;
+        case StoreResolveResultState.Stale:
+            builder.markStale();
+            return;
+        case StoreResolveResultState.Locked:
+            builder.markLocked();
+            return;
+        case StoreResolveResultState.Error:
+            throw new Error('TODO: Implement error links');
+    }
+
+    return lookup;
+}
+
 export function resolveLink<D>(
     builder: Reader<any>,
     storeLink: StoreLink
 ): StoreResolveResultFound<D> | undefined {
-    const { StoreLinkStateValues, StoreResolveResultState } = builder;
+    const { StoreLinkStateValues } = builder;
     const linkState = builder.getLinkState(storeLink);
 
     switch (linkState.state) {
@@ -99,24 +121,7 @@ export function resolveLink<D>(
     }
 
     const { key: __ref } = linkState;
-    const lookup = builder.storeLookup<D>(__ref);
-    markStoreResolveResultSeen(builder, lookup);
-
-    switch (lookup.state) {
-        case StoreResolveResultState.NotPresent:
-            builder.markMissingLink(__ref);
-            return;
-        case StoreResolveResultState.Stale:
-            builder.markStale();
-            return;
-        case StoreResolveResultState.Locked:
-            builder.markLocked();
-            return;
-        case StoreResolveResultState.Error:
-            throw new Error('TODO: Implement error links');
-    }
-
-    return lookup;
+    return resolveKey(builder, __ref);
 }
 
 export function followLink(

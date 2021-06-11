@@ -2162,4 +2162,134 @@ describe('graphql', () => {
             expect(snapshot.data).toEqualSnapshotWithoutEtags(mock);
         });
     });
+    describe('Child Relationships', () => {
+        it('should load child relationship correctly', async () => {
+            const mock = getMock('RecordQuery-Opportunity-child-relationship-partners');
+            const ast = parseQuery(`
+                    { uiapi {
+                        query {
+                          Opportunity(where: {Name: {like: "Opp1"}}) @connection {
+                            edges {
+                              node @resource(type: "Record") {
+                                Name {
+                                  value
+                                  displayValue
+                                }
+                                Partners @connection {
+                                  edges {
+                                    node @resource(type: "Record") {
+                                      ApiName
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                }
+            }
+            `);
+
+            const expectedQuery = `
+                query {
+                    uiapi {
+                        query {
+                            Opportunity(where: {Name: {like: "Opp1"}}) {
+                                edges {
+                                    node {
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
+                                        Partners {
+                                            edges {
+                                                node {
+                                                    ApiName
+                                                    ...defaultRecordFields
+                                                }
+                                            }
+                                        }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                    value
+                    }
+                    LastModifiedById {
+                    value
+                    }
+                    LastModifiedDate {
+                    value
+                    }
+                    RecordTypeId(fallback: true) {
+                    value
+                    }
+                }
+            `;
+
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            Opportunity: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Name: {
+                                                value: 'Opp1',
+                                                displayValue: null,
+                                            },
+                                            Partners: {
+                                                edges: [
+                                                    {
+                                                        node: {
+                                                            ApiName: 'Partner',
+                                                        },
+                                                    },
+                                                    {
+                                                        node: {
+                                                            ApiName: 'Partner',
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                mock
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const pending = graphQLImperative(graphqlConfig);
+            const snapshot = await luvio.resolvePendingSnapshot(pending);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+        });
+    });
 });

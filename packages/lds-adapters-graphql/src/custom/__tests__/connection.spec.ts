@@ -1,6 +1,6 @@
 import { Environment, Luvio, Store, UnfulfilledSnapshot } from '@luvio/engine';
 import { LuvioSelectionCustomFieldNode } from '@salesforce/lds-graphql-parser';
-import { createIngest, createRead } from '../connection';
+import { createIngest, createRead, keyBuilder } from '../connection';
 
 describe('GQL Connection', () => {
     describe('read', () => {
@@ -406,7 +406,7 @@ describe('GQL Connection', () => {
                 })
             );
 
-            createIngest(selection)(
+            createIngest(selection, keyBuilder(selection))(
                 data,
                 {
                     parent: null,
@@ -532,7 +532,7 @@ describe('GQL Connection', () => {
                 })
             );
 
-            createIngest(selection)(
+            createIngest(selection, keyBuilder(selection))(
                 data,
                 {
                     parent: null,
@@ -651,12 +651,13 @@ describe('GQL Connection', () => {
                 })
             );
 
-            createIngest(selection)(
+            createIngest(selection, keyBuilder(selection))(
                 data,
                 {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
+                    state: undefined,
                 },
                 luvio,
                 store,
@@ -805,7 +806,7 @@ describe('GQL Connection', () => {
                 })
             );
 
-            createIngest(selection)(
+            createIngest(selection, keyBuilder(selection))(
                 data,
                 {
                     parent: null,
@@ -967,7 +968,7 @@ describe('GQL Connection', () => {
                 })
             );
 
-            createIngest(ast)(
+            createIngest(ast, 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})')(
                 data,
                 {
                     parent: null,

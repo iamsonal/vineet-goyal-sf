@@ -10,13 +10,20 @@ import {
     RecordRepresentationNormalized,
     FieldValueRepresentationNormalized,
     FieldValueRepresentation,
+    keyBuilderRecord,
 } from '@salesforce/lds-adapters-uiapi';
-import { GqlConnection } from './connection';
+import {
+    createRead as createConnectionRead,
+    createIngest as createConnectionIngest,
+    GqlConnection,
+    CUSTOM_FIELD_NODE_TYPE as CUSTOM_FIELD_NODE_TYPE_CONNECTION,
+} from './connection';
 import {
     getLuvioFieldNodeSelection,
     resolveLink,
     propertyLookup,
     PropertyLookupResultState,
+    resolveKey,
 } from '../type/Selection';
 
 type RecordFieldTrie = Parameters<typeof createIngestRecordWithFields>[0];
@@ -62,6 +69,13 @@ function collectObjectFieldSelection(data: GqlRecordFieldValue): FieldValueRepre
     };
 }
 
+function childTypeIsChildRelationships(
+    sel: LuvioSelectionCustomFieldNode,
+    _data: CustomDataType | SpanningGqlRecord
+): _data is GqlConnection {
+    return sel.type === CUSTOM_FIELD_NODE_TYPE_CONNECTION;
+}
+
 function childTypeIsSpanningGqlRecord(
     sel: LuvioSelectionCustomFieldNode,
     _data: CustomDataType | SpanningGqlRecord
@@ -101,35 +115,43 @@ function convertAstToTrie(ast: LuvioSelectionCustomFieldNode): RecordFieldTrie {
 
 function formatSpanningCustomFieldSelection(
     sel: LuvioSelectionCustomFieldNode,
-    data: CustomDataType
+    data: GqlRecord
 ): { value: FieldValueRepresentation; trie: RecordFieldTrie } {
-    if (childTypeIsSpanningGqlRecord(sel, data)) {
-        if (data === null) {
-            return {
-                value: {
-                    displayValue: null,
-                    value: null,
-                },
-                trie: convertAstToTrie(sel),
-            };
-        }
-        const { recordRepresentation, fieldsTrie } = convertToRecordRepresentation(sel, data);
+    if (data === null) {
         return {
-            trie: fieldsTrie,
             value: {
-                displayValue: data.DisplayValue,
-                value: recordRepresentation,
+                displayValue: null,
+                value: null,
             },
+            trie: convertAstToTrie(sel),
         };
     }
+    const { recordRepresentation, fieldsTrie } = convertToRecordRepresentation(sel, data);
+    return {
+        trie: fieldsTrie,
+        value: {
+            displayValue: data.DisplayValue,
+            value: recordRepresentation,
+        },
+    };
+}
 
-    throw new Error(`"${sel.kind}" not implemented for RecordRepresentation conversion`);
+interface RecordRepresentationConversionResult {
+    recordRepresentation: RecordRepresentation;
+    childRelationships: Record<
+        string,
+        {
+            ast: LuvioSelectionCustomFieldNode;
+            data: GqlConnection;
+        }
+    >;
+    fieldsTrie: RecordFieldTrie;
 }
 
 export function convertToRecordRepresentation(
     ast: LuvioSelectionCustomFieldNode,
     record: GqlRecord
-): { recordRepresentation: RecordRepresentation; fieldsTrie: RecordFieldTrie } {
+): RecordRepresentationConversionResult {
     const {
         Id,
         WeakEtag,
@@ -146,11 +168,12 @@ export function convertToRecordRepresentation(
     }
 
     const trieChildren: RecordFieldTrie['children'] = {};
-    const trie: RecordFieldTrie = {
+    const trie: RecordRepresentationConversionResult['fieldsTrie'] = {
         name: ApiName,
         children: trieChildren,
     };
 
+    const childRelationships: RecordRepresentationConversionResult['childRelationships'] = {};
     const fieldsBag: RecordRepresentation['fields'] = {};
     for (let i = 0, len = luvioSelections.length; i < len; i += 1) {
         const sel = getLuvioFieldNodeSelection(luvioSelections[i]);
@@ -168,12 +191,19 @@ export function convertToRecordRepresentation(
                 break;
             }
             case 'CustomFieldSelection': {
-                const { value, trie } = formatSpanningCustomFieldSelection(
-                    sel,
-                    data as CustomDataType
-                );
-                trieChildren[fieldName] = trie;
-                fieldsBag[fieldName] = value;
+                if (childTypeIsSpanningGqlRecord(sel, data as CustomDataType)) {
+                    const { value, trie } = formatSpanningCustomFieldSelection(
+                        sel,
+                        data as GqlRecord
+                    );
+                    trieChildren[fieldName] = trie;
+                    fieldsBag[fieldName] = value;
+                } else if (childTypeIsChildRelationships(sel, data as CustomDataType)) {
+                    childRelationships[fieldName] = {
+                        ast: sel,
+                        data: data as GqlConnection,
+                    };
+                }
                 break;
             }
         }
@@ -196,6 +226,7 @@ export function convertToRecordRepresentation(
     return {
         recordRepresentation: rep,
         fieldsTrie: trie,
+        childRelationships,
     };
 }
 
@@ -203,17 +234,48 @@ export const defaultRecordFieldsFragmentName = 'defaultRecordFields';
 
 export const defaultRecordFieldsFragment = `fragment ${defaultRecordFieldsFragmentName} on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
 
+function getChildRelationshipsKey(recordKey: string, propertyName: string) {
+    return `${recordKey}__childRelationships__${propertyName}`;
+}
+
 export const createIngest: (ast: LuvioSelectionCustomFieldNode) => ResourceIngest = (
     ast: LuvioSelectionCustomFieldNode
 ) => {
     return (data: GqlRecord, path: IngestPath, luvio: Luvio, store: Store, timestamp: number) => {
-        const { recordRepresentation, fieldsTrie } = convertToRecordRepresentation(ast, data);
+        const { recordRepresentation, fieldsTrie, childRelationships } =
+            convertToRecordRepresentation(ast, data);
         const ingestRecord = createIngestRecordWithFields(fieldsTrie, {
             name: recordRepresentation.apiName,
             children: {},
         });
 
-        return ingestRecord(recordRepresentation, path, luvio, store, timestamp);
+        const recordIngest = ingestRecord(recordRepresentation, path, luvio, store, timestamp);
+        const recordKey = recordIngest.__ref as string;
+        const childRelationshipKeys = Object.keys(childRelationships);
+        for (let i = 0, len = childRelationshipKeys.length; i < len; i += 1) {
+            const propertyName = childRelationshipKeys[i];
+            const childRelationship = childRelationships[propertyName];
+            const { ast: childRelationshipAst, data: childRelationshipData } = childRelationship;
+            const fullPath = getChildRelationshipsKey(recordKey, propertyName);
+            createConnectionIngest(childRelationshipAst, fullPath)(
+                childRelationshipData,
+                {
+                    parent: {
+                        data,
+                        key: recordKey,
+                        existing: undefined,
+                    },
+                    fullPath: fullPath,
+                    state: path.state,
+                    propertyName: propertyName,
+                },
+                luvio,
+                store,
+                timestamp
+            );
+        }
+
+        return recordIngest;
     };
 };
 
@@ -287,6 +349,25 @@ function getScalarValue(selectionName: string, state: RecordDenormalizationState
     return state.source[assignment.propertyName] as any;
 }
 
+function assignConnectionSelection(
+    builder: Reader<any>,
+    sink: any,
+    sel: LuvioSelectionCustomFieldNode,
+    recordKey: string,
+    propertyName: string
+) {
+    const key = getChildRelationshipsKey(recordKey, propertyName);
+    const resolved = resolveKey(builder, key);
+    if (resolved === undefined) {
+        return;
+    }
+    const data = createConnectionRead(sel as LuvioSelectionCustomFieldNode)(
+        resolved.value,
+        builder
+    );
+    builder.assignNonScalar(sink, propertyName, data);
+}
+
 function assignSelection(
     selection: LuvioSelectionNode,
     builder: Reader<any>,
@@ -324,34 +405,47 @@ function assignSelection(
             break;
         }
         case 'CustomFieldSelection': {
-            const field = fields[selectionName];
-            const resolvedParentFieldValue = resolveLink<FieldValueRepresentationNormalized>(
-                builder,
-                field
-            );
+            if ((sel as LuvioSelectionCustomFieldNode).type === 'Connection') {
+                const recordKey = keyBuilderRecord({
+                    recordId: state.source.id,
+                });
+                assignConnectionSelection(
+                    builder,
+                    sink,
+                    sel as LuvioSelectionCustomFieldNode,
+                    recordKey,
+                    propertyName
+                );
+            } else {
+                const field = fields[selectionName];
 
-            if (resolvedParentFieldValue === undefined) {
-                break;
-            }
-            const { value: spanningFieldResult } = resolvedParentFieldValue;
-            const { value: spanningFieldValue } = spanningFieldResult;
-            if (spanningFieldValue === null || typeof spanningFieldValue !== 'object') {
-                sink[propertyName] = null;
-                break;
-            }
+                const resolvedParentFieldValue = resolveLink<FieldValueRepresentationNormalized>(
+                    builder,
+                    field
+                );
+                if (resolvedParentFieldValue === undefined) {
+                    break;
+                }
+                const { value: spanningFieldResult } = resolvedParentFieldValue;
+                const { value: spanningFieldValue } = spanningFieldResult;
+                if (spanningFieldValue === null || typeof spanningFieldValue !== 'object') {
+                    sink[propertyName] = null;
+                    break;
+                }
 
-            const resolvedSpanningRecordValue = resolveLink<RecordRepresentationNormalized>(
-                builder,
-                spanningFieldValue
-            );
-            if (resolvedSpanningRecordValue === undefined) {
-                break;
+                const resolvedSpanningRecordValue = resolveLink<RecordRepresentationNormalized>(
+                    builder,
+                    spanningFieldValue
+                );
+                if (resolvedSpanningRecordValue === undefined) {
+                    break;
+                }
+                const data = getCustomSelection(sel as LuvioSelectionCustomFieldNode, builder, {
+                    source: resolvedSpanningRecordValue.value,
+                    parentFieldValue: spanningFieldResult,
+                });
+                builder.assignNonScalar(sink, propertyName, data);
             }
-            const data = getCustomSelection(sel as LuvioSelectionCustomFieldNode, builder, {
-                source: resolvedSpanningRecordValue.value,
-                parentFieldValue: spanningFieldResult,
-            });
-            builder.assignNonScalar(sink, propertyName, data);
         }
     }
     builder.exitPath();
@@ -378,7 +472,6 @@ function readRecordRepresentation(
         sink,
         parentFieldValue: options.parentFieldValue,
     };
-
     for (let i = 0, len = luvioSelections.length; i < len; i += 1) {
         assignSelection(luvioSelections[i], builder, state);
     }

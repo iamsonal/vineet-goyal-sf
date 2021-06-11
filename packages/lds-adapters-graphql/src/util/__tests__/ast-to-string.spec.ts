@@ -1,5 +1,8 @@
 import { astToString, serializeCustomFieldRecord } from '../ast-to-string';
-import { LuvioDocumentNode, LuvioSelectionCustomFieldNode } from '@salesforce/lds-graphql-parser';
+import parse, {
+    LuvioDocumentNode,
+    LuvioSelectionCustomFieldNode,
+} from '@salesforce/lds-graphql-parser';
 
 describe('AST to string', () => {
     it('should create correct graphql query', () => {
@@ -179,6 +182,33 @@ describe('AST to string', () => {
 
         const actual = astToString(ast);
         expect(actual).toEqual(expectedQuery);
+    });
+
+    it('should create correct query when @connection directive does not contain arguments', () => {
+        const query = `
+            {
+                uiapi {
+                    query {
+                        Opportunity {
+                            edges {
+                                Partners @connection {
+                                    edges {
+                                        node {
+                                            Id
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+        const parsed = parse(query);
+        const string = astToString(parsed);
+        expect(string).toEqual(
+            'query { uiapi { query { Opportunity { edges { Partners { edges { node { Id,  } } } } } } } }'
+        );
     });
 
     describe('custom field selection - record', () => {

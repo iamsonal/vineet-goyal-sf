@@ -74,6 +74,7 @@ describe('GQL Record', () => {
             const result = convertToRecordRepresentation(ast, gqlRecord);
             expect(result).toEqual({
                 recordRepresentation: recordRep,
+                childRelationships: {},
                 fieldsTrie: {
                     name: 'Account',
                     children: {
@@ -214,6 +215,7 @@ describe('GQL Record', () => {
 
             const result = convertToRecordRepresentation(ast, gqlRecord);
             expect(result).toEqual({
+                childRelationships: {},
                 recordRepresentation: recordRep,
                 fieldsTrie: {
                     name: 'Account',
@@ -326,6 +328,7 @@ describe('GQL Record', () => {
 
             const result = convertToRecordRepresentation(ast, gqlRecord);
             expect(result).toEqual({
+                childRelationships: {},
                 recordRepresentation: recordRep,
                 fieldsTrie: {
                     name: 'Account',
@@ -455,6 +458,7 @@ describe('GQL Record', () => {
 
             const result = convertToRecordRepresentation(ast, gqlRecord);
             expect(result).toEqual({
+                childRelationships: {},
                 recordRepresentation: recordRep,
                 fieldsTrie: {
                     name: 'Account',
@@ -616,6 +620,7 @@ describe('GQL Record', () => {
 
             const result = convertToRecordRepresentation(ast, gqlRecord);
             expect(result).toEqual({
+                childRelationships: {},
                 recordRepresentation: recordRep,
                 fieldsTrie: {
                     name: 'Account',
@@ -981,6 +986,151 @@ describe('GQL Record', () => {
                 'UiApi::RecordRepresentation:001RM000005BJPTYA4__fields__Parent': {
                     displayValue: null,
                     value: null,
+                },
+            });
+        });
+
+        it('should correctly ingest child relationships', () => {
+            const selection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'node',
+                type: 'Record',
+                luvioSelections: [
+                    {
+                        kind: 'CustomFieldSelection',
+                        name: 'Child',
+                        type: 'Connection',
+                        luvioSelections: [
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'edges',
+                                luvioSelections: [
+                                    {
+                                        kind: 'CustomFieldSelection',
+                                        name: 'node',
+                                        type: 'Record',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'Id',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const data = {
+                Id: '001RM000004uuhnYAA',
+                WeakEtag: 1615493739000,
+                Child: {
+                    edges: [
+                        {
+                            node: {
+                                ApiName: 'Partner',
+                                __typename: 'Partner',
+                                WeakEtag: 1610066170000,
+                                Id: 'id',
+                                DisplayValue: null,
+                                SystemModstamp: {
+                                    value: '2021-01-08T00:36:10.000Z',
+                                },
+                                LastModifiedById: {
+                                    value: '005RM000002492xYAA',
+                                },
+                                LastModifiedDate: {
+                                    value: '2021-01-08T00:36:10.000Z',
+                                },
+                                RecordTypeId: {
+                                    value: null,
+                                },
+                            },
+                        },
+                    ],
+                },
+                __typename: 'Account',
+                ApiName: 'Account',
+                DisplayValue: 'Account1',
+                SystemModstamp: {
+                    value: '2021-03-11T20:15:39.000Z',
+                },
+                LastModifiedById: {
+                    value: '005RM000002492xYAA',
+                },
+                LastModifiedDate: {
+                    value: '2021-03-11T20:15:39.000Z',
+                },
+                RecordTypeId: {
+                    value: '012RM000000E79WYAS',
+                },
+            };
+
+            const store = new Store();
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            createIngest(selection)(
+                data,
+                {
+                    parent: null,
+                    state: null,
+                    propertyName: null,
+                    fullPath: '',
+                },
+                luvio,
+                store,
+                0
+            );
+
+            expect(store.records).toEqual({
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
+                    apiName: 'Account',
+                    eTag: '',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                    childRelationships: {},
+                    id: '001RM000004uuhnYAA',
+                    weakEtag: 1615493739000,
+                    fields: {},
+                },
+                'UiApi::RecordRepresentation:id': {
+                    apiName: 'Partner',
+                    eTag: '',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-01-08T00:36:10.000Z',
+                    systemModstamp: '2021-01-08T00:36:10.000Z',
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    childRelationships: {},
+                    id: 'id',
+                    weakEtag: 1610066170000,
+                    fields: {},
+                },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__childRelationships__Child__edges__0':
+                    {
+                        node: {
+                            __ref: 'UiApi::RecordRepresentation:id',
+                        },
+                    },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__childRelationships__Child__edges':
+                    [
+                        {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__childRelationships__Child__edges__0',
+                        },
+                    ],
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__childRelationships__Child': {
+                    edges: {
+                        __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__childRelationships__Child__edges',
+                    },
                 },
             });
         });
@@ -1818,6 +1968,115 @@ describe('GQL Record', () => {
             }) as FulfilledSnapshot<any, any>;
             expect(snap.seenRecords).toEqual({
                 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': true,
+            });
+        });
+
+        it('should denormalize ChildRelationships correctly', () => {
+            const selection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'node',
+                type: 'Record',
+                luvioSelections: [
+                    {
+                        kind: 'CustomFieldSelection',
+                        name: 'Child',
+                        type: 'Connection',
+                        luvioSelections: [
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'edges',
+                                luvioSelections: [
+                                    {
+                                        kind: 'CustomFieldSelection',
+                                        name: 'node',
+                                        type: 'Record',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'Id',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const store = new Store();
+            store.records = {
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA': {
+                    apiName: 'Account',
+                    eTag: '',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-03-11T20:15:39.000Z',
+                    systemModstamp: '2021-03-11T20:15:39.000Z',
+                    recordTypeId: '012RM000000E79WYAS',
+                    recordTypeInfo: null,
+                    childRelationships: {},
+                    id: '001RM000004uuhnYAA',
+                    weakEtag: 1615493739000,
+                    fields: {},
+                },
+                'UiApi::RecordRepresentation:id': {
+                    apiName: 'Partner',
+                    eTag: '',
+                    lastModifiedById: '005RM000002492xYAA',
+                    lastModifiedDate: '2021-01-08T00:36:10.000Z',
+                    systemModstamp: '2021-01-08T00:36:10.000Z',
+                    recordTypeId: null,
+                    recordTypeInfo: null,
+                    childRelationships: {},
+                    id: 'id',
+                    weakEtag: 1610066170000,
+                    fields: {},
+                },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__childRelationships__Child__edges__0':
+                    {
+                        node: {
+                            __ref: 'UiApi::RecordRepresentation:id',
+                        },
+                    },
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__childRelationships__Child__edges':
+                    [
+                        {
+                            __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__childRelationships__Child__edges__0',
+                        },
+                    ],
+                'UiApi::RecordRepresentation:001RM000004uuhnYAA__childRelationships__Child': {
+                    edges: {
+                        __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA__childRelationships__Child__edges',
+                    },
+                },
+            };
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            const snap = luvio.storeLookup({
+                recordId: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
+                node: {
+                    kind: 'Fragment',
+                    synthetic: false,
+                    reader: true,
+                    read: createRead(selection),
+                },
+                variables: {},
+            }) as FulfilledSnapshot<any, any>;
+            expect(snap.state).toBe('Fulfilled');
+            expect(snap.data).toEqual({
+                Child: {
+                    edges: [
+                        {
+                            node: {
+                                Id: 'id',
+                            },
+                        },
+                    ],
+                },
             });
         });
     });

@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-community-sites-search",
-    "version": "1.19.0",
+    "version": "1.19.1",
     "description": "Wire adapter for Sites Search APIs",
     "license": "MIT",
     "main": "dist/umd/es2018/community-sites-search.js",
@@ -28,13 +28,13 @@
         "test:unit": "jest"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.19.0"
+        "@salesforce/lds-bindings": "1.19.1"
     },
     "devDependencies": {
         "@luvio/cli": "0.37.2",
         "@luvio/compiler": "0.37.2",
         "@luvio/engine": "0.37.2",
         "@luvio/lwc-luvio": "0.37.2",
-        "@salesforce/lds-karma": "1.19.0"
+        "@salesforce/lds-karma": "1.19.1"
     }
 }

@@ -1,5 +1,5 @@
 import { Adapter } from '@luvio/engine';
-import { DurableStore } from '@luvio/environments';
+import { DurableStore, DurableStoreEntries } from '@luvio/environments';
 import {
     ObjectInfoRepresentation,
     getObjectInfoAdapterFactory,
@@ -46,16 +46,38 @@ export function objectInfoServiceFactory(
             });
     }
 
-    // TODO: W-9427909 - Re-enable this later in a way that doesn't cause duplicate object info requests
-    // function objectInfoMapExists(apiName: string) {
-    //     return durableStore
-    //         .getEntries<ObjectInfoIndex>([apiName], OBJECT_INFO_PREFIX_SEGMENT)
-    //         .then((entries) => entries !== undefined && entries[apiName] !== undefined);
-    // }
+    function objectInfoMapExists(apiName: string) {
+        return durableStore
+            .getEntries<ObjectInfoIndex>([apiName], OBJECT_INFO_PREFIX_SEGMENT)
+            .then((entries) => entries !== undefined && entries[apiName] !== undefined);
+    }
 
-    // TODO: W-9427909 - Re-enable this later in a way that doesn't cause duplicate object info requests
-    function ensureObjectInfoCached(_apiName: string) {
-        return Promise.resolve();
+    function ensureObjectInfoCached(apiName: string) {
+        return objectInfoMapExists(apiName).then((exists) => {
+            if (!exists) {
+                return Promise.resolve(
+                    getObjectInfo({
+                        objectApiName: apiName,
+                    })
+                ).then((snapshot) => {
+                    if (snapshot !== null && snapshot.data !== undefined) {
+                        const apiName = snapshot.data.apiName;
+                        const keyPrefix = snapshot.data.keyPrefix ?? '';
+                        const entries: DurableStoreEntries<ObjectInfoIndex> = {
+                            [apiName]: {
+                                data: {
+                                    apiName,
+                                    keyPrefix,
+                                },
+                            },
+                        };
+                        return durableStore.setEntries(entries, OBJECT_INFO_PREFIX_SEGMENT);
+                    } else {
+                        throw new Error(`No snapshot found for apiName ${apiName}`);
+                    }
+                });
+            }
+        });
     }
 
     return {

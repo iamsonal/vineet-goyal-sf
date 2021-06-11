@@ -15,15 +15,27 @@ export class RecordMetadataOnSetPlugin implements DurableStoreSetEntryPlugin {
         this.ensureObjectInfoCached = ensureObjectInfoCached;
     }
 
+    alreadyFetchedApiName: { [apiName: string]: true } = {};
+
     beforeSet<T>(
         key: string,
         entry: DurableStoreEntry<Extract<T, unknown>>,
         segment: string
     ): void {
         if (segment === DefaultDurableSegment && isRecordRepresentation(entry, key)) {
-            this.ensureObjectInfoCached(entry.data.apiName).catch(() => {
-                //TODO: log this W-9067768
-            });
+            const apiName = entry.data.apiName;
+            if (this.alreadyFetchedApiName[apiName] === true) {
+                return;
+            }
+            // debounce multiple identical requests per durable write operations
+            this.alreadyFetchedApiName[apiName] = true;
+            this.ensureObjectInfoCached(apiName)
+                .catch(() => {
+                    //TODO: log this W-9067768
+                })
+                .finally(() => {
+                    delete this.alreadyFetchedApiName[apiName];
+                });
         }
     }
 }

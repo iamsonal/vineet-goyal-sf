@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-compiler-plugins",
-    "version": "1.18.0",
+    "version": "1.19.0",
     "description": "Plugins for LDS compiler",
     "private": true,
     "license": "MIT",

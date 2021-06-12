@@ -4,17 +4,23 @@ import { getDataflowJobs } from 'lds-adapters-analytics-wave';
 export default class GetDataflowJobs extends LightningElement {
     wirePushCount = -1;
 
+    @api jobTypes;
     @api licenseType;
     @api page;
     @api pageSize;
     @api q;
+    @api startedAfter;
+    @api startedBefore;
     @api status;
 
     @wire(getDataflowJobs, {
+        jobTypes: '$jobTypes',
         licenseType: '$licenseType',
         page: '$page',
         pageSize: '$pageSize',
         q: '$q',
+        startedAfter: '$startedAfter',
+        startedBefore: '$startedBefore',
         status: '$status',
     })
     onGetDataflowJobs({ data, error }) {

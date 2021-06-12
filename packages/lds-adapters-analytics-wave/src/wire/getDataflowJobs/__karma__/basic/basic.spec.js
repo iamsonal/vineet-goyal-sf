@@ -33,6 +33,20 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
+    it('gets dataflow jobs with jobTypes, startedAfter, startedBefore', async () => {
+        const mock = getMock('dataflow-jobs-running');
+        const config = {
+            jobTypes: ['recipe'],
+            startedAfter: '1622752558',
+            startedBefore: '1623450350',
+        };
+        mockGetDataflowJobsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetDataflowJobs);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
     it('gets dataflow jobs with status and search', async () => {
         const mock = getMock('dataflow-jobs-running');
         const config = { status: 'Running', q: 'recipe' };

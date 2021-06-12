@@ -3124,6 +3124,21 @@ types:
         dataflowId:
           type: string
           required: false
+        jobTypes:
+          type: array
+          required: false
+          items:
+            type: string
+            enum:
+              - DataSync
+              - FileUpload
+              - Internal
+              - Recipe
+              - Recipe_V3
+              - Report
+              - Restore
+              - User
+            (oas-collectionFormat): csv
         licenseType:
           type: string
           required: false
@@ -3137,6 +3152,12 @@ types:
           type: integer
           required: false
         q:
+          type: string
+          required: false
+        startedAfter:
+          type: string
+          required: false
+        startedBefore:
           type: string
           required: false
         status:

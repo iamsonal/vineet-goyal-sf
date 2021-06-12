@@ -340,7 +340,7 @@ function mockGetDataflowJobsNetworkErrorOnce(config, mockData) {
 }
 
 function getDataflowJobsMatcher(config) {
-    let { licenseType, page, pageSize, q, status } = config;
+    let { jobTypes, licenseType, page, pageSize, q, startedAfter, startedBefore, status } = config;
 
     return sinon.match({
         body: null,
@@ -349,10 +349,13 @@ function getDataflowJobsMatcher(config) {
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/dataflowjobs`,
         queryParams: {
+            jobTypes,
             licenseType,
             page,
             pageSize,
             q,
+            startedAfter,
+            startedBefore,
             status,
         },
     });

@@ -28,16 +28,17 @@ const requestArgs: MockPayload['networkArgs'] = {
 describe('graphQL adapter offline', () => {
     describe('L2 cache hit', () => {
         it('when adapter called with same query', async () => {
-            const ast = parseAndVisit(`
+            const ast = parseAndVisit(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -81,16 +82,17 @@ describe('graphQL adapter offline', () => {
         });
 
         it('when adapter called with subset of field properties', async () => {
-            const ast1 = parseAndVisit(`
+            const ast1 = parseAndVisit(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -121,16 +123,16 @@ describe('graphQL adapter offline', () => {
             const adapter = graphQLAdapterFactory(luvio);
 
             // now use similar query, but request subset of field properties (just "value")
-            const ast2 = parseAndVisit(`
+            const ast2 = parseAndVisit(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value }
+                                        Name {
+                                            value
+                                        }
                                     }
                                 }
                             }
@@ -180,16 +182,17 @@ describe('graphQL adapter offline', () => {
         // from second request, and then the third request for both should be cache
         // hit since each field was individually already put in the cache
         it('when adapter called with a composite of already cached fields', async () => {
-            const ast1 = parseAndVisit(`
+            const ast1 = parseAndVisit(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -209,16 +212,17 @@ describe('graphQL adapter offline', () => {
                 buildSuccessMockPayload(requestArgs, mockData_Account_fields_Name)
             );
 
-            const ast2 = parseAndVisit(`
+            const ast2 = parseAndVisit(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Phone { value, displayValue }
+                                        Phone {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -250,17 +254,21 @@ describe('graphQL adapter offline', () => {
             const adapter = graphQLAdapterFactory(luvio);
 
             // now use similar query, but request subset of field properties (just "value")
-            const ast3 = parseAndVisit(`
+            const ast3 = parseAndVisit(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value, displayValue }
-                                        Phone { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
+                                        Phone {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }

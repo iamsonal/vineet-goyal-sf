@@ -3,25 +3,23 @@ import * as parser from '../main';
 describe('LDS GraphQL Parser', () => {
     describe('parseAndVisit', () => {
         it('transforms GraphQL operation into a custom AST', () => {
-            const source = `
-            query {
-                uiapi {
-                    query {
-                        Account(
-                            where: { Name: { like: "Account1" } }
-                        ) @connection {
-                            edges {
-                                node @resource(type: "Record") {
-                                    Name {
-                                        value
-                                        displayValue
+            const source = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-            }
             `;
 
             const expected = {
@@ -108,18 +106,17 @@ describe('LDS GraphQL Parser', () => {
         });
 
         it('transforms GraphQL connection directive on child property', () => {
-            const source = `
-            query {
-                uiapi {
-                    query {
-                        Account(
-                            where: { Name: { like: "Account1" } }
-                        ) @connection {
-                            edges {
-                                node @resource(type: "Record") {
-                                    Child @connection {
-                                        edges {
-                                            Id
+            const source = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Child @connection {
+                                            edges {
+                                                Id
+                                            }
                                         }
                                     }
                                 }
@@ -127,7 +124,6 @@ describe('LDS GraphQL Parser', () => {
                         }
                     }
                 }
-            }
             `;
 
             const expected = {
@@ -217,25 +213,25 @@ describe('LDS GraphQL Parser', () => {
         });
 
         it('transforms GraphQL fragment into a custom AST', () => {
-            const source = `
-            fragment requiredFields on Record{
-                id,
-                WeakEtag,
-                ApiName,
-                DisplayValue,
-                LastModifiedById {
-                  value
+            const source = /* GraphQL */ `
+                fragment requiredFields on Record {
+                    id
+                    WeakEtag
+                    ApiName
+                    DisplayValue
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    SystemModstamp {
+                        value
+                    }
+                    RecordTypeId {
+                        value
+                    }
                 }
-                LastModifiedDate {
-                    value
-                }
-                SystemModstamp {
-                  value
-                }
-                RecordTypeId {
-                  value
-                }
-              }
             `;
 
             const expected = {
@@ -280,11 +276,11 @@ describe('LDS GraphQL Parser', () => {
         });
 
         it('throws an error for unsupported GraphQL definition', () => {
-            const source = `
-            type Character {
-                name: String!
-                appearsIn: [Episode!]!
-            }
+            const source = /* GraphQL */ `
+                type Character {
+                    name: String!
+                    appearsIn: [Episode!]!
+                }
             `;
 
             expect(() => parser.default(source)).toThrowError(
@@ -293,13 +289,13 @@ describe('LDS GraphQL Parser', () => {
         });
 
         it('throws an error for unsupported GraphQL operation definition', () => {
-            const source = `
-            mutation CreateReviewForEpisode($ep: Episode!, $review: ReviewInput!) {
-                createReview(episode: $ep, review: $review) {
-                  stars
-                  commentary
+            const source = /* GraphQL */ `
+                mutation CreateReviewForEpisode($ep: Episode!, $review: ReviewInput!) {
+                    createReview(episode: $ep, review: $review) {
+                        stars
+                        commentary
+                    }
                 }
-            }
             `;
 
             expect(() => parser.default(source)).toThrowError(
@@ -308,15 +304,15 @@ describe('LDS GraphQL Parser', () => {
         });
 
         it('transforms variable definitions', () => {
-            const source = `
-            query HeroNameAndFriends($episode: Episode = JEDI) {
-                hero(episode: $episode) {
-                  name
-                  friends {
-                    name
-                  }
+            const source = /* GraphQL */ `
+                query HeroNameAndFriends($episode: Episode = JEDI) {
+                    hero(episode: $episode) {
+                        name
+                        friends {
+                            name
+                        }
+                    }
                 }
-            }
             `;
 
             const expected = {
@@ -367,15 +363,15 @@ describe('LDS GraphQL Parser', () => {
         });
 
         it('transform directives', () => {
-            const source = `
-            query Hero($episode: Episode, $withFriends: Boolean!) {
-                hero(episode: $episode) {
-                  name
-                  friends @include(if: $withFriends) {
-                    name
-                  }
+            const source = /* GraphQL */ `
+                query Hero($episode: Episode, $withFriends: Boolean!) {
+                    hero(episode: $episode) {
+                        name
+                        friends @include(if: $withFriends) {
+                            name
+                        }
+                    }
                 }
-            }
             `;
 
             const expected = {
@@ -449,17 +445,17 @@ describe('LDS GraphQL Parser', () => {
         });
 
         it('transform fragment spread', () => {
-            const source = `
-            {
-              aliasTest: hero(episode: EMPIRE) {
-                  ...nameField
-                  appearsIn
-              }
-            }
+            const source = /* GraphQL */ `
+                {
+                    aliasTest: hero(episode: EMPIRE) {
+                        ...nameField
+                        appearsIn
+                    }
+                }
 
-            fragment nameField on Character {
-              name
-            }
+                fragment nameField on Character {
+                    name
+                }
             `;
 
             const expected = {
@@ -502,18 +498,18 @@ describe('LDS GraphQL Parser', () => {
         });
 
         it('transform inline fragment', () => {
-            const source = `
-            query HeroForEpisode($ep: Episode!) {
-              hero(episode: $ep) {
-                name
-                ... on Droid {
-                  primaryFunction
+            const source = /* GraphQL */ `
+                query HeroForEpisode($ep: Episode!) {
+                    hero(episode: $ep) {
+                        name
+                        ... on Droid {
+                            primaryFunction
+                        }
+                        ... on Human {
+                            height
+                        }
+                    }
                 }
-                ... on Human {
-                  height
-                }
-              }
-            }
             `;
 
             const expected = {

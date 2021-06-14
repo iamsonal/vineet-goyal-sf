@@ -26,16 +26,17 @@ function getMock(filename) {
 describe('graphql', () => {
     describe('no cache', () => {
         it('hits network when no data is in the cache', async () => {
-            const ast = parseQuery(`
+            const ast = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -44,14 +45,17 @@ describe('graphql', () => {
                 }
             `);
 
-            const expectedQuery = `
+            const expectedQuery = /* GraphQL */ `
                 query {
                     uiapi {
                         query {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Name { value, displayValue}
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -60,15 +64,23 @@ describe('graphql', () => {
                     }
                 }
                 fragment defaultRecordFields on Record {
-                    __typename,
-                    ApiName,
-                    WeakEtag,
-                    Id,
-                    DisplayValue,
-                    SystemModstamp { value }
-                    LastModifiedById { value }
-                    LastModifiedDate { value }
-                    RecordTypeId(fallback: true) { value }
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
                 }
             `;
 
@@ -114,17 +126,18 @@ describe('graphql', () => {
         });
 
         it('should return scalars on @connection types correctly', async () => {
-            const ast = parseQuery(`
+            const ast = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 __typename
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -133,7 +146,7 @@ describe('graphql', () => {
                 }
             `);
 
-            const expectedQuery = `
+            const expectedQuery = /* GraphQL */ `
                 query {
                     uiapi {
                         query {
@@ -141,7 +154,10 @@ describe('graphql', () => {
                                 __typename
                                 edges {
                                     node {
-                                        Name { value, displayValue}
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -150,15 +166,23 @@ describe('graphql', () => {
                     }
                 }
                 fragment defaultRecordFields on Record {
-                    __typename,
-                    ApiName,
-                    WeakEtag,
-                    Id,
-                    DisplayValue,
-                    SystemModstamp { value }
-                    LastModifiedById { value }
-                    LastModifiedDate { value }
-                    RecordTypeId(fallback: true) { value }
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
                 }
             `;
 
@@ -207,16 +231,17 @@ describe('graphql', () => {
 
     describe('caching', () => {
         it('should not hit network when all data is in cache', async () => {
-            const ast = parseQuery(`
+            const ast = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -225,14 +250,17 @@ describe('graphql', () => {
                 }
             `);
 
-            const expectedQuery = `
+            const expectedQuery = /* GraphQL */ `
                 query {
                     uiapi {
                         query {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -241,15 +269,23 @@ describe('graphql', () => {
                     }
                 }
                 fragment defaultRecordFields on Record {
-                    __typename,
-                    ApiName,
-                    WeakEtag,
-                    Id,
-                    DisplayValue,
-                    SystemModstamp { value }
-                    LastModifiedById { value }
-                    LastModifiedDate { value }
-                    RecordTypeId(fallback: true) { value }
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
                 }
             `;
 
@@ -298,16 +334,17 @@ describe('graphql', () => {
         });
 
         it('should not hit network when subset of already cached data is requested', async () => {
-            const ast = parseQuery(`
+            const ast = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -316,14 +353,17 @@ describe('graphql', () => {
                 }
             `);
 
-            const expectedQuery = `
+            const expectedQuery = /* GraphQL */ `
                 query {
                     uiapi {
                         query {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Name { value, displayValue}
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -332,15 +372,23 @@ describe('graphql', () => {
                     }
                 }
                 fragment defaultRecordFields on Record {
-                    __typename,
-                    ApiName,
-                    WeakEtag,
-                    Id,
-                    DisplayValue,
-                    SystemModstamp { value }
-                    LastModifiedById { value }
-                    LastModifiedDate { value }
-                    RecordTypeId(fallback: true) { value }
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
                 }
             `;
 
@@ -381,16 +429,16 @@ describe('graphql', () => {
 
             const pending = graphQLImperative(graphqlConfig);
             await luvio.resolvePendingSnapshot(pending);
-            const cachedDataAst = parseQuery(`
+            const cachedDataAst = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value }
+                                        Name {
+                                            value
+                                        }
                                     }
                                 }
                             }
@@ -407,16 +455,17 @@ describe('graphql', () => {
         });
 
         it('should hit network when some data is unfulfilled', async () => {
-            const ast = parseQuery(`
+            const ast = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -425,16 +474,17 @@ describe('graphql', () => {
                 }
             `);
 
-            const ast2 = parseQuery(`
+            const ast2 = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Phone { value, displayValue }
+                                        Phone {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -443,14 +493,17 @@ describe('graphql', () => {
                 }
             `);
 
-            const expectedQueryOne = `
+            const expectedQueryOne = /* GraphQL */ `
                 query {
                     uiapi {
                         query {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -459,26 +512,37 @@ describe('graphql', () => {
                     }
                 }
                 fragment defaultRecordFields on Record {
-                    __typename,
-                    ApiName,
-                    WeakEtag,
-                    Id,
-                    DisplayValue,
-                    SystemModstamp { value }
-                    LastModifiedById { value }
-                    LastModifiedDate { value }
-                    RecordTypeId(fallback: true) { value }
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
                 }
             `;
 
-            const expectedQueryTwo = `
+            const expectedQueryTwo = /* GraphQL */ `
                 query {
                     uiapi {
                         query {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Phone { value, displayValue }
+                                        Phone {
+                                            value
+                                            displayValue
+                                        }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -487,15 +551,23 @@ describe('graphql', () => {
                     }
                 }
                 fragment defaultRecordFields on Record {
-                    __typename,
-                    ApiName,
-                    WeakEtag,
-                    Id,
-                    DisplayValue,
-                    SystemModstamp { value }
-                    LastModifiedById { value }
-                    LastModifiedDate { value }
-                    RecordTypeId(fallback: true) { value }
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
                 }
             `;
 
@@ -581,16 +653,17 @@ describe('graphql', () => {
         });
 
         it('should not hit network when merged data in cache is requested', async () => {
-            const ast = parseQuery(`
+            const ast = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -599,16 +672,17 @@ describe('graphql', () => {
                 }
             `);
 
-            const ast2 = parseQuery(`
+            const ast2 = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Phone { value, displayValue }
+                                        Phone {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -617,14 +691,17 @@ describe('graphql', () => {
                 }
             `);
 
-            const expectedQueryOne = `
+            const expectedQueryOne = /* GraphQL */ `
                 query {
                     uiapi {
                         query {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -633,26 +710,37 @@ describe('graphql', () => {
                     }
                 }
                 fragment defaultRecordFields on Record {
-                    __typename,
-                    ApiName,
-                    WeakEtag,
-                    Id,
-                    DisplayValue,
-                    SystemModstamp { value }
-                    LastModifiedById { value }
-                    LastModifiedDate { value }
-                    RecordTypeId(fallback: true) { value }
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
                 }
             `;
 
-            const expectedQueryTwo = `
+            const expectedQueryTwo = /* GraphQL */ `
                 query {
                     uiapi {
                         query {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Phone { value, displayValue }
+                                        Phone {
+                                            value
+                                            displayValue
+                                        }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -661,15 +749,23 @@ describe('graphql', () => {
                     }
                 }
                 fragment defaultRecordFields on Record {
-                    __typename,
-                    ApiName,
-                    WeakEtag,
-                    Id,
-                    DisplayValue,
-                    SystemModstamp { value }
-                    LastModifiedById { value }
-                    LastModifiedDate { value }
-                    RecordTypeId(fallback: true) { value }
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
                 }
             `;
 
@@ -753,17 +849,19 @@ describe('graphql', () => {
             const snapshot2 = await luvio.resolvePendingSnapshot(pending2);
             expect(snapshot2.data).toEqualSnapshotWithoutEtags(expectedDataTwo);
 
-            const cachedDataAst = parseQuery(`
+            const cachedDataAst = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value }
-                                        Phone { value }
+                                        Name {
+                                            value
+                                        }
+                                        Phone {
+                                            value
+                                        }
                                     }
                                 }
                             }
@@ -806,16 +904,17 @@ describe('graphql', () => {
 
     describe('aliasing', () => {
         it('should not hit network when all data is in cache', async () => {
-            const astOne = parseQuery(`
+            const astOne = parseQuery(/* GraphQL */ `
                 query {
                     ApiOne: uiapi {
                         query {
-                            AccountOne: Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            AccountOne: Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        NameOne: Name { value, displayValue }
+                                        NameOne: Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -824,16 +923,17 @@ describe('graphql', () => {
                 }
             `);
 
-            const astTwo = parseQuery(`
+            const astTwo = parseQuery(/* GraphQL */ `
                 query {
                     ApiTwo: uiapi {
                         query {
-                            AccountTwo: Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            AccountTwo: Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        NameTwo: Name { value, displayValue }
+                                        NameTwo: Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -886,14 +986,17 @@ describe('graphql', () => {
                 errors: [],
             };
 
-            const expectedQuery = `
+            const expectedQuery = /* GraphQL */ `
                 query {
                     ApiOne: uiapi {
                         query {
                             AccountOne: Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        NameOne: Name { value, displayValue }
+                                        NameOne: Name {
+                                            value
+                                            displayValue
+                                        }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -902,15 +1005,23 @@ describe('graphql', () => {
                     }
                 }
                 fragment defaultRecordFields on Record {
-                    __typename,
-                    ApiName,
-                    WeakEtag,
-                    Id,
-                    DisplayValue,
-                    SystemModstamp { value }
-                    LastModifiedById { value }
-                    LastModifiedDate { value }
-                    RecordTypeId(fallback: true) { value }
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
                 }
             `;
 
@@ -942,16 +1053,17 @@ describe('graphql', () => {
         });
 
         it('should not hit network when merged data in cache is requested', async () => {
-            const ast = parseQuery(`
+            const ast = parseQuery(/* GraphQL */ `
                 query {
                     ApiOne: uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -959,12 +1071,13 @@ describe('graphql', () => {
                     }
                     ApiTwo: uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Phone { value, displayValue }
+                                        Phone {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -1011,14 +1124,17 @@ describe('graphql', () => {
                 errors: [],
             };
 
-            const expectedQuery = `
+            const expectedQuery = /* GraphQL */ `
                 query {
                     ApiOne: uiapi {
                         query {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -1030,7 +1146,10 @@ describe('graphql', () => {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Phone { value, displayValue }
+                                        Phone {
+                                            value
+                                            displayValue
+                                        }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -1039,15 +1158,23 @@ describe('graphql', () => {
                     }
                 }
                 fragment defaultRecordFields on Record {
-                    __typename,
-                    ApiName,
-                    WeakEtag,
-                    Id,
-                    DisplayValue,
-                    SystemModstamp { value }
-                    LastModifiedById { value }
-                    LastModifiedDate { value }
-                    RecordTypeId(fallback: true) { value }
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
                 }
             `;
 
@@ -1070,17 +1197,20 @@ describe('graphql', () => {
             const snapshot = await luvio.resolvePendingSnapshot(pending);
             expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
 
-            const cachedDataAst = parseQuery(`
+            const cachedDataAst = parseQuery(/* GraphQL */ `
                 query {
                     ApiThree: uiapi {
                         query {
-                            AccountThree: Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            AccountThree: Account(where: { Name: { like: "Account1" } })
+                                @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        NameThree: Name { value }
-                                        PhoneThree: Phone { value }
+                                        NameThree: Name {
+                                            value
+                                        }
+                                        PhoneThree: Phone {
+                                            value
+                                        }
                                     }
                                 }
                             }
@@ -1121,16 +1251,17 @@ describe('graphql', () => {
         });
 
         it('should not hit network when data from multiple requests in cache is requested', async () => {
-            const astOne = parseQuery(`
+            const astOne = parseQuery(/* GraphQL */ `
                 query {
                     ApiOne: uiapi {
                         query {
-                            AccountOne: Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            AccountOne: Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        NameOne: Name { value, displayValue }
+                                        NameOne: Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -1139,16 +1270,17 @@ describe('graphql', () => {
                 }
             `);
 
-            const astTwo = parseQuery(`
+            const astTwo = parseQuery(/* GraphQL */ `
                 query {
                     ApiTwo: uiapi {
                         query {
-                            AccountTwo: Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            AccountTwo: Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        PhoneTwo: Phone { value, displayValue }
+                                        PhoneTwo: Phone {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -1201,14 +1333,17 @@ describe('graphql', () => {
                 errors: [],
             };
 
-            const expectedQueryOne = `
+            const expectedQueryOne = /* GraphQL */ `
                 query {
                     ApiOne: uiapi {
                         query {
                             AccountOne: Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        NameOne: Name { value, displayValue }
+                                        NameOne: Name {
+                                            value
+                                            displayValue
+                                        }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -1217,26 +1352,37 @@ describe('graphql', () => {
                     }
                 }
                 fragment defaultRecordFields on Record {
-                    __typename,
-                    ApiName,
-                    WeakEtag,
-                    Id,
-                    DisplayValue,
-                    SystemModstamp { value }
-                    LastModifiedById { value }
-                    LastModifiedDate { value }
-                    RecordTypeId(fallback: true) { value }
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
                 }
             `;
 
-            const expectedQueryTwo = `
+            const expectedQueryTwo = /* GraphQL */ `
                 query {
                     ApiTwo: uiapi {
                         query {
                             AccountTwo: Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        PhoneTwo: Phone { value, displayValue }
+                                        PhoneTwo: Phone {
+                                            value
+                                            displayValue
+                                        }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -1245,15 +1391,23 @@ describe('graphql', () => {
                     }
                 }
                 fragment defaultRecordFields on Record {
-                    __typename,
-                    ApiName,
-                    WeakEtag,
-                    Id,
-                    DisplayValue,
-                    SystemModstamp { value }
-                    LastModifiedById { value }
-                    LastModifiedDate { value }
-                    RecordTypeId(fallback: true) { value }
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
                 }
             `;
 
@@ -1294,17 +1448,20 @@ describe('graphql', () => {
             const snapshot2 = await luvio.resolvePendingSnapshot(pending2);
             expect(snapshot2.data).toEqualSnapshotWithoutEtags(expectedDataTwo);
 
-            const cachedDataAst = parseQuery(`
+            const cachedDataAst = parseQuery(/* GraphQL */ `
                 query {
                     ApiThree: uiapi {
                         query {
-                            AccountThree: Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            AccountThree: Account(where: { Name: { like: "Account1" } })
+                                @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        NameThree: Name { value }
-                                        PhoneThree: Phone { value }
+                                        NameThree: Name {
+                                            value
+                                        }
+                                        PhoneThree: Phone {
+                                            value
+                                        }
                                     }
                                 }
                             }
@@ -1347,16 +1504,17 @@ describe('graphql', () => {
 
     describe('missing links', () => {
         it('should handle when nested spanning field is not present', async () => {
-            const ast = parseQuery(`
+            const ast = parseQuery(/* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Account(
-                                where: { Name: { like: "Account1" } }
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                     }
                                 }
                             }
@@ -1365,12 +1523,11 @@ describe('graphql', () => {
                 }
             `);
 
-            const ast2 = parseQuery(`
+            const ast2 = parseQuery(/* GraphQL */ `
                 {
                     uiapi {
                         query {
-                            Account(where: {Name: {like: "Account1"}}
-                            ) @connection {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
                                         Owner @resource(type: "Record") {
@@ -1387,14 +1544,17 @@ describe('graphql', () => {
                 }
             `);
 
-            const expectedQueryOne = `
+            const expectedQueryOne = /* GraphQL */ `
                 query {
                     uiapi {
                         query {
                             Account(where: { Name: { like: "Account1" } }) {
                                 edges {
                                     node {
-                                        Name { value, displayValue }
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
                                         ...defaultRecordFields
                                     }
                                 }
@@ -1403,59 +1563,67 @@ describe('graphql', () => {
                     }
                 }
                 fragment defaultRecordFields on Record {
-                    __typename,
-                    ApiName,
-                    WeakEtag,
-                    Id,
-                    DisplayValue,
-                    SystemModstamp { value }
-                    LastModifiedById { value }
-                    LastModifiedDate { value }
-                    RecordTypeId(fallback: true) { value }
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
                 }
             `;
 
-            const expectedQueryTwo = `
-            {
-                uiapi {
-                  query {
-                    Account(where: {Name: {like: "Account1"}}) {
-                      edges {
-                        node {
-                          Owner {
-                            Name {
-                              value
-                              displayValue
+            const expectedQueryTwo = /* GraphQL */ `
+                {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) {
+                                edges {
+                                    node {
+                                        Owner {
+                                            Name {
+                                                value
+                                                displayValue
+                                            }
+                                            ...defaultRecordFields
+                                        }
+                                        ...defaultRecordFields
+                                    }
+                                }
                             }
-                            ...defaultRecordFields
-                          }
-                          ...defaultRecordFields
                         }
-                      }
                     }
-                  }
                 }
-              }
 
-              fragment defaultRecordFields on Record {
-                __typename
-                ApiName
-                WeakEtag
-                Id
-                DisplayValue
-                SystemModstamp {
-                  value
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
                 }
-                LastModifiedById {
-                  value
-                }
-                LastModifiedDate {
-                  value
-                }
-                RecordTypeId(fallback: true) {
-                  value
-                }
-              }
             `;
 
             const networkData = getMock('RecordQuery-Account-fields-Name');
@@ -1545,16 +1713,17 @@ describe('graphql', () => {
     describe('Record representation', () => {
         describe('getRecord', () => {
             it('should be a CACHE HIT if getRecord requests a record with same fields fetched from GQL', async () => {
-                const ast = parseQuery(`
+                const ast = parseQuery(/* GraphQL */ `
                     query {
                         uiapi {
                             query {
-                                Account(
-                                    where: { Name: { like: "Account1" } }
-                                ) @connection {
+                                Account(where: { Name: { like: "Account1" } }) @connection {
                                     edges {
                                         node @resource(type: "Record") {
-                                            Name { value, displayValue }
+                                            Name {
+                                                value
+                                                displayValue
+                                            }
                                         }
                                     }
                                 }
@@ -1563,14 +1732,17 @@ describe('graphql', () => {
                     }
                 `);
 
-                const expectedQuery = `
+                const expectedQuery = /* GraphQL */ `
                     query {
                         uiapi {
                             query {
                                 Account(where: { Name: { like: "Account1" } }) {
                                     edges {
                                         node {
-                                            Name { value, displayValue }
+                                            Name {
+                                                value
+                                                displayValue
+                                            }
                                             ...defaultRecordFields
                                         }
                                     }
@@ -1579,15 +1751,23 @@ describe('graphql', () => {
                         }
                     }
                     fragment defaultRecordFields on Record {
-                        __typename,
-                        ApiName,
-                        WeakEtag,
-                        Id,
-                        DisplayValue,
-                        SystemModstamp { value }
-                        LastModifiedById { value }
-                        LastModifiedDate { value }
-                        RecordTypeId(fallback: true) { value }
+                        __typename
+                        ApiName
+                        WeakEtag
+                        Id
+                        DisplayValue
+                        SystemModstamp {
+                            value
+                        }
+                        LastModifiedById {
+                            value
+                        }
+                        LastModifiedDate {
+                            value
+                        }
+                        RecordTypeId(fallback: true) {
+                            value
+                        }
                     }
                 `;
 
@@ -1659,16 +1839,17 @@ describe('graphql', () => {
             });
 
             it('should emit changes to graphql adapter when getRecord returns updated fields', async () => {
-                const ast = parseQuery(`
+                const ast = parseQuery(/* GraphQL */ `
                     query {
                         uiapi {
                             query {
-                                Account(
-                                    where: { Name: { like: "Account1" } }
-                                ) @connection {
+                                Account(where: { Name: { like: "Account1" } }) @connection {
                                     edges {
                                         node @resource(type: "Record") {
-                                            Name { value, displayValue }
+                                            Name {
+                                                value
+                                                displayValue
+                                            }
                                         }
                                     }
                                 }
@@ -1677,14 +1858,17 @@ describe('graphql', () => {
                     }
                 `);
 
-                const expectedQuery = `
+                const expectedQuery = /* GraphQL */ `
                     query {
                         uiapi {
                             query {
                                 Account(where: { Name: { like: "Account1" } }) {
                                     edges {
                                         node {
-                                            Name { value, displayValue }
+                                            Name {
+                                                value
+                                                displayValue
+                                            }
                                             ...defaultRecordFields
                                         }
                                     }
@@ -1694,15 +1878,23 @@ describe('graphql', () => {
                     }
 
                     fragment defaultRecordFields on Record {
-                        __typename,
-                        ApiName,
-                        WeakEtag,
-                        Id,
-                        DisplayValue,
-                        SystemModstamp { value }
-                        LastModifiedById { value }
-                        LastModifiedDate { value }
-                        RecordTypeId(fallback: true) { value }
+                        __typename
+                        ApiName
+                        WeakEtag
+                        Id
+                        DisplayValue
+                        SystemModstamp {
+                            value
+                        }
+                        LastModifiedById {
+                            value
+                        }
+                        LastModifiedDate {
+                            value
+                        }
+                        RecordTypeId(fallback: true) {
+                            value
+                        }
                     }
                 `;
 
@@ -1772,11 +1964,11 @@ describe('graphql', () => {
 
         describe('Tracked fields', () => {
             it('should fetch record with all tracked fields collected from getRecord wire', async () => {
-                const query = parseQuery(`
+                const query = parseQuery(/* GraphQL */ `
                     query {
                         uiapi {
                             query {
-                                Opportunity(where: {Name: {eq: "Opp1"}}) @connection {
+                                Opportunity(where: { Name: { eq: "Opp1" } }) @connection {
                                     edges {
                                         node @resource(type: "Record") {
                                             Name {
@@ -1791,11 +1983,11 @@ describe('graphql', () => {
                     }
                 `);
 
-                const expectedQuery = `
+                const expectedQuery = /* GraphQL */ `
                     query {
                         uiapi {
                             query {
-                                Opportunity(where: {Name: {eq: "Opp1"}}) {
+                                Opportunity(where: { Name: { eq: "Opp1" } }) {
                                     edges {
                                         node {
                                             Name {
@@ -1816,10 +2008,18 @@ describe('graphql', () => {
                         WeakEtag
                         Id
                         DisplayValue
-                        SystemModstamp { value }
-                        LastModifiedById { value }
-                        LastModifiedDate { value }
-                        RecordTypeId(fallback: true) { value }
+                        SystemModstamp {
+                            value
+                        }
+                        LastModifiedById {
+                            value
+                        }
+                        LastModifiedDate {
+                            value
+                        }
+                        RecordTypeId(fallback: true) {
+                            value
+                        }
                     }
                 `;
 
@@ -1896,11 +2096,11 @@ describe('graphql', () => {
             });
 
             it('should refresh data when gql returns old records', async () => {
-                const query = parseQuery(`
+                const query = parseQuery(/* GraphQL */ `
                     query {
                         uiapi {
                             query {
-                                Opportunity(where: {Name: {eq: "Opp1"}}) @connection {
+                                Opportunity(where: { Name: { eq: "Opp1" } }) @connection {
                                     edges {
                                         node @resource(type: "Record") {
                                             Name {
@@ -1915,11 +2115,11 @@ describe('graphql', () => {
                     }
                 `);
 
-                const expectedQuery = `
+                const expectedQuery = /* GraphQL */ `
                     query {
                         uiapi {
                             query {
-                                Opportunity(where: {Name: {eq: "Opp1"}}) {
+                                Opportunity(where: { Name: { eq: "Opp1" } }) {
                                     edges {
                                         node {
                                             Name {
@@ -1940,10 +2140,18 @@ describe('graphql', () => {
                         WeakEtag
                         Id
                         DisplayValue
-                        SystemModstamp { value }
-                        LastModifiedById { value }
-                        LastModifiedDate { value }
-                        RecordTypeId(fallback: true) { value }
+                        SystemModstamp {
+                            value
+                        }
+                        LastModifiedById {
+                            value
+                        }
+                        LastModifiedDate {
+                            value
+                        }
+                        RecordTypeId(fallback: true) {
+                            value
+                        }
                     }
                 `;
 
@@ -2028,11 +2236,11 @@ describe('graphql', () => {
 
     describe('null spanning records', () => {
         it('should ingest null spanning records correctly', async () => {
-            const ast = parseQuery(`
+            const ast = parseQuery(/* GraphQL */ `
                 {
                     uiapi {
                         query {
-                            Account(where: {Name: {like: "Add One More Account"}}) @connection {
+                            Account(where: { Name: { like: "Add One More Account" } }) @connection {
                                 edges {
                                     node @resource(type: "Record") {
                                         Parent @resource(type: "Record") {
@@ -2048,11 +2256,11 @@ describe('graphql', () => {
                 }
             `);
 
-            const expectedQuery = `
+            const expectedQuery = /* GraphQL */ `
                 {
                     uiapi {
                         query {
-                            Account(where: {Name: {like: "Add One More Account"}}) {
+                            Account(where: { Name: { like: "Add One More Account" } }) {
                                 edges {
                                     node {
                                         Parent {
@@ -2133,7 +2341,7 @@ describe('graphql', () => {
     describe('Errors', () => {
         it('should emit error responses to the user', async () => {
             const mock = getMock('ErrorQuery-invalid-field');
-            const query = `
+            const query = /* GraphQL */ `
                 {
                     uiapi {
                         query {
@@ -2165,36 +2373,37 @@ describe('graphql', () => {
     describe('Child Relationships', () => {
         it('should load child relationship correctly', async () => {
             const mock = getMock('RecordQuery-Opportunity-child-relationship-partners');
-            const ast = parseQuery(`
-                    { uiapi {
+            const ast = parseQuery(/* GraphQL */ `
+                {
+                    uiapi {
                         query {
-                          Opportunity(where: {Name: {like: "Opp1"}}) @connection {
-                            edges {
-                              node @resource(type: "Record") {
-                                Name {
-                                  value
-                                  displayValue
-                                }
-                                Partners @connection {
-                                  edges {
+                            Opportunity(where: { Name: { like: "Opp1" } }) @connection {
+                                edges {
                                     node @resource(type: "Record") {
-                                      ApiName
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
+                                        Partners @connection {
+                                            edges {
+                                                node @resource(type: "Record") {
+                                                    ApiName
+                                                }
+                                            }
+                                        }
                                     }
-                                  }
                                 }
-                              }
                             }
-                          }
                         }
+                    }
                 }
-            }
             `);
 
-            const expectedQuery = `
+            const expectedQuery = /* GraphQL */ `
                 query {
                     uiapi {
                         query {
-                            Opportunity(where: {Name: {like: "Opp1"}}) {
+                            Opportunity(where: { Name: { like: "Opp1" } }) {
                                 edges {
                                     node {
                                         Name {
@@ -2224,16 +2433,16 @@ describe('graphql', () => {
                     Id
                     DisplayValue
                     SystemModstamp {
-                    value
+                        value
                     }
                     LastModifiedById {
-                    value
+                        value
                     }
                     LastModifiedDate {
-                    value
+                        value
                     }
                     RecordTypeId(fallback: true) {
-                    value
+                        value
                     }
                 }
             `;

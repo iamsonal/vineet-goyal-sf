@@ -106,7 +106,8 @@ export class JsNimbusDurableStore implements DurableStore {
         throw new Error('deprecated');
     }
 
-    async batchOperations(operations: DurableStoreOperation[], sender: string): Promise<void> {
+    batchOperations(operations: DurableStoreOperation[], sender: string): Promise<void> {
+        const promises: Promise<any>[] = [];
         for (const operation of operations) {
             const { ids, segment, type, entries } = operation;
             switch (type) {
@@ -114,32 +115,36 @@ export class JsNimbusDurableStore implements DurableStore {
                     for (const id of ids) {
                         const entry = entries && entries[id];
                         if (entry !== undefined) {
-                            await this.backingStore.set(id, segment, entry);
+                            promises.push(this.backingStore.set(id, segment, entry));
                         }
                     }
                     break;
                 case 'evictEntries':
                     for (const id of ids) {
-                        await this.backingStore.delete(id, segment);
+                        promises.push(this.backingStore.delete(id, segment));
                     }
                     break;
             }
         }
 
-        const listenerIds = Object.keys(this.listeners);
-        for (const id of listenerIds) {
-            const listener = this.listeners[id];
-            listener(
-                operations.map((o) => {
-                    return {
-                        ids: o.ids,
-                        segment: o.segment,
-                        type: o.type,
-                        sender,
-                    };
-                })
-            );
-        }
+        return Promise.all(promises)
+            .then(() => {
+                const listenerIds = Object.keys(this.listeners);
+                for (const id of listenerIds) {
+                    const listener = this.listeners[id];
+                    listener(
+                        operations.map((o) => {
+                            return {
+                                ids: o.ids,
+                                segment: o.segment,
+                                type: o.type,
+                                sender,
+                            };
+                        })
+                    );
+                }
+            })
+            .then();
     }
 
     registerOnChangedListenerWithBatchInfo(

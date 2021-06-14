@@ -86,7 +86,7 @@ describe('AST to string', () => {
             ],
         };
 
-        const expectedQuery = `query { uiapi { query { Account(where:  { Name:  { like: "Account1" } }) { edges { node { Name { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+        const expectedQuery = `query { uiapi { query { Account(where: {Name: {like: "Account1"}}) { edges { node { Name { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
 
         const actual = astToString(ast);
         expect(actual).toEqual(expectedQuery);
@@ -178,7 +178,7 @@ describe('AST to string', () => {
             ],
         };
 
-        const expectedQuery = `query { uiapi { query { Account(where:  { Name:  { like: "Account1" } }) { edges { node { id, WeakEtag, Name { value, displayValue,  } } } } } } }`;
+        const expectedQuery = `query { uiapi { query { Account(where: {Name: {like: "Account1"}}) { edges { node { id, WeakEtag, Name { value, displayValue,  } } } } } } }`;
 
         const actual = astToString(ast);
         expect(actual).toEqual(expectedQuery);
@@ -369,7 +369,151 @@ describe('AST to string', () => {
             ],
         };
 
-        const expectedQuery = `query { MyApi: uiapi { query { MyAccount: Account(where:  { Name:  { like: "Account1" } }) { edges { MyNode: node { MyName: Name { MyValue: value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+        const expectedQuery = `query { MyApi: uiapi { query { MyAccount: Account(where: {Name: {like: "Account1"}}) { edges { MyNode: node { MyName: Name { MyValue: value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+
+        const actual = astToString(ast);
+        expect(actual).toEqual(expectedQuery);
+    });
+
+    it('should create correct graphql query when using variables', () => {
+        const ast: LuvioDocumentNode = {
+            kind: 'Document',
+            definitions: [
+                {
+                    kind: 'OperationDefinition',
+                    operation: 'query',
+                    name: 'operationName',
+                    luvioSelections: [
+                        {
+                            kind: 'ObjectFieldSelection',
+                            name: 'uiapi',
+                            alias: 'MyApi',
+                            luvioSelections: [
+                                {
+                                    kind: 'ObjectFieldSelection',
+                                    name: 'query',
+                                    luvioSelections: [
+                                        {
+                                            kind: 'CustomFieldSelection',
+                                            name: 'Account',
+                                            type: 'Connection',
+                                            alias: 'MyAccount',
+                                            luvioSelections: [
+                                                {
+                                                    kind: 'ObjectFieldSelection',
+                                                    name: 'edges',
+                                                    luvioSelections: [
+                                                        {
+                                                            kind: 'CustomFieldSelection',
+                                                            name: 'node',
+                                                            type: 'Record',
+                                                            alias: 'MyNode',
+                                                            luvioSelections: [
+                                                                {
+                                                                    kind: 'ObjectFieldSelection',
+                                                                    name: 'Name',
+                                                                    alias: 'MyName',
+                                                                    luvioSelections: [
+                                                                        {
+                                                                            kind: 'ScalarFieldSelection',
+                                                                            name: 'value',
+                                                                            alias: 'MyValue',
+                                                                        },
+                                                                        {
+                                                                            kind: 'ScalarFieldSelection',
+                                                                            name: 'displayValue',
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                            arguments: [
+                                                {
+                                                    kind: 'Argument',
+                                                    name: 'where',
+                                                    value: {
+                                                        kind: 'ObjectValue',
+                                                        fields: {
+                                                            Name: {
+                                                                kind: 'ObjectValue',
+                                                                fields: {
+                                                                    like: {
+                                                                        kind: 'Variable',
+                                                                        name: 'accountName',
+                                                                    },
+                                                                },
+                                                            },
+                                                            Id: {
+                                                                kind: 'ObjectValue',
+                                                                fields: {
+                                                                    in: {
+                                                                        kind: 'Variable',
+                                                                        name: 'Id',
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                    variableDefinitions: [
+                        {
+                            kind: 'VariableDefinition',
+                            variable: {
+                                kind: 'Variable',
+                                name: 'accountName',
+                            },
+                            type: {
+                                kind: 'NamedType',
+                                name: 'String',
+                            },
+                            defaultValue: {
+                                kind: 'StringValue',
+                                value: 'Account2',
+                            },
+                        },
+                        {
+                            kind: 'VariableDefinition',
+                            variable: {
+                                kind: 'Variable',
+                                name: 'Id',
+                            },
+                            type: {
+                                kind: 'ListType',
+                                type: {
+                                    kind: 'NamedType',
+                                    name: 'ID',
+                                },
+                            },
+                            defaultValue: {
+                                kind: 'ListValue',
+                                values: [
+                                    {
+                                        kind: 'StringValue',
+                                        value: '001RM000004uuhtYAA',
+                                    },
+                                    {
+                                        kind: 'StringValue',
+                                        value: '001RM000004uuhsYAA',
+                                    },
+                                ],
+                            },
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const expectedQuery = `query ($accountName: String = "Account2", $Id: [ID] = ["001RM000004uuhtYAA", "001RM000004uuhsYAA"]) { MyApi: uiapi { query { MyAccount: Account(where: {Name: {like: $accountName}, Id: {in: $Id}}) { edges { MyNode: node { MyName: Name { MyValue: value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
 
         const actual = astToString(ast);
         expect(actual).toEqual(expectedQuery);
@@ -451,7 +595,7 @@ describe('AST to string', () => {
                 ],
             };
 
-            const expectedQuery = `query { uiapi { query { Account(where:  { Name:  { like: "Account1" } }) { edges { node { Name { label, value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+            const expectedQuery = `query { uiapi { query { Account(where: {Name: {like: "Account1"}}) { edges { node { Name { label, value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
             const actual = astToString(ast);
 
             expect(actual).toEqual(expectedQuery);
@@ -546,7 +690,7 @@ describe('AST to string', () => {
                 ],
             };
 
-            const expectedQuery = `query { uiapi { query { Account(where:  { Name:  { like: "Account1" } }) { edges { node { Name { value, displayValue,  }Phone { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+            const expectedQuery = `query { uiapi { query { Account(where: {Name: {like: "Account1"}}) { edges { node { Name { value, displayValue,  }Phone { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
             const actual = astToString(ast);
 
             expect(actual).toEqual(expectedQuery);

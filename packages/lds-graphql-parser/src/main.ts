@@ -17,6 +17,12 @@ import {
     LuvioSelectionScalarFieldNode,
     LuvioValueNode,
     LuvioFieldNode,
+    LuvioVariableDefinitionNode,
+    LuvioVariableNode,
+    LuvioNamedTypeNode,
+    LuvioListTypeNode,
+    LuvioListValueNode,
+    LuvioTypeNode,
 } from './ast';
 import { transform } from './document';
 
@@ -44,4 +50,10 @@ export {
     LuvioSelectionScalarFieldNode,
     LuvioValueNode,
     LuvioFieldNode,
+    LuvioVariableDefinitionNode,
+    LuvioVariableNode,
+    LuvioNamedTypeNode,
+    LuvioListTypeNode,
+    LuvioListValueNode,
+    LuvioTypeNode,
 };

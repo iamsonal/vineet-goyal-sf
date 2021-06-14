@@ -14,6 +14,12 @@ import {
     LuvioSelectionScalarFieldNode,
     LuvioValueNode,
     LuvioFieldNode,
+    LuvioVariableNode,
+    LuvioVariableDefinitionNode,
+    LuvioNamedTypeNode,
+    LuvioListTypeNode,
+    LuvioListValueNode,
+    LuvioTypeNode,
 } from '@salesforce/lds-graphql-parser';
 import {
     defaultRecordFieldsFragmentName,
@@ -40,9 +46,29 @@ function serializeValueNode(valueDefinition: LuvioValueNode) {
             return (valueDefinition as IntValueNode).value;
         case 'BooleanValue':
             return (valueDefinition as BooleanValueNode).value;
+        case 'Variable':
+            return serializeVariableNode(valueDefinition as LuvioVariableNode);
+        case 'ListValue':
+            return serializeListValueNode(valueDefinition as LuvioListValueNode);
     }
 
     throw new Error(`Unable to serialize graphql query, unsupported value node "${kind}"`);
+}
+
+function serializeVariableNode(variableNode: LuvioVariableNode) {
+    return `$${variableNode.name}`;
+}
+
+function serializeListValueNode(listNode: LuvioListValueNode) {
+    const { values } = listNode;
+    if (values.length === 0) {
+        return '';
+    }
+    let str = '';
+    for (let i = 0, len = values.length; i < len; i += 1) {
+        str = `${str}${serializeValueNode(values[i])}, `;
+    }
+    return `[${str.substring(0, str.length - 2)}]`;
 }
 
 function serializeStringValueNode(literalValueNode: StringValueNode) {
@@ -55,9 +81,9 @@ function serializeObjectValueNode(objectValueDefinition: LuvioObjectValueNode) {
     const fieldKeys = keys(fields);
     for (let i = 0, len = fieldKeys.length; i < len; i += 1) {
         const fieldKey = fieldKeys[i];
-        str = `${str} { ${fieldKey}: ${serializeValueNode(fields[fieldKey])} }`;
+        str = `${str}${fieldKey}: ${serializeValueNode(fields[fieldKey])}, `;
     }
-    return str;
+    return `{${str.substring(0, str.length - 2)}}`;
 }
 
 function serializeArguments(argDefinitions: LuvioArgumentNode[] | undefined) {
@@ -94,6 +120,47 @@ function serializeSelections(selections: LuvioSelectionNode[] | undefined, state
     }
 
     return str;
+}
+
+function serializeVariableDefinitions(definitons: LuvioVariableDefinitionNode[] | undefined) {
+    if (definitons === undefined || definitons.length === 0) {
+        return '';
+    }
+    let str = '';
+    for (let i = 0, len = definitons.length; i < len; i += 1) {
+        const def = serializeVariableDefinitionNode(definitons[i]);
+        str = `${str}${def}, `;
+    }
+    return ` (${str.substring(0, str.length - 2)})`;
+}
+
+function serializeVariableDefinitionNode(def: LuvioVariableDefinitionNode) {
+    const { variable, type, defaultValue } = def;
+    return defaultValue === undefined
+        ? `$${variable.name}: ${serializeTypeNode(type)}`
+        : `$${variable.name}: ${serializeTypeNode(type)} = ${serializeValueNode(defaultValue)}`;
+}
+
+function serializeTypeNode(type: LuvioTypeNode): string {
+    const { kind } = type;
+
+    switch (kind) {
+        case 'NamedType':
+            return serializeNamedTypeNode(type as LuvioNamedTypeNode);
+        case 'ListType':
+            return serializeListTypeNode(type as LuvioListTypeNode);
+    }
+    throw new Error(
+        `Unable to serialize graphql query, unsupported variable definition type node "${type.kind}"`
+    );
+}
+
+function serializeNamedTypeNode(type: LuvioNamedTypeNode) {
+    return type.name;
+}
+
+function serializeListTypeNode(type: LuvioListTypeNode) {
+    return `[${serializeTypeNode(type.type)}]`;
 }
 
 function serializeRecordSelections(
@@ -237,8 +304,10 @@ function serializeOperationNode(def: LuvioDefinitionNode, state: SerializeState)
 }
 
 function serializeOperationDefinition(def: LuvioOperationDefinitionNode, state: SerializeState) {
-    const { operation, luvioSelections } = def;
-    return `${operation} { ${serializeSelections(luvioSelections, state)} }`;
+    const { operation, luvioSelections, variableDefinitions } = def;
+    return `${operation}${serializeVariableDefinitions(
+        variableDefinitions
+    )} { ${serializeSelections(luvioSelections, state)} }`;
 }
 
 interface SerializeState {

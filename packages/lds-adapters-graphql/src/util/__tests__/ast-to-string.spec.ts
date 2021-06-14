@@ -1,6 +1,13 @@
-import { astToString, serializeCustomFieldRecord } from '../ast-to-string';
+import {
+    astToString,
+    serializeCustomFieldRecord,
+    serializeArguments,
+    serializeOperationDefinition,
+} from '../ast-to-string';
 import parse, {
+    LuvioArgumentNode,
     LuvioDocumentNode,
+    LuvioOperationDefinitionNode,
     LuvioSelectionCustomFieldNode,
 } from '@salesforce/lds-graphql-parser';
 
@@ -13,7 +20,6 @@ describe('AST to string', () => {
                     kind: 'OperationDefinition',
                     operation: 'query',
                     variableDefinitions: [],
-                    name: 'operationName',
                     luvioSelections: [
                         {
                             kind: 'ObjectFieldSelection',
@@ -86,10 +92,133 @@ describe('AST to string', () => {
             ],
         };
 
-        const expectedQuery = `query { uiapi { query { Account(where: {Name: {like: "Account1"}}) { edges { node { Name { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+        const expectedQuery = `query { uiapi { query { Account(where: { Name: { like: "Account1" } }) { edges { node { Name { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
 
         const actual = astToString(ast);
         expect(actual).toEqual(expectedQuery);
+    });
+
+    describe('serializeArguments', () => {
+        it('should serialize deep arguments correctly', () => {
+            const args: LuvioArgumentNode[] = [
+                {
+                    kind: 'Argument',
+                    name: 'orderBy',
+                    value: {
+                        kind: 'ObjectValue',
+                        fields: {
+                            AppointmentNumber: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    order: {
+                                        kind: 'EnumValue',
+                                        value: 'ASC',
+                                    },
+                                    nulls: {
+                                        kind: 'EnumValue',
+                                        value: 'FIRST',
+                                    },
+                                },
+                            },
+                            Id: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    order: {
+                                        kind: 'EnumValue',
+                                        value: 'ASC',
+                                    },
+                                    nulls: {
+                                        kind: 'EnumValue',
+                                        value: 'FIRST',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                {
+                    kind: 'Argument',
+                    name: 'first',
+                    value: {
+                        kind: 'IntValue',
+                        value: '1000',
+                    },
+                },
+                {
+                    kind: 'Argument',
+                    name: 'where',
+                    value: {
+                        kind: 'ObjectValue',
+                        fields: {
+                            SchedStartTime: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    gte: {
+                                        kind: 'ObjectValue',
+                                        fields: {
+                                            range: {
+                                                kind: 'ObjectValue',
+                                                fields: {
+                                                    last_n_months: {
+                                                        kind: 'IntValue',
+                                                        value: '4',
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                            and: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    SchedEndTime: {
+                                        kind: 'ObjectValue',
+                                        fields: {
+                                            lte: {
+                                                kind: 'ObjectValue',
+                                                fields: {
+                                                    range: {
+                                                        kind: 'ObjectValue',
+                                                        fields: {
+                                                            next_n_months: {
+                                                                kind: 'IntValue',
+                                                                value: '4',
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            ];
+
+            const expectedQuery =
+                'orderBy: { AppointmentNumber: { order: ASC, nulls: FIRST }, Id: { order: ASC, nulls: FIRST } } first: 1000 where: { SchedStartTime: { gte: { range: { last_n_months: 4 } } }, and: { SchedEndTime: { lte: { range: { next_n_months: 4 } } } } }';
+
+            const actual = serializeArguments(args);
+            expect(actual).toEqual(expectedQuery);
+        });
+    });
+
+    describe('serializeOperationDefinition', () => {
+        it('should serialize named operation correctly', () => {
+            const operationNode: LuvioOperationDefinitionNode = {
+                kind: 'OperationDefinition',
+                operation: 'query',
+                variableDefinitions: [],
+                name: 'operationName',
+                luvioSelections: [],
+            };
+
+            const result = serializeOperationDefinition(operationNode, { fragments: {} });
+            expect(result).toEqual('query operationName {  }');
+        });
     });
 
     it('should make correct request when arguments are present outside @connection directive', () => {
@@ -99,7 +228,6 @@ describe('AST to string', () => {
                 {
                     kind: 'OperationDefinition',
                     operation: 'query',
-                    name: 'operationName',
                     luvioSelections: [
                         {
                             kind: 'ObjectFieldSelection',
@@ -178,7 +306,7 @@ describe('AST to string', () => {
             ],
         };
 
-        const expectedQuery = `query { uiapi { query { Account(where: {Name: {like: "Account1"}}) { edges { node { id, WeakEtag, Name { value, displayValue,  } } } } } } }`;
+        const expectedQuery = `query { uiapi { query { Account(where: { Name: { like: "Account1" } }) { edges { node { id, WeakEtag, Name { value, displayValue,  } } } } } } }`;
 
         const actual = astToString(ast);
         expect(actual).toEqual(expectedQuery);
@@ -291,7 +419,6 @@ describe('AST to string', () => {
                     kind: 'OperationDefinition',
                     operation: 'query',
                     variableDefinitions: [],
-                    name: 'operationName',
                     luvioSelections: [
                         {
                             kind: 'ObjectFieldSelection',
@@ -369,7 +496,7 @@ describe('AST to string', () => {
             ],
         };
 
-        const expectedQuery = `query { MyApi: uiapi { query { MyAccount: Account(where: {Name: {like: "Account1"}}) { edges { MyNode: node { MyName: Name { MyValue: value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+        const expectedQuery = `query { MyApi: uiapi { query { MyAccount: Account(where: { Name: { like: "Account1" } }) { edges { MyNode: node { MyName: Name { MyValue: value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
 
         const actual = astToString(ast);
         expect(actual).toEqual(expectedQuery);
@@ -382,7 +509,6 @@ describe('AST to string', () => {
                 {
                     kind: 'OperationDefinition',
                     operation: 'query',
-                    name: 'operationName',
                     luvioSelections: [
                         {
                             kind: 'ObjectFieldSelection',
@@ -513,7 +639,7 @@ describe('AST to string', () => {
             ],
         };
 
-        const expectedQuery = `query ($accountName: String = "Account2", $Id: [ID] = ["001RM000004uuhtYAA", "001RM000004uuhsYAA"]) { MyApi: uiapi { query { MyAccount: Account(where: {Name: {like: $accountName}, Id: {in: $Id}}) { edges { MyNode: node { MyName: Name { MyValue: value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+        const expectedQuery = `query  ($accountName: String = "Account2", $Id: [ID] = ["001RM000004uuhtYAA", "001RM000004uuhsYAA"]){ MyApi: uiapi { query { MyAccount: Account(where: { Name: { like: $accountName }, Id: { in: $Id } }) { edges { MyNode: node { MyName: Name { MyValue: value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
 
         const actual = astToString(ast);
         expect(actual).toEqual(expectedQuery);
@@ -595,7 +721,7 @@ describe('AST to string', () => {
                 ],
             };
 
-            const expectedQuery = `query { uiapi { query { Account(where: {Name: {like: "Account1"}}) { edges { node { Name { label, value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+            const expectedQuery = `query { uiapi { query { Account(where: { Name: { like: "Account1" } }) { edges { node { Name { label, value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
             const actual = astToString(ast);
 
             expect(actual).toEqual(expectedQuery);
@@ -690,7 +816,7 @@ describe('AST to string', () => {
                 ],
             };
 
-            const expectedQuery = `query { uiapi { query { Account(where: {Name: {like: "Account1"}}) { edges { node { Name { value, displayValue,  }Phone { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+            const expectedQuery = `query { uiapi { query { Account(where: { Name: { like: "Account1" } }) { edges { node { Name { value, displayValue,  }Phone { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
             const actual = astToString(ast);
 
             expect(actual).toEqual(expectedQuery);

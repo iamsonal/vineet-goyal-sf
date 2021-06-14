@@ -41,15 +41,21 @@ function serializeValueNode(valueDefinition: LuvioValueNode) {
         case 'NullValue':
             return 'null';
         case 'FloatValue':
-            return (valueDefinition as FloatValueNode).value;
         case 'IntValue':
-            return (valueDefinition as IntValueNode).value;
         case 'BooleanValue':
             return (valueDefinition as BooleanValueNode).value;
         case 'Variable':
             return serializeVariableNode(valueDefinition as LuvioVariableNode);
         case 'ListValue':
             return serializeListValueNode(valueDefinition as LuvioListValueNode);
+        case 'EnumValue':
+            return (
+                valueDefinition as
+                    | BooleanValueNode
+                    | FloatValueNode
+                    | IntValueNode
+                    | BooleanValueNode
+            ).value;
     }
 
     throw new Error(`Unable to serialize graphql query, unsupported value node "${kind}"`);
@@ -75,25 +81,28 @@ function serializeStringValueNode(literalValueNode: StringValueNode) {
     return `"${literalValueNode.value}"`;
 }
 
-function serializeObjectValueNode(objectValueDefinition: LuvioObjectValueNode) {
+function serializeObjectValueNode(objectValueDefinition: LuvioObjectValueNode): string {
     const { fields } = objectValueDefinition;
-    let str = '';
+    let str = [];
     const fieldKeys = keys(fields);
     for (let i = 0, len = fieldKeys.length; i < len; i += 1) {
         const fieldKey = fieldKeys[i];
-        str = `${str}${fieldKey}: ${serializeValueNode(fields[fieldKey])}, `;
+        str.push(`${fieldKey}: ${serializeValueNode(fields[fieldKey])}`);
     }
-    return `{${str.substring(0, str.length - 2)}}`;
+    return `{ ${str.join(', ')} }`;
 }
 
-function serializeArguments(argDefinitions: LuvioArgumentNode[] | undefined) {
+export function serializeArguments(argDefinitions: LuvioArgumentNode[] | undefined) {
     if (argDefinitions === undefined) {
         return '';
     }
 
     let str = '';
     for (let i = 0, len = argDefinitions.length; i < len; i += 1) {
-        const def = serializeArgument(argDefinitions[i]);
+        let def = serializeArgument(argDefinitions[i]);
+        if (i !== 0) {
+            def = ` ${def}`;
+        }
         str = `${str}${def}`;
     }
     return str;
@@ -303,11 +312,15 @@ function serializeOperationNode(def: LuvioDefinitionNode, state: SerializeState)
     );
 }
 
-function serializeOperationDefinition(def: LuvioOperationDefinitionNode, state: SerializeState) {
-    const { operation, luvioSelections, variableDefinitions } = def;
-    return `${operation}${serializeVariableDefinitions(
+export function serializeOperationDefinition(
+    def: LuvioOperationDefinitionNode,
+    state: SerializeState
+) {
+    const { operation, luvioSelections, name, variableDefinitions } = def;
+    const nameStr = name === undefined ? ' ' : ` ${name} `;
+    return `${operation}${nameStr}${serializeVariableDefinitions(
         variableDefinitions
-    )} { ${serializeSelections(luvioSelections, state)} }`;
+    )}{ ${serializeSelections(luvioSelections, state)} }`;
 }
 
 interface SerializeState {

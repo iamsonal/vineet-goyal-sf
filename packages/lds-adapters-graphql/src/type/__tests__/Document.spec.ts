@@ -691,26 +691,26 @@ describe('Document', () => {
                         },
                     },
                 },
-                'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})__edges__0':
+                'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})__edges__0':
                     {
                         node: { __ref: 'UiApi::RecordRepresentation:001RM000005BJPYYA4' },
                     },
-                'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})__edges':
+                'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})__edges':
                     [
                         {
-                            __ref: 'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})__edges__0',
+                            __ref: 'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})__edges__0',
                         },
                     ],
-                'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})':
+                'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})':
                     {
                         edges: {
-                            __ref: 'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})__edges',
+                            __ref: 'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})__edges',
                         },
                     },
                 fullpath__uiapi__query: {
-                    'Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})':
+                    'Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})':
                         {
-                            __ref: 'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC}},{Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"}},{Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}},{Name:{like:"Admin User"}}})',
+                            __ref: 'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})',
                         },
                 },
                 fullpath__uiapi: { query: { __ref: 'fullpath__uiapi__query' } },

@@ -57,12 +57,12 @@ function serializeAndSortObjectValueNode(objectValueDefinition: LuvioObjectValue
     const fieldKeys = keys(fields).sort();
     for (let i = 0, len = fieldKeys.length; i < len; i += 1) {
         const fieldKey = fieldKeys[i];
-        str = `${str}{${fieldKey}:${serializeValueNode(fields[fieldKey])}}`;
+        str = `${str}${fieldKey}:${serializeValueNode(fields[fieldKey])}`;
         if (len > 1 && i < len - 1) {
             str = `${str},`;
         }
     }
-    return str;
+    return `{${str}}`;
 }
 
 export function serialize(arg: LuvioArgumentNode): string {

@@ -1,0 +1,101 @@
+{
+    "data": {
+        "uiapi": {
+            "query": {
+                "ServiceAppointment": {
+                    "edges": [
+                        {
+                            "node": {
+                                "Id": "08pRM0000004sJLYAY",
+                                "ParentRecordId": {
+                                    "value": "001RM000004uuhnYAA",
+                                    "displayValue": null
+                                },
+                                "ParentRecordStatusCategory": {
+                                    "value": null,
+                                    "displayValue": null
+                                },
+                                "Street": {
+                                    "value": null,
+                                    "displayValue": null
+                                },
+                                "City": {
+                                    "value": null,
+                                    "displayValue": null
+                                },
+                                "State": {
+                                    "value": null,
+                                    "displayValue": null
+                                },
+                                "Country": {
+                                    "value": null,
+                                    "displayValue": null
+                                },
+                                "PostalCode": {
+                                    "value": null,
+                                    "displayValue": null
+                                },
+                                "Latitude": {
+                                    "value": null,
+                                    "displayValue": null
+                                },
+                                "Longitude": {
+                                    "value": null,
+                                    "displayValue": null
+                                },
+                                "Contact": null,
+                                "AppointmentNumber": {
+                                    "value": "SA-0002",
+                                    "displayValue": null
+                                },
+                                "Subject": {
+                                    "value": null,
+                                    "displayValue": null
+                                },
+                                "Description": {
+                                    "value": "Test Service Appointment",
+                                    "displayValue": null
+                                },
+                                "Status": {
+                                    "value": "Scheduled",
+                                    "displayValue": "Scheduled"
+                                },
+                                "SchedStartTime": {
+                                    "value": "2021-06-14T19:00:00.000Z",
+                                    "displayValue": "6/14/2021, 12:00 PM"
+                                },
+                                "SchedEndTime": {
+                                    "value": "2021-06-16T19:00:00.000Z",
+                                    "displayValue": "6/16/2021, 12:00 PM"
+                                },
+                                "CreatedDate": {
+                                    "value": "2021-06-11T17:00:12.000Z",
+                                    "displayValue": "6/11/2021, 10:00 AM"
+                                },
+                                "LastModifiedDate": {
+                                    "value": "2021-06-11T17:00:12.000Z",
+                                    "displayValue": "6/11/2021, 10:00 AM"
+                                },
+                                "SystemModstamp": {
+                                    "value": "2021-06-11T17:00:12.000Z",
+                                    "displayValue": "6/11/2021, 10:00 AM"
+                                },
+                                "__typename": "ServiceAppointment",
+                                "ApiName": "ServiceAppointment",
+                                "WeakEtag": 1623430812000,
+                                "DisplayValue": "SA-0002",
+                                "LastModifiedById": {
+                                    "value": "005RM000002492xYAA"
+                                },
+                                "RecordTypeId": {
+                                    "value": "012000000000000AAA"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "errors": []
+}

@@ -129,9 +129,10 @@ types:
         description: Scheduler Status for the Batch Job
         type: string
         enum:
+          - Draft
+          - Active
+          - Inactive
           - Canceled
-          - Scheduled
-          - Unscheduled
 /billing/batch/payments/schedulers:
   post:
     description: Create Payments Batch Job Scheduler

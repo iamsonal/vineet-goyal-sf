@@ -6,7 +6,7 @@
         "preferredTime": "10:00 AM",
         "frequencyCadence": "Once",
         "criteriaExpression": "",
-        "status": "Unscheduled",
+        "status": "Inactive",
         "filterCriteria": []
     }
 }

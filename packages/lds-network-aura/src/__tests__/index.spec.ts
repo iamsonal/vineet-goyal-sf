@@ -6029,7 +6029,7 @@ describe('routes', () => {
                         frequencyCadence: 'Monthly',
                         recursEveryMonthOnDay: '28',
                         criteriaExpression: '1 AND 2',
-                        status: 'Scheduled',
+                        status: 'Active',
                         filterCriteria: [
                             {
                                 objectName: 'PaymentSchedule',
@@ -6060,7 +6060,7 @@ describe('routes', () => {
                         frequencyCadence: 'Monthly',
                         recursEveryMonthOnDay: '28',
                         criteriaExpression: '1 AND 2',
-                        status: 'Scheduled',
+                        status: 'Active',
                         filterCriteria: [
                             {
                                 objectName: 'PaymentSchedule',

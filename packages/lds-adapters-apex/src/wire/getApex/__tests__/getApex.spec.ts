@@ -8,12 +8,28 @@ describe('getApex', () => {
             method: 'getString',
             isContinuation: false,
         };
-        const mockLds = {
+        const mockLuvio = {
             storeLookup: jest.fn().mockReturnValue({ state: 'Fulfilled', data: {} }),
             snapshotAvailable: jest.fn().mockReturnValue(true),
         };
-        await getApex(mockLds as any, mockInvokerParams)({});
-        expect(mockLds.storeLookup.mock.calls.length).toBe(1);
+        await getApex(mockLuvio as any, mockInvokerParams)({});
+        expect(mockLuvio.storeLookup.mock.calls.length).toBe(1);
+    });
+    it('returns null when config contains undefined values', async () => {
+        const mockInvokerParams = {
+            namespace: '',
+            classname: 'TestController',
+            method: 'getString',
+            isContinuation: false,
+        };
+        const mockConfig = {
+            validVal: 'valid',
+            undefVal: undefined,
+        };
+        // Luvio not needed for this test
+        const mockLuvio = null;
+        const adapter = await getApex(mockLuvio, mockInvokerParams)(mockConfig);
+        expect(adapter).toBeNull();
     });
     it('calls resolveUnfulfilledSnapshot when Snapshot is Unfulfilled', async () => {
         const mockInvokerParams = {
@@ -22,14 +38,14 @@ describe('getApex', () => {
             method: 'getString',
             isContinuation: false,
         };
-        const mockLds = {
+        const mockLuvio = {
             storeLookup: jest.fn().mockReturnValue({ state: 'Unfulfilled', data: {} }),
             snapshotAvailable: jest.fn().mockReturnValue(false),
             resolveUnfulfilledSnapshot: jest.fn().mockResolvedValueOnce({}),
         };
-        await getApex(mockLds as any, mockInvokerParams)({});
-        expect(mockLds.storeLookup.mock.calls.length).toBe(1);
-        expect(mockLds.resolveUnfulfilledSnapshot.mock.calls.length).toBe(1);
+        await getApex(mockLuvio as any, mockInvokerParams)({});
+        expect(mockLuvio.storeLookup.mock.calls.length).toBe(1);
+        expect(mockLuvio.resolveUnfulfilledSnapshot.mock.calls.length).toBe(1);
     });
 });
 describe('keyBuilderFromResourceParams', () => {

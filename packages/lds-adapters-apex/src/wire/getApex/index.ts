@@ -218,6 +218,10 @@ function getApexAdapterFactory(
     isContinuation: boolean
 ): Adapter<any, any> {
     return (untrustedConfig: unknown) => {
+        // Even though the config is of type `any`,
+        // validation is required here because `undefined`
+        // values on a wire mean that properties on the component
+        // used in the config have not been loaded yet.
         const config = validateAdapterConfig(untrustedConfig);
 
         // Invalid or incomplete config

@@ -28,7 +28,6 @@ import {
     KEY_DELIM,
     isEmptyParam,
     shouldCache,
-    validateAdapterConfig,
 } from '../../util/shared';
 
 export function createResourceParams(config: ApexAdapterConfig): ResourceRequestConfig {
@@ -226,13 +225,11 @@ function postApexAdapterFactory(
     method: string,
     isContinuation: boolean
 ): Adapter<any, any> {
-    return (untrustedConfig: unknown) => {
-        const config = validateAdapterConfig(untrustedConfig);
-
-        // Invalid or incomplete config
-        if (config === null) {
-            return null;
-        }
+    return (config: unknown) => {
+        // config validation is unnecessary for this imperative adapter
+        // due to the config being of type `any`.
+        // however, we have special config validation for the wire adapter,
+        // explanation in getApex
         const configPlus = configBuilder(
             config,
             apexClassnameBuilder(namespace, classname),

@@ -156,6 +156,18 @@ describe('configBuilder', () => {
         };
         expect(configBuilder(config, CLASSNAME, METHOD, false)).toStrictEqual(expected);
     });
+    it('adapts ApexInvokerParams and config, with undefined values, from adapter into Apex config', () => {
+        const config = {
+            toLower: undefined,
+        };
+        const expected: ApexAdapterConfig = {
+            apexClass: CLASSNAME,
+            apexMethod: METHOD,
+            methodParams: config,
+            xSFDCAllowContinuation: IS_CONTINUATION,
+        };
+        expect(configBuilder(config, CLASSNAME, METHOD, false)).toStrictEqual(expected);
+    });
 });
 
 describe('apexClassnameBuilder', () => {

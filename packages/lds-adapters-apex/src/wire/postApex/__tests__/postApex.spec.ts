@@ -8,12 +8,30 @@ describe('postApex', () => {
             method: 'getString',
             isContinuation: false,
         };
-        const mockLds = {
+        const mockLuvio = {
             storeLookup: jest.fn().mockReturnValue({ state: 'Fulfilled', data: {} }),
             snapshotAvailable: jest.fn().mockReturnValue(true),
         };
-        await postApex(mockLds as any, mockInvokerParams)({});
-        expect(mockLds.storeLookup.mock.calls.length).toBe(2);
+        await postApex(mockLuvio as any, mockInvokerParams)({});
+        expect(mockLuvio.storeLookup.mock.calls.length).toBe(2);
+    });
+    it('calls storeLookup on valid input with undefined values', async () => {
+        const mockInvokerParams = {
+            namespace: '',
+            classname: 'TestController',
+            method: 'getString',
+            isContinuation: false,
+        };
+        const mockConfig = {
+            validVal: 'valid',
+            undefVal: undefined,
+        };
+        const mockLuvio = {
+            storeLookup: jest.fn().mockReturnValue({ state: 'Fulfilled', data: {} }),
+            snapshotAvailable: jest.fn().mockReturnValue(true),
+        };
+        await postApex(mockLuvio as any, mockInvokerParams)(mockConfig);
+        expect(mockLuvio.storeLookup.mock.calls.length).toBe(2);
     });
     it('calls buildNetworkSnapshot when isCacheable returns false', async () => {
         const mockInvokerParams = {
@@ -22,14 +40,14 @@ describe('postApex', () => {
             method: 'getString',
             isContinuation: false,
         };
-        const mockLds = {
+        const mockLuvio = {
             storeLookup: jest.fn().mockReturnValue({ state: 'Unfulfilled', data: {} }),
             snapshotAvailable: jest.fn().mockReturnValue(false),
             dispatchResourceRequest: jest.fn().mockResolvedValueOnce({}),
         };
-        await postApex(mockLds as any, mockInvokerParams)({});
-        expect(mockLds.storeLookup.mock.calls.length).toBe(1);
-        expect(mockLds.dispatchResourceRequest.mock.calls.length).toBe(1);
+        await postApex(mockLuvio as any, mockInvokerParams)({});
+        expect(mockLuvio.storeLookup.mock.calls.length).toBe(1);
+        expect(mockLuvio.dispatchResourceRequest.mock.calls.length).toBe(1);
     });
 });
 describe('keyBuilderFromResourceParams', () => {

@@ -24,11 +24,11 @@
         "clean": "rm -rf dist src/generated"
     },
     "devDependencies": {
-        "@luvio/engine": "0.37.2",
+        "@luvio/engine": "0.37.3",
         "@salesforce/lds-adapters-uiapi": "1.19.1"
     },
     "dependencies": {
-        "@luvio/lwc-luvio": "0.37.2",
+        "@luvio/lwc-luvio": "0.37.3",
         "@salesforce/lds-default-luvio": "1.19.1"
     }
 }

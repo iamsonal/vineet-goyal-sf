@@ -3613,19 +3613,19 @@
     npmlog "^4.1.2"
     write-file-atomic "^2.3.0"
 
-"@luvio/adapter-test-library@0.37.2":
-  version "0.37.2"
-  resolved "https://registry.yarnpkg.com/@luvio/adapter-test-library/-/adapter-test-library-0.37.2.tgz#1da0dc427bae5db970eec829234dfa6c208748ca"
-  integrity sha512-sQvKGXKDaLnjQgAl19yAyqdZQQDffoKyqGw9WerXwGmYei8xYcPgvLsvastTrffNIeQbeCLPihIE0U+Vr7xigg==
+"@luvio/adapter-test-library@0.37.3":
+  version "0.37.3"
+  resolved "https://registry.npmjs.org/@luvio/adapter-test-library/-/adapter-test-library-0.37.3.tgz#a91c52f3ea7ec7ccf590b27212530ffb44d8342e"
+  integrity sha512-i3z0085gAxR5ZFQ1f9Oh85RBTX+q/KVb5G196o9B+9Dk9zqyGtR/6cAUqIshZpcgWok8SOH3c2URrGMdQ9JGig==
   dependencies:
     sinon "^7.5.0"
 
-"@luvio/cli@0.37.2", "@luvio/cli@^0.37.2":
-  version "0.37.2"
-  resolved "https://registry.yarnpkg.com/@luvio/cli/-/cli-0.37.2.tgz#ead38819da20914811d6c740cec66bf4dff71b23"
-  integrity sha512-fAue8JVUJkFjvY6oimGgH7ZI/2OUkCcTmhY6DUKET8E8hUf2D9HlE3uRQ0veqyKZy7msKErs8pzSjhCBDBwYYQ==
+"@luvio/cli@0.37.3":
+  version "0.37.3"
+  resolved "https://registry.npmjs.org/@luvio/cli/-/cli-0.37.3.tgz#ba810a8c24aa31df6f091c6f82acc1f530a32720"
+  integrity sha512-Q7WJhXK9Oi2CuPd9yAoW/FUx4dpOW9LudRFNPGfmISc17xwUO1BpCFw2xvdIzEBpeWZ3bHX2pjEOT2c2USmQgA==
   dependencies:
-    "@luvio/compiler" "0.37.2"
+    "@luvio/compiler" "0.37.3"
     "@oclif/command" "^1.5.19"
     "@oclif/config" "^1.13.3"
     "@oclif/plugin-help" "^2.2.1"
@@ -3633,31 +3633,31 @@
     strip-ansi "^6.0.0"
     text-table "^0.2.0"
 
-"@luvio/compiler@0.37.2", "@luvio/compiler@^0.37.2":
-  version "0.37.2"
-  resolved "https://registry.yarnpkg.com/@luvio/compiler/-/compiler-0.37.2.tgz#2483fe87e3faa9507697b884ad34193dcb12da89"
-  integrity sha512-INGTbADa7U1Tvqq3peivK2IQjd0T2Q2VHcJOtOVLxbmWV0j/VlHnLxfQIrKKzUdroVp+4zHoh7FVL0lwbpFKyg==
+"@luvio/compiler@0.37.3":
+  version "0.37.3"
+  resolved "https://registry.npmjs.org/@luvio/compiler/-/compiler-0.37.3.tgz#2338120cc57c3e92aca4159098296dd1dba3e11d"
+  integrity sha512-Xu0ngKk5O5S1M1r+Yeha8WCd3+Jqn48GbSKNR5zydkGrmKydAqo+On1LqrJ8KgFyClUPFcgL3obB4JTETwAIVg==
   dependencies:
     amf-client-js "4.2.0"
 
-"@luvio/engine@0.37.2", "@luvio/engine@^0.37.2":
-  version "0.37.2"
-  resolved "https://registry.yarnpkg.com/@luvio/engine/-/engine-0.37.2.tgz#d1751a20a00a2f74f1eeb42c4e0a4875bd849331"
-  integrity sha512-k2JEi+BF4bo+BCHE+E+WgOAgwzY0YkuScGk0v2EsCcCGsWup1xZl04OwltIwpo9cuH31kwh+NdRFy0EHpKU8xw==
+"@luvio/engine@0.37.3":
+  version "0.37.3"
+  resolved "https://registry.npmjs.org/@luvio/engine/-/engine-0.37.3.tgz#c96a8fbb3ae8010e148741d318c23d8a723ef4c9"
+  integrity sha512-OZxoR6WX5tMzKG6J451b3zPoui6YUfLXTde/LJD40vGfNptVRG1KuOTyWOqg3l4BE0IjGSC14fL1C6OnXMZuAw==
 
-"@luvio/environments@0.37.2":
-  version "0.37.2"
-  resolved "https://registry.yarnpkg.com/@luvio/environments/-/environments-0.37.2.tgz#1640f739ce3b9dc6bb2c7026a77a58f81adb3229"
-  integrity sha512-Q1ViRAt4V5B1XJy8K57D9s6CBWIJnE/PPTFVfYYziSqSMvNaataMekxSLJpgq7V1RpkqpSO8lmVzdoMcnVbB2Q==
+"@luvio/environments@0.37.3":
+  version "0.37.3"
+  resolved "https://registry.npmjs.org/@luvio/environments/-/environments-0.37.3.tgz#79f586c325ad23c4b6af720e2242e50daf6cdf77"
+  integrity sha512-9rhylRM3zO1332LQwnSy35069JAYJWue2j3fTdXIe69MlgYo6E7VNVxaSZ30CPGF1rn2VX388iOchGKFNqP3Nw==
   dependencies:
-    "@luvio/engine" "0.37.2"
+    "@luvio/engine" "0.37.3"
 
-"@luvio/lwc-luvio@0.37.2", "@luvio/lwc-luvio@^0.37.2":
-  version "0.37.2"
-  resolved "https://registry.yarnpkg.com/@luvio/lwc-luvio/-/lwc-luvio-0.37.2.tgz#144746674eba901805d0ca794185dde539aaf08a"
-  integrity sha512-AwryI0Fsxvy5SiL1EhUla/izJCZ+/rMHbvR/9B2C/jyOX4Nstb2sZmGmpkktZ33LleLLw+ko/veD/23VEiOeyw==
+"@luvio/lwc-luvio@0.37.3":
+  version "0.37.3"
+  resolved "https://registry.npmjs.org/@luvio/lwc-luvio/-/lwc-luvio-0.37.3.tgz#4daa57d95376e90192fc737dc1406ada049eb026"
+  integrity sha512-0qsaktPyv2WXYIXNLLIoYRlYRqeTY4GRvgWG0SOgHJ6lsf7YzUR8AwIoBaMNlBWU06W5nWP6YhbRSZWUoUonjw==
   dependencies:
-    "@luvio/engine" "0.37.2"
+    "@luvio/engine" "0.37.3"
     "@lwc/engine-core" "^1.7.5"
 
 "@lwc/babel-plugin-component@1.7.14":

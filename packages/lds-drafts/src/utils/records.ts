@@ -5,6 +5,7 @@ import {
     Environment,
     StoreLink,
     StoreRecordError,
+    Adapter,
 } from '@luvio/engine';
 import {
     RecordRepresentation,
@@ -12,6 +13,7 @@ import {
     FieldValueRepresentation,
     buildSelectionFromFields,
     RecordRepresentationNormalized,
+    GetRecordConfig,
 } from '@salesforce/lds-adapters-uiapi';
 import {
     ArrayIsArray,
@@ -26,6 +28,7 @@ import { CompletedDraftAction, DraftAction } from '../main';
 import {
     buildRecordFieldStoreKey,
     extractRecordIdFromStoreKey,
+    isStoreKeyRecordId,
 } from '@salesforce/lds-uiapi-record-utils';
 import { DraftIdMappingEntry, QueueOperation, QueueOperationType } from '../DraftQueue';
 import { isLDSDraftAction } from '../actionHandlers/LDSActionHandler';
@@ -467,6 +470,13 @@ export function isStoreRecordError(storeRecord: unknown): storeRecord is StoreRe
     return (storeRecord as StoreRecordError).__type === 'error';
 }
 
+export function isEntryDurableRecordRepresentation(
+    entry: DurableStoreEntry<any>,
+    key: string
+): entry is DurableStoreEntry<DurableRecordRepresentation> {
+    return isStoreKeyRecordId(key) && entry.data.apiName !== undefined;
+}
+
 /**
  * Returns a set of Queue operations that the DraftQueue must perform to update itself with
  * new id references after a record has been created.
@@ -621,7 +631,7 @@ export function durableMerge(
     incoming: DurableStoreEntry<DurableRecordRepresentation>,
     drafts: DraftAction<RecordRepresentation, ResourceRequest>[],
     userId: string,
-    refreshRecordByFields: (recordId: string, fields: string[]) => Promise<RecordRepresentation>
+    getRecord: Adapter<GetRecordConfig, RecordRepresentation>
 ): DurableStoreEntry<DurableRecordRepresentation> {
     const { data: existingRecord } = existing;
     const { data: incomingRecord } = incoming;
@@ -632,7 +642,7 @@ export function durableMerge(
     // merged will be undefined if we're dealing with a draft-create
     let merged: DurableRecordRepresentation | undefined;
     if (existingWithoutDrafts !== undefined && incomingWithoutDrafts !== undefined) {
-        merged = merge(existingWithoutDrafts, incomingWithoutDrafts, refreshRecordByFields);
+        merged = merge(existingWithoutDrafts, incomingWithoutDrafts, getRecord);
     }
 
     const mergedWithDrafts = replayDraftsOnRecord(merged, drafts, userId);
@@ -643,13 +653,13 @@ export function durableMerge(
 function merge(
     existing: DurableRecordRepresentation,
     incoming: DurableRecordRepresentation,
-    refreshRecordByFields: (recordId: string, fields: string[]) => Promise<RecordRepresentation>
+    getRecord: Adapter<GetRecordConfig, RecordRepresentation>
 ) {
     const incomingWeakEtag = incoming.weakEtag;
     const existingWeakEtag = existing.weakEtag;
 
     if (incomingWeakEtag !== 0 && existingWeakEtag !== 0 && incomingWeakEtag !== existingWeakEtag) {
-        return mergeRecordConflict(existing, incoming, refreshRecordByFields);
+        return mergeRecordConflict(existing, incoming, getRecord);
     }
 
     const merged = {
@@ -673,7 +683,7 @@ function merge(
 function mergeRecordConflict(
     existing: DurableRecordRepresentation,
     incoming: DurableRecordRepresentation,
-    refreshRecordByFields: (recordId: string, fields: string[]) => Promise<RecordRepresentation>
+    getRecord: Adapter<GetRecordConfig, RecordRepresentation>
 ) {
     const incomingWeakEtag = incoming.weakEtag;
     const existingWeakEtag = existing.weakEtag;
@@ -689,16 +699,16 @@ function mergeRecordConflict(
     // incoming newer, apply drafts (if applicable) and kick of network refresh for unioned fields
     if (existingWeakEtag < incomingWeakEtag) {
         if (isSuperset(incomingFields, existingFields) === false) {
-            // kick off an async refresh which will pull all unionized fields with the same version
-            refreshRecordByFields(incoming.id, unionizedFieldArray);
+            // kick off a getRecord call which will pull all unionized fields with the same version
+            getRecord({ recordId: incoming.id, optionalFields: unionizedFieldArray });
         }
         return incoming;
     }
 
     // existing newer, refresh with unioned fields
     if (isSuperset(existingFields, incomingFields) === false) {
-        // kick off an async refresh which will pull all unionized fields with the same version
-        refreshRecordByFields(incoming.id, unionizedFieldArray);
+        // kick off a getRecord call which will pull all unionized fields with the same version
+        getRecord({ recordId: incoming.id, optionalFields: unionizedFieldArray });
     }
 
     return existing;

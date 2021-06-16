@@ -1,0 +1,47 @@
+{
+    "hasErrors": false,
+    "results": [
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "14987c9ec451f56582caaecf1d23e9ac",
+                "fields": {
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "001xx000003Gn4WAAX"
+                    }
+                },
+                "id": "001xx000003Gn4WAAS",
+                "lastModifiedById": "005T1000000DvlhIAC",
+                "lastModifiedDate": "2020-09-17T01:41:35.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-09-17T01:41:35.000Z",
+                "weakEtag": 1600306895000
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "14987c9ec451f56582caaecf1d23e9ad",
+                "fields": {
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "001xx000003Gn4WAAX"
+                    }
+                },
+                "id": "00122000003Gn4WBBA",
+                "lastModifiedById": "005T1000000DvlhIAC",
+                "lastModifiedDate": "2020-09-17T01:41:35.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-09-17T01:41:35.000Z",
+                "weakEtag": 1600306895000
+            },
+            "statusCode": 200
+        }
+    ]
+}

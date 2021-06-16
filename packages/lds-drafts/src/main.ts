@@ -13,8 +13,13 @@ export {
     Action,
     DraftActionMetadata,
 } from './DraftQueue';
-export { makeNetworkAdapterDraftAware } from './makeNetworkAdapterDraftAware';
-export { updateQueueOnPost, createIdDraftMapping } from './utils/records';
+export {
+    updateQueueOnPost,
+    createIdDraftMapping,
+    durableMerge,
+    DurableRecordRepresentation,
+    isEntryDurableRecordRepresentation,
+} from './utils/records';
 export { DurableDraftQueue, DRAFT_SEGMENT } from './DurableDraftQueue';
 export {
     DraftManager,

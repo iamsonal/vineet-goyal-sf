@@ -14,7 +14,6 @@ import {
 import { factory as getListUi } from '../index';
 import { GetListUiByListViewIdConfig } from '../../../generated/adapters/getListUiByListViewId';
 import { GetListUiByApiNameConfig } from '../../../generated/adapters/getListUiByApiName';
-import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
 
 import response from './data/list-ui-All-Opportunities.json';
 
@@ -38,15 +37,11 @@ const configUsingApiName: GetListUiByApiNameConfig = {
 
 describe('getListUi adapter offline', () => {
     it('returns stale snapshot when data is expired', async () => {
-        await testDataEmittedWhenStale(getListUi, configUsingListViewId, payload, TTL, {
-            reviveRetrievers: responseRecordRepresentationRetrievers,
-        });
+        await testDataEmittedWhenStale(getListUi, configUsingListViewId, payload, TTL);
     });
 
     it('does not hit the network when durable store is populated', async () => {
-        await testDurableHitDoesNotHitNetwork(getListUi, configUsingListViewId, payload, {
-            reviveRetrievers: responseRecordRepresentationRetrievers,
-        });
+        await testDurableHitDoesNotHitNetwork(getListUi, configUsingListViewId, payload);
     });
 
     it('should not make another HTTP request when using different props of listReference', async () => {

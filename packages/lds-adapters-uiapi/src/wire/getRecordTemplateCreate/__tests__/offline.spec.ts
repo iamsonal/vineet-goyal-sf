@@ -13,7 +13,6 @@ import {
 
 import { factory as getRecordTemplateCreate } from '../index';
 import { GetRecordTemplateCreateConfig } from '../../../generated/adapters/getRecordTemplateCreate';
-import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
 
 import recordTemplateCreate_Custom from './mockData/record-template-create-Custom_Object__c.json';
 import { TTL } from '../../../generated/types/RecordDefaultsTemplateCreateRepresentation';
@@ -42,8 +41,7 @@ describe('getRecordTemplateCreate adapter offline', () => {
             getRecordTemplateCreate,
             configWithRecordTypeId,
             recordPayload,
-            TTL,
-            { reviveRetrievers: responseRecordRepresentationRetrievers }
+            TTL
         );
     });
 
@@ -51,8 +49,7 @@ describe('getRecordTemplateCreate adapter offline', () => {
         await testDurableHitDoesNotHitNetwork(
             getRecordTemplateCreate,
             configWithRecordTypeId,
-            recordPayload,
-            { reviveRetrievers: responseRecordRepresentationRetrievers }
+            recordPayload
         );
     });
 

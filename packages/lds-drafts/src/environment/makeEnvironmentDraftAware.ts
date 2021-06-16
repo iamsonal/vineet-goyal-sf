@@ -1,10 +1,5 @@
-import { Environment, IngestPath, Store } from '@luvio/engine';
-import {
-    DurableEnvironment,
-    DurableStoreChange,
-    DurableStoreEntry,
-    ResponsePropertyRetriever,
-} from '@luvio/environments';
+import { Environment, Store } from '@luvio/engine';
+import { DurableEnvironment, DurableStoreChange, DurableStoreEntry } from '@luvio/environments';
 import {
     DraftIdMappingEntry,
     DraftQueue,
@@ -12,8 +7,7 @@ import {
     DraftQueueEvent,
     DraftQueueEventType,
 } from '../DraftQueue';
-import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
-import { draftAwareHandleResponse } from '../makeNetworkAdapterDraftAware';
+import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { getRecordDraftEnvironment } from './getRecordDraftEnvironment';
 import { createRecordDraftEnvironment } from './createRecordDraftEnvironment';
 import {
@@ -34,34 +28,20 @@ export interface DraftEnvironmentOptions {
     draftQueue: DraftQueue;
     durableStore: RecordDenormalizingDurableStore;
     // TODO - W-8291468 - have ingest get called a different way somehow
-    ingestFunc: (
-        record: RecordRepresentation,
-        path: IngestPath,
-        store: Store,
-        timeStamp: number
-    ) => void;
+    ingestFunc: (record: RecordRepresentation) => void;
     generateId: (apiName: string) => string;
     isDraftId: (id: string) => boolean;
     apiNameForPrefix: (prefix: string) => Promise<string>;
     prefixForApiName: (apiName: string) => Promise<string>;
-    recordResponseRetrievers: ResponsePropertyRetriever<unknown, RecordRepresentation>[];
     userId: string;
     registerDraftKeyMapping: (draftKey: string, canonicalKey: string) => void;
 }
 
 export function makeEnvironmentDraftAware(
     env: DurableEnvironment,
-    options: AllDraftEnvironmentOptions,
-    userId: string
+    options: AllDraftEnvironmentOptions
 ): Environment {
-    const {
-        draftQueue,
-        recordResponseRetrievers,
-        ingestFunc,
-        store,
-        durableStore,
-        registerDraftKeyMapping,
-    } = options;
+    const { draftQueue, ingestFunc, durableStore, registerDraftKeyMapping } = options;
 
     function onDraftActionCompleting(event: DraftQueueCompleteEvent) {
         const { action } = event;
@@ -74,25 +54,10 @@ export function makeEnvironmentDraftAware(
                 env.storeBroadcast(env.rebuildSnapshot, env.snapshotAvailable);
                 return Promise.resolve();
             }
-            return draftAwareHandleResponse(
-                request,
-                action.response,
-                draftQueue,
-                recordResponseRetrievers,
-                userId
-            ).then((response) => {
-                const record = response.body as RecordRepresentation;
-                const key = keyBuilderRecord({ recordId: record.id });
-                const path: IngestPath = {
-                    fullPath: key,
-                    parent: null,
-                    propertyName: null,
-                    state: { result: { type: 'success' } },
-                };
+            const record = action.response.body as RecordRepresentation;
 
-                ingestFunc(record, path, store, Date.now());
-                env.storeBroadcast(env.rebuildSnapshot, env.snapshotAvailable);
-            });
+            ingestFunc(record);
+            env.storeBroadcast(env.rebuildSnapshot, env.snapshotAvailable);
         }
         return Promise.resolve();
     }

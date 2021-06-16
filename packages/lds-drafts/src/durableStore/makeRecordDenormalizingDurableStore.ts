@@ -80,7 +80,7 @@ function buildDurableRecordRepresentation(
     normalizedRecord: RecordRepresentationNormalized,
     records: RecordSource,
     pendingEntries: DurableStoreEntries<RecordRepresentationNormalized>
-): DurableRecordRepresentation | DraftRecordRepresentation | undefined {
+): DurableRecordRepresentation | undefined {
     const fields = normalizedRecord.fields;
     const filteredFields: {
         [key: string]: FieldValueRepresentation;

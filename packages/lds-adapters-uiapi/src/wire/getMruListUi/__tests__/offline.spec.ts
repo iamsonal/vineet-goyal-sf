@@ -3,7 +3,6 @@ import { testDataEmittedWhenStale, testDurableHitDoesNotHitNetwork } from '@sale
 
 import { factory as getMruListUi } from '../index';
 import { GetMruListUiConfig } from '../../../generated/adapters/getMruListUi';
-import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
 
 import response from './data/mru-list-ui-Opportunity.json';
 
@@ -22,14 +21,10 @@ const config: GetMruListUiConfig = {
 
 describe('getMruListUi adapter offline', () => {
     it('returns stale snapshot when data is expired', async () => {
-        await testDataEmittedWhenStale(getMruListUi, config, payload, TTL, {
-            reviveRetrievers: responseRecordRepresentationRetrievers,
-        });
+        await testDataEmittedWhenStale(getMruListUi, config, payload, TTL);
     });
 
     it('does not hit the network when durable store is populated', async () => {
-        await testDurableHitDoesNotHitNetwork(getMruListUi, config, payload, {
-            reviveRetrievers: responseRecordRepresentationRetrievers,
-        });
+        await testDurableHitDoesNotHitNetwork(getMruListUi, config, payload);
     });
 });

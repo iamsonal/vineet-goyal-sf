@@ -16,7 +16,6 @@ import {
 import { DefaultDurableSegment } from '@luvio/environments';
 
 import { factory as getRecordAdapterFactory } from '../index';
-import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
 
 import { makeDurable, makeOffline } from '@luvio/environments';
 import {
@@ -46,7 +45,6 @@ function buildLds(durableStore: MockDurableStore, n?: NetworkAdapter) {
     const network = n ?? buildMockNetworkAdapter([recordPayload_Account]);
     const env = makeDurable(makeOffline(new Environment(store, network)), {
         durableStore,
-        reviveRetrievers: responseRecordRepresentationRetrievers,
     });
     const luvio = new Luvio(env);
     return {

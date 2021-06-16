@@ -8,12 +8,7 @@ import {
     PendingSnapshot,
     Snapshot,
 } from '@luvio/engine';
-import {
-    makeDurable,
-    makeOffline,
-    ResponsePropertyRetriever,
-    DurableEnvironment,
-} from '@luvio/environments';
+import { makeDurable, makeOffline, DurableEnvironment } from '@luvio/environments';
 import {
     buildMockNetworkAdapter,
     MockDurableStore,
@@ -29,8 +24,6 @@ export type CustomEnvironmentFactory = (
 
 export interface OfflineOptions {
     customEnvironment?: CustomEnvironmentFactory;
-    reviveRetrievers?: ResponsePropertyRetriever<any, any>[];
-    compositeRetrievers?: ResponsePropertyRetriever<any, any>[];
 }
 
 function flushPromises() {
@@ -42,13 +35,11 @@ export function buildOfflineLuvio(
     network: NetworkAdapter,
     options: OfflineOptions = {}
 ) {
-    const { compositeRetrievers, customEnvironment, reviveRetrievers } = options;
+    const { customEnvironment } = options;
     // TODO: use default scheduler
     const store = new Store({ scheduler: () => {} });
     let env = makeDurable(makeOffline(new Environment(store, network)), {
         durableStore,
-        reviveRetrievers: reviveRetrievers || [],
-        compositeRetrievers: compositeRetrievers || [],
     });
     if (customEnvironment !== undefined) {
         env = customEnvironment(env, durableStore, store);

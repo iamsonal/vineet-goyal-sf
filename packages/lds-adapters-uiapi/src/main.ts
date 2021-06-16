@@ -2,6 +2,7 @@ export { MRU } from './wire/getListUi';
 export { notifyChangeFactory as GetRecordNotifyChange } from './wire/getRecord';
 export { ClientOptions as UpdateRecordClientOptions } from './wire/updateRecord';
 
+export { GetRecordConfig } from './generated/adapters/getRecord';
 export { UpdateRecordConfig } from './generated/adapters/updateRecord';
 
 // Validation Utils

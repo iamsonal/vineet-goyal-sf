@@ -105,6 +105,10 @@ describe('mobile runtime integration tests', () => {
                 fields: ['Account.Name'],
             })) as Snapshot<RecordRepresentation>;
             expect(getRecordSnapshot.state).toBe('Fulfilled');
+
+            // TODO: W-9463628 this flush can be removed when we solve the extra durable writes due to this bug
+            await flushPromises();
+
             const callbackSpy = jest.fn();
             // subscribe to getRecord snapshot
             luvio.storeSubscribe(getRecordSnapshot, callbackSpy);
@@ -112,12 +116,9 @@ describe('mobile runtime integration tests', () => {
             // update the synthetic record
             await updateRecord({ recordId, apiName: API_NAME, fields: { Name: updatedName } });
 
-            // TODO: W-9463628 this callback should only be invoked 1 time but because we're writing data
-            // back into the durable store that we just read out, it's triggering an extra rebuild/broadcast
-            // ensure the getRecord callback was invoked
-            expect(callbackSpy).toBeCalledTimes(2);
+            expect(callbackSpy).toBeCalledTimes(1);
             // ensure the getRecord callback was invoked with updated draft data value
-            expect(callbackSpy.mock.calls[1][0].data.fields.Name.value).toBe(updatedName);
+            expect(callbackSpy.mock.calls[0][0].data.fields.Name.value).toBe(updatedName);
         });
 
         it('getRecord includes draft overlay on stale response', async () => {
@@ -238,7 +239,7 @@ describe('mobile runtime integration tests', () => {
             expect(getRecordCallbackSpy.mock.calls[3][0].data.drafts.edited).toBe(true);
 
             // the server value should be updated
-            expect(getRecordCallbackSpy.mock.calls[4][0].data.drafts.serverValues.Name.value).toBe(
+            expect(getRecordCallbackSpy.mock.calls[5][0].data.drafts.serverValues.Name.value).toBe(
                 draftOneNameValue
             );
         });

@@ -101,6 +101,10 @@ describe('mobile runtime integration tests', () => {
                 fields: ['Account.Name', 'Account.Id'],
             })) as Snapshot<RecordRepresentation>;
             expect(getRecordSnapshot.state).toBe('Fulfilled');
+
+            // TODO: W-9463628 this flush can be removed when we solve the extra durable writes due to this bug
+            await flushPromises();
+
             const callbackSpy = jest.fn();
             // subscribe to getRecord snapshot
             luvio.storeSubscribe(getRecordSnapshot, callbackSpy);
@@ -116,12 +120,9 @@ describe('mobile runtime integration tests', () => {
             await flushPromises();
             expect(result).toBe(ProcessActionResult.ACTION_SUCCEEDED);
 
-            // TODO: W-9463628 this callback should only be invoked 1 time but because we're writing data
-            // back into the durable store that we just read out, it's triggering an extra rebuild/broadcast
-            // make sure getRecord callback was called
-            expect(callbackSpy).toBeCalledTimes(2);
+            expect(callbackSpy).toBeCalledTimes(1);
             // ensure the callback id value has the updated canonical server id
-            expect(callbackSpy.mock.calls[1][0].data.fields.Id.value).toBe(RECORD_ID);
+            expect(callbackSpy.mock.calls[0][0].data.fields.Id.value).toBe(RECORD_ID);
         });
         it('creates a create item in queue visible by draft manager', async () => {
             await createRecord({ apiName: API_NAME, fields: { Name: 'Justin' } });

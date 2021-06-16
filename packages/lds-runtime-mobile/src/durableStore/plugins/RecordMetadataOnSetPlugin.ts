@@ -1,9 +1,5 @@
 import { DefaultDurableSegment, DurableStoreEntry } from '@luvio/environments';
-import {
-    RecordRepresentation,
-    RecordRepresentationNormalized,
-} from '@salesforce/lds-adapters-uiapi';
-import { isStoreKeyRecordId } from '@salesforce/lds-uiapi-record-utils';
+import { isEntryDurableRecordRepresentation } from '@salesforce/lds-drafts';
 import { DurableStoreSetEntryPlugin } from './DurableStorePlugins';
 
 type CachedObjectInfoFunction = (apiName: string) => Promise<void>;
@@ -22,7 +18,7 @@ export class RecordMetadataOnSetPlugin implements DurableStoreSetEntryPlugin {
         entry: DurableStoreEntry<Extract<T, unknown>>,
         segment: string
     ): void {
-        if (segment === DefaultDurableSegment && isRecordRepresentation(entry, key)) {
+        if (segment === DefaultDurableSegment && isEntryDurableRecordRepresentation(entry, key)) {
             const apiName = entry.data.apiName;
             if (this.alreadyFetchedApiName[apiName] === true) {
                 return;
@@ -38,11 +34,4 @@ export class RecordMetadataOnSetPlugin implements DurableStoreSetEntryPlugin {
                 });
         }
     }
-}
-
-function isRecordRepresentation(
-    entry: DurableStoreEntry<any>,
-    key: string
-): entry is DurableStoreEntry<RecordRepresentation | RecordRepresentationNormalized> {
-    return isStoreKeyRecordId(key) && entry.data.apiName !== undefined;
 }

@@ -943,12 +943,10 @@ describe('draft environment record utilities', () => {
             const result = durableMerge(existing, incoming, [], '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(1);
-            expect(refreshSpy.mock.calls[0][0]).toBe('foo');
-            expect(refreshSpy.mock.calls[0][1]).toStrictEqual([
-                'Account.Name',
-                'Account.Birthday',
-                'Account.IsMad',
-            ]);
+            expect(refreshSpy.mock.calls[0][0]).toStrictEqual({
+                optionalFields: ['Account.Name', 'Account.Birthday', 'Account.IsMad'],
+                recordId: 'foo',
+            });
         });
         it('newer incoming overwrites existing but does not kick off refresh if fields are superset', () => {
             const refreshSpy = jest.fn();
@@ -1146,12 +1144,10 @@ describe('draft environment record utilities', () => {
             const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(1);
-            expect(refreshSpy.mock.calls[0][0]).toBe(RECORD_ID);
-            expect(refreshSpy.mock.calls[0][1]).toStrictEqual([
-                'Account.Name',
-                'Account.Birthday',
-                'Account.IsMad',
-            ]);
+            expect(refreshSpy).toBeCalledWith({
+                optionalFields: ['Account.Name', 'Account.Birthday', 'Account.IsMad'],
+                recordId: RECORD_ID,
+            });
         });
         it('older incoming gets discarded and kicks off a unionized field refresh', () => {
             const refreshSpy = jest.fn();
@@ -1277,14 +1273,16 @@ describe('draft environment record utilities', () => {
             const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(1);
-            expect(refreshSpy.mock.calls[0][0]).toBe(RECORD_ID);
-            expect(refreshSpy.mock.calls[0][1]).toStrictEqual([
-                'Account.Name',
-                'Account.Birthday',
-                'Account.IsMad',
-                'Account.LastModifiedById',
-                'Account.LastModifiedDate',
-            ]);
+            expect(refreshSpy).toBeCalledWith({
+                recordId: RECORD_ID,
+                optionalFields: [
+                    'Account.Name',
+                    'Account.Birthday',
+                    'Account.IsMad',
+                    'Account.LastModifiedById',
+                    'Account.LastModifiedDate',
+                ],
+            });
         });
         it('older incoming gets discarded and does not kick of network refresh if fields are superset', () => {
             const refreshSpy = jest.fn();
@@ -1495,13 +1493,16 @@ describe('draft environment record utilities', () => {
             const result = durableMerge(existing, incoming, [], '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(1);
-            expect(refreshSpy.mock.calls[0][0]).toBe('foo');
-            expect(refreshSpy.mock.calls[0][1]).toStrictEqual([
-                'Account.Name',
-                'Account.Birthday',
-                'Account.Owner.Id',
-                'Account.IsMad',
-            ]);
+
+            expect(refreshSpy).toBeCalledWith({
+                recordId: 'foo',
+                optionalFields: [
+                    'Account.Name',
+                    'Account.Birthday',
+                    'Account.Owner.Id',
+                    'Account.IsMad',
+                ],
+            });
         });
         it('merged data gets incoming expiration applied', () => {
             const refreshSpy = jest.fn();
@@ -1718,12 +1719,11 @@ describe('draft environment record utilities', () => {
             const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(1);
-            expect(refreshSpy.mock.calls[0][0]).toBe(RECORD_ID);
-            expect(refreshSpy.mock.calls[0][1]).toStrictEqual([
-                'Account.Name',
-                'Account.Birthday',
-                'Account.IsMad',
-            ]);
+
+            expect(refreshSpy).toBeCalledWith({
+                recordId: RECORD_ID,
+                optionalFields: ['Account.Name', 'Account.Birthday', 'Account.IsMad'],
+            });
         });
 
         it('newer incoming record with missing field but field has draft applied', () => {
@@ -1845,14 +1845,16 @@ describe('draft environment record utilities', () => {
             const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(1);
-            expect(refreshSpy.mock.calls[0][0]).toBe(RECORD_ID);
-            expect(refreshSpy.mock.calls[0][1]).toStrictEqual([
-                'Account.Birthday',
-                'Account.Name',
-                'Account.IsMad',
-                'Account.LastModifiedById',
-                'Account.LastModifiedDate',
-            ]);
+            expect(refreshSpy).toBeCalledWith({
+                recordId: RECORD_ID,
+                optionalFields: [
+                    'Account.Birthday',
+                    'Account.Name',
+                    'Account.IsMad',
+                    'Account.LastModifiedById',
+                    'Account.LastModifiedDate',
+                ],
+            });
         });
 
         it('merges draft created data properly', () => {

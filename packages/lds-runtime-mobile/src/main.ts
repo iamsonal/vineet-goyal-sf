@@ -1,18 +1,17 @@
-import { Luvio, Store, Environment, IngestPath } from '@luvio/engine';
+import { Luvio, Store, Environment } from '@luvio/engine';
 import { makeOffline, makeDurable } from '@luvio/environments';
 import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
 
 import {
     RecordRepresentation,
-    responseRecordRepresentationRetrievers,
     ingestRecord,
+    keyBuilderRecord,
 } from '@salesforce/lds-adapters-uiapi';
 import { getRecordsPropertyRetriever } from '@salesforce/lds-uiapi-record-utils';
 import {
     makeDurableStoreDraftAware,
     makeRecordDenormalizingDurableStore,
     makeEnvironmentDraftAware,
-    makeNetworkAdapterDraftAware,
     DraftManager,
 } from '@salesforce/lds-drafts';
 
@@ -27,18 +26,16 @@ import { buildInternalAdapters } from './utils/adapters';
 import { objectInfoServiceFactory } from './utils/ObjectInfoService';
 import { RecordMetadataOnSetPlugin } from './durableStore/plugins/RecordMetadataOnSetPlugin';
 import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledDurableStore';
+import { makeDurableStoreWithMergeStrategy } from './durableStore/makeDurableStoreWithMergeStrategy';
+import { RecordMergeStrategy } from './durableStore/RecordMergeStrategy';
 
 let luvio: Luvio;
 
 // TODO - W-8291468 - have ingest get called a different way somehow
-const recordIngestFunc = (
-    record: RecordRepresentation,
-    path: IngestPath,
-    store: Store,
-    timeStamp: number
-) => {
+const recordIngestFunc = (record: RecordRepresentation) => {
     if (luvio !== undefined) {
-        ingestRecord(record, path, luvio, store, timeStamp);
+        const key = keyBuilderRecord({ recordId: record.id });
+        luvio.storeIngest(key, ingestRecord, record);
     }
 };
 
@@ -69,7 +66,7 @@ const storeOptions = {
 const store = new Store(storeOptions);
 const networkAdapter = makeNetworkAdapterChunkRecordFields(NimbusNetworkAdapter);
 
-const baseDurableStore = new NimbusDurableStore();
+const baseDurableStore = makeDurableStoreWithMergeStrategy(new NimbusDurableStore());
 
 // specific adapters
 const internalAdapterStore = new Store();
@@ -109,39 +106,27 @@ pluginEnabledDurableStore.registerPlugins([objectInfoPlugin]);
 // creates a durable store that denormalizes scalar fields for records
 const recordDenormingStore = makeRecordDenormalizingDurableStore(pluginEnabledDurableStore, store);
 
-// make network and durable draft aware
-const draftAwareNetworkAdapter = makeNetworkAdapterDraftAware(
-    networkAdapter,
-    draftQueue,
-    responseRecordRepresentationRetrievers,
-    userId
-);
-
-const baseEnv = new Environment(store, draftAwareNetworkAdapter);
+const baseEnv = new Environment(store, networkAdapter);
 const offlineEnv = makeOffline(baseEnv);
 const durableEnv = makeDurable(offlineEnv, {
     durableStore: recordDenormingStore,
-    reviveRetrievers: responseRecordRepresentationRetrievers,
     compositeRetrievers: [getRecordsPropertyRetriever],
 });
-const draftEnv = makeEnvironmentDraftAware(
-    durableEnv,
-    {
-        store,
-        draftQueue,
-        durableStore: recordDenormingStore,
-        ingestFunc: recordIngestFunc,
-        generateId: newRecordId,
-        isDraftId: isGenerated,
-        prefixForApiName,
-        apiNameForPrefix,
-        getRecord,
-        recordResponseRetrievers: responseRecordRepresentationRetrievers,
-        userId,
-        registerDraftKeyMapping: registerDraftMapping,
-    },
-    userId
-);
+const draftEnv = makeEnvironmentDraftAware(durableEnv, {
+    store,
+    draftQueue,
+    durableStore: recordDenormingStore,
+    ingestFunc: recordIngestFunc,
+    generateId: newRecordId,
+    isDraftId: isGenerated,
+    prefixForApiName,
+    apiNameForPrefix,
+    getRecord,
+    userId,
+    registerDraftKeyMapping: registerDraftMapping,
+});
+
+baseDurableStore.registerMergeStrategy(new RecordMergeStrategy(draftQueue, getRecord, userId));
 
 luvio = new Luvio(draftEnv);
 setDefaultLuvio({ luvio });

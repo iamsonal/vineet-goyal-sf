@@ -1,7 +1,10 @@
 import { Adapter, Environment, ResourceRequest } from '@luvio/engine';
 import { DurableEnvironment } from '@luvio/environments';
-import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
-import { GetRecordConfig } from '@salesforce/lds-adapters-uiapi/dist/types/src/generated/adapters/getRecord';
+import {
+    keyBuilderRecord,
+    RecordRepresentation,
+    GetRecordConfig,
+} from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
 import { createLDSAction } from '../actionHandlers/LDSActionHandler';
 import {

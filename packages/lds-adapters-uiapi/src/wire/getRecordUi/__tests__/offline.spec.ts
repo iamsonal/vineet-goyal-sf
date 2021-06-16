@@ -9,7 +9,6 @@ import {
 import { DefaultDurableSegment, makeDurable, makeOffline } from '@luvio/environments';
 
 import { factory as getRecordUiAdapterFactory } from '../index';
-import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
 import { isFulfilledSnapshot } from '../../../util/snapshot';
 
 import recordUiSingleResponse from './data/single-record-Account-layouttypes-Full-modes-View.json';
@@ -58,7 +57,6 @@ function buildLds(ds?: MockDurableStore) {
     const store = new Store();
     const env = makeDurable(makeOffline(new Environment(store, network)), {
         durableStore,
-        reviveRetrievers: responseRecordRepresentationRetrievers,
     });
     const luvio = new Luvio(env);
     return {

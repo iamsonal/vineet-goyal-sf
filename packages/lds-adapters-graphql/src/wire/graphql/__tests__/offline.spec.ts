@@ -1,4 +1,3 @@
-import { PendingSnapshot } from '@luvio/engine';
 import {
     buildMockNetworkAdapter,
     buildSuccessMockPayload,
@@ -146,9 +145,8 @@ describe('graphQL adapter offline', () => {
                 variables: {},
             };
 
-            const pending = adapter(config2);
+            const result = await adapter(config2);
 
-            const result = await luvio.resolvePendingSnapshot(pending as PendingSnapshot<any, any>);
             expect(result.state).toBe('Fulfilled');
             expect(result.data).toEqual({
                 data: {
@@ -282,9 +280,7 @@ describe('graphQL adapter offline', () => {
                 variables: {},
             };
 
-            const pending = adapter(config3);
-
-            const result = await luvio.resolvePendingSnapshot(pending as PendingSnapshot<any, any>);
+            const result = await adapter(config3);
             expect(result.state).toBe('Fulfilled');
             expect(result.data).toEqual({
                 data: {

@@ -1,7 +1,6 @@
 import { getMock as globalGetMock } from 'test-util';
 import { mockGraphqlNetwork, parseQuery } from 'graphql-test-util';
 import { graphQLImperative } from 'lds-adapters-graphql';
-import { luvio } from 'lds-engine';
 
 const MOCK_PREFIX = 'wire/graphql/__karma__/sfs/data/';
 
@@ -411,8 +410,7 @@ describe('sfs gql queries', () => {
             variables: {},
         };
 
-        const pending = graphQLImperative(graphqlConfig);
-        const snapshot = await luvio.resolvePendingSnapshot(pending);
+        const snapshot = await graphQLImperative(graphqlConfig);
         expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
     });
 
@@ -811,11 +809,10 @@ describe('sfs gql queries', () => {
             variables: {},
         };
 
-        const pending = graphQLImperative(graphqlConfig);
-        const snapshot = await luvio.resolvePendingSnapshot(pending);
+        const snapshot = await graphQLImperative(graphqlConfig);
         expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
 
-        const secondPending = graphQLImperative(graphqlConfig);
-        expect(snapshot.data).toEqualSnapshotWithoutEtags(secondPending.data);
+        const secondSnapshot = await graphQLImperative(graphqlConfig);
+        expect(snapshot.data).toEqualSnapshotWithoutEtags(secondSnapshot.data);
     });
 });

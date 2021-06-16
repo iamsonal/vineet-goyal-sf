@@ -815,4 +815,263 @@ describe('sfs gql queries', () => {
         const secondSnapshot = await graphQLImperative(graphqlConfig);
         expect(snapshot.data).toEqualSnapshotWithoutEtags(secondSnapshot.data);
     });
+
+    describe('ResourceAbsence', () => {
+        it('should resolve query correctly', async () => {
+            const ast = parseQuery(/* GraphQL */ `
+                {
+                    uiapi {
+                        query {
+                            ResourceAbsence(
+                                where: { ResourceId: { eq: "0HnRM0000000FaJ0AU" } }
+                                orderBy: { Start: { order: DESC } }
+                                first: 10
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Start {
+                                            value
+                                        }
+                                        End {
+                                            value
+                                        }
+                                        ResourceId {
+                                            value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQuery = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ResourceAbsence(
+                                where: { ResourceId: { eq: "0HnRM0000000FaJ0AU" } }
+                                orderBy: { Start: { order: DESC } }
+                                first: 10
+                            ) {
+                                edges {
+                                    node {
+                                        Start {
+                                            value
+                                            displayValue
+                                        }
+                                        End {
+                                            value
+                                            displayValue
+                                        }
+                                        ResourceId {
+                                            value
+                                            displayValue
+                                        }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
+                }
+            `;
+
+            const mock = getMock('RecordQuery-ResourceAbsence');
+
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            ResourceAbsence: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Start: {
+                                                value: '2021-06-15T19:00:00.000Z',
+                                            },
+                                            End: {
+                                                value: '2021-06-22T19:00:00.000Z',
+                                            },
+                                            ResourceId: {
+                                                value: '0HnRM0000000FaJ0AU',
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                mock
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const snapshot = await graphQLImperative(graphqlConfig);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+        });
+
+        it('should be a CACHE HIT if query executed twice', async () => {
+            const ast = parseQuery(/* GraphQL */ `
+                {
+                    uiapi {
+                        query {
+                            ResourceAbsence(
+                                where: { ResourceId: { eq: "0HnRM0000000FaJ0AU" } }
+                                orderBy: { Start: { order: DESC } }
+                                first: 10
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Start {
+                                            value
+                                        }
+                                        End {
+                                            value
+                                        }
+                                        ResourceId {
+                                            value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQuery = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ResourceAbsence(
+                                where: { ResourceId: { eq: "0HnRM0000000FaJ0AU" } }
+                                orderBy: { Start: { order: DESC } }
+                                first: 10
+                            ) {
+                                edges {
+                                    node {
+                                        Start {
+                                            value
+                                            displayValue
+                                        }
+                                        End {
+                                            value
+                                            displayValue
+                                        }
+                                        ResourceId {
+                                            value
+                                            displayValue
+                                        }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
+                }
+            `;
+
+            const mock = getMock('RecordQuery-ResourceAbsence');
+
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            ResourceAbsence: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Start: {
+                                                value: '2021-06-15T19:00:00.000Z',
+                                            },
+                                            End: {
+                                                value: '2021-06-22T19:00:00.000Z',
+                                            },
+                                            ResourceId: {
+                                                value: '0HnRM0000000FaJ0AU',
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                mock
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const snapshot = await graphQLImperative(graphqlConfig);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+
+            const secondSnapshot = graphQLImperative(graphqlConfig);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(secondSnapshot.data);
+        });
+    });
 });

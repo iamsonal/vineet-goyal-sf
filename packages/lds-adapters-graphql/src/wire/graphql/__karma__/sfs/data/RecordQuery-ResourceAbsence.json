@@ -1,0 +1,46 @@
+{
+    "data": {
+        "uiapi": {
+            "query": {
+                "ResourceAbsence": {
+                    "edges": [
+                        {
+                            "node": {
+                                "Start": {
+                                    "displayValue": "6/15/2021, 12:00 PM",
+                                    "value": "2021-06-15T19:00:00.000Z"
+                                },
+                                "End": {
+                                    "displayValue": "6/22/2021, 12:00 PM",
+                                    "value": "2021-06-22T19:00:00.000Z"
+                                },
+                                "ResourceId": {
+                                    "displayValue": null,
+                                    "value": "0HnRM0000000FaJ0AU"
+                                },
+                                "__typename": "ResourceAbsence",
+                                "ApiName": "ResourceAbsence",
+                                "WeakEtag": 1623798500000,
+                                "Id": "0HwRM0000004G0y0AE",
+                                "DisplayValue": "RA-0001",
+                                "SystemModstamp": {
+                                    "value": "2021-06-15T23:08:20.000Z"
+                                },
+                                "LastModifiedById": {
+                                    "value": "005RM000002492xYAA"
+                                },
+                                "LastModifiedDate": {
+                                    "value": "2021-06-15T23:08:20.000Z"
+                                },
+                                "RecordTypeId": {
+                                    "value": "012000000000000AAA"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "errors": []
+}

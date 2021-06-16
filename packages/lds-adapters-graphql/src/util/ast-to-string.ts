@@ -31,7 +31,7 @@ import { getLuvioFieldNodeSelection } from '../type/Selection';
 const { keys } = Object;
 const KIND_OBJECT_FIELD_SELECTION = 'ObjectFieldSelection';
 
-function serializeValueNode(valueDefinition: LuvioValueNode) {
+export function serializeValueNode(valueDefinition: LuvioValueNode) {
     const { kind } = valueDefinition;
     switch (kind) {
         case 'ObjectValue':
@@ -81,7 +81,7 @@ function serializeStringValueNode(literalValueNode: StringValueNode) {
     return `"${literalValueNode.value}"`;
 }
 
-function serializeObjectValueNode(objectValueDefinition: LuvioObjectValueNode): string {
+export function serializeObjectValueNode(objectValueDefinition: LuvioObjectValueNode): string {
     const { fields } = objectValueDefinition;
     let str = [];
     const fieldKeys = keys(fields);

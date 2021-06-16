@@ -1073,5 +1073,629 @@ describe('sfs gql queries', () => {
             const secondSnapshot = graphQLImperative(graphqlConfig);
             expect(snapshot.data).toEqualSnapshotWithoutEtags(secondSnapshot.data);
         });
+
+        it('shuld resolve data in cache correctly', async () => {
+            const ast = parseQuery(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ServiceTerritoryLocation(
+                                orderBy: { LastModifiedDate: { order: DESC } }
+                                first: 10
+                                where: {
+                                    Location: {
+                                        IsMobile: { eq: false }
+                                        IsInventoryLocation: { eq: false }
+                                    }
+                                    and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
+                                }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQuery = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ServiceTerritoryLocation(
+                                orderBy: { LastModifiedDate: { order: DESC } }
+                                first: 10
+                                where: {
+                                    Location: {
+                                        IsMobile: { eq: false }
+                                        IsInventoryLocation: { eq: false }
+                                    }
+                                    and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
+                                }
+                            ) {
+                                edges {
+                                    node {
+                                        Id
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
+                }
+            `;
+
+            const mock = getMock('RecordQuery-ServiceTerritoryLocation');
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            ServiceTerritoryLocation: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Id: '1SlRM00000000YB0AY',
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                mock
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const snapshot = await graphQLImperative(graphqlConfig);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+
+            const secondSnapshot = graphQLImperative(graphqlConfig);
+            expect(secondSnapshot.data).toEqualSnapshotWithoutEtags(secondSnapshot.data);
+        });
+
+        it('shuld resolve data in cache correctly if arguments are in different order', async () => {
+            const ast = parseQuery(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ServiceTerritoryLocation(
+                                orderBy: { LastModifiedDate: { order: DESC } }
+                                first: 10
+                                where: {
+                                    Location: {
+                                        IsMobile: { eq: false }
+                                        IsInventoryLocation: { eq: false }
+                                    }
+                                    and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
+                                }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const modifiedAst = parseQuery(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ServiceTerritoryLocation(
+                                where: {
+                                    Location: {
+                                        IsInventoryLocation: { eq: false }
+                                        IsMobile: { eq: false }
+                                    }
+                                    and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
+                                }
+                                orderBy: { LastModifiedDate: { order: DESC } }
+                                first: 10
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQuery = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ServiceTerritoryLocation(
+                                orderBy: { LastModifiedDate: { order: DESC } }
+                                first: 10
+                                where: {
+                                    Location: {
+                                        IsMobile: { eq: false }
+                                        IsInventoryLocation: { eq: false }
+                                    }
+                                    and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
+                                }
+                            ) {
+                                edges {
+                                    node {
+                                        Id
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
+                }
+            `;
+
+            const mock = getMock('RecordQuery-ServiceTerritoryLocation');
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            ServiceTerritoryLocation: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Id: '1SlRM00000000YB0AY',
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                mock
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const snapshot = await graphQLImperative(graphqlConfig);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+
+            const secondSnapshot = graphQLImperative({
+                query: modifiedAst,
+                variables: {},
+            });
+            expect(secondSnapshot.data).toEqualSnapshotWithoutEtags(secondSnapshot.data);
+        });
+    });
+
+    describe('query with IN statement', () => {
+        it('shuld resolve data correctly', async () => {
+            const ast = parseQuery(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ServiceTerritoryLocation(
+                                orderBy: { LastModifiedDate: { order: DESC } }
+                                first: 10
+                                where: {
+                                    Location: {
+                                        IsMobile: { eq: false }
+                                        IsInventoryLocation: { eq: false }
+                                    }
+                                    and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
+                                }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQuery = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ServiceTerritoryLocation(
+                                orderBy: { LastModifiedDate: { order: DESC } }
+                                first: 10
+                                where: {
+                                    Location: {
+                                        IsMobile: { eq: false }
+                                        IsInventoryLocation: { eq: false }
+                                    }
+                                    and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
+                                }
+                            ) {
+                                edges {
+                                    node {
+                                        Id
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
+                }
+            `;
+
+            const mock = getMock('RecordQuery-ServiceTerritoryLocation');
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            ServiceTerritoryLocation: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Id: '1SlRM00000000YB0AY',
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                mock
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const snapshot = await graphQLImperative(graphqlConfig);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+        });
+
+        it('shuld resolve data in cache correctly', async () => {
+            const ast = parseQuery(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ServiceTerritoryLocation(
+                                orderBy: { LastModifiedDate: { order: DESC } }
+                                first: 10
+                                where: {
+                                    Location: {
+                                        IsMobile: { eq: false }
+                                        IsInventoryLocation: { eq: false }
+                                    }
+                                    and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
+                                }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQuery = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ServiceTerritoryLocation(
+                                orderBy: { LastModifiedDate: { order: DESC } }
+                                first: 10
+                                where: {
+                                    Location: {
+                                        IsMobile: { eq: false }
+                                        IsInventoryLocation: { eq: false }
+                                    }
+                                    and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
+                                }
+                            ) {
+                                edges {
+                                    node {
+                                        Id
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
+                }
+            `;
+
+            const mock = getMock('RecordQuery-ServiceTerritoryLocation');
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            ServiceTerritoryLocation: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Id: '1SlRM00000000YB0AY',
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                mock
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const snapshot = await graphQLImperative(graphqlConfig);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+
+            const secondSnapshot = graphQLImperative(graphqlConfig);
+            expect(secondSnapshot.data).toEqualSnapshotWithoutEtags(secondSnapshot.data);
+        });
+
+        it('shuld resolve data in cache correctly if arguments are in different order', async () => {
+            const ast = parseQuery(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ServiceTerritoryLocation(
+                                orderBy: { LastModifiedDate: { order: DESC } }
+                                first: 10
+                                where: {
+                                    Location: {
+                                        IsMobile: { eq: false }
+                                        IsInventoryLocation: { eq: false }
+                                    }
+                                    and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
+                                }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const modifiedAst = parseQuery(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ServiceTerritoryLocation(
+                                where: {
+                                    Location: {
+                                        IsInventoryLocation: { eq: false }
+                                        IsMobile: { eq: false }
+                                    }
+                                    and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
+                                }
+                                orderBy: { LastModifiedDate: { order: DESC } }
+                                first: 10
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQuery = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            ServiceTerritoryLocation(
+                                orderBy: { LastModifiedDate: { order: DESC } }
+                                first: 10
+                                where: {
+                                    Location: {
+                                        IsMobile: { eq: false }
+                                        IsInventoryLocation: { eq: false }
+                                    }
+                                    and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
+                                }
+                            ) {
+                                edges {
+                                    node {
+                                        Id
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
+                }
+            `;
+
+            const mock = getMock('RecordQuery-ServiceTerritoryLocation');
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            ServiceTerritoryLocation: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Id: '1SlRM00000000YB0AY',
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                mock
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const snapshot = await graphQLImperative(graphqlConfig);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+
+            const secondSnapshot = graphQLImperative({
+                query: modifiedAst,
+                variables: {},
+            });
+            expect(secondSnapshot.data).toEqualSnapshotWithoutEtags(secondSnapshot.data);
+        });
     });
 });

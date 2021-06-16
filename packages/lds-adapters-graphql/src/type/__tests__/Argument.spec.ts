@@ -59,6 +59,52 @@ describe('Arguments', () => {
                 'where:{Id:{eq:"001RM00000558MmYAI"},Name:{like:"Account%"}}'
             );
         });
+
+        describe('ListValue', () => {
+            it('should serialize ListValue correctly', () => {
+                const listValue: LuvioArgumentNode = {
+                    name: 'foo',
+                    kind: 'Argument',
+                    value: {
+                        kind: 'ListValue',
+                        values: [
+                            {
+                                kind: 'StringValue',
+                                value: 'a',
+                            },
+                            {
+                                kind: 'StringValue',
+                                value: 'b',
+                            },
+                        ],
+                    },
+                };
+
+                expect(serialize(listValue)).toBe('foo:["a","b"]');
+            });
+
+            it('should serialize and sort ListValue correctly', () => {
+                const listValue: LuvioArgumentNode = {
+                    name: 'foo',
+                    kind: 'Argument',
+                    value: {
+                        kind: 'ListValue',
+                        values: [
+                            {
+                                kind: 'StringValue',
+                                value: 'b',
+                            },
+                            {
+                                kind: 'StringValue',
+                                value: 'a',
+                            },
+                        ],
+                    },
+                };
+
+                expect(serialize(listValue)).toBe('foo:["a","b"]');
+            });
+        });
     });
 
     describe('serialize arguments', () => {

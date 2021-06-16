@@ -634,38 +634,82 @@ describe('record-field-batching utils', () => {
 
     describe('buildCompositeRequestByFields', () => {
         const referenceId = 'mockId';
-        it('should build a CompositeRequest with a getRecord input', () => {
-            const fieldCollection = ScopedFieldsCollection.fromQueryParameterValue(
-                'Name,Id,Cars__c,Cars__r.Name'
-            ).split();
 
-            const actualCompositeRequest = buildCompositeRequestByFields(
+        const scopedFieldsCollection = ScopedFieldsCollection.fromQueryParameterValue(
+            'Name,Id,Cars__c,Cars__r.Name'
+        ).split();
+
+        const scopedOptionalFieldCollection =
+            ScopedFieldsCollection.fromQueryParameterValue('Parent_Account__c').split();
+
+        const emptyCollection = ScopedFieldsCollection.fromQueryParameterValue('').split();
+        const collectionWithEmptyItem = [new ScopedFieldsCollection()];
+
+        function testWithEmptyOptionFields(
+            referenceId: string,
+            scopedFieldsCollection: ScopedFieldsCollection[],
+            collection: ScopedFieldsCollection[]
+        ) {
+            const result = buildCompositeRequestByFields(referenceId, buildResourceRequest({}), {
+                fieldCollection: scopedFieldsCollection,
+                optionalFieldCollection: collection,
+            });
+
+            expect(result.length).toEqual(1);
+            expect(result[0].referenceId.length).toBeGreaterThan(0);
+            expect(result[0].url.length).toBeGreaterThan(0);
+        }
+
+        function testWithEmptyFields(
+            referenceId: string,
+            collection: any,
+            scopedOptionalFieldCollection: ScopedFieldsCollection[]
+        ) {
+            const result = buildCompositeRequestByFields(referenceId, buildResourceRequest({}), {
+                fieldCollection: collection,
+                optionalFieldCollection: scopedOptionalFieldCollection,
+            });
+
+            expect(result.length).toEqual(1);
+            expect(result[0].referenceId.length).toBeGreaterThan(0);
+            expect(result[0].url.length).toBeGreaterThan(0);
+        }
+
+        it('should build a CompositeRequest with fields and undefined optionalFields', () => {
+            testWithEmptyOptionFields(referenceId, scopedFieldsCollection, undefined);
+        });
+
+        it('should build a CompositeRequest with fields and empty optionalFields', () => {
+            testWithEmptyOptionFields(referenceId, scopedFieldsCollection, emptyCollection);
+        });
+
+        it('should build a CompositeRequest with fields and optionalFields collection with empty item', () => {
+            testWithEmptyOptionFields(referenceId, scopedFieldsCollection, collectionWithEmptyItem);
+        });
+
+        it('should build a CompositeRequest with optional fields and undefined Fields', () => {
+            testWithEmptyFields(referenceId, undefined, scopedOptionalFieldCollection);
+        });
+
+        it('should build a CompositeRequest with optional fields and empty Fields', () => {
+            testWithEmptyFields(referenceId, emptyCollection, scopedOptionalFieldCollection);
+        });
+
+        it('should build a CompositeRequest with optional fields and fields collection with emty item', () => {
+            testWithEmptyFields(
                 referenceId,
-                buildResourceRequest({}),
-                {
-                    fieldCollection,
-                    optionalFieldCollection: undefined,
-                }
+                collectionWithEmptyItem,
+                scopedOptionalFieldCollection
             );
-
-            expect(actualCompositeRequest.length).toEqual(1);
-            expect(actualCompositeRequest[0].referenceId.length).toBeGreaterThan(0);
-            expect(actualCompositeRequest[0].url.length).toBeGreaterThan(0);
         });
 
         it('should create multiple chunks with fields and optionalFields', () => {
-            const fieldCollection = ScopedFieldsCollection.fromQueryParameterValue(
-                'Name,Id,Cars__c,Cars__r.Name'
-            ).split();
-            const optionalFieldCollection =
-                ScopedFieldsCollection.fromQueryParameterValue('Parent_Account__c').split();
-
             const actualCompositeRequest = buildCompositeRequestByFields(
                 referenceId,
                 buildResourceRequest({}),
                 {
-                    fieldCollection,
-                    optionalFieldCollection,
+                    fieldCollection: scopedFieldsCollection,
+                    optionalFieldCollection: scopedOptionalFieldCollection,
                 }
             );
 

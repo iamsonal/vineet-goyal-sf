@@ -302,6 +302,9 @@ export function buildCompositeRequestByFields(
     if (fieldCollection !== undefined) {
         for (let i = 0, len = fieldCollection.length; i < len; i += 1) {
             const fieldChunk = fieldCollection[i].toQueryParams();
+            if (fieldChunk.length === 0) {
+                continue;
+            }
             const url = buildAggregateUiUrl(
                 {
                     fields: fieldChunk,
@@ -319,6 +322,9 @@ export function buildCompositeRequestByFields(
     if (optionalFieldCollection !== undefined) {
         for (let i = 0, len = optionalFieldCollection.length; i < len; i += 1) {
             const fieldChunk = optionalFieldCollection[i].toQueryParams();
+            if (fieldChunk.length === 0) {
+                continue;
+            }
             const url = buildAggregateUiUrl(
                 {
                     optionalFields: fieldChunk,

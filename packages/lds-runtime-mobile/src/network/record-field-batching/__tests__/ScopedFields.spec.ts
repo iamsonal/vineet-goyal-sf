@@ -121,6 +121,21 @@ describe('ScopedFields', () => {
 
     describe('ScopedFieldsCollection.split', () => {
         const maxLengthAllowed = 30;
+
+        it(`null should not be splitted`, () => {
+            const result =
+                ScopedFieldsCollection.fromQueryParameterValue(null).split(maxLengthAllowed);
+
+            expect(result.length).toBe(0);
+        });
+
+        it(`empty string should not be splitted`, () => {
+            const result =
+                ScopedFieldsCollection.fromQueryParameterValue('').split(maxLengthAllowed);
+
+            expect(result.length).toBe(0);
+        });
+
         it(`short one should not be splitted`, () => {
             const result =
                 ScopedFieldsCollection.fromQueryParameterValue('Note.Id,Note.Name').split(

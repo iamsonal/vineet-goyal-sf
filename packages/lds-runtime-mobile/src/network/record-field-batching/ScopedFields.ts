@@ -161,8 +161,10 @@ export class ScopedFieldsCollection {
                 }
             }
             return result;
-        } else {
+        } else if (size > 0) {
             return [this];
+        } else {
+            return [];
         }
     }
 

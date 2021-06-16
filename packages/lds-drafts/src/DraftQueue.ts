@@ -217,17 +217,17 @@ export enum QueueOperationType {
     Update = 'update',
 }
 
-interface AddQueueOperation {
+export interface AddQueueOperation {
     type: QueueOperationType.Add;
     action: DraftAction<unknown, unknown>;
 }
 
-interface DeleteQueueOperation {
+export interface DeleteQueueOperation {
     type: QueueOperationType.Delete;
     key: string;
 }
 
-interface UpdateQueueOperation {
+export interface UpdateQueueOperation {
     type: QueueOperationType.Update;
     key: string;
     action: DraftAction<unknown, unknown>;

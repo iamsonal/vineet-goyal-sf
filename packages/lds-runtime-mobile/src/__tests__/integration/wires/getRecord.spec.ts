@@ -1,38 +1,21 @@
-import { Luvio, Snapshot, HttpStatusCode } from '@luvio/engine';
+import { Snapshot, HttpStatusCode } from '@luvio/engine';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { CompositeResponseEnvelope } from '../../../network/record-field-batching/utils';
-import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusDurableStore';
-import { MockNimbusNetworkAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
-import { getRecordAdapterFactory } from '@salesforce/lds-adapters-uiapi';
+import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 import { generateMockedRecordFields } from '../../../network/record-field-batching/__tests__/testUtils';
 import { JSONStringify } from '../../../utils/language';
 import { clone } from '../../testUtils';
+import { setup } from './integrationTestSetup';
 const RECORD_ID = mockAccount.id;
 const API_NAME = mockAccount.apiName;
 
 describe('mobile runtime integration tests', () => {
-    let luvio: Luvio;
     let networkAdapter: MockNimbusNetworkAdapter;
     let getRecord;
 
-    // we want the same instance of MockNimbusDurableStore since we don't
-    // want to lose the listeners between tests (luvio instance only registers
-    // the listeners once on static import)
-    const durableStore = new MockNimbusDurableStore();
-    mockNimbusStoreGlobal(durableStore);
-
     beforeEach(async () => {
-        await durableStore.resetStore();
-
-        networkAdapter = new MockNimbusNetworkAdapter();
-        mockNimbusNetworkGlobal(networkAdapter);
-
-        const runtime = await import('../../../main');
-        luvio = runtime.luvio;
-        (luvio as any).environment.store.reset();
-
-        getRecord = getRecordAdapterFactory(luvio);
+        ({ networkAdapter, getRecord } = await setup());
     });
     describe('getRecord', () => {
         it('return data correctly when fields are batched', async () => {

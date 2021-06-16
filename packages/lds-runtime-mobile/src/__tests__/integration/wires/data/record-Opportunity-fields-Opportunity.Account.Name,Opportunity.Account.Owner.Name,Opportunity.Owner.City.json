@@ -1,0 +1,105 @@
+{
+    "apiName": "Opportunity",
+    "childRelationships": {},
+    "eTag": "dad262085dffae2bbee55118ad3ade01",
+    "fields": {
+        "Account": {
+            "displayValue": "Burlington Textiles Corp of America",
+            "value": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "2a6f8b97a5101116e37f89e5832778ec",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "001T1000002GaXCIA0"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Burlington Textiles Corp of America"
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "58697248d360e82aed7e83834ef5f48a",
+                            "fields": {
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000Huh7IAC"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "User User"
+                                }
+                            },
+                            "id": "005T1000000Huh7IAC",
+                            "lastModifiedById": "005T1000000Huh7IAC",
+                            "lastModifiedDate": "2021-04-07T06:08:03.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2021-04-07T06:08:03.000Z",
+                            "weakEtag": 1617775683000
+                        }
+                    },
+                    "OwnerId": {
+                        "displayValue": null,
+                        "value": "005T1000000Huh7IAC"
+                    }
+                },
+                "id": "001T1000002GaXCIA0",
+                "lastModifiedById": "005T1000000Huh7IAC",
+                "lastModifiedDate": "2021-04-06T23:46:16.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2021-04-06T23:46:16.000Z",
+                "weakEtag": 1617752776000
+            }
+        },
+        "AccountId": {
+            "displayValue": null,
+            "value": "001T1000002GaXCIA0"
+        },
+        "Owner": {
+            "displayValue": "User User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "58697248d360e82aed7e83834ef5f48a",
+                "fields": {
+                    "City": {
+                        "displayValue": null,
+                        "value": "Atlanta"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "005T1000000Huh7IAC"
+                    }
+                },
+                "id": "005T1000000Huh7IAC",
+                "lastModifiedById": "005T1000000Huh7IAC",
+                "lastModifiedDate": "2021-04-07T06:08:03.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2021-04-07T06:08:03.000Z",
+                "weakEtag": 1617775683000
+            }
+        },
+        "OwnerId": {
+            "displayValue": null,
+            "value": "005T1000000Huh7IAC"
+        },
+        "Name": {
+            "displayValue": null,
+            "value": "Great oppy"
+        }
+    },
+    "id": "006T10000023ZEJIA2",
+    "lastModifiedById": "005T1000000Huh7IAC",
+    "lastModifiedDate": "2021-04-06T23:46:16.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2021-04-06T23:46:16.000Z",
+    "weakEtag": 1617752776000
+}

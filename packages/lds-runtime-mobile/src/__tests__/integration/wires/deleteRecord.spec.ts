@@ -1,18 +1,13 @@
-import { Luvio, Snapshot } from '@luvio/engine';
-import {
-    createRecordAdapterFactory,
-    deleteRecordAdapterFactory,
-    getRecordAdapterFactory,
-    RecordRepresentation,
-} from '@salesforce/lds-adapters-uiapi';
-import { DraftManager, DraftQueue, DraftActionOperationType } from '@salesforce/lds-drafts';
+import { Snapshot } from '@luvio/engine';
+import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import { DraftManager, DraftActionOperationType } from '@salesforce/lds-drafts';
 import { DraftRecordRepresentation } from '@salesforce/lds-drafts/dist/utils/records';
 import { JSONStringify } from '../../../utils/language';
-import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusDurableStore';
-import { MockNimbusNetworkAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
+import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 import { ObjectInfoIndex, OBJECT_INFO_PREFIX_SEGMENT } from '../../../utils/ObjectInfoService';
 import { DurableStoreEntry } from '@luvio/environments';
+import { setup } from './integrationTestSetup';
 
 const RECORD_ID = mockAccount.id;
 const API_NAME = 'Account';
@@ -44,36 +39,16 @@ function createTestRecord(
 }
 
 describe('mobile runtime integration tests', () => {
-    let luvio: Luvio;
-    let draftQueue: DraftQueue;
     let draftManager: DraftManager;
     let networkAdapter: MockNimbusNetworkAdapter;
     let createRecord;
     let deleteRecord;
     let getRecord;
-
-    // we want the same instance of MockNimbusDurableStore since we don't
-    // want to lose the listeners between tests (luvio instance only registers
-    // the listeners once on static import)
-    const durableStore = new MockNimbusDurableStore();
-    mockNimbusStoreGlobal(durableStore);
+    let durableStore;
 
     beforeEach(async () => {
-        await durableStore.resetStore();
-
-        networkAdapter = new MockNimbusNetworkAdapter();
-        mockNimbusNetworkGlobal(networkAdapter);
-
-        const runtime = await import('../../../main');
-        luvio = runtime.luvio;
-        draftQueue = runtime.draftQueue;
-        draftQueue.stopQueue();
-        draftManager = runtime.draftManager;
-        (luvio as any).environment.store.reset();
-
-        createRecord = createRecordAdapterFactory(luvio);
-        deleteRecord = deleteRecordAdapterFactory(luvio);
-        getRecord = getRecordAdapterFactory(luvio);
+        ({ draftManager, networkAdapter, createRecord, getRecord, durableStore, deleteRecord } =
+            await setup());
     });
 
     describe('deleteRecord', () => {

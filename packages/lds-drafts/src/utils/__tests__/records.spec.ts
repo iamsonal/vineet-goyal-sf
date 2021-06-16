@@ -3,10 +3,12 @@ import { DurableStoreEntry } from '@luvio/environments';
 import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
 import {
+    AddQueueOperation,
     DraftAction,
     DraftActionStatus,
     PendingDraftAction,
     QueueOperationType,
+    UpdateQueueOperation,
 } from '../../DraftQueue';
 import {
     buildDurableRecordRepresentation,
@@ -562,13 +564,24 @@ describe('draft environment record utilities', () => {
             expect(operations.length).toBe(4);
             expect(operations[0].type).toBe(QueueOperationType.Delete);
             expect(operations[1].type).toBe(QueueOperationType.Add);
-            expect((operations[1] as any).action.request.basePath).toBe(
-                completedAction.data.basePath
-            );
+            expect(
+                (
+                    (operations[1] as AddQueueOperation).action as DraftAction<
+                        unknown,
+                        ResourceRequest
+                    >
+                ).data.basePath
+            ).toBe(completedAction.data.basePath);
             expect(operations[2].type).toBe(QueueOperationType.Delete);
-            expect((operations[3] as any).action.request.basePath).toBe(
-                completedAction.data.basePath
-            );
+            expect(operations[3].type).toBe(QueueOperationType.Add);
+            expect(
+                (
+                    (operations[3] as AddQueueOperation).action as DraftAction<
+                        unknown,
+                        ResourceRequest
+                    >
+                ).data.basePath
+            ).toBe(completedAction.data.basePath);
         });
 
         it('replaces draft id references in the body', () => {
@@ -607,7 +620,14 @@ describe('draft environment record utilities', () => {
             const operations = updateQueueOnPost(completedAction, queue);
             expect(operations.length).toBe(1);
             expect(operations[0].type).toBe(QueueOperationType.Update);
-            expect((operations[0] as any).action.request.body).toEqual({
+            expect(
+                (
+                    (operations[0] as UpdateQueueOperation).action as DraftAction<
+                        unknown,
+                        ResourceRequest
+                    >
+                ).data.body
+            ).toEqual({
                 fields: { FriendId: canonicalId },
             });
         });

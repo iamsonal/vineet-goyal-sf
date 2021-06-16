@@ -524,10 +524,10 @@ export function updateQueueOnPost(
                 if (queueActionTag === draftKey) {
                     const canonicalRecordKey = keyBuilderRecord({ recordId: canonicalRecordId });
 
-                    const updatedAction = {
+                    const updatedAction: DraftAction<unknown, ResourceRequest> = {
                         ...queueAction,
                         tag: canonicalRecordKey,
-                        request: {
+                        data: {
                             ...queueActionRequest,
                             basePath: updatedBasePath,
                             body: JSONParse(updatedBody),
@@ -543,9 +543,9 @@ export function updateQueueOnPost(
                         action: updatedAction,
                     });
                 } else {
-                    const updatedAction = {
+                    const updatedAction: DraftAction<unknown, ResourceRequest> = {
                         ...queueAction,
-                        request: {
+                        data: {
                             ...queueActionRequest,
                             basePath: updatedBasePath,
                             body: JSONParse(updatedBody),

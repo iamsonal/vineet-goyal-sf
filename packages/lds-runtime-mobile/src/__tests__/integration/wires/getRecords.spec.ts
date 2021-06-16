@@ -1,15 +1,14 @@
 import timekeeper from 'timekeeper';
 import { Luvio, PendingSnapshot, Snapshot } from '@luvio/engine';
-import { getRecordsAdapterFactory } from '@salesforce/lds-adapters-uiapi';
-import { DraftQueue } from '@salesforce/lds-drafts';
 import { customMatchers } from '@salesforce/lds-jest';
 
 import { JSONStringify } from '../../../utils/language';
-import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusDurableStore';
-import { MockNimbusNetworkAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
+import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
 import getRecordsResponse from './data/records-multiple-Accounts-fields-Account.Id,Account.Name.json';
 import getRecordsResponseWithOwnerField from './data/records-multiple-Accounts-fields-Account.OwnerId.json';
 import { flushPromises } from '../../testUtils';
+import { setup } from './integrationTestSetup';
+import { MockNimbusDurableStore } from '../../MockNimbusDurableStore';
 
 const RECORD_TTL = 30000;
 const GET_RECORDS_PRIVATE_FIELDS = ['eTag', 'weakEtag', 'hasErrors'];
@@ -19,29 +18,12 @@ expect.extend(customMatchers);
 
 describe('mobile runtime integration tests', () => {
     let luvio: Luvio;
-    let draftQueue: DraftQueue;
     let networkAdapter: MockNimbusNetworkAdapter;
+    let durableStore: MockNimbusDurableStore;
     let getRecords;
 
-    // we want the same instance of MockNimbusDurableStore since we don't
-    // want to lose the listeners between tests (luvio instance only registers
-    // the listeners once on static import)
-    const durableStore = new MockNimbusDurableStore();
-    mockNimbusStoreGlobal(durableStore);
-
     beforeEach(async () => {
-        await durableStore.resetStore();
-
-        networkAdapter = new MockNimbusNetworkAdapter();
-        mockNimbusNetworkGlobal(networkAdapter);
-
-        const runtime = await import('../../../main');
-        luvio = runtime.luvio;
-        draftQueue = runtime.draftQueue;
-        draftQueue.stopQueue();
-        (luvio as any).environment.store.reset();
-
-        getRecords = getRecordsAdapterFactory(luvio);
+        ({ luvio, networkAdapter, durableStore, getRecords } = await setup());
     });
 
     describe('getRecords', () => {

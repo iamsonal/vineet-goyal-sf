@@ -1,9 +1,5 @@
 import { Luvio, Snapshot } from '@luvio/engine';
-import {
-    createRecordAdapterFactory,
-    getRecordAdapterFactory,
-    RecordRepresentation,
-} from '@salesforce/lds-adapters-uiapi';
+import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import {
     DraftManager,
     DraftQueue,
@@ -12,12 +8,11 @@ import {
 } from '@salesforce/lds-drafts';
 import { DraftRecordRepresentation } from '@salesforce/lds-drafts/dist/utils/records';
 import { JSONStringify } from '../../../utils/language';
-import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusDurableStore';
-import { MockNimbusNetworkAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
+import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
 import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
-import { DurableStoreEntry } from '@luvio/environments';
-import { ObjectInfoIndex, OBJECT_INFO_PREFIX_SEGMENT } from '../../../utils/ObjectInfoService';
+import mockOppy from './data/record-Opportunity-fields-Opportunity.Account.Name,Opportunity.Account.Owner.Name,Opportunity.Owner.City.json';
+import { setup } from './integrationTestSetup';
 
 const RECORD_ID = mockAccount.id;
 const API_NAME = 'Account';
@@ -30,38 +25,29 @@ describe('mobile runtime integration tests', () => {
     let createRecord;
     let getRecord;
 
-    // we want the same instance of MockNimbusDurableStore since we don't
-    // want to lose the listeners between tests (luvio instance only registers
-    // the listeners once on static import)
-    const durableStore = new MockNimbusDurableStore();
-    mockNimbusStoreGlobal(durableStore);
-
     beforeEach(async () => {
-        await durableStore.resetStore();
-
-        networkAdapter = new MockNimbusNetworkAdapter();
-        mockNimbusNetworkGlobal(networkAdapter);
-
-        const runtime = await import('../../../main');
-        luvio = runtime.luvio;
-        draftQueue = runtime.draftQueue;
-        draftQueue.stopQueue();
-        draftManager = runtime.draftManager;
-        (luvio as any).environment.store.reset();
-
-        createRecord = createRecordAdapterFactory(luvio);
-        getRecord = getRecordAdapterFactory(luvio);
-
-        const accountObjectInfo: DurableStoreEntry<ObjectInfoIndex> = {
-            data: { apiName: API_NAME, keyPrefix: '001' },
-        };
-        durableStore.setEntriesInSegment(
-            {
-                [API_NAME]: JSON.stringify(accountObjectInfo),
-            },
-            OBJECT_INFO_PREFIX_SEGMENT
-        );
+        ({ luvio, draftManager, draftQueue, networkAdapter, createRecord, getRecord } =
+            await setup());
     });
+
+    async function populateDurableStoreWithAccount() {
+        networkAdapter.setMockResponse({
+            status: 201,
+            headers: {},
+            body: JSONStringify(mockAccount),
+        });
+
+        const snapshot = await getRecord({
+            recordId: RECORD_ID,
+            fields: ['Account.Id', 'Account.Name'],
+        });
+        expect(snapshot.state).toBe('Fulfilled');
+
+        (luvio as any).environment.storeReset();
+        await flushPromises();
+
+        return snapshot.data as RecordRepresentation;
+    }
 
     describe('createRecord', () => {
         it('createRecord returns synthetic record', async () => {
@@ -131,6 +117,96 @@ describe('mobile runtime integration tests', () => {
             expect(subject.items[0]).toMatchObject({
                 operationType: DraftActionOperationType.Create,
             });
+        });
+
+        it('creates a record making it a child of an existing record', async () => {
+            // populate DS with existing Account
+            const account = await populateDurableStoreWithAccount();
+            // create a draft Opportunity with OwnerId set to the existing Account
+            const createdOppy = (
+                await createRecord({
+                    apiName: 'Opportunity',
+                    fields: { Name: 'Fabulous Oppy', OwnerId: account.id },
+                })
+            ).data as RecordRepresentation;
+            // call getRecord on the draft Opportunity and request Owner.Name
+            const oppySnap = await getRecord({
+                recordId: createdOppy.id,
+                fields: ['Opportunity.Name', 'Opportunity.OwnerId'],
+            });
+            // expect the snapshot to be fulfilled
+            expect(oppySnap.state).toBe('Fulfilled');
+
+            await flushPromises();
+            // subscribe to snapshot
+            const getRecordSpy = jest.fn();
+            luvio.storeSubscribe(oppySnap, getRecordSpy);
+            // process next draft queue item
+            networkAdapter.setMockResponse({
+                status: 201,
+                headers: {},
+                body: JSONStringify(mockOppy),
+            });
+
+            await draftQueue.processNextAction();
+
+            await flushPromises();
+
+            const canonicalOppyId = mockOppy.id;
+
+            // expect snapshot to be called back with updated ids
+            expect(getRecordSpy).toHaveBeenCalledTimes(1);
+            const callbackOppy = getRecordSpy.mock.calls[0][0].data as RecordRepresentation;
+            expect(callbackOppy.id).toEqual(canonicalOppyId);
+        });
+
+        it('creates a record making it a child of another draft record', async () => {
+            // create a draft Account
+            const account = (
+                await createRecord({
+                    apiName: API_NAME,
+                    fields: { Name: 'Cool Account' },
+                })
+            ).data as RecordRepresentation;
+            // create a draft Opportunity with OwnerId set to the draft Account
+            const oppy = (
+                await createRecord({
+                    apiName: 'Opportunity',
+                    fields: { Name: 'Fabulous Oppy', AccountId: account.id },
+                })
+            ).data as RecordRepresentation;
+            // call getRecord on the draft Opportunity and request Owner.Name
+            // call getRecord on the draft Opportunity and request Owner.Name
+            const oppySnap = await getRecord({
+                recordId: oppy.id,
+                fields: ['Opportunity.Name', 'Opportunity.AccountId'],
+            });
+            // expect the snapshot to be fulfilled
+            expect(oppySnap.state).toBe('Fulfilled');
+
+            await flushPromises();
+            // subscribe to snapshot
+            const getRecordSpy = jest.fn();
+            luvio.storeSubscribe(oppySnap, getRecordSpy);
+
+            // process next draft action to create the parent account
+            networkAdapter.setMockResponse({
+                status: 201,
+                headers: {},
+                body: JSONStringify(mockAccount),
+            });
+            // process next draft queue item
+            await draftQueue.processNextAction();
+
+            // flush
+            await flushPromises();
+
+            const canonicalRecordId = mockAccount.id;
+            // expect snapshot to be called back with ids updated
+            // TODO: W-9463628 this should be 1 but we are emmitting an extra identical emit
+            expect(getRecordSpy).toHaveBeenCalledTimes(2);
+            const callbackOppy = getRecordSpy.mock.calls[0][0].data as RecordRepresentation;
+            expect(callbackOppy.fields['AccountId'].value).toBe(canonicalRecordId);
         });
     });
 });

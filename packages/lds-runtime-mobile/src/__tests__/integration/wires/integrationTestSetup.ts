@@ -5,6 +5,7 @@ import {
     getRecordAdapterFactory,
     updateRecordAdapterFactory,
     getRecordsAdapterFactory,
+    getRelatedListRecordsAdapterFactory,
 } from '@salesforce/lds-adapters-uiapi';
 import { DraftManager, DraftQueue } from '@salesforce/lds-drafts';
 import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusDurableStore';
@@ -22,6 +23,7 @@ let getRecord;
 let updateRecord;
 let deleteRecord;
 let getRecords;
+let getRelatedListRecords;
 
 // we want the same instance of MockNimbusDurableStore since we don't
 // want to lose the listeners between tests (luvio instance only registers
@@ -42,13 +44,14 @@ export async function setup() {
     draftQueue = runtime.draftQueue;
     draftQueue.stopQueue();
     draftManager = runtime.draftManager;
-    (luvio as any).environment.store.reset();
+    await resetLuvioStore();
 
     createRecord = createRecordAdapterFactory(luvio);
     getRecord = getRecordAdapterFactory(luvio);
     deleteRecord = deleteRecordAdapterFactory(luvio);
     updateRecord = updateRecordAdapterFactory(luvio);
     getRecords = getRecordsAdapterFactory(luvio);
+    getRelatedListRecords = getRelatedListRecordsAdapterFactory(luvio);
 
     await populateDurableStoreWithObjectInfos();
     await flushPromises();
@@ -64,12 +67,22 @@ export async function setup() {
         deleteRecord,
         updateRecord,
         getRecords,
+        getRelatedListRecords,
     };
+}
+
+export async function resetLuvioStore() {
+    (luvio as any).environment.storeReset();
+    await flushPromises();
 }
 
 export function populateDurableStoreWithObjectInfos() {
     const accountObjectInfo: DurableStoreEntry<ObjectInfoIndex> = {
         data: { apiName: 'Account', keyPrefix: '001' },
+    };
+
+    const contactObjectInfoPrefix: DurableStoreEntry<ObjectInfoIndex> = {
+        data: { apiName: 'Contact', keyPrefix: '005' },
     };
 
     const userObjectInfo: DurableStoreEntry<ObjectInfoIndex> = {
@@ -84,12 +97,13 @@ export function populateDurableStoreWithObjectInfos() {
         [
             {
                 type: DurableStoreOperationType.SetEntries,
-                ids: ['Account', 'Opportunity', 'User'],
+                ids: ['Account', 'Opportunity', 'User', 'Contact'],
                 segment: OBJECT_INFO_PREFIX_SEGMENT,
                 entries: {
                     ['Account']: JSON.stringify(accountObjectInfo),
                     ['Opportunity']: JSON.stringify(opportunityObjectInfo),
                     ['User']: JSON.stringify(userObjectInfo),
+                    ['Contact']: JSON.stringify(contactObjectInfoPrefix),
                 },
             },
         ],

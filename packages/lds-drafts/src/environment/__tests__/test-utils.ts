@@ -56,26 +56,21 @@ export function setupDraftEnvironment(
         getRecord: jest.fn().mockImplementation(realGetRecord),
     };
     const registerDraftKeyMapping = jest.fn();
-    const draftEnvironment = makeEnvironmentDraftAware(
-        baseEnvironment,
-        {
-            store,
-            draftQueue,
-            durableStore: durableStore as RecordDenormalizingDurableStore,
-            ingestFunc: (_record: any, _path: any, _store: any, _timestamp: any) => {},
-            generateId: (prefix: string) => {
-                return `${prefix}${DRAFT_RECORD_ID.substring(4, DRAFT_RECORD_ID.length)}`;
-            },
-            isDraftId: setupOptions.isDraftId || ((id) => id === DRAFT_RECORD_ID),
-            getRecord: adapters.getRecord,
-            prefixForApiName: setupOptions.prefixForApiName || jest.fn(),
-            apiNameForPrefix: setupOptions.apiNameForPrefix || jest.fn(),
-            recordResponseRetrievers: undefined,
-            userId: 'testUserId',
-            registerDraftKeyMapping: registerDraftKeyMapping,
+    const draftEnvironment = makeEnvironmentDraftAware(baseEnvironment, {
+        store,
+        draftQueue,
+        durableStore: durableStore as RecordDenormalizingDurableStore,
+        ingestFunc: (_record: any) => {},
+        generateId: (prefix: string) => {
+            return `${prefix}${DRAFT_RECORD_ID.substring(4, DRAFT_RECORD_ID.length)}`;
         },
-        'testUserId'
-    );
+        isDraftId: setupOptions.isDraftId || ((id) => id === DRAFT_RECORD_ID),
+        getRecord: adapters.getRecord,
+        prefixForApiName: setupOptions.prefixForApiName || jest.fn(),
+        apiNameForPrefix: setupOptions.apiNameForPrefix || jest.fn(),
+        userId: 'testUserId',
+        registerDraftKeyMapping: registerDraftKeyMapping,
+    });
     return {
         store,
         network,

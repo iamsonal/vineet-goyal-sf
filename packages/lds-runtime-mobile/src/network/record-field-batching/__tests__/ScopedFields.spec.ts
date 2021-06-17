@@ -122,21 +122,21 @@ describe('ScopedFields', () => {
     describe('ScopedFieldsCollection.split', () => {
         const maxLengthAllowed = 30;
 
-        it(`null should not be splitted`, () => {
+        it(`null should not be split`, () => {
             const result =
                 ScopedFieldsCollection.fromQueryParameterValue(null).split(maxLengthAllowed);
 
             expect(result.length).toBe(0);
         });
 
-        it(`empty string should not be splitted`, () => {
+        it(`empty string should not be split`, () => {
             const result =
                 ScopedFieldsCollection.fromQueryParameterValue('').split(maxLengthAllowed);
 
             expect(result.length).toBe(0);
         });
 
-        it(`short one should not be splitted`, () => {
+        it(`short one should not be split`, () => {
             const result =
                 ScopedFieldsCollection.fromQueryParameterValue('Note.Id,Note.Name').split(
                     maxLengthAllowed
@@ -146,7 +146,7 @@ describe('ScopedFields', () => {
             expect(result[0].toQueryParameterValue()).toBe('Note.Id,Note.Name');
         });
 
-        it(`scoped short one should not be splitted`, () => {
+        it(`scoped short one should not be split`, () => {
             const result =
                 ScopedFieldsCollection.fromQueryParameterValue('Notes:Note.Id,Note.Id2').split(
                     maxLengthAllowed
@@ -156,7 +156,7 @@ describe('ScopedFields', () => {
             expect(result[0].toQueryParameterValue()).toBe('Notes:Note.Id,Note.Id2');
         });
 
-        it(`long one should be splitted`, () => {
+        it(`long one should be split`, () => {
             const result = ScopedFieldsCollection.fromQueryParameterValue(
                 'Note.Id1,Note.Id2,Note.Id3,Note.Id4'
             ).split(maxLengthAllowed);
@@ -166,7 +166,7 @@ describe('ScopedFields', () => {
             expect(result[1].toQueryParameterValue()).toBe('Note.Id4');
         });
 
-        it(`scoped long one should be splitted`, () => {
+        it(`scoped long one should be split`, () => {
             const result = ScopedFieldsCollection.fromQueryParameterValue(
                 'Notes:Note.Id1,Note.Id2,Note.Id3,Note.Id4'
             ).split(maxLengthAllowed);
@@ -176,7 +176,7 @@ describe('ScopedFields', () => {
             expect(result[1].toQueryParameterValue()).toBe('Notes:Note.Id3,Note.Id4');
         });
 
-        it(`multiple scoped long one should be splitted`, () => {
+        it(`multiple scoped long one should be split`, () => {
             const result = ScopedFieldsCollection.fromQueryParameterValue(
                 'Notes:Note.Id1,Note.Id2;Contacts:Contact.Id'
             ).split(maxLengthAllowed);

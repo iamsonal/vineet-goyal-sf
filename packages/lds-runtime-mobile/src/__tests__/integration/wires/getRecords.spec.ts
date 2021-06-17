@@ -1,5 +1,5 @@
 import timekeeper from 'timekeeper';
-import { Luvio, PendingSnapshot, Snapshot } from '@luvio/engine';
+import { Luvio } from '@luvio/engine';
 import { customMatchers } from '@salesforce/lds-jest';
 
 import { JSONStringify } from '../../../utils/language';
@@ -45,17 +45,8 @@ describe('mobile runtime integration tests', () => {
                 body: JSONStringify(getRecordsResponse),
             });
 
-            // TODO - W-9051409 we don't need to check for Promises once custom adapters
-            // are updated to not use resolveUnfulfilledSnapshot
-            const snapshotOrPromise = getRecords(config)!;
-            let result: Snapshot<any>;
-            if ('then' in snapshotOrPromise) {
-                result = await snapshotOrPromise;
-            } else {
-                result = await luvio.resolvePendingSnapshot(
-                    snapshotOrPromise as PendingSnapshot<any, any>
-                );
-            }
+            const result = await getRecords(config)!;
+
             expect(result.state).toBe('Fulfilled');
             expect(result.data.results[0].result.id).toBe(id1);
             expect(durableStore).toBeDefined();
@@ -63,18 +54,9 @@ describe('mobile runtime integration tests', () => {
 
             timekeeper.travel(Date.now() + RECORD_TTL + 1);
 
-            // TODO - W-9051409 we don't need to check for Promises once custom adapters
-            // are updated to not use resolveUnfulfilledSnapshot
-            const snapshotOrPromise2 = getRecords(config)!;
-            let result2: Snapshot<any>;
-            if ('then' in snapshotOrPromise2) {
-                result2 = await snapshotOrPromise2;
-            } else {
-                result2 = await luvio.resolvePendingSnapshot(
-                    snapshotOrPromise2 as PendingSnapshot<any, any>
-                );
-            }
-            expect(result2).toEqualFulfilledSnapshotWithData(
+            const result2 = await getRecords(config)!;
+
+            expect(result2).toEqualStaleSnapshotWithData(
                 getRecordsResponse,
                 GET_RECORDS_PRIVATE_FIELDS
             );
@@ -106,38 +88,14 @@ describe('mobile runtime integration tests', () => {
                 ],
             };
 
-            // TODO - W-9051373 this should only hit the network once, but makeDurable.resolveUnfulfilledSnapshot
-            // will call base resolveUnfulfilledSnapshot on errors... once generated
-            // adapters use resolveSnapshot this should change to just return one mock response
-            networkAdapter.setMockResponses([
-                {
-                    status: 200,
-                    headers: {},
-                    body: JSONStringify(errorResponseBody),
-                },
-                {
-                    status: 200,
-                    headers: {},
-                    body: JSONStringify(errorResponseBody),
-                },
-            ]);
-            // networkAdapter.setMockResponse({
-            //     status: 200,
-            //     headers: {},
-            //     body: JSONStringify(errorResponseBody),
-            // });
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(errorResponseBody),
+            });
 
-            // TODO - W-9051409 we don't need to check for Promises once custom adapters
-            // are updated to not use resolveUnfulfilledSnapshot
-            const snapshotOrPromise = getRecords(config)!;
-            let result: Snapshot<any>;
-            if ('then' in snapshotOrPromise) {
-                result = await snapshotOrPromise;
-            } else {
-                result = await luvio.resolvePendingSnapshot(
-                    snapshotOrPromise as PendingSnapshot<any, any>
-                );
-            }
+            const result = await getRecords(config)!;
+
             expect(result).toEqualFulfilledSnapshotWithData(
                 errorResponseBody,
                 GET_RECORDS_PRIVATE_FIELDS

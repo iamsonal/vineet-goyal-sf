@@ -1,7 +1,5 @@
 import { buildSuccessMockPayload, MockPayload } from '@luvio/adapter-test-library';
 
-import { getRecordsPropertyRetriever } from '@salesforce/lds-uiapi-record-utils';
-
 import multipleRecordsWithIdName from './mockData/records-multiple-Accounts-fields-Account.Id,Account.Name.json';
 import { testDurableHitDoesNotHitNetwork } from '@salesforce/lds-jest';
 import { getRecordsAdapterFactory } from '../../../generated/adapters/getRecords';
@@ -33,10 +31,7 @@ describe('getRecords with fields offline', () => {
         await testDurableHitDoesNotHitNetwork(
             getRecordsAdapterFactory,
             config,
-            recordPayload_Account,
-            {
-                compositeRetrievers: [getRecordsPropertyRetriever],
-            }
+            recordPayload_Account
         );
     });
 });

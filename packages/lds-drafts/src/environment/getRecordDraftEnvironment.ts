@@ -150,7 +150,7 @@ export function getRecordDraftEnvironment(
             env,
             durableStore,
             isDraftId,
-            env.dispatchResourceRequest
+            env.dispatchResourceRequest.bind(env)
         ) as any;
     };
 

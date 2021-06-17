@@ -1,10 +1,16 @@
-import { FulfilledSnapshot, Snapshot } from '@luvio/engine';
+import { FulfilledSnapshot, Snapshot, StaleSnapshot } from '@luvio/engine';
 import { isImmutable, stripProperties } from '@luvio/adapter-test-library';
 
 function isFulfilledSnapshot(
     snapshot: Snapshot<unknown, unknown>
 ): snapshot is FulfilledSnapshot<unknown, unknown> {
     return snapshot.state === 'Fulfilled';
+}
+
+function isStaleSnapshot(
+    snapshot: Snapshot<unknown, unknown>
+): snapshot is StaleSnapshot<unknown, unknown> {
+    return snapshot.state === 'Stale';
 }
 
 type MatcherResult = { pass: boolean; message: () => string };
@@ -30,6 +36,26 @@ export const customMatchers = {
         return {
             pass: false,
             message: () => 'Actual Snapshot is not a FulfilledSnapshot.',
+        };
+    },
+    toEqualStaleSnapshotWithData: (
+        snapshot: Snapshot<unknown, unknown>,
+        expected: any,
+        privateProperties?: string[]
+    ): MatcherResult => {
+        if (isStaleSnapshot(snapshot)) {
+            const expectedWithoutPrivateProperties = stripProperties(
+                expected,
+                privateProperties || []
+            );
+            expect(snapshot.data).toEqual(expectedWithoutPrivateProperties);
+            expect(isImmutable(snapshot.data)).toBe(true);
+            return { pass: true, message: () => 'Snapshot is a StaleSnapshot' };
+        }
+
+        return {
+            pass: false,
+            message: () => 'Actual Snapshot is not a StaleSnapshot.',
         };
     },
 };

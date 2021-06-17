@@ -5,7 +5,6 @@
  */
 
 const plugin = require('@salesforce/lds-compiler-plugins');
-const offlineRecordPlugin = require('./lds-uiapi-offline-record-plugin');
 const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
@@ -97,30 +96,30 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
         import { Luvio, Snapshot } from '@luvio/engine';
         import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}, ${CREATE_LDS_ADAPTER} } from '@salesforce/lds-bindings';
         import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
-        
+
         ${adapterNames.map((name) => adapterCode[name].import).join('\n')}
-        
+
         type AdapterFactoryish<DataType> = (luvio: Luvio) => (...config: unknown[]) => Promise<Snapshot<DataType>>;
-        
+
         ${adapterNames.map((name) => 'let ' + name + ': any;').join('\n    ')}
-        
+
         function bindExportsTo(luvio: Luvio): { [key: string]: any } {
             function unwrapSnapshotData<DataType>(factory: AdapterFactoryish<DataType>) {
                 const adapter = factory(luvio);
                 return (...config: unknown[]) => (adapter(...config) as Promise<Snapshot<DataType>>).then(snapshot => snapshot.data);
             }
-        
+
             return {
                 ${adapterNames.map((name) => adapterCode[name].bind).join(',\n            ')}
             }
         }
-        
+
         withDefaultLuvio((luvio: Luvio) => {
             ({
                 ${adapterNames.join(',\n            ')}
             } = bindExportsTo(luvio));
         });
-        
+
         export { ${adapterNames.join(', ')}};
         `;
 
@@ -248,8 +247,6 @@ module.exports = {
         );
         generateAdapterInfoExport(artifactsDir, generatedAdapters, imperativeAdapters);
 
-        // right now LDS cli only supports one plugin, so invoke the offline record plugin from this one
-        offlineRecordPlugin(compilerConfig, modelInfo);
         fieldsPlugin.afterGenerate(compilerConfig, modelInfo, createGenerationContext);
     },
     /**

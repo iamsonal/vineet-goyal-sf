@@ -61,10 +61,6 @@ export {
     getFieldValue,
 } from './uiapi-static-functions';
 
-// Export "retrievers" so durable environments can properly revive RecordRepresentations
-// from responses before running record merge code
-export { responseRecordRepresentationRetrievers } from './generated/records/retrievers';
-
 // Exposing this helper method so we can build record selectors from our @salesforce/lds-drafts package
 // TODO W-8235671 we should move common record utilities to @salesforce/uiapi-record-utils
 export { buildSelectionFromFields } from './selectors/record';

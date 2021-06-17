@@ -645,7 +645,7 @@ describe('record-field-batching utils', () => {
         const emptyCollection = ScopedFieldsCollection.fromQueryParameterValue('').split();
         const collectionWithEmptyItem = [new ScopedFieldsCollection()];
 
-        function testWithEmptyOptionFields(
+        function testWithEmptyOptionalFields(
             referenceId: string,
             scopedFieldsCollection: ScopedFieldsCollection[],
             collection: ScopedFieldsCollection[]
@@ -676,15 +676,19 @@ describe('record-field-batching utils', () => {
         }
 
         it('should build a CompositeRequest with fields and undefined optionalFields', () => {
-            testWithEmptyOptionFields(referenceId, scopedFieldsCollection, undefined);
+            testWithEmptyOptionalFields(referenceId, scopedFieldsCollection, undefined);
         });
 
         it('should build a CompositeRequest with fields and empty optionalFields', () => {
-            testWithEmptyOptionFields(referenceId, scopedFieldsCollection, emptyCollection);
+            testWithEmptyOptionalFields(referenceId, scopedFieldsCollection, emptyCollection);
         });
 
         it('should build a CompositeRequest with fields and optionalFields collection with empty item', () => {
-            testWithEmptyOptionFields(referenceId, scopedFieldsCollection, collectionWithEmptyItem);
+            testWithEmptyOptionalFields(
+                referenceId,
+                scopedFieldsCollection,
+                collectionWithEmptyItem
+            );
         });
 
         it('should build a CompositeRequest with optional fields and undefined Fields', () => {

@@ -5,7 +5,6 @@ import {
     getRelatedListRecordsAdapterFactory as getRelatedListRecords,
     GetRelatedListRecordsConfig,
 } from '../../../generated/adapters/getRelatedListRecords';
-import { responseRecordRepresentationRetrievers } from '../../../generated/records/retrievers';
 
 import response from './data/list-ui-All-Related-Lists.json';
 
@@ -28,8 +27,7 @@ describe('getRelatedListRecords adapter offline', () => {
             getRelatedListRecords,
             relatedListRecordsConfig,
             payload,
-            undefined,
-            responseRecordRepresentationRetrievers
+            undefined
         );
     });
 });

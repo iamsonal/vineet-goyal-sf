@@ -7,7 +7,6 @@ import {
     ingestRecord,
     keyBuilderRecord,
 } from '@salesforce/lds-adapters-uiapi';
-import { getRecordsPropertyRetriever } from '@salesforce/lds-uiapi-record-utils';
 import {
     makeDurableStoreDraftAware,
     makeRecordDenormalizingDurableStore,
@@ -110,7 +109,6 @@ const baseEnv = new Environment(store, networkAdapter);
 const offlineEnv = makeOffline(baseEnv);
 const durableEnv = makeDurable(offlineEnv, {
     durableStore: recordDenormingStore,
-    compositeRetrievers: [getRecordsPropertyRetriever],
 });
 const draftEnv = makeEnvironmentDraftAware(durableEnv, {
     store,

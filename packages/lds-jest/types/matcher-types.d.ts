@@ -11,6 +11,7 @@ declare global {
     namespace jest {
         interface Matchers<R> {
             toEqualFulfilledSnapshotWithData: (expected: any, privateProperties?: string[]) => R;
+            toEqualStaleSnapshotWithData: (expected: any, privateProperties?: string[]) => R;
         }
     }
 }

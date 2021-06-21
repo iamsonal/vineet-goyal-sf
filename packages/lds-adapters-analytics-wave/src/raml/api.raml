@@ -1999,6 +1999,40 @@ types:
         description: Select or drop fields
         type: string
         required: false # TODO Hand-rolled W-8253396
+  SourceFieldCollectionRepresentation:
+    description: A list of Source Fields.
+    type: object
+    properties:
+      dataConnector:
+        description: A reference to the data connector that the fields belong to
+        type: AssetReferenceRepresentation
+      fields:
+        description: A list of Source Fields.
+        type: array
+        items:
+          type: SourceFieldRepresentation
+      sourceObjectName:
+        description: The name of the source object that the fields belong to
+        type: string
+      url:
+        description: URL to get the collection.
+        type: string
+  SourceFieldRepresentation:
+    description: A field of a Source Object.
+    discriminatorValue: sourceField
+    type: AbstractFieldRepresentation
+    properties:
+      accessDeniedReason:
+        description: In the event that this Source Field is inaccessible, this property
+          contains a message describing the reason.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      accessible:
+        description: If this property is present and false, the Source Field is inaccessible
+          and cannot be  replicated. Check the accessDeniedReason property for more
+          information.
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
   SourceObjectCollectionRepresentation:
     description: A paged list of Source Objects.
     type: object
@@ -3076,6 +3110,22 @@ types:
         sourceObjectName:
           type: string
           required: true
+      /fields:
+        get:
+          description: Get a list of all the Source Fields of a particular Source Object.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: SourceFieldCollectionRepresentation
+        uriParameters:
+          connectorIdOrApiName:
+            type: string
+            required: true
+          sourceObjectName:
+            type: string
+            required: true
     /ingest:
       post:
         description: Triggers a 'run now' for given connectionID

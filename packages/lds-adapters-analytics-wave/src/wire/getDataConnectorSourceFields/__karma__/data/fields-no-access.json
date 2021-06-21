@@ -1,0 +1,18 @@
+{
+    "dataConnector": {
+        "id": "0ItRM00000001gF0AQ",
+        "name": "SFDC_LOCAL"
+    },
+    "fields": [
+        {
+            "fieldType": "text",
+            "label": "Account ID",
+            "multiValue": false,
+            "name": "Id",
+            "accessible": false,
+            "accessDeniedReason": "Field not visible to Integration User"
+        }
+    ],
+    "sourceObjectName": "Lead",
+    "url": "/services/data/v53.0/wave/dataConnectors/0ItRM00000001gF0AQ/sourceObjects/Lead/fields"
+}

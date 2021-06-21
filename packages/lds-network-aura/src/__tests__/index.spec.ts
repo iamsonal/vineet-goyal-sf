@@ -4150,6 +4150,30 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/dataconnectors/{connectorIdOrApiName}/sourceObjects/{sourceObjectName}/fields', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS700000001YxKAI/sourceObjects/AIApplication/fields`,
+            },
+            [
+                'WaveController.getDataConnectorSourceFields',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataconnectors/0ItS700000001YxKAI/sourceObjects/AIApplication/fields`,
+            },
+            {}
+        );
+    });
+
     describe('get /wave/dataConnectorTypes', () => {
         testControllerInput(
             {

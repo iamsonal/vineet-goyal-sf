@@ -1,0 +1,96 @@
+{
+    "dataConnector": {
+        "id": "0ItRM00000001gF0AQ",
+        "name": "SFDC_LOCAL"
+    },
+    "fields": [
+        {
+            "fieldType": "text",
+            "label": "Account ID",
+            "multiValue": false,
+            "name": "Id",
+            "precision": 18
+        },
+        {
+            "defaultValue": "false",
+            "fieldType": "text",
+            "label": "Deleted",
+            "multiValue": false,
+            "name": "IsDeleted"
+        },
+        {
+            "fieldType": "text",
+            "label": "Account Name",
+            "multiValue": false,
+            "name": "Name",
+            "precision": 255
+        },
+        {
+            "fieldType": "text",
+            "label": "Account Type",
+            "multiValue": false,
+            "name": "Type",
+            "precision": 255
+        },
+        {
+            "fieldType": "text",
+            "label": "Parent Account ID",
+            "multiValue": false,
+            "name": "ParentId",
+            "precision": 18
+        },
+        {
+            "fieldType": "text",
+            "label": "Account Fax",
+            "multiValue": false,
+            "name": "Fax",
+            "precision": 40
+        },
+        {
+            "fieldType": "text",
+            "label": "Website",
+            "multiValue": false,
+            "name": "Website",
+            "precision": 255
+        },
+        {
+            "fieldType": "text",
+            "label": "Photo URL",
+            "multiValue": false,
+            "name": "PhotoUrl",
+            "precision": 255
+        },
+        {
+            "fieldType": "text",
+            "label": "Industry",
+            "multiValue": false,
+            "name": "Industry",
+            "precision": 255
+        },
+        {
+            "fieldType": "numeric",
+            "label": "Annual Revenue",
+            "multiValue": false,
+            "name": "AnnualRevenue",
+            "precision": 18,
+            "scale": 0
+        },
+        {
+            "fieldType": "numeric",
+            "label": "Employees",
+            "multiValue": false,
+            "name": "NumberOfEmployees",
+            "precision": 10,
+            "scale": 0
+        },
+        {
+            "fieldType": "text",
+            "label": "Ticker Symbol",
+            "multiValue": false,
+            "name": "TickerSymbol",
+            "precision": 20
+        }
+    ],
+    "sourceObjectName": "Account",
+    "url": "/services/data/v53.0/wave/dataConnectors/0ItRM00000001gF0AQ/sourceObjects/Account/fields"
+}

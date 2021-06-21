@@ -18,6 +18,7 @@ types:
     (luvio.key):
       id: assetId
   ReplicatedFieldCollectionRepresentation:
+    (luvio.ttl): 5000
     (luvio.key):
       id: replicatedDataset.id
   RestoreDatasetVersionRepresentation:
@@ -29,6 +30,11 @@ types:
     (luvio.key):
       connectorIdOrApiName: dataConnector.id # Only support id for now
       SourceObjectName: name
+  SourceFieldCollectionRepresentation:
+    (luvio.ttl): 5000
+    (luvio.key):
+      connectorIdOrApiName: dataConnector.id # Only support id for now
+      SourceObjectName: sourceObjectName
 
 /wave:
   /asset/{assetId}/schedule:
@@ -67,6 +73,13 @@ types:
         (luvio.key):
           connectorIdOrApiName: urlParams.connectorIdOrApiName
           SourceObjectName: urlParams.sourceObjectName
+      /fields:
+        get:
+          (luvio.adapter):
+            name: getDataConnectorSourceFields
+          (luvio.key):
+            connectorIdOrApiName: urlParams.connectorIdOrApiName
+            SourceObjectName: urlParams.sourceObjectName
     /ingest:
       post:
         (luvio.adapter):

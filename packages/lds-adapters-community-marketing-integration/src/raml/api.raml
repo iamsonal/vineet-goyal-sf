@@ -1,0 +1,197 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '53.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v53.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  FormFieldInputList:
+    description: Wraps a list of form fields in a marketing integration form.
+    type: object
+    properties:
+      formFields:
+        description: List of form fields associated with the form.
+        type: array
+        items:
+          type: object
+  FormFieldInputRepresentation:
+    description: Input representation for Marketing Integration form field.
+    type: object
+    properties:
+      name:
+        description: Set a name of the form field.
+        type: string
+      type:
+        description: Set a type of the form field.
+        type: string
+        enum:
+          - Boolean
+          - Date
+          - EmailAddress
+          - Number
+          - Text
+  FormFieldList:
+    description: List of form fields.
+    type: object
+    properties:
+      formFields:
+        description: List of form fields associated with the marketing integration
+          form.
+        type: array
+        items:
+          type: FormFieldRepresentation
+  FormFieldRepresentation:
+    description: A representation for a Marketing Integration form field.
+    type: object
+    properties:
+      name:
+        description: Name of the form field.
+        type: string
+      type:
+        description: Type of the form field.
+        type: string
+        enum:
+          - Boolean
+          - Date
+          - EmailAddress
+          - Number
+          - Text
+  FormInputRepresentation:
+    description: Input representation for Marketing Integration forms.
+    type: object
+    properties:
+      formFieldsList:
+        description: Set form fields for this form.
+        type: array
+        items:
+          type: object
+      formName:
+        description: Form name.
+        type: string
+      memberIdentificationCode:
+        description: Set Marketing Cloud's member identification code (mid) associated
+          with this form
+        type: string
+  FormRepresentation:
+    description: A representation for a Marketing Integration form.
+    type: object
+    properties:
+      dataExtensionId:
+        description: Data extension id associated with the marketing integration form.
+        type: string
+      formFieldsList:
+        description: List of form fields associated with the marketing integration
+          form.
+        type: FormFieldList
+      formId:
+        description: Marketing integration form id.
+        type: string
+      formName:
+        description: Name of the marketing integration form.
+        type: string
+  FormSubmissionFieldInputList:
+    description: Wraps a list of form submission fields in a marketing integration
+      form.
+    type: object
+    properties:
+      formFields:
+        description: List of form fields associated with the form submission.
+        type: array
+        items:
+          type: object
+  FormSubmissionFieldInputRepresentation:
+    description: Input representation for Marketing Integration form field submission.
+    type: object
+    properties:
+      name:
+        description: Set the name of the form field.
+        type: string
+      value:
+        description: Set the value of the form field.
+        type: string
+  FormSubmissionInputRepresentation:
+    description: Input representation for Marketing Integration forms submission.
+    type: object
+    properties:
+      formFieldsList:
+        description: Set form fields for this form.
+        type: array
+        items:
+          type: object
+  FormSubmissionRepresentation:
+    description: A representation for a Marketing Integration form submission.
+    type: object
+    properties: {}
+/sites/{siteId}/marketing-integration/forms:
+  post:
+    description: Saves a form for Marketing Integration.
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: FormRepresentation
+    body:
+      application/json:
+        type: FormInputRepresentation
+        (oas-body-name): marketingIntegrationFormInput
+  uriParameters:
+    siteId:
+      type: string
+      required: true
+/sites/{siteId}/marketing-integration/forms/{formId}:
+  get:
+    description: Gets a form for Marketing Integration.
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: FormRepresentation
+  uriParameters:
+    formId:
+      type: string
+      required: true
+    siteId:
+      type: string
+      required: true
+/sites/{siteId}/marketing-integration/forms/{formId}/data:
+  post:
+    description: Submits a form when the user fills in details on the microsite form.
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: FormSubmissionRepresentation
+    body:
+      application/json:
+        type: FormSubmissionInputRepresentation
+        (oas-body-name): marketingIntegrationFormSubmissionInput
+  uriParameters:
+    formId:
+      type: string
+      required: true
+    siteId:
+      type: string
+      required: true

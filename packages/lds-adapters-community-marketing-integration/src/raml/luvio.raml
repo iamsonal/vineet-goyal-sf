@@ -1,0 +1,24 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'marketing-integration'
+
+types:
+  FormRepresentation:
+    (luvio.ttl): 30000
+    (luvio.key):
+      form_id: formId
+
+/sites/{siteId}/marketing-integration/forms:
+  post:
+    (luvio.adapter):
+      name: saveForm
+/sites/{siteId}/marketing-integration/forms/{formId}:
+  get:
+    (luvio.adapter):
+      name: getForm
+    (luvio.key):
+      form_id: urlParams.formId

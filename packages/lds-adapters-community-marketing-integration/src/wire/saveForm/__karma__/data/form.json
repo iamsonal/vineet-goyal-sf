@@ -1,0 +1,33 @@
+{
+    "dataExtensionId": "test_data_extension_id",
+    "formName": "test_form_name",
+    "formId": "test_form_id",
+    "formFieldsList": {
+        "formFields": [
+            {
+                "name": "First Name",
+                "type": "Text"
+            },
+            {
+                "name": "Last Name",
+                "type": "Text"
+            },
+            {
+                "name": "Email Address",
+                "type": "EmailAddress"
+            },
+            {
+                "name": "Phone Number",
+                "type": "Number"
+            },
+            {
+                "name": "Custom Field 1",
+                "type": "Text"
+            },
+            {
+                "name": "Custome Field 2",
+                "type": "Text"
+            }
+        ]
+    }
+}

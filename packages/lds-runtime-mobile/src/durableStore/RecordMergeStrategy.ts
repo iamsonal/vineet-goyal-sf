@@ -1,6 +1,7 @@
 import { DurableStoreEntries, DurableStoreEntry } from '@luvio/environments';
 import {
     DraftAction,
+    DraftActionMap,
     DraftQueue,
     isEntryDurableRecordRepresentation,
 } from '@salesforce/lds-drafts';
@@ -47,6 +48,9 @@ export class RecordMergeStrategy implements MergeStrategy {
         const recordKeys: Record<string, true> = {};
         const existingRecords: Record<string, DurableStoreEntry<DurableRecordRepresentation>> = {};
         const incomingRecords: Record<string, DurableStoreEntry<DurableRecordRepresentation>> = {};
+
+        // track any incoming or existing records that contain drafts
+        const draftKeys: Record<string, true> = {};
         for (let i = 0, len = incomingKeys.length; i < len; i++) {
             const key = incomingKeys[i];
             const incomingEntry = incomingEntries[key];
@@ -60,6 +64,12 @@ export class RecordMergeStrategy implements MergeStrategy {
                 recordKeys[key] = true;
                 incomingRecords[key] = incomingEntry;
                 existingRecords[key] = existingEntry;
+                if (
+                    incomingEntry.data.drafts !== undefined ||
+                    existingEntry.data.drafts !== undefined
+                ) {
+                    draftKeys[key] = true;
+                }
             }
         }
 
@@ -69,7 +79,16 @@ export class RecordMergeStrategy implements MergeStrategy {
             return Promise.resolve(merged);
         }
 
-        return this.draftQueue.getActionsForTags(recordKeys).then((actionMap) => {
+        // optimization - we only request drafts for records if any of the
+        // existing or incoming records already contain drafts on them
+        let draftPromise: Promise<DraftActionMap>;
+        if (ObjectKeys(draftKeys).length === 0) {
+            draftPromise = Promise.resolve({});
+        } else {
+            draftPromise = this.draftQueue.getActionsForTags(draftKeys);
+        }
+
+        return draftPromise.then((actionMap) => {
             const { userId, getRecord } = this;
             for (let i = 0, len = keysArray.length; i < len; i++) {
                 const key = keysArray[i];

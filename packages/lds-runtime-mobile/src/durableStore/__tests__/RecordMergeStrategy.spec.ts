@@ -20,6 +20,28 @@ describe('RecordMergeStrategy tests', () => {
         },
     };
 
+    const RECORD_WITH_NAME_DRAFT = {
+        'UiApi::RecordRepresentation:foo': {
+            data: {
+                id: 'foo',
+                apiName: 'Account',
+                fields: {
+                    Name: { value: 'Justin', displayValue: 'Justin' },
+                },
+                drafts: {
+                    serverValues: {
+                        Name: { value: 'Jason', displayValue: 'Jason' },
+                    },
+                    created: false,
+                    edited: true,
+                    deleted: false,
+                    draftActionIds: ['foo'],
+                },
+                links: {},
+            },
+        },
+    };
+
     const RECORD_WITH_BIRTHDAY = {
         'UiApi::RecordRepresentation:foo': {
             data: {
@@ -152,5 +174,31 @@ describe('RecordMergeStrategy tests', () => {
 
         await durableStore.setEntries(incoming, DefaultDurableSegment);
         expect(baseDurableStore.segments[DefaultDurableSegment]).toEqual(expected);
+    });
+
+    it('requests drafts if an existing record contains drafts', async () => {
+        const { durableStore, baseDurableStore, mockDraftQueue } = setup();
+        baseDurableStore.segments[DefaultDurableSegment] = { ...RECORD_WITH_NAME_DRAFT };
+
+        durableStore.setEntries({ ...RECORD_WITH_NAME_COLOR }, DefaultDurableSegment);
+        await flushPromises();
+        expect(mockDraftQueue.getActionsForTags).toHaveBeenCalledTimes(1);
+    });
+
+    it('requests drafts if an incoming record contains drafts', async () => {
+        const { durableStore, baseDurableStore, mockDraftQueue } = setup();
+        baseDurableStore.segments[DefaultDurableSegment] = { ...RECORD_WITH_NAME };
+
+        durableStore.setEntries({ ...RECORD_WITH_NAME_DRAFT }, DefaultDurableSegment);
+        await flushPromises();
+        expect(mockDraftQueue.getActionsForTags).toHaveBeenCalledTimes(1);
+    });
+    it('does not request drafts if neither incoming or existing contains drafts', async () => {
+        const { durableStore, baseDurableStore, mockDraftQueue } = setup();
+        baseDurableStore.segments[DefaultDurableSegment] = { ...RECORD_WITH_NAME };
+
+        durableStore.setEntries({ ...RECORD_WITH_NAME_COLOR }, DefaultDurableSegment);
+        await flushPromises();
+        expect(mockDraftQueue.getActionsForTags).toHaveBeenCalledTimes(0);
     });
 });

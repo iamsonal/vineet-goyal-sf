@@ -47,24 +47,27 @@ export function makeDurableStoreWithMergeStrategy(
         const deferred = new Promise<void>((resolve, reject) => {
             pendingMerges.push(() => {
                 return durableStore.getEntries(keys, segment).then((existingEntries) => {
-                    if (existingEntries === undefined) {
-                        return durableStore.setEntries(entries, segment);
+                    let setPromise;
+                    if (existingEntries === undefined || ObjectKeys(existingEntries).length === 0) {
+                        setPromise = durableStore.setEntries(entries, segment);
+                    } else {
+                        setPromise = mergeStrategy
+                            .mergeDurableEntries(keys, existingEntries, entries)
+                            .then((merged) => {
+                                return durableStore.setEntries(merged, segment);
+                            });
                     }
-                    return mergeStrategy
-                        .mergeDurableEntries(keys, existingEntries, entries)
-                        .then((merged) => {
-                            return durableStore
-                                .setEntries(merged, segment)
-                                .then(() => {
-                                    resolve();
-                                })
-                                .catch((e) => {
-                                    reject(e);
-                                })
-                                .finally(() => {
-                                    pendingMerges.shift();
-                                    runNextMerge();
-                                });
+
+                    return setPromise
+                        .then(() => {
+                            resolve();
+                        })
+                        .catch((e) => {
+                            reject(e);
+                        })
+                        .finally(() => {
+                            pendingMerges.shift();
+                            runNextMerge();
                         });
                 });
             });

@@ -1,0 +1,73 @@
+{
+    "calculationProcedureDefinition": {
+        "calculationProcedureId": "1234",
+        "constants": {
+            "details": [
+                {
+                    "apiName": "const1",
+                    "calculationMatrixName": "calcMatrix1",
+                    "dataType": "string",
+                    "defaultValue": "1",
+                    "displayName": "const1",
+                    "id": "const1",
+                    "isEditable": true,
+                    "isUserDefined": true,
+                    "name": "const1",
+                    "precision": 1,
+                    "uiDisplayOrder": 2
+                }
+            ]
+        },
+        "description": "description",
+        "enabled": true,
+        "endDate": "2021-06-19T10:54:56.787Z",
+        "name": "name",
+        "rank": 1,
+        "root": {
+            "steps": ["root1", "root2"]
+        },
+        "startDate": "2021-06-19T10:54:56.787Z",
+        "step": {
+            "details": {
+                "s1": {
+                    "name": "s1 name",
+                    "id": "s1",
+                    "description": "desc s1",
+                    "stepType": "calcproc",
+                    "formulaExpressionText": "",
+                    "formulaUiFormattedText": "",
+                    "conditionsExpressionText": "",
+                    "conditionsUiFormattedText": "",
+                    "returnMessageValueSet": "",
+                    "inputVariablesFormatText": "",
+                    "outputVariablesFormatText": "",
+                    "calculationMatrixId": "calcId",
+                    "referenceCalculationProcedureId": "cp1",
+                    "outputVariablesMappingText": "",
+                    "isResultIncluded": false,
+                    "stage": "Calculation",
+                    "childStepIds": []
+                }
+            }
+        },
+        "variables": {
+            "details": [
+                {
+                    "apiName": "var1",
+                    "calculationMatrixName": "calcMatrix1",
+                    "dataType": "string",
+                    "defaultValue": "1",
+                    "displayName": "var1",
+                    "id": "var1",
+                    "isEditable": true,
+                    "isUserDefined": true,
+                    "name": "var1",
+                    "precision": 1,
+                    "uiDisplayOrder": 2
+                }
+            ]
+        },
+        "versionId": "123",
+        "versionNumber": 1
+    }
+}

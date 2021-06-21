@@ -1,0 +1,63 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'interaction::'
+(luvio.ttl): 360000
+
+types:
+  DecisionMatrixResultRepresentation:
+    (luvio.key):
+      id: id
+  CalculationProcedureVersionDefinitionOutputRepresentation:
+    (luvio.key):
+      id: versionId
+  CalculationProcedureListOutputRepresentation:
+    (luvio.opaque): true
+
+/connect:
+  /omnistudio:
+    /decision-matrices/{id}:
+      get:
+        (luvio.adapter):
+          name: getDecisionMatrixDetails
+          tests:
+            validConfigs:
+              - |
+                {
+                  "id": "123"
+                }
+            invalidConfigs:
+              - |
+                {
+                  "id": 123
+                }
+        (luvio.key):
+          id: urlParams.id
+    /evaluation-services/version-definitions/{id}:
+      get:
+        (luvio.adapter):
+          name: getCalcProcVersionDetails
+          tests:
+            validConfigs:
+              - |
+                {
+                  "id": "123"
+                }
+            invalidConfigs:
+              - |
+                {
+                  "id": 123
+                }
+        (luvio.key):
+          id: urlParams.id
+    /evaluation-services/version-definitions:
+      post:
+        (luvio.adapter):
+          name: postCalcProcVersionDetails
+    /evaluation-services:
+      get:
+        (luvio.adapter):
+          name: searchCalculationProcedure

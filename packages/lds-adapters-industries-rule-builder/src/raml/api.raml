@@ -1,0 +1,660 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '53.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v53.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  CalculationProcedureListOutputRepresentation:
+    description: Output representation of list of calculation procedure
+    type: object
+    properties:
+      calculationProcedureOutputRepresentations:
+        description: CalculationProcedureListOutput api calculation procedure list
+        type: array
+        items:
+          type: CalculationProcedureOutputRepresentation
+      code:
+        description: CalculationProcedureListOutput api calculation procedure code
+        type: string
+      message:
+        description: CalculationProcedureListOutput api calculation procedure message
+        type: string
+      success:
+        description: CalculationProcedureListOutput api calculation procedure isSuccess
+        type: boolean
+  CalculationProcedureOutputRepresentation:
+    description: Output representation of calculation procedure
+    type: object
+    properties:
+      description:
+        description: CalculationProcedureOutput api calculation procedure description
+        type: string
+        required: false
+      id:
+        description: CalculationProcedureOutput api calculation procedure id
+        type: string
+        required: false
+      name:
+        description: CalculationProcedureOutput api calculation procedure name
+        type: string
+        required: false
+  CalculationProcedureStepInputRepresentation:
+    description: Input representation for Calculation Procedure Version Steps
+    type: object
+    properties:
+      calculationMatrixId:
+        description: Calculation Matrix Id used in Calcuation Procedure Version Step
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      childStepIds:
+        description: Child Step Ids of Calcuation Procedure Version Step
+        type: array
+        required: false # TODO Hand-rolled W-9314597
+        items:
+          type: string
+      conditionsExpressionText:
+        description: Condition Expression Text of Calcuation Procedure Version Step
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      conditionsUiFormattedText:
+        description: Conditions Ui Formatted Text of Calcuation Procedure Version
+          Step
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      description:
+        description: Description of Calcuation Procedure Version Step
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      formulaExpressionText:
+        description: Formula Expression Text of Calcuation Procedure Version Step
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      formulaUiFormattedText:
+        description: Formula Ui Formatted Text of Calcuation Procedure Version Step
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      id:
+        description: Id of Calcuation Procedure Version Step
+        type: string
+      inputVariablesFormatText:
+        description: Input Variables Format Text of Calcuation Procedure Version Step
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      isResultIncluded:
+        description: IsResultIncluded in Output Response of Calcuation Procedure Version
+          Step
+        type: boolean
+        required: false # TODO Hand-rolled W-9314597
+      name:
+        description: Name of Calcuation Procedure Version Step
+        type: string
+      outputVariablesFormatText:
+        description: Output Variables Format Text of Calcuation Procedure Version
+          Step
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      outputVariablesMappingText:
+        description: OutputVariablesMappingText of Calcuation Procedure Version Step
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      referenceCalculationProcedureId:
+        description: Reference Calculation Procedure Id used in Calcuation Procedure
+          Version Step
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      returnMessageValueSet:
+        description: ReturnMessageValueSet of Calcuation Procedure Version Step
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      stage:
+        description: Stage of Calcuation Procedure Version Step
+        type: string
+      stepType:
+        description: StepType of Calcuation Procedure Version Step
+        type: string
+  CalculationProcedureStepMapInputRepresentation:
+    description: Input Map Representation of the Calculation Procedure Version step
+      details
+    type: object
+    properties:
+      details:
+        description: Map of Calculation Procedure Version step details
+        type: object
+        properties:
+          //:
+            # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+            type: CalculationProcedureStepInputRepresentation
+  CalculationProcedureStepMapOutputRepresentation:
+    description: Output represenation of the Calculation Procedure Version step details
+    type: object
+    properties:
+      details:
+        description: Map of Calculation Procedure Version step details
+        type: object
+        required: false
+        properties:
+          //:
+            type: CalculationProcedureStepOutputRepresentation
+  CalculationProcedureStepOutputRepresentation:
+    description: Output represenation of Calculation Procedure Version Steps
+    type: object
+    properties:
+      calculationMatrixId:
+        description: CalculationMatrixId of another CalculationMatrix
+        type: string
+        required: false
+      childStepIds:
+        description: Child Steps of present Calculation Procedure Step
+        type: array
+        required: false
+        items:
+          type: string
+      conditionsExpressionText:
+        description: Condition Expression Text of Calcuation Procedure Version Step
+        type: string
+        required: false
+      conditionsUiFormattedText:
+        description: Conditions Ui Formatted Text of Calcuation Procedure Version
+          Step
+        type: string
+        required: false
+      description:
+        description: Description of Calculation Procedure Step
+        type: string
+        required: false
+      formulaExpressionText:
+        description: Formula Expression Text of Calcuation Procedure Version Step
+        type: string
+        required: false
+      formulaUiFormattedText:
+        description: Formula Ui Formatted Text of Calcuation Procedure Version Step
+        type: string
+        required: false
+      id:
+        description: recordId of Calculation Procedure Step
+        type: string
+        required: false
+      inputVariablesFormatText:
+        description: Input Variables Format Text of Calcuation Procedure Version Step
+        type: string
+        required: false
+      isResultIncluded:
+        description: IsResultIncluded in Output Response of Calcuation Procedure Version
+          Step
+        type: boolean
+        required: false
+      name:
+        description: Name of Calculation Procedure Step
+        type: string
+        required: false
+      outputVariablesFormatText:
+        description: Output Variables Format Text of Calcuation Procedure Version
+          Step
+        type: string
+        required: false
+      outputVariablesMappingText:
+        description: OutputVariablesMappingText of Calcuation Procedure Version Step
+        type: string
+        required: false
+      referenceCalculationProcedureId:
+        description: Reference CalculationProcedureId of another CalculationProcedure
+        type: string
+        required: false
+      returnMessageValueSet:
+        description: ReturnMessageValueSet of Calcuation Procedure Version Step
+        type: string
+        required: false
+      stage:
+        description: Stage of Calculation Procedure Step
+        type: string
+        required: false
+      stepType:
+        description: StepType of Calculation Procedure Step
+        type: string
+        required: false
+  # TODO Hand-rolled W-8334626
+  CalculationProcedureVersionDefinitionInputWrapperRepresentation:
+    description: Wrapper Input Representation for CalculationProcedureVersionDefinitionInputRepresentation
+    type: object
+    properties:
+      calculationProcedureDefinition:
+        type: CalculationProcedureVersionDefinitionInputRepresentation
+        description: Input representation for Calculation Procedure Version Definition
+  CalculationProcedureVersionDefinitionInputRepresentation:
+    description: Input representation for Calculation Procedure Version Definition
+    type: object
+    properties:
+      calculationProcedureId:
+        description: Calculation Procedure Id for which version is created/updated
+        type: string
+      constants:
+        description: Details of the Constants Resource
+        # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+        type: ResourceListInputRepresentation
+        required: false # TODO Hand-rolled W-9314597
+      description:
+        description: Description of Calculation Procedure Version
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      enabled:
+        description: States if version is active
+        type: boolean
+        required: false # TODO Hand-rolled W-9314597
+      endDate:
+        description: End Date of Calculation Procedure Version
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      name:
+        description: Name of Calculation Procedure Version
+        type: string
+      rank:
+        description: Rank of Calculation Procedure Version
+        type: integer
+        required: false # TODO Hand-rolled W-9314597
+      root:
+        description: Starting Step/Steps for Calculation Procedure Version
+        # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+        type: RootStepListInputRepresentation
+        required: false # TODO Hand-rolled W-9314597
+      startDate:
+        description: Start Date of Calculation Procedure Version
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      step:
+        description: Map of Calculation Procedure Version step
+        # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+        type: CalculationProcedureStepMapInputRepresentation
+        required: false # TODO Hand-rolled W-9314597
+      variables:
+        description: Details of the Variables Resource
+        # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+        type: ResourceListInputRepresentation
+        required: false # TODO Hand-rolled W-9314597
+      versionId:
+        description: Id of Calculation Procedure Version
+        type: string
+      versionNumber:
+        description: Version Number of Calculation Procedure Version
+        type: integer
+        required: false # TODO Hand-rolled W-9314597
+  CalculationProcedureVersionDefinitionOutputRepresentation:
+    description: Output represenation of a Calculation Procedure Version Definition
+    type: object
+    properties:
+      calculationProcedureId:
+        description: Record Id of Calculation Procedure
+        type: string
+        required: false
+      code:
+        description: API returned code
+        type: string
+        required: false
+      constants:
+        description: Constants used within Calculation Procedure Version
+        type: ResourceListOutputRepresentation
+        required: false
+      description:
+        description: Description of Calculation Procedure Version
+        type: string
+        required: false
+      enabled:
+        description: State of Calculation Procedure Version
+        type: boolean
+        required: false
+      endDate:
+        description: End Date of Calculation Procedure Version
+        type: string
+        required: false
+      isSuccess:
+        description: API success flag
+        type: boolean
+        required: false
+      message:
+        description: API message
+        type: string
+        required: false
+      name:
+        description: Name of Calculation Procedure Version
+        type: string
+        required: false
+      rank:
+        description: Rank of Calculation Procedure Version
+        type: integer
+        required: false
+      root:
+        description: Starting steps of Calculation Procedure Version
+        type: RootStepListOutputRepresentation
+        required: false
+      startDate:
+        description: start date of Calculation Procedure Version
+        type: string
+        required: false
+      step:
+        description: Steps within Calculation Procedure Version
+        type: CalculationProcedureStepMapOutputRepresentation
+        required: false
+      variables:
+        description: Variables used within Calculation Procedure Version
+        type: ResourceListOutputRepresentation
+        required: false
+      versionId:
+        description: Record Id of Calculation Procedure Version
+        type: string
+      versionNumber:
+        description: versionNumber of Calculation Procedure Version
+        type: integer
+        required: false
+  DecisionMatrixBasicRepresentation:
+    description: Output represenation of Decision Matrix Basic Details
+    type: object
+    properties:
+      description:
+        description: 'DecisionMatrixDetails api DecisionMatrix description '
+        type: string
+        required: false
+      id:
+        description: DecisionMatrixDetails api DecisionMatrix  id
+        type: string
+        required: false
+      name:
+        description: DecisionMatrixDetails api DecisionMatrix name
+        type: string
+        required: false
+  DecisionMatrixResultListRepresentation:
+    description: Output represenation of Decision Matrix Details Get
+    type: object
+    properties:
+      code:
+        description: API response code for failure case
+        type: string
+        required: false
+      decisionMatrices:
+        description: List of decisionMatrices
+        type: array
+        required: false
+        items:
+          type: DecisionMatrixBasicRepresentation
+      isSuccess:
+        description: States whether API is successful or not
+        type: boolean
+        required: false
+      message:
+        description: API response message for failure case
+        type: string
+        required: false
+  DecisionMatrixResultRepresentation:
+    description: Output represenation of Decision Matrix Details Get
+    type: object
+    properties:
+      code:
+        description: DecisionMatrixGetResult api DecisionMatrix Code
+        type: string
+        required: false
+      description:
+        description: 'DecisionMatrixGetResult api DecisionMatrix description '
+        type: string
+        required: false
+      id:
+        description: DecisionMatrixGetResult api DecisionMatrix  id
+        type: string
+      inputVariables:
+        description: DecisionMatrixGetResult api DecisionMatrix input variables
+        type: array
+        required: false
+        items:
+          type: DecisionMatrixVariable
+      isSuccess:
+        description: DecisionMatrixGetResult api DecisionMatrix success status
+        type: boolean
+        required: false
+      message:
+        description: DecisionMatrixGetResult api DecisionMatrix message
+        type: string
+        required: false
+      name:
+        description: DecisionMatrixGetResult api DecisionMatrix name
+        type: string
+        required: false
+      outputVariables:
+        description: DecisionMatrixGetResult api DecisionMatrix output variables
+        type: array
+        required: false
+        items:
+          type: DecisionMatrixVariable
+  DecisionMatrixVariable:
+    description: represenation of DecisionMatrixVariable
+    type: object
+    properties:
+      dataType:
+        description: DecisionMatrixGetResult api DecisionMatrix variable dataType
+        type: string
+      id:
+        description: DecisionMatrixGetResult api DecisionMatrix variable lineItemId
+        type: string
+      name:
+        description: DecisionMatrixGetResult api DecisionMatrix variable column Key
+        type: string
+  ResourceInputRepresentation:
+    description: Input representation for Calculation Procedure Resources(variables/Constants)
+    type: object
+    properties:
+      apiName:
+        description: ApiName of the Resource
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      calculationMatrixName:
+        description: Name of Calculation Matrix used in Resource
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      dataType:
+        description: DataType of the Resource
+        type: string
+      defaultValue:
+        description: Default Value of the Resource
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      displayName:
+        description: DisplayName of the Resource
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      id:
+        description: Id of the Resource
+        type: string
+        required: false # TODO Hand-rolled W-9314597
+      isEditable:
+        description: Whether Resource is editable
+        type: boolean
+        required: false # TODO Hand-rolled W-9314597
+      isUserDefined:
+        description: Whether Resource is User Defined
+        type: boolean
+        required: false # TODO Hand-rolled W-9314597
+      name:
+        description: Name of the Resource
+        type: string
+      precision:
+        description: Precision of the Resource
+        type: integer
+        required: false # TODO Hand-rolled W-9314597
+      uiDisplayOrder:
+        description: Display Order in Ui for the Resource
+        type: integer
+        required: false # TODO Hand-rolled W-9314597
+  ResourceListInputRepresentation:
+    description: Input representation for Calculation Procedure Resources Variables/Constants
+    type: object
+    properties:
+      details:
+        description: Details of the Resource Variable or Constants
+        type: array
+        items:
+          # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type: ResourceInputRepresentation
+  ResourceListOutputRepresentation:
+    description: Output represenation for Calculation Procedure Resources Variables/Constants
+    type: object
+    properties:
+      details:
+        description: Details of the Resource Variable or Constants
+        type: array
+        required: false
+        items:
+          type: ResourceOutputRepresentation
+  ResourceOutputRepresentation:
+    description: Output represenation of a Calculation Procedure Version Definition
+    type: object
+    properties:
+      apiName:
+        description: ApiName of the Resource
+        type: string
+        required: false
+      calculationMatrixName:
+        description: Name of Calculation Matrix used in Resource
+        type: string
+        required: false
+      dataType:
+        description: DataType of the Resource
+        type: string
+        required: false
+      defaultValue:
+        description: Default Value of the Resource
+        type: string
+        required: false
+      displayName:
+        description: DisplayName of the Resource
+        type: string
+        required: false
+      id:
+        description: Id of the Resource
+        type: string
+        required: false
+      isEditable:
+        description: Whether Resource is editable
+        type: boolean
+        required: false
+      isUserDefined:
+        description: Whether Resource is User Defined
+        type: boolean
+        required: false
+      name:
+        description: Name of the Resource
+        type: string
+        required: false
+      precision:
+        description: Precision of the Resource
+        type: integer
+        required: false
+      uiDisplayOrder:
+        description: Display Order in Ui for the Resource
+        type: integer
+        required: false
+  RootStepListInputRepresentation:
+    description: Input representation for Root Steps of Calculation Procedure version
+    type: object
+    properties:
+      steps:
+        description: Starting Steps for Calculation Procedure Version
+        type: array
+        items:
+          type: string
+  RootStepListOutputRepresentation:
+    description: Output representation for Root Steps of Calculation Procedure version
+    type: object
+    properties:
+      steps:
+        description: Starting steps of Calculation Procedure Version
+        type: array
+        required: false
+        items:
+          type: string
+/connect:
+  /omnistudio:
+    /evaluation-services:
+      get:
+        description: Used for fetching calculation procedure from source object.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: CalculationProcedureListOutputRepresentation
+        queryParameters:
+          searchKey:
+            type: string
+            required: false
+    /evaluation-services/version-definitions:
+      post:
+        description: API to save Calculation Procedure version Definition
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: CalculationProcedureVersionDefinitionOutputRepresentation
+        body:
+          application/json:
+            # TODO Hand-rolled W-8334626
+            type: CalculationProcedureVersionDefinitionInputWrapperRepresentation
+            # TODO: Hand-rolled due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+            #required: false
+            (oas-body-name): calculationProcedureDefinition
+    /evaluation-services/version-definitions/{id}:
+      get:
+        description: API to get Calculation Procedure version Definition
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: CalculationProcedureVersionDefinitionOutputRepresentation
+      uriParameters:
+        id:
+          type: string
+          required: true
+    /decision-matrices:
+      get:
+        description: Method to trigger search on Decision Matrix
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: DecisionMatrixResultListRepresentation
+        queryParameters:
+          searchKey:
+            type: string
+            required: false
+    /decision-matrices/{id}:
+      get:
+        description: Get information about a single Sample object.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: DecisionMatrixResultRepresentation
+      uriParameters:
+        id:
+          type: string
+          required: true

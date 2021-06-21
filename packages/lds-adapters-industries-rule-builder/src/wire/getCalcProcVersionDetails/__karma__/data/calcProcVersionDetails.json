@@ -1,0 +1,42 @@
+{
+    "calculationProcedureId": "I0123",
+    "constants": {
+        "details": [
+            {
+                "dataType": "Text",
+                "displayName": "Family Income",
+                "name": "family income",
+                "precision": 5,
+                "uiDisplayOrder": 5
+            }
+        ]
+    },
+    "description": "Total Income Calculation",
+    "enabled": false,
+    "endDate": "2021-06-16T14:32:15.089Z",
+    "name": "TotalIncome",
+    "rank": 1,
+    "root": {
+        "steps": ["Additional Benefit"]
+    },
+    "startDate": "2021-06-16T14:32:15.089Z",
+    "variables": {
+        "details": [
+            {
+                "apiName": "CalculationProcedure",
+                "calculationMatrixName": "Net Income calcMatrix",
+                "dataType": "Text",
+                "defaultValue": "00",
+                "displayName": "Net Income",
+                "id": "I1234",
+                "isEditable": true,
+                "isUserDefined": false,
+                "name": "Income",
+                "precision": 5,
+                "uiDisplayOrder": 5
+            }
+        ]
+    },
+    "versionId": "123",
+    "versionNumber": 6
+}

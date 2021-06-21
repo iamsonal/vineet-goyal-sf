@@ -1,0 +1,37 @@
+{
+    "calculationProcedureOutputRepresentations": [
+        {
+            "description": "desc calc proc 1",
+            "id": "0k0R000000000B9IAI",
+            "name": "trial calculation proc 1"
+        },
+        {
+            "description": "desc calc proc 2",
+            "id": "0k0R000000000BEIAY",
+            "name": "trial calculation proc 2"
+        },
+        {
+            "description": "desc calc proc 3",
+            "id": "0k0R000000000BJIAY",
+            "name": "trial calc proc 3"
+        },
+        {
+            "description": "desc calc proc 4",
+            "id": "0k0R000000000BOIAY",
+            "name": "trial calc proc 4"
+        },
+        {
+            "description": "desc calc proc 5",
+            "id": "0k0R000000000BTIAY",
+            "name": "trial calc proc 5"
+        },
+        {
+            "description": "desc calc proc 6",
+            "id": "0k0R000000000BYIAY",
+            "name": "trial calc proc 6"
+        }
+    ],
+    "code": "success",
+    "message": "expected result",
+    "success": true
+}

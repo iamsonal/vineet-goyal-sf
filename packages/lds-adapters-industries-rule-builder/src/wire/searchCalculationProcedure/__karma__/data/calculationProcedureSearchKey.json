@@ -1,0 +1,17 @@
+{
+    "calculationProcedureOutputRepresentations": [
+        {
+            "description": "desc calc proc 1",
+            "id": "0k0R000000000B9IAI",
+            "name": "trial calculation proc 1"
+        },
+        {
+            "description": "desc calc proc 2",
+            "id": "0k0R000000000BEIAY",
+            "name": "trial calculation proc 2"
+        }
+    ],
+    "code": "success",
+    "message": "expected result",
+    "success": true
+}

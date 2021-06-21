@@ -2267,6 +2267,161 @@ describe('routes', () => {
         );
     });
 
+    describe('get /omnistudio/decision-matrices/{id}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-matrices/123`,
+            },
+            [
+                'InteractionCalculationProceduresController.getDecisionMatrixDetails',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-matrices/123`,
+            },
+            {}
+        );
+    });
+
+    describe('get /omnistudio/evaluation-services/version-definitions/{id}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/evaluation-services/version-definitions/123`,
+            },
+            [
+                'InteractionCalculationProceduresController.getCalcProcVersionDefinition',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/evaluation-services/version-definitions/123`,
+            },
+            {}
+        );
+    });
+
+    describe('post /omnistudio/evaluation-services/version-definitions', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/evaluation-services/version-definitions`,
+                body: {
+                    calculationProcedureDefinition: {
+                        calculationProcedureId: '1234',
+                        constants: [],
+                        description: 'description',
+                        enabled: true,
+                        endDate: '2021-06-19T10:54:56.787Z',
+                        name: 'name',
+                        rank: 1,
+                        root: ['root1', 'root2'],
+                        startDate: '2021-06-19T10:54:56.787Z',
+                        step: {},
+                        variables: [],
+                        versionId: '123',
+                        versionNumber: 1,
+                    },
+                },
+            },
+            [
+                'InteractionCalculationProceduresController.createRule',
+                {
+                    calculationProcedureDefinition: {
+                        calculationProcedureId: '1234',
+                        constants: [],
+                        description: 'description',
+                        enabled: true,
+                        endDate: '2021-06-19T10:54:56.787Z',
+                        name: 'name',
+                        rank: 1,
+                        root: ['root1', 'root2'],
+                        startDate: '2021-06-19T10:54:56.787Z',
+                        step: {},
+                        variables: [],
+                        versionId: '123',
+                        versionNumber: 1,
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                versionId: '123',
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/omnistudio/evaluation-services/version-definitions`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/evaluation-services/version-definitions`,
+            },
+            {
+                versionId: '123',
+            }
+        );
+    });
+
+    describe('get /omnistudio/evaluation-services', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/evaluation-services`,
+            },
+            [
+                'InteractionCalculationProceduresController.searchCalculationProcedure',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: CONNECT_BASE_URI,
+                    basePath: `/omnistudio/evaluation-services`,
+                    queryParams: {
+                        searchKey: 'CalcProc',
+                    },
+                },
+                [
+                    'InteractionCalculationProceduresController.searchCalculationProcedure',
+                    {
+                        searchKey: 'CalcProc',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/evaluation-services`,
+            },
+            {}
+        );
+    });
+
     describe('get /related-list-info', () => {
         describe('/{parentObjectApiName}/{relatedListId}', () => {
             testControllerInput(

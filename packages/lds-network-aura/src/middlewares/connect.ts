@@ -196,6 +196,26 @@ const POST_BATCH_PAYMENTS_SCHEDULERS_PATH = new RegExp(
     'i'
 );
 
+const GET_DECISION_MATRIC_DETAILS_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/omnistudio/decision-matrices/([A-Z0-9]){1,18}`,
+    'i'
+);
+
+const GET_CALC_PROC_VERSION_DETAILS_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/omnistudio/evaluation-services/version-definitions/([A-Z0-9]){1,18}`,
+    'i'
+);
+
+const POST_CALC_PROC_VERSION_DETAILS_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/omnistudio/evaluation-services/version-definitions`,
+    'i'
+);
+
+const SEARCH_CALCULATION_PROCEDURES_DETAILS_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/omnistudio/evaluation-services`,
+    'i'
+);
+
 const connect: ApiFamily = {
     getCommunityNavigationMenu: {
         method: 'get',
@@ -293,6 +313,39 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && SITES_SEARCH_PATH.test(path),
         transport: {
             controller: 'SitesController.searchSite',
+        },
+    },
+    getDecisionMatrixDetails: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_DECISION_MATRIC_DETAILS_PATH.test(path),
+        transport: {
+            controller: 'InteractionCalculationProceduresController.getDecisionMatrixDetails',
+        },
+    },
+    getCalcProcVersionDetails: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_CALC_PROC_VERSION_DETAILS_PATH.test(path),
+        transport: {
+            controller: 'InteractionCalculationProceduresController.getCalcProcVersionDefinition',
+        },
+    },
+    postCalcProcVersionDetails: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && POST_CALC_PROC_VERSION_DETAILS_PATH.test(path),
+        transport: {
+            controller: 'InteractionCalculationProceduresController.createRule',
+        },
+    },
+    searchCalculationProcedure: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) &&
+            SEARCH_CALCULATION_PROCEDURES_DETAILS_PATH.test(path),
+        transport: {
+            controller: 'InteractionCalculationProceduresController.searchCalculationProcedure',
         },
     },
     replaceManagedContentVariant: {

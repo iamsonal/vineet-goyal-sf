@@ -4,7 +4,7 @@ import {
     DraftActionMap,
     isEntryDurableRecordRepresentation,
 } from '@salesforce/lds-drafts';
-import { durableMerge, DurableRecordRepresentation } from '@salesforce/lds-drafts';
+import { durableMerge, DurableRecordEntry } from '@salesforce/lds-drafts';
 import { ObjectAssign, ObjectKeys } from '../utils/language';
 import { GetRecordConfig, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { Adapter, ResourceRequest } from '@luvio/engine';
@@ -47,8 +47,8 @@ export class RecordMergeStrategy implements MergeStrategy {
         const merged = ObjectAssign({}, incomingEntries) as DurableStoreEntries<unknown>;
 
         const recordKeys: Record<string, true> = {};
-        const existingRecords: DurableStoreEntries<DurableRecordRepresentation> = {};
-        const incomingRecords: DurableStoreEntries<DurableRecordRepresentation> = {};
+        const existingRecords: DurableStoreEntries<DurableRecordEntry> = {};
+        const incomingRecords: DurableStoreEntries<DurableRecordEntry> = {};
 
         // track any incoming or existing records that contain drafts
         const draftKeys: Record<string, true> = {};

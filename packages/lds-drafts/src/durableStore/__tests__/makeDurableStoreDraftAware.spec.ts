@@ -220,6 +220,33 @@ describe('makeDurableStoreDraftAware', () => {
                 expect(storedRecord.drafts.serverValues.Name).toEqual(NAME_VALUE);
             });
 
+            it('does not attempt to resolve drafts against an error', async () => {
+                const editAction = createEditDraftAction(RECORD_ID, STORE_KEY_RECORD);
+
+                const { durableStore, baseDurableStore } = setupDraftStore({
+                    [STORE_KEY_RECORD]: [editAction],
+                });
+                const setEntriesSpy = jest.fn();
+
+                baseDurableStore.setEntries = setEntriesSpy.mockResolvedValue(undefined);
+                baseDurableStore.getEntries = jest.fn().mockResolvedValue({
+                    [STORE_KEY_RECORD]: { data: { __type: 'error', status: 400 } },
+                });
+
+                await durableStore.setEntries<any>(
+                    {
+                        [buildDraftDurableStoreKey(editAction.tag, editAction.id)]: {
+                            data: editAction,
+                        },
+                    },
+                    DRAFT_SEGMENT
+                );
+
+                // there should be no writes to the default segment
+                expect(setEntriesSpy).toBeCalledTimes(1);
+                expect(setEntriesSpy.mock.calls[0][1]).toBe(DRAFT_SEGMENT);
+            });
+
             it('updates the record when a delete action is written', async () => {
                 const durableRecord = buildDurableRecordRepresentation(RECORD_ID, {
                     Name: NAME_VALUE,

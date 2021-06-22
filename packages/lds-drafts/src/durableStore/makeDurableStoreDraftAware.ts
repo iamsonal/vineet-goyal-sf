@@ -13,9 +13,10 @@ import { DRAFT_SEGMENT } from '../DurableDraftQueue';
 import { ObjectCreate, ObjectKeys } from '../utils/language';
 import {
     buildSyntheticRecordRepresentation,
-    DurableRecordRepresentation,
+    DurableRecordEntry,
     extractRecordKeyFromDraftDurableStoreKey,
     isDraftActionStoreRecordKey,
+    isStoreRecordError,
     removeDrafts,
     replayDraftsOnRecord,
 } from '../utils/records';
@@ -29,7 +30,7 @@ function persistDraftCreates(
     userId: string
 ) {
     const keys = ObjectKeys(entries);
-    const draftCreates: DurableStoreEntries<DurableRecordRepresentation> = {};
+    const draftCreates: DurableStoreEntries<DurableRecordEntry> = {};
     let shouldWrite = false;
 
     for (let i = 0, len = keys.length; i < len; i++) {
@@ -82,7 +83,7 @@ function resolveDrafts(
     userId: string
 ) {
     return durableStore
-        .getEntries<DurableRecordRepresentation>(recordKeys, DefaultDurableSegment)
+        .getEntries<DurableRecordEntry>(recordKeys, DefaultDurableSegment)
         .then((entries) => {
             if (entries === undefined) {
                 return;
@@ -90,7 +91,7 @@ function resolveDrafts(
 
             return getDraftActionsForRecords(recordKeys).then((actions) => {
                 const updatedRecords: {
-                    [key: string]: DurableStoreEntry<DurableRecordRepresentation>;
+                    [key: string]: DurableStoreEntry<DurableRecordEntry>;
                 } = {};
 
                 for (let i = 0, len = recordKeys.length; i < len; i++) {
@@ -101,6 +102,11 @@ function resolveDrafts(
                     }
 
                     const { data: record, expiration } = entry;
+
+                    // cannot apply drafts to an error
+                    if (isStoreRecordError(record)) {
+                        continue;
+                    }
 
                     const drafts =
                         (actions[recordKey] as DraftAction<
@@ -130,7 +136,9 @@ function resolveDrafts(
                     }
                 }
 
-                return durableStore.setEntries(updatedRecords, DefaultDurableSegment);
+                if (ObjectKeys(updatedRecords).length > 0) {
+                    return durableStore.setEntries(updatedRecords, DefaultDurableSegment);
+                }
             });
         });
 }

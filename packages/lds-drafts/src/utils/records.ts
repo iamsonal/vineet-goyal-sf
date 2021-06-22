@@ -73,6 +73,23 @@ export interface DurableRecordRepresentation extends Omit<DraftRecordRepresentat
     links: { [key: string]: StoreLink };
 }
 
+// Either a DurableRecordRepresentation or StoreRecordError can live at a record key
+export type DurableRecordEntry = DurableRecordRepresentation | StoreRecordError;
+
+export function isStoreRecordError(
+    storeRecord: DurableRecordEntry | RecordRepresentationNormalized
+): storeRecord is StoreRecordError {
+    return (storeRecord as StoreRecordError).__type === 'error';
+}
+
+export function isEntryDurableRecordRepresentation(
+    entry: DurableStoreEntry<any>,
+    key: string
+): entry is DurableStoreEntry<DurableRecordRepresentation> {
+    // Either a DurableRecordRepresentation or StoreRecordError can live at a record key
+    return isStoreKeyRecordId(key) && (entry.data as StoreRecordError).__type === undefined;
+}
+
 export interface RequestFields {
     fields: string[];
     optionalFields: string[];
@@ -381,7 +398,7 @@ export function replayDraftsOnRecord(
     drafts: DraftAction<RecordRepresentation, ResourceRequest>[],
     objectInfo: ObjectInfoRepresentation | undefined,
     userId: string
-): DurableRecordRepresentation {
+): DurableRecordEntry {
     if (record === undefined) {
         if (drafts.length === 0) {
             throw Error('cannot synthesize a record without a post draft action');
@@ -502,17 +519,6 @@ export function extractRecordKeyFromDraftDurableStoreKey(key: string) {
         return undefined;
     }
     return matches[1];
-}
-
-export function isStoreRecordError(storeRecord: unknown): storeRecord is StoreRecordError {
-    return (storeRecord as StoreRecordError).__type === 'error';
-}
-
-export function isEntryDurableRecordRepresentation(
-    entry: DurableStoreEntry<any>,
-    key: string
-): entry is DurableStoreEntry<DurableRecordRepresentation> {
-    return isStoreKeyRecordId(key) && entry.data.apiName !== undefined;
 }
 
 /**
@@ -665,15 +671,19 @@ export function filterRecordFields(
  * @returns
  */
 export function durableMerge(
-    existing: DurableStoreEntry<DurableRecordRepresentation>,
-    incoming: DurableStoreEntry<DurableRecordRepresentation>,
+    existing: DurableStoreEntry<DurableRecordEntry>,
+    incoming: DurableStoreEntry<DurableRecordEntry>,
     drafts: DraftAction<RecordRepresentation, ResourceRequest>[],
     objectInfo: ObjectInfoRepresentation | undefined,
     userId: string,
     getRecord: Adapter<GetRecordConfig, RecordRepresentation>
-): DurableStoreEntry<DurableRecordRepresentation> {
+): DurableStoreEntry<DurableRecordEntry> {
     const { data: existingRecord } = existing;
     const { data: incomingRecord } = incoming;
+
+    if (isStoreRecordError(existingRecord) || isStoreRecordError(incomingRecord)) {
+        return incoming;
+    }
 
     const existingWithoutDrafts = removeDrafts(existingRecord);
     const incomingWithoutDrafts = removeDrafts(incomingRecord);
@@ -693,7 +703,7 @@ function merge(
     existing: DurableRecordRepresentation,
     incoming: DurableRecordRepresentation,
     getRecord: Adapter<GetRecordConfig, RecordRepresentation>
-) {
+): DurableRecordRepresentation {
     const incomingWeakEtag = incoming.weakEtag;
     const existingWeakEtag = existing.weakEtag;
 
@@ -723,7 +733,7 @@ function mergeRecordConflict(
     existing: DurableRecordRepresentation,
     incoming: DurableRecordRepresentation,
     getRecord: Adapter<GetRecordConfig, RecordRepresentation>
-) {
+): DurableRecordRepresentation {
     const incomingWeakEtag = incoming.weakEtag;
     const existingWeakEtag = existing.weakEtag;
 

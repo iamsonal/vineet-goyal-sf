@@ -17,7 +17,7 @@ export {
     updateQueueOnPost,
     createIdDraftMapping,
     durableMerge,
-    DurableRecordRepresentation,
+    DurableRecordEntry,
     isEntryDurableRecordRepresentation,
 } from './utils/records';
 export { DurableDraftQueue, DRAFT_SEGMENT } from './DurableDraftQueue';

@@ -13,12 +13,13 @@ import {
 import {
     buildRecordFieldStoreKey,
     extractRecordIdFromStoreKey,
-    isStoreKeyRecordId,
 } from '@salesforce/lds-uiapi-record-utils';
 import { ObjectAssign, ObjectCreate, ObjectKeys } from '../utils/language';
 import {
     DraftRecordRepresentation,
+    DurableRecordEntry,
     DurableRecordRepresentation,
+    isEntryDurableRecordRepresentation,
     isStoreRecordError,
 } from '../utils/records';
 
@@ -80,7 +81,7 @@ function buildDurableRecordRepresentation(
     normalizedRecord: RecordRepresentationNormalized,
     records: RecordSource,
     pendingEntries: DurableStoreEntries<RecordRepresentationNormalized>
-): DurableRecordRepresentation | undefined {
+): DurableRecordEntry | undefined {
     const fields = normalizedRecord.fields;
     const filteredFields: {
         [key: string]: FieldValueRepresentation;
@@ -130,7 +131,7 @@ function buildDurableRecordRepresentation(
         ...normalizedRecord,
         fields: filteredFields,
         links,
-    } as DurableRecordRepresentation;
+    } as DurableRecordEntry;
 }
 
 export interface RecordDenormalizingDurableStore extends DurableStore {
@@ -194,14 +195,8 @@ export function makeRecordDenormalizingDurableStore(
                     continue;
                 }
 
-                if (isStoreKeyRecordId(key) && !isStoreRecordError(value.data)) {
-                    ObjectAssign(
-                        returnEntries,
-                        normalizeRecordFields(
-                            key,
-                            value as unknown as DurableStoreEntry<DurableRecordRepresentation>
-                        )
-                    );
+                if (isEntryDurableRecordRepresentation(value, key)) {
+                    ObjectAssign(returnEntries, normalizeRecordFields(key, value));
                 } else {
                     returnEntries[key] = value;
                 }
@@ -287,9 +282,7 @@ export function makeRecordDenormalizingDurableStore(
                 return undefined;
             }
 
-            const denormalizedEntry = entries[
-                recordKey
-            ] as DurableStoreEntry<DurableRecordRepresentation>;
+            const denormalizedEntry = entries[recordKey] as DurableStoreEntry<DurableRecordEntry>;
 
             if (denormalizedEntry === undefined) {
                 return undefined;

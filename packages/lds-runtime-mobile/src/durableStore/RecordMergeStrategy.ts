@@ -1,8 +1,7 @@
-import { DurableStoreEntries, DurableStoreEntry } from '@luvio/environments';
+import { DurableStoreEntries } from '@luvio/environments';
 import {
     DraftAction,
     DraftActionMap,
-    DraftQueue,
     isEntryDurableRecordRepresentation,
 } from '@salesforce/lds-drafts';
 import { durableMerge, DurableRecordRepresentation } from '@salesforce/lds-drafts';
@@ -12,17 +11,19 @@ import { Adapter, ResourceRequest } from '@luvio/engine';
 import { MergeStrategy } from './makeDurableStoreWithMergeStrategy';
 import { isStoreKeyRecordId } from '@salesforce/lds-uiapi-record-utils';
 
+type GetDraftActionsForRecords = (keys: string[]) => Promise<DraftActionMap>;
+
 export class RecordMergeStrategy implements MergeStrategy {
-    private readonly draftQueue: DraftQueue;
+    private readonly getDraftActions: GetDraftActionsForRecords;
     private readonly getRecord: Adapter<GetRecordConfig, RecordRepresentation>;
     private readonly userId: string;
 
     constructor(
-        draftQueue: DraftQueue,
+        getDraftActions: GetDraftActionsForRecords,
         getRecord: Adapter<GetRecordConfig, RecordRepresentation>,
         userId: string
     ) {
-        this.draftQueue = draftQueue;
+        this.getDraftActions = getDraftActions;
         this.getRecord = getRecord;
         this.userId = userId;
     }
@@ -46,8 +47,8 @@ export class RecordMergeStrategy implements MergeStrategy {
         const merged = ObjectAssign({}, incomingEntries) as DurableStoreEntries<unknown>;
 
         const recordKeys: Record<string, true> = {};
-        const existingRecords: Record<string, DurableStoreEntry<DurableRecordRepresentation>> = {};
-        const incomingRecords: Record<string, DurableStoreEntry<DurableRecordRepresentation>> = {};
+        const existingRecords: DurableStoreEntries<DurableRecordRepresentation> = {};
+        const incomingRecords: DurableStoreEntries<DurableRecordRepresentation> = {};
 
         // track any incoming or existing records that contain drafts
         const draftKeys: Record<string, true> = {};
@@ -82,10 +83,11 @@ export class RecordMergeStrategy implements MergeStrategy {
         // optimization - we only request drafts for records if any of the
         // existing or incoming records already contain drafts on them
         let draftPromise: Promise<DraftActionMap>;
-        if (ObjectKeys(draftKeys).length === 0) {
+        const draftKeysArray = ObjectKeys(draftKeys);
+        if (draftKeysArray.length === 0) {
             draftPromise = Promise.resolve({});
         } else {
-            draftPromise = this.draftQueue.getActionsForTags(draftKeys);
+            draftPromise = this.getDraftActions(draftKeysArray);
         }
 
         return draftPromise.then((actionMap) => {

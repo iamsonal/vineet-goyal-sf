@@ -101,19 +101,17 @@ describe('RecordMergeStrategy tests', () => {
     function setup() {
         const baseDurableStore = new MockDurableStore();
 
-        const mockDraftQueue = {
-            getActionsForTags: jest.fn().mockResolvedValue({}),
-        } as any;
+        const getActionsForTags = jest.fn().mockResolvedValue({});
         const mockGetRecord = jest.fn();
         const mockUserId = '';
-        const mergeStrategy = new RecordMergeStrategy(mockDraftQueue, mockGetRecord, mockUserId);
+        const mergeStrategy = new RecordMergeStrategy(getActionsForTags, mockGetRecord, mockUserId);
         const durableStore = makeDurableStoreWithMergeStrategy(baseDurableStore);
         durableStore.registerMergeStrategy(mergeStrategy);
 
         return {
             baseDurableStore,
             durableStore,
-            mockDraftQueue,
+            getActionsForTags,
             mockGetRecord,
             mockUserId,
             mergeStrategy,
@@ -177,28 +175,28 @@ describe('RecordMergeStrategy tests', () => {
     });
 
     it('requests drafts if an existing record contains drafts', async () => {
-        const { durableStore, baseDurableStore, mockDraftQueue } = setup();
+        const { durableStore, baseDurableStore, getActionsForTags } = setup();
         baseDurableStore.segments[DefaultDurableSegment] = { ...RECORD_WITH_NAME_DRAFT };
 
         durableStore.setEntries({ ...RECORD_WITH_NAME_COLOR }, DefaultDurableSegment);
         await flushPromises();
-        expect(mockDraftQueue.getActionsForTags).toHaveBeenCalledTimes(1);
+        expect(getActionsForTags).toHaveBeenCalledTimes(1);
     });
 
     it('requests drafts if an incoming record contains drafts', async () => {
-        const { durableStore, baseDurableStore, mockDraftQueue } = setup();
+        const { durableStore, baseDurableStore, getActionsForTags } = setup();
         baseDurableStore.segments[DefaultDurableSegment] = { ...RECORD_WITH_NAME };
 
         durableStore.setEntries({ ...RECORD_WITH_NAME_DRAFT }, DefaultDurableSegment);
         await flushPromises();
-        expect(mockDraftQueue.getActionsForTags).toHaveBeenCalledTimes(1);
+        expect(getActionsForTags).toHaveBeenCalledTimes(1);
     });
     it('does not request drafts if neither incoming or existing contains drafts', async () => {
-        const { durableStore, baseDurableStore, mockDraftQueue } = setup();
+        const { durableStore, baseDurableStore, getActionsForTags } = setup();
         baseDurableStore.segments[DefaultDurableSegment] = { ...RECORD_WITH_NAME };
 
         durableStore.setEntries({ ...RECORD_WITH_NAME_COLOR }, DefaultDurableSegment);
         await flushPromises();
-        expect(mockDraftQueue.getActionsForTags).toHaveBeenCalledTimes(0);
+        expect(getActionsForTags).toHaveBeenCalledTimes(0);
     });
 });

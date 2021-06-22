@@ -124,7 +124,9 @@ const draftEnv = makeEnvironmentDraftAware(durableEnv, {
     registerDraftKeyMapping: registerDraftMapping,
 });
 
-baseDurableStore.registerMergeStrategy(new RecordMergeStrategy(draftQueue, getRecord, userId));
+baseDurableStore.registerMergeStrategy(
+    new RecordMergeStrategy(getDraftActionForRecordKeys, getRecord, userId)
+);
 
 luvio = new Luvio(draftEnv);
 setDefaultLuvio({ luvio });

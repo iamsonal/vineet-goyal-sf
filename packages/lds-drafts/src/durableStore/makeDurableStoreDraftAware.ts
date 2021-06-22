@@ -122,6 +122,8 @@ function resolveDrafts(
                         const resolvedRecord = replayDraftsOnRecord(
                             baseRecord,
                             replayDrafts,
+                            // TODO: W-9074912 pass in ObjectInfo
+                            undefined,
                             userId
                         );
                         updatedRecords[recordKey] = { data: resolvedRecord, expiration };

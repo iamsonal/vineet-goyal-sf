@@ -96,7 +96,16 @@ export class RecordMergeStrategy implements MergeStrategy {
                     (actionMap[key] as DraftAction<RecordRepresentation, ResourceRequest>[]) ?? [];
                 const existing = existingRecords[key];
                 const incoming = incomingRecords[key];
-                const mergedRecord = durableMerge(existing, incoming, drafts, userId, getRecord);
+
+                const mergedRecord = durableMerge(
+                    existing,
+                    incoming,
+                    drafts,
+                    // TODO: W-9074912 pass in ObjectInfo
+                    undefined,
+                    userId,
+                    getRecord
+                );
 
                 merged[key] = mergedRecord;
             }

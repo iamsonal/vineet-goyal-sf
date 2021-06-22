@@ -14,6 +14,7 @@ import {
     buildSelectionFromFields,
     RecordRepresentationNormalized,
     GetRecordConfig,
+    ObjectInfoRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
 import {
     ArrayIsArray,
@@ -42,6 +43,13 @@ interface ScalarFieldRepresentationValue {
     value: ScalarFieldType;
 }
 
+interface LinkFieldRepresentationValue {
+    displayValue: string | null;
+    value: StoreLink;
+}
+
+type DurableFieldRepresentation = ScalarFieldRepresentationValue | LinkFieldRepresentationValue;
+
 const DRAFT_ACTION_KEY_JUNCTION = '__DraftAction__';
 const DRAFT_ACTION_KEY_REGEXP = new RegExp(`(.*)${DRAFT_ACTION_KEY_JUNCTION}([a-zA-Z0-9]+)$`);
 const DEFAULT_FIELD_CREATED_BY_ID = 'CreatedById';
@@ -61,7 +69,7 @@ export interface DraftRecordRepresentation extends RecordRepresentation {
 }
 
 export interface DurableRecordRepresentation extends Omit<DraftRecordRepresentation, 'fields'> {
-    fields: { [key: string]: ScalarFieldRepresentationValue | StoreLink };
+    fields: { [key: string]: DurableFieldRepresentation };
     links: { [key: string]: StoreLink };
 }
 
@@ -84,6 +92,11 @@ function formatDisplayValue(value: boolean | number | string | null) {
  */
 function isGraphNode(node: ProxyGraphNode<unknown>): node is GraphNode<unknown> {
     return node !== null && node.type === 'Node';
+}
+
+// creates a link node
+function createLink(key: string) {
+    return { __ref: key };
 }
 
 const ETAG_SELECTION: PathSelection = {
@@ -363,13 +376,12 @@ export function extractRecordApiNameFromStore(key: string, env: Environment): st
  * @param drafts The list of drafts to apply to the record
  * @param userId The current user id, will be the last modified id
  */
-export function replayDraftsOnRecord<
-    U extends DurableRecordRepresentation | DraftRecordRepresentation
->(
-    record: U | undefined,
+export function replayDraftsOnRecord(
+    record: DurableRecordRepresentation | undefined,
     drafts: DraftAction<RecordRepresentation, ResourceRequest>[],
+    objectInfo: ObjectInfoRepresentation | undefined,
     userId: string
-): U {
+): DurableRecordRepresentation {
     if (record === undefined) {
         if (drafts.length === 0) {
             throw Error('cannot synthesize a record without a post draft action');
@@ -378,9 +390,9 @@ export function replayDraftsOnRecord<
         if (postAction.data.method !== 'post') {
             throw Error('cannot synthesize a record without a post draft action');
         }
-        const syntheticRecord = buildSyntheticRecordRepresentation(postAction, userId) as U;
+        const syntheticRecord = buildSyntheticRecordRepresentation(postAction, userId);
         drafts.shift();
-        return replayDraftsOnRecord(syntheticRecord, drafts, userId);
+        return replayDraftsOnRecord(syntheticRecord, drafts, objectInfo, userId);
     }
     if (drafts.length === 0) {
         return record;
@@ -421,14 +433,40 @@ export function replayDraftsOnRecord<
     const fields = draft.data.body.fields;
     const draftFields = buildRecordFieldValueRepresentationsFromDraftFields(fields);
 
-    const keys = ObjectKeys(draftFields);
-    for (let i = 0, len = keys.length; i < len; i++) {
-        const key = keys[i];
-        // don't apply server values to draft created records
-        if (record.drafts.created === false && record.drafts.serverValues[key] === undefined) {
-            record.drafts.serverValues[key] = record.fields[key] as any;
+    const fieldNames = ObjectKeys(draftFields);
+    for (let i = 0, len = fieldNames.length; i < len; i++) {
+        const fieldName = fieldNames[i];
+        if (objectInfo !== undefined) {
+            const fieldInfo = objectInfo.fields[fieldName];
+
+            if (fieldInfo !== undefined) {
+                const { dataType, relationshipName } = fieldInfo;
+                if (dataType === 'Reference' && relationshipName !== null) {
+                    const fieldValue = draftFields[fieldName].value;
+
+                    if (typeof fieldValue !== 'string') {
+                        throw Error('reference field value is not a string');
+                    }
+
+                    const key = keyBuilderRecord({ recordId: fieldValue });
+                    record.fields[relationshipName] = {
+                        displayValue: null,
+                        value: createLink(key),
+                    };
+                }
+            }
         }
-        record.fields[key] = draftFields[key];
+
+        // don't apply server values to draft created records
+        if (
+            record.drafts.created === false &&
+            record.drafts.serverValues[fieldName] === undefined
+        ) {
+            record.drafts.serverValues[fieldName] = record.fields[
+                fieldName
+            ] as ScalarFieldRepresentationValue;
+        }
+        record.fields[fieldName] = draftFields[fieldName];
     }
 
     record.drafts.edited = true;
@@ -448,7 +486,7 @@ export function replayDraftsOnRecord<
         displayValue: lastModifiedDate,
     };
 
-    return replayDraftsOnRecord(record, drafts, userId);
+    return replayDraftsOnRecord(record, drafts, objectInfo, userId);
 }
 
 export function buildDraftDurableStoreKey(recordKey: string, draftActionId: string) {
@@ -630,6 +668,7 @@ export function durableMerge(
     existing: DurableStoreEntry<DurableRecordRepresentation>,
     incoming: DurableStoreEntry<DurableRecordRepresentation>,
     drafts: DraftAction<RecordRepresentation, ResourceRequest>[],
+    objectInfo: ObjectInfoRepresentation | undefined,
     userId: string,
     getRecord: Adapter<GetRecordConfig, RecordRepresentation>
 ): DurableStoreEntry<DurableRecordRepresentation> {
@@ -645,7 +684,7 @@ export function durableMerge(
         merged = merge(existingWithoutDrafts, incomingWithoutDrafts, getRecord);
     }
 
-    const mergedWithDrafts = replayDraftsOnRecord(merged, drafts, userId);
+    const mergedWithDrafts = replayDraftsOnRecord(merged, drafts, objectInfo, userId);
 
     return { data: mergedWithDrafts, expiration: incoming.expiration };
 }

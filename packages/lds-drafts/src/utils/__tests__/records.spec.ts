@@ -1,4 +1,4 @@
-import { Environment, ResourceRequest, Store } from '@luvio/engine';
+import { Environment, ResourceRequest, Store, StoreLink } from '@luvio/engine';
 import { DurableStoreEntry } from '@luvio/environments';
 import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
@@ -44,6 +44,7 @@ import {
     DraftRecordRepresentation,
     removeDrafts,
 } from '../records';
+import OpportunityObjectInfo from './data/object-Opportunity.json';
 
 describe('draft environment record utilities', () => {
     describe('buildRecordFieldValueRepresentationsFromDraftFields', () => {
@@ -308,14 +309,14 @@ describe('draft environment record utilities', () => {
     describe('replayDraftsOnRecord', () => {
         it('returns unmodified record if no draft actions', () => {
             const record = {} as any;
-            const result = replayDraftsOnRecord(record, [], CURRENT_USER_ID);
+            const result = replayDraftsOnRecord(record, [], undefined, CURRENT_USER_ID);
 
             expect(result).toBe(record);
         });
 
         it('returns unmodified record if draft action undefined', () => {
             const record = {} as any;
-            const result = replayDraftsOnRecord(record, [undefined], CURRENT_USER_ID);
+            const result = replayDraftsOnRecord(record, [undefined], undefined, CURRENT_USER_ID);
 
             expect(result).toBe(record);
         });
@@ -325,6 +326,7 @@ describe('draft environment record utilities', () => {
                 replayDraftsOnRecord(
                     {} as any,
                     [{ request: { method: 'post' } } as any],
+                    undefined,
                     CURRENT_USER_ID
                 )
             ).toThrowError();
@@ -335,6 +337,7 @@ describe('draft environment record utilities', () => {
                 replayDraftsOnRecord(
                     {} as any,
                     [{ request: { method: 'delete' } } as any, {} as any],
+                    undefined,
                     CURRENT_USER_ID
                 )
             ).toThrowError();
@@ -346,6 +349,7 @@ describe('draft environment record utilities', () => {
             const result = replayDraftsOnRecord(
                 record,
                 [{ id: '123', data: { method: 'delete' } } as any],
+                undefined,
                 CURRENT_USER_ID
             );
 
@@ -373,7 +377,7 @@ describe('draft environment record utilities', () => {
                 'UiApi::RecordRepresentation:123',
                 'newName'
             );
-            const result = replayDraftsOnRecord(record, [editAction], CURRENT_USER_ID);
+            const result = replayDraftsOnRecord(record, [editAction], undefined, CURRENT_USER_ID);
 
             const expectedLastModifiedDate = new Date(DEFAULT_TIME_STAMP).toISOString();
             expect(result).toStrictEqual({
@@ -415,7 +419,7 @@ describe('draft environment record utilities', () => {
                 'UiApi::RecordRepresentation:123',
                 'newName'
             );
-            const result = replayDraftsOnRecord(record, [editAction], CURRENT_USER_ID);
+            const result = replayDraftsOnRecord(record, [editAction], undefined, CURRENT_USER_ID);
 
             const expectedLastModifiedDate = new Date(DEFAULT_TIME_STAMP).toISOString();
             const expected = {
@@ -457,6 +461,7 @@ describe('draft environment record utilities', () => {
                     createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newerName'),
                     createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newestName'),
                 ],
+                undefined,
                 CURRENT_USER_ID
             );
             expect(result.drafts.draftActionIds.length).toBe(3);
@@ -466,6 +471,7 @@ describe('draft environment record utilities', () => {
             const result = replayDraftsOnRecord(
                 undefined,
                 [createPostDraftAction(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_ID)],
+                undefined,
                 ''
             );
             expect(result.drafts.created).toBe(true);
@@ -480,6 +486,7 @@ describe('draft environment record utilities', () => {
                 replayDraftsOnRecord(
                     record,
                     [createPostDraftAction(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_ID)],
+                    undefined,
                     CURRENT_USER_ID
                 );
             }).toThrowError();
@@ -494,6 +501,7 @@ describe('draft environment record utilities', () => {
                         createEditDraftAction(DRAFT_RECORD_ID, STORE_KEY_DRAFT_RECORD, 'newName'),
                         createPostDraftAction(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_ID),
                     ],
+                    undefined,
                     ''
                 );
             }).toThrowError();
@@ -506,11 +514,61 @@ describe('draft environment record utilities', () => {
                     createPostDraftAction(STORE_KEY_DRAFT_RECORD, DRAFT_RECORD_ID),
                     createEditDraftAction(DRAFT_RECORD_ID, STORE_KEY_DRAFT_RECORD, 'newName'),
                 ],
+                undefined,
                 ''
             );
             expect(result.drafts.created).toBe(true);
             expect(result.drafts.edited).toBe(true);
             expect(result.drafts.draftActionIds.length).toBe(2);
+        });
+
+        describe('draft relationships', () => {
+            it('update lookup field link', () => {
+                const objectInfo = OpportunityObjectInfo;
+                const originalOwnerId = 'ORIGINAL_OWNER';
+                const draftOwnerId = 'DRAFT_OWNER';
+                const draftNameValue = 'Jason';
+                const originalRecord = buildDurableRecordRepresentation('123', {
+                    Name: { value: 'oldName', displayValue: null },
+                    OwnerId: { value: originalOwnerId, displayValue: null },
+                });
+
+                const draftLink = keyBuilderRecord({ recordId: draftOwnerId });
+
+                const action = createEditDraftAction(RECORD_ID, STORE_KEY_RECORD, draftNameValue);
+                action.data.body.fields = { ...action.data.body.fields, OwnerId: draftOwnerId };
+
+                const recordWithDrafts = replayDraftsOnRecord(
+                    originalRecord,
+                    [action],
+                    objectInfo,
+                    ''
+                );
+                expect(recordWithDrafts.drafts).toBeDefined();
+                // expect OwnerId field is updated
+                expect(recordWithDrafts.fields.OwnerId.value).toEqual(draftOwnerId);
+
+                // expect Owner lookup field link is updated
+                expect(recordWithDrafts.fields.Owner).toBeDefined();
+                expect((recordWithDrafts.fields.Owner.value as StoreLink).__ref).toEqual(draftLink);
+            });
+
+            it('throws if draft lookup field is not a string', () => {
+                const objectInfo = OpportunityObjectInfo;
+                const draftOwnerId = 123;
+                const draftNameValue = 'Jason';
+                const originalRecord = buildDurableRecordRepresentation('123', {
+                    Name: { value: 'oldName', displayValue: null },
+                    OwnerId: { value: 'ORIGINAL_OWNER', displayValue: null },
+                });
+
+                const action = createEditDraftAction(RECORD_ID, STORE_KEY_RECORD, draftNameValue);
+                action.data.body.fields = { ...action.data.body.fields, OwnerId: draftOwnerId };
+
+                expect(() =>
+                    replayDraftsOnRecord(originalRecord, [action], objectInfo, '')
+                ).toThrow();
+            });
         });
     });
 
@@ -763,7 +821,7 @@ describe('draft environment record utilities', () => {
                 },
             };
 
-            const result = durableMerge(existing, incoming, [], '', refreshSpy);
+            const result = durableMerge(existing, incoming, [], undefined, '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(0);
         });
@@ -877,7 +935,7 @@ describe('draft environment record utilities', () => {
                 },
             };
 
-            const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
+            const result = durableMerge(existing, incoming, [draftEdit], undefined, '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(0);
         });
@@ -960,7 +1018,7 @@ describe('draft environment record utilities', () => {
                 },
             };
 
-            const result = durableMerge(existing, incoming, [], '', refreshSpy);
+            const result = durableMerge(existing, incoming, [], undefined, '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(1);
             expect(refreshSpy.mock.calls[0][0]).toStrictEqual({
@@ -1043,7 +1101,7 @@ describe('draft environment record utilities', () => {
                 },
             };
 
-            const result = durableMerge(existing, incoming, [], '', refreshSpy);
+            const result = durableMerge(existing, incoming, [], undefined, '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(0);
         });
@@ -1161,7 +1219,7 @@ describe('draft environment record utilities', () => {
                 },
             };
 
-            const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
+            const result = durableMerge(existing, incoming, [draftEdit], undefined, '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(1);
             expect(refreshSpy).toBeCalledWith({
@@ -1290,7 +1348,7 @@ describe('draft environment record utilities', () => {
                 },
             };
 
-            const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
+            const result = durableMerge(existing, incoming, [draftEdit], undefined, '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(1);
             expect(refreshSpy).toBeCalledWith({
@@ -1421,7 +1479,7 @@ describe('draft environment record utilities', () => {
                 },
             };
 
-            const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
+            const result = durableMerge(existing, incoming, [draftEdit], undefined, '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(0);
         });
@@ -1510,7 +1568,7 @@ describe('draft environment record utilities', () => {
                 },
             };
 
-            const result = durableMerge(existing, incoming, [], '', refreshSpy);
+            const result = durableMerge(existing, incoming, [], undefined, '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(1);
 
@@ -1602,7 +1660,7 @@ describe('draft environment record utilities', () => {
                 expiration: { stale: 2, fresh: 2 },
             };
 
-            const result = durableMerge(existing, incoming, [], '', refreshSpy);
+            const result = durableMerge(existing, incoming, [], undefined, '', refreshSpy);
             expect(result).toEqual(expected);
         });
 
@@ -1736,7 +1794,7 @@ describe('draft environment record utilities', () => {
                 },
             };
 
-            const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
+            const result = durableMerge(existing, incoming, [draftEdit], undefined, '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(1);
 
@@ -1862,7 +1920,7 @@ describe('draft environment record utilities', () => {
                 },
             };
 
-            const result = durableMerge(existing, incoming, [draftEdit], '', refreshSpy);
+            const result = durableMerge(existing, incoming, [draftEdit], undefined, '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(1);
             expect(refreshSpy).toBeCalledWith({
@@ -2034,6 +2092,7 @@ describe('draft environment record utilities', () => {
                 existing,
                 incoming,
                 [createDraft, updateDraft],
+                undefined,
                 '',
                 refreshSpy
             );

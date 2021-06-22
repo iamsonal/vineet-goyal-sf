@@ -1,5 +1,5 @@
 {
-    "name": "@community/lds-adapters-experience-marketing-integration",
+    "name": "@salesforce/lds-adapters-experience-marketing-integration",
     "version": "1.15.0",
     "description": "With this API, you can CRUD data in Marketing Cloud's storage, Data Extensions.",
     "license": "MIT",
@@ -23,8 +23,7 @@
         "clean": "rm -rf dist sfdc src/generated karma/dist",
         "start": "karma start",
         "test": "karma start --single-run",
-        "test:compat": "karma start --single-run --compat",
-        "test:unit": "jest"
+        "test:compat": "karma start --single-run --compat"
     },
     "dependencies": {
         "@salesforce/lds-bindings": "1.20.0"

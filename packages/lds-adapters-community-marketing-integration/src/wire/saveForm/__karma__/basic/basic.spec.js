@@ -55,7 +55,7 @@ describe('basic', () => {
 
         expect(data.data).toEqual(mockRespose);
     });
-    it('displays error when network request 404s', async () => {
+    it('displays error when network request 400s', async () => {
         const mock = {
             status: 400,
             ok: false,

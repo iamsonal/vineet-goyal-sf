@@ -46,7 +46,7 @@ const registerDraftMapping = (draftKey: string, canonicalKey: string) => {
 };
 
 const getDraftActionForRecordKeys = (keys: string[]) => {
-    const objectSet: { [key: string]: true } = {};
+    const objectSet: Record<string, true> = {};
     for (let i = 0, len = keys.length; i < len; i++) {
         objectSet[keys[i]] = true;
     }

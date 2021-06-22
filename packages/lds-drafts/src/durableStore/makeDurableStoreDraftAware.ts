@@ -171,6 +171,7 @@ export function makeDurableStoreDraftAware(
         const draftEntries: DurableStoreEntries<
             DraftAction<RecordRepresentation, ResourceRequest>
         > = {};
+        let hasDraftEntries = false;
         const keys = ObjectKeys(entries);
         for (let i = 0, len = keys.length; i < len; i++) {
             const key = keys[i];
@@ -180,20 +181,23 @@ export function makeDurableStoreDraftAware(
                     draftEntries[key] = entry as DurableStoreEntry<
                         DraftAction<RecordRepresentation, ResourceRequest>
                     >;
+                    hasDraftEntries = true;
                 }
             }
         }
 
         // change made to a draft action require affected records to be resolved
         return durableStore.setEntries(entries, segment).then(() => {
-            return persistDraftCreates(draftEntries, durableStore, userId).then(() => {
-                return onDraftEntriesChanged(
-                    ObjectKeys(entries),
-                    durableStore,
-                    getDraftActionsForRecords,
-                    userId
-                );
-            });
+            if (hasDraftEntries === true) {
+                return persistDraftCreates(draftEntries, durableStore, userId).then(() => {
+                    return onDraftEntriesChanged(
+                        ObjectKeys(entries),
+                        durableStore,
+                        getDraftActionsForRecords,
+                        userId
+                    );
+                });
+            }
         });
     };
 
@@ -230,13 +234,13 @@ export function makeDurableStoreDraftAware(
                 operation.type === DurableStoreOperationType.SetEntries
             ) {
                 const keys = ObjectKeys(operation.entries);
-                changedDraftKeys = changedDraftKeys.concat(keys);
 
                 for (let i = 0, len = keys.length; i < len; i++) {
                     const key = keys[i];
                     const entry = operation.entries[key];
                     if (isEntryDraftAction(entry, key)) {
                         if (isLDSDraftAction(entry.data)) {
+                            changedDraftKeys.push(key);
                             persistOperations.push(
                                 persistDraftCreates(
                                     operation.entries as unknown as DurableStoreEntries<

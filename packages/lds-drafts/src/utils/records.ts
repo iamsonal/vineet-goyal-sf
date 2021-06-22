@@ -720,7 +720,7 @@ function mergeRecordConflict(
  * @param setB The target subset
  * @returns
  */
-function isSuperset(setA: { [key: string]: true }, setB: { [key: string]: true }) {
+function isSuperset(setA: Record<string, true>, setB: Record<string, true>) {
     const keys = ObjectKeys(setB);
     for (let i = 0, len = keys.length; i < len; i++) {
         const key = keys[i];
@@ -737,7 +737,7 @@ function isSuperset(setA: { [key: string]: true }, setB: { [key: string]: true }
  * @param record
  * @param fieldList
  */
-function extractFields(record: DurableRecordRepresentation, fieldList: { [key: string]: true }) {
+function extractFields(record: DurableRecordRepresentation, fieldList: Record<string, true>) {
     const fieldNames = ObjectKeys(record.fields);
     const apiName = record.apiName;
     for (let i = 0, len = fieldNames.length; i < len; i++) {

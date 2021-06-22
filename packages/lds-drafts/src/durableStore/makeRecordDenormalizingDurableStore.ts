@@ -162,7 +162,7 @@ export function makeRecordDenormalizingDurableStore(
         // filter out record field keys
         const filteredEntryIds: string[] = [];
         // map of records to avoid requesting duplicate record keys when requesting both records and fields
-        const recordEntries: { [key: string]: true } = {};
+        const recordEntries: Record<string, true> = {};
 
         for (let i = 0, len = entriesLength; i < len; i++) {
             const id = entries[i];

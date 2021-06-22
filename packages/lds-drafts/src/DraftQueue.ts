@@ -92,8 +92,6 @@ export enum ProcessActionResult {
     CUSTOM_ACTION_WAITING = 'CUSTOM_ACTION_WAITING',
 }
 
-export type ObjectAsSet = { [key: string]: true };
-
 export enum DraftQueueState {
     /** Currently processing an item in the queue or queue is empty and waiting to process the next item. */
     Started = 'started',
@@ -273,7 +271,7 @@ export interface DraftQueue {
      * @param tags A map of tags to get an ordered list of DraftActions for
      * @returns Map of tag name to ordered action array
      */
-    getActionsForTags(tags: ObjectAsSet): Promise<DraftActionMap>;
+    getActionsForTags(tags: Record<string, true>): Promise<DraftActionMap>;
 
     /**
      * Registers a listener to be notified when the Draft Queue changes

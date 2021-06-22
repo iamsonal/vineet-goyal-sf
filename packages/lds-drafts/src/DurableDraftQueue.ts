@@ -7,7 +7,6 @@ import {
     DraftActionMap,
     DraftActionStatus,
     ProcessActionResult,
-    ObjectAsSet,
     DraftQueueState,
     DraftQueueChangeListener,
     DraftQueueEvent,
@@ -277,7 +276,7 @@ export class DurableDraftQueue implements DraftQueue {
         });
     }
 
-    getActionsForTags(tags: ObjectAsSet): Promise<DraftActionMap> {
+    getActionsForTags(tags: Record<string, true>): Promise<DraftActionMap> {
         return this.getQueueActions().then((queue) => {
             const map: DraftActionMap = {};
             const tagKeys = ObjectKeys(tags);

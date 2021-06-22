@@ -121,7 +121,7 @@ describe('makeDurableStoreDraftAware', () => {
                     DRAFT_SEGMENT
                 );
 
-                expect(setEntriesSpy.mock.calls.length).toBe(2);
+                expect(setEntriesSpy.mock.calls.length).toBe(1);
                 expect(setEntriesSpy.mock.calls[0][1]).toBe('DRAFT');
                 const customData = setEntriesSpy.mock.calls[0][0]['1234__DraftAction__12345'].data;
                 expect(customData.data).toStrictEqual({ mock: 'data' });
@@ -453,10 +453,7 @@ describe('makeDurableStoreDraftAware', () => {
             await durableStore.batchOperations([operation]);
 
             expect(batchSpy.mock.calls.length).toBe(1);
-            expect(setSpy.mock.calls.length).toBe(1);
-
-            //Set with DRAFT updates should never be called for a non-record
-            expect(setSpy).not.toBeCalledWith(operation.entries, DRAFT_SEGMENT);
+            expect(setSpy.mock.calls.length).toBe(0);
 
             const action = batchSpy.mock.calls[0][0][0].entries['1234__DraftAction__12345'].data;
             expect(action.handler).toBe('CUSTOM');
@@ -509,10 +506,7 @@ describe('makeDurableStoreDraftAware', () => {
             await durableStore.batchOperations([operation]);
 
             expect(batchSpy.mock.calls.length).toBe(1);
-            expect(setSpy.mock.calls.length).toBe(1);
-
-            //Set with DRAFT updates should never be called for a non-record
-            expect(setSpy).not.toBeCalledWith(operation.entries, DRAFT_SEGMENT);
+            expect(setSpy.mock.calls.length).toBe(0);
         });
 
         it('updates the record when an edit action is written', async () => {

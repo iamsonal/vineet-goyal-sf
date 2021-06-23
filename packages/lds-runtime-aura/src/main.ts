@@ -15,7 +15,8 @@ function setTrackedFieldsConfig(includeLeafNodeIdOnly: boolean): void {
     ldsAdaptersUiapiConfig.setTrackedFieldDepthOnNotifyChange(depth);
 }
 
-export default function ldsEngineCreator() {
+// LDS initialization logic, invoked directly by Aura component tests
+export function initializeLDS() {
     const storeOptions = {
         scheduler: () => {},
     };
@@ -31,6 +32,12 @@ export default function ldsEngineCreator() {
     setDefaultLuvio({ luvio });
 
     setTrackedFieldsConfig(ldsTrackedFieldsBehaviorGate.isOpen({ fallback: false }));
+}
 
+// service function to be invoked by Aura
+function ldsEngineCreator() {
+    initializeLDS();
     return { name: 'ldsEngineCreator' };
 }
+
+export default ldsEngineCreator;

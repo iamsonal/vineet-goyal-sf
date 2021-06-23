@@ -1,6 +1,3 @@
-import { Luvio } from '@luvio/engine';
-import { DurableStoreEntry } from '@luvio/environments';
-import { createRecordAdapterFactory } from '@salesforce/lds-adapters-uiapi';
 import { Action, DraftAction, DraftQueue, ProcessActionResult } from '@salesforce/lds-drafts';
 import {
     CustomActionData,
@@ -8,13 +5,9 @@ import {
     CustomActionResultType,
 } from '@salesforce/lds-drafts/src/actionHandlers/CustomActionHandler';
 import { JSONStringify } from '@salesforce/lds-drafts/src/utils/language';
-import { ObjectInfoIndex } from '../../../../utils/ObjectInfoService';
-import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../../MockNimbusDurableStore';
-import {
-    MockNimbusNetworkAdapter,
-    mockNimbusNetworkGlobal,
-} from '../../../MockNimbusNetworkAdapter';
+import { MockNimbusNetworkAdapter } from '../../../MockNimbusNetworkAdapter';
 import { flushPromises } from '../../../testUtils';
+import { setup } from '../integrationTestSetup';
 
 import mockAccount from '../data/record-Account-fields-Account.Id,Account.Name.json';
 
@@ -29,45 +22,14 @@ const DEFAULT_CUSTOM_ACTION: Action<CustomActionData> = {
 };
 
 describe('mobile runtime integration tests on actions', () => {
-    let luvio: Luvio;
     let draftQueue: DraftQueue;
     let networkAdapter: MockNimbusNetworkAdapter;
     let createRecord;
 
-    let durableStore: MockNimbusDurableStore;
-
     beforeEach(async () => {
-        durableStore = new MockNimbusDurableStore();
-        mockNimbusStoreGlobal(durableStore);
-
-        await durableStore.resetStore();
-
-        networkAdapter = new MockNimbusNetworkAdapter();
-        mockNimbusNetworkGlobal(networkAdapter);
-
-        const runtime = await import('../../../../main');
-        luvio = runtime.luvio;
-        draftQueue = runtime.draftQueue;
-        draftQueue.stopQueue();
-        (luvio as any).environment.store.reset();
-
+        ({ createRecord, draftQueue, networkAdapter } = await setup());
         // each test sets its own custom handler, remove before next test
         draftQueue.removeHandler(CUSTOM_HANDLER);
-
-        createRecord = createRecordAdapterFactory(luvio);
-
-        const accountObjectInfo: DurableStoreEntry<ObjectInfoIndex> = {
-            data: {
-                apiName: API_NAME,
-                keyPrefix: '001',
-            },
-        };
-        durableStore.setEntriesInSegment(
-            {
-                [API_NAME]: JSON.stringify(accountObjectInfo),
-            },
-            OBJECT_INFO_PREFIX_SEGMENT
-        );
     });
 
     it('custom handler added gets call back', async () => {

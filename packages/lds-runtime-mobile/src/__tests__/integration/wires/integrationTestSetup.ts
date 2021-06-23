@@ -5,14 +5,22 @@ import {
     getRecordAdapterFactory,
     updateRecordAdapterFactory,
     getRecordsAdapterFactory,
+    ObjectInfoRepresentation,
+    keyBuilderObjectInfo,
     getRelatedListRecordsAdapterFactory,
 } from '@salesforce/lds-adapters-uiapi';
 import { DraftManager, DraftQueue } from '@salesforce/lds-drafts';
 import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusDurableStore';
 import { MockNimbusNetworkAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
-import { DurableStoreEntry, DurableStoreOperationType } from '@luvio/environments';
+import {
+    DefaultDurableSegment,
+    DurableStoreEntry,
+    DurableStoreOperationType,
+} from '@luvio/environments';
 import { ObjectInfoIndex, OBJECT_INFO_PREFIX_SEGMENT } from '../../../utils/ObjectInfoService';
 import { flushPromises } from '../../testUtils';
+import mockOpportunityObjectInfo from './data/object-Opportunity.json';
+import mockAccountObjectInfo from './data/object-Account.json';
 
 let luvio: Luvio;
 let draftQueue: DraftQueue;
@@ -77,20 +85,32 @@ export async function resetLuvioStore() {
 }
 
 export function populateDurableStoreWithObjectInfos() {
-    const accountObjectInfo: DurableStoreEntry<ObjectInfoIndex> = {
+    const accountObjectInfoIndex: DurableStoreEntry<ObjectInfoIndex> = {
         data: { apiName: 'Account', keyPrefix: '001' },
     };
 
-    const contactObjectInfoPrefix: DurableStoreEntry<ObjectInfoIndex> = {
+    const contactObjectInfoPrefixIndex: DurableStoreEntry<ObjectInfoIndex> = {
         data: { apiName: 'Contact', keyPrefix: '005' },
     };
 
-    const userObjectInfo: DurableStoreEntry<ObjectInfoIndex> = {
+    const userObjectInfoIndex: DurableStoreEntry<ObjectInfoIndex> = {
         data: { apiName: 'User', keyPrefix: '005' },
     };
 
-    const opportunityObjectInfo: DurableStoreEntry<ObjectInfoIndex> = {
+    const opportunityObjectInfoIndex: DurableStoreEntry<ObjectInfoIndex> = {
         data: { apiName: 'Opportunity', keyPrefix: '006' },
+    };
+
+    const opportunityObjectInfoKey = keyBuilderObjectInfo({
+        apiName: mockOpportunityObjectInfo.apiName,
+    });
+    const opportunityObjectInfo: DurableStoreEntry<ObjectInfoRepresentation> = {
+        data: { ...mockOpportunityObjectInfo },
+    };
+
+    const accountObjectInfoKey = keyBuilderObjectInfo({ apiName: mockAccountObjectInfo.apiName });
+    const accountObjectInfo: DurableStoreEntry<ObjectInfoRepresentation> = {
+        data: { ...mockAccountObjectInfo },
     };
 
     return durableStore.batchOperations(
@@ -100,10 +120,19 @@ export function populateDurableStoreWithObjectInfos() {
                 ids: ['Account', 'Opportunity', 'User', 'Contact'],
                 segment: OBJECT_INFO_PREFIX_SEGMENT,
                 entries: {
-                    ['Account']: JSON.stringify(accountObjectInfo),
-                    ['Opportunity']: JSON.stringify(opportunityObjectInfo),
-                    ['User']: JSON.stringify(userObjectInfo),
-                    ['Contact']: JSON.stringify(contactObjectInfoPrefix),
+                    ['Account']: JSON.stringify(accountObjectInfoIndex),
+                    ['Opportunity']: JSON.stringify(opportunityObjectInfoIndex),
+                    ['User']: JSON.stringify(userObjectInfoIndex),
+                    ['Contact']: JSON.stringify(contactObjectInfoPrefixIndex),
+                },
+            },
+            {
+                type: DurableStoreOperationType.SetEntries,
+                segment: DefaultDurableSegment,
+                ids: [opportunityObjectInfoKey, accountObjectInfoKey],
+                entries: {
+                    [opportunityObjectInfoKey]: JSON.stringify(opportunityObjectInfo),
+                    [accountObjectInfoKey]: JSON.stringify(accountObjectInfo),
                 },
             },
         ],

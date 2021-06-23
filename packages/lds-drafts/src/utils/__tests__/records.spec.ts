@@ -1,6 +1,10 @@
 import { Environment, ResourceRequest, Store, StoreLink } from '@luvio/engine';
 import { DurableStoreEntry } from '@luvio/environments';
-import { keyBuilderRecord, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import {
+    keyBuilderObjectInfo,
+    keyBuilderRecord,
+    RecordRepresentation,
+} from '@salesforce/lds-adapters-uiapi';
 import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
 import {
     AddQueueOperation,
@@ -43,8 +47,13 @@ import {
     durableMerge,
     DraftRecordRepresentation,
     removeDrafts,
+    getDraftResolutionInfoForRecordSet,
 } from '../records';
 import OpportunityObjectInfo from './data/object-Opportunity.json';
+
+const OPPORTUNITY_OBJECT_INFO_KEY = keyBuilderObjectInfo({
+    apiName: OpportunityObjectInfo.apiName,
+});
 
 describe('draft environment record utilities', () => {
     describe('buildRecordFieldValueRepresentationsFromDraftFields', () => {
@@ -2301,6 +2310,157 @@ describe('draft environment record utilities', () => {
             expect(draftless.drafts).toBeUndefined();
             expect((draftless.fields.Name as any).value).toBe('Justin');
             expect((draftless.fields.Name as any).displayValue).toBe('Justin');
+        });
+    });
+
+    describe('getDraftResolutionInfoForRecordSet', () => {
+        it('returns draft resolution info when present', async () => {
+            const mockRecordId = 'Record1';
+            const mockRecord = { data: { apiName: OpportunityObjectInfo.apiName } };
+            const opportunityEntry = { data: OpportunityObjectInfo };
+            const mockDraft = { mockDraft: true, handler: LDS_ACTION_HANDLER_ID };
+
+            const recordSet = {
+                [mockRecordId]: mockRecord,
+            } as any;
+
+            const durableStore = {
+                getEntries: jest.fn().mockResolvedValue({
+                    [OPPORTUNITY_OBJECT_INFO_KEY]: opportunityEntry,
+                }),
+            } as any;
+
+            const getDraftActions = jest.fn().mockResolvedValue({
+                [mockRecordId]: [mockDraft],
+            });
+
+            const info = await getDraftResolutionInfoForRecordSet(
+                recordSet,
+                durableStore,
+                getDraftActions
+            );
+            expect(info).toBeDefined();
+            const { record, objectInfo, drafts } = info[mockRecordId];
+            expect(record).toEqual(mockRecord);
+            expect(objectInfo).toEqual(objectInfo);
+            expect(drafts.length).toEqual(1);
+            expect(drafts[0]).toEqual(mockDraft);
+        });
+        it('does not return non lds drafts', async () => {
+            const mockRecordId = 'Record1';
+            const mockRecord = { data: { apiName: OpportunityObjectInfo.apiName } };
+            const opportunityEntry = { data: OpportunityObjectInfo };
+            const mockDraft = { mockDraft: true, handler: LDS_ACTION_HANDLER_ID };
+            const nonLDSDraft = { mockDraft: true, handler: 'Custom' };
+
+            const recordSet = {
+                [mockRecordId]: mockRecord,
+            } as any;
+
+            const durableStore = {
+                getEntries: jest.fn().mockResolvedValue({
+                    [OPPORTUNITY_OBJECT_INFO_KEY]: opportunityEntry,
+                }),
+            } as any;
+
+            const getDraftActions = jest.fn().mockResolvedValue({
+                [mockRecordId]: [mockDraft, nonLDSDraft],
+            });
+
+            const info = await getDraftResolutionInfoForRecordSet(
+                recordSet,
+                durableStore,
+                getDraftActions
+            );
+            expect(info).toBeDefined();
+            const { record, objectInfo, drafts } = info[mockRecordId];
+            expect(record).toEqual(mockRecord);
+            expect(objectInfo).toEqual(objectInfo);
+            expect(drafts.length).toEqual(1);
+            expect(drafts[0]).toEqual(mockDraft);
+        });
+        it('does not retrieve info for error entry', async () => {
+            const mockRecordId = 'Record1';
+            const mockRecord = { data: { __type: 'error' } };
+            const opportunityEntry = { data: OpportunityObjectInfo };
+            const mockDraft = { mockDraft: true, handler: LDS_ACTION_HANDLER_ID };
+
+            const recordSet = {
+                [mockRecordId]: mockRecord,
+            } as any;
+
+            const durableStore = {
+                getEntries: jest.fn().mockResolvedValue({
+                    [OPPORTUNITY_OBJECT_INFO_KEY]: opportunityEntry,
+                }),
+            } as any;
+
+            const getDraftActions = jest.fn().mockResolvedValue({
+                [mockRecordId]: [mockDraft],
+            });
+
+            const info = await getDraftResolutionInfoForRecordSet(
+                recordSet,
+                durableStore,
+                getDraftActions
+            );
+            expect(info).toBeDefined();
+            expect(info[mockRecordId]).toBeUndefined();
+        });
+        it('returns empty array when no drafts present for record', async () => {
+            const mockRecordId = 'Record1';
+            const mockRecord = { data: { apiName: OpportunityObjectInfo.apiName } };
+            const opportunityEntry = { data: OpportunityObjectInfo };
+
+            const recordSet = {
+                [mockRecordId]: mockRecord,
+            } as any;
+
+            const durableStore = {
+                getEntries: jest.fn().mockResolvedValue({
+                    [OPPORTUNITY_OBJECT_INFO_KEY]: opportunityEntry,
+                }),
+            } as any;
+
+            const getDraftActions = jest.fn().mockResolvedValue({
+                [mockRecordId]: [],
+            });
+
+            const info = await getDraftResolutionInfoForRecordSet(
+                recordSet,
+                durableStore,
+                getDraftActions
+            );
+            expect(info).toBeDefined();
+            const { record, objectInfo, drafts } = info[mockRecordId];
+            expect(record).toEqual(mockRecord);
+            expect(objectInfo).toEqual(objectInfo);
+            expect(drafts.length).toEqual(0);
+        });
+        it('throws when missing object info and drafts are present', async () => {
+            const mockRecordId = 'Record1';
+            const mockRecord = { data: { apiName: OpportunityObjectInfo.apiName } };
+            const mockDraft = { mockDraft: true, handler: LDS_ACTION_HANDLER_ID };
+
+            const recordSet = {
+                [mockRecordId]: mockRecord,
+            } as any;
+
+            const durableStore = {
+                getEntries: jest.fn().mockResolvedValue({}),
+            } as any;
+
+            const getDraftActions = jest.fn().mockResolvedValue({
+                [mockRecordId]: [mockDraft],
+            });
+
+            await expect(
+                getDraftResolutionInfoForRecordSet(recordSet, durableStore, getDraftActions)
+            ).rejects.toThrowError(
+                new Error(
+                    'Missing object info in cache when drafts are present, drafts may not resolve correctly.'
+                )
+            );
         });
     });
 });

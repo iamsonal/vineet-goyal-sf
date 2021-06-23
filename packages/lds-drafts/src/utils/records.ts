@@ -31,9 +31,15 @@ import {
     extractRecordIdFromStoreKey,
     isStoreKeyRecordId,
 } from '@salesforce/lds-uiapi-record-utils';
-import { DraftIdMappingEntry, QueueOperation, QueueOperationType } from '../DraftQueue';
+import {
+    DraftActionMap,
+    DraftIdMappingEntry,
+    QueueOperation,
+    QueueOperationType,
+} from '../DraftQueue';
 import { isLDSDraftAction } from '../actionHandlers/LDSActionHandler';
-import { DurableStoreEntry } from '@luvio/environments';
+import { DurableStore, DurableStoreEntries, DurableStoreEntry } from '@luvio/environments';
+import { getObjectInfosForRecords } from './objectInfo';
 
 type ScalarFieldType = boolean | number | string | null;
 type DraftFields = { [key: string]: ScalarFieldType };
@@ -832,4 +838,66 @@ export function removeDrafts(
     }
 
     return { ...record, drafts: undefined, fields: updatedFields };
+}
+
+export type GetDraftActionsForRecords = (keys: string[]) => Promise<DraftActionMap>;
+
+export interface DraftResolutionInput {
+    record: DurableStoreEntry<DurableRecordRepresentation>;
+    drafts: DraftAction<RecordRepresentation, ResourceRequest>[];
+    objectInfo: ObjectInfoRepresentation | undefined;
+}
+
+/**
+ * Extracts the relevant object infos and drafts for a set of durable store record entries
+ * @param records A set of DurableStoreEntries containing records
+ * @param durableStore the durable store
+ * @param getDraftActions function to get draft actions for a set of record keys
+ * @returns A map of record key to DraftResolutionInput items that can be used to resolve drafts
+ */
+export function getDraftResolutionInfoForRecordSet(
+    records: DurableStoreEntries<DurableRecordEntry>,
+    durableStore: DurableStore,
+    getDraftActions: GetDraftActionsForRecords
+): Promise<Record<string, DraftResolutionInput>> {
+    const keysArray = ObjectKeys(records);
+
+    return Promise.all([
+        getDraftActions(keysArray),
+        getObjectInfosForRecords(durableStore, records),
+    ]).then(([actionMap, objectInfos]) => {
+        const results: Record<string, DraftResolutionInput> = {};
+
+        for (let i = 0, len = keysArray.length; i < len; i++) {
+            const key = keysArray[i];
+            const recordEntry = records[key];
+            const record = recordEntry.data;
+            // if entry is an error don't extract draft info for it
+            if (isStoreRecordError(record)) {
+                continue;
+            }
+
+            const drafts = (actionMap[key] ?? []).filter((x) => isLDSDraftAction(x)) as DraftAction<
+                RecordRepresentation,
+                ResourceRequest
+            >[];
+
+            const objectInfo = objectInfos[record.apiName];
+
+            if (process.env.NODE_ENV !== 'production') {
+                if (drafts.length > 0 && objectInfo === undefined) {
+                    throw new Error(
+                        'Missing object info in cache when drafts are present, drafts may not resolve correctly.'
+                    );
+                }
+            }
+
+            results[key] = {
+                record: recordEntry as DurableStoreEntry<DurableRecordRepresentation>,
+                drafts,
+                objectInfo,
+            };
+        }
+        return results;
+    });
 }

@@ -19,6 +19,7 @@ export {
     durableMerge,
     DurableRecordEntry,
     isEntryDurableRecordRepresentation,
+    getDraftResolutionInfoForRecordSet,
 } from './utils/records';
 export { DurableDraftQueue, DRAFT_SEGMENT } from './DurableDraftQueue';
 export {

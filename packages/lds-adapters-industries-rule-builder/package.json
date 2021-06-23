@@ -13,7 +13,8 @@
     ],
     "contributors": [
         "pratima.shukla@salesforce.com",
-        "aashishgoel@salesforce.com"
+        "aashishgoel@salesforce.com",
+        "vpatoju@salesforce.com"
     ],
     "scripts": {
         "build": "yarn build:raml && yarn build:services && yarn build:karma",

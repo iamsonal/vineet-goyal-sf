@@ -16,6 +16,9 @@ types:
       id: versionId
   CalculationProcedureListOutputRepresentation:
     (luvio.opaque): true
+  DecisionMatrixResultListRepresentation:
+    (luvio.opaque): true
+    (luvio.ttl): 360000
 
 /connect:
   /omnistudio:
@@ -36,6 +39,18 @@ types:
                 }
         (luvio.key):
           id: urlParams.id
+    /decision-matrices:
+      get:
+        (luvio.adapter):
+          name: searchDecisionMatrixByName
+          tests:
+            validConfigs:
+              - |
+                {
+                  "searchKey": "DM1"
+                }
+        queryParameters:
+          searchKey:
     /evaluation-services/version-definitions/{id}:
       get:
         (luvio.adapter):

@@ -1,0 +1,12 @@
+{
+    "decisionMatrices": [
+        {
+            "id": "0lIxx0000000001EAA",
+            "name": "DM1"
+        },
+        {
+            "id": "0lIxx000000001dEAA",
+            "name": "DM2"
+        }
+    ]
+}

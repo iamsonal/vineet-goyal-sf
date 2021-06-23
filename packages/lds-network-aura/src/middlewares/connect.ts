@@ -216,6 +216,11 @@ const SEARCH_CALCULATION_PROCEDURES_DETAILS_PATH = new RegExp(
     'i'
 );
 
+const SEARCH_DECISION_MATRICES_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/omnistudio/decision-matrices`,
+    'i'
+);
+
 const connect: ApiFamily = {
     getCommunityNavigationMenu: {
         method: 'get',
@@ -354,6 +359,14 @@ const connect: ApiFamily = {
             path.startsWith(CMS_BASE_URI) && REPLACE_MANAGED_CONTENT_VARIANT_PATH.test(path),
         transport: {
             controller: 'ManagedContentController.replaceManagedContentVariant',
+        },
+    },
+    searchDecisionMatrixByName: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && SEARCH_DECISION_MATRICES_PATH.test(path),
+        transport: {
+            controller: 'InteractionCalculationProceduresController.searchDecisionMatrixByName',
         },
     },
 };

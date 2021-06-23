@@ -2422,6 +2422,47 @@ describe('routes', () => {
         );
     });
 
+    describe('get /omnistudio/decision-matrices', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-matrices`,
+            },
+            [
+                'InteractionCalculationProceduresController.searchDecisionMatrixByName',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: CONNECT_BASE_URI,
+                    basePath: `/omnistudio/decision-matrices`,
+                    queryParams: {
+                        searchKey: 'DM1',
+                    },
+                },
+                [
+                    'InteractionCalculationProceduresController.searchDecisionMatrixByName',
+                    {
+                        searchKey: 'DM1',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-matrices`,
+            },
+            {}
+        );
+    });
+
     describe('get /related-list-info', () => {
         describe('/{parentObjectApiName}/{relatedListId}', () => {
             testControllerInput(

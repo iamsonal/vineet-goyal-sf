@@ -1,9 +1,11 @@
 import { karmaNetworkAdapter } from 'lds-engine';
-import { mockNetworkOnce, mockNetworkErrorOnce } from 'test-util';
+import { mockNetworkOnce, mockNetworkErrorOnce, mockNetworkSequence } from 'test-util';
 import sinon from 'sinon';
+import timekeeper from 'timekeeper';
 
 const API_VERSION = 'v53.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
+const INTERACTION_TTL = 360000;
 
 export function clone(obj) {
     // this is needed for compat tests, because the toEqual matcher can't
@@ -104,4 +106,38 @@ function searchCalculationProcedureMatcher(config) {
             searchKey,
         },
     });
+}
+
+export function mockSearchDecisionMatrixByNameNetworkOnce(config, mockData) {
+    const paramMatch = searchDecisionMatrixByNameMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+export function mockSearchDecisionMatrixByNameNetworkErrorOnce(config, mockData) {
+    const paramMatch = searchDecisionMatrixByNameMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function searchDecisionMatrixByNameMatcher(config) {
+    let { query } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `/connect/omnistudio/decision-matrices`,
+        queryParams: query,
+    });
+}
+
+/**
+ * Force a cache expiration for searchData by fast-forwarding time past the
+ * searchData TTL
+ */
+export function expireSearchData() {
+    timekeeper.travel(Date.now() + INTERACTION_TTL + 1);
 }

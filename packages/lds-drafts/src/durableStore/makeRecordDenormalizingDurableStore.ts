@@ -81,7 +81,7 @@ function buildDurableRecordRepresentation(
     normalizedRecord: RecordRepresentationNormalized,
     records: RecordSource,
     pendingEntries: DurableStoreEntries<RecordRepresentationNormalized>
-): DurableRecordEntry | undefined {
+): DurableRecordEntry {
     const fields = normalizedRecord.fields;
     const filteredFields: {
         [key: string]: FieldValueRepresentation;
@@ -113,18 +113,16 @@ function buildDurableRecordRepresentation(
                 }
             }
 
-            // there is a dangling field reference, do not persist a
-            // record if there's a field reference missing
-            if (ref === undefined) {
-                if (process.env.NODE_ENV !== 'production') {
-                    throw new Error('failed to find normalized field reference');
-                }
-                return undefined;
+            // if field reference exists then add it to our filteredFields
+            if (ref !== undefined) {
+                filteredFields[fieldName] = ref;
             }
-
-            filteredFields[fieldName] = ref;
         }
-        links[fieldName] = field;
+
+        // we want to preserve fields that are missing nodes
+        if (filteredFields[fieldName] !== undefined || field.isMissing === true) {
+            links[fieldName] = field;
+        }
     }
 
     return {
@@ -255,12 +253,10 @@ export function makeRecordDenormalizingDurableStore(
                     storeRecords,
                     recordEntries
                 );
-                if (denormalizedRecord !== undefined) {
-                    putEntries[recordKey] = {
-                        data: denormalizedRecord,
-                        expiration,
-                    };
-                }
+                putEntries[recordKey] = {
+                    data: denormalizedRecord,
+                    expiration,
+                };
             } else {
                 putEntries[key] = value;
             }

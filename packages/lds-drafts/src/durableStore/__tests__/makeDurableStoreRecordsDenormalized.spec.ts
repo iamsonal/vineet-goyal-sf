@@ -254,7 +254,7 @@ describe('makeRecordDenormalizingDurableStore', () => {
                 expect(durableRecord.fields.Name.value).toBe(NAME_VALUE.value);
             });
 
-            it('does not write the record when a field is missing from the store', () => {
+            it('does write the record when a field is missing from the store', () => {
                 // simulate production
                 process.env.NODE_ENV = 'production';
                 const record = {
@@ -285,8 +285,13 @@ describe('makeRecordDenormalizingDurableStore', () => {
                 expect(baseDurableStore.setEntries).toBeCalledTimes(1);
                 const entries = (baseDurableStore.setEntries as jest.Mock).mock.calls[0][0];
 
-                // no entries should get set
-                expect(ObjectKeys(entries).length).toBe(0);
+                // entries should get set
+                const keys = ObjectKeys(entries);
+                expect(keys.length).toBe(1);
+
+                const entry = entries[keys[0]];
+                expect(entry.data.fields).toEqual({});
+                expect(entry.data.links).toEqual({});
             });
 
             it('handles when record is a 404', async () => {

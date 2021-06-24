@@ -11,18 +11,14 @@ import {
     LuvioSelectionCustomFieldNode,
     LuvioSelectionObjectFieldNode,
 } from '@salesforce/lds-graphql-parser';
-import {
-    createIngest as selectionCreateIngest,
-    getLuvioFieldNodeSelection,
-    resolveLink,
-    followLink,
-} from '../type/Selection';
+import { getLuvioFieldNodeSelection, resolveLink, followLink } from '../type/Selection';
 import { GqlRecord } from './record';
 import { render as renderArguments } from '../type/Argument';
 import { serialize as serializeField, render as renderField } from '../type/Field';
 import { adapterApiFamily } from '../constants';
 import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
 import { readScalarFieldSelection } from '../type/ScalarField';
+import { createIngest as genericCreateIngest } from '../util/ingest';
 
 interface GqlEdge {
     node: GqlRecord;
@@ -132,7 +128,7 @@ function ingestEdgeItem(
         }
         const propertyName = renderField(sel, {}) as keyof GqlEdge;
         const item = data[propertyName];
-        data[propertyName] = selectionCreateIngest(sel)(
+        data[propertyName] = genericCreateIngest(sel)(
             item,
             {
                 parent: {

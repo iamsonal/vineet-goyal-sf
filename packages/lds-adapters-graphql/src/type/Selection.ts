@@ -1,33 +1,8 @@
-import {
-    Reader,
-    ReaderFragment,
-    ResourceIngest,
-    StoreLink,
-    StoreResolveResultFound,
-} from '@luvio/engine';
-import {
-    LuvioSelectionNode,
-    LuvioSelectionCustomFieldNode,
-    LuvioSelectionObjectFieldNode,
-} from '@salesforce/lds-graphql-parser';
-import { LuvioFieldNode, LuvioOperationDefinitionNode } from '@salesforce/lds-graphql-parser';
-import { createIngest as createCustomFieldIngest } from './CustomField';
-import {
-    createIngest as objectFieldCreateIngest,
-    createRead as objectFieldCreateRead,
-} from './ObjectField';
-import { createRead as operationCreateRead } from './Operation';
-import { createRead as connectionCreateRead } from '../custom/connection';
-import { createRead as recordCreateRead } from '../custom/record';
+import { Reader, StoreLink, StoreResolveResultFound } from '@luvio/engine';
+import { LuvioSelectionNode } from '@salesforce/lds-graphql-parser';
+import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
+import { createRead } from '../util/read';
 import { StoreResolveResult } from '@luvio/engine/dist/es/es2018/reader/resolve';
-
-function createCustomFieldRead(sel: LuvioSelectionCustomFieldNode): ReaderFragment['read'] {
-    if (sel.type === 'Connection') {
-        return connectionCreateRead(sel);
-    }
-
-    return recordCreateRead(sel);
-}
 
 export enum PropertyLookupResultState {
     Missing,
@@ -124,27 +99,14 @@ export function resolveLink<D>(
     return resolveKey(builder, __ref);
 }
 
-export function followLink(
-    sel: LuvioSelectionNode | LuvioOperationDefinitionNode,
-    builder: Reader<any>,
-    storeLink: StoreLink
-) {
+export function followLink(sel: LuvioSelectionNode, builder: Reader<any>, storeLink: StoreLink) {
     const linkState = resolveLink(builder, storeLink);
     if (linkState === undefined) {
         return;
     }
 
     const { value } = linkState;
-    switch (sel.kind) {
-        case 'ObjectFieldSelection':
-            return objectFieldCreateRead(sel)(value, builder);
-        case 'OperationDefinition':
-            return operationCreateRead(sel)(value, builder);
-        case 'CustomFieldSelection':
-            return createCustomFieldRead(sel)(value, builder);
-        default:
-            throw new Error(`Type not implemented: "${sel.kind}"`);
-    }
+    return createRead(sel)(value, builder);
 }
 
 export function getLuvioFieldNodeSelection(ast: LuvioSelectionNode): LuvioFieldNode {
@@ -155,17 +117,3 @@ export function getLuvioFieldNodeSelection(ast: LuvioSelectionNode): LuvioFieldN
 
     return ast as LuvioFieldNode;
 }
-
-export const createIngest: (ast: LuvioSelectionNode) => ResourceIngest = (
-    ast: LuvioSelectionNode
-) => {
-    const { kind } = ast;
-    switch (kind) {
-        case 'CustomFieldSelection':
-            return createCustomFieldIngest(ast as LuvioSelectionCustomFieldNode);
-        case 'ObjectFieldSelection':
-            return objectFieldCreateIngest(ast as LuvioSelectionObjectFieldNode);
-    }
-
-    throw new Error(`Unsupported "${kind}"`);
-};

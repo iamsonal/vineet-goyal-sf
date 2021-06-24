@@ -1,9 +1,7 @@
 import { IngestPath, Luvio, Reader, ReaderFragment, ResourceIngest, Store } from '@luvio/engine';
 import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
-import {
-    createIngest as operationCreateIngest,
-    createRead as operationCreateRead,
-} from './Operation';
+import { createIngest as genericCreateIngest } from '../util/ingest';
+import { createRead as genericCreateRead } from '../util/read';
 
 export type GraphQL = {
     data: any;
@@ -22,7 +20,7 @@ export const createRead: (ast: LuvioDocumentNode) => ReaderFragment['read'] = (
                 throw new Error(`Unsupported document definition "${def.kind}"`);
             }
 
-            const data = operationCreateRead(def)(source, builder);
+            const data = genericCreateRead(def)(source, builder);
             sink = {
                 ...sink,
                 ...data,
@@ -46,7 +44,7 @@ export function createIngest(ast: LuvioDocumentNode): ResourceIngest {
                 throw new Error(`Unsupported document definition "${def.kind}"`);
             }
 
-            operationCreateIngest(def)(
+            genericCreateIngest(def)(
                 data,
                 {
                     parent: null,

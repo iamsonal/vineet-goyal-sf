@@ -5,6 +5,8 @@ import {
     Selector,
     FetchResponse,
     SnapshotRefresh,
+    Snapshot,
+    AdapterContext,
 } from '@luvio/engine';
 import { validateAdapterConfig } from '../../generated/adapters/getRecordCreateDefaults';
 import getUiApiRecordDefaultsCreateByObjectApiName, {
@@ -25,7 +27,6 @@ import {
     GetRecordCreateDefaultsConfig,
     getRecordCreateDefaults_ConfigPropertyNames,
 } from '../../generated/adapters/getRecordCreateDefaults';
-import { isFulfilledSnapshot } from '../../util/snapshot';
 
 const layoutSelections = recordLayoutRepresentationSelect();
 const objectInfoSelections = objectInfoRepresentationSelect();
@@ -62,23 +63,25 @@ type GetRecordCreateDefaultsConfigWithDefaults = Required<GetRecordCreateDefault
 
 function buildSnapshotRefresh(
     luvio: Luvio,
+    context: AdapterContext,
     config: GetRecordCreateDefaultsConfigWithDefaults
 ): SnapshotRefresh<RecordDefaultsRepresentation> {
     return {
         config,
-        resolve: () => buildNetworkSnapshot(luvio, config),
+        resolve: () => buildNetworkSnapshot(luvio, context, config),
     };
 }
 
 export function buildNetworkSnapshot(
     luvio: Luvio,
+    context: AdapterContext,
     config: GetRecordCreateDefaultsConfigWithDefaults
 ) {
     const params: ResourceRequestConfig = createResourceParams(config);
     const request = getUiApiRecordDefaultsCreateByObjectApiName(params);
 
     const key = keyBuilder(params);
-    const selectorKey = `${key}__selector`;
+    const selectorKey = buildSelectorKey(config);
 
     return luvio.dispatchResourceRequest<RecordDefaultsRepresentation>(request).then(
         (response) => {
@@ -93,16 +96,20 @@ export function buildNetworkSnapshot(
                 variables: {},
             };
 
-            luvio.storePublish(selectorKey, cacheSelector);
+            context.set(selectorKey, cacheSelector);
             luvio.storeIngest(key, ingest, body);
-            luvio.storeBroadcast();
-            return luvio.storeLookup<RecordDefaultsRepresentation>(
+            const snapshot = luvio.storeLookup<RecordDefaultsRepresentation>(
                 cacheSelector,
-                buildSnapshotRefresh(luvio, config)
+                buildSnapshotRefresh(luvio, context, config)
             );
+            luvio.storeBroadcast();
+            return snapshot;
         },
         (err: FetchResponse<unknown>) => {
-            const errorSnapshot = luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
+            const errorSnapshot = luvio.errorSnapshot(
+                err,
+                buildSnapshotRefresh(luvio, context, config)
+            );
             luvio.storeIngestError(key, errorSnapshot);
             luvio.storeBroadcast();
             return errorSnapshot;
@@ -139,62 +146,57 @@ function coerceConfigWithDefaults(
     };
 }
 
-export function buildInMemorySnapshot(
-    luvio: Luvio,
-    config: GetRecordCreateDefaultsConfigWithDefaults
-) {
+function buildSelectorKey(config: GetRecordCreateDefaultsConfigWithDefaults) {
     const params: ResourceRequestConfig = createResourceParams(config);
     const key = keyBuilder(params);
+    return `${key}__selector`;
+}
 
-    const selectorKey = `${key}__selector`;
-
-    /**
-     * getRecordCreateDefaults returns a value that includes a map of ObjectInfos,
-     * a layout and a record. The returned record includes fields that are not
-     * known to the client. Because we don't know what the return shape will be,
-     * we have to store a selector from a previous response and see if we can
-     * extract those values back out.
-     *
-     * cacheSnapshot is the cached selector from a previous request. It is just
-     * a stashed selector
-     */
-    const cacheSnapshot = luvio.storeLookup<Selector>({
-        recordId: selectorKey,
-        node: {
-            kind: 'Fragment',
-            private: [],
-            opaque: true,
-        },
-        variables: {},
-    });
-
-    // We've seen this request before
-    if (isFulfilledSnapshot(cacheSnapshot)) {
-        const snapshot = luvio.storeLookup<RecordDefaultsRepresentation>(
-            cacheSnapshot.data,
-            buildSnapshotRefresh(luvio, config)
-        );
-
-        // Cache hit
-        if (luvio.snapshotAvailable(snapshot)) {
-            return snapshot;
-        }
-    }
-
-    return null;
+export function buildInMemorySnapshot(
+    sel: Selector,
+    luvio: Luvio,
+    context: AdapterContext,
+    config: GetRecordCreateDefaultsConfigWithDefaults
+) {
+    return luvio.storeLookup<RecordDefaultsRepresentation>(
+        sel,
+        buildSnapshotRefresh(luvio, context, config)
+    );
 }
 
 export const factory: AdapterFactory<GetRecordCreateDefaultsConfig, RecordDefaultsRepresentation> =
     (luvio: Luvio) =>
-        function getRecordCreateDefaults(untrusted: unknown) {
+        luvio.withContext(function getRecordCreateDefaults(
+            untrusted: unknown,
+            context: AdapterContext
+        ) {
             const config = coerceConfigWithDefaults(untrusted);
             if (config === null) {
                 return null;
             }
 
-            const snapshot = buildInMemorySnapshot(luvio, config);
-            if (snapshot !== null) {
+            const selectorKey = buildSelectorKey(config);
+            /**
+             * getRecordCreateDefaults returns a value that includes a map of ObjectInfos,
+             * a layout and a record. The returned record includes fields that are not
+             * known to the client. Because we don't know what the return shape will be,
+             * we have to store a selector from a previous response and see if we can
+             * extract those values back out.
+             *
+             * store cached selector in the adapter context and if it does not exist
+             * we need to fetch it from the network and set it.
+             */
+            const cachedSelector = context.get<Selector>(selectorKey);
+            if (cachedSelector === undefined) {
+                return buildNetworkSnapshot(luvio, context, config);
+            }
+
+            const snapshot = buildInMemorySnapshot(cachedSelector, luvio, context, config);
+            if (luvio.snapshotAvailable(snapshot)) {
                 return snapshot;
             }
-            return buildNetworkSnapshot(luvio, config);
-        };
+            return luvio.resolveSnapshot(
+                snapshot,
+                buildSnapshotRefresh(luvio, context, config)
+            ) as Promise<Snapshot<RecordDefaultsRepresentation, any>>;
+        });

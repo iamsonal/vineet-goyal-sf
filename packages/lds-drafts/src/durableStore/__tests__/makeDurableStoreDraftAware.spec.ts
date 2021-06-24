@@ -1,12 +1,19 @@
 import {
-    DurableStore,
+    DefaultDurableSegment,
+    DurableStoreEntries,
+    DurableStoreEntry,
     DurableStoreOperation,
     DurableStoreOperationType,
 } from '@luvio/environments';
+import { MockDurableStore } from '@luvio/adapter-test-library';
 
 import { DraftAction, DraftActionMap, DraftActionStatus } from '../../DraftQueue';
 import { makeDurableStoreDraftAware } from '../makeDurableStoreDraftAware';
-import { buildDraftDurableStoreKey } from '../../utils/records';
+import {
+    buildDraftDurableStoreKey,
+    DurableRecordEntry,
+    DurableRecordRepresentation,
+} from '../../utils/records';
 import {
     buildDurableRecordRepresentation,
     createDeleteDraftAction,
@@ -19,20 +26,26 @@ import {
     STORE_KEY_DRAFT_RECORD,
     STORE_KEY_RECORD,
     CURRENT_USER_ID,
+    ACCOUNT_OBJECT_INFO_KEY,
 } from '../../__tests__/test-utils';
 import { DRAFT_SEGMENT } from '../../DurableDraftQueue';
 import { CustomActionData } from '../../actionHandlers/CustomActionHandler';
 import { ObjectKeys } from '../../utils/language';
+import { StoreRecordError } from '@luvio/engine';
 
-function setupDraftStore(draftActions: DraftActionMap) {
-    const baseDurableStore: DurableStore = {
-        setEntries: jest.fn(),
-        getEntries: jest.fn(),
-        getAllEntries: jest.fn(),
-        evictEntries: jest.fn(),
-        registerOnChangedListener: jest.fn(),
-        batchOperations: jest.fn(),
-    };
+async function setup(
+    draftActions: DraftActionMap,
+    initialEntries: DurableStoreEntries<DurableRecordEntry>
+) {
+    const baseDurableStore = new MockDurableStore();
+
+    await baseDurableStore.setEntries(initialEntries, DefaultDurableSegment);
+    await baseDurableStore.setEntries(
+        {
+            [ACCOUNT_OBJECT_INFO_KEY]: { data: { apiName: 'Account', fields: {} } },
+        },
+        DefaultDurableSegment
+    );
 
     const durableStore = makeDurableStoreDraftAware(
         baseDurableStore,
@@ -40,7 +53,11 @@ function setupDraftStore(draftActions: DraftActionMap) {
         CURRENT_USER_ID
     );
 
-    return { durableStore, baseDurableStore };
+    const setEntriesSpy = jest.spyOn(baseDurableStore, 'setEntries');
+    const batchEntriesSpy = jest.spyOn(baseDurableStore, 'batchOperations');
+    const evictEntriesSpy = jest.spyOn(baseDurableStore, 'evictEntries');
+
+    return { durableStore, baseDurableStore, setEntriesSpy, batchEntriesSpy, evictEntriesSpy };
 }
 
 describe('makeDurableStoreDraftAware', () => {
@@ -59,15 +76,12 @@ describe('makeDurableStoreDraftAware', () => {
                     draftActionIds: [createAction.id],
                 };
 
-                const { durableStore, baseDurableStore } = setupDraftStore({
-                    [STORE_KEY_DRAFT_RECORD]: [createAction],
-                });
-                const setEntriesSpy = jest.fn();
-
-                baseDurableStore.setEntries = setEntriesSpy.mockResolvedValue(undefined);
-                baseDurableStore.getEntries = jest
-                    .fn()
-                    .mockResolvedValue({ [STORE_KEY_DRAFT_RECORD]: { data: durableRecord } });
+                const { durableStore, setEntriesSpy } = await setup(
+                    {
+                        [STORE_KEY_DRAFT_RECORD]: [createAction],
+                    },
+                    {}
+                );
 
                 await durableStore.setEntries<any>(
                     {
@@ -78,9 +92,10 @@ describe('makeDurableStoreDraftAware', () => {
                     DRAFT_SEGMENT
                 );
 
-                expect(setEntriesSpy.mock.calls.length).toBe(3);
+                expect(setEntriesSpy).toHaveBeenCalledTimes(2);
 
-                const storedRecord = setEntriesSpy.mock.calls[2][0][STORE_KEY_DRAFT_RECORD].data;
+                const storedRecord = setEntriesSpy.mock.calls[1][0][STORE_KEY_DRAFT_RECORD]
+                    .data as DurableRecordRepresentation;
 
                 expect(storedRecord.drafts.created).toBe(true);
                 expect(storedRecord.fields.Name.value).toEqual(DEFAULT_NAME_FIELD_VALUE);
@@ -102,15 +117,14 @@ describe('makeDurableStoreDraftAware', () => {
                     timestamp: Date.now(),
                 };
 
-                const { durableStore, baseDurableStore } = setupDraftStore({
-                    [STORE_KEY_DRAFT_RECORD]: [customAction],
-                });
-                const setEntriesSpy = jest.fn();
-
-                baseDurableStore.setEntries = setEntriesSpy.mockResolvedValue(undefined);
-                baseDurableStore.getEntries = jest.fn().mockResolvedValue({
-                    [STORE_KEY_DRAFT_RECORD]: { data: durableRecord },
-                });
+                const { durableStore, setEntriesSpy } = await setup(
+                    {
+                        [STORE_KEY_DRAFT_RECORD]: [customAction],
+                    },
+                    {
+                        [STORE_KEY_DRAFT_RECORD]: { data: durableRecord },
+                    }
+                );
 
                 await durableStore.setEntries<any>(
                     {
@@ -121,9 +135,10 @@ describe('makeDurableStoreDraftAware', () => {
                     DRAFT_SEGMENT
                 );
 
-                expect(setEntriesSpy.mock.calls.length).toBe(1);
+                expect(setEntriesSpy).toHaveBeenCalledTimes(1);
                 expect(setEntriesSpy.mock.calls[0][1]).toBe('DRAFT');
-                const customData = setEntriesSpy.mock.calls[0][0]['1234__DraftAction__12345'].data;
+                const customData = setEntriesSpy.mock.calls[0][0]['1234__DraftAction__12345']
+                    .data as DurableStoreEntry<DurableRecordRepresentation>;
                 expect(customData.data).toStrictEqual({ mock: 'data' });
             });
 
@@ -152,18 +167,17 @@ describe('makeDurableStoreDraftAware', () => {
                     timestamp: Date.now(),
                 };
 
-                const { durableStore, baseDurableStore } = setupDraftStore({
-                    [STORE_KEY_DRAFT_RECORD]: [createAction],
-                    [customAction.tag]: [customAction],
-                });
-                const setEntriesSpy = jest.fn();
-
-                baseDurableStore.setEntries = setEntriesSpy.mockResolvedValue(undefined);
-                baseDurableStore.getEntries = jest.fn().mockResolvedValue({
-                    [STORE_KEY_DRAFT_RECORD]: {
-                        data: durableRecord,
+                const { durableStore, setEntriesSpy } = await setup(
+                    {
+                        [STORE_KEY_DRAFT_RECORD]: [createAction],
+                        [customAction.tag]: [customAction],
                     },
-                });
+                    {
+                        [STORE_KEY_DRAFT_RECORD]: {
+                            data: durableRecord,
+                        },
+                    }
+                );
 
                 await durableStore.setEntries<any>(
                     {
@@ -177,10 +191,10 @@ describe('makeDurableStoreDraftAware', () => {
                     DRAFT_SEGMENT
                 );
 
-                expect(setEntriesSpy.mock.calls.length).toBe(3);
+                expect(setEntriesSpy).toHaveBeenCalledTimes(2);
 
                 //the persistDraftCreates only called with record
-                expect(ObjectKeys(setEntriesSpy.mock.calls[2][0])).toStrictEqual([
+                expect(ObjectKeys(setEntriesSpy.mock.calls[1][0])).toStrictEqual([
                     STORE_KEY_DRAFT_RECORD,
                 ]);
             });
@@ -191,15 +205,12 @@ describe('makeDurableStoreDraftAware', () => {
                 });
                 const editAction = createEditDraftAction(RECORD_ID, STORE_KEY_RECORD);
 
-                const { durableStore, baseDurableStore } = setupDraftStore({
-                    [STORE_KEY_RECORD]: [editAction],
-                });
-                const setEntriesSpy = jest.fn();
-
-                baseDurableStore.setEntries = setEntriesSpy.mockResolvedValue(undefined);
-                baseDurableStore.getEntries = jest
-                    .fn()
-                    .mockResolvedValue({ [STORE_KEY_RECORD]: { data: durableRecord } });
+                const { durableStore, setEntriesSpy } = await setup(
+                    {
+                        [STORE_KEY_RECORD]: [editAction],
+                    },
+                    { [STORE_KEY_RECORD]: { data: durableRecord } }
+                );
 
                 await durableStore.setEntries<any>(
                     {
@@ -210,9 +221,10 @@ describe('makeDurableStoreDraftAware', () => {
                     DRAFT_SEGMENT
                 );
 
-                expect(setEntriesSpy.mock.calls.length).toBe(2);
+                expect(setEntriesSpy).toHaveBeenCalledTimes(2);
 
-                const storedRecord = setEntriesSpy.mock.calls[1][0][STORE_KEY_RECORD].data;
+                const storedRecord = setEntriesSpy.mock.calls[1][0][STORE_KEY_RECORD]
+                    .data as DurableRecordRepresentation;
 
                 expect(storedRecord.drafts.edited).toBe(true);
                 expect(storedRecord.fields.Name.value).toEqual(DEFAULT_NAME_FIELD_VALUE);
@@ -223,15 +235,20 @@ describe('makeDurableStoreDraftAware', () => {
             it('does not attempt to resolve drafts against an error', async () => {
                 const editAction = createEditDraftAction(RECORD_ID, STORE_KEY_RECORD);
 
-                const { durableStore, baseDurableStore } = setupDraftStore({
-                    [STORE_KEY_RECORD]: [editAction],
-                });
-                const setEntriesSpy = jest.fn();
-
-                baseDurableStore.setEntries = setEntriesSpy.mockResolvedValue(undefined);
-                baseDurableStore.getEntries = jest.fn().mockResolvedValue({
-                    [STORE_KEY_RECORD]: { data: { __type: 'error', status: 400 } },
-                });
+                const { durableStore, setEntriesSpy } = await setup(
+                    {
+                        [STORE_KEY_RECORD]: [editAction],
+                    },
+                    {
+                        [STORE_KEY_RECORD]: {
+                            data: {
+                                __type: 'error' as StoreRecordError['__type'],
+                                status: 400,
+                                error: {} as any,
+                            },
+                        },
+                    }
+                );
 
                 await durableStore.setEntries<any>(
                     {
@@ -253,15 +270,12 @@ describe('makeDurableStoreDraftAware', () => {
                 });
                 const deleteAction = createDeleteDraftAction(RECORD_ID, STORE_KEY_RECORD);
 
-                const { durableStore, baseDurableStore } = setupDraftStore({
-                    [STORE_KEY_RECORD]: [deleteAction],
-                });
-                const setEntriesSpy = jest.fn();
-
-                baseDurableStore.setEntries = setEntriesSpy.mockResolvedValue(undefined);
-                baseDurableStore.getEntries = jest
-                    .fn()
-                    .mockResolvedValue({ [STORE_KEY_RECORD]: { data: durableRecord } });
+                const { durableStore, setEntriesSpy } = await setup(
+                    {
+                        [STORE_KEY_RECORD]: [deleteAction],
+                    },
+                    { [STORE_KEY_RECORD]: { data: durableRecord } }
+                );
 
                 await durableStore.setEntries<any>(
                     {
@@ -272,9 +286,10 @@ describe('makeDurableStoreDraftAware', () => {
                     DRAFT_SEGMENT
                 );
 
-                expect(setEntriesSpy.mock.calls.length).toBe(2);
+                expect(setEntriesSpy).toHaveBeenCalledTimes(2);
 
-                const storedRecord = setEntriesSpy.mock.calls[1][0][STORE_KEY_RECORD].data;
+                const storedRecord = setEntriesSpy.mock.calls[1][0][STORE_KEY_RECORD]
+                    .data as DurableRecordRepresentation;
 
                 expect(storedRecord.drafts.deleted).toBe(true);
             });
@@ -298,15 +313,12 @@ describe('makeDurableStoreDraftAware', () => {
                     draftActionIds: [createAction.id, updateAction.id],
                 };
 
-                const { durableStore, baseDurableStore } = setupDraftStore({
-                    [STORE_KEY_DRAFT_RECORD]: [createAction, updateAction],
-                });
-                const setEntriesSpy = jest.fn();
-
-                baseDurableStore.setEntries = setEntriesSpy.mockResolvedValue(undefined);
-                baseDurableStore.getEntries = jest
-                    .fn()
-                    .mockResolvedValue({ [STORE_KEY_DRAFT_RECORD]: { data: durableRecord } });
+                const { durableStore, setEntriesSpy } = await setup(
+                    {
+                        [STORE_KEY_DRAFT_RECORD]: [createAction, updateAction],
+                    },
+                    { [STORE_KEY_DRAFT_RECORD]: { data: durableRecord } }
+                );
 
                 await durableStore.setEntries<any>(
                     {
@@ -320,9 +332,10 @@ describe('makeDurableStoreDraftAware', () => {
                     DRAFT_SEGMENT
                 );
 
-                expect(setEntriesSpy.mock.calls.length).toBe(3);
+                expect(setEntriesSpy).toHaveBeenCalledTimes(3);
 
-                const storedRecord = setEntriesSpy.mock.calls[2][0][STORE_KEY_DRAFT_RECORD].data;
+                const storedRecord = setEntriesSpy.mock.calls[2][0][STORE_KEY_DRAFT_RECORD]
+                    .data as DurableRecordRepresentation;
 
                 expect(storedRecord.drafts.created).toBe(true);
                 expect(storedRecord.drafts.edited).toBe(true);
@@ -335,26 +348,22 @@ describe('makeDurableStoreDraftAware', () => {
         it('removes drafts node when all actions are evicted', async () => {
             const durableRecord = buildDurableRecordRepresentation(RECORD_ID, { Name: NAME_VALUE });
 
-            const { durableStore, baseDurableStore } = setupDraftStore({
-                [STORE_KEY_RECORD]: [],
-            });
-            const setEntriesSpy = jest.fn();
-            const evictEntriesSpy = jest.fn();
-
-            baseDurableStore.setEntries = setEntriesSpy.mockResolvedValue(undefined);
-            baseDurableStore.evictEntries = evictEntriesSpy.mockResolvedValue(undefined);
-            baseDurableStore.getEntries = jest
-                .fn()
-                .mockResolvedValue({ [STORE_KEY_RECORD]: { data: durableRecord } });
+            const { durableStore, evictEntriesSpy, setEntriesSpy } = await setup(
+                {
+                    [STORE_KEY_RECORD]: [],
+                },
+                { [STORE_KEY_RECORD]: { data: durableRecord } }
+            );
 
             const actionKey = buildDraftDurableStoreKey(STORE_KEY_RECORD, 'someotheractionid');
 
             await durableStore.evictEntries([actionKey], DRAFT_SEGMENT);
 
-            expect(setEntriesSpy.mock.calls.length).toBe(1);
+            expect(setEntriesSpy).toHaveBeenCalledTimes(1);
             expect(evictEntriesSpy.mock.calls.length).toBe(1);
 
-            const storedRecord = setEntriesSpy.mock.calls[0][0][STORE_KEY_RECORD].data;
+            const storedRecord = setEntriesSpy.mock.calls[0][0][STORE_KEY_RECORD]
+                .data as DurableRecordRepresentation;
 
             expect(storedRecord.drafts).toBeUndefined();
         });
@@ -363,26 +372,22 @@ describe('makeDurableStoreDraftAware', () => {
             const durableRecord = buildDurableRecordRepresentation(RECORD_ID, { Name: NAME_VALUE });
             const editAction = createEditDraftAction(RECORD_ID, STORE_KEY_RECORD);
 
-            const { durableStore, baseDurableStore } = setupDraftStore({
-                [STORE_KEY_RECORD]: [editAction],
-            });
-            const setEntriesSpy = jest.fn();
-            const evictEntriesSpy = jest.fn();
-
-            baseDurableStore.setEntries = setEntriesSpy.mockResolvedValue(undefined);
-            baseDurableStore.evictEntries = evictEntriesSpy.mockResolvedValue(undefined);
-            baseDurableStore.getEntries = jest
-                .fn()
-                .mockResolvedValue({ [STORE_KEY_RECORD]: { data: durableRecord } });
+            const { durableStore, setEntriesSpy, evictEntriesSpy } = await setup(
+                {
+                    [STORE_KEY_RECORD]: [editAction],
+                },
+                { [STORE_KEY_RECORD]: { data: durableRecord } }
+            );
 
             const actionKey = buildDraftDurableStoreKey(STORE_KEY_RECORD, editAction.id);
 
             await durableStore.evictEntries([actionKey], DRAFT_SEGMENT);
 
-            expect(setEntriesSpy.mock.calls.length).toBe(1);
+            expect(setEntriesSpy).toHaveBeenCalledTimes(1);
             expect(evictEntriesSpy.mock.calls.length).toBe(1);
 
-            const storedRecord = setEntriesSpy.mock.calls[0][0][STORE_KEY_RECORD].data;
+            const storedRecord = setEntriesSpy.mock.calls[0][0][STORE_KEY_RECORD]
+                .data as DurableRecordRepresentation;
 
             expect(storedRecord.drafts.edited).toBe(true);
             expect(storedRecord.fields.Name.value).toEqual(DEFAULT_NAME_FIELD_VALUE);
@@ -407,17 +412,12 @@ describe('makeDurableStoreDraftAware', () => {
                 draftActionIds: [createAction.id],
             };
 
-            const { durableStore, baseDurableStore } = setupDraftStore({
-                [STORE_KEY_DRAFT_RECORD]: [createAction],
-            });
-            const batchSpy = jest.fn();
-            const setSpy = jest.fn();
-
-            baseDurableStore.batchOperations = batchSpy.mockResolvedValue(undefined);
-            baseDurableStore.setEntries = setSpy.mockResolvedValue(undefined);
-            baseDurableStore.getEntries = jest
-                .fn()
-                .mockResolvedValue({ [STORE_KEY_DRAFT_RECORD]: { data: durableRecord } });
+            const { durableStore, batchEntriesSpy, setEntriesSpy } = await setup(
+                {
+                    [STORE_KEY_DRAFT_RECORD]: [createAction],
+                },
+                { [STORE_KEY_DRAFT_RECORD]: { data: durableRecord } }
+            );
 
             await durableStore.batchOperations([
                 {
@@ -431,14 +431,52 @@ describe('makeDurableStoreDraftAware', () => {
                 },
             ]);
 
-            expect(batchSpy.mock.calls.length).toBe(1);
-            expect(setSpy.mock.calls.length).toBe(2);
+            // batchEntries is also called by setEntries internals so expect
+            expect(batchEntriesSpy.mock.calls.length).toBe(2);
+            expect(setEntriesSpy).toHaveBeenCalledTimes(1);
 
-            const storedRecord = setSpy.mock.calls[1][0][STORE_KEY_DRAFT_RECORD].data;
+            const storedRecord = setEntriesSpy.mock.calls[0][0][STORE_KEY_DRAFT_RECORD]
+                .data as DurableRecordRepresentation;
 
             expect(storedRecord.drafts.created).toBe(true);
             expect(storedRecord.fields.Name.value).toEqual(DEFAULT_NAME_FIELD_VALUE);
             expect(storedRecord.fields.Name.displayValue).toEqual(DEFAULT_NAME_FIELD_VALUE);
+        });
+
+        it('including two draft creates in a single batch only makes one call to setEntries', async () => {
+            const recordKey = 'draftKey1';
+            const record2Key = 'draftKey2';
+            const createAction = createPostDraftAction(recordKey, 'draftRecordId1');
+            const createAction2 = createPostDraftAction(record2Key, 'draftRecordId2');
+
+            const action1Key = buildDraftDurableStoreKey(createAction.tag, createAction.id);
+
+            const action2Key = buildDraftDurableStoreKey(createAction2.tag, createAction2.id);
+
+            const { durableStore, setEntriesSpy } = await setup(
+                {
+                    [STORE_KEY_DRAFT_RECORD]: [createAction],
+                },
+                {}
+            );
+
+            await durableStore.batchOperations([
+                {
+                    segment: DRAFT_SEGMENT,
+                    type: DurableStoreOperationType.SetEntries,
+                    entries: {
+                        [action1Key]: {
+                            data: createAction,
+                        },
+                        [action2Key]: {
+                            data: createAction2,
+                        },
+                    },
+                },
+            ]);
+
+            expect(setEntriesSpy).toHaveBeenCalledTimes(1);
+            expect(ObjectKeys(setEntriesSpy.mock.calls[0][0])).toEqual([recordKey, record2Key]);
         });
 
         it('does not persist creates to non records', async () => {
@@ -456,17 +494,12 @@ describe('makeDurableStoreDraftAware', () => {
                 timestamp: Date.now(),
             };
 
-            const { durableStore, baseDurableStore } = setupDraftStore({
-                [STORE_KEY_DRAFT_RECORD]: [customAction],
-            });
-            const batchSpy = jest.fn();
-            const setSpy = jest.fn();
-
-            baseDurableStore.batchOperations = batchSpy.mockResolvedValue(undefined);
-            baseDurableStore.setEntries = setSpy.mockResolvedValue(undefined);
-            baseDurableStore.getEntries = jest
-                .fn()
-                .mockResolvedValue({ [STORE_KEY_DRAFT_RECORD]: { data: durableRecord } });
+            const { durableStore, setEntriesSpy, batchEntriesSpy } = await setup(
+                {
+                    [STORE_KEY_DRAFT_RECORD]: [customAction],
+                },
+                { [STORE_KEY_DRAFT_RECORD]: { data: durableRecord } }
+            );
 
             const operation: DurableStoreOperation<unknown> = {
                 segment: DRAFT_SEGMENT,
@@ -479,10 +512,11 @@ describe('makeDurableStoreDraftAware', () => {
             };
             await durableStore.batchOperations([operation]);
 
-            expect(batchSpy.mock.calls.length).toBe(1);
-            expect(setSpy.mock.calls.length).toBe(0);
+            expect(batchEntriesSpy.mock.calls.length).toBe(1);
+            expect(setEntriesSpy.mock.calls.length).toBe(0);
 
-            const action = batchSpy.mock.calls[0][0][0].entries['1234__DraftAction__12345'].data;
+            const action =
+                batchEntriesSpy.mock.calls[0][0][0].entries['1234__DraftAction__12345'].data;
             expect(action.handler).toBe('CUSTOM');
         });
 
@@ -504,19 +538,15 @@ describe('makeDurableStoreDraftAware', () => {
                 timestamp: Date.now(),
             };
 
-            const { durableStore, baseDurableStore } = setupDraftStore({
-                [STORE_KEY_DRAFT_RECORD]: [createAction],
-                [customAction.tag]: [customAction],
-            });
-
-            const batchSpy = jest.fn();
-            const setSpy = jest.fn();
-
-            baseDurableStore.batchOperations = batchSpy.mockResolvedValue(undefined);
-            baseDurableStore.setEntries = setSpy.mockResolvedValue(undefined);
-            baseDurableStore.getEntries = jest.fn().mockResolvedValue({
-                [STORE_KEY_DRAFT_RECORD]: { data: durableRecord },
-            });
+            const { durableStore, setEntriesSpy, batchEntriesSpy } = await setup(
+                {
+                    [STORE_KEY_DRAFT_RECORD]: [createAction],
+                    [customAction.tag]: [customAction],
+                },
+                {
+                    [STORE_KEY_DRAFT_RECORD]: { data: durableRecord },
+                }
+            );
 
             const operation: DurableStoreOperation<unknown> = {
                 segment: DRAFT_SEGMENT,
@@ -532,8 +562,8 @@ describe('makeDurableStoreDraftAware', () => {
             };
             await durableStore.batchOperations([operation]);
 
-            expect(batchSpy.mock.calls.length).toBe(1);
-            expect(setSpy.mock.calls.length).toBe(0);
+            expect(batchEntriesSpy.mock.calls.length).toBe(1);
+            expect(setEntriesSpy.mock.calls.length).toBe(0);
         });
 
         it('updates the record when an edit action is written', async () => {
@@ -542,17 +572,12 @@ describe('makeDurableStoreDraftAware', () => {
             });
             const editAction = createEditDraftAction(RECORD_ID, STORE_KEY_RECORD);
 
-            const { durableStore, baseDurableStore } = setupDraftStore({
-                [STORE_KEY_RECORD]: [editAction],
-            });
-            const setEntriesSpy = jest.fn();
-            const batchOperations = jest.fn();
-
-            baseDurableStore.setEntries = setEntriesSpy.mockResolvedValue(undefined);
-            baseDurableStore.batchOperations = batchOperations.mockResolvedValue(undefined);
-            baseDurableStore.getEntries = jest
-                .fn()
-                .mockResolvedValue({ [STORE_KEY_RECORD]: { data: durableRecord } });
+            const { durableStore, setEntriesSpy } = await setup(
+                {
+                    [STORE_KEY_RECORD]: [editAction],
+                },
+                { [STORE_KEY_RECORD]: { data: durableRecord } }
+            );
 
             await durableStore.batchOperations<any>([
                 {
@@ -566,9 +591,10 @@ describe('makeDurableStoreDraftAware', () => {
                 },
             ]);
 
-            expect(setEntriesSpy.mock.calls.length).toBe(1);
+            expect(setEntriesSpy).toHaveBeenCalledTimes(1);
 
-            const storedRecord = setEntriesSpy.mock.calls[0][0][STORE_KEY_RECORD].data;
+            const storedRecord = setEntriesSpy.mock.calls[0][0][STORE_KEY_RECORD]
+                .data as DurableRecordRepresentation;
 
             expect(storedRecord.drafts.edited).toBe(true);
             expect(storedRecord.fields.Name.value).toEqual(DEFAULT_NAME_FIELD_VALUE);

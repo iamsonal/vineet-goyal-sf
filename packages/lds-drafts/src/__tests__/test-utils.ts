@@ -2,6 +2,7 @@ import { HttpStatusCode, ResourceRequest } from '@luvio/engine';
 import { DurableStore } from '@luvio/environments';
 import {
     FieldValueRepresentation,
+    keyBuilderObjectInfo,
     keyBuilderRecord,
     RecordRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
@@ -27,6 +28,7 @@ export const STORE_KEY_RECORD = `UiApi::RecordRepresentation:${RECORD_ID}`;
 export const STORE_KEY_DRAFT_RECORD = `UiApi::RecordRepresentation:${DRAFT_RECORD_ID}`;
 export const STORE_KEY_FIELD__NAME = `UiApi::RecordRepresentation:${RECORD_ID}__fields__Name`;
 export const DRAFT_STORE_KEY_FIELD__NAME = `UiApi::RecordRepresentation:${DRAFT_RECORD_ID}__fields__Name`;
+export const ACCOUNT_OBJECT_INFO_KEY = keyBuilderObjectInfo({ apiName: 'Account' });
 export const DEFAULT_API_NAME = 'Account';
 export const DEFAULT_NAME_FIELD_VALUE = 'Acme';
 export const DEFAULT_TIME_STAMP = 12345;

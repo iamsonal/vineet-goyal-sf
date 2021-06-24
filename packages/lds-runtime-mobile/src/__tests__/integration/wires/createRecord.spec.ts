@@ -203,8 +203,7 @@ describe('mobile runtime integration tests', () => {
 
             const canonicalRecordId = mockAccount.id;
             // expect snapshot to be called back with ids updated
-            // TODO: W-9463628 this should be 1 but we are emmitting an extra identical emit
-            expect(getRecordSpy).toHaveBeenCalledTimes(2);
+            expect(getRecordSpy).toHaveBeenCalledTimes(1);
             const callbackOppy = getRecordSpy.mock.calls[0][0].data as RecordRepresentation;
             expect(callbackOppy.fields['AccountId'].value).toBe(canonicalRecordId);
         });

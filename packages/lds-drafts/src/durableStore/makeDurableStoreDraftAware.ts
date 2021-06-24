@@ -183,16 +183,18 @@ export function makeDurableStoreDraftAware(
         > = {};
         let hasDraftEntries = false;
         const keys = ObjectKeys(entries);
+        const changedKeys: string[] = [];
         for (let i = 0, len = keys.length; i < len; i++) {
             const key = keys[i];
             const entry = entries[key];
-            if (isEntryDraftAction(entry, key)) {
-                if (isLDSDraftAction(entry.data)) {
-                    draftEntries[key] = entry as DurableStoreEntry<
-                        DraftAction<RecordRepresentation, ResourceRequest>
-                    >;
-                    hasDraftEntries = true;
+            if (isEntryDraftAction(entry, key) && isLDSDraftAction(entry.data)) {
+                if (entry.data.data.method !== 'post') {
+                    changedKeys.push(key);
                 }
+                draftEntries[key] = entry as DurableStoreEntry<
+                    DraftAction<RecordRepresentation, ResourceRequest>
+                >;
+                hasDraftEntries = true;
             }
         }
 
@@ -201,7 +203,7 @@ export function makeDurableStoreDraftAware(
             if (hasDraftEntries === true) {
                 return persistDraftCreates(draftEntries, durableStore, userId).then(() => {
                     return onDraftEntriesChanged(
-                        ObjectKeys(entries),
+                        changedKeys,
                         durableStore,
                         getDraftActionsForRecords,
                         userId
@@ -245,37 +247,46 @@ export function makeDurableStoreDraftAware(
             ) {
                 const keys = ObjectKeys(operation.entries);
 
+                let containsDraftCreates = false;
+                const { entries } = operation;
+
+                // check entries for any LDS actions that create records
                 for (let i = 0, len = keys.length; i < len; i++) {
                     const key = keys[i];
-                    const entry = operation.entries[key];
-                    if (isEntryDraftAction(entry, key)) {
-                        if (isLDSDraftAction(entry.data)) {
+                    const entry = entries[key];
+                    if (isEntryDraftAction(entry, key) && isLDSDraftAction(entry.data)) {
+                        if (entry.data.data.method === 'post') {
+                            containsDraftCreates = true;
+                        } else {
                             changedDraftKeys.push(key);
-                            persistOperations.push(
-                                persistDraftCreates(
-                                    operation.entries as unknown as DurableStoreEntries<
-                                        DraftAction<RecordRepresentation, ResourceRequest>
-                                    >,
-                                    durableStore,
-                                    userId
-                                )
-                            );
                         }
                     }
+                }
+
+                if (containsDraftCreates) {
+                    persistOperations.push(
+                        persistDraftCreates(
+                            operation.entries as unknown as DurableStoreEntries<
+                                DraftAction<RecordRepresentation, ResourceRequest>
+                            >,
+                            durableStore,
+                            userId
+                        )
+                    );
                 }
             }
         }
         return durableStore.batchOperations(operations).then(() => {
-            if (changedDraftKeys.length > 0) {
-                return Promise.all(persistOperations).then(() => {
+            return Promise.all(persistOperations).then(() => {
+                if (changedDraftKeys.length > 0) {
                     return onDraftEntriesChanged(
                         changedDraftKeys,
                         durableStore,
                         getDraftActionsForRecords,
                         userId
                     );
-                });
-            }
+                }
+            });
         });
     };
 

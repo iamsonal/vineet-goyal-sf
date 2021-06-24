@@ -1,59 +1,63 @@
 import { LuvioArgumentNode } from '@salesforce/lds-graphql-parser';
-import { serialize, serializeAndSortArguments } from '../Argument';
+import { serialize, render } from '../Argument';
 
 describe('Arguments', () => {
     describe('serialize', () => {
         it('should return correct string when one argument present', () => {
-            const args: LuvioArgumentNode = {
-                kind: 'Argument',
-                name: 'where',
-                value: {
-                    kind: 'ObjectValue',
-                    fields: {
-                        Name: {
-                            kind: 'ObjectValue',
-                            fields: {
-                                like: {
-                                    kind: 'StringValue',
-                                    value: 'Account1',
+            const args: LuvioArgumentNode[] = [
+                {
+                    kind: 'Argument',
+                    name: 'where',
+                    value: {
+                        kind: 'ObjectValue',
+                        fields: {
+                            Name: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    like: {
+                                        kind: 'StringValue',
+                                        value: 'Account1',
+                                    },
                                 },
                             },
                         },
                     },
                 },
-            };
+            ];
 
             expect(serialize(args)).toBe('where:{Name:{like:"Account1"}}');
         });
 
         it('should return correct string when multiple arguments present', () => {
-            const args: LuvioArgumentNode = {
-                kind: 'Argument',
-                name: 'where',
-                value: {
-                    kind: 'ObjectValue',
-                    fields: {
-                        Name: {
-                            kind: 'ObjectValue',
-                            fields: {
-                                like: {
-                                    kind: 'StringValue',
-                                    value: 'Account%',
+            const args: LuvioArgumentNode[] = [
+                {
+                    kind: 'Argument',
+                    name: 'where',
+                    value: {
+                        kind: 'ObjectValue',
+                        fields: {
+                            Name: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    like: {
+                                        kind: 'StringValue',
+                                        value: 'Account%',
+                                    },
                                 },
                             },
-                        },
-                        Id: {
-                            kind: 'ObjectValue',
-                            fields: {
-                                eq: {
-                                    kind: 'StringValue',
-                                    value: '001RM00000558MmYAI',
+                            Id: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    eq: {
+                                        kind: 'StringValue',
+                                        value: '001RM00000558MmYAI',
+                                    },
                                 },
                             },
                         },
                     },
                 },
-            };
+            ];
 
             expect(serialize(args)).toBe(
                 'where:{Id:{eq:"001RM00000558MmYAI"},Name:{like:"Account%"}}'
@@ -62,47 +66,51 @@ describe('Arguments', () => {
 
         describe('ListValue', () => {
             it('should serialize ListValue correctly', () => {
-                const listValue: LuvioArgumentNode = {
-                    name: 'foo',
-                    kind: 'Argument',
-                    value: {
-                        kind: 'ListValue',
-                        values: [
-                            {
-                                kind: 'StringValue',
-                                value: 'a',
-                            },
-                            {
-                                kind: 'StringValue',
-                                value: 'b',
-                            },
-                        ],
+                const listValue: LuvioArgumentNode[] = [
+                    {
+                        name: 'foo',
+                        kind: 'Argument',
+                        value: {
+                            kind: 'ListValue',
+                            values: [
+                                {
+                                    kind: 'StringValue',
+                                    value: 'a',
+                                },
+                                {
+                                    kind: 'StringValue',
+                                    value: 'b',
+                                },
+                            ],
+                        },
                     },
-                };
+                ];
 
                 expect(serialize(listValue)).toBe('foo:["a","b"]');
             });
 
             it('should serialize and sort ListValue correctly', () => {
-                const listValue: LuvioArgumentNode = {
-                    name: 'foo',
-                    kind: 'Argument',
-                    value: {
-                        kind: 'ListValue',
-                        values: [
-                            {
-                                kind: 'StringValue',
-                                value: 'b',
-                            },
-                            {
-                                kind: 'StringValue',
-                                value: 'a',
-                            },
-                        ],
+                const listValue: LuvioArgumentNode[] = [
+                    {
+                        name: 'foo',
+                        kind: 'Argument',
+                        value: {
+                            kind: 'ListValue',
+                            values: [
+                                {
+                                    kind: 'StringValue',
+                                    value: 'b',
+                                },
+                                {
+                                    kind: 'StringValue',
+                                    value: 'a',
+                                },
+                            ],
+                        },
                     },
-                };
+                ];
 
-                expect(serialize(listValue)).toBe('foo:["a","b"]');
+                expect(render(listValue, {})).toBe('foo:["a","b"]');
             });
         });
     });
@@ -157,7 +165,7 @@ describe('Arguments', () => {
                 },
             ];
 
-            expect(serializeAndSortArguments(args)).toBe(
+            expect(render(args, {})).toBe(
                 'orderBy:{Name:{order:DESC}},where:{Id:{eq:"001RM00000558MmYAI"},Name:{like:"Account%"}}'
             );
         });
@@ -215,7 +223,7 @@ describe('Arguments', () => {
                     },
                 },
             ];
-            expect(serializeAndSortArguments(args)).toBe(
+            expect(render(args, {})).toBe(
                 'orderBy:{Name:{order:ASC}},where:{Name:{like:"Account2"},Owner:{Name:{like:"Admin User"}}}'
             );
         });
@@ -327,7 +335,7 @@ describe('Arguments', () => {
                 },
             ];
 
-            expect(serializeAndSortArguments(args)).toBe(
+            expect(render(args, {})).toBe(
                 'first:10,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}}'
             );
         });
@@ -431,36 +439,38 @@ describe('Arguments', () => {
                 },
             ];
 
-            expect(serializeAndSortArguments(arg)).toBe(
+            expect(render(arg, {})).toBe(
                 'first:1000,orderBy:{AppointmentNumber:{nulls:FIRST,order:ASC},Id:{nulls:FIRST,order:ASC}},where:{SchedStartTime:{gte:{range:{last_n_months:4}}},and:{SchedEndTime:{lte:{range:{next_n_months:4}}}}}'
             );
         });
 
         it('should serialize multiple nested arguments', () => {
-            const arg: LuvioArgumentNode = {
-                kind: 'Argument',
-                name: 'orderBy',
-                value: {
-                    kind: 'ObjectValue',
-                    fields: {
-                        AppointmentNumber: {
-                            kind: 'ObjectValue',
-                            fields: {
-                                order: {
-                                    kind: 'EnumValue',
-                                    value: 'ASC',
-                                },
-                                nulls: {
-                                    kind: 'EnumValue',
-                                    value: 'FIRST',
+            const arg: LuvioArgumentNode[] = [
+                {
+                    kind: 'Argument',
+                    name: 'orderBy',
+                    value: {
+                        kind: 'ObjectValue',
+                        fields: {
+                            AppointmentNumber: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    order: {
+                                        kind: 'EnumValue',
+                                        value: 'ASC',
+                                    },
+                                    nulls: {
+                                        kind: 'EnumValue',
+                                        value: 'FIRST',
+                                    },
                                 },
                             },
                         },
                     },
                 },
-            };
+            ];
 
-            expect(serialize(arg)).toBe('orderBy:{AppointmentNumber:{nulls:FIRST,order:ASC}}');
+            expect(render(arg, {})).toBe('orderBy:{AppointmentNumber:{nulls:FIRST,order:ASC}}');
         });
 
         it('should serialize and sort deeply nested enum arguments correctly', () => {
@@ -562,7 +572,7 @@ describe('Arguments', () => {
                 },
             ];
 
-            expect(serializeAndSortArguments(args)).toBe(
+            expect(render(args, {})).toBe(
                 'first:1000,orderBy:{AppointmentNumber:{nulls:FIRST,order:ASC},Id:{nulls:FIRST,order:ASC}},where:{SchedStartTime:{gte:{range:{last_n_months:4}}},and:{SchedEndTime:{lte:{range:{next_n_months:4}}}}}'
             );
         });
@@ -780,7 +790,7 @@ describe('Arguments', () => {
                 },
             ];
 
-            expect(serializeAndSortArguments(sel1)).toEqual(serializeAndSortArguments(sel2));
+            expect(render(sel1, {})).toEqual(render(sel2, {}));
         });
     });
 });

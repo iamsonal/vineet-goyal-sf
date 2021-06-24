@@ -1,58 +1,81 @@
 import {
     LuvioArgumentNode,
-    LuvioFieldNode,
     LuvioListValueNode,
     LuvioObjectValueNode,
     LuvioValueNode,
 } from '@salesforce/lds-graphql-parser';
 import { serializeValueNode } from '../util/ast-to-string';
 import { sortAndCopyUsingObjectKey } from '../util/sortUsingKey';
+import { GraphQLVariables } from './Variable';
 
 const { keys } = Object;
 
-export function resolveIngestedPropertyName(sel: LuvioFieldNode) {
-    const { name: fieldName } = sel;
-    if (sel.kind === 'ScalarFieldSelection') {
-        return fieldName;
-    }
+export type SerializationOptions =
+    | {
+          render: true;
+          variables: GraphQLVariables;
+      }
+    | {
+          render: false;
+      };
 
-    const { arguments: selectionArguments } = sel;
-    if (selectionArguments === undefined || selectionArguments.length === 0) {
-        return fieldName;
-    }
-
-    return `${fieldName}(${serializeAndSortArguments(selectionArguments)})`;
+export function serialize(args: LuvioArgumentNode[]): string {
+    return serializeArgs(args, { render: false });
 }
 
-function serializeArgumentValueNode(valueDefinition: LuvioValueNode) {
+export function render(args: LuvioArgumentNode[], variables: GraphQLVariables): string {
+    return serializeArgs(args, { render: true, variables });
+}
+
+function serializeArgs(args: LuvioArgumentNode[], option: SerializationOptions): string {
+    const sortedArgs = option.render === true ? sortAndCopyUsingObjectKey(args, 'name') : args;
+
+    let str = '';
+    for (let i = 0, len = sortedArgs.length; i < len; i += 1) {
+        str = `${str}${serializeArgumentNode(sortedArgs[i], option)}`;
+        if (len > 1 && i < len - 1) {
+            str = `${str},`;
+        }
+    }
+
+    return str;
+}
+
+function serializeArgumentValueNode(valueDefinition: LuvioValueNode, option: SerializationOptions) {
     const { kind } = valueDefinition;
     switch (kind) {
         case 'ObjectValue':
-            return serializeAndSortObjectValueNode(valueDefinition as LuvioObjectValueNode);
+            return serializeAndSortObjectValueNode(valueDefinition as LuvioObjectValueNode, option);
         case 'ListValue':
-            return serializeAndSortListValueNode(valueDefinition as LuvioListValueNode);
+            return serializeAndSortListValueNode(valueDefinition as LuvioListValueNode, option);
         default:
             return serializeValueNode(valueDefinition);
     }
 }
 
-function serializeAndSortListValueNode(objectValueDefinition: LuvioListValueNode): string {
+function serializeAndSortListValueNode(
+    objectValueDefinition: LuvioListValueNode,
+    option: SerializationOptions
+): string {
     const { values } = objectValueDefinition;
     const str = [];
-    const sorted = sortAndCopyUsingObjectKey(values, 'value');
+    const sorted = option.render === true ? sortAndCopyUsingObjectKey(values, 'value') : values;
     for (let i = 0, len = sorted.length; i < len; i += 1) {
-        str.push(serializeArgumentValueNode(sorted[i]));
+        str.push(serializeArgumentValueNode(sorted[i], option));
     }
     return `[${str.join(',')}]`;
 }
 
-function serializeAndSortObjectValueNode(objectValueDefinition: LuvioObjectValueNode) {
+function serializeAndSortObjectValueNode(
+    objectValueDefinition: LuvioObjectValueNode,
+    option: SerializationOptions
+) {
     const { fields } = objectValueDefinition;
     let str = '';
     const fieldKeys = keys(fields).sort();
     for (let i = 0, len = fieldKeys.length; i < len; i += 1) {
         const fieldKey = fieldKeys[i];
-        str = `${str}${fieldKey}:${serializeArgumentValueNode(fields[fieldKey])}`;
+        str = `${str}${fieldKey}:${serializeArgumentValueNode(fields[fieldKey], option)}`;
         if (len > 1 && i < len - 1) {
             str = `${str},`;
         }
@@ -60,19 +83,7 @@ function serializeAndSortObjectValueNode(objectValueDefinition: LuvioObjectValue
     return `{${str}}`;
 }
 
-export function serialize(arg: LuvioArgumentNode): string {
+function serializeArgumentNode(arg: LuvioArgumentNode, option: SerializationOptions): string {
     const { name, value } = arg;
-    return `${name}:${serializeArgumentValueNode(value)}`;
-}
-
-export function serializeAndSortArguments(args: LuvioArgumentNode[]): string {
-    const sortedArgs = sortAndCopyUsingObjectKey(args, 'name');
-    let str = '';
-    for (let i = 0, len = sortedArgs.length; i < len; i += 1) {
-        str = `${str}${serialize(sortedArgs[i])}`;
-        if (len > 1 && i < len - 1) {
-            str = `${str},`;
-        }
-    }
-    return str;
+    return `${name}:${serializeArgumentValueNode(value, option)}`;
 }

@@ -18,7 +18,8 @@ import {
     followLink,
 } from '../type/Selection';
 import { GqlRecord } from './record';
-import { resolveIngestedPropertyName, serializeAndSortArguments } from '../type/Argument';
+import { render as renderArguments } from '../type/Argument';
+import { serialize as serializeField, render as renderField } from '../type/Field';
 import { adapterApiFamily } from '../constants';
 import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
 import { readScalarFieldSelection } from '../type/ScalarField';
@@ -39,7 +40,7 @@ export function keyBuilder(ast: LuvioSelectionCustomFieldNode) {
     if (args === undefined) {
         return `${adapterApiFamily}::${CUSTOM_FIELD_NODE_TYPE}::${name}()`;
     }
-    const serialized = serializeAndSortArguments(args);
+    const serialized = renderArguments(args, {});
     return `${adapterApiFamily}::${CUSTOM_FIELD_NODE_TYPE}::${name}(${serialized})`;
 }
 
@@ -68,7 +69,7 @@ export const createRead: (ast: LuvioSelectionCustomFieldNode) => ReaderFragment[
                 readScalarFieldSelection(builder, source, name, sink);
                 continue;
             }
-            const readPropertyName = resolveIngestedPropertyName(sel);
+            const readPropertyName = serializeField(sel);
             builder.enterPath(readPropertyName);
             const edges = resolveLink<StoreLink[]>(builder, source[readPropertyName]);
             if (edges === undefined) {
@@ -129,7 +130,7 @@ function ingestEdgeItem(
         if (sel.kind === 'ScalarFieldSelection') {
             throw new Error('Unsupported scalar field on Connection');
         }
-        const propertyName = resolveIngestedPropertyName(sel) as keyof GqlEdge;
+        const propertyName = renderField(sel, {}) as keyof GqlEdge;
         const item = data[propertyName];
         data[propertyName] = selectionCreateIngest(sel)(
             item,

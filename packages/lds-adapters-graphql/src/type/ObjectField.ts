@@ -4,7 +4,7 @@ import { getLuvioFieldNodeSelection, followLink } from './Selection';
 import { createIngest as customFieldCreateIngest } from './CustomField';
 import merge from '../util/merge';
 import { readScalarFieldSelection } from './ScalarField';
-import { resolveIngestedPropertyName } from './Argument';
+import { render as renderField } from './Field';
 
 export const createRead: (ast: LuvioSelectionObjectFieldNode) => ReaderFragment['read'] = (
     ast: LuvioSelectionObjectFieldNode
@@ -22,7 +22,7 @@ export const createRead: (ast: LuvioSelectionObjectFieldNode) => ReaderFragment[
                     readScalarFieldSelection(builder, source, fieldName, sink);
                     break;
                 default: {
-                    const data = followLink(sel, builder, source[resolveIngestedPropertyName(sel)]);
+                    const data = followLink(sel, builder, source[renderField(sel, {})]);
                     builder.assignNonScalar(sink, propertyName, data);
                 }
             }
@@ -49,7 +49,7 @@ export const createIngest: (ast: LuvioSelectionObjectFieldNode) => ResourceInges
             const { name: fieldName, alias } = sel;
             const readPropertyName = alias === undefined ? fieldName : alias;
             const propertyFullPath = `${fullPath}__${fieldName}`;
-            const writePropertyName = resolveIngestedPropertyName(sel);
+            const writePropertyName = renderField(sel, {});
             const childPath: IngestPath = {
                 parent: {
                     existing: null,

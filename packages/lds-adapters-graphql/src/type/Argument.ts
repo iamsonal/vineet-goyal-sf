@@ -3,12 +3,12 @@ import {
     LuvioListValueNode,
     LuvioObjectValueNode,
     LuvioValueNode,
+    LuvioVariableNode,
 } from '@salesforce/lds-graphql-parser';
 import { serializeValueNode } from '../util/ast-to-string';
+import { ArrayIsArray, ObjectKeys } from '../util/language';
 import { sortAndCopyUsingObjectKey } from '../util/sortUsingKey';
 import { GraphQLVariables } from './Variable';
-
-const { keys } = Object;
 
 export type SerializationOptions =
     | {
@@ -48,9 +48,37 @@ function serializeArgumentValueNode(valueDefinition: LuvioValueNode, option: Ser
             return serializeAndSortObjectValueNode(valueDefinition as LuvioObjectValueNode, option);
         case 'ListValue':
             return serializeAndSortListValueNode(valueDefinition as LuvioListValueNode, option);
+        case 'Variable':
+            return serializeVariableNode(valueDefinition as LuvioVariableNode, option);
         default:
             return serializeValueNode(valueDefinition);
     }
+}
+
+function serializeVariableNode(literalValueNode: LuvioVariableNode, option: SerializationOptions) {
+    if (option.render === false) {
+        return `$${literalValueNode.name}`;
+    }
+    return `${serializeVariableValue(option.variables[literalValueNode.name])}`;
+}
+
+function serializeVariableValue(value: unknown): string {
+    if (ArrayIsArray(value)) {
+        return serializeVariableListValue(value);
+    } else if (typeof value === 'string') {
+        return `"${value}"`;
+    } else {
+        return `${value}`;
+    }
+}
+
+function serializeVariableListValue(value: unknown[]): string {
+    value.sort();
+    const str = [];
+    for (let i = 0, len = value.length; i < len; i += 1) {
+        str.push(`${serializeVariableValue(value[i])}`);
+    }
+    return `[${str.join(',')}]`;
 }
 
 function serializeAndSortListValueNode(
@@ -72,7 +100,7 @@ function serializeAndSortObjectValueNode(
 ) {
     const { fields } = objectValueDefinition;
     let str = '';
-    const fieldKeys = keys(fields).sort();
+    const fieldKeys = ObjectKeys(fields).sort();
     for (let i = 0, len = fieldKeys.length; i < len; i += 1) {
         const fieldKey = fieldKeys[i];
         str = `${str}${fieldKey}:${serializeArgumentValueNode(fields[fieldKey], option)}`;

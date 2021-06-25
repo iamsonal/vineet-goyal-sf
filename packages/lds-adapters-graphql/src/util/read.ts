@@ -10,18 +10,25 @@ import { createRead as connectionCreateRead } from '../custom/connection';
 import { createRead as recordCreateRead } from '../custom/record';
 import { readScalarFieldSelection } from '../type/ScalarField';
 import { render as renderField } from '../type/Field';
+import { GraphQLVariables } from '../type/Variable';
 
-function createCustomFieldRead(sel: LuvioSelectionCustomFieldNode): ReaderFragment['read'] {
+function createCustomFieldRead(
+    sel: LuvioSelectionCustomFieldNode,
+    variables: GraphQLVariables
+): ReaderFragment['read'] {
     if (sel.type === 'Connection') {
-        return connectionCreateRead(sel);
+        return connectionCreateRead(sel, variables);
     }
 
-    return recordCreateRead(sel);
+    return recordCreateRead(sel, variables);
 }
 
-export function createRead(ast: LuvioSelectionNode | LuvioOperationDefinitionNode) {
+export function createRead(
+    ast: LuvioSelectionNode | LuvioOperationDefinitionNode,
+    variables: GraphQLVariables
+) {
     if (ast.kind === 'CustomFieldSelection') {
-        return createCustomFieldRead(ast as LuvioSelectionCustomFieldNode);
+        return createCustomFieldRead(ast as LuvioSelectionCustomFieldNode, variables);
     }
 
     if (
@@ -32,13 +39,15 @@ export function createRead(ast: LuvioSelectionNode | LuvioOperationDefinitionNod
         throw new Error('"FragmentSpread" and "InlineFragment" currently not supported');
     }
 
-    return genericCreateRead(ast);
+    return genericCreateRead(ast, variables);
 }
 
 const genericCreateRead: (
-    ast: LuvioSelectionObjectFieldNode | LuvioOperationDefinitionNode
+    ast: LuvioSelectionObjectFieldNode | LuvioOperationDefinitionNode,
+    variables: GraphQLVariables
 ) => ReaderFragment['read'] = (
-    ast: LuvioSelectionObjectFieldNode | LuvioOperationDefinitionNode
+    ast: LuvioSelectionObjectFieldNode | LuvioOperationDefinitionNode,
+    variables: GraphQLVariables
 ) => {
     const selections = ast.luvioSelections === undefined ? [] : ast.luvioSelections;
     return (source: any, builder: Reader<any>) => {
@@ -53,7 +62,12 @@ const genericCreateRead: (
                     readScalarFieldSelection(builder, source, fieldName, sink);
                     break;
                 default: {
-                    const data = followLink(sel, builder, source[renderField(sel, {})]);
+                    const data = followLink(
+                        sel,
+                        builder,
+                        source[renderField(sel, variables)],
+                        variables
+                    );
                     builder.assignNonScalar(sink, propertyName, data);
                 }
             }

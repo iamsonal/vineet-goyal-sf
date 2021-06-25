@@ -1,5 +1,6 @@
 import { IngestPath, Luvio, Reader, ReaderFragment, ResourceIngest, Store } from '@luvio/engine';
 import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
+import { GraphQLVariables } from './Variable';
 import { createIngest as genericCreateIngest } from '../util/ingest';
 import { createRead as genericCreateRead } from '../util/read';
 
@@ -8,9 +9,10 @@ export type GraphQL = {
     errors: unknown[];
 };
 
-export const createRead: (ast: LuvioDocumentNode) => ReaderFragment['read'] = (
-    ast: LuvioDocumentNode
-) => {
+export const createRead: (
+    ast: LuvioDocumentNode,
+    variables: GraphQLVariables
+) => ReaderFragment['read'] = (ast: LuvioDocumentNode, variables: GraphQLVariables) => {
     const definitions = ast.definitions === undefined ? [] : ast.definitions;
     return (source: any, builder: Reader<any>) => {
         let sink = {};
@@ -20,7 +22,7 @@ export const createRead: (ast: LuvioDocumentNode) => ReaderFragment['read'] = (
                 throw new Error(`Unsupported document definition "${def.kind}"`);
             }
 
-            const data = genericCreateRead(def)(source, builder);
+            const data = genericCreateRead(def, variables)(source, builder);
             sink = {
                 ...sink,
                 ...data,
@@ -34,7 +36,7 @@ export const createRead: (ast: LuvioDocumentNode) => ReaderFragment['read'] = (
         return gqlData;
     };
 };
-export function createIngest(ast: LuvioDocumentNode): ResourceIngest {
+export function createIngest(ast: LuvioDocumentNode, variables: GraphQLVariables): ResourceIngest {
     const definitions = ast.definitions === undefined ? [] : ast.definitions;
     return (data: GraphQL, path: IngestPath, luvio: Luvio, store: Store, timestamp: number) => {
         const key = path.fullPath;
@@ -44,7 +46,7 @@ export function createIngest(ast: LuvioDocumentNode): ResourceIngest {
                 throw new Error(`Unsupported document definition "${def.kind}"`);
             }
 
-            genericCreateIngest(def)(
+            genericCreateIngest(def, variables)(
                 data,
                 {
                     parent: null,

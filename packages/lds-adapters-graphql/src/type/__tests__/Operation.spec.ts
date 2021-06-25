@@ -62,7 +62,7 @@ describe('Operation', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             });
@@ -191,7 +191,7 @@ describe('Operation', () => {
                 })
             );
 
-            createIngest(ast)(
+            createIngest(ast, {})(
                 data,
                 {
                     parent: null,
@@ -315,7 +315,7 @@ describe('Operation', () => {
                     })
                 );
 
-                createIngest(fooAst)(
+                createIngest(fooAst, {})(
                     fooData,
                     {
                         parent: null,
@@ -327,7 +327,7 @@ describe('Operation', () => {
                     0
                 );
 
-                createIngest(barAst)(
+                createIngest(barAst, {})(
                     barData,
                     {
                         parent: null,
@@ -419,7 +419,7 @@ describe('Operation', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             });
@@ -466,7 +466,7 @@ describe('Operation', () => {
                 })
             );
 
-            createIngest(ast)(
+            createIngest(ast, {})(
                 data,
                 {
                     parent: null,

@@ -85,7 +85,7 @@ describe('GQL Connection', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(selection),
+                    read: createRead(selection, {}),
                 },
                 variables: {},
             }) as UnfulfilledSnapshot<any, any>;
@@ -181,7 +181,7 @@ describe('GQL Connection', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(selection),
+                    read: createRead(selection, {}),
                 },
                 variables: {},
             }) as UnfulfilledSnapshot<any, any>;
@@ -305,7 +305,7 @@ describe('GQL Connection', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(ast),
+                    read: createRead(ast as LuvioSelectionCustomFieldNode, {}),
                 },
                 variables: {},
             });
@@ -406,7 +406,7 @@ describe('GQL Connection', () => {
                 })
             );
 
-            createIngest(selection, keyBuilder(selection))(
+            createIngest(selection, keyBuilder(selection, {}), {})(
                 data,
                 {
                     parent: null,
@@ -532,7 +532,7 @@ describe('GQL Connection', () => {
                 })
             );
 
-            createIngest(selection, keyBuilder(selection))(
+            createIngest(selection, keyBuilder(selection, {}), {})(
                 data,
                 {
                     parent: null,
@@ -651,7 +651,7 @@ describe('GQL Connection', () => {
                 })
             );
 
-            createIngest(selection, keyBuilder(selection))(
+            createIngest(selection, keyBuilder(selection, {}), {})(
                 data,
                 {
                     parent: null,
@@ -806,7 +806,7 @@ describe('GQL Connection', () => {
                 })
             );
 
-            createIngest(selection, keyBuilder(selection))(
+            createIngest(selection, keyBuilder(selection, {}), {})(
                 data,
                 {
                     parent: null,
@@ -968,7 +968,11 @@ describe('GQL Connection', () => {
                 })
             );
 
-            createIngest(ast, 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})')(
+            createIngest(
+                ast as LuvioSelectionCustomFieldNode,
+                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})',
+                {}
+            )(
                 data,
                 {
                     parent: null,

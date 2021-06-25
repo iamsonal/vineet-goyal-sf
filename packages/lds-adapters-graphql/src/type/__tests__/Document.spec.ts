@@ -170,7 +170,7 @@ describe('Document', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             });
@@ -729,7 +729,7 @@ describe('Document', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(ast1),
+                    read: createRead(ast1 as LuvioDocumentNode, {}),
                 },
                 variables: {},
             });
@@ -739,7 +739,7 @@ describe('Document', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(ast2),
+                    read: createRead(ast2 as LuvioDocumentNode, {}),
                 },
                 variables: {},
             });
@@ -898,7 +898,7 @@ describe('Document', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             }) as FulfilledSnapshot<any, any>;
@@ -1064,7 +1064,7 @@ describe('Document', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             }) as FulfilledSnapshot<any, any>;
@@ -1207,7 +1207,7 @@ describe('Document', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             }) as UnfulfilledSnapshot<any, any>;
@@ -1322,7 +1322,7 @@ describe('Document', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             }) as UnfulfilledSnapshot<any, any>;
@@ -1462,7 +1462,7 @@ describe('Document', () => {
                 })
             );
 
-            createIngest(ast)(
+            createIngest(ast, {})(
                 data,
                 {
                     fullPath: 'fullpath',
@@ -1738,7 +1738,7 @@ describe('Document', () => {
                 })
             );
 
-            createIngest(ast)(
+            createIngest(ast, {})(
                 data,
                 {
                     fullPath: 'fullpath',

@@ -8,21 +8,26 @@ import { render as renderField } from '../type/Field';
 import { getLuvioFieldNodeSelection } from '../type/Selection';
 import { createIngest as customFieldCreateIngest } from '../type/CustomField';
 import merge from './merge';
+import { GraphQLVariables } from '../type/Variable';
 
 export function createIngest(
     ast:
         | LuvioOperationDefinitionNode
         | LuvioSelectionObjectFieldNode
-        | LuvioSelectionCustomFieldNode
+        | LuvioSelectionCustomFieldNode,
+    variables: GraphQLVariables
 ) {
     if (ast.kind === 'CustomFieldSelection') {
-        return customFieldCreateIngest(ast as LuvioSelectionCustomFieldNode);
+        return customFieldCreateIngest(ast as LuvioSelectionCustomFieldNode, variables);
     }
 
-    return genericCreateIngest(ast);
+    return genericCreateIngest(ast, variables);
 }
 
-function genericCreateIngest(ast: LuvioOperationDefinitionNode | LuvioSelectionObjectFieldNode) {
+function genericCreateIngest(
+    ast: LuvioOperationDefinitionNode | LuvioSelectionObjectFieldNode,
+    variables: GraphQLVariables
+) {
     let selections = ast.luvioSelections === undefined ? [] : ast.luvioSelections;
 
     return (data: any, path: IngestPath, luvio: Luvio, store: Store, timestamp: number) => {
@@ -37,7 +42,7 @@ function genericCreateIngest(ast: LuvioOperationDefinitionNode | LuvioSelectionO
             const { name: fieldName, alias } = sel;
             const readPropertyName = alias === undefined ? fieldName : alias;
             const propertyFullPath = `${fullPath}__${fieldName}`;
-            const writePropertyName = renderField(sel, {});
+            const writePropertyName = renderField(sel, variables);
             const childPath: IngestPath = {
                 parent: {
                     existing: null,
@@ -48,7 +53,7 @@ function genericCreateIngest(ast: LuvioOperationDefinitionNode | LuvioSelectionO
                 fullPath: propertyFullPath,
                 state: path.state,
             };
-            data[writePropertyName] = createIngest(sel)(
+            data[writePropertyName] = createIngest(sel, variables)(
                 data[readPropertyName],
                 childPath,
                 luvio,

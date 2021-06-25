@@ -115,7 +115,7 @@ describe('Arguments', () => {
         });
     });
 
-    describe('serialize arguments', () => {
+    describe('render', () => {
         it('should serialize multiple arguments correctly', () => {
             const args: LuvioArgumentNode[] = [
                 {

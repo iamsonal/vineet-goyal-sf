@@ -25,6 +25,7 @@ import {
     PropertyLookupResultState,
     resolveKey,
 } from '../type/Selection';
+import { GraphQLVariables } from '../type/Variable';
 
 type RecordFieldTrie = Parameters<typeof createIngestRecordWithFields>[0];
 
@@ -238,9 +239,10 @@ function getChildRelationshipsKey(recordKey: string, propertyName: string) {
     return `${recordKey}__childRelationships__${propertyName}`;
 }
 
-export const createIngest: (ast: LuvioSelectionCustomFieldNode) => ResourceIngest = (
-    ast: LuvioSelectionCustomFieldNode
-) => {
+export const createIngest: (
+    ast: LuvioSelectionCustomFieldNode,
+    variables: GraphQLVariables
+) => ResourceIngest = (ast: LuvioSelectionCustomFieldNode, variables: GraphQLVariables) => {
     return (data: GqlRecord, path: IngestPath, luvio: Luvio, store: Store, timestamp: number) => {
         const { recordRepresentation, fieldsTrie, childRelationships } =
             convertToRecordRepresentation(ast, data);
@@ -257,7 +259,7 @@ export const createIngest: (ast: LuvioSelectionCustomFieldNode) => ResourceInges
             const childRelationship = childRelationships[propertyName];
             const { ast: childRelationshipAst, data: childRelationshipData } = childRelationship;
             const fullPath = getChildRelationshipsKey(recordKey, propertyName);
-            createConnectionIngest(childRelationshipAst, fullPath)(
+            createConnectionIngest(childRelationshipAst, fullPath, variables)(
                 childRelationshipData,
                 {
                     parent: {
@@ -322,12 +324,13 @@ function getNonSpanningField(
 function getCustomSelection(
     selection: LuvioSelectionCustomFieldNode,
     builder: Reader<any>,
-    options: RecordRepresentationReadOptions
+    options: RecordRepresentationReadOptions,
+    variables: GraphQLVariables
 ) {
     const { type } = selection;
     switch (type) {
         case 'Record':
-            return readRecordRepresentation(selection, builder, options);
+            return readRecordRepresentation(selection, builder, options, variables);
     }
 }
 
@@ -354,14 +357,15 @@ function assignConnectionSelection(
     sink: any,
     sel: LuvioSelectionCustomFieldNode,
     recordKey: string,
-    propertyName: string
+    propertyName: string,
+    variables: GraphQLVariables
 ) {
     const key = getChildRelationshipsKey(recordKey, propertyName);
     const resolved = resolveKey(builder, key);
     if (resolved === undefined) {
         return;
     }
-    const data = createConnectionRead(sel as LuvioSelectionCustomFieldNode)(
+    const data = createConnectionRead(sel as LuvioSelectionCustomFieldNode, variables)(
         resolved.value,
         builder
     );
@@ -371,7 +375,8 @@ function assignConnectionSelection(
 function assignSelection(
     selection: LuvioSelectionNode,
     builder: Reader<any>,
-    state: RecordDenormalizationState
+    state: RecordDenormalizationState,
+    variables: GraphQLVariables
 ) {
     const sel = getLuvioFieldNodeSelection(selection);
     const { name: selectionName, kind, alias } = sel;
@@ -414,7 +419,8 @@ function assignSelection(
                     sink,
                     sel as LuvioSelectionCustomFieldNode,
                     recordKey,
-                    propertyName
+                    propertyName,
+                    variables
                 );
             } else {
                 const field = fields[selectionName];
@@ -440,10 +446,15 @@ function assignSelection(
                 if (resolvedSpanningRecordValue === undefined) {
                     break;
                 }
-                const data = getCustomSelection(sel as LuvioSelectionCustomFieldNode, builder, {
-                    source: resolvedSpanningRecordValue.value,
-                    parentFieldValue: spanningFieldResult,
-                });
+                const data = getCustomSelection(
+                    sel as LuvioSelectionCustomFieldNode,
+                    builder,
+                    {
+                        source: resolvedSpanningRecordValue.value,
+                        parentFieldValue: spanningFieldResult,
+                    },
+                    variables
+                );
                 builder.assignNonScalar(sink, propertyName, data);
             }
         }
@@ -459,7 +470,8 @@ interface RecordRepresentationReadOptions {
 function readRecordRepresentation(
     ast: LuvioSelectionCustomFieldNode,
     builder: Reader<any>,
-    options: RecordRepresentationReadOptions
+    options: RecordRepresentationReadOptions,
+    variables: GraphQLVariables
 ) {
     const { luvioSelections } = ast;
     if (luvioSelections === undefined) {
@@ -473,18 +485,24 @@ function readRecordRepresentation(
         parentFieldValue: options.parentFieldValue,
     };
     for (let i = 0, len = luvioSelections.length; i < len; i += 1) {
-        assignSelection(luvioSelections[i], builder, state);
+        assignSelection(luvioSelections[i], builder, state, variables);
     }
     return sink;
 }
 
-export const createRead: (ast: LuvioSelectionCustomFieldNode) => ReaderFragment['read'] = (
-    ast: LuvioSelectionCustomFieldNode
-) => {
+export const createRead: (
+    ast: LuvioSelectionCustomFieldNode,
+    variables: GraphQLVariables
+) => ReaderFragment['read'] = (ast: LuvioSelectionCustomFieldNode, variables: GraphQLVariables) => {
     return (data: RecordRepresentationNormalized, builder: Reader<any>) => {
-        return readRecordRepresentation(ast, builder, {
-            source: data,
-            parentFieldValue: undefined,
-        });
+        return readRecordRepresentation(
+            ast,
+            builder,
+            {
+                source: data,
+                parentFieldValue: undefined,
+            },
+            variables
+        );
     };
 };

@@ -14,10 +14,11 @@ import {
 import { getLuvioFieldNodeSelection, resolveLink, followLink } from '../type/Selection';
 import { GqlRecord } from './record';
 import { render as renderArguments } from '../type/Argument';
-import { serialize as serializeField, render as renderField } from '../type/Field';
+import { render as renderField } from '../type/Field';
 import { adapterApiFamily } from '../constants';
 import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
 import { readScalarFieldSelection } from '../type/ScalarField';
+import { GraphQLVariables } from '../type/Variable';
 import { createIngest as genericCreateIngest } from '../util/ingest';
 
 interface GqlEdge {
@@ -31,30 +32,36 @@ export type GqlConnection = {
 const PROPERTY_NAME_EDGES = 'edges';
 export const CUSTOM_FIELD_NODE_TYPE = 'Connection';
 
-export function keyBuilder(ast: LuvioSelectionCustomFieldNode) {
+export function keyBuilder(ast: LuvioSelectionCustomFieldNode, variables: GraphQLVariables) {
     const { arguments: args, name } = ast;
     if (args === undefined) {
         return `${adapterApiFamily}::${CUSTOM_FIELD_NODE_TYPE}::${name}()`;
     }
-    const serialized = renderArguments(args, {});
+    const serialized = renderArguments(args, variables);
     return `${adapterApiFamily}::${CUSTOM_FIELD_NODE_TYPE}::${name}(${serialized})`;
 }
 
-function selectEdges(builder: Reader<any>, ast: LuvioFieldNode, links: StoreLink[]) {
+function selectEdges(
+    builder: Reader<any>,
+    ast: LuvioFieldNode,
+    links: StoreLink[],
+    variables: GraphQLVariables
+) {
     const sink: any[] = [];
     for (let i = 0, len = links.length; i < len; i += 1) {
         builder.enterPath(i);
         const link = links[i];
-        const resolved = followLink(ast, builder, link);
+        const resolved = followLink(ast, builder, link, variables);
         builder.assignNonScalar(sink, i, resolved);
         builder.exitPath();
     }
     return sink;
 }
 
-export const createRead: (ast: LuvioSelectionCustomFieldNode) => ReaderFragment['read'] = (
-    ast: LuvioSelectionCustomFieldNode
-) => {
+export const createRead: (
+    ast: LuvioSelectionCustomFieldNode,
+    variables: GraphQLVariables
+) => ReaderFragment['read'] = (ast: LuvioSelectionCustomFieldNode, variables: GraphQLVariables) => {
     const selections = ast.luvioSelections === undefined ? [] : ast.luvioSelections;
     return (source: any, builder: Reader<any>) => {
         const sink = {};
@@ -65,7 +72,7 @@ export const createRead: (ast: LuvioSelectionCustomFieldNode) => ReaderFragment[
                 readScalarFieldSelection(builder, source, name, sink);
                 continue;
             }
-            const readPropertyName = serializeField(sel);
+            const readPropertyName = renderField(sel, variables);
             builder.enterPath(readPropertyName);
             const edges = resolveLink<StoreLink[]>(builder, source[readPropertyName]);
             if (edges === undefined) {
@@ -73,7 +80,7 @@ export const createRead: (ast: LuvioSelectionCustomFieldNode) => ReaderFragment[
                 break;
             }
             if (readPropertyName === PROPERTY_NAME_EDGES) {
-                const data = selectEdges(builder, sel, edges.value);
+                const data = selectEdges(builder, sel, edges.value, variables);
                 builder.assignNonScalar(sink, readPropertyName, data);
             } else {
                 throw new Error('Not supported');
@@ -91,7 +98,8 @@ function ingestConnectionProperty(
     path: IngestPath,
     luvio: Luvio,
     store: Store,
-    timestamp: number
+    timestamp: number,
+    variables: GraphQLVariables
 ) {
     const propertyName = sel.name as keyof GqlConnection;
 
@@ -103,7 +111,8 @@ function ingestConnectionProperty(
                 path,
                 luvio,
                 store,
-                timestamp
+                timestamp,
+                variables
             );
     }
 }
@@ -114,7 +123,8 @@ function ingestEdgeItem(
     path: IngestPath,
     luvio: Luvio,
     store: Store,
-    timestamp: number
+    timestamp: number,
+    variables: GraphQLVariables
 ): StoreLink {
     const { luvioSelections } = sel;
     const selections = luvioSelections === undefined ? [] : luvioSelections;
@@ -126,9 +136,9 @@ function ingestEdgeItem(
         if (sel.kind === 'ScalarFieldSelection') {
             throw new Error('Unsupported scalar field on Connection');
         }
-        const propertyName = renderField(sel, {}) as keyof GqlEdge;
+        const propertyName = renderField(sel, variables) as keyof GqlEdge;
         const item = data[propertyName];
-        data[propertyName] = genericCreateIngest(sel)(
+        data[propertyName] = genericCreateIngest(sel, variables)(
             item,
             {
                 parent: {
@@ -159,7 +169,8 @@ function ingestConnectionEdges(
     path: IngestPath,
     luvio: Luvio,
     store: Store,
-    timestamp: number
+    timestamp: number,
+    variables: GraphQLVariables
 ): StoreLink {
     const key = path.fullPath;
 
@@ -179,7 +190,8 @@ function ingestConnectionEdges(
             },
             luvio,
             store,
-            timestamp
+            timestamp,
+            variables
         ) as any;
     }
 
@@ -190,9 +202,14 @@ function ingestConnectionEdges(
     };
 }
 
-export const createIngest: (ast: LuvioSelectionCustomFieldNode, key: string) => ResourceIngest = (
+export const createIngest: (
     ast: LuvioSelectionCustomFieldNode,
-    key: string
+    key: string,
+    variables: GraphQLVariables
+) => ResourceIngest = (
+    ast: LuvioSelectionCustomFieldNode,
+    key: string,
+    variables: GraphQLVariables
 ) => {
     const { luvioSelections } = ast;
     const selections = luvioSelections === undefined ? [] : luvioSelections;
@@ -228,7 +245,8 @@ export const createIngest: (ast: LuvioSelectionCustomFieldNode, key: string) => 
                 },
                 luvio,
                 store,
-                timestamp
+                timestamp,
+                variables
             ) as any;
         }
 

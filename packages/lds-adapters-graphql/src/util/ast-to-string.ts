@@ -27,8 +27,8 @@ import {
     RECORD_DEFAULT_FIELD_VALUES,
 } from '../custom/record';
 import { getLuvioFieldNodeSelection } from '../type/Selection';
+import { ObjectKeys } from './language';
 
-const { keys } = Object;
 const KIND_OBJECT_FIELD_SELECTION = 'ObjectFieldSelection';
 
 export function serializeValueNode(valueDefinition: LuvioValueNode) {
@@ -84,7 +84,7 @@ function serializeStringValueNode(literalValueNode: StringValueNode) {
 export function serializeObjectValueNode(objectValueDefinition: LuvioObjectValueNode): string {
     const { fields } = objectValueDefinition;
     let str = [];
-    const fieldKeys = keys(fields);
+    const fieldKeys = ObjectKeys(fields);
     for (let i = 0, len = fieldKeys.length; i < len; i += 1) {
         const fieldKey = fieldKeys[i];
         str.push(`${fieldKey}: ${serializeValueNode(fields[fieldKey])}`);

@@ -3,6 +3,7 @@ import { LuvioSelectionNode } from '@salesforce/lds-graphql-parser';
 import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
 import { createRead } from '../util/read';
 import { StoreResolveResult } from '@luvio/engine/dist/es/es2018/reader/resolve';
+import { GraphQLVariables } from './Variable';
 
 export enum PropertyLookupResultState {
     Missing,
@@ -99,14 +100,19 @@ export function resolveLink<D>(
     return resolveKey(builder, __ref);
 }
 
-export function followLink(sel: LuvioSelectionNode, builder: Reader<any>, storeLink: StoreLink) {
+export function followLink(
+    sel: LuvioSelectionNode,
+    builder: Reader<any>,
+    storeLink: StoreLink,
+    variables: GraphQLVariables
+) {
     const linkState = resolveLink(builder, storeLink);
     if (linkState === undefined) {
         return;
     }
 
     const { value } = linkState;
-    return createRead(sel)(value, builder);
+    return createRead(sel, variables)(value, builder);
 }
 
 export function getLuvioFieldNodeSelection(ast: LuvioSelectionNode): LuvioFieldNode {

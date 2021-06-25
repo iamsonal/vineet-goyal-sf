@@ -699,7 +699,7 @@ describe('GQL Record', () => {
                 })
             );
 
-            createIngest(selection)(
+            createIngest(selection, {})(
                 data,
                 {
                     parent: null,
@@ -829,7 +829,7 @@ describe('GQL Record', () => {
                 })
             );
 
-            createIngest(selection)(
+            createIngest(selection, {})(
                 gqlRecord,
                 {
                     parent: null,
@@ -950,7 +950,7 @@ describe('GQL Record', () => {
                 })
             );
 
-            createIngest(ast)(
+            createIngest(ast, {})(
                 gqlRecord,
                 {
                     parent: null,
@@ -1075,7 +1075,7 @@ describe('GQL Record', () => {
                 })
             );
 
-            createIngest(selection)(
+            createIngest(selection, {})(
                 data,
                 {
                     parent: null,
@@ -1208,7 +1208,7 @@ describe('GQL Record', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(selection),
+                    read: createRead(selection, {}),
                 },
                 variables: {},
             });
@@ -1348,7 +1348,7 @@ describe('GQL Record', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(selection),
+                    read: createRead(selection, {}),
                 },
                 variables: {},
             });
@@ -1488,7 +1488,7 @@ describe('GQL Record', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(selection),
+                    read: createRead(selection, {}),
                 },
                 variables: {},
             });
@@ -1631,7 +1631,7 @@ describe('GQL Record', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(selection),
+                    read: createRead(selection, {}),
                 },
                 variables: {},
             });
@@ -1742,7 +1742,7 @@ describe('GQL Record', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(selection),
+                    read: createRead(selection, {}),
                 },
                 variables: {},
             });
@@ -1817,7 +1817,7 @@ describe('GQL Record', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(selection),
+                    read: createRead(selection, {}),
                 },
                 variables: {},
             });
@@ -1892,7 +1892,7 @@ describe('GQL Record', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(selection),
+                    read: createRead(selection, {}),
                 },
                 variables: {},
             });
@@ -1962,7 +1962,7 @@ describe('GQL Record', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(selection),
+                    read: createRead(selection, {}),
                 },
                 variables: {},
             }) as FulfilledSnapshot<any, any>;
@@ -2062,7 +2062,7 @@ describe('GQL Record', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(selection),
+                    read: createRead(selection, {}),
                 },
                 variables: {},
             }) as FulfilledSnapshot<any, any>;
@@ -2145,7 +2145,7 @@ describe('GQL Record', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(selection),
+                    read: createRead(selection, {}),
                 },
                 variables: {},
             }) as FulfilledSnapshot<any, any>;

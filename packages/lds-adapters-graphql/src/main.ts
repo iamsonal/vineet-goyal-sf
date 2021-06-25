@@ -11,9 +11,11 @@ import {
 import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
 import { astToString } from './util/ast-to-string';
 import { GraphQL, createIngest, createRead } from './type/Document';
+import { GraphQLVariables } from './type/Variable';
+import { ArrayIsArray, ObjectFreeze, ObjectKeys } from './util/language';
 interface GraphQlConfig {
     query: LuvioDocumentNode;
-    variables: Record<string, string | number | boolean>;
+    variables: GraphQLVariables;
 }
 
 export const adapterName = 'graphQL';
@@ -29,17 +31,14 @@ function buildSnapshotRefresh(
     };
 }
 
-function createFragment(query: LuvioDocumentNode): ReaderFragment {
+function createFragment(query: LuvioDocumentNode, variables: GraphQLVariables): ReaderFragment {
     return {
         kind: 'Fragment',
         synthetic: false,
         reader: true,
-        read: createRead(query),
+        read: createRead(query, variables),
     };
 }
-
-const { isArray: ArrayIsArray } = Array;
-const { keys: ObjectKeys, freeze: ObjectFreeze } = Object;
 
 function deepFreeze(value: unknown) {
     // No need to freeze primitives
@@ -67,7 +66,7 @@ function onResourceResponseSuccess(
     response: FetchResponse<GraphQL>,
     fragment: ReaderFragment
 ) {
-    const { query } = config;
+    const { query, variables } = config;
     const { body } = response;
     if (body.errors.length > 0) {
         return luvio.storeLookup({
@@ -91,7 +90,7 @@ function onResourceResponseSuccess(
         });
     }
 
-    const ingest = createIngest(query);
+    const ingest = createIngest(query, variables);
     luvio.storeIngest('graphql', ingest, response.body.data);
 
     const snapshot = luvio.storeLookup(
@@ -140,9 +139,9 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQlConfig, unknown> = (lu
     ): Promise<Snapshot<unknown, any>> | Snapshot<unknown, any> | null {
         const validatedConfig = untrustedConfig as GraphQlConfig;
 
-        const { query } = validatedConfig;
+        const { query, variables } = validatedConfig;
 
-        const fragment: ReaderFragment = createFragment(query);
+        const fragment: ReaderFragment = createFragment(query, variables);
 
         const snapshot = luvio.storeLookup(
             {

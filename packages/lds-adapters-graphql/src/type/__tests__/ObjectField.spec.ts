@@ -59,7 +59,7 @@ describe('ObjectField', () => {
                     kind: 'Fragment',
                     reader: true,
                     synthetic: false,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             };
@@ -115,7 +115,7 @@ describe('ObjectField', () => {
                     kind: 'Fragment',
                     reader: true,
                     synthetic: false,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             };
@@ -165,7 +165,7 @@ describe('ObjectField', () => {
                     kind: 'Fragment',
                     reader: true,
                     synthetic: false,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             };
@@ -277,7 +277,7 @@ describe('ObjectField', () => {
                 })
             );
 
-            createIngest(ast)(
+            createIngest(ast, {})(
                 data,
                 {
                     parent: null,
@@ -364,7 +364,7 @@ describe('ObjectField', () => {
                 })
             );
 
-            createIngest(ast)(
+            createIngest(ast, {})(
                 data,
                 {
                     parent: null,
@@ -453,7 +453,7 @@ describe('ObjectField', () => {
                 })
             );
 
-            createIngest(fooAst)(
+            createIngest(fooAst, {})(
                 firstData,
                 {
                     parent: null,
@@ -465,7 +465,7 @@ describe('ObjectField', () => {
                 0
             );
 
-            createIngest(barAst)(
+            createIngest(barAst, {})(
                 secondData,
                 {
                     parent: null,
@@ -519,7 +519,7 @@ describe('ObjectField', () => {
                 })
             );
 
-            createIngest(fooAst)(
+            createIngest(fooAst, {})(
                 firstData,
                 {
                     parent: null,
@@ -531,7 +531,7 @@ describe('ObjectField', () => {
                 0
             );
 
-            createIngest(fooAst)(
+            createIngest(fooAst, {})(
                 secondData,
                 {
                     parent: null,
@@ -600,7 +600,7 @@ describe('ObjectField', () => {
                 })
             );
 
-            createIngest(fooAst)(
+            createIngest(fooAst, {})(
                 firstData,
                 {
                     parent: null,
@@ -612,7 +612,7 @@ describe('ObjectField', () => {
                 0
             );
 
-            createIngest(aliasedFooAst)(
+            createIngest(aliasedFooAst, {})(
                 secondData,
                 {
                     parent: null,
@@ -676,7 +676,7 @@ describe('ObjectField', () => {
                 })
             );
 
-            createIngest(ast)(
+            createIngest(ast, {})(
                 data,
                 {
                     parent: null,
@@ -757,7 +757,7 @@ describe('ObjectField', () => {
                     kind: 'Fragment',
                     reader: true,
                     synthetic: false,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             };
@@ -814,7 +814,7 @@ describe('ObjectField', () => {
                     kind: 'Fragment',
                     reader: true,
                     synthetic: false,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             };
@@ -865,7 +865,7 @@ describe('ObjectField', () => {
                     kind: 'Fragment',
                     reader: true,
                     synthetic: false,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             };
@@ -919,7 +919,7 @@ describe('ObjectField', () => {
                     kind: 'Fragment',
                     reader: true,
                     synthetic: false,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             };
@@ -967,7 +967,7 @@ describe('ObjectField', () => {
                     kind: 'Fragment',
                     reader: true,
                     synthetic: false,
-                    read: createRead(ast),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             };

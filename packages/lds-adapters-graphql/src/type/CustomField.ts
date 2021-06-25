@@ -6,16 +6,18 @@ import {
     createIngest as connectionCreateIngest,
     CUSTOM_FIELD_NODE_TYPE as CUSTOM_FIELD_NODE_TYPE_CONNECTION,
 } from '../custom/connection';
+import { GraphQLVariables } from './Variable';
 
-export const createIngest: (ast: LuvioSelectionCustomFieldNode) => ResourceIngest = (
-    ast: LuvioSelectionCustomFieldNode
-) => {
+export const createIngest: (
+    ast: LuvioSelectionCustomFieldNode,
+    variables: GraphQLVariables
+) => ResourceIngest = (ast: LuvioSelectionCustomFieldNode, variables: GraphQLVariables) => {
     const { type } = ast;
     switch (type) {
         case CUSTOM_FIELD_NODE_TYPE:
-            return recordCreateIngest(ast);
+            return recordCreateIngest(ast, variables);
         case CUSTOM_FIELD_NODE_TYPE_CONNECTION:
-            return connectionCreateIngest(ast, connectionKeyBuilder(ast));
+            return connectionCreateIngest(ast, connectionKeyBuilder(ast, variables), variables);
     }
 
     throw new Error(`Unsupported type: "${type}"`);

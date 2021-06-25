@@ -2480,4 +2480,251 @@ describe('graphql', () => {
             expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
         });
     });
+
+    describe('variables', () => {
+        it('hits network when no data is in the cache', async () => {
+            const ast = parseQuery(/* GraphQL */ `
+                query ($accountName: String = "Account2", $Id: [ID]) {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: $accountName }, Id: { in: $Id } })
+                                @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQuery = /* GraphQL */ `
+                query ($accountName: String = "Account2", $Id: [ID]) {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: $accountName }, Id: { in: $Id } }) {
+                                edges {
+                                    node {
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
+                }
+            `;
+
+            const networkData = getMock('RecordQuery-Account-fields-Name');
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            Account: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Name: {
+                                                value: 'Account1',
+                                                displayValue: null,
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {
+                        accountName: 'Account1',
+                        Id: ['001RM000004uuhnYAA', '001RM000004uuhsYAA'],
+                    },
+                },
+                networkData
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {
+                    accountName: 'Account1',
+                    Id: ['001RM000004uuhnYAA', '001RM000004uuhsYAA'],
+                },
+            };
+
+            const snapshot = await graphQLImperative(graphqlConfig);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+        });
+
+        it('should not hit network when all data is in cache', async () => {
+            const ast = parseQuery(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            Account(
+                                where: {
+                                    Name: { like: "Account1" }
+                                    Id: { in: ["001RM000004uuhtYAA", "001RM000004uuhsYAA"] }
+                                }
+                            ) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQuery = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            Account(
+                                where: {
+                                    Name: { like: "Account1" }
+                                    Id: { in: ["001RM000004uuhtYAA", "001RM000004uuhsYAA"] }
+                                }
+                            ) {
+                                edges {
+                                    node {
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
+                }
+            `;
+
+            const networkData = getMock('RecordQuery-Account-fields-Name');
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            Account: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Name: {
+                                                value: 'Account1',
+                                                displayValue: null,
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                networkData
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const snapshot = await graphQLImperative(graphqlConfig);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+
+            const secondAst = parseQuery(/* GraphQL */ `
+                query ($accountName: String = "Account2", $Id: [ID]) {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: $accountName }, Id: { in: $Id } })
+                                @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const secondGraphqlConfig = {
+                query: secondAst,
+                variables: {
+                    accountName: 'Account1',
+                    Id: ['001RM000004uuhtYAA', '001RM000004uuhsYAA'],
+                },
+            };
+            const secondSnapshot = graphQLImperative(secondGraphqlConfig);
+            expect(secondSnapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+        });
+    });
 });

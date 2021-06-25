@@ -1,10 +1,4 @@
-import {
-    ResourceRequest,
-    ResourceResponse,
-    UnfulfilledSnapshot,
-    Environment,
-    HttpStatusCode,
-} from '@luvio/engine';
+import { ResourceRequest, ResourceResponse, Environment, HttpStatusCode } from '@luvio/engine';
 import { DurableEnvironment } from '@luvio/environments';
 import { keyBuilderRecord, BatchRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
@@ -279,52 +273,7 @@ export function getRecordsDraftEnvironment(
         ) as any;
     };
 
-    const resolveUnfulfilledSnapshot: DurableEnvironment['resolveUnfulfilledSnapshot'] = function <
-        T
-    >(
-        resourceRequest: ResourceRequest,
-        snapshot: UnfulfilledSnapshot<T, unknown>
-    ): Promise<ResourceResponse<T>> {
-        if (isRequestForGetRecords(resourceRequest) === false) {
-            // only override requests to getRecords endpoint
-            return env.resolveUnfulfilledSnapshot(resourceRequest, snapshot);
-        }
-
-        return handleGetRecordsRequest(
-            resourceRequest,
-            env,
-            durableStore,
-            isDraftId,
-            (request: ResourceRequest, removedDraftIds: string[]) => {
-                return env
-                    .resolveUnfulfilledSnapshot(request, snapshot)
-                    .then((response: ResourceResponse<any>) => {
-                        // check if any of the draft ids have been ingested since the network call was dispatched.
-                        // if so, refetch including all ids
-                        if (hasIdsChanged(removedDraftIds, env)) {
-                            return resolveUnfulfilledSnapshot(resourceRequest, snapshot);
-                        }
-
-                        if (response.headers === undefined || removedDraftIds.length === 0) {
-                            // response is from durable store and contains drafts already or there's no drafts to apply
-                            return response;
-                        }
-
-                        // response is from network containing only canonical ids, attach drafts to it
-                        return applyDraftsToBatchResponse(
-                            resourceRequest,
-                            response,
-                            removedDraftIds,
-                            env,
-                            durableStore
-                        );
-                    });
-            }
-        ) as any;
-    };
-
     return ObjectCreate(env, {
         dispatchResourceRequest: { value: dispatchResourceRequest },
-        resolveUnfulfilledSnapshot: { value: resolveUnfulfilledSnapshot },
     });
 }

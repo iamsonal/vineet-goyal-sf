@@ -1,0 +1,72 @@
+{
+    "apiName": "Account",
+    "childRelationships": {},
+    "eTag": "21e55928d8a8126831dc9e38b6903c6b",
+    "fields": {
+        "CreatedBy": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "f910c7f699a1e3de2ca7f66b19e40d75",
+                "fields": {
+                    "Id": { "displayValue": null, "value": "005R0000000WoyMIAS" },
+                    "Name": { "displayValue": null, "value": "Admin User" }
+                },
+                "id": "005R0000000WoyMIAS",
+                "lastModifiedById": "005R0000000WoyMIAS",
+                "lastModifiedDate": "2019-12-03T00:11:59.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-10-29T22:08:15.000Z",
+                "weakEtag": 1604009295000
+            }
+        },
+        "LastModifiedBy": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "f910c7f699a1e3de2ca7f66b19e40d75",
+                "fields": {
+                    "Id": { "displayValue": null, "value": "005R0000000WoyMIAS" },
+                    "Name": { "displayValue": null, "value": "Admin User" }
+                },
+                "id": "005R0000000WoyMIAS",
+                "lastModifiedById": "005R0000000WoyMIAS",
+                "lastModifiedDate": "2019-12-03T00:11:59.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-10-29T22:08:15.000Z",
+                "weakEtag": 1604009295000
+            }
+        },
+        "Name": { "displayValue": null, "value": "Acme 123" },
+        "Owner": {
+            "displayValue": "Admin User",
+            "value": {
+                "apiName": "User",
+                "childRelationships": {},
+                "eTag": "f910c7f699a1e3de2ca7f66b19e40d75",
+                "fields": {
+                    "Id": { "displayValue": null, "value": "005R0000000WoyMIAS" },
+                    "Name": { "displayValue": null, "value": "Admin User" }
+                },
+                "id": "005R0000000WoyMIAS",
+                "lastModifiedById": "005R0000000WoyMIAS",
+                "lastModifiedDate": "2019-12-03T00:11:59.000Z",
+                "recordTypeId": null,
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-10-29T22:08:15.000Z",
+                "weakEtag": 1604009295000
+            }
+        }
+    },
+    "id": "001R0000005NckZIAS",
+    "lastModifiedById": "005R0000000WoyMIAS",
+    "lastModifiedDate": "2020-10-30T21:27:38.000Z",
+    "recordTypeId": "012000000000000AAA",
+    "recordTypeInfo": null,
+    "systemModstamp": "2020-10-30T21:27:38.000Z",
+    "weakEtag": 1604093258000
+}

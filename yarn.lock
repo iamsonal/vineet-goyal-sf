@@ -3613,9 +3613,16 @@
     npmlog "^4.1.2"
     write-file-atomic "^2.3.0"
 
+"@luvio/adapter-test-library@0.39.0":
+  version "0.39.0"
+  resolved "https://registry.yarnpkg.com/@luvio/adapter-test-library/-/adapter-test-library-0.39.0.tgz#625d6fafeaefd596e6bc940561411ab0bcfae0e0"
+  integrity sha512-/tXGfYpd7D1iaeu7LaQvL127ILNxH2HeJUcBkvBLvrjCGwiGZtnxB2w1AXfTc+ZCDw+HNDT/rXneArWvdFiIMA==
+  dependencies:
+    sinon "^7.5.0"
+
 "@luvio/adapter-test-library@0.40.0":
   version "0.40.0"
-  resolved "https://registry.npmjs.org/@luvio/adapter-test-library/-/adapter-test-library-0.40.0.tgz#2ee17fbe33d07a744021e8486e8471785e8ad608"
+  resolved "https://registry.yarnpkg.com/@luvio/adapter-test-library/-/adapter-test-library-0.40.0.tgz#2ee17fbe33d07a744021e8486e8471785e8ad608"
   integrity sha512-f5UnegUWERH7zKC0qFCs+dwIZwls0F3iNnti+olizJH+4e8mXHPN6tYU8PJeucFUaW96lQmWYcRs/ZAC3mcIxQ==
   dependencies:
     sinon "^7.5.0"
@@ -3640,14 +3647,26 @@
   dependencies:
     amf-client-js "4.2.0"
 
+"@luvio/engine@0.39.0":
+  version "0.39.0"
+  resolved "https://registry.yarnpkg.com/@luvio/engine/-/engine-0.39.0.tgz#d8498ce3d187e503585398c17bab4c5d7b978f82"
+  integrity sha512-pXg35HWqeNSsDUBjNCJhvoLTYCJt2gbJSyUA0qz8SNUHQteVCAuFQ+QP2GQmRe3Rb6BkDxfwM3u501EyFRN/cQ==
+
 "@luvio/engine@0.40.0":
   version "0.40.0"
-  resolved "https://registry.npmjs.org/@luvio/engine/-/engine-0.40.0.tgz#60989ab9e7fd5ecfdb70d15fd75f875af6deb125"
+  resolved "https://registry.yarnpkg.com/@luvio/engine/-/engine-0.40.0.tgz#60989ab9e7fd5ecfdb70d15fd75f875af6deb125"
   integrity sha512-EacrpVeKg7olSrhJOTD8En9LaR0YWlWQfcp80JJSvNXwia319N2GijcxQhIeNNXg2Vg2W/RloNyg4CqLwRfHyw==
+
+"@luvio/environments@0.39.0":
+  version "0.39.0"
+  resolved "https://registry.yarnpkg.com/@luvio/environments/-/environments-0.39.0.tgz#bccb25aaf9d147b507456792bead6ffe9d9df254"
+  integrity sha512-kvRI2W5GeNSDx/YfPRZhLSdMHTi47c9I6UVyFtHG7nRccqkGd0sTAnFwxuOTg7xS9zB2AfCdgmpuXv70kD1wDQ==
+  dependencies:
+    "@luvio/engine" "0.39.0"
 
 "@luvio/environments@0.40.0":
   version "0.40.0"
-  resolved "https://registry.npmjs.org/@luvio/environments/-/environments-0.40.0.tgz#b63b6d0973df05db7a7e1226b9630c1e5f2e5729"
+  resolved "https://registry.yarnpkg.com/@luvio/environments/-/environments-0.40.0.tgz#b63b6d0973df05db7a7e1226b9630c1e5f2e5729"
   integrity sha512-/LHzWwZu8dTFNWslD7L7L6esVKZxUSgNaVf+Vfivl8SQuv5aMGWWfbymM5RMyCZcNvgBA/214ANQYl1cNEGvQg==
   dependencies:
     "@luvio/engine" "0.40.0"
@@ -3802,6 +3821,13 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
+
+"@oat-sa/rollup-plugin-wildcard-external@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@oat-sa/rollup-plugin-wildcard-external/-/rollup-plugin-wildcard-external-0.1.0.tgz#3388bb5124a07bb09944f75a1d494ff9403bf4fe"
+  integrity sha512-bYSoeOwpjTe7mdMhNYD9fmH9UkzIkebR5NjIoh8u+GGs39zn1oEP4plsKiAvMS6+XmAzZgIw1Y4zZ1RtLVUEGg==
+  dependencies:
+    minimatch "^3.0.4"
 
 "@oclif/command@^1.5.13", "@oclif/command@^1.5.19", "@oclif/command@^1.5.20", "@oclif/command@^1.6.1":
   version "1.8.0"
@@ -3996,6 +4022,13 @@
   integrity sha512-EKQRFZU/oOfUlqk9ntLIE5UO/bcOx8exFpdXGBciJP90f05me3mza0sacIpqVqmiIQP3nJsBjnZHMmtijE5XwQ==
   dependencies:
     "@octokit/openapi-types" "^5.2.2"
+
+"@rollup/plugin-alias@^3.1.1":
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/@rollup/plugin-alias/-/plugin-alias-3.1.2.tgz#c585b05be4a7782d269c69d13def56f44e417772"
+  integrity sha512-wzDnQ6v7CcoRzS0qVwFPrFdYA4Qlr+ookA217Y2Z3DPZE1R8jrFNM3jvGgOf6o6DMjbnQIn5lCIJgHPe1Bt3uw==
+  dependencies:
+    slash "^3.0.0"
 
 "@rollup/plugin-replace@~2.3.3":
   version "2.3.4"

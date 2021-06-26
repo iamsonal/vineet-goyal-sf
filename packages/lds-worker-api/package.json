@@ -1,0 +1,31 @@
+{
+    "name": "@mobileplatform/lds-worker-api",
+    "version": "1.22.0",
+    "description": "",
+    "license": "MIT",
+    "main": "dist/standalone/umd/lds-worker-api.js",
+    "module": "dist/standalone/es/lds-worker-api.js",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "prepare": "yarn build",
+        "build": "rollup --config rollup.config.js",
+        "test:unit": "jest",
+        "clean": "rm -rf dist",
+        "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-runtime-mobile"
+    },
+    "devDependencies": {
+        "@luvio/adapter-test-library": "0.39.0",
+        "@luvio/engine": "0.39.0",
+        "@luvio/environments": "0.39.0",
+        "@mobileplatform/nimbus-plugin-lds": "1.22.0",
+        "@oat-sa/rollup-plugin-wildcard-external": "^0.1.0",
+        "@salesforce/lds-adapters-graphql": "1.22.0",
+        "@salesforce/lds-adapters-uiapi": "1.22.0",
+        "@salesforce/lds-drafts": "1.22.0",
+        "@salesforce/lds-graphql-parser": "1.22.0",
+        "@salesforce/lds-runtime-mobile": "1.22.0",
+        "nimbus-types": "^2.0.0-alpha1"
+    }
+}

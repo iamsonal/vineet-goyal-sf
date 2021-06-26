@@ -25,6 +25,10 @@ const REPO_LDS_ENGINE_RUNTIME_MOBILE_PATH = path.resolve(
     REPO_ROOT,
     'packages/lds-runtime-mobile/dist/ldsEngineRuntimeMobile.js'
 );
+const REPO_LDS_WORKER_API_PATH = path.resolve(
+    REPO_ROOT,
+    'packages/lds-worker-api/dist/sfdc/es/ldsWorkerApi.js'
+);
 const REPO_LDS_NETWORK_PATH = path.resolve(
     REPO_ROOT,
     'packages/lds-network-aura/dist/ldsNetwork.js'
@@ -94,6 +98,13 @@ const CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH = path.resolve(
     'app',
     CORE_BRANCH,
     'core/ui-bridge-components/modules/native/ldsEngineMobile/ldsEngineMobile.js'
+);
+
+const CORE_LDS_WORKER_API_PATH = path.resolve(
+    BLT_HOME,
+    'app',
+    CORE_BRANCH,
+    'core/ui-bridge-components/modules/native/ldsWorkerApi/ldsWorkerApi.js'
 );
 
 const CORE_LDS_NETWORK_PATH = path.resolve(
@@ -327,6 +338,7 @@ function deployAdapterPackage() {
     checkCore(CORE_LDS_ENGINE_RUNTIME_AURA_PATH);
     checkCore(CORE_LDS_ENGINE_CREATOR_RUNTIME_AURA_PATH);
     checkCore(CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH);
+    checkCore(CORE_LDS_WORKER_API_PATH);
     checkCore(CORE_LDS_NETWORK_PATH);
     checkCore(CORE_LDS_STORAGE_PATH);
     checkCore(CORE_LDS_INSTRUMENTATION_PATH);
@@ -359,6 +371,7 @@ function deployAdapterPackage() {
         CORE_LDS_ENGINE_CREATOR_RUNTIME_AURA_PATH
     );
     copyArtifacts(REPO_LDS_ENGINE_RUNTIME_MOBILE_PATH, CORE_LDS_ENGINE_RUNTIME_MOBILE_PATH);
+    copyArtifacts(REPO_LDS_WORKER_API_PATH, CORE_LDS_WORKER_API_PATH);
     copyArtifacts(REPO_LDS_NETWORK_PATH, CORE_LDS_NETWORK_PATH);
     copyArtifacts(REPO_LDS_STORAGE_PATH, CORE_LDS_STORAGE_PATH);
     copyArtifacts(REPO_LDS_INSTRUMENTATION_PATH, CORE_LDS_INSTRUMENTATION_PATH);

@@ -15,6 +15,7 @@ export const createRead: (
 ) => ReaderFragment['read'] = (ast: LuvioDocumentNode, variables: GraphQLVariables) => {
     const definitions = ast.definitions === undefined ? [] : ast.definitions;
     return (source: any, builder: Reader<any>) => {
+        builder.enterPath('data');
         let sink = {};
         for (let i = 0, len = definitions.length; i < len; i += 1) {
             const def = definitions[i];
@@ -31,7 +32,10 @@ export const createRead: (
 
         const gqlData = {};
         builder.assignNonScalar(gqlData, 'data', sink);
+        builder.exitPath();
+        builder.enterPath('errors');
         builder.assignNonScalar(gqlData, 'errors', []);
+        builder.exitPath();
 
         return gqlData;
     };

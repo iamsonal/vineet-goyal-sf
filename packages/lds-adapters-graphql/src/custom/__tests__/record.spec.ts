@@ -2160,4 +2160,92 @@ describe('GQL Record', () => {
             expect(spy).toHaveBeenCalledTimes(1);
         });
     });
+
+    describe('publishing records that have not changed', () => {
+        it('should not ingest a RecordRepresentation that is unchanged', () => {
+            const selection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'node',
+                type: 'Record',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'Name',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'displayValue',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const data = {
+                Id: '001RM000004uuhnYAA',
+                WeakEtag: 1615493739000,
+                Name: {
+                    value: 'Account1',
+                    displayValue: null,
+                },
+                __typename: 'Account',
+                ApiName: 'Account',
+                DisplayValue: 'Account1',
+                SystemModstamp: {
+                    value: '2021-03-11T20:15:39.000Z',
+                },
+                LastModifiedById: {
+                    value: '005RM000002492xYAA',
+                },
+                LastModifiedDate: {
+                    value: '2021-03-11T20:15:39.000Z',
+                },
+                RecordTypeId: {
+                    value: '012RM000000E79WYAS',
+                },
+            };
+
+            const store = new Store();
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            createIngest(selection)(
+                data,
+                {
+                    parent: null,
+                    propertyName: null,
+                    fullPath: '',
+                    state: undefined,
+                },
+                luvio,
+                store,
+                0
+            );
+
+            luvio.storeBroadcast();
+            jest.spyOn(store, 'publish');
+
+            createIngest(selection)(
+                data,
+                {
+                    parent: null,
+                    propertyName: null,
+                    fullPath: '',
+                    state: undefined,
+                },
+                luvio,
+                store,
+                0
+            );
+
+            expect(store.publish).not.toHaveBeenCalled();
+        });
+    });
 });

@@ -412,6 +412,7 @@ describe('GQL Connection', () => {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
+                    state: undefined,
                 },
                 luvio,
                 store,
@@ -538,6 +539,7 @@ describe('GQL Connection', () => {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
+                    state: undefined,
                 },
                 luvio,
                 store,
@@ -812,6 +814,7 @@ describe('GQL Connection', () => {
                     parent: null,
                     propertyName: null,
                     fullPath: '',
+                    state: undefined,
                 },
                 luvio,
                 store,
@@ -986,18 +989,18 @@ describe('GQL Connection', () => {
             );
 
             expect(store.records).toEqual({
-                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0__Name': {
+                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__node__Name': {
                     value: 'Opp1',
                     displayValue: null,
                 },
-                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0': {
+                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__node': {
                     Name: {
-                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0__Name',
+                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__node__Name',
                     },
                 },
                 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0': {
                     node: {
-                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0',
+                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__node',
                     },
                 },
                 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges': [
@@ -1012,6 +1015,131 @@ describe('GQL Connection', () => {
                     },
                 },
             });
+        });
+
+        it('should not ingest connection data with no changes', () => {
+            const selection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'Account',
+                type: 'Connection',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'edges',
+                        luvioSelections: [
+                            {
+                                kind: 'CustomFieldSelection',
+                                name: 'node',
+                                type: 'Record',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'Name',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'value',
+                                            },
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'displayValue',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+                arguments: [
+                    {
+                        kind: 'Argument',
+                        name: 'where',
+                        value: {
+                            kind: 'ObjectValue',
+                            fields: {
+                                Name: {
+                                    kind: 'ObjectValue',
+                                    fields: {
+                                        like: {
+                                            kind: 'StringValue',
+                                            value: 'Account1',
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                ],
+            };
+
+            const data = {
+                edges: [
+                    {
+                        node: {
+                            Id: '001RM000004uuhnYAA',
+                            WeakEtag: 1615493739000,
+                            Name: {
+                                value: 'Account1',
+                                displayValue: null,
+                            },
+                            __typename: 'Account',
+                            ApiName: 'Account',
+                            DisplayValue: 'Account1',
+                            SystemModstamp: {
+                                value: '2021-03-11T20:15:39.000Z',
+                            },
+                            LastModifiedById: {
+                                value: '005RM000002492xYAA',
+                            },
+                            LastModifiedDate: {
+                                value: '2021-03-11T20:15:39.000Z',
+                            },
+                            RecordTypeId: {
+                                value: '012RM000000E79WYAS',
+                            },
+                        },
+                    },
+                ],
+            };
+
+            const store = new Store();
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            createIngest(selection, keyBuilder(selection))(
+                JSON.parse(JSON.stringify(data)),
+                {
+                    parent: null,
+                    propertyName: null,
+                    fullPath: '',
+                    state: undefined,
+                },
+                luvio,
+                store,
+                0
+            );
+
+            luvio.storeBroadcast();
+            jest.spyOn(luvio, 'storePublish');
+
+            createIngest(selection, keyBuilder(selection))(
+                data,
+                {
+                    parent: null,
+                    propertyName: null,
+                    fullPath: '',
+                    state: undefined,
+                },
+                luvio,
+                store,
+                0
+            );
+
+            expect(luvio.storePublish).not.toHaveBeenCalled();
         });
     });
 });

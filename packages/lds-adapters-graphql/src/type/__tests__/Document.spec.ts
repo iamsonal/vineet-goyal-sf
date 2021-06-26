@@ -1214,7 +1214,7 @@ describe('Document', () => {
 
             expect(snap.state).toBe('Unfulfilled');
             expect(snap.missingPaths).toEqual({
-                'uiapi.query.Account.edges.0.node': true,
+                'data.uiapi.query.Account.edges.0.node': true,
             });
             expect(snap.missingLinks).toEqual({
                 missingRef: true,
@@ -1329,7 +1329,7 @@ describe('Document', () => {
 
             expect(snap.state).toBe('Unfulfilled');
             expect(snap.missingPaths).toEqual({
-                uiapi: true,
+                'data.uiapi': true,
             });
             expect(snap.missingLinks).toEqual({
                 fullpath__uiapi: true,

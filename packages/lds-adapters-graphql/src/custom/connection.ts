@@ -14,12 +14,12 @@ import {
 import { getLuvioFieldNodeSelection, resolveLink, followLink } from '../type/Selection';
 import { GqlRecord } from './record';
 import { render as renderArguments } from '../type/Argument';
+import { GraphQLVariables } from '../type/Variable';
 import { render as renderField } from '../type/Field';
 import { adapterApiFamily } from '../constants';
 import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
 import { readScalarFieldSelection } from '../type/ScalarField';
-import { GraphQLVariables } from '../type/Variable';
-import { createIngest as genericCreateIngest } from '../util/ingest';
+import { createIngest as genericCreateIngest, publishIfChanged } from '../util/ingest';
 
 interface GqlEdge {
     node: GqlRecord;
@@ -117,52 +117,6 @@ function ingestConnectionProperty(
     }
 }
 
-function ingestEdgeItem(
-    data: GqlEdge,
-    sel: LuvioSelectionObjectFieldNode,
-    path: IngestPath,
-    luvio: Luvio,
-    store: Store,
-    timestamp: number,
-    variables: GraphQLVariables
-): StoreLink {
-    const { luvioSelections } = sel;
-    const selections = luvioSelections === undefined ? [] : luvioSelections;
-    const { fullPath } = path;
-
-    for (let i = 0, len = selections.length; i < len; i += 1) {
-        const sel = getLuvioFieldNodeSelection(selections[i]);
-        const key = `${fullPath}__${i}`;
-        if (sel.kind === 'ScalarFieldSelection') {
-            throw new Error('Unsupported scalar field on Connection');
-        }
-        const propertyName = renderField(sel, variables) as keyof GqlEdge;
-        const item = data[propertyName];
-        data[propertyName] = genericCreateIngest(sel, variables)(
-            item,
-            {
-                parent: {
-                    data,
-                    existing: null,
-                    key,
-                },
-                propertyName: i,
-                fullPath: key,
-                state: path.state,
-            },
-            luvio,
-            store,
-            timestamp
-        ) as any;
-    }
-
-    luvio.storePublish(fullPath, data);
-
-    return {
-        __ref: fullPath,
-    };
-}
-
 function ingestConnectionEdges(
     sel: LuvioSelectionObjectFieldNode,
     data: GqlConnection['edges'],
@@ -173,11 +127,12 @@ function ingestConnectionEdges(
     variables: GraphQLVariables
 ): StoreLink {
     const key = path.fullPath;
+    const existing = store.records[key];
 
+    let hasChanges = existing === undefined;
     for (let i = 0, len = data.length; i < len; i += 1) {
-        data[i] = ingestEdgeItem(
+        const incomingItem = (data[i] = genericCreateIngest(sel, variables)(
             data[i],
-            sel,
             {
                 parent: {
                     data,
@@ -190,12 +145,18 @@ function ingestConnectionEdges(
             },
             luvio,
             store,
-            timestamp,
-            variables
-        ) as any;
+            timestamp
+        ) as any);
+
+        const existingItem = existing !== undefined ? existing[i] : undefined;
+        if (existingItem === undefined || existingItem.__ref !== incomingItem.__ref) {
+            hasChanges = true;
+        }
     }
 
-    luvio.storePublish(key, data);
+    if (hasChanges === true) {
+        luvio.storePublish(key, data);
+    }
 
     return {
         __ref: key,
@@ -250,7 +211,14 @@ export const createIngest: (
             ) as any;
         }
 
-        luvio.storePublish(key, data);
+        publishIfChanged({
+            key,
+            luvio,
+            store,
+            incoming: data,
+            variables: {},
+            ast,
+        });
 
         return {
             __ref: key,

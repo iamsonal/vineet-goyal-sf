@@ -386,6 +386,66 @@ describe('ObjectField', () => {
                 toplevel__parent: null,
             });
         });
+
+        it('should not ingest object data that is not changed', () => {
+            const ast: LuvioSelectionObjectFieldNode = {
+                kind: 'ObjectFieldSelection',
+                name: 'edges',
+                luvioSelections: [
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: '__typename',
+                    },
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: 'title',
+                    },
+                ],
+            };
+
+            const data = {
+                __typename: 'typename',
+                title: 'title',
+            };
+
+            const store = new Store();
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            createIngest(ast)(
+                data,
+                {
+                    parent: null,
+                    fullPath: 'toplevel',
+                    propertyName: null,
+                    state: { result: { type: 'success' } },
+                },
+                luvio,
+                store,
+                0
+            );
+
+            luvio.storeBroadcast();
+            jest.spyOn(store, 'publish');
+
+            createIngest(ast)(
+                data,
+                {
+                    parent: null,
+                    fullPath: 'toplevel',
+                    propertyName: null,
+                    state: { result: { type: 'success' } },
+                },
+                luvio,
+                store,
+                0
+            );
+
+            expect(store.publish).not.toHaveBeenCalled();
+        });
     });
 
     describe('Merge Tests', () => {
@@ -459,6 +519,7 @@ describe('ObjectField', () => {
                     parent: null,
                     fullPath: 'toplevel',
                     propertyName: null,
+                    state: undefined,
                 },
                 luvio,
                 store,
@@ -471,6 +532,7 @@ describe('ObjectField', () => {
                     parent: null,
                     fullPath: 'toplevel',
                     propertyName: null,
+                    state: undefined,
                 },
                 luvio,
                 store,
@@ -682,6 +744,7 @@ describe('ObjectField', () => {
                     parent: null,
                     fullPath: 'toplevel',
                     propertyName: null,
+                    state: undefined,
                 },
                 luvio,
                 store,

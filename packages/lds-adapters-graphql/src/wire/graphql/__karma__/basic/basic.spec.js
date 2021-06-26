@@ -2019,14 +2019,7 @@ describe('graphql', () => {
                     {
                         recordId: recordRepMock.id,
                         fields: ['Opportunity.Id'],
-                    },
-                    recordRepMock
-                );
-
-                mockGetRecordNetwork(
-                    {
-                        recordId: recordRepMock.id,
-                        optionalFields: ['Opportunity.Id', 'Opportunity.Name'],
+                        optionalFields: ['Opportunity.Name'],
                     },
                     recordRepUpdated
                 );
@@ -2725,6 +2718,167 @@ describe('graphql', () => {
             };
             const secondSnapshot = graphQLImperative(secondGraphqlConfig);
             expect(secondSnapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+        });
+    });
+
+    describe('Unchanged network data', () => {
+        it('should not update subscriptions when overlapping network data has not changed', async () => {
+            const ast = parseQuery(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const ast2 = parseQuery(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Phone {
+                                            value
+                                            displayValue
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQueryOne = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) {
+                                edges {
+                                    node {
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
+                }
+            `;
+
+            const expectedQueryTwo = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) {
+                                edges {
+                                    node {
+                                        Phone {
+                                            value
+                                            displayValue
+                                        }
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
+                }
+            `;
+
+            const networkData = getMock('RecordQuery-Account-fields-Name');
+            const networkDataTwo = getMock('RecordQuery-Account-fields-Phone');
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQueryOne,
+                    variables: {},
+                },
+                networkData
+            );
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQueryTwo,
+                    variables: {},
+                },
+                networkDataTwo
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const secondGraphQLConfig = {
+                query: ast2,
+                variables: {},
+            };
+
+            // initial load
+            const snapshot = await graphQLImperative(graphqlConfig);
+            const spy = sinon.spy();
+            luvio.storeSubscribe(snapshot, spy);
+
+            // loads a superset of data, data relevant to first snapshot
+            // is not changed
+            await graphQLImperative(secondGraphQLConfig);
+
+            // assert that first subscription was not given a new value
+            expect(spy.callCount).toBe(0);
         });
     });
 });

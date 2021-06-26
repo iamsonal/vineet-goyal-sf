@@ -9,14 +9,14 @@ import { getLuvioFieldNodeSelection } from '../type/Selection';
 import { createIngest as customFieldCreateIngest } from '../type/CustomField';
 import merge from './merge';
 import { GraphQLVariables } from '../type/Variable';
+import { equals } from './equal';
 
-export function createIngest(
-    ast:
-        | LuvioOperationDefinitionNode
-        | LuvioSelectionObjectFieldNode
-        | LuvioSelectionCustomFieldNode,
-    variables: GraphQLVariables
-) {
+type LuvioIngestableNode =
+    | LuvioOperationDefinitionNode
+    | LuvioSelectionObjectFieldNode
+    | LuvioSelectionCustomFieldNode;
+
+export function createIngest(ast: LuvioIngestableNode, variables: GraphQLVariables) {
     if (ast.kind === 'CustomFieldSelection') {
         return customFieldCreateIngest(ast as LuvioSelectionCustomFieldNode, variables);
     }
@@ -24,10 +24,23 @@ export function createIngest(
     return genericCreateIngest(ast, variables);
 }
 
-function genericCreateIngest(
-    ast: LuvioOperationDefinitionNode | LuvioSelectionObjectFieldNode,
-    variables: GraphQLVariables
-) {
+export function publishIfChanged(params: {
+    ast: LuvioIngestableNode;
+    key: string;
+    incoming: any;
+    luvio: Luvio;
+    store: Store;
+    variables: GraphQLVariables;
+}) {
+    const { store, key, ast, incoming, luvio, variables } = params;
+    const existing = store.records[key];
+    if (existing === undefined || equals(ast, variables, existing, incoming) === false) {
+        const newData = merge(existing, incoming);
+        luvio.storePublish(key, newData);
+    }
+}
+
+function genericCreateIngest(ast: LuvioIngestableNode, variables: GraphQLVariables) {
     let selections = ast.luvioSelections === undefined ? [] : ast.luvioSelections;
 
     return (data: any, path: IngestPath, luvio: Luvio, store: Store, timestamp: number) => {
@@ -66,10 +79,14 @@ function genericCreateIngest(
             }
         }
 
-        const existing = store.records[fullPath];
-        const newData = merge(existing, data);
-
-        luvio.storePublish(fullPath, newData);
+        publishIfChanged({
+            ast,
+            luvio,
+            store,
+            key: fullPath,
+            variables: {},
+            incoming: data,
+        });
 
         return {
             __ref: fullPath,

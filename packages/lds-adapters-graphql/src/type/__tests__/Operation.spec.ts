@@ -197,6 +197,7 @@ describe('Operation', () => {
                     parent: null,
                     fullPath: 'toplevel',
                     propertyName: null,
+                    state: undefined,
                 },
                 luvio,
                 store,
@@ -321,6 +322,7 @@ describe('Operation', () => {
                         parent: null,
                         fullPath: 'toplevel',
                         propertyName: null,
+                        state: undefined,
                     },
                     luvio,
                     store,
@@ -333,6 +335,7 @@ describe('Operation', () => {
                         parent: null,
                         fullPath: 'toplevel',
                         propertyName: null,
+                        state: undefined,
                     },
                     luvio,
                     store,
@@ -355,6 +358,79 @@ describe('Operation', () => {
                         },
                     },
                 });
+            });
+        });
+
+        describe('unchanged data', () => {
+            it('should not ingest object data that is not changed', () => {
+                const ast: LuvioOperationDefinitionNode = {
+                    kind: 'OperationDefinition',
+                    operation: 'query',
+                    variableDefinitions: [],
+                    name: 'operationName',
+                    luvioSelections: [
+                        {
+                            kind: 'ObjectFieldSelection',
+                            name: 'Name',
+                            alias: 'MyName',
+                            luvioSelections: [
+                                {
+                                    kind: 'ScalarFieldSelection',
+                                    name: 'value',
+                                },
+                                {
+                                    kind: 'ScalarFieldSelection',
+                                    name: 'displayValue',
+                                },
+                            ],
+                        },
+                    ],
+                };
+
+                const data = {
+                    MyName: {
+                        value: 'Account1',
+                        displayValue: null,
+                    },
+                };
+
+                const store = new Store();
+                const luvio = new Luvio(
+                    new Environment(store, () => {
+                        throw new Error('Not used');
+                    })
+                );
+
+                createIngest(ast)(
+                    JSON.parse(JSON.stringify(data)),
+                    {
+                        parent: null,
+                        fullPath: 'toplevel',
+                        propertyName: null,
+                        state: undefined,
+                    },
+                    luvio,
+                    store,
+                    0
+                );
+
+                luvio.storeBroadcast();
+                jest.spyOn(store, 'publish');
+
+                createIngest(ast)(
+                    data,
+                    {
+                        parent: null,
+                        fullPath: 'toplevel',
+                        propertyName: null,
+                        state: undefined,
+                    },
+                    luvio,
+                    store,
+                    0
+                );
+
+                expect(store.publish).not.toHaveBeenCalled();
             });
         });
     });
@@ -472,6 +548,7 @@ describe('Operation', () => {
                     parent: null,
                     fullPath: 'toplevel',
                     propertyName: null,
+                    state: undefined,
                 },
                 luvio,
                 store,

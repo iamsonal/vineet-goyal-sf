@@ -25,6 +25,65 @@ annotationTypes:
     type: string
     allowedTargets: TypeDeclaration
 types:
+  CalculationProcedureDetailOutputRepresentation:
+    description: Output represenation of calculation Procedure Details Get
+    type: object
+    properties:
+      code:
+        description: Response Code
+        type: string
+        required: false
+      description:
+        description: Calculation Procedure description
+        type: string
+        required: false
+      id:
+        description: Calculation procedure id
+        type: string
+        required: false
+      inputVariables:
+        description: Calculation Procedure input variables
+        type: array
+        required: false
+        items:
+          type: CalculationProcedureVariableOutputRepresentation
+      isSuccess:
+        description: Response status
+        type: boolean
+        required: false
+      message:
+        description: Response message
+        type: string
+        required: false
+      name:
+        description: Calculation procedure name
+        type: string
+        required: false
+      outputVariables:
+        description: Calculation Procedure output variables
+        type: array
+        required: false
+        items:
+          type: CalculationProcedureVariableOutputRepresentation
+  CalculationProcedureActivationOutputRepresentation:
+    description: Output Representation of Calculation Procedure Version Activation
+    type: object
+    properties:
+      code:
+        description: CalculationProcedureActivationOutput api code
+        type: string
+        required: false
+      isSuccess:
+        description: CalculationProcedureActivationOutput api Calculation ProcedureVersion activation success status
+        type: boolean
+        required: false
+      message:
+        description: CalculationProcedureActivationOutput api message
+        type: string
+        required: false
+      versionId:
+        description: CalculationProcedureActivationOutput api versionId
+        type: string
   CalculationProcedureListOutputRepresentation:
     description: Output representation of list of calculation procedure
     type: object
@@ -237,6 +296,17 @@ types:
         description: StepType of Calculation Procedure Step
         type: string
         required: false
+  CalculationProcedureVariableOutputRepresentation:
+    description: represenation of CalcProcVariable
+    type: object
+    properties:
+      dataType:
+        description: CalculationProcedureVariable dataType
+        type: string
+      name:
+        description: CalculationProcedureVariable column
+          Key
+        type: string
   # TODO Hand-rolled W-8334626
   CalculationProcedureVersionDefinitionInputWrapperRepresentation:
     description: Wrapper Input Representation for CalculationProcedureVersionDefinitionInputRepresentation
@@ -592,6 +662,196 @@ types:
         required: false
         items:
           type: string
+  SimulationConfigInputRepresentation:
+    description: Input representation for config data in rule simulation
+    type: object
+    properties:
+      versionInfo:
+        description: Property contains version info related data
+        # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+        type: SimulationVersionInfoInputRepresentation
+  SimulationErrorOutputRepresentation:
+    description: Output Representation of Calculation Procedure Execution
+    type: object
+    properties:
+      errorCode:
+        description: store the error code
+        type: string
+      errorDetails:
+        description: stores error msg in detail
+        type: string
+      errorMsg:
+        description: stores error msg
+        type: string
+  SimulationEvalServiceWrapperInputRepresentation:
+    description: wrapper of SimulationEvalServiceInputRepresentation
+    type: object
+    properties:
+      simulationInput:
+        description: Input representation for Rule Simulation
+        type: SimulationEvalServiceInputRepresentation
+  SimulationEvalServiceInputRepresentation:
+    description: Input representation for Rule Simulation
+    type: object
+    properties:
+      config:
+        description: This property will contains data related to rule (metadata)
+        # TODO Hand-Rolled due to issue #16 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+        type: SimulationConfigInputRepresentation
+      input:
+        description: This property will have list of input variables
+        # TODO Hand-Rolled due to issue #16 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+        type: SimulationVariablesInputRepresentation
+  SimulationEvalServiceOutputRepresentation:
+    description: Output Representation for rule simulation
+    type: object
+    properties:
+      error:
+        description: stores error occur in execution of rule
+        type: SimulationErrorOutputRepresentation
+        required: false
+      executionId:
+        description: Stores execution id of rule simulation
+        type: string
+      simulationResults:
+        description: stores list of overall output from simulation
+        type: array
+        required: false
+        items:
+          type: SimulationVariableOutputRepresentation
+      simulationStepResults:
+        description: stores a map with key as step id and value as it's details
+        type: object
+        required: false
+        properties:
+          //:
+            type: SimulationStepResultOutputRepresentation
+  SimulationStepAdditionalInfoOutputRepresentation:
+    description: Output Representation of step additional info
+    type: object
+    properties:
+      stepType:
+        description: stores stype of step (CalculationProcedure or DecisionMatrix)
+        type: string
+      versionName:
+        description: store name of the step
+        type: string
+      versionNumber:
+        description: stores version number of the step
+        type: string
+  SimulationStepResultOutputRepresentation:
+    description: Output representation of step execution in rule
+    type: object
+    properties:
+      additionalInfo:
+        description: stores additional info about the step
+        type: SimulationStepAdditionalInfoOutputRepresentation
+        required: false
+      stepInputs:
+        description: stores input variables of step
+        type: array
+        items:
+          type: SimulationVariableOutputRepresentation
+      stepResults:
+        description: stores output variables as list of step
+        type: array
+        items:
+          type: SimulationVariableOutputRepresentation
+  SimulationVariableInputRepresentation:
+    description: Input Representating the a input variable for rule simulation
+    type: object
+    properties:
+      datatype:
+        description: datatype for this variable
+        type: string
+      name:
+        description: name of variable
+        type: string
+      value:
+        description: string value of variable
+        type: string
+  SimulationVariableOutputRepresentation:
+    description: Output representation of variables for simulation
+    type: object
+    properties:
+      datatype:
+        description: stores datatype of variable
+        type: string
+      name:
+        description: stores name of variable
+        type: string
+      value:
+        description: stores value of variable
+        type: string
+  SimulationVariablesInputRepresentation:
+    description: Wrapper for List of input variables for rule simulation
+    type: object
+    properties:
+      variables:
+        description: List of input variables for rule simulation
+        type: array
+        items:
+          # TODO Hand-Rolled due to issue #16 in in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          type: SimulationVariableInputRepresentation
+  SimulationVersionInfoInputRepresentation:
+    description: Input representation for Rule Simulation
+    type: object
+    properties:
+      configurationVersionId:
+        description: This property contains calc proc version id
+        type: string
+      effectiveDate:
+        description: This property will contains the effective date of calc proc version
+        type: string
+  SimulationInputVariableBasicRepresentation:
+    description: Output represenation of Simulation Input Variable Basic Details
+    type: object
+    properties:
+      apiName:
+        description: SimulationInputVariablesDetails api SimulationInputVariables
+          apiName
+        type: string
+      dataType:
+        description: SimulationInputVariablesDetails api SimulationInputVariables
+          dataType
+        type: string
+      defaultValue:
+        description: SimulationInputVariablesDetails api SimulationInputVariables
+          defaultValue
+        type: string
+        required: false
+      lastSimulatedValue:
+        description: SimulationInputVariablesDetails api SimulationInputVariables  lastSimulatedValue
+        type: string
+        required: false
+      name:
+        description: SimulationInputVariablesDetails api SimulationInputVariables
+          name
+        type: string
+      precision:
+        description: SimulationInputVariablesDetails api SimulationInputVariables  precision
+        type: string
+        required: false
+  SimulationInputVariablesResultListRepresentation:
+    description: Output represenation of Simulation Input Variable Details Get
+    type: object
+    properties:
+      code:
+        description: API response code for failure case
+        type: string
+      inputVariables:
+        description: List of inputVariables
+        type: array
+        required: false
+        items:
+          type: SimulationInputVariableBasicRepresentation
+      isSuccess:
+        description: States whether API is successful or not
+        type: boolean
+      message:
+        description: API response message for failure case
+        type: string
+        required: false
 /connect:
   /omnistudio:
     /evaluation-services:
@@ -632,6 +892,63 @@ types:
             body:
               application/json:
                 type: CalculationProcedureVersionDefinitionOutputRepresentation
+      patch:
+        description: API to activate Calculation Procedure Version
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: CalculationProcedureActivationOutputRepresentation
+        queryParameters:
+          action:
+            type: string
+            required: false
+      uriParameters:
+        id:
+          type: string
+          required: true
+    /evaluation-services/{id}:
+      get:
+        description: Get information about a single calc proc object.
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: CalculationProcedureDetailOutputRepresentation
+      uriParameters:
+        id:
+          type: string
+          required: true
+    /evaluation-services/version-definitions/{id}/simulation:
+      get:
+        description: API to get Calculation Procedure Version Input Variables
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SimulationInputVariablesResultListRepresentation
+        queryParameters:
+          inputVariables:
+            type: boolean
+            required: false
+      patch:
+        description: API to execute Calculation Procedure Version
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: SimulationEvalServiceOutputRepresentation
+        body:
+          application/json:
+            # TODO Hand-rolled W-8334626
+            type: SimulationEvalServiceWrapperInputRepresentation
+            # TODO: Hand-rolled due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+            #required: false
+            (oas-body-name): simulationInput
       uriParameters:
         id:
           type: string

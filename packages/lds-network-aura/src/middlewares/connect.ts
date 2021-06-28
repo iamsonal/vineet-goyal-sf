@@ -202,22 +202,32 @@ const POST_BATCH_PAYMENTS_SCHEDULERS_PATH = new RegExp(
 );
 
 const GET_DECISION_MATRIC_DETAILS_PATH = new RegExp(
-    `${CONNECT_BASE_URI}/omnistudio/decision-matrices/([A-Z0-9]){1,18}`,
+    `${CONNECT_BASE_URI}/omnistudio/decision-matrices/([A-Z0-9]){1,18}$`,
     'i'
 );
 
 const GET_CALC_PROC_VERSION_DETAILS_PATH = new RegExp(
-    `${CONNECT_BASE_URI}/omnistudio/evaluation-services/version-definitions/([A-Z0-9]){1,18}`,
+    `${CONNECT_BASE_URI}/omnistudio/evaluation-services/version-definitions/([A-Z0-9]){1,18}$`,
+    'i'
+);
+
+const GET_CALC_PROC_DETAILS_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/omnistudio/evaluation-services/([A-Z0-9]){1,18}$`,
     'i'
 );
 
 const POST_CALC_PROC_VERSION_DETAILS_PATH = new RegExp(
-    `${CONNECT_BASE_URI}/omnistudio/evaluation-services/version-definitions`,
+    `${CONNECT_BASE_URI}/omnistudio/evaluation-services/version-definitions$`,
     'i'
 );
 
 const SEARCH_CALCULATION_PROCEDURES_DETAILS_PATH = new RegExp(
-    `${CONNECT_BASE_URI}/omnistudio/evaluation-services`,
+    `${CONNECT_BASE_URI}/omnistudio/evaluation-services$`,
+    'i'
+);
+
+const SIMULATION_EVALUATION_SERVICE_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/omnistudio/evaluation-services/version-definitions/([A-Z0-9]){1,18}/simulation$`,
     'i'
 );
 
@@ -348,6 +358,22 @@ const connect: ApiFamily = {
             controller: 'InteractionCalculationProceduresController.getCalcProcVersionDefinition',
         },
     },
+    activateCalcProcedureVersion: {
+        method: 'patch',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_CALC_PROC_VERSION_DETAILS_PATH.test(path),
+        transport: {
+            controller: 'InteractionCalculationProceduresController.activateCalcProcedureVersion',
+        },
+    },
+    getCalcProcDetails: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && GET_CALC_PROC_DETAILS_PATH.test(path),
+        transport: {
+            controller: 'InteractionCalculationProceduresController.getCalcProcDetails',
+        },
+    },
     postCalcProcVersionDetails: {
         method: 'post',
         predicate: (path: string) =>
@@ -365,6 +391,14 @@ const connect: ApiFamily = {
             controller: 'InteractionCalculationProceduresController.searchCalculationProcedure',
         },
     },
+    simulateEvaluationService: {
+        method: 'patch',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && SIMULATION_EVALUATION_SERVICE_PATH.test(path),
+        transport: {
+            controller: 'InteractionCalculationProceduresController.simulateEvaluationService',
+        },
+    },
     replaceManagedContentVariant: {
         method: 'put',
         predicate: (path: string) =>
@@ -379,6 +413,14 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && SEARCH_DECISION_MATRICES_PATH.test(path),
         transport: {
             controller: 'InteractionCalculationProceduresController.searchDecisionMatrixByName',
+        },
+    },
+    getSimulationInputVariables: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && SIMULATION_EVALUATION_SERVICE_PATH.test(path),
+        transport: {
+            controller: 'InteractionCalculationProceduresController.getSimulationInputVariables',
         },
     },
 };

@@ -1,0 +1,22 @@
+{
+    "input": {
+        "variables": [
+            {
+                "name": "artEstimatedValue",
+                "value": "301",
+                "datatype": "number"
+            },
+            {
+                "name": "quantity",
+                "value": "301",
+                "datatype": "number"
+            }
+        ]
+    },
+    "config": {
+        "versionInfo": {
+            "configurationVersionId": "a1o5w000002EJPPAA4",
+            "effectiveDate": "2021-06-19T10:54:56.787Z"
+        }
+    }
+}

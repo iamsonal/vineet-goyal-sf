@@ -19,9 +19,25 @@ types:
   DecisionMatrixResultListRepresentation:
     (luvio.opaque): true
     (luvio.ttl): 360000
+  SimulationEvalServiceOutputRepresentation:
+    (luvio.opaque): true
+    (luvio.key):
+      id: executionId
+  SimulationInputVariablesResultListRepresentation:
+    (luvio.opaque): true
+  CalculationProcedureDetailOutputRepresentation:
+    (luvio.opaque): true
+  CalculationProcedureActivationOutputRepresentation:
+    (luvio.opaque): true
+    (luvio.key):
+      id: versionId
 
 /connect:
   /omnistudio:
+    /evaluation-services/{id}:
+      get:
+        (luvio.adapter):
+          name: getCalcProcDetails
     /decision-matrices/{id}:
       get:
         (luvio.adapter):
@@ -68,6 +84,9 @@ types:
                 }
         (luvio.key):
           id: urlParams.id
+      patch:
+        (luvio.adapter):
+          name: activateCalcProcedureVersion
     /evaluation-services/version-definitions:
       post:
         (luvio.adapter):
@@ -76,3 +95,10 @@ types:
       get:
         (luvio.adapter):
           name: searchCalculationProcedure
+    /evaluation-services/version-definitions/{id}/simulation:
+      patch:
+        (luvio.adapter):
+          name: simulateEvaluationService
+      get:
+        (luvio.adapter):
+          name: getSimulationInputVariables

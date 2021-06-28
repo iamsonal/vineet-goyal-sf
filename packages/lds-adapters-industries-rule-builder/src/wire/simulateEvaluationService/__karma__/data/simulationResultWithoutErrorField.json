@@ -1,0 +1,38 @@
+{
+    "executionId": "testId",
+    "simulationResults": [
+        {
+            "datatype": "number",
+            "name": "totalPrice",
+            "value": "400"
+        },
+        {
+            "datatype": "number",
+            "name": "artTotal",
+            "value": "4000"
+        }
+    ],
+    "simulationStepResults": {
+        "abcdef": {
+            "additionalInfo": {
+                "stepType": "CalculationProcedure",
+                "versionName": "Version Name",
+                "versionNumber": "Version Number"
+            },
+            "stepInputs": [
+                {
+                    "datatype": "number",
+                    "name": "totalPrice",
+                    "value": "400"
+                }
+            ],
+            "stepResults": [
+                {
+                    "datatype": "number",
+                    "name": "artTotal",
+                    "value": "4000"
+                }
+            ]
+        }
+    }
+}

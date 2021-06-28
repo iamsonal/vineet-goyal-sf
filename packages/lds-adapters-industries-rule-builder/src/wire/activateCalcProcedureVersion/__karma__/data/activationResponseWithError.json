@@ -1,0 +1,6 @@
+{
+    "versionId": "testId",
+    "code": "UNKNOWN_EXCEPTION",
+    "isSuccess": false,
+    "message": "We couldn’t process this query. Try again or ask your Salesforce admin for help."
+}

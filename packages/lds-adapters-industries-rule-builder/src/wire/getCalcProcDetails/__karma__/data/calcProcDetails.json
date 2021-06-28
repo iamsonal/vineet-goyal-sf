@@ -1,0 +1,17 @@
+{
+    "id": "",
+    "name": "",
+    "description": "",
+    "inputVariables": [
+        {
+            "name": "name 1",
+            "dataType": "Number"
+        }
+    ],
+    "outputVariables": [
+        {
+            "name": "name 2",
+            "dataType": "Number"
+        }
+    ]
+}

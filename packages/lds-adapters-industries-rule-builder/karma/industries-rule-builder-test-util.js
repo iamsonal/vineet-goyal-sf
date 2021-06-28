@@ -13,6 +13,16 @@ export function clone(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
+export function mockGetSimulationInputVariablesNetworkOnce(config, mockData) {
+    const paramMatch = getSimulationInputVariablesMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockSimulationInputVariablesNetworkErrorOnce(config, mockData) {
+    const paramMatch = getSimulationInputVariablesMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 export function mockGetDecisionMatricDetailsNetworkOnce(config, mockData) {
     const paramMatch = getDecisionMatricDetailsMatcher(config);
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
@@ -30,6 +40,16 @@ export function mockGetCalcProcVersionDetailsNetworkOnce(config, mockData) {
 
 export function mockGetCalcProcVersionDetailsNetworkErrorOnce(config, mockData) {
     const paramMatch = getCalcProcVersionDetailsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockGetCalcProcDetailsNetworkOnce(config, mockData) {
+    const paramMatch = getCalcProcDetailsMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockGetCalcProcDetailsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getCalcProcDetailsMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
@@ -51,6 +71,39 @@ export function mockSearchCalculationProcedureNetworkOnce(config, mockData) {
 export function mockSearchCalculationProcedureNetworkErrorOnce(config, mockData) {
     const paramMatch = searchCalculationProcedureMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockSimulateEvaluationServiceNetworkOnce(config, mockData) {
+    const paramMatch = simulateEvaluationServiceMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockSimulateEvaluationServiceNetworkErrorOnce(config, mockData) {
+    const paramMatch = simulateEvaluationServiceMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockActivateCalcProcedureVersionNetworkOnce(config, mockData) {
+    const paramMatch = activateCalcProcedureVersionMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockActivateCalcProcedureVersionNetworkErrorOnce(config, mockData) {
+    const paramMatch = activateCalcProcedureVersionMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getSimulationInputVariablesMatcher(config) {
+    let { id, inputVariables } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `/connect/omnistudio/evaluation-services/version-definitions/${id}/simulation`,
+        queryParams: { inputVariables },
+    });
 }
 
 function getDecisionMatricDetailsMatcher(config) {
@@ -79,6 +132,19 @@ function getCalcProcVersionDetailsMatcher(config) {
     });
 }
 
+function getCalcProcDetailsMatcher(config) {
+    let { id } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `/connect/omnistudio/evaluation-services/${id}`,
+        queryParams: {},
+    });
+}
+
 function postCalcProcVersionDetailsMatcher(config) {
     let { calculationProcedureVersionDefinition } = config;
 
@@ -90,6 +156,21 @@ function postCalcProcVersionDetailsMatcher(config) {
         method: 'post',
         baseUri: BASE_URI,
         basePath: `/connect/omnistudio/evaluation-services/version-definitions`,
+        queryParams: {},
+    });
+}
+
+function simulateEvaluationServiceMatcher(config) {
+    let { id, simulationInput } = config;
+
+    return sinon.match({
+        body: {
+            simulationInput,
+        },
+        headers: {},
+        method: 'patch',
+        baseUri: BASE_URI,
+        basePath: `/connect/omnistudio/evaluation-services/version-definitions/${id}/simulation`,
         queryParams: {},
     });
 }
@@ -131,6 +212,19 @@ function searchDecisionMatrixByNameMatcher(config) {
         baseUri: BASE_URI,
         basePath: `/connect/omnistudio/decision-matrices`,
         queryParams: query,
+    });
+}
+
+function activateCalcProcedureVersionMatcher(config) {
+    let { id, action } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'patch',
+        baseUri: BASE_URI,
+        basePath: `/connect/omnistudio/evaluation-services/version-definitions/${id}`,
+        queryParams: { action },
     });
 }
 

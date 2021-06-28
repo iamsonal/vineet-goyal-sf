@@ -2267,6 +2267,39 @@ describe('routes', () => {
         );
     });
 
+    describe('get ${CONNECT_BASE_URI}/omnistudio/evaluation-services/version-definitions/([A-Z0-9]){15,18}/simulation$', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/evaluation-services/version-definitions/03CRM0000006tEf2AI/simulation`,
+                urlParams: {
+                    id: '03CRM0000006tEf2AI',
+                },
+                queryParams: {
+                    inputVariales: true,
+                },
+            },
+            [
+                'InteractionCalculationProceduresController.getSimulationInputVariables',
+                {
+                    id: '03CRM0000006tEf2AI',
+                    inputVariales: true,
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/evaluation-services/version-definitions/03CRM0000006tEf2AI/simulation`,
+            },
+            {}
+        );
+    });
+
     describe('get /omnistudio/decision-matrices/{id}', () => {
         testControllerInput(
             {
@@ -2290,6 +2323,97 @@ describe('routes', () => {
         );
     });
 
+    describe('patch /omnistudio/evaluation-services/version-definitions/([A-Z0-9]){1,18}', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/evaluation-services/version-definitions/testId`,
+                body: {
+                    action: 'activate',
+                },
+            },
+            [
+                'InteractionCalculationProceduresController.activateCalcProcedureVersion',
+                {
+                    action: 'activate',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'patch',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/evaluation-services/version-definitions/testId`,
+                body: {
+                    action: 'activate',
+                },
+            },
+            {
+                versionId: 'testId',
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'patch',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/omnistudio/evaluation-services/version-definitions/testId`,
+        });
+    });
+
+    describe('patch /omnistudio/evaluation-services/version-definitions/([A-Z0-9]){1,18}/simulation', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/evaluation-services/version-definitions/testId/simulation`,
+                body: {
+                    simulationInput: {
+                        input: {},
+                        config: {},
+                    },
+                },
+            },
+            [
+                'InteractionCalculationProceduresController.simulateEvaluationService',
+                {
+                    simulationInput: {
+                        input: {},
+                        config: {},
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'patch',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/evaluation-services/version-definitions/testId/simulation`,
+                body: {
+                    simulationInput: {
+                        input: {},
+                        config: {},
+                    },
+                },
+            },
+            {
+                executionId: 'executionId',
+                simulationResults: [],
+                simulationStepResults: {},
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'patch',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/omnistudio/evaluation-services/version-definitions/testId/simulation`,
+        });
+    });
+
     describe('get /omnistudio/evaluation-services/version-definitions/{id}', () => {
         testControllerInput(
             {
@@ -2308,6 +2432,29 @@ describe('routes', () => {
                 method: 'get',
                 baseUri: CONNECT_BASE_URI,
                 basePath: `/omnistudio/evaluation-services/version-definitions/123`,
+            },
+            {}
+        );
+    });
+
+    describe('get /omnistudio/evaluation-services/{id}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/evaluation-services/123`,
+            },
+            [
+                'InteractionCalculationProceduresController.getCalcProcDetails',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/evaluation-services/123`,
             },
             {}
         );

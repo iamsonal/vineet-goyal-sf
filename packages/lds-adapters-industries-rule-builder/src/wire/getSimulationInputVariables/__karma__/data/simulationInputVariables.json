@@ -1,0 +1,23 @@
+{
+    "code": "success",
+    "message": "Successfully run",
+    "isSuccess": true,
+    "inputVariables": [
+        {
+            "name": "Benefit",
+            "apiName": "Benefit",
+            "dataType": "Number",
+            "defaultValue": "12",
+            "lastSimulatedValue": "20",
+            "precision": "1"
+        },
+        {
+            "name": "Tax",
+            "apiName": "Taxes",
+            "dataType": "Number",
+            "defaultValue": "15",
+            "lastSimulatedValue": "10",
+            "precision": "0"
+        }
+    ]
+}

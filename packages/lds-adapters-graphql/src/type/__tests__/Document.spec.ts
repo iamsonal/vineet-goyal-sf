@@ -1823,5 +1823,161 @@ describe('Document', () => {
                 },
             });
         });
+
+        it('should not ingest document with no changes', () => {
+            const ast: LuvioDocumentNode = {
+                kind: 'Document',
+                definitions: [
+                    {
+                        kind: 'OperationDefinition',
+                        operation: 'query',
+                        variableDefinitions: [],
+                        name: 'operationName',
+                        luvioSelections: [
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'uiapi',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'query',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'CustomFieldSelection',
+                                                name: 'Account',
+                                                type: 'Connection',
+                                                luvioSelections: [
+                                                    {
+                                                        kind: 'ObjectFieldSelection',
+                                                        name: 'edges',
+                                                        luvioSelections: [
+                                                            {
+                                                                kind: 'CustomFieldSelection',
+                                                                name: 'node',
+                                                                type: 'Record',
+                                                                luvioSelections: [
+                                                                    {
+                                                                        kind: 'ObjectFieldSelection',
+                                                                        name: 'Name',
+                                                                        luvioSelections: [
+                                                                            {
+                                                                                kind: 'ScalarFieldSelection',
+                                                                                name: 'value',
+                                                                            },
+                                                                            {
+                                                                                kind: 'ScalarFieldSelection',
+                                                                                name: 'displayValue',
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                                arguments: [
+                                                    {
+                                                        kind: 'Argument',
+                                                        name: 'where',
+                                                        value: {
+                                                            kind: 'ObjectValue',
+                                                            fields: {
+                                                                Name: {
+                                                                    kind: 'ObjectValue',
+                                                                    fields: {
+                                                                        like: {
+                                                                            kind: 'StringValue',
+                                                                            value: 'Account1',
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const data = {
+                uiapi: {
+                    query: {
+                        Account: {
+                            edges: [
+                                {
+                                    node: {
+                                        Id: '001RM000004uuhnYAA',
+                                        WeakEtag: 1615493739000,
+                                        Name: {
+                                            value: 'Account1',
+                                            displayValue: null,
+                                        },
+                                        __typename: 'Account',
+                                        ApiName: 'Account',
+                                        DisplayValue: 'Account1',
+                                        SystemModstamp: {
+                                            value: '2021-03-11T20:15:39.000Z',
+                                        },
+                                        LastModifiedById: {
+                                            value: '005RM000002492xYAA',
+                                        },
+                                        LastModifiedDate: {
+                                            value: '2021-03-11T20:15:39.000Z',
+                                        },
+                                        RecordTypeId: {
+                                            value: '012RM000000E79WYAS',
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
+            };
+
+            const store = new Store();
+            const luvio = new Luvio(
+                new Environment(store, () => {
+                    throw new Error('Not used');
+                })
+            );
+
+            createIngest(ast, {})(
+                JSON.parse(JSON.stringify(data)),
+                {
+                    fullPath: 'fullpath',
+                    parent: null,
+                    propertyName: null,
+                    state: undefined,
+                },
+                luvio,
+                store,
+                0
+            );
+
+            luvio.storeBroadcast();
+            jest.spyOn(luvio, 'storePublish');
+
+            createIngest(ast, {})(
+                data,
+                {
+                    fullPath: 'fullpath',
+                    parent: null,
+                    propertyName: null,
+                    state: undefined,
+                },
+                luvio,
+                store,
+                0
+            );
+
+            expect(luvio.storePublish).not.toHaveBeenCalled();
+        });
     });
 });

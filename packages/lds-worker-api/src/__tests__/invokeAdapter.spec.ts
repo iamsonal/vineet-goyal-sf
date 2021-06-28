@@ -1,13 +1,15 @@
 import timekeeper from 'timekeeper';
+import { stripProperties } from '@luvio/adapter-test-library';
+import { UpdateRecordConfig } from '@salesforce/lds-adapters-uiapi';
 
 import { draftManager } from '../draftQueueImplementation';
 import { subscribeToAdapter, invokeAdapter, OnResponse, OnSnapshot } from '../executeAdapter';
 import { addMockNetworkResponse } from './mocks/mockNimbusNetwork';
+
+import objectInfo_Account from './mockData/objectInfo-Account.json';
 import recordRep_Account from './mockData/RecordRepresentation-Account.json';
 import recordRep_Account_Edited from './mockData/RecordRepresentation-Account-Edited.json';
 import userId from '../standalone-stubs/salesforce-user-id';
-import { stripProperties } from '@luvio/adapter-test-library';
-import { UpdateRecordConfig } from '@salesforce/lds-adapters-uiapi';
 
 describe('invokeAdapter', () => {
     beforeEach(() => {
@@ -66,6 +68,18 @@ describe('invokeAdapter', () => {
                 body: JSON.stringify(recordRep_Account_Edited),
             }
         );
+        addMockNetworkResponse('GET', '/services/data/v53.0/ui-api/object-info/Account', {
+            headers: {},
+            status: 200,
+            body: JSON.stringify(objectInfo_Account),
+        });
+
+        // ensure DS has object info
+        await invokeAdapter(
+            'getObjectInfo',
+            JSON.stringify({ objectApiName: 'Account' }),
+            () => {}
+        );
 
         const testUpdatedDate = new Date();
         timekeeper.freeze(testUpdatedDate);
@@ -91,6 +105,8 @@ describe('invokeAdapter', () => {
                         value: 'Acme',
                     },
                 },
+                // draft action IDs are current timestamp plus a double digit index
+                draftActionIds: [`${testUpdatedDate.valueOf()}00`],
             },
         };
 
@@ -125,15 +141,12 @@ describe('invokeAdapter', () => {
                         expected = stripProperties(recordRep_Account, ['eTag', 'weakEtag']);
                     } else if (onSnapshotCount === 2 || onSnapshotCount === 3) {
                         expected = stripProperties(optimisticDraftResponse, ['eTag', 'weakEtag']);
-                        // assert the draft action id is there then remove it so we can match it
-                        expect(data.drafts.draftActionIds.length).toBe(1);
-                        delete data.drafts.draftActionIds;
                     } else {
                         done.fail('unexpected snapshot broadcast');
                     }
 
                     expect(error).toBeUndefined();
-                    expect(data).toMatchObject(expected);
+                    expect(data).toEqual(expected);
 
                     // resolve for the first call since it's being awaited
                     if (onSnapshotCount === 1) {
@@ -147,8 +160,6 @@ describe('invokeAdapter', () => {
 
         const onResponse: OnResponse = (value) => {
             const { data, error } = value;
-            // no way to predict these ids so we get rid of them before asserting
-            delete data.drafts.draftActionIds;
             // currently drafts response doesn't get all fields, just the modified ones
             expect(data).toEqual(
                 stripProperties(
@@ -182,6 +193,21 @@ describe('invokeAdapter', () => {
                 body: JSON.stringify(recordRep_Account),
             }
         );
+        addMockNetworkResponse('GET', '/services/data/v53.0/ui-api/object-info/Account', {
+            headers: {},
+            status: 200,
+            body: JSON.stringify(objectInfo_Account),
+        });
+
+        // ensure DS has object info
+        await invokeAdapter(
+            'getObjectInfo',
+            JSON.stringify({ objectApiName: 'Account' }),
+            () => {}
+        );
+
+        const testUpdatedDate = new Date();
+        timekeeper.freeze(testUpdatedDate);
 
         const optimisticDraftResponse = {
             ...recordRep_Account,
@@ -190,6 +216,8 @@ describe('invokeAdapter', () => {
                 edited: false,
                 deleted: true,
                 serverValues: {},
+                // draft action IDs are current timestamp plus a double digit index
+                draftActionIds: [`${testUpdatedDate.valueOf()}00`],
             },
         };
 
@@ -228,7 +256,7 @@ describe('invokeAdapter', () => {
 
                     const { data, error } = result;
                     expect(error).toBeUndefined();
-                    expect(data).toMatchObject(expected);
+                    expect(data).toEqual(expected);
 
                     // resolve for the first call since it's being awaited
                     if (onSnapshotCount === 1) {
@@ -292,6 +320,18 @@ describe('invokeAdapter', () => {
                 body: JSON.stringify(recordRep_Account_Edited),
             }
         );
+        addMockNetworkResponse('GET', '/services/data/v53.0/ui-api/object-info/Account', {
+            headers: {},
+            status: 200,
+            body: JSON.stringify(objectInfo_Account),
+        });
+
+        // ensure DS has object info
+        await invokeAdapter(
+            'getObjectInfo',
+            JSON.stringify({ objectApiName: 'Account' }),
+            () => {}
+        );
 
         const getConfig = {
             recordId: recordRep_Account.id,
@@ -339,6 +379,8 @@ describe('invokeAdapter', () => {
                         value: 'Acme',
                     },
                 },
+                // draft action IDs are current timestamp plus a double digit index
+                draftActionIds: [`${testUpdatedDate.valueOf()}00`],
             },
         };
 
@@ -347,7 +389,6 @@ describe('invokeAdapter', () => {
             onResponseCount += 1;
             const { data, error } = value;
 
-            delete data.drafts.draftActionIds;
             // currently drafts response doesn't get all fields, just the modified ones
             expect(data).toEqual(
                 stripProperties(

@@ -7,12 +7,12 @@ const PACAKGES_ROOT = path.resolve(REPO_ROOT, 'packages');
 const wires = [];
 
 // adapters families that don't conform to typical package structure
-const blacklist = ['lds-adapters-platform-flow'];
+const blocklist = ['lds-adapters-platform-flow'];
 
 fs.readdirSync(PACAKGES_ROOT).forEach((package) => {
     if (
         package.startsWith('lds-adapters') === false ||
-        blacklist.findIndex((x) => x === package) > -1
+        blocklist.findIndex((x) => x === package) > -1
     ) {
         return;
     }
@@ -51,4 +51,5 @@ const report = {
     all: wires.sort((a, b) => (a.wire > b.wire ? 1 : -1)),
 };
 
+// eslint-disable-next-line no-console
 console.log(JSON.stringify(report, null, 2));

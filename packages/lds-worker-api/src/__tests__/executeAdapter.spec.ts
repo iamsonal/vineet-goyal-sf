@@ -1,7 +1,13 @@
+import timekeeper from 'timekeeper';
 import { stripProperties } from '@luvio/adapter-test-library';
 import { UpdateRecordConfig } from '@salesforce/lds-adapters-uiapi/dist/types/src/generated/adapters/updateRecord';
 
-import { executeAdapter, executeMutatingAdapter, OnSnapshot } from '../executeAdapter';
+import {
+    executeAdapter,
+    executeMutatingAdapter,
+    invokeAdapter,
+    OnSnapshot,
+} from '../executeAdapter';
 import { draftManager } from '../draftQueueImplementation';
 import { addMockNetworkResponse } from './mocks/mockNimbusNetwork';
 
@@ -136,6 +142,14 @@ describe('executeMutatingAdapter', () => {
                 body: JSON.stringify(recordRep_Account),
             }
         );
+        addMockNetworkResponse('GET', '/services/data/v53.0/ui-api/object-info/Account', {
+            headers: {},
+            status: 200,
+            body: JSON.stringify(objectInfo_Account),
+        });
+
+        const testUpdatedDate = new Date();
+        timekeeper.freeze(testUpdatedDate);
 
         const optimisticDraftResponse = {
             ...recordRep_Account,
@@ -144,6 +158,8 @@ describe('executeMutatingAdapter', () => {
                 edited: false,
                 deleted: true,
                 serverValues: {},
+                // draft action IDs are current timestamp plus a double digit index
+                draftActionIds: [`${testUpdatedDate.valueOf()}00`],
             },
         };
 
@@ -182,7 +198,7 @@ describe('executeMutatingAdapter', () => {
 
                     const { data, error } = result;
                     expect(error).toBeUndefined();
-                    expect(data).toMatchObject(expected);
+                    expect(data).toEqual(expected);
 
                     // resolve for the first call since it's being awaited
                     if (onSnapshotCount === 1) {
@@ -193,6 +209,13 @@ describe('executeMutatingAdapter', () => {
         });
 
         await getRecordPromise;
+
+        // then populate object info for that record
+        await invokeAdapter(
+            'getObjectInfo',
+            JSON.stringify({ objectApiName: 'Account' }),
+            () => {}
+        );
 
         // deleteRecord is a special adapter that does not take in a config object but rather
         // a record ID directly :grimacing:

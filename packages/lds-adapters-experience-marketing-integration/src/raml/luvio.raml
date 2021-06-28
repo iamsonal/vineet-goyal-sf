@@ -11,6 +11,10 @@ types:
     (luvio.ttl): 30000
     (luvio.key):
       form_id: formId
+  FormSubmissionRepresentation:
+    (luvio.ttl): 100
+    (luvio.key):
+      form_submission_id: formSubmissionId
 
 /sites/{siteId}/marketing-integration/forms:
   post:
@@ -22,3 +26,7 @@ types:
       name: getForm
     (luvio.key):
       form_id: urlParams.formId
+/sites/{siteId}/marketing-integration/forms/{formId}/data:
+  post:
+    (luvio.adapter):
+      name: submitForm

@@ -8,6 +8,7 @@ import {
     CMS_NON_CONNECT_BASE_URI,
     INTERACTION_BASE_URI,
     BILLING_BASE_URI,
+    SITES_BASE_URI,
 } from './connect-base';
 
 const COMMUNITIES_NAVIGATION_MENU_PATH = new RegExp(
@@ -233,6 +234,21 @@ const SIMULATION_EVALUATION_SERVICE_PATH = new RegExp(
 
 const SEARCH_DECISION_MATRICES_PATH = new RegExp(
     `${CONNECT_BASE_URI}/omnistudio/decision-matrices`,
+    'i'
+);
+
+const MARKETING_INTEGRATION_GET_FORM_PATH = new RegExp(
+    `${SITES_BASE_URI}/([A-Z0-9]){15,18}/marketing-integration/forms/([A-Z0-9]){15,18}$`,
+    'i'
+);
+
+const MARKETING_INTEGRATION_SUBMIT_FORM_PATH = new RegExp(
+    `${SITES_BASE_URI}/([A-Z0-9]){15,18}/marketing-integration/forms/([A-Z0-9]){15,18}/data`,
+    'i'
+);
+
+const MARKETING_INTEGRATION_SAVE_FORM_PATH = new RegExp(
+    `${SITES_BASE_URI}/([A-Z0-9]){15,18}/marketing-integration/forms$`,
     'i'
 );
 
@@ -831,9 +847,37 @@ const billing: ApiFamily = {
     },
 };
 
+const marketingIntegration = {
+    getForm: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(SITES_BASE_URI) && MARKETING_INTEGRATION_GET_FORM_PATH.test(path),
+        transport: {
+            controller: 'MarketingIntegrationController.getForm',
+        },
+    },
+    submitForm: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(SITES_BASE_URI) && MARKETING_INTEGRATION_SUBMIT_FORM_PATH.test(path),
+        transport: {
+            controller: 'MarketingIntegrationController.submitForm',
+        },
+    },
+    saveForm: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(SITES_BASE_URI) && MARKETING_INTEGRATION_SAVE_FORM_PATH.test(path),
+        transport: {
+            controller: 'MarketingIntegrationController.saveForm',
+        },
+    },
+};
+
 registerApiFamilyRoutes(connect);
 registerApiFamilyRoutes(commerce);
 registerApiFamilyRoutes(guidance);
 registerApiFamilyRoutes(analytics);
 registerApiFamilyRoutes(flow);
 registerApiFamilyRoutes(billing);
+registerApiFamilyRoutes(marketingIntegration);

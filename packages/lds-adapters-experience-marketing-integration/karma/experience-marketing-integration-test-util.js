@@ -58,3 +58,31 @@ function saveFormMatcher(config) {
         queryParams: {},
     });
 }
+
+export function mockSubmitFormNetworkOnce(config, mockResponse) {
+    const paramMatch = submitFormMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockResponse);
+}
+
+export function mockSubmitFormInvalidSiteIdNetworkErrorOnce(config, mockResponse) {
+    const paramMatch = submitFormMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockResponse);
+}
+
+function submitFormMatcher(config) {
+    let { siteId, formId, ...mockFormData } = config;
+
+    // do not compare item content as FormSubmissionInputRepresentation.formFieldsList type in raml is object, not FormSubmissionFieldInputList yet
+    mockFormData.formFieldsList = mockFormData.formFieldsList.map(() => {
+        return {};
+    });
+
+    return sinon.match({
+        body: mockFormData,
+        headers: {},
+        method: 'post',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/${siteId}/marketing-integration/forms/${formId}/data`,
+        queryParams: {},
+    });
+}

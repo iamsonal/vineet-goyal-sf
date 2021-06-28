@@ -141,7 +141,11 @@ types:
   FormSubmissionRepresentation:
     description: A representation for a Marketing Integration form submission.
     type: object
-    properties: {}
+    properties:
+      formSubmissionId:
+        description: Form submission id representing the form submission data that was saved.
+        type: string
+
 /sites/{siteId}/marketing-integration/forms:
   post:
     description: Saves a form for Marketing Integration.

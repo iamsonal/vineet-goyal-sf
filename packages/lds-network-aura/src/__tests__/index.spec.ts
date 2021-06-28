@@ -11,6 +11,7 @@ import {
     WAVE_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
     BILLING_BASE_URI,
+    SITES_BASE_URI,
 } from '../middlewares/connect-base';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 import { ControllerInvoker } from '../middlewares/utils';
@@ -6522,6 +6523,93 @@ describe('routes', () => {
                 },
                 paymentBatchRunCriteriaId: '5PCR000000000HvOAI',
             }
+        );
+    });
+
+    describe('get /sites/{siteId}/marketing-integration/forms/{formId}', () => {
+        testControllerInput(
+            {
+                baseUri: SITES_BASE_URI,
+                basePath: `/0DM000000000000000/marketing-integration/forms/8Cm000000000000000`,
+            },
+            [
+                'MarketingIntegrationController.getForm',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: SITES_BASE_URI,
+            basePath: `/0DM000000000000000/marketing-integration/forms/8Cm000000000000000`,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: SITES_BASE_URI,
+                basePath: `/0DM000000000000000/marketing-integration/forms/8Cm000000000000000`,
+            },
+            {}
+        );
+    });
+
+    describe('post /sites/{siteId}/marketing-integration/forms', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: SITES_BASE_URI,
+                basePath: `/0DM000000000000000/marketing-integration/forms`,
+            },
+            [
+                'MarketingIntegrationController.saveForm',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: SITES_BASE_URI,
+            basePath: `/0DM000000000000000/marketing-integration/forms`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: SITES_BASE_URI,
+                basePath: `/0DM000000000000000/marketing-integration/forms`,
+            },
+            {}
+        );
+    });
+
+    describe('post /sites/{siteId}/marketing-integration/forms/{formId}/data', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: SITES_BASE_URI,
+                basePath: `/0DM000000000000000/marketing-integration/forms/8Cm000000000000000/data`,
+            },
+            [
+                'MarketingIntegrationController.submitForm',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: SITES_BASE_URI,
+            basePath: `/0DM000000000000000/marketing-integration/forms/8Cm000000000000000/data`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: SITES_BASE_URI,
+                basePath: `/0DM000000000000000/marketing-integration/forms/8Cm000000000000000/data`,
+            },
+            {}
         );
     });
 

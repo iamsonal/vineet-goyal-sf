@@ -1,12 +1,4 @@
-import {
-    ResourceRequest,
-    ProxyGraphNode,
-    GraphNode,
-    Environment,
-    StoreLink,
-    StoreRecordError,
-    Adapter,
-} from '@luvio/engine';
+import { ResourceRequest, StoreLink, StoreRecordError, Adapter } from '@luvio/engine';
 import {
     RecordRepresentation,
     keyBuilderRecord,
@@ -110,13 +102,6 @@ function formatDisplayValue(value: boolean | number | string | null) {
     return value === null ? null : value.toString();
 }
 
-/**
- * Checks if a node is a GraphNode
- */
-function isGraphNode(node: ProxyGraphNode<unknown>): node is GraphNode<unknown> {
-    return node !== null && node.type === 'Node';
-}
-
 // creates a link node
 function createLink(key: string) {
     return { __ref: key };
@@ -163,16 +148,38 @@ export function isDraftRecordRepresentationNormalized(
  * Builds synthetic FieldValueRepresentations for fields that have draft changes applied
  * @param fields List of draft record fields
  */
-export function buildRecordFieldValueRepresentationsFromDraftFields(fields: DraftFields) {
-    const keys = ObjectKeys(fields);
-    const recordFields: { [key: string]: ScalarFieldRepresentationValue } = {};
-    for (let i = 0, len = keys.length; i < len; i++) {
-        const key = keys[i];
-        const draftField = fields[key];
-        recordFields[key] = {
+export function buildRecordFieldValueRepresentationsFromDraftFields(
+    fields: DraftFields,
+    objectInfo: ObjectInfoRepresentation | undefined
+) {
+    const fieldNames = ObjectKeys(fields);
+    const recordFields: Record<string, DurableFieldRepresentation> = {};
+    for (let i = 0, len = fieldNames.length; i < len; i++) {
+        const fieldName = fieldNames[i];
+        const draftField = fields[fieldName];
+        recordFields[fieldName] = {
             value: draftField,
             displayValue: formatDisplayValue(draftField),
         };
+
+        if (objectInfo !== undefined) {
+            const fieldInfo = objectInfo.fields[fieldName];
+
+            if (fieldInfo !== undefined) {
+                const { dataType, relationshipName } = fieldInfo;
+                if (dataType === 'Reference' && relationshipName !== null) {
+                    if (typeof draftField !== 'string') {
+                        throw Error('reference field value is not a string');
+                    }
+
+                    const key = keyBuilderRecord({ recordId: draftField });
+                    recordFields[relationshipName] = {
+                        displayValue: null,
+                        value: createLink(key),
+                    };
+                }
+            }
+        }
     }
     return recordFields;
 }
@@ -188,13 +195,14 @@ export function buildRecordFieldValueRepresentationsFromDraftFields(fields: Draf
  */
 export function buildSyntheticRecordRepresentation(
     action: DraftAction<RecordRepresentation, ResourceRequest>,
-    userId: string
+    userId: string,
+    objectInfo: ObjectInfoRepresentation | undefined
 ): DurableRecordRepresentation {
     const { timestamp, data, targetId: recordId, tag: recordKey, id: actionId } = action;
     const { body } = data;
     const { apiName } = body;
 
-    const fields = buildRecordFieldValueRepresentationsFromDraftFields(body.fields);
+    const fields = buildRecordFieldValueRepresentationsFromDraftFields(body.fields, objectInfo);
 
     // add default fields
     fields[DEFAULT_FIELD_CREATED_BY_ID] = { value: userId, displayValue: null };
@@ -379,20 +387,6 @@ export function getRecordFieldsFromRecordRequest(request: ResourceRequest): Requ
 }
 
 /**
- * Looks up the apiName for a RecordRepresentation located in the Store
- * @param key RecordRepresentation key
- * @param env The environment containing the Store where the record is stored
- */
-export function extractRecordApiNameFromStore(key: string, env: Environment): string | undefined {
-    const node = env.getNode<RecordRepresentationNormalized>(key);
-    if (isGraphNode(node)) {
-        const record = node.retrieve();
-        return record.apiName;
-    }
-    return undefined;
-}
-
-/**
  * Replays an ordered draft list on top of a record. If undefined is passed in, the first draft must
  * be a POST action
  * @param record The base record to apply drafts to
@@ -404,7 +398,7 @@ export function replayDraftsOnRecord(
     drafts: DraftAction<RecordRepresentation, ResourceRequest>[],
     objectInfo: ObjectInfoRepresentation | undefined,
     userId: string
-): DurableRecordEntry {
+): DurableRecordRepresentation {
     if (record === undefined) {
         if (drafts.length === 0) {
             throw Error('cannot synthesize a record without a post draft action');
@@ -413,7 +407,7 @@ export function replayDraftsOnRecord(
         if (postAction.data.method !== 'post') {
             throw Error('cannot synthesize a record without a post draft action');
         }
-        const syntheticRecord = buildSyntheticRecordRepresentation(postAction, userId);
+        const syntheticRecord = buildSyntheticRecordRepresentation(postAction, userId, objectInfo);
         drafts.shift();
         return replayDraftsOnRecord(syntheticRecord, drafts, objectInfo, userId);
     }
@@ -454,31 +448,11 @@ export function replayDraftsOnRecord(
     }
 
     const fields = draft.data.body.fields;
-    const draftFields = buildRecordFieldValueRepresentationsFromDraftFields(fields);
+    const draftFields = buildRecordFieldValueRepresentationsFromDraftFields(fields, objectInfo);
 
     const fieldNames = ObjectKeys(draftFields);
     for (let i = 0, len = fieldNames.length; i < len; i++) {
         const fieldName = fieldNames[i];
-        if (objectInfo !== undefined) {
-            const fieldInfo = objectInfo.fields[fieldName];
-
-            if (fieldInfo !== undefined) {
-                const { dataType, relationshipName } = fieldInfo;
-                if (dataType === 'Reference' && relationshipName !== null) {
-                    const fieldValue = draftFields[fieldName].value;
-
-                    if (typeof fieldValue !== 'string') {
-                        throw Error('reference field value is not a string');
-                    }
-
-                    const key = keyBuilderRecord({ recordId: fieldValue });
-                    record.fields[relationshipName] = {
-                        displayValue: null,
-                        value: createLink(key),
-                    };
-                }
-            }
-        }
 
         // don't apply server values to draft created records
         if (
@@ -887,7 +861,7 @@ export function getDraftResolutionInfoForRecordSet(
             if (process.env.NODE_ENV !== 'production') {
                 if (drafts.length > 0 && objectInfo === undefined) {
                     throw new Error(
-                        'Missing object info in cache when drafts are present, drafts may not resolve correctly.'
+                        `Missing ${record.apiName} object info in cache when drafts are present, drafts may not resolve correctly.`
                     );
                 }
             }
@@ -900,4 +874,33 @@ export function getDraftResolutionInfoForRecordSet(
         }
         return results;
     });
+}
+
+/**
+ * Helper function to extract the apiName property from a set of draft actions
+ * that contain actions to create a record. Duplicate api names are filtered out.
+ * @param entries
+ * @returns array of api names
+ */
+export function getObjectApiNamesFromDraftCreateEntries(
+    entries: DurableStoreEntries<DraftAction<RecordRepresentation, ResourceRequest>>
+) {
+    const keys = ObjectKeys(entries);
+    const apiNames: Record<string, true> = {};
+    for (let i = 0, len = keys.length; i < len; i++) {
+        const key = keys[i];
+        const entry = entries[key];
+        const request = entry.data.data;
+        const { method, body } = request;
+
+        if (method !== 'post') {
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error('Can only extract apiName from record post request');
+            }
+        } else {
+            apiNames[body.apiName] = true;
+        }
+    }
+
+    return ObjectKeys(apiNames);
 }

@@ -1,4 +1,4 @@
-import { Environment, ResourceRequest, Store, StoreLink } from '@luvio/engine';
+import { ResourceRequest, StoreLink } from '@luvio/engine';
 import { DurableStoreEntry } from '@luvio/environments';
 import {
     keyBuilderObjectInfo,
@@ -35,7 +35,6 @@ import {
 import {
     buildRecordFieldValueRepresentationsFromDraftFields,
     buildSyntheticRecordRepresentation,
-    extractRecordApiNameFromStore,
     getRecordFieldsFromRecordRequest,
     getRecordIdFromRecordRequest,
     getRecordKeyForId,
@@ -48,6 +47,7 @@ import {
     DraftRecordRepresentation,
     removeDrafts,
     getDraftResolutionInfoForRecordSet,
+    getObjectApiNamesFromDraftCreateEntries,
 } from '../records';
 import OpportunityObjectInfo from './data/object-Opportunity.json';
 
@@ -58,11 +58,14 @@ const OPPORTUNITY_OBJECT_INFO_KEY = keyBuilderObjectInfo({
 describe('draft environment record utilities', () => {
     describe('buildRecordFieldValueRepresentationsFromDraftFields', () => {
         it('converts DraftFields into FieldValueRepresentations', () => {
-            const fields = buildRecordFieldValueRepresentationsFromDraftFields({
-                Name: 'Justin',
-                Color: 'Blue',
-                Friends: null,
-            });
+            const fields = buildRecordFieldValueRepresentationsFromDraftFields(
+                {
+                    Name: 'Justin',
+                    Color: 'Blue',
+                    Friends: null,
+                },
+                OpportunityObjectInfo
+            );
 
             expect(fields['Name']).toEqual({
                 value: 'Justin',
@@ -76,6 +79,35 @@ describe('draft environment record utilities', () => {
 
             expect(fields['Friends']).toEqual({
                 value: null,
+                displayValue: null,
+            });
+        });
+
+        it('updates reference field', () => {
+            const Name = 'Justin';
+            const OwnerId = '12345';
+            const fields = buildRecordFieldValueRepresentationsFromDraftFields(
+                {
+                    Name,
+                    OwnerId,
+                },
+                OpportunityObjectInfo
+            );
+
+            expect(fields['Name']).toEqual({
+                value: Name,
+                displayValue: Name,
+            });
+
+            expect(fields['OwnerId']).toEqual({
+                value: OwnerId,
+                displayValue: OwnerId,
+            });
+
+            expect(fields['Owner']).toEqual({
+                value: {
+                    __ref: `UiApi::RecordRepresentation:${OwnerId}`,
+                },
                 displayValue: null,
             });
         });
@@ -104,7 +136,11 @@ describe('draft environment record utilities', () => {
                 } as any,
             };
 
-            const syntheticRecord = buildSyntheticRecordRepresentation(action, CURRENT_USER_ID);
+            const syntheticRecord = buildSyntheticRecordRepresentation(
+                action,
+                CURRENT_USER_ID,
+                undefined
+            );
 
             expect(syntheticRecord).toEqual({
                 id: DRAFT_RECORD_ID,
@@ -292,26 +328,6 @@ describe('draft environment record utilities', () => {
             const fields = getRecordFieldsFromRecordRequest(request);
             expect(fields.fields).toEqual([]);
             expect(fields.optionalFields).toEqual([]);
-        });
-    });
-
-    describe('extractRecordApiNameFromStore', () => {
-        it('gets apiName from record in store', () => {
-            const store = new Store();
-            store.publish(STORE_KEY_RECORD, { apiName: DEFAULT_API_NAME });
-            const apiName = extractRecordApiNameFromStore(
-                STORE_KEY_RECORD,
-                new Environment(store, jest.fn())
-            );
-            expect(apiName).toBe(DEFAULT_API_NAME);
-        });
-        it('returns undefined if missing in store', () => {
-            const store = new Store();
-            const apiName = extractRecordApiNameFromStore(
-                STORE_KEY_RECORD,
-                new Environment(store, jest.fn())
-            );
-            expect(apiName).toBeUndefined();
         });
     });
 
@@ -2458,9 +2474,62 @@ describe('draft environment record utilities', () => {
                 getDraftResolutionInfoForRecordSet(recordSet, durableStore, getDraftActions)
             ).rejects.toThrowError(
                 new Error(
-                    'Missing object info in cache when drafts are present, drafts may not resolve correctly.'
+                    `Missing ${OpportunityObjectInfo.apiName} object info in cache when drafts are present, drafts may not resolve correctly.`
                 )
             );
+        });
+    });
+
+    describe('getObjectApiNamesFromDraftCreateEntries', () => {
+        it('extracts api name from set of draft creates', () => {
+            const postAction1 = { data: { method: 'post', body: { apiName: 'Account' } } };
+            const postAction2 = { data: { method: 'post', body: { apiName: 'Opportunity' } } };
+            const entries = {
+                '1': { data: postAction1 },
+                '2': { data: postAction2 },
+            } as any;
+
+            const apiNames = getObjectApiNamesFromDraftCreateEntries(entries);
+            expect(apiNames).toEqual(['Account', 'Opportunity']);
+        });
+
+        it('filters out duplicate apiNames', () => {
+            const postAction1 = { data: { method: 'post', body: { apiName: 'Account' } } };
+            const postAction2 = { data: { method: 'post', body: { apiName: 'Account' } } };
+            const entries = {
+                '1': { data: postAction1 },
+                '2': { data: postAction2 },
+            } as any;
+
+            const apiNames = getObjectApiNamesFromDraftCreateEntries(entries);
+            expect(apiNames).toEqual(['Account']);
+        });
+        it('throws if any entry is not a draft action', () => {
+            const postAction1 = { data: { someRandomData: true } };
+            const postAction2 = { data: { method: 'post', body: { apiName: 'Account' } } };
+            const entries = {
+                '1': { data: postAction1 },
+                '2': { data: postAction2 },
+            } as any;
+
+            expect(() => getObjectApiNamesFromDraftCreateEntries(entries)).toThrow(
+                new Error('Can only extract apiName from record post request')
+            );
+        });
+
+        it('throws if any action is not post', () => {
+            const postAction1 = { data: { method: 'get', body: { apiName: 'Account' } } };
+            const entries = {
+                '1': { data: postAction1 },
+            } as any;
+
+            expect(() => getObjectApiNamesFromDraftCreateEntries(entries)).toThrow(
+                new Error('Can only extract apiName from record post request')
+            );
+        });
+        it('returns empty array for empty input', () => {
+            const result = getObjectApiNamesFromDraftCreateEntries({});
+            expect(result).toEqual([]);
         });
     });
 });

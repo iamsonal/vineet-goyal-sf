@@ -21,6 +21,8 @@ import { ObjectInfoIndex, OBJECT_INFO_PREFIX_SEGMENT } from '../../../utils/Obje
 import { flushPromises } from '../../testUtils';
 import mockOpportunityObjectInfo from './data/object-Opportunity.json';
 import mockAccountObjectInfo from './data/object-Account.json';
+import mockUser from './data/record-User-fields-User.Id,User.City.json';
+import { JSONStringify } from '../../../utils/language';
 
 let luvio: Luvio;
 let draftQueue: DraftQueue;
@@ -138,4 +140,24 @@ export function populateDurableStoreWithObjectInfos() {
         ],
         ''
     );
+}
+
+export async function populateL2WithUser() {
+    // populate L2 with a user
+    networkAdapter.setMockResponse({
+        status: 200,
+        headers: {},
+        body: JSONStringify(mockUser),
+    });
+
+    const userSnap = await getRecord({
+        recordId: mockUser.id,
+        fields: ['User.City', 'User.Id'],
+    });
+    expect(userSnap.state).toBe('Fulfilled');
+
+    // reset L1 so user is just in L2
+    (luvio as any).environment.storeReset();
+
+    return { ...mockUser };
 }

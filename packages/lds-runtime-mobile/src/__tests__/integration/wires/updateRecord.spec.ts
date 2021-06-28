@@ -6,8 +6,9 @@ import { JSONStringify } from '../../../utils/language';
 import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
 import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
+import mockOpportunity from './data/record-Opportunity-fields-Opportunity.Account.Name,Opportunity.Account.Owner.Name,Opportunity.Owner.City.json';
 import { RECORD_TTL } from '@salesforce/lds-adapters-uiapi/karma/dist/uiapi-constants';
-import { setup } from './integrationTestSetup';
+import { populateL2WithUser, setup } from './integrationTestSetup';
 
 const RECORD_ID = mockAccount.id;
 const API_NAME = 'Account';
@@ -54,8 +55,8 @@ describe('mobile runtime integration tests', () => {
             draftQueue,
             networkAdapter,
             createRecord,
-            getRecord,
             updateRecord,
+            getRecord,
         } = await setup());
     });
 
@@ -295,6 +296,45 @@ describe('mobile runtime integration tests', () => {
             expect(subject.items[0]).toMatchObject({
                 operationType: DraftActionOperationType.Update,
             });
+        });
+
+        it('update to reference field causes spanning record to be updated', async () => {
+            const newOwner = await populateL2WithUser();
+
+            const opportunityId = mockOpportunity.id;
+            const updatedOwnerId = newOwner.id;
+
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(mockOpportunity),
+            });
+
+            const getRecordSnapshot = (await getRecord({
+                recordId: opportunityId,
+                fields: ['Opportunity.OwnerId', 'Opportunity.Owner.Id', 'Opportunity.Owner.City'],
+            })) as Snapshot<RecordRepresentation>;
+            expect(getRecordSnapshot.state).toBe('Fulfilled');
+
+            // TODO: W-9463628 this flush can be removed when we solve the extra durable writes due to this bug
+            await flushPromises();
+
+            const callbackSpy = jest.fn();
+            // subscribe to getRecord snapshot
+            luvio.storeSubscribe(getRecordSnapshot, callbackSpy);
+
+            // update the synthetic record
+            await updateRecord({ recordId: opportunityId, fields: { OwnerId: updatedOwnerId } });
+
+            await flushPromises();
+
+            // TODO: W-9463628 extra emit, should be 1
+            expect(callbackSpy).toBeCalledTimes(2);
+            const updatedOppy = callbackSpy.mock.calls[1][0].data as RecordRepresentation;
+            expect(updatedOppy.fields['OwnerId'].value).toBe(updatedOwnerId);
+            const updatedSpanning = updatedOppy.fields['Owner'].value as RecordRepresentation;
+            expect(updatedSpanning.id).toBe(updatedOwnerId);
+            expect(updatedSpanning.fields['City'].value).toBe('Montreal');
         });
     });
 });

@@ -10,7 +10,11 @@ import {
     createOkResponse,
 } from '../DraftFetchResponse';
 import { ObjectCreate, ObjectKeys } from '../utils/language';
-import { getRecordFieldsFromRecordRequest, RECORD_ENDPOINT_REGEX } from '../utils/records';
+import {
+    filterRecordFields,
+    getRecordFieldsFromRecordRequest,
+    RECORD_ENDPOINT_REGEX,
+} from '../utils/records';
 import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
 
 /**
@@ -101,7 +105,7 @@ export function createRecordDraftEnvironment(
                             if (record === undefined) {
                                 throw createDraftSynthesisErrorResponse();
                             }
-                            return createOkResponse(record) as any;
+                            return createOkResponse(filterRecordFields(record, fields)) as any;
                         });
                 });
         });

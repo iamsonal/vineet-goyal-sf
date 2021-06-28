@@ -14,30 +14,41 @@ export function getObjectInfosForRecords(
     records: DurableStoreEntries<DurableRecordEntry>
 ): Promise<Record<string, ObjectInfoRepresentation>> {
     const recordKeys = ObjectKeys(records);
-    const objectInfoKeys: { [key: string]: true } = {};
+    const apiNames: { [key: string]: true } = {};
     for (let i = 0; i < recordKeys.length; i++) {
         const entry = records[recordKeys[i]];
         const record = entry.data;
         if (isStoreRecordError(record)) {
             continue;
         }
-        const { apiName } = record;
-        if (apiName !== undefined) {
-            const objectInfoKey = keyBuilderObjectInfo({ apiName });
-            objectInfoKeys[objectInfoKey] = true;
-        }
+        apiNames[record.apiName] = true;
     }
-    const objectInfoKeysArray = ObjectKeys(objectInfoKeys);
+
+    return getObjectInfos(durableStore, ObjectKeys(apiNames));
+}
+
+export function getObjectInfos(
+    durableStore: DurableStore,
+    apiNames: string[]
+): Promise<Record<string, ObjectInfoRepresentation>> {
+    const result: Record<string, ObjectInfoRepresentation> = {};
+
+    if (apiNames.length === 0) {
+        return Promise.resolve(result);
+    }
+
+    const keys = apiNames.map((apiName) => {
+        return keyBuilderObjectInfo({ apiName });
+    });
 
     return durableStore
-        .getEntries<ObjectInfoRepresentation>(objectInfoKeysArray, DefaultDurableSegment)
+        .getEntries<ObjectInfoRepresentation>(keys, DefaultDurableSegment)
         .then((entries) => {
-            const result: Record<string, ObjectInfoRepresentation> = {};
             if (entries === undefined) {
                 return result;
             }
-            for (let i = 0, len = objectInfoKeysArray.length; i < len; i++) {
-                const key = objectInfoKeysArray[i];
+            for (let i = 0, len = keys.length; i < len; i++) {
+                const key = keys[i];
                 const entry = entries[key];
                 if (entry !== undefined) {
                     const objectInfo = entry.data;

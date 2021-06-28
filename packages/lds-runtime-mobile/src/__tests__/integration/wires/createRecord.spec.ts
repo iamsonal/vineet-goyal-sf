@@ -12,7 +12,7 @@ import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
 import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 import mockOppy from './data/record-Opportunity-fields-Opportunity.Account.Name,Opportunity.Account.Owner.Name,Opportunity.Owner.City.json';
-import { setup } from './integrationTestSetup';
+import { populateL2WithUser, setup } from './integrationTestSetup';
 
 const RECORD_ID = mockAccount.id;
 const API_NAME = 'Account';
@@ -206,6 +206,28 @@ describe('mobile runtime integration tests', () => {
             expect(getRecordSpy).toHaveBeenCalledTimes(1);
             const callbackOppy = getRecordSpy.mock.calls[0][0].data as RecordRepresentation;
             expect(callbackOppy.fields['AccountId'].value).toBe(canonicalRecordId);
+        });
+
+        it('create a record with a reference field', async () => {
+            const parent = await populateL2WithUser();
+            const oppy = (
+                await createRecord({
+                    apiName: 'Account',
+                    fields: { Name: 'My Accout', ParentId: parent.id },
+                })
+            ).data as RecordRepresentation;
+
+            expect(oppy.fields['ParentId'].value).toEqual(parent.id);
+
+            const spanningSnapshot = await getRecord({
+                recordId: oppy.id,
+                fields: ['Opportunity.Id', 'Opportunity.Parent.City'],
+            });
+            expect(spanningSnapshot.state).toBe('Fulfilled');
+            const record = spanningSnapshot.data as RecordRepresentation;
+            expect(
+                (record.fields['Parent'].value as RecordRepresentation).fields['City'].value
+            ).toEqual(parent.fields['City'].value);
         });
     });
 });

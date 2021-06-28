@@ -1,12 +1,19 @@
-import { DurableStoreEntries } from '@luvio/environments';
+import { DurableStore, DurableStoreEntries } from '@luvio/environments';
 import {
-    DraftAction,
+    durableMerge,
+    DurableRecordEntry,
+    getDraftResolutionInfoForRecordSet,
     DraftActionMap,
     isEntryDurableRecordRepresentation,
+    DraftResolutionInput,
+    DraftAction,
 } from '@salesforce/lds-drafts';
-import { durableMerge, DurableRecordEntry } from '@salesforce/lds-drafts';
 import { ObjectAssign, ObjectKeys } from '../utils/language';
-import { GetRecordConfig, RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import {
+    GetRecordConfig,
+    ObjectInfoRepresentation,
+    RecordRepresentation,
+} from '@salesforce/lds-adapters-uiapi';
 import { Adapter, ResourceRequest } from '@luvio/engine';
 import { MergeStrategy } from './makeDurableStoreWithMergeStrategy';
 import { isStoreKeyRecordId } from '@salesforce/lds-uiapi-record-utils';
@@ -15,14 +22,17 @@ type GetDraftActionsForRecords = (keys: string[]) => Promise<DraftActionMap>;
 
 export class RecordMergeStrategy implements MergeStrategy {
     private readonly getDraftActions: GetDraftActionsForRecords;
+    private readonly durableStore: DurableStore;
     private readonly getRecord: Adapter<GetRecordConfig, RecordRepresentation>;
     private readonly userId: string;
 
     constructor(
+        durableStore: DurableStore,
         getDraftActions: GetDraftActionsForRecords,
         getRecord: Adapter<GetRecordConfig, RecordRepresentation>,
         userId: string
     ) {
+        this.durableStore = durableStore;
         this.getDraftActions = getDraftActions;
         this.getRecord = getRecord;
         this.userId = userId;
@@ -82,29 +92,38 @@ export class RecordMergeStrategy implements MergeStrategy {
 
         // optimization - we only request drafts for records if any of the
         // existing or incoming records already contain drafts on them
-        let draftPromise: Promise<DraftActionMap>;
-        const draftKeysArray = ObjectKeys(draftKeys);
-        if (draftKeysArray.length === 0) {
+        let draftPromise: Promise<Record<string, DraftResolutionInput>>;
+        if (ObjectKeys(draftKeys).length === 0) {
             draftPromise = Promise.resolve({});
         } else {
-            draftPromise = this.getDraftActions(draftKeysArray);
+            draftPromise = getDraftResolutionInfoForRecordSet(
+                incomingRecords,
+                this.durableStore,
+                this.getDraftActions
+            );
         }
 
-        return draftPromise.then((actionMap) => {
+        // get object infos and drafts so we can replay the drafts on the merged result
+        return draftPromise.then((draftResolutionInfo) => {
             const { userId, getRecord } = this;
             for (let i = 0, len = keysArray.length; i < len; i++) {
                 const key = keysArray[i];
-                const drafts =
-                    (actionMap[key] as DraftAction<RecordRepresentation, ResourceRequest>[]) ?? [];
                 const existing = existingRecords[key];
                 const incoming = incomingRecords[key];
+
+                const draftInfo = draftResolutionInfo[key];
+                let drafts: DraftAction<RecordRepresentation, ResourceRequest>[] = [];
+                let objectInfo: ObjectInfoRepresentation | undefined;
+                if (draftInfo !== undefined) {
+                    drafts = draftInfo.drafts;
+                    objectInfo = draftInfo.objectInfo;
+                }
 
                 const mergedRecord = durableMerge(
                     existing,
                     incoming,
                     drafts,
-                    // TODO: W-9074912 pass in ObjectInfo
-                    undefined,
+                    objectInfo,
                     userId,
                     getRecord
                 );

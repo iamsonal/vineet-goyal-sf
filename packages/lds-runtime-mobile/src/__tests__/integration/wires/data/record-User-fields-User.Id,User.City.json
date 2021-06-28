@@ -1,0 +1,22 @@
+{
+    "apiName": "User",
+    "childRelationships": {},
+    "eTag": "01d978e1080d6411cd494581063a93c7",
+    "fields": {
+        "City": {
+            "displayValue": null,
+            "value": "Montreal"
+        },
+        "Id": {
+            "displayValue": null,
+            "value": "005T1000000Huh7IBD"
+        }
+    },
+    "id": "005T1000000Huh7IBD",
+    "lastModifiedById": "005T1000000Huh7IAC",
+    "lastModifiedDate": "2021-04-07T00:30:48.000Z",
+    "recordTypeId": null,
+    "recordTypeInfo": null,
+    "systemModstamp": "2021-04-07T00:30:48.000Z",
+    "weakEtag": 1617755448000
+}

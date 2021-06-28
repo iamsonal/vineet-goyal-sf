@@ -20,6 +20,7 @@ export {
     DurableRecordEntry,
     isEntryDurableRecordRepresentation,
     getDraftResolutionInfoForRecordSet,
+    DraftResolutionInput,
 } from './utils/records';
 export { DurableDraftQueue, DRAFT_SEGMENT } from './DurableDraftQueue';
 export {

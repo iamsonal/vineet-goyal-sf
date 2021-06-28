@@ -8,46 +8,58 @@ import {
 } from '@luvio/environments';
 import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { isLDSDraftAction } from '../actionHandlers/LDSActionHandler';
-import { DraftAction, DraftActionMap, DraftActionStatus } from '../DraftQueue';
+import { DraftAction, DraftActionStatus } from '../DraftQueue';
 import { DRAFT_SEGMENT } from '../DurableDraftQueue';
 import { ObjectCreate, ObjectKeys } from '../utils/language';
 import {
     buildSyntheticRecordRepresentation,
     DurableRecordEntry,
     extractRecordKeyFromDraftDurableStoreKey,
+    GetDraftActionsForRecords,
+    getDraftResolutionInfoForRecordSet,
+    getObjectApiNamesFromDraftCreateEntries,
     isDraftActionStoreRecordKey,
     isStoreRecordError,
     removeDrafts,
     replayDraftsOnRecord,
 } from '../utils/records';
 import { ResourceRequest } from '@luvio/engine';
-
-type GetDraftActionsForRecords = (keys: string[]) => Promise<DraftActionMap>;
+import { getObjectInfos } from '../utils/objectInfo';
 
 function persistDraftCreates(
     entries: DurableStoreEntries<DraftAction<RecordRepresentation, ResourceRequest>>,
     durableStore: DurableStore,
     userId: string
-) {
+): Promise<void> {
     const keys = ObjectKeys(entries);
-    const draftCreates: DurableStoreEntries<DurableRecordEntry> = {};
-    let shouldWrite = false;
+    if (keys.length === 0) {
+        return Promise.resolve();
+    }
+    const apiNames = getObjectApiNamesFromDraftCreateEntries(entries);
+    return getObjectInfos(durableStore, apiNames).then((objectInfos) => {
+        const draftCreates: DurableStoreEntries<DurableRecordEntry> = {};
 
-    for (let i = 0, len = keys.length; i < len; i++) {
-        const key = keys[i];
-        const entry = entries[key];
-        const action = entry.data;
-        if (action.data.method === 'post') {
-            const syntheticRecord = buildSyntheticRecordRepresentation(action, userId);
+        for (let i = 0, len = keys.length; i < len; i++) {
+            const key = keys[i];
+            const entry = entries[key];
+            const action = entry.data;
+            const request = action.data;
+            if (process.env.NODE_ENV !== 'production') {
+                if (request.method !== 'post') {
+                    throw Error('attempting to generate synthetic record from non post request');
+                }
+            }
+            const apiName = request.body.apiName;
+            const syntheticRecord = buildSyntheticRecordRepresentation(
+                action,
+                userId,
+                objectInfos[apiName]
+            );
             draftCreates[action.tag] = { data: syntheticRecord };
-            shouldWrite = true;
         }
-    }
 
-    if (shouldWrite) {
         return durableStore.setEntries(draftCreates, DefaultDurableSegment);
-    }
-    return Promise.resolve();
+    });
 }
 
 function onDraftEntriesChanged(
@@ -88,18 +100,20 @@ function resolveDrafts(
             if (entries === undefined) {
                 return;
             }
-
-            return getDraftActionsForRecords(recordKeys).then((actions) => {
+            // get object infos and drafts so we can replay the drafts on the merged result
+            return getDraftResolutionInfoForRecordSet(
+                entries,
+                durableStore,
+                getDraftActionsForRecords
+            ).then((draftResolutionInfo) => {
                 const updatedRecords: {
                     [key: string]: DurableStoreEntry<DurableRecordEntry>;
                 } = {};
 
-                for (let i = 0, len = recordKeys.length; i < len; i++) {
-                    const recordKey = recordKeys[i];
+                let keys = ObjectKeys(entries);
+                for (let i = 0, len = keys.length; i < len; i++) {
+                    const recordKey = keys[i];
                     const entry = entries[recordKey];
-                    if (entry === undefined) {
-                        continue;
-                    }
 
                     const { data: record, expiration } = entry;
 
@@ -108,11 +122,7 @@ function resolveDrafts(
                         continue;
                     }
 
-                    const drafts =
-                        (actions[recordKey] as DraftAction<
-                            RecordRepresentation,
-                            ResourceRequest
-                        >[]) || [];
+                    const { objectInfo, drafts } = draftResolutionInfo[recordKey];
 
                     const baseRecord = removeDrafts(record);
 
@@ -128,8 +138,7 @@ function resolveDrafts(
                         const resolvedRecord = replayDraftsOnRecord(
                             baseRecord,
                             replayDrafts,
-                            // TODO: W-9074912 pass in ObjectInfo
-                            undefined,
+                            objectInfo,
                             userId
                         );
                         updatedRecords[recordKey] = { data: resolvedRecord, expiration };
@@ -178,7 +187,7 @@ export function makeDurableStoreDraftAware(
             return durableStore.setEntries(entries, segment);
         }
 
-        const draftEntries: DurableStoreEntries<
+        const draftCreateEntries: DurableStoreEntries<
             DraftAction<RecordRepresentation, ResourceRequest>
         > = {};
         let hasDraftEntries = false;
@@ -190,10 +199,12 @@ export function makeDurableStoreDraftAware(
             if (isEntryDraftAction(entry, key) && isLDSDraftAction(entry.data)) {
                 if (entry.data.data.method !== 'post') {
                     changedKeys.push(key);
+                } else {
+                    draftCreateEntries[key] = entry as DurableStoreEntry<
+                        DraftAction<RecordRepresentation, ResourceRequest>
+                    >;
                 }
-                draftEntries[key] = entry as DurableStoreEntry<
-                    DraftAction<RecordRepresentation, ResourceRequest>
-                >;
+
                 hasDraftEntries = true;
             }
         }
@@ -201,7 +212,7 @@ export function makeDurableStoreDraftAware(
         // change made to a draft action require affected records to be resolved
         return durableStore.setEntries(entries, segment).then(() => {
             if (hasDraftEntries === true) {
-                return persistDraftCreates(draftEntries, durableStore, userId).then(() => {
+                return persistDraftCreates(draftCreateEntries, durableStore, userId).then(() => {
                     return onDraftEntriesChanged(
                         changedKeys,
                         durableStore,
@@ -247,7 +258,9 @@ export function makeDurableStoreDraftAware(
             ) {
                 const keys = ObjectKeys(operation.entries);
 
-                let containsDraftCreates = false;
+                const draftCreateEntries: DurableStoreEntries<
+                    DraftAction<RecordRepresentation, ResourceRequest>
+                > = {};
                 const { entries } = operation;
 
                 // check entries for any LDS actions that create records
@@ -256,22 +269,18 @@ export function makeDurableStoreDraftAware(
                     const entry = entries[key];
                     if (isEntryDraftAction(entry, key) && isLDSDraftAction(entry.data)) {
                         if (entry.data.data.method === 'post') {
-                            containsDraftCreates = true;
+                            draftCreateEntries[key] = entry as DurableStoreEntry<
+                                DraftAction<RecordRepresentation, ResourceRequest>
+                            >;
                         } else {
                             changedDraftKeys.push(key);
                         }
                     }
                 }
 
-                if (containsDraftCreates) {
+                if (ObjectKeys(draftCreateEntries).length > 0) {
                     persistOperations.push(
-                        persistDraftCreates(
-                            operation.entries as unknown as DurableStoreEntries<
-                                DraftAction<RecordRepresentation, ResourceRequest>
-                            >,
-                            durableStore,
-                            userId
-                        )
+                        persistDraftCreates(draftCreateEntries, durableStore, userId)
                     );
                 }
             }

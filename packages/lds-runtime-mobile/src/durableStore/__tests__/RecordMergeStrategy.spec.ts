@@ -104,17 +104,22 @@ describe('RecordMergeStrategy tests', () => {
         const getActionsForTags = jest.fn().mockResolvedValue({});
         const mockGetRecord = jest.fn();
         const mockUserId = '';
-        const mergeStrategy = new RecordMergeStrategy(getActionsForTags, mockGetRecord, mockUserId);
+        const mergeStrategy = new RecordMergeStrategy(
+            baseDurableStore,
+            getActionsForTags,
+            mockGetRecord,
+            mockUserId
+        );
         const durableStore = makeDurableStoreWithMergeStrategy(baseDurableStore);
         durableStore.registerMergeStrategy(mergeStrategy);
 
         return {
             baseDurableStore,
             durableStore,
-            getActionsForTags,
             mockGetRecord,
             mockUserId,
             mergeStrategy,
+            getActionsForTags,
         };
     }
     it('non records are not merged', async () => {
@@ -124,13 +129,12 @@ describe('RecordMergeStrategy tests', () => {
 
         durableStore.segments[DefaultDurableSegment] = existing;
 
-        const mockDraftQueue = {
-            getActionsForTags: jest.fn().mockResolvedValue({}),
-        } as any;
+        const getActionsForTags = jest.fn().mockResolvedValue({});
         const mockGetRecord = jest.fn();
         const mockUserId = '';
         const recordMergeStrategy = new RecordMergeStrategy(
-            mockDraftQueue,
+            durableStore,
+            getActionsForTags,
             mockGetRecord,
             mockUserId
         );
@@ -138,7 +142,7 @@ describe('RecordMergeStrategy tests', () => {
         const mergeEnabled = makeDurableStoreWithMergeStrategy(durableStore);
         mergeEnabled.registerMergeStrategy(recordMergeStrategy);
 
-        mergeEnabled.setEntries(incoming, DefaultDurableSegment);
+        await mergeEnabled.setEntries(incoming, DefaultDurableSegment);
         expect(durableStore.segments[DefaultDurableSegment]).toEqual(incoming);
     });
 

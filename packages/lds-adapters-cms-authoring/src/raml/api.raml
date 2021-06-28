@@ -2172,12 +2172,14 @@ types:
         language:
           description: Language locale for the managed content, for example, en_US.
           type: string
-          required: false
+          # TODO hand rolled. W-9499610
+          required: true
         version:
           description: An 18-character unique Salesforce identifier for the content
             version.
           type: string
-          required: false
+          # TODO hand rolled. W-9499610
+          required: true
     uriParameters:
       contentKeyOrId:
         description: A unique identifier or ID of a content.

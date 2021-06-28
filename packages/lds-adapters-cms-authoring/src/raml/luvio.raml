@@ -21,7 +21,9 @@ types:
     (luvio.ttl): 100
     (luvio.opaque): true
     (luvio.key):
-      managedContentVariantId: managedContentVariantId
+      content_key: contentKey
+      version_id: managedContentVersionId
+      language: language
 
 /cms:
   /contents:
@@ -111,6 +113,14 @@ types:
                     "urlName":"testurl"
                 }
               }
+  /contents/{contentKeyOrId}:
+    get:
+      (luvio.adapter):
+        name: getManagedContent
+      (luvio.key):
+        content_key: urlParams.contentKeyOrId
+        version_id: queryParams.version
+        language: queryParams.language
   /deployments:
     post:
       (luvio.adapter):

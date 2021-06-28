@@ -5517,6 +5517,52 @@ describe('routes', () => {
         );
     });
 
+    describe('get /cms/contents/{contentKeyOrId}', () => {
+        testControllerInput(
+            {
+                baseUri: CMS_NON_CONNECT_BASE_URI,
+                basePath: `/contents/MCMOEXXY57SNBAJID2SYYWJO45LM`,
+                urlParams: {
+                    contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM',
+                },
+                queryParams: {
+                    version: '5OUxx0000004DMqGAM',
+                    language: 'en_US',
+                },
+            },
+            [
+                'ManagedContentController.getManagedContent',
+                {
+                    contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM',
+                    version: '5OUxx0000004DMqGAM',
+                    language: 'en_US',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: CMS_NON_CONNECT_BASE_URI,
+            basePath: `/contents/MCMOEXXY57SNBAJID2SYYWJO45LM`,
+            queryParams: {
+                version: '5OUxx0000004DMqGAM',
+                language: 'en_US',
+            },
+        });
+
+        testResolveResponse(
+            {
+                baseUri: CMS_NON_CONNECT_BASE_URI,
+                basePath: `/contents/MCMOEXXY57SNBAJID2SYYWJO45LM`,
+                queryParams: {
+                    version: '5OUxx0000004DMqGAM',
+                    language: 'en_US',
+                },
+            },
+            {}
+        );
+    });
+
     describe('get /connect/cms/contents/variants/{managedContentVariantId}', () => {
         testControllerInput(
             {

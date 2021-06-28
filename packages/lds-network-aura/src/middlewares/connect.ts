@@ -143,6 +143,11 @@ const GET_MANAGED_CONTENT_VARIANT_PATH = new RegExp(
     'i'
 );
 
+const GET_MANAGED_CONTENT_PATH = new RegExp(
+    `${CMS_NON_CONNECT_BASE_URI}/contents/([A-Z0-9_]){1,80}$`,
+    'i'
+);
+
 const REPLACE_MANAGED_CONTENT_VARIANT_PATH = GET_MANAGED_CONTENT_VARIANT_PATH;
 
 const LIST_CONTENT_INTERNAL_PATH = new RegExp(
@@ -230,7 +235,14 @@ const connect: ApiFamily = {
             controller: 'NavigationMenuController.getCommunityNavigationMenu',
         },
     },
-
+    getManagedContent: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CMS_NON_CONNECT_BASE_URI) && GET_MANAGED_CONTENT_PATH.test(path),
+        transport: {
+            controller: 'ManagedContentController.getManagedContent',
+        },
+    },
     getManagedContentVariant: {
         method: 'get',
         predicate: (path: string) =>

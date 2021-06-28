@@ -6,10 +6,20 @@ import timekeeper from 'timekeeper';
 const API_VERSION = 'v53.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/connect`;
+const MANAGED_CONTENT_TTL = 100;
 const MANAGED_CONTENT_VARIANT_TTL = 3600000;
 
 function mockCreateDeployment(config, mockData) {
     const paramMatch = getCreateDeploymentsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetManagedContent(config, mockData) {
+    const paramMatch = getManagedContentMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {
@@ -52,6 +62,18 @@ function getCreateDeploymentsMatcher(config) {
     });
 }
 
+function getManagedContentMatcher(config) {
+    let { contentKeyOrId } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `/cms/contents/${contentKeyOrId}`,
+        queryParams: {},
+    });
+}
+
 function getManagedContentVariantMatcher(config) {
     let { variantId } = config;
     return sinon.match({
@@ -69,6 +91,11 @@ function mockCreateDeploymentsErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+function mockGetManagedContentErrorOnce(config, mockData) {
+    const paramMatch = getManagedContentMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 function mockGetManagedContentVariantErrorOnce(config, mockData) {
     const paramMatch = getManagedContentVariantMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
@@ -76,6 +103,10 @@ function mockGetManagedContentVariantErrorOnce(config, mockData) {
 
 function clearManagedContentVariantCache() {
     clearCache();
+}
+
+function expireManagedContent() {
+    timekeeper.travel(Date.now() + MANAGED_CONTENT_TTL + 1);
 }
 
 /**
@@ -122,7 +153,6 @@ function mockCreateManagedContentErrorOnce(config, mockData) {
     var paramMatch = getCreateManagedContentsMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
-
 function getReplaceManagedContentsVaraiantsMatcher(config) {
     var variantId = config.variantId,
         title = config.title,
@@ -161,6 +191,9 @@ export {
     getCreateDeploymentsMatcher,
     mockCreateDeployment,
     mockCreateDeploymentsErrorOnce,
+    mockGetManagedContent,
+    mockGetManagedContentErrorOnce,
+    expireManagedContent,
     mockGetManagedContentVariant,
     mockGetManagedContentVariantErrorOnce,
     expireManagedContentVariant,

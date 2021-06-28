@@ -36,7 +36,11 @@ types:
         description: Field Name
         type: string
         enum:
+          - Currency_Iso_code
           - Id
+          - PaymentMethod
+          - PaymentRunBatch
+          - ReferenceEntity
           - ReferenceEntityAccount
       objectName:
         description: Object Name
@@ -44,11 +48,13 @@ types:
         enum:
           - PaymentGateway
           - PaymentSchedule
+          - PaymentScheduleItem
       operation:
         description: Operation to be performed
         type: string
         enum:
           - Equals
+          - OfType
       value:
         description: Value to be compared
         type: string

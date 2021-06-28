@@ -165,11 +165,14 @@ export function buildInMemorySnapshot(
 }
 
 export const factory: AdapterFactory<GetRecordCreateDefaultsConfig, RecordDefaultsRepresentation> =
-    (luvio: Luvio) =>
-        luvio.withContext(function getRecordCreateDefaults(
+    (luvio: Luvio) => {
+        return luvio.withContext(function UiApi__getRecordCreateDefaults(
             untrusted: unknown,
             context: AdapterContext
-        ) {
+        ):
+            | Promise<Snapshot<RecordDefaultsRepresentation, any>>
+            | Snapshot<RecordDefaultsRepresentation, any>
+            | null {
             const config = coerceConfigWithDefaults(untrusted);
             if (config === null) {
                 return null;
@@ -195,8 +198,6 @@ export const factory: AdapterFactory<GetRecordCreateDefaultsConfig, RecordDefaul
             if (luvio.snapshotAvailable(snapshot)) {
                 return snapshot;
             }
-            return luvio.resolveSnapshot(
-                snapshot,
-                buildSnapshotRefresh(luvio, context, config)
-            ) as Promise<Snapshot<RecordDefaultsRepresentation, any>>;
+            return luvio.resolveSnapshot(snapshot, buildSnapshotRefresh(luvio, context, config));
         });
+    };

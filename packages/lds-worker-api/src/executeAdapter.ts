@@ -64,8 +64,18 @@ export function subscribeToAdapter(
     for (let i = 0, len = gqlKeys.length; i < len; i++) {
         const key = gqlKeys[i];
         if (key === adapterId) {
-            // gql config needs gql query string turned into AST object
-            configObject.query = gqlParse(configObject.query);
+            try {
+                // gql config needs gql query string turned into AST object
+                configObject.query = gqlParse(configObject.query);
+            } catch (parseError) {
+                // call the callback with error
+                onSnapshot({ data: undefined, error: parseError });
+                return () => {
+                    if (wire !== undefined) {
+                        wire.disconnect();
+                    }
+                };
+            }
             break;
         }
     }
@@ -99,8 +109,14 @@ export function invokeAdapter(adapterId: string, config: string, onResponse: OnR
     for (let i = 0, len = gqlKeys.length; i < len; i++) {
         const key = gqlKeys[i];
         if (key === adapterId) {
-            // gql config needs gql query string turned into AST object
-            configObject.query = gqlParse(configObject.query);
+            try {
+                // gql config needs gql query string turned into AST object
+                configObject.query = gqlParse(configObject.query);
+            } catch (parseError) {
+                // call the callback with error
+                onResponse({ data: undefined, error: parseError });
+                return;
+            }
             break;
         }
     }

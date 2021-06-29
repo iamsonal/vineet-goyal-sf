@@ -21,6 +21,19 @@ const CREATE_WIRE_ADAPTER_CONSTRUCTOR = 'createWireAdapterConstructor';
 const CREATE_LDS_ADAPTER = 'createLDSAdapter';
 const LDS_BINDINGS = '@salesforce/lds-bindings';
 
+// Adapter modules that need a nested .data included in the result when snapshots are
+// unwrapped for imperative calls. This is a stopgap measure until W-9232436 is fully
+// resolved.
+const NESTED_DATA_ADAPTER_MODULES = [
+    'lds-adapters-analytics-wave',
+    'lds-adapters-cms-authoring',
+    'lds-adapters-experience-marketing-integration',
+    'lds-adapters-industries-rule-builder',
+    'lds-adapters-platform-admin-success-guidance',
+    'lds-adapters-platform-interaction-orchestrator',
+    'lds-adapters-revenue-billing-batch',
+];
+
 function generateNpmModule(outputDir: string, adapters: AdapterInfo[]) {
     const code = adapters.map((adapter) => {
         const { name } = adapter;
@@ -34,7 +47,11 @@ function generateNpmModule(outputDir: string, adapters: AdapterInfo[]) {
     fs.writeFileSync(path.join(outputDir, 'main.ts'), source);
 }
 
-function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
+function generateCoreAdapterModule(
+    outputDir: string,
+    adapters: AdapterInfo[],
+    includeNestedData: boolean
+) {
     const adapterCode = adapters.reduce((_adapterCode, adapter) => {
         const { apiFamily, name, method, ttl } = adapter;
         const factoryIdentifier = `${name}AdapterFactory`;
@@ -44,7 +61,9 @@ function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
             bind:
                 method === 'get'
                     ? `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}(luvio, ${factoryIdentifier}, {apiFamily: '${apiFamily}', name: ${adapterNameIdentifier}, ttl: ${ttl}}),`
-                    : `${name}: ${CREATE_LDS_ADAPTER}(luvio, ${adapterNameIdentifier}, ${factoryIdentifier}),`,
+                    : method === 'delete'
+                    ? `${name}: ${CREATE_LDS_ADAPTER}(luvio, ${adapterNameIdentifier}, ${factoryIdentifier}),`
+                    : `${name}: unwrapSnapshotData(${factoryIdentifier}),`,
             import: `import { ${factoryIdentifier}, adapterName as ${adapterNameIdentifier} } from '../adapters/${name}';`,
         };
 
@@ -63,8 +82,14 @@ function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
 
     const adapterNames = Object.keys(adapterCode).sort();
 
+    const unwrapper = includeNestedData
+        ? // temporary hack for consumers that are still expecting a Snapshot; note that this
+          // has the side effect of unfreezing the top level of data
+          `return (config: Config) => (adapter(config) as Promise<Snapshot<DataType>>).then(snapshot => ({ ...snapshot.data, data: snapshot.data }));`
+        : `return (config: Config) => (adapter(config) as Promise<Snapshot<DataType>>).then(snapshot => snapshot.data);`;
+
     const source = dedent`
-        import { Luvio } from '@luvio/engine';
+        import { AdapterFactory, Luvio, Snapshot } from '@luvio/engine';
         import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}, ${CREATE_LDS_ADAPTER} } from '${LDS_BINDINGS}';
         import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
         ${adapterNames.map((name) => adapterCode[name].import).join('\n')}
@@ -72,6 +97,11 @@ function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
         ${adapterNames.map((name) => 'let ' + name + ': any;').join('\n    ')}
 
         function bindExportsTo(luvio: Luvio): { [key: string]: any } {
+            function unwrapSnapshotData<Config,DataType>(factory: AdapterFactory<Config,DataType>) {
+                const adapter = factory(luvio);
+                ${unwrapper}
+            }
+
             return {
                 ${adapterNames.map((name) => adapterCode[name].bind).join('\n')}
             };
@@ -117,7 +147,11 @@ export function afterGenerate(config: CompilerConfig, modelInfo: ModelInfo) {
     const outputDur = path.join(config.outputDir, 'artifacts');
     mkdirp.sync(outputDur);
 
-    generateCoreAdapterModule(outputDur, adapters);
+    generateCoreAdapterModule(
+        outputDur,
+        adapters,
+        !!NESTED_DATA_ADAPTER_MODULES.find((mod) => outputDur.indexOf(mod) > -1)
+    );
     generateNpmModule(outputDur, adapters);
 }
 

@@ -27,7 +27,7 @@ describe('basic', () => {
         mockSimulateEvaluationServiceNetworkOnce(config, outputMock);
 
         const el = await simulateEvaluationService(config);
-        expect(el.data).toEqual(outputMock);
+        expect(el).toEqualWithExtraNestedData(outputMock);
     });
 
     it('test basic simulateEvaluationService when no internal error occured', async () => {
@@ -40,7 +40,7 @@ describe('basic', () => {
         mockSimulateEvaluationServiceNetworkOnce(config, outputMock);
 
         const el = await simulateEvaluationService(config);
-        expect(el.data).toEqual(outputMock);
+        expect(el).toEqualWithExtraNestedData(outputMock);
     });
 
     it('test basic simulateEvaluationService when internal error occured', async () => {
@@ -53,7 +53,7 @@ describe('basic', () => {
         mockSimulateEvaluationServiceNetworkOnce(config, outputMock);
 
         const el = await simulateEvaluationService(config);
-        expect(el.data).toEqual(outputMock);
+        expect(el).toEqualWithExtraNestedData(outputMock);
     });
 
     it('test simulateEvaluationService network error 404', async () => {

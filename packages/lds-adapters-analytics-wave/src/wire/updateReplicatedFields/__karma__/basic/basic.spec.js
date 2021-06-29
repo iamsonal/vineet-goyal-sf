@@ -29,7 +29,7 @@ describe('basic', () => {
 
         const data = await updateReplicatedFields(config);
 
-        expect(data.data).toEqual(mock);
+        expect(data).toEqualWithExtraNestedData(mock);
     });
 
     it('should not hit the network when another wire tries to access the newly updated replicated fields', async () => {
@@ -49,7 +49,7 @@ describe('basic', () => {
         const data = await updateReplicatedFields(config);
 
         const element = await setupElement(
-            { replicatedDatasetId: data.data.replicatedDataset.id },
+            { replicatedDatasetId: data.replicatedDataset.id },
             GetReplicatedFields
         );
 

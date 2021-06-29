@@ -40,7 +40,7 @@ describe('basic', () => {
 
         const data = await submitForm(config);
 
-        expect(data.data).toEqual(mockRespose);
+        expect(data).toEqualWithExtraNestedData(mockRespose);
     });
     it('displays error when network request 400s', async () => {
         const mock = {

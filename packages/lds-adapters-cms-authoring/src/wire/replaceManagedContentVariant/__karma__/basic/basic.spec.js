@@ -18,7 +18,7 @@ describe('basic', () => {
         mockReplaceManagedContentVariant(testInput, mock);
 
         const el = await replaceManagedContentVariant(testInput);
-        expect(el.data).toEqual(mock);
+        expect(el).toEqualWithExtraNestedData(mock);
     });
 
     it('test replace managed content variant error case', async () => {

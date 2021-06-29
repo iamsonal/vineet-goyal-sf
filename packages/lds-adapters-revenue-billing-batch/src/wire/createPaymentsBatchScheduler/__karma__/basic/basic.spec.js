@@ -18,7 +18,7 @@ describe('basic', () => {
         mockCreatePaymentsBatchScheduler(testInput, mock);
 
         const el = await createPaymentsBatchScheduler(testInput);
-        expect(el.data).toEqual(mock);
+        expect(el).toEqualWithExtraNestedData(mock);
     });
 
     it('test create payments batch scheduler without filter criteria', async () => {
@@ -27,7 +27,7 @@ describe('basic', () => {
         mockCreatePaymentsBatchScheduler(testInput, mock);
 
         const el = await createPaymentsBatchScheduler(testInput);
-        expect(el.data).toEqual(mock);
+        expect(el).toEqualWithExtraNestedData(mock);
     });
 
     it('test create payments batch scheduler error case', async () => {

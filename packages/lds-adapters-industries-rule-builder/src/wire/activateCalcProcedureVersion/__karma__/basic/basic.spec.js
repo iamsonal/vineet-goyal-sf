@@ -21,7 +21,7 @@ describe('basic', () => {
         mockActivateCalcProcedureVersionNetworkOnce(config, mock);
 
         const el = await activateCalcProcedureVersion(config);
-        expect(el.data).toEqual(mock);
+        expect(el).toEqualWithExtraNestedData(mock);
     });
 
     it('test activateCalcProcedureVersion with 404 error', async () => {

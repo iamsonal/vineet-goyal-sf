@@ -32,7 +32,7 @@ describe('basic', () => {
 
         const data = await updateDataConnector(config);
 
-        expect(data.data).toEqual(mock);
+        expect(data).toEqualWithExtraNestedData(mock);
     });
 
     it('should not hit the network when another wire tries to access the newly updated data connector', async () => {
@@ -54,10 +54,7 @@ describe('basic', () => {
 
         const data = await updateDataConnector(config);
 
-        const element = await setupElement(
-            { connectorIdOrApiName: data.data.id },
-            GetDataConnector
-        );
+        const element = await setupElement({ connectorIdOrApiName: data.id }, GetDataConnector);
 
         expect(element.pushCount()).toBe(1);
         expect(element.getWiredData()).toEqual(mock);

@@ -32,7 +32,7 @@ describe('basic', () => {
 
         const data = await updateSchedule(config);
 
-        expect(data.data).toEqual(mock);
+        expect(data).toEqualWithExtraNestedData(mock);
     });
 
     it('updates a recipe with hourly schedule', async () => {
@@ -54,7 +54,7 @@ describe('basic', () => {
 
         const data = await updateSchedule(config);
 
-        expect(data.data).toEqual(mock);
+        expect(data).toEqualWithExtraNestedData(mock);
     });
 
     it('updates a recipe with weekly schedule', async () => {
@@ -75,7 +75,7 @@ describe('basic', () => {
 
         const data = await updateSchedule(config);
 
-        expect(data.data).toEqual(mock);
+        expect(data).toEqualWithExtraNestedData(mock);
     });
 
     it('updates a recipe with monthly relative schedule', async () => {
@@ -97,7 +97,7 @@ describe('basic', () => {
 
         const data = await updateSchedule(config);
 
-        expect(data.data).toEqual(mock);
+        expect(data).toEqualWithExtraNestedData(mock);
     });
 
     it('updates a recipe with monthly specific schedule', async () => {
@@ -118,7 +118,7 @@ describe('basic', () => {
 
         const data = await updateSchedule(config);
 
-        expect(data.data).toEqual(mock);
+        expect(data).toEqualWithExtraNestedData(mock);
     });
 
     it('updates a recipe with event-based schedule', async () => {
@@ -134,7 +134,7 @@ describe('basic', () => {
 
         const data = await updateSchedule(config);
 
-        expect(data.data).toEqual(mock);
+        expect(data).toEqualWithExtraNestedData(mock);
     });
 
     it('clears the schedule on a recipe', async () => {
@@ -147,7 +147,7 @@ describe('basic', () => {
 
         const data = await updateSchedule(config);
 
-        expect(data.data).toEqual(mock);
+        expect(data).toEqualWithExtraNestedData(mock);
     });
 
     it('displays error when network request 404s', async () => {

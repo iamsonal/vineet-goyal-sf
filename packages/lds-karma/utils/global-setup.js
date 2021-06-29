@@ -64,6 +64,22 @@ beforeEach(() => {
                 },
             };
         },
+
+        /**
+         * temporary equality check that accounts for the extra nested .data; will be removed
+         * once we transition to full snapshot unwrapping (W-9232436)
+         */
+        toEqualWithExtraNestedData: () => {
+            return {
+                compare: (actual, expected) => {
+                    expect(actual.data).toEqual(expected);
+                    const actualWithoutData = clone(actual);
+                    delete actualWithoutData.data;
+                    expect(actualWithoutData).toEqual(expected);
+                    return { pass: true };
+                },
+            };
+        },
     });
 
     clearCache();

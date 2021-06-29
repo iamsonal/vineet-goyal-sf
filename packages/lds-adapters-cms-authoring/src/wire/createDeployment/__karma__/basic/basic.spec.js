@@ -18,7 +18,7 @@ describe('basic', () => {
         mockCreateDeployment(testInput, mock);
 
         const el = await createDeployment(testInput);
-        expect(el.data).toEqual(mock);
+        expect(el).toEqualWithExtraNestedData(mock);
     });
 
     it('test create deployment happy case  with minimum input fields', async () => {
@@ -28,7 +28,7 @@ describe('basic', () => {
         mockCreateDeployment(testInput, mock);
 
         const el = await createDeployment(testInput);
-        expect(el.data).toEqual(mock);
+        expect(el).toEqualWithExtraNestedData(mock);
     });
 
     it('test create deployment happy case with nullable output fields', async () => {
@@ -37,7 +37,7 @@ describe('basic', () => {
         mockCreateDeployment(testInput, mock);
 
         const el = await createDeployment(testInput);
-        expect(el.data).toEqual(mock);
+        expect(el).toEqualWithExtraNestedData(mock);
     });
 
     it('test create deployment error case', async () => {

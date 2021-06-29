@@ -18,7 +18,7 @@ describe('basic', () => {
         mockCreateManagedContent(testInput, mock);
 
         const el = await createManagedContent(testInput);
-        expect(el.data).toEqual(mock);
+        expect(el).toEqualWithExtraNestedData(mock);
     });
 
     it('test create managed content error case', async () => {

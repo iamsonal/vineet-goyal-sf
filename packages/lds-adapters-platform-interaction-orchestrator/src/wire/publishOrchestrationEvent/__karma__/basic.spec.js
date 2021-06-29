@@ -20,7 +20,7 @@ describe('basic', () => {
 
         const data = await publishOrchestrationEvent(mockConfig);
 
-        expect(data.data).toEqual(mockResponse);
+        expect(data).toEqualWithExtraNestedData(mockResponse);
     });
 
     it('displays error when network request 404s', async () => {

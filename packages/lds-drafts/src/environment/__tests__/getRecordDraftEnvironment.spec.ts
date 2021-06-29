@@ -28,14 +28,14 @@ function buildRequest(id: string, fields: string[], optionalFields: string[]): R
 
 describe('draft environment tests', () => {
     describe('getRecord', () => {
-        it('does not intercept record get endpoint on non-draft id', () => {
-            const { draftEnvironment, network } = setupDraftEnvironment();
+        it('does not intercept record get endpoint on non-draft id', async () => {
+            const { draftEnvironment, network } = await setupDraftEnvironment();
             draftEnvironment.dispatchResourceRequest(buildRequest(RECORD_ID, ['Account.Name'], []));
             expect(network).toBeCalledTimes(1);
         });
 
-        it('replaces draft id with canonical id in get requests', () => {
-            const { draftEnvironment, network } = setupDraftEnvironment();
+        it('replaces draft id with canonical id in get requests', async () => {
+            const { draftEnvironment, network } = await setupDraftEnvironment();
             draftEnvironment.storeRedirect(STORE_KEY_DRAFT_RECORD, STORE_KEY_RECORD);
             draftEnvironment.dispatchResourceRequest(
                 buildRequest(DRAFT_RECORD_ID, ['Account.Name'], [])
@@ -45,7 +45,7 @@ describe('draft environment tests', () => {
         });
 
         it('returns mutable data', async () => {
-            const { durableStore, draftEnvironment } = setupDraftEnvironment();
+            const { durableStore, draftEnvironment } = await setupDraftEnvironment();
             mockDurableStoreGetDenormalizedRecordDraft(durableStore);
             const response = await draftEnvironment.dispatchResourceRequest(
                 buildRequest(DRAFT_RECORD_ID, ['Account.Name'], [])
@@ -60,7 +60,7 @@ describe('draft environment tests', () => {
         });
 
         it('fails to get record with fields that do not exist on the synthetic record', async () => {
-            const { durableStore, draftEnvironment } = setupDraftEnvironment();
+            const { durableStore, draftEnvironment } = await setupDraftEnvironment();
             durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue(undefined);
 
             await expect(
@@ -73,7 +73,7 @@ describe('draft environment tests', () => {
         });
 
         it('succeeds to get record with optionalFields that do not exist on the synthetic record', async () => {
-            const { durableStore, draftEnvironment } = setupDraftEnvironment();
+            const { durableStore, draftEnvironment } = await setupDraftEnvironment();
             mockDurableStoreGetDenormalizedRecordDraft(durableStore);
             const response = await draftEnvironment.dispatchResourceRequest(
                 buildRequest(DRAFT_RECORD_ID, ['Account.Name'], ['Account.Birthday'])

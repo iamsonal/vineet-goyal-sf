@@ -1,7 +1,7 @@
 import { MockDurableStore } from '@luvio/adapter-test-library';
 import { Environment, Luvio, Store } from '@luvio/engine';
-import { DurableStore, makeDurable, makeOffline } from '@luvio/environments';
-import { getRecordAdapterFactory } from '@salesforce/lds-adapters-uiapi';
+import { DefaultDurableSegment, DurableStore, makeDurable, makeOffline } from '@luvio/environments';
+import { getRecordAdapterFactory, keyBuilderObjectInfo } from '@salesforce/lds-adapters-uiapi';
 import { DraftQueue } from '../../DraftQueue';
 import { makeDurableStoreDraftAware } from '../../durableStore/makeDurableStoreDraftAware';
 import {
@@ -10,15 +10,18 @@ import {
 } from '../../durableStore/makeRecordDenormalizingDurableStore';
 import { DRAFT_RECORD_ID } from '../../__tests__/test-utils';
 import { makeEnvironmentDraftAware } from '../makeEnvironmentDraftAware';
+import AccountObjectInfo from './mockData/object-Account.json';
+const AccountObjectInfoKey = keyBuilderObjectInfo({ apiName: AccountObjectInfo.apiName });
 
 export * from '../../__tests__/test-utils';
 
-export function setupDraftEnvironment(
+export async function setupDraftEnvironment(
     setupOptions: {
         mockNetworkResponse?: any;
         isDraftId?: (id: string) => boolean;
         prefixForApiName?: (apiName: string) => Promise<string>;
         apiNameForPrefix?: (prefix: string) => Promise<string>;
+        skipPopulatingAccountObjectInfo?: boolean;
     } = {}
 ) {
     const { mockNetworkResponse } = setupOptions;
@@ -71,6 +74,11 @@ export function setupDraftEnvironment(
         userId: 'testUserId',
         registerDraftKeyMapping: registerDraftKeyMapping,
     });
+
+    if (setupOptions.skipPopulatingAccountObjectInfo !== true) {
+        await populateDurableStoreWithAccountObjectInfo(durableStore);
+    }
+
     return {
         store,
         network,
@@ -81,4 +89,13 @@ export function setupDraftEnvironment(
         adapters,
         registerDraftKeyMapping,
     };
+}
+
+async function populateDurableStoreWithAccountObjectInfo(durableStore: DurableStore) {
+    await durableStore.setEntries(
+        {
+            [AccountObjectInfoKey]: { data: AccountObjectInfo },
+        },
+        DefaultDurableSegment
+    );
 }

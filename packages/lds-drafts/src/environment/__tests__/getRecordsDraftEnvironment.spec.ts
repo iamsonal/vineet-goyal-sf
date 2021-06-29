@@ -41,7 +41,7 @@ function mockCompositeNetworkResponse(network: jest.Mock) {
 describe('draft environment tests', () => {
     describe('getRecords', () => {
         it('does not hit the network for request containing only draft ids', async () => {
-            const { draftEnvironment, network, durableStore } = setupDraftEnvironment();
+            const { draftEnvironment, network, durableStore } = await setupDraftEnvironment();
 
             // create getRecords request containing draft ids
             const request = buildRequest([DRAFT_RECORD_ID], FIELDS, []);
@@ -58,7 +58,7 @@ describe('draft environment tests', () => {
         });
 
         it('only hits the network with canonical ids', async () => {
-            const { draftEnvironment, network } = setupDraftEnvironment();
+            const { draftEnvironment, network } = await setupDraftEnvironment();
 
             // create getRecords request containing only canonical ids
             const request = buildRequest([RECORD_ID], FIELDS, []);
@@ -70,7 +70,7 @@ describe('draft environment tests', () => {
         });
 
         it('merges synthetic records with canonical records', async () => {
-            const { draftEnvironment, network, durableStore } = setupDraftEnvironment();
+            const { draftEnvironment, network, durableStore } = await setupDraftEnvironment();
 
             mockDurableStoreGetDenormalizedRecordDraft(durableStore);
             mockCompositeNetworkResponse(network);
@@ -97,7 +97,7 @@ describe('draft environment tests', () => {
         });
 
         it('maintains order of requested ids in response', async () => {
-            const { draftEnvironment, network, durableStore } = setupDraftEnvironment();
+            const { draftEnvironment, network, durableStore } = await setupDraftEnvironment();
 
             mockDurableStoreGetDenormalizedRecordDraft(durableStore);
             mockCompositeNetworkResponse(network);
@@ -124,7 +124,7 @@ describe('draft environment tests', () => {
         });
 
         it('returns mutable data', async () => {
-            const { draftEnvironment, network, durableStore } = setupDraftEnvironment();
+            const { draftEnvironment, network, durableStore } = await setupDraftEnvironment();
 
             mockDurableStoreGetDenormalizedRecordDraft(durableStore);
             mockCompositeNetworkResponse(network);
@@ -145,7 +145,7 @@ describe('draft environment tests', () => {
         });
 
         it('returns synthetic records with missing optionalFields', async () => {
-            const { draftEnvironment, network, durableStore } = setupDraftEnvironment();
+            const { draftEnvironment, network, durableStore } = await setupDraftEnvironment();
 
             mockDurableStoreGetDenormalizedRecordDraft(durableStore);
             mockCompositeNetworkResponse(network);
@@ -174,7 +174,7 @@ describe('draft environment tests', () => {
         });
 
         it('refetches if a draft response has been ingested since the fetch', async () => {
-            const { draftEnvironment, network, store } = setupDraftEnvironment();
+            const { draftEnvironment, network, store } = await setupDraftEnvironment();
             const mappedRecordId = mockCompositeResponseMultipleRecords.results[1].result.id;
             let networkCount = 0;
 
@@ -208,7 +208,7 @@ describe('draft environment tests', () => {
         });
 
         it('maintains request id order with ingested draft records', async () => {
-            const { draftEnvironment, network, store } = setupDraftEnvironment();
+            const { draftEnvironment, network, store } = await setupDraftEnvironment();
             const mappedRecordId =
                 mockCompositeResponseMultipleRecordsDraftIngested.results[0].result.id;
             const nonMappedRecordId =

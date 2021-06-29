@@ -11,7 +11,7 @@ describe('draft environment tests', () => {
     describe('deleteRecord', () => {
         describe('storeEvict', () => {
             it('calling storeEvict after a delete request does not evict from the durable store', async () => {
-                const { durableStore, draftEnvironment, store } = setupDraftEnvironment();
+                const { durableStore, draftEnvironment, store } = await setupDraftEnvironment();
                 store.records[STORE_KEY_RECORD] = {};
                 mockDurableStoreResponse(durableStore);
                 const evictSpy = jest.spyOn(durableStore, 'evictEntries');
@@ -25,7 +25,8 @@ describe('draft environment tests', () => {
             });
 
             it('request gets enqueued with key as tag', async () => {
-                const { durableStore, draftEnvironment, draftQueue } = setupDraftEnvironment();
+                const { durableStore, draftEnvironment, draftQueue } =
+                    await setupDraftEnvironment();
                 mockDurableStoreResponse(durableStore);
                 const request = createDeleteRequest();
                 await draftEnvironment.dispatchResourceRequest(request);

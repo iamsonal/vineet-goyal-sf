@@ -11,6 +11,7 @@ import {
 } from '../DraftFetchResponse';
 import { ObjectCreate, ObjectKeys } from '../utils/language';
 import {
+    ensureReferencedIdsAreCached,
     filterRecordFields,
     getRecordFieldsFromRecordRequest,
     RECORD_ENDPOINT_REGEX,
@@ -84,32 +85,44 @@ export function createRecordDraftEnvironment(
             );
         }
 
-        return prefixForApiName(apiName).then((prefix) => {
-            const recordId = generateId(prefix);
-            const key = keyBuilderRecord({ recordId });
-
-            const fields = getRecordFieldsFromRecordRequest(resolvedResourceRequest);
-            if (fields === undefined) {
-                throw createBadRequestResponse({ message: 'fields are missing' });
+        return assertReferenceIdsAreCached(apiName, resolvedResourceRequest.body.fields).then(
+            () => {
+                return prefixForApiName(apiName).then((prefix) => {
+                    return enqueueRequest(prefix, resolvedResourceRequest);
+                });
             }
+        );
+    };
 
-            return draftQueue
-                .enqueue(createLDSAction(recordId, key, resolvedResourceRequest))
-                .then(() => {
-                    return durableStore
-                        .getDenormalizedRecord(key)
-                        .catch(() => {
-                            throw createInternalErrorResponse();
-                        })
-                        .then((record) => {
-                            if (record === undefined) {
-                                throw createDraftSynthesisErrorResponse();
-                            }
-                            return createOkResponse(filterRecordFields(record, fields)) as any;
-                        });
+    function assertReferenceIdsAreCached(apiName: string, fields: Record<string, any>) {
+        return ensureReferencedIdsAreCached(durableStore, apiName, fields).catch((err: Error) => {
+            throw createDraftSynthesisErrorResponse(err.message);
+        });
+    }
+
+    function enqueueRequest(prefix: string, request: ResourceRequest): any {
+        const recordId = generateId(prefix);
+        const key = keyBuilderRecord({ recordId });
+
+        const fields = getRecordFieldsFromRecordRequest(request);
+        if (fields === undefined) {
+            throw createBadRequestResponse({ message: 'fields are missing' });
+        }
+
+        return draftQueue.enqueue(createLDSAction(recordId, key, request)).then(() => {
+            return durableStore
+                .getDenormalizedRecord(key)
+                .catch(() => {
+                    throw createInternalErrorResponse();
+                })
+                .then((record) => {
+                    if (record === undefined) {
+                        throw createDraftSynthesisErrorResponse();
+                    }
+                    return createOkResponse(filterRecordFields(record, fields)) as any;
                 });
         });
-    };
+    }
 
     return ObjectCreate(env, {
         dispatchResourceRequest: { value: dispatchResourceRequest },

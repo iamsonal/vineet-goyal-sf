@@ -5,13 +5,13 @@ import { setupDraftEnvironment, STORE_KEY_DRAFT_RECORD, STORE_KEY_RECORD } from 
 
 describe('makeEnvironmentDraftAware', () => {
     it('does not start the draft queue', async () => {
-        const { draftQueue } = setupDraftEnvironment();
+        const { draftQueue } = await setupDraftEnvironment();
         expect(draftQueue.startQueue).toBeCalledTimes(0);
     });
 
     describe('dispatchResourceRequest', () => {
         it('does not intercept non record endpoints', async () => {
-            const { draftEnvironment, network } = setupDraftEnvironment();
+            const { draftEnvironment, network } = await setupDraftEnvironment();
             await draftEnvironment.dispatchResourceRequest({
                 baseUri: '/services/data/v53.0',
                 basePath: `/ui-api/not-record-endpoint`,
@@ -27,7 +27,7 @@ describe('makeEnvironmentDraftAware', () => {
 
     describe('registerOnChangeListener', () => {
         it('redirect entries added to the durable store invokes the injected mapping function', async () => {
-            const { durableStore, registerDraftKeyMapping } = setupDraftEnvironment();
+            const { durableStore, registerDraftKeyMapping } = await setupDraftEnvironment();
             durableStore.getEntries = jest.fn().mockResolvedValue({
                 [STORE_KEY_RECORD]: {
                     data: {

@@ -18,7 +18,7 @@ const STORE_KEY_DRAFT_RECORD = `UiApi::RecordRepresentation:${CREATE_DRAFT_RECOR
 describe('draft environment tests', () => {
     describe('createRecord', () => {
         it('rejects when apiName is not in the request body', async () => {
-            const { draftEnvironment } = setupDraftEnvironment();
+            const { draftEnvironment } = await setupDraftEnvironment();
             const { rejects } = await expect(
                 draftEnvironment.dispatchResourceRequest({
                     baseUri: '/services/data/v53.0',
@@ -44,7 +44,7 @@ describe('draft environment tests', () => {
         });
 
         it('returns the correct prefix for the record', async () => {
-            const { draftEnvironment, durableStore } = setupDraftEnvironment({
+            const { draftEnvironment, durableStore } = await setupDraftEnvironment({
                 prefixForApiName: (_apiName: string) => Promise.resolve('001'),
             });
 
@@ -94,7 +94,7 @@ describe('draft environment tests', () => {
         });
 
         it('request gets enqueued with key as tag', async () => {
-            const { draftEnvironment, draftQueue, durableStore } = setupDraftEnvironment({
+            const { draftEnvironment, draftQueue, durableStore } = await setupDraftEnvironment({
                 prefixForApiName: (_apiName: string) => Promise.resolve('001'),
             });
             let assignedDraftId = '';
@@ -147,7 +147,7 @@ describe('draft environment tests', () => {
         });
 
         it('throws if durable store rejects', async () => {
-            const { draftEnvironment, durableStore } = setupDraftEnvironment({
+            const { draftEnvironment, durableStore } = await setupDraftEnvironment({
                 prefixForApiName: (_apiName: string) => Promise.resolve('001'),
             });
 
@@ -161,7 +161,7 @@ describe('draft environment tests', () => {
         });
 
         it('throws draft error if unable to synthesize draft after create', async () => {
-            const { draftEnvironment, durableStore } = setupDraftEnvironment({
+            const { draftEnvironment, durableStore } = await setupDraftEnvironment({
                 prefixForApiName: (_apiName: string) => Promise.resolve('001'),
             });
             durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue(undefined);
@@ -178,7 +178,7 @@ describe('draft environment tests', () => {
         });
 
         it('returns mutable data in the response', async () => {
-            const { draftEnvironment, durableStore } = setupDraftEnvironment({
+            const { draftEnvironment, durableStore } = await setupDraftEnvironment({
                 prefixForApiName: (_apiName: string) => Promise.resolve('001'),
             });
             let assignedDraftId = '';
@@ -223,12 +223,13 @@ describe('draft environment tests', () => {
             const draftReferenceKey = getRecordKeyForId(draftReferenceId);
             const canonicalReferenceKey = getRecordKeyForId(canonicalReferenceId);
 
-            const { draftEnvironment, draftQueue, durableStore, store } = setupDraftEnvironment({
-                isDraftId: (id: string) => {
-                    return id === CREATE_DRAFT_RECORD_ID || id === draftReferenceId;
-                },
-                prefixForApiName: (_apiName: string) => Promise.resolve('001'),
-            });
+            const { draftEnvironment, draftQueue, durableStore, store } =
+                await setupDraftEnvironment({
+                    isDraftId: (id: string) => {
+                        return id === CREATE_DRAFT_RECORD_ID || id === draftReferenceId;
+                    },
+                    prefixForApiName: (_apiName: string) => Promise.resolve('001'),
+                });
             store.redirect(draftReferenceKey, canonicalReferenceKey);
             durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue({
                 apiName: DEFAULT_API_NAME,
@@ -279,6 +280,53 @@ describe('draft environment tests', () => {
                 tag: STORE_KEY_DRAFT_RECORD,
                 targetId: CREATE_DRAFT_RECORD_ID,
                 handler: LDS_ACTION_HANDLER_ID,
+            });
+        });
+
+        it('fails to create record draft when object info is not present', async () => {
+            const { draftEnvironment } = await setupDraftEnvironment({
+                skipPopulatingAccountObjectInfo: true,
+            });
+
+            const request = createPostRequest();
+
+            await expect(draftEnvironment.dispatchResourceRequest(request)).rejects.toEqual({
+                status: 400,
+                body: {
+                    errorCode: 'DRAFT_ERROR',
+                    message: 'ObjectInfo for Account is not cached',
+                },
+                headers: {},
+            });
+        });
+        it('fails to create record draft when reference field is not a string', async () => {
+            const { draftEnvironment } = await setupDraftEnvironment();
+
+            const request = createPostRequest();
+            request.body.fields['OwnerId'] = 1;
+
+            await expect(draftEnvironment.dispatchResourceRequest(request)).rejects.toEqual({
+                status: 400,
+                body: {
+                    errorCode: 'DRAFT_ERROR',
+                    message: 'Reference field value OwnerId is not a string',
+                },
+                headers: {},
+            });
+        });
+        it('fails to create record draft when referenced record is not cached', async () => {
+            const { draftEnvironment } = await setupDraftEnvironment();
+
+            const request = createPostRequest();
+            request.body.fields['OwnerId'] = 'foobar';
+
+            await expect(draftEnvironment.dispatchResourceRequest(request)).rejects.toEqual({
+                status: 400,
+                body: {
+                    errorCode: 'DRAFT_ERROR',
+                    message: 'Referenced record foobar is not cached',
+                },
+                headers: {},
             });
         });
     });

@@ -17,7 +17,7 @@ import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
 describe('draft environment tests', () => {
     describe('updateRecord', () => {
         it('request gets enqueued with key as tag', async () => {
-            const { durableStore, draftEnvironment, draftQueue } = setupDraftEnvironment({
+            const { durableStore, draftEnvironment, draftQueue } = await setupDraftEnvironment({
                 apiNameForPrefix: (_prefix: string) => {
                     return Promise.resolve('Account');
                 },
@@ -34,7 +34,7 @@ describe('draft environment tests', () => {
         });
 
         it('record gets evicted from store prior to revival', async () => {
-            const { durableStore, draftEnvironment, store } = setupDraftEnvironment({
+            const { durableStore, draftEnvironment, store } = await setupDraftEnvironment({
                 apiNameForPrefix: (_prefix: string) => {
                     return Promise.resolve('Account');
                 },
@@ -47,7 +47,7 @@ describe('draft environment tests', () => {
         });
 
         it('returns mutable data in the response', async () => {
-            const { durableStore, draftEnvironment } = setupDraftEnvironment({
+            const { durableStore, draftEnvironment } = await setupDraftEnvironment({
                 apiNameForPrefix: (_prefix: string) => {
                     return Promise.resolve('Account');
                 },
@@ -66,11 +66,12 @@ describe('draft environment tests', () => {
         });
 
         it('resolves draft ids in the base path', async () => {
-            const { durableStore, draftEnvironment, draftQueue, store } = setupDraftEnvironment({
-                apiNameForPrefix: (_prefix: string) => {
-                    return Promise.resolve('Account');
-                },
-            });
+            const { durableStore, draftEnvironment, draftQueue, store } =
+                await setupDraftEnvironment({
+                    apiNameForPrefix: (_prefix: string) => {
+                        return Promise.resolve('Account');
+                    },
+                });
             const redirected2 = 'bar';
             const redirected2Key = getRecordKeyForId(redirected2);
             store.redirect(STORE_KEY_RECORD, redirected2Key);
@@ -110,7 +111,7 @@ describe('draft environment tests', () => {
         });
 
         it('throws if durable store rejects', async () => {
-            const { draftEnvironment, durableStore } = setupDraftEnvironment({
+            const { draftEnvironment, durableStore } = await setupDraftEnvironment({
                 apiNameForPrefix: (_prefix: string) => {
                     return Promise.resolve('Account');
                 },
@@ -138,7 +139,7 @@ describe('draft environment tests', () => {
         });
 
         it('throws if durable store returns nothing after revive', async () => {
-            const { draftEnvironment, durableStore, network } = setupDraftEnvironment({
+            const { draftEnvironment, durableStore, network } = await setupDraftEnvironment({
                 apiNameForPrefix: (_prefix: string) => {
                     return Promise.resolve('Account');
                 },
@@ -181,7 +182,7 @@ describe('draft environment tests', () => {
         });
 
         it('throws if no object info is stored in the durable store for the prefix when attempting to call getRecord', async () => {
-            const { draftEnvironment, durableStore } = setupDraftEnvironment({
+            const { draftEnvironment, durableStore } = await setupDraftEnvironment({
                 apiNameForPrefix: (_prefix: string) => {
                     return Promise.reject({
                         body: { message: 'apiName is missing from the request body.' },
@@ -215,11 +216,12 @@ describe('draft environment tests', () => {
         });
 
         it('resolves draft id references in the body', async () => {
-            const { durableStore, draftEnvironment, store, draftQueue } = setupDraftEnvironment({
-                apiNameForPrefix: (_prefix: string) => {
-                    return Promise.resolve('Account');
-                },
-            });
+            const { durableStore, draftEnvironment, store, draftQueue } =
+                await setupDraftEnvironment({
+                    apiNameForPrefix: (_prefix: string) => {
+                        return Promise.resolve('Account');
+                    },
+                });
 
             store.redirect(STORE_KEY_DRAFT_RECORD, STORE_KEY_RECORD);
             durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue({
@@ -278,7 +280,7 @@ describe('draft environment tests', () => {
         });
 
         it('throws error when request has no recordId', async () => {
-            const { draftEnvironment, durableStore } = setupDraftEnvironment();
+            const { draftEnvironment, durableStore } = await setupDraftEnvironment();
             mockDurableStoreResponse(durableStore);
             const request = {
                 baseUri: '/services/data/v53.0',
@@ -306,11 +308,13 @@ describe('draft environment tests', () => {
         });
 
         it(`calls getRecord adapter when durable store missing enough info to synthesize response`, async () => {
-            const { draftEnvironment, network, adapters, draftQueue } = setupDraftEnvironment({
-                apiNameForPrefix: (_prefix: string) => {
-                    return Promise.resolve('Account');
-                },
-            });
+            const { draftEnvironment, network, adapters, draftQueue } = await setupDraftEnvironment(
+                {
+                    apiNameForPrefix: (_prefix: string) => {
+                        return Promise.resolve('Account');
+                    },
+                }
+            );
             const request = createPatchRequest();
             network.mockResolvedValue({
                 body: clone(mockGetRecord),
@@ -336,7 +340,7 @@ describe('draft environment tests', () => {
         });
 
         it(`throws error because it doesn't find a record in the store or online`, async () => {
-            const { draftEnvironment, network } = setupDraftEnvironment({
+            const { draftEnvironment, network } = await setupDraftEnvironment({
                 apiNameForPrefix: (_prefix: string) => {
                     return Promise.resolve('Account');
                 },

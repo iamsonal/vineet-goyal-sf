@@ -145,10 +145,7 @@ const GET_MANAGED_CONTENT_VARIANT_PATH = new RegExp(
     'i'
 );
 
-const GET_MANAGED_CONTENT_PATH = new RegExp(
-    `${CMS_NON_CONNECT_BASE_URI}/contents/([A-Z0-9_]){1,80}$`,
-    'i'
-);
+const GET_MANAGED_CONTENT_PATH = new RegExp(`${CMS_BASE_URI}/contents/([A-Z0-9_]){1,80}$`, 'i');
 
 const REPLACE_MANAGED_CONTENT_VARIANT_PATH = GET_MANAGED_CONTENT_VARIANT_PATH;
 
@@ -164,7 +161,7 @@ const LIST_CONTENT_PATH = new RegExp(
 
 const CREATE_DEPLOYMENT_PATH = new RegExp(`${CMS_NON_CONNECT_BASE_URI}/deployments`, 'i');
 
-const CREATE_MANAGED_CONTENT_PATH = new RegExp(`${CMS_NON_CONNECT_BASE_URI}/contents`, 'i');
+const CREATE_MANAGED_CONTENT_PATH = new RegExp(`${CMS_BASE_URI}/contents`, 'i');
 
 const RECORD_SEO_PROPERTIES_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/seo/properties/([^\\s]){1,128}`,
@@ -267,7 +264,7 @@ const connect: ApiFamily = {
     getManagedContent: {
         method: 'get',
         predicate: (path: string) =>
-            path.startsWith(CMS_NON_CONNECT_BASE_URI) && GET_MANAGED_CONTENT_PATH.test(path),
+            path.startsWith(CMS_BASE_URI) && GET_MANAGED_CONTENT_PATH.test(path),
         transport: {
             controller: 'ManagedContentController.getManagedContent',
         },
@@ -315,7 +312,7 @@ const connect: ApiFamily = {
     createManagedContent: {
         method: 'post',
         predicate: (path: string) =>
-            path.startsWith(CMS_NON_CONNECT_BASE_URI) && CREATE_MANAGED_CONTENT_PATH.test(path),
+            path.startsWith(CMS_BASE_URI) && CREATE_MANAGED_CONTENT_PATH.test(path),
         transport: {
             controller: 'ManagedContentController.createManagedContent',
         },

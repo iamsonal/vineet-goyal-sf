@@ -26,101 +26,6 @@ types:
       language: language
 
 /cms:
-  /contents:
-    post:
-      (luvio.adapter):
-        name: createManagedContent
-        tests:
-          validConfigs:
-            - |
-              {
-                "ManagedContentInputParam": {
-                    "contentSpaceOrFolderId":"0Zuxx00000001DpCAI",
-                    "contentType":"news",
-                    "title":"hello authoring 2.0",
-                    "urlName":"testurl",   
-                    "contentBody":{
-                      "title": "hello authoring 2.0",
-                      "body":"test body",
-                      "excerpt":"test excerpt"
-                    }
-                }
-              }
-          invalidConfigs:
-            - |
-              {
-                    "contentSpaceOrFolderId":"0Zuxx00000001DpCAI",
-                    "contentType":"news",
-                    "title":"hello authoring 2.0",
-                    "urlName":"testurl",   
-                    "contentBody":{
-                      "title": "hello authoring 2.0",
-                      "body":"test body",
-                      "excerpt":"test excerpt"
-                    }
-              }
-            - |
-              {
-                "ManagedContentInputParam": {
-                    "contentSpaceOrFolderId":"0Zuxx00000001DpCAI"
-                }
-              }
-            - |
-              {
-                "ManagedContentInputParam": {
-                    "contentType":"news",
-                    "title":"hello authoring 2.0",
-                    "urlName":"testurl",   
-                    "contentBody":{
-                      "title": "hello authoring 2.0",
-                      "body":"test body",
-                      "excerpt":"test excerpt"
-                    }
-                }
-              }
-            - |
-              {
-                "ManagedContentInputParam": {
-                    "contentSpaceOrFolderId":"0Zuxx00000001DpCAI",
-                    "title":"hello authoring 2.0",
-                    "urlName":"testurl",   
-                    "contentBody":{
-                      "title": "hello authoring 2.0",
-                      "body":"test body",
-                      "excerpt":"test excerpt"
-                    }
-                }
-              }
-            - |
-              {
-                "ManagedContentInputParam": {
-                    "contentSpaceOrFolderId":"0Zuxx00000001DpCAI",
-                    "contentType":"news",
-                    "urlName":"testurl",   
-                    "contentBody":{
-                      "title": "hello authoring 2.0",
-                      "body":"test body",
-                      "excerpt":"test excerpt"
-                    }
-                }
-              }
-            - |
-              {
-                "ManagedContentInputParam": {
-                    "contentSpaceOrFolderId":"0Zuxx00000001DpCAI",
-                    "contentType":"news",
-                    "title":"hello authoring 2.0",
-                    "urlName":"testurl"
-                }
-              }
-  /contents/{contentKeyOrId}:
-    get:
-      (luvio.adapter):
-        name: getManagedContent
-      (luvio.key):
-        content_key: urlParams.contentKeyOrId
-        version_id: queryParams.version
-        language: queryParams.language
   /deployments:
     post:
       (luvio.adapter):
@@ -202,21 +107,17 @@ types:
               }
 /connect:
   /cms:
-    /contents/variants/{variantId}:
-      get:
+    /contents:
+      post:
         (luvio.adapter):
-          name: getManagedContentVariant
-        (luvio.key):
-          id: urlParams.variantId
-      put:
-        (luvio.adapter):
-          name: replaceManagedContentVariant
+          name: createManagedContent
           tests:
             validConfigs:
               - |
                 {
-                  "variantId": "9Psxx0000004DwKCAU",
-                  "ManagedContentVariantInputParam": {
+                  "ManagedContentInputParam": {
+                      "contentSpaceOrFolderId":"0Zuxx00000001DpCAI",
+                      "contentType":"news",
                       "title":"hello authoring 2.0",
                       "urlName":"testurl",   
                       "contentBody":{
@@ -229,7 +130,93 @@ types:
             invalidConfigs:
               - |
                 {
-                  "ManagedContentVariantInputParam": {
+                      "contentSpaceOrFolderId":"0Zuxx00000001DpCAI",
+                      "contentType":"news",
+                      "title":"hello authoring 2.0",
+                      "urlName":"testurl",   
+                      "contentBody":{
+                        "title": "hello authoring 2.0",
+                        "body":"test body",
+                        "excerpt":"test excerpt"
+                      }
+                }
+              - |
+                {
+                  "ManagedContentInputParam": {
+                      "contentSpaceOrFolderId":"0Zuxx00000001DpCAI"
+                  }
+                }
+              - |
+                {
+                  "ManagedContentInputParam": {
+                      "contentType":"news",
+                      "title":"hello authoring 2.0",
+                      "urlName":"testurl",   
+                      "contentBody":{
+                        "title": "hello authoring 2.0",
+                        "body":"test body",
+                        "excerpt":"test excerpt"
+                      }
+                  }
+                }
+              - |
+                {
+                  "ManagedContentInputParam": {
+                      "contentSpaceOrFolderId":"0Zuxx00000001DpCAI",
+                      "title":"hello authoring 2.0",
+                      "urlName":"testurl",   
+                      "contentBody":{
+                        "title": "hello authoring 2.0",
+                        "body":"test body",
+                        "excerpt":"test excerpt"
+                      }
+                  }
+                }
+              - |
+                {
+                  "ManagedContentInputParam": {
+                      "contentSpaceOrFolderId":"0Zuxx00000001DpCAI",
+                      "contentType":"news",
+                      "urlName":"testurl",   
+                      "contentBody":{
+                        "title": "hello authoring 2.0",
+                        "body":"test body",
+                        "excerpt":"test excerpt"
+                      }
+                  }
+                }
+              - |
+                {
+                  "ManagedContentInputParam": {
+                      "contentSpaceOrFolderId":"0Zuxx00000001DpCAI",
+                      "contentType":"news",
+                      "title":"hello authoring 2.0",
+                      "urlName":"testurl"
+                  }
+                }
+      /{contentKeyOrId}:
+        get:
+          (luvio.adapter):
+            name: getManagedContent
+          (luvio.key):
+            content_key: urlParams.contentKeyOrId
+            version_id: queryParams.version
+            language: queryParams.language
+      /variants/{variantId}:
+        get:
+          (luvio.adapter):
+            name: getManagedContentVariant
+          (luvio.key):
+            id: urlParams.variantId
+        put:
+          (luvio.adapter):
+            name: replaceManagedContentVariant
+            tests:
+              validConfigs:
+                - |
+                  {
+                    "variantId": "9Psxx0000004DwKCAU",
+                    "ManagedContentVariantInputParam": {
                         "title":"hello authoring 2.0",
                         "urlName":"testurl",   
                         "contentBody":{
@@ -237,17 +224,30 @@ types:
                           "body":"test body",
                           "excerpt":"test excerpt"
                         }
+                    }
                   }
-                }
-              - |
-                { 
-                  "variantId": "9Psxx0000004DwKCAU"
-                }
-              - |
-                {
-                  "variantId": "9Psxx0000004DwKCAU",
-                  "ManagedContentVariantInputParam": {
-                      "title":"hello authoring 2.0",
-                      "urlName":"testurl"
+              invalidConfigs:
+                - |
+                  {
+                    "ManagedContentVariantInputParam": {
+                          "title":"hello authoring 2.0",
+                          "urlName":"testurl",   
+                          "contentBody":{
+                            "title": "hello authoring 2.0",
+                            "body":"test body",
+                            "excerpt":"test excerpt"
+                          }
+                    }
                   }
-                }
+                - |
+                  { 
+                    "variantId": "9Psxx0000004DwKCAU"
+                  }
+                - |
+                  {
+                    "variantId": "9Psxx0000004DwKCAU",
+                    "ManagedContentVariantInputParam": {
+                        "title":"hello authoring 2.0",
+                        "urlName":"testurl"
+                    }
+                  }

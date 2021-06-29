@@ -2143,48 +2143,7 @@ types:
     type: object
   ReferenceRepresentation: # TODO hand rolled. W-9275452
     type: object
-
 /cms:
-  /contents:
-    post:
-      description: Create Managed Content for Json store
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: ManagedContentDocumentRepresentation
-      body:
-        application/json:
-          type: ManagedContentInputWrapperRepresentation
-          #required: false # TODO hand rolled. W-9275477
-          (oas-body-name): ManagedContentInputParam
-  /contents/{contentKeyOrId}:
-    get:
-      description: Gets existing managed content for provided version.
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: ManagedContentDocumentRepresentation
-      queryParameters:
-        language:
-          description: Language locale for the managed content, for example, en_US.
-          type: string
-          # TODO hand rolled. W-9499610
-          required: true
-        version:
-          description: An 18-character unique Salesforce identifier for the content
-            version.
-          type: string
-          # TODO hand rolled. W-9499610
-          required: true
-    uriParameters:
-      contentKeyOrId:
-        description: A unique identifier or ID of a content.
-        type: string
-        required: true
   /delivery:
     /channels/{channelId}/variants:
       post:
@@ -2715,32 +2674,72 @@ types:
         contentTypeFQN:
           type: string
           required: true
-    /contents/variants/{variantId}:
-      get:
-        description: Gets a managed content variant by Id.
+    /contents:
+      post:
+        description: Create Managed Content for Json store
         responses:
           '200':
             description: Success
             body:
               application/json:
-                type: ManagedContentVariantRepresentation
-      put:
-        description: Replace a managed content variant.
-        responses:
-          '200':
-            description: Success
-            body:
-              application/json:
-                type: ManagedContentVariantRepresentation
+                type: ManagedContentDocumentRepresentation
         body:
           application/json:
-            type: ManagedContentVariantUpdateInputWrapperRepresentation
+            type: ManagedContentInputWrapperRepresentation
             #required: false # TODO hand rolled. W-9275477
-            (oas-body-name): ManagedContentVariantInputParam
-      uriParameters:
-        variantId:
-          type: string
-          required: true
+            (oas-body-name): ManagedContentInputParam
+      /variants/{variantId}:
+        get:
+          description: Gets a managed content variant by Id.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentVariantRepresentation
+        put:
+          description: Replace a managed content variant.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentVariantRepresentation
+          body:
+            application/json:
+              type: ManagedContentVariantUpdateInputWrapperRepresentation
+              #required: false # TODO hand rolled. W-9275477
+              (oas-body-name): ManagedContentVariantInputParam
+        uriParameters:
+          variantId:
+            type: string
+            required: true
+      /{contentKeyOrId}:
+        get:
+          description: Gets existing managed content for provided version.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: ManagedContentDocumentRepresentation
+          queryParameters:
+            language:
+              description: Language locale for the managed content, for example, en_US.
+              type: string
+              # TODO hand rolled. W-9499610
+              required: true
+            version:
+              description: An 18-character unique Salesforce identifier for the content
+                version.
+              type: string
+              # TODO hand rolled. W-9499610
+              required: true
+        uriParameters:
+          contentKeyOrId:
+            description: A unique identifier or ID of a content.
+            type: string
+            required: true
     /deliveries/{deliveryChannelIdOrSiteId}/contents/{contentKeyOrId}:
       get:
         description: Get a single record of content published to a particular channel

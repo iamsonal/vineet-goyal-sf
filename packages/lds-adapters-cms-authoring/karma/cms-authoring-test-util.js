@@ -69,7 +69,7 @@ function getManagedContentMatcher(config) {
         headers: {},
         method: 'get',
         baseUri: BASE_URI,
-        basePath: `/cms/contents/${contentKeyOrId}`,
+        basePath: `${URL_BASE}/cms/contents/${contentKeyOrId}`,
         queryParams: {},
     });
 }
@@ -134,7 +134,7 @@ function getCreateManagedContentsMatcher(config) {
         headers: {},
         method: 'post',
         baseUri: BASE_URI,
-        basePath: '/cms/contents',
+        basePath: `${URL_BASE}/cms/contents`,
         queryParams: {},
     });
 }

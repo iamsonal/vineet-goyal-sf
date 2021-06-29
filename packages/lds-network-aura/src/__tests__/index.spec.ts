@@ -10,6 +10,7 @@ import {
     GUIDANCE_BASE_URI,
     WAVE_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
+    CMS_BASE_URI,
     BILLING_BASE_URI,
     SCALECENTER_BASE_URI,
     SITES_BASE_URI,
@@ -5705,10 +5706,10 @@ describe('routes', () => {
         );
     });
 
-    describe('get /cms/contents/{contentKeyOrId}', () => {
+    describe('get /connect/cms/contents/{contentKeyOrId}', () => {
         testControllerInput(
             {
-                baseUri: CMS_NON_CONNECT_BASE_URI,
+                baseUri: CMS_BASE_URI,
                 basePath: `/contents/MCMOEXXY57SNBAJID2SYYWJO45LM`,
                 urlParams: {
                     contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM',
@@ -5730,7 +5731,7 @@ describe('routes', () => {
         );
 
         testRejectFetchResponse({
-            baseUri: CMS_NON_CONNECT_BASE_URI,
+            baseUri: CMS_BASE_URI,
             basePath: `/contents/MCMOEXXY57SNBAJID2SYYWJO45LM`,
             queryParams: {
                 version: '5OUxx0000004DMqGAM',
@@ -5740,7 +5741,7 @@ describe('routes', () => {
 
         testResolveResponse(
             {
-                baseUri: CMS_NON_CONNECT_BASE_URI,
+                baseUri: CMS_BASE_URI,
                 basePath: `/contents/MCMOEXXY57SNBAJID2SYYWJO45LM`,
                 queryParams: {
                     version: '5OUxx0000004DMqGAM',
@@ -6114,11 +6115,11 @@ describe('routes', () => {
         );
     });
 
-    describe('post /cms/contents', () => {
+    describe('post /connect/cms/contents', () => {
         testControllerInput(
             {
                 method: 'post',
-                baseUri: CMS_NON_CONNECT_BASE_URI,
+                baseUri: CMS_BASE_URI,
                 basePath: `/contents`,
                 body: {
                     ManagedContentInputParam: {
@@ -6189,13 +6190,13 @@ describe('routes', () => {
         );
         testRejectFetchResponse({
             method: 'post',
-            baseUri: CMS_NON_CONNECT_BASE_URI,
+            baseUri: CMS_BASE_URI,
             basePath: `/contents`,
         });
         testResolveResponse(
             {
                 method: 'post',
-                baseUri: CMS_NON_CONNECT_BASE_URI,
+                baseUri: CMS_BASE_URI,
                 basePath: `/contents`,
                 body: {
                     ManagedContentInputParam: {

@@ -336,5 +336,28 @@ describe('mobile runtime integration tests', () => {
             expect(updatedSpanning.id).toBe(updatedOwnerId);
             expect(updatedSpanning.fields['City'].value).toBe('Montreal');
         });
+
+        it('returns an error when getRecord returns Snapshot in Error state', async () => {
+            networkAdapter.setMockResponse({
+                status: 404,
+                headers: {},
+                body: undefined,
+            });
+
+            await expect(
+                updateRecord({
+                    recordId: RECORD_ID,
+                    apiName: API_NAME,
+                    fields: { Name: 'mockNameUpdate' },
+                })
+            ).rejects.toEqual({
+                body: {
+                    errorCode: 'DRAFT_ERROR',
+                    message: 'cannot apply a draft to a record that is not cached',
+                },
+                headers: {},
+                status: 400,
+            });
+        });
     });
 });

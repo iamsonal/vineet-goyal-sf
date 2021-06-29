@@ -158,8 +158,13 @@ export function updateRecordDraftEnvironment(
                     recordId,
                     ...fields,
                 })
-            ).catch(() => {
-                throw createInternalErrorResponse();
+            ).then((snapshot) => {
+                if (snapshot === null || snapshot.state === 'Error') {
+                    throw createDraftSynthesisErrorResponse(
+                        'cannot apply a draft to a record that is not cached'
+                    );
+                }
+                return snapshot;
             });
         });
     }

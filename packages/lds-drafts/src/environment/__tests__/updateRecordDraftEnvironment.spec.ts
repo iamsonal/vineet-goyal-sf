@@ -357,7 +357,7 @@ describe('draft environment tests', () => {
                 status: 400,
                 body: {
                     errorCode: 'DRAFT_ERROR',
-                    message: 'failed to synthesize draft response',
+                    message: 'cannot apply a draft to a record that is not cached',
                 },
                 headers: {},
             });

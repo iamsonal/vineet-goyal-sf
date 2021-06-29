@@ -1,0 +1,47 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '53.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v53.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  ScaleCenterMetricDataRepresentation:
+    description: 'Metrics data for Scale Center '
+    type: object
+    properties:
+      response:
+        description: JSON Payload of data returned from Scale Center backend services
+        type: string
+/scalecenter/metrics/query:
+  get:
+    description: Query Scale Center
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: ScaleCenterMetricDataRepresentation
+    queryParameters:
+      request:
+        type: string
+        required: false

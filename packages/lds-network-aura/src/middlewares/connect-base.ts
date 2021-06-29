@@ -5,6 +5,7 @@ export const GUIDANCE_BASE_URI = `${BASE_URI}/guidance`;
 export const WAVE_BASE_URI = `${BASE_URI}/wave`;
 export const CMS_BASE_URI = `${CONNECT_BASE_URI}/cms`;
 export const CMS_NON_CONNECT_BASE_URI = `${BASE_URI}/cms`;
+export const SCALECENTER_BASE_URI = `${BASE_URI}/scalecenter`;
 export const BILLING_BASE_URI = `${BASE_URI}/billing`;
 export const INTERACTION_BASE_URI = `${CONNECT_BASE_URI}/interaction`;
 export const SITES_BASE_URI = `${BASE_URI}/sites`;

@@ -12,6 +12,7 @@ generated-typedoc
 *.pem
 .idea
 __benchmarks_results__
+.sfdx
 
 # Project artifacts
 dist

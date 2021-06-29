@@ -1,0 +1,38 @@
+{
+    "name": "@salesforce/lds-adapters-platform-scale-center",
+    "version": "1.22.0",
+    "description": "LDS Adapter for Scale Center observability metrics and insights",
+    "license": "MIT",
+    "main": "dist/umd/es2018/platform-scale-center.js",
+    "module": "dist/es/es2018/platform-scale-center.js",
+    "types": "dist/types/src/generated/artifacts/main.d.ts",
+    "files": [
+        "dist",
+        "sfdc",
+        "src/raml/*"
+    ],
+    "contributors": [
+        "j.herrick@salesforce.com",
+        "pteyer@salesforce.com"
+    ],
+    "scripts": {
+        "build": "yarn build:raml && yarn build:services && yarn build:karma",
+        "build:karma": "rollup --config rollup.config.karma.js",
+        "build:raml": "luvio generate src/raml/luvio.raml src/generated -p '../lds-compiler-plugins'",
+        "build:services": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist sfdc src/generated karma/dist",
+        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-platform-scale-center",
+        "start": "karma start",
+        "test": "karma start --single-run",
+        "test:compat": "karma start --single-run --compat"
+    },
+    "publishConfig": {
+        "registry": "https://npm.lwcjs.org"
+    },
+    "dependencies": {
+        "@salesforce/lds-bindings": "1.22.0"
+    },
+    "devDependencies": {
+        "@salesforce/lds-karma": "1.22.0"
+    }
+}

@@ -1,0 +1,16 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'ScaleCenter::'
+
+types:
+  ScaleCenterMetricDataRepresentation:
+    (luvio.ttl): 10
+
+/scalecenter/metrics/query:
+  get:
+    (luvio.adapter):
+      name: queryMetrics

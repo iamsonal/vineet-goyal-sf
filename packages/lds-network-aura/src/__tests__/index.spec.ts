@@ -11,6 +11,7 @@ import {
     WAVE_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
     BILLING_BASE_URI,
+    SCALECENTER_BASE_URI,
     SITES_BASE_URI,
 } from '../middlewares/connect-base';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
@@ -3978,6 +3979,45 @@ describe('routes', () => {
                 basePath: `/webstores/1234567890ABCDE/pricing/products/1234567890ABCDE`,
             },
             {}
+        );
+    });
+
+    describe('get /scalecenter/metrics/query', () => {
+        const testRequest =
+            '{"path":"datasource/requestType/sample_metric","guid":"1234","start":123456789,"end":123456789}';
+        const testResponse =
+            '{"guid": "1234","data": [metric: "sample_metric",datapoints: {"1234":100, "5678":200}]}';
+        const queryMetricsPath = `/metrics/query`;
+        testControllerInput(
+            {
+                baseUri: SCALECENTER_BASE_URI,
+                basePath: queryMetricsPath,
+                queryParams: {
+                    request: testRequest,
+                },
+            },
+            [
+                'ScaleCenterController.queryMetrics',
+                {
+                    request: testRequest,
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: SCALECENTER_BASE_URI,
+            basePath: queryMetricsPath,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: SCALECENTER_BASE_URI,
+                basePath: queryMetricsPath,
+            },
+            {
+                response: testResponse,
+            }
         );
     });
 

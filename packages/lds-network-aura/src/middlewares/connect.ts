@@ -6,6 +6,7 @@ import {
     WAVE_BASE_URI,
     CMS_BASE_URI,
     CMS_NON_CONNECT_BASE_URI,
+    SCALECENTER_BASE_URI,
     INTERACTION_BASE_URI,
     BILLING_BASE_URI,
     SITES_BASE_URI,
@@ -201,6 +202,8 @@ const POST_BATCH_PAYMENTS_SCHEDULERS_PATH = new RegExp(
     `${BILLING_BASE_URI}/batch/payments/schedulers`,
     'i'
 );
+
+const SCALE_CENTER_GET_METRICS_PATH = new RegExp(`${SCALECENTER_BASE_URI}/metrics/query`, 'i');
 
 const GET_DECISION_MATRIC_DETAILS_PATH = new RegExp(
     `${CONNECT_BASE_URI}/omnistudio/decision-matrices/([A-Z0-9]){1,18}$`,
@@ -472,6 +475,16 @@ const commerce: ApiFamily = {
             path.startsWith(COMMERCE_BASE_URI) && PRODUCT_SEARCH_PATH.test(path),
         transport: {
             controller: 'CommerceProductSearchController.productSearch',
+        },
+    },
+};
+
+const scalecenter: ApiFamily = {
+    queryMetrics: {
+        method: 'get',
+        predicate: (path: string) => SCALE_CENTER_GET_METRICS_PATH.test(path),
+        transport: {
+            controller: 'ScaleCenterController.queryMetrics',
         },
     },
 };
@@ -878,6 +891,7 @@ registerApiFamilyRoutes(connect);
 registerApiFamilyRoutes(commerce);
 registerApiFamilyRoutes(guidance);
 registerApiFamilyRoutes(analytics);
+registerApiFamilyRoutes(scalecenter);
 registerApiFamilyRoutes(flow);
 registerApiFamilyRoutes(billing);
 registerApiFamilyRoutes(marketingIntegration);

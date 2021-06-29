@@ -10,19 +10,19 @@ import {
 } from '@luvio/engine';
 import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
 import { astToString } from './util/ast-to-string';
-import { GraphQL, createIngest, createRead } from './type/Document';
+import { GraphQL, createIngest, createRead, validate as documentValidate } from './type/Document';
 import { GraphQLVariables } from './type/Variable';
-import { ArrayIsArray, ObjectFreeze, ObjectKeys } from './util/language';
-interface GraphQlConfig {
+import { ArrayIsArray, ObjectFreeze, ObjectKeys, untrustedIsObject } from './util/language';
+
+interface GraphQLConfig {
     query: LuvioDocumentNode;
     variables: GraphQLVariables;
 }
-
 export const adapterName = 'graphQL';
 
 function buildSnapshotRefresh(
     luvio: Luvio,
-    config: GraphQlConfig,
+    config: GraphQLConfig,
     fragment: ReaderFragment
 ): SnapshotRefresh<unknown> {
     return {
@@ -62,7 +62,7 @@ function deepFreeze(value: unknown) {
 
 function onResourceResponseSuccess(
     luvio: Luvio,
-    config: GraphQlConfig,
+    config: GraphQLConfig,
     response: FetchResponse<GraphQL>,
     fragment: ReaderFragment
 ) {
@@ -109,7 +109,7 @@ function onResourceResponseSuccess(
 
 function buildNetworkSnapshot(
     luvio: Luvio,
-    config: GraphQlConfig,
+    config: GraphQLConfig,
     fragment: ReaderFragment
 ): Promise<Snapshot<unknown, any>> {
     const { variables: queryVariables, query } = config;
@@ -133,11 +133,86 @@ function buildNetworkSnapshot(
     });
 }
 
-export const graphQLAdapterFactory: AdapterFactory<GraphQlConfig, unknown> = (luvio: Luvio) =>
+function validateGraphQlConfig(untrustedConfig: unknown): {
+    validatedConfig: GraphQLConfig | null;
+    errors: string[];
+} {
+    if (!untrustedIsObject(untrustedConfig)) {
+        return {
+            validatedConfig: null,
+            errors: ["Invalid Config provided isn't an object"],
+        };
+    }
+
+    if (!('variables' in untrustedConfig && 'query' in untrustedConfig)) {
+        return {
+            validatedConfig: null,
+            errors: [
+                'Missing one or both of the required config parameters "query" and "variables"',
+            ],
+        };
+    }
+
+    const { variables, query } = untrustedConfig;
+    const validationErrors: string[] = [];
+
+    if (isLuvioDocumentNode(query) === false) {
+        validationErrors.push('The config parameter "query" isn\'t a valid LuvioDocumentNode');
+    }
+    const ast = query as LuvioDocumentNode;
+
+    if (untrustedIsObject(variables) === false) {
+        validationErrors.push('The config parameter "variables" isn\'t an object');
+    }
+
+    if (validationErrors.length > 0) {
+        return {
+            validatedConfig: null,
+            errors: validationErrors,
+        };
+    }
+
+    validationErrors.push(...documentValidate(ast, variables));
+
+    if (validationErrors.length > 0) {
+        return {
+            validatedConfig: null,
+            errors: validationErrors,
+        };
+    }
+
+    return {
+        validatedConfig: {
+            variables,
+            query,
+        },
+        errors: [],
+    };
+}
+
+function isLuvioDocumentNode(ast: unknown): ast is LuvioDocumentNode {
+    return (
+        untrustedIsObject(ast) &&
+        'kind' in ast &&
+        typeof ast['kind'] === 'string' &&
+        ast['kind'] === 'Document' &&
+        'definitions' in ast &&
+        ArrayIsArray(ast['definitions'])
+    );
+}
+
+export const graphQLAdapterFactory: AdapterFactory<GraphQLConfig, unknown> = (luvio: Luvio) =>
     function graphql(
         untrustedConfig: unknown
     ): Promise<Snapshot<unknown, any>> | Snapshot<unknown, any> | null {
-        const validatedConfig = untrustedConfig as GraphQlConfig;
+        const { validatedConfig, errors } = validateGraphQlConfig(untrustedConfig);
+
+        if (errors.length > 0 || validatedConfig === null) {
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error(errors.join(', '));
+            }
+            return null;
+        }
 
         const { query, variables } = validatedConfig;
 

@@ -181,7 +181,7 @@ describe('Document', () => {
             });
         });
         it('should return same data if arguments are different order', () => {
-            const ast1 = {
+            const ast1: LuvioDocumentNode = {
                 kind: 'Document',
                 definitions: [
                     {
@@ -395,7 +395,7 @@ describe('Document', () => {
                 ],
             };
 
-            const ast2 = {
+            const ast2: LuvioDocumentNode = {
                 kind: 'Document',
                 definitions: [
                     {
@@ -729,7 +729,7 @@ describe('Document', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(ast1 as LuvioDocumentNode, {}),
+                    read: createRead(ast1, {}),
                 },
                 variables: {},
             });
@@ -739,7 +739,7 @@ describe('Document', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(ast2 as LuvioDocumentNode, {}),
+                    read: createRead(ast2, {}),
                 },
                 variables: {},
             });

@@ -192,7 +192,7 @@ describe('GQL Connection', () => {
         });
 
         it('should read scalars correctly', () => {
-            const ast = {
+            const ast: LuvioSelectionCustomFieldNode = {
                 kind: 'CustomFieldSelection',
                 name: 'Opportunity',
                 type: 'Connection',
@@ -305,7 +305,7 @@ describe('GQL Connection', () => {
                     kind: 'Fragment',
                     synthetic: false,
                     reader: true,
-                    read: createRead(ast as LuvioSelectionCustomFieldNode, {}),
+                    read: createRead(ast, {}),
                 },
                 variables: {},
             });
@@ -892,7 +892,7 @@ describe('GQL Connection', () => {
         });
 
         it('should ingest connection with scalars correctly', () => {
-            const ast = {
+            const ast: LuvioSelectionCustomFieldNode = {
                 kind: 'CustomFieldSelection',
                 name: 'Opportunity',
                 type: 'Connection',
@@ -971,11 +971,7 @@ describe('GQL Connection', () => {
                 })
             );
 
-            createIngest(
-                ast as LuvioSelectionCustomFieldNode,
-                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})',
-                {}
-            )(
+            createIngest(ast, 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})', {})(
                 data,
                 {
                     parent: null,
@@ -1110,7 +1106,7 @@ describe('GQL Connection', () => {
                 })
             );
 
-            createIngest(selection, keyBuilder(selection))(
+            createIngest(selection, keyBuilder(selection, {}), {})(
                 JSON.parse(JSON.stringify(data)),
                 {
                     parent: null,
@@ -1126,7 +1122,7 @@ describe('GQL Connection', () => {
             luvio.storeBroadcast();
             jest.spyOn(luvio, 'storePublish');
 
-            createIngest(selection, keyBuilder(selection))(
+            createIngest(selection, keyBuilder(selection, {}), {})(
                 data,
                 {
                     parent: null,

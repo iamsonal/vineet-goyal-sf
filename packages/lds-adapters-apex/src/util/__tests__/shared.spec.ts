@@ -5,13 +5,18 @@ import {
     ApexAdapterConfig,
     APEX_TTL,
     CACHE_CONTROL,
+    checkAdapterContext,
     configBuilder,
+    isCacheable,
     keyBuilder,
     shouldCache,
     validateAdapterConfig,
+    getCacheableKey,
+    setCacheControlAdapterContext,
 } from '../shared';
+import { ObjectCreate } from '../language';
 
-import { IngestPath, ResourceResponse } from '@luvio/engine';
+import { AdapterContext, IngestPath, ResourceResponse } from '@luvio/engine';
 import { createLink } from '../../generated/types/type-utils';
 
 const CLASSNAME = 'TestController';
@@ -176,6 +181,120 @@ describe('apexClassnameBuilder', () => {
     });
     it('returns classname without namespace, if namespace is an empty string', () => {
         expect(apexClassnameBuilder('', CLASSNAME)).toBe(CLASSNAME);
+    });
+});
+
+describe('checkAdapterContext', () => {
+    let contextStore: { [s: string]: any } = ObjectCreate(null);
+    const context: AdapterContext = {
+        set<T>(key: string, value: T): void {
+            contextStore[key] = value;
+        },
+
+        get<T>(key: string): T | undefined {
+            return contextStore[key];
+        },
+    };
+    const mockId = 'mockId';
+    it('returns false if context is null', () => {
+        contextStore = {
+            [getCacheableKey(mockId)]: null,
+        };
+        expect(checkAdapterContext(context, mockId)).toBe(false);
+    });
+    it('returns false if context is undefined', () => {
+        contextStore = ObjectCreate(null);
+        expect(checkAdapterContext(context, mockId)).toBe(false);
+    });
+    it('returns false if context value is "no-cache"', () => {
+        contextStore = {
+            [getCacheableKey(mockId)]: 'no-cache',
+        };
+        expect(checkAdapterContext(context, mockId)).toBe(false);
+    });
+    it('returns true if context value is not "no-cache"', () => {
+        contextStore = {
+            [getCacheableKey(mockId)]: 'private',
+        };
+        expect(checkAdapterContext(context, mockId)).toBe(true);
+    });
+});
+
+describe('isCacheable', () => {
+    let contextStore: { [s: string]: any } = ObjectCreate(null);
+    const context: AdapterContext = {
+        set<T>(key: string, value: T): void {
+            contextStore[key] = value;
+        },
+
+        get<T>(key: string): T | undefined {
+            return contextStore[key];
+        },
+    };
+    const adapterConfig: ApexAdapterConfig = {
+        apexClass: CLASSNAME,
+        apexMethod: METHOD,
+        methodParams: {},
+        xSFDCAllowContinuation: IS_CONTINUATION,
+    };
+    const mockCacheableKey = getCacheableKey(keyBuilder(CLASSNAME, METHOD, IS_CONTINUATION, {}));
+
+    it('returns true if the cacheable value is in the adapter context', () => {
+        contextStore = {
+            [mockCacheableKey]: 'private',
+        };
+        expect(isCacheable(adapterConfig, context)).toBe(true);
+    });
+    it('returns false if the cacheable value is not in the adapter context', () => {
+        contextStore = {};
+        expect(isCacheable(adapterConfig, context)).toBe(false);
+    });
+});
+
+describe('setCacheControlAdapterContext', () => {
+    let contextStore: { [s: string]: any } = ObjectCreate(null);
+    const context: AdapterContext = {
+        set<T>(key: string, value: T): void {
+            contextStore[key] = value;
+        },
+
+        get<T>(key: string): T | undefined {
+            return contextStore[key];
+        },
+    };
+    const response: any = {};
+    const mockId = 'mockId';
+    it('does not add to the context store if headers is not defined', () => {
+        contextStore = ObjectCreate(null);
+        setCacheControlAdapterContext(context, mockId, response);
+        expect(contextStore).toMatchObject({});
+    });
+    it('does not add to the store if Cache-Control is not a string', () => {
+        const headers = { [CACHE_CONTROL]: 1234 };
+        contextStore = ObjectCreate(null);
+        response.headers = headers;
+        setCacheControlAdapterContext(context, mockId, response);
+        expect(contextStore).toMatchObject({});
+    });
+    it('adds Cache-Control value to recordId specified', () => {
+        const headers = { [CACHE_CONTROL]: 'private' };
+        contextStore = ObjectCreate(null);
+        response.headers = headers;
+        setCacheControlAdapterContext(context, mockId, response);
+        expect(contextStore).toMatchObject({
+            [getCacheableKey(mockId)]: 'private',
+        });
+    });
+    it('tracks Cache-Control values for multiple recordIds', () => {
+        const headers = { [CACHE_CONTROL]: 'private' };
+        contextStore = ObjectCreate(null);
+        response.headers = headers;
+        setCacheControlAdapterContext(context, 'foo', response);
+        setCacheControlAdapterContext(context, 'bar', response);
+        expect(contextStore).toMatchObject({
+            [getCacheableKey('foo')]: 'private',
+            [getCacheableKey('bar')]: 'private',
+        });
     });
 });
 

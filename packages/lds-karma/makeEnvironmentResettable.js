@@ -25,11 +25,12 @@ function makeContextSpyable(context, adapterName) {
 }
 
 function makeEnvironmentResettable(environment) {
-    const withContext = function (adapter, onContextLoaded) {
+    const withContext = function (adapter, { onContextLoaded, contextId }) {
         const adapterSpy = (config, context) => {
-            return adapter(config, makeContextSpyable(context, adapter.name));
+            const adapterContextId = contextId === undefined ? adapter.name : contextId;
+            return adapter(config, makeContextSpyable(context, adapterContextId));
         };
-        return environment.withContext(adapterSpy, onContextLoaded);
+        return environment.withContext(adapterSpy, { onContextLoaded, contextId });
     };
     return Object.create(environment, {
         withContext: { value: withContext },

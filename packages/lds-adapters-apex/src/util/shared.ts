@@ -1,4 +1,5 @@
 import {
+    AdapterContext,
     IngestPath,
     Luvio,
     ResourceIngest,
@@ -28,6 +29,7 @@ export interface ApexAdapterConfig {
 }
 
 export const CACHE_CONTROL = 'Cache-Control';
+export const SHARED_ADAPTER_CONTEXT_ID = 'apex__shared';
 
 // TODO: APEX_TTL, apexResponseEquals, apexResponseIngest, and validateAdapterConfig should have been code generated
 // however compiler does not support response body type any so hand roll for now
@@ -131,4 +133,45 @@ export function shouldCache(resourceResponse: ResourceResponse<any>): boolean {
             return cacheControl !== 'no-cache';
         }
     }
+}
+
+export function getCacheableKey(recordId: string) {
+    return `${recordId}_cacheable`;
+}
+
+function set(context: AdapterContext, recordId: string, value: string) {
+    const key = getCacheableKey(recordId);
+    context.set(key, value);
+}
+
+function get(context: AdapterContext, key: string) {
+    return context.get(getCacheableKey(key));
+}
+
+export function setCacheControlAdapterContext(
+    context: AdapterContext,
+    recordId: string,
+    response: ResourceResponse<any>
+) {
+    const { headers } = response;
+    if (headers !== undefined && typeof headers[CACHE_CONTROL] === 'string') {
+        const value = headers[CACHE_CONTROL];
+        set(context, recordId, value);
+    }
+}
+
+export function isCacheable(config: ApexAdapterConfig, context: AdapterContext) {
+    const { apexClass, apexMethod, xSFDCAllowContinuation, methodParams } = config;
+    const recordId = keyBuilder(apexClass, apexMethod, xSFDCAllowContinuation, methodParams);
+
+    return checkAdapterContext(context, recordId);
+}
+
+export function checkAdapterContext(context: AdapterContext, recordId: string) {
+    const contextValue = get(context, recordId);
+
+    if (contextValue === null || contextValue === undefined) {
+        return false;
+    }
+    return contextValue !== 'no-cache';
 }

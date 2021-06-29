@@ -107,9 +107,7 @@ describe('imperative Apex call', () => {
                 apexMethod: 'getContactList',
                 apexClass: 'ContactController',
             },
-            queryParams: {
-                methodParams: {},
-            },
+            queryParams: {},
             headers: {
                 'X-SFDC-Allow-Continuation': 'false',
             },

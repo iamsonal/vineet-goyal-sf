@@ -1,5 +1,6 @@
 import {
     Adapter,
+    AdapterContext,
     FetchResponse,
     FulfilledSnapshot,
     Luvio,
@@ -9,18 +10,19 @@ import {
     Snapshot,
     SnapshotRefresh,
     StaleSnapshot,
+    UnAvailableSnapshot,
     UnfulfilledSnapshot,
 } from '@luvio/engine';
 import {
     AdapterValidationConfig,
     snapshotRefreshOptions,
-    SNAPSHOT_STATE_UNFULFILLED,
     stableJSONStringify,
 } from '../../generated/adapters/adapter-utils';
 import {
     createResourceRequest,
     ResourceRequestConfig,
 } from '../../generated/resources/getByApexMethodAndApexClass';
+import { ObjectCreate } from '../../util/language';
 import {
     apexResponseIngest,
     apexClassnameBuilder,
@@ -30,6 +32,8 @@ import {
     keyBuilder,
     KEY_DELIM,
     isEmptyParam,
+    setCacheControlAdapterContext,
+    SHARED_ADAPTER_CONTEXT_ID,
     shouldCache,
     validateAdapterConfig,
 } from '../../util/shared';
@@ -45,13 +49,15 @@ export const getByApexMethodAndApexClass_ConfigPropertyNames: AdapterValidationC
 };
 
 export function createResourceParams(config: ApexAdapterConfig): ResourceRequestConfig {
+    const queryParams = ObjectCreate(null);
+    if (!isEmptyParam(config.methodParams)) {
+        queryParams.methodParams = config.methodParams;
+    }
     return {
+        queryParams,
         urlParams: {
             apexMethod: config.apexMethod,
             apexClass: config.apexClass,
-        },
-        queryParams: {
-            methodParams: config.methodParams,
         },
         headers: {
             xSFDCAllowContinuation: config.xSFDCAllowContinuation,
@@ -84,7 +90,6 @@ export function ingestSuccess(
         node: { kind: 'Fragment', opaque: true, private: [] },
         variables: {},
     };
-    luvio.storePublish(recordId + '_cacheable', response.headers);
     luvio.storeIngest<any>(recordId, apexResponseIngest, body);
 
     const snapshot = luvio.storeLookup<any>(select, snapshotRefresh);
@@ -106,7 +111,7 @@ export function ingestSuccess(
     return snapshot as FulfilledSnapshot<any, any> | StaleSnapshot<any, any>;
 }
 
-function buildInMemorySnapshot(luvio: Luvio, config: ApexAdapterConfig) {
+function buildInMemorySnapshot(luvio: Luvio, context: AdapterContext, config: ApexAdapterConfig) {
     const { apexClass, apexMethod, xSFDCAllowContinuation, methodParams } = config;
     const recordId = keyBuilder(apexClass, apexMethod, xSFDCAllowContinuation, methodParams);
 
@@ -122,30 +127,32 @@ function buildInMemorySnapshot(luvio: Luvio, config: ApexAdapterConfig) {
         },
         {
             config,
-            resolve: () => buildNetworkSnapshot(luvio, config, snapshotRefreshOptions),
+            resolve: () => buildNetworkSnapshot(luvio, context, config, snapshotRefreshOptions),
         }
     );
 }
 
 export function resolveUnfulfilledSnapshot(
     luvio: Luvio,
+    context: AdapterContext,
     config: ApexAdapterConfig,
-    snapshot: UnfulfilledSnapshot<any, unknown>
+    snapshot: UnfulfilledSnapshot<any, any>
 ): Promise<any> {
     const params = createResourceParams(config);
     const request = createResourceRequest(params);
     return luvio.resolveUnfulfilledSnapshot<any>(request, snapshot).then(
         (response) => {
-            return onResourceResponseSuccess(luvio, config, params, response);
+            return onResourceResponseSuccess(luvio, context, config, params, response);
         },
         (error: FetchResponse<unknown>) => {
-            return onResourceResponseError(luvio, config, params, error);
+            return onResourceResponseError(luvio, context, config, params, error);
         }
     );
 }
 
 export function onResourceResponseSuccess(
     luvio: Luvio,
+    context: AdapterContext,
     config: ApexAdapterConfig,
     resourceParams: ResourceRequestConfig,
     response: ResourceResponse<any>
@@ -156,16 +163,17 @@ export function onResourceResponseSuccess(
         node: { kind: 'Fragment', opaque: true, private: [] },
         variables: {},
     };
+    setCacheControlAdapterContext(context, recordId, response);
     if (shouldCache(response)) {
         const snapshot = ingestSuccess(luvio, resourceParams, response, {
             config,
-            resolve: () => buildNetworkSnapshot(luvio, config, snapshotRefreshOptions),
+            resolve: () => buildNetworkSnapshot(luvio, context, config, snapshotRefreshOptions),
         });
         luvio.storeBroadcast();
         return snapshot;
     }
 
-    // if cacheable is not set or set to false, return a synthetic snapshot
+    // if Cache-Control is not set or set to 'no-cache', return a synthetic snapshot
     return {
         recordId,
         variables: {},
@@ -178,18 +186,20 @@ export function onResourceResponseSuccess(
 
 export function onResourceResponseError(
     luvio: Luvio,
+    context: AdapterContext,
     config: ApexAdapterConfig,
     _resourceParams: ResourceRequestConfig,
     response: FetchResponse<unknown>
 ) {
     return luvio.errorSnapshot(response, {
         config,
-        resolve: () => buildNetworkSnapshot(luvio, config, snapshotRefreshOptions),
+        resolve: () => buildNetworkSnapshot(luvio, context, config, snapshotRefreshOptions),
     });
 }
 
 export function buildNetworkSnapshot(
     luvio: Luvio,
+    context: AdapterContext,
     config: ApexAdapterConfig,
     override?: ResourceRequestOverride
 ): Promise<Snapshot<any>> {
@@ -197,10 +207,10 @@ export function buildNetworkSnapshot(
     const request = createResourceRequest(resourceParams);
     return luvio.dispatchResourceRequest<any>(request, override).then(
         (response) => {
-            return onResourceResponseSuccess(luvio, config, resourceParams, response);
+            return onResourceResponseSuccess(luvio, context, config, resourceParams, response);
         },
         (response: FetchResponse<unknown>) => {
-            return onResourceResponseError(luvio, config, resourceParams, response);
+            return onResourceResponseError(luvio, context, config, resourceParams, response);
         }
     );
 }
@@ -217,35 +227,42 @@ function getApexAdapterFactory(
     method: string,
     isContinuation: boolean
 ): Adapter<any, any> {
-    return (untrustedConfig: unknown) => {
-        // Even though the config is of type `any`,
-        // validation is required here because `undefined`
-        // values on a wire mean that properties on the component
-        // used in the config have not been loaded yet.
-        const config = validateAdapterConfig(untrustedConfig);
+    return luvio.withContext(
+        function apex__getApex(
+            untrustedConfig: unknown,
+            context: AdapterContext
+        ): Promise<Snapshot<any, any>> | Snapshot<any, any> | null {
+            // Even though the config is of type `any`,
+            // validation is required here because `undefined`
+            // values on a wire mean that properties on the component
+            // used in the config have not been loaded yet.
+            const config = validateAdapterConfig(untrustedConfig);
 
-        // Invalid or incomplete config
-        if (config === null) {
-            return null;
-        }
-        const configPlus = configBuilder(
-            config,
-            apexClassnameBuilder(namespace, classname),
-            method,
-            isContinuation
-        );
+            // Invalid or incomplete config
+            if (config === null) {
+                return null;
+            }
+            const configPlus = configBuilder(
+                config,
+                apexClassnameBuilder(namespace, classname),
+                method,
+                isContinuation
+            );
 
-        const cacheSnapshot = buildInMemorySnapshot(luvio, configPlus);
+            const cacheSnapshot = buildInMemorySnapshot(luvio, context, configPlus);
 
-        // Cache Hit
-        if (luvio.snapshotAvailable(cacheSnapshot) === true) {
-            return cacheSnapshot;
-        }
+            // Cache Hit
+            if (luvio.snapshotAvailable(cacheSnapshot) === true) {
+                return cacheSnapshot;
+            }
 
-        if (cacheSnapshot.state === SNAPSHOT_STATE_UNFULFILLED) {
-            return resolveUnfulfilledSnapshot(luvio, configPlus, cacheSnapshot);
-        }
-
-        return buildNetworkSnapshot(luvio, configPlus);
-    };
+            // Resolve if snapshot not available
+            // we have to cast to AvailableSnapshot because TS doesn't know how to infer types after "=== true" on the previous line
+            return luvio.resolveSnapshot(cacheSnapshot as UnAvailableSnapshot<any, any>, {
+                config: {},
+                resolve: () => buildNetworkSnapshot(luvio, context, configPlus),
+            });
+        },
+        { contextId: SHARED_ADAPTER_CONTEXT_ID }
+    );
 }

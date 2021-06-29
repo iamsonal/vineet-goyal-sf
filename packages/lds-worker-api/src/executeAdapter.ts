@@ -1,10 +1,13 @@
 import { FetchResponse } from '@luvio/engine';
 import gqlParse from '@salesforce/lds-graphql-parser';
 import * as gqlApi from 'force/ldsAdaptersGraphql';
+import { getInstrumentation } from 'o11y/client';
 
 import { JSONParse } from './language';
 import { isNotAFunctionError } from './error';
 import { adapterMap } from './lightningAdapterApi';
+
+const instr = getInstrumentation('lds-worker-api');
 
 type CallbackValue = {
     data: any | undefined;
@@ -69,6 +72,7 @@ export function subscribeToAdapter(
                 configObject.query = gqlParse(configObject.query);
             } catch (parseError) {
                 // call the callback with error
+                instr.error(parseError, 'gql-parse-error');
                 onSnapshot({ data: undefined, error: parseError });
                 return () => {
                     if (wire !== undefined) {
@@ -114,6 +118,7 @@ export function invokeAdapter(adapterId: string, config: string, onResponse: OnR
                 configObject.query = gqlParse(configObject.query);
             } catch (parseError) {
                 // call the callback with error
+                instr.error(parseError, 'gql-parse-error');
                 onResponse({ data: undefined, error: parseError });
                 return;
             }

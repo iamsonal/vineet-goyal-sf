@@ -40,6 +40,12 @@ function declareNotifierTaskMulti(_name: string, _existingBusyCount?: number) {
 
 function declarePollableTaskMulti(_name: string, _isBusyChecker: IsBusyChecker) {}
 
+export const mockInstrumentation = {
+    error: jest.fn(),
+};
+
+export const getInstrumentation = jest.fn().mockReturnValue(mockInstrumentation);
+
 export const idleDetector: IdleDetector = {
     requestIdleDetectedCallback,
     declareNotifierTaskSingle,

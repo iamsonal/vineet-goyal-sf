@@ -1,0 +1,33 @@
+{
+    "connectionProperties": [],
+    "connectorHandler": "Legacy",
+    "connectorType": "SfdcLocal",
+    "createdBy": {
+        "id": "005xx000001X7fPAAS",
+        "name": "Integration User",
+        "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+    },
+    "createdDate": "2021-02-11T00:37:00.000Z",
+    "description": "SFDC_LOCAL",
+    "id": "0Itxx0000004C92CAE",
+    "ingestionSchedule": {
+        "assetId": "0Itxx0000004C92CAE",
+        "frequency": "none"
+    },
+    "label": "SFDC_LOCAL",
+    "lastModifiedBy": {
+        "id": "005xx000001X7fPAAS",
+        "name": "Integration User",
+        "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+    },
+    "lastModifiedDate": "2021-02-11T00:37:00.000Z",
+    "name": "SFDC_LOCAL",
+    "targetConnector": {
+        "id": "0Itxx0000004EAqCAM",
+        "label": "Snowflake output",
+        "name": "snowflake",
+        "url": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004EAqCAM"
+    },
+    "type": "dataconnector",
+    "url": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE"
+}

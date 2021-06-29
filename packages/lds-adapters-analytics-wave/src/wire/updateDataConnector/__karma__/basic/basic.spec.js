@@ -35,6 +35,23 @@ describe('basic', () => {
         expect(data).toEqualWithExtraNestedData(mock);
     });
 
+    it('update target connector', async () => {
+        const mock = getMock('data-connector-with-target-connector');
+        const config = {
+            connectorIdOrApiName: mock.id,
+            dataConnector: {
+                targetConnector: {
+                    id: '0Itxx0000004EAqCAM',
+                },
+            },
+        };
+        mockUpdateDataConnectorNetworkOnce(config, mock);
+
+        const data = await updateDataConnector(config);
+
+        expect(data).toEqualWithExtraNestedData(mock);
+    });
+
     it('should not hit the network when another wire tries to access the newly updated data connector', async () => {
         const mock = getMock('data-connector');
         const config = {

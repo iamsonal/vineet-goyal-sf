@@ -23,11 +23,19 @@ describe('mobile runtime integration tests', () => {
     let draftManager: DraftManager;
     let networkAdapter: MockNimbusNetworkAdapter;
     let createRecord;
+    let updateRecord;
     let getRecord;
 
     beforeEach(async () => {
-        ({ luvio, draftManager, draftQueue, networkAdapter, createRecord, getRecord } =
-            await setup());
+        ({
+            luvio,
+            draftManager,
+            draftQueue,
+            networkAdapter,
+            createRecord,
+            getRecord,
+            updateRecord,
+        } = await setup());
     });
 
     async function populateDurableStoreWithAccount() {
@@ -110,6 +118,44 @@ describe('mobile runtime integration tests', () => {
             // ensure the callback id value has the updated canonical server id
             expect(callbackSpy.mock.calls[0][0].data.fields.Id.value).toBe(RECORD_ID);
         });
+
+        it('created record has future drafts still applied after draft is uploaded', async () => {
+            const orginalName = mockAccount.fields.Name.value;
+            const updatedName = 'Jason';
+            // create a synthetic record
+            const snapshot = await createRecord({
+                apiName: API_NAME,
+                fields: { Name: orginalName },
+            });
+            const record = snapshot.data;
+            const recordId = record.id;
+
+            await updateRecord({ recordId: recordId, fields: { Name: updatedName } });
+
+            networkAdapter.setMockResponse({
+                status: 201,
+                headers: {},
+                body: JSONStringify(mockAccount),
+            });
+
+            // upload the draft and respond with a record with more fields and a new id
+            const result = await draftQueue.processNextAction();
+            await flushPromises();
+            expect(result).toBe(ProcessActionResult.ACTION_SUCCEEDED);
+
+            const updatedRecord = (
+                await getRecord({
+                    recordId: recordId,
+                    fields: ['Account.Name', 'Account.Id'],
+                })
+            ).data as DraftRecordRepresentation;
+
+            expect(updatedRecord.fields['Name'].value).toEqual(updatedName);
+            expect(updatedRecord.drafts.created).toBe(false);
+            expect(updatedRecord.drafts.edited).toBe(true);
+            expect(updatedRecord.drafts.draftActionIds.length).toBe(1);
+        });
+
         it('creates a create item in queue visible by draft manager', async () => {
             await createRecord({ apiName: API_NAME, fields: { Name: 'Justin' } });
             const subject = await draftManager.getQueue();

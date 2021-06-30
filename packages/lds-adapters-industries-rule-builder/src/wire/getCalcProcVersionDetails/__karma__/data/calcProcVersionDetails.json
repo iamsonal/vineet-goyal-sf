@@ -38,5 +38,28 @@
         ]
     },
     "versionId": "123",
-    "versionNumber": 6
+    "versionNumber": 6,
+    "step": {
+        "details": {
+            "s1": {
+                "name": "s1 name",
+                "id": "s1",
+                "description": "desc s1",
+                "stepType": "calcproc",
+                "formulaExpressionText": "",
+                "formulaUiFormattedText": "",
+                "conditionsExpressionText": "",
+                "conditionsUiFormattedText": "",
+                "returnMessageValueSet": "",
+                "inputVariablesFormatText": "",
+                "outputVariablesFormatText": "",
+                "calculationMatrixId": "calcId",
+                "referenceCalculationProcedureId": "cp1",
+                "outputVariablesMappingText": "",
+                "isResultIncluded": false,
+                "stage": "Calculation",
+                "childStepIds": []
+            }
+        }
+    }
 }

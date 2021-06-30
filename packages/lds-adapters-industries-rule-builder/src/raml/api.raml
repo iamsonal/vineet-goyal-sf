@@ -966,7 +966,7 @@ types:
           searchKey:
             type: string
             required: false
-    /decision-matrices/{id}:
+    /decision-matrices/{matrixId}:
       get:
         description: Get information about a single Sample object.
         responses:
@@ -976,6 +976,6 @@ types:
               application/json:
                 type: DecisionMatrixResultRepresentation
       uriParameters:
-        id:
+        matrixId:
           type: string
           required: true

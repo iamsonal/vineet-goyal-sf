@@ -5,7 +5,7 @@ import timekeeper from 'timekeeper';
 
 const API_VERSION = 'v53.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
-const INTERACTION_TTL = 360000;
+const INTERACTION_TTL = 100;
 
 export function clone(obj) {
     // this is needed for compat tests, because the toEqual matcher can't

@@ -7,7 +7,7 @@ export default class GetDecisionMatrixDetails extends LightningElement {
     @api id;
 
     @wire(getDecisionMatrixDetails, {
-        id: '$id',
+        matrixId: '$id',
     })
     onGetDecisionMatrixDetails({ data, error }) {
         this.decisionMatrixDetails = data;

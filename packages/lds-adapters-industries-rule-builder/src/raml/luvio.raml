@@ -9,24 +9,31 @@ uses:
 
 types:
   DecisionMatrixResultRepresentation:
+    (luvio.ttl): 100
+    (luvio.opaque): true
     (luvio.key):
       id: id
   CalculationProcedureVersionDefinitionOutputRepresentation:
+    (luvio.ttl): 100
+    (luvio.opaque): true
     (luvio.key):
       id: versionId
   CalculationProcedureListOutputRepresentation:
+    (luvio.ttl): 100
     (luvio.opaque): true
   DecisionMatrixResultListRepresentation:
     (luvio.opaque): true
-    (luvio.ttl): 360000
+    (luvio.ttl): 100
   SimulationEvalServiceOutputRepresentation:
     (luvio.opaque): true
     (luvio.key):
       id: executionId
   SimulationInputVariablesResultListRepresentation:
     (luvio.opaque): true
+    (luvio.ttl): 100
   CalculationProcedureDetailOutputRepresentation:
     (luvio.opaque): true
+    (luvio.ttl): 100
   CalculationProcedureActivationOutputRepresentation:
     (luvio.opaque): true
     (luvio.key):
@@ -38,7 +45,7 @@ types:
       get:
         (luvio.adapter):
           name: getCalcProcDetails
-    /decision-matrices/{id}:
+    /decision-matrices/{matrixId}:
       get:
         (luvio.adapter):
           name: getDecisionMatrixDetails
@@ -46,15 +53,15 @@ types:
             validConfigs:
               - |
                 {
-                  "id": "123"
+                  "matrixId": "123"
                 }
             invalidConfigs:
               - |
                 {
-                  "id": 123
+                  "matrixId": 123
                 }
         (luvio.key):
-          id: urlParams.id
+          id: urlParams.matrixId
     /decision-matrices:
       get:
         (luvio.adapter):

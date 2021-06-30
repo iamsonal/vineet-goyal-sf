@@ -16,7 +16,7 @@ export default function normalize(
     timestamp: number,
     fieldsTrie: RecordFieldTrie,
     optionalFieldsTrie: RecordFieldTrie,
-    recordConflictMap?: RecordConflictMap
+    recordConflictMap: RecordConflictMap
 ): FieldValueRepresentationNormalized {
     const input_value = input.value;
     const input_value_id = path.fullPath + '__value';

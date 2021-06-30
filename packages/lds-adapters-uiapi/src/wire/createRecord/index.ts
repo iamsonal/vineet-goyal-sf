@@ -11,6 +11,10 @@ import postUiApiRecords from '../../generated/resources/postUiApiRecords';
 import { createResourceParams, CreateRecordConfig } from '../../generated/adapters/createRecord';
 import { BLANK_RECORD_FIELDS_TRIE } from '../../util/records';
 import { createRecordIngest } from '../../util/record-ingest';
+import {
+    RecordConflictMap,
+    resolveConflict,
+} from '../../helpers/RecordRepresentation/resolveConflict';
 
 export const factory = (luvio: Luvio) => {
     return function (untrustedConfig: unknown): Promise<Snapshot<RecordRepresentation>> {
@@ -18,7 +22,8 @@ export const factory = (luvio: Luvio) => {
         const request = postUiApiRecords(resourceParams);
         const fieldTrie = BLANK_RECORD_FIELDS_TRIE;
         const optionalFieldTrie = BLANK_RECORD_FIELDS_TRIE;
-        const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie);
+        const conflictMap: RecordConflictMap = {};
+        const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie, conflictMap);
         return luvio.dispatchResourceRequest<RecordRepresentation>(request).then(
             (response) => {
                 const { body } = response;
@@ -29,7 +34,7 @@ export const factory = (luvio: Luvio) => {
                 });
 
                 luvio.storeIngest(key, recordIngest, body);
-
+                resolveConflict(luvio, conflictMap);
                 const snapshot = luvio.storeLookup<RecordRepresentation>({
                     recordId: key,
                     node: {

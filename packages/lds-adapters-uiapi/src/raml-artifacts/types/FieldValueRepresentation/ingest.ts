@@ -13,7 +13,7 @@ import { RecordFieldTrie } from '../../../util/records';
 export function makeIngest(
     fieldsTrie: RecordFieldTrie,
     optionalFieldsTrie: RecordFieldTrie,
-    recordConflictMap?: RecordConflictMap
+    recordConflictMap: RecordConflictMap
 ): ResourceIngest {
     return (
         input: FieldValueRepresentation,

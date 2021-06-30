@@ -34,7 +34,19 @@ export const createIngestRecordWithFields: (
     };
 };
 
-export const ingest: typeof generatedIngest = createRecordIngest(
-    BLANK_RECORD_FIELDS_TRIE,
-    BLANK_RECORD_FIELDS_TRIE
-);
+export const ingest: typeof generatedIngest = (
+    input: RecordRepresentation,
+    path: IngestPath,
+    luvio: Luvio,
+    store: Store,
+    timestamp: number
+) => {
+    const conflictMap = {};
+    const result = createRecordIngest(
+        BLANK_RECORD_FIELDS_TRIE,
+        BLANK_RECORD_FIELDS_TRIE,
+        conflictMap
+    )(input, path, luvio, store, timestamp);
+    resolveConflict(luvio, conflictMap);
+    return result;
+};

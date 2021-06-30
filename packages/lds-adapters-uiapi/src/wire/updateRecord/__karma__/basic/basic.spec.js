@@ -5,6 +5,7 @@ import {
     extractRecordFields,
     mockGetRecordNetwork,
     mockUpdateRecordNetwork,
+    mockGetRecordsNetwork,
 } from 'uiapi-test-util';
 
 import RecordFields from '../../../getRecord/__karma__/lwc/record-fields';
@@ -130,37 +131,42 @@ describe('update record', () => {
             ],
         };
 
-        const childRefreshMock = getMock('record-Child_Object__c-updated');
-        const childRefreshConfig = {
-            recordId: childRefreshMock.id,
-            optionalFields: [
-                'Child_Object__c.Id',
-                'Child_Object__c.Name',
-                'Child_Object__c.Parent_Object__c',
-                'Child_Object__c.Parent_Object__r.Id',
-                'Child_Object__c.Parent_Object__r.Name',
-            ],
-        };
-
         const parentMock = getMock('record-Parent_Object__c-fields-all-old');
         const parentConfig = {
             recordId: parentMock.id,
             fields: ['Parent_Object__c.Child_Object_Count__c'],
         };
-        const parentRefreshMock = getMock('record-Parent_Object__c-fields-all-updated');
-        const parentRecordRefreshConfig = {
-            recordId: parentMock.id,
-            optionalFields: [
-                'Parent_Object__c.Child_Object_Count__c',
-                'Parent_Object__c.Id',
-                'Parent_Object__c.Name',
-            ],
-        };
 
+        const getRecordsRefreshedMock = getMock('records-Parent_Object-Child_Object-refreshed');
+        const parentRefreshMock = getRecordsRefreshedMock.results[0].result;
+
+        mockGetRecordsNetwork(
+            {
+                records: [
+                    {
+                        recordIds: [parentMock.id],
+                        optionalFields: [
+                            'Parent_Object__c.Child_Object_Count__c',
+                            'Parent_Object__c.Id',
+                            'Parent_Object__c.Name',
+                        ],
+                    },
+                    {
+                        recordIds: [childMock.id],
+                        optionalFields: [
+                            'Child_Object__c.Id',
+                            'Child_Object__c.Name',
+                            'Child_Object__c.Parent_Object__c',
+                            'Child_Object__c.Parent_Object__r.Id',
+                            'Child_Object__c.Parent_Object__r.Name',
+                        ],
+                    },
+                ],
+            },
+            getRecordsRefreshedMock
+        );
         mockGetRecordNetwork(childConfig, childMock);
-        mockGetRecordNetwork(childRefreshConfig, childRefreshMock);
         mockGetRecordNetwork(parentConfig, parentMock);
-        mockGetRecordNetwork(parentRecordRefreshConfig, parentRefreshMock);
 
         const mockUpdatedResponse = getMock('record-Child_Object__c-updated');
         const updateParams = {

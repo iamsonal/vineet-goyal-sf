@@ -54,12 +54,11 @@ function mergePendingFields(
 // when incoming record has a higher version
 // than the record that is currently in the store
 function mergeAndRefreshHigherVersionRecord(
-    luvio: Luvio,
     incoming: RecordRepresentationNormalized,
     existing: RecordRepresentationNormalized,
     incomingTrackedFieldsTrieRoot: RecordFieldTrie,
     existingTrackedFieldsTrieRoot: RecordFieldTrie,
-    recordConflictMap?: RecordConflictMap
+    recordConflictMap: RecordConflictMap
 ): RecordRepresentationNormalized {
     // If the higher version (incoming) does not contain a superset of fields as existing
     // then we need to refresh to get updated versions of fields in existing
@@ -72,18 +71,11 @@ function mergeAndRefreshHigherVersionRecord(
         if (isSupportedEntity(incoming.apiName) === false) {
             return mergeRecordFields(incoming, existing);
         }
-        if (recordConflictMap) {
-            // update the conflict map to resolve the record conflict in resolveConflict
-            recordConflictMap[incoming.id] = {
-                recordId: incoming.id,
-                trackedFields: existingTrackedFieldsTrieRoot,
-            };
-        } else {
-            getRecordFieldsNetwork(luvio, {
-                recordId: incoming.id,
-                optionalFields: convertTrieToFields(incomingTrackedFieldsTrieRoot),
-            });
-        }
+        // update the conflict map to resolve the record conflict in resolveConflict
+        recordConflictMap[incoming.id] = {
+            recordId: incoming.id,
+            trackedFields: existingTrackedFieldsTrieRoot,
+        };
 
         // We want to mark fields in the store as pending
         // Because we don't want to emit any data to components
@@ -141,7 +133,7 @@ function mergeRecordConflict(
     luvio: Luvio,
     incoming: RecordRepresentationNormalized,
     existing: RecordRepresentationNormalized,
-    recordConflictMap?: RecordConflictMap
+    recordConflictMap: RecordConflictMap
 ) {
     const incomingNode =
         luvio.wrapNormalizedGraphNode<RecordRepresentationNormalized, RecordRepresentation>(
@@ -183,7 +175,6 @@ function mergeRecordConflict(
 
     if (incoming.weakEtag > existing.weakEtag) {
         return mergeAndRefreshHigherVersionRecord(
-            luvio,
             incoming,
             existing,
             incomingTrackedFieldsTrieRoot,
@@ -236,7 +227,7 @@ export default function merge(
     incoming: RecordRepresentationNormalized,
     luvio: Luvio,
     _path: IngestPath,
-    recordConflictMap?: RecordConflictMap
+    recordConflictMap: RecordConflictMap
 ): RecordRepresentationNormalized {
     if (existing === undefined || isErrorEntry(existing)) {
         return incoming;

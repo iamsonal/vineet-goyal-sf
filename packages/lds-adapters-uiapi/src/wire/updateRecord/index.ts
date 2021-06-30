@@ -17,6 +17,10 @@ import patchUiApiRecordsByRecordId from '../../generated/resources/patchUiApiRec
 import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
 import { BLANK_RECORD_FIELDS_TRIE } from '../../util/records';
 import { createRecordIngest } from '../../util/record-ingest';
+import {
+    RecordConflictMap,
+    resolveConflict,
+} from '../../helpers/RecordRepresentation/resolveConflict';
 
 export interface ClientOptions {
     ifUnmodifiedSince?: string;
@@ -62,7 +66,8 @@ export const factory = (luvio: Luvio) => {
 
         const fieldTrie = BLANK_RECORD_FIELDS_TRIE;
         const optionalFieldTrie = BLANK_RECORD_FIELDS_TRIE;
-        const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie);
+        const conflictMap: RecordConflictMap = {};
+        const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie, conflictMap);
 
         return luvio.dispatchResourceRequest<RecordRepresentation>(request).then(
             (response) => {
@@ -74,6 +79,7 @@ export const factory = (luvio: Luvio) => {
                 });
 
                 luvio.storeIngest(key, recordIngest, body);
+                resolveConflict(luvio, conflictMap);
 
                 const snapshot = luvio.storeLookup<RecordRepresentation>({
                     recordId: key,

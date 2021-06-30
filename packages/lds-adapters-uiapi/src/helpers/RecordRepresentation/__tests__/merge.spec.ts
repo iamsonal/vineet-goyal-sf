@@ -169,34 +169,6 @@ describe('merge', () => {
             merge(existingRecord, incomingNormalized, luvio, path, conflictMap);
             expect(spy).not.toHaveBeenCalled();
         });
-        it('makes a network request as a fallback ', () => {
-            const spy = buildNetworkSnapshot;
-            let incoming = createRecordData(2);
-            let existing = createRecordData(1);
-
-            // we dont want incoming to be a superset of the fields
-            delete incoming.fields['CreatedDate'];
-            existing = JSON.parse(JSON.stringify(existing));
-            incoming = JSON.parse(JSON.stringify(incoming));
-
-            const store = new Store();
-            const luvio = new Luvio(new Environment(store, jest.fn()));
-
-            const key = keyBuilder({ recordId: existing.id });
-            const path = {
-                fullPath: key,
-                parent: null,
-            };
-
-            ingest(existing, path, luvio, store, 0);
-
-            const existingRecord = store.records[key];
-
-            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
-
-            merge(existingRecord, incomingNormalized, luvio, path);
-            expect(spy).toHaveBeenCalled();
-        });
         it('sets incoming fields that arent on existing fields to undefined (CreateDate should have undefined ref)', () => {
             const expectedMergedFields = {
                 apiName: 'Account',

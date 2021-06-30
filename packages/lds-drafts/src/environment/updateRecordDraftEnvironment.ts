@@ -15,6 +15,7 @@ import {
 } from '../DraftFetchResponse';
 import { ObjectCreate, ObjectKeys } from '../utils/language';
 import {
+    ensureReferencedIdsAreCached,
     extractRecordIdFromResourceRequest,
     filterRecordFields,
     getRecordFieldsFromRecordRequest,
@@ -127,48 +128,88 @@ export function updateRecordDraftEnvironment(
             ) as any;
         }
 
+        const prefix = targetId.substring(0, 3);
+        const fields = getRecordFieldsFromRecordRequest(resolvedRequest);
+
+        return apiNameForPrefix(prefix).then((apiName) => {
+            return assertReferenceIdsAreCached(apiName, resolvedRequest.body.fields).then(() => {
+                return assertRecordIsCached(key, targetId, apiName, fields).then(() => {
+                    return enqueueRequest(resolvedRequest, key, targetId);
+                });
+            });
+        });
+    };
+
+    /**
+     * Asserts that any refrence ids being edited exist in the store
+     * @param apiName apiName of record being updated
+     * @param fields fields being edited
+     * @returns
+     */
+    function assertReferenceIdsAreCached(apiName: string, fields: Record<string, any>) {
+        return ensureReferencedIdsAreCached(durableStore, apiName, fields).catch((err: Error) => {
+            throw createDraftSynthesisErrorResponse(err.message);
+        });
+    }
+
+    /**
+     * Asserts that the record being edited is in the DurableStore. If it's not in the DurableStore
+     * it will attempt to fetch it. If it can't fetch it and it's not in the store it will throw an error
+     * @param recordKey
+     * @param recordId
+     * @param apiName
+     * @param requestFields
+     */
+    function assertRecordIsCached(
+        recordKey: string,
+        recordId: string,
+        apiName: string,
+        requestFields: RequestFields
+    ) {
         return durableStore
-            .getDenormalizedRecord(key)
+            .getDenormalizedRecord(recordKey)
             .catch(() => {
                 throw createInternalErrorResponse();
             })
             .then((entries) => {
                 if (entries === undefined) {
-                    return fetchRecord(resolvedRequest, key, targetId).then(() => {
-                        return enqueueRequest(resolvedRequest, key, targetId);
-                    });
-                } else {
-                    return enqueueRequest(resolvedRequest, key, targetId);
+                    return fetchRecord(recordId, apiName, requestFields);
                 }
             });
-    };
+    }
 
-    function fetchRecord(request: ResourceRequest, key: string, recordId: string) {
-        const recordFields = getRecordFieldsFromRecordRequest(request);
-        const prefix = recordId.substring(0, 3);
-
-        return apiNameForPrefix(prefix).then((apiName) => {
-            const fields: RequestFields = {
-                fields: recordFields.fields.map((f) => `${apiName}.${f}`),
-                optionalFields: recordFields.optionalFields.map((f) => `${apiName}.${f}`),
-            };
-
-            return Promise.resolve(
-                getRecord({
-                    recordId,
-                    ...fields,
-                })
-            ).then((snapshot) => {
-                if (snapshot === null || snapshot.state === 'Error') {
-                    throw createDraftSynthesisErrorResponse(
-                        'cannot apply a draft to a record that is not cached'
-                    );
-                }
-                return snapshot;
-            });
+    /**
+     * Fetches the record being updated so the draft can be applied on top of it
+     * @param recordId
+     * @param apiName
+     * @param requestFields
+     */
+    function fetchRecord(recordId: string, apiName: string, requestFields: RequestFields) {
+        const prefixedFields = {
+            fields: requestFields.fields.map((f) => `${apiName}.${f}`),
+            optionalFields: requestFields.optionalFields.map((f) => `${apiName}.${f}`),
+        };
+        return Promise.resolve(
+            getRecord({
+                recordId,
+                ...prefixedFields,
+            })
+        ).then((snapshot) => {
+            if (snapshot === null || snapshot.state === 'Error') {
+                throw createDraftSynthesisErrorResponse(
+                    'cannot apply a draft to a record that is not cached'
+                );
+            }
+            return snapshot;
         });
     }
 
+    /**
+     * Enqueues the update request into the draft queue
+     * @param request The resource request that will edit the record
+     * @param key The target record's store key
+     * @param targetId the record id
+     */
     function enqueueRequest(request: ResourceRequest, key: string, targetId: string) {
         return draftQueue.enqueue(createLDSAction(targetId, key, request)).then(() => {
             // TODO: [W-8195289] Draft edited records should include all fields in the Full/View layout if possible

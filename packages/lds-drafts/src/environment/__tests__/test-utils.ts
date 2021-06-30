@@ -59,6 +59,13 @@ export async function setupDraftEnvironment(
         getRecord: jest.fn().mockImplementation(realGetRecord),
     };
     const registerDraftKeyMapping = jest.fn();
+    const defaultApiNameForPrefix = (prefix: string) => {
+        return Promise.resolve(prefix === '001' ? 'Account' : undefined);
+    };
+    const defaultPrefixForApiName = (apiName: string) => {
+        return Promise.resolve(apiName === 'Account' ? '001' : undefined);
+    };
+
     const draftEnvironment = makeEnvironmentDraftAware(baseEnvironment, {
         store,
         draftQueue,
@@ -69,8 +76,8 @@ export async function setupDraftEnvironment(
         },
         isDraftId: setupOptions.isDraftId || ((id) => id === DRAFT_RECORD_ID),
         getRecord: adapters.getRecord,
-        prefixForApiName: setupOptions.prefixForApiName || jest.fn(),
-        apiNameForPrefix: setupOptions.apiNameForPrefix || jest.fn(),
+        prefixForApiName: setupOptions.prefixForApiName || defaultPrefixForApiName,
+        apiNameForPrefix: setupOptions.apiNameForPrefix || defaultApiNameForPrefix,
         userId: 'testUserId',
         registerDraftKeyMapping: registerDraftKeyMapping,
     });

@@ -45,9 +45,7 @@ describe('draft environment tests', () => {
         });
 
         it('returns the correct prefix for the record', async () => {
-            const { draftEnvironment, durableStore } = await setupDraftEnvironment({
-                prefixForApiName: (_apiName: string) => Promise.resolve('001'),
-            });
+            const { draftEnvironment, durableStore } = await setupDraftEnvironment();
 
             let assignedDraftId = '';
             let assignedDraftIdStoreKey = '';
@@ -95,9 +93,7 @@ describe('draft environment tests', () => {
         });
 
         it('request gets enqueued with key as tag', async () => {
-            const { draftEnvironment, draftQueue, durableStore } = await setupDraftEnvironment({
-                prefixForApiName: (_apiName: string) => Promise.resolve('001'),
-            });
+            const { draftEnvironment, draftQueue, durableStore } = await setupDraftEnvironment();
             let assignedDraftId = '';
             let assignedDraftIdStoreKey = '';
             durableStore.getDenormalizedRecord = jest.fn().mockImplementation((key) => {
@@ -148,9 +144,7 @@ describe('draft environment tests', () => {
         });
 
         it('throws if durable store rejects', async () => {
-            const { draftEnvironment, durableStore } = await setupDraftEnvironment({
-                prefixForApiName: (_apiName: string) => Promise.resolve('001'),
-            });
+            const { draftEnvironment, durableStore } = await setupDraftEnvironment();
 
             durableStore.getDenormalizedRecord = jest.fn().mockRejectedValue(undefined);
             const request = createPostRequest();
@@ -162,9 +156,7 @@ describe('draft environment tests', () => {
         });
 
         it('throws draft error if unable to synthesize draft after create', async () => {
-            const { draftEnvironment } = await setupDraftEnvironment({
-                prefixForApiName: (_apiName: string) => Promise.resolve('001'),
-            });
+            const { draftEnvironment } = await setupDraftEnvironment();
             const request = createPostRequest();
 
             const { rejects } = await expect(draftEnvironment.dispatchResourceRequest(request));
@@ -178,9 +170,7 @@ describe('draft environment tests', () => {
         });
 
         it('returns mutable data in the response', async () => {
-            const { draftEnvironment, durableStore } = await setupDraftEnvironment({
-                prefixForApiName: (_apiName: string) => Promise.resolve('001'),
-            });
+            const { draftEnvironment, durableStore } = await setupDraftEnvironment();
             let assignedDraftId = '';
             let assignedDraftIdStoreKey = '';
             durableStore.getDenormalizedRecord = jest.fn().mockImplementation((key) => {

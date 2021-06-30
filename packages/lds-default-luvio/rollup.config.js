@@ -45,10 +45,14 @@ const ldsDefaultLuvioConfigs = [
 
 const coreConfig = {
     input: 'src/sfdc.ts',
+    external: ['@salesforce/lds-network-aura'],
     output: {
         file: `sfdc/ldsEngine.js`,
         format: 'es',
         name: 'ldsEngine',
+        paths: {
+            '@salesforce/lds-network-aura': 'force/ldsNetwork',
+        },
         banner,
         footer,
     },

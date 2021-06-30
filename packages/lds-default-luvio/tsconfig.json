@@ -1,4 +1,11 @@
 {
     "extends": "../../tsconfig.json",
-    "include": ["src"]
+    "include": ["src"],
+    "compilerOptions": {
+        "paths": {
+            "@salesforce/lds-network-aura": [
+                "packages/lds-default-luvio/typings/lds-network-aura.d.ts"
+            ]
+        }
+    }
 }

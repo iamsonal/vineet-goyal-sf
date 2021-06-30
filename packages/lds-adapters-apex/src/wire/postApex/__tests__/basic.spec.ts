@@ -1,5 +1,20 @@
-import { createResourceParams, keyBuilderFromResourceParams, ingestSuccess } from '../index';
+import {
+    AdapterContext,
+    Environment,
+    FulfilledSnapshot,
+    Luvio,
+    ResourceResponse,
+    Store,
+} from '@luvio/engine';
+
+import {
+    createResourceParams,
+    keyBuilderFromResourceParams,
+    ingestSuccess,
+    onResourceResponseSuccess,
+} from '../index';
 import { ResourceRequestConfig } from '../../../generated/resources/postByApexMethodAndApexClass';
+import { CACHE_CONTROL } from '../../../util/shared';
 
 describe('ingestSuccess', () => {
     const mockLuvio: any = {
@@ -57,5 +72,61 @@ describe('keyBuilderFromResourceParams', () => {
             xSFDCAllowContinuation: 'false',
         });
         expect(keyBuilderFromResourceParams(params)).toBe(expectedKey);
+    });
+});
+
+describe('onResourceResponseSuccess', () => {
+    it('skips storeIngest if cache header not set', () => {
+        const mockLuvio: any = {
+            storeIngest: jest.fn(),
+            storeLookup: jest.fn(),
+        };
+        const context = { get: jest.fn(), set: jest.fn() } as AdapterContext;
+        const config = {
+            apexClass: 'foo',
+            apexMethod: 'bar',
+            xSFDCAllowContinuation: 'false',
+        };
+        const resourceParams = createResourceParams(config);
+        const response = { headers: {} } as ResourceResponse<any>;
+
+        onResourceResponseSuccess(mockLuvio, context, config, resourceParams, response);
+
+        expect(mockLuvio.storeIngest).not.toHaveBeenCalled();
+        expect(mockLuvio.storeLookup).not.toHaveBeenCalled();
+    });
+
+    it('calls storeIngest if cache header is set', () => {
+        const store = new Store();
+        const environment = new Environment(store, jest.fn());
+        const ingestSpy = jest.spyOn(environment, 'storeIngest');
+        const luvio = new Luvio(environment);
+        const context = { get: jest.fn(), set: jest.fn() } as AdapterContext;
+        const config = {
+            apexClass: 'foo',
+            apexMethod: 'bar',
+            xSFDCAllowContinuation: 'false',
+        };
+        const expectedKey = 'foo:bar:false:';
+        const resourceParams = createResourceParams(config);
+        const response = {
+            body: 'some string',
+            ok: true,
+            status: 200,
+            headers: { [CACHE_CONTROL]: 'private' },
+        } as ResourceResponse<any>;
+
+        const result = onResourceResponseSuccess(luvio, context, config, resourceParams, response);
+
+        expect(context.set).toHaveBeenCalledWith(`${expectedKey}_cacheable`, 'private');
+        expect(ingestSpy).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(
+            expect.objectContaining({
+                state: 'Fulfilled',
+                recordId: expectedKey,
+                data: response.body,
+            } as FulfilledSnapshot<any, any>)
+        );
+        expect(store.records[expectedKey]).toBe(response.body);
     });
 });

@@ -20,3 +20,16 @@ const opportunityId = await helpers.getOpportunityByName(OPPORTUNITY_NAME);
         path.join(rootDir, `${filename}.json`)
     );
 });
+
+// Opportunity record ui data
+[
+    {
+        filename: 'record-Opportunity-layouttypes-Full-modes-View',
+        params: '?layoutTypes=Full&modes=View',
+    },
+].forEach(async ({ params, filename }) => {
+    await helpers.requestGetAndSave(
+        `/ui-api/record-ui/${opportunityId}${params}`,
+        path.join(rootDir, `${filename}.json`)
+    );
+});

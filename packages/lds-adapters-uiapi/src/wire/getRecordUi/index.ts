@@ -23,7 +23,7 @@ import {
     RecordRepresentation,
     RecordRepresentationNormalized,
 } from '../../generated/types/RecordRepresentation';
-import { depenpendencyKeyBuilder as recordRepresentationDependencyKeyBuilder } from '../../helpers/RecordRepresentation/merge';
+import { dependencyKeyBuilder as recordRepresentationDependencyKeyBuilder } from '../../helpers/RecordRepresentation/merge';
 import { ArrayPrototypePush, ObjectAssign, ObjectCreate, ObjectKeys } from '../../util/language';
 import {
     markMissingOptionalFields,

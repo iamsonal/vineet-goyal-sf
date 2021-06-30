@@ -71,6 +71,9 @@ function refresh(
     return getRecordUiNetwork(luvio, recordUiConfig).then((snapshot) => {
         const refresh = buildSnapshotRefresh(luvio, config);
         if (isErrorSnapshot(snapshot)) {
+            var recordKey = recordRepresentationKeyBuilder({ recordId });
+            luvio.storeIngestError(recordKey, snapshot);
+            luvio.storeBroadcast();
             return luvio.errorSnapshot(snapshot.error, refresh);
         }
 

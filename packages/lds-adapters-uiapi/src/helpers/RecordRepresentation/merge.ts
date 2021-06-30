@@ -235,7 +235,7 @@ export default function merge(
     // recordTypeId may get changed based on record state.
     // Evicts all dependencies from store.
     if (incoming.recordTypeId !== existing.recordTypeId) {
-        const recordDepKey = depenpendencyKeyBuilder({ recordId: existing.id });
+        const recordDepKey = dependencyKeyBuilder({ recordId: existing.id });
         const node = luvio.getNode<{ [key: string]: true }, any>(recordDepKey);
         if (isGraphNode(node)) {
             const dependencies = node.retrieve();
@@ -292,7 +292,7 @@ export default function merge(
     return mergeRecordFields(incoming, existing);
 }
 
-export function depenpendencyKeyBuilder(config: {
+export function dependencyKeyBuilder(config: {
     /** The ID of this record. */
     recordId: string;
 }) {

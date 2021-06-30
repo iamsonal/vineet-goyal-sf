@@ -99,3 +99,11 @@ async function populateDurableStoreWithAccountObjectInfo(durableStore: DurableSt
         DefaultDurableSegment
     );
 }
+
+export function populateDurableStoreWithRecord(
+    durableStore: DurableStore,
+    key: string,
+    record: any
+) {
+    return durableStore.setEntries({ [key]: { data: record } }, DefaultDurableSegment);
+}

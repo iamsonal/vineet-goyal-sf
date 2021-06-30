@@ -7,6 +7,7 @@ import {
     DEFAULT_API_NAME,
     DEFAULT_NAME_FIELD_VALUE,
     mockDurableStoreResponse,
+    populateDurableStoreWithRecord,
     setupDraftEnvironment,
     STORE_KEY_RECORD,
 } from './test-utils';
@@ -75,7 +76,7 @@ describe('draft environment tests', () => {
             const redirected2 = 'bar';
             const redirected2Key = getRecordKeyForId(redirected2);
             store.redirect(STORE_KEY_RECORD, redirected2Key);
-            durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue({
+            await populateDurableStoreWithRecord(durableStore, redirected2Key, {
                 apiName: DEFAULT_API_NAME,
                 childRelationships: {},
                 eTag: '',
@@ -182,7 +183,7 @@ describe('draft environment tests', () => {
         });
 
         it('throws if no object info is stored in the durable store for the prefix when attempting to call getRecord', async () => {
-            const { draftEnvironment, durableStore } = await setupDraftEnvironment({
+            const { draftEnvironment } = await setupDraftEnvironment({
                 apiNameForPrefix: (_prefix: string) => {
                     return Promise.reject({
                         body: { message: 'apiName is missing from the request body.' },
@@ -191,7 +192,6 @@ describe('draft environment tests', () => {
                     });
                 },
             });
-            durableStore.getEntries = jest.fn().mockResolvedValue(undefined);
             const request = {
                 baseUri: '/services/data/v53.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
@@ -223,8 +223,7 @@ describe('draft environment tests', () => {
                     },
                 });
 
-            store.redirect(STORE_KEY_DRAFT_RECORD, STORE_KEY_RECORD);
-            durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue({
+            await populateDurableStoreWithRecord(durableStore, STORE_KEY_RECORD, {
                 apiName: DEFAULT_API_NAME,
                 childRelationships: {},
                 eTag: '',
@@ -242,6 +241,7 @@ describe('draft environment tests', () => {
                 systemModstamp: null,
                 weakEtag: -1,
             });
+            store.redirect(STORE_KEY_DRAFT_RECORD, STORE_KEY_RECORD);
             const request = {
                 baseUri: '/services/data/v53.0',
                 basePath: `/ui-api/records/${DRAFT_RECORD_ID}`,

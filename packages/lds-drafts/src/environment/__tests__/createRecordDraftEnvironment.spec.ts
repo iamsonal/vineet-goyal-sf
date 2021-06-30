@@ -8,6 +8,7 @@ import {
     createPostRequest,
     DEFAULT_API_NAME,
     DEFAULT_NAME_FIELD_VALUE,
+    populateDurableStoreWithRecord,
     RECORD_ID,
     setupDraftEnvironment,
 } from './test-utils';
@@ -161,10 +162,9 @@ describe('draft environment tests', () => {
         });
 
         it('throws draft error if unable to synthesize draft after create', async () => {
-            const { draftEnvironment, durableStore } = await setupDraftEnvironment({
+            const { draftEnvironment } = await setupDraftEnvironment({
                 prefixForApiName: (_apiName: string) => Promise.resolve('001'),
             });
-            durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue(undefined);
             const request = createPostRequest();
 
             const { rejects } = await expect(draftEnvironment.dispatchResourceRequest(request));
@@ -217,7 +217,7 @@ describe('draft environment tests', () => {
             expect(record.fields.Name.value).toEqual(changedName);
         });
 
-        it('resolves draft id references in the body', async () => {
+        it('resolves draft id references in the create body', async () => {
             const draftReferenceId = 'DRAFT';
             const canonicalReferenceId = 'CANONICAL';
             const draftReferenceKey = getRecordKeyForId(draftReferenceId);
@@ -230,8 +230,8 @@ describe('draft environment tests', () => {
                     },
                     prefixForApiName: (_apiName: string) => Promise.resolve('001'),
                 });
-            store.redirect(draftReferenceKey, canonicalReferenceKey);
-            durableStore.getDenormalizedRecord = jest.fn().mockResolvedValue({
+
+            await populateDurableStoreWithRecord(durableStore, STORE_KEY_DRAFT_RECORD, {
                 apiName: DEFAULT_API_NAME,
                 childRelationships: {},
                 eTag: '',
@@ -249,6 +249,9 @@ describe('draft environment tests', () => {
                 systemModstamp: null,
                 weakEtag: -1,
             });
+
+            store.redirect(draftReferenceKey, canonicalReferenceKey);
+
             const request = {
                 baseUri: '/services/data/v53.0',
                 basePath: `/ui-api/records/`,

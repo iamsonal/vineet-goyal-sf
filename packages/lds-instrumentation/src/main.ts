@@ -47,6 +47,7 @@ import {
     STORE_SIZE_COUNT,
     STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT,
     STORE_WATCH_SUBSCRIPTIONS_COUNT,
+    GET_GRAPHQL_RESPONSE_MIXED,
 } from './metric-keys';
 
 import {
@@ -89,6 +90,7 @@ interface AdapterUnfulfilledError {
 
 export const APEX_ADAPTER_NAME = 'getApex';
 export const NORMALIZED_APEX_ADAPTER_NAME = `Apex.${APEX_ADAPTER_NAME}`;
+export const GRAPHQL_ADAPTER_NAME = 'graphQL';
 interface RefreshAdapterEvents {
     [adapterName: string]: number;
 }
@@ -194,6 +196,7 @@ const getApexCacheMissCountMetric = counter(GET_APEX_CACHE_MISS_COUNT);
 const getApexCacheMissDurationMetric = timer(GET_APEX_CACHE_MISS_DURATION);
 const totalAdapterRequestSuccessMetric = counter(TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT);
 const totalAdapterErrorMetric = counter(TOTAL_ADAPTER_ERROR_COUNT);
+const getGraphqlResponseMixedMetric = counter(GET_GRAPHQL_RESPONSE_MIXED);
 export class Instrumentation {
     private recordApiNameChangeCounters: RecordApiNameChangeCounters = {};
     private adapterUnfulfilledErrorCounters: AdapterUnfulfilledErrorCounters = {};
@@ -235,6 +238,7 @@ export class Instrumentation {
         const { apiFamily, name, ttl } = metadata;
         const adapterName = normalizeAdapterName(name, apiFamily);
         const isGetApexAdapter = isApexAdapter(name);
+        const isGetGraphqlAdapter = isGraphqlAdapter(name);
 
         const stats = isGetApexAdapter ? getApexCacheStats : registerLdsCacheStats(adapterName);
         const ttlMissStats = isGetApexAdapter
@@ -350,6 +354,9 @@ export class Instrumentation {
                         cacheMissDurationByAdapterMetric,
                         Date.now() - startTime
                     );
+                    if (isGetGraphqlAdapter === true) {
+                        logGraphqlInteraction(_snapshot);
+                    }
                 });
                 stats.logMisses();
                 cacheMissMetric.increment(1);
@@ -375,6 +382,9 @@ export class Instrumentation {
                 cacheHitMetric.increment(1);
                 cacheHitCountByAdapterMetric.increment(1);
                 timerMetricAddDuration(cacheHitDurationByAdapterMetric, Date.now() - startTime);
+                if (isGetGraphqlAdapter === true) {
+                    logGraphqlInteraction(result);
+                }
             }
 
             return result;
@@ -639,6 +649,23 @@ export class Instrumentation {
     }
 }
 /**
+ * Any graphql get adapter specific instrumentation that we need to log
+ * @param snapshot from either in-memory or built after a network hit
+ */
+function logGraphqlInteraction(snapshot: Snapshot<any>) {
+    // We have both data and error in the returned response
+    const { data: snapshotData } = snapshot;
+    if (
+        snapshotData &&
+        snapshotData.data &&
+        ObjectKeys(snapshotData.data).length > 0 &&
+        snapshotData.errors.length > 0
+    ) {
+        getGraphqlResponseMixedMetric.increment(1);
+    }
+}
+
+/**
  * Aura Metrics Service plugin in charge of aggregating all the LDS performance marks before they
  * get sent to the server. All the marks are summed by operation type and the aggregated result
  * is then stored an a new mark.
@@ -751,6 +778,13 @@ function getStoreStats(store: Store): LdsStatsReport {
  */
 function isApexAdapter(adapterName: string): boolean {
     return adapterName.indexOf(APEX_ADAPTER_NAME) > -1;
+}
+/**
+ * Returns whether adapter is a graphQL one or not.
+ * @param adapterName The name of the adapter.
+ */
+function isGraphqlAdapter(adapterName: string): boolean {
+    return adapterName === GRAPHQL_ADAPTER_NAME;
 }
 
 /**

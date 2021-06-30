@@ -213,3 +213,13 @@ export const STORE_WATCH_SUBSCRIPTIONS_COUNT: MetricsKey = {
         return { owner: METRIC_KEY_OWNER, name: 'store-watch-subscriptions-count' };
     },
 };
+
+/**
+ * W-9131128
+ * Counter for graphQL get adapter response with mixed bag of both data and error in response
+ */
+export const GET_GRAPHQL_RESPONSE_MIXED: MetricsKey = {
+    get() {
+        return { owner: METRIC_KEY_OWNER, name: 'get-graphql-response-mixed-count' };
+    },
+};

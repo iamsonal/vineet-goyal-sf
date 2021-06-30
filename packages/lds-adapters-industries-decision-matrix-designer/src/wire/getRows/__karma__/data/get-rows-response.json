@@ -1,0 +1,24 @@
+{
+    "message": null,
+    "rows": [
+        {
+            "id": "9mtxx000000015l",
+            "name": "fe81d9792c6fde28fab118b0925f837a",
+            "rowData": {
+                "Age": 50.0,
+                "Gender": "M",
+                "Premium": "1000"
+            }
+        },
+        {
+            "id": "9mtxx000000017N",
+            "name": "fe81d9792c6fde28fab118b0925f837a",
+            "rowData": {
+                "Age": "25",
+                "Gender": "F",
+                "Premium": "1000"
+            }
+        }
+    ],
+    "totalRows": 2
+}

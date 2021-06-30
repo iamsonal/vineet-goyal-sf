@@ -2270,6 +2270,100 @@ describe('routes', () => {
         );
     });
 
+    describe('post /connect/omnistudio/decision-matrices/{id}/columns', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-matrices/1234567890ABCDE/columns`,
+                body: { columns: [{ name: 'data' }] },
+            },
+            [
+                'InteractionDecisionMatrixController.saveColumns',
+                { columns: [{ name: 'data' }] },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-matrices/1234567890ABCDE/columns`,
+            },
+            {}
+        );
+    });
+
+    describe('get /omnistudio/decision-matrices/{$matrixId}/columns', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-matrices/1234567890ABCDE/columns`,
+            },
+            [
+                'InteractionDecisionMatrixController.getColumns',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-matrices/1234567890ABCDE/columns`,
+            },
+            {}
+        );
+    });
+
+    describe('get /omnistudio/decision-matrices/{id}/versions/{id}/rows', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-matrices/1234567890ABCDE/versions/1234567890ABCDE/rows`,
+            },
+            [
+                'InteractionDecisionMatrixController.getRows',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-matrices/1234567890ABCDE/versions/1234567890ABCDE/rows`,
+            },
+            {}
+        );
+    });
+
+    describe('post /omnistudio/decision-matrices/{id}/versions/{id}/rows', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-matrices/1234567890ABCDE/versions/1234567890ABCDE/rows`,
+                body: { rows: [{ name: 'data' }] },
+            },
+            [
+                'InteractionDecisionMatrixController.saveRows',
+                { rows: [{ name: 'data' }] },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/omnistudio/decision-matrices/1234567890ABCDE/versions/1234567890ABCDE/rows`,
+            },
+            {}
+        );
+    });
+
     describe('get ${CONNECT_BASE_URI}/omnistudio/evaluation-services/version-definitions/([A-Z0-9]){15,18}/simulation$', () => {
         testControllerInput(
             {

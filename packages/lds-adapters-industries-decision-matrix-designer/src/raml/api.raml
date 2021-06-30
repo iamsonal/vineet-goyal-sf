@@ -1,0 +1,267 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '53.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v53.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  DecisionMatrixColumnOutputRepresentation:
+    description: Represents columns for a decision matrix
+    type: object
+    properties:
+      apiName:
+        description: Represents the apiName of a column
+        type: string
+      columnType:
+        description: Represents the columnType of a column
+        type: string
+      dataType:
+        description: Represents the dataType of a column
+        type: string
+      displaySequence:
+        description: Represents the displaySequence of a column
+        type: integer
+      id:
+        description: Represents the id of a column
+        type: string
+      name:
+        description: Represents the name of a column
+        type: string
+      rangeValues:
+        description: Represents the range values of a column
+        type: string | nil
+  DecisionMatrixColumnRepresentation:
+    description: Represents the information to describe a Decision Matrix Column for
+      input
+    type: object
+    properties:
+      action:
+        description: Represents the action of a column
+        type: string
+      apiName:
+        description: Represents the apiName of a column
+        type: string
+      columnType:
+        description: Represents the columnType of a column
+        type: string
+      dataType:
+        description: Represents the dataType of a column
+        type: string
+      displaySequence:
+        description: Represents the displaySequence of a column
+        type: integer
+      id:
+        description: Represents the id of a column
+        type: string
+      name:
+        description: Represents the name of a column
+        type: string
+      rangeValues:
+        description: Represents the range values of a column
+        type: string
+  DecisionMatrixColumnsInputRepresentation:
+    description: Represents the information to update a Decision Matrix's columns
+    type: object
+    properties:
+      columns:
+        description: Represents a list of columns to be updated
+        type: array
+        items:
+          type: object
+  DecisionMatrixColumnsOutputRepresentation:
+    description: Output Representation of all columns for a Decision Matrix
+    type: object
+    properties:
+      columns:
+        description: List of all columns available for a column
+        type: array
+        items:
+          type: DecisionMatrixColumnOutputRepresentation
+  DecisionMatrixOutputRepresentation:
+    description: Represents the response and its status
+    type: object
+    properties:
+      errors:
+        description: Represents errors during CRUD operation.
+        type: array
+        items:
+          type: string
+      message:
+        description: Represents a message for async vs. sync operation to inform user.
+        type: string | nil
+      success:
+        description: Represents the success of matrix CRUD operation.
+        type: string
+  DecisionMatrixRowInputRepresentation:
+    description: Represents the information to describe a Decision Matrix Row for
+      input
+    type: object
+    properties:
+      action:
+        description: Represents the action to this Decision Matrix Row, null if is
+          add
+        type: string
+      id:
+        description: Represents the id of the Decision Matrix Row, null it if is a
+          new row
+        type: string
+      name:
+        description: Represents the name of the Decision Matrix Row.
+        type: string
+      rowData:
+        description: Represents the key value pair of the Decision Matrix Row.
+        type: object
+        properties:
+          //:
+            type: object
+  DecisionMatrixRowOutputRepresentation:
+    description: Represents the information to describe a Decision Matrix Row for
+      output.
+    type: object
+    properties:
+      id:
+        description: Represents the id of the Decision Matrix Row.
+        type: string
+      name:
+        description: Represents the name of the Decision Matrix Row.
+        type: string
+      rowData:
+        description: Represents the key value pair of the Decision Matrix Row.
+        type: object
+        properties:
+          //:
+            type: string | number | boolean # TODO W-8252808 hand roll
+  DecisionMatrixRowsInputRepresentation:
+    description: Represents the information to update a Decision Matrix Version’s
+      rows
+    type: object
+    properties:
+      fileId:
+        description: Represents the id of the CSV file
+        type: string
+        required: false # TODO Hand Rolled required false
+      rows:
+        description: Represents a list of rows to be updated
+        type: array
+        required: false # TODO Hand Rolled required false
+        items:
+          type: object
+  # TODO Hand Rolled 'RowsInput' W-9311618 and W-9311623
+  RowsInput:
+    description: A Wrapper around the DecisionMatrixRowsInputRepresentation
+    type: object
+    properties:
+      rowsInput:
+        description: The Oas Body Name for RowsInput
+        type: DecisionMatrixRowsInputRepresentation
+  # TODO Hand Rolled 'Columns' W-9311618 and W-9311623
+  Columns:
+    description: A Wrapper around the DecisionMatrixColumnsInputRepresentation
+    type: object
+    properties:
+      columns:
+        description: The Oas Body Name for RowsInput
+        type: DecisionMatrixColumnsInputRepresentation
+  DecisionMatrixRowsOutputRepresentation:
+    description: A paginated list of rows in a Decision Matrix Version
+    type: object
+    properties:
+      message:
+        description: Represents the message which indicates the async process.
+        type: string | nil
+      rows:
+        description: Represents the returned list of rows.
+        type: array
+        items:
+          type: DecisionMatrixRowOutputRepresentation
+      totalRows:
+        description: Represents the total number of rows.
+        type: integer | nil
+/connect/omnistudio/decision-matrices/{matrixId}:
+  /columns:
+    get:
+      description: Get a list of columns Decision Matrix
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DecisionMatrixColumnsOutputRepresentation
+    post:
+      description: Save a list of columns for a decision matrix.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DecisionMatrixOutputRepresentation
+      body:
+        application/json:
+          # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
+          type: Columns
+          (oas-body-name): columns
+          # required: false TODO hand roll
+    uriParameters:
+      matrixId:
+        description: Unique ID used to represent a matrix.
+        type: string
+        required: true
+  /versions/{versionId}/rows:
+    get:
+      description: Get a list of rows or generate a csv file of rows in a Decision
+        Matrix Version
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DecisionMatrixRowsOutputRepresentation
+      queryParameters:
+        file:
+          description: Flag for generating a CSV file
+          type: boolean
+          required: false
+    post:
+      description: Save a list of rows or a CSV file of rows into a decision matrix
+        version.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DecisionMatrixOutputRepresentation
+      body:
+        application/json:
+          # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
+          type: RowsInput
+          (oas-body-name): rowsInput
+          # required: false TODO hand roll
+    uriParameters:
+      matrixId:
+        description: Unique ID used to represent a matrix.
+        type: string
+        required: true
+      versionId:
+        description: Unique ID used to represent a matrix version.
+        type: string
+        required: true

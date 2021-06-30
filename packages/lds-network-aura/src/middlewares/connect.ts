@@ -200,6 +200,16 @@ const POST_BATCH_PAYMENTS_SCHEDULERS_PATH = new RegExp(
     'i'
 );
 
+const DECISION_MATRIX_COLUMNS_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/omnistudio/decision-matrices/([A-Z0-9]){1,18}/columns`,
+    'i'
+);
+
+const DECISION_MATRIX_ROWS_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/omnistudio/decision-matrices/([A-Z0-9]){1,18}/versions/([A-Z0-9]){1,18}/rows`,
+    'i'
+);
+
 const SCALE_CENTER_GET_METRICS_PATH = new RegExp(`${SCALECENTER_BASE_URI}/metrics/query`, 'i');
 
 const GET_DECISION_MATRIC_DETAILS_PATH = new RegExp(
@@ -356,6 +366,38 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && SITES_SEARCH_PATH.test(path),
         transport: {
             controller: 'SitesController.searchSite',
+        },
+    },
+    getDecisionMatrixColumns: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && DECISION_MATRIX_COLUMNS_PATH.test(path),
+        transport: {
+            controller: 'InteractionDecisionMatrixController.getColumns',
+        },
+    },
+    getDecisionMatrixRows: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && DECISION_MATRIX_ROWS_PATH.test(path),
+        transport: {
+            controller: 'InteractionDecisionMatrixController.getRows',
+        },
+    },
+    saveDecisionMatrixColumns: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && DECISION_MATRIX_COLUMNS_PATH.test(path),
+        transport: {
+            controller: 'InteractionDecisionMatrixController.saveColumns',
+        },
+    },
+    saveDecisionMatrixRows: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && DECISION_MATRIX_ROWS_PATH.test(path),
+        transport: {
+            controller: 'InteractionDecisionMatrixController.saveRows',
         },
     },
     getDecisionMatrixDetails: {

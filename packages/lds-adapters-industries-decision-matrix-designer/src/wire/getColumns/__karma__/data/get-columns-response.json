@@ -1,0 +1,22 @@
+{
+    "columns": [
+        {
+            "columnType": "Input",
+            "dataType": "Integer",
+            "displaySequence": 0,
+            "id": "0lJxx000000004rEAZ",
+            "name": "Age",
+            "rangeValues": "",
+            "apiName": "age"
+        },
+        {
+            "columnType": "Output",
+            "dataType": "Currency",
+            "id": "0lJxx000000004rEAG",
+            "displaySequence": 1,
+            "name": "Premium",
+            "rangeValues": "",
+            "apiName": "currency"
+        }
+    ]
+}

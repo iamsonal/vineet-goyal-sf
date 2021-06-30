@@ -1,0 +1,66 @@
+import { ArrayIsArray, JSONStringify, ObjectKeys } from './language';
+
+export function untrustedIsObject<Base>(untrusted: unknown): untrusted is Object {
+    return typeof untrusted === 'object' && untrusted !== null && ArrayIsArray(untrusted) === false;
+}
+
+/**
+ * A deterministic JSON stringify implementation. Heavily adapted from https://github.com/epoberezkin/fast-json-stable-stringify.
+ * This is needed because insertion order for JSON.stringify(object) affects output:
+ * JSON.stringify({a: 1, b: 2})
+ *      "{"a":1,"b":2}"
+ * JSON.stringify({b: 2, a: 1})
+ *      "{"b":2,"a":1}"
+ * @param data Data to be JSON-stringified.
+ * @returns JSON.stringified value with consistent ordering of keys.
+ */
+export function stableJSONStringify(node: any): string {
+    // This is for Date values.
+    if (node && node.toJSON && typeof node.toJSON === 'function') {
+        // eslint-disable-next-line no-param-reassign
+        node = node.toJSON();
+    }
+    if (node === undefined) {
+        return '';
+    }
+    if (typeof node === 'number') {
+        return isFinite(node) ? '' + node : 'null';
+    }
+    if (typeof node !== 'object') {
+        return JSONStringify(node);
+    }
+
+    let i;
+    let out;
+    if (ArrayIsArray(node)) {
+        node.sort();
+        out = '[';
+        for (i = 0; i < node.length; i++) {
+            if (i) {
+                out += ',';
+            }
+            out += stableJSONStringify(node[i]) || 'null';
+        }
+        return out + ']';
+    }
+
+    if (node === null) {
+        return 'null';
+    }
+
+    const keys = ObjectKeys(node).sort();
+    out = '';
+    for (i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        const value = stableJSONStringify(node[key]);
+
+        if (!value) {
+            continue;
+        }
+        if (out) {
+            out += ',';
+        }
+        out += key + ':' + value;
+    }
+    return '{' + out + '}';
+}

@@ -792,5 +792,126 @@ describe('Arguments', () => {
 
             expect(render(sel1, {})).toEqual(render(sel2, {}));
         });
+
+        it('should render scalar variables in arguments correctly', () => {
+            const args: LuvioArgumentNode[] = [
+                {
+                    kind: 'Argument',
+                    name: 'where',
+                    value: {
+                        kind: 'ObjectValue',
+                        fields: {
+                            IsDeleted: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    eq: {
+                                        kind: 'Variable',
+                                        name: 'IsDeleted',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            ];
+
+            expect(render(args, { IsDeleted: false })).toBe('where:{IsDeleted:{eq:false}}');
+        });
+
+        it('should render string variables in arguments correctly', () => {
+            const args: LuvioArgumentNode[] = [
+                {
+                    kind: 'Argument',
+                    name: 'where',
+                    value: {
+                        kind: 'ObjectValue',
+                        fields: {
+                            Name: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    like: {
+                                        kind: 'Variable',
+                                        name: 'accountName',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            ];
+
+            expect(render(args, { accountName: 'Account1' })).toBe(
+                'where:{Name:{like:"Account1"}}'
+            );
+        });
+
+        it('should render list variables in arguments correctly', () => {
+            const args: LuvioArgumentNode[] = [
+                {
+                    kind: 'Argument',
+                    name: 'where',
+                    value: {
+                        kind: 'ObjectValue',
+                        fields: {
+                            Id: {
+                                kind: 'ObjectValue',
+                                fields: {
+                                    in: {
+                                        kind: 'Variable',
+                                        name: 'Id',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            ];
+
+            expect(render(args, { Id: ['001RM000004uuhtYAA', '001RM000004uuhsYAA'] })).toBe(
+                'where:{Id:{in:["001RM000004uuhsYAA","001RM000004uuhtYAA"]}}'
+            );
+        });
+
+        it('should render object variables in arguments correctly', () => {
+            const args: LuvioArgumentNode[] = [
+                {
+                    kind: 'Argument',
+                    name: 'where',
+                    value: {
+                        kind: 'ObjectValue',
+                        fields: {
+                            IsDeleted: {
+                                kind: 'Variable',
+                                name: 'IsDeleted',
+                            },
+                        },
+                    },
+                },
+            ];
+
+            expect(render(args, { IsDeleted: { eq: false } })).toBe('where:{IsDeleted:{eq:false}}');
+        });
+
+        it('should render object variables in arguments correctly and sort the values', () => {
+            const args: LuvioArgumentNode[] = [
+                {
+                    kind: 'Argument',
+                    name: 'orderBy',
+                    value: {
+                        kind: 'ObjectValue',
+                        fields: {
+                            Id: {
+                                kind: 'Variable',
+                                name: 'clause',
+                            },
+                        },
+                    },
+                },
+            ];
+
+            expect(render(args, { clause: { order: 'ASC', nulls: 'FIRST' } })).toBe(
+                'orderBy:{Id:{nulls:"FIRST",order:"ASC"}}'
+            );
+        });
     });
 });

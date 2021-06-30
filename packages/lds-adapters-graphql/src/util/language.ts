@@ -1,12 +1,15 @@
 const { isArray } = Array;
 const { keys, freeze } = Object;
+const { stringify } = JSON;
 
 export {
     // Array
     isArray as ArrayIsArray,
-    //Object
+    // Object
     keys as ObjectKeys,
     freeze as ObjectFreeze,
+    // JSON
+    stringify as JSONStringify,
 };
 
 export function untrustedIsObject<Base>(untrusted: unknown): untrusted is Untrusted<Base> {

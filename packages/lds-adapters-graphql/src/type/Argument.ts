@@ -6,9 +6,10 @@ import {
     LuvioVariableNode,
 } from '@salesforce/lds-graphql-parser';
 import { serializeValueNode } from '../util/ast-to-string';
-import { ArrayIsArray, ObjectKeys } from '../util/language';
+import { ObjectKeys } from '../util/language';
 import { sortAndCopyUsingObjectKey } from '../util/sortUsingKey';
 import { GraphQLVariables } from './Variable';
+import { stableJSONStringify } from '../util/adapter';
 
 export type SerializationOptions =
     | {
@@ -63,22 +64,7 @@ function serializeVariableNode(literalValueNode: LuvioVariableNode, option: Seri
 }
 
 function serializeVariableValue(value: unknown): string {
-    if (ArrayIsArray(value)) {
-        return serializeVariableListValue(value);
-    } else if (typeof value === 'string') {
-        return `"${value}"`;
-    } else {
-        return `${value}`;
-    }
-}
-
-function serializeVariableListValue(value: unknown[]): string {
-    value.sort();
-    const str = [];
-    for (let i = 0, len = value.length; i < len; i += 1) {
-        str.push(`${serializeVariableValue(value[i])}`);
-    }
-    return `[${str.join(',')}]`;
+    return stableJSONStringify(value);
 }
 
 function serializeAndSortListValueNode(

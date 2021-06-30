@@ -299,30 +299,30 @@ describe('setCacheControlAdapterContext', () => {
 });
 
 describe('shouldCache', () => {
-    it('returns true when cache-control header supplies something other than "no-cache"', () => {
+    const cases = [
+        // cache control value, expected response
+        ['private,max-age=3600', true],
+        ['no-cache', false],
+        ['no-cache,something_else', false],
+        ['no-cache,private', false],
+        ['no-store', false],
+        ['no-store,something_else', false],
+        ['no-store,private', false],
+        [undefined, false],
+    ];
+    it.each(cases)('cache-control value of %p returns %p', (cacheControlValue, expected) => {
         const mockResponse: ResourceResponse<any> = {
             status: 200,
             statusText: 'Ok',
             ok: true,
             headers: {
-                [CACHE_CONTROL]: 'private max-age=30',
+                [CACHE_CONTROL]: cacheControlValue,
             },
             body: {},
         };
-        expect(shouldCache(mockResponse)).toBe(true);
+        expect(shouldCache(mockResponse)).toBe(expected);
     });
-    it('returns false when cache-control header supplies "no-cache"', () => {
-        let mockResponse: ResourceResponse<any> = {
-            status: 200,
-            statusText: 'Ok',
-            ok: true,
-            headers: {
-                [CACHE_CONTROL]: 'no-cache',
-            },
-            body: {},
-        };
-        expect(shouldCache(mockResponse)).toBe(false);
-    });
+
     it('returns false when cache-control header is undefined', () => {
         let mockResponse: ResourceResponse<any> = {
             status: 200,
@@ -333,6 +333,7 @@ describe('shouldCache', () => {
         };
         expect(shouldCache(mockResponse)).toBe(false);
     });
+
     it('returns false when no header is defined', () => {
         let mockResponse: ResourceResponse<any> = {
             status: 200,

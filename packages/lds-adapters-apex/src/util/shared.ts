@@ -6,6 +6,7 @@ import {
     ResourceResponse,
     Store,
     StoreLink,
+    Headers,
 } from '@luvio/engine';
 import { stableJSONStringify, untrustedIsObject } from '../generated/adapters/adapter-utils';
 import { createLink, deepFreeze } from '../generated/types/type-utils';
@@ -28,7 +29,7 @@ export interface ApexAdapterConfig {
     xSFDCAllowContinuation: string;
 }
 
-export const CACHE_CONTROL = 'Cache-Control';
+export const CACHE_CONTROL = 'cache-control';
 export const SHARED_ADAPTER_CONTEXT_ID = 'apex__shared';
 
 // TODO: APEX_TTL, apexResponseEquals, apexResponseIngest, and validateAdapterConfig should have been code generated
@@ -122,17 +123,38 @@ export function apexClassnameBuilder(namespace: string, classname: string) {
     return namespace !== '' ? `${namespace}__${classname}` : classname;
 }
 
-export function shouldCache(resourceResponse: ResourceResponse<any>): boolean {
-    if (resourceResponse.headers === undefined) {
+function isCacheControlValueCacheable(value: string | undefined | null) {
+    if (value === undefined || value === null || typeof value !== 'string') {
         return false;
-    } else {
-        const cacheControl = resourceResponse.headers[CACHE_CONTROL];
-        if (cacheControl === undefined) {
-            return false;
-        } else {
-            return cacheControl !== 'no-cache';
+    }
+
+    return value.indexOf('no-cache') < 0 && value.indexOf('no-store') < 0;
+}
+
+function getCacheControlHeaderValue(headers: Headers | undefined): string | undefined {
+    if (headers === undefined) {
+        return undefined;
+    }
+
+    // header fields are case-insensitive according to
+    // https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
+    const headerKeys = ObjectKeys(headers);
+    for (let i = 0, len = headerKeys.length; i < len; i += 1) {
+        const key = headerKeys[i];
+        if (key.toLowerCase() === CACHE_CONTROL) {
+            return headers[key];
         }
     }
+
+    return undefined;
+}
+
+export function shouldCache(resourceResponse: ResourceResponse<any>): boolean {
+    const { headers } = resourceResponse;
+
+    const headerValue = getCacheControlHeaderValue(headers);
+
+    return isCacheControlValueCacheable(headerValue);
 }
 
 export function getCacheableKey(recordId: string) {
@@ -144,8 +166,8 @@ function set(context: AdapterContext, recordId: string, value: string) {
     context.set(key, value);
 }
 
-function get(context: AdapterContext, key: string) {
-    return context.get(getCacheableKey(key));
+function get<T>(context: AdapterContext, key: string) {
+    return context.get<T>(getCacheableKey(key));
 }
 
 export function setCacheControlAdapterContext(
@@ -154,9 +176,9 @@ export function setCacheControlAdapterContext(
     response: ResourceResponse<any>
 ) {
     const { headers } = response;
-    if (headers !== undefined && typeof headers[CACHE_CONTROL] === 'string') {
-        const value = headers[CACHE_CONTROL];
-        set(context, recordId, value);
+    const headerValue = getCacheControlHeaderValue(headers);
+    if (headerValue !== undefined) {
+        set(context, recordId, headerValue);
     }
 }
 
@@ -168,10 +190,7 @@ export function isCacheable(config: ApexAdapterConfig, context: AdapterContext) 
 }
 
 export function checkAdapterContext(context: AdapterContext, recordId: string) {
-    const contextValue = get(context, recordId);
+    const contextValue = get<string>(context, recordId);
 
-    if (contextValue === null || contextValue === undefined) {
-        return false;
-    }
-    return contextValue !== 'no-cache';
+    return isCacheControlValueCacheable(contextValue);
 }

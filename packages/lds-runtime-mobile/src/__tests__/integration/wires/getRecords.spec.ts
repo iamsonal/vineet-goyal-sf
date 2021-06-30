@@ -7,8 +7,9 @@ import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
 import getRecordsResponse from './data/records-multiple-Accounts-fields-Account.Id,Account.Name.json';
 import getRecordsResponseWithOwnerField from './data/records-multiple-Accounts-fields-Account.OwnerId.json';
 import { flushPromises } from '../../testUtils';
-import { setup } from './integrationTestSetup';
+import { resetLuvioStore, setup } from './integrationTestSetup';
 import { MockNimbusDurableStore } from '../../MockNimbusDurableStore';
+import mockResponseWithMissingOptionalFields from './data/records-multiple-Accounts-MissingOptionalFields.json';
 
 const RECORD_TTL = 30000;
 const GET_RECORDS_PRIVATE_FIELDS = ['eTag', 'weakEtag', 'hasErrors'];
@@ -168,6 +169,35 @@ describe('mobile runtime integration tests', () => {
 
             // no additional network calls should have been made
             expect(networkCallsBefore).toEqual(networkCallsAfter);
+        });
+
+        it('should be fulfilled with missing optional fields', async () => {
+            const config = {
+                records: [
+                    {
+                        recordIds: ['001x0000004ckZXAAY'],
+                        optionalFields: ['Account.Name'],
+                    },
+                    {
+                        recordIds: ['02ix000000CG4h1AAD', '02ix000000CG4h1AAE'],
+                        optionalFields: ['Asset.Id', 'Asset.ContactId'],
+                    },
+                ],
+            };
+
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(mockResponseWithMissingOptionalFields),
+            });
+
+            const originalResult = await getRecords(config)!;
+            expect(originalResult.state).toBe('Fulfilled');
+
+            resetLuvioStore();
+
+            const durableResult = await getRecords(config)!;
+            expect(durableResult.state).toBe('Fulfilled');
         });
     });
 });

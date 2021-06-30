@@ -1,0 +1,72 @@
+{
+    "hasErrors": false,
+    "results": [
+        {
+            "result": {
+                "apiName": "Account",
+                "childRelationships": {},
+                "eTag": "0f9b732fbbae69374ace55c56ff51ae6",
+                "fields": {
+                    "Name": {
+                        "displayValue": null,
+                        "value": "A001_10_99961"
+                    }
+                },
+                "id": "001x0000004ckZXAAY",
+                "lastModifiedById": "005x0000000xNhqAAE",
+                "lastModifiedDate": "2016-03-06T02:31:51.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2016-03-06T02:31:51.000Z",
+                "weakEtag": 1457231511000
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "apiName": "Asset",
+                "childRelationships": {},
+                "eTag": "e6279865547e42639f3e16ff68b5dc1d",
+                "fields": {
+                    "Id": {
+                        "displayValue": null,
+                        "value": "02ix000000CG4h1AAD"
+                    }
+                },
+                "id": "02ix000000CG4h1AAD",
+                "lastModifiedById": "005x0000000xNhqAAE",
+                "lastModifiedDate": "2020-11-11T01:07:17.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-11-11T01:07:17.000Z",
+                "weakEtag": 1605056837000
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "apiName": "Asset",
+                "childRelationships": {},
+                "eTag": "e6279865547e42639f3e16ff68b5dc1d",
+                "fields": {
+                    "ContactId": {
+                        "displayValue": null,
+                        "value": "003x0000005A0eMAAS"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "02ix000000CG4h1AAE"
+                    }
+                },
+                "id": "02ix000000CG4h1AAE",
+                "lastModifiedById": "005x0000000xNhqAAE",
+                "lastModifiedDate": "2020-11-11T01:07:17.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2020-11-11T01:07:17.000Z",
+                "weakEtag": 1605056837000
+            },
+            "statusCode": 200
+        }
+    ]
+}

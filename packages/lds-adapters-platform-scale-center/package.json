@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-platform-scale-center",
-    "version": "1.22.0",
+    "version": "1.23.0",
     "description": "LDS Adapter for Scale Center observability metrics and insights",
     "license": "MIT",
     "main": "dist/umd/es2018/platform-scale-center.js",
@@ -30,9 +30,9 @@
         "registry": "https://npm.lwcjs.org"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.22.0"
+        "@salesforce/lds-bindings": "1.23.0"
     },
     "devDependencies": {
-        "@salesforce/lds-karma": "1.22.0"
+        "@salesforce/lds-karma": "1.23.0"
     }
 }

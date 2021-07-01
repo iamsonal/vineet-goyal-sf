@@ -12,8 +12,10 @@ describe('navigateFlow', () => {
     it('executes a flow action', async () => {
         const mockConfig = {
             flowDevName: 'flow1',
-            action: 'NEXT',
-            serializedState: 'ABC',
+            request: {
+                action: 'NEXT',
+                serializedState: 'ABC',
+            },
         };
         const mockResponse = getMock(MOCK_PREFIX + 'response_1');
         mockNavigateFlowNetworkOnce(mockConfig, mockResponse);
@@ -28,8 +30,10 @@ describe('navigateFlow', () => {
     it('does not use cache', async () => {
         const mockConfig = {
             flowDevName: 'flow12',
-            action: 'NEXT',
-            serializedState: 'ABCD',
+            request: {
+                action: 'NEXT',
+                serializedState: 'ABCD',
+            },
         };
         const mockResponse = getMock(MOCK_PREFIX + 'response_sequence_1');
         expect(mockResponse[0]).not.toEqual(mockResponse[1]);
@@ -43,8 +47,10 @@ describe('navigateFlow', () => {
     it('errors out on flow not found', async () => {
         const mockConfig = {
             flowDevName: 'flow2',
-            action: 'NEXT',
-            serializedState: 'ABC',
+            request: {
+                action: 'NEXT',
+                serializedState: 'ABC',
+            },
         };
         const mockResponse = {
             errorCode: 'NOT_FOUND',

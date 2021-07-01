@@ -63,6 +63,13 @@ types:
         type: any
         required: false
 
+  FlowRuntimeNavigateFlowWrapperRepresentation:
+    type: object
+    properties:
+      request:
+        type: FlowRuntimeNavigateFlowRepresentation
+        required: true
+
   FlowRuntimeNavigateFlowRepresentation:
     type: object
     properties:
@@ -136,7 +143,8 @@ types:
             type: FlowRuntimeResponseRepresentation
     body:
       application/json:
-        type: FlowRuntimeNavigateFlowRepresentation
+        type: FlowRuntimeNavigateFlowWrapperRepresentation
+        (oas-body-name): request
   uriParameters:
     flowDevName:
       type: string

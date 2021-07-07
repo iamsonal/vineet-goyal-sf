@@ -33,7 +33,7 @@ types:
         description: List of form fields associated with the form.
         type: array
         items:
-          type: object
+          type: FormFieldInputRepresentation
   FormFieldInputRepresentation:
     description: Input representation for Marketing Integration form field.
     type: object
@@ -55,8 +55,7 @@ types:
     type: object
     properties:
       formFields:
-        description: List of form fields associated with the marketing integration
-          form.
+        description: List of form fields associated with the marketing integration form.
         type: array
         items:
           type: FormFieldRepresentation
@@ -82,9 +81,7 @@ types:
     properties:
       formFieldsList:
         description: Set form fields for this form.
-        type: array
-        items:
-          type: object
+        type: FormFieldInputList # TODO Hand-rolled W-9550115
       formName:
         description: Form name.
         type: string
@@ -92,6 +89,13 @@ types:
         description: Set Marketing Cloud's member identification code (mid) associated
           with this form
         type: string
+  FormInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: The data in the http body of Marketing Integration form creation.
+    type: object
+    properties:
+      formInput:
+        description: Form Input Representation
+        type: FormInputRepresentation
   FormRepresentation:
     description: A representation for a Marketing Integration form.
     type: object
@@ -118,7 +122,7 @@ types:
         description: List of form fields associated with the form submission.
         type: array
         items:
-          type: object
+          type: FormSubmissionFieldInputRepresentation
   FormSubmissionFieldInputRepresentation:
     description: Input representation for Marketing Integration form field submission.
     type: object
@@ -135,9 +139,14 @@ types:
     properties:
       formFieldsList:
         description: Set form fields for this form.
-        type: array
-        items:
-          type: object
+        type: FormSubmissionFieldInputList # TODO Hand-rolled W-9550115
+  FormSubmissionInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: The data in the http body of forms submission.
+    type: object
+    properties:
+      formSubmissionInput:
+        description: Set form fields for this form.
+        type: FormSubmissionInputRepresentation
   FormSubmissionRepresentation:
     description: A representation for a Marketing Integration form submission.
     type: object
@@ -145,7 +154,6 @@ types:
       formSubmissionId:
         description: Form submission id representing the form submission data that was saved.
         type: string
-
 /sites/{siteId}/marketing-integration/forms:
   post:
     description: Saves a form for Marketing Integration.
@@ -157,8 +165,8 @@ types:
             type: FormRepresentation
     body:
       application/json:
-        type: FormInputRepresentation
-        (oas-body-name): marketingIntegrationFormInput
+        type: FormInputWrapperRepresentation
+        (oas-body-name): formInput
   uriParameters:
     siteId:
       type: string
@@ -190,8 +198,8 @@ types:
             type: FormSubmissionRepresentation
     body:
       application/json:
-        type: FormSubmissionInputRepresentation
-        (oas-body-name): marketingIntegrationFormSubmissionInput
+        type: FormSubmissionInputWrapperRepresentation
+        (oas-body-name): formSubmissionInput
   uriParameters:
     formId:
       type: string

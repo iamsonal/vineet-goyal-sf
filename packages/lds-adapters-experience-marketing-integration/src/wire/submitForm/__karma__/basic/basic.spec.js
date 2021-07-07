@@ -8,20 +8,22 @@ import {
 const MOCK_PREFIX = 'wire/submitForm/__karma__/data/';
 
 const mockFormData = {
-    formFieldsList: [
-        {
-            name: 'First Name',
-            value: 'Tom',
-        },
-        {
-            name: 'Last Name',
-            value: 'Bob',
-        },
-        {
-            name: 'Email',
-            value: 'tom@gmail.com',
-        },
-    ],
+    formFieldsList: {
+        formFields: [
+            {
+                name: 'First Name',
+                value: 'Tom',
+            },
+            {
+                name: 'Last Name',
+                value: 'Bob',
+            },
+            {
+                name: 'Email',
+                value: 'tom@gmail.com',
+            },
+        ],
+    },
 };
 
 function getMock(filename) {
@@ -30,17 +32,19 @@ function getMock(filename) {
 
 describe('basic', () => {
     it('submit form', async () => {
-        const mockRespose = getMock('form');
+        const mockResponse = getMock('form');
         const config = {
-            formId: 'test_form_id',
             siteId: '0DM000000000000000',
-            ...mockFormData,
+            formId: 'test_form_id',
+            formSubmissionInput: {
+                ...mockFormData,
+            },
         };
-        mockSubmitFormNetworkOnce(config, mockRespose);
+        mockSubmitFormNetworkOnce(config, mockResponse);
 
         const data = await submitForm(config);
 
-        expect(data).toEqualWithExtraNestedData(mockRespose);
+        expect(data).toEqual(mockResponse);
     });
     it('displays error when network request 400s', async () => {
         const mock = {
@@ -57,7 +61,9 @@ describe('basic', () => {
         const config = {
             formId: 'test_form_id',
             siteId: 'invalidSiteId',
-            ...mockFormData,
+            formSubmissionInput: {
+                ...mockFormData,
+            },
         };
         mockSubmitFormInvalidSiteIdNetworkErrorOnce(config, mock);
 

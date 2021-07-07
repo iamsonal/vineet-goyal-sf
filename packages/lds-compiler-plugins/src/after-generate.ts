@@ -27,7 +27,6 @@ const LDS_BINDINGS = '@salesforce/lds-bindings';
 const NESTED_DATA_ADAPTER_MODULES = [
     'lds-adapters-analytics-wave',
     'lds-adapters-cms-authoring',
-    'lds-adapters-experience-marketing-integration',
     'lds-adapters-industries-rule-builder',
     'lds-adapters-platform-admin-success-guidance',
     'lds-adapters-platform-interaction-orchestrator',

@@ -9,32 +9,34 @@ const MOCK_PREFIX = 'wire/saveForm/__karma__/data/';
 
 const mockFormConfig = {
     formName: 'test_form_name',
-    formFieldsList: [
-        {
-            name: 'First Name',
-            type: 'Text',
-        },
-        {
-            name: 'Last Name',
-            type: 'Text',
-        },
-        {
-            name: 'Email Address',
-            type: 'EmailAddress',
-        },
-        {
-            name: 'Phone Number',
-            type: 'Number',
-        },
-        {
-            name: 'Custom Field 1',
-            type: 'Text',
-        },
-        {
-            name: 'Custome Field 2',
-            type: 'Text',
-        },
-    ],
+    formFieldsList: {
+        formFields: [
+            {
+                name: 'First Name',
+                type: 'Text',
+            },
+            {
+                name: 'Last Name',
+                type: 'Text',
+            },
+            {
+                name: 'Email Address',
+                type: 'EmailAddress',
+            },
+            {
+                name: 'Phone Number',
+                type: 'Number',
+            },
+            {
+                name: 'Custom Field 1',
+                type: 'Text',
+            },
+            {
+                name: 'Custome Field 2',
+                type: 'Text',
+            },
+        ],
+    },
 };
 
 function getMock(filename) {
@@ -46,14 +48,15 @@ describe('basic', () => {
         const mockRespose = getMock('form');
         const config = {
             siteId: '0DM000000000000000',
-            memberIdentificationCode: 'marketing-account-id',
-            ...mockFormConfig,
+            formInput: {
+                memberIdentificationCode: 'marketing-account-id',
+                ...mockFormConfig,
+            },
         };
         mockSaveFormNetworkOnce(config, mockRespose);
 
         const data = await saveForm(config);
-
-        expect(data).toEqualWithExtraNestedData(mockRespose);
+        expect(data).toEqual(mockRespose);
     });
     it('displays error when network request 400s', async () => {
         const mock = {
@@ -69,8 +72,10 @@ describe('basic', () => {
         };
         const config = {
             siteId: 'invalidSiteId',
-            memberIdentificationCode: 'marketing-account-id',
-            ...mockFormConfig,
+            formInput: {
+                memberIdentificationCode: 'marketing-account-id',
+                ...mockFormConfig,
+            },
         };
         mockSaveFormInvalidSiteIdNetworkErrorOnce(config, mock);
 

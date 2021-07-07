@@ -44,11 +44,6 @@ export function mockSaveFormInvalidSiteIdNetworkErrorOnce(config, mockData) {
 function saveFormMatcher(config) {
     let { siteId, ...mockInputBody } = config;
 
-    // do not compare item content as FormInputRepresentation.formFieldsList type in raml is object, not FormFieldInputRepresentation yet
-    mockInputBody.formFieldsList = mockInputBody.formFieldsList.map(() => {
-        return {};
-    });
-
     return sinon.match({
         body: mockInputBody,
         headers: {},
@@ -71,11 +66,6 @@ export function mockSubmitFormInvalidSiteIdNetworkErrorOnce(config, mockResponse
 
 function submitFormMatcher(config) {
     let { siteId, formId, ...mockFormData } = config;
-
-    // do not compare item content as FormSubmissionInputRepresentation.formFieldsList type in raml is object, not FormSubmissionFieldInputList yet
-    mockFormData.formFieldsList = mockFormData.formFieldsList.map(() => {
-        return {};
-    });
 
     return sinon.match({
         body: mockFormData,

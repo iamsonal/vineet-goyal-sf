@@ -101,6 +101,9 @@ types:
     description: Represents the response and its status
     type: object
     properties:
+      errorFileId:
+        description: Represents the id of the error CSV file.
+        type: string | nil
       errors:
         description: Represents errors during CRUD operation.
         type: array
@@ -111,7 +114,7 @@ types:
         type: string | nil
       success:
         description: Represents the success of matrix CRUD operation.
-        type: string
+        type: boolean
   DecisionMatrixRowInputRepresentation:
     description: Represents the information to describe a Decision Matrix Row for
       input

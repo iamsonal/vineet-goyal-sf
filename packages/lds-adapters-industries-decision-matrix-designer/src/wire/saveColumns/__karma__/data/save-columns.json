@@ -1,5 +1,6 @@
 {
-    "success": "true",
+    "success": true,
     "errors": [],
-    "message": ""
+    "message": "",
+    "errorFileId": null
 }

@@ -168,18 +168,11 @@ const RECORD_SEO_PROPERTIES_PATH = new RegExp(
     'i'
 );
 
-const PUBLISH_ORCHESTRATION_EVENT_PATH = new RegExp(
-    `${CONNECT_BASE_URI}/interaction/orchestration/events$`,
-    'i'
-);
 const GET_ORCHESTRATION_INSTANCE_COLLECTION_PATH = new RegExp(
     `${CONNECT_BASE_URI}/interaction/orchestration/instances$`,
     'i'
 );
-const GET_ORCHESTRATION_INSTANCE_PATH = new RegExp(
-    `${CONNECT_BASE_URI}/interaction/orchestration/instances/([A-Z0-9]){15,18}$`,
-    'i'
-);
+
 const SITES_SEARCH_PATH = new RegExp(`${CONNECT_BASE_URI}/sites/([A-Z0-9]){15,18}/search`, 'i');
 
 const INTERACTION_RUNTIME_RUN_FLOW_PATH = new RegExp(
@@ -335,14 +328,6 @@ const connect: ApiFamily = {
             controller: 'SeoPropertiesController.getRecordSeoProperties',
         },
     },
-    getOrchestrationInstance: {
-        method: 'get',
-        predicate: (path: string) =>
-            path.startsWith(CONNECT_BASE_URI) && GET_ORCHESTRATION_INSTANCE_PATH.test(path),
-        transport: {
-            controller: 'OrchestrationController.getOrchestrationInstance',
-        },
-    },
     getOrchestrationInstanceCollection: {
         method: 'get',
         predicate: (path: string) =>
@@ -350,14 +335,6 @@ const connect: ApiFamily = {
             GET_ORCHESTRATION_INSTANCE_COLLECTION_PATH.test(path),
         transport: {
             controller: 'OrchestrationController.getOrchestrationInstanceCollection',
-        },
-    },
-    publishOrchestrationEvent: {
-        method: 'post',
-        predicate: (path: string) =>
-            path.startsWith(CONNECT_BASE_URI) && PUBLISH_ORCHESTRATION_EVENT_PATH.test(path),
-        transport: {
-            controller: 'OrchestrationController.publishOrchestrationEvent',
         },
     },
     searchSite: {

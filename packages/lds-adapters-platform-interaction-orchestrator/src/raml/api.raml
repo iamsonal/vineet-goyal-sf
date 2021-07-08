@@ -25,39 +25,6 @@ annotationTypes:
     type: string
     allowedTargets: TypeDeclaration
 types:
-  AppProcessEventInputRepresentation:
-    description: The input representation for an Orchestration event
-    type: object
-    properties:
-      doesCancelOrchestrationInstance:
-        description: if true, will cause Orchestrator instance to terminate
-        type: boolean
-      eventPayload:
-        description: Additional parameters for this event
-        type: string
-      orchestrationInstanceId:
-        description: ID of the Orchestration instance to resume
-        type: string
-      stepInstanceId:
-        description: ID of the app process step instance which triggered the operation
-          firing this event upon completion
-        type: string
-  AppProcessEventRepresentation:
-    description: Information about an Orchestration event.
-    type: object
-    properties:
-      doesCancelOrchestrationInstance:
-        description: if true, will cause the Orchestration instance to terminate
-        type: boolean | nil
-      eventPayload:
-        description: Orchestration event additional parameters
-        type: string | nil
-      orchestrationInstanceId:
-        description: Id of the orchestration instance to resume
-        type: string
-      stepInstanceId:
-        description: ID of the Orchestration step instance publishing the event
-        type: string
   FlowOrchestrationInstanceCollectionRepresentation:
     description: Information about a collection of Orchestration instances.
     type: object
@@ -197,34 +164,6 @@ types:
           - InProgress
           - NotStarted
 /connect/interaction/orchestration:
-  /events:
-    post:
-      description: Publishes an Orchestration event
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: AppProcessEventRepresentation
-      # TODO: Hand Rolled removal of queryParams - please see @W-8999414
-      # queryParameters:
-      #   doesCancelOrchestrationInstance:
-      #     type: boolean
-      #     required: false
-      #   eventPayload:
-      #     type: string
-      #     required: false
-      #   orchestrationInstanceId:
-      #     type: string
-      #     required: false
-      #   stepInstanceId:
-      #     type: string
-      #     required: false
-      body:
-        application/json:
-          type: AppProcessEventInputRepresentation
-          # TODO: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0 @W-8928625
-          (oas-body-name): event
   /instances:
     get:
       description: Retrieves a collection of Orchestration instances
@@ -241,16 +180,3 @@ types:
         relatedRecordId:
           type: string
           required: false
-  /instances/{instanceId}:
-    get:
-      description: Retrieves an Orchestration instance
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: FlowOrchestrationInstanceRepresentation
-    uriParameters:
-      instanceId:
-        type: string
-        required: true

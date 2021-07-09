@@ -223,3 +223,23 @@ export const GET_GRAPHQL_RESPONSE_MIXED: MetricsKey = {
         return { owner: METRIC_KEY_OWNER, name: 'get-graphql-response-mixed-count' };
     },
 };
+
+/**
+ * W-9537401
+ * Counter for Luvio store trim task invocation
+ */
+export const STORE_TRIM_TASK_COUNT: MetricsKey = {
+    get() {
+        return { owner: METRIC_KEY_OWNER, name: 'store-trim-task-count' };
+    },
+};
+
+/**
+ * W-9537401
+ * Timer to measure performance for Luvio store trim task
+ */
+export const STORE_TRIM_TASK_DURATION: MetricsKey = {
+    get() {
+        return { owner: METRIC_KEY_OWNER, name: 'store-trim-task-duration' };
+    },
+};

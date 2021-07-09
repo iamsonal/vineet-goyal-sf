@@ -48,6 +48,8 @@ import {
     STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT,
     STORE_WATCH_SUBSCRIPTIONS_COUNT,
     GET_GRAPHQL_RESPONSE_MIXED,
+    STORE_TRIM_TASK_COUNT,
+    STORE_TRIM_TASK_DURATION,
 } from './metric-keys';
 
 import {
@@ -173,6 +175,9 @@ const NETWORK_TRANSACTION_NAME = 'lds-network';
 
 const CACHE_STATS_OUT_OF_TTL_MISS_POSTFIX = 'out-of-ttl-miss';
 const RECORD_API_NAME_CHANGE_COUNT_METRIC_NAME = 'record-api-name-change-count';
+
+const STORE_TRIM_TASK_NAME = 'store-trim-task';
+const STORE_TRIMMED_COUNT = 'store-trimmed-count';
 const aggregateUiChunkCountMetric = percentileHistogram(AGGREGATE_UI_CHUNK_COUNT);
 const cacheHitMetric = counter(CACHE_HIT_COUNT);
 const cacheMissMetric = counter(CACHE_MISS_COUNT);
@@ -197,6 +202,10 @@ const getApexCacheMissDurationMetric = timer(GET_APEX_CACHE_MISS_DURATION);
 const totalAdapterRequestSuccessMetric = counter(TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT);
 const totalAdapterErrorMetric = counter(TOTAL_ADAPTER_ERROR_COUNT);
 const getGraphqlResponseMixedMetric = counter(GET_GRAPHQL_RESPONSE_MIXED);
+
+const storeTrimTaskMetric = counter(STORE_TRIM_TASK_COUNT);
+const storeTrimTaskTimer = timer(STORE_TRIM_TASK_DURATION);
+
 export class Instrumentation {
     private recordApiNameChangeCounters: RecordApiNameChangeCounters = {};
     private adapterUnfulfilledErrorCounters: AdapterUnfulfilledErrorCounters = {};
@@ -825,6 +834,39 @@ function log(schema: any, payload: LightningInteractionSchema): void {
     interaction(target, scope, context, eventSource, eventType, attributes);
 }
 
+function instrumentStoreTrimTask(callback: () => number) {
+    return () => {
+        storeTrimTaskMetric.increment(1);
+        perfStart(STORE_TRIM_TASK_NAME);
+        const startTime = Date.now();
+        const res = callback();
+        timerMetricAddDuration(storeTrimTaskTimer, Date.now() - startTime);
+        perfEnd(STORE_TRIM_TASK_NAME, { [STORE_TRIMMED_COUNT]: res });
+        return res;
+    };
+}
+
+function setStoreScheduler(store: Store) {
+    if (store.options === undefined || store.options.scheduler === undefined) {
+        store.options = {
+            scheduler: (callback: () => number) => {
+                Promise.resolve()
+                    .then(instrumentStoreTrimTask(callback))
+                    .catch((error) => {
+                        setTimeout(() => {
+                            throw error;
+                        }, 0);
+                    });
+            },
+        };
+    } else {
+        const originalScheduler = store.options.scheduler;
+        store.options.scheduler = (callback) => {
+            originalScheduler(instrumentStoreTrimTask(callback));
+        };
+    }
+}
+
 /**
  * Add a mark to the metrics service.
  *
@@ -861,6 +903,8 @@ export function setupInstrumentation(luvio: Luvio, store: Store): void {
         { methodName: 'storeIngest', metricKey: STORE_INGEST_DURATION },
         { methodName: 'storeLookup', metricKey: STORE_LOOKUP_DURATION },
     ]);
+
+    setStoreScheduler(store);
 
     registerPeriodicLogger(NAMESPACE, () => {
         const storeStats = getStoreStats(store);

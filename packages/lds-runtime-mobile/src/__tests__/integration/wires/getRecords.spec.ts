@@ -10,6 +10,7 @@ import { flushPromises } from '../../testUtils';
 import { resetLuvioStore, setup } from './integrationTestSetup';
 import { MockNimbusDurableStore } from '../../MockNimbusDurableStore';
 import mockResponseWithMissingOptionalFields from './data/records-multiple-Accounts-MissingOptionalFields.json';
+import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 
 const RECORD_TTL = 30000;
 const GET_RECORDS_PRIVATE_FIELDS = ['eTag', 'weakEtag', 'hasErrors'];
@@ -22,9 +23,10 @@ describe('mobile runtime integration tests', () => {
     let networkAdapter: MockNimbusNetworkAdapter;
     let durableStore: MockNimbusDurableStore;
     let getRecords;
+    let createRecord;
 
     beforeEach(async () => {
-        ({ luvio, networkAdapter, durableStore, getRecords } = await setup());
+        ({ luvio, networkAdapter, durableStore, getRecords, createRecord } = await setup());
     });
 
     describe('getRecords', () => {
@@ -198,6 +200,58 @@ describe('mobile runtime integration tests', () => {
 
             const durableResult = await getRecords(config)!;
             expect(durableResult.state).toBe('Fulfilled');
+        });
+
+        it('resolves with a mix of draft ids and server ids', async () => {
+            const id1 = '001xx000003Gn4WAAS';
+            const id2 = '00122000003Gn4WBBA';
+            const config = {
+                records: [
+                    {
+                        recordIds: [id1, id2],
+                        optionalFields: ['Account.Id', 'Account.Name'],
+                    },
+                ],
+            };
+
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(getRecordsResponse),
+            });
+
+            const result = await getRecords(config)!;
+
+            expect(result.state).toBe('Fulfilled');
+
+            networkAdapter.setMockResponse({
+                status: 201,
+                headers: {},
+                body: JSONStringify(mockAccount),
+            });
+
+            const draft = (
+                await createRecord({
+                    apiName: 'Account',
+                    fields: { Name: 'I am a poor draft' },
+                })
+            ).data;
+
+            await flushPromises();
+            await resetLuvioStore();
+
+            const configWithDraft = {
+                records: [
+                    {
+                        recordIds: [id1, id2, draft.id],
+                        optionalFields: ['Account.Id', 'Account.Name'],
+                    },
+                ],
+            };
+
+            const resultWithDraft = await getRecords(configWithDraft)!;
+
+            expect(resultWithDraft.state).toBe('Fulfilled');
         });
     });
 });

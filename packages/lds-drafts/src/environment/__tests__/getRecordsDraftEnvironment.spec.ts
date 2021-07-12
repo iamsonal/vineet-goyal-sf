@@ -53,8 +53,7 @@ describe('draft environment tests', () => {
             expect(response.status).toBe(200);
             const compoundResponse = response.body as any;
             expect(compoundResponse.results.length).toBe(1);
-            expect(compoundResponse.results[0].statusCode).toBe(200);
-            expect(compoundResponse.results[0].result.id).toBe(DRAFT_RECORD_ID);
+            expect(compoundResponse.results[0].statusCode).toBe(400);
         });
 
         it('only hits the network with canonical ids', async () => {
@@ -90,10 +89,7 @@ describe('draft environment tests', () => {
             expect(compoundResponse.results.length).toBe(2);
             expect(compoundResponse.results[0].statusCode).toBe(200);
             expect((compoundResponse.results[0].result as RecordRepresentation).id).toBe(RECORD_ID);
-            expect(compoundResponse.results[1].statusCode).toBe(200);
-            expect((compoundResponse.results[1].result as RecordRepresentation).id).toBe(
-                DRAFT_RECORD_ID
-            );
+            expect(compoundResponse.results[1].statusCode).toBe(400);
         });
 
         it('maintains order of requested ids in response', async () => {
@@ -115,10 +111,7 @@ describe('draft environment tests', () => {
             // ensure result contains the network response and synthetic responses
             const compoundResponse = response.body;
             expect(compoundResponse.results.length).toBe(2);
-            expect(compoundResponse.results[0].statusCode).toBe(200);
-            expect((compoundResponse.results[0].result as RecordRepresentation).id).toBe(
-                DRAFT_RECORD_ID
-            );
+            expect(compoundResponse.results[0].statusCode).toBe(400);
             expect(compoundResponse.results[1].statusCode).toBe(200);
             expect((compoundResponse.results[1].result as RecordRepresentation).id).toBe(RECORD_ID);
         });
@@ -142,35 +135,6 @@ describe('draft environment tests', () => {
             expect(record.id).toBe(RECORD_ID);
             record.id = 'bar';
             expect(record.id).toBe('bar');
-        });
-
-        it('returns synthetic records with missing optionalFields', async () => {
-            const { draftEnvironment, network, durableStore } = await setupDraftEnvironment();
-
-            mockDurableStoreGetDenormalizedRecordDraft(durableStore);
-            mockCompositeNetworkResponse(network);
-
-            // create getRecords request containing a mix of draft ids and canonical ids
-            const request = buildRequest([RECORD_ID, DRAFT_RECORD_ID], FIELDS, [
-                'Account.MissingField',
-            ]);
-            const response = await draftEnvironment.dispatchResourceRequest<BatchRepresentation>(
-                request
-            );
-
-            // ensure network request containing only canonical ids is made
-            expect(network).toBeCalledTimes(1);
-            expect(network.mock.calls[0][0].basePath).toBe(`/ui-api/records/batch/${RECORD_ID}`);
-
-            // ensure result contains the network response and synthetic responses
-            const compoundResponse = response.body;
-            expect(compoundResponse.results.length).toBe(2);
-            expect(compoundResponse.results[0].statusCode).toBe(200);
-            expect((compoundResponse.results[0].result as RecordRepresentation).id).toBe(RECORD_ID);
-            expect(compoundResponse.results[1].statusCode).toBe(200);
-            expect((compoundResponse.results[1].result as RecordRepresentation).id).toBe(
-                DRAFT_RECORD_ID
-            );
         });
 
         it('refetches if a draft response has been ingested since the fetch', async () => {

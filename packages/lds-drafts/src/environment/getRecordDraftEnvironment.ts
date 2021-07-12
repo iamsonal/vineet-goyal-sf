@@ -2,17 +2,10 @@ import { FetchResponse, ResourceRequest } from '@luvio/engine';
 import { DurableEnvironment } from '@luvio/environments';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
-import {
-    createBadRequestResponse,
-    createDraftSynthesisErrorResponse,
-    createOkResponse,
-} from '../DraftFetchResponse';
-import { RecordDenormalizingDurableStore } from '../durableStore/makeRecordDenormalizingDurableStore';
+import { createBadRequestResponse } from '../DraftFetchResponse';
 import { ObjectCreate } from '../utils/language';
 import {
     extractRecordIdFromResourceRequest,
-    filterRecordFields,
-    getRecordFieldsFromRecordRequest,
     getRecordKeyFromResourceRequest,
     RECORD_ENDPOINT_REGEX,
 } from '../utils/records';
@@ -74,41 +67,9 @@ function resolveResourceRequestIds(request: ResourceRequest, canonicalRecordStor
     };
 }
 
-/**
- * Creates a synthetic response for a call to the getRecord endpoint if the
- * record is a draft record and has not been created yet
- * @param resourceRequest
- */
-function createSyntheticGetRecordResponse(
-    resourceRequest: ResourceRequest,
-    durableStore: RecordDenormalizingDurableStore
-) {
-    const key = getRecordKeyFromResourceRequest(resourceRequest);
-
-    if (key === undefined) {
-        return Promise.reject(
-            createBadRequestResponse({
-                message: 'Unable to calculate RecordRepresentation key from ResourceRequest.',
-            })
-        );
-    }
-
-    const fields = getRecordFieldsFromRecordRequest(resourceRequest);
-    if (fields === undefined) {
-        return Promise.reject(createBadRequestResponse({ message: 'fields are missing' }));
-    }
-
-    return durableStore.getDenormalizedRecord(key).then((record) => {
-        if (record === undefined) {
-            throw createDraftSynthesisErrorResponse();
-        }
-        return createOkResponse(filterRecordFields(record, fields));
-    });
-}
-
 export function getRecordDraftEnvironment(
     env: DurableEnvironment,
-    { durableStore, isDraftId }: DraftEnvironmentOptions
+    { isDraftId }: DraftEnvironmentOptions
 ): DurableEnvironment {
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function <T>(
         resourceRequest: ResourceRequest
@@ -127,12 +88,11 @@ export function getRecordDraftEnvironment(
         const canonicalKey = env.storeGetCanonicalKey(recordKey);
 
         // if the canonical key matches the key in the resource request it means we do not have a
-        // mapping in our cache and this record must be synthetically returned
+        // mapping in our cache so return a non-cacheable error
         if (canonicalKey === recordKey) {
-            return createSyntheticGetRecordResponse(
-                resourceRequest,
-                durableStore
-            ) as unknown as Promise<FetchResponse<T>>;
+            return Promise.reject(
+                createBadRequestResponse({ message: 'cannot refresh a draft-created record' })
+            );
         }
 
         // a canonical mapping exists for the draft id passed in, we can create a new resource

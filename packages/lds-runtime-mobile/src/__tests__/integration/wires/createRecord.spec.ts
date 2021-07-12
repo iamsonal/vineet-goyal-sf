@@ -13,9 +13,11 @@ import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 import mockOppy from './data/record-Opportunity-fields-Opportunity.Account.Name,Opportunity.Account.Owner.Name,Opportunity.Owner.City.json';
 import { populateL2WithUser, setup } from './integrationTestSetup';
+import timekeeper from 'timekeeper';
 
 const RECORD_ID = mockAccount.id;
 const API_NAME = 'Account';
+const RECORD_TTL = 30000;
 
 describe('mobile runtime integration tests', () => {
     let luvio: Luvio;
@@ -80,6 +82,23 @@ describe('mobile runtime integration tests', () => {
             })) as Snapshot<RecordRepresentation>;
             expect(getRecordSnapshot.state).toBe('Fulfilled');
         });
+
+        it('created record does not go stale', async () => {
+            const snapshot = await createRecord({ apiName: API_NAME, fields: { Name: 'Justin' } });
+            (luvio as any).environment.storeReset();
+
+            timekeeper.travel(Date.now() + RECORD_TTL + 1);
+
+            const record = snapshot.data;
+            const recordId = record.id;
+            // call getRecord with synthetic record id
+            const getRecordSnapshot = (await getRecord({
+                recordId: recordId,
+                fields: ['Account.Name', 'Account.Id'],
+            })) as Snapshot<RecordRepresentation>;
+            expect(getRecordSnapshot.state).toBe('Fulfilled');
+        });
+
         it('created record is still observable after draft is uploaded', async () => {
             const orginalName = 'Justin';
             // create a synthetic record
@@ -274,6 +293,34 @@ describe('mobile runtime integration tests', () => {
             expect(
                 (record.fields['Parent'].value as RecordRepresentation).fields['City'].value
             ).toEqual(parent.fields['City'].value);
+        });
+
+        it('synthetic record with stale reference does not refresh', async () => {
+            const parent = await populateL2WithUser();
+            const oppy = (
+                await createRecord({
+                    apiName: 'Account',
+                    fields: { Name: 'My Accout', ParentId: parent.id },
+                })
+            ).data as RecordRepresentation;
+
+            const spy = jest.spyOn(networkAdapter, 'sendRequest');
+
+            expect(oppy.fields['ParentId'].value).toEqual(parent.id);
+
+            timekeeper.travel(Date.now() + RECORD_TTL + 1);
+
+            const spanningSnapshot = await getRecord({
+                recordId: oppy.id,
+                fields: ['Opportunity.Id', 'Opportunity.Parent.City'],
+            });
+            expect(spanningSnapshot.state).toBe('Stale');
+            const record = spanningSnapshot.data as RecordRepresentation;
+            expect(
+                (record.fields['Parent'].value as RecordRepresentation).fields['City'].value
+            ).toEqual(parent.fields['City'].value);
+
+            expect(spy).toBeCalledTimes(0);
         });
     });
 });

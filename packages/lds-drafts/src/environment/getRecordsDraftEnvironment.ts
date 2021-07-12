@@ -1,15 +1,10 @@
-import { ResourceRequest, ResourceResponse, Environment, HttpStatusCode } from '@luvio/engine';
+import { ResourceRequest, ResourceResponse, Environment } from '@luvio/engine';
 import { DurableEnvironment } from '@luvio/environments';
 import { keyBuilderRecord, BatchRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
-import { createOkResponse, DRAFT_ERROR_CODE } from '../DraftFetchResponse';
-import { RecordDenormalizingDurableStore } from '../durableStore/makeRecordDenormalizingDurableStore';
+import { createOkResponse } from '../DraftFetchResponse';
 import { ArrayIsArray, ObjectCreate } from '../utils/language';
-import {
-    filterRecordFields,
-    getRecordFieldsFromRecordRequest,
-    getRecordKeyForId,
-} from '../utils/records';
+import { getRecordKeyForId } from '../utils/records';
 import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
 
 export const RECORDS_ENDPOINT_REGEX = /^\/ui-api\/records\/batch\/?(([a-zA-Z0-9,]+))?$/;
@@ -115,50 +110,27 @@ function extractDraftAndCanonicalIdsFromRequest(
 function applyDraftsToBatchResponse(
     resourceRequest: ResourceRequest,
     response: ResourceResponse<BatchRepresentation>,
-    draftIds: string[],
-    env: DurableEnvironment,
-    durableStore: RecordDenormalizingDurableStore
+    draftIds: string[]
 ) {
     const { length } = draftIds;
     if (length === 0) {
         return response;
     }
 
-    const fields = getRecordFieldsFromRecordRequest(resourceRequest) || [];
     const requestedIds = extractRecordIdsFromResourceRequest(resourceRequest) || [];
-    const promises = draftIds.map((draftId) => {
-        const draftKey = keyBuilderRecord({ recordId: draftId });
-        return durableStore.getDenormalizedRecord(draftKey).then((record) => {
-            if (record === undefined) {
-                return;
-            }
-            return filterRecordFields(record, fields);
+
+    draftIds.forEach((id) => {
+        // It is a luvio invariant that the order of resources in response
+        // matches the order of ids in the request
+        const requestIndex = requestedIds.indexOf(id);
+        const insertIndex = requestIndex >= 0 ? requestIndex : 0;
+        response.body.results.splice(insertIndex, 0, {
+            statusCode: 400,
+            result: {},
         });
     });
-    return Promise.all(promises).then((results) => {
-        for (let i = 0; i < length; i++) {
-            const record = results[i];
-            if (record === undefined) {
-                response.body.results.push({
-                    statusCode: HttpStatusCode.BadRequest,
-                    result: {
-                        errorCode: DRAFT_ERROR_CODE,
-                        message: 'failed to synthesize draft record',
-                    },
-                });
-            } else {
-                // It is a luvio invariant that the order of resources in response
-                // matches the order of ids in the request
-                const requestIndex = requestedIds.indexOf(record.id);
-                const insertIndex = requestIndex >= 0 ? requestIndex : 0;
-                response.body.results.splice(insertIndex, 0, {
-                    statusCode: 200,
-                    result: record,
-                });
-            }
-        }
-        return response;
-    });
+
+    return response;
 }
 
 /**
@@ -202,7 +174,6 @@ function hasIdsChanged(ids: string[], env: Environment) {
 function handleGetRecordsRequest(
     resourceRequest: ResourceRequest,
     env: DurableEnvironment,
-    durableStore: RecordDenormalizingDurableStore,
     isDraftId: (id: string) => boolean,
     fetchRequest: (
         request: ResourceRequest,
@@ -223,9 +194,7 @@ function handleGetRecordsRequest(
         return applyDraftsToBatchResponse(
             resourceRequest,
             createOkResponse(syntheticEnvelop),
-            draftIds,
-            env,
-            durableStore
+            draftIds
         );
     }
 
@@ -237,7 +206,7 @@ function handleGetRecordsRequest(
 
 export function getRecordsDraftEnvironment(
     env: DurableEnvironment,
-    { durableStore, isDraftId }: DraftEnvironmentOptions
+    { isDraftId }: DraftEnvironmentOptions
 ): DurableEnvironment {
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function (
         resourceRequest: ResourceRequest
@@ -250,7 +219,6 @@ export function getRecordsDraftEnvironment(
         return handleGetRecordsRequest(
             resourceRequest,
             env,
-            durableStore,
             isDraftId,
             (request: ResourceRequest, removedDraftIds: string[]) =>
                 env.dispatchResourceRequest<BatchRepresentation>(request).then((response) => {
@@ -262,13 +230,7 @@ export function getRecordsDraftEnvironment(
 
                     // response contains records we asked for with canonical ids, now we need to merge with
                     // synthetic drafts
-                    return applyDraftsToBatchResponse(
-                        resourceRequest,
-                        response,
-                        removedDraftIds,
-                        env,
-                        durableStore
-                    );
+                    return applyDraftsToBatchResponse(resourceRequest, response, removedDraftIds);
                 })
         ) as any;
     };

@@ -29,8 +29,6 @@ const NESTED_DATA_ADAPTER_MODULES = [
     'lds-adapters-cms-authoring',
     'lds-adapters-industries-rule-builder',
     'lds-adapters-platform-admin-success-guidance',
-    'lds-adapters-platform-interaction-orchestrator',
-    'lds-adapters-revenue-billing-batch',
 ];
 
 function generateNpmModule(outputDir: string, adapters: AdapterInfo[]) {

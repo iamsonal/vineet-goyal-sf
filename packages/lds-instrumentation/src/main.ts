@@ -92,7 +92,7 @@ interface AdapterUnfulfilledError {
 
 export const APEX_ADAPTER_NAME = 'getApex';
 export const NORMALIZED_APEX_ADAPTER_NAME = `Apex.${APEX_ADAPTER_NAME}`;
-export const GRAPHQL_ADAPTER_NAME = 'graphQL';
+const GRAPHQL_ADAPTER_NAME = 'graphQL';
 interface RefreshAdapterEvents {
     [adapterName: string]: number;
 }
@@ -247,7 +247,6 @@ export class Instrumentation {
         const { apiFamily, name, ttl } = metadata;
         const adapterName = normalizeAdapterName(name, apiFamily);
         const isGetApexAdapter = isApexAdapter(name);
-        const isGetGraphqlAdapter = isGraphqlAdapter(name);
 
         const stats = isGetApexAdapter ? getApexCacheStats : registerLdsCacheStats(adapterName);
         const ttlMissStats = isGetApexAdapter
@@ -363,9 +362,6 @@ export class Instrumentation {
                         cacheMissDurationByAdapterMetric,
                         Date.now() - startTime
                     );
-                    if (isGetGraphqlAdapter === true) {
-                        logGraphqlInteraction(_snapshot);
-                    }
                 });
                 stats.logMisses();
                 cacheMissMetric.increment(1);
@@ -391,9 +387,6 @@ export class Instrumentation {
                 cacheHitMetric.increment(1);
                 cacheHitCountByAdapterMetric.increment(1);
                 timerMetricAddDuration(cacheHitDurationByAdapterMetric, Date.now() - startTime);
-                if (isGetGraphqlAdapter === true) {
-                    logGraphqlInteraction(result);
-                }
             }
 
             return result;
@@ -402,7 +395,9 @@ export class Instrumentation {
         Object.defineProperty(instrumentedAdapter, 'name', {
             value: name + '__instrumented',
         });
-        return instrumentedAdapter;
+        return isGraphqlAdapter(name) === true
+            ? instrumentGraphqlAdapter(instrumentedAdapter)
+            : instrumentedAdapter;
     }
 
     private incrementAdapterRequestMetric(wireRequestCounter: Counter) {
@@ -661,7 +656,7 @@ export class Instrumentation {
  * Any graphql get adapter specific instrumentation that we need to log
  * @param snapshot from either in-memory or built after a network hit
  */
-function logGraphqlInteraction(snapshot: Snapshot<any>) {
+function logGraphqlMetrics(snapshot: Snapshot<any>) {
     // We have both data and error in the returned response
     const { data: snapshotData } = snapshot;
     if (
@@ -788,8 +783,9 @@ function getStoreStats(store: Store): LdsStatsReport {
 function isApexAdapter(adapterName: string): boolean {
     return adapterName.indexOf(APEX_ADAPTER_NAME) > -1;
 }
+
 /**
- * Returns whether adapter is a graphQL one or not.
+ * Returns boolean whether adapter is a graphQL one or not.
  * @param adapterName The name of the adapter.
  */
 function isGraphqlAdapter(adapterName: string): boolean {
@@ -962,6 +958,29 @@ export function refreshApiEvent(apiName: keyof refreshApiNames): InstrumentParam
             apiName,
         };
     };
+}
+
+/**
+ * @param instrumentedAdapter
+ * @returns instrumentedGraphqlAdapter, which logs additional metrics for get graphQL adapter
+ */
+export function instrumentGraphqlAdapter<C, D>(instrumentedAdapter: Adapter<C, D>): Adapter<C, D> {
+    const instrumentedGraphqlAdapter = (config: C) => {
+        const result = instrumentedAdapter(config);
+
+        if (result === null) {
+            return result;
+        }
+        if (isPromise(result)) {
+            result.then((_snapshot: Snapshot<D>) => {
+                logGraphqlMetrics(_snapshot);
+            });
+        } else {
+            logGraphqlMetrics(result);
+        }
+        return result;
+    };
+    return instrumentedGraphqlAdapter;
 }
 
 export const instrumentation = new Instrumentation();

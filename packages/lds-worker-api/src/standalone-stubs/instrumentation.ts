@@ -8,5 +8,8 @@ export const instrumentation = {
 export function incrementGetRecordNotifyChangeAllowCount() {}
 export function incrementGetRecordNotifyChangeDropCount() {}
 export function refreshApiEvent() {}
+export function instrumentGraphqlAdapter(createFunction: Function, _metadata: any) {
+    return createFunction;
+}
 
 export const REFRESH_UIAPI_KEY = 'refreshUiApi';

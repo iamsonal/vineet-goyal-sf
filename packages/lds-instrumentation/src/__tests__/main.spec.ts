@@ -413,6 +413,7 @@ describe('instrumentation', () => {
                 0
             );
             expect((instrumentation as any).adapterCacheMisses.size).toEqual(0);
+            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(4);
         });
 
         it('logs nothings when adapter returns null', async () => {
@@ -788,6 +789,85 @@ describe('instrumentation', () => {
                     }
                 )
             ).toEqual(expectedCacheStatsCalls);
+        });
+    });
+
+    describe('instrumentGraphqlAdapter', () => {
+        it('logs mixed bag response in case of a cache hit', async () => {
+            const mockSnapshot = {
+                data: {
+                    data: {
+                        a: 1,
+                    },
+                    errors: ['errors'],
+                },
+            };
+
+            const mockAdapter = ((config) => {
+                if (config.cacheHit === true) {
+                    return mockSnapshot;
+                } else {
+                    return Promise.resolve(mockSnapshot);
+                }
+            }) as Adapter<any, any>;
+
+            const instrumentedAdapter = instrumentation.instrumentAdapter(mockAdapter, {
+                apiFamily: 'gql',
+                name: 'graphQL',
+            });
+
+            await instrumentedAdapter({ cacheHit: true });
+
+            expect(instrumentationServiceSpies.cacheStatsLogHitsSpy).toHaveBeenCalledTimes(1);
+            expect(instrumentationServiceSpies.cacheStatsLogMissesSpy).toHaveBeenCalledTimes(0);
+            expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
+
+            // no TTL provided so these metrics should be 0
+            expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
+                0
+            );
+            expect((instrumentation as any).adapterCacheMisses.size).toEqual(0);
+
+            // 4 standard counters + 1 for gql counter
+            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(5);
+        });
+        it('logs mixed bag response in case of a cache miss', async () => {
+            const mockSnapshot = {
+                data: {
+                    data: {
+                        a: 1,
+                    },
+                    errors: ['errors'],
+                },
+            };
+
+            const mockAdapter = ((config) => {
+                if (config.cacheHit === true) {
+                    return mockSnapshot;
+                } else {
+                    return Promise.resolve(mockSnapshot);
+                }
+            }) as Adapter<any, any>;
+
+            const instrumentedAdapter = instrumentation.instrumentAdapter(mockAdapter, {
+                apiFamily: 'gql',
+                name: 'graphQL',
+            });
+
+            await instrumentedAdapter({ cacheHit: false });
+
+            expect(instrumentationServiceSpies.cacheStatsLogHitsSpy).toHaveBeenCalledTimes(0);
+            expect(instrumentationServiceSpies.cacheStatsLogMissesSpy).toHaveBeenCalledTimes(1);
+            expect(instrumentationServiceSpies.timerAddDurationSpy).toHaveBeenCalledTimes(1);
+
+            // no TTL provided so these metrics should be 0
+            expect(instrumentationSpies.logAdapterCacheMissOutOfTtlDuration).toHaveBeenCalledTimes(
+                0
+            );
+            expect((instrumentation as any).adapterCacheMisses.size).toEqual(0);
+
+            // 4 standard counters + 1 for gql counter
+            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(5);
         });
     });
 });

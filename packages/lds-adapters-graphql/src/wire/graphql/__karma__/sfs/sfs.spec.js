@@ -1698,4 +1698,96 @@ describe('sfs gql queries', () => {
             expect(secondSnapshot.data).toEqualSnapshotWithoutEtags(secondSnapshot.data);
         });
     });
+
+    describe('FieldServiceOrgSettings', () => {
+        it('should resolve query with no arguments correctly', async () => {
+            const ast = parseQuery(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            FieldServiceOrgSettings @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQuery = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            FieldServiceOrgSettings {
+                                edges {
+                                    node {
+                                        Id
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
+                }
+            `;
+
+            const mock = getMock('RecordQuery-FieldServiceOrgSettings-id');
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            FieldServiceOrgSettings: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Id: '0UJx00000000001GAA',
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                mock
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const snapshot = await graphQLImperative(graphqlConfig);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+        });
+    });
 });

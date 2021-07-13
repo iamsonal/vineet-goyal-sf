@@ -2,6 +2,7 @@ import {
     buildMockNetworkAdapter,
     buildSuccessMockPayload,
     getMockNetworkAdapterCallCount,
+    MockDurableStore,
     MockPayload,
 } from '@luvio/adapter-test-library';
 import {
@@ -9,6 +10,7 @@ import {
     populateDurableStore,
     testDurableHitDoesNotHitNetwork,
 } from '@salesforce/lds-jest';
+import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import parseAndVisit from '@salesforce/lds-graphql-parser';
 
 import { graphQLAdapterFactory } from '../../../main';
@@ -18,6 +20,9 @@ import mockData_Account_fields_Name from './data/RecordQuery-Account-fields-Name
 import mockData_Account_fields_Name_no_displayValue from './data/RecordQuery-Account-fields-Name-no-displayValue.json';
 import mockData_Account_fields_Phone from './data/RecordQuery-Account-fields-Phone.json';
 import mockData_Account_fields_Name_Phone from './data/RecordQuery-Account-fields-Name-Phone.json';
+import mockData_FieldServiceOrgSettings_Id from './data/RecordQuery-FieldServiceOrgSettings-id.json';
+
+import timekeeper from 'timekeeper';
 
 const requestArgs: MockPayload['networkArgs'] = {
     method: 'post',
@@ -313,6 +318,71 @@ describe('graphQL adapter offline', () => {
 
             // ensure no outstanding promises throw errors
             await flushPromises();
+        });
+
+        it('should resolve stale data correctly', async () => {
+            const ast = parseAndVisit(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            FieldServiceOrgSettings @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const config = {
+                query: ast,
+                variables: {},
+            };
+
+            const { luvio, store } = buildOfflineLuvio(
+                new MockDurableStore(),
+                buildMockNetworkAdapter([
+                    buildSuccessMockPayload(requestArgs, mockData_FieldServiceOrgSettings_Id),
+                ])
+            );
+            const recordId =
+                mockData_FieldServiceOrgSettings_Id.data.uiapi.query.FieldServiceOrgSettings
+                    .edges[0].node.Id;
+            const recordKey = keyBuilderRecord({
+                recordId,
+            });
+
+            const adapter = graphQLAdapterFactory(luvio);
+
+            // populate it
+            await adapter(config);
+
+            const expiration = store.recordExpirations[recordKey].fresh;
+            timekeeper.travel(expiration + 10);
+            const result = await adapter(config);
+
+            expect(result.state).toBe('Stale');
+            expect(result.data).toEqual({
+                data: {
+                    uiapi: {
+                        query: {
+                            FieldServiceOrgSettings: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Id: recordId,
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            });
         });
     });
 });

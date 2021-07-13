@@ -2,7 +2,10 @@ import { Reader, StoreLink, StoreResolveResultFound } from '@luvio/engine';
 import { LuvioSelectionNode } from '@salesforce/lds-graphql-parser';
 import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
 import { createRead } from '../util/read';
-import { StoreResolveResult } from '@luvio/engine/dist/es/es2018/reader/resolve';
+import {
+    StoreResolveResult,
+    StoreResolveResultStale,
+} from '@luvio/engine/dist/es/es2018/reader/resolve';
 import { GraphQLVariables } from './Variable';
 
 export enum PropertyLookupResultState {
@@ -65,7 +68,7 @@ export function resolveKey<D>(builder: Reader<any>, key: string) {
             return;
         case StoreResolveResultState.Stale:
             builder.markStale();
-            return;
+            return lookup;
         case StoreResolveResultState.Locked:
             builder.markLocked();
             return;
@@ -79,7 +82,7 @@ export function resolveKey<D>(builder: Reader<any>, key: string) {
 export function resolveLink<D>(
     builder: Reader<any>,
     storeLink: StoreLink
-): StoreResolveResultFound<D> | undefined {
+): StoreResolveResultFound<D> | StoreResolveResultStale | undefined {
     const { StoreLinkStateValues } = builder;
     const linkState = builder.getLinkState(storeLink);
 

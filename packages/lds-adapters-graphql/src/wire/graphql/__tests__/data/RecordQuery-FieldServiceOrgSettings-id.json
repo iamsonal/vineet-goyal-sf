@@ -1,0 +1,34 @@
+{
+    "data": {
+        "uiapi": {
+            "query": {
+                "FieldServiceOrgSettings": {
+                    "edges": [
+                        {
+                            "node": {
+                                "Id": "0UJx00000000001GAA",
+                                "__typename": "FieldServiceOrgSettings",
+                                "ApiName": "FieldServiceOrgSettings",
+                                "WeakEtag": 1626132337000,
+                                "DisplayValue": "Field_Service_Default_Org_Settings",
+                                "SystemModstamp": {
+                                    "value": "2021-07-12T23:25:37.000Z"
+                                },
+                                "LastModifiedById": {
+                                    "value": "005x0000000xNhqAAE"
+                                },
+                                "LastModifiedDate": {
+                                    "value": "2021-07-12T23:25:37.000Z"
+                                },
+                                "RecordTypeId": {
+                                    "value": null
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "errors": []
+}

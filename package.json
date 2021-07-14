@@ -32,6 +32,7 @@
         "release:adapters:local": "lerna run --scope @salesforce/* release:core -- --auto-checkout",
         "release": "yarn release:adapters && ./scripts/release/core.js",
         "release:local": "./scripts/release/core.js --skip-git-check --auto-checkout && yarn release:adapters:local",
+        "release:local:skipbuild": "./scripts/release/core.js --skip-git-check --auto-checkout --skip-build && yarn release:adapters:local",
         "link:luvio": "yarn link @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio && lerna exec -- yarn link @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio",
         "unlink:luvio": "yarn unlink @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio; lerna exec --no-bail -- yarn unlink @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio"
     },

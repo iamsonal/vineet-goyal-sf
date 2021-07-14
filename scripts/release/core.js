@@ -63,7 +63,7 @@ const argv = require('yargs')
     .boolean('skip-git-check')
     .describe('skip-git-check', 'skips git branch and status check')
     .boolean('skip-build')
-    .describe('skip-build', 'skips building')
+    .describe('skip-build', 'skips building (and cleaning)')
     .boolean('skip-clean')
     .describe('skip-clean', 'skips cleaning')
     .boolean('print-commits-only')
@@ -350,7 +350,7 @@ function deployAdapterPackage() {
         checkGitStatus();
     }
 
-    if (!argv['skip-clean']) {
+    if (!argv['skip-clean'] && !argv['skip-build']) {
         clean();
     }
 

@@ -75,11 +75,11 @@ describe('invokeAdapter', () => {
         });
 
         // ensure DS has object info
-        await invokeAdapter(
-            'getObjectInfo',
-            JSON.stringify({ objectApiName: 'Account' }),
-            () => {}
-        );
+        await new Promise((resolve) => {
+            invokeAdapter('getObjectInfo', JSON.stringify({ objectApiName: 'Account' }), () => {
+                resolve(undefined);
+            });
+        });
 
         const testUpdatedDate = new Date();
         timekeeper.freeze(testUpdatedDate);
@@ -200,11 +200,11 @@ describe('invokeAdapter', () => {
         });
 
         // ensure DS has object info
-        await invokeAdapter(
-            'getObjectInfo',
-            JSON.stringify({ objectApiName: 'Account' }),
-            () => {}
-        );
+        await new Promise((resolve) => {
+            invokeAdapter('getObjectInfo', JSON.stringify({ objectApiName: 'Account' }), () => {
+                resolve(undefined);
+            });
+        });
 
         const testUpdatedDate = new Date();
         timekeeper.freeze(testUpdatedDate);
@@ -327,11 +327,11 @@ describe('invokeAdapter', () => {
         });
 
         // ensure DS has object info
-        await invokeAdapter(
-            'getObjectInfo',
-            JSON.stringify({ objectApiName: 'Account' }),
-            () => {}
-        );
+        await new Promise((resolve) => {
+            invokeAdapter('getObjectInfo', JSON.stringify({ objectApiName: 'Account' }), () => {
+                resolve(undefined);
+            });
+        });
 
         const getConfig = {
             recordId: recordRep_Account.id,

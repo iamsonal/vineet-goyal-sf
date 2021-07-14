@@ -211,11 +211,11 @@ describe('executeMutatingAdapter', () => {
         await getRecordPromise;
 
         // then populate object info for that record
-        await invokeAdapter(
-            'getObjectInfo',
-            JSON.stringify({ objectApiName: 'Account' }),
-            () => {}
-        );
+        await new Promise((resolve) => {
+            invokeAdapter('getObjectInfo', JSON.stringify({ objectApiName: 'Account' }), () => {
+                resolve(undefined);
+            });
+        });
 
         // deleteRecord is a special adapter that does not take in a config object but rather
         // a record ID directly :grimacing:

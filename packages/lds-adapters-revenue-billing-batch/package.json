@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-revenue-billing-batch",
-    "version": "1.23.3",
+    "version": "1.23.4",
     "description": "This API family is meant for all APIs required for Billing Batch.",
     "license": "MIT",
     "main": "dist/umd/es2018/revenue-billing-batch.js",
@@ -28,13 +28,13 @@
         "test:unit": "jest"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.23.3"
+        "@salesforce/lds-bindings": "1.23.4"
     },
     "devDependencies": {
         "@luvio/cli": "0.41.4",
         "@luvio/compiler": "0.41.4",
         "@luvio/engine": "0.41.4",
         "@luvio/lwc-luvio": "0.41.4",
-        "@salesforce/lds-karma": "1.23.3"
+        "@salesforce/lds-karma": "1.23.4"
     }
 }

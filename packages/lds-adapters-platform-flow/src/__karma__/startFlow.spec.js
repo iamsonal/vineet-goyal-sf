@@ -20,6 +20,16 @@ describe('startFlow', () => {
         expect(data).toEqualSnapshotWithoutEtags(mockResponse);
     });
 
+    it('starts a flow when version id is not supplied', async () => {
+        const mockConfig = {
+            flowDevName: 'flow1',
+        };
+        const mockResponse = getMock(MOCK_PREFIX + 'response_1');
+        mockStartFlowNetworkOnce(mockConfig, mockResponse);
+        const data = await startFlow(mockConfig);
+        expect(data).toEqualSnapshotWithoutEtags(mockResponse);
+    });
+
     it('does not use cache', async () => {
         const mockConfig = {
             flowDevName: 'flow133',

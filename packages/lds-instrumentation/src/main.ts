@@ -843,24 +843,10 @@ function instrumentStoreTrimTask(callback: () => number) {
 }
 
 function setStoreScheduler(store: Store) {
-    if (store.options === undefined || store.options.scheduler === undefined) {
-        store.options = {
-            scheduler: (callback: () => number) => {
-                Promise.resolve()
-                    .then(instrumentStoreTrimTask(callback))
-                    .catch((error) => {
-                        setTimeout(() => {
-                            throw error;
-                        }, 0);
-                    });
-            },
-        };
-    } else {
-        const originalScheduler = store.options.scheduler;
-        store.options.scheduler = (callback) => {
-            originalScheduler(instrumentStoreTrimTask(callback));
-        };
-    }
+    const originalScheduler = store.scheduler;
+    store.scheduler = (callback) => {
+        originalScheduler(instrumentStoreTrimTask(callback));
+    };
 }
 
 /**

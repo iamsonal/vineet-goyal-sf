@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { Adapter } from '@luvio/engine';
+import { Adapter, Store } from '@luvio/engine';
 import timekeeper from 'timekeeper';
 
 import {
@@ -876,12 +876,11 @@ describe('setupInstrumentation', () => {
     describe('sets store scheduler', () => {
         it('adds instrumentation with default scheduler', async () => {
             const luvio = {} as any;
-            const store = {} as any;
+            const store = new Store();
             setupInstrumentation(luvio, store);
-            expect(store.options).toBeDefined();
-            expect(store.options.scheduler).toBeDefined();
+            expect(store.scheduler).toBeDefined();
             // dummy trim task returning 5 trimmed entries
-            await store.options.scheduler(() => 5);
+            await store.scheduler(() => 5);
 
             expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(1);
             expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledWith('store-trim-task');
@@ -894,16 +893,14 @@ describe('setupInstrumentation', () => {
         it('adds instrumentation with custom scheduler', () => {
             const luvio = {} as any;
             // store with custom synchronous scheduler
-            const store = {
-                options: {
-                    scheduler: (callback) => {
-                        callback();
-                    },
+            const store = new Store({
+                scheduler: (callback) => {
+                    callback();
                 },
-            } as any;
+            });
             setupInstrumentation(luvio, store);
             // dummy trim task returning 5 trimmed entries
-            store.options.scheduler(() => 5);
+            store.scheduler(() => 5);
 
             expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(1);
             expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledWith('store-trim-task');
@@ -916,14 +913,10 @@ describe('setupInstrumentation', () => {
         it('no-ops with no-op scheduler', () => {
             const luvio = {} as any;
             // store with custom no-op scheduler
-            const store = {
-                options: {
-                    scheduler: () => {},
-                },
-            } as any;
+            const store = new Store({ scheduler: () => {} });
             setupInstrumentation(luvio, store);
             // dummy trim task returning 5 trimmed entries
-            store.options.scheduler(() => 5);
+            store.scheduler(() => 5);
 
             expect(instrumentationServiceSpies.counterIncrementSpy).not.toHaveBeenCalled();
             expect(instrumentationServiceSpies.perfStart).not.toHaveBeenCalled();

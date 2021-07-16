@@ -122,6 +122,26 @@ export const GET_RECORD_AGGREGATE_INVOKE_COUNT: MetricsKey = {
 };
 
 /**
+ * W-9105403
+ * Counter increments when a getRecord fails and we retry with aggregateUi
+ */
+export const GET_RECORD_AGGREGATE_RETRY_COUNT: MetricsKey = {
+    get() {
+        return { owner: METRIC_KEY_OWNER, name: 'get-record-aggregate-retry-count' };
+    },
+};
+
+/**
+ * W-9105403
+ * Counter increments when aggregateUi fails with a Connect exception
+ */
+export const AGGREGATE_CONNECT_ERROR_COUNT: MetricsKey = {
+    get() {
+        return { owner: METRIC_KEY_OWNER, name: 'aggregate-connect-error-count' };
+    },
+};
+
+/**
  * W-7301684
  * Counter for when getRecordNotifyChange api calls are allowed through.
  */

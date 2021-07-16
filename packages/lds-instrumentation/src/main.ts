@@ -29,6 +29,7 @@ import {
     ADAPTER_CACHE_MISS_DURATION_METRIC_NAME,
     ADAPTER_CACHE_MISS_OUT_OF_TTL_COUNT_METRIC_NAME,
     ADAPTER_CACHE_MISS_OUT_OF_TTL_DURATION_METRIC_NAME,
+    AGGREGATE_CONNECT_ERROR_COUNT,
     AGGREGATE_UI_CHUNK_COUNT,
     CACHE_HIT_COUNT,
     CACHE_MISS_COUNT,
@@ -37,6 +38,7 @@ import {
     GET_APEX_CACHE_MISS_COUNT,
     GET_APEX_CACHE_MISS_DURATION,
     GET_RECORD_AGGREGATE_INVOKE_COUNT,
+    GET_RECORD_AGGREGATE_RETRY_COUNT,
     GET_RECORD_NORMAL_INVOKE_COUNT,
     GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT,
     GET_RECORD_NOTIFY_CHANGE_DROP_COUNT,
@@ -178,10 +180,13 @@ const RECORD_API_NAME_CHANGE_COUNT_METRIC_NAME = 'record-api-name-change-count';
 
 const STORE_TRIM_TASK_NAME = 'store-trim-task';
 const STORE_TRIMMED_COUNT = 'store-trimmed-count';
+
+const aggregateUiConnectErrorCountMetric = counter(AGGREGATE_CONNECT_ERROR_COUNT);
 const aggregateUiChunkCountMetric = percentileHistogram(AGGREGATE_UI_CHUNK_COUNT);
 const cacheHitMetric = counter(CACHE_HIT_COUNT);
 const cacheMissMetric = counter(CACHE_MISS_COUNT);
 const getRecordAggregateInvokeMetric = counter(GET_RECORD_AGGREGATE_INVOKE_COUNT);
+const getRecordAggregateRetryMetric = counter(GET_RECORD_AGGREGATE_RETRY_COUNT);
 const getRecordNormalInvokeMetric = counter(GET_RECORD_NORMAL_INVOKE_COUNT);
 const getRecordNotifyChangeAllowMetric = counter(GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT);
 const getRecordNotifyChangeDropMetric = counter(GET_RECORD_NOTIFY_CHANGE_DROP_COUNT);
@@ -907,6 +912,14 @@ export function incrementGetRecordNormalInvokeCount(): void {
 
 export function incrementGetRecordAggregateInvokeCount(): void {
     getRecordAggregateInvokeMetric.increment(1);
+}
+
+export function incrementAggregateUiConnectErrorCount(): void {
+    aggregateUiConnectErrorCountMetric.increment(1);
+}
+
+export function incrementGetRecordAggregateRetryCount(): void {
+    getRecordAggregateRetryMetric.increment(1);
 }
 
 export function incrementGetRecordNotifyChangeAllowCount(): void {

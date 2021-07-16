@@ -6,16 +6,24 @@ import {
     SnapshotRefresh,
     UnfulfilledSnapshot,
     ResourceResponse,
+    ResourceRequest,
 } from '@luvio/engine';
 import { GetRecordConfig, createResourceParams } from '../../generated/adapters/getRecord';
-import { keyBuilder } from '../../generated/resources/getUiApiRecordsByRecordId';
+import {
+    keyBuilder,
+    ResourceRequestConfig,
+} from '../../generated/resources/getUiApiRecordsByRecordId';
 import { createResourceRequest } from '../../raml-artifacts/resources/getUiApiRecordsByRecordId/createResourceRequest';
 import { TTL as RecordRepresentationTTL } from '../../generated/types/RecordRepresentation';
 import {
     keyBuilder as recordRepresentationKeyBuilder,
     RecordRepresentation,
 } from '../../generated/types/RecordRepresentation';
-import { getTrackedFields, convertFieldsToTrie } from '../../util/records';
+import {
+    getTrackedFields,
+    convertFieldsToTrie,
+    ResourceRequestWithConfig,
+} from '../../util/records';
 import { buildSelectionFromFields } from '../../selectors/record';
 import { difference } from '../../validation/utils';
 import { isUnfulfilledSnapshot } from '../../util/snapshot';
@@ -50,7 +58,7 @@ function buildSnapshotRefresh(
 }
 
 function prepareRequest(luvio: Luvio, config: GetRecordConfig) {
-    const { recordId, fields } = config;
+    const { recordId, fields, optionalFields: optionalFieldsFromConfig } = config;
 
     // Should this go into the coersion logic?
     const key = keyBuilder(createResourceParams(config));
@@ -62,16 +70,18 @@ function prepareRequest(luvio: Luvio, config: GetRecordConfig) {
             maxDepth: configuration.getTrackedFieldDepthOnCacheMiss(),
             onlyFetchLeafNodeId: configuration.getTrackedFieldLeafNodeIdOnly(),
         },
-        config.optionalFields
+        optionalFieldsFromConfig
     );
-    const optionalFields =
+    const allOptionalFields =
         fields === undefined ? allTrackedFields : difference(allTrackedFields, fields);
-    const params = createResourceParams({
+    const params: ResourceRequestConfig = createResourceParams({
         recordId,
         fields,
-        optionalFields: optionalFields.length > 0 ? optionalFields : undefined,
+        optionalFields: allOptionalFields.length > 0 ? allOptionalFields : undefined,
     });
-    const request = createResourceRequest(params);
+
+    const request = createResourceRequest(params) as ResourceRequest & ResourceRequestWithConfig;
+    request.configOptionalFields = optionalFieldsFromConfig;
 
     return { request, key, allTrackedFields };
 }

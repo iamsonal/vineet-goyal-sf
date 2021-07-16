@@ -52,7 +52,7 @@ describe('basic', () => {
         await flushPromises();
 
         expect(el.getData()).toBeDefined();
-        expect(el.getData()).toEqual(el.getWiredData());
+        expect(el.getData()).toEqual(el.getWiredData().data);
         assertNetworkCallCount();
     });
 

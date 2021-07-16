@@ -25,7 +25,7 @@ describe('basic', () => {
 
         const data = await createReplicatedDataset(config);
 
-        expect(data).toEqualWithExtraNestedData(mock);
+        expect(data).toEqual(mock);
     });
 
     it('should not hit the network when another wire tries to access the newly created replicated dataset', async () => {

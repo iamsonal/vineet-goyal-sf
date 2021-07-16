@@ -23,7 +23,7 @@ describe('basic', () => {
         mockPostCalcProcVersionDetailsNetworkOnce(inputMock, outputMock);
 
         const el = await postCalcProcVersionDetails(inputMock);
-        expect(el).toEqualWithExtraNestedData(outputMock);
+        expect(el).toEqual(outputMock);
     });
 
     it('test basic postCalcProcVersionDetails with required inputs only', async () => {
@@ -32,7 +32,7 @@ describe('basic', () => {
         mockPostCalcProcVersionDetailsNetworkOnce(inputMock, outputMock);
 
         const el = await postCalcProcVersionDetails(inputMock);
-        expect(el).toEqualWithExtraNestedData(outputMock);
+        expect(el).toEqual(outputMock);
     });
 
     it('test postCalcProcVersionDetails error case', async () => {

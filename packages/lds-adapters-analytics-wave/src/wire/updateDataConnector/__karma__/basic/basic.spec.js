@@ -32,7 +32,7 @@ describe('basic', () => {
 
         const data = await updateDataConnector(config);
 
-        expect(data).toEqualWithExtraNestedData(mock);
+        expect(data).toEqual(mock);
     });
 
     it('update target connector', async () => {
@@ -49,7 +49,7 @@ describe('basic', () => {
 
         const data = await updateDataConnector(config);
 
-        expect(data).toEqualWithExtraNestedData(mock);
+        expect(data).toEqual(mock);
     });
 
     it('should not hit the network when another wire tries to access the newly updated data connector', async () => {

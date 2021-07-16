@@ -28,7 +28,7 @@ describe('basic', () => {
 
         const data = await createDataConnector(config);
 
-        expect(data).toEqualWithExtraNestedData(mock);
+        expect(data).toEqual(mock);
     });
 
     it('displays error when network request 404s', async () => {

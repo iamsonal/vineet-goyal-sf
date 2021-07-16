@@ -11,7 +11,7 @@ export default class UpdateDataflowJob extends LightningElement {
     @api
     invokeUpdateDataflowJob({ dataflowjobId, dataflowJob: { command } }) {
         updateDataflowJob({ dataflowjobId, dataflowJob: { command } })
-            .then(({ data }) => {
+            .then((data) => {
                 this.jobData = data;
                 this.jobId = dataflowjobId;
             })
@@ -27,7 +27,7 @@ export default class UpdateDataflowJob extends LightningElement {
 
     @api
     getWiredData() {
-        return this.wiredDataflowJobResult && this.wiredDataflowJobResult.data;
+        return this.wiredDataflowJobResult;
     }
 
     @api

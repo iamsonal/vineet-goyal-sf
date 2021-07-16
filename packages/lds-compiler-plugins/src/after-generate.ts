@@ -24,12 +24,7 @@ const LDS_BINDINGS = '@salesforce/lds-bindings';
 // Adapter modules that need a nested .data included in the result when snapshots are
 // unwrapped for imperative calls. This is a stopgap measure until W-9232436 is fully
 // resolved.
-const NESTED_DATA_ADAPTER_MODULES = [
-    'lds-adapters-analytics-wave',
-    'lds-adapters-cms-authoring',
-    'lds-adapters-industries-rule-builder',
-    'lds-adapters-platform-admin-success-guidance',
-];
+const NESTED_DATA_ADAPTER_MODULES = ['lds-adapters-platform-admin-success-guidance'];
 
 function generateNpmModule(outputDir: string, adapters: AdapterInfo[]) {
     const code = adapters.map((adapter) => {

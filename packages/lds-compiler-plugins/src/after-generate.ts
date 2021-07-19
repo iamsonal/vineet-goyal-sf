@@ -21,11 +21,6 @@ const CREATE_WIRE_ADAPTER_CONSTRUCTOR = 'createWireAdapterConstructor';
 const CREATE_LDS_ADAPTER = 'createLDSAdapter';
 const LDS_BINDINGS = '@salesforce/lds-bindings';
 
-// Adapter modules that need a nested .data included in the result when snapshots are
-// unwrapped for imperative calls. This is a stopgap measure until W-9232436 is fully
-// resolved.
-const NESTED_DATA_ADAPTER_MODULES = ['lds-adapters-platform-admin-success-guidance'];
-
 function generateNpmModule(outputDir: string, adapters: AdapterInfo[]) {
     const code = adapters.map((adapter) => {
         const { name } = adapter;
@@ -39,11 +34,7 @@ function generateNpmModule(outputDir: string, adapters: AdapterInfo[]) {
     fs.writeFileSync(path.join(outputDir, 'main.ts'), source);
 }
 
-function generateCoreAdapterModule(
-    outputDir: string,
-    adapters: AdapterInfo[],
-    includeNestedData: boolean
-) {
+function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
     const adapterCode = adapters.reduce((_adapterCode, adapter) => {
         const { apiFamily, name, method, ttl } = adapter;
         const factoryIdentifier = `${name}AdapterFactory`;
@@ -74,12 +65,6 @@ function generateCoreAdapterModule(
 
     const adapterNames = Object.keys(adapterCode).sort();
 
-    const unwrapper = includeNestedData
-        ? // temporary hack for consumers that are still expecting a Snapshot; note that this
-          // has the side effect of unfreezing the top level of data
-          `return (config: Config) => (adapter(config) as Promise<Snapshot<DataType>>).then(snapshot => ({ ...snapshot.data, data: snapshot.data }));`
-        : `return (config: Config) => (adapter(config) as Promise<Snapshot<DataType>>).then(snapshot => snapshot.data);`;
-
     const source = dedent`
         import { AdapterFactory, Luvio, Snapshot } from '@luvio/engine';
         import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}, ${CREATE_LDS_ADAPTER} } from '${LDS_BINDINGS}';
@@ -91,7 +76,7 @@ function generateCoreAdapterModule(
         function bindExportsTo(luvio: Luvio): { [key: string]: any } {
             function unwrapSnapshotData<Config,DataType>(factory: AdapterFactory<Config,DataType>) {
                 const adapter = factory(luvio);
-                ${unwrapper}
+                return (config: Config) => (adapter(config) as Promise<Snapshot<DataType>>).then(snapshot => snapshot.data);
             }
 
             return {
@@ -139,11 +124,7 @@ export function afterGenerate(config: CompilerConfig, modelInfo: ModelInfo) {
     const outputDur = path.join(config.outputDir, 'artifacts');
     mkdirp.sync(outputDur);
 
-    generateCoreAdapterModule(
-        outputDur,
-        adapters,
-        !!NESTED_DATA_ADAPTER_MODULES.find((mod) => outputDur.indexOf(mod) > -1)
-    );
+    generateCoreAdapterModule(outputDur, adapters);
     generateNpmModule(outputDur, adapters);
 }
 

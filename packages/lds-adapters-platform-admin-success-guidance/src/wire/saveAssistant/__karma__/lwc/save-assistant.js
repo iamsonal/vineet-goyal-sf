@@ -15,7 +15,7 @@ export default class SaveAssistant extends LightningElement {
     @api
     invokeSaveAssistant({ assistantGroup, assistantData, scenarioId }) {
         saveAssistant({ assistantGroup, assistantData, scenarioId })
-            .then(({ data }) => {
+            .then((data) => {
                 this.assistantData = data;
                 this.assistantGroup = assistantGroup;
                 this.scenarioId = scenarioId;

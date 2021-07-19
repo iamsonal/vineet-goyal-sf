@@ -33,7 +33,7 @@ describe('basic', () => {
 
         const response = await updateScenarios(config);
 
-        expect(response).toEqualWithExtraNestedData(mock);
+        expect(response).toEqual(mock);
     });
     it('displays error when network request 404s', async () => {
         const config = {

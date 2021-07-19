@@ -16,7 +16,7 @@ export default class SaveQuestionnaire extends LightningElement {
     @api
     invokeSaveQuestionnaire({ assistantGroup, questionnaireData, questionnaireId }) {
         saveQuestionnaire({ assistantGroup, questionnaireId, questionnaireData })
-            .then(({ data }) => {
+            .then((data) => {
                 this.questionnaireId = questionnaireId;
                 this.assistantGroup = assistantGroup;
                 this.questionnaireData = data;

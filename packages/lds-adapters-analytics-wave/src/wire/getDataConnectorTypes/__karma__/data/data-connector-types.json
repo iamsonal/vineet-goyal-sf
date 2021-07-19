@@ -114,6 +114,7 @@
         {
             "advancedProperties": [],
             "associatedCategories": ["batchRead", "filterSupport"],
+            "bundle": "Salesforce",
             "connectionProperties": [
                 {
                     "dataType": "text",
@@ -1048,6 +1049,7 @@
         {
             "advancedProperties": [],
             "associatedCategories": ["batchRead", "filterSupport"],
+            "bundle": "Snowflake",
             "connectionProperties": [
                 {
                     "dataType": "text",
@@ -1131,6 +1133,7 @@
         {
             "advancedProperties": [],
             "associatedCategories": ["direct"],
+            "bundle": "Snowflake",
             "connectionProperties": [
                 {
                     "dataType": "text",
@@ -1268,6 +1271,7 @@
         {
             "advancedProperties": [],
             "associatedCategories": ["batchRead", "fileBased"],
+            "bundle": "AmazonS3",
             "connectionProperties": [
                 {
                     "dataType": "text",

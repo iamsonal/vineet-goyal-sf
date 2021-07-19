@@ -648,6 +648,16 @@ types:
             - FilterSupport
             - MuleSoft
             - Output
+      bundle:
+        description: The bundle that this data connector belongs to.
+        type: string
+        enum:
+          - AmazonS3
+          - Cdp
+          - Salesforce
+          - Snowflake
+          - Tableau
+        required: false # TODO Hand-rolled W-8253396
       connectionProperties:
         description: The connection properties of the data connector type.
         type: array

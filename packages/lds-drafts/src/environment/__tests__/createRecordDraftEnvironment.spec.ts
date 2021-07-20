@@ -276,7 +276,7 @@ describe('draft environment tests', () => {
             });
         });
 
-        it('fails to create record draft when object info is not present', async () => {
+        it('fails to create record draft when object info is not accessible', async () => {
             const { draftEnvironment } = await setupDraftEnvironment({
                 skipPopulatingAccountObjectInfo: true,
             });
@@ -287,11 +287,12 @@ describe('draft environment tests', () => {
                 status: 400,
                 body: {
                     errorCode: 'DRAFT_ERROR',
-                    message: 'ObjectInfo for Account is not cached',
+                    message: 'failed to synthesize draft response',
                 },
                 headers: {},
             });
         });
+
         it('fails to create record draft when reference field is not a string', async () => {
             const { draftEnvironment } = await setupDraftEnvironment();
 
@@ -307,6 +308,7 @@ describe('draft environment tests', () => {
                 headers: {},
             });
         });
+
         it('fails to create record draft when referenced record is not cached', async () => {
             const { draftEnvironment } = await setupDraftEnvironment();
 

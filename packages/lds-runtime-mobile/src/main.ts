@@ -120,6 +120,7 @@ const draftEnv = makeEnvironmentDraftAware(durableEnv, {
     prefixForApiName,
     apiNameForPrefix,
     getRecord,
+    getObjectInfo,
     userId,
     registerDraftKeyMapping: registerDraftMapping,
 });

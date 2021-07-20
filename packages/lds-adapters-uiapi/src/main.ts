@@ -4,6 +4,7 @@ export { ClientOptions as UpdateRecordClientOptions } from './wire/updateRecord'
 
 export { GetRecordConfig } from './generated/adapters/getRecord';
 export { UpdateRecordConfig } from './generated/adapters/updateRecord';
+export { GetObjectInfoConfig } from './generated/adapters/getObjectInfo';
 
 // Validation Utils
 export { untrustedIsObject } from './generated/adapters/adapter-utils';

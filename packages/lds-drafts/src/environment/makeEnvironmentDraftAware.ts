@@ -1,4 +1,4 @@
-import { Environment, Store } from '@luvio/engine';
+import { Adapter, Environment, Store } from '@luvio/engine';
 import { DurableEnvironment, DurableStoreChange, DurableStoreEntry } from '@luvio/environments';
 import {
     DraftIdMappingEntry,
@@ -7,7 +7,11 @@ import {
     DraftQueueEvent,
     DraftQueueEventType,
 } from '../DraftQueue';
-import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import {
+    GetObjectInfoConfig,
+    ObjectInfoRepresentation,
+    RecordRepresentation,
+} from '@salesforce/lds-adapters-uiapi';
 import { getRecordDraftEnvironment } from './getRecordDraftEnvironment';
 import { createRecordDraftEnvironment } from './createRecordDraftEnvironment';
 import {
@@ -35,6 +39,7 @@ export interface DraftEnvironmentOptions {
     prefixForApiName: (apiName: string) => Promise<string>;
     userId: string;
     registerDraftKeyMapping: (draftKey: string, canonicalKey: string) => void;
+    getObjectInfo: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>;
 }
 
 export function makeEnvironmentDraftAware(

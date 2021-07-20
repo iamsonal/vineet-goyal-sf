@@ -1,7 +1,12 @@
 import { MockDurableStore } from '@luvio/adapter-test-library';
-import { Environment, Luvio, Store } from '@luvio/engine';
+import { Adapter, Environment, FulfilledSnapshot, Luvio, Store } from '@luvio/engine';
 import { DefaultDurableSegment, DurableStore, makeDurable, makeOffline } from '@luvio/environments';
-import { getRecordAdapterFactory, keyBuilderObjectInfo } from '@salesforce/lds-adapters-uiapi';
+import {
+    getRecordAdapterFactory,
+    keyBuilderObjectInfo,
+    GetObjectInfoConfig,
+    ObjectInfoRepresentation,
+} from '@salesforce/lds-adapters-uiapi';
 import { DraftQueue } from '../../DraftQueue';
 import { makeDurableStoreDraftAware } from '../../durableStore/makeDurableStoreDraftAware';
 import {
@@ -10,6 +15,7 @@ import {
 } from '../../durableStore/makeRecordDenormalizingDurableStore';
 import { DRAFT_RECORD_ID } from '../../__tests__/test-utils';
 import { makeEnvironmentDraftAware } from '../makeEnvironmentDraftAware';
+
 import AccountObjectInfo from './mockData/object-Account.json';
 const AccountObjectInfoKey = keyBuilderObjectInfo({ apiName: AccountObjectInfo.apiName });
 
@@ -66,6 +72,13 @@ export async function setupDraftEnvironment(
         return Promise.resolve(apiName === 'Account' ? '001' : undefined);
     };
 
+    let getObjectInfo: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>;
+    const accountEntry = { data: AccountObjectInfo };
+    const snapshot: Partial<FulfilledSnapshot<ObjectInfoRepresentation, {}>> = {
+        data: accountEntry.data as ObjectInfoRepresentation,
+    };
+    getObjectInfo = jest.fn().mockResolvedValue(snapshot);
+
     const draftEnvironment = makeEnvironmentDraftAware(baseEnvironment, {
         store,
         draftQueue,
@@ -80,6 +93,7 @@ export async function setupDraftEnvironment(
         apiNameForPrefix: setupOptions.apiNameForPrefix || defaultApiNameForPrefix,
         userId: 'testUserId',
         registerDraftKeyMapping: registerDraftKeyMapping,
+        getObjectInfo: getObjectInfo,
     });
 
     if (setupOptions.skipPopulatingAccountObjectInfo !== true) {

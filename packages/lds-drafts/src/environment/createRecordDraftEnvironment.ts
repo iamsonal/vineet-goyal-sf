@@ -63,7 +63,14 @@ function resolveResourceRequestIds(
 
 export function createRecordDraftEnvironment(
     env: DurableEnvironment,
-    { draftQueue, prefixForApiName, generateId, isDraftId, durableStore }: DraftEnvironmentOptions
+    {
+        draftQueue,
+        prefixForApiName,
+        generateId,
+        isDraftId,
+        durableStore,
+        getObjectInfo,
+    }: DraftEnvironmentOptions
 ): DurableEnvironment {
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function <T>(
         request: ResourceRequest
@@ -95,9 +102,11 @@ export function createRecordDraftEnvironment(
     };
 
     function assertReferenceIdsAreCached(apiName: string, fields: Record<string, any>) {
-        return ensureReferencedIdsAreCached(durableStore, apiName, fields).catch((err: Error) => {
-            throw createDraftSynthesisErrorResponse(err.message);
-        });
+        return ensureReferencedIdsAreCached(durableStore, apiName, fields, getObjectInfo).catch(
+            (err: Error) => {
+                throw createDraftSynthesisErrorResponse(err.message);
+            }
+        );
     }
 
     function enqueueRequest(prefix: string, request: ResourceRequest): any {

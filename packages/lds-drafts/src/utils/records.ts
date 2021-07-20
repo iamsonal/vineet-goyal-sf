@@ -6,6 +6,7 @@ import {
     buildSelectionFromFields,
     RecordRepresentationNormalized,
     GetRecordConfig,
+    GetObjectInfoConfig,
     ObjectInfoRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
 import {
@@ -36,7 +37,7 @@ import {
     DurableStoreEntries,
     DurableStoreEntry,
 } from '@luvio/environments';
-import { getObjectInfos, getObjectInfosForRecords } from './objectInfo';
+import { getObjectInfosForRecords } from './objectInfo';
 import { RecordDenormalizingDurableStore } from '../durableStore/makeRecordDenormalizingDurableStore';
 
 type ScalarFieldType = boolean | number | string | null;
@@ -916,49 +917,56 @@ export function getObjectApiNamesFromDraftCreateEntries(
  * @param durableStore the durable store
  * @param apiName api name of the record being created or modified
  * @param recordInputFields the fields of the record being created or modified
+ * @param getObjectInfoAdapter adapter tasked with getting objectInfo for supplied apiName
  * @throws if object info is not cached or referenced entry is missing in the durable store
  */
 export function ensureReferencedIdsAreCached(
     durableStore: RecordDenormalizingDurableStore,
     apiName: string,
-    recordInputFields: Record<string, ScalarFieldType>
+    recordInputFields: Record<string, ScalarFieldType>,
+    getObjectInfoAdapter: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>
 ) {
-    return getObjectInfos(durableStore, [apiName]).then((objectInfos) => {
-        const objectInfo = objectInfos[apiName];
-        if (objectInfo === undefined) {
-            throw new Error(`ObjectInfo for ${apiName} is not cached`);
-        }
-
-        const recordReferences: Record<string, true> = {};
-        const { fields: objectInfoFieldInformations } = objectInfo;
-        const recordInputFieldNames = ObjectKeys(recordInputFields);
-        for (let i = 0, len = recordInputFieldNames.length; i < len; i++) {
-            const recordInputFieldName = recordInputFieldNames[i];
-            const field = recordInputFields[recordInputFieldName];
-            const objectInfoFieldInformation = objectInfoFieldInformations[recordInputFieldName];
-
-            if (objectInfoFieldInformation.dataType === 'Reference') {
-                if (typeof field !== 'string') {
-                    throw Error(`Reference field value ${recordInputFieldName} is not a string`);
-                }
-                const key = keyBuilderRecord({ recordId: field });
-                recordReferences[key] = true;
+    return Promise.resolve(getObjectInfoAdapter({ objectApiName: apiName }))
+        .then((snapshot) => {
+            if (snapshot === null || snapshot.data === undefined) {
+                throw new Error(`ObjectInfo for ${apiName} is not cached`);
             }
-        }
+            return snapshot.data;
+        })
+        .then((objectInfo) => {
+            const recordReferences: Record<string, true> = {};
+            const { fields: objectInfoFieldInformations } = objectInfo;
+            const recordInputFieldNames = ObjectKeys(recordInputFields);
+            for (let i = 0, len = recordInputFieldNames.length; i < len; i++) {
+                const recordInputFieldName = recordInputFieldNames[i];
+                const field = recordInputFields[recordInputFieldName];
+                const objectInfoFieldInformation =
+                    objectInfoFieldInformations[recordInputFieldName];
 
-        const recordKeys = ObjectKeys(recordReferences);
-        return durableStore.getEntries(recordKeys, DefaultDurableSegment).then((entries) => {
-            if (entries === undefined) {
-                throw Error('Reference entries are not cached');
-            }
-
-            for (let i = 0, len = recordKeys.length; i < len; i++) {
-                const recordKey = recordKeys[i];
-                if (entries[recordKey] === undefined) {
-                    const id = extractRecordIdFromStoreKey(recordKey);
-                    throw new Error(`Referenced record ${id} is not cached`);
+                if (objectInfoFieldInformation.dataType === 'Reference') {
+                    if (typeof field !== 'string') {
+                        throw Error(
+                            `Reference field value ${recordInputFieldName} is not a string`
+                        );
+                    }
+                    const key = keyBuilderRecord({ recordId: field });
+                    recordReferences[key] = true;
                 }
             }
+
+            const recordKeys = ObjectKeys(recordReferences);
+            return durableStore.getEntries(recordKeys, DefaultDurableSegment).then((entries) => {
+                if (entries === undefined) {
+                    throw Error('Reference entries are not cached');
+                }
+
+                for (let i = 0, len = recordKeys.length; i < len; i++) {
+                    const recordKey = recordKeys[i];
+                    if (entries[recordKey] === undefined) {
+                        const id = extractRecordIdFromStoreKey(recordKey);
+                        throw new Error(`Referenced record ${id} is not cached`);
+                    }
+                }
+            });
         });
-    });
 }

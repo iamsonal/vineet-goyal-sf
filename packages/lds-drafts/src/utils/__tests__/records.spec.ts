@@ -1,8 +1,10 @@
-import { ResourceRequest, StoreLink } from '@luvio/engine';
+import { Adapter, FulfilledSnapshot, ResourceRequest, StoreLink } from '@luvio/engine';
 import { DurableStoreEntry } from '@luvio/environments';
 import {
     keyBuilderObjectInfo,
     keyBuilderRecord,
+    GetObjectInfoConfig,
+    ObjectInfoRepresentation,
     RecordRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
 import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
@@ -2543,32 +2545,68 @@ describe('draft environment record utilities', () => {
                 }),
             } as any;
 
-            await ensureReferencedIdsAreCached(durableStore, 'Opportunity', { Name: 'Foo' });
+            let getObjectInfo: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>;
+
+            let snapshot: Partial<FulfilledSnapshot<ObjectInfoRepresentation, {}>> = {
+                data: opportunityEntry.data as ObjectInfoRepresentation,
+            };
+            getObjectInfo = jest.fn().mockResolvedValue(snapshot);
+
+            await ensureReferencedIdsAreCached(
+                durableStore,
+                'Opportunity',
+                { Name: 'Foo' },
+                getObjectInfo
+            );
         });
+
         it('returns when object info is cached and reference fields are cached', async () => {
             const opportunityEntry = { data: OpportunityObjectInfo };
             const durableStore = {
-                getEntries: jest
-                    .fn()
-                    .mockResolvedValueOnce({
-                        [OPPORTUNITY_OBJECT_INFO_KEY]: opportunityEntry,
-                    })
-                    .mockResolvedValueOnce({
-                        [STORE_KEY_RECORD]: {},
-                    }),
+                getEntries: jest.fn().mockResolvedValueOnce({
+                    [STORE_KEY_RECORD]: {},
+                }),
             } as any;
 
-            await ensureReferencedIdsAreCached(durableStore, 'Opportunity', { OwnerId: RECORD_ID });
+            let getObjectInfo: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>;
+
+            let snapshot: Partial<FulfilledSnapshot<ObjectInfoRepresentation, {}>> = {
+                data: opportunityEntry.data as ObjectInfoRepresentation,
+                recordId: '000',
+                select: null,
+            };
+            getObjectInfo = jest.fn().mockResolvedValue(snapshot);
+
+            await ensureReferencedIdsAreCached(
+                durableStore,
+                'Opportunity',
+                { OwnerId: RECORD_ID },
+                getObjectInfo
+            );
         });
-        it('throws when object info is not cached', async () => {
+
+        it('throws when object info is not available', async () => {
             const durableStore = {
                 getEntries: jest.fn().mockResolvedValueOnce({}),
             } as any;
 
+            let getObjectInfo: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>;
+
+            let snapshot: Partial<FulfilledSnapshot<ObjectInfoRepresentation, {}>> = {
+                data: undefined,
+            };
+            getObjectInfo = jest.fn().mockResolvedValue(snapshot);
+
             await expect(
-                ensureReferencedIdsAreCached(durableStore, 'Opportunity', { OwnerId: RECORD_ID })
+                ensureReferencedIdsAreCached(
+                    durableStore,
+                    'Opportunity',
+                    { OwnerId: RECORD_ID },
+                    getObjectInfo
+                )
             ).rejects.toEqual(new Error('ObjectInfo for Opportunity is not cached'));
         });
+
         it('throws when reference field is not a string', async () => {
             const opportunityEntry = { data: OpportunityObjectInfo };
             const durableStore = {
@@ -2577,10 +2615,23 @@ describe('draft environment record utilities', () => {
                 }),
             } as any;
 
+            let getObjectInfo: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>;
+
+            let snapshot: Partial<FulfilledSnapshot<ObjectInfoRepresentation, {}>> = {
+                data: opportunityEntry.data as ObjectInfoRepresentation,
+            };
+            getObjectInfo = jest.fn().mockResolvedValue(snapshot);
+
             await expect(
-                ensureReferencedIdsAreCached(durableStore, 'Opportunity', { OwnerId: 123 })
+                ensureReferencedIdsAreCached(
+                    durableStore,
+                    'Opportunity',
+                    { OwnerId: 123 },
+                    getObjectInfo
+                )
             ).rejects.toEqual(new Error('Reference field value OwnerId is not a string'));
         });
+
         it('throws when reference field is not cached', async () => {
             const opportunityEntry = { data: OpportunityObjectInfo };
             const durableStore = {
@@ -2592,10 +2643,23 @@ describe('draft environment record utilities', () => {
                     .mockResolvedValueOnce({}),
             } as any;
 
+            let getObjectInfo: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>;
+
+            let snapshot: Partial<FulfilledSnapshot<ObjectInfoRepresentation, {}>> = {
+                data: opportunityEntry.data as ObjectInfoRepresentation,
+            };
+            getObjectInfo = jest.fn().mockResolvedValue(snapshot);
+
             await expect(
-                ensureReferencedIdsAreCached(durableStore, 'Opportunity', { OwnerId: RECORD_ID })
+                ensureReferencedIdsAreCached(
+                    durableStore,
+                    'Opportunity',
+                    { OwnerId: RECORD_ID },
+                    getObjectInfo
+                )
             ).rejects.toEqual(new Error(`Referenced record ${RECORD_ID} is not cached`));
         });
+
         it('throws when durable store returns undefined for records', async () => {
             const opportunityEntry = { data: OpportunityObjectInfo };
             const durableStore = {
@@ -2607,10 +2671,23 @@ describe('draft environment record utilities', () => {
                     .mockResolvedValueOnce(undefined),
             } as any;
 
+            let getObjectInfo: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>;
+
+            let snapshot: Partial<FulfilledSnapshot<ObjectInfoRepresentation, {}>> = {
+                data: opportunityEntry.data as ObjectInfoRepresentation,
+            };
+            getObjectInfo = jest.fn().mockResolvedValue(snapshot);
+
             await expect(
-                ensureReferencedIdsAreCached(durableStore, 'Opportunity', { OwnerId: RECORD_ID })
-            ).rejects.toEqual(new Error(`Reference entries are not cached`));
+                ensureReferencedIdsAreCached(
+                    durableStore,
+                    'Opportunity',
+                    { OwnerId: RECORD_ID },
+                    getObjectInfo
+                )
+            ).rejects.toEqual(new Error(`Referenced record ${RECORD_ID} is not cached`));
         });
+
         it('throws when one reference field is cached but another is not', async () => {
             const opportunityEntry = { data: OpportunityObjectInfo };
             const durableStore = {
@@ -2624,12 +2701,24 @@ describe('draft environment record utilities', () => {
                     }),
             } as any;
 
+            let getObjectInfo: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>;
+
+            let snapshot: Partial<FulfilledSnapshot<ObjectInfoRepresentation, {}>> = {
+                data: opportunityEntry.data as ObjectInfoRepresentation,
+            };
+            getObjectInfo = jest.fn().mockResolvedValue(snapshot);
+
             await expect(
-                ensureReferencedIdsAreCached(durableStore, 'Opportunity', {
-                    OwnerId: RECORD_ID,
-                    AccountId: 'Missing',
-                })
-            ).rejects.toEqual(new Error(`Referenced record Missing is not cached`));
+                ensureReferencedIdsAreCached(
+                    durableStore,
+                    'Opportunity',
+                    {
+                        OwnerId: RECORD_ID,
+                        AccountId: 'Missing',
+                    },
+                    getObjectInfo
+                )
+            ).rejects.toEqual(new Error(`Referenced record ${RECORD_ID} is not cached`));
         });
     });
 });

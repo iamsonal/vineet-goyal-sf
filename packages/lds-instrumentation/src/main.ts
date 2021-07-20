@@ -63,7 +63,7 @@ import {
     TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT,
 } from './utils/observability';
 
-import { ObjectKeys } from './utils/language';
+import { ObjectKeys, ObjectCreate } from './utils/language';
 import { LRUCache } from './utils/lru-cache';
 import { isPromise, stableJSONStringify } from './utils/utils';
 interface RecordApiNameChangeCounters {
@@ -168,6 +168,12 @@ export interface LightningInteractionSchema {
     eventSource: string;
     eventType: string;
     attributes: unknown;
+}
+
+export interface CounterMetric {
+    kind: 'counter';
+    name: string;
+    value: number;
 }
 
 const NAMESPACE = 'lds';
@@ -463,6 +469,8 @@ export class Instrumentation {
             this.incrementAdapterRequestErrorCount(context);
         } else if (isLightningInteractionLog(context)) {
             log(null, context);
+        } else if (isCounterMetric(context)) {
+            counterMetric(context.name, context.value);
         } else {
             perfStart(NETWORK_TRANSACTION_NAME);
             perfEnd(NETWORK_TRANSACTION_NAME, context);
@@ -833,6 +841,33 @@ function isLightningInteractionLog(context: unknown): context is LightningIntera
 function log(schema: any, payload: LightningInteractionSchema): void {
     const { target, scope, context, eventSource, eventType, attributes } = payload;
     interaction(target, scope, context, eventSource, eventType, attributes);
+}
+
+/**
+ * @param context the payload received from `luvio.instrument`
+ * @returns whether or not the context is of type `CounterMetric`.
+ */
+function isCounterMetric(context: unknown): context is CounterMetric {
+    return (context as CounterMetric).kind === 'counter';
+}
+
+const counterMetricTracker: Record<string, Counter> = ObjectCreate(null);
+/**
+ * Calls instrumentation/service telemetry counter
+ * @param name Name of the metric
+ * @param value pos numbers increment, neg numbers decrement
+ */
+function counterMetric(name: string, value: number) {
+    let metric = counterMetricTracker[name];
+    if (metric === undefined) {
+        metric = counter(createMetricsKey(NAMESPACE, name));
+        counterMetricTracker[name] = metric;
+    }
+    if (value > 0) {
+        metric.increment(value);
+    } else {
+        metric.decrement(value * -1);
+    }
 }
 
 function instrumentStoreTrimTask(callback: () => number) {

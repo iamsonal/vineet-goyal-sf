@@ -47,18 +47,12 @@ export default function merge(
         incoming.displayValue = existing.displayValue;
 
         // Temporary instrumentation to capture distribution and frequency, W-8990630
-        luvio.instrument((): LightningInteractionSchema => {
+        // Flipped to counter metric due to W-9611107
+        luvio.instrument((): any => {
             return {
-                kind: 'interaction',
-                target: 'merge',
-                scope: 'lds-adapters-uiapi',
-                context: {
-                    entityName: (path.parent!.data as RecordRepresentationNormalized).apiName,
-                    fieldName: path.propertyName,
-                },
-                eventSource: 'lds-dv-bandaid',
-                eventType: 'system',
-                attributes: null,
+                kind: 'counter',
+                name: 'merge-null-dv-count',
+                value: 1,
             };
         });
     }

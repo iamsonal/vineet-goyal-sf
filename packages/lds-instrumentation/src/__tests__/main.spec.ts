@@ -15,6 +15,7 @@ import {
     REFRESH_UIAPI_KEY,
     SUPPORTED_KEY,
     UNSUPPORTED_KEY,
+    MetricCounter,
 } from '../main';
 import { REFRESH_ADAPTER_EVENT } from '@luvio/lwc-luvio';
 import { stableJSONStringify } from '../utils/utils';
@@ -25,6 +26,7 @@ jest.mock('instrumentation/service', () => {
         cacheStatsLogHitsSpy: jest.fn(),
         cacheStatsLogMissesSpy: jest.fn(),
         counterIncrementSpy: jest.fn(),
+        counterDecrementSpy: jest.fn(),
         interaction: jest.fn(),
         percentileUpdateSpy: jest.fn(),
         perfEnd: jest.fn(),
@@ -35,6 +37,7 @@ jest.mock('instrumentation/service', () => {
     return {
         counter: (metricKey) => ({
             increment: spies.counterIncrementSpy,
+            decrement: spies.counterDecrementSpy,
             __metricKey: metricKey,
         }),
         interaction: spies.interaction,
@@ -90,6 +93,7 @@ beforeEach(() => {
     instrumentationServiceSpies.cacheStatsLogHitsSpy.mockClear();
     instrumentationServiceSpies.cacheStatsLogMissesSpy.mockClear();
     instrumentationServiceSpies.counterIncrementSpy.mockClear();
+    instrumentationServiceSpies.counterDecrementSpy.mockClear();
     instrumentationServiceSpies.timerAddDurationSpy.mockClear();
     (instrumentation as any).adapterCacheMisses = new LRUCache(250);
     (instrumentation as any).resetRefreshStats();
@@ -140,6 +144,33 @@ describe('instrumentation', () => {
         it('should call the log function, which will call interaction', () => {
             instrumentation.instrumentNetwork(interaction);
             expect(instrumentationServiceSpies.interaction).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('counter metric', () => {
+        const counter: MetricCounter = {
+            kind: 'counter',
+            name: 'foo',
+            value: 1,
+        };
+
+        it('should increment `foo` counter by 1', () => {
+            counter.value = 1;
+            instrumentation.instrumentNetwork(counter);
+            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(1);
+            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledWith(1);
+        });
+        it('should increment `foo` counter by 100', () => {
+            counter.value = 100;
+            instrumentation.instrumentNetwork(counter);
+            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(1);
+            expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledWith(100);
+        });
+        it('should increment `foo` counter by -100', () => {
+            counter.value = -100;
+            instrumentation.instrumentNetwork(counter);
+            expect(instrumentationServiceSpies.counterDecrementSpy).toHaveBeenCalledTimes(1);
+            expect(instrumentationServiceSpies.counterDecrementSpy).toHaveBeenCalledWith(100);
         });
     });
 

@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-karma",
-    "version": "1.23.4",
+    "version": "1.23.5",
     "description": "Karma config and utils for wire adapter testing",
     "private": true,
     "license": "MIT",
@@ -12,6 +12,6 @@
     "dependencies": {
         "@luvio/engine": "0.42.0",
         "@luvio/lwc-luvio": "0.42.0",
-        "@salesforce/lds-default-luvio": "1.23.4"
+        "@salesforce/lds-default-luvio": "1.23.5"
     }
 }

@@ -48,6 +48,7 @@ export function selectChildResourceParams(
             const results = [] as BatchRepresentation['results'];
             for (let i = 0, len = childResources.length; i < len; i += 1) {
                 reader.enterPath(i);
+                reader.enterPath(envelopeBodyPath);
                 const childResource = childResources[i];
                 const childKey = getUiApiRecordsByRecordId_keyBuilder(childResource);
                 const isMissingDataBeforeChildRead = reader.getIsDataMissing();
@@ -58,6 +59,7 @@ export function selectChildResourceParams(
                         childResource.queryParams.optionalFields || []
                     )
                 );
+                reader.exitPath();
                 const childSink = {} as BatchResultRepresentation;
                 reader.markSeenId(childKey);
                 switch (childSnapshot.state) {

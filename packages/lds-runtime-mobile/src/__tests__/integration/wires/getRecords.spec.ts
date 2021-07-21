@@ -253,5 +253,60 @@ describe('mobile runtime integration tests', () => {
 
             expect(resultWithDraft.state).toBe('Fulfilled');
         });
+
+        it('stale becomes unstale after refresh', async () => {
+            const id1 = '001xx000003Gn4WAAS';
+            const id2 = '00122000003Gn4WBBA';
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(getRecordsResponse),
+            });
+
+            const config = {
+                records: [
+                    {
+                        recordIds: [id1, id2],
+                        optionalFields: ['Account.Id', 'Account.Name'],
+                    },
+                ],
+            };
+
+            const networkSpy = jest.spyOn(networkAdapter, 'sendRequest');
+
+            let snapshot = await getRecords(config);
+
+            expect(snapshot.state).toBe('Fulfilled');
+
+            const subscriptionSpy = jest.fn();
+            luvio.storeSubscribe(snapshot, subscriptionSpy);
+
+            timekeeper.travel(Date.now() + 30000 + 1);
+
+            // Set the mock response for a refresh
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(getRecordsResponse),
+            });
+
+            snapshot = await getRecords(config);
+
+            expect(snapshot.state).toBe('Stale');
+
+            await flushPromises();
+
+            expect(networkSpy).toBeCalledTimes(2);
+
+            snapshot = await getRecords(config);
+
+            expect(snapshot.state).toBe('Fulfilled');
+
+            expect(networkSpy).toBeCalledTimes(2);
+
+            // ingestion response was the same so broadcast should not emit to
+            // subscription
+            expect(subscriptionSpy).toHaveBeenCalledTimes(0);
+        });
     });
 });

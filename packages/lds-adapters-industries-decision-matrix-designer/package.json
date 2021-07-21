@@ -31,10 +31,10 @@
         "karma": "^6.3.4"
     },
     "devDependencies": {
-        "@luvio/cli": "0.41.5",
-        "@luvio/compiler": "0.41.5",
-        "@luvio/engine": "0.41.5",
-        "@luvio/lwc-luvio": "0.41.5",
+        "@luvio/cli": "0.42.0",
+        "@luvio/compiler": "0.42.0",
+        "@luvio/engine": "0.42.0",
+        "@luvio/lwc-luvio": "0.42.0",
         "@salesforce/lds-karma": "1.23.4"
     }
 }

@@ -4,6 +4,10 @@ import {
     keyBuilder as getUiApiRecordsByRecordId_keyBuilder,
     ResourceRequestConfig as getUiApiRecordsByRecordId_ResourceRequestConfig,
 } from '../../../generated/resources/getUiApiRecordsByRecordId';
+import {
+    keyBuilder as getUiApiRecordsBatchByRecordIds_keyBuilder,
+    ResourceRequestConfig as getUiApiRecordsBatchByRecordIds_ResourceRequestConfig,
+} from '../../../generated/resources/getUiApiRecordsBatchByRecordIds';
 import { BatchRepresentation } from '../../../generated/types/BatchRepresentation';
 import { BatchResultRepresentation } from '../../../generated/types/BatchResultRepresentation';
 import { RecordRepresentation } from '../../../generated/types/RecordRepresentation';
@@ -11,8 +15,9 @@ import { buildRecordSelector } from '../../../wire/getRecord/GetRecordFields';
 import { nonCachedErrors } from './ingestSuccessChildResourceParams';
 
 export function selectChildResourceParams(
-    _luvio: Luvio,
-    childResources: getUiApiRecordsByRecordId_ResourceRequestConfig[]
+    luvio: Luvio,
+    childResources: getUiApiRecordsByRecordId_ResourceRequestConfig[],
+    resourceParams: getUiApiRecordsBatchByRecordIds_ResourceRequestConfig
 ): Fragment {
     const envelopeBodyPath = 'result';
     const envelopeStatusCodePath = 'statusCode';
@@ -22,6 +27,21 @@ export function selectChildResourceParams(
         reader: true,
         synthetic: true,
         read: (reader: Reader<any>) => {
+            // Top-level 404 lookup
+            const compositeSnapshot = luvio.storeLookup<any>({
+                recordId: getUiApiRecordsBatchByRecordIds_keyBuilder(resourceParams),
+                node: {
+                    kind: 'Fragment',
+                    private: [],
+                },
+                variables: {},
+            });
+            if (compositeSnapshot.state === 'Error' && compositeSnapshot.error.status === 404) {
+                return {
+                    state: compositeSnapshot.state,
+                    value: compositeSnapshot.error,
+                };
+            }
             const sink = {} as BatchRepresentation;
             reader.enterPath(envelopePath);
             const timestamp = reader.getTimeStamp();

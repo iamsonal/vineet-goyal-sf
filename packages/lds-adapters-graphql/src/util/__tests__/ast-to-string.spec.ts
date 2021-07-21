@@ -409,6 +409,170 @@ describe('AST to string', () => {
             expect(actual).toEqual(expectedQuery);
             expect(state).toEqual(expectedState);
         });
+
+        it('throws when serializing unsupported object field', () => {
+            const recordSelection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'node',
+                type: 'Record',
+                luvioSelections: [
+                    { kind: 'ScalarFieldSelection', name: 'Id' },
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'ContentDocument',
+                        luvioSelections: [{ kind: 'ScalarFieldSelection', name: 'Id' }],
+                    },
+                ],
+            };
+
+            const state = { fragments: {} };
+
+            expect(() => serializeCustomFieldRecord(recordSelection, state)).toThrowError(
+                'Invalid selection for "ContentDocument.Id". Only value, displayValue are supported. If "ContentDocument" is a spanning Record, please include @resource(type: "Record") directive.'
+            );
+        });
+
+        it('throws when serializing unsupported nested object field', () => {
+            const recordSelection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'node',
+                type: 'Record',
+                luvioSelections: [
+                    {
+                        kind: 'ScalarFieldSelection',
+                        name: 'Id',
+                    },
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'ContentDocumentId',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                        ],
+                    },
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'ContentDocument',
+                        luvioSelections: [
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'Title',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ScalarFieldSelection',
+                                        name: 'value',
+                                    },
+                                ],
+                            },
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'FileType',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ScalarFieldSelection',
+                                        name: 'value',
+                                    },
+                                ],
+                            },
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'FileExtension',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ScalarFieldSelection',
+                                        name: 'value',
+                                    },
+                                ],
+                            },
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'ContentSize',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ScalarFieldSelection',
+                                        name: 'value',
+                                    },
+                                ],
+                            },
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'LastModifiedDate',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ScalarFieldSelection',
+                                        name: 'value',
+                                    },
+                                ],
+                            },
+                            {
+                                kind: 'ObjectFieldSelection',
+                                name: 'LatestPublishedVersion',
+                                luvioSelections: [
+                                    {
+                                        kind: 'ObjectFieldSelection',
+                                        name: 'VersionNumber',
+                                        luvioSelections: [
+                                            {
+                                                kind: 'ScalarFieldSelection',
+                                                name: 'value',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'LinkedEntityId',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const state = { fragments: {} };
+
+            expect(() => serializeCustomFieldRecord(recordSelection, state)).toThrowError(
+                'Invalid selection for ContentDocument. ContentDocument appears to be a Record, but is missing @resource(type: "Record")'
+            );
+        });
+
+        it('throws when serializing unsupported scalar field', () => {
+            const recordSelection: LuvioSelectionCustomFieldNode = {
+                kind: 'CustomFieldSelection',
+                name: 'node',
+                type: 'Record',
+                luvioSelections: [
+                    {
+                        kind: 'ObjectFieldSelection',
+                        name: 'Name',
+                        luvioSelections: [
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'value',
+                            },
+                            {
+                                kind: 'ScalarFieldSelection',
+                                name: 'label',
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const state = { fragments: {} };
+
+            expect(() => serializeCustomFieldRecord(recordSelection, state)).toThrowError(
+                'Invalid selection for "Name.label". Only value, displayValue are supported. If "Name" is a spanning Record, please include @resource(type: "Record") directive.'
+            );
+        });
     });
 
     it('should create correct graphql query when using aliases', () => {
@@ -682,7 +846,7 @@ describe('AST to string', () => {
                                                                         luvioSelections: [
                                                                             {
                                                                                 kind: 'ScalarFieldSelection',
-                                                                                name: 'label',
+                                                                                name: 'value',
                                                                             },
                                                                         ],
                                                                     },
@@ -721,7 +885,7 @@ describe('AST to string', () => {
                 ],
             };
 
-            const expectedQuery = `query { uiapi { query { Account(where: { Name: { like: "Account1" } }) { edges { node { Name { label, value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+            const expectedQuery = `query { uiapi { query { Account(where: { Name: { like: "Account1" } }) { edges { node { Name { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
             const actual = astToString(ast);
 
             expect(actual).toEqual(expectedQuery);

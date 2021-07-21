@@ -66,7 +66,10 @@ export const factory = (luvio: Luvio) => {
 
         const fieldTrie = BLANK_RECORD_FIELDS_TRIE;
         const optionalFieldTrie = BLANK_RECORD_FIELDS_TRIE;
-        const conflictMap: RecordConflictMap = {};
+        const conflictMap: RecordConflictMap = {
+            conflicts: {},
+            serverRequestCount: 0, // do not count the update request we're about to make
+        };
         const recordIngest = createRecordIngest(fieldTrie, optionalFieldTrie, conflictMap);
 
         return luvio.dispatchResourceRequest<RecordRepresentation>(request).then(

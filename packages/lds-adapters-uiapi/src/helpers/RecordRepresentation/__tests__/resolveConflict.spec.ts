@@ -50,11 +50,11 @@ const trie2 = {
 describe('resolve conflict ', () => {
     it('returns void', () => {
         const mockLDS = new Luvio(new Environment(new Store(), jest.fn()));
-        expect(resolveConflict(mockLDS, {})).toBe(undefined);
+        expect(resolveConflict(mockLDS, { conflicts: {}, serverRequestCount: 0 })).toBe(undefined);
     });
     it('makes no network call when there is no conflict', () => {
         const mockLDS = new Luvio(new Environment(new Store(), jest.fn()));
-        const singleRecordConflictMap = {};
+        const singleRecordConflictMap = { conflicts: {}, serverRequestCount: 0 };
         resolveConflict(mockLDS, singleRecordConflictMap);
         return Promise.resolve().then(() => {
             expect(getRecordNetwork).not.toHaveBeenCalled();
@@ -64,19 +64,25 @@ describe('resolve conflict ', () => {
     it('calls getRecordNetwork when a single record exists in recordConflictMap', () => {
         const mockLDS = new Luvio(new Environment(new Store(), jest.fn()));
         const singleRecordConflictMap = {
-            a: { recordId: 'a', trackedFields: trie1 },
+            conflicts: {
+                a: { recordId: 'a', trackedFields: trie1 },
+            },
+            serverRequestCount: 0,
         };
         const mockConfig = { recordId: 'a', optionalFields: ['a.b', 'a.c'] };
         resolveConflict(mockLDS, singleRecordConflictMap);
         return Promise.resolve().then(() => {
-            expect(getRecordNetwork).toHaveBeenCalledWith(mockLDS, mockConfig);
+            expect(getRecordNetwork).toHaveBeenCalledWith(mockLDS, mockConfig, 0);
         });
     });
     it('calls getRecordsNetwork when multiple records exist in recordConflictMap', () => {
         const mockLDS = new Luvio(new Environment(new Store(), jest.fn()));
         const singleRecordConflictMap = {
-            a: { recordId: 'a', trackedFields: trie1 },
-            test2: { recordId: 'test2', trackedFields: trie2 },
+            conflicts: {
+                a: { recordId: 'a', trackedFields: trie1 },
+                test2: { recordId: 'test2', trackedFields: trie2 },
+            },
+            serverRequestCount: 0,
         };
         const mockConfig = {
             records: [

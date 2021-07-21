@@ -91,7 +91,8 @@ export function ingestSuccess(
     config: GetRecordConfig,
     key: string,
     allTrackedFields: string[],
-    response: ResourceResponse<RecordRepresentation>
+    response: ResourceResponse<RecordRepresentation>,
+    serverRequestCount: number
 ) {
     const { body } = response;
     const fields = config.fields === undefined ? [] : config.fields;
@@ -104,6 +105,7 @@ export function ingestSuccess(
             fields: fieldTrie,
             optionalFields: convertFieldsToTrie(optionalFields, true),
             trackedFields: convertFieldsToTrie(allTrackedFields, true),
+            serverRequestCount,
         }),
         body
     );
@@ -119,9 +121,17 @@ function onResourceSuccess(
     config: GetRecordConfig,
     key: string,
     allTrackedFields: string[],
-    response: ResourceResponse<RecordRepresentation>
+    response: ResourceResponse<RecordRepresentation>,
+    serverRequestCount: number
 ) {
-    const snapshot = ingestSuccess(luvio, config, key, allTrackedFields, response);
+    const snapshot = ingestSuccess(
+        luvio,
+        config,
+        key,
+        allTrackedFields,
+        response,
+        serverRequestCount
+    );
     luvio.storeBroadcast();
     return snapshot;
 }
@@ -148,12 +158,23 @@ function onResourceError(
     return errorSnapshot;
 }
 
-export function buildNetworkSnapshot(luvio: Luvio, config: GetRecordConfig) {
+export function buildNetworkSnapshot(
+    luvio: Luvio,
+    config: GetRecordConfig,
+    serverRequestCount: number = 0
+) {
     const { request, key, allTrackedFields } = prepareRequest(luvio, config);
 
     return luvio.dispatchResourceRequest<RecordRepresentation>(request).then(
         (response) => {
-            return onResourceSuccess(luvio, config, key, allTrackedFields, response);
+            return onResourceSuccess(
+                luvio,
+                config,
+                key,
+                allTrackedFields,
+                response,
+                serverRequestCount + 1
+            );
         },
         (err: FetchResponse<unknown>) => {
             return onResourceError(luvio, config, key, err);
@@ -170,7 +191,7 @@ export function resolveUnfulfilledSnapshot(
 
     return luvio.resolveUnfulfilledSnapshot<RecordRepresentation>(request, snapshot).then(
         (response) => {
-            return onResourceSuccess(luvio, config, key, allTrackedFields, response);
+            return onResourceSuccess(luvio, config, key, allTrackedFields, response, 1);
         },
         (err: FetchResponse<unknown>) => {
             return onResourceError(luvio, config, key, err);

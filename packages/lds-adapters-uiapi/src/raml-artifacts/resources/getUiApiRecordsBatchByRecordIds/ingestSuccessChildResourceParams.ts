@@ -70,7 +70,8 @@ export function ingestSuccessChildResourceParams(
                 },
                 childKey,
                 childTrackedFields,
-                childResponse
+                childResponse,
+                1
             ) as
                 | FulfilledSnapshot<RecordRepresentation, {}>
                 | StaleSnapshot<RecordRepresentation, {}>;

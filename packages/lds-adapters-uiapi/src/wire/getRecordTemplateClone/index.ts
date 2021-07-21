@@ -122,6 +122,7 @@ const buildNetworkSnapshot: (
                         fields: BLANK_RECORD_FIELDS_TRIE,
                         optionalFields: optionalFieldsTrie,
                         trackedFields: optionalFieldsTrie,
+                        serverRequestCount: 1,
                     }),
                     body
                 );

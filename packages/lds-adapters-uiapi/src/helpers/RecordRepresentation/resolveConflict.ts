@@ -8,31 +8,42 @@ import {
 
 import { ArrayPrototypePush, ArrayPrototypeReduce, ObjectKeys } from '../../util/language';
 import { RecordFieldTrie, convertTrieToFields } from '../../util/records';
+import { instrumentation } from '../../instrumentation';
 import { Luvio } from '@luvio/engine';
 
 export interface RecordConflict {
     recordId: string;
     trackedFields: RecordFieldTrie;
 }
-export type RecordConflictMap = Record<string, RecordConflict>;
+
+export type RecordConflictMap = {
+    // conflicts detected, indexed by record id
+    conflicts: Record<string, RecordConflict>;
+
+    // number of server requests that were made to resolve this tree of conflicts
+    serverRequestCount: number;
+};
 
 // iterate through the map to build configs for network calls
 export function resolveConflict(luvio: Luvio, map: RecordConflictMap): void {
-    const ids = ObjectKeys(map) as string[];
-    if (ids.length === 0) return;
+    const ids = ObjectKeys(map.conflicts) as string[];
+    if (ids.length === 0) {
+        instrumentation.recordConflictsResolved(map.serverRequestCount);
+        return;
+    }
 
     if (ids.length === 1) {
         const recordId = ids[0];
         const config: GetRecordConfig = {
             recordId,
-            optionalFields: convertTrieToFields(map[recordId].trackedFields),
+            optionalFields: convertTrieToFields(map.conflicts[recordId].trackedFields),
         };
-        getRecordNetwork(luvio, config);
+        getRecordNetwork(luvio, config, map.serverRequestCount);
     } else {
         const records: GetRecordsEntityConfiguration[] = ArrayPrototypeReduce.call(
             ids,
             (acc, id: string) => {
-                const { trackedFields } = map[id];
+                const { trackedFields } = map.conflicts[id];
                 ArrayPrototypePush.call(acc, {
                     recordIds: [id],
                     optionalFields: convertTrieToFields(trackedFields),
@@ -44,6 +55,7 @@ export function resolveConflict(luvio: Luvio, map: RecordConflictMap): void {
 
         const config: GetRecordsConfig = { records };
 
+        // TODO - need to propagate map.serverRequestCount here
         getRecordsNetwork(luvio, config);
     }
 }

@@ -33,9 +33,12 @@ describe('merge', () => {
             ingest(existing, path, luvio, store, 0);
             const existingRecord = store.records[key];
             const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
-            const conflictMap = {};
+            const conflictMap = {
+                conflicts: {},
+                serverRequestCount: 0,
+            };
             merge(existingRecord, incomingNormalized, luvio, path, conflictMap);
-            expect(conflictMap[incomingNormalized.id]).toStrictEqual({
+            expect(conflictMap.conflicts[incomingNormalized.id]).toStrictEqual({
                 recordId: incomingNormalized.id,
                 trackedFields: {
                     children: {
@@ -95,9 +98,12 @@ describe('merge', () => {
             ingest(existing, path, luvio, store, 0);
             const existingRecord = store.records[key];
             const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
-            const conflictMap = {};
+            const conflictMap = {
+                conflicts: {},
+                serverRequestCount: 0,
+            };
             merge(existingRecord, incomingNormalized, luvio, path, conflictMap);
-            expect(conflictMap[incomingNormalized.id]).toStrictEqual({
+            expect(conflictMap.conflicts[incomingNormalized.id]).toStrictEqual({
                 recordId: incomingNormalized.id,
                 trackedFields: {
                     children: {
@@ -164,7 +170,10 @@ describe('merge', () => {
 
             const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
 
-            const conflictMap = {};
+            const conflictMap = {
+                conflicts: {},
+                serverRequestCount: 0,
+            };
 
             merge(existingRecord, incomingNormalized, luvio, path, conflictMap);
             expect(spy).not.toHaveBeenCalled();
@@ -220,7 +229,10 @@ describe('merge', () => {
             const existingRecord = store.records[key];
 
             const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
-            const conflictMap = {};
+            const conflictMap = {
+                conflicts: {},
+                serverRequestCount: 0,
+            };
 
             const mergedFields = merge(
                 existingRecord,
@@ -280,7 +292,10 @@ describe('merge', () => {
             const existingRecord = store.records[key];
 
             const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
-            const conflictMap = {};
+            const conflictMap = {
+                conflicts: {},
+                serverRequestCount: 0,
+            };
 
             const mergedFields = merge(
                 existingRecord,
@@ -316,7 +331,10 @@ describe('merge', () => {
 
             const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
 
-            const conflictMap = {};
+            const conflictMap = {
+                conflicts: {},
+                serverRequestCount: 0,
+            };
 
             merge(existingRecord, incomingNormalized, luvio, path, conflictMap);
             expect(spy).not.toHaveBeenCalled();
@@ -399,7 +417,10 @@ describe('merge', () => {
             const existingRecord = store.records[key];
 
             const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
-            const conflictMap = {};
+            const conflictMap = {
+                conflicts: {},
+                serverRequestCount: 0,
+            };
 
             const mergedFields = merge(
                 existingRecord,
@@ -458,7 +479,10 @@ describe('merge', () => {
             const existingRecord = store.records[key];
 
             const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
-            const conflictMap = {};
+            const conflictMap = {
+                conflicts: {},
+                serverRequestCount: 0,
+            };
 
             const mergedFields = merge(
                 existingRecord,
@@ -494,7 +518,10 @@ describe('merge', () => {
 
             const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
 
-            const conflictMap = {};
+            const conflictMap = {
+                conflicts: {},
+                serverRequestCount: 0,
+            };
 
             merge(existingRecord, incomingNormalized, luvio, path, conflictMap);
             expect(spy).not.toHaveBeenCalled();
@@ -550,7 +577,10 @@ describe('merge', () => {
             const existingRecord = store.records[key];
 
             const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
-            const conflictMap = {};
+            const conflictMap = {
+                conflicts: {},
+                serverRequestCount: 0,
+            };
 
             const mergedFields = merge(
                 existingRecord,
@@ -610,7 +640,10 @@ describe('merge', () => {
             const existingRecord = store.records[key];
 
             const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
-            const conflictMap = {};
+            const conflictMap = {
+                conflicts: {},
+                serverRequestCount: 0,
+            };
 
             const mergedFields = merge(
                 existingRecord,

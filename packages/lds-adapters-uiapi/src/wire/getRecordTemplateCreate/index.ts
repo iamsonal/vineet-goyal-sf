@@ -138,6 +138,7 @@ function onResourceResponseSuccess(
         fields: BLANK_RECORD_FIELDS_TRIE,
         optionalFields: allTrackedFieldsTrie,
         trackedFields: allTrackedFieldsTrie,
+        serverRequestCount: 1,
     });
 
     luvio.storeIngest<RecordDefaultsTemplateCreateRepresentation>(key, ingest, body);

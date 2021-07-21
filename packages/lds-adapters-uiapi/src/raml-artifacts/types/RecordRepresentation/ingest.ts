@@ -21,7 +21,10 @@ export const createIngestRecordWithFields: (
         store: Store,
         timestamp: number
     ) => {
-        const conflictMap: RecordConflictMap = {};
+        const conflictMap: RecordConflictMap = {
+            conflicts: {},
+            serverRequestCount: 0,
+        };
         const result = createRecordIngest(fields, optionalFields, conflictMap)(
             input,
             path,
@@ -41,7 +44,10 @@ export const ingest: typeof generatedIngest = (
     store: Store,
     timestamp: number
 ) => {
-    const conflictMap = {};
+    const conflictMap = {
+        conflicts: {},
+        serverRequestCount: 0,
+    };
     const result = createRecordIngest(
         BLANK_RECORD_FIELDS_TRIE,
         BLANK_RECORD_FIELDS_TRIE,

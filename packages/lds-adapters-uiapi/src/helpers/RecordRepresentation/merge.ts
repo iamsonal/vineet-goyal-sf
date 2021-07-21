@@ -72,7 +72,7 @@ function mergeAndRefreshHigherVersionRecord(
             return mergeRecordFields(incoming, existing);
         }
         // update the conflict map to resolve the record conflict in resolveConflict
-        recordConflictMap[incoming.id] = {
+        recordConflictMap.conflicts[incoming.id] = {
             recordId: incoming.id,
             trackedFields: existingTrackedFieldsTrieRoot,
         };
@@ -112,7 +112,7 @@ function mergeAndRefreshLowerVersionRecord(
 
         // update the conflict map to resolve the record conflict in resolveConflict
         if (recordConflictMap) {
-            recordConflictMap[incoming.id] = {
+            recordConflictMap.conflicts[incoming.id] = {
                 recordId: incoming.id,
                 trackedFields: incomingTrackedFieldsTrieRoot,
             };

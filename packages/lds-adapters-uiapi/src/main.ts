@@ -66,5 +66,8 @@ export {
 // TODO W-8235671 we should move common record utilities to @salesforce/uiapi-record-utils
 export { buildSelectionFromFields } from './selectors/record';
 
-// Exposing the configuration object for new tracked field values change
+// Expose module configuration settings
 export { configuration } from './configuration';
+
+// Expose module instrumentation
+export { instrument, LdsUiapiInstrumentation } from './instrumentation';

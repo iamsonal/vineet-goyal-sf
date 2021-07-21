@@ -111,6 +111,7 @@ export const notifyChangeFactory = (luvio: Luvio) => {
                             fields: fieldTrie,
                             optionalFields: optionalFieldTrie,
                             trackedFields: optionalFieldTrie,
+                            serverRequestCount: 1,
                         }),
                         body
                     );

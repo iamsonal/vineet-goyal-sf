@@ -78,6 +78,10 @@ describe('SFDC exports', () => {
 
             /** Configuration object */
             'configuration',
+
+            /** instrumentation object */
+            'instrument',
+            'LdsUiapiInstrumentation',
         ].sort();
 
         it('should only export allowlisted items', () => {

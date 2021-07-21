@@ -117,5 +117,5 @@ export {
     ingest as ingestObjectInfo,
 } from './generated/types/ObjectInfoRepresentation';
 
-// Expose the configuration object
-export { configuration } from '../src/main';
+// Expose module configuration and instrumentation
+export { configuration, instrument, LdsUiapiInstrumentation } from './main';

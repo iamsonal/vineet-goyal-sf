@@ -24,6 +24,7 @@ function generateResourceIngestSuccess(resource, state) {
       trackedFields: ${RECORD_FIELD_TRIE};
       fields: ${RECORD_FIELD_TRIE};
       optionalFields: ${RECORD_FIELD_TRIE};
+      serverRequestCount?: number;
     }
   `;
 
@@ -51,8 +52,11 @@ function generateResourceIngestSuccess(resource, state) {
       ${inputsInterface}
 
       export function createFieldsIngestSuccess(params: Inputs): ${RESOURCE_INGEST_INTERFACE} {
-          const { fields, optionalFields, trackedFields } = params;
-          const recordConflictMap: ${RESOLVE_RECORD_MAP_INTERFACE} = {};
+          const { fields, optionalFields, trackedFields, serverRequestCount = 1 } = params;
+          const recordConflictMap: ${RESOLVE_RECORD_MAP_INTERFACE} = {
+              conflicts: {},
+              serverRequestCount,
+          };
           const ingest = ${RECORD_INGEST}(fields, optionalFields, recordConflictMap);
           ${resourceIngestFunction}
       }
@@ -64,7 +68,10 @@ function generateResourceIngestSuccess(resource, state) {
 
     export function createFieldsIngestSuccess(params: Inputs): ${RESOURCE_INGEST_INTERFACE} {
       const { trackedFields } = params;
-      const recordConflictMap: ${RESOLVE_RECORD_MAP_INTERFACE} = {};
+      const recordConflictMap: ${RESOLVE_RECORD_MAP_INTERFACE} = {
+         conflicts: {},
+         serverRequestCount: 1,
+      };
       const ingest = ${resourceIngest}({
         ...params,
         recordConflictMap,

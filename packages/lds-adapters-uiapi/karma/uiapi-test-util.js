@@ -988,3 +988,5 @@ export {
     extractRelatedListsBatchParamsFromMockData,
     setTrackedFieldsConfig,
 };
+
+export { instrument } from 'lds-adapters-uiapi';

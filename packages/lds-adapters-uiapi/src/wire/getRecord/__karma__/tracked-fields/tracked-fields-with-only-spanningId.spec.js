@@ -8,6 +8,7 @@ import {
 import {
     expireRecords,
     extractRecordFields,
+    instrument,
     mockGetRecordNetwork,
     setTrackedFieldsConfig,
 } from 'uiapi-test-util';
@@ -30,6 +31,12 @@ function mockListNetworkOnce(mockList) {
         }),
         mockList
     );
+}
+
+function keepOnlyId(record) {
+    record.fields = {
+        Id: record.fields.Id,
+    };
 }
 
 describe('tracked fields with only spanning ID', () => {
@@ -64,8 +71,10 @@ describe('tracked fields with only spanning ID', () => {
 
         mockGetRecordNetwork(accountConfig, accountMock);
 
-        //TODO: change mock data to only reflect 1 level deep
         const refreshMock = getMock('record-TestD__c-fields-6-levels');
+        // trim nested records from mock data to match the request
+        keepOnlyId(refreshMock.fields.TestC__r.value);
+
         const refreshedConfig = {
             recordId: testDMock.id,
             fields: ['TestD__c.TestC__r.Id'],
@@ -83,6 +92,9 @@ describe('tracked fields with only spanning ID', () => {
         // Expire records, force refresh
         expireRecords();
 
+        const recordConflictsResolved = jasmine.createSpy('recordConflictsResolved');
+        instrument({ recordConflictsResolved });
+
         const elm = await setupElement(
             {
                 recordId: testDMock.id,
@@ -92,6 +104,8 @@ describe('tracked fields with only spanning ID', () => {
         );
 
         expect(elm.pushCount()).toBe(1);
+        expect(recordConflictsResolved).toHaveBeenCalledTimes(1);
+        expect(recordConflictsResolved).toHaveBeenCalledWith(1);
     });
 
     it('should only request spanning record ID field if invoking notify change', async () => {
@@ -109,8 +123,10 @@ describe('tracked fields with only spanning ID', () => {
 
         const elm = await setupElement(testDConfig, RecordFields);
 
-        // also, update mock data
         const refreshMock = getMock('record-TestD__c-fields-6-levels');
+        // trim nested records from mock data to match the request
+        keepOnlyId(refreshMock.fields.TestC__r.value);
+
         const refreshedConfig = {
             recordId: testDMock.id,
             optionalFields: ['TestD__c.TestC__c', 'TestD__c.TestC__r.Id'],
@@ -118,9 +134,14 @@ describe('tracked fields with only spanning ID', () => {
 
         mockGetRecordNetwork(refreshedConfig, refreshMock);
 
+        const recordConflictsResolved = jasmine.createSpy('recordConflictsResolved');
+        instrument({ recordConflictsResolved });
+
         await elm.notifyChange([{ recordId: testDMock.id }]);
 
         expect(elm.pushCount()).toBe(1);
+        expect(recordConflictsResolved).toHaveBeenCalledTimes(1);
+        expect(recordConflictsResolved).toHaveBeenCalledWith(1);
     });
 
     it('should only request spanning record ID field if resolving a record merge conflict when incoming record has higher version', async () => {
@@ -174,15 +195,106 @@ describe('tracked fields with only spanning ID', () => {
             refreshMock
         );
 
+        const recordConflictsResolved = jasmine.createSpy('recordConflictsResolved');
+        instrument({ recordConflictsResolved });
+
         const elm = await setupElement(recordConfig, RecordFields);
+
+        // first getRecord
+        expect(recordConflictsResolved).toHaveBeenCalledTimes(1);
+        expect(recordConflictsResolved).toHaveBeenCalledWith(1);
 
         const listElm = await setupElement(listConfig, GetListUi);
 
         // Called 2 times because merge conflict re-fetch
         expect(elm.pushCount()).toBe(2);
 
+        // getRecord to resolve conflict should have counted as 1 network request since getListUi
+        // does not support tracked fields
+        expect(recordConflictsResolved).toHaveBeenCalledTimes(2);
+        expect(recordConflictsResolved).toHaveBeenCalledWith(1);
+
         expect(listElm.pushCount()).toBe(1);
     });
+
+    it('correctly counts iterative conflict resolution requests', async () => {
+        const recordConflictsResolved = jasmine.createSpy('recordConflictsResolved');
+        instrument({ recordConflictsResolved });
+
+        // populate Account -> OperatingHours -> User in the cache
+        const accountMock1 = getMock(
+            'record-Account-fields-Account.OperatingHours.CreatedBy.Name--version-1571943581000'
+        );
+        const accountConfig1 = {
+            recordId: accountMock1.id,
+            fields: ['Account.OperatingHours.CreatedBy.Name'],
+        };
+        mockGetRecordNetwork(accountConfig1, accountMock1);
+
+        await setupElement(accountConfig1, RecordFields);
+
+        // initial getRecord was fully resolved in 1 request
+        expect(recordConflictsResolved).toHaveBeenCalledTimes(1);
+        expect(recordConflictsResolved).toHaveBeenCalledWith(1);
+
+        // create a series of conflicts to be resolved:
+        //
+        // 1. new element asks for Account.Name - request will include Account.OperatingHours.Id,
+        //    response shows that OperatingHours has been updated
+        const accountMock2 = JSON.parse(JSON.stringify(accountMock1));
+        accountMock2.fields.OperatingHours.value.weakEtag++;
+        keepOnlyId(accountMock2.fields.OperatingHours.value);
+        accountMock2.fields.Name = {
+            displayValue: null,
+            value: 'Account Name',
+        };
+        const accountConfig2 = {
+            recordId: accountMock2.id,
+            fields: ['Account.Name'],
+            optionalFields: ['Account.OperatingHours.Id', 'Account.OperatingHoursId'],
+        };
+        mockGetRecordNetwork(accountConfig2, accountMock2);
+
+        // 2. resolve OperatingHours conflict - request will include OperatingHours.CreatedBy.Id,
+        //    response shows that User has been updated
+        const operatingHoursMock = JSON.parse(
+            JSON.stringify(accountMock1.fields.OperatingHours.value)
+        );
+        operatingHoursMock.weakEtag++;
+        operatingHoursMock.fields.CreatedBy.value.weakEtag++;
+        keepOnlyId(operatingHoursMock.fields.CreatedBy.value);
+        mockGetRecordNetwork(
+            {
+                recordId: operatingHoursMock.id,
+                optionalFields: [
+                    'OperatingHours.CreatedBy.Id',
+                    'OperatingHours.CreatedById',
+                    'OperatingHours.Id',
+                ],
+            },
+            operatingHoursMock
+        );
+
+        // 3. resolve User conflict
+        const userMock = JSON.parse(
+            JSON.stringify(accountMock1.fields.OperatingHours.value.fields.CreatedBy.value)
+        );
+        userMock.weakEtag++;
+        mockGetRecordNetwork(
+            {
+                recordId: userMock.id,
+                optionalFields: ['User.Id', 'User.Name'],
+            },
+            userMock
+        );
+
+        await setupElement(accountConfig2, RecordFields);
+
+        // this getRecord should have reported 3 server requests to resolve everything
+        expect(recordConflictsResolved).toHaveBeenCalledTimes(2);
+        expect(recordConflictsResolved).toHaveBeenCalledWith(3);
+    });
+
     // Reset tracked fields to our default behavior
     afterAll(() => {
         setTrackedFieldsConfig(false);

@@ -184,6 +184,61 @@ describe('executeAggregateUi', () => {
                 expect(requestChunk.url.length).toBeGreaterThan(0);
             });
         });
+
+        it('should dedupe tracked fields with config fields', () => {
+            // 20 fields with four lookups per chunk equals five chunks
+            const trackedOptionalFields = generateMockedRecordFields(
+                20,
+                'CrazyHugeCustomFieldName',
+                true
+            );
+            const configFields = generateMockedRecordFields(20, 'ConfigFieldName', true);
+            const configOptionalFields = generateMockedRecordFields(
+                20,
+                'ConfigOptionalFieldName',
+                true
+            );
+            const recordId = 'a02xx000001noTkAAI';
+
+            // add in a field that we expect to be deduped
+            const dedupedField = configOptionalFields[0];
+            trackedOptionalFields.push(dedupedField);
+
+            const resourceRequest: ResourceRequest & ResourceRequestWithConfig =
+                buildResourceRequest({});
+            resourceRequest.configOptionalFields = configOptionalFields;
+
+            const actualCompositeRequest = buildGetRecordByFieldsCompositeRequest(
+                recordId,
+                resourceRequest,
+                {
+                    fieldsArray: configFields,
+                    optionalFieldsArray: trackedOptionalFields,
+                    optionalFieldsLength: trackedOptionalFields.length,
+                    fieldsLength: configFields.length,
+                }
+            );
+
+            // Five chunks plus one each for fields and optionalFields from config == 7
+            // Without tracked optionalField dedupe, we would get another chunk.
+            expect(actualCompositeRequest.length).toEqual(7);
+
+            actualCompositeRequest.forEach((requestChunk) => {
+                expect(requestChunk.referenceId.length).toBeGreaterThan(0);
+                expect(requestChunk.url.length).toBeGreaterThan(0);
+            });
+
+            // More assertions for optionalFields deduping
+            expect(actualCompositeRequest[1].referenceId).toEqual(
+                'LDS_Records_AggregateUi_optionalFields_0'
+            );
+            expect(actualCompositeRequest[1].url).toContain(dedupedField);
+
+            // Check that it's not in other chunks (1st is for fields)
+            for (let i = 2; i < actualCompositeRequest.length; i++) {
+                expect(actualCompositeRequest[i].url).not.toContain(dedupedField);
+            }
+        });
     });
 
     describe('dispatchSplitRecordAggregateUiAction', () => {

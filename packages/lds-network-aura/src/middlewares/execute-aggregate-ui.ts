@@ -9,7 +9,6 @@ import {
     ArrayPrototypeJoin,
     ArrayPrototypePush,
     ArrayPrototypeUnshift,
-    ArrayPrototypeFilter,
 } from '../utils/language';
 import { InstrumentationCallbacks } from './utils';
 
@@ -220,10 +219,7 @@ export function buildGetRecordByFieldsCompositeRequest(
     // Right now, optionalFieldsArray includes optional fields from a config.  Let's remove those to cut down duplicate entries.
     const optionalTrackedFields =
         optionalFieldsFromConfig.length > 0
-            ? ArrayPrototypeFilter.call(
-                  optionalFieldsArray,
-                  (element) => optionalFieldsFromConfig.indexOf(element) === -1
-              )
+            ? dedupeFields(optionalFieldsFromConfig, optionalFieldsArray)
             : optionalFieldsArray;
 
     // Separate lookup fields from the tracked fields list so we can distribute them later
@@ -307,6 +303,28 @@ export function buildGetRecordByFieldsCompositeRequest(
     }
 
     return compositeRequest;
+}
+
+/**
+ * Returns array of fields in fieldsToDedupe that are not present in baseFields.
+ * @param baseFields - array of fields.
+ * @param fieldsToDedupe - array of fields to be deduped from baseFields.
+ * @returns - array of fields in fieldsToDedupe that are not present in baseFields.
+ */
+function dedupeFields(baseFields: string[], fieldsToDedupe: string[]): string[] {
+    const baseFieldsMap: Record<string, true> = {};
+    for (let i = 0; i < baseFields.length; i++) {
+        baseFieldsMap[baseFields[i]] = true;
+    }
+
+    const dedupedFields = [];
+    for (let i = 0; i < fieldsToDedupe.length; i++) {
+        const field = fieldsToDedupe[i];
+        if (baseFieldsMap[field] !== true) {
+            dedupedFields.push(field);
+        }
+    }
+    return dedupedFields;
 }
 
 export function shouldUseAggregateUiForGetRecord(

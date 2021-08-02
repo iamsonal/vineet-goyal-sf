@@ -20,10 +20,10 @@
         "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-bindings"
     },
     "dependencies": {
-        "@luvio/lwc-luvio": "0.42.0"
+        "@luvio/lwc-luvio": "0.43.0"
     },
     "devDependencies": {
-        "@luvio/engine": "0.42.0",
+        "@luvio/engine": "0.43.0",
         "@lwc/engine-core": "~1.7.5",
         "@salesforce/lds-instrumentation": "1.23.5"
     }

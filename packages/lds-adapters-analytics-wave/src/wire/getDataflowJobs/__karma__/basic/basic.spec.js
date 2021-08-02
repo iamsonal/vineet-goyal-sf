@@ -1,3 +1,4 @@
+import timekeeper from 'timekeeper';
 import GetDataflowJobs from '../lwc/get-dataflow-jobs';
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
@@ -31,6 +32,42 @@ describe('basic', () => {
         const el = await setupElement(config, GetDataflowJobs);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredData()).toEqual(mock);
+    });
+
+    it('gets no job and then some jobs after TTL expires', async () => {
+        const mockEmptyData = {
+            dataflowJobs: [],
+            url: '/services/data/v53.0/wave/dataflowjobs',
+        };
+        const mockData = getMock('dataflow-jobs-running');
+        const config = { status: 'Running' };
+
+        mockGetDataflowJobsNetworkOnce(config, [mockEmptyData, mockData]);
+        const el = await setupElement(config, GetDataflowJobs);
+        expect(el.getWiredData()).toEqual(mockEmptyData);
+
+        timekeeper.travel(Date.now() + 5000 + 1);
+
+        const el2 = await setupElement(config, GetDataflowJobs);
+        expect(el2.getWiredData()).toEqual(mockData);
+    });
+
+    it('gets some jobs and then no job after TTL expires', async () => {
+        const mockEmptyData = {
+            dataflowJobs: [],
+            url: '/services/data/v53.0/wave/dataflowjobs',
+        };
+        const mockData = getMock('dataflow-jobs-running');
+        const config = { status: 'Running' };
+
+        mockGetDataflowJobsNetworkOnce(config, [mockData, mockEmptyData]);
+        const el = await setupElement(config, GetDataflowJobs);
+        expect(el.getWiredData()).toEqual(mockData);
+
+        timekeeper.travel(Date.now() + 5000 + 1);
+
+        const el2 = await setupElement(config, GetDataflowJobs);
+        expect(el2.getWiredData()).toEqual(mockEmptyData);
     });
 
     it('gets dataflow jobs with jobTypes, startedAfter, startedBefore', async () => {

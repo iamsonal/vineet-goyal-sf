@@ -11,7 +11,6 @@ import {
     SnapshotRefresh,
     StaleSnapshot,
     UnAvailableSnapshot,
-    UnfulfilledSnapshot,
 } from '@luvio/engine';
 import {
     AdapterValidationConfig,
@@ -128,24 +127,6 @@ function buildInMemorySnapshot(luvio: Luvio, context: AdapterContext, config: Ap
         {
             config,
             resolve: () => buildNetworkSnapshot(luvio, context, config, snapshotRefreshOptions),
-        }
-    );
-}
-
-export function resolveUnfulfilledSnapshot(
-    luvio: Luvio,
-    context: AdapterContext,
-    config: ApexAdapterConfig,
-    snapshot: UnfulfilledSnapshot<any, any>
-): Promise<any> {
-    const params = createResourceParams(config);
-    const request = createResourceRequest(params);
-    return luvio.resolveUnfulfilledSnapshot<any>(request, snapshot).then(
-        (response) => {
-            return onResourceResponseSuccess(luvio, context, config, params, response);
-        },
-        (error: FetchResponse<unknown>) => {
-            return onResourceResponseError(luvio, context, config, params, error);
         }
     );
 }

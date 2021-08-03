@@ -6,7 +6,6 @@ import {
     FetchResponse,
     SnapshotRefresh,
     ResourceResponse,
-    UnfulfilledSnapshot,
 } from '@luvio/engine';
 import {
     AdapterValidationConfig,
@@ -21,7 +20,6 @@ import {
     ingest as recordLayoutRepresentationIngest,
 } from '../../generated/types/RecordLayoutRepresentation';
 import { MASTER_RECORD_TYPE_ID } from '../../util/layout';
-import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
 const layoutSelections = recordLayoutRepresentationSelect();
 
@@ -78,8 +76,7 @@ function onResourceResponseSuccess(
     const { body } = response;
 
     luvio.storeIngest<RecordLayoutRepresentation>(key, recordLayoutRepresentationIngest, body);
-    luvio.storeBroadcast();
-    return luvio.storeLookup<RecordLayoutRepresentation>(
+    const snapshot = luvio.storeLookup<RecordLayoutRepresentation>(
         {
             recordId: key,
             node: layoutSelections,
@@ -87,6 +84,8 @@ function onResourceResponseSuccess(
         },
         buildSnapshotRefresh(luvio, config)
     );
+    luvio.storeBroadcast();
+    return snapshot;
 }
 
 function onResourceResponseError(
@@ -109,23 +108,6 @@ export function buildNetworkSnapshot(
     const { request, key } = buildRequestAndKey(config);
 
     return luvio.dispatchResourceRequest<RecordLayoutRepresentation>(request, requestOverride).then(
-        (response) => {
-            return onResourceResponseSuccess(luvio, config, key, response);
-        },
-        (error: FetchResponse<unknown>) => {
-            return onResourceResponseError(luvio, config, key, error);
-        }
-    );
-}
-
-export function resolveUnfulfilledSnapshot(
-    luvio: Luvio,
-    config: GetLayoutConfigWithDefaults,
-    snapshot: UnfulfilledSnapshot<RecordLayoutRepresentation, unknown>
-): Promise<Snapshot<RecordLayoutRepresentation>> {
-    const { request, key } = buildRequestAndKey(config);
-
-    return luvio.resolveUnfulfilledSnapshot<RecordLayoutRepresentation>(request, snapshot).then(
         (response) => {
             return onResourceResponseSuccess(luvio, config, key, response);
         },
@@ -196,9 +178,5 @@ export const factory: AdapterFactory<GetLayoutConfig, RecordLayoutRepresentation
             return snapshot;
         }
 
-        if (isUnfulfilledSnapshot(snapshot)) {
-            return resolveUnfulfilledSnapshot(luvio, config, snapshot);
-        }
-
-        return buildNetworkSnapshot(luvio, config);
+        return luvio.resolveSnapshot(snapshot, buildSnapshotRefresh(luvio, config));
     };

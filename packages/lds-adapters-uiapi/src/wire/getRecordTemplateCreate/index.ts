@@ -8,8 +8,8 @@ import {
     FetchResponse,
     ResourceResponse,
     ResourceRequest,
-    UnfulfilledSnapshot,
     AdapterContext,
+    SnapshotRefresh,
 } from '@luvio/engine';
 import {
     validateAdapterConfig,
@@ -33,11 +33,21 @@ import {
     getTrackedFields,
 } from '../../util/records';
 import { snapshotRefreshOptions } from '../../generated/adapters/adapter-utils';
-import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
 import { keyBuilderFromType } from '../../generated/types/RecordDefaultsTemplateCreateRepresentation';
 import { createFieldsIngestSuccess as resourceCreateFieldsIngest } from '../../generated/fields/resources/getUiApiRecordDefaultsTemplateCreateByObjectApiName';
 import { configuration } from '../../configuration';
+
+function buildSnapshotRefresh(
+    luvio: Luvio,
+    context: AdapterContext,
+    config: GetRecordTemplateCreateConfig
+): SnapshotRefresh<RecordDefaultsTemplateCreateRepresentation> {
+    return {
+        config,
+        resolve: () => buildNetworkSnapshot(luvio, context, config, snapshotRefreshOptions),
+    };
+}
 
 function buildRecordTypeIdContextKey(objectApiName: string): string {
     return `DEFAULTS::recordTypeId:${objectApiName}`;
@@ -168,10 +178,12 @@ function onResourceResponseError(
     resourceParams: ResourceRequestConfig,
     error: FetchResponse<unknown>
 ) {
-    const snapshot = ingestError(luvio, resourceParams, error, {
-        config,
-        resolve: () => buildNetworkSnapshot(luvio, context, config, snapshotRefreshOptions),
-    });
+    const snapshot = ingestError(
+        luvio,
+        resourceParams,
+        error,
+        buildSnapshotRefresh(luvio, context, config)
+    );
     luvio.storeBroadcast();
     return snapshot;
 }
@@ -204,32 +216,6 @@ function buildNetworkSnapshot(
         );
 }
 
-function resolveUnfulfilledSnapshot(
-    luvio: Luvio,
-    context: AdapterContext,
-    config: GetRecordTemplateCreateConfig,
-    snapshot: UnfulfilledSnapshot<RecordDefaultsTemplateCreateRepresentation, unknown>
-): Promise<Snapshot<RecordDefaultsTemplateCreateRepresentation>> {
-    const resourceParams = createResourceParams(config);
-    const request = prepareRequest(luvio, context, config);
-
-    return luvio.resolveUnfulfilledSnapshot(request, snapshot).then(
-        (response) => {
-            return onResourceResponseSuccess(
-                luvio,
-                context,
-                config,
-                request,
-                response,
-                resourceParams
-            );
-        },
-        (response: FetchResponse<unknown>) => {
-            return onResourceResponseError(luvio, context, config, resourceParams, response);
-        }
-    );
-}
-
 function buildInMemorySnapshot(
     luvio: Luvio,
     context: AdapterContext,
@@ -241,10 +227,10 @@ function buildInMemorySnapshot(
         node: adapterFragment(luvio, config),
         variables: {},
     };
-    return luvio.storeLookup<RecordDefaultsTemplateCreateRepresentation>(selector, {
-        config,
-        resolve: () => buildNetworkSnapshot(luvio, context, config, snapshotRefreshOptions),
-    });
+    return luvio.storeLookup<RecordDefaultsTemplateCreateRepresentation>(
+        selector,
+        buildSnapshotRefresh(luvio, context, config)
+    );
 }
 
 export const factory: AdapterFactory<
@@ -276,14 +262,10 @@ export const factory: AdapterFactory<
         });
 
         // Cache Hit
-        if (luvio.snapshotAvailable(cacheSnapshot) === true) {
+        if (luvio.snapshotAvailable(cacheSnapshot)) {
             return cacheSnapshot;
         }
 
-        if (isUnfulfilledSnapshot(cacheSnapshot)) {
-            return resolveUnfulfilledSnapshot(luvio, context, config, cacheSnapshot);
-        }
-
-        return buildNetworkSnapshot(luvio, context, config);
+        return luvio.resolveSnapshot(cacheSnapshot, buildSnapshotRefresh(luvio, context, config));
     });
 };

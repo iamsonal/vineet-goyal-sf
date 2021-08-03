@@ -7,7 +7,6 @@ import {
     FetchResponse,
     SnapshotRefresh,
     ResourceResponse,
-    UnfulfilledSnapshot,
 } from '@luvio/engine';
 
 import {
@@ -32,7 +31,6 @@ import {
 } from '../../util/pagination';
 import { select as listViewSummaryRepresentationSelect } from '../../generated/types/ListViewSummaryRepresentation';
 import { ResourceRequestConfig } from '../../generated/resources/getUiApiListUiByObjectApiName';
-import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
 // TODO RAML - this more properly goes in the generated resource files
 const DEFAULT_PAGE_SIZE = 20;
@@ -80,11 +78,12 @@ function buildListViewSummaryCollectionFragment(
 
 function buildRefreshSnapshot(
     luvio: Luvio,
-    config: GetListViewSummaryCollectionConfig
+    config: GetListViewSummaryCollectionConfig,
+    snapshot?: Snapshot<ListViewSummaryCollectionRepresentation>
 ): SnapshotRefresh<ListViewSummaryCollectionRepresentation> {
     return {
         config,
-        resolve: () => buildNetworkSnapshot(luvio, config),
+        resolve: () => buildNetworkSnapshot(luvio, config, snapshot),
     };
 }
 export function buildInMemorySnapshot(
@@ -152,8 +151,9 @@ function onResourceSuccess(
         listViewSummaryCollectionRepresentationIngest,
         body
     );
+    const snapshot = buildInMemorySnapshot(luvio, config);
     luvio.storeBroadcast();
-    return buildInMemorySnapshot(luvio, config);
+    return snapshot;
 }
 
 function onResourceError(
@@ -166,27 +166,6 @@ function onResourceError(
     luvio.storeIngestError(key, errorSnapshot);
     luvio.storeBroadcast();
     return errorSnapshot;
-}
-
-function resolveUnfulfilledSnapshot(
-    luvio: Luvio,
-    config: GetListViewSummaryCollectionConfig,
-    snapshot: UnfulfilledSnapshot<ListViewSummaryCollectionRepresentation, any>
-) {
-    const resourceParams = createResourceParams(config);
-    const key = keyBuilder(resourceParams);
-    const request = prepareRequest(luvio, config, resourceParams, snapshot);
-
-    return luvio
-        .resolveUnfulfilledSnapshot<ListViewSummaryCollectionRepresentation>(request, snapshot)
-        .then(
-            (resp: ResourceResponse<ListViewSummaryCollectionRepresentation>) => {
-                return onResourceSuccess(luvio, config, key, resp);
-            },
-            (error: FetchResponse<unknown>) => {
-                return onResourceError(luvio, config, key, error);
-            }
-        );
 }
 
 export function buildNetworkSnapshot(
@@ -235,9 +214,8 @@ export const factory: AdapterFactory<
             return cacheSnapshot;
         }
 
-        if (isUnfulfilledSnapshot(cacheSnapshot)) {
-            return resolveUnfulfilledSnapshot(luvio, config, cacheSnapshot);
-        }
-
-        return buildNetworkSnapshot(luvio, config, cacheSnapshot);
+        return luvio.resolveSnapshot(
+            cacheSnapshot,
+            buildRefreshSnapshot(luvio, config, cacheSnapshot)
+        );
     };

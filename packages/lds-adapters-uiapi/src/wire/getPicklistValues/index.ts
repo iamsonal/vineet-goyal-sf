@@ -5,9 +5,7 @@ import {
     Snapshot,
     SnapshotRefresh,
     ResourceResponse,
-    UnfulfilledSnapshot,
 } from '@luvio/engine';
-import { isUnfulfilledSnapshot } from '../../util/snapshot';
 import {
     adapterName as getPicklistValuesAdapterName,
     validateAdapterConfig,
@@ -61,8 +59,9 @@ function onResponseSuccess(
 ) {
     const { body } = response;
     luvio.storeIngest(key, picklistValuesRepresentationIngest, body);
+    const snapshot = buildInMemorySnapshot(luvio, config);
     luvio.storeBroadcast();
-    return buildInMemorySnapshot(luvio, config);
+    return snapshot;
 }
 
 function onResponseError(
@@ -84,23 +83,6 @@ export function buildNetworkSnapshot(
     const { request, key } = buildRequestAndKey(config);
 
     return luvio.dispatchResourceRequest<PicklistValuesRepresentation>(request).then(
-        (response) => {
-            return onResponseSuccess(luvio, config, key, response);
-        },
-        (err: FetchResponse<unknown>) => {
-            return onResponseError(luvio, config, key, err);
-        }
-    );
-}
-
-export function resolveUnfulfilledSnapshot(
-    luvio: Luvio,
-    config: GetPicklistValuesConfig,
-    snapshot: UnfulfilledSnapshot<PicklistValuesRepresentation, any>
-): Promise<Snapshot<PicklistValuesRepresentation>> {
-    const { request, key } = buildRequestAndKey(config);
-
-    return luvio.resolveUnfulfilledSnapshot<PicklistValuesRepresentation>(request, snapshot).then(
         (response) => {
             return onResponseSuccess(luvio, config, key, response);
         },
@@ -158,9 +140,5 @@ export const factory: AdapterFactory<GetPicklistValuesConfig, PicklistValuesRepr
             return snapshot;
         }
 
-        if (isUnfulfilledSnapshot(snapshot)) {
-            return resolveUnfulfilledSnapshot(luvio, config, snapshot);
-        }
-
-        return buildNetworkSnapshot(luvio, config);
+        return luvio.resolveSnapshot(snapshot, buildSnapshotRefresh(luvio, config));
     };

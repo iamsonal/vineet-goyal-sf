@@ -4,7 +4,6 @@ import {
     FetchResponse,
     Snapshot,
     SnapshotRefresh,
-    UnfulfilledSnapshot,
     ResourceResponse,
 } from '@luvio/engine';
 import {
@@ -21,7 +20,6 @@ import { default as resources_getUiApiLayoutUserStateByObjectApiName_default } f
 import { LayoutMode } from '../../primitives/LayoutMode';
 import { LayoutType } from '../../primitives/LayoutType';
 import { AdapterValidationConfig } from '../../generated/adapters/adapter-utils';
-import { isUnfulfilledSnapshot } from '../../util/snapshot';
 
 const recordLayoutSelect = recordLayoutUserStateRepresentationSelect();
 
@@ -122,25 +120,6 @@ export function buildNetworkSnapshot(
     );
 }
 
-function resolveUnfulfilledSnapshot(
-    luvio: Luvio,
-    config: GetLayoutUserStateConfigWithDefaults,
-    snapshot: UnfulfilledSnapshot<RecordLayoutUserStateRepresentation, any>
-) {
-    const { request, key } = prepareRequest(config);
-
-    return luvio
-        .resolveUnfulfilledSnapshot<RecordLayoutUserStateRepresentation>(request, snapshot)
-        .then(
-            (response) => {
-                return onResourceResponseSuccess(luvio, config, key, response);
-            },
-            (error: FetchResponse<unknown>) => {
-                return onResourceResponseError(luvio, config, key, error);
-            }
-        );
-}
-
 function onResourceResponseSuccess(
     luvio: Luvio,
     config: GetLayoutUserStateConfigWithDefaults,
@@ -213,9 +192,5 @@ export const factory: AdapterFactory<
             return cacheSnapshot;
         }
 
-        if (isUnfulfilledSnapshot(cacheSnapshot)) {
-            return resolveUnfulfilledSnapshot(luvio, config, cacheSnapshot);
-        }
-
-        return buildNetworkSnapshot(luvio, config);
+        return luvio.resolveSnapshot(cacheSnapshot, buildSnapshotRefresh(luvio, config));
     };

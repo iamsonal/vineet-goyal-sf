@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-platform-flow",
-    "version": "1.23.6",
+    "version": "1.24.0",
     "description": "Flow Runtime APIs",
     "license": "MIT",
     "main": "dist/umd/es2018/platform-flow.js",
@@ -26,13 +26,13 @@
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-platform-flow"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.23.6"
+        "@salesforce/lds-bindings": "1.24.0"
     },
     "devDependencies": {
         "@luvio/cli": "0.43.0",
         "@luvio/compiler": "0.43.0",
         "@luvio/engine": "0.43.0",
         "@luvio/lwc-luvio": "0.43.0",
-        "@salesforce/lds-karma": "1.23.6"
+        "@salesforce/lds-karma": "1.24.0"
     }
 }

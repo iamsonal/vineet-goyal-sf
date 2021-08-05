@@ -134,7 +134,7 @@ function onResponseSuccess(
     // Remove ids from in flight list
     recordIds.forEach((id) => IN_FLIGHT_REQUESTS.delete(id));
 
-    // the selector passed to resolveUnfulfilledSnapshot requests the data already formatted so the response
+    // the selector passed to dispatchResourceRequest requests the data already formatted so the response
     // can either be a RecordAvatarBulkRepresentation or a RecordAvatarBulkMapRepresentation
     if (isRecordAvatarBulkMapRepresentation(response)) {
         formatted = response.body;
@@ -153,8 +153,9 @@ function onResponseSuccess(
         recordAvatarBulkMapRepresentationIngest,
         formatted
     );
+    const snapshot = buildInMemorySnapshot(luvio, config);
     luvio.storeBroadcast();
-    return buildInMemorySnapshot(luvio, config);
+    return snapshot;
 }
 
 function onResponseError(
@@ -172,12 +173,14 @@ function onResponseError(
     return errorSnapshot;
 }
 
-function resolveUnfulfilledSnapshot(
-    luvio: Luvio,
-    config: GetRecordAvatarsConfig,
-    recordIds: string[],
-    snapshot: UnfulfilledSnapshot<RecordAvatarBulkMapRepresentation, any>
-) {
+/**
+ *
+ * The third argument, "recordIds", is here because
+ * We only want to fetch avatars that are actually missing
+ * This list will be a subset of the recordIds that are on the adapter config.
+ *
+ */
+function buildNetworkSnapshot(luvio: Luvio, config: GetRecordAvatarsConfig, recordIds: string[]) {
     const recordIdsNotInFlight: string[] = [],
         recordIdsInFlight: string[] = [];
     let luvioResponse;
@@ -196,14 +199,16 @@ function resolveUnfulfilledSnapshot(
         recordIdsNotInFlight.forEach((id) => IN_FLIGHT_REQUESTS.add(id));
         const resourceRequest = buildRequest(recordIdsNotInFlight);
 
-        luvioResponse = luvio.resolveUnfulfilledSnapshot(resourceRequest, snapshot).then(
-            (response) => {
-                return onResponseSuccess(luvio, config, recordIdsNotInFlight, response);
-            },
-            (err: FetchResponse<unknown>) => {
-                return onResponseError(luvio, config, recordIdsNotInFlight, err);
-            }
-        );
+        luvioResponse = luvio
+            .dispatchResourceRequest<RecordAvatarBulkRepresentation>(resourceRequest)
+            .then(
+                (response) => {
+                    return onResponseSuccess(luvio, config, recordIdsNotInFlight, response);
+                },
+                (err: FetchResponse<unknown>) => {
+                    return onResponseError(luvio, config, recordIdsNotInFlight, err);
+                }
+            );
     }
 
     // For any currently in flight record ids lets emit a fake response
@@ -211,31 +216,7 @@ function resolveUnfulfilledSnapshot(
         ingestFakeResponse(luvio, recordIdsInFlight);
     }
 
-    return luvioResponse ? luvioResponse : buildInMemorySnapshot(luvio, config);
-}
-
-/**
- *
- * The third argument, "recordIds", is here because
- * We only want to fetch avatars that are actually missing
- * This list will be a subset of the recordIds that are on the adapter config.
- *
- */
-export function buildNetworkSnapshot(
-    luvio: Luvio,
-    config: GetRecordAvatarsConfig,
-    recordIds: string[]
-): Promise<Snapshot<RecordAvatarBulkMapRepresentation>> {
-    const resourceRequest = buildRequest(recordIds);
-
-    return luvio.dispatchResourceRequest<RecordAvatarBulkRepresentation>(resourceRequest).then(
-        (response) => {
-            return onResponseSuccess(luvio, config, recordIds, response);
-        },
-        (err: FetchResponse<unknown>) => {
-            return onResponseError(luvio, config, recordIds, err);
-        }
-    );
+    return luvioResponse ? luvioResponse : Promise.resolve(buildInMemorySnapshot(luvio, config));
 }
 
 // We have to type guard against pending snapshots
@@ -274,9 +255,5 @@ export const factory: AdapterFactory<GetRecordAvatarsConfig, RecordAvatarBulkMap
         // Only fetch avatars that are missing
         const recordIds = getRecordIds(config, cacheLookup);
 
-        if (isUnfulfilledSnapshot(cacheLookup)) {
-            return resolveUnfulfilledSnapshot(luvio, config, recordIds, cacheLookup);
-        }
-
-        return buildNetworkSnapshot(luvio, config, recordIds);
+        return luvio.resolveSnapshot(cacheLookup, buildSnapshotRefresh(luvio, config, recordIds));
     };

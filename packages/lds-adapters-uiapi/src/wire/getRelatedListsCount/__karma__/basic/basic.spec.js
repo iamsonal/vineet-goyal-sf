@@ -130,4 +130,32 @@ describe('refresh', () => {
         expect(element.pushCount()).toBe(4);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(fourthMock);
     });
+
+    it('rebuilds snapshot properly when one child resource gets updated', async () => {
+        const mockData = getMock('related-lists-count-Cases-Contacts');
+        const secondMock = getMock('related-lists-count-Cases-Contacts');
+        secondMock.results[1].result.count += 1;
+
+        const parentRecordId = mockData.results[0].result.listReference.inContextOfRecordId;
+        const relatedListNames = mockData.results.map(
+            (result) => result.result.listReference.relatedListId
+        );
+        const resourceConfig = {
+            parentRecordId: parentRecordId,
+            relatedListNames: relatedListNames.join(','),
+        };
+        mockNetwork(resourceConfig, [mockData, secondMock]);
+
+        const props = {
+            parentRecordId: parentRecordId,
+            relatedListNames: relatedListNames,
+        };
+
+        const element = await setupElement(props, RelatedListsCount);
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
+
+        await element.refresh();
+        expect(element.pushCount()).toBe(2);
+        expect(element.getWiredData()).toEqualSnapshotWithoutEtags(secondMock);
+    });
 });

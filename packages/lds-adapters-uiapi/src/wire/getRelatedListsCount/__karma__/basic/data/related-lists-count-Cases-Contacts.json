@@ -1,0 +1,40 @@
+{
+    "results": [
+        {
+            "result": {
+                "count": 14,
+                "eTag": "20a3701fee0ab4faa22a29a32b0ec0c1",
+                "hasMore": false,
+                "listReference": {
+                    "id": null,
+                    "inContextOfRecordId": "001D2000002vEU2IAM",
+                    "listViewApiName": null,
+                    "objectApiName": null,
+                    "parentObjectApiName": "Account",
+                    "recordTypeId": null,
+                    "relatedListId": "Cases",
+                    "type": "relatedList"
+                }
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "count": 20,
+                "eTag": "6e72ae9073169e65031edf740eadb9dd",
+                "hasMore": true,
+                "listReference": {
+                    "id": null,
+                    "inContextOfRecordId": "001D2000002vEU2IAM",
+                    "listViewApiName": null,
+                    "objectApiName": null,
+                    "parentObjectApiName": "Account",
+                    "recordTypeId": null,
+                    "relatedListId": "Contacts",
+                    "type": "relatedList"
+                }
+            },
+            "statusCode": 200
+        }
+    ]
+}

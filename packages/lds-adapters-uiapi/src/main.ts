@@ -18,8 +18,6 @@ export {
     keyBuilder as keyBuilderRecord,
     KeyParams as KeyParamsRecord,
 } from './generated/types/RecordRepresentation';
-// TODO - W-9051409 - remove this export after custom composite adapters no longer use resolveUnfulfilledSnapshot
-export { keyBuilderFromType as keyBuilderFromTypeRecord } from './generated/types/RecordRepresentation';
 export {
     ingest as ingestRecord,
     createIngestRecordWithFields,

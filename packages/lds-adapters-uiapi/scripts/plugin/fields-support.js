@@ -6,9 +6,6 @@ const { parse } = require('./parse-fields');
 // Adapter Generation
 const { generateFieldsAdapterFragment } = require('./adapter/generate-fields-fragment');
 const { generateFieldsIngestSuccess } = require('./adapter/generate-fields-ingest-success');
-const {
-    generateResolveUnfulfilledSnapshot,
-} = require('./adapter/generate-fields-resolve-unfulfilled-snapshot');
 
 // Resource Generation
 const { generateResourceIngestSuccess } = require('./resource/generate-ingest-success');
@@ -106,7 +103,6 @@ function generateAdapter(adapter, resource, def, outputDir, createGenerationCont
     const code = [
         generateFieldsAdapterFragment(adapter, resource, def, state),
         generateFieldsIngestSuccess(adapter, resource, def, state),
-        generateResolveUnfulfilledSnapshot(adapter, resource, def, state),
     ];
 
     adapterContext.write(code.join('\n\n'));
@@ -154,10 +150,6 @@ function linkFieldImports(fieldsAst, addImportOverride) {
             {
                 generatedIdentifier: 'buildNetworkSnapshot',
                 targetIdentifier: 'buildNetworkSnapshot',
-            },
-            {
-                generatedIdentifier: 'resolveUnfulfilledSnapshot',
-                targetIdentifier: 'resolveUnfulfilledSnapshot',
             },
         ].forEach(({ generatedIdentifier, targetIdentifier }) => {
             addImportOverride(

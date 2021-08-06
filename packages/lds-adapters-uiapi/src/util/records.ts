@@ -45,10 +45,6 @@ export interface FieldValueRepresentationLinkState {
     fields: string[];
 }
 
-export interface ResourceRequestWithConfig {
-    configOptionalFields?: string[];
-}
-
 export interface RecordLayoutFragment {
     apiName: RecordRepresentation['apiName'];
     recordTypeId: RecordRepresentation['recordTypeId'];

@@ -269,16 +269,3 @@ export function registerApiFamilyRoutes(apiFamily: ApiFamily) {
         );
     });
 }
-
-export function auraResponseIsQueryTooComplicated(error: AuraFetchResponse<any>) {
-    const { body } = error;
-
-    if (error.status === HttpStatusCode.BadRequest && body !== undefined) {
-        return (
-            body.statusCode === HttpStatusCode.BadRequest &&
-            body.errorCode === 'QUERY_TOO_COMPLICATED'
-        );
-    }
-
-    return false;
-}

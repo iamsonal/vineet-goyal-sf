@@ -4,7 +4,6 @@ import {
     Snapshot,
     FetchResponse,
     SnapshotRefresh,
-    UnfulfilledSnapshot,
     ResourceResponse,
 } from '@luvio/engine';
 import { GetRecordConfig, createResourceParams } from '../../generated/adapters/getRecord';
@@ -18,7 +17,6 @@ import {
 import { getTrackedFields, convertFieldsToTrie } from '../../util/records';
 import { buildSelectionFromFields } from '../../selectors/record';
 import { difference } from '../../validation/utils';
-import { isUnfulfilledSnapshot } from '../../util/snapshot';
 import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
 import { configuration } from '../../configuration';
 
@@ -172,23 +170,6 @@ export function buildNetworkSnapshot(
     );
 }
 
-export function resolveUnfulfilledSnapshot(
-    luvio: Luvio,
-    config: GetRecordConfig,
-    snapshot: UnfulfilledSnapshot<RecordRepresentation, any>
-) {
-    const { request, key, allTrackedFields } = prepareRequest(luvio, config);
-
-    return luvio.resolveUnfulfilledSnapshot<RecordRepresentation>(request, snapshot).then(
-        (response) => {
-            return onResourceSuccess(luvio, config, key, allTrackedFields, response, 1);
-        },
-        (err: FetchResponse<unknown>) => {
-            return onResourceError(luvio, config, key, err);
-        }
-    );
-}
-
 // used by getRecordLayoutType#refresh
 export function buildInMemorySnapshot(
     luvio: Luvio,
@@ -214,9 +195,5 @@ export function getRecordByFields(
         return snapshot;
     }
 
-    if (isUnfulfilledSnapshot(snapshot)) {
-        return resolveUnfulfilledSnapshot(luvio, config, snapshot);
-    }
-
-    return buildNetworkSnapshot(luvio, config);
+    return luvio.resolveSnapshot(snapshot, buildSnapshotRefresh(luvio, config));
 }

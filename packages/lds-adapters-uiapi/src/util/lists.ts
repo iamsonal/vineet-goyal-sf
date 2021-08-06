@@ -3,8 +3,9 @@ import {
     PathSelection,
     AdapterContext,
     Snapshot,
-    ResourceResponse,
     SnapshotRefresh,
+    FulfilledSnapshot,
+    StaleSnapshot,
 } from '@luvio/engine';
 import {
     keyBuilder as ListInfoRepresentation_keyBuilder,
@@ -95,10 +96,9 @@ const LIST_INFO_SELECTIONS_ETAG: PathSelection[] = [
 export function getListInfo(
     listRef: ListReferenceRepresentation,
     luvio: Luvio,
-    // TODO - W-9051409 - today makeDurable environment needs a refresh set for
-    // "resolveUnfulfilledSnapshot" override to work properly, but once this work
-    // item is done we won't have "resolveUnfulfilledSnapshot" anymore and this
-    // "refresh" parameter can go away
+    // TODO - W-9601746 - today makeDurable environment needs a refresh set for
+    // "resolveSnapshot" override to work properly, but once this work
+    // item is done we won't need refresh set anymore and this parameter can go away
     refresh?: SnapshotRefresh<ListInfoRepresentation>
 ): Snapshot<ListInfoRepresentation> {
     const key = ListInfoRepresentation_keyBuilder(listRef);
@@ -351,8 +351,11 @@ export function listFields(
     };
 }
 
-export function isResultListInfoRepresentation(
-    result: ResourceResponse<ListInfoRepresentation>
-): result is ResourceResponse<ListInfoRepresentation> {
-    return 'listReference' in result.body;
+export function isListInfoSnapshotWithData(
+    snapshot: Snapshot<unknown>
+): snapshot is FulfilledSnapshot<ListInfoRepresentation> | StaleSnapshot<ListInfoRepresentation> {
+    return (
+        (snapshot.state === 'Fulfilled' || snapshot.state === 'Stale') &&
+        'listReference' in (snapshot.data as ListInfoRepresentation)
+    );
 }

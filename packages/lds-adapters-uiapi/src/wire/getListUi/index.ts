@@ -8,8 +8,8 @@ import {
     Snapshot,
     SnapshotRefresh,
     ResourceResponse,
-    UnfulfilledSnapshot,
     AdapterContext,
+    UnAvailableSnapshot,
 } from '@luvio/engine';
 import { untrustedIsObject } from '../../generated/adapters/adapter-utils';
 import {
@@ -53,7 +53,7 @@ import {
     ListFields,
     LIST_INFO_SELECTIONS,
     LIST_INFO_PRIVATES,
-    isResultListInfoRepresentation,
+    isListInfoSnapshotWithData,
 } from '../../util/lists';
 import {
     minimizeRequest,
@@ -62,7 +62,7 @@ import {
 } from '../../util/pagination';
 import { factory as getListViewSummaryCollectionAdapterFactory } from '../getListViewSummaryCollection';
 import { factory as getMruListUiAdapterFactory } from '../getMruListUi';
-import { isUnfulfilledSnapshot, isFulfilledSnapshot } from '../../util/snapshot';
+import { isFulfilledSnapshot } from '../../util/snapshot';
 
 const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select();
 
@@ -210,11 +210,11 @@ function buildInMemorySnapshot(
 
     return luvio.storeLookup<ListUiRepresentation>(
         selector,
-        buildSnapshotRefresh(luvio, context, config)
+        buildSnapshotRefresh_getListUi(luvio, context, config)
     );
 }
 
-function buildSnapshotRefresh(
+function buildSnapshotRefresh_getListUi(
     luvio: Luvio,
     context: AdapterContext,
     config: GetListUiConfig
@@ -298,7 +298,7 @@ function onResourceSuccess_getListUi(
             node: fragment,
             variables: {},
         },
-        buildSnapshotRefresh(luvio, context, config)
+        buildSnapshotRefresh_getListUi(luvio, context, config)
     );
 
     luvio.storeBroadcast();
@@ -312,24 +312,7 @@ function onResourceError_getListUi(
     config: GetListUiConfig,
     err: FetchResponse<unknown>
 ) {
-    return luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, context, config));
-}
-
-function resolveUnfulfilledSnapshot_getListUi(
-    luvio: Luvio,
-    context: AdapterContext,
-    config: GetListUiConfig,
-    snapshot: UnfulfilledSnapshot<ListUiRepresentation, any>
-) {
-    const request = prepareRequest_getListUi(config);
-    return luvio.resolveUnfulfilledSnapshot<ListUiRepresentation>(request, snapshot).then(
-        (response) => {
-            return onResourceSuccess_getListUi(luvio, context, config, response);
-        },
-        (err: FetchResponse<unknown>) => {
-            return onResourceError_getListUi(luvio, context, config, err);
-        }
-    );
+    return luvio.errorSnapshot(err, buildSnapshotRefresh_getListUi(luvio, context, config));
 }
 
 /**
@@ -448,9 +431,10 @@ function onResourceSuccess_getListRecords(
         types_ListRecordCollectionRepresentation_ingest,
         body
     );
-    luvio.storeBroadcast();
 
-    return buildInMemorySnapshot(luvio, context, config, listInfo, fields);
+    const snapshot = buildInMemorySnapshot(luvio, context, config, listInfo, fields);
+    luvio.storeBroadcast();
+    return snapshot;
 }
 
 function onResourceError_getListRecords(
@@ -470,30 +454,6 @@ function onResourceError_getListRecords(
     );
     luvio.storeBroadcast();
     return errorSnapshot;
-}
-
-function resolveUnfulfilledSnapshot_getListRecords(
-    luvio: Luvio,
-    context: AdapterContext,
-    config: GetListUiConfig,
-    listInfo: ListInfoRepresentation,
-    snapshot: UnfulfilledSnapshot<ListUiRepresentation, any>
-): Promise<Snapshot<ListUiRepresentation>> {
-    const request = prepareRequest_getListRecords(luvio, context, config, listInfo, snapshot);
-
-    return luvio
-        .resolveUnfulfilledSnapshot<ListRecordCollectionRepresentation>(
-            request,
-            snapshot as unknown as UnfulfilledSnapshot<ListRecordCollectionRepresentation, any>
-        )
-        .then(
-            (response) => {
-                return onResourceSuccess_getListRecords(luvio, context, config, listInfo, response);
-            },
-            (err: FetchResponse<unknown>) => {
-                return onResourceError_getListRecords(luvio, context, config, listInfo, err);
-            }
-        );
 }
 
 function buildNetworkSnapshot_getListRecords(
@@ -586,34 +546,27 @@ function getListUiSnapshotFromListInfo(
     // list ui from the store
     const snapshot = buildInMemorySnapshot(luvio, context, config, listInfo);
 
-    // if the list ui was not found in the store then
-    // make a full list-ui request
-    if (!snapshot.data) {
-        if (isUnfulfilledSnapshot(snapshot)) {
-            return resolveUnfulfilledSnapshot_getListUi(luvio, context, config, snapshot);
-        }
-
-        return buildNetworkSnapshot_getListUi(luvio, context, config);
-    }
-
     if (luvio.snapshotAvailable(snapshot)) {
         // cache hit :partyparrot:
         return snapshot;
     }
 
-    // we *should* only be missing records and/or tokens at this point; send a list-records
-    // request to fill them in
-    if (isUnfulfilledSnapshot(snapshot)) {
-        return resolveUnfulfilledSnapshot_getListRecords(
-            luvio,
-            context,
-            config,
-            listInfo,
-            snapshot
+    // if the list ui was not found in the store then
+    // make a full list-ui request
+    if (!snapshot.data) {
+        return luvio.resolveSnapshot(
+            snapshot,
+            buildSnapshotRefresh_getListUi(luvio, context, config)
         );
     }
 
-    return buildNetworkSnapshot_getListRecords(luvio, context, config, listInfo, snapshot);
+    // we *should* only be missing records and/or tokens at this point; send a list-records
+    // request to fill them in
+    return luvio.resolveSnapshot(snapshot, {
+        config,
+        resolve: () =>
+            buildNetworkSnapshot_getListRecords(luvio, context, config, listInfo, snapshot),
+    });
 }
 
 export const factory: AdapterFactory<
@@ -638,13 +591,16 @@ export const factory: AdapterFactory<
         // no listRef means we can't even attempt to build an in-memory snapshot
         // so make a full list-ui request
         if (listRef === undefined) {
+            // TODO - W-9712566 - this is returning network response directly to caller,
+            // this means LDS on Mobile environment does not have a chance to overlay
+            // draft edits on top of results
             return buildNetworkSnapshot_getListUi(luvio, context, config);
         }
 
         const listInfoSnapshot = getListInfo(
             listRef,
             luvio,
-            buildSnapshotRefresh(
+            buildSnapshotRefresh_getListUi(
                 luvio,
                 context,
                 config
@@ -656,38 +612,39 @@ export const factory: AdapterFactory<
             return getListUiSnapshotFromListInfo(luvio, context, config, listInfoSnapshot.data);
         }
 
-        // if listInfoSnapshot is unfulfilled then we can try to resolve it
-        if (isUnfulfilledSnapshot(listInfoSnapshot)) {
-            const listUiResourceRequest = prepareRequest_getListUi(config);
-
-            // In default environment resolving an unfulfilled snapshot is just hitting the network
-            // with the given ResourceRequest (so list-ui in this case).  In durable environment
-            // resolving an unfulfilled snapshot will first attempt to read the missing cache keys
-            // from the given unfulfilled snapshot (a list-info snapshot in this case) and build a
-            // fulfilled snapshot from that if those cache keys are present, otherwise it hits the
-            // network with the given resource request.  Usually the ResourceRequest and the unfulfilled
-            // snapshot are for the same response Type, but this lists adapter is special (it mixes
-            // calls with list-info, list-records, and list-ui), and so our use of resolveUnfulfilledSnapshot
-            // is special (polymorphic response, could either be a list-info representation or a
-            // list-ui representation).
-            return luvio.resolveUnfulfilledSnapshot(listUiResourceRequest, listInfoSnapshot).then(
-                (response) => {
-                    // if result came from cache we know it's a listinfo, otherwise
-                    // it's a full list-ui response
-                    if (isResultListInfoRepresentation(response)) {
-                        return getListUiSnapshotFromListInfo(luvio, context, config, response.body);
-                    } else {
-                        return onResourceSuccess_getListUi(luvio, context, config, response);
-                    }
-                },
-                (err: FetchResponse<unknown>) => {
-                    return onResourceError_getListUi(luvio, context, config, err);
+        // In default environment resolving a snapshot is just hitting the network
+        // using the given SnapshotRefresh (so list-ui in this case).  In durable environment
+        // resolving a snapshot will first attempt to read the missing cache keys
+        // from the given UnAvailable snapshot (a list-info snapshot in this case) and build a
+        // fulfilled snapshot from that if those cache keys are present, otherwise it refreshes
+        // with the given SnapshotRefresh.  Usually the SnapshotRefresh response and the UnAvailable
+        // snapshot are for the same response Type, but this lists adapter is special (it mixes
+        // calls with list-info, list-records, and list-ui), and so our use of resolveSnapshot
+        // is special (polymorphic response, could either be a list-info representation or a
+        // list-ui representation).
+        return luvio
+            .resolveSnapshot(
+                listInfoSnapshot as UnAvailableSnapshot<ListInfoRepresentation>,
+                buildSnapshotRefresh_getListUi(
+                    luvio,
+                    context,
+                    config
+                ) as unknown as SnapshotRefresh<ListInfoRepresentation>
+            )
+            .then((resolvedSnapshot) => {
+                // if result came from cache we know it's a listinfo, otherwise
+                // it's a full list-ui response
+                if (isListInfoSnapshotWithData(resolvedSnapshot)) {
+                    return getListUiSnapshotFromListInfo(
+                        luvio,
+                        context,
+                        config,
+                        resolvedSnapshot.data
+                    );
                 }
-            );
-        }
 
-        // if listInfoSnapshot in any other state then we make a full list-ui request
-        return buildNetworkSnapshot_getListUi(luvio, context, config);
+                return resolvedSnapshot as Snapshot<ListUiRepresentation>;
+            });
     };
 
     let listViewSummaryCollectionAdapter: Adapter<any, any> | null = null;

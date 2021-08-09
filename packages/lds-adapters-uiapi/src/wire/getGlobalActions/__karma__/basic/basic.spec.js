@@ -97,22 +97,24 @@ describe('data emit', () => {
 
         const config = {};
         mockGetGlobalActionsNetwork(config, {
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
             reject: true,
-            data: mockError,
+            data: {
+                status: 404,
+                statusText: 'Not Found',
+                ok: false,
+                body: mockError,
+            },
         });
 
         const element = await setupElement(config, GlobalActions);
 
         expect(element.pushCount()).toBe(1);
-        expect(element.getWiredError()).toContainErrorResponse(mockError);
+        expect(element.getWiredError()).toContainErrorBody(mockError);
 
         const elementB = await setupElement(config, GlobalActions);
 
         expect(elementB.pushCount()).toBe(1);
-        expect(elementB.getWiredError()).toContainErrorResponse(mockError);
+        expect(elementB.getWiredError()).toContainErrorBody(mockError);
     });
 
     it('should refresh when ingested error exceeds ttl', async () => {
@@ -122,11 +124,13 @@ describe('data emit', () => {
         const config = {};
         mockGetGlobalActionsNetwork(config, [
             {
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 reject: true,
-                data: mockError,
+                data: {
+                    status: 404,
+                    statusText: 'Not Found',
+                    ok: false,
+                    body: mockError,
+                },
             },
             mock,
         ]);
@@ -134,7 +138,7 @@ describe('data emit', () => {
         const element = await setupElement(config, GlobalActions);
 
         expect(element.pushCount()).toBe(1);
-        expect(element.getWiredError()).toContainErrorResponse(mockError);
+        expect(element.getWiredError()).toContainErrorBody(mockError);
 
         expireActions();
 

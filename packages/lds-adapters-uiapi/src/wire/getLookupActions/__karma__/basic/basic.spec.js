@@ -100,13 +100,13 @@ describe('basic', () => {
                 sections: undefined,
             },
         };
-        mockNetworkError(resourceConfig, mockData);
+        mockNetworkError(resourceConfig, { body: mockData });
 
         const props = { ...resourceConfig.urlParams, ...resourceConfig.queryParams };
         const element = await setupElement(props, Basic);
 
         const error = element.getWiredError();
-        expect(error.body).toEqualSnapshotWithoutEtags(mockData);
+        expect(error).toContainErrorBody(mockData);
     });
 
     it(`coerces invalid formFactor param to undefined`, async () => {

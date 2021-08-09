@@ -48,7 +48,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            id: '0IuS70000004CqIKAU',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -60,7 +59,7 @@ describe('basic', () => {
             ],
         };
         const config = {
-            id: mock.id,
+            id: '0ItS700000001YxKAI',
             replicatedDataset: {
                 connectionMode: 'Full',
             },
@@ -72,7 +71,8 @@ describe('basic', () => {
             // make sure we are hitting the catch
             fail('updateReplicatedDataset did not throw');
         } catch (e) {
-            expect(e).toContainErrorResponse(mock);
+            expect(e).toEqual(mock);
+            expect(e).toBeImmutable();
         }
     });
 });

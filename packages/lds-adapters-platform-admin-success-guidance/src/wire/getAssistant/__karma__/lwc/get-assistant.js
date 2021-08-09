@@ -29,6 +29,6 @@ export default class GetAssistant extends LightningElement {
 
     @api
     getError() {
-        return this.error.body;
+        return this.error;
     }
 }

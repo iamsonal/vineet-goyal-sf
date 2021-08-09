@@ -59,7 +59,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            id: '0IuS70000004CqIKAU',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -70,8 +69,9 @@ describe('basic', () => {
                 },
             ],
         };
+
         const config = {
-            id: mock.id,
+            id: '0IuS70000004CqIKAU',
             replicatedFields: {
                 fields: [
                     { fieldType: 'text', label: 'Id', name: 'Id', skipped: 'false' },
@@ -86,7 +86,8 @@ describe('basic', () => {
             // make sure we are hitting the catch
             fail('updateReplicatedFields did not throw');
         } catch (e) {
-            expect(e).toContainErrorResponse(mock);
+            expect(e).toEqual(mock);
+            expect(e).toBeImmutable();
         }
     });
 });

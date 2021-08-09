@@ -26,7 +26,7 @@ export default class GetDataConnectorSourceObjects extends LightningElement {
 
     @api
     getWiredError() {
-        return this.error.body;
+        return this.error;
     }
 
     @api

@@ -27,6 +27,6 @@ export default class GetForm extends LightningElement {
     }
 
     @api getError() {
-        return this.error.body;
+        return this.error;
     }
 }

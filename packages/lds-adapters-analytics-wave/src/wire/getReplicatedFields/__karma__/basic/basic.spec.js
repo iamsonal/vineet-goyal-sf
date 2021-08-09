@@ -50,7 +50,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            id: '0IuS70000004CqXKAU',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -61,17 +60,17 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { id: mock.id };
+        const id = '0IuS70000004CqXKAU';
+        const config = { id: id };
         mockGetReplicatedFieldsNetworkErrorOnce(config, mock);
 
-        const el = await setupElement({ replicatedDatasetId: mock.id }, GetReplicatedFields);
+        const el = await setupElement({ replicatedDatasetId: id }, GetReplicatedFields);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
     });
 
     it('should cause a cache hit on query after server returned 404', async () => {
         const mock = {
-            id: '0IuS70000004CqXKAU',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -82,22 +81,20 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { id: mock.id };
+        const id = '0IuS70000004CqXKAU';
+        const config = { id: id };
         mockGetReplicatedFieldsNetworkOnce(config, [
             {
                 reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 data: mock,
             },
         ]);
 
-        const el = await setupElement({ replicatedDatasetId: mock.id }, GetReplicatedFields);
+        const el = await setupElement({ replicatedDatasetId: id }, GetReplicatedFields);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
 
-        const el2 = await setupElement({ replicatedDatasetId: mock.id }, GetReplicatedFields);
+        const el2 = await setupElement({ replicatedDatasetId: id }, GetReplicatedFields);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredError()).toEqual(mock);
     });

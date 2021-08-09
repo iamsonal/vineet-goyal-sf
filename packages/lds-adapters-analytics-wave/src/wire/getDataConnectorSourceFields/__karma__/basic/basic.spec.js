@@ -97,15 +97,10 @@ describe('basic', () => {
             sourceObjectName: 'Account',
         };
 
-        mockGetDataConnectorSourceFieldsNetworkOnce(config, [
-            {
-                reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                data: mock,
-            },
-        ]);
+        mockGetDataConnectorSourceFieldsNetworkOnce(config, {
+            reject: true,
+            data: mock,
+        });
 
         const el = await setupElement(config, GetDataConnectorSourceFields);
         expect(el.pushCount()).toBe(1);

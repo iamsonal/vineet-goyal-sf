@@ -17,20 +17,25 @@ describe('record-ui error responses', () => {
             layoutTypes: ['Full'],
             modes: ['View'],
         };
-        mockGetRecordUiNetwork(config, { reject: true, data: mockError });
+        mockGetRecordUiNetwork(config, { reject: true, data: { body: mockError } });
 
         const wireA = await setupElement(config, RecordUi);
 
-        expect(wireA.getWiredError()).toContainErrorResponse(mockError);
+        expect(wireA.getWiredError()).toContainErrorBody(mockError);
     });
 
     it('should cause a cache hit when a recordUi is queried after server returned 404', async () => {
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
+        const mockError = {
+            status: 404,
+            statusText: 'Not Found',
+            ok: false,
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
+        };
         const config = {
             recordIds: 'a07B0000002MTICIA4', // record id doesn't matter
             layoutTypes: ['Full'],
@@ -38,34 +43,29 @@ describe('record-ui error responses', () => {
         };
         mockGetRecordUiNetwork(config, {
             reject: true,
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
             data: mockError,
         });
 
-        const expectedError = {
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
-            body: mockError,
-        };
-
         const elm = await setupElement(config, RecordUi);
-        expect(elm.getWiredError()).toEqualSnapshotWithoutEtags(expectedError);
+        expect(elm.getWiredError()).toEqual(mockError);
 
         const secondElm = await setupElement(config, RecordUi);
-        expect(secondElm.getWiredError()).toEqualSnapshotWithoutEtags(expectedError);
+        expect(secondElm.getWiredError()).toEqual(mockError);
     });
 
     it('should refetch recordUi when ingested error TTLs out', async () => {
         const mockData = getMock('single-record-Account-layouttypes-Full-modes-View');
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
+        const mockError = {
+            status: 404,
+            statusText: 'Not Found',
+            ok: false,
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
+        };
         const config = {
             recordIds: Object.keys(mockData.records)[0],
             layoutTypes: ['Full'],
@@ -74,23 +74,13 @@ describe('record-ui error responses', () => {
         mockGetRecordUiNetwork(config, [
             {
                 reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 data: mockError,
             },
             mockData,
         ]);
 
-        const expectedError = {
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
-            body: mockError,
-        };
-
         const elm = await setupElement(config, RecordUi);
-        expect(elm.getWiredError()).toEqualSnapshotWithoutEtags(expectedError);
+        expect(elm.getWiredError()).toEqualSnapshotWithoutEtags(mockError);
 
         expireRecordUi();
 
@@ -100,12 +90,17 @@ describe('record-ui error responses', () => {
     });
 
     it('should not emit when refetching recordUi responding with the same error after ingested error TTLs out', async () => {
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
+        const mockError = {
+            status: 404,
+            statusText: 'Not Found',
+            ok: false,
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
+        };
         const config = {
             recordIds: 'a07B0000002MTICIA4', // record id doesn't matter
             layoutTypes: ['Full'],
@@ -114,36 +109,23 @@ describe('record-ui error responses', () => {
         mockGetRecordUiNetwork(config, [
             {
                 reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 data: mockError,
             },
             {
                 reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 data: mockError,
             },
         ]);
 
-        const expectedError = {
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
-            body: mockError,
-        };
-
         const elm = await setupElement(config, RecordUi);
         expect(elm.pushCount()).toBe(1);
-        expect(elm.getWiredError()).toEqualSnapshotWithoutEtags(expectedError);
+        expect(elm.getWiredError()).toEqual(mockError);
 
         expireRecordUi();
 
         const secondElm = await setupElement(config, RecordUi);
         expect(secondElm.pushCount()).toBe(1);
-        expect(secondElm.getWiredError()).toEqualSnapshotWithoutEtags(expectedError);
+        expect(secondElm.getWiredError()).toEqual(mockError);
 
         // verify no new emit to elm
         expect(elm.pushCount()).toBe(1);

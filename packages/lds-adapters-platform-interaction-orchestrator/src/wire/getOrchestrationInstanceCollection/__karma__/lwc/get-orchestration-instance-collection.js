@@ -20,7 +20,7 @@ export default class GetOrchestrationInstanceCollection extends LightningElement
 
     @api
     getError() {
-        return this.error.body;
+        return this.error;
     }
 
     @api

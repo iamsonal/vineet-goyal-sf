@@ -36,7 +36,7 @@ export default class GetDataflowJobs extends LightningElement {
 
     @api
     getWiredError() {
-        return this.error.body;
+        return this.error;
     }
 
     @api

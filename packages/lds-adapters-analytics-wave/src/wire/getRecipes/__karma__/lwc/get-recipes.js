@@ -32,7 +32,7 @@ export default class GetRecipes extends LightningElement {
 
     @api
     getWiredError() {
-        return this.error.body;
+        return this.error;
     }
 
     @api

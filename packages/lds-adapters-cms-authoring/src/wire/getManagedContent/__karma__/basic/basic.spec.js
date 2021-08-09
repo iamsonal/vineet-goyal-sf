@@ -14,21 +14,19 @@ const TEST_CONFIG = {
     language: 'en_US',
 };
 const MOCK_ERROR = {
-    errorCode: 'NOT_FOUND',
-    message: 'The requested resource does not exist',
+    ok: false,
+    status: 404,
+    statusText: 'Not Found',
+    body: [
+        {
+            errorCode: 'NOT_FOUND',
+            message: 'The requested resource does not exist',
+        },
+    ],
 };
 const ERROR_DATA = {
-    ok: false,
-    status: 404,
-    statusText: 'Not Found',
     reject: true,
-    data: [MOCK_ERROR],
-};
-const ERROR = {
-    ok: false,
-    status: 404,
-    statusText: 'Not Found',
-    body: [MOCK_ERROR],
+    data: MOCK_ERROR,
 };
 
 function getMock(filename) {
@@ -106,22 +104,22 @@ describe('basic', () => {
     });
 
     it('should display error when network request returns 404s', async () => {
-        mockGetManagedContentErrorOnce(TEST_CONFIG, ERROR);
+        mockGetManagedContentErrorOnce(TEST_CONFIG, MOCK_ERROR);
 
         const el = await setupElement(TEST_CONFIG, GetManagedContent);
         expect(el.pushCount()).toBe(1);
-        expect(el.getError().body).toEqual(ERROR);
+        expect(el.getError()).toEqual(MOCK_ERROR);
     });
 
     it('should cause a cache hit when content is queried after server returned 404', async () => {
         mockGetManagedContent(TEST_CONFIG, [ERROR_DATA]);
 
         const el1 = await setupElement(TEST_CONFIG, GetManagedContent);
-        expect(el1.getError()).toEqual(ERROR);
+        expect(el1.getError()).toEqual(MOCK_ERROR);
         expect(el1.getError()).toBeImmutable();
 
         const el2 = await setupElement(TEST_CONFIG, GetManagedContent);
-        expect(el2.getError()).toEqual(ERROR);
+        expect(el2.getError()).toEqual(MOCK_ERROR);
         expect(el2.getError()).toBeImmutable();
     });
 
@@ -131,7 +129,7 @@ describe('basic', () => {
         mockGetManagedContent(TEST_CONFIG, [ERROR_DATA, mock]);
 
         const el1 = await setupElement(TEST_CONFIG, GetManagedContent);
-        expect(el1.getError()).toEqual(ERROR);
+        expect(el1.getError()).toEqual(MOCK_ERROR);
 
         expireManagedContent();
 

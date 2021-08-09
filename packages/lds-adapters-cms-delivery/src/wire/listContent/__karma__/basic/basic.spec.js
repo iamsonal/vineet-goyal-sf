@@ -99,28 +99,42 @@ describe('basic', () => {
 
         const el = await setupElement(TEST_CONFIG, ListContent);
         expect(el.pushCount()).toBe(1);
-        expect(el.getError().body).toEqual(mock);
+        expect(el.getError()).toEqual(mock);
     });
 
     it('causes a cache hit when a contentList is queried after server returned 404', async () => {
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
+        const mockError = {
+            ok: false,
+            status: 404,
+            statusText: 'NOT_FOUND',
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
+        };
 
         mockListContent(TEST_CONFIG, [
             {
                 reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 data: mockError,
             },
         ]);
 
-        const expectedError = {
+        const elm = await setupElement(TEST_CONFIG, ListContent);
+        expect(elm.getError()).toEqual(mockError);
+        expect(elm.getError()).toBeImmutable();
+
+        const secondElm = await setupElement(TEST_CONFIG, ListContent);
+        expect(secondElm.getError()).toEqual(mockError);
+        expect(secondElm.getError()).toBeImmutable();
+    });
+
+    it('causes a cache miss when a contentList is queried again after server returned 404, and cache is cleared', async () => {
+        const contentListMock = getMock('contentList');
+
+        const mockError = {
             status: 404,
             statusText: 'Not Found',
             ok: false,
@@ -132,45 +146,16 @@ describe('basic', () => {
             ],
         };
 
-        const elm = await setupElement(TEST_CONFIG, ListContent);
-        expect(elm.getError()).toEqual(expectedError);
-        expect(elm.getError()).toBeImmutable();
-
-        const secondElm = await setupElement(TEST_CONFIG, ListContent);
-        expect(secondElm.getError()).toEqual(expectedError);
-        expect(secondElm.getError()).toBeImmutable();
-    });
-
-    it('causes a cache miss when a contentList is queried again after server returned 404, and cache is cleared', async () => {
-        const contentListMock = getMock('contentList');
-
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
-
         mockListContent(TEST_CONFIG, [
             {
                 reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 data: mockError,
             },
             contentListMock,
         ]);
 
-        const expectedError = {
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
-            body: mockError,
-        };
-
         const elm = await setupElement(TEST_CONFIG, ListContent);
-        expect(elm.getError()).toEqual(expectedError);
+        expect(elm.getError()).toEqual(mockError);
 
         clearContentListCache();
 

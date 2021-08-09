@@ -28,7 +28,12 @@ describe('deleteDataset - basic', () => {
 
     it('evicts dataset from cache using id', async () => {
         const mockDataset = getMock('dataset');
-        const mockError = getMock('delete-dataset-not-exist');
+        const mockError = {
+            ok: false,
+            status: 404,
+            statusText: 'NOT_FOUND',
+            body: getMock('delete-dataset-not-exist'),
+        };
         const config = {
             datasetIdOrApiName: mockDataset.id,
         };
@@ -41,7 +46,6 @@ describe('deleteDataset - basic', () => {
             mockDataset,
             {
                 reject: true,
-                status: 404,
                 data: mockError,
             },
         ]);
@@ -57,12 +61,16 @@ describe('deleteDataset - basic', () => {
 
         expect(el.pushCount()).toBe(2);
         expect(el.getWiredError()).toEqual(mockError);
-        expect(el.getWiredError()).toBeImmutable();
     });
 
     it('evicts dataset from cache using name', async () => {
         const mockDataset = getMock('dataset');
-        const mockError = getMock('delete-dataset-not-exist');
+        const mockError = {
+            ok: false,
+            status: 404,
+            statusText: 'NOT_FOUND',
+            body: getMock('delete-dataset-not-exist'),
+        };
         const config = {
             datasetIdOrApiName: mockDataset.id,
         };
@@ -75,7 +83,6 @@ describe('deleteDataset - basic', () => {
             mockDataset,
             {
                 reject: true,
-                status: 404,
                 data: mockError,
             },
         ]);
@@ -102,7 +109,7 @@ describe('deleteDataset - errors', () => {
             datasetIdOrApiName: "05vRM00000003rZYAQ'",
         };
 
-        mockDeleteDatasetNetworkOnce(config, { reject: true, data: mockError });
+        mockDeleteDatasetNetworkOnce(config, { reject: true, data: { body: mockError } });
 
         let error;
         try {
@@ -112,7 +119,7 @@ describe('deleteDataset - errors', () => {
             error = e;
         }
 
-        expect(error).toContainErrorResponse(mockError);
+        expect(error).toContainErrorBody(mockError);
     });
 
     it('does not evict cache when server returns an error', async () => {

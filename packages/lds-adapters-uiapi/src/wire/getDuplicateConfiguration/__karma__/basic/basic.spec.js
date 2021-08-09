@@ -267,11 +267,11 @@ describe('duplicate configuration', () => {
         const invalidObjectApiConfig = {
             objectApiName: 'Invalid',
         };
-        mockNetworkError(invalidObjectApiConfig, mockData);
+        mockNetworkError(invalidObjectApiConfig, { body: mockData });
 
         const element = await setupElement(invalidObjectApiConfig, GetDuplicatesConfiguration);
 
         const error = element.getWiredError();
-        expect(error.body).toEqualSnapshotWithoutEtags(mockData);
+        expect(error).toContainErrorBody(mockData);
     });
 });

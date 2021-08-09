@@ -187,12 +187,12 @@ describe('error', () => {
             message: 'Error occured',
         };
 
-        mockCreateRecordNetwork(config, { reject: true, data: mockError });
+        mockCreateRecordNetwork(config, { reject: true, data: { body: mockError } });
 
         try {
             await createRecord(config);
         } catch (e) {
-            expect(e).toContainErrorResponse(mockError);
+            expect(e).toContainErrorBody(mockError);
         }
     });
 
@@ -201,7 +201,7 @@ describe('error', () => {
             message: 'Error occured',
         };
 
-        mockCreateRecordNetwork(config, { reject: true, data: mockError });
+        mockCreateRecordNetwork(config, { reject: true, data: { body: mockError } });
 
         try {
             await createRecord(config);
@@ -213,7 +213,7 @@ describe('error', () => {
             } catch (e) {
                 // do nothing
             }
-            expect(e).toContainErrorResponse(mockError);
+            expect(e).toContainErrorBody(mockError);
         }
     });
 });

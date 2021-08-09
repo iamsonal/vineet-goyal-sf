@@ -15,13 +15,13 @@ describe('getObjectInfo - fetch errors', () => {
         const mockError = getMock('object-error');
 
         const config = { objectApiName: 'Invalid' };
-        mockGetObjectInfoNetwork(config, { reject: true, data: mockError });
+        mockGetObjectInfoNetwork(config, { reject: true, data: { body: mockError } });
 
         const element = await setupElement(config, ObjectBasic);
 
         expect(element.pushCount()).toBe(1);
         expect(element.getWiredData()).toBeUndefined();
-        expect(element.getWiredError()).toContainErrorResponse(mockError);
+        expect(element.getWiredError()).toContainErrorBody(mockError);
     });
 
     it('should resolve with correct data when an error is refreshed', async () => {
@@ -32,7 +32,7 @@ describe('getObjectInfo - fetch errors', () => {
         mockGetObjectInfoNetwork(config, [
             {
                 reject: true,
-                data: mockError,
+                data: { body: mockError },
             },
             mock,
         ]);
@@ -40,7 +40,7 @@ describe('getObjectInfo - fetch errors', () => {
         const element = await setupElement(config, ObjectBasic);
 
         expect(element.pushCount()).toBe(1);
-        expect(element.getWiredError()).toContainErrorResponse(mockError);
+        expect(element.getWiredError()).toContainErrorBody(mockError);
 
         const refreshed = await element.refresh();
 
@@ -56,7 +56,7 @@ describe('getObjectInfo - fetch errors', () => {
             mock,
             {
                 reject: true,
-                data: mockError,
+                data: { body: mockError },
             },
         ]);
 
@@ -68,7 +68,7 @@ describe('getObjectInfo - fetch errors', () => {
             await element.refresh();
             fail();
         } catch (e) {
-            expect(e).toContainErrorResponse(mockError);
+            expect(e).toContainErrorBody(mockError);
         }
     });
 
@@ -77,56 +77,58 @@ describe('getObjectInfo - fetch errors', () => {
 
         const config = { objectApiName: 'Account' };
         mockGetObjectInfoNetwork(config, {
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
             reject: true,
-            data: mockError,
+            data: {
+                status: 404,
+                statusText: 'Not Found',
+                ok: false,
+                body: mockError,
+            },
         });
 
         const element = await setupElement(config, ObjectBasic);
 
         expect(element.pushCount()).toBe(1);
-        expect(element.getWiredError()).toContainErrorResponse(mockError);
+        expect(element.getWiredError()).toContainErrorBody(mockError);
 
         const elementB = await setupElement(config, ObjectBasic);
 
         expect(elementB.pushCount()).toBe(1);
-        expect(elementB.getWiredError()).toContainErrorResponse(mockError);
+        expect(elementB.getWiredError()).toContainErrorBody(mockError);
     });
 
     it('should not emit when refetching objectInfo returns the same error after ingested error TTLs out', async () => {
         const mockError = getMock('object-error');
+        const mockErrorResponse = {
+            status: 404,
+            statusText: 'Not Found',
+            ok: false,
+            body: mockError,
+        };
 
         const config = { objectApiName: 'Account' };
         mockGetObjectInfoNetwork(config, [
             {
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 reject: true,
-                data: mockError,
+                data: mockErrorResponse,
             },
             {
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 reject: true,
-                data: mockError,
+                data: mockErrorResponse,
             },
         ]);
 
         const element = await setupElement(config, ObjectBasic);
 
         expect(element.pushCount()).toBe(1);
-        expect(element.getWiredError()).toContainErrorResponse(mockError);
+        expect(element.getWiredError()).toContainErrorBody(mockError);
 
         expireObjectInfo();
 
         const elementB = await setupElement(config, ObjectBasic);
 
         expect(elementB.pushCount()).toBe(1);
-        expect(elementB.getWiredError()).toContainErrorResponse(mockError);
+        expect(elementB.getWiredError()).toContainErrorBody(mockError);
 
         // First element should not have received new error
         expect(element.pushCount()).toBe(1);
@@ -139,11 +141,13 @@ describe('getObjectInfo - fetch errors', () => {
         const config = { objectApiName: 'Account' };
         mockGetObjectInfoNetwork(config, [
             {
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 reject: true,
-                data: mockError,
+                data: {
+                    status: 404,
+                    statusText: 'Not Found',
+                    ok: false,
+                    body: mockError,
+                },
             },
             mock,
         ]);
@@ -151,7 +155,7 @@ describe('getObjectInfo - fetch errors', () => {
         const element = await setupElement(config, ObjectBasic);
 
         expect(element.pushCount()).toBe(1);
-        expect(element.getWiredError()).toContainErrorResponse(mockError);
+        expect(element.getWiredError()).toContainErrorBody(mockError);
 
         expireObjectInfo();
 
@@ -172,7 +176,7 @@ describe('getObjectInfo - fetch errors', () => {
             mock,
             {
                 reject: true,
-                data: mockError,
+                data: { body: mockError },
             },
         ]);
 
@@ -184,7 +188,7 @@ describe('getObjectInfo - fetch errors', () => {
             await element.refresh();
             fail();
         } catch (e) {
-            expect(element.getWiredError()).toContainErrorResponse(mockError);
+            expect(element.getWiredError()).toContainErrorBody(mockError);
         }
     });
 
@@ -199,7 +203,7 @@ describe('getObjectInfo - fetch errors', () => {
         mockGetObjectInfoNetwork(config, [
             {
                 reject: true,
-                data: mockError,
+                data: { body: mockError },
             },
             mock,
         ]);

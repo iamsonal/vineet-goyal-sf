@@ -134,28 +134,11 @@ describe('basic', () => {
 
         const el = await setupElement(WIRE_CONFIG, SearchSite);
         expect(el.pushCount).toBe(1);
-        expect(el.getError().body).toEqual(mockError);
+        expect(el.getError()).toEqual(mockError);
     });
 
     it('causes a cache hit when a searchSite is queried after server returned 404', async () => {
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
-
-        mockSiteSearchNetworkOnce(TEST_CONFIG, [
-            {
-                reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                data: mockError,
-            },
-        ]);
-
-        const expectedError = {
+        const mockError = {
             status: 404,
             statusText: 'Not Found',
             ok: false,
@@ -167,12 +150,19 @@ describe('basic', () => {
             ],
         };
 
+        mockSiteSearchNetworkOnce(TEST_CONFIG, [
+            {
+                reject: true,
+                data: mockError,
+            },
+        ]);
+
         const elm = await setupElement(WIRE_CONFIG, SearchSite);
-        expect(elm.getError()).toEqual(expectedError);
+        expect(elm.getError()).toEqual(mockError);
         expect(elm.getError()).toBeImmutable();
 
         const secondElm = await setupElement(WIRE_CONFIG, SearchSite);
-        expect(secondElm.getError()).toEqual(expectedError);
+        expect(secondElm.getError()).toEqual(mockError);
         expect(secondElm.getError()).toBeImmutable();
     });
 
@@ -182,33 +172,28 @@ describe('basic', () => {
         TEST_CONFIG.siteId = siteId;
         WIRE_CONFIG.siteId = siteId;
 
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
+        const mockError = {
+            status: 404,
+            statusText: 'Not Found',
+            ok: false,
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
+        };
 
         mockSiteSearchNetworkOnce(TEST_CONFIG, [
             {
                 reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 data: mockError,
             },
             mock,
         ]);
 
-        const expectedError = {
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
-            body: mockError,
-        };
-
         const elm = await setupElement(WIRE_CONFIG, SearchSite);
-        expect(elm.getError()).toEqual(expectedError);
+        expect(elm.getError()).toEqual(mockError);
 
         expireSearchData();
 

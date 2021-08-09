@@ -28,7 +28,7 @@ export default class GetReplicatedDatasets extends LightningElement {
 
     @api
     getWiredError() {
-        return this.error.body;
+        return this.error;
     }
 
     @api

@@ -55,12 +55,16 @@ describe('imperative Apex call', () => {
 
     it('returns immutable error', async () => {
         const mockApexError = getMock('apex-getContactList-imperativeError');
-        mockApexNetwork(request, { reject: true, data: mockApexError }, mockCacheableHeaders);
+        mockApexNetwork(
+            request,
+            { reject: true, data: { body: mockApexError } },
+            mockCacheableHeaders
+        );
 
         const element = await setupElement({}, Imperative);
         const error = await element.getContacts();
 
-        expect(error).toContainErrorResponse(mockApexError);
+        expect(error).toContainErrorBody(mockApexError);
     });
 
     it('uses cached data when cacheable is set in response', async () => {

@@ -39,17 +39,19 @@ describe('resumeFlow', () => {
             flowDevName: 'flow2',
             pausedInterviewId: '123',
         };
-        const mockResponse = {
+        const mockError = {
             errorCode: 'NOT_FOUND',
             message: 'The requested resource does not exist',
         };
-        mockResumeFlowNetworkErrorOnce(mockConfig, mockResponse);
+        mockResumeFlowNetworkErrorOnce(mockConfig, {
+            body: mockError,
+        });
         try {
             await resumeFlow(mockConfig);
             fail('runFlow did not error out');
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
-            expect(e).toEqual(jasmine.objectContaining({ message: mockResponse.message }));
+            expect(e).toEqual(jasmine.objectContaining({ message: mockError.message }));
         }
     });
 });

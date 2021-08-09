@@ -187,14 +187,21 @@ describe('single recordId - basic', () => {
             layoutTypes: ['Full'],
             modes: ['View'],
         };
-        const mockError = [{}];
+        const mockError = {
+            ok: false,
+            status: 404,
+            statusText: 'NOT_FOUND',
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
+        };
         mockGetRecordUiNetwork(params, [
             mock,
             {
                 reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 data: mockError,
             },
         ]);
@@ -208,12 +215,7 @@ describe('single recordId - basic', () => {
         await elm.deleteRecord(recordId);
         await flushPromises();
         expect(elm.pushCount()).toBe(2);
-        expect(elm.getWiredError()).toEqual({
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
-            body: mockError,
-        });
+        expect(elm.getWiredError()).toEqual(mockError);
         expect(elm.getWiredError()).toBeImmutable();
         expect(elm.getWiredData()).toBeUndefined();
     });

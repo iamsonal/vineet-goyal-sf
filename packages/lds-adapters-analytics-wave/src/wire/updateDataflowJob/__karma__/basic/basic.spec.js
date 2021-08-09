@@ -58,7 +58,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            id: '0ePRM0000000WC52AM',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -69,14 +68,15 @@ describe('basic', () => {
                 },
             ],
         };
+        const id = '0ePRM0000000WC52AM';
         const config = {
-            dataflowjobId: mock.id,
+            dataflowjobId: id,
             dataflowJob: { command: 'stop' },
         };
         mockUpdateDataflowJobNetworkErrorOnce(config, mock);
 
         const setupConfig = {
-            jobId: mock.id,
+            jobId: id,
             dataflowJob: { command: 'stop' },
         };
         const el = await setupElement(setupConfig, UpdateDataflowJob);

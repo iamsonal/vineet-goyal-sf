@@ -33,7 +33,12 @@ describe('deleteReplicatedDataset - basic', () => {
     it('evicts replicated dataset from cache', async () => {
         const mockReplicatedDataset = getMock('replicated-dataset');
         const replicatedDatasetId = mockReplicatedDataset.id;
-        const mockError = getMock('delete-replicated-dataset-not-exist');
+        const mockError = {
+            ok: false,
+            status: 404,
+            statusText: 'NOT_FOUND',
+            body: getMock('delete-replicated-dataset-not-exist'),
+        };
         const config = {
             id: replicatedDatasetId,
         };
@@ -43,7 +48,6 @@ describe('deleteReplicatedDataset - basic', () => {
             mockReplicatedDataset,
             {
                 reject: true,
-                status: 404,
                 data: mockError,
             },
         ]);
@@ -69,7 +73,12 @@ describe('deleteReplicatedDataset - errors', () => {
             id: "0IuS70000004CqIKAU'",
         };
 
-        mockDeleteReplicatedDatasetNetworkOnce(config, { reject: true, data: mockError });
+        mockDeleteReplicatedDatasetNetworkOnce(config, {
+            reject: true,
+            data: {
+                body: mockError,
+            },
+        });
 
         let error;
         try {
@@ -79,7 +88,7 @@ describe('deleteReplicatedDataset - errors', () => {
             error = e;
         }
 
-        expect(error).toContainErrorResponse(mockError);
+        expect(error).toContainErrorBody(mockError);
     });
 
     it('does not evict cache when server returns an error', async () => {

@@ -14,13 +14,21 @@ describe('getNavItems - fetch errors', () => {
         const mockError = getMock('nav-items-error');
 
         const config = { navItemNames: ['notExisted'] };
-        mockGetNavItemsNetwork(config, { reject: true, data: mockError });
+        mockGetNavItemsNetwork(config, {
+            reject: true,
+            data: {
+                status: 404,
+                statusText: 'Not Found',
+                ok: false,
+                body: mockError,
+            },
+        });
 
         const element = await setupElement(config, NavItemsBasic);
 
         expect(element.pushCount()).toBe(1);
         expect(element.getWiredData()).toBeUndefined();
-        expect(element.getWiredError()).toContainErrorResponse(mockError);
+        expect(element.getWiredError()).toContainErrorBody(mockError);
     });
 
     it('should resolve with correct data when an error is refreshed', async () => {
@@ -31,7 +39,12 @@ describe('getNavItems - fetch errors', () => {
         mockGetNavItemsNetwork(config, [
             {
                 reject: true,
-                data: mockError,
+                data: {
+                    status: 404,
+                    statusText: 'Not Found',
+                    ok: false,
+                    body: mockError,
+                },
             },
             mock,
         ]);
@@ -39,7 +52,7 @@ describe('getNavItems - fetch errors', () => {
         const element = await setupElement(config, NavItemsBasic);
 
         expect(element.pushCount()).toBe(1);
-        expect(element.getWiredError()).toContainErrorResponse(mockError);
+        expect(element.getWiredError()).toContainErrorBody(mockError);
 
         const refreshed = await element.refresh();
 
@@ -55,7 +68,12 @@ describe('getNavItems - fetch errors', () => {
             mock,
             {
                 reject: true,
-                data: mockError,
+                data: {
+                    status: 404,
+                    statusText: 'Not Found',
+                    ok: false,
+                    body: mockError,
+                },
             },
         ]);
 
@@ -67,7 +85,7 @@ describe('getNavItems - fetch errors', () => {
             await element.refresh();
             fail();
         } catch (e) {
-            expect(e).toContainErrorResponse(mockError);
+            expect(e).toContainErrorBody(mockError);
         }
     });
 
@@ -76,22 +94,24 @@ describe('getNavItems - fetch errors', () => {
 
         const config = { formFactor: 'Small' };
         mockGetNavItemsNetwork(config, {
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
             reject: true,
-            data: mockError,
+            data: {
+                status: 404,
+                statusText: 'Not Found',
+                ok: false,
+                body: mockError,
+            },
         });
 
         const element = await setupElement(config, NavItemsBasic);
 
         expect(element.pushCount()).toBe(1);
-        expect(element.getWiredError()).toContainErrorResponse(mockError);
+        expect(element.getWiredError()).toContainErrorBody(mockError);
 
         const elementB = await setupElement(config, NavItemsBasic);
 
         expect(elementB.pushCount()).toBe(1);
-        expect(elementB.getWiredError()).toContainErrorResponse(mockError);
+        expect(elementB.getWiredError()).toContainErrorBody(mockError);
     });
 
     it('should not emit when refetching nav items returns the same error after ingested error TTLs out', async () => {
@@ -100,32 +120,36 @@ describe('getNavItems - fetch errors', () => {
         const config = { formFactor: 'Small' };
         mockGetNavItemsNetwork(config, [
             {
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 reject: true,
-                data: mockError,
+                data: {
+                    status: 404,
+                    statusText: 'Not Found',
+                    ok: false,
+                    body: mockError,
+                },
             },
             {
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 reject: true,
-                data: mockError,
+                data: {
+                    status: 404,
+                    statusText: 'Not Found',
+                    ok: false,
+                    body: mockError,
+                },
             },
         ]);
 
         const element = await setupElement(config, NavItemsBasic);
 
         expect(element.pushCount()).toBe(1);
-        expect(element.getWiredError()).toContainErrorResponse(mockError);
+        expect(element.getWiredError()).toContainErrorBody(mockError);
 
         expireNavItems();
 
         const elementB = await setupElement(config, NavItemsBasic);
 
         expect(elementB.pushCount()).toBe(1);
-        expect(elementB.getWiredError()).toContainErrorResponse(mockError);
+        expect(elementB.getWiredError()).toContainErrorBody(mockError);
 
         // First element should not have received new error
         expect(element.pushCount()).toBe(1);
@@ -138,11 +162,13 @@ describe('getNavItems - fetch errors', () => {
         const config = { formFactor: 'Small' };
         mockGetNavItemsNetwork(config, [
             {
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 reject: true,
-                data: mockError,
+                data: {
+                    status: 404,
+                    statusText: 'Not Found',
+                    ok: false,
+                    body: mockError,
+                },
             },
             mock,
         ]);
@@ -150,7 +176,7 @@ describe('getNavItems - fetch errors', () => {
         const element = await setupElement(config, NavItemsBasic);
 
         expect(element.pushCount()).toBe(1);
-        expect(element.getWiredError()).toContainErrorResponse(mockError);
+        expect(element.getWiredError()).toContainErrorBody(mockError);
 
         expireNavItems();
 

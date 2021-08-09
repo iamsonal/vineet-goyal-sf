@@ -1,11 +1,10 @@
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import { getMock as globalGetMock, setupElement, clearCache } from 'test-util';
 import {
     mockGetOrchestrationInstanceCollectionNetworkOnce,
     mockGetOrchestrationInstanceCollectionNetworkErrorOnce,
     mockGetOrchestrationInstanceCollectionNetworkSequence,
 } from 'platform-interaction-orchestrator-test-util';
 import GetOrchestrationInstanceCollection from '../lwc/get-orchestration-instance-collection';
-import { expireInteractionOrchestratorCaches } from '../../../../../karma/platform-interaction-orchestrator-test-util';
 
 const MOCK_PREFIX = 'wire/getOrchestrationInstanceCollection/__karma__/data/';
 const TEST_CONFIG = { relatedRecordId: 'A Sample Record ID' };
@@ -84,20 +83,13 @@ describe('basic', () => {
             mock,
         ]);
 
-        const expectedError = {
-            status: 404,
-            statusText: 'NOT_FOUND',
-            ok: false,
-            body: mockError.body,
-        };
-
         const el1 = await setupElement(TEST_CONFIG, GetOrchestrationInstanceCollection);
-        expect(el1.getError()).toEqual(expectedError);
+        expect(el1.getError()).toEqual(mockError);
 
-        expireInteractionOrchestratorCaches();
+        clearCache();
 
         const el2 = await setupElement(TEST_CONFIG, GetOrchestrationInstanceCollection);
-        expect(el2.error).toBeUndefined();
+        expect(el2.getError()).toBeUndefined();
         expect(el2.getData()).toEqual(mock);
     });
 });

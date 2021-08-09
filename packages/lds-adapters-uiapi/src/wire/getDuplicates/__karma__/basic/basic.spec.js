@@ -147,11 +147,11 @@ describe('get duplicates', () => {
                 Email: 'info@salesforce.com',
             },
         };
-        mockNetworkError(invalidObjectApiConfig, mockData);
+        mockNetworkError(invalidObjectApiConfig, { body: mockData });
 
         const element = await setupElement(invalidObjectApiConfig, GetDuplicates);
 
         const error = element.getWiredError();
-        expect(error.body).toEqualSnapshotWithoutEtags(mockData);
+        expect(error).toContainErrorBody(mockData);
     });
 });

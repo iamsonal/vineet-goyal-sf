@@ -53,7 +53,7 @@ describe('basic', () => {
             await postCalcProcVersionDetails(inputMock);
             fail('postCalcProcVersionDetails did not throw an error when expected to');
         } catch (e) {
-            expect(e).toContainErrorResponse(mockErrorResponse);
+            expect(e).toEqual(mockErrorResponse);
         }
     });
 });

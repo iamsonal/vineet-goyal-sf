@@ -187,11 +187,11 @@ describe('picklist values by record type', () => {
             recordTypeId: MASTER_RECORD_TYPE_ID,
         };
 
-        mockGetPicklistValuesNetwork(config, { reject: true, data: mock });
+        mockGetPicklistValuesNetwork(config, { reject: true, data: { body: mock } });
 
         const elm = await setupElement(config, GetPicklistValuesByRecordType);
 
-        expect(elm.getWiredError()).toContainErrorResponse(mock);
+        expect(elm.getWiredError()).toContainErrorBody(mock);
     });
 
     xit(

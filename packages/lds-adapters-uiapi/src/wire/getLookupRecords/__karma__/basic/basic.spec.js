@@ -335,7 +335,7 @@ describe('getLookupRecords', () => {
         it(`returns error for invalid field api name`, async () => {
             const reference = 'lookup-records-fieldApiName-invalid';
             const mockData = getMock(reference);
-            mockNetworkBehaviour(getEndpointEntry(reference), mockData, ERROR);
+            mockNetworkBehaviour(getEndpointEntry(reference), { body: mockData }, ERROR);
             const config = {
                 fieldApiName: 'Opportunity.Id',
                 targetApiName: 'Contact',
@@ -343,12 +343,12 @@ describe('getLookupRecords', () => {
             const element = await setupElement(config, GetLookupRecords);
 
             const error = element.getWiredError();
-            expect(error).toContainErrorResponse(mockData);
+            expect(error).toContainErrorBody(mockData);
         });
         it(`returns unkown error from the server and that is cached`, async () => {
             const reference = 'lookup-records-Opportunity-unknown-error';
             const mockData = getMock(reference);
-            mockNetworkBehaviour(getEndpointEntry(reference), mockData, ERROR);
+            mockNetworkBehaviour(getEndpointEntry(reference), { body: mockData }, ERROR);
 
             const config = {
                 fieldApiName: 'Opportunity.ContactId',
@@ -365,7 +365,7 @@ describe('getLookupRecords', () => {
 
             const error = element.getWiredError();
             expect(element.pushCount()).toBe(1);
-            expect(error).toContainErrorResponse(mockData);
+            expect(error).toContainErrorBody(mockData);
         });
     });
 

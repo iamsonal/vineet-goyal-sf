@@ -25,6 +25,6 @@ export default class SaveColumns extends LightningElement {
 
     @api
     getError() {
-        return this.error.body;
+        return this.error;
     }
 }

@@ -39,7 +39,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            id: '0ePRM0000000WC52AM',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -50,17 +49,17 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { dataflowjobId: mock.id };
+        const id = '0ePRM0000000WC52AM';
+        const config = { dataflowjobId: id };
         mockGetDataflowJobNetworkErrorOnce(config, mock);
 
-        const el = await setupElement({ jobId: mock.id }, GetDataflowJob);
+        const el = await setupElement({ jobId: id }, GetDataflowJob);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
     });
 
     it('should cause a cache hit on query after server returned 404', async () => {
         const mock = {
-            id: '0ePRM0000000WC52AM',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -71,23 +70,19 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { dataflowjobId: mock.id };
+        const id = '0ePRM0000000WC52AM';
+        const config = { dataflowjobId: id };
 
-        mockGetDataflowJobNetworkOnce(config, [
-            {
-                reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                data: mock,
-            },
-        ]);
+        mockGetDataflowJobNetworkOnce(config, {
+            reject: true,
+            data: mock,
+        });
 
-        const el = await setupElement({ jobId: mock.id }, GetDataflowJob);
+        const el = await setupElement({ jobId: id }, GetDataflowJob);
         expect(el.getWiredError()).toEqual(mock);
         expect(el.getWiredError()).toBeImmutable();
 
-        const el2 = await setupElement({ jobId: mock.id }, GetDataflowJob);
+        const el2 = await setupElement({ jobId: id }, GetDataflowJob);
         expect(el2.getWiredError()).toEqual(mock);
         expect(el2.getWiredError()).toBeImmutable();
     });

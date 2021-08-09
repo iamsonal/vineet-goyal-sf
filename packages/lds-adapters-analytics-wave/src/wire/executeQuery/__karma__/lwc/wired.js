@@ -23,7 +23,7 @@ export default class WiredExecuteQuery extends LightningElement {
 
     @api
     getWiredError() {
-        return this.error.body;
+        return this.error;
     }
 
     @api

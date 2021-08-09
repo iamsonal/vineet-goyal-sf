@@ -137,11 +137,11 @@ describe('picklist values', () => {
             recordTypeId: MASTER_RECORD_TYPE_ID,
         };
 
-        mockGetPicklistValuesNetwork(config, { reject: true, data: mock });
+        mockGetPicklistValuesNetwork(config, { reject: true, data: { body: mock } });
 
         const elm = await setupElement(config, GetPicklistValues);
 
-        expect(elm.getWiredError()).toContainErrorResponse(mock);
+        expect(elm.getWiredError()).toContainErrorBody(mock);
     });
 
     it('bad objectApiName emits error', async () => {
@@ -152,11 +152,11 @@ describe('picklist values', () => {
             recordTypeId: MASTER_RECORD_TYPE_ID,
         };
 
-        mockGetPicklistValuesNetwork(config, { reject: true, data: mock });
+        mockGetPicklistValuesNetwork(config, { reject: true, data: { body: mock } });
 
         const elm = await setupElement(config, GetPicklistValues);
 
-        expect(elm.getWiredError()).toContainErrorResponse(mock);
+        expect(elm.getWiredError()).toContainErrorBody(mock);
     });
 
     // currently no forking logic on 304 (yet)

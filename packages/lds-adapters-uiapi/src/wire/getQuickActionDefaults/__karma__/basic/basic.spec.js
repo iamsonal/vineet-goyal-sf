@@ -211,22 +211,24 @@ describe('basic', () => {
                 actionApiName: 'Create_Custom_Object_3',
             };
             mockGetQuickActionDefaultsNetwork(config, {
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 reject: true,
-                data: mockError,
+                data: {
+                    status: 404,
+                    statusText: 'Not Found',
+                    ok: false,
+                    body: mockError,
+                },
             });
 
             const element = await setupElement(config, QuickActionDefaults);
 
             expect(element.pushCount()).toBe(1);
-            expect(element.getWiredError()).toContainErrorResponse(mockError);
+            expect(element.getWiredError()).toContainErrorBody(mockError);
 
             const elementB = await setupElement(config, QuickActionDefaults);
 
             expect(elementB.pushCount()).toBe(1);
-            expect(elementB.getWiredError()).toContainErrorResponse(mockError);
+            expect(elementB.getWiredError()).toContainErrorBody(mockError);
         });
 
         it('should refresh when ingested error exceeds ttl', async () => {
@@ -238,11 +240,13 @@ describe('basic', () => {
             };
             mockGetQuickActionDefaultsNetwork(config, [
                 {
-                    status: 404,
-                    statusText: 'Not Found',
-                    ok: false,
                     reject: true,
-                    data: mockError,
+                    data: {
+                        status: 404,
+                        statusText: 'Not Found',
+                        ok: false,
+                        body: mockError,
+                    },
                 },
                 mock,
             ]);
@@ -250,7 +254,7 @@ describe('basic', () => {
             const element = await setupElement(config, QuickActionDefaults);
 
             expect(element.pushCount()).toBe(1);
-            expect(element.getWiredError()).toContainErrorResponse(mockError);
+            expect(element.getWiredError()).toContainErrorBody(mockError);
 
             expireQuickActionDefaults();
 

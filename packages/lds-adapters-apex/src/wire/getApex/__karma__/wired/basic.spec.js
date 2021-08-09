@@ -80,11 +80,11 @@ describe('@wire Apex call', () => {
 
     it('returns error', async () => {
         const mockApexError = getMock('apex-getContactList-wiredError');
-        mockApexNetwork(request, { reject: true, data: mockApexError }, mockHeaders);
+        mockApexNetwork(request, { reject: true, data: { body: mockApexError } }, mockHeaders);
 
         const element = await setupElement({}, Wired);
 
-        expect(element.getWiredError()).toContainErrorResponse(mockApexError);
+        expect(element.getWiredError()).toContainErrorBody(mockApexError);
     });
 
     it('does not issue network request on configs with undefined values', async () => {

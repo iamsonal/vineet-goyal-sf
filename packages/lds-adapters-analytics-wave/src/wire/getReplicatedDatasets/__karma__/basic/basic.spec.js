@@ -110,15 +110,10 @@ describe('basic', () => {
             ],
         };
         const config = {};
-        mockGetReplicatedDatasetsNetworkOnce(config, [
-            {
-                reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                data: mock,
-            },
-        ]);
+        mockGetReplicatedDatasetsNetworkOnce(config, {
+            reject: true,
+            data: mock,
+        });
 
         const el = await setupElement(config, GetReplicatedDatasets);
         expect(el.pushCount()).toBe(1);

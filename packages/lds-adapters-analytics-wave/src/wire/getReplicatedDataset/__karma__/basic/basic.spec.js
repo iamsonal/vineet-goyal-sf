@@ -39,7 +39,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            id: '0IuS70000004CqIKAU',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -50,17 +49,17 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { id: mock.id };
+        const id = '0ItS700000001YxKAI';
+        const config = { id: id };
         mockGetReplicatedDatasetNetworkErrorOnce(config, mock);
 
-        const el = await setupElement({ replicatedDatasetId: mock.id }, GetReplicatedDataset);
+        const el = await setupElement({ replicatedDatasetId: id }, GetReplicatedDataset);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
     });
 
     it('should cause a cache hit on query after server returned 404', async () => {
         const mock = {
-            id: '0IuS70000004CqIKAU',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -71,7 +70,9 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { id: mock.id };
+
+        const id = '0IuS70000004CqIKAU';
+        const config = { id: id };
 
         mockGetReplicatedDatasetNetworkOnce(config, [
             {
@@ -83,11 +84,11 @@ describe('basic', () => {
             },
         ]);
 
-        const el = await setupElement({ replicatedDatasetId: mock.id }, GetReplicatedDataset);
+        const el = await setupElement({ replicatedDatasetId: id }, GetReplicatedDataset);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
 
-        const el2 = await setupElement({ replicatedDatasetId: mock.id }, GetReplicatedDataset);
+        const el2 = await setupElement({ replicatedDatasetId: id }, GetReplicatedDataset);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredError()).toEqual(mock);
     });

@@ -100,12 +100,14 @@ function mockNetworkSequence(adapter, args, responses, headers = []) {
 
                 const header = headers[index] ? clone(headers[index]) : null;
                 if (response.reject) {
+                    const { status, statusText, ok, body } = response.data;
+
                     return Promise.reject({
-                        ...FETCH_RESPONSE_ERROR,
-                        status: response.status || FETCH_RESPONSE_ERROR.status,
-                        statusText: response.statusText || FETCH_RESPONSE_ERROR.statusText,
-                        ok: response.ok !== undefined ? response.ok : FETCH_RESPONSE_ERROR.ok,
-                        body: clone(response.data),
+                        status: status !== undefined ? status : FETCH_RESPONSE_ERROR.status,
+                        statusText:
+                            statusText !== undefined ? statusText : FETCH_RESPONSE_ERROR.statusText,
+                        ok: ok !== undefined ? ok : FETCH_RESPONSE_ERROR.ok,
+                        body: clone(body),
                         ...(header && { headers: header }),
                     });
                 }
@@ -137,7 +139,9 @@ function mockNetworkSequence(adapter, args, responses, headers = []) {
  * @param {object} adapter The network adapter LDS uses to make server-side
  * requests. Assumes this is a sinon stub.
  * @param {object} args Arguments the network adapter is called with to match
- * @param {object} response The data payload to return when the mock is called
+ * @param {object} response The error data returned from network adapter when
+ * the mock is called, e.g.
+ * ``` { status: 404, ok: false, statusText: 'NOT_FOUND', body: {} }```
  * @param {object} headers The headers to return when the mock is called
  */
 function mockNetworkErrorOnce(adapter, args, response, headers) {

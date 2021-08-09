@@ -185,7 +185,7 @@ describe('layoutTypes', () => {
                 recordIds: [recordId],
                 layoutTypes: ['invalid'],
             };
-            mockGetRecordUiNetwork(networkParams, { reject: true, data: mockError });
+            mockGetRecordUiNetwork(networkParams, { reject: true, data: { body: mockError } });
 
             const config = {
                 recordId,
@@ -193,7 +193,7 @@ describe('layoutTypes', () => {
             };
             const element = await setupElement(config, RecordLayoutTypes);
 
-            expect(element.getWiredError()).toContainErrorResponse(mockError);
+            expect(element.getWiredError()).toContainErrorBody(mockError);
         });
     });
 
@@ -269,7 +269,7 @@ describe('modes', () => {
                 layoutTypes: ['Full'],
                 modes: ['Invalid'],
             };
-            mockGetRecordUiNetwork(networkParams, { reject: true, data: mockError });
+            mockGetRecordUiNetwork(networkParams, { reject: true, data: { body: mockError } });
 
             const config = {
                 recordId,
@@ -278,7 +278,7 @@ describe('modes', () => {
             };
             const element = await setupElement(config, RecordLayoutTypes);
 
-            expect(element.getWiredError()).toContainErrorResponse(mockError);
+            expect(element.getWiredError()).toContainErrorBody(mockError);
         });
     });
 });

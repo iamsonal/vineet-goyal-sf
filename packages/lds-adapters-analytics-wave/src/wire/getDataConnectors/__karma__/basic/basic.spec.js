@@ -80,15 +80,10 @@ describe('basic', () => {
             ],
         };
         const config = {};
-        mockGetDataConnectorsNetworkOnce(config, [
-            {
-                reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                data: mock,
-            },
-        ]);
+        mockGetDataConnectorsNetworkOnce(config, {
+            reject: true,
+            data: mock,
+        });
 
         const el = await setupElement(config, GetDataConnectors);
         expect(el.pushCount()).toBe(1);

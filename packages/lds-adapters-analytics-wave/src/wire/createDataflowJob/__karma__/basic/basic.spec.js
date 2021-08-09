@@ -26,7 +26,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            id: '0ePRM0000000WC52AM',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -47,7 +46,7 @@ describe('basic', () => {
             // make sure we are hitting the catch
             fail('createRecord did not throw');
         } catch (e) {
-            expect(e).toContainErrorResponse(mock);
+            expect(e).toEqual(mock);
         }
     });
 });

@@ -56,6 +56,6 @@ describe('basic', () => {
 
         const el = await setupElement(config, GetCalcProcDetails);
         expect(el.pushCount()).toBe(1);
-        expect(clone(el.getError())).toEqual(mock);
+        expect(el.getError()).toEqual(mock);
     });
 });

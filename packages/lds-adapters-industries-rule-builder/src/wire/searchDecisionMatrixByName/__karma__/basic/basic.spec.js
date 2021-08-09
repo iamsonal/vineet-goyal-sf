@@ -82,7 +82,7 @@ describe('basic', () => {
     });
 
     it('displays error when network request 404s', async () => {
-        const config = { query: {} };
+        const config = { query: { searchKey: 'test123' } };
         const mock = {
             ok: false,
             status: 404,
@@ -97,32 +97,14 @@ describe('basic', () => {
         mockSearchDecisionMatrixByNameNetworkErrorOnce(config, mock);
         const el = await setupElement(config.query, SearchDecisionMatrixByName);
         expect(el.pushCount()).toBe(1);
-        expect(el.getError().body).toEqual(mock);
+        expect(el.getError()).toEqual(mock);
     });
 
     it('causes a cache hit when a searchDecisionMatrixByName is queried after server returned 404', async () => {
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
-        const config = { query: {} };
-
-        mockSearchDecisionMatrixByNameNetworkOnce(config, [
-            {
-                reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                data: mockError,
-            },
-        ]);
-
-        const expectedError = {
-            status: 404,
-            statusText: 'Not Found',
+        const mockError = {
             ok: false,
+            status: 404,
+            statusText: 'NOT_FOUND',
             body: [
                 {
                     errorCode: 'NOT_FOUND',
@@ -131,45 +113,44 @@ describe('basic', () => {
             ],
         };
 
-        const elm = await setupElement(config, SearchDecisionMatrixByName);
-        expect(elm.getError()).toEqual(expectedError);
+        const config = { query: { searchKey: 'test123' } };
+
+        mockSearchDecisionMatrixByNameNetworkErrorOnce(config, mockError);
+
+        const elm = await setupElement(config.query, SearchDecisionMatrixByName);
+        expect(elm.getError()).toEqual(mockError);
         expect(elm.getError()).toBeImmutable();
 
-        const secondElm = await setupElement(config, SearchDecisionMatrixByName);
-        expect(secondElm.getError()).toEqual(expectedError);
+        const secondElm = await setupElement(config.query, SearchDecisionMatrixByName);
+        expect(secondElm.getError()).toEqual(mockError);
         expect(secondElm.getError()).toBeImmutable();
     });
 
     it('causes a cache miss when a searchDecisionMatrixByName is queried again after server returned 404, and cache is cleared', async () => {
         const mock = getMock(MOCK_SEARCH_DECISION_MATRICES_JSON);
         const config = { query: { searchKey: 'test123' } };
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
+        const mockError = {
+            ok: false,
+            status: 404,
+            statusText: 'NOT_FOUND',
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
+        };
 
         mockSearchDecisionMatrixByNameNetworkOnce(config, [
             {
                 reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 data: mockError,
             },
             mock,
         ]);
 
-        const expectedError = {
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
-            body: mockError,
-        };
-
         const elm = await setupElement(config.query, SearchDecisionMatrixByName);
-        expect(elm.getError()).toEqual(expectedError);
+        expect(elm.getError()).toEqual(mockError);
 
         expireSearchData();
 

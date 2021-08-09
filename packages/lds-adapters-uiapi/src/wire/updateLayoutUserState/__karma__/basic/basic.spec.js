@@ -150,7 +150,10 @@ describe('Update layoutUserState', () => {
             objectApiName: 'Invalid',
         });
 
-        mockUpdateLayoutUserStateNetwork(config, sectionUserStateInput, { reject: true, data: {} });
+        mockUpdateLayoutUserStateNetwork(config, sectionUserStateInput, {
+            reject: true,
+            data: { body: {} },
+        });
 
         try {
             await updateLayoutUserState(

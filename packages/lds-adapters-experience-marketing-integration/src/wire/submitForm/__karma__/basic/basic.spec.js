@@ -72,7 +72,7 @@ describe('basic', () => {
             // make sure we are hitting the catch
             fail('saveForm did not throw');
         } catch (e) {
-            expect(e).toContainErrorResponse(mock);
+            expect(e).toContainErrorBody(mock.body);
         }
     });
 });

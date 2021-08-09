@@ -41,7 +41,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            jobId: '03CRM0000006tEf2AI',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -52,17 +51,17 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { dataflowjobId: mock.jobId };
+        const id = '03CRM0000006tEf2AI';
+        const config = { dataflowjobId: id };
         mockGetDataflowJobNodesNetworkErrorOnce(config, mock);
 
-        const el = await setupElement({ jobId: mock.jobId }, GetDataflowJobNodes);
+        const el = await setupElement({ jobId: id }, GetDataflowJobNodes);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
     });
 
     it('should cause a cache hit on query after server returned 404', async () => {
         const mock = {
-            jobId: '03CRM0000006tEf2AI',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -73,7 +72,8 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { dataflowjobId: mock.jobId };
+        const id = '03CRM0000006tEf2AI';
+        const config = { dataflowjobId: id };
         mockGetDataflowJobNodesNetworkOnce(config, [
             {
                 reject: true,
@@ -84,11 +84,11 @@ describe('basic', () => {
             },
         ]);
 
-        const el = await setupElement({ jobId: mock.jobId }, GetDataflowJobNodes);
+        const el = await setupElement({ jobId: id }, GetDataflowJobNodes);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
 
-        const el2 = await setupElement({ jobId: mock.jobId }, GetDataflowJobNodes);
+        const el2 = await setupElement({ jobId: id }, GetDataflowJobNodes);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredError()).toEqual(mock);
     });

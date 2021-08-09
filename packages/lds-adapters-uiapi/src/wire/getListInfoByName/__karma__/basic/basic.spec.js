@@ -81,19 +81,16 @@ describe('basic', () => {
     });
 
     it('validates 404 response from server', async () => {
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
-
         const mockErrorResponse = {
             status: 404,
             statusText: 'Not Found',
             ok: false,
-            reject: true,
-            data: mockError,
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
         };
 
         const config = {
@@ -103,28 +100,27 @@ describe('basic', () => {
 
         const networkConfig = { ...config };
 
-        mockGetListInfoByNameNetwork(networkConfig, mockErrorResponse);
+        mockGetListInfoByNameNetwork(networkConfig, {
+            reject: true,
+            data: mockErrorResponse,
+        });
 
         const element = await setupElement(config, ListBasic);
         const error = element.getError();
-        expect(error.status).toBe(404);
-        expect(error).toContainErrorResponse(mockError);
+        expect(error).toEqual(mockErrorResponse);
     });
 
     it('validates 404 cache hit', async () => {
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
-
         const mockErrorResponse = {
             status: 404,
             statusText: 'Not Found',
             ok: false,
-            reject: true,
-            data: mockError,
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
         };
 
         const config = {
@@ -134,7 +130,10 @@ describe('basic', () => {
 
         const networkConfig = { ...config };
 
-        mockGetListInfoByNameNetwork(networkConfig, mockErrorResponse);
+        mockGetListInfoByNameNetwork(networkConfig, {
+            reject: true,
+            data: mockErrorResponse,
+        });
 
         const element = await setupElement(config, ListBasic);
         const element2 = await setupElement(config, ListBasic);
@@ -144,19 +143,16 @@ describe('basic', () => {
     });
 
     it('validates 404 cache miss', async () => {
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
-
         const mockErrorResponse = {
             status: 404,
             statusText: 'Not Found',
             ok: false,
-            reject: true,
-            data: mockError,
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
         };
 
         const config = {
@@ -166,14 +162,23 @@ describe('basic', () => {
 
         const networkConfig = { ...config };
 
-        mockGetListInfoByNameNetwork(networkConfig, [mockErrorResponse, mockErrorResponse]);
+        mockGetListInfoByNameNetwork(networkConfig, [
+            {
+                reject: true,
+                data: mockErrorResponse,
+            },
+            {
+                reject: true,
+                data: mockErrorResponse,
+            },
+        ]);
 
         const element = await setupElement(config, ListBasic);
         expireListInfo();
         const element2 = await setupElement(config, ListBasic);
 
-        expect(element.getError()).toContainErrorResponse(mockError);
-        expect(element2.getError()).toContainErrorResponse(mockError);
+        expect(element.getError()).toEqual(mockErrorResponse);
+        expect(element2.getError()).toEqual(mockErrorResponse);
     });
 });
 

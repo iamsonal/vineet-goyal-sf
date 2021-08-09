@@ -32,6 +32,6 @@ export default class GetQuestionnaires extends LightningElement {
 
     @api
     getError() {
-        return this.error.body;
+        return this.error;
     }
 }

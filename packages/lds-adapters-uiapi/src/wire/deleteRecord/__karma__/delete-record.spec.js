@@ -36,7 +36,12 @@ describe('deleteRecord - basic', () => {
 
     it('evicts record from cache', async () => {
         const mockRecord = getMock('record-Opportunity-fields-Opportunity.FiscalYear');
-        const mockError = getMock('delete-record-not-exist');
+        const mockError = {
+            status: 404,
+            statusText: 'Server Error',
+            ok: false,
+            body: getMock('delete-record-not-exist'),
+        };
         const recordId = mockRecord.id;
 
         const config = {
@@ -47,7 +52,6 @@ describe('deleteRecord - basic', () => {
             mockRecord,
             {
                 reject: true,
-                status: 404,
                 data: mockError,
             },
         ]);
@@ -62,12 +66,7 @@ describe('deleteRecord - basic', () => {
 
         // hit network
         expect(element.pushCount()).toBe(2);
-        expect(element.getWiredError()).toEqual({
-            status: 404,
-            statusText: 'Server Error',
-            ok: false,
-            body: mockError,
-        });
+        expect(element.getWiredError()).toEqual(mockError);
 
         expect(element.getWiredError()).toBeImmutable();
     });
@@ -75,7 +74,12 @@ describe('deleteRecord - basic', () => {
     it('evicts record fetched with layoutType from cache', async () => {
         const mockRecordUiData = getMock('record-Opportunity-layouttypes-Full-modes-View');
         const mockRecord = mockRecordUiData.records[Object.keys(mockRecordUiData.records)[0]];
-        const mockError = getMock('delete-record-not-exist');
+        const mockError = {
+            status: 404,
+            statusText: 'Server Error',
+            ok: false,
+            body: getMock('delete-record-not-exist'),
+        };
         const recordId = mockRecord.id;
 
         const config = {
@@ -97,12 +101,10 @@ describe('deleteRecord - basic', () => {
             mockRecordUiData,
             {
                 reject: true,
-                status: 404,
                 data: mockError,
             },
             {
                 reject: true,
-                status: 404,
                 data: mockError,
             },
         ]);
@@ -123,20 +125,10 @@ describe('deleteRecord - basic', () => {
         expect(element.pushCount()).toBe(2);
         expect(recordUi.pushCount()).toBe(2);
 
-        expect(element.getWiredError()).toEqual({
-            status: 404,
-            statusText: 'Server Error',
-            ok: false,
-            body: mockError,
-        });
-        expect(recordUi.getWiredError()).toEqual({
-            status: 404,
-            statusText: 'Server Error',
-            ok: false,
-            body: mockError,
-        });
-
+        expect(element.getWiredError()).toEqual(mockError);
         expect(element.getWiredError()).toBeImmutable();
+
+        expect(recordUi.getWiredError()).toEqual(mockError);
         expect(recordUi.getWiredError()).toBeImmutable();
     });
 });
@@ -163,7 +155,7 @@ describe('deleteRecord - errors', () => {
         const recordId = '005B00000029o0qIAA';
         const mockError = getMock('delete-record-error');
 
-        mockDeleteRecordNetwork(recordId, { reject: true, data: mockError });
+        mockDeleteRecordNetwork(recordId, { reject: true, data: { body: mockError } });
 
         let error;
         try {
@@ -173,7 +165,7 @@ describe('deleteRecord - errors', () => {
             error = e;
         }
 
-        expect(error).toContainErrorResponse(mockError);
+        expect(error).toContainErrorBody(mockError);
     });
 
     it('does not evict cache when server returns an error', async () => {

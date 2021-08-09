@@ -49,7 +49,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            id: '05vRM00000003rZYAQ',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -60,7 +59,7 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { id: mock.id };
+        const config = { id: '05vRM00000003rZYAQ' };
         mockGetRecipeNetworkErrorOnce(config, mock);
 
         const el = await setupElement(config, GetRecipe);
@@ -70,7 +69,6 @@ describe('basic', () => {
 
     it('should cause a cache hit on query after server returned 404', async () => {
         const mock = {
-            id: '05vRM00000003rZYAQ',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -81,17 +79,12 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { id: mock.id };
+        const config = { id: '05vRM0000000324YAB' };
 
-        mockGetRecipeNetworkOnce(config, [
-            {
-                reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                data: mock,
-            },
-        ]);
+        mockGetRecipeNetworkOnce(config, {
+            reject: true,
+            data: mock,
+        });
 
         const el = await setupElement(config, GetRecipe);
         expect(el.getWiredError()).toEqual(mock);

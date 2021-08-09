@@ -51,7 +51,7 @@ beforeEach(() => {
         /**
          * expect the actual value contains expected error content on body property
          */
-        toContainErrorResponse: () => {
+        toContainErrorBody: () => {
             return {
                 compare: (actual, expected) => {
                     expect(actual).toEqual(

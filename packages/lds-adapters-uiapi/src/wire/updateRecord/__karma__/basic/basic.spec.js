@@ -442,7 +442,7 @@ describe('update record', () => {
         const mockError = { message: 'Error occured' };
         mockUpdateRecordNetwork(updateParams.fields.Id, updateParams, {
             reject: true,
-            data: mockError,
+            data: { body: mockError },
         });
 
         try {

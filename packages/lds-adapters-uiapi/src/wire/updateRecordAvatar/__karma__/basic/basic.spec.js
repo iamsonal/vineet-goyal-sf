@@ -140,7 +140,12 @@ describe('Update Avatar record', () => {
     it('test Server error', async () => {
         //set up test data
         const updateParams = { externalId: externalId, photoUrl: photoUrl, actionType: actionType };
-        const mockResponse = getMock('avatar-error');
+        const mockResponse = {
+            body: getMock('avatar-error'),
+            ok: false,
+            status: 500,
+            statusText: 'Server Error',
+        };
         mockNetworkErrorUpdateAvatar(recordId, updateParams, mockResponse);
         updateParams.recordId = recordId;
 
@@ -149,13 +154,7 @@ describe('Update Avatar record', () => {
             await updateRecordAvatar(updateParams);
             fail('update avatar should error out and not hit this point');
         } catch (e) {
-            const mockErrorResponse = {
-                body: mockResponse,
-                ok: false,
-                status: 500,
-                statusText: 'Server Error',
-            };
-            expect(mockErrorResponse).toEqual(e);
+            expect(e).toEqual(mockResponse);
             expect(e).toBeImmutable();
         }
     });

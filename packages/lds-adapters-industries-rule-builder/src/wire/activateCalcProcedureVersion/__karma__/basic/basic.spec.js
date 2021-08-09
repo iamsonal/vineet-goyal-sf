@@ -45,7 +45,7 @@ describe('basic', () => {
             await activateCalcProcedureVersion(config);
             fail('activateCalcProcedureVersion did not throw an error when expected to');
         } catch (e) {
-            expect(e).toContainErrorResponse(mockErrorResponse);
+            expect(e).toEqual(mockErrorResponse);
         }
     });
 });

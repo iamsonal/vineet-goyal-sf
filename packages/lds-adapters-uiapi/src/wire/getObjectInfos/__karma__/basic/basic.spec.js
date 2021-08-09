@@ -136,7 +136,13 @@ describe('getObjectInfos', () => {
     });
 
     it('should be a cache hit when single object info previously returned a mix of 404s and 200s', async () => {
-        const notFound = getMock('object-error');
+        const notFoundError = getMock('object-error');
+        const errorResponse = {
+            status: 404,
+            statusText: 'Not Found',
+            ok: false,
+            body: notFoundError,
+        };
         const account = getMock('object-Account');
 
         mockGetObjectInfoNetwork(
@@ -150,15 +156,10 @@ describe('getObjectInfos', () => {
             {
                 objectApiName: 'notfound',
             },
-            [
-                {
-                    reject: true,
-                    status: 404,
-                    statusText: 'Not Found',
-                    ok: false,
-                    data: notFound,
-                },
-            ]
+            {
+                reject: true,
+                data: errorResponse,
+            }
         );
 
         await setupElement(
@@ -187,7 +188,7 @@ describe('getObjectInfos', () => {
             results: [
                 {
                     statusCode: 404,
-                    result: notFound,
+                    result: notFoundError,
                 },
                 {
                     statusCode: 200,

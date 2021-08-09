@@ -106,29 +106,28 @@ describe('basic', () => {
 
     it('should cause a cache hit when seo properties are queried after server returned 404', async () => {
         const mockError = {
-            errorCode: 'NOT_FOUND',
-            message: 'The requested resource does not exist',
+            ok: false,
+            status: 404,
+            statusText: 'NOT_FOUND',
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
         };
 
         mockGetSeoPropertiesOnce(TEST_CONFIG, {
             reject: true,
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
             data: mockError,
         });
 
-        const expectedError = {
-            errorCode: 'NOT_FOUND',
-            message: 'The requested resource does not exist',
-        };
-
         const el1 = await setupElement(TEST_CONFIG, GetRecordSeoProperties);
-        expect(el1.getError()).toEqual(expectedError);
+        expect(el1.getError()).toEqual(mockError);
         expect(el1.getError()).toBeImmutable();
 
         const el2 = await setupElement(TEST_CONFIG, GetRecordSeoProperties);
-        expect(el2.getError()).toEqual(expectedError);
+        expect(el2.getError()).toEqual(mockError);
         expect(el2.getError()).toBeImmutable();
     });
 
@@ -155,15 +154,8 @@ describe('basic', () => {
             mock,
         ]);
 
-        const expectedError = {
-            status: 404,
-            statusText: 'NOT_FOUND',
-            ok: false,
-            body: mockError.body,
-        };
-
         const el1 = await setupElement(TEST_CONFIG, GetRecordSeoProperties);
-        expect(el1.getError()).toEqual(expectedError);
+        expect(el1.getError()).toEqual(mockError);
 
         clearCache();
 

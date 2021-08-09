@@ -39,7 +39,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            id: '0ItS700000001YxKAI',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -50,17 +49,17 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { connectorIdOrApiName: mock.id };
+        const id = '0ItS700000001YxKAI';
+        const config = { connectorIdOrApiName: id };
         mockGetDataConnectorNetworkErrorOnce(config, mock);
 
-        const el = await setupElement({ connectorIdOrApiName: mock.id }, GetDataConnector);
+        const el = await setupElement({ connectorIdOrApiName: id }, GetDataConnector);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
     });
 
     it('should cause a cache hit on query after server returned 404', async () => {
         const mock = {
-            id: '0ItS700000001YxKAI',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -71,23 +70,20 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { connectorIdOrApiName: mock.id };
 
-        mockGetDataConnectorNetworkOnce(config, [
-            {
-                reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                data: mock,
-            },
-        ]);
+        const id = '0ItS700000001YxKAI';
+        const config = { connectorIdOrApiName: id };
 
-        const el = await setupElement({ connectorIdOrApiName: mock.id }, GetDataConnector);
+        mockGetDataConnectorNetworkOnce(config, {
+            reject: true,
+            data: mock,
+        });
+
+        const el = await setupElement({ connectorIdOrApiName: id }, GetDataConnector);
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredError()).toEqual(mock);
 
-        const el2 = await setupElement({ connectorIdOrApiName: mock.id }, GetDataConnector);
+        const el2 = await setupElement({ connectorIdOrApiName: id }, GetDataConnector);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredError()).toEqual(mock);
     });

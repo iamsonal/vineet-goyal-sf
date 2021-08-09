@@ -37,7 +37,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            id: '0ItS70000004CVSKA2',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -58,7 +57,6 @@ describe('basic', () => {
 
     it('should cause a cache hit on query after server returned 404', async () => {
         const mock = {
-            id: '0ItS70000004CVSKA2',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -70,15 +68,10 @@ describe('basic', () => {
             ],
         };
 
-        mockGetDataConnectorStatusNetworkOnce(config, [
-            {
-                reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                data: mock,
-            },
-        ]);
+        mockGetDataConnectorStatusNetworkOnce(config, {
+            reject: true,
+            data: mock,
+        });
 
         const el = await setupElement(config, GetDataConnectorStatus);
         expect(el.pushCount()).toBe(1);

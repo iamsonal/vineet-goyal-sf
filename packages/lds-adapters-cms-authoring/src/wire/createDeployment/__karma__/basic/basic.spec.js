@@ -58,7 +58,7 @@ describe('basic', () => {
             await createDeployment(testInput);
             fail('createDeployment did not throw an error when expected to');
         } catch (e) {
-            expect(e).toContainErrorResponse(mockErrorResponse);
+            expect(e).toEqual(mockErrorResponse);
         }
     });
 });

@@ -100,28 +100,11 @@ describe('basic', () => {
 
         const el = await setupElement(TEST_CONFIG, ContentType);
         expect(el.pushCount()).toBe(1);
-        expect(el.getError().body).toEqual(mock);
+        expect(el.getError()).toEqual(mock);
     });
 
     it('should cause a cache hit when a contentType is queried after server returned 404', async () => {
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
-
-        mockgetContentType(TEST_CONFIG, [
-            {
-                reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                data: mockError,
-            },
-        ]);
-
-        const expectedError = {
+        const mockError = {
             status: 404,
             statusText: 'Not Found',
             ok: false,
@@ -133,45 +116,47 @@ describe('basic', () => {
             ],
         };
 
+        mockgetContentType(TEST_CONFIG, [
+            {
+                reject: true,
+                data: mockError,
+            },
+        ]);
+
         const elm = await setupElement(TEST_CONFIG, ContentType);
-        expect(elm.getError()).toEqual(expectedError);
+        expect(elm.getError()).toEqual(mockError);
         expect(elm.getError()).toBeImmutable();
 
         const secondElm = await setupElement(TEST_CONFIG, ContentType);
-        expect(secondElm.getError()).toEqual(expectedError);
+        expect(secondElm.getError()).toEqual(mockError);
         expect(secondElm.getError()).toBeImmutable();
     });
 
     it('should refetch contenttype when ingested contentType error TTLs out', async () => {
         const contentTypeMock = getMock('contentType');
 
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
+        const mockError = {
+            status: 404,
+            statusText: 'Not Found',
+            ok: false,
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
+        };
 
         mockgetContentType(TEST_CONFIG, [
             {
                 reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 data: mockError,
             },
             contentTypeMock,
         ]);
 
-        const expectedError = {
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
-            body: mockError,
-        };
-
         const elm = await setupElement(TEST_CONFIG, ContentType);
-        expect(elm.getError()).toEqual(expectedError);
+        expect(elm.getError()).toEqual(mockError);
 
         expireContentType();
 

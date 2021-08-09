@@ -31,6 +31,6 @@ export default class GetRecordSeoProperties extends LightningElement {
 
     @api
     getError() {
-        return this.error.body;
+        return this.error;
     }
 }

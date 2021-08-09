@@ -16,11 +16,11 @@ describe('getRecord errors', () => {
             recordId: 'a07B0000002MTICIA4', // record id doesn't matter, we are throwing
             fields: ['NoExistEntity'],
         };
-        mockGetRecordNetwork(config, { reject: true, data: errorMock });
+        mockGetRecordNetwork(config, { reject: true, data: { body: errorMock } });
 
         const element = await setupElement(config, RecordFields);
 
-        expect(element.getWiredError()).toContainErrorResponse(errorMock);
+        expect(element.getWiredError()).toContainErrorBody(errorMock);
     });
 
     it('should emit error when server returns bad request', async () => {
@@ -29,11 +29,11 @@ describe('getRecord errors', () => {
             recordId: 'a07B0000002MTICIA4', // record id doesn't matter, we are throwing
             fields: ['Opportunity.Name', 'Opportunity.NoExist'],
         };
-        mockGetRecordNetwork(config, { reject: true, data: errorMock });
+        mockGetRecordNetwork(config, { reject: true, data: { body: errorMock } });
 
         const element = await setupElement(config, RecordFields);
 
-        expect(element.getWiredError()).toContainErrorResponse(errorMock);
+        expect(element.getWiredError()).toContainErrorBody(errorMock);
     });
 
     it('should not propagate error when re-requesting record returns error', async () => {
@@ -49,7 +49,7 @@ describe('getRecord errors', () => {
             recordId: recordMock.id,
             fields: ['Opportunity.Foo'],
         };
-        mockGetRecordNetwork(errorConfig, { reject: true, data: errorMock });
+        mockGetRecordNetwork(errorConfig, { reject: true, data: { body: errorMock } });
 
         const wireA = await setupElement(recordConfig, RecordFields);
         const error = await setupElement(errorConfig, RecordFields);
@@ -57,34 +57,12 @@ describe('getRecord errors', () => {
         // wireA should not have received new data
         expect(wireA.pushCount()).toBe(1);
         expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(recordMock);
-        expect(error.getWiredError()).toContainErrorResponse(errorMock);
+        expect(error.getWiredError()).toContainErrorBody(errorMock);
     });
 
     it('should cause a cache hit when a record is queried after server returned 404', async () => {
         const recordMock = getMock('record-Opportunity-fields-Opportunity.Name');
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
-
-        const config = {
-            recordId: recordMock.id,
-            fields: ['Opportunity.Name'],
-        };
-
-        mockGetRecordNetwork(config, [
-            {
-                reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                data: mockError,
-            },
-        ]);
-
-        const expectedError = {
+        const mockError = {
             status: 404,
             statusText: 'Not Found',
             ok: false,
@@ -96,23 +74,40 @@ describe('getRecord errors', () => {
             ],
         };
 
+        const config = {
+            recordId: recordMock.id,
+            fields: ['Opportunity.Name'],
+        };
+
+        mockGetRecordNetwork(config, [
+            {
+                reject: true,
+                data: mockError,
+            },
+        ]);
+
         const elm = await setupElement(config, RecordFields);
-        expect(elm.getWiredError()).toEqual(expectedError);
+        expect(elm.getWiredError()).toEqual(mockError);
         expect(elm.getWiredError()).toBeImmutable();
 
         const secondElm = await setupElement(config, RecordFields);
-        expect(secondElm.getWiredError()).toEqual(expectedError);
+        expect(secondElm.getWiredError()).toEqual(mockError);
         expect(elm.getWiredError()).toBeImmutable();
     });
 
     it('should refetch record when ingested record error TTLs out', async () => {
         const recordMock = getMock('record-Opportunity-fields-Opportunity.Name');
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
+        const mockError = {
+            status: 404,
+            statusText: 'Not Found',
+            ok: false,
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
+        };
 
         const config = {
             recordId: recordMock.id,
@@ -122,23 +117,13 @@ describe('getRecord errors', () => {
         mockGetRecordNetwork(config, [
             {
                 reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 data: mockError,
             },
             recordMock,
         ]);
 
-        const expectedError = {
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
-            body: mockError,
-        };
-
         const elm = await setupElement(config, RecordFields);
-        expect(elm.getWiredError()).toEqualSnapshotWithoutEtags(expectedError);
+        expect(elm.getWiredError()).toEqualSnapshotWithoutEtags(mockError);
 
         expireRecords();
         const secondElm = await setupElement(config, RecordFields);

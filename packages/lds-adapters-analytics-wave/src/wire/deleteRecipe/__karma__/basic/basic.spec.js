@@ -32,7 +32,12 @@ describe('deleteRecipe - basic', () => {
 
     it('evicts recipe from cache', async () => {
         const mockRecipe = getMock('recipe');
-        const mockError = getMock('delete-recipe-not-exist');
+        const mockError = {
+            ok: false,
+            status: 404,
+            statusText: 'NOT_FOUND',
+            body: getMock('delete-recipe-not-exist'),
+        };
         const config = {
             id: mockRecipe.id,
         };
@@ -42,7 +47,6 @@ describe('deleteRecipe - basic', () => {
             mockRecipe,
             {
                 reject: true,
-                status: 404,
                 data: mockError,
             },
         ]);
@@ -68,7 +72,7 @@ describe('deleteRecipe - errors', () => {
             id: "05vRM00000003rZYAQ'",
         };
 
-        mockDeleteRecipeNetworkOnce(config, { reject: true, data: mockError });
+        mockDeleteRecipeNetworkOnce(config, { reject: true, data: { body: mockError } });
 
         let error;
         try {
@@ -78,7 +82,7 @@ describe('deleteRecipe - errors', () => {
             error = e;
         }
 
-        expect(error).toContainErrorResponse(mockError);
+        expect(error).toContainErrorBody(mockError);
     });
 
     it('does not evict cache when server returns an error', async () => {

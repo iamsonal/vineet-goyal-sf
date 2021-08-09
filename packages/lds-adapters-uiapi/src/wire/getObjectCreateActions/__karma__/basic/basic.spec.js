@@ -106,20 +106,21 @@ describe('data emit', () => {
             objectApiName: 'Invalid',
         };
 
-        mockGetObjectCreateActionsNetwork(config, { reject: true, data: mockData });
+        mockGetObjectCreateActionsNetwork(config, { reject: true, data: { body: mockData } });
 
         const elm = await setupElement(config, ObjectCreateActions);
-        expect(elm.getWiredError()).toContainErrorResponse(mockData);
+        expect(elm.getWiredError()).toContainErrorBody(mockData);
     });
 
     it('should be a cache hit when ingested 404 does not exceed ttl', async () => {
-        const mockError = getMock('object-create-error');
-
-        const config = { objectApiName: 'Account' };
-        mockGetObjectCreateActionsNetwork(config, {
+        const mockError = {
             status: 404,
             statusText: 'Not Found',
             ok: false,
+            body: getMock('object-create-error'),
+        };
+        const config = { objectApiName: 'Account' };
+        mockGetObjectCreateActionsNetwork(config, {
             reject: true,
             data: mockError,
         });
@@ -127,24 +128,26 @@ describe('data emit', () => {
         const element = await setupElement(config, ObjectCreateActions);
 
         expect(element.pushCount()).toBe(1);
-        expect(element.getWiredError()).toContainErrorResponse(mockError);
+        expect(element.getWiredError()).toEqual(mockError);
 
         const elementB = await setupElement(config, ObjectCreateActions);
 
         expect(elementB.pushCount()).toBe(1);
-        expect(elementB.getWiredError()).toContainErrorResponse(mockError);
+        expect(elementB.getWiredError()).toEqual(mockError);
     });
 
     it('should refresh when ingested error exceeds ttl', async () => {
         const mock = getMock('object-create-actions');
-        const mockError = getMock('object-create-error');
+        const mockError = {
+            status: 404,
+            statusText: 'Not Found',
+            ok: false,
+            body: getMock('object-create-error'),
+        };
 
         const config = { objectApiName: 'Account' };
         mockGetObjectCreateActionsNetwork(config, [
             {
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 reject: true,
                 data: mockError,
             },
@@ -154,7 +157,7 @@ describe('data emit', () => {
         const element = await setupElement(config, ObjectCreateActions);
 
         expect(element.pushCount()).toBe(1);
-        expect(element.getWiredError()).toContainErrorResponse(mockError);
+        expect(element.getWiredError()).toEqual(mockError);
 
         expireActions();
 

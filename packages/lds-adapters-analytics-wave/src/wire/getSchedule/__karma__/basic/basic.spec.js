@@ -47,7 +47,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            assetId: '05vRM00000003rZYAQ',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -58,7 +57,7 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { assetId: mock.assetId };
+        const config = { assetId: '05vRM00000003rZYAQ' };
         mockGetScheduleNetworkErrorOnce(config, mock);
 
         const el = await setupElement(config, GetSchedule);
@@ -68,7 +67,6 @@ describe('basic', () => {
 
     it('should cause a cache hit on query after server returned 404', async () => {
         const mock = {
-            assetId: '05vRM00000003rZYAQ',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -79,14 +77,11 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { assetId: mock.assetId };
+        const config = { assetId: '05vRM00000003rZYAQ' };
 
         mockGetScheduleNetworkOnce(config, [
             {
                 reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
                 data: mock,
             },
         ]);

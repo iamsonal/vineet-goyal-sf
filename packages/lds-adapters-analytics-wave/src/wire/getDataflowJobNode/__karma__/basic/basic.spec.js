@@ -55,8 +55,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            jobId: '03CRM0000006tEf2AI',
-            id: '03LRM000000Bg4P2AS',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -67,12 +65,14 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { dataflowjobId: mock.jobId, nodeId: mock.id };
+        const jobId = '03CRM0000006tEf2AI';
+        const id = '03LRM000000Bg4P2AS';
+        const config = { dataflowjobId: jobId, nodeId: id };
         mockGetDataflowJobNodeNetworkErrorOnce(config, mock);
 
         const setupConfig = {
-            jobId: mock.jobId,
-            nodeId: mock.id,
+            jobId: jobId,
+            nodeId: id,
         };
         const el = await setupElement(setupConfig, GetDataflowJobNode);
         expect(el.pushCount()).toBe(1);
@@ -81,8 +81,6 @@ describe('basic', () => {
 
     it('should cause a cache hit on query after server returned 404', async () => {
         const mock = {
-            jobId: '03CRM0000006tEf2AI',
-            id: '03LRM000000Bg4P2AS',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -93,21 +91,19 @@ describe('basic', () => {
                 },
             ],
         };
-        const config = { dataflowjobId: mock.jobId, nodeId: mock.id };
 
-        mockGetDataflowJobNodeNetworkOnce(config, [
-            {
-                reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                data: mock,
-            },
-        ]);
+        const jobId = '03CRM0000006tEf2AI';
+        const id = '03LRM000000Bg4P2AS';
+        const config = { dataflowjobId: jobId, nodeId: id };
+
+        mockGetDataflowJobNodeNetworkOnce(config, {
+            reject: true,
+            data: mock,
+        });
 
         const setupConfig = {
-            jobId: mock.jobId,
-            nodeId: mock.id,
+            jobId: jobId,
+            nodeId: id,
         };
         const el = await setupElement(setupConfig, GetDataflowJobNode);
         expect(el.pushCount()).toBe(1);

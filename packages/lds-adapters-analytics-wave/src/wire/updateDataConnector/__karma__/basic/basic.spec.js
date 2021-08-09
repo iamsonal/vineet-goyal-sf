@@ -79,7 +79,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            id: '0ItS70000004CVSKA2',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -91,7 +90,7 @@ describe('basic', () => {
             ],
         };
         const config = {
-            connectorIdOrApiName: mock.id,
+            connectorIdOrApiName: '0ItS70000004CVSKA2',
             dataConnector: {
                 label: 'My Salesforce External Connector',
                 description: 'Snowflake connector',
@@ -110,7 +109,7 @@ describe('basic', () => {
             // make sure we are hitting the catch
             fail('updateDataConnector did not throw');
         } catch (e) {
-            expect(e).toContainErrorResponse(mock);
+            expect(e).toEqual(mock);
         }
     });
 });

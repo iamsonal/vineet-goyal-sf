@@ -17,11 +17,11 @@ describe('getRecordTemplateCreate errors', () => {
             objectApiName: 'Foo',
         };
 
-        mockGetRecordTemplateCreateNetwork(config, { reject: true, data: errorMock });
+        mockGetRecordTemplateCreateNetwork(config, { reject: true, data: { body: errorMock } });
 
         const elm = await setupElement(config, GetRecordTemplateCreate);
 
-        expect(elm.getWiredError()).toContainErrorResponse(errorMock);
+        expect(elm.getWiredError()).toContainErrorBody(errorMock);
         expect(elm.getWiredError()).toBeImmutable();
     });
 
@@ -33,11 +33,11 @@ describe('getRecordTemplateCreate errors', () => {
             recordTypeId: '001RM000004PkciYAC',
         };
 
-        mockGetRecordTemplateCreateNetwork(config, { reject: true, data: errorMock });
+        mockGetRecordTemplateCreateNetwork(config, { reject: true, data: { body: errorMock } });
 
         const elm = await setupElement(config, GetRecordTemplateCreate);
 
-        expect(elm.getWiredError()).toContainErrorResponse(errorMock);
+        expect(elm.getWiredError()).toContainErrorBody(errorMock);
         expect(elm.getWiredError()).toBeImmutable();
     });
 
@@ -49,11 +49,11 @@ describe('getRecordTemplateCreate errors', () => {
             optionalFields: ['Name'],
         };
 
-        mockGetRecordTemplateCreateNetwork(config, { reject: true, data: errorMock });
+        mockGetRecordTemplateCreateNetwork(config, { reject: true, data: { body: errorMock } });
 
         const elm = await setupElement(config, GetRecordTemplateCreate);
 
-        expect(elm.getWiredError()).toContainErrorResponse(errorMock);
+        expect(elm.getWiredError()).toContainErrorBody(errorMock);
         expect(elm.getWiredError()).toBeImmutable();
     });
 });

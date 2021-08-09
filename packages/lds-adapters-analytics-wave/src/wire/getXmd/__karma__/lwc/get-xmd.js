@@ -30,7 +30,7 @@ export default class GetXmd extends LightningElement {
 
     @api
     getWiredError() {
-        return this.error.body;
+        return this.error;
     }
 
     @api

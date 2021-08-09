@@ -91,15 +91,10 @@ describe('basic', () => {
             ],
         };
         const config = {};
-        mockGetAnalyticsLimitsNetworkOnce(config, [
-            {
-                reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                data: mock,
-            },
-        ]);
+        mockGetAnalyticsLimitsNetworkOnce(config, {
+            reject: true,
+            data: mock,
+        });
 
         const el = await setupElement(config, GetAnalyticsLimits);
         expect(el.pushCount()).toBe(1);

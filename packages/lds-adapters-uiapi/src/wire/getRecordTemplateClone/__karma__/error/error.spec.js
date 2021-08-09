@@ -21,12 +21,19 @@ describe('getRecordTemplateClone errors', () => {
             recordId: '001RM000004PkciYAC', // invalid
         };
 
-        mockGetRecordTemplateCloneNetwork(config, { reject: true, data: errorMock });
+        mockGetRecordTemplateCloneNetwork(config, {
+            reject: true,
+            data: {
+                status: 404,
+                statusText: 'Not Found',
+                ok: false,
+                body: errorMock,
+            },
+        });
 
         const elm = await setupElement(config, GetRecordTemplateClone);
 
-        expect(elm.getWiredError()).toContainErrorResponse(errorMock);
-        expect(elm.getWiredError()).toBeImmutable();
+        expect(elm.getWiredError()).toContainErrorBody(errorMock);
     });
 
     it('should cache 404 not found error for bad recordId', async () => {
@@ -38,21 +45,19 @@ describe('getRecordTemplateClone errors', () => {
 
         mockGetRecordTemplateCloneNetwork(config, {
             reject: true,
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
-            data: errorMock,
+            data: {
+                status: 404,
+                statusText: 'Not Found',
+                ok: false,
+                body: errorMock,
+            },
         });
 
         const elm = await setupElement(config, GetRecordTemplateClone);
-
-        expect(elm.getWiredError()).toContainErrorResponse(errorMock);
-        expect(elm.getWiredError()).toBeImmutable();
+        expect(elm.getWiredError()).toContainErrorBody(errorMock);
 
         const elm2 = await setupElement(config, GetRecordTemplateClone);
-
-        expect(elm2.getWiredError()).toContainErrorResponse(errorMock);
-        expect(elm2.getWiredError()).toBeImmutable();
+        expect(elm2.getWiredError()).toContainErrorBody(errorMock);
     });
 
     it('should refetch recordTemplateClone when ingested template error TTLs out', async () => {
@@ -67,18 +72,19 @@ describe('getRecordTemplateClone errors', () => {
         mockGetRecordTemplateCloneNetwork(config, [
             {
                 reject: true,
-                status: 404,
-                statusText: 'Not Found',
-                ok: false,
-                data: errorMock,
+                data: {
+                    status: 404,
+                    statusText: 'Not Found',
+                    ok: false,
+                    body: errorMock,
+                },
             },
             validMock,
         ]);
 
         const elm = await setupElement(config, GetRecordTemplateClone);
 
-        expect(elm.getWiredError()).toContainErrorResponse(errorMock);
-        expect(elm.getWiredError()).toBeImmutable();
+        expect(elm.getWiredError()).toContainErrorBody(errorMock);
 
         expireCloneTemplateRepresentation();
 
@@ -94,12 +100,19 @@ describe('getRecordTemplateClone errors', () => {
             recordTypeId: '001RM000004PkciYAC', // invalid
         };
 
-        mockGetRecordTemplateCloneNetwork(config, { reject: true, data: errorMock });
+        mockGetRecordTemplateCloneNetwork(config, {
+            reject: true,
+            data: {
+                status: 404,
+                statusText: 'Not Found',
+                ok: false,
+                body: errorMock,
+            },
+        });
 
         const elm = await setupElement(config, GetRecordTemplateClone);
 
-        expect(elm.getWiredError()).toContainErrorResponse(errorMock);
-        expect(elm.getWiredError()).toBeImmutable();
+        expect(elm.getWiredError()).toContainErrorBody(errorMock);
     });
 
     it('should propagate error when server returns 400 for invalid optionalField value', async () => {
@@ -110,11 +123,18 @@ describe('getRecordTemplateClone errors', () => {
             optionalFields: ['Name'], // invalid
         };
 
-        mockGetRecordTemplateCloneNetwork(config, { reject: true, data: errorMock });
+        mockGetRecordTemplateCloneNetwork(config, {
+            reject: true,
+            data: {
+                status: 404,
+                statusText: 'Not Found',
+                ok: false,
+                body: errorMock,
+            },
+        });
 
         const elm = await setupElement(config, GetRecordTemplateClone);
 
-        expect(elm.getWiredError()).toContainErrorResponse(errorMock);
-        expect(elm.getWiredError()).toBeImmutable();
+        expect(elm.getWiredError()).toContainErrorBody(errorMock);
     });
 });

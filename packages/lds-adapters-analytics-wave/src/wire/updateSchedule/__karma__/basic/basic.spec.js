@@ -152,7 +152,6 @@ describe('basic', () => {
 
     it('displays error when network request 404s', async () => {
         const mock = {
-            assetId: '05vRM00000003rZYAQ',
             ok: false,
             status: 404,
             statusText: 'NOT_FOUND',
@@ -182,7 +181,7 @@ describe('basic', () => {
             // make sure we are hitting the catch
             fail('updateSchedule did not throw');
         } catch (e) {
-            expect(e).toContainErrorResponse(mock);
+            expect(e).toEqual(mock);
         }
     });
 });

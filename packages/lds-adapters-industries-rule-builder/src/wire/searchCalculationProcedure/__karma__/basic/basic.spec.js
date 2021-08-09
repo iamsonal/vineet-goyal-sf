@@ -57,6 +57,6 @@ describe('basic', () => {
         mockSearchCalculationProcedureNetworkErrorOnce(config, mock);
         const el = await setupElement(config, SearchCalculationProcedure);
         expect(el.pushCount()).toBe(1);
-        expect(clone(el.getError())).toEqual(mock);
+        expect(el.getError()).toEqual(mock);
     });
 });

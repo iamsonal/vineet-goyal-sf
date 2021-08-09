@@ -215,12 +215,17 @@ describe('refresh', () => {
         const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockRecordUiData);
 
-        const mockError = [
-            {
-                errorCode: 'NOT_FOUND',
-                message: 'The requested resource does not exist',
-            },
-        ];
+        const mockError = {
+            status: 404,
+            statusText: 'Not Found',
+            ok: false,
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
+        };
 
         const config = {
             recordIds: recordId,
@@ -229,15 +234,13 @@ describe('refresh', () => {
             optionalFields: ['Account.Industry'],
         };
 
-        const mockErrorResponse = {
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
-            reject: true,
-            data: mockError,
-        };
-
-        mockGetRecordUiNetwork(config, [mockRecordUiData, mockErrorResponse]);
+        mockGetRecordUiNetwork(config, [
+            mockRecordUiData,
+            {
+                reject: true,
+                data: mockError,
+            },
+        ]);
 
         const element = await setupElement(config, RecordUi);
         expect(element.pushCount()).toBe(1);
@@ -246,13 +249,7 @@ describe('refresh', () => {
         try {
             await element.refresh();
         } catch (e) {
-            const mockErrorResponse = {
-                body: mockError,
-                ok: false,
-                status: 404,
-                statusText: 'Not Found',
-            };
-            expect(mockErrorResponse).toEqual(e);
+            expect(e).toEqual(mockError);
             expect(e).toBeImmutable();
         }
     });
@@ -268,12 +265,20 @@ describe('refresh', () => {
             optionalFields: ['Account.Industry'],
         };
 
-        const mockError = {
-            reject: true,
-            data: {},
+        const mockErrorResponse = {
+            body: {},
+            ok: false,
+            status: 500,
+            statusText: 'Server Error',
         };
 
-        mockGetRecordUiNetwork(config, [mockRecordUiData, mockError]);
+        mockGetRecordUiNetwork(config, [
+            mockRecordUiData,
+            {
+                reject: true,
+                data: mockErrorResponse,
+            },
+        ]);
 
         const element = await setupElement(config, RecordUi);
         expect(element.pushCount()).toBe(1);
@@ -282,19 +287,18 @@ describe('refresh', () => {
         try {
             await element.refresh();
         } catch (e) {
-            const mockErrorResponse = {
-                body: {},
-                ok: false,
-                status: 500,
-                statusText: 'Server Error',
-            };
-            expect(mockErrorResponse).toEqual(e);
+            expect(e).toEqual(mockErrorResponse);
             expect(e).toBeImmutable();
         }
     });
 
     it('should automatically refreshUi when child object info is 404 ', async () => {
-        const objectInfoError = getMock('objectInfo-error');
+        const objectInfoError = {
+            status: 404,
+            statusText: 'Not Found',
+            ok: false,
+            body: getMock('objectInfo-error'),
+        };
         const mockRecordUiData = getMock('single-record-Account-layouttypes-Full-modes-View');
         const recordId = getRecordIdFromMock(mockRecordUiData);
         const mockRecordUiDataChanged = getMock(
@@ -314,9 +318,6 @@ describe('refresh', () => {
 
         mockGetRecordUiNetwork(configRecordUi, [mockRecordUiData, mockRecordUiDataChanged]);
         mockGetObjectInfoNetwork(configObjectInfo, {
-            status: 404,
-            statusText: 'Not Found',
-            ok: false,
             reject: true,
             data: objectInfoError,
         });
@@ -332,7 +333,7 @@ describe('refresh', () => {
         const elementObjectInfo = await setupElement(configObjectInfo, ObjectInfo);
         expect(elementObjectInfo.pushCount()).toBe(1);
         expect(elementObjectInfo.getWiredData()).toBeUndefined();
-        expect(elementObjectInfo.getWiredError()).toContainErrorResponse(objectInfoError);
+        expect(elementObjectInfo.getWiredError()).toEqual(objectInfoError);
 
         // Verify we made another call and got fresh data.
         expect(elementRecordUi.pushCount()).toBe(2);

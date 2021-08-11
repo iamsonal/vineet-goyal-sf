@@ -1,41 +1,10 @@
 {
-    "count": 1,
+    "count": 0,
     "currentPageToken": null,
-    "currentPageUrl": "/services/data/v53.0/ui-api/lookups/Case/AccountId/Account?q=test&searchType=TypeAhead&page=1&pageSize=25",
+    "currentPageUrl": "/services/data/v54.0/ui-api/lookups/Case/AccountId/Account?q=test&searchType=TypeAhead&page=1&pageSize=25",
     "nextPageToken": null,
     "nextPageUrl": null,
     "previousPageToken": null,
     "previousPageUrl": null,
-    "records": [
-        {
-            "apiName": "Account",
-            "childRelationships": {},
-            "eTag": "298eb045cdaee7ff3c0217ae1b955b76",
-            "fields": {
-                "DisambiguationField": {
-                    "displayValue": null,
-                    "value": null
-                },
-                "Id": {
-                    "displayValue": null,
-                    "value": "001T1000002GaXCIA0"
-                },
-                "Name": {
-                    "displayValue": null,
-                    "value": "Burlington Textiles Corp of America"
-                },
-                "Site": {
-                    "displayValue": null,
-                    "value": null
-                }
-            },
-            "id": "001T1000002GaXCIA0",
-            "lastModifiedById": "005T1000000Huh7IAC",
-            "lastModifiedDate": "2021-04-06T23:46:16.000Z",
-            "recordTypeId": "012000000000000AAA",
-            "recordTypeInfo": null,
-            "systemModstamp": "2021-04-06T23:46:16.000Z",
-            "weakEtag": 1617752776000
-        }
-    ]
+    "records": []
 }

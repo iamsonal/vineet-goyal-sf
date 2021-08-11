@@ -1681,7 +1681,7 @@ describe('routes', () => {
                 },
                 defaultValue: null,
                 eTag: 'a4587e5dc7cc5157e1f07e3cc9ed94e5',
-                url: '/services/data/v53.0/ui-api/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User',
+                url: '/services/data/v54.0/ui-api/object-info/Opportunity/picklist-values/012T00000004MUHIA2/User',
                 values: [
                     {
                         attributes: null,
@@ -5917,25 +5917,25 @@ describe('routes', () => {
                 contentKey: 'MCP5UIGCCS3NHDVLFJFTC47QR5OM',
                 contentSpace: {
                     id: '0Zuxx000000009hCAA',
-                    resourceUrl: '/services/data/v53.0/connect/cms/spaces/0Zuxx000000009h',
+                    resourceUrl: '/services/data/v54.0/connect/cms/spaces/0Zuxx000000009h',
                 },
                 contentType: {
                     fullyQualifiedName: 'news',
                 },
                 createdBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fN',
+                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fN',
                 },
                 createdDate: '2021-06-04T09:21:31.000Z',
                 folder: {
                     id: '9Puxx0000004CSOCA2',
-                    resourceUrl: '/services/data/v53.0/connect/cms/folders/9Puxx0000004CSO',
+                    resourceUrl: '/services/data/v54.0/connect/cms/folders/9Puxx0000004CSO',
                 },
                 isPublished: false,
                 language: 'en_US',
                 lastModifiedBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fN',
+                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fN',
                 },
                 lastModifiedDate: '2021-06-04T11:55:24.000Z',
                 managedContentId: '20Yxx0000011SooEAE',
@@ -5977,25 +5977,25 @@ describe('routes', () => {
                 contentKey: 'MCP5UIGCCS3NHDVLFJFTC47QR5OM',
                 contentSpace: {
                     id: '0Zuxx000000009hCAA',
-                    resourceUrl: '/services/data/v53.0/connect/cms/spaces/0Zuxx000000009h',
+                    resourceUrl: '/services/data/v54.0/connect/cms/spaces/0Zuxx000000009h',
                 },
                 contentType: {
                     fullyQualifiedName: 'news',
                 },
                 createdBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fN',
+                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fN',
                 },
                 createdDate: '2021-06-04T09:21:31.000Z',
                 folder: {
                     id: '9Puxx0000004CSOCA2',
-                    resourceUrl: '/services/data/v53.0/connect/cms/folders/9Puxx0000004CSO',
+                    resourceUrl: '/services/data/v54.0/connect/cms/folders/9Puxx0000004CSO',
                 },
                 isPublished: false,
                 language: 'en_US',
                 lastModifiedBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fN',
+                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fN',
                 },
                 lastModifiedDate: '2021-06-04T11:55:24.000Z',
                 managedContentId: '20Yxx0000011SooEAE',
@@ -6169,24 +6169,24 @@ describe('routes', () => {
                 contentKey: 'MCFXA42Q4MHNCKXER4YOLK4SE5KQ',
                 contentSpace: {
                     id: '0Zuxx000000009hCAA',
-                    resourceUrl: '/services/data/v53.0/connect/cms/spaces/0Zuxx000000009hCAA',
+                    resourceUrl: '/services/data/v54.0/connect/cms/spaces/0Zuxx000000009hCAA',
                 },
                 contentType: {
                     fullyQualifiedName: 'news',
                 },
                 createdBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fNAAS',
                 },
                 createdDate: '2021-06-04T09:13:35.000Z',
                 folder: {
                     id: '9Puxx0000004CSOCA2',
-                    resourceUrl: '/services/data/v53.0/connect/cms/folders/9Puxx0000004CSOCA2',
+                    resourceUrl: '/services/data/v54.0/connect/cms/folders/9Puxx0000004CSOCA2',
                 },
                 language: 'en_US',
                 lastModifiedBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fNAAS',
                 },
                 lastModifiedDate: '2021-06-04T09:13:35.000Z',
                 managedContentId: '20Yxx0000011SjyEAE',
@@ -6229,24 +6229,24 @@ describe('routes', () => {
                 contentKey: 'MCFXA42Q4MHNCKXER4YOLK4SE5KQ',
                 contentSpace: {
                     id: '0Zuxx000000009hCAA',
-                    resourceUrl: '/services/data/v53.0/connect/cms/spaces/0Zuxx000000009hCAA',
+                    resourceUrl: '/services/data/v54.0/connect/cms/spaces/0Zuxx000000009hCAA',
                 },
                 contentType: {
                     fullyQualifiedName: 'news',
                 },
                 createdBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fNAAS',
                 },
                 createdDate: '2021-06-04T09:13:35.000Z',
                 folder: {
                     id: '9Puxx0000004CSOCA2',
-                    resourceUrl: '/services/data/v53.0/connect/cms/folders/9Puxx0000004CSOCA2',
+                    resourceUrl: '/services/data/v54.0/connect/cms/folders/9Puxx0000004CSOCA2',
                 },
                 language: 'en_US',
                 lastModifiedBy: {
                     id: '005xx000001X7fNAAS',
-                    resourceUrl: '/services/data/v53.0/chatter/users/005xx000001X7fNAAS',
+                    resourceUrl: '/services/data/v54.0/chatter/users/005xx000001X7fNAAS',
                 },
                 lastModifiedDate: '2021-06-04T09:13:35.000Z',
                 managedContentId: '20Yxx0000011SjyEAE',

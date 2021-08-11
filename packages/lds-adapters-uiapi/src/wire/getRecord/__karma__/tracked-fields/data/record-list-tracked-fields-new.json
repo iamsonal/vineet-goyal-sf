@@ -1,69 +1,69 @@
 {
     "apiName": "Opportunity",
     "childRelationships": {},
-    "eTag": "5c7103d1f2a0716eaf0471b0145a8c25",
+    "eTag": "1f71e5946167bebd6fd1b5f68ab1aa69",
     "fields": {
         "Account": {
             "displayValue": "Burlington Textiles Corp of America",
             "value": {
                 "apiName": "Account",
                 "childRelationships": {},
-                "eTag": "745670ef3a7b5f29c648cc83d07d805b",
+                "eTag": "770d4852931441a0c915c9aa89ca6eb2",
                 "fields": {
                     "Id": {
                         "displayValue": null,
-                        "value": "001xx000003GdehAAC"
+                        "value": "001xx000003GgW7AAK"
                     }
                 },
-                "id": "001xx000003GdehAAC",
-                "lastModifiedById": "005xx000001XD7ZAAW",
-                "lastModifiedDate": "2021-05-21T13:50:39.000Z",
+                "id": "001xx000003GgW7AAK",
+                "lastModifiedById": "005xx000001XFXZAA4",
+                "lastModifiedDate": "2021-08-10T19:59:45.000Z",
                 "recordTypeId": "012000000000000AAA",
                 "recordTypeInfo": null,
-                "systemModstamp": "2021-05-21T13:50:39.000Z",
-                "weakEtag": 1621605039000
+                "systemModstamp": "2021-08-10T19:59:45.000Z",
+                "weakEtag": 1628625585000
             }
         },
         "AccountId": {
             "displayValue": null,
-            "value": "001xx000003GdehAAC"
+            "value": "001xx000003GgW7AAK"
         },
         "Amount": {
             "displayValue": "$235,000.00",
             "value": 235000
         },
         "CloseDate": {
-            "displayValue": "5/1/2019",
-            "value": "2019-05-01"
+            "displayValue": "7/22/2019",
+            "value": "2019-07-22"
         },
         "CreatedBy": {
             "displayValue": "User User",
             "value": {
                 "apiName": "User",
                 "childRelationships": {},
-                "eTag": "393149fddc6245d7ecb22d997524b953",
+                "eTag": "1b695fb04e2f4c5e24ae62ab33f71f92",
                 "fields": {
                     "Id": {
                         "displayValue": null,
-                        "value": "005xx000001XD7ZAAW"
+                        "value": "005xx000001XFXZAA4"
                     }
                 },
-                "id": "005xx000001XD7ZAAW",
-                "lastModifiedById": "005xx000001XD7ZAAW",
-                "lastModifiedDate": "2021-05-21T13:50:39.000Z",
+                "id": "005xx000001XFXZAA4",
+                "lastModifiedById": "005xx000001XFXZAA4",
+                "lastModifiedDate": "2021-08-10T20:14:14.000Z",
                 "recordTypeId": null,
                 "recordTypeInfo": null,
-                "systemModstamp": "2021-05-21T14:26:16.000Z",
-                "weakEtag": 1621607176000
+                "systemModstamp": "2021-08-10T20:14:14.000Z",
+                "weakEtag": 1628626454000
             }
         },
         "CreatedById": {
             "displayValue": null,
-            "value": "005xx000001XD7ZAAW"
+            "value": "005xx000001XFXZAA4"
         },
         "CreatedDate": {
-            "displayValue": "5/21/2021, 6:50 AM",
-            "value": "2021-05-21T13:50:39.000Z"
+            "displayValue": "8/10/2021, 12:59 PM",
+            "value": "2021-08-10T19:59:45.000Z"
         },
         "FiscalYear": {
             "displayValue": null,
@@ -71,15 +71,15 @@
         },
         "Id": {
             "displayValue": null,
-            "value": "006xx000001a7oQAAQ"
+            "value": "006xx000001aAskAAE"
         },
         "LastModifiedById": {
             "displayValue": null,
-            "value": "005xx000001XD7ZAAW"
+            "value": "005xx000001XFXZAA4"
         },
         "LastModifiedDate": {
-            "displayValue": "5/21/2021, 6:50 AM",
-            "value": "2021-05-21T13:50:39.000Z"
+            "displayValue": "8/10/2021, 12:59 PM",
+            "value": "2021-08-10T19:59:45.000Z"
         },
         "Name": {
             "displayValue": null,
@@ -90,14 +90,14 @@
             "value": {
                 "apiName": "Name",
                 "childRelationships": {},
-                "eTag": "c2f27c8e35d314b71f2e83f8e70e97e8",
+                "eTag": "d482140eea76a6a3aeb51229d4e1b1c1",
                 "fields": {
                     "Id": {
                         "displayValue": null,
-                        "value": "005xx000001XD7ZAAW"
+                        "value": "005xx000001XFXZAA4"
                     }
                 },
-                "id": "005xx000001XD7ZAAW",
+                "id": "005xx000001XFXZAA4",
                 "lastModifiedById": null,
                 "lastModifiedDate": null,
                 "recordTypeId": null,
@@ -108,22 +108,22 @@
         },
         "OwnerId": {
             "displayValue": null,
-            "value": "005xx000001XD7ZAAW"
+            "value": "005xx000001XFXZAA4"
         },
         "StageName": {
             "displayValue": "Closed Won",
             "value": "Closed Won"
         },
         "SystemModstamp": {
-            "displayValue": "5/21/2021, 6:50 AM",
-            "value": "2021-05-21T13:50:39.000Z"
+            "displayValue": "8/10/2021, 12:59 PM",
+            "value": "2021-08-10T19:59:45.000Z"
         }
     },
-    "id": "006xx000001a7oQAAQ",
-    "lastModifiedById": "005xx000001XD7ZAAW",
-    "lastModifiedDate": "2021-05-21T13:50:39.000Z",
+    "id": "006xx000001aAskAAE",
+    "lastModifiedById": "005xx000001XFXZAA4",
+    "lastModifiedDate": "2021-08-10T19:59:45.000Z",
     "recordTypeId": "012000000000000AAA",
     "recordTypeInfo": null,
-    "systemModstamp": "2021-05-21T13:50:39.000Z",
-    "weakEtag": 1621605039000
+    "systemModstamp": "2021-08-10T19:59:45.000Z",
+    "weakEtag": 1628625585000
 }

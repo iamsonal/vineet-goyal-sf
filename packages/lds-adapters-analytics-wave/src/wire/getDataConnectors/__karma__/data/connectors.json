@@ -27,7 +27,7 @@
             "lastModifiedDate": "2020-10-14T14:36:56.000Z",
             "name": "SFDC_LOCAL",
             "type": "dataconnector",
-            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfe0AE"
+            "url": "/services/data/v54.0/wave/dataConnectors/0ItRM0000004Dfe0AE"
         },
         {
             "connectionProperties": [
@@ -77,7 +77,7 @@
             "lastModifiedDate": "2020-10-14T14:36:56.000Z",
             "name": "s3testKeys",
             "type": "dataconnector",
-            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfb0AE"
+            "url": "/services/data/v54.0/wave/dataConnectors/0ItRM0000004Dfb0AE"
         },
         {
             "connectionProperties": [
@@ -127,7 +127,7 @@
             "lastModifiedDate": "2020-10-14T14:36:56.000Z",
             "name": "arg7dn",
             "type": "dataconnector",
-            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfc0AE"
+            "url": "/services/data/v54.0/wave/dataConnectors/0ItRM0000004Dfc0AE"
         },
         {
             "connectionProperties": [
@@ -177,7 +177,7 @@
             "lastModifiedDate": "2020-10-14T14:36:56.000Z",
             "name": "badinfodn",
             "type": "dataconnector",
-            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfd0AE"
+            "url": "/services/data/v54.0/wave/dataConnectors/0ItRM0000004Dfd0AE"
         },
         {
             "connectionProperties": [
@@ -227,7 +227,7 @@
             "lastModifiedDate": "2020-10-14T14:36:56.000Z",
             "name": "arf",
             "type": "dataconnector",
-            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfg0AE"
+            "url": "/services/data/v54.0/wave/dataConnectors/0ItRM0000004Dfg0AE"
         },
         {
             "connectionProperties": [
@@ -277,7 +277,7 @@
             "lastModifiedDate": "2020-10-14T14:36:56.000Z",
             "name": "arf2DevName",
             "type": "dataconnector",
-            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfh0AE"
+            "url": "/services/data/v54.0/wave/dataConnectors/0ItRM0000004Dfh0AE"
         },
         {
             "connectionProperties": [
@@ -327,7 +327,7 @@
             "lastModifiedDate": "2020-10-14T14:36:56.000Z",
             "name": "arfarf5dev",
             "type": "dataconnector",
-            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfi0AE"
+            "url": "/services/data/v54.0/wave/dataConnectors/0ItRM0000004Dfi0AE"
         },
         {
             "connectionProperties": [
@@ -377,7 +377,7 @@
             "lastModifiedDate": "2020-10-14T14:36:56.000Z",
             "name": "deletemedv",
             "type": "dataconnector",
-            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfj0AE"
+            "url": "/services/data/v54.0/wave/dataConnectors/0ItRM0000004Dfj0AE"
         },
         {
             "connectionProperties": [
@@ -434,8 +434,8 @@
             "lastModifiedDate": "2020-10-14T14:36:56.000Z",
             "name": "Sample_Data",
             "type": "dataconnector",
-            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfk0AE"
+            "url": "/services/data/v54.0/wave/dataConnectors/0ItRM0000004Dfk0AE"
         }
     ],
-    "url": "/services/data/v53.0/wave/dataConnectors"
+    "url": "/services/data/v54.0/wave/dataConnectors"
 }

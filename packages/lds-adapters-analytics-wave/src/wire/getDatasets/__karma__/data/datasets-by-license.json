@@ -8,7 +8,7 @@
             },
             "createdDate": "2021-01-20T20:07:19.000Z",
             "currentVersionId": "0Fcxx0000004CsCCAU",
-            "currentVersionUrl": "/services/data/v53.0/wave/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU",
+            "currentVersionUrl": "/services/data/v54.0/wave/datasets/0Fbxx0000004CyeCAE/versions/0Fcxx0000004CsCCAU",
             "dataRefreshDate": "2021-01-20T20:08:33.000Z",
             "datasetType": "default",
             "folder": {
@@ -34,12 +34,12 @@
                 "view": true
             },
             "type": "dataset",
-            "url": "/services/data/v53.0/wave/datasets/0Fbxx0000004CyeCAE",
-            "versionsUrl": "/services/data/v53.0/wave/datasets/0Fbxx0000004CyeCAE/versions",
+            "url": "/services/data/v54.0/wave/datasets/0Fbxx0000004CyeCAE",
+            "versionsUrl": "/services/data/v54.0/wave/datasets/0Fbxx0000004CyeCAE/versions",
             "visibility": "All"
         }
     ],
     "nextPageUrl": null,
     "totalSize": 1,
-    "url": "/services/data/v53.0/wave/datasets?scope=CreatedByMe"
+    "url": "/services/data/v54.0/wave/datasets?scope=CreatedByMe"
 }

@@ -1,11 +1,11 @@
 {
-    "eTag": "e048c8cdbd47752ff69830de75ca6460",
+    "eTag": "28320ea883bb4d96016f9f7286c9a247",
     "picklistFieldValues": {
         "AccountSource": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "1c44ae66d1671182a5c4fe5bd111e650",
-            "url": "/services/data/v53.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/AccountSource",
+            "eTag": "cebe744780a6fc00e0f24819ab0437d5",
+            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/AccountSource",
             "values": [
                 {
                     "attributes": null,
@@ -42,8 +42,8 @@
         "Active__c": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "1b0657fe2a37c27dd20186977becc65a",
-            "url": "/services/data/v53.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Active__c",
+            "eTag": "239799e8ea172c1e1983fe728f36ace9",
+            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Active__c",
             "values": [
                 {
                     "attributes": null,
@@ -62,8 +62,8 @@
         "BillingGeocodeAccuracy": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "1869f71bd88421665c283362a4fdc0a5",
-            "url": "/services/data/v53.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/BillingGeocodeAccuracy",
+            "eTag": "14304b3691a80d82b16caf8275f91ec9",
+            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/BillingGeocodeAccuracy",
             "values": [
                 {
                     "attributes": null,
@@ -136,8 +136,8 @@
         "CleanStatus": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "98a688b291f02757c1f5a20787573de8",
-            "url": "/services/data/v53.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/CleanStatus",
+            "eTag": "856a08328eb35ac6c66bd9ef9e6c90c2",
+            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/CleanStatus",
             "values": [
                 {
                     "attributes": null,
@@ -192,8 +192,8 @@
         "CustomerPriority__c": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "2f36f95b66297caad0e0bec13197c9d4",
-            "url": "/services/data/v53.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/CustomerPriority__c",
+            "eTag": "f4f3f63ce41fec531a4423002065baea",
+            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/CustomerPriority__c",
             "values": [
                 {
                     "attributes": null,
@@ -218,8 +218,8 @@
         "Industry": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "6c009655c68198ed37a5bf139c112937",
-            "url": "/services/data/v53.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Industry",
+            "eTag": "b3c43b8c8a8e93ddbf209a71f9ae6230",
+            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Industry",
             "values": [
                 {
                     "attributes": null,
@@ -418,8 +418,8 @@
         "Ownership": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "2d6e1b32bd4c3cf430c44a86b5c0dd27",
-            "url": "/services/data/v53.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Ownership",
+            "eTag": "329f4ba151c265a12a9b962e4aa9285e",
+            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Ownership",
             "values": [
                 {
                     "attributes": null,
@@ -450,8 +450,8 @@
         "Rating": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "c7e7b53f659373232559847b72caf02a",
-            "url": "/services/data/v53.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Rating",
+            "eTag": "63af52ba1033bc91b7f3955c3d2238e2",
+            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Rating",
             "values": [
                 {
                     "attributes": null,
@@ -476,8 +476,8 @@
         "SLA__c": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "23933c9849fe134e44d4074751bcbba6",
-            "url": "/services/data/v53.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/SLA__c",
+            "eTag": "225caecc5df7bca2e6e09d991e045258",
+            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/SLA__c",
             "values": [
                 {
                     "attributes": null,
@@ -508,8 +508,8 @@
         "ShippingGeocodeAccuracy": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "1869f71bd88421665c283362a4fdc0a5",
-            "url": "/services/data/v53.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/ShippingGeocodeAccuracy",
+            "eTag": "14304b3691a80d82b16caf8275f91ec9",
+            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/ShippingGeocodeAccuracy",
             "values": [
                 {
                     "attributes": null,
@@ -582,8 +582,8 @@
         "Type": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "a86c967efbd55c1582f03c5a771c1e03",
-            "url": "/services/data/v53.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Type",
+            "eTag": "d9f7d99534ae0ff78da5324cc393e27f",
+            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/Type",
             "values": [
                 {
                     "attributes": null,
@@ -632,8 +632,8 @@
         "UpsellOpportunity__c": {
             "controllerValues": {},
             "defaultValue": null,
-            "eTag": "80d44a870e91c930670e31c27a8e4b28",
-            "url": "/services/data/v53.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/UpsellOpportunity__c",
+            "eTag": "577d22bc89b75bd07f927b24db3636c4",
+            "url": "/services/data/v54.0/ui-api/object-info/Account/picklist-values/012000000000000AAA/UpsellOpportunity__c",
             "values": [
                 {
                     "attributes": null,

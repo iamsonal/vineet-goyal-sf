@@ -2,11 +2,11 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '53.0'
+version: '54.0'
 mediaType: application/json
 protocols:
   - https
-baseUri: /services/data/v53.0
+baseUri: /services/data/v54.0
 securitySchemes:
   OAuth2:
     type: OAuth 2.0
@@ -1232,7 +1232,7 @@ types:
         type: boolean
       label:
         description: Localized label of the field.
-        type: string
+        type: string | nil
   ListOrderedByInfoInputRepresentation:
     description: Representation of a orderedBy Info input.
     type: object
@@ -1883,7 +1883,6 @@ types:
       type:
         description: API name of the corresponding PageDefinition.
         type: string
-        # format: int64 - W-9109412: Format int64 is not valid for type http://www.w3.org/2001/XMLSchema#string.
   PhotoMetadataRepresentation:
     description: Represents an metadata of an avatar associated to a record.
     type: object
@@ -1910,6 +1909,7 @@ types:
       height:
         description: Retrieve the height of the photo in pixels, if known, otherwise
           this will be null.
+        # format: int64 - W-9109412: Format int64 is not valid for type http://www.w3.org/2001/XMLSchema#string.
         type: integer | nil
       photoMetadata:
         description: The photo metadata for the image
@@ -3010,6 +3010,52 @@ types:
           is a best effort calculation, and should not be relied upon to always be
           completely accurate.
         type: boolean
+  RelatedListUserPreferencesInputRepresentation:
+    description: Representation of related list user preferences input.
+    type: object
+    properties:
+      columnWidths:
+        description: Column width preferences.  -1 indicates default width.
+        type: object
+        properties:
+          //:
+            type: integer
+      columnWrap:
+        description: Column wrapping preferences.  True indicates text wrapping is
+          enabled.
+        type: object
+        properties:
+          //:
+            type: boolean
+      orderedBy:
+        description: Input representation for orderBy.
+        type: array
+        items:
+          type: object
+  RelatedListUserPreferencesRepresentation:
+    description: RelatedListUserPreferencesRepresentation
+    type: object
+    properties:
+      columnWidths:
+        description: Column width preferences for the related list.
+        type: object
+        properties:
+          //:
+            type: integer
+      columnWrap:
+        description: Column wrapping preferences for the related list.
+        type: object
+        properties:
+          //:
+            type: boolean
+      orderedBy:
+        description: Ordering preference for the related list.
+        type: array
+        items:
+          type: ListOrderByInfoRepresentation
+      preferencesId:
+        description: Preference id for these preferences.
+        type: string
   ReportLayoutComponentRepresentation:
     description: Report record layout component.
     discriminatorValue: ReportChart # TODO: hand rolled
@@ -5710,6 +5756,54 @@ types:
         relatedListId:
           type: string
           required: true
+    /related-list-preferences:
+      /batch/{preferencesIds}:
+        get:
+          description: Retrieve user preferences.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: SimplifiedBatchRepresentation
+        uriParameters:
+          preferencesIds:
+            type: array
+            required: true
+            items:
+              type: string
+              (oas-collectionFormat): csv
+      /{preferencesId}:
+        delete:
+          description: Deletes a single user preferences by preferencesId.
+          responses:
+            '200':
+              description: Success
+        get:
+          description: Retrieve user preferences.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: RelatedListUserPreferencesRepresentation
+        patch:
+          description: Update user preferences on an existing related list.
+          responses:
+            '200':
+              description: Success
+              body:
+                application/json:
+                  type: RelatedListUserPreferencesRepresentation
+          body:
+            application/json:
+              type: RelatedListUserPreferencesInputRepresentation
+              # required: false - W-9109412: Property 'required' not supported in a RAML 1.0 object node
+              (oas-body-name): relatedListUserPreferencesInput
+        uriParameters:
+          preferencesId:
+            type: string
+            required: true
   /related-list-records:
     /batch/{parentRecordId}/{relatedListIds}:
       get:

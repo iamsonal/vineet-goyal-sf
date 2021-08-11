@@ -3,7 +3,7 @@ import { mockNetworkOnce, mockNetworkErrorOnce, mockNetworkSequence, clearCache 
 import sinon from 'sinon';
 import timekeeper from 'timekeeper';
 
-const API_VERSION = 'v53.0';
+const API_VERSION = 'v54.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/connect`;
 const CONTENT_LIST_TTL = 3600000;

@@ -7,12 +7,12 @@
             "id": "03CRM0000006tEf2AI",
             "jobType": "recipe",
             "label": "recipe opp ext amt_recipe",
-            "nodesUrl": "/services/data/v53.0/wave/dataflowjobs/03CRM0000006tEf2AI/nodes",
+            "nodesUrl": "/services/data/v54.0/wave/dataflowjobs/03CRM0000006tEf2AI/nodes",
             "progress": 0.0,
             "startDate": "2020-10-01T07:00:01.000Z",
             "status": "Running",
             "type": "dataflowjob",
-            "url": "/services/data/v53.0/wave/dataflowjobs/03CRM0000006tEf2AI",
+            "url": "/services/data/v54.0/wave/dataflowjobs/03CRM0000006tEf2AI",
             "createdBy": { "id": "", "name": "", "profilePhotoUrl": "" },
             "lastModifiedBy": { "id": "", "name": "", "profilePhotoUrl": "" },
             "permissions": { "create": true, "manage": true, "modify": true, "view": true },
@@ -26,12 +26,12 @@
             "id": "03CRM0000006seg2AA",
             "jobType": "fileupload",
             "label": "recipe opp ext amt - Upload flow - Overwrite",
-            "nodesUrl": "/services/data/v53.0/wave/dataflowjobs/03CRM0000006seg2AA/nodes",
+            "nodesUrl": "/services/data/v54.0/wave/dataflowjobs/03CRM0000006seg2AA/nodes",
             "progress": 1.0,
             "startDate": "2020-09-30T01:30:55.000Z",
             "status": "Running",
             "type": "dataflowjob",
-            "url": "/services/data/v53.0/wave/dataflowjobs/03CRM0000006seg2AA",
+            "url": "/services/data/v54.0/wave/dataflowjobs/03CRM0000006seg2AA",
             "assetSharingUrl": "https://HOST/analytics/wave/dataflowjobs?assetId=03CRM0000006seg2AA&orgId=ORG_ID&loginHost=HOST&urlType=sharing",
             "description": "",
             "lastAccessedDate": "",
@@ -46,5 +46,5 @@
             "syncDataflows": { "dataflows": [] }
         }
     ],
-    "url": "/services/data/v53.0/wave/dataflowjobs"
+    "url": "/services/data/v54.0/wave/dataflowjobs"
 }

@@ -34,12 +34,12 @@
             "sortable": true
         }
     ],
-    "eTag": "be0001cdba2e29ba64a1ef5ce083aa23",
+    "eTag": "557b2f31a795090582cc2b7c27795044",
     "filterLogicString": null,
     "filteredByInfo": [],
     "label": "All Accounts",
     "listReference": {
-        "id": "00BT1000000tiA9MAI",
+        "id": "00Bxx0000029fiuEAA",
         "listViewApiName": "AllAccounts",
         "objectApiName": "Account",
         "type": "listView"

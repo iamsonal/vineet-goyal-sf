@@ -48,8 +48,8 @@
             "lastModifiedDate": "2020-10-14T14:36:56.000Z",
             "name": "arg7dn",
             "type": "dataconnector",
-            "url": "/services/data/v53.0/wave/dataConnectors/0ItRM0000004Dfc0AE"
+            "url": "/services/data/v54.0/wave/dataConnectors/0ItRM0000004Dfc0AE"
         }
     ],
-    "url": "/services/data/v53.0/wave/dataConnectors"
+    "url": "/services/data/v54.0/wave/dataConnectors"
 }

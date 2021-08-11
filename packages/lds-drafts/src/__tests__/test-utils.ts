@@ -84,7 +84,7 @@ export function buildDurableRecordRepresentation(
 
 export function createGetRequest() {
     return {
-        baseUri: '/services/data/v53.0',
+        baseUri: '/services/data/v54.0',
         basePath: `/ui-api/records/${RECORD_ID}`,
         method: 'get',
         body: {},
@@ -96,7 +96,7 @@ export function createGetRequest() {
 
 export function createPatchRequest() {
     return {
-        baseUri: '/services/data/v53.0',
+        baseUri: '/services/data/v54.0',
         basePath: `/ui-api/records/${RECORD_ID}`,
         method: 'patch',
         body: {
@@ -115,7 +115,7 @@ export function createPatchRequest() {
 
 export function createPostRequest() {
     return {
-        baseUri: '/services/data/v53.0',
+        baseUri: '/services/data/v54.0',
         basePath: `/ui-api/records/`,
         method: 'post',
         body: {
@@ -132,7 +132,7 @@ export function createPostRequest() {
 
 export function createDeleteRequest() {
     return {
-        baseUri: '/services/data/v53.0',
+        baseUri: '/services/data/v54.0',
         basePath: `/ui-api/records/${RECORD_ID}`,
         method: 'delete',
         body: {},
@@ -159,7 +159,7 @@ export function createEditDraftAction(
         timestamp: timestamp,
         handler: LDS_ACTION_HANDLER_ID,
         data: {
-            baseUri: '/services/data/v53.0',
+            baseUri: '/services/data/v54.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'patch',
             body: { fields: { Name: nameValue } },
@@ -188,7 +188,7 @@ export function createPostDraftAction(
         timestamp: timestamp,
         handler: LDS_ACTION_HANDLER_ID,
         data: {
-            baseUri: '/services/data/v53.0',
+            baseUri: '/services/data/v54.0',
             basePath: `/ui-api/records`,
             method: 'post',
             body: { fields: { Name: nameValue }, apiName },
@@ -215,7 +215,7 @@ export function createDeleteDraftAction(
         timestamp: timestamp,
         handler: LDS_ACTION_HANDLER_ID,
         data: {
-            baseUri: '/services/data/v53.0',
+            baseUri: '/services/data/v54.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'delete',
             body: {},
@@ -249,7 +249,7 @@ export function createErrorDraftAction(
         timestamp: timestamp,
         handler: LDS_ACTION_HANDLER_ID,
         data: {
-            baseUri: '/services/data/v53.0',
+            baseUri: '/services/data/v54.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'delete',
             body: {},
@@ -283,7 +283,7 @@ export function createCompletedDraftAction(
         timestamp: timestamp,
         handler: LDS_ACTION_HANDLER_ID,
         data: {
-            baseUri: '/services/data/v53.0',
+            baseUri: '/services/data/v54.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'delete',
             body: {},
@@ -337,7 +337,7 @@ export function createUnsupportedRequestDraftAction(
         targetId: recordId,
         handler: LDS_ACTION_HANDLER_ID,
         data: {
-            baseUri: '/services/data/v53.0',
+            baseUri: '/services/data/v54.0',
             basePath: `/ui-api/records/${recordId}`,
             method: 'get',
             body: {},

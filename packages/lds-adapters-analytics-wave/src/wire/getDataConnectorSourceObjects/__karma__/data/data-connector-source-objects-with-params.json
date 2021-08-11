@@ -1,56 +1,56 @@
 {
-    "nextPageUrl": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects?page=eyJwYWdlU2l6ZSI6NSwic29ydE9yZGVyIjoiTkFNRSIsImxhc3RJZCI6IjAwMDAwMDAwMDAwMDAwMCIsImxhc3ROYW1lIjoiQUlJbnNpZ2h0VmFsdWUifQ%3D%3D",
+    "nextPageUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects?page=eyJwYWdlU2l6ZSI6NSwic29ydE9yZGVyIjoiTkFNRSIsImxhc3RJZCI6IjAwMDAwMDAwMDAwMDAwMCIsImxhc3ROYW1lIjoiQUlJbnNpZ2h0VmFsdWUifQ%3D%3D",
     "sourceObjects": [
         {
-            "dataPreviewUrl": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplicationConfig/dataPreview",
-            "fieldsUrl": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplicationConfig/fields",
+            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplicationConfig/dataPreview",
+            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplicationConfig/fields",
             "name": "AIApplicationConfig",
             "replicated": false,
-            "url": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplicationConfig",
+            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIApplicationConfig",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightAction/dataPreview",
-            "fieldsUrl": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightAction/fields",
+            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightAction/dataPreview",
+            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightAction/fields",
             "name": "AIInsightAction",
             "replicated": false,
-            "url": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightAction",
+            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightAction",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightFeedback/dataPreview",
-            "fieldsUrl": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightFeedback/fields",
+            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightFeedback/dataPreview",
+            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightFeedback/fields",
             "name": "AIInsightFeedback",
             "replicated": false,
-            "url": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightFeedback",
+            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightFeedback",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightReason/dataPreview",
-            "fieldsUrl": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightReason/fields",
+            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightReason/dataPreview",
+            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightReason/fields",
             "name": "AIInsightReason",
             "replicated": false,
-            "url": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightReason",
+            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightReason",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
             }
         },
         {
-            "dataPreviewUrl": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightValue/dataPreview",
-            "fieldsUrl": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightValue/fields",
+            "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightValue/dataPreview",
+            "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightValue/fields",
             "name": "AIInsightValue",
             "replicated": false,
-            "url": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightValue",
+            "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects/AIInsightValue",
             "dataConnector": {
                 "id": "0Itxx0000004C92CAE",
                 "name": "SFDC_LOCAL"
@@ -58,5 +58,5 @@
         }
     ],
     "totalSize": 719,
-    "url": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects?page=eyJwYWdlU2l6ZSI6NSwic29ydE9yZGVyIjoiTkFNRSIsImxhc3RJZCI6IjAwMDAwMDAwMDAwMDAwMCIsImxhc3ROYW1lIjoiQUlBcHBsaWNhdGlvbiJ9"
+    "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004C92CAE/sourceObjects?page=eyJwYWdlU2l6ZSI6NSwic29ydE9yZGVyIjoiTkFNRSIsImxhc3RJZCI6IjAwMDAwMDAwMDAwMDAwMCIsImxhc3ROYW1lIjoiQUlBcHBsaWNhdGlvbiJ9"
 }

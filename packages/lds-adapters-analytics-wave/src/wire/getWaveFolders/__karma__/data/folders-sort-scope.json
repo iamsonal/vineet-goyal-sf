@@ -39,7 +39,7 @@
             "templateOptions": {},
             "templateValues": {},
             "type": "folder",
-            "url": "/services/data/v53.0/wave/folders/00lRM000000gQWjYAM"
+            "url": "/services/data/v54.0/wave/folders/00lRM000000gQWjYAM"
         },
         {
             "applicationStatus": "completedstatus",
@@ -83,7 +83,7 @@
             "templateValues": {},
             "templateVersion": "6.0",
             "type": "folder",
-            "url": "/services/data/v53.0/wave/folders/00lRM000000g6bkYAA"
+            "url": "/services/data/v54.0/wave/folders/00lRM000000g6bkYAA"
         },
         {
             "applicationStatus": "newstatus",
@@ -124,10 +124,10 @@
             "templateOptions": {},
             "templateValues": {},
             "type": "folder",
-            "url": "/services/data/v53.0/wave/folders/00lRM000000g6xfYAA"
+            "url": "/services/data/v54.0/wave/folders/00lRM000000g6xfYAA"
         }
     ],
-    "nextPageUrl": "/services/data/v53.0/wave/folders?page=eyJwYWdlU2l6ZSI6Mywic29ydE9yZGVyIjoiTVJVIiwibGFzdElkIjoiMDJJUk0wMDAwMDAwQUpvMkFNIiwibGFzdE5hbWUiOiJUeXBlYWhlYWQgVGVzdCBBcHAiLCJsYXN0VGltZSI6MTYxMzY5NDc0MDAwMCwib3RoZXJQYXJhbWV0ZXJzIjp7InRlbXBsYXRlU291cmNlSWQiOm51bGx9LCJzY29wZSI6IkNSRUFURUQifQ%3D%3D",
+    "nextPageUrl": "/services/data/v54.0/wave/folders?page=eyJwYWdlU2l6ZSI6Mywic29ydE9yZGVyIjoiTVJVIiwibGFzdElkIjoiMDJJUk0wMDAwMDAwQUpvMkFNIiwibGFzdE5hbWUiOiJUeXBlYWhlYWQgVGVzdCBBcHAiLCJsYXN0VGltZSI6MTYxMzY5NDc0MDAwMCwib3RoZXJQYXJhbWV0ZXJzIjp7InRlbXBsYXRlU291cmNlSWQiOm51bGx9LCJzY29wZSI6IkNSRUFURUQifQ%3D%3D",
     "totalSize": 42,
-    "url": "/services/data/v53.0/wave/folders?pageSize=3&sort=Mru&scope=CreatedByMe"
+    "url": "/services/data/v54.0/wave/folders?pageSize=3&sort=Mru&scope=CreatedByMe"
 }

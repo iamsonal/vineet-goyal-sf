@@ -29,7 +29,7 @@
                 "lastModifiedDate": "2021-01-26T02:13:10.000Z",
                 "name": "SFDC_REMOTE",
                 "type": "dataconnector",
-                "url": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004CKKCA3"
+                "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004CKKCA3"
             },
             "createdBy": {
                 "id": "",
@@ -39,7 +39,7 @@
             "createdDate": "2021-01-26T02:13:10.000Z",
             "datasetId": "0Fbxx0000004CKKCA2",
             "fieldCount": 36,
-            "fieldsUrl": "/services/data/v53.0/wave/replicatedDatasets/0Iuxx0000004CAeCAM/fields",
+            "fieldsUrl": "/services/data/v54.0/wave/replicatedDatasets/0Iuxx0000004CAeCAM/fields",
             "filterApplied": false,
             "id": "0Iuxx0000004CAeCAM",
             "label": "Opportunity",
@@ -57,7 +57,7 @@
             "status": "cancelled",
             "supportedConnectionModes": ["full", "incremental", "periodicFull"],
             "type": "replicateddataset",
-            "url": "/services/data/v53.0/wave/replicatedDatasets/0Iuxx0000004CAeCAM"
+            "url": "/services/data/v54.0/wave/replicatedDatasets/0Iuxx0000004CAeCAM"
         },
         {
             "advancedProperties": [],
@@ -88,7 +88,7 @@
                 "lastModifiedDate": "2021-01-26T02:13:10.000Z",
                 "name": "SFDC_LOCAL",
                 "type": "dataconnector",
-                "url": "/services/data/v53.0/wave/dataConnectors/0Itxx0000004CKKCA2"
+                "url": "/services/data/v54.0/wave/dataConnectors/0Itxx0000004CKKCA2"
             },
             "createdBy": {
                 "id": "",
@@ -98,7 +98,7 @@
             "createdDate": "2021-01-26T02:13:10.000Z",
             "datasetId": "0Fbxx0000004CKLCA2",
             "fieldCount": 7,
-            "fieldsUrl": "/services/data/v53.0/wave/replicatedDatasets/0Iuxx0000004CAfCAM/fields",
+            "fieldsUrl": "/services/data/v54.0/wave/replicatedDatasets/0Iuxx0000004CAfCAM/fields",
             "filterApplied": false,
             "id": "0Iuxx0000004CAfCAM",
             "label": "Case",
@@ -115,8 +115,8 @@
             "status": "cancelled",
             "supportedConnectionModes": ["full", "incremental", "periodicFull"],
             "type": "replicateddataset",
-            "url": "/services/data/v53.0/wave/replicatedDatasets/0Iuxx0000004CAfCAM"
+            "url": "/services/data/v54.0/wave/replicatedDatasets/0Iuxx0000004CAfCAM"
         }
     ],
-    "url": "/services/data/v53.0/wave/replicatedDatasets"
+    "url": "/services/data/v54.0/wave/replicatedDatasets"
 }

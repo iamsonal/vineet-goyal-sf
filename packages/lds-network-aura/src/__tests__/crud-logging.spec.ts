@@ -184,7 +184,7 @@ describe('crud logging', () => {
                 count: 1,
                 currentPageToken: '0',
                 currentPageUrl:
-                    '/services/data/v53.0/ui-api/related-list-records/001RM000004km7aYAA/Contacts?fields=Contact.Id%2CContact.Name&optionalFields=Contact.Email%2CContact.LastName&pageSize=50&pageToken=0',
+                    '/services/data/v54.0/ui-api/related-list-records/001RM000004km7aYAA/Contacts?fields=Contact.Id%2CContact.Name&optionalFields=Contact.Email%2CContact.LastName&pageSize=50&pageToken=0',
                 fields: ['Contact.Id', 'Contact.Name'],
                 listInfoETag: null,
                 listReference: {
@@ -302,7 +302,7 @@ describe('crud logging', () => {
                 count: 1,
                 currentPageToken: 0,
                 currentPageUrl:
-                    '/services/data/v53.0/ui-api/related-list-records/001RM000004km7aYAA/Contacts?fields=Contact.Id%2CContact.Name&optionalFields=Contact.Email%2CContact.LastName&pageSize=50&pageToken=0',
+                    '/services/data/v54.0/ui-api/related-list-records/001RM000004km7aYAA/Contacts?fields=Contact.Id%2CContact.Name&optionalFields=Contact.Email%2CContact.LastName&pageSize=50&pageToken=0',
                 fields: ['Contact.Id', 'Contact.Name'],
                 listInfoETag: null,
                 listReference: {
@@ -383,7 +383,7 @@ describe('crud logging', () => {
                             count: 0,
                             currentPageToken: '0',
                             currentPageUrl:
-                                '/services/data/v53.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom02s__r?pageSize=50&pageToken=0',
+                                '/services/data/v54.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom02s__r?pageSize=50&pageToken=0',
                             fields: [],
                             listInfoETag: null,
                             listReference: {
@@ -426,7 +426,7 @@ describe('crud logging', () => {
                             count: 8,
                             currentPageToken: 0,
                             currentPageUrl:
-                                '/services/data/v53.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?pageSize=50&pageToken=0',
+                                '/services/data/v54.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?pageSize=50&pageToken=0',
                             fields: [],
                             listInfoETag: null,
                             listReference: {
@@ -540,7 +540,7 @@ describe('crud logging', () => {
                             count: 0,
                             currentPageToken: '0',
                             currentPageUrl:
-                                '/services/data/v53.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom02s__r?pageSize=50&pageToken=0',
+                                '/services/data/v54.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom02s__r?pageSize=50&pageToken=0',
                             fields: [],
                             listInfoETag: null,
                             listReference: {

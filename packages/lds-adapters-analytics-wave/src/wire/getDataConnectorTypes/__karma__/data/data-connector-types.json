@@ -1938,5 +1938,5 @@
             "type": "MulesoftSqlServer"
         }
     ],
-    "url": "/services/data/v53.0/wave/dataConnectorTypes"
+    "url": "/services/data/v54.0/wave/dataConnectorTypes"
 }

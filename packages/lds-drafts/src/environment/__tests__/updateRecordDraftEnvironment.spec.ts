@@ -100,7 +100,7 @@ describe('draft environment tests', () => {
 
             durableStore.getDenormalizedRecord = jest.fn().mockRejectedValue(undefined);
             const request = {
-                baseUri: '/services/data/v53.0',
+                baseUri: '/services/data/v54.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'patch',
                 body: {
@@ -134,7 +134,7 @@ describe('draft environment tests', () => {
                 .mockResolvedValueOnce(undefined);
 
             const request = {
-                baseUri: '/services/data/v53.0',
+                baseUri: '/services/data/v54.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'patch',
                 body: {
@@ -169,7 +169,7 @@ describe('draft environment tests', () => {
                 },
             });
             const request = {
-                baseUri: '/services/data/v53.0',
+                baseUri: '/services/data/v54.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'patch',
                 body: {
@@ -215,7 +215,7 @@ describe('draft environment tests', () => {
             });
             store.redirect(STORE_KEY_DRAFT_RECORD, STORE_KEY_RECORD);
             const request = {
-                baseUri: '/services/data/v53.0',
+                baseUri: '/services/data/v54.0',
                 basePath: `/ui-api/records/${DRAFT_RECORD_ID}`,
                 method: 'patch',
                 body: {
@@ -255,7 +255,7 @@ describe('draft environment tests', () => {
             const { draftEnvironment, durableStore } = await setupDraftEnvironment();
             mockDurableStoreResponse(durableStore);
             const request = {
-                baseUri: '/services/data/v53.0',
+                baseUri: '/services/data/v54.0',
                 basePath: '/ui-api/records/',
                 method: 'patch',
                 body: {

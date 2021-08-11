@@ -179,7 +179,7 @@
             "defaultRecordTypeId": "012000000000000AAA",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "069c91cd65a2812f04ceeb48970d0da0",
+            "eTag": "b72a1f143587797c6ab53da69449a324",
             "feedEnabled": false,
             "fields": {
                 "CloneSourceId": {

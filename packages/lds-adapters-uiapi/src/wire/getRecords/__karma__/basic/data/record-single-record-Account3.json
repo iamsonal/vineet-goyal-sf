@@ -1,22 +1,22 @@
 {
     "apiName": "Account",
     "childRelationships": {},
-    "eTag": "00a67ed97694a842cb31d8d814449612",
+    "eTag": "ed294a76ad1c2d75cb765f13c55e8b07",
     "fields": {
         "Id": {
             "displayValue": null,
-            "value": "001T1000002GaX8IAK"
+            "value": "001xx000003GgW3AAK"
         },
         "Name": {
             "displayValue": null,
             "value": "GenePoint"
         }
     },
-    "id": "001T1000002GaX8IAK",
-    "lastModifiedById": "005T1000000Huh7IAC",
-    "lastModifiedDate": "2021-04-06T23:46:16.000Z",
+    "id": "001xx000003GgW3AAK",
+    "lastModifiedById": "005xx000001XFXZAA4",
+    "lastModifiedDate": "2021-08-10T19:59:45.000Z",
     "recordTypeId": "012000000000000AAA",
     "recordTypeInfo": null,
-    "systemModstamp": "2021-04-06T23:46:16.000Z",
-    "weakEtag": 1617752776000
+    "systemModstamp": "2021-08-10T19:59:45.000Z",
+    "weakEtag": 1628625585000
 }

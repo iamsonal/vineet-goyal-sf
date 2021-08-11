@@ -506,7 +506,7 @@
     "defaultRecordTypeId": "012000000000000AAA",
     "deletable": true,
     "dependentFields": {},
-    "eTag": "bc94ee2dfe43dce6c1e3994e18284e3f",
+    "eTag": "067d3ef8235950f39585edb4b7348ddc",
     "feedEnabled": true,
     "fields": {
         "AccountNumber": {
@@ -1141,7 +1141,7 @@
             "relationshipName": "DandbCompany",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": true,
+            "searchPrefilterable": false,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -1816,7 +1816,7 @@
             "relationshipName": "OperatingHours",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": true,
+            "searchPrefilterable": false,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -1925,7 +1925,7 @@
             "relationshipName": "Parent",
             "required": false,
             "scale": 0,
-            "searchPrefilterable": true,
+            "searchPrefilterable": false,
             "sortable": true,
             "unique": false,
             "updateable": true
@@ -2775,7 +2775,7 @@
     "searchable": true,
     "themeInfo": {
         "color": "7F8DE1",
-        "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
+        "iconUrl": "https://miso-rockaway-6893-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
     },
     "updateable": true
 }

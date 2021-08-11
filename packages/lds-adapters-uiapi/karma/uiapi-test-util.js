@@ -33,7 +33,7 @@ import {
     RELATED_LIST_RECORD_COLLECTION_TTL,
 } from './dist/uiapi-constants';
 
-const API_VERSION = 'v53.0';
+const API_VERSION = 'v54.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/ui-api`;
 

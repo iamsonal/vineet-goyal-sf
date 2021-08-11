@@ -26,7 +26,7 @@ describe('postApex adapter offline', () => {
         const getApexRequestArgs: MockPayload['networkArgs'] = {
             method: 'get',
             basePath: `/${invokerParams.classname}/${invokerParams.method}`,
-            baseUri: '/lwr/apex/v53.0',
+            baseUri: '/lwr/apex/v54.0',
         };
         const getApexRecordPayload: MockPayload = buildSuccessMockPayload(
             getApexRequestArgs,
@@ -46,7 +46,7 @@ describe('postApex adapter offline', () => {
         const postRequestArgs: MockPayload['networkArgs'] = {
             method: 'post',
             basePath: `/${invokerParams.classname}/${invokerParams.method}`,
-            baseUri: '/lwr/apex/v53.0',
+            baseUri: '/lwr/apex/v54.0',
         };
         const postApexRecordPayload: MockPayload = buildSuccessMockPayload(
             postRequestArgs,

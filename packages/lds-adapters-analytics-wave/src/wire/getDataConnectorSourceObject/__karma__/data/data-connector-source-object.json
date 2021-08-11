@@ -1,9 +1,9 @@
 {
-    "dataPreviewUrl": "/services/data/v53.0/wave/dataConnectors/0ItS700000001YxKAI/sourceObjects/AIApplication/dataPreview",
-    "fieldsUrl": "/services/data/v53.0/wave/dataConnectors/0ItS700000001YxKAI/sourceObjects/AIApplication/fields",
+    "dataPreviewUrl": "/services/data/v54.0/wave/dataConnectors/0ItS700000001YxKAI/sourceObjects/AIApplication/dataPreview",
+    "fieldsUrl": "/services/data/v54.0/wave/dataConnectors/0ItS700000001YxKAI/sourceObjects/AIApplication/fields",
     "name": "AIApplication",
     "replicated": false,
-    "url": "/services/data/v53.0/wave/dataConnectors/0ItS700000001YxKAI/sourceObjects/AIApplication",
+    "url": "/services/data/v54.0/wave/dataConnectors/0ItS700000001YxKAI/sourceObjects/AIApplication",
     "dataConnector": {
         "id": "0ItS700000001YxKAI",
         "name": "SFDC_LOCAL"

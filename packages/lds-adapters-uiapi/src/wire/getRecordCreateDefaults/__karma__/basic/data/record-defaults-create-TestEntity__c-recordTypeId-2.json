@@ -1,18 +1,18 @@
 {
     "layout": {
-        "eTag": "0bf3be0a2771419379280339b15cc0ca",
-        "id": "00hT1000000NvE1IAK",
+        "eTag": "3aa9f5fadeab22866512e8f037f895ea",
+        "id": "00hxx0000019caSAAQ",
         "layoutType": "Full",
         "mode": "Create",
         "objectApiName": "TestEntity__c",
-        "recordTypeId": "012T10000004MDOIA2",
+        "recordTypeId": "012xx0000005tQjAAI",
         "saveOptions": [],
         "sections": [
             {
                 "collapsible": false,
                 "columns": 2,
                 "heading": "Information",
-                "id": "01BT1000000U1KqMAK",
+                "id": "01Bxx000002CDliEAG",
                 "layoutRows": [
                     {
                         "layoutItems": [
@@ -87,7 +87,7 @@
             "defaultRecordTypeId": null,
             "deletable": true,
             "dependentFields": {},
-            "eTag": "976b637f1ddafe6e944996bdd3d045a8",
+            "eTag": "2d1f74fc46b6abf36dc0f24e3286f47c",
             "feedEnabled": false,
             "fields": {
                 "CreatedById": {
@@ -513,7 +513,7 @@
                     "relationshipName": "Related",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": false
@@ -588,7 +588,7 @@
             "keyPrefix": "00G",
             "label": "Group",
             "labelPlural": "Group",
-            "layoutable": false,
+            "layoutable": true,
             "mruEnabled": false,
             "nameFields": ["Name"],
             "queryable": true,
@@ -596,7 +596,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "769ED9",
-                "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/orders_120.png"
+                "iconUrl": "https://miso-rockaway-6893-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/standard/orders_120.png"
             },
             "updateable": true
         },
@@ -933,7 +933,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "53ab611349539e4be16c3f4e0298ee84",
+            "eTag": "1f98958e0b40b0648a4e8d172c090750",
             "feedEnabled": true,
             "fields": {
                 "AboutMe": {
@@ -1002,7 +1002,7 @@
                     "relationshipName": "Account",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": false
@@ -1347,7 +1347,7 @@
                     "relationshipName": "Contact",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2125,7 +2125,7 @@
                     "relationshipName": "Individual",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -2663,7 +2663,7 @@
                     "relationshipName": "Manager",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -3031,7 +3031,7 @@
                     "relationshipName": "Profile",
                     "required": true,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -6110,6 +6110,39 @@
                     "unique": false,
                     "updateable": true
                 },
+                "UserPreferencesReverseOpenActivitiesView": {
+                    "apiName": "UserPreferencesReverseOpenActivitiesView",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "ReverseOpenActivitiesView",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
                 "UserPreferencesSRHOverrideActivities": {
                     "apiName": "UserPreferencesSRHOverrideActivities",
                     "calculated": false,
@@ -6902,6 +6935,39 @@
                     "unique": false,
                     "updateable": true
                 },
+                "UserPreferencesShowTerritoryTimeZoneShifts": {
+                    "apiName": "UserPreferencesShowTerritoryTimeZoneShifts",
+                    "calculated": false,
+                    "compound": false,
+                    "compoundComponentName": null,
+                    "compoundFieldName": null,
+                    "controllerName": null,
+                    "controllingFields": [],
+                    "createable": true,
+                    "custom": false,
+                    "dataType": "Boolean",
+                    "extraTypeInfo": null,
+                    "filterable": true,
+                    "filteredLookupInfo": null,
+                    "highScaleNumber": false,
+                    "htmlFormatted": false,
+                    "inlineHelpText": null,
+                    "label": "ShowTerritoryTimeZoneShifts",
+                    "length": 0,
+                    "nameField": false,
+                    "polymorphicForeignKey": false,
+                    "precision": 0,
+                    "reference": false,
+                    "referenceTargetField": null,
+                    "referenceToInfos": [],
+                    "relationshipName": null,
+                    "required": true,
+                    "scale": 0,
+                    "searchPrefilterable": false,
+                    "sortable": false,
+                    "unique": false,
+                    "updateable": true
+                },
                 "UserPreferencesShowTitleToExternalUsers": {
                     "apiName": "UserPreferencesShowTitleToExternalUsers",
                     "calculated": false,
@@ -7298,7 +7364,7 @@
                     "relationshipName": "UserRole",
                     "required": false,
                     "scale": 0,
-                    "searchPrefilterable": true,
+                    "searchPrefilterable": false,
                     "sortable": true,
                     "unique": false,
                     "updateable": true
@@ -7381,7 +7447,7 @@
             "searchable": true,
             "themeInfo": {
                 "color": "65CAE4",
-                "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/user_120.png"
+                "iconUrl": "https://miso-rockaway-6893-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/standard/user_120.png"
             },
             "updateable": true
         },
@@ -7395,7 +7461,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "b641a59ae0c5a613838308e889f11dc0",
+            "eTag": "c097d3e1fde110b18f54c917dbe803c8",
             "feedEnabled": false,
             "fields": {
                 "BusinessProcessId": {
@@ -8031,10 +8097,10 @@
             ],
             "createable": true,
             "custom": true,
-            "defaultRecordTypeId": "012T10000004MDNIA2",
+            "defaultRecordTypeId": "012xx0000005tQiAAI",
             "deletable": true,
             "dependentFields": {},
-            "eTag": "ca564687619ac18cc3b5419a851ca860",
+            "eTag": "b33b711fbb3bef116d64ad1fa39bb545",
             "feedEnabled": false,
             "fields": {
                 "CloneSourceId": {
@@ -8440,19 +8506,19 @@
                     "name": "Master",
                     "recordTypeId": "012000000000000AAA"
                 },
-                "012T10000004MDNIA2": {
+                "012xx0000005tQiAAI": {
                     "available": true,
                     "defaultRecordTypeMapping": true,
                     "master": false,
                     "name": "Test Entity Type 1",
-                    "recordTypeId": "012T10000004MDNIA2"
+                    "recordTypeId": "012xx0000005tQiAAI"
                 },
-                "012T10000004MDOIA2": {
+                "012xx0000005tQjAAI": {
                     "available": true,
                     "defaultRecordTypeMapping": false,
                     "master": false,
                     "name": "Test Entity Type 2",
-                    "recordTypeId": "012T10000004MDOIA2"
+                    "recordTypeId": "012xx0000005tQjAAI"
                 }
             },
             "searchable": false,
@@ -8472,7 +8538,7 @@
             "defaultRecordTypeId": null,
             "deletable": false,
             "dependentFields": {},
-            "eTag": "dd19ae4bfb7314bc94e233941365ebc5",
+            "eTag": "e2b4a53fe59d50d8cacee6990276025f",
             "feedEnabled": false,
             "fields": {
                 "Alias": {
@@ -9101,7 +9167,7 @@
     "record": {
         "apiName": "TestEntity__c",
         "childRelationships": {},
-        "eTag": "6bfac011af98dea5269fdd89372b611b",
+        "eTag": "2498571d3356f85834e3644717c57b15",
         "fields": {
             "Name": {
                 "displayValue": null,
@@ -9112,18 +9178,18 @@
                 "value": {
                     "apiName": "Name",
                     "childRelationships": {},
-                    "eTag": "283708032b183fa249437a6e1eda4e44",
+                    "eTag": "7b0231fcdcd69231b0b135eeeeea8d1e",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "005T1000000Huh7IAC"
+                            "value": "005xx000001XFXZAA4"
                         },
                         "Name": {
                             "displayValue": null,
                             "value": "User User"
                         }
                     },
-                    "id": "005T1000000Huh7IAC",
+                    "id": "005xx000001XFXZAA4",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -9134,25 +9200,25 @@
             },
             "OwnerId": {
                 "displayValue": null,
-                "value": "005T1000000Huh7IAC"
+                "value": "005xx000001XFXZAA4"
             },
             "RecordType": {
                 "displayValue": "Test Entity Type 2",
                 "value": {
                     "apiName": "RecordType",
                     "childRelationships": {},
-                    "eTag": "72622e83e647e47571177f0f081874df",
+                    "eTag": "7ba0a39a6a71cb7369146d6d99999544",
                     "fields": {
                         "Id": {
                             "displayValue": null,
-                            "value": "012T10000004MDOIA2"
+                            "value": "012xx0000005tQjAAI"
                         },
                         "Name": {
                             "displayValue": "Test Entity Type 2",
                             "value": "Test Entity Type 2"
                         }
                     },
-                    "id": "012T10000004MDOIA2",
+                    "id": "012xx0000005tQjAAI",
                     "lastModifiedById": null,
                     "lastModifiedDate": null,
                     "recordTypeId": null,
@@ -9163,19 +9229,19 @@
             },
             "RecordTypeId": {
                 "displayValue": null,
-                "value": "012T10000004MDOIA2"
+                "value": "012xx0000005tQjAAI"
             }
         },
         "id": null,
         "lastModifiedById": null,
         "lastModifiedDate": null,
-        "recordTypeId": "012T10000004MDOIA2",
+        "recordTypeId": "012xx0000005tQjAAI",
         "recordTypeInfo": {
             "available": true,
             "defaultRecordTypeMapping": false,
             "master": false,
             "name": "Test Entity Type 2",
-            "recordTypeId": "012T10000004MDOIA2"
+            "recordTypeId": "012xx0000005tQjAAI"
         },
         "systemModstamp": null,
         "weakEtag": 0

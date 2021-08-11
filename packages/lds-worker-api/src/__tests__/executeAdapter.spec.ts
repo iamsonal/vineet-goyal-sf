@@ -57,7 +57,7 @@ describe('executeAdapter', () => {
 
     it('calls getObjectInfo wire adapter', (done) => {
         // setup mock response
-        addMockNetworkResponse('GET', '/services/data/v53.0/ui-api/object-info/Account', {
+        addMockNetworkResponse('GET', '/services/data/v54.0/ui-api/object-info/Account', {
             headers: {},
             status: 200,
             body: JSON.stringify(objectInfo_Account),
@@ -82,7 +82,7 @@ describe('executeAdapter', () => {
 
     it('calls error callback on non-2xx response', (done) => {
         // setup mock response
-        addMockNetworkResponse('GET', '/services/data/v53.0/ui-api/object-info/Account', {
+        addMockNetworkResponse('GET', '/services/data/v54.0/ui-api/object-info/Account', {
             headers: {},
             status: 400,
             body: JSON.stringify({}),
@@ -135,14 +135,14 @@ describe('executeMutatingAdapter', () => {
         // setup mock responses
         addMockNetworkResponse(
             'GET',
-            `/services/data/v53.0/ui-api/records/${recordRep_Account.id}`,
+            `/services/data/v54.0/ui-api/records/${recordRep_Account.id}`,
             {
                 headers: {},
                 status: 200,
                 body: JSON.stringify(recordRep_Account),
             }
         );
-        addMockNetworkResponse('GET', '/services/data/v53.0/ui-api/object-info/Account', {
+        addMockNetworkResponse('GET', '/services/data/v54.0/ui-api/object-info/Account', {
             headers: {},
             status: 200,
             body: JSON.stringify(objectInfo_Account),

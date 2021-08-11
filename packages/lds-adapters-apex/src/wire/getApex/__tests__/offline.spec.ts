@@ -27,7 +27,7 @@ const invokerParams: ApexInvokerParams = {
 const requestArgs: MockPayload['networkArgs'] = {
     method: 'get',
     basePath: `/${invokerParams.classname}/${invokerParams.method}`,
-    baseUri: '/lwr/apex/v53.0',
+    baseUri: '/lwr/apex/v54.0',
 };
 const recordPayload: MockPayload = buildSuccessMockPayload(requestArgs, getContactList, {
     'Cache-Control': 'private',
@@ -49,7 +49,7 @@ describe('getApex adapter offline', () => {
         const postRequestArgs: MockPayload['networkArgs'] = {
             method: 'post',
             basePath: `/${invokerParams.classname}/${invokerParams.method}`,
-            baseUri: '/lwr/apex/v53.0',
+            baseUri: '/lwr/apex/v54.0',
         };
         const postApexRecordPayload: MockPayload = buildSuccessMockPayload(
             postRequestArgs,

@@ -28,7 +28,7 @@
         "lastModifiedDate": "2021-03-23T17:03:48.000Z",
         "name": "SFDC_LOCAL",
         "type": "dataconnector",
-        "url": "/services/data/v53.0/wave/dataConnectors/0ItS700000001YxKAI"
+        "url": "/services/data/v54.0/wave/dataConnectors/0ItS700000001YxKAI"
     },
     "createdBy": {
         "id": "005S7000000VQ6fIAG",
@@ -38,7 +38,7 @@
     "createdDate": "2021-05-03T21:07:52.000Z",
     "datasetId": "0FbS70000004W1PKAU",
     "fieldCount": 0,
-    "fieldsUrl": "/services/data/v53.0/wave/replicatedDatasets/0IuS70000004CqIKAU/fields",
+    "fieldsUrl": "/services/data/v54.0/wave/replicatedDatasets/0IuS70000004CqIKAU/fields",
     "filterApplied": false,
     "id": "0IuS70000004CqIKAU",
     "label": "Account",
@@ -55,5 +55,5 @@
     "status": "new",
     "supportedConnectionModes": ["full", "incremental", "periodicFull"],
     "type": "replicateddataset",
-    "url": "/services/data/v53.0/wave/replicatedDatasets/0IuS70000004CqIKAU"
+    "url": "/services/data/v54.0/wave/replicatedDatasets/0IuS70000004CqIKAU"
 }

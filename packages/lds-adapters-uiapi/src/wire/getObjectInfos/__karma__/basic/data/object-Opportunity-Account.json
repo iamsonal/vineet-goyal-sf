@@ -222,7 +222,7 @@
                 "defaultRecordTypeId": "012000000000000AAA",
                 "deletable": true,
                 "dependentFields": {},
-                "eTag": "1c01d757f80cda29d6c660ba157c6625",
+                "eTag": "147c0614c6b94d83f4e6a883a76e72a7",
                 "feedEnabled": true,
                 "fields": {
                     "AccountId": {
@@ -258,7 +258,7 @@
                         "relationshipName": "Account",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": true,
+                        "searchPrefilterable": false,
                         "sortable": true,
                         "unique": false,
                         "updateable": true
@@ -329,7 +329,7 @@
                         "relationshipName": "Campaign",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": true,
+                        "searchPrefilterable": false,
                         "sortable": true,
                         "unique": false,
                         "updateable": true
@@ -1136,7 +1136,7 @@
                         "relationshipName": "LastAmountChangedHistory",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": true,
+                        "searchPrefilterable": false,
                         "sortable": true,
                         "unique": false,
                         "updateable": false
@@ -1174,7 +1174,7 @@
                         "relationshipName": "LastCloseDateChangedHistory",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": true,
+                        "searchPrefilterable": false,
                         "sortable": true,
                         "unique": false,
                         "updateable": false
@@ -1534,11 +1534,15 @@
                         "label": "Owner ID",
                         "length": 18,
                         "nameField": false,
-                        "polymorphicForeignKey": false,
+                        "polymorphicForeignKey": true,
                         "precision": 0,
                         "reference": true,
                         "referenceTargetField": null,
                         "referenceToInfos": [
+                            {
+                                "apiName": "Group",
+                                "nameFields": ["Name"]
+                            },
                             {
                                 "apiName": "User",
                                 "nameFields": ["FirstName", "LastName", "Name"]
@@ -1585,7 +1589,7 @@
                         "relationshipName": "Pricebook2",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": true,
+                        "searchPrefilterable": false,
                         "sortable": true,
                         "unique": false,
                         "updateable": true
@@ -1622,6 +1626,39 @@
                         "sortable": true,
                         "unique": false,
                         "updateable": true
+                    },
+                    "PushCount": {
+                        "apiName": "PushCount",
+                        "calculated": false,
+                        "compound": false,
+                        "compoundComponentName": null,
+                        "compoundFieldName": null,
+                        "controllerName": null,
+                        "controllingFields": [],
+                        "createable": false,
+                        "custom": false,
+                        "dataType": "Int",
+                        "extraTypeInfo": null,
+                        "filterable": true,
+                        "filteredLookupInfo": null,
+                        "highScaleNumber": false,
+                        "htmlFormatted": false,
+                        "inlineHelpText": null,
+                        "label": "Push Count",
+                        "length": 0,
+                        "nameField": false,
+                        "polymorphicForeignKey": false,
+                        "precision": 0,
+                        "reference": false,
+                        "referenceTargetField": null,
+                        "referenceToInfos": [],
+                        "relationshipName": null,
+                        "required": false,
+                        "scale": 0,
+                        "searchPrefilterable": false,
+                        "sortable": true,
+                        "unique": false,
+                        "updateable": false
                     },
                     "StageName": {
                         "apiName": "StageName",
@@ -1808,7 +1845,7 @@
                 "searchable": true,
                 "themeInfo": {
                     "color": "FCB95B",
-                    "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/opportunity_120.png"
+                    "iconUrl": "https://miso-rockaway-6893-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/standard/opportunity_120.png"
                 },
                 "updateable": true
             },
@@ -2323,7 +2360,7 @@
                 "defaultRecordTypeId": "012000000000000AAA",
                 "deletable": true,
                 "dependentFields": {},
-                "eTag": "bc94ee2dfe43dce6c1e3994e18284e3f",
+                "eTag": "067d3ef8235950f39585edb4b7348ddc",
                 "feedEnabled": true,
                 "fields": {
                     "AccountNumber": {
@@ -2958,7 +2995,7 @@
                         "relationshipName": "DandbCompany",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": true,
+                        "searchPrefilterable": false,
                         "sortable": true,
                         "unique": false,
                         "updateable": true
@@ -3633,7 +3670,7 @@
                         "relationshipName": "OperatingHours",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": true,
+                        "searchPrefilterable": false,
                         "sortable": true,
                         "unique": false,
                         "updateable": true
@@ -3742,7 +3779,7 @@
                         "relationshipName": "Parent",
                         "required": false,
                         "scale": 0,
-                        "searchPrefilterable": true,
+                        "searchPrefilterable": false,
                         "sortable": true,
                         "unique": false,
                         "updateable": true
@@ -4592,7 +4629,7 @@
                 "searchable": true,
                 "themeInfo": {
                     "color": "7F8DE1",
-                    "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/standard/account_120.png"
+                    "iconUrl": "https://miso-rockaway-6893-dev-ed.my.localhost.sfdcdev.salesforce.com:6101/img/icon/t4v35/standard/account_120.png"
                 },
                 "updateable": true
             },

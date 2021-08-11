@@ -238,7 +238,7 @@ describe('draft environment record utilities', () => {
 
         it('returns undefined if method not recognized', () => {
             const request = {
-                baseUri: '/services/data/v53.0',
+                baseUri: '/services/data/v54.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'put',
                 body: {
@@ -256,7 +256,7 @@ describe('draft environment record utilities', () => {
 
         it('returns undefined if not record cud endpoint', () => {
             const request = {
-                baseUri: '/services/data/v53.0',
+                baseUri: '/services/data/v54.0',
                 basePath: `/ui-api/records/somethingelse/${RECORD_ID}`,
                 method: 'delete',
                 body: {},
@@ -270,7 +270,7 @@ describe('draft environment record utilities', () => {
 
         it('returns undefined if base path is unexpected', () => {
             const request = {
-                baseUri: '/services/data/v53.0',
+                baseUri: '/services/data/v54.0',
                 basePath: `/ui-api/records/${RECORD_ID}/something`,
                 method: 'delete',
                 body: {},
@@ -309,7 +309,7 @@ describe('draft environment record utilities', () => {
 
         it('returns fields and optional fields for get request', () => {
             const request = {
-                baseUri: '/services/data/v53.0',
+                baseUri: '/services/data/v54.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'get',
                 body: {},
@@ -692,7 +692,7 @@ describe('draft environment record utilities', () => {
                 timestamp: 12345,
                 handler: LDS_ACTION_HANDLER_ID,
                 data: {
-                    baseUri: '/services/data/v53.0',
+                    baseUri: '/services/data/v54.0',
                     basePath: `/ui-api/records/${record2Id}`,
                     method: 'patch',
                     body: { fields: { FriendId: draftId } },
@@ -746,7 +746,7 @@ describe('draft environment record utilities', () => {
             timestamp: draftTimetamp,
             handler: LDS_ACTION_HANDLER_ID,
             data: {
-                baseUri: '/services/data/v53.0',
+                baseUri: '/services/data/v54.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'patch',
                 body: { fields: { Name: draftName } },

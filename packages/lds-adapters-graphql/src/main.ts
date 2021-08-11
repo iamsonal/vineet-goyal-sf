@@ -115,7 +115,7 @@ function buildNetworkSnapshot(
     const { variables: queryVariables, query } = config;
 
     const request: ResourceRequest = {
-        baseUri: '/services/data/v53.0',
+        baseUri: '/services/data/v54.0',
         basePath: '/graphql',
         method: 'post',
         body: {

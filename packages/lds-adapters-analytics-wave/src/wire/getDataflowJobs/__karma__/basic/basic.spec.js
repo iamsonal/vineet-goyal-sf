@@ -37,7 +37,7 @@ describe('basic', () => {
     it('gets no job and then some jobs after TTL expires', async () => {
         const mockEmptyData = {
             dataflowJobs: [],
-            url: '/services/data/v53.0/wave/dataflowjobs',
+            url: '/services/data/v54.0/wave/dataflowjobs',
         };
         const mockData = getMock('dataflow-jobs-running');
         const config = { status: 'Running' };
@@ -55,7 +55,7 @@ describe('basic', () => {
     it('gets some jobs and then no job after TTL expires', async () => {
         const mockEmptyData = {
             dataflowJobs: [],
-            url: '/services/data/v53.0/wave/dataflowjobs',
+            url: '/services/data/v54.0/wave/dataflowjobs',
         };
         const mockData = getMock('dataflow-jobs-running');
         const config = { status: 'Running' };

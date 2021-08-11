@@ -22,7 +22,7 @@ describe('draft environment tests', () => {
             const { draftEnvironment } = await setupDraftEnvironment();
             const { rejects } = await expect(
                 draftEnvironment.dispatchResourceRequest({
-                    baseUri: '/services/data/v53.0',
+                    baseUri: '/services/data/v54.0',
                     basePath: `/ui-api/records/`,
                     method: 'post',
                     body: {
@@ -72,7 +72,7 @@ describe('draft environment tests', () => {
                 });
             });
             const request = {
-                baseUri: '/services/data/v53.0',
+                baseUri: '/services/data/v54.0',
                 basePath: `/ui-api/records/${CREATE_DRAFT_RECORD_ID}`,
                 method: 'post',
                 body: {
@@ -119,7 +119,7 @@ describe('draft environment tests', () => {
                 });
             });
             const request = {
-                baseUri: '/services/data/v53.0',
+                baseUri: '/services/data/v54.0',
                 basePath: `/ui-api/records/${RECORD_ID}`,
                 method: 'post',
                 body: {
@@ -243,7 +243,7 @@ describe('draft environment tests', () => {
             store.redirect(draftReferenceKey, canonicalReferenceKey);
 
             const request = {
-                baseUri: '/services/data/v53.0',
+                baseUri: '/services/data/v54.0',
                 basePath: `/ui-api/records/`,
                 method: 'post',
                 body: {

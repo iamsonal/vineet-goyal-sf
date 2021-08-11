@@ -8,7 +8,7 @@ import { parse, print } from 'graphql';
 
 import parseAndVisit from '@salesforce/lds-graphql-parser';
 
-const API_VERSION = 'v53.0';
+const API_VERSION = 'v54.0';
 const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/graphql`;
 

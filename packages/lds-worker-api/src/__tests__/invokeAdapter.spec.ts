@@ -52,7 +52,7 @@ describe('invokeAdapter', () => {
         // setup mock responses
         addMockNetworkResponse(
             'GET',
-            `/services/data/v53.0/ui-api/records/${recordRep_Account.id}`,
+            `/services/data/v54.0/ui-api/records/${recordRep_Account.id}`,
             {
                 headers: {},
                 status: 200,
@@ -61,14 +61,14 @@ describe('invokeAdapter', () => {
         );
         addMockNetworkResponse(
             'PATCH',
-            `/services/data/v53.0/ui-api/records/${recordRep_Account_Edited.id}`,
+            `/services/data/v54.0/ui-api/records/${recordRep_Account_Edited.id}`,
             {
                 headers: {},
                 status: 200,
                 body: JSON.stringify(recordRep_Account_Edited),
             }
         );
-        addMockNetworkResponse('GET', '/services/data/v53.0/ui-api/object-info/Account', {
+        addMockNetworkResponse('GET', '/services/data/v54.0/ui-api/object-info/Account', {
             headers: {},
             status: 200,
             body: JSON.stringify(objectInfo_Account),
@@ -186,14 +186,14 @@ describe('invokeAdapter', () => {
         // setup mock responses
         addMockNetworkResponse(
             'GET',
-            `/services/data/v53.0/ui-api/records/${recordRep_Account.id}`,
+            `/services/data/v54.0/ui-api/records/${recordRep_Account.id}`,
             {
                 headers: {},
                 status: 200,
                 body: JSON.stringify(recordRep_Account),
             }
         );
-        addMockNetworkResponse('GET', '/services/data/v53.0/ui-api/object-info/Account', {
+        addMockNetworkResponse('GET', '/services/data/v54.0/ui-api/object-info/Account', {
             headers: {},
             status: 200,
             body: JSON.stringify(objectInfo_Account),
@@ -304,7 +304,7 @@ describe('invokeAdapter', () => {
         // setup mock responses
         addMockNetworkResponse(
             'GET',
-            `/services/data/v53.0/ui-api/records/${recordRep_Account.id}`,
+            `/services/data/v54.0/ui-api/records/${recordRep_Account.id}`,
             {
                 headers: {},
                 status: 200,
@@ -313,14 +313,14 @@ describe('invokeAdapter', () => {
         );
         addMockNetworkResponse(
             'PATCH',
-            `/services/data/v53.0/ui-api/records/${recordRep_Account_Edited.id}`,
+            `/services/data/v54.0/ui-api/records/${recordRep_Account_Edited.id}`,
             {
                 headers: {},
                 status: 200,
                 body: JSON.stringify(recordRep_Account_Edited),
             }
         );
-        addMockNetworkResponse('GET', '/services/data/v53.0/ui-api/object-info/Account', {
+        addMockNetworkResponse('GET', '/services/data/v54.0/ui-api/object-info/Account', {
             headers: {},
             status: 200,
             body: JSON.stringify(objectInfo_Account),

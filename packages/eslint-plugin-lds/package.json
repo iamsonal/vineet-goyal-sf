@@ -2,7 +2,7 @@
     "name": "@salesforce/eslint-plugin-lds",
     "description": "Official ESLint Rules for LDS",
     "license": "MIT",
-    "version": "1.24.1",
+    "version": "1.24.2",
     "main": "lib/index.js",
     "scripts": {
         "test:unit": "jest"

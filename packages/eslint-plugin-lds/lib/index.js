@@ -8,6 +8,8 @@
 
 const rules = {
     'no-optional-chaining': require('./rules/no-optional-chaining'),
+    'no-invalid-todo': require('./rules/no-invalid-todo'),
+    'no-error-in-production': require('./rules/no-error-in-production'),
 };
 
 module.exports = {

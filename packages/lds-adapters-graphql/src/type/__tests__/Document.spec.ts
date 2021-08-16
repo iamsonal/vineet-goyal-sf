@@ -127,24 +127,24 @@ describe('Document', () => {
                     value: 'Account1',
                     displayValue: null,
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0': {
                     node: {
                         __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                     },
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges': [
                     {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0',
                     },
                 ],
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})': {
                     edges: {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges',
                     },
                 },
                 fullpath__uiapi__query: {
                     'Account(where:{Name:{like:"Account1"}})': {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})',
                     },
                 },
                 fullpath__uiapi: {
@@ -691,26 +691,26 @@ describe('Document', () => {
                         },
                     },
                 },
-                'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})__edges__0':
+                'GraphQL::Connection:Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})__edges__0':
                     {
                         node: { __ref: 'UiApi::RecordRepresentation:001RM000005BJPYYA4' },
                     },
-                'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})__edges':
+                'GraphQL::Connection:Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})__edges':
                     [
                         {
-                            __ref: 'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})__edges__0',
+                            __ref: 'GraphQL::Connection:Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})__edges__0',
                         },
                     ],
-                'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})':
+                'GraphQL::Connection:Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})':
                     {
                         edges: {
-                            __ref: 'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})__edges',
+                            __ref: 'GraphQL::Connection:Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})__edges',
                         },
                     },
                 fullpath__uiapi__query: {
                     'Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})':
                         {
-                            __ref: 'gql::Connection::Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})',
+                            __ref: 'GraphQL::Connection:Account(first:1,orderBy:{CreatedDate:{order:DESC},Name:{order:ASC}},scope:EVERYTHING,where:{Name:{like:"Account%"},Owner:{LastModifiedBy:{CreatedBy:{Name:{like:"Admin User"}},Name:{like:"Admin User"}},Name:{like:"Admin User"}}})',
                         },
                 },
                 fullpath__uiapi: { query: { __ref: 'fullpath__uiapi__query' } },
@@ -855,24 +855,24 @@ describe('Document', () => {
                     value: 'Account1',
                     displayValue: null,
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0': {
                     node: {
                         __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                     },
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges': [
                     {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0',
                     },
                 ],
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})': {
                     edges: {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges',
                     },
                 },
                 fullpath__uiapi__query: {
                     'Account(where:{Name:{like:"Account1"}})': {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})',
                     },
                 },
                 fullpath__uiapi: {
@@ -906,9 +906,9 @@ describe('Document', () => {
             expect(snap.seenRecords).toEqual({
                 fullpath__uiapi: true,
                 fullpath__uiapi__query: true,
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})': true,
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': true,
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': true,
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})': true,
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges': true,
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0': true,
                 'UiApi::RecordRepresentation:001RM000004uuhnYAA': true,
                 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': true,
             });
@@ -1021,24 +1021,24 @@ describe('Document', () => {
                     value: 'Account1',
                     displayValue: null,
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0': {
                     node: {
                         __ref: 'redirect',
                     },
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges': [
                     {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0',
                     },
                 ],
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})': {
                     edges: {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges',
                     },
                 },
                 fullpath__uiapi__query: {
                     'Account(where:{Name:{like:"Account1"}})': {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})',
                     },
                 },
                 fullpath__uiapi: {
@@ -1072,9 +1072,9 @@ describe('Document', () => {
             expect(snap.seenRecords).toEqual({
                 fullpath__uiapi: true,
                 fullpath__uiapi__query: true,
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})': true,
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': true,
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': true,
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})': true,
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges': true,
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0': true,
                 'UiApi::RecordRepresentation:001RM000004uuhnYAA': true,
                 'UiApi::RecordRepresentation:001RM000004uuhnYAA__fields__Name': true,
                 redirect: true,
@@ -1164,24 +1164,24 @@ describe('Document', () => {
 
             const store = new Store();
             store.records = {
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0': {
                     node: {
                         __ref: 'missingRef',
                     },
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges': [
                     {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0',
                     },
                 ],
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})': {
                     edges: {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges',
                     },
                 },
                 fullpath__uiapi__query: {
                     'Account(where:{Name:{like:"Account1"}})': {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})',
                     },
                 },
                 fullpath__uiapi: {
@@ -1497,24 +1497,24 @@ describe('Document', () => {
                     value: 'Account1',
                     displayValue: null,
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0': {
                     node: {
                         __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                     },
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges': [
                     {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0',
                     },
                 ],
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})': {
                     edges: {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges',
                     },
                 },
                 fullpath__uiapi__query: {
                     'Account(where:{Name:{like:"Account1"}})': {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})',
                     },
                 },
                 fullpath__uiapi: {
@@ -1773,40 +1773,40 @@ describe('Document', () => {
                     value: 'Account1',
                     displayValue: null,
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0': {
                     node: {
                         __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                     },
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges': [
                     {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0',
                     },
                 ],
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})': {
                     edges: {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges',
                     },
                 },
                 fullpath__uiapi__query: {
                     'Account(where:{Name:{like:"Account1"}})': {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})',
                     },
                     'Account(where:{Name:{eq:"Account1"}})': {
-                        __ref: 'gql::Connection::Account(where:{Name:{eq:"Account1"}})',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{eq:"Account1"}})',
                     },
                 },
-                'gql::Connection::Account(where:{Name:{eq:"Account1"}})': {
+                'GraphQL::Connection:Account(where:{Name:{eq:"Account1"}})': {
                     edges: {
-                        __ref: 'gql::Connection::Account(where:{Name:{eq:"Account1"}})__edges',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{eq:"Account1"}})__edges',
                     },
                 },
-                'gql::Connection::Account(where:{Name:{eq:"Account1"}})__edges': [
+                'GraphQL::Connection:Account(where:{Name:{eq:"Account1"}})__edges': [
                     {
-                        __ref: 'gql::Connection::Account(where:{Name:{eq:"Account1"}})__edges__0',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{eq:"Account1"}})__edges__0',
                     },
                 ],
-                'gql::Connection::Account(where:{Name:{eq:"Account1"}})__edges__0': {
+                'GraphQL::Connection:Account(where:{Name:{eq:"Account1"}})__edges__0': {
                     node: {
                         __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                     },

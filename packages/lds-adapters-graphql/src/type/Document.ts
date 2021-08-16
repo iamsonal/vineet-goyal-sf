@@ -4,11 +4,28 @@ import { validate as operationValidate } from './Operation';
 import { GraphQLVariables } from './Variable';
 import { createIngest as genericCreateIngest } from '../util/ingest';
 import { createRead as genericCreateRead } from '../util/read';
+import { untrustedIsObject } from '../util/adapter';
+import { ArrayIsArray, ObjectPrototypeHasOwnProperty } from '../util/language';
 
 export type GraphQL = {
     data: any;
     errors: unknown[];
 };
+
+export function isLuvioDocumentNode(unknown: unknown): unknown is LuvioDocumentNode {
+    if (
+        untrustedIsObject(unknown) === true &&
+        ObjectPrototypeHasOwnProperty.call(unknown, 'kind') === true &&
+        ObjectPrototypeHasOwnProperty.call(unknown, 'definitions') === true
+    ) {
+        return (
+            typeof (unknown as LuvioDocumentNode).kind === 'string' &&
+            ArrayIsArray((unknown as LuvioDocumentNode).definitions)
+        );
+    }
+
+    return false;
+}
 
 export const createRead: (
     ast: LuvioDocumentNode,

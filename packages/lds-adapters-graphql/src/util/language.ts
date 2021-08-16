@@ -1,5 +1,6 @@
 const { isArray } = Array;
 const { keys, freeze } = Object;
+const { hasOwnProperty } = Object.prototype;
 const { stringify } = JSON;
 
 export {
@@ -8,12 +9,8 @@ export {
     // Object
     keys as ObjectKeys,
     freeze as ObjectFreeze,
+    // Object.prototype
+    hasOwnProperty as ObjectPrototypeHasOwnProperty,
     // JSON
     stringify as JSONStringify,
 };
-
-export function untrustedIsObject<Base>(untrusted: unknown): untrusted is Untrusted<Base> {
-    return typeof untrusted === 'object' && untrusted !== null && isArray(untrusted) === false;
-}
-
-export type Untrusted<Base> = Partial<Base>;

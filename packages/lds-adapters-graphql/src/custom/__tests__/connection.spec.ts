@@ -62,14 +62,14 @@ describe('GQL Connection', () => {
 
             const store = new Store();
             store.records = {
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})': {
                     edges: {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges',
                     },
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges': [
                     {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0',
                     },
                 ],
             };
@@ -80,7 +80,7 @@ describe('GQL Connection', () => {
             );
 
             const snap = luvio.storeLookup({
-                recordId: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
+                recordId: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})',
                 node: {
                     kind: 'Fragment',
                     synthetic: false,
@@ -153,17 +153,17 @@ describe('GQL Connection', () => {
 
             const store = new Store();
             store.records = {
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})': {
                     edges: {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges',
                     },
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges': [
                     {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0',
                     },
                 ],
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0': {
                     node: {
                         __ref: 'missingRef',
                     },
@@ -176,7 +176,7 @@ describe('GQL Connection', () => {
             );
 
             const snap = luvio.storeLookup({
-                recordId: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
+                recordId: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})',
                 node: {
                     kind: 'Fragment',
                     synthetic: false,
@@ -266,29 +266,29 @@ describe('GQL Connection', () => {
 
             const store = new Store();
             store.records = {
-                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0__Name': {
+                'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0__Name': {
                     value: 'Opp1',
                     displayValue: null,
                 },
-                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0': {
+                'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0': {
                     Name: {
-                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0__Name',
+                        __ref: 'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0__Name',
                     },
                 },
-                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0': {
+                'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0': {
                     node: {
-                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0',
+                        __ref: 'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__0',
                     },
                 },
-                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges': [
+                'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges': [
                     {
-                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0',
+                        __ref: 'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0',
                     },
                 ],
-                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})': {
+                'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})': {
                     __typename: 'OpportunityConnection',
                     edges: {
-                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges',
+                        __ref: 'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges',
                     },
                 },
             };
@@ -300,7 +300,7 @@ describe('GQL Connection', () => {
             );
 
             const snap = luvio.storeLookup({
-                recordId: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})',
+                recordId: 'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})',
                 node: {
                     kind: 'Fragment',
                     synthetic: false,
@@ -420,17 +420,17 @@ describe('GQL Connection', () => {
             );
 
             expect(store.records).toEqual({
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})': {
                     edges: {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges',
                     },
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges': [
                     {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0',
                     },
                 ],
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0': {
                     node: {
                         __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                     },
@@ -547,17 +547,17 @@ describe('GQL Connection', () => {
             );
 
             expect(store.records).toEqual({
-                'gql::Connection::Account()': {
+                'GraphQL::Connection:Account()': {
                     edges: {
-                        __ref: 'gql::Connection::Account()__edges',
+                        __ref: 'GraphQL::Connection:Account()__edges',
                     },
                 },
-                'gql::Connection::Account()__edges': [
+                'GraphQL::Connection:Account()__edges': [
                     {
-                        __ref: 'gql::Connection::Account()__edges__0',
+                        __ref: 'GraphQL::Connection:Account()__edges__0',
                     },
                 ],
-                'gql::Connection::Account()__edges__0': {
+                'GraphQL::Connection:Account()__edges__0': {
                     node: {
                         __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                     },
@@ -667,12 +667,12 @@ describe('GQL Connection', () => {
             );
 
             expect(store.records).toEqual({
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})': {
                     edges: {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges',
                     },
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [],
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges': [],
             });
         });
 
@@ -822,17 +822,17 @@ describe('GQL Connection', () => {
             );
 
             expect(store.records).toEqual({
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})': {
                     edges: {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges',
                     },
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges': [
                     {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0',
                     },
                 ],
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0': {
                     node: {
                         __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                     },
@@ -971,7 +971,7 @@ describe('GQL Connection', () => {
                 })
             );
 
-            createIngest(ast, 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})', {})(
+            createIngest(ast, 'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})', {})(
                 data,
                 {
                     parent: null,
@@ -985,29 +985,30 @@ describe('GQL Connection', () => {
             );
 
             expect(store.records).toEqual({
-                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__node__Name': {
-                    value: 'Opp1',
-                    displayValue: null,
-                },
-                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__node': {
-                    Name: {
-                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__node__Name',
-                    },
-                },
-                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0': {
-                    node: {
-                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__node',
-                    },
-                },
-                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges': [
+                'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__node__Name':
                     {
-                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0',
+                        value: 'Opp1',
+                        displayValue: null,
+                    },
+                'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__node': {
+                    Name: {
+                        __ref: 'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__node__Name',
+                    },
+                },
+                'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0': {
+                    node: {
+                        __ref: 'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0__node',
+                    },
+                },
+                'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges': [
+                    {
+                        __ref: 'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges__0',
                     },
                 ],
-                'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})': {
+                'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})': {
                     __typename: 'OpportunityConnection',
                     edges: {
-                        __ref: 'gql::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges',
+                        __ref: 'GraphQL::Connection::Opportunity(where:{Name:{like:"Opp1"}})__edges',
                     },
                 },
             });

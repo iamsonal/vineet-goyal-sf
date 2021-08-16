@@ -10,15 +10,26 @@ import {
 } from '@luvio/engine';
 import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
 import { astToString } from './util/ast-to-string';
-import { GraphQL, createIngest, createRead, validate as documentValidate } from './type/Document';
-import { GraphQLVariables } from './type/Variable';
-import { ArrayIsArray, ObjectFreeze, ObjectKeys, untrustedIsObject } from './util/language';
+import { deepFreeze, keyPrefix, untrustedIsObject } from './util/adapter';
+import {
+    GraphQL,
+    createIngest,
+    createRead,
+    validate as documentValidate,
+    isLuvioDocumentNode,
+} from './type/Document';
+import { GraphQLVariables, isGraphQLVariables } from './type/Variable';
+
+export { apiFamilyName } from './util/adapter';
+
+export const adapterName = 'graphQL';
+
+const GRAPHQL_ROOT_KEY = `${keyPrefix}graphql`;
 
 interface GraphQLConfig {
     query: LuvioDocumentNode;
     variables: GraphQLVariables;
 }
-export const adapterName = 'graphQL';
 
 function buildSnapshotRefresh(
     luvio: Luvio,
@@ -38,26 +49,6 @@ function createFragment(query: LuvioDocumentNode, variables: GraphQLVariables): 
         reader: true,
         read: createRead(query, variables),
     };
-}
-
-function deepFreeze(value: unknown) {
-    // No need to freeze primitives
-    if (typeof value !== 'object' || value === null) {
-        return;
-    }
-    if (ArrayIsArray(value)) {
-        for (let i = 0, len = value.length; i < len; i += 1) {
-            deepFreeze(value[i]);
-        }
-    } else {
-        const keys = ObjectKeys(value) as Array<keyof typeof value>;
-
-        for (let i = 0, len = keys.length; i < len; i += 1) {
-            const v = value[keys[i]];
-            deepFreeze(v);
-        }
-    }
-    return ObjectFreeze(value);
 }
 
 function onResourceResponseSuccess(
@@ -91,11 +82,11 @@ function onResourceResponseSuccess(
     }
 
     const ingest = createIngest(query, variables);
-    luvio.storeIngest('graphql', ingest, response.body.data);
+    luvio.storeIngest(GRAPHQL_ROOT_KEY, ingest, response.body.data);
 
     const snapshot = luvio.storeLookup(
         {
-            recordId: 'graphql',
+            recordId: GRAPHQL_ROOT_KEY,
             node: fragment,
             variables: {},
         },
@@ -161,7 +152,7 @@ function validateGraphQlConfig(untrustedConfig: unknown): {
     }
     const ast = query as LuvioDocumentNode;
 
-    if (untrustedIsObject(variables) === false) {
+    if (isGraphQLVariables(variables) === false) {
         validationErrors.push('The config parameter "variables" isn\'t an object');
     }
 
@@ -190,17 +181,6 @@ function validateGraphQlConfig(untrustedConfig: unknown): {
     };
 }
 
-function isLuvioDocumentNode(ast: unknown): ast is LuvioDocumentNode {
-    return (
-        untrustedIsObject(ast) &&
-        'kind' in ast &&
-        typeof ast['kind'] === 'string' &&
-        ast['kind'] === 'Document' &&
-        'definitions' in ast &&
-        ArrayIsArray(ast['definitions'])
-    );
-}
-
 export const graphQLAdapterFactory: AdapterFactory<GraphQLConfig, unknown> = (luvio: Luvio) =>
     function graphql(
         untrustedConfig: unknown
@@ -220,7 +200,7 @@ export const graphQLAdapterFactory: AdapterFactory<GraphQLConfig, unknown> = (lu
 
         const snapshot = luvio.storeLookup(
             {
-                recordId: 'graphql',
+                recordId: GRAPHQL_ROOT_KEY,
                 node: fragment,
                 variables: {},
             },

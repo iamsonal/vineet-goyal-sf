@@ -226,24 +226,24 @@ describe('Operation', () => {
                     value: 'Account1',
                     displayValue: null,
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0': {
                     node: {
                         __ref: 'UiApi::RecordRepresentation:001RM000004uuhnYAA',
                     },
                 },
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges': [
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges': [
                     {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges__0',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges__0',
                     },
                 ],
-                'gql::Connection::Account(where:{Name:{like:"Account1"}})': {
+                'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})': {
                     edges: {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})__edges',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})__edges',
                     },
                 },
                 toplevel__uiapi__query: {
                     'Account(where:{Name:{like:"Account1"}})': {
-                        __ref: 'gql::Connection::Account(where:{Name:{like:"Account1"}})',
+                        __ref: 'GraphQL::Connection:Account(where:{Name:{like:"Account1"}})',
                     },
                 },
                 toplevel__uiapi: {

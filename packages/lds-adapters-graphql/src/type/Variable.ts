@@ -1,6 +1,11 @@
 import { LuvioVariableDefinitionNode, LuvioValueNode } from '@salesforce/lds-graphql-parser';
+import { untrustedIsObject } from '../util/adapter';
 
 export type GraphQLVariables = Record<string, unknown>;
+
+export function isGraphQLVariables(unknown: unknown): unknown is GraphQLVariables {
+    return untrustedIsObject(unknown);
+}
 
 export function validateVariableDefinitions(
     definitons: LuvioVariableDefinitionNode[],

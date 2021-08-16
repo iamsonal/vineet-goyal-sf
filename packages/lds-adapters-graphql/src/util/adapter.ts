@@ -1,7 +1,29 @@
-import { ArrayIsArray, JSONStringify, ObjectKeys } from './language';
+import { ArrayIsArray, JSONStringify, ObjectFreeze, ObjectKeys } from './language';
 
-export function untrustedIsObject<Base>(untrusted: unknown): untrusted is Object {
+export function untrustedIsObject<Base>(untrusted: unknown): untrusted is Untrusted<Base> {
     return typeof untrusted === 'object' && untrusted !== null && ArrayIsArray(untrusted) === false;
+}
+
+export type Untrusted<Base> = Partial<Base>;
+
+export function deepFreeze(value: unknown) {
+    // No need to freeze primitives
+    if (typeof value !== 'object' || value === null) {
+        return;
+    }
+    if (ArrayIsArray(value)) {
+        for (let i = 0, len = value.length; i < len; i += 1) {
+            deepFreeze(value[i]);
+        }
+    } else {
+        const keys = ObjectKeys(value) as Array<keyof typeof value>;
+
+        for (let i = 0, len = keys.length; i < len; i += 1) {
+            const v = value[keys[i]];
+            deepFreeze(v);
+        }
+    }
+    return ObjectFreeze(value);
 }
 
 /**
@@ -64,3 +86,6 @@ export function stableJSONStringify(node: any): string {
     }
     return '{' + out + '}';
 }
+
+export const apiFamilyName = 'GraphQL';
+export const keyPrefix = `${apiFamilyName}::`;

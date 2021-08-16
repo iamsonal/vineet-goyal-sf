@@ -1,3 +1,4 @@
+enforce-work-item-for-pr: true
 core-deploy:
   enabled: true
   use-core-packager: false
@@ -9,5 +10,5 @@ steps:
     name: platform-build
     description: Runs platform-specific build step
     run:
-      command: yarn release:core
+      command: yarn release:corejar
     before: core-packager

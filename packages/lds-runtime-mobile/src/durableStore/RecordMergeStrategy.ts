@@ -1,4 +1,4 @@
-import { DurableStore, DurableStoreEntries } from '@luvio/environments';
+import { DurableStore, DurableStoreEntries, DurableStoreEntry } from '@luvio/environments';
 import {
     durableMerge,
     DurableRecordEntry,
@@ -14,11 +14,16 @@ import {
     ObjectInfoRepresentation,
     RecordRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
+import { apiFamilyName as graphQLApiFamilyName } from '@salesforce/lds-adapters-graphql';
 import { Adapter, ResourceRequest } from '@luvio/engine';
 import { MergeStrategy } from './makeDurableStoreWithMergeStrategy';
 import { isStoreKeyRecordId } from '@salesforce/lds-uiapi-record-utils';
 
 type GetDraftActionsForRecords = (keys: string[]) => Promise<DraftActionMap>;
+
+function isGqlCacheKey(key: string) {
+    return key.startsWith(`${graphQLApiFamilyName}::`);
+}
 
 export class RecordMergeStrategy implements MergeStrategy {
     private readonly getDraftActions: GetDraftActionsForRecords;
@@ -38,10 +43,16 @@ export class RecordMergeStrategy implements MergeStrategy {
         this.userId = userId;
     }
 
-    // only merge sets containing at least one record key
+    // only merge sets containing at least one record key or GQL key
     shouldMerge(incomingKeys: string[]) {
         for (let i = 0, len = incomingKeys.length; i < len; i++) {
-            if (isStoreKeyRecordId(incomingKeys[i])) {
+            const key = incomingKeys[i];
+            if (isStoreKeyRecordId(key)) {
+                return true;
+            }
+
+            // both RecordReps and the GQL root keys need to be merged
+            if (isGqlCacheKey(key)) {
                 return true;
             }
         }
@@ -66,9 +77,12 @@ export class RecordMergeStrategy implements MergeStrategy {
             const key = incomingKeys[i];
             const incomingEntry = incomingEntries[key];
             const existingEntry = existingEntries[key];
+
+            if (incomingEntry === undefined || existingEntry === undefined) {
+                continue;
+            }
+
             if (
-                incomingEntry !== undefined &&
-                existingEntry !== undefined &&
                 isEntryDurableRecordRepresentation(incomingEntry, key) &&
                 isEntryDurableRecordRepresentation(existingEntry, key)
             ) {
@@ -81,6 +95,18 @@ export class RecordMergeStrategy implements MergeStrategy {
                 ) {
                     draftKeys[key] = true;
                 }
+            } else if (isGqlCacheKey(key)) {
+                // GQL root keys are spread merged
+                const { data: existingData, expiration: existingExpiration } = existingEntry;
+                const { data: incomingData, expiration: incomingExpiration } = incomingEntry;
+
+                const data = ObjectAssign({}, existingData, incomingData);
+
+                let expiration: DurableStoreEntry['expiration'] | undefined;
+                if (existingExpiration !== undefined || incomingExpiration !== undefined) {
+                    expiration = ObjectAssign({}, existingExpiration, incomingExpiration);
+                }
+                merged[key] = { data, expiration };
             }
         }
 

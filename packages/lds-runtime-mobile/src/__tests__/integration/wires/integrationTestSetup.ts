@@ -9,6 +9,7 @@ import {
     keyBuilderObjectInfo,
     getRelatedListRecordsAdapterFactory,
 } from '@salesforce/lds-adapters-uiapi';
+import { graphQLAdapterFactory } from '@salesforce/lds-adapters-graphql';
 import { DraftManager, DraftQueue } from '@salesforce/lds-drafts';
 import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusDurableStore';
 import { MockNimbusNetworkAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
@@ -34,6 +35,7 @@ let updateRecord;
 let deleteRecord;
 let getRecords;
 let getRelatedListRecords;
+let graphQL;
 
 // we want the same instance of MockNimbusDurableStore since we don't
 // want to lose the listeners between tests (luvio instance only registers
@@ -62,6 +64,7 @@ export async function setup() {
     updateRecord = updateRecordAdapterFactory(luvio);
     getRecords = getRecordsAdapterFactory(luvio);
     getRelatedListRecords = getRelatedListRecordsAdapterFactory(luvio);
+    graphQL = graphQLAdapterFactory(luvio);
 
     await populateDurableStoreWithObjectInfos();
     await flushPromises();
@@ -78,6 +81,7 @@ export async function setup() {
         updateRecord,
         getRecords,
         getRelatedListRecords,
+        graphQL,
     };
 }
 

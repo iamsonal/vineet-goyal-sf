@@ -30,6 +30,70 @@ const requestArgs: MockPayload['networkArgs'] = {
 };
 
 describe('graphQL adapter offline', () => {
+    describe('L2 cache miss', () => {
+        it('should go to network', async () => {
+            const ast = parseAndVisit(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const config = {
+                query: ast,
+                variables: {},
+            };
+
+            const { luvio, network } = buildOfflineLuvio(
+                new MockDurableStore(),
+                buildMockNetworkAdapter([
+                    buildSuccessMockPayload(requestArgs, mockData_Account_fields_Name),
+                ])
+            );
+
+            const adapter = graphQLAdapterFactory(luvio);
+
+            const snapshot = await adapter(config);
+
+            const callCount = getMockNetworkAdapterCallCount(network);
+            expect(callCount).toBe(1);
+
+            expect(snapshot.data).toEqual({
+                data: {
+                    uiapi: {
+                        query: {
+                            Account: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Name: {
+                                                value: 'Account1',
+                                                displayValue: null,
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            });
+        });
+    });
+
     describe('L2 cache hit', () => {
         it('when adapter called with same query', async () => {
             const ast = parseAndVisit(/* GraphQL */ `

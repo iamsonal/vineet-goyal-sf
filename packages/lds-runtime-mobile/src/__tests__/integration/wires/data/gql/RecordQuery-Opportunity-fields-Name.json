@@ -1,0 +1,38 @@
+{
+    "data": {
+        "uiapi": {
+            "query": {
+                "Opportunity": {
+                    "edges": [
+                        {
+                            "node": {
+                                "Name": {
+                                    "value": "Opp1",
+                                    "displayValue": null
+                                },
+                                "__typename": "Opportunity",
+                                "ApiName": "Opportunity",
+                                "WeakEtag": 1601595776000,
+                                "Id": "006RM000003UQ0AYAW",
+                                "DisplayValue": "Opp1",
+                                "SystemModstamp": {
+                                    "value": "2020-10-01T23:42:56.000Z"
+                                },
+                                "LastModifiedById": {
+                                    "value": "005RM000002492xYAA"
+                                },
+                                "LastModifiedDate": {
+                                    "value": "2020-10-01T23:42:56.000Z"
+                                },
+                                "RecordTypeId": {
+                                    "value": "012000000000000AAA"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "errors": []
+}

@@ -23,6 +23,7 @@ jest.mock('@salesforce/lds-instrumentation', () => {
         setAggregateUiChunkCountMetric: () => {},
         incrementGetRecordAggregateInvokeCount: () => {},
         incrementGetRecordNormalInvokeCount: () => {},
+        incrementAggregateUiConnectErrorCount: () => {},
         registerLdsCacheStats: () => {},
         logCRUDLightningInteraction: spies.logCRUDLightningInteraction,
         __spies: spies,

@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-apex",
-    "version": "1.24.2",
+    "version": "1.24.3",
     "description": "Wire adapters for Apex",
     "license": "MIT",
     "main": "dist/umd/es2018/apex-service.js",
@@ -31,11 +31,11 @@
         ]
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.24.2",
-        "@salesforce/lds-default-luvio": "1.24.2"
+        "@salesforce/lds-bindings": "1.24.3",
+        "@salesforce/lds-default-luvio": "1.24.3"
     },
     "devDependencies": {
         "@luvio/engine": "0.46.0",
-        "@salesforce/lds-karma": "1.24.2"
+        "@salesforce/lds-karma": "1.24.3"
     }
 }

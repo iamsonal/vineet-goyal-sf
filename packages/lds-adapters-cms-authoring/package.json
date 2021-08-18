@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-cms-authoring",
-    "version": "1.24.2",
+    "version": "1.24.3",
     "description": "Wire adapters for CMS authoring APIs",
     "license": "MIT",
     "main": "dist/umd/es2018/cms-authoring.js",
@@ -28,13 +28,13 @@
         "test:unit": "jest"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.24.2"
+        "@salesforce/lds-bindings": "1.24.3"
     },
     "devDependencies": {
         "@luvio/cli": "0.46.0",
         "@luvio/compiler": "0.46.0",
         "@luvio/engine": "0.46.0",
         "@luvio/lwc-luvio": "0.46.0",
-        "@salesforce/lds-karma": "1.24.2"
+        "@salesforce/lds-karma": "1.24.3"
     }
 }

@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-commerce-store-pricing",
-    "version": "1.24.2",
+    "version": "1.24.3",
     "description": "Wire adapters Commerce Store Pricing",
     "license": "MIT",
     "main": "dist/umd/es2018/commerce-store-pricing.js",
@@ -27,9 +27,9 @@
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-commerce-store-pricing"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.24.2"
+        "@salesforce/lds-bindings": "1.24.3"
     },
     "devDependencies": {
-        "@salesforce/lds-karma": "1.24.2"
+        "@salesforce/lds-karma": "1.24.3"
     }
 }

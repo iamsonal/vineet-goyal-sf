@@ -64,4 +64,20 @@ describe('startFlow', () => {
             expect(e).toEqual(jasmine.objectContaining({ message: mockError.message }));
         }
     });
+
+    it('ingests a response with null response property', async () => {
+        const mockConfig = {
+            flowDevName: 'flow1',
+            flowVersionId: '123',
+        };
+        mockStartFlowNetworkOnce(mockConfig, {
+            error: 'Some error message',
+            response: null,
+        });
+        const data = await startFlow(mockConfig);
+        expect(data).toEqualSnapshotWithoutEtags({
+            error: 'Some error message',
+            response: null,
+        });
+    });
 });

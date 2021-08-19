@@ -67,4 +67,23 @@ describe('navigateFlow', () => {
             expect(e).toEqual(jasmine.objectContaining({ message: mockError.message }));
         }
     });
+
+    it('ingests a response with null response property', async () => {
+        const mockConfig = {
+            flowDevName: 'flow1',
+            request: {
+                action: 'NEXT',
+                serializedState: 'ABC',
+            },
+        };
+        mockNavigateFlowNetworkOnce(mockConfig, {
+            error: 'Some error message',
+            response: null,
+        });
+        const data = await navigateFlow(mockConfig);
+        expect(data).toEqualSnapshotWithoutEtags({
+            error: 'Some error message',
+            response: null,
+        });
+    });
 });

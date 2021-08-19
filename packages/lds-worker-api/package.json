@@ -16,9 +16,9 @@
         "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-runtime-mobile"
     },
     "devDependencies": {
-        "@luvio/adapter-test-library": "0.46.0",
-        "@luvio/engine": "0.46.0",
-        "@luvio/environments": "0.46.0",
+        "@luvio/adapter-test-library": "0.47.0",
+        "@luvio/engine": "0.47.0",
+        "@luvio/environments": "0.47.0",
         "@mobileplatform/nimbus-plugin-lds": "1.24.3",
         "@oat-sa/rollup-plugin-wildcard-external": "^0.1.0",
         "@salesforce/lds-adapters-graphql": "1.24.3",

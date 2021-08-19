@@ -38,6 +38,7 @@ export const createRead: (
         for (let i = 0, len = definitions.length; i < len; i += 1) {
             const def = definitions[i];
             if (def.kind !== 'OperationDefinition') {
+                // eslint-disable-next-line @salesforce/lds/no-error-in-production
                 throw new Error(`Unsupported document definition "${def.kind}"`);
             }
 
@@ -65,6 +66,7 @@ export function createIngest(ast: LuvioDocumentNode, variables: GraphQLVariables
         for (let i = 0, len = definitions.length; i < len; i += 1) {
             const def = definitions[i];
             if (def.kind !== 'OperationDefinition') {
+                // eslint-disable-next-line @salesforce/lds/no-error-in-production
                 throw new Error(`Unsupported document definition "${def.kind}"`);
             }
 

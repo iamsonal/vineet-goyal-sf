@@ -45,6 +45,7 @@ export function setDefaultLuvio(params: SetDefaultLuvioParameters) {
             : undefined;
 
     if (newLuvio === undefined) {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('unable to construct default Luvio instance from supplied parameters');
     }
 

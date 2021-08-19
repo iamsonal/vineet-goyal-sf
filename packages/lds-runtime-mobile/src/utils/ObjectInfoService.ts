@@ -73,7 +73,9 @@ export function objectInfoServiceFactory(
                         };
                         return durableStore.setEntries(entries, OBJECT_INFO_PREFIX_SEGMENT);
                     } else {
-                        throw new Error(`No snapshot found for apiName ${apiName}`);
+                        if (process.env.NODE_ENV !== 'production') {
+                            throw new Error(`No snapshot found for apiName ${apiName}`);
+                        }
                     }
                 });
             }

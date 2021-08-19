@@ -55,6 +55,7 @@ export function resolveConflict(luvio: Luvio, map: RecordConflictMap): void {
 
         const config: GetRecordsConfig = { records };
 
+        // eslint-disable-next-line @salesforce/lds/no-invalid-todo
         // TODO - need to propagate map.serverRequestCount here
         getRecordsNetwork(luvio, config);
     }

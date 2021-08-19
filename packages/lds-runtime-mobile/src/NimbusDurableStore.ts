@@ -161,7 +161,7 @@ export class NimbusDurableStore implements DurableStore {
     }
 
     setEntries<T>(entries: DurableStoreEntries<T>, segment: string): Promise<void> {
-        // TODO W-8963041: Remove this once old versions of setEntries are no longer supported
+        // TODO [W-8963041]: Remove this once old versions of setEntries are no longer supported
         if (__nimbus.plugins.LdsDurableStore.batchOperations === undefined) {
             return this.setEntriesOld(entries, segment);
         }
@@ -194,7 +194,7 @@ export class NimbusDurableStore implements DurableStore {
             ]);
         }
 
-        // TODO W-8963041: Remove this once old versions of setEntries are no longer supported
+        // TODO [W-8963041]: Remove this once old versions of setEntries are no longer supported
         return this.evictEntriesOld(entryIds, segment);
     }
 

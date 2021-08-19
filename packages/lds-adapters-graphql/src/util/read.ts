@@ -36,6 +36,7 @@ export function createRead(
         ast.kind === 'InlineFragment' ||
         ast.kind === 'ScalarFieldSelection'
     ) {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('"FragmentSpread" and "InlineFragment" currently not supported');
     }
 

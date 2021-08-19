@@ -226,6 +226,7 @@ describe('cache', () => {
         expect(thirdElement.getWiredData()).toEqualSnapshotWithoutEtags(accountMock);
     });
 
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO: figure out what is the desire behavior before re-activating
     xit('should not mark optionalFields as missing if root apiName does not match', async () => {
         const otherMock = getMock('record-Case-fields-Other.Account.Name');
@@ -237,6 +238,7 @@ describe('cache', () => {
         mockGetRecordNetwork(otherConfig, otherMock);
         const otherElm = await setupElement(otherConfig, RecordFields);
 
+        // eslint-disable-next-line @salesforce/lds/no-invalid-todo
         // TODO - API returns a value with no fields, should we provision one?
         expect(otherElm.pushCount()).toBe(0);
 

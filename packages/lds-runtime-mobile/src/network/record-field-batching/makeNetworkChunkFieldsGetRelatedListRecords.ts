@@ -53,6 +53,7 @@ export function mergeRelatedRecordsFields(
         return first;
     } else {
         // Throw error due to two collection are about different set of records
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('Aggregate UI response is invalid');
     }
 }

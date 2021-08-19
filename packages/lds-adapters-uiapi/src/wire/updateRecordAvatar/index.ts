@@ -26,6 +26,7 @@ export const factory = (luvio: Luvio) => {
     return (untrustedConfig: unknown): Promise<Snapshot<AbstractRecordAvatarRepresentation>> => {
         const config = validateAdapterConfig(untrustedConfig, updateRecordAvatarConfigProperties);
         if (config === null) {
+            // eslint-disable-next-line @salesforce/lds/no-error-in-production
             throw new Error('updateRecordAvatar invalid configuration');
         }
         const resourceParams: ResourceRequestConfig = {
@@ -61,10 +62,11 @@ export const factory = (luvio: Luvio) => {
                         body as PhotoRecordAvatarRepresentation
                     );
                 } else {
+                    // eslint-disable-next-line @salesforce/lds/no-error-in-production
                     throw new Error('Unsupported avatar type');
                 }
 
-                // TODO W-6804405 - support unions on fragments (only supported on links today)
+                // TODO [W-6804405]: support unions on fragments (only supported on links today)
                 const snapshot = luvio.storeLookup<AbstractRecordAvatarRepresentation>({
                     recordId: key,
                     node: selectors(),

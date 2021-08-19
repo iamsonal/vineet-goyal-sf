@@ -28,6 +28,7 @@ export function transform(
         ret.defaultValue = transformValueNode(defaultValue);
     }
 
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO: transform directives
 
     return ret;

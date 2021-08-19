@@ -30,7 +30,7 @@ import { RecordMergeStrategy } from './durableStore/RecordMergeStrategy';
 
 let luvio: Luvio;
 
-// TODO - W-8291468 - have ingest get called a different way somehow
+// TODO [W-8291468]: have ingest get called a different way somehow
 const recordIngestFunc = (record: RecordRepresentation) => {
     if (luvio !== undefined) {
         const key = keyBuilderRecord({ recordId: record.id });
@@ -58,6 +58,7 @@ const getDraftActionForRecordKeys = (keys: string[]) => {
 const { newRecordId, isGenerated } = recordIdGenerator(userId);
 
 // non-draft-aware base services
+// eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO: use default scheduler
 const storeOptions = {
     scheduler: () => {},

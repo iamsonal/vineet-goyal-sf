@@ -32,6 +32,7 @@ export interface ApexAdapterConfig {
 export const CACHE_CONTROL = 'cache-control';
 export const SHARED_ADAPTER_CONTEXT_ID = 'apex__shared';
 
+// eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO: APEX_TTL, apexResponseEquals, apexResponseIngest, and validateAdapterConfig should have been code generated
 // however compiler does not support response body type any so hand roll for now
 /**

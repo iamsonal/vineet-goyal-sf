@@ -66,6 +66,7 @@ import { isFulfilledSnapshot } from '../../util/snapshot';
 
 const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select();
 
+// eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO RAML - this more properly goes in the generated resource files
 const DEFAULT_PAGE_SIZE = 50;
 
@@ -250,6 +251,7 @@ function prepareRequest_getListUi(config: GetListUiConfig) {
             queryParams,
         });
     } else {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('unrecognized config');
     }
 
@@ -370,6 +372,7 @@ function prepareRequest_getListRecords(
             queryParams,
         });
     } else {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('how did MRU config get here?');
     }
 
@@ -591,7 +594,7 @@ export const factory: AdapterFactory<
         // no listRef means we can't even attempt to build an in-memory snapshot
         // so make a full list-ui request
         if (listRef === undefined) {
-            // TODO - W-9712566 - this is returning network response directly to caller,
+            // TODO [W-9712566]: this is returning network response directly to caller,
             // this means LDS on Mobile environment does not have a chance to overlay
             // draft edits on top of results
             return buildNetworkSnapshot_getListUi(luvio, context, config);

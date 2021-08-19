@@ -134,7 +134,7 @@ export function buildNetworkSnapshot(luvio: Luvio, config: GetLookupRecordsConfi
 
     return luvio.dispatchResourceRequest<RecordCollectionRepresentation>(request).then(
         (response) => {
-            // TODO W-7235112 - remove this hack to never ingest lookup responses that
+            // TODO [W-7235112]: remove this hack to never ingest lookup responses that
             // avoids issues caused by them not being real RecordRepresentations
             const key = keyBuilder(resourceParams);
             const { body } = response;
@@ -178,6 +178,7 @@ export const factory: AdapterFactory<GetLookupRecordsConfig, RecordCollectionRep
         (untrusted: unknown) => {
             const config = coerceConfigWithDefaults(untrusted);
             if (config === null) {
+                // eslint-disable-next-line @salesforce/lds/no-error-in-production
                 throw new Error('Refresh should not be called with partial configuration');
             }
             return buildNetworkSnapshot(luvio, config);

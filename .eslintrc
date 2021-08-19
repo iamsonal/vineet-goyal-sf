@@ -32,8 +32,8 @@
         "no-unused-vars": "off",
 
         "@salesforce/lds/no-optional-chaining": "error",
-        "@salesforce/lds/no-invalid-todo": "warn",
-        "@salesforce/lds/no-error-in-production": "warn",
+        "@salesforce/lds/no-invalid-todo": "error",
+        "@salesforce/lds/no-error-in-production": "error",
         "@typescript-eslint/no-unused-vars": [
             "error",
             { "argsIgnorePattern": "^_" }
@@ -91,6 +91,8 @@
         },
         {
             "files": [
+                "packages/**/karma/**",
+                "packages/lds-karma/**/test-util.js",
                 "packages/**/__tests__/**",
                 "packages/**/__karma__/**",
                 "packages/**/__benchmarks__/**"

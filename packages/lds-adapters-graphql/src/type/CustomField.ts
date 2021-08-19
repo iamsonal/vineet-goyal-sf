@@ -20,5 +20,6 @@ export const createIngest: (
             return connectionCreateIngest(ast, connectionKeyBuilder(ast, variables), variables);
     }
 
+    // eslint-disable-next-line @salesforce/lds/no-error-in-production
     throw new Error(`Unsupported type: "${type}"`);
 };

@@ -1,4 +1,4 @@
-// TODO TD-0081508 - once that TD is fulfilled we can probably change this file
+// TODO [TD-0081508]: once that TD is fulfilled we can probably change this file
 export const instrumentation = {
     instrumentAdapter(createFunction: Function, _metadata: any) {
         return createFunction;

@@ -83,7 +83,9 @@ export const createRead: (
                 const data = selectEdges(builder, sel, edges.value, variables);
                 builder.assignNonScalar(sink, readPropertyName, data);
             } else {
-                throw new Error('Not supported');
+                if (process.env.NODE_ENV !== 'production') {
+                    throw new Error('Not supported');
+                }
             }
 
             builder.exitPath();

@@ -144,6 +144,7 @@ export function customActionHandler(
         _uploadingActionId: String | undefined,
         _actions: DraftAction<unknown, unknown>[]
     ) => {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error(
             `${actionId} does not support action replacing. You can only delete ${actionId}`
         );

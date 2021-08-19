@@ -18,9 +18,11 @@ export function transform(root: DocumentNode): LuvioDocumentNode {
         } else if (isFragmentDefinitionNode(definition)) {
             luvioDefinitions.push(fragmentDefinitionTransform(definition));
         } else {
-            throw new Error(
-                `Unsupported ${definition.kind} definition. Only OperationDefinition and FragmentDefinition are supported in a GraphQL Document`
-            );
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error(
+                    `Unsupported ${definition.kind} definition. Only OperationDefinition and FragmentDefinition are supported in a GraphQL Document`
+                );
+            }
         }
     }
 

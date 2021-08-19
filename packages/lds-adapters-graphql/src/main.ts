@@ -118,6 +118,7 @@ function buildNetworkSnapshot(
         headers: {},
     };
 
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO - handle network error response
     return luvio.dispatchResourceRequest<any>(request).then((resp) => {
         return onResourceResponseSuccess(luvio, config, resp, fragment);

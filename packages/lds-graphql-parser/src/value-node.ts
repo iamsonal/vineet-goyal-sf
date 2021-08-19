@@ -61,6 +61,7 @@ export function transform(node: ValueNode): LuvioValueNode {
             };
         }
         default:
+            // eslint-disable-next-line @salesforce/lds/no-error-in-production
             throw new Error('Unsupported ValueNode kind');
     }
 }

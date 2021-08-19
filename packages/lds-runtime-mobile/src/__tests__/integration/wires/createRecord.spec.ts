@@ -115,7 +115,7 @@ describe('mobile runtime integration tests', () => {
             })) as Snapshot<RecordRepresentation>;
             expect(getRecordSnapshot.state).toBe('Fulfilled');
 
-            // TODO: W-9463628 this flush can be removed when we solve the extra durable writes due to this bug
+            // TODO [W-9463628]: this flush can be removed when we solve the extra durable writes due to this bug
             await flushPromises();
 
             const callbackSpy = jest.fn();

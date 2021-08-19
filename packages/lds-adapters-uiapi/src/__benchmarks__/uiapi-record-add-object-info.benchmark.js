@@ -7,6 +7,7 @@ import { ITERATION_COUNT, WARM_UP_ITERATION_COUNT } from './shared';
 const RECORD_ID = 'objectInfo';
 const rejectNetworkAdapter = (_) => Promise.reject(new Error('not implemented'));
 
+// eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
     const store = new Store();

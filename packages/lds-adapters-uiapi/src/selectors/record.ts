@@ -18,7 +18,7 @@ const CHILD_RELATIONSHIP_SELECTION: PathSelection = {
 // This selection is a client-side only selection and will only
 // be applied to a RecordRepresentation in environments configured with
 // drafts when the record has draft changes applied to it
-// TODO W-8237087 - explore if this selection can only be added in environments where drafts are enabled
+// TODO [W-8237087]: explore if this selection can only be added in environments where drafts are enabled
 const DRAFTS_SELECTION: PathSelection = {
     kind: 'Object',
     opaque: true,

@@ -29,6 +29,7 @@ describe('basic', () => {
 
         mockPostProductSearchNetworkOnce(config, mock);
 
+        // eslint-disable-next-line @salesforce/lds/no-invalid-todo
         // TODO: wire adapter binding on nested object properties does not work in ie11
         // So the query is destructured here:
         const wireParams = { webstoreId: config.webstoreId, ...config.query };
@@ -65,6 +66,7 @@ describe('basic', () => {
 
         mockPostProductSearchNetworkErrorOnce(config, mock);
 
+        // eslint-disable-next-line @salesforce/lds/no-invalid-todo
         // TODO: wire adapter binding on nested object properties does not work in ie11
         // So the query is destructured here:
         const wireParams = { webstoreId: config.webstoreId, ...config.query };

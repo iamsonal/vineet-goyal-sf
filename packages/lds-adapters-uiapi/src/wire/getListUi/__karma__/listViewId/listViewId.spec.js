@@ -211,6 +211,7 @@ describe('with listViewId', () => {
 
         xit('does not make second XHR for removed fields', async () => {});
 
+        // eslint-disable-next-line @salesforce/lds/no-invalid-todo
         // TODO: probably bogus, but need to verify
         xit('does not make second XHR for listViewId that does not exist', async () => {});
     });

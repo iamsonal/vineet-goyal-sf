@@ -30,7 +30,9 @@ export const getApexInvoker = function (
     isContinuation: boolean
 ) {
     if (luvio === undefined) {
-        throw new Error('cannot create Apex adapter before default luvio is set');
+        if (process.env.NODE_ENV !== 'production') {
+            throw new Error('cannot create Apex adapter before default luvio is set');
+        }
     }
 
     const adapterName = `getApex_${namespace}_${classname}_${method}_${isContinuation}`;

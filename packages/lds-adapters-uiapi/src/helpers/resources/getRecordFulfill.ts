@@ -34,7 +34,7 @@ export default function fulfill(existing: ResourceRequest, incoming: ResourceReq
         }
     }
 
-    // TODO W-6900100 - handle when incoming.fields are only in existing.optionalFields, and
+    // TODO [W-6900100]: handle when incoming.fields are only in existing.optionalFields, and
     // existing's response doesn't include those fields. We need to detect this then
     // re-issue the request to get the relevant error response.
 

@@ -28,6 +28,7 @@ export function buildOfflineLuvio(
     options: OfflineOptions = {}
 ) {
     const { customEnvironment } = options;
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO: use default scheduler
     const store = new Store({ scheduler: () => {} });
     let env = makeDurable(makeOffline(new Environment(store, network)), {

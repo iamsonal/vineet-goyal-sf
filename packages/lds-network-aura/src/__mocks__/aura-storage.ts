@@ -34,7 +34,9 @@ export default {
         const storage = storages[name];
 
         if (!storage) {
-            throw new Error(`Invalid store name ${name}`);
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error(`Invalid store name ${name}`);
+            }
         }
 
         return storage;

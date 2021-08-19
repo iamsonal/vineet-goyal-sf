@@ -101,7 +101,9 @@ export function mergeAggregateUiResponse<T>(
             body.compositeResponse.length === 0
         ) {
             // We shouldn't even get into this state - a 200 with no body?
-            throw new Error('No response body in executeAggregateUi found');
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error('No response body in executeAggregateUi found');
+            }
         }
 
         const merged = body.compositeResponse.reduce(

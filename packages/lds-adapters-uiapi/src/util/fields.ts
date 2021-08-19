@@ -177,7 +177,7 @@ function extractRecordFieldsRecursively(record: FieldMapRepresentation): string[
 /**
  * Returns a list of fields for a RecordRepresentationLike.
  *
- * TODO W-6900271 - Remove this function once getRelatedList don't depend on it anymore. Always prefer
+ * TODO [W-6900271]: Remove this function once getRelatedList don't depend on it anymore. Always prefer
  * generating a selection out of a record, than convert a record to a field list and back to a
  * selection.
  */

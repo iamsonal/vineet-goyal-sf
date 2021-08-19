@@ -979,6 +979,7 @@ export function logCRUDLightningInteraction(eventSource: string, attributes: obj
     interaction(eventSource, 'force_record', null, eventSource, 'crud', attributes);
 }
 
+// eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO: export these types from luvio/engine
 type Instrument = (params: unknown) => void;
 type InstrumentParamsBuilder = () => Parameters<Instrument>[0];

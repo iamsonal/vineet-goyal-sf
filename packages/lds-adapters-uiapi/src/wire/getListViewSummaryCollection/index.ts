@@ -32,6 +32,7 @@ import {
 import { select as listViewSummaryRepresentationSelect } from '../../generated/types/ListViewSummaryRepresentation';
 import { ResourceRequestConfig } from '../../generated/resources/getUiApiListUiByObjectApiName';
 
+// eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO RAML - this more properly goes in the generated resource files
 const DEFAULT_PAGE_SIZE = 20;
 

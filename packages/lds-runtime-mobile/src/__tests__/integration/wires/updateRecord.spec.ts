@@ -78,7 +78,7 @@ describe('mobile runtime integration tests', () => {
             })) as Snapshot<RecordRepresentation>;
             expect(getRecordSnapshot.state).toBe('Fulfilled');
 
-            // TODO: W-9463628 this flush can be removed when we solve the extra durable writes due to this bug
+            // TODO [W-9463628]: this flush can be removed when we solve the extra durable writes due to this bug
             await flushPromises();
 
             const callbackSpy = jest.fn();
@@ -316,7 +316,7 @@ describe('mobile runtime integration tests', () => {
             })) as Snapshot<RecordRepresentation>;
             expect(getRecordSnapshot.state).toBe('Fulfilled');
 
-            // TODO: W-9463628 this flush can be removed when we solve the extra durable writes due to this bug
+            // TODO [W-9463628]: this flush can be removed when we solve the extra durable writes due to this bug
             await flushPromises();
 
             const callbackSpy = jest.fn();
@@ -328,7 +328,7 @@ describe('mobile runtime integration tests', () => {
 
             await flushPromises();
 
-            // TODO: W-9463628 extra emit, should be 1
+            // TODO [W-9463628]: extra emit, should be 1
             expect(callbackSpy).toBeCalledTimes(2);
             const updatedOppy = callbackSpy.mock.calls[1][0].data as RecordRepresentation;
             expect(updatedOppy.fields['OwnerId'].value).toBe(updatedOwnerId);

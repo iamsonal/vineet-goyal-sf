@@ -5,6 +5,7 @@ module.exports = {
 
     displayName: '@salesforce/lds-adapters-graphql',
     roots: ['<rootDir>/src'],
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO: improve unit test coverage and remove this override
     coverageThreshold: {
         global: {

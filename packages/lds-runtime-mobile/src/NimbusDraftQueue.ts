@@ -26,7 +26,7 @@ export class NimbusDraftQueue implements DraftQueue {
     enqueue<Response, Data>(action: Action<Data>): Promise<DraftAction<Response, Data>> {
         const { tag, targetId } = action;
         const serializedAction = JSONStringify(action);
-        // TODO: W-9400488 - remove tag and targetId parameters when interface is updated
+        // TODO [W-9400488]: remove tag and targetId parameters when interface is updated
         return new Promise((resolve, reject) => {
             __nimbus.plugins.LdsDraftQueue.enqueue(
                 serializedAction,
@@ -74,6 +74,7 @@ export class NimbusDraftQueue implements DraftQueue {
     }
 
     getQueueState(): DraftQueueState {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('Cannot call getQueueState from the NimbusDraftQueue');
     }
 

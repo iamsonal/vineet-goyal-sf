@@ -96,7 +96,7 @@ const LIST_INFO_SELECTIONS_ETAG: PathSelection[] = [
 export function getListInfo(
     listRef: ListReferenceRepresentation,
     luvio: Luvio,
-    // TODO - W-9601746 - today makeDurable environment needs a refresh set for
+    // TODO [W-9601746]: today makeDurable environment needs a refresh set for
     // "resolveSnapshot" override to work properly, but once this work
     // item is done we won't need refresh set anymore and this parameter can go away
     refresh?: SnapshotRefresh<ListInfoRepresentation>
@@ -117,6 +117,7 @@ export function getListInfo(
 // track of default values that we've seen the server supply for past
 // requests so that we can guess what those values will be on future requests.
 
+// eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO - look at generalizing this so we can declaratively tell Luvio to remember
 // default values from the server.
 

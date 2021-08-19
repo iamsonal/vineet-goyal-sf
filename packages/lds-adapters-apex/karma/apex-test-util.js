@@ -5,6 +5,7 @@ import timekeeper from 'timekeeper';
 import sinon from 'sinon';
 import { mockNetworkOnce, mockNetworkSequence } from 'test-util';
 
+// eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO: hardcode the TTL for now.
 // TTL should be imported from generated code, once we can define it on RAML.
 const APEX_TTL = 5 * 60 * 1000;

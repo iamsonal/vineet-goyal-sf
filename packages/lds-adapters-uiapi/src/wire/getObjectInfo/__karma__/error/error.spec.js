@@ -166,6 +166,7 @@ describe('getObjectInfo - fetch errors', () => {
         expect(elementB.getWiredData()).toEqualSnapshotWithoutEtags(mock);
     });
 
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO: Implement error snapshot subscription
     xit('should emit error when refresh results in error', async () => {
         const mock = getMock('object-Account');
@@ -192,6 +193,7 @@ describe('getObjectInfo - fetch errors', () => {
         }
     });
 
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO: Once a component receives an error, we DO NOT ever provision another
     // value for the component. This matches existing 222 behavior, but we should
     // investigate enabling this.

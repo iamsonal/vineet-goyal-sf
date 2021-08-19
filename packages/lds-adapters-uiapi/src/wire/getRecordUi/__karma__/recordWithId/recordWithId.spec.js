@@ -1161,6 +1161,7 @@ describe('recordTypeId update', () => {
     const newStageName = 'Open - This is Changed';
     const newRecordTypeId = '0129000000006ByAAI';
 
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO: generated updated data with refreshData script
     function createUpdatedOpportunityRecordUi(baseRecordUi) {
         const updatedRecordUi = clone(baseRecordUi);

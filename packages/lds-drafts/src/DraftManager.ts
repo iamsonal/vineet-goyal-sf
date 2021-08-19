@@ -112,11 +112,13 @@ function getOperationTypeFrom(action: DraftAction<unknown, unknown>): DraftActio
                 case 'delete':
                     return DraftActionOperationType.Delete;
                 default:
+                    // eslint-disable-next-line @salesforce/lds/no-error-in-production
                     throw new Error(
                         `${action.data.method} is an unsupported request method type for DraftQueue.`
                     );
             }
         } else {
+            // eslint-disable-next-line @salesforce/lds/no-error-in-production
             throw new Error(`action has no data found`);
         }
     } else {

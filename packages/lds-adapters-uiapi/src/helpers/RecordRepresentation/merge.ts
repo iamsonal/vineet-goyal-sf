@@ -28,7 +28,7 @@ function mergePendingFields(
     newRecord: RecordRepresentationNormalized,
     oldRecord: RecordRepresentationNormalized
 ): RecordRepresentationNormalized {
-    // TODO W-6900046 - avoid casting to any by updating
+    // TODO [W-6900046]: avoid casting to any by updating
     // RecordRepresentationNormalized['fields'] to include `pending:true` property
     const mergedFields = { ...newRecord.fields } as any;
     const merged = { ...newRecord, fields: mergedFields };
@@ -38,7 +38,7 @@ function mergePendingFields(
         const spanningFieldName = existingFields[i];
 
         if (newRecord.fields[spanningFieldName] === undefined) {
-            // TODO W-6900046 - fix above casting issue so we're not stuffing arbitrary things
+            // TODO [W-6900046]: fix above casting issue so we're not stuffing arbitrary things
             // into RecordRepresentationNormalized['fields']
             mergedFields[spanningFieldName] = {
                 __ref: undefined,
@@ -248,6 +248,7 @@ export default function merge(
         }
     }
 
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO - handle merging of records that change apiName
     // if (existing.apiName !== incoming.apiName) {
     //     if (process.env.NODE_ENV === 'production') {
@@ -283,7 +284,7 @@ export default function merge(
         luvio.instrument(paramsBuilder);
     }
 
-    // TODO W-6900085 - UIAPI returns weakEtag=0 when the record is >2 levels nested. For now
+    // TODO [W-6900085]: UIAPI returns weakEtag=0 when the record is >2 levels nested. For now
     // we treat the record as mergeable.
     if (incomingWeakEtag !== 0 && existingWeakEtag !== 0 && incomingWeakEtag !== existingWeakEtag) {
         return mergeRecordConflict(luvio, incoming, existing, recordConflictMap);

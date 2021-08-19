@@ -145,7 +145,7 @@ export const ingestSuccess: typeof generatedIngestSuccess = (
     snapshotRefresh?: SnapshotRefresh<RelatedListRecordCollectionRepresentation>
 ) => {
     const { body } = resp;
-    // TODO: remove me after W-8673110 is sorted out.
+    // TODO [W-8673110]: remove me after W-8673110 is sorted out.
     const returnedFieldsDebug = body.records.map(
         (record, index) =>
             `Returned fields for ${index}, apiName: ${record.apiName}: ` +
@@ -178,25 +178,27 @@ export const ingestSuccess: typeof generatedIngestSuccess = (
     );
 
     if (isUnfulfilledSnapshot(snapshot)) {
-        // TODO: revert me after W-8673110 is sorted out.
-        throw new Error(
-            `${Object.keys(snapshot.missingPaths).join(
-                ', '
-            )} missing immediately after get-related-list-records request.
-            Requested fields: ${
-                resourceRequestConfig.queryParams.fields === null ||
-                resourceRequestConfig.queryParams.fields === undefined
-                    ? undefined
-                    : resourceRequestConfig.queryParams.fields.join()
-            }
-            Requested optionalFields: ${
-                resourceRequestConfig.queryParams.optionalFields === null ||
-                resourceRequestConfig.queryParams.optionalFields === undefined
-                    ? undefined
-                    : resourceRequestConfig.queryParams.optionalFields.join()
-            }
-            ${returnedFieldsDebug}`
-        );
+        // TODO [W-8673110]: revert me after W-8673110 is sorted out.
+        if (process.env.NODE_ENV !== 'production') {
+            throw new Error(
+                `${Object.keys(snapshot.missingPaths).join(
+                    ', '
+                )} missing immediately after get-related-list-records request.
+                Requested fields: ${
+                    resourceRequestConfig.queryParams.fields === null ||
+                    resourceRequestConfig.queryParams.fields === undefined
+                        ? undefined
+                        : resourceRequestConfig.queryParams.fields.join()
+                }
+                Requested optionalFields: ${
+                    resourceRequestConfig.queryParams.optionalFields === null ||
+                    resourceRequestConfig.queryParams.optionalFields === undefined
+                        ? undefined
+                        : resourceRequestConfig.queryParams.optionalFields.join()
+                }
+                ${returnedFieldsDebug}`
+            );
+        }
     }
 
     return snapshot as FulfilledSnapshot<RelatedListRecordCollectionRepresentation, any>;

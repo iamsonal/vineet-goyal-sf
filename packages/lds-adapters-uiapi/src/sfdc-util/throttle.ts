@@ -19,7 +19,9 @@ export function throttle<T extends any[], R extends any>(
     options?: ThrottleOptions
 ): (...args: T) => R | void {
     if (invokeLimit <= 0 || timeLimit <= 0) {
-        throw new Error('only supports throttling with positive invokeLimit and timeLimit');
+        if (process.env.NODE_ENV !== 'production') {
+            throw new Error('only supports throttling with positive invokeLimit and timeLimit');
+        }
     }
 
     let invokeCount = 0;

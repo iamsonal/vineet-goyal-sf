@@ -298,7 +298,7 @@ export function makeRecordDenormalizingDurableStore(
         });
     };
 
-    // TODO: W-9103958 -- record fields needs to be denormalized if included in a batch operation
+    // TODO [W-9103958]: record fields needs to be denormalized if included in a batch operation
     return ObjectCreate(durableStore, {
         getEntries: { value: getEntries, writable: true },
         setEntries: { value: setEntries, writable: true },

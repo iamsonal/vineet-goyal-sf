@@ -18,7 +18,9 @@ function controllerInvokerFactory(resourceRequest: ResourceRequest): ControllerI
     const ret = appRouter.lookup(resourceRequest);
 
     if (ret === null) {
-        throw new Error(`No invoker matching controller factory: ${path} ${method}.`);
+        if (process.env.NODE_ENV !== 'production') {
+            throw new Error(`No invoker matching controller factory: ${path} ${method}.`);
+        }
     }
 
     return ret;

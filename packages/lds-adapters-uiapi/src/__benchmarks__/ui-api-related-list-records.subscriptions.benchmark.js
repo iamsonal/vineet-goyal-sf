@@ -10,6 +10,7 @@ function clone(data) {
     return JSON.parse(data);
 }
 
+// eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
     const store = new Store();

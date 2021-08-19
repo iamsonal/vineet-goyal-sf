@@ -168,7 +168,7 @@ function mockNetworkOnce(adapter, args, response, headers) {
  * during the test. Fails the test if there is a mismatch.
  */
 function assertNetworkCallCount() {
-    // TODO - W-7095524 - tests will get broken out into shared functional tests
+    // TODO [W-7095524]: tests will get broken out into shared functional tests
     // (that don't test implementation details like network calls) and implementation
     // specific tests (that count network calls), so this "countNetworkCalls" flag
     // will get reworked then.

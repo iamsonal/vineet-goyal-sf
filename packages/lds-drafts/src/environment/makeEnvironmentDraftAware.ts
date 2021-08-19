@@ -31,7 +31,7 @@ export interface DraftEnvironmentOptions {
     store: Store;
     draftQueue: DraftQueue;
     durableStore: RecordDenormalizingDurableStore;
-    // TODO - W-8291468 - have ingest get called a different way somehow
+    // TODO [W-8291468]: have ingest get called a different way somehow
     ingestFunc: (record: RecordRepresentation) => void;
     generateId: (apiName: string) => string;
     isDraftId: (id: string) => boolean;

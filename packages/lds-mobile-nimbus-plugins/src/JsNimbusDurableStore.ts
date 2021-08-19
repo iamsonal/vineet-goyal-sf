@@ -92,6 +92,7 @@ export class JsNimbusDurableStore implements DurableStore {
      * @deprecated Use batchOperations instead
      */
     evictEntriesInSegment(_ids: string[], _segment: string): Promise<void> {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('deprecated');
     }
 
@@ -103,6 +104,7 @@ export class JsNimbusDurableStore implements DurableStore {
         _segment: string,
         _sender: string
     ): Promise<void> {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('deprecated');
     }
 
@@ -161,6 +163,7 @@ export class JsNimbusDurableStore implements DurableStore {
     registerOnChangedListener(
         _listener: (ids: string[], segment: string) => void
     ): Promise<string> {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('deprecated');
     }
 
@@ -170,6 +173,7 @@ export class JsNimbusDurableStore implements DurableStore {
     registerOnChangedListenerWithInfo(
         _listener: (info: DurableStoreChangedInfo) => void
     ): Promise<string> {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('deprecated');
     }
 

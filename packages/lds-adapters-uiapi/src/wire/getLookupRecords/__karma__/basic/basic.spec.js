@@ -153,7 +153,7 @@ describe('getLookupRecords', () => {
         expect(elm.getWiredData()).toEqualSnapshotWithoutEtags(mock);
     });
 
-    // TODO W-7235112 - reenable test when hack is removed
+    // TODO [W-7235112]: reenable test when hack is removed
     xit('should result in a cache hit when same params are requested', async () => {
         const reference = 'lookup-records-Opportunity-AccountId-Account-pageSize-1-q-bu';
         const mock = getMock(reference);
@@ -241,7 +241,7 @@ describe('getLookupRecords', () => {
         expect(elm.getWiredData()).toEqualSnapshotWithoutEtags(mock);
     });
 
-    // TODO W-7235112 - reenable test when hack is removed
+    // TODO [W-7235112]: reenable test when hack is removed
     xit('should result in a cache hit when same requestParams are present', async () => {
         const reference = 'lookup-records-Case-ContactId-Contact';
         const mock = getMock(reference);
@@ -271,7 +271,7 @@ describe('getLookupRecords', () => {
         expect(wireB.getWiredData()).toEqualSnapshotWithoutEtags(mock);
     });
 
-    // TODO W-7235112 - reenable test when hack is removed
+    // TODO [W-7235112]: reenable test when hack is removed
     xit('refresh should refresh lookup records', async () => {
         const reference = 'lookup-records-Opportunity-AccountId-Account-pageSize-1-q-bu';
         const mock = getMock(reference);

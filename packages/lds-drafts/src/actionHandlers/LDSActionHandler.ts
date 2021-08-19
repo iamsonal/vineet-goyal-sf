@@ -88,12 +88,14 @@ export function ldsActionHandler(
         queue: DraftAction<unknown, unknown>[]
     ) => {
         const { data, tag, targetId, handler } = action;
-        if (data.method === 'post' && actionsForTag(tag, queue).length > 0) {
-            throw new Error('Cannot enqueue a POST draft action with an existing tag');
-        }
+        if (process.env.NODE_ENV !== 'production') {
+            if (data.method === 'post' && actionsForTag(tag, queue).length > 0) {
+                throw new Error('Cannot enqueue a POST draft action with an existing tag');
+            }
 
-        if (deleteActionsForTag(tag, queue).length > 0) {
-            throw new Error('Cannot enqueue a draft action for a deleted record');
+            if (deleteActionsForTag(tag, queue).length > 0) {
+                throw new Error('Cannot enqueue a draft action for a deleted record');
+            }
         }
 
         const id = generateUniqueDraftActionId(queue.map((a) => a.id));
@@ -173,21 +175,26 @@ export function ldsActionHandler(
         const actionToReplace = actions.filter((action) => action.id === actionId)[0];
         // get the replacing action
         const replacingAction = actions.filter((action) => action.id === withActionId)[0];
-        // reject if either action is undefined
-        if (actionToReplace === undefined || replacingAction === undefined) {
-            throw new Error('One or both actions does not exist');
-        }
-        // reject if either action is uploading
-        if (actionToReplace.id === uploadingActionId || replacingAction.id === uploadingActionId) {
-            throw new Error('Cannot replace an draft action that is uploading');
-        }
-        // reject if these two draft actions aren't acting on the same target
-        if (actionToReplace.tag !== replacingAction.tag) {
-            throw new Error('Cannot swap actions targeting different targets');
-        }
-        // reject if the replacing action is not pending
-        if (replacingAction.status !== DraftActionStatus.Pending) {
-            throw new Error('Cannot replace with a non-pending action');
+        if (process.env.NODE_ENV !== 'production') {
+            // reject if either action is undefined
+            if (actionToReplace === undefined || replacingAction === undefined) {
+                throw new Error('One or both actions does not exist');
+            }
+            // reject if either action is uploading
+            if (
+                actionToReplace.id === uploadingActionId ||
+                replacingAction.id === uploadingActionId
+            ) {
+                throw new Error('Cannot replace an draft action that is uploading');
+            }
+            // reject if these two draft actions aren't acting on the same target
+            if (actionToReplace.tag !== replacingAction.tag) {
+                throw new Error('Cannot swap actions targeting different targets');
+            }
+            // reject if the replacing action is not pending
+            if (replacingAction.status !== DraftActionStatus.Pending) {
+                throw new Error('Cannot replace with a non-pending action');
+            }
         }
 
         if (
@@ -207,6 +214,7 @@ export function ldsActionHandler(
                 replacingAction: replacingAction,
             };
         } else {
+            // eslint-disable-next-line @salesforce/lds/no-error-in-production
             throw new Error('Incompatable Action types to replace one another');
         }
     };

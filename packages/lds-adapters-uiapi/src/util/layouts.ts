@@ -14,16 +14,19 @@ function isFieldAReferenceWithRelationshipName(
         return false;
     }
 
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO - can reference===true and relationshipName===null?
     return field.reference === true && field.relationshipName !== null;
 }
 
 function getRelationshipName(objectInfo: ObjectInfoRepresentation, fieldApiName: string): string {
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO RAML - fix typing so isFieldAReferenceWithRelationshipName enables calling this without `relationshipName!`
     return objectInfo.fields[fieldApiName].relationshipName!;
 }
 
 export function getNameField(objectInfo: ObjectInfoRepresentation, fieldApiName: string): string {
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO - this logic is adopted from lds222. It searches
     // ObjectInfoRep.ReferenceToInfoRep[].nameFields[]:
     // 1. If any of the arrays are empty returns `Name`

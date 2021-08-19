@@ -165,6 +165,7 @@ export function convertToRecordRepresentation(
 
     const { luvioSelections } = ast;
     if (luvioSelections === undefined) {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('Undefined selections');
     }
 
@@ -304,6 +305,7 @@ function getNonSpanningField(
     const sink: GqlRecordFieldValue = {};
     const { luvioSelections } = sel;
     if (luvioSelections === undefined) {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('Empty selections not supported');
     }
     for (let i = 0, len = luvioSelections.length; i < len; i += 1) {
@@ -312,7 +314,9 @@ function getNonSpanningField(
         const name = sel.name as keyof GqlRecordFieldValue;
         builder.enterPath(name);
         if (kind !== 'ScalarFieldSelection') {
-            throw new Error(`Unexpected kind "${kind}"`);
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error(`Unexpected kind "${kind}"`);
+            }
         }
         builder.assignScalar(name, sink, source[name]);
         builder.exitPath();
@@ -338,16 +342,22 @@ function getScalarValue(selectionName: string, state: RecordDenormalizationState
     if (selectionName === 'DisplayValue') {
         const { parentFieldValue } = state;
         if (parentFieldValue === undefined) {
-            throw new Error('Unable to calculate DisplayValue');
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error('Unable to calculate DisplayValue');
+            } else {
+                return undefined;
+            }
         }
         return parentFieldValue.displayValue;
     }
 
     const assignment = recordProperties[selectionName];
     if (assignment === undefined) {
-        throw new Error(
-            `Unknown assignment for ScalarFieldSelection at property "${selectionName}"`
-        );
+        if (process.env.NODE_ENV !== 'production') {
+            throw new Error(
+                `Unknown assignment for ScalarFieldSelection at property "${selectionName}"`
+            );
+        }
     }
     return state.source[assignment.propertyName] as any;
 }
@@ -475,6 +485,7 @@ function readRecordRepresentation(
 ) {
     const { luvioSelections } = ast;
     if (luvioSelections === undefined) {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('Empty selections not supported');
     }
 

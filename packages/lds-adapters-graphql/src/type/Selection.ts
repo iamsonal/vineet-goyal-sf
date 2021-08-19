@@ -70,7 +70,11 @@ export function resolveKey<D>(builder: Reader<any>, key: string) {
             builder.markLocked();
             return;
         case StoreResolveResultState.Error:
-            throw new Error('TODO: Implement error links');
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error('TODO: Implement error links');
+            } else {
+                return;
+            }
     }
 
     return lookup;
@@ -93,7 +97,13 @@ export function resolveLink<D>(
             builder.markPending();
             return;
         case StoreLinkStateValues.Null:
-            throw new Error(`TODO: Invalid Link State. Link on "${builder.currentPath.fullPath}"`);
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error(
+                    `TODO: Invalid Link State. Link on "${builder.currentPath.fullPath}"`
+                );
+            } else {
+                return;
+            }
     }
 
     const { key: __ref } = linkState;
@@ -118,7 +128,9 @@ export function followLink(
 export function getLuvioFieldNodeSelection(ast: LuvioSelectionNode): LuvioFieldNode {
     const { kind } = ast;
     if (kind === 'FragmentSpread' || kind === 'InlineFragment') {
-        throw new Error('"FragmentSpread" and "InlineFragment" currently not supported');
+        if (process.env.NODE_ENV !== 'production') {
+            throw new Error('"FragmentSpread" and "InlineFragment" currently not supported');
+        }
     }
 
     return ast as LuvioFieldNode;

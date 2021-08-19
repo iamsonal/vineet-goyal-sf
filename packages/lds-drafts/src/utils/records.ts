@@ -68,7 +68,7 @@ export function isDraftActionStoreRecordKey(key: string) {
     return DRAFT_ACTION_KEY_REGEXP.test(key);
 }
 
-// TODO W-8220618 - remove this once generated RecordRepresentation has drafts node on it
+// TODO [W-8220618]: remove this once generated RecordRepresentation has drafts node on it
 export interface DraftRecordRepresentation extends RecordRepresentation {
     drafts?: DraftRepresentation;
 }
@@ -105,7 +105,7 @@ export interface RequestFields {
  * @param value the value to format
  */
 function formatDisplayValue(value: boolean | number | string | null) {
-    // TODO: [W-7919614] This method should properly format displayValues for FieldValueRepresentations
+    // TODO [W-7919614]: This method should properly format displayValues for FieldValueRepresentations
     return value === null ? null : value.toString();
 }
 
@@ -929,6 +929,7 @@ export function ensureReferencedIdsAreCached(
     return Promise.resolve(getObjectInfoAdapter({ objectApiName: apiName }))
         .then((snapshot) => {
             if (snapshot === null || snapshot.data === undefined) {
+                // eslint-disable-next-line @salesforce/lds/no-error-in-production
                 throw new Error(`ObjectInfo for ${apiName} is not cached`);
             }
             return snapshot.data;
@@ -964,7 +965,9 @@ export function ensureReferencedIdsAreCached(
                     const recordKey = recordKeys[i];
                     if (entries[recordKey] === undefined) {
                         const id = extractRecordIdFromStoreKey(recordKey);
-                        throw new Error(`Referenced record ${id} is not cached`);
+                        if (process.env.NODE_ENV !== 'production') {
+                            throw new Error(`Referenced record ${id} is not cached`);
+                        }
                     }
                 }
             });

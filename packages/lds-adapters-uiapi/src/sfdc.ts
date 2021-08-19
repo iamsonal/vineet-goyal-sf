@@ -55,7 +55,10 @@ export const updateRelatedListInfo = (
 ) => {
     const value = baseUpdateRelatedListInfo(config);
     if (value === null) {
-        throw new Error('Invalid config for updateRelatedListInfo');
+        if (process.env.NODE_ENV !== 'production') {
+            throw new Error('Invalid config for updateRelatedListInfo');
+        }
+        return;
     }
     if ('then' in value) {
         return value.then((snapshot) => snapshot.data);
@@ -106,7 +109,7 @@ export {
 } from './uiapi-static-functions';
 
 // This ingestion method needs to be exposed to ingest records coming from the ADS Bridge.
-// TODO W-5971944 - remove the ADS bridge and these exports
+// TODO [W-5971944]: remove the ADS bridge and these exports
 export { keyBuilder as keyBuilderRecord } from './generated/types/RecordRepresentation';
 export {
     ingest as ingestRecord,

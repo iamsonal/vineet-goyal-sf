@@ -30,6 +30,7 @@ interface RelatedListRecordsConfig {
     optionalFields?: string[];
     pageSize?: number;
     sortBy?: string[];
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // pageToken: string; TODO: need support for this on backend to enable.
 }
 

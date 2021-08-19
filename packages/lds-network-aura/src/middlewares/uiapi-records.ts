@@ -149,19 +149,19 @@ if (forceRecordTransactionsDisabled === false) {
 
 const objectInfoStorage = createStorage({
     name: 'ldsObjectInfo',
-    expiration: 5 * 60, // 5 minutes, TODO W-6900122 - Make it sync with RAML definition
+    expiration: 5 * 60, // 5 minutes, TODO [W-6900122]:  Make it sync with RAML definition
 });
 const objectInfoStorageStatsLogger = registerLdsCacheStats('getObjectInfo:storage');
 
 const layoutStorage = createStorage({
     name: 'ldsLayout',
-    expiration: 15 * 60, // 15 minutes, TODO W-6900122 -  Make it sync with RAML definition
+    expiration: 15 * 60, // 15 minutes, TODO [W-6900122]:  Make it sync with RAML definition
 });
 const layoutStorageStatsLogger = registerLdsCacheStats('getLayout:storage');
 
 const layoutUserStateStorage = createStorage({
     name: 'ldsLayoutUserState',
-    expiration: 15 * 60, // 15 minutes, TODO W-6900122 - Make it sync with RAML definition
+    expiration: 15 * 60, // 15 minutes, TODO [W-6900122]: Make it sync with RAML definition
 });
 const layoutUserStateStorageStatsLogger = registerLdsCacheStats('getLayoutUserState:storage');
 
@@ -463,6 +463,7 @@ function updateLayoutUserState(resourceRequest: ResourceRequest): Promise<any> {
 
     return dispatchAction(UiApiRecordController.UpdateLayoutUserState, params, actionConfig).then(
         (response) => {
+            // eslint-disable-next-line @salesforce/lds/no-invalid-todo
             // TODO: Instead of surgically evicting the record that has been updated in the cache we
             // currently dump all the entries. We need a way to recreate the same cache key between
             // getLayoutUserState and updateLayoutUserState.

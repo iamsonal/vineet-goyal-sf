@@ -78,15 +78,18 @@ function refresh(
         }
 
         if (isUnfulfilledSnapshot(snapshot)) {
-            throw new Error(
-                `RecordUi adapter resolved with a snapshot with missing data, missingPaths: ${ObjectKeys(
-                    snapshot.missingPaths
-                )}`
-            );
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error(
+                    `RecordUi adapter resolved with a snapshot with missing data, missingPaths: ${ObjectKeys(
+                        snapshot.missingPaths
+                    )}`
+                );
+            }
         }
 
         const { data } = snapshot;
         if (data === undefined) {
+            // eslint-disable-next-line @salesforce/lds/no-error-in-production
             throw new Error(
                 `RecordUi adapter resolved with a ${snapshot.state} snapshot with undefined data`
             );
@@ -178,15 +181,18 @@ function processRecordUiRepresentation(
         return luvio.errorSnapshot(snapshot.error, refresh);
     }
     if (isUnfulfilledSnapshot(snapshot)) {
-        throw new Error(
-            `RecordUi adapter resolved with a snapshot with missing data, missingPaths: ${ObjectKeys(
-                snapshot.missingPaths
-            )}`
-        );
+        if (process.env.NODE_ENV !== 'production') {
+            throw new Error(
+                `RecordUi adapter resolved with a snapshot with missing data, missingPaths: ${ObjectKeys(
+                    snapshot.missingPaths
+                )}`
+            );
+        }
     }
 
     const { data } = snapshot;
     if (data === undefined) {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error(
             `RecordUi adapter resolved with a ${snapshot.state} snapshot with undefined data`
         );

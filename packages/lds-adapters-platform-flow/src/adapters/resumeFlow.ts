@@ -37,7 +37,9 @@ export function buildNetworkSnapshot(
                 return response.body;
             },
             (response: any) => {
-                throw new Error(response.body.message || response.body);
+                if (process.env.NODE_ENV !== 'production') {
+                    throw new Error(response.body.message || response.body);
+                }
             }
         );
 }

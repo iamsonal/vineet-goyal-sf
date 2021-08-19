@@ -172,6 +172,7 @@ describe('layout', () => {
         const mockFullLayoutRecord = mockRecordUiData.records[recordId];
 
         const recordFields = extractRecordFields(mockFullLayoutRecord, {
+            // eslint-disable-next-line @salesforce/lds/no-invalid-todo
             // TODO: this seems a bug (UIAPI). In object-info, the CampaignId fields has referenceToInfos which points to
             // Campaign with Name fields. However, in the record-ui, Campaign has a null value.
             omit: ['Opportunity.Campaign'],
@@ -210,6 +211,7 @@ describe('layout', () => {
     it('should not go to network (record-ui) when record apiName, layout, and object-info are available locally', async () => {
         // Mock record fields request w/ null recordTypeId
         const mockRecordNameField = getMock('record-Opportunity-fields-Opportunity.Name');
+        // eslint-disable-next-line @salesforce/lds/no-invalid-todo
         // TODO: it should use real record which does not support record type.
         mockRecordNameField.recordTypeId = null;
 
@@ -243,6 +245,7 @@ describe('layout', () => {
         const mockFullLayoutRecord = mockRecordUiData.records[recordId];
 
         const recordFields = extractRecordFields(mockFullLayoutRecord, {
+            // eslint-disable-next-line @salesforce/lds/no-invalid-todo
             // TODO: this seems a bug (UIAPI). In object-info, the CampaignId fiedls has referenceToInfos which points to
             // Campaign with Name fields. However, in the record-ui, Campaign has a null value.
             omit: ['Opportunity.Campaign'],

@@ -168,7 +168,7 @@ export function buildInMemorySnapshot(
             },
             variables: {},
         },
-        // TODO - W-9601746 - today makeDurable environment needs a refresh set for
+        // TODO [W-9601746]: today makeDurable environment needs a refresh set for
         // "resolveSnapshot" override to work properly, but once this work
         // item is done we won't need to pass in a refresh here
         buildSnapshotRefresh(luvio, config) as unknown as SnapshotRefresh<Selector>
@@ -262,6 +262,7 @@ function onResourceResponseSuccess(
 ) {
     const { recordIds, layoutTypes, modes, optionalFields } = config;
 
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO fix API so we don't have to augment the response with request details in order
     // to support refresh. these are never emitted out per (private).
     eachLayout(

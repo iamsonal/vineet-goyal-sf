@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-// TODO W-9523236 - add test coverage for this file and remove above comment
+// TODO [W-9523236]: add test coverage for this file and remove above comment
 
 import { DraftQueue as NimbusDraftQueue } from '@mobileplatform/nimbus-plugin-lds';
 

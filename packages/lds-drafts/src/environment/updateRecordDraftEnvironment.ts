@@ -215,7 +215,7 @@ export function updateRecordDraftEnvironment(
      */
     function enqueueRequest(request: ResourceRequest, key: string, targetId: string) {
         return draftQueue.enqueue(createLDSAction(targetId, key, request)).then(() => {
-            // TODO: [W-8195289] Draft edited records should include all fields in the Full/View layout if possible
+            // TODO [W-8195289]: Draft edited records should include all fields in the Full/View layout if possible
             const fields = getRecordFieldsFromRecordRequest(request);
             if (fields === undefined) {
                 throw createBadRequestResponse({

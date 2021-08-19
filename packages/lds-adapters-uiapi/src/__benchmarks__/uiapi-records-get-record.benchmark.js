@@ -69,6 +69,7 @@ ingestRecord(deepRecord.data, deepRecord.data.id, luvio, store);
 ingestRecord(wideRecord.data, wideRecord.data.id, luvio, store);
 ingestRecord(balancedRecord.data, balancedRecord.data.id, luvio, store);
 
+// eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO: Remove warmup once BEST does this internally.
 for (let i = 0; i < WARM_UP_ITERATION_COUNT; i++) {
     getRecord({

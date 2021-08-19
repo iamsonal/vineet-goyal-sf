@@ -36,7 +36,7 @@ module.exports = {
     // JEST can't handle ESM so we have to tell it to transform some of the
     // node_modules that only export ESM.  This stinks because it makes it harder
     // to debug jest tests.
-    // TODO - when jest supports ESM natively (https://github.com/facebook/jest/issues/9430)
+    // TODO [facebook/jest#9430]: when jest supports ESM natively (https://github.com/facebook/jest/issues/9430)
     // get rid of the esm-to-cjs transform - ie: remove the below line and get
     // rid of the plugin-transform-modules-commonjs in babel config
     transformIgnorePatterns: [

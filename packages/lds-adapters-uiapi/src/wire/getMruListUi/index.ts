@@ -51,6 +51,7 @@ import { isFulfilledSnapshot } from '../../util/snapshot';
 
 const LIST_REFERENCE_SELECTIONS = ListReferenceRepresentation_select();
 
+// eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO RAML - this more properly goes in the generated resource files
 const DEFAULT_PAGE_SIZE = 50;
 
@@ -131,6 +132,7 @@ function buildListUiFragment(
                                 config.pageSize === undefined ? DEFAULT_PAGE_SIZE : config.pageSize,
                         }),
                         {
+                            // eslint-disable-next-line @salesforce/lds/no-invalid-todo
                             // TODO - check type; re-verify after sortBy added to key
                             kind: 'Scalar',
                             name: 'sortBy',

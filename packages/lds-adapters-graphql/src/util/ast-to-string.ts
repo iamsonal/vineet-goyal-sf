@@ -58,7 +58,9 @@ export function serializeValueNode(valueDefinition: LuvioValueNode) {
             ).value;
     }
 
-    throw new Error(`Unable to serialize graphql query, unsupported value node "${kind}"`);
+    if (process.env.NODE_ENV !== 'production') {
+        throw new Error(`Unable to serialize graphql query, unsupported value node "${kind}"`);
+    }
 }
 
 function serializeVariableNode(variableNode: LuvioVariableNode) {
@@ -159,9 +161,12 @@ function serializeTypeNode(type: LuvioTypeNode): string {
         case 'ListType':
             return serializeListTypeNode(type as LuvioListTypeNode);
     }
-    throw new Error(
-        `Unable to serialize graphql query, unsupported variable definition type node "${type.kind}"`
-    );
+    if (process.env.NODE_ENV !== 'production') {
+        throw new Error(
+            `Unable to serialize graphql query, unsupported variable definition type node "${type.kind}"`
+        );
+    }
+    return '';
 }
 
 function serializeNamedTypeNode(type: LuvioNamedTypeNode) {
@@ -178,6 +183,7 @@ function serializeObjectFieldNodeUnderRecord(node: LuvioSelectionObjectFieldNode
     let result = ``;
 
     if (luvioSelections === undefined) {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('selection should not be empty for ObjectFieldNodeUnderRecord');
     }
 
@@ -186,17 +192,21 @@ function serializeObjectFieldNodeUnderRecord(node: LuvioSelectionObjectFieldNode
         const sel = getLuvioFieldNodeSelection(luvioSelections[i]);
         const { name } = sel;
         if (sel.kind !== 'ScalarFieldSelection') {
-            throw new Error(
-                `Invalid selection for ${nodeName}. ${nodeName} appears to be a Record, but is missing @resource(type: "Record")`
-            );
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error(
+                    `Invalid selection for ${nodeName}. ${nodeName} appears to be a Record, but is missing @resource(type: "Record")`
+                );
+            }
         }
 
         if (RECORD_DEFAULT_FIELD_VALUES.indexOf(name) === -1) {
-            throw new Error(
-                `Invalid selection for "${nodeName}.${name}". Only ${RECORD_DEFAULT_FIELD_VALUES.join(
-                    ', '
-                )} are supported. If "${nodeName}" is a spanning Record, please include @resource(type: "Record") directive.`
-            );
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error(
+                    `Invalid selection for "${nodeName}.${name}". Only ${RECORD_DEFAULT_FIELD_VALUES.join(
+                        ', '
+                    )} are supported. If "${nodeName}" is a spanning Record, please include @resource(type: "Record") directive.`
+                );
+            }
         }
 
         fields[name] = true;
@@ -247,7 +257,9 @@ function serializeFieldNode(def: LuvioSelectionNode, state: SerializeState) {
             return serializeScalarFieldNode(def as LuvioSelectionScalarFieldNode);
     }
 
-    throw new Error(`Unable to serialize graphql query, unsupported field node "${kind}"`);
+    if (process.env.NODE_ENV !== 'production') {
+        throw new Error(`Unable to serialize graphql query, unsupported field node "${kind}"`);
+    }
 }
 
 function serializeScalarFieldNode(def: LuvioSelectionScalarFieldNode) {
@@ -313,7 +325,11 @@ function serializeCustomFieldNode(def: LuvioSelectionCustomFieldNode, state: Ser
             return serializeCustomFieldRecord(def, state);
     }
 
-    throw new Error(`Unable to serialize graphql query, unsupported CustomField type "${type}"`);
+    if (process.env.NODE_ENV !== 'production') {
+        throw new Error(
+            `Unable to serialize graphql query, unsupported CustomField type "${type}"`
+        );
+    }
 }
 
 function serializeOperationNode(def: LuvioDefinitionNode, state: SerializeState) {
@@ -323,9 +339,11 @@ function serializeOperationNode(def: LuvioDefinitionNode, state: SerializeState)
             return serializeOperationDefinition(def as LuvioOperationDefinitionNode, state);
     }
 
-    throw new Error(
-        `Unable to serialize graphql query, unsupported OperationDefinition type "${kind}"`
-    );
+    if (process.env.NODE_ENV !== 'production') {
+        throw new Error(
+            `Unable to serialize graphql query, unsupported OperationDefinition type "${kind}"`
+        );
+    }
 }
 
 export function serializeOperationDefinition(

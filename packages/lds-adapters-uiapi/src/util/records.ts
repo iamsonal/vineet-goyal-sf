@@ -497,7 +497,9 @@ export function generateRecordInputForUpdate(
         objectInfo
     );
     if (!record.id) {
-        throw new Error('record must have id for update');
+        if (process.env.NODE_ENV !== 'production') {
+            throw new Error('record must have id for update');
+        }
     }
     // Always copy over any existing id.
     recordInput.fields.Id = record.id;
@@ -731,7 +733,7 @@ function _markMissingPath(
     const fieldName = path.shift()!;
 
     if (fieldValueRepresentation.isUndefined(fieldName) === true) {
-        // TODO W-6900046 - remove cast, make RecordRepresentationNormalized['fields'] accept
+        // TODO [W-6900046]: remove cast, make RecordRepresentationNormalized['fields'] accept
         // an undefined/non-present __ref if isMissing is present
         fieldValueRepresentation.write(fieldName, {
             __ref: undefined,
@@ -746,7 +748,7 @@ function _markMissingPath(
         );
 
     if (link.isPending()) {
-        // TODO W-6900046 - remove cast, make RecordRepresentationNormalized['fields'] accept
+        // TODO [W-6900046]: remove cast, make RecordRepresentationNormalized['fields'] accept
         // an undefined/non-present __ref if isMissing is present
         fieldValueRepresentation.write(fieldName, {
             __ref: undefined,

@@ -52,6 +52,7 @@ function createResourceRequestFromRepresentation(
     return getUiApiRecordsByRecordId(config);
 }
 
+// eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO: this should probably be code generated in RecordRepresentation
 function coerceKeyParams(config: KeyParams): KeyParams {
     const coercedConfig = {} as KeyParams;

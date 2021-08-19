@@ -25,6 +25,7 @@ const ADAPTERS_NOT_DEFINED_IN_OVERLAY = [
 const CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER = 'createWireAdapterConstructor';
 const CREATE_LDS_ADAPTER = 'createLDSAdapter';
 
+// eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO: scan raml-artifacts folder and generate this map
 const RAML_ARTIFACTS = {
     '/adapters/getRecords': [

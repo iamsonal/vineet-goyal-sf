@@ -1,4 +1,5 @@
 export class NameToIdCache {
+    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
     // TODO: change this to a cross-session api (e.g. for offline mobile support)
     private cache: { [name: string]: string | undefined } = {};
 

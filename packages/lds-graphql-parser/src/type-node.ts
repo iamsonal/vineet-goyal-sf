@@ -31,9 +31,11 @@ export function transform(node: TypeNode): LuvioTypeNode {
                 },
             };
         } else {
+            // eslint-disable-next-line @salesforce/lds/no-error-in-production
             throw new Error('Unsupported NonNullTypeNode');
         }
     } else {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error('Unsupported TypeNode');
     }
 }

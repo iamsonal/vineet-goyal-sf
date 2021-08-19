@@ -55,6 +55,7 @@ export const factory = (luvio: Luvio) => {
 
         // Invalid or incomplete config
         if (config === null) {
+            // eslint-disable-next-line @salesforce/lds/no-error-in-production
             throw new Error('Invalid recordInput');
         }
 

@@ -149,6 +149,7 @@ function coerceConfigWithDefaults(
 ): UpdateUserLayoutStateConfigWithDefaults {
     const config = coerceGetLayoutUserStateConfigWithDefaults(untrusted);
     if (config === null) {
+        // eslint-disable-next-line @salesforce/lds/no-error-in-production
         throw new Error(
             `@wire(updateLayoutUserState) invalid configuration ${JSONStringify(untrusted)}`
         );
@@ -179,9 +180,11 @@ export const factory = (luvio: Luvio): UpdateLayoutUserStateAdapter => {
         };
         const config = coerceConfigWithDefaults(untrusted, untrustedLayoutUserStateInput);
         if (config === null) {
-            throw new Error(
-                `@wire(updateLayoutUserState) invalid configuration ${JSONStringify(untrusted)}`
-            );
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error(
+                    `@wire(updateLayoutUserState) invalid configuration ${JSONStringify(untrusted)}`
+                );
+            }
         }
 
         const { objectApiName, layoutType, mode, recordTypeId, layoutUserStateInput } = config;

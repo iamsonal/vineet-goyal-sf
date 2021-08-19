@@ -87,7 +87,9 @@ export function generateUniqueDraftActionId(existingIds: string[]) {
         // if the counter is 100+ then somehow this method has been called 100
         // times in one millisecond
         if (counter >= 100) {
-            throw new Error('Unable to generate unique new draft ID');
+            if (process.env.NODE_ENV !== 'production') {
+                throw new Error('Unable to generate unique new draft ID');
+            }
         }
     }
 
@@ -450,12 +452,16 @@ export class DurableDraftQueue implements DraftQueue {
             //Get the store key for the removed action
             const actions = queue.filter((action) => action.id === actionId);
             if (actions.length === 0) {
-                throw new Error(`No removable action with id ${actionId}`);
+                if (process.env.NODE_ENV !== 'production') {
+                    throw new Error(`No removable action with id ${actionId}`);
+                }
             }
 
             const action = actions[0];
             if (action.id === this.uploadingActionId) {
-                throw new Error(`Cannot remove an uploading draft action with ID ${actionId}`);
+                if (process.env.NODE_ENV !== 'production') {
+                    throw new Error(`Cannot remove an uploading draft action with ID ${actionId}`);
+                }
             }
 
             let durableStoreKey = buildDraftDurableStoreKey(action.tag, action.id);
@@ -510,7 +516,7 @@ export class DurableDraftQueue implements DraftQueue {
                     first.handler
                 ].replaceAction(actionId, withActionId, this.uploadingActionId, actions);
 
-                // TODO: W-8873834 - Will add batching support to durable store
+                // TODO [W-8873834]: Will add batching support to durable store
                 // we should use that here to remove and set both actions in one operation
                 return this.removeDraftAction(replacingAction.id).then(() => {
                     const entry: DurableStoreEntry<PendingDraftAction<unknown, unknown>> = {

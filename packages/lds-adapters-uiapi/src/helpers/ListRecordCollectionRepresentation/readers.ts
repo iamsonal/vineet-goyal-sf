@@ -75,7 +75,7 @@ export function url(
     let urlProp = selection.name;
     let tokenProp = `${urlProp.substring(0, urlProp.indexOf('Url'))}Token`;
 
-    // TODO W-6741077 Remove this change when craig sets the currentPageUrl
+    // TODO [W-6741077]: Remove this change when craig sets the currentPageUrl
     if (variables[tokenProp] && record.currentPageUrl) {
         // currentPageUrl should never be empty so use that as the template
         variables[urlProp] = record.currentPageUrl

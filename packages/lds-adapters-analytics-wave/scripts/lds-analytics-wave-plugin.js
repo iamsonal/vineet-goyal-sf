@@ -7,6 +7,7 @@
 const path = require('path');
 const basePlugin = require('../../lds-compiler-plugins');
 
+// eslint-disable-next-line @salesforce/lds/no-invalid-todo
 // TODO: build support for raml-artifacts/ partial overrides into the base plugin
 
 // the custom adapter partial files

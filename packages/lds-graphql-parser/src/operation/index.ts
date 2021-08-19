@@ -8,5 +8,6 @@ export function transform(node: OperationDefinitionNode): LuvioOperationDefiniti
         return QueryTransform(node);
     }
 
+    // eslint-disable-next-line @salesforce/lds/no-error-in-production
     throw new Error(`Unsupported ${operation} operation. Only query operation is supported`);
 }

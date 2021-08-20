@@ -8,6 +8,7 @@ declare var $A:
     | {
           getContext: () => {
               getMode: () => string;
+              test: string | undefined;
           };
       }
     | undefined;
@@ -29,8 +30,7 @@ declare var $A:
 if (
     typeof $A !== 'undefined' &&
     $A.getContext().getMode().indexOf('AUTOJSTEST') > -1 &&
-    typeof window !== 'undefined' &&
-    window.location.href.indexOf('auratest/test.app') > -1
+    $A.getContext().test
 ) {
     const storeOptions = {
         scheduler: () => {},

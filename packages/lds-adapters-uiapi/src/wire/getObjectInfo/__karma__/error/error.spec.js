@@ -1,6 +1,5 @@
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import { expireObjectInfo, mockGetObjectInfoNetwork } from 'uiapi-test-util';
-import { refresh } from 'lds-adapters-uiapi';
 
 import ObjectBasic from '../lwc/object-basic';
 
@@ -166,67 +165,34 @@ describe('getObjectInfo - fetch errors', () => {
         expect(elementB.getWiredData()).toEqualSnapshotWithoutEtags(mock);
     });
 
-    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
-    // TODO: Implement error snapshot subscription
-    xit('should emit error when refresh results in error', async () => {
-        const mock = getMock('object-Account');
-        const mockError = getMock('object-error');
+    it('should emit error when refresh results in error', async () => {
+        const mockAccount = getMock('object-Account');
+        const mockErrorObject = getMock('object-error');
+        const mockError = {
+            ok: false,
+            status: 404,
+            statusText: 'NOT_FOUND',
+            body: mockErrorObject,
+        };
 
         const config = { objectApiName: 'Account' };
         mockGetObjectInfoNetwork(config, [
-            mock,
+            mockAccount,
             {
                 reject: true,
-                data: { body: mockError },
+                data: mockError,
             },
         ]);
 
         const element = await setupElement(config, ObjectBasic);
 
         expect(element.pushCount()).toBe(1);
-
         try {
             await element.refresh();
-            fail();
+            fail('refresh call is expected to throw when error response is returned.');
         } catch (e) {
-            expect(element.getWiredError()).toContainErrorBody(mockError);
+            expect(element.getWiredError()).toEqual(mockError);
+            expect(element.getWiredError()).toBeImmutable();
         }
-    });
-
-    // eslint-disable-next-line @salesforce/lds/no-invalid-todo
-    // TODO: Once a component receives an error, we DO NOT ever provision another
-    // value for the component. This matches existing 222 behavior, but we should
-    // investigate enabling this.
-    xit('should emit correct object when error is refreshed', async () => {
-        const mock = getMock('object-Account');
-        const mockError = getMock('object-error');
-
-        const config = { objectApiName: 'Account' };
-        mockGetObjectInfoNetwork(config, [
-            {
-                reject: true,
-                data: { body: mockError },
-            },
-            mock,
-        ]);
-
-        const element = await setupElement(config, ObjectBasic);
-
-        expect(element.pushCount()).toBe(1);
-        expect(element.getWiredError()).toEqual(mockError);
-        expect(element.getWiredError()).toBeImmutable();
-
-        const refreshed = await refresh(element.getWiredError());
-
-        expect(refreshed).toBeUndefined();
-
-        // New push
-        expect(element.pushCount()).toBe(2);
-
-        // Should not have an error
-        expect(element.getWiredError()).toBeUndefined();
-
-        // Should have new data
-        expect(element.getData()).toEqualSnapshotWithoutEtags(mock);
     });
 });

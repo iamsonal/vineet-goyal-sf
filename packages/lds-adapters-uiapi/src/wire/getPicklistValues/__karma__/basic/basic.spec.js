@@ -159,14 +159,44 @@ describe('picklist values', () => {
         expect(elm.getWiredError()).toContainErrorBody(mock);
     });
 
-    // currently no forking logic on 304 (yet)
-    xit('304 correctly handled for single picklist field');
-    xit(
-        'verifies a 404 request because of a bad field api name results in observable emitting a 404 error'
-    );
-    xit(
-        'verifies a 404 request because of a bad object api name results in observable emitting a 404 error'
-    );
+    it('verifies a 404 request because of a bad field api name results in observable emitting a 404 error', async () => {
+        const mock = getMock('picklist-Account-bad-fieldApiName');
+        const mockError = {
+            ok: false,
+            status: 404,
+            statusText: 'NOT_FOUND',
+            body: mock,
+        };
+        const config = {
+            fieldApiName: 'Account.BadField',
+            recordTypeId: MASTER_RECORD_TYPE_ID,
+        };
+
+        mockGetPicklistValuesNetwork(config, { reject: true, data: mockError });
+        const elm = await setupElement(config, GetPicklistValues);
+        expect(elm.getWiredError()).toEqual(mockError);
+        expect(elm.getWiredError()).toBeImmutable();
+    });
+
+    it('verifies a 404 request because of a bad object api name results in observable emitting a 404 error', async () => {
+        const mock = getMock('picklist-Account-bad-objectApiName');
+        const mockError = {
+            ok: false,
+            status: 404,
+            statusText: 'NOT_FOUND',
+            body: mock,
+        };
+
+        const config = {
+            fieldApiName: 'BadObjectName.Type',
+            recordTypeId: MASTER_RECORD_TYPE_ID,
+        };
+
+        mockGetPicklistValuesNetwork(config, { reject: true, data: mockError });
+        const elm = await setupElement(config, GetPicklistValues);
+        expect(elm.getWiredError()).toEqual(mockError);
+        expect(elm.getWiredError()).toBeImmutable();
+    });
 
     describe('refresh', () => {
         it('should refresh get picklist values', async () => {

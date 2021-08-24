@@ -20,6 +20,7 @@ import {
     time,
     timer,
     Timer,
+    PercentileHistogram,
 } from 'instrumentation/service';
 
 import {
@@ -868,6 +869,21 @@ function counterMetric(name: string, value: number) {
     } else {
         metric.decrement(value * -1);
     }
+}
+
+const percentileHistogramMetricTracker: Record<string, PercentileHistogram> = ObjectCreate(null);
+/**
+ * Calls instrumentation/service telemetry percentileHistogram
+ * @param name Name of the metric
+ * @param value number to update the percentileHistogram with
+ */
+export function updatePercentileHistogramMetric(name: string, value: number) {
+    let metric = percentileHistogramMetricTracker[name];
+    if (metric === undefined) {
+        metric = percentileHistogram(createMetricsKey(NAMESPACE, name));
+        percentileHistogramMetricTracker[name] = metric;
+    }
+    metric.update(value);
 }
 
 function instrumentStoreTrimTask(callback: () => number) {

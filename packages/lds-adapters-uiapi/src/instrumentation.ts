@@ -7,12 +7,12 @@ export interface LdsUiapiInstrumentation {
      * parameter indicates the number of server requests that were needed
      * to fully resolve all the record conflicts.
      */
-    recordConflictsResolved?: (serverRequestCount: Number) => void;
+    recordConflictsResolved?: (serverRequestCount: number) => void;
 }
 
 // For use by callers within this module to instrument interesting things.
 export let instrumentation = {
-    recordConflictsResolved: (_serverRequestCount: Number) => {},
+    recordConflictsResolved: (_serverRequestCount: number) => {},
 };
 
 /**

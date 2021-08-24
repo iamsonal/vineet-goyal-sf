@@ -6,7 +6,7 @@ import {
 } from '@luvio/adapter-test-library';
 import { ResourceRequest } from '@luvio/engine';
 import {
-    Action,
+    LDSAction,
     CompletedDraftAction,
     DraftAction,
     DraftActionStatus,
@@ -174,11 +174,12 @@ describe('LDSActionHandler', () => {
             );
         });
         it('throws error when post and already in queue', async () => {
-            const action: Action<ResourceRequest> = {
+            const action: LDSAction<ResourceRequest> = {
                 data: DEFAULT_POST_REQUEST,
                 handler: LDS_ACTION_HANDLER_ID,
                 tag: '1234',
                 targetId: '1234',
+                targetApiName: 'Account',
             };
             const draft: PendingDraftAction<unknown, ResourceRequest> = {
                 data: DEFAULT_POST_REQUEST,
@@ -196,11 +197,12 @@ describe('LDSActionHandler', () => {
         });
 
         it('throws error when delete and already in queue', async () => {
-            const action: Action<ResourceRequest> = {
+            const action: LDSAction<ResourceRequest> = {
                 data: DEFAULT_DELETE_REQUEST,
                 handler: LDS_ACTION_HANDLER_ID,
                 tag: '1234',
                 targetId: '1234',
+                targetApiName: 'Account',
             };
             const draft: PendingDraftAction<unknown, ResourceRequest> = {
                 data: DEFAULT_DELETE_REQUEST,
@@ -218,11 +220,12 @@ describe('LDSActionHandler', () => {
         });
 
         it('returns pending draft action', async () => {
-            const action: Action<ResourceRequest> = {
+            const action: LDSAction<ResourceRequest> = {
                 data: DEFAULT_DELETE_REQUEST,
                 handler: LDS_ACTION_HANDLER_ID,
                 tag: '1234',
                 targetId: '1234',
+                targetApiName: 'Account',
             };
 
             const subject = handler.buildPendingAction(action, []);
@@ -238,6 +241,34 @@ describe('LDSActionHandler', () => {
                 },
                 handler: 'LDS_ACTION_HANDLER',
                 metadata: {},
+                status: 'pending',
+                tag: '1234',
+                targetId: '1234',
+            });
+        });
+
+        it('adds object type to metadata', async () => {
+            const action: LDSAction<ResourceRequest> = {
+                data: DEFAULT_DELETE_REQUEST,
+                handler: LDS_ACTION_HANDLER_ID,
+                tag: '1234',
+                targetId: '1234',
+                targetApiName: 'Account',
+            };
+
+            const subject = handler.buildPendingAction(action, []);
+            expect(subject).toMatchObject({
+                data: {
+                    basePath: '/blah',
+                    baseUri: 'blahuri',
+                    body: null,
+                    headers: {},
+                    method: 'delete',
+                    queryParams: {},
+                    urlParams: {},
+                },
+                handler: 'LDS_ACTION_HANDLER',
+                metadata: { LDS_ACTION_METADATA_API_NAME: 'Account' },
                 status: 'pending',
                 tag: '1234',
                 targetId: '1234',

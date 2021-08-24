@@ -18,7 +18,12 @@ import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
 describe('draft environment tests', () => {
     describe('updateRecord', () => {
         it('request gets enqueued with key as tag', async () => {
-            const { durableStore, draftEnvironment, draftQueue } = await setupDraftEnvironment();
+            const apiNameMock = () => {
+                return Promise.resolve('Account');
+            };
+            const { durableStore, draftEnvironment, draftQueue } = await setupDraftEnvironment({
+                apiNameForPrefix: apiNameMock,
+            });
             mockDurableStoreResponse(durableStore);
             const request = createPatchRequest();
             await draftEnvironment.dispatchResourceRequest(request);
@@ -27,7 +32,22 @@ describe('draft environment tests', () => {
                 tag: STORE_KEY_RECORD,
                 targetId: RECORD_ID,
                 handler: LDS_ACTION_HANDLER_ID,
+                targetApiName: 'Account',
             });
+        });
+
+        it('throws if api name not cached', async () => {
+            const apiNameMock = () => {
+                throw Error();
+            };
+            const { durableStore, draftEnvironment } = await setupDraftEnvironment({
+                apiNameForPrefix: apiNameMock,
+            });
+            mockDurableStoreResponse(durableStore);
+            const request = createPatchRequest();
+            expect(() => {
+                draftEnvironment.dispatchResourceRequest(request);
+            }).toThrow();
         });
 
         it('record gets evicted from store prior to revival', async () => {
@@ -92,6 +112,7 @@ describe('draft environment tests', () => {
                 tag: redirected2Key,
                 targetId: redirected2,
                 handler: LDS_ACTION_HANDLER_ID,
+                targetApiName: 'Account',
             });
         });
 
@@ -248,6 +269,7 @@ describe('draft environment tests', () => {
                 tag: STORE_KEY_RECORD,
                 targetId: RECORD_ID,
                 handler: LDS_ACTION_HANDLER_ID,
+                targetApiName: 'Account',
             });
         });
 
@@ -299,6 +321,7 @@ describe('draft environment tests', () => {
                 tag: STORE_KEY_RECORD,
                 targetId: RECORD_ID,
                 handler: LDS_ACTION_HANDLER_ID,
+                targetApiName: 'Account',
             });
             expect(network).toBeCalledTimes(1);
             expect(response.status).toBe(200);

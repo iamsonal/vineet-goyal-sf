@@ -151,6 +151,13 @@ export function isDraftRecordRepresentationNormalized(
     return (record as any).drafts !== undefined;
 }
 
+export function prefixForRecordId(recordId: string): string {
+    if (recordId.length >= 3) {
+        return recordId.slice(0, 3);
+    }
+    return '';
+}
+
 /**
  * Builds synthetic FieldValueRepresentations for fields that have draft changes applied
  * @param fields List of draft record fields

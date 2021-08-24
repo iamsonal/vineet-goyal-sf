@@ -196,6 +196,7 @@ export class DraftManager {
                 data: metadata,
                 handler,
                 targetId,
+                targetApiName: undefined,
                 tag,
             })
             .then(this.buildDraftQueueItem);

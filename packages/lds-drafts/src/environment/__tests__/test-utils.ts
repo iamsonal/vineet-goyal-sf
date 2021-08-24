@@ -47,6 +47,9 @@ export async function setupDraftEnvironment(
         removeDraftAction: jest.fn(),
         replaceAction: jest.fn(),
         setMetadata: jest.fn(),
+        addCustomHandler: jest.fn(),
+        addHandler: jest.fn(),
+        removeHandler: jest.fn(),
     };
 
     durableStore = makeDurableStoreDraftAware(

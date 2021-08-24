@@ -93,7 +93,12 @@ describe('draft environment tests', () => {
         });
 
         it('request gets enqueued with key as tag', async () => {
-            const { draftEnvironment, draftQueue, durableStore } = await setupDraftEnvironment();
+            const apiNameMock = () => {
+                return Promise.resolve('Account');
+            };
+            const { draftEnvironment, draftQueue, durableStore } = await setupDraftEnvironment({
+                apiNameForPrefix: apiNameMock,
+            });
             let assignedDraftId = '';
             let assignedDraftIdStoreKey = '';
             durableStore.getDenormalizedRecord = jest.fn().mockImplementation((key) => {
@@ -140,6 +145,7 @@ describe('draft environment tests', () => {
                 tag: assignedDraftIdStoreKey,
                 targetId: CREATE_DRAFT_RECORD_ID,
                 handler: LDS_ACTION_HANDLER_ID,
+                targetApiName: 'Account',
             });
         });
 
@@ -273,6 +279,7 @@ describe('draft environment tests', () => {
                 tag: STORE_KEY_DRAFT_RECORD,
                 targetId: CREATE_DRAFT_RECORD_ID,
                 handler: LDS_ACTION_HANDLER_ID,
+                targetApiName: 'Account',
             });
         });
 

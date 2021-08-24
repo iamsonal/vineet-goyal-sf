@@ -5,7 +5,7 @@ import {
     DurableStoreOperationType,
 } from '@luvio/environments';
 import {
-    Action,
+    LDSAction,
     CompletedDraftAction,
     DraftAction,
     DraftActionStatus,
@@ -28,14 +28,17 @@ import { buildDraftDurableStoreKey } from '../utils/records';
 import { ActionHandler } from './ActionHandler';
 
 export const LDS_ACTION_HANDLER_ID = 'LDS_ACTION_HANDLER';
+export const LDS_ACTION_METADATA_API_NAME = 'LDS_ACTION_METADATA_API_NAME';
 
 export function createLDSAction(
     targetId: string,
+    targetApiName: string,
     tag: string,
     data: ResourceRequest
-): Action<ResourceRequest> {
+): LDSAction<ResourceRequest> {
     return {
         targetId,
+        targetApiName,
         tag,
         data,
         handler: LDS_ACTION_HANDLER_ID,
@@ -84,10 +87,10 @@ export function ldsActionHandler(
     };
 
     const buildPendingAction = <Response>(
-        action: Action<ResourceRequest>,
+        action: LDSAction<ResourceRequest>,
         queue: DraftAction<unknown, unknown>[]
     ) => {
-        const { data, tag, targetId, handler } = action;
+        const { data, tag, targetId, handler, targetApiName } = action;
         if (process.env.NODE_ENV !== 'production') {
             if (data.method === 'post' && actionsForTag(tag, queue).length > 0) {
                 throw new Error('Cannot enqueue a POST draft action with an existing tag');
@@ -106,7 +109,7 @@ export function ldsActionHandler(
             data,
             tag,
             timestamp: Date.now(),
-            metadata: {},
+            metadata: { LDS_ACTION_METADATA_API_NAME: targetApiName },
             handler,
         } as PendingDraftAction<Response, ResourceRequest>;
     };
@@ -175,26 +178,25 @@ export function ldsActionHandler(
         const actionToReplace = actions.filter((action) => action.id === actionId)[0];
         // get the replacing action
         const replacingAction = actions.filter((action) => action.id === withActionId)[0];
-        if (process.env.NODE_ENV !== 'production') {
-            // reject if either action is undefined
-            if (actionToReplace === undefined || replacingAction === undefined) {
-                throw new Error('One or both actions does not exist');
-            }
-            // reject if either action is uploading
-            if (
-                actionToReplace.id === uploadingActionId ||
-                replacingAction.id === uploadingActionId
-            ) {
-                throw new Error('Cannot replace an draft action that is uploading');
-            }
-            // reject if these two draft actions aren't acting on the same target
-            if (actionToReplace.tag !== replacingAction.tag) {
-                throw new Error('Cannot swap actions targeting different targets');
-            }
-            // reject if the replacing action is not pending
-            if (replacingAction.status !== DraftActionStatus.Pending) {
-                throw new Error('Cannot replace with a non-pending action');
-            }
+        // reject if either action is undefined
+        if (actionToReplace === undefined || replacingAction === undefined) {
+            // eslint-disable-next-line @salesforce/lds/no-error-in-production
+            throw new Error('One or both actions does not exist');
+        }
+        // reject if either action is uploading
+        if (actionToReplace.id === uploadingActionId || replacingAction.id === uploadingActionId) {
+            // eslint-disable-next-line @salesforce/lds/no-error-in-production
+            throw new Error('Cannot replace an draft action that is uploading');
+        }
+        // reject if these two draft actions aren't acting on the same target
+        if (actionToReplace.tag !== replacingAction.tag) {
+            // eslint-disable-next-line @salesforce/lds/no-error-in-production
+            throw new Error('Cannot swap actions targeting different targets');
+        }
+        // reject if the replacing action is not pending
+        if (replacingAction.status !== DraftActionStatus.Pending) {
+            // eslint-disable-next-line @salesforce/lds/no-error-in-production
+            throw new Error('Cannot replace with a non-pending action');
         }
 
         if (

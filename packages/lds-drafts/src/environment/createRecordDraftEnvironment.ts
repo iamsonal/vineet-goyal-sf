@@ -14,6 +14,7 @@ import {
     ensureReferencedIdsAreCached,
     filterRecordFields,
     getRecordFieldsFromRecordRequest,
+    prefixForRecordId,
     RECORD_ENDPOINT_REGEX,
 } from '../utils/records';
 import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
@@ -70,6 +71,7 @@ export function createRecordDraftEnvironment(
         isDraftId,
         durableStore,
         getObjectInfo,
+        apiNameForPrefix,
     }: DraftEnvironmentOptions
 ): DurableEnvironment {
     const dispatchResourceRequest: DurableEnvironment['dispatchResourceRequest'] = function <T>(
@@ -117,19 +119,20 @@ export function createRecordDraftEnvironment(
         if (fields === undefined) {
             throw createBadRequestResponse({ message: 'fields are missing' });
         }
-
-        return draftQueue.enqueue(createLDSAction(recordId, key, request)).then(() => {
-            return durableStore
-                .getDenormalizedRecord(key)
-                .catch(() => {
-                    throw createInternalErrorResponse();
-                })
-                .then((record) => {
-                    if (record === undefined) {
-                        throw createDraftSynthesisErrorResponse();
-                    }
-                    return createOkResponse(filterRecordFields(record, fields)) as any;
-                });
+        return apiNameForPrefix(prefixForRecordId(recordId)).then((apiName) => {
+            return draftQueue.enqueue(createLDSAction(recordId, apiName, key, request)).then(() => {
+                return durableStore
+                    .getDenormalizedRecord(key)
+                    .catch(() => {
+                        throw createInternalErrorResponse();
+                    })
+                    .then((record) => {
+                        if (record === undefined) {
+                            throw createDraftSynthesisErrorResponse();
+                        }
+                        return createOkResponse(filterRecordFields(record, fields)) as any;
+                    });
+            });
         });
     }
 

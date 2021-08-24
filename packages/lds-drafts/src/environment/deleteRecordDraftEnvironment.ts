@@ -9,6 +9,7 @@ import {
     extractRecordIdFromResourceRequest,
     getRecordIdFromRecordRequest,
     getRecordKeyFromRecordRequest,
+    prefixForRecordId,
     RECORD_ENDPOINT_REGEX,
 } from '../utils/records';
 import { DraftEnvironmentOptions } from './makeEnvironmentDraftAware';
@@ -60,7 +61,7 @@ function resolveResourceRequestId(request: ResourceRequest, env: Environment) {
 
 export function deleteRecordDraftEnvironment(
     env: DurableEnvironment,
-    { draftQueue, store }: DraftEnvironmentOptions
+    { draftQueue, store, apiNameForPrefix }: DraftEnvironmentOptions
 ): DurableEnvironment {
     const draftDeleteSet = new Set<string>();
 
@@ -82,13 +83,15 @@ export function deleteRecordDraftEnvironment(
             }) as any;
         }
 
-        // resolvedResourceRequest, key, targetId;
-        return draftQueue
-            .enqueue(createLDSAction(targetId, key, resolvedResourceRequest))
-            .then(() => {
-                draftDeleteSet.add(key);
-                return createDeletedResponse() as any;
-            });
+        return apiNameForPrefix(prefixForRecordId(targetId)).then((apiName) => {
+            // resolvedResourceRequest, key, targetId;
+            return draftQueue
+                .enqueue(createLDSAction(targetId, apiName, key, resolvedResourceRequest))
+                .then(() => {
+                    draftDeleteSet.add(key);
+                    return createDeletedResponse() as any;
+                });
+        });
     };
 
     const storeEvict: DurableEnvironment['storeEvict'] = function (key: string) {

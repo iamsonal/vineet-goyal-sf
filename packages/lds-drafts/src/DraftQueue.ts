@@ -9,7 +9,13 @@ export enum DraftActionStatus {
     Completed = 'completed',
 }
 
-export interface Action<Data> {
+export interface Action<Data> extends BaseAction<Data> {}
+
+export interface LDSAction<Data> extends BaseAction<Data> {
+    targetApiName: string;
+}
+
+export interface BaseAction<Data> {
     targetId: string;
     tag: string;
     handler: string;
@@ -244,7 +250,9 @@ export interface DraftQueue {
      * @param Action The action to process in the queue
      * @returns A promise including the action created for the request
      */
-    enqueue<Response, Data>(action: Action<Data>): Promise<DraftAction<Response, Data>>;
+    enqueue<Response, Data>(
+        action: Action<Data> | LDSAction<Data>
+    ): Promise<DraftAction<Response, Data>>;
 
     /**
      * add a new handler to the draft queue to process the data in the actions

@@ -17,6 +17,7 @@ import {
     DraftActionMetadata,
     Action,
     isDraftError,
+    LDSAction,
 } from './DraftQueue';
 import { NetworkAdapter, FetchResponse } from '@luvio/engine';
 import { ObjectKeys } from './utils/language';
@@ -27,6 +28,7 @@ import {
     isLDSDraftAction,
     ldsActionHandler,
     LDS_ACTION_HANDLER_ID,
+    LDS_ACTION_METADATA_API_NAME,
 } from './actionHandlers/LDSActionHandler';
 import { ActionHandler } from './actionHandlers/ActionHandler';
 
@@ -246,7 +248,9 @@ export class DurableDraftQueue implements DraftQueue {
             });
     }
 
-    enqueue<Response, Data>(action: Action<Data>): Promise<DraftAction<Response, Data>> {
+    enqueue<Response, Data>(
+        action: Action<Data> | LDSAction<Data>
+    ): Promise<DraftAction<Response, Data>> {
         return this.getQueueActions().then((queue) => {
             const handler = this.handlers[action.handler] as ActionHandler<Data>;
             if (handler === undefined) {
@@ -582,7 +586,7 @@ export class DurableDraftQueue implements DraftQueue {
                 type: DraftQueueEventType.ActionUpdating,
                 action: action,
             }).then(() => {
-                action.metadata = metadata;
+                action.metadata = this.sanitizeMetadata(action.metadata, metadata);
                 const durableStoreId = buildDraftDurableStoreKey(action.tag, action.id);
                 const entry: DurableStoreEntry<DraftAction<unknown, unknown>> = { data: action };
                 const entries: DurableStoreEntries<DraftAction<unknown, unknown>> = {
@@ -598,6 +602,15 @@ export class DurableDraftQueue implements DraftQueue {
                 });
             });
         });
+    }
+
+    private sanitizeMetadata(
+        existing: DraftActionMetadata,
+        newMetadata: DraftActionMetadata
+    ): DraftActionMetadata {
+        let sanitized = newMetadata;
+        sanitized[LDS_ACTION_METADATA_API_NAME] = existing[LDS_ACTION_METADATA_API_NAME];
+        return sanitized;
     }
 
     private scheduleRetry() {

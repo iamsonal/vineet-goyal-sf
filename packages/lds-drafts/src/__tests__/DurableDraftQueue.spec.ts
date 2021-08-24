@@ -37,7 +37,10 @@ import {
     getRecordIdFromRecordRequest,
     getRecordKeyFromRecordRequest,
 } from '../utils/records';
-import { LDS_ACTION_HANDLER_ID } from '../actionHandlers/LDSActionHandler';
+import {
+    LDS_ACTION_HANDLER_ID,
+    LDS_ACTION_METADATA_API_NAME,
+} from '../actionHandlers/LDSActionHandler';
 import { ActionHandler } from '../actionHandlers/ActionHandler';
 import {
     CustomActionExecutor,
@@ -156,6 +159,7 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
                 tag: draftId,
                 targetId: draftId,
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
         });
@@ -183,12 +187,14 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
                 tag: draftId,
                 targetId: draftId,
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             await draftQueue.enqueue({
                 data: DEFAULT_PATCH_REQUEST,
                 tag: draftIdTwo,
                 targetId: draftId,
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             draftQueue.startQueue();
@@ -264,6 +270,7 @@ describe('DurableDraftQueue', () => {
                 data: request,
                 tag: DEFAULT_TAG,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
         });
@@ -317,6 +324,7 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
                 tag: draftId,
                 targetId: draftId,
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
         });
@@ -471,6 +479,7 @@ describe('DurableDraftQueue', () => {
                     data: {},
                     tag: 'fooId',
                     targetId: 'fooId',
+                    targetApiName: 'Account',
                     handler: 'unknown',
                 })
             ).rejects.toBe('No handler for unknown');
@@ -495,6 +504,7 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
                 tag: draftId,
                 targetId: draftId,
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
 
@@ -516,6 +526,7 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_POST_REQUEST,
                 tag: draftId,
                 targetId: draftId,
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
 
@@ -524,6 +535,7 @@ describe('DurableDraftQueue', () => {
                     data: DEFAULT_POST_REQUEST,
                     tag: draftId,
                     targetId: draftId,
+                    targetApiName: 'Account',
                     handler: LDS_ACTION_HANDLER_ID,
                 })
             ).rejects.toThrowError('Cannot enqueue a POST draft action with an existing tag');
@@ -551,6 +563,7 @@ describe('DurableDraftQueue', () => {
                 },
                 tag: draftId,
                 targetId: draftId,
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
 
@@ -566,6 +579,7 @@ describe('DurableDraftQueue', () => {
                 },
                 tag: draftId,
                 targetId: draftId,
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
 
@@ -582,6 +596,7 @@ describe('DurableDraftQueue', () => {
                     },
                     tag: draftId,
                     targetId: draftId,
+                    targetApiName: 'Account',
                     handler: LDS_ACTION_HANDLER_ID,
                 })
             ).rejects.toThrowError('Cannot enqueue a draft action for a deleted record');
@@ -601,6 +616,7 @@ describe('DurableDraftQueue', () => {
                 data: createPatchRequest(),
                 tag: DEFAULT_TAG,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             const allEntries = await durableStore.getAllEntries(DRAFT_SEGMENT);
@@ -621,6 +637,7 @@ describe('DurableDraftQueue', () => {
                 data: createPatchRequest(),
                 tag: DEFAULT_TAG,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             const secondPatch = createPatchRequest();
@@ -629,6 +646,7 @@ describe('DurableDraftQueue', () => {
                 data: secondPatch,
                 tag: DEFAULT_TAG,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             const allEntries = await durableStore.getAllEntries(DRAFT_SEGMENT);
@@ -660,6 +678,7 @@ describe('DurableDraftQueue', () => {
                 data: request,
                 tag,
                 targetId,
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
 
@@ -687,6 +706,7 @@ describe('DurableDraftQueue', () => {
                 data: createPostRequest(),
                 tag: DEFAULT_TAG,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
 
@@ -713,12 +733,14 @@ describe('DurableDraftQueue', () => {
                 data: createPostRequest(),
                 tag: DEFAULT_TAG,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             await draftQueue.enqueue({
                 data: createPostRequest(),
                 tag: 'testTagTwo',
                 targetId: 'targetIdTwo',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
 
@@ -852,6 +874,7 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
                 tag: DEFAULT_TAG,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
 
@@ -892,6 +915,7 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
                 tag: DEFAULT_TAG,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
 
@@ -930,6 +954,7 @@ describe('DurableDraftQueue', () => {
                 data: request,
                 tag: DEFAULT_TAG,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             const result = await draftQueue.processNextAction();
@@ -981,6 +1006,7 @@ describe('DurableDraftQueue', () => {
                 data: request,
                 tag: DEFAULT_TAG,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             const result = await draftQueue.processNextAction();
@@ -1013,6 +1039,7 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
                 tag: 'tag1',
                 targetId: 'targetIdOne',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             // put a couple more actions in the queue to ensure ordering is maintained
@@ -1020,12 +1047,14 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
                 tag: 'tag2',
                 targetId: 'targetIdTwo',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             await draftQueue.enqueue({
                 data: DEFAULT_PATCH_REQUEST,
                 tag: 'tag3',
                 targetId: 'targetIdThree',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
 
@@ -1059,12 +1088,14 @@ describe('DurableDraftQueue', () => {
                 data: firstRequest,
                 tag: 'z',
                 targetId: 'targetIdOne',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             await draftQueue.enqueue({
                 data: secondRequest,
                 tag: 'a',
                 targetId: 'targetIdTwo',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
 
@@ -1113,6 +1144,7 @@ describe('DurableDraftQueue', () => {
                     data: DEFAULT_POST_REQUEST,
                     tag: DEFAULT_TAG,
                     targetId: 'fooId',
+                    targetApiName: 'Account',
                     handler: LDS_ACTION_HANDLER_ID,
                 });
                 const result = await draftQueue.processNextAction();
@@ -1142,6 +1174,7 @@ describe('DurableDraftQueue', () => {
                     data: DEFAULT_POST_REQUEST,
                     tag: DEFAULT_TAG,
                     targetId: 'fooId',
+                    targetApiName: 'Account',
                     handler: LDS_ACTION_HANDLER_ID,
                 });
                 const result = await draftQueue.processNextAction();
@@ -1175,6 +1208,7 @@ describe('DurableDraftQueue', () => {
                     data: DEFAULT_PATCH_REQUEST,
                     tag: draftId,
                     targetId: draftId,
+                    targetApiName: 'Account',
                     handler: LDS_ACTION_HANDLER_ID,
                 });
                 await draftQueue.processNextAction();
@@ -1201,6 +1235,7 @@ describe('DurableDraftQueue', () => {
                     data: DEFAULT_PATCH_REQUEST,
                     tag: draftId,
                     targetId: draftId,
+                    targetApiName: 'Account',
                     handler: LDS_ACTION_HANDLER_ID,
                 });
                 await draftQueue.processNextAction();
@@ -1227,6 +1262,7 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
                 tag: draftId,
                 targetId: draftId,
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             expect(listener).toBeCalledTimes(2);
@@ -1247,6 +1283,7 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
                 tag: DEFAULT_TAG,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
 
@@ -1282,6 +1319,7 @@ describe('DurableDraftQueue', () => {
                 data: firstRequest,
                 tag: 'z',
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             await draftQueue.processNextAction();
@@ -1314,6 +1352,7 @@ describe('DurableDraftQueue', () => {
                 data: firstRequest,
                 tag: 'z',
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             await draftQueue.startQueue();
@@ -1556,12 +1595,14 @@ describe('DurableDraftQueue', () => {
                 data: UPDATE_REQUEST,
                 tag: draftTag,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             const actionTwo = await draftQueue.enqueue({
                 data: UPDATE_REQUEST,
                 tag: draftTag,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             let actions = await draftQueue.getQueueActions();
@@ -1588,6 +1629,7 @@ describe('DurableDraftQueue', () => {
                 data: UPDATE_REQUEST,
                 tag: draftTag,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             const secondUpdate = { ...UPDATE_REQUEST };
@@ -1596,6 +1638,7 @@ describe('DurableDraftQueue', () => {
                 data: secondUpdate,
                 tag: draftTag,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             let actions = await draftQueue.getQueueActions();
@@ -1644,12 +1687,14 @@ describe('DurableDraftQueue', () => {
                 data: UPDATE_REQUEST,
                 tag: draftTag,
                 targetId: 'targetId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             await draftQueue.enqueue({
                 data: UPDATE_REQUEST,
                 tag: draftTag,
                 targetId: 'fooId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             let actions = await draftQueue.getQueueActions();
@@ -1671,6 +1716,7 @@ describe('DurableDraftQueue', () => {
                 data: UPDATE_REQUEST,
                 tag: draftTag,
                 targetId: 'fooId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             const result = draftQueue.replaceAction(actionOne.id, 'blah');
@@ -1692,12 +1738,14 @@ describe('DurableDraftQueue', () => {
                 data: UPDATE_REQUEST,
                 tag: draftTag,
                 targetId: 'fooId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             const actionTwo = await draftQueue.enqueue({
                 data: UPDATE_REQUEST,
                 tag: draftTagTwo,
                 targetId: 'barId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             let actions = await draftQueue.getQueueActions();
@@ -1894,12 +1942,14 @@ describe('DurableDraftQueue', () => {
                 data: UPDATE_REQUEST,
                 tag: draftTag,
                 targetId: 'fooId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             const actionTwo = await draftQueue.enqueue({
                 data: UPDATE_REQUEST,
                 tag: draftTag,
                 targetId: 'fooId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             let actions = await draftQueue.getQueueActions();
@@ -1950,12 +2000,14 @@ describe('DurableDraftQueue', () => {
                 data: UPDATE_REQUEST,
                 tag: draftTag,
                 targetId: 'fooId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             const actionTwo = await draftQueue.enqueue({
                 data: UPDATE_REQUEST,
                 tag: draftTag,
                 targetId: 'fooId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             let actions = await draftQueue.getQueueActions();
@@ -1987,12 +2039,14 @@ describe('DurableDraftQueue', () => {
                 data: UPDATE_REQUEST,
                 tag: draftTag,
                 targetId: 'fooId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             const actionTwo = await draftQueue.enqueue({
                 data: UPDATE_REQUEST,
                 tag: draftTag,
                 targetId: 'fooId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
             let actions = await draftQueue.getQueueActions();
@@ -2070,9 +2124,11 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
                 tag: draftId,
                 targetId: 'fooId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             })) as DraftAction<unknown, unknown>;
-            expect(ObjectKeys(action.metadata).length).toBe(0);
+            expect(ObjectKeys(action.metadata).length).toBe(1);
+            expect(action.metadata[LDS_ACTION_METADATA_API_NAME]).toBe('Account');
 
             const newMetadata = { foo: 'bar', anotherItem: 'anotherValue' };
             const updated = await draftQueue.setMetadata(action.id, newMetadata);
@@ -2104,9 +2160,11 @@ describe('DurableDraftQueue', () => {
                 data: request,
                 tag: draftId,
                 targetId: 'fooId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             })) as DraftAction<unknown, unknown>;
-            expect(ObjectKeys(action.metadata).length).toBe(0);
+            expect(ObjectKeys(action.metadata).length).toBe(1);
+            expect(action.metadata[LDS_ACTION_METADATA_API_NAME]).toBe('Account');
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(1);
             await draftQueue.processNextAction();
@@ -2130,9 +2188,11 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
                 tag: draftId,
                 targetId: 'fooId',
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             });
-            expect(ObjectKeys(action.metadata).length).toBe(0);
+            expect(ObjectKeys(action.metadata).length).toBe(1);
+            expect(action.metadata[LDS_ACTION_METADATA_API_NAME]).toBe('Account');
 
             const newMetadata = { foo: ['bar', 'baz'] } as any;
             let result = draftQueue.setMetadata(action.id, newMetadata);
@@ -2170,7 +2230,8 @@ describe('DurableDraftQueue', () => {
             draftQueue.registerOnChangedListener((event): Promise<void> => {
                 if (event.type === DraftQueueEventType.ActionUpdating) {
                     updatingCalled = true;
-                    expect(ObjectKeys(event.action.metadata).length).toBe(0);
+                    expect(ObjectKeys(action.metadata).length).toBe(1);
+                    expect(action.metadata[LDS_ACTION_METADATA_API_NAME]).toBe('Account');
                 } else if (event.type === DraftQueueEventType.ActionUpdated) {
                     updatedCalled = true;
                     expect(event.action.metadata).toBe(newMetadata);
@@ -2181,9 +2242,11 @@ describe('DurableDraftQueue', () => {
                 data: DEFAULT_PATCH_REQUEST,
                 tag: draftId,
                 targetId: draftId,
+                targetApiName: 'Account',
                 handler: LDS_ACTION_HANDLER_ID,
             })) as DraftAction<unknown, unknown>;
-            expect(ObjectKeys(action.metadata).length).toBe(0);
+            expect(ObjectKeys(action.metadata).length).toBe(1);
+            expect(action.metadata[LDS_ACTION_METADATA_API_NAME]).toBe('Account');
 
             await draftQueue.setMetadata(action.id, newMetadata);
             const actions = await draftQueue.getQueueActions();
@@ -2192,6 +2255,41 @@ describe('DurableDraftQueue', () => {
             expect(action.metadata).toEqual(newMetadata);
             expect(updatedCalled).toBe(true);
             expect(updatingCalled).toBe(true);
+        });
+
+        it('does not allow overwriting target api name', async () => {
+            const network = buildMockNetworkAdapter([]);
+            const durableStore = new MockDurableStore();
+            const draftQueue = new DurableDraftQueue(
+                durableStore,
+                network,
+                mockQueuePostHandler,
+                mockDraftIdHandler
+            );
+            const draftId = 'fooId';
+            const newMetadata = {
+                foo: 'bar',
+                anotherItem: 'anotherValue',
+                LDS_ACTION_METADATA_API_NAME: 'garbage',
+            };
+
+            let action = (await draftQueue.enqueue({
+                data: DEFAULT_PATCH_REQUEST,
+                tag: draftId,
+                targetId: draftId,
+                targetApiName: 'Account',
+                handler: LDS_ACTION_HANDLER_ID,
+            })) as DraftAction<unknown, unknown>;
+            expect(ObjectKeys(action.metadata).length).toBe(1);
+            expect(action.metadata[LDS_ACTION_METADATA_API_NAME]).toBe('Account');
+
+            await draftQueue.setMetadata(action.id, newMetadata);
+            const actions = await draftQueue.getQueueActions();
+            expect(actions.length).toBe(1);
+            action = actions[0];
+            let expectedMetadata = newMetadata;
+            expectedMetadata[LDS_ACTION_METADATA_API_NAME] = 'Account';
+            expect(action.metadata).toEqual(expectedMetadata);
         });
     });
 });

@@ -51,6 +51,7 @@ import {
     getDraftResolutionInfoForRecordSet,
     getObjectApiNamesFromDraftCreateEntries,
     ensureReferencedIdsAreCached,
+    prefixForRecordId,
 } from '../records';
 import OpportunityObjectInfo from './data/object-Opportunity.json';
 
@@ -2719,6 +2720,20 @@ describe('draft environment record utilities', () => {
                     getObjectInfo
                 )
             ).rejects.toEqual(new Error(`Referenced record ${RECORD_ID} is not cached`));
+        });
+    });
+
+    describe('prefixForRecordId', () => {
+        it('provides correct prefix for valid record id', async () => {
+            const idToTest = '0010GR4OSgdZzpKQNS';
+            const prefix = prefixForRecordId(idToTest);
+            expect(prefix).toBe('001');
+        });
+
+        it('provides undefined for an invalid record id', async () => {
+            const idToTest = '11';
+            const prefix = prefixForRecordId(idToTest);
+            expect(prefix).toBe('');
         });
     });
 });

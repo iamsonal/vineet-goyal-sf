@@ -21,6 +21,7 @@ import {
     getRecordFieldsFromRecordRequest,
     getRecordIdFromRecordRequest,
     getRecordKeyFromRecordRequest,
+    prefixForRecordId,
     RECORD_ENDPOINT_REGEX,
     RequestFields,
 } from '../utils/records';
@@ -214,34 +215,36 @@ export function updateRecordDraftEnvironment(
      * @param targetId the record id
      */
     function enqueueRequest(request: ResourceRequest, key: string, targetId: string) {
-        return draftQueue.enqueue(createLDSAction(targetId, key, request)).then(() => {
-            // TODO [W-8195289]: Draft edited records should include all fields in the Full/View layout if possible
-            const fields = getRecordFieldsFromRecordRequest(request);
-            if (fields === undefined) {
-                throw createBadRequestResponse({
-                    message: 'fields are missing',
-                });
-            }
+        return apiNameForPrefix(prefixForRecordId(targetId)).then((apiName) => {
+            return draftQueue.enqueue(createLDSAction(targetId, apiName, key, request)).then(() => {
+                // TODO [W-8195289]: Draft edited records should include all fields in the Full/View layout if possible
+                const fields = getRecordFieldsFromRecordRequest(request);
+                if (fields === undefined) {
+                    throw createBadRequestResponse({
+                        message: 'fields are missing',
+                    });
+                }
 
-            // now that there's a mutation request enqueued the value in the
-            // store is no longer accurate as it does not have draft values applied
-            // so evict it from the store in case anyone tries to access it before we have
-            // a chance to revive it with drafts applied
-            store.evict(key);
+                // now that there's a mutation request enqueued the value in the
+                // store is no longer accurate as it does not have draft values applied
+                // so evict it from the store in case anyone tries to access it before we have
+                // a chance to revive it with drafts applied
+                store.evict(key);
 
-            // revive the modified record to the in-memory store. This will put the record
-            // in the in-memory store with the new draft values applied to it
-            return durableStore
-                .getDenormalizedRecord(key)
-                .catch(() => {
-                    throw createInternalErrorResponse();
-                })
-                .then((record) => {
-                    if (record === undefined) {
-                        throw createDraftSynthesisErrorResponse();
-                    }
-                    return createOkResponse(filterRecordFields(record, fields));
-                });
+                // revive the modified record to the in-memory store. This will put the record
+                // in the in-memory store with the new draft values applied to it
+                return durableStore
+                    .getDenormalizedRecord(key)
+                    .catch(() => {
+                        throw createInternalErrorResponse();
+                    })
+                    .then((record) => {
+                        if (record === undefined) {
+                            throw createDraftSynthesisErrorResponse();
+                        }
+                        return createOkResponse(filterRecordFields(record, fields));
+                    });
+            });
         });
     }
 

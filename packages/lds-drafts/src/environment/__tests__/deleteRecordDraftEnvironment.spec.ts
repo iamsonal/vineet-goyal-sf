@@ -25,8 +25,12 @@ describe('draft environment tests', () => {
             });
 
             it('request gets enqueued with key as tag', async () => {
-                const { durableStore, draftEnvironment, draftQueue } =
-                    await setupDraftEnvironment();
+                const apiNameMock = () => {
+                    return Promise.resolve('Account');
+                };
+                const { durableStore, draftEnvironment, draftQueue } = await setupDraftEnvironment({
+                    apiNameForPrefix: apiNameMock,
+                });
                 mockDurableStoreResponse(durableStore);
                 const request = createDeleteRequest();
                 await draftEnvironment.dispatchResourceRequest(request);
@@ -35,7 +39,22 @@ describe('draft environment tests', () => {
                     tag: STORE_KEY_RECORD,
                     targetId: RECORD_ID,
                     handler: LDS_ACTION_HANDLER_ID,
+                    targetApiName: 'Account',
                 });
+            });
+
+            it('throws if prefix is not cached', async () => {
+                const apiNameMock = () => {
+                    throw Error();
+                };
+                const { durableStore, draftEnvironment } = await setupDraftEnvironment({
+                    apiNameForPrefix: apiNameMock,
+                });
+                mockDurableStoreResponse(durableStore);
+                const request = createDeleteRequest();
+                expect(() => {
+                    draftEnvironment.dispatchResourceRequest(request);
+                }).toThrow();
             });
         });
     });

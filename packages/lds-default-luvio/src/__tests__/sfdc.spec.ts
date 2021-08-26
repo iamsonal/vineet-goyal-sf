@@ -30,39 +30,18 @@ describe('sfdc lds-default-luvio', () => {
                 getMode: () => 'JSTEST',
             }),
         };
-        (global as any).window = {
-            location: {
-                href: 'auratest/test.app',
-            },
-        };
 
         const { Luvio } = require('@luvio/engine');
         require('../sfdc');
         expect(Luvio).not.toHaveBeenCalled();
     });
 
-    it('does nothing when window is not defined', () => {
+    it('does nothing when app is defined', () => {
         (global as any).$A = {
             getContext: () => ({
                 getMode: () => 'AUTOJSTEST',
+                getApp: () => 'some:app',
             }),
-        };
-
-        const { Luvio } = require('@luvio/engine');
-        require('../sfdc');
-        expect(Luvio).not.toHaveBeenCalled();
-    });
-
-    it('does nothing when window.location.href does not contain "auratest/test.app"', () => {
-        (global as any).$A = {
-            getContext: () => ({
-                getMode: () => 'AUTOJSTEST',
-            }),
-        };
-        (global as any).window = {
-            location: {
-                href: 'some/other.app',
-            },
         };
 
         const { Luvio } = require('@luvio/engine');
@@ -74,12 +53,8 @@ describe('sfdc lds-default-luvio', () => {
         (global as any).$A = {
             getContext: () => ({
                 getMode: () => 'AUTOJSTEST',
+                getApp: () => undefined,
             }),
-        };
-        (global as any).window = {
-            location: {
-                href: 'auratest/test.app',
-            },
         };
 
         const { Luvio, Environment, Store } = require('@luvio/engine');

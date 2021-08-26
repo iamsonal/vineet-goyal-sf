@@ -8,6 +8,7 @@ declare var $A:
     | {
           getContext: () => {
               getMode: () => string;
+              getApp: () => string | undefined;
           };
       }
     | undefined;
@@ -25,12 +26,21 @@ declare var $A:
 // the test to run and access data on the server. The instrumentation and
 // configuration initialization steps from lds-runtime-aura are skipped to
 // keep the logic simpler & faster.
+//
+// For future reference, here are the values we see from getApp():
+//
+// - for a regular .app, the name of the app, e.g. "one:one"
+// - for the top-level iframe of a .app loaded in JSTEST mode, "aurajstest:jstest"
+// - for the top-level iframe of a .cmp loaded in JSTEST mode, undefined
+// - for a test iframe of a .cmp or .app test loaded via
+//   /auratest/test.app?testName=..&aura.mode=AUTOJSTEST, undefined
+// - for a test iframe loaded via /aura?... (no clue where/how these are
+//   generated), undefined
 
 if (
     typeof $A !== 'undefined' &&
     $A.getContext().getMode().indexOf('AUTOJSTEST') > -1 &&
-    typeof window !== 'undefined' &&
-    window.location.href.indexOf('auratest/test.app') > -1
+    $A.getContext().getApp() === undefined
 ) {
     const storeOptions = {
         scheduler: () => {},

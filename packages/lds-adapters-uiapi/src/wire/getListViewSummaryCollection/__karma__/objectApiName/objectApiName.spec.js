@@ -1,6 +1,14 @@
 import ObjectApiName from '../lwc/objectApiName';
-import { mockNetworkOnce, flushPromises, setupElement, getMock as globalGetMock } from 'test-util';
-import { URL_BASE } from 'uiapi-test-util';
+import {
+    mockNetworkOnce,
+    mockNetworkSequence,
+    flushPromises,
+    setupElement,
+    assertNetworkCallCount,
+    updateElement,
+    getMock as globalGetMock,
+} from 'test-util';
+import { URL_BASE, expireDefaultTTL } from 'uiapi-test-util';
 import { karmaNetworkAdapter } from 'lds-engine';
 import sinon from 'sinon';
 
@@ -21,7 +29,11 @@ function mockNetworkListUi(config, mockData) {
             )
         );
     }
-    mockNetworkOnce(karmaNetworkAdapter, sinon.match(paramMatch), mockData);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, sinon.match(paramMatch), mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, sinon.match(paramMatch), mockData);
+    }
 }
 
 describe('with objectApiName', () => {
@@ -55,7 +67,28 @@ describe('with objectApiName', () => {
         );
     });
 
-    xit('does not make additional XHR for smaller pageSize request', async () => {});
+    it('requesting a smaller pageSize makes an XHR request', async () => {
+        const mockDataPageSize6 = getMock('list-ui-Opportunity-pageSize-6');
+        const mockDataPageSize3 = getMock('list-ui-Opportunity-pageSize-3');
+
+        const { objectApiName } = mockDataPageSize6;
+
+        const config = {
+            objectApiName,
+            pageSize: mockDataPageSize6.pageSize,
+        };
+        mockNetworkListUi(config, mockDataPageSize6);
+
+        const element = await setupElement(config, ObjectApiName);
+        let wiredData = element.getWiredData();
+        expect(wiredData.data).toEqualSnapshotWithoutEtags(mockDataPageSize6);
+
+        mockNetworkListUi({ objectApiName, pageSize: 3, pageToken: '0' }, mockDataPageSize3);
+        await updateElement(element, { pageSize: 3 });
+
+        wiredData = element.getWiredData();
+        expect(wiredData.data).toEqualSnapshotWithoutEtags(mockDataPageSize3);
+    });
 
     it('makes additional XHR for same objectApiName and larger pageSize', async () => {
         const mockData1 = getMock('list-ui-Opportunity-pageSize-3');
@@ -92,7 +125,20 @@ describe('with objectApiName', () => {
         expect(wiredData.data).toEqualSnapshotWithoutEtags(mockData3);
     });
 
-    xit('makes additional XHR after list-ui TTL expired', async () => {});
+    it('makes a network request after ListViewSummaryCollectionRepresentation is TTL expired', async () => {
+        const mockData = getMock('list-ui-Opportunity');
+        const config = { objectApiName: mockData.objectApiName };
+
+        mockNetworkListUi(config, [mockData, mockData]);
+        const el = await setupElement(config, ObjectApiName);
+        expect(el.getWiredData().data).toEqualSnapshotWithoutEtags(mockData);
+
+        expireDefaultTTL();
+
+        const el2 = await setupElement(config, ObjectApiName);
+        expect(el2.getWiredData().data).toEqualSnapshotWithoutEtags(mockData);
+        assertNetworkCallCount();
+    });
 
     it('makes additional XHR when q parameter changes', async () => {
         // fetch with q=this
@@ -172,16 +218,114 @@ describe('with objectApiName', () => {
         expect(wiredData.data).toEqualSnapshotWithoutEtags(mockData1);
     });
 
-    xit('uses pageToken to page through records', async () => {});
-    xit('returns error when objectApiName do not exist', async () => {});
-    xit('no XHR if previously requested by listViewId', async () => {});
-    xit('does not make second XHR for additional fields', async () => {});
-    xit('does not make second XHR for removed fields', async () => {});
-    xit('does not make second XHR for objectApiName that does not exist', async () => {});
-    xit('returns error when pageSize is 0', async () => {});
-    xit('returns error when pageSize is above max', async () => {});
-    xit('returns error when pageToken is -1', async () => {});
-    xit('returns error when pageToken is above max', async () => {});
-    xit('returns error when requests non-existent fields', async () => {});
-    xit('returns error when objectApiName not set', async () => {});
+    it('uses pageToken to page through records', async () => {
+        const mockDataPageSize3 = getMock('list-ui-Opportunity-pageSize-3');
+        const mockDataPageToken3PageSize3 = getMock('list-ui-Opportunity-pageToken-3-pageSize-3');
+
+        const { objectApiName, pageSize } = mockDataPageSize3;
+
+        const config = { objectApiName, pageSize, pageToken: '0' };
+        mockNetworkListUi(config, mockDataPageSize3);
+
+        const element = await setupElement(config, ObjectApiName);
+        let wiredData = element.getWiredData();
+        expect(wiredData.data).toEqualSnapshotWithoutEtags(mockDataPageSize3);
+
+        // mimicking the behavior of click the next button to load next records
+        mockNetworkListUi({ ...config, pageToken: '3' }, mockDataPageToken3PageSize3);
+        await updateElement(element, { pageToken: '3' });
+
+        wiredData = element.getWiredData();
+        expect(wiredData.data).toEqualSnapshotWithoutEtags(mockDataPageToken3PageSize3);
+        expect(element.pushCount()).toBe(2);
+    });
+
+    it('returns error when objectApiName do not exist', async () => {
+        const mockError = {
+            ok: false,
+            status: 404,
+            statusText: 'NOT_FOUND',
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
+        };
+
+        const config = {
+            objectApiName: 'badObjectApiName',
+        };
+
+        mockNetworkListUi(config, { reject: true, data: mockError });
+        const element = await setupElement(config, ObjectApiName);
+        expect(element.getWiredData().error).toEqual(mockError);
+        expect(element.getWiredData().error).toBeImmutable();
+    });
+
+    it('returns error when pageSize is -1', async () => {
+        const mockError = {
+            ok: false,
+            status: 400,
+            statusText: 'BAD_REQUEST',
+            body: [
+                {
+                    errorCode: 'NUMBER_OUTSIDE_VALID_RANGE',
+                    message: 'pageSize parameter must be between 1 and 2000',
+                },
+            ],
+        };
+
+        const config = { objectApiName: 'Opportunity', pageSize: -1 };
+
+        mockNetworkListUi(config, { reject: true, data: mockError });
+        const element = await setupElement(config, ObjectApiName);
+        const wiredError = element.getWiredData().error;
+        expect(wiredError).toEqual(mockError);
+        expect(wiredError).toBeImmutable();
+    });
+
+    it('returns error when pageSize is above max', async () => {
+        const mockError = {
+            ok: false,
+            status: 400,
+            statusText: 'BAD_REQUEST',
+            body: [
+                {
+                    errorCode: 'NUMBER_OUTSIDE_VALID_RANGE',
+                    message: 'pageSize parameter must be between 1 and 2000',
+                },
+            ],
+        };
+
+        const config = { objectApiName: 'Opportunity', pageSize: 2100 };
+
+        mockNetworkListUi(config, { reject: true, data: mockError });
+        const element = await setupElement(config, ObjectApiName);
+        const wiredError = element.getWiredData().error;
+        expect(wiredError).toEqual(mockError);
+        expect(wiredError).toBeImmutable();
+    });
+
+    it('returns error when pageToken is invalid', async () => {
+        const mockError = {
+            ok: false,
+            status: 400,
+            statusText: 'BAD_REQUEST',
+            body: [
+                {
+                    errorCode: 'ILLEGAL_QUERY_PARAMETER_VALUE',
+                    message: 'For input string: invalid',
+                },
+            ],
+        };
+
+        const config = { objectApiName: 'Opportunity', pageSize: 20, pageToken: 'invalid' };
+
+        mockNetworkListUi(config, { reject: true, data: mockError });
+        const element = await setupElement(config, ObjectApiName);
+        const wiredError = element.getWiredData().error;
+        expect(wiredError).toEqual(mockError);
+        expect(wiredError).toBeImmutable();
+    });
 });

@@ -40,6 +40,7 @@ const URL_BASE = `/ui-api`;
 // FIXME: update to a real value once TTL is implemented
 const LIST_UI_TTL = 60 * 1000;
 const LOOKUP_RECORDS_TTL = 2 * 60 * 1000;
+const DEFAULT_TTL = 2592000000;
 
 // Configuration options for tracked fields depth
 const LEAF_NODE_ID_ONLY_DEPTH = 1;
@@ -629,6 +630,14 @@ function expireDuplicatesRepresentation() {
 
 /**
  * Force a cache expiration for records by fast-forwarding time past the
+ * default TTL for uiApi
+ */
+function expireDefaultTTL() {
+    timekeeper.travel(Date.now() + DEFAULT_TTL);
+}
+
+/**
+ * Force a cache expiration for records by fast-forwarding time past the
  * standard record TTL.
  */
 function expireRecords() {
@@ -927,6 +936,7 @@ export {
     MASTER_RECORD_TYPE_ID,
     URL_BASE,
     // cache expire utils
+    expireDefaultTTL,
     expireActions,
     expireQuickActionDefaults,
     expireLayout,

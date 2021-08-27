@@ -23,6 +23,8 @@ import {
     PercentileHistogram,
 } from 'instrumentation/service';
 
+import { getInstrumentation } from 'o11y/client';
+
 import {
     ADAPTER_CACHE_HIT_COUNT_METRIC_NAME,
     ADAPTER_CACHE_HIT_DURATION_METRIC_NAME,
@@ -217,6 +219,8 @@ const getGraphqlResponseMixedMetric = counter(GET_GRAPHQL_RESPONSE_MIXED);
 
 const storeTrimTaskMetric = counter(STORE_TRIM_TASK_COUNT);
 const storeTrimTaskTimer = timer(STORE_TRIM_TASK_DURATION);
+
+const instr = getInstrumentation(NAMESPACE);
 
 export class Instrumentation {
     private recordApiNameChangeCounters: RecordApiNameChangeCounters = {};
@@ -951,6 +955,37 @@ export function setupInstrumentation(luvio: Luvio, store: Store): void {
         storeSnapshotSubscriptionsMetric.update(storeStats.snapshotSubscriptionCount);
         storeWatchSubscriptionsMetric.update(storeStats.watchSubscriptionCount);
     });
+}
+
+/**
+ * Initialize the instrumentation and instrument the LDS instance and the Store.
+ *
+ * @param luvio The Luvio instance to instrument.
+ * @param store The Store to instrument.
+ */
+export function setupInstrumentationWithO11y(luvio: Luvio, _store: Store): void {
+    instrumentMethodWithO11y(luvio, ['storeBroadcast', 'storeIngest', 'storeLookup']);
+
+    // TODO [W-9782972]: part of internal instrumentation work
+    //setStoreScheduler(store);
+}
+
+// pass in class, obj, what have you, with the method you want to wrap to collect duration metrics
+// e.g. pass in Luvio with ['storeBroadcast', 'storeIngest', 'storeLookup']
+// Uses ${Activity} from o11y
+export function instrumentMethodWithO11y(obj: any, methods: string[]): void {
+    for (let i = 0, len = methods.length; i < len; i++) {
+        const method = methods[i];
+        const originalMethod = obj[method];
+
+        obj[method] = function (...args: any[]): any {
+            const act = instr.startActivity(method);
+            const res = originalMethod.call(this, ...args);
+            act.stop();
+
+            return res;
+        };
+    }
 }
 
 export function setAggregateUiChunkCountMetric(chunkCount: number): void {

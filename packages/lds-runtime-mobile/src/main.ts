@@ -28,6 +28,8 @@ import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledD
 import { makeDurableStoreWithMergeStrategy } from './durableStore/makeDurableStoreWithMergeStrategy';
 import { RecordMergeStrategy } from './durableStore/RecordMergeStrategy';
 
+import { setupInstrumentation } from './instrumentation';
+
 let luvio: Luvio;
 
 // TODO [W-8291468]: have ingest get called a different way somehow
@@ -131,6 +133,10 @@ baseDurableStore.registerMergeStrategy(
 );
 
 luvio = new Luvio(draftEnv);
+
+// Currently instruments store runtime perf
+setupInstrumentation(luvio, store);
+
 setDefaultLuvio({ luvio });
 
 export { luvio, draftQueue, draftManager };

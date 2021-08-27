@@ -10,7 +10,7 @@ const footer = buildFooter(packageJson.version);
 const ldsInstrumentation = {
     input: './src/main.ts',
 
-    external: ['lwc', 'instrumentation/service'],
+    external: ['lwc', 'instrumentation/service', 'o11y/client'],
 
     output: {
         file: 'dist/ldsInstrumentation.js',

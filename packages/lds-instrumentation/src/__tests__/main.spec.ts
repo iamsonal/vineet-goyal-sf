@@ -7,6 +7,7 @@ import timekeeper from 'timekeeper';
 
 import {
     setupInstrumentation,
+    setupInstrumentationWithO11y,
     Instrumentation,
     LightningInteractionSchema,
     refreshApiEvent,
@@ -15,11 +16,14 @@ import {
     REFRESH_UIAPI_KEY,
     SUPPORTED_KEY,
     UNSUPPORTED_KEY,
-    MetricCounter,
+    CounterMetric,
 } from '../main';
 import { REFRESH_ADAPTER_EVENT } from '@luvio/lwc-luvio';
 import { stableJSONStringify } from '../utils/utils';
 import { LRUCache } from '../utils/lru-cache';
+
+jest.mock('o11y/client');
+import { instrumentation as o11yInstrumentation, activity as o11yActivity } from 'o11y/client';
 
 jest.mock('instrumentation/service', () => {
     const spies = {
@@ -148,7 +152,7 @@ describe('instrumentation', () => {
     });
 
     describe('counter metric', () => {
-        const counter: MetricCounter = {
+        const counter: CounterMetric = {
             kind: 'counter',
             name: 'foo',
             value: 1,
@@ -953,6 +957,34 @@ describe('setupInstrumentation', () => {
             expect(instrumentationServiceSpies.perfStart).not.toHaveBeenCalled();
             expect(instrumentationServiceSpies.perfEnd).not.toHaveBeenCalled();
             expect(instrumentationServiceSpies.timerAddDurationSpy).not.toHaveBeenCalled();
+        });
+    });
+});
+
+describe('setupInstrumentationWithO11y', () => {
+    // TODO [W-9782972]: part of internal instrumentation work
+    // describe('sets store scheduler', () => {});
+
+    describe('Luvio Store Performance', () => {
+        it('instruments luvio store methods with o11y', () => {
+            // Setup
+            const mockLuvio: any = {
+                storeBroadcast: jest.fn,
+                storeIngest: jest.fn,
+                storeLookup: jest.fn,
+            };
+            jest.spyOn(o11yInstrumentation, 'startActivity');
+            jest.spyOn(o11yActivity, 'stop');
+
+            // Exercise
+            setupInstrumentationWithO11y(mockLuvio, undefined);
+            mockLuvio.storeBroadcast();
+            mockLuvio.storeIngest();
+            mockLuvio.storeLookup();
+
+            // Verify
+            expect(o11yInstrumentation.startActivity).toHaveBeenCalledTimes(3);
+            expect(o11yActivity.stop).toHaveBeenCalledTimes(3);
         });
     });
 });

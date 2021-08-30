@@ -9,19 +9,13 @@ const footer = buildFooter(packageJson.version);
 
 const adsBridge = {
     input: './src/main.ts',
-    external: [
-        'instrumentation/service',
-        '@salesforce/lds-instrumentation',
-        '@salesforce/lds-adapters-uiapi',
-        '@salesforce/lds-default-luvio',
-    ],
+    external: ['@salesforce/lds-adapters-uiapi', '@salesforce/lds-default-luvio'],
     output: {
         file: 'dist/adsBridge.js',
         format: 'esm',
         banner,
         footer,
         paths: {
-            '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
             '@salesforce/lds-default-luvio': 'force/ldsEngine',
             '@salesforce/lds-adapters-uiapi': 'force/ldsAdaptersUiapi',
         },
@@ -40,7 +34,6 @@ const adsBridgeForPerfTest = {
         file: 'dist/ads-bridge-perf.js',
         format: 'esm',
     },
-    external: ['instrumentation/service'],
     plugins: [
         resolve(),
         typescript({

@@ -18,13 +18,12 @@ import {
     ObjectPrototypeHasOwnProperty,
 } from './utils/language';
 
-import { timer } from 'instrumentation/service';
-import { timerMetricAddDuration } from '@salesforce/lds-instrumentation';
 import {
     ADS_BRIDGE_ADD_RECORDS_DURATION,
     ADS_BRIDGE_EMIT_RECORD_CHANGED_DURATION,
     ADS_BRIDGE_EVICT_DURATION,
 } from './utils/metric-keys';
+import { instrumentation } from './instrumentation';
 
 import { RECORD_ID_PREFIX, isStoreKeyRecordId } from '@salesforce/lds-uiapi-record-utils';
 
@@ -242,9 +241,6 @@ function fixRecordTypes(luvio: Luvio, record: RecordRepresentation): void {
 export default class AdsBridge {
     private isRecordEmitLocked: boolean = false;
     private watchUnsubscribe: Unsubscribe | undefined;
-    private addRecordsTimerMetric = timer(ADS_BRIDGE_ADD_RECORDS_DURATION);
-    private evictTimerMetric = timer(ADS_BRIDGE_EVICT_DURATION);
-    private emitRecordChangedTimerMetric = timer(ADS_BRIDGE_EMIT_RECORD_CHANGED_DURATION);
 
     constructor(private luvio: Luvio) {}
 
@@ -312,7 +308,10 @@ export default class AdsBridge {
             if (didIngestRecord === true) {
                 luvio.storeBroadcast();
             }
-            timerMetricAddDuration(this.addRecordsTimerMetric, Date.now() - startTime);
+            instrumentation.timerMetricAddDuration(
+                ADS_BRIDGE_ADD_RECORDS_DURATION,
+                Date.now() - startTime
+            );
         });
     }
 
@@ -326,7 +325,10 @@ export default class AdsBridge {
         return this.lockLdsRecordEmit(() => {
             luvio.storeEvict(key);
             luvio.storeBroadcast();
-            timerMetricAddDuration(this.evictTimerMetric, Date.now() - startTime);
+            instrumentation.timerMetricAddDuration(
+                ADS_BRIDGE_EVICT_DURATION,
+                Date.now() - startTime
+            );
             return Promise.resolve();
         });
     }
@@ -425,6 +427,9 @@ export default class AdsBridge {
         if (shouldEmit === true) {
             callback(adsRecordMap, adsObjectMap);
         }
-        timerMetricAddDuration(this.emitRecordChangedTimerMetric, Date.now() - startTime);
+        instrumentation.timerMetricAddDuration(
+            ADS_BRIDGE_EMIT_RECORD_CHANGED_DURATION,
+            Date.now() - startTime
+        );
     }
 }

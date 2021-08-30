@@ -1,16 +1,10 @@
 import { Luvio, Store, Environment } from '@luvio/engine';
 import { keyBuilderRecord, ingestRecord } from '@salesforce/lds-adapters-uiapi';
-import { timerMetricAddDuration as timerMetricAddDurationSpy } from '@salesforce/lds-instrumentation';
 import { expect } from '@jest/globals';
 
 import AdsBridge from '../ads-bridge';
 import { addObjectInfo, addRecord, createObjectInfo, createRecord } from './test-utils';
-
-jest.mock('@salesforce/lds-instrumentation', () => {
-    return {
-        timerMetricAddDuration: jest.fn(),
-    };
-});
+import { instrumentation } from '../instrumentation';
 
 function createBridge() {
     const store = new Store();
@@ -43,6 +37,8 @@ function queryRecord(luvio: Luvio, { recordId }: { recordId: string }): any {
         variables: {},
     });
 }
+
+const timerMetricAddDurationSpy = jest.spyOn(instrumentation, 'timerMetricAddDuration');
 
 beforeEach(() => {
     (timerMetricAddDurationSpy as jest.Mock<any, any>).mockClear();

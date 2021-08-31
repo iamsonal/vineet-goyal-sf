@@ -2,7 +2,7 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '53.0'
+version: '54.0'
 mediaType: application/json
 protocols:
   - https
@@ -40,7 +40,7 @@ types:
         type: string
       displaySequence:
         description: Represents the displaySequence of a column
-        type: integer
+        type: integer | nil
       id:
         description: Represents the id of a column
         type: string
@@ -243,6 +243,10 @@ types:
         file:
           description: Flag for generating a CSV file
           type: boolean
+          required: false
+        filter:
+          description: Parameter to Apply Filter to Rows
+          type: string
           required: false
     post:
       description: Save a list of rows or a CSV file of rows into a decision matrix

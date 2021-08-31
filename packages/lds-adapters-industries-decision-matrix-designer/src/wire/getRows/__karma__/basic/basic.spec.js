@@ -37,6 +37,35 @@ describe('basic', () => {
         expect(clone(el.getData())).toEqual(mock);
     });
 
+    it('gets filtered matrix rows', async () => {
+        const config = {
+            matrixId: '0lIxx0000000001EAA',
+            versionId: '0lIxx0000000001EAA',
+            filter: 'age=25',
+        };
+        const mock = getMock('get-rows-response');
+        mockGetRowsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetRows);
+        expect(el.pushCount()).toBe(1);
+        expect(clone(el.getData())).toEqual(mock);
+    });
+
+    it('gets filtered matrix rows as csv', async () => {
+        const config = {
+            matrixId: '0lIxx0000000001EAA',
+            versionId: '0lIxx0000000001EAA',
+            file: true,
+            filter: 'age=25',
+        };
+        const mock = getMock('get-rows-response');
+        mockGetRowsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetRows);
+        expect(el.pushCount()).toBe(1);
+        expect(clone(el.getData())).toEqual(mock);
+    });
+
     it('do not fetch matrix rows second time', async () => {
         const config = { matrixId: '0lIxx0000000001EAA', versionId: '0lIxx0000000001EAA' };
         const mock = getMock('get-rows-response');

@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-experience-marketing-integration",
-    "version": "1.24.5",
+    "version": "1.24.6",
     "description": "With this API, you can CRUD data in Marketing Cloud's storage, Data Extensions.",
     "license": "MIT",
     "main": "dist/umd/es2018/experience-marketing-integration.js",
@@ -27,13 +27,13 @@
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-experience-marketing-integration"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.24.5"
+        "@salesforce/lds-bindings": "1.24.6"
     },
     "devDependencies": {
         "@luvio/cli": "0.47.3",
         "@luvio/compiler": "0.47.3",
         "@luvio/engine": "0.47.3",
         "@luvio/lwc-luvio": "0.47.3",
-        "@salesforce/lds-karma": "1.24.5"
+        "@salesforce/lds-karma": "1.24.6"
     }
 }

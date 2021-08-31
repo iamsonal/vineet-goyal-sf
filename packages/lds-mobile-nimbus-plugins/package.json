@@ -1,6 +1,6 @@
 {
     "name": "@mobileplatform/nimbus-plugin-lds",
-    "version": "1.24.5",
+    "version": "1.24.6",
     "description": "Nimbus plugins for LDS on Mobile native integrations: durable store, networking, and draft queue.",
     "license": "MIT",
     "types": "dist/index.d.ts",

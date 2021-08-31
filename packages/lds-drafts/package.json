@@ -17,8 +17,8 @@
         "release:corejar": "yarn build && ../core-build/scripts/core.js --adapter=lds-drafts"
     },
     "dependencies": {
-        "@luvio/engine": "0.47.2",
-        "@luvio/environments": "0.47.2"
+        "@luvio/engine": "0.47.3",
+        "@luvio/environments": "0.47.3"
     },
     "devDependencies": {
         "@salesforce/lds-adapters-uiapi": "1.24.4",

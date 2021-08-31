@@ -26,6 +26,19 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
+    it('gets source fields - external input connection', async () => {
+        const mock = getMock('fields-external');
+        const config = {
+            connectorIdOrApiName: '0ItS700000001IUKAY',
+            sourceObjectName: 'Datasets',
+        };
+        mockGetDataConnectorSourceFieldsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetDataConnectorSourceFields);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
     it('returns accessible=false and access denied properties', async () => {
         const mock = getMock('fields-no-access');
         const config = {

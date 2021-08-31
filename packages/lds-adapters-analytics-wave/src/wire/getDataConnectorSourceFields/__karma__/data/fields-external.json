@@ -1,0 +1,40 @@
+{
+    "dataConnector": {
+        "id": "0ItS700000001IUKAY",
+        "name": "BigQuery"
+    },
+    "fields": [
+        {
+            "fieldType": "text",
+            "label": "Id",
+            "name": "Id",
+            "precision": 255
+        },
+        {
+            "fieldType": "text",
+            "label": "Kind",
+            "name": "Kind",
+            "precision": 2000
+        },
+        {
+            "fieldType": "text",
+            "label": "FriendlyName",
+            "name": "FriendlyName",
+            "precision": 2000
+        },
+        {
+            "fieldType": "text",
+            "label": "DatasetReference_ProjectId",
+            "name": "DatasetReference_ProjectId",
+            "precision": 2000
+        },
+        {
+            "fieldType": "text",
+            "label": "DatasetReference_DatasetId",
+            "name": "DatasetReference_DatasetId",
+            "precision": 2000
+        }
+    ],
+    "sourceObjectName": "Datasets",
+    "url": "/services/data/v53.0/wave/dataConnectors/0ItS700000001IUKAY/sourceObjects/Datasets/fields"
+}

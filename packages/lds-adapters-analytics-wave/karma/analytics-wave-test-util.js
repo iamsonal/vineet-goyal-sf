@@ -351,6 +351,36 @@ function getDataConnectorTypesMatcher(_config) {
     });
 }
 
+// Dataflows
+function mockGetDataflowsNetworkOnce(config, mockData) {
+    const paramMatch = getDataflowsMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetDataflowsNetworkErrorOnce(config, mockData) {
+    const paramMatch = getDataflowsMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function getDataflowsMatcher(config) {
+    let { q } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/dataflows`,
+        queryParams: {
+            q,
+        },
+    });
+}
+
 // Dataflow Jobs
 function mockGetDataflowJobsNetworkOnce(config, mockData) {
     const paramMatch = getDataflowJobsMatcher(config);
@@ -1037,6 +1067,8 @@ export {
     mockIngestDataConnectorNetworkErrorOnce,
     mockGetDataConnectorStatusNetworkOnce,
     mockGetDataConnectorStatusNetworkErrorOnce,
+    mockGetDataflowsNetworkOnce,
+    mockGetDataflowsNetworkErrorOnce,
     mockGetDataflowJobsNetworkOnce,
     mockGetDataflowJobsNetworkErrorOnce,
     mockCreateDataflowJobNetworkOnce,

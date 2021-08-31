@@ -4683,6 +4683,50 @@ describe('routes', () => {
         );
     });
 
+    describe('get /wave/dataflows', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataflows`,
+            },
+            [
+                'WaveController.getDataflows',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        describe('with query params', () => {
+            testControllerInput(
+                {
+                    method: 'get',
+                    baseUri: WAVE_BASE_URI,
+                    basePath: `/dataflows`,
+                    queryParams: {
+                        q: 'dataflow 3',
+                    },
+                },
+                [
+                    'WaveController.getDataflows',
+                    {
+                        q: 'dataflow 3',
+                    },
+                    { background: false, hotspot: true, longRunning: false },
+                ]
+            );
+        });
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: WAVE_BASE_URI,
+                basePath: `/dataflows`,
+            },
+            {}
+        );
+    });
+
     describe('get /wave/dataflowjobs', () => {
         testControllerInput(
             {

@@ -978,6 +978,7 @@ types:
       definition:
         description: The representation of the dataflow nodes
         type: object
+        required: false # TODO Hand-rolled W-8253396
         properties: # TODO Hand-rolled W-8252808
           //:
             type: string
@@ -3173,6 +3174,19 @@ types:
           body:
             application/json:
               type: DataConnectorTypeCollectionRepresentation
+  /dataflows:
+    get:
+      description: Get a collection of dataflow resource representations.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: DataflowCollectionRepresentation
+      queryParameters:
+        q:
+          type: string
+          required: false
   /dataflowjobs:
     get:
       description: Get a collection  of all dataflow jobs representation

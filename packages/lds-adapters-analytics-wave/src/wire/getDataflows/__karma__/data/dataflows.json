@@ -1,0 +1,94 @@
+{
+    "dataflows": [
+        {
+            "createdBy": {
+                "id": "",
+                "name": "",
+                "profilePhotoUrl": ""
+            },
+            "createdDate": "2021-05-17T22:30:31.000Z",
+            "emailNotificationLevel": "warnings",
+            "historiesUrl": "/services/data/v54.0/wave/dataflows/02KRM0000005j9F2AQ/histories",
+            "id": "02KRM0000005j9F2AQ",
+            "label": "Bad Dataflow",
+            "lastModifiedBy": {
+                "id": "",
+                "name": "",
+                "profilePhotoUrl": ""
+            },
+            "lastModifiedDate": "2021-05-17T22:31:59.000Z",
+            "name": "Bad_Dataflow",
+            "type": "dataflow",
+            "url": "/services/data/v54.0/wave/dataflows/02KRM0000005j9F2AQ",
+            "definition": {}
+        },
+        {
+            "createdBy": {
+                "id": "",
+                "name": "",
+                "profilePhotoUrl": ""
+            },
+            "createdDate": "2021-04-29T20:40:54.000Z",
+            "emailNotificationLevel": "warnings",
+            "historiesUrl": "/services/data/v54.0/wave/dataflows/02KRM0000003AiH2AU/histories",
+            "id": "02KRM0000003AiH2AU",
+            "label": "TestDeploymentDataflow",
+            "lastModifiedBy": {
+                "id": "",
+                "name": "",
+                "profilePhotoUrl": ""
+            },
+            "lastModifiedDate": "2021-04-29T22:39:29.000Z",
+            "name": "TestDeploymentDataflow",
+            "type": "dataflow",
+            "url": "/services/data/v54.0/wave/dataflows/02KRM0000003AiH2AU",
+            "definition": {}
+        },
+        {
+            "createdBy": {
+                "id": "",
+                "name": "",
+                "profilePhotoUrl": ""
+            },
+            "createdDate": "2020-10-21T20:35:54.000Z",
+            "description": "This is the default Salesforce dataflow.",
+            "emailNotificationLevel": "warnings",
+            "historiesUrl": "/services/data/v54.0/wave/dataflows/02KRM0000002NZh2AM/histories",
+            "id": "02KRM0000002NZh2AM",
+            "label": "Default Salesforce Dataflow",
+            "lastModifiedBy": {
+                "id": "",
+                "name": "",
+                "profilePhotoUrl": ""
+            },
+            "lastModifiedDate": "2021-04-09T18:38:54.000Z",
+            "name": "SalesEdgeEltWorkflow",
+            "type": "dataflow",
+            "url": "/services/data/v54.0/wave/dataflows/02KRM0000002NZh2AM",
+            "definition": {}
+        },
+        {
+            "createdBy": {
+                "id": "",
+                "name": "",
+                "profilePhotoUrl": ""
+            },
+            "createdDate": "2020-12-16T05:29:33.000Z",
+            "emailNotificationLevel": "warnings",
+            "historiesUrl": "/services/data/v54.0/wave/dataflows/02KRM0000002bFG2AY/histories",
+            "id": "02KRM0000002bFG2AY",
+            "label": "MyOppsDataflow",
+            "lastModifiedBy": {
+                "id": "",
+                "name": "",
+                "profilePhotoUrl": ""
+            },
+            "lastModifiedDate": "2021-03-18T15:51:10.000Z",
+            "name": "MyOppsDataflow",
+            "scheduleAttributes": "{&quot;scheduleType&quot;:&quot;eventdriven&quot;,&quot;triggerRule&quot;:&quot;$ALL_SALESFORCE_OBJECTS&quot;}",
+            "type": "dataflow",
+            "url": "/services/data/v54.0/wave/dataflows/02KRM0000002bFG2AY",
+            "definition": {}
+        }
+    ]
+}

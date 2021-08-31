@@ -90,6 +90,8 @@ const DATA_CONNECTOR_STATUS_PATH = new RegExp(
 
 const DATA_CONNECTOR_TYPES_PATH = new RegExp(`${WAVE_BASE_URI}/dataConnectorTypes$`, 'i');
 
+const DATAFLOWS_PATH = new RegExp(`${WAVE_BASE_URI}/dataflows$`, 'i');
+
 const DATAFLOW_JOBS_PATH = new RegExp(`${WAVE_BASE_URI}/dataflowjobs$`, 'i');
 
 const DATAFLOW_JOB_PATH = new RegExp(`${WAVE_BASE_URI}/dataflowjobs/([A-Z0-9]){15,18}$`, 'i');
@@ -660,6 +662,13 @@ const analytics: ApiFamily = {
             path.startsWith(WAVE_BASE_URI) && DATA_CONNECTOR_TYPES_PATH.test(path),
         transport: {
             controller: 'WaveController.getDataConnectorTypes',
+        },
+    },
+    getDataflows: {
+        method: 'get',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && DATAFLOWS_PATH.test(path),
+        transport: {
+            controller: 'WaveController.getDataflows',
         },
     },
     createDataflowJob: {

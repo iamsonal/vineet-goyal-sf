@@ -37,6 +37,8 @@ types:
       SourceObjectName: sourceObjectName
   DataflowJobCollectionRepresentation:
     (luvio.ttl): 5000
+  DataflowCollectionRepresentation:
+    (luvio.ttl): 5000
 
 /wave:
   /asset/{assetId}/schedule:
@@ -94,6 +96,10 @@ types:
     get:
       (luvio.adapter):
         name: getDataConnectorTypes
+  /dataflows:
+    get:
+      (luvio.adapter):
+        name: getDataflows
   /dataflowjobs:
     get:
       (luvio.adapter):

@@ -1,13 +1,6 @@
 import { ResourceRequest } from '@luvio/engine';
 
-import {
-    incrementGetRecordAggregateInvokeCount,
-    incrementGetRecordAggregateRetryCount,
-    incrementGetRecordNormalInvokeCount,
-    logCRUDLightningInteraction,
-    registerLdsCacheStats,
-    setAggregateUiChunkCountMetric,
-} from '@salesforce/lds-instrumentation';
+import { registerLdsCacheStats } from '@salesforce/lds-instrumentation';
 import { createStorage } from '@salesforce/lds-aura-storage';
 
 import { actionConfig, UI_API_BASE_URI } from './uiapi-base';
@@ -34,6 +27,7 @@ import {
     forceRecordTransactionsDisabled,
     RecordInstrumentationCallbacks,
 } from './event-logging';
+import { instrumentation } from '../instrumentation';
 
 enum UiApiRecordController {
     CreateRecord = 'RecordUiController.createRecord',
@@ -81,64 +75,64 @@ let crudInstrumentationCallbacks: RecordInstrumentationCallbacks | null = null;
 if (forceRecordTransactionsDisabled === false) {
     crudInstrumentationCallbacks = {
         createRecordRejectFunction: (config: InstrumentationRejectConfig) => {
-            logCRUDLightningInteraction(CrudEventType.CREATE, {
+            instrumentation.logCrud(CrudEventType.CREATE, {
                 recordId: config.params.recordInput.apiName,
                 state: CrudEventState.ERROR,
             });
         },
         createRecordResolveFunction: (config: InstrumentationResolveConfig) => {
-            logCRUDLightningInteraction(CrudEventType.CREATE, {
+            instrumentation.logCrud(CrudEventType.CREATE, {
                 recordId: config.body.id,
                 recordType: config.body.apiName,
                 state: CrudEventState.SUCCESS,
             });
         },
         deleteRecordRejectFunction: (config: InstrumentationRejectConfig) => {
-            logCRUDLightningInteraction(CrudEventType.DELETE, {
+            instrumentation.logCrud(CrudEventType.DELETE, {
                 recordId: config.params.recordId,
                 state: CrudEventState.ERROR,
             });
         },
         deleteRecordResolveFunction: (config: InstrumentationResolveConfig) => {
-            logCRUDLightningInteraction(CrudEventType.DELETE, {
+            instrumentation.logCrud(CrudEventType.DELETE, {
                 recordId: config.params.recordId,
                 state: CrudEventState.SUCCESS,
             });
         },
         getRecordAggregateRejectFunction: (config: InstrumentationRejectConfig) => {
-            logCRUDLightningInteraction(CrudEventType.READ, {
+            instrumentation.logCrud(CrudEventType.READ, {
                 recordId: config.params.recordId,
                 state: CrudEventState.ERROR,
             });
         },
         getRecordAggregateResolveFunction: (config: InstrumentationResolveConfig) => {
-            logCRUDLightningInteraction(CrudEventType.READ, {
+            instrumentation.logCrud(CrudEventType.READ, {
                 recordId: config.params.recordId,
                 recordType: config.body.apiName,
                 state: CrudEventState.SUCCESS,
             });
         },
         getRecordRejectFunction: (config: InstrumentationRejectConfig) => {
-            logCRUDLightningInteraction(CrudEventType.READ, {
+            instrumentation.logCrud(CrudEventType.READ, {
                 recordId: config.params.recordId,
                 state: CrudEventState.ERROR,
             });
         },
         getRecordResolveFunction: (config: InstrumentationResolveConfig) => {
-            logCRUDLightningInteraction(CrudEventType.READ, {
+            instrumentation.logCrud(CrudEventType.READ, {
                 recordId: config.params.recordId,
                 recordType: config.body.apiName,
                 state: CrudEventState.SUCCESS,
             });
         },
         updateRecordRejectFunction: (config: InstrumentationRejectConfig) => {
-            logCRUDLightningInteraction(CrudEventType.UPDATE, {
+            instrumentation.logCrud(CrudEventType.UPDATE, {
                 recordId: config.params.recordId,
                 state: CrudEventState.ERROR,
             });
         },
         updateRecordResolveFunction: (config: InstrumentationResolveConfig) => {
-            logCRUDLightningInteraction(CrudEventType.UPDATE, {
+            instrumentation.logCrud(CrudEventType.UPDATE, {
                 recordId: config.params.recordId,
                 recordType: config.body.apiName,
                 state: CrudEventState.SUCCESS,
@@ -180,7 +174,7 @@ function buildAndDispatchGetRecordAggregateUi(
     fieldsString: string,
     optionalFieldsString: string
 ): Promise<any> {
-    incrementGetRecordAggregateInvokeCount();
+    instrumentation.getRecordAggregateInvoke();
 
     const compositeRequest = buildGetRecordByFieldsCompositeRequest(recordId, resourceRequest, {
         fieldsArray,
@@ -203,7 +197,7 @@ function buildAndDispatchGetRecordAggregateUi(
               }
             : {};
 
-    setAggregateUiChunkCountMetric(compositeRequest.length);
+    instrumentation.aggregateUiChunkCount(compositeRequest.length);
 
     return dispatchSplitRecordAggregateUiAction(
         UiApiRecordController.ExecuteAggregateUi,
@@ -294,7 +288,7 @@ function getRecord(resourceRequest: ResourceRequest & ResourceRequestWithConfig)
     let getRecordParams: any = {};
     let controller: UiApiRecordController;
 
-    incrementGetRecordNormalInvokeCount();
+    instrumentation.getRecordNormalInvoke();
 
     if (layoutTypes !== undefined) {
         getRecordParams = {
@@ -324,7 +318,7 @@ function getRecord(resourceRequest: ResourceRequest & ResourceRequestWithConfig)
     return dispatchAction(controller, params, actionConfig, instrumentationCallbacks).catch(
         (err) => {
             if (auraResponseIsQueryTooComplicated(err)) {
-                incrementGetRecordAggregateRetryCount();
+                instrumentation.getRecordAggregateRetry();
 
                 // Retry with aggregateUi to see if we can avoid Query Too Complicated
                 return buildAndDispatchGetRecordAggregateUi(

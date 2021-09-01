@@ -15,25 +15,23 @@ jest.mock('@salesforce/lds-environment-settings', () => {
 });
 
 jest.mock('@salesforce/lds-instrumentation', () => {
-    const spies = {
-        logCRUDLightningInteraction: jest.fn(),
-    };
-
     return {
-        setAggregateUiChunkCountMetric: () => {},
-        incrementGetRecordAggregateInvokeCount: () => {},
-        incrementGetRecordNormalInvokeCount: () => {},
         incrementAggregateUiConnectErrorCount: () => {},
         registerLdsCacheStats: () => {},
-        logCRUDLightningInteraction: spies.logCRUDLightningInteraction,
-        __spies: spies,
     };
 });
 
-import { __spies as instrumentationSpies } from '@salesforce/lds-instrumentation';
+import { instrumentation } from '../instrumentation';
+
+const instrumentationSpies = {
+    logCrud: jest.spyOn(instrumentation, 'logCrud'),
+    getRecordAggregateInvoke: jest.spyOn(instrumentation, 'getRecordAggregateInvoke'),
+    getRecordAggregateRetry: jest.spyOn(instrumentation, 'getRecordAggregateRetry'),
+    getRecordNormalInvoke: jest.spyOn(instrumentation, 'getRecordNormalInvoke'),
+};
 
 beforeEach(() => {
-    instrumentationSpies.logCRUDLightningInteraction.mockClear();
+    instrumentationSpies.logCrud.mockClear();
 });
 
 describe('crud logging', () => {
@@ -62,15 +60,12 @@ describe('crud logging', () => {
             jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce(response);
             await networkAdapter(buildResourceRequest(request));
 
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith(
-                'create',
-                {
-                    recordId: '1234',
-                    recordType: 'Test__c',
-                    state: 'SUCCESS',
-                }
-            );
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('create', {
+                recordId: '1234',
+                recordType: 'Test__c',
+                state: 'SUCCESS',
+            });
         });
 
         it('logs create event when createRecord is called but returns error', async () => {
@@ -90,14 +85,11 @@ describe('crud logging', () => {
             try {
                 await networkAdapter(buildResourceRequest(request));
             } catch (err) {
-                expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-                expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith(
-                    'read',
-                    {
-                        recordId: '1234',
-                        state: 'ERROR',
-                    }
-                );
+                expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
+                expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('read', {
+                    recordId: '1234',
+                    state: 'ERROR',
+                });
             }
         });
     });
@@ -128,8 +120,8 @@ describe('crud logging', () => {
             jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce(response);
             await networkAdapter(buildResourceRequest(request));
 
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith('read', {
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('read', {
                 recordId: '1234',
                 recordType: 'Foo',
                 state: 'SUCCESS',
@@ -153,14 +145,11 @@ describe('crud logging', () => {
             try {
                 await networkAdapter(buildResourceRequest(request));
             } catch (err) {
-                expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-                expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith(
-                    'read',
-                    {
-                        recordId: '1234',
-                        state: 'ERROR',
-                    }
-                );
+                expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
+                expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('read', {
+                    recordId: '1234',
+                    state: 'ERROR',
+                });
             }
         });
 
@@ -272,8 +261,8 @@ describe('crud logging', () => {
             jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce(response);
             await networkAdapter(buildResourceRequest(request));
 
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith('reads', {
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('reads', {
                 parentRecordId: '001RM000004km7aYAA',
                 recordIds: ['003RM000006Swh5YAC', '003RM000006Swh5YAD'],
                 recordType: 'Contact',
@@ -329,7 +318,7 @@ describe('crud logging', () => {
             jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce(response);
             await networkAdapter(buildResourceRequest(request));
 
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(0);
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(0);
         });
 
         it('logs read event when getRelatedListRecords is called but returns error', async () => {
@@ -353,15 +342,12 @@ describe('crud logging', () => {
             try {
                 await networkAdapter(buildResourceRequest(request));
             } catch (err) {
-                expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-                expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith(
-                    'reads',
-                    {
-                        parentRecordId: '001RM000004km7aYAA',
-                        relatedListId: 'Contacts',
-                        state: 'ERROR',
-                    }
-                );
+                expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
+                expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('reads', {
+                    parentRecordId: '001RM000004km7aYAA',
+                    relatedListId: 'Contacts',
+                    state: 'ERROR',
+                });
             }
         });
 
@@ -497,29 +483,21 @@ describe('crud logging', () => {
             jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce(response);
             await networkAdapter(buildResourceRequest(request));
 
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(2);
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenNthCalledWith(
-                1,
-                'reads',
-                {
-                    parentRecordId: 'a00RM0000004aVwYAI',
-                    recordIds: ['a01RM000000vPOBYA1'],
-                    recordType: 'CwcCustom02__c',
-                    relatedListId: 'CwcCustom02s__r',
-                    state: 'SUCCESS',
-                }
-            );
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenNthCalledWith(
-                2,
-                'reads',
-                {
-                    parentRecordId: 'a00RM0000004aVwYAI',
-                    recordIds: ['a01RM000000vPOBYA2', 'a01RM000000qecDYAQ', 'a01RM000000v7ThYAI'],
-                    recordType: 'CwcCustom01__c',
-                    relatedListId: 'CwcCustom01s__r',
-                    state: 'SUCCESS',
-                }
-            );
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(2);
+            expect(instrumentationSpies.logCrud).toHaveBeenNthCalledWith(1, 'reads', {
+                parentRecordId: 'a00RM0000004aVwYAI',
+                recordIds: ['a01RM000000vPOBYA1'],
+                recordType: 'CwcCustom02__c',
+                relatedListId: 'CwcCustom02s__r',
+                state: 'SUCCESS',
+            });
+            expect(instrumentationSpies.logCrud).toHaveBeenNthCalledWith(2, 'reads', {
+                parentRecordId: 'a00RM0000004aVwYAI',
+                recordIds: ['a01RM000000vPOBYA2', 'a01RM000000qecDYAQ', 'a01RM000000v7ThYAI'],
+                recordType: 'CwcCustom01__c',
+                relatedListId: 'CwcCustom01s__r',
+                state: 'SUCCESS',
+            });
         });
 
         it('logs read event when getRelatedListRecordsBatch is called but a result is error', async () => {
@@ -595,8 +573,8 @@ describe('crud logging', () => {
             jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce(response);
             await networkAdapter(buildResourceRequest(request));
 
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith('reads', {
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('reads', {
                 parentRecordId: 'a00RM0000004aVwYAI',
                 recordIds: ['a01RM000000vPOBYA1'],
                 recordType: 'CwcCustom02__c',
@@ -621,15 +599,12 @@ describe('crud logging', () => {
             try {
                 await networkAdapter(buildResourceRequest(request));
             } catch (err) {
-                expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-                expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith(
-                    'reads',
-                    {
-                        parentRecordId: 'a00RM0000004aVwYAI',
-                        relatedListIds: ['CwcCustom02s__r, CwcCustom01s__r'],
-                        state: 'ERROR',
-                    }
-                );
+                expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
+                expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('reads', {
+                    parentRecordId: 'a00RM0000004aVwYAI',
+                    relatedListIds: ['CwcCustom02s__r, CwcCustom01s__r'],
+                    state: 'ERROR',
+                });
             }
         });
     });
@@ -679,8 +654,8 @@ describe('crud logging', () => {
             jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce(response);
             await networkAdapter(buildResourceRequest(request));
 
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith('read', {
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('read', {
                 recordId: '1234',
                 recordType: 'Foo',
                 state: 'SUCCESS',
@@ -728,14 +703,11 @@ describe('crud logging', () => {
             try {
                 await networkAdapter(buildResourceRequest(request));
             } catch (err) {
-                expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-                expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith(
-                    'read',
-                    {
-                        recordId: '1234',
-                        state: 'ERROR',
-                    }
-                );
+                expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
+                expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('read', {
+                    recordId: '1234',
+                    state: 'ERROR',
+                });
             }
         });
     });
@@ -763,15 +735,12 @@ describe('crud logging', () => {
             jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce(response);
             await networkAdapter(buildResourceRequest(request));
 
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith(
-                'update',
-                {
-                    recordId: '1234',
-                    recordType: 'Test__c',
-                    state: 'SUCCESS',
-                }
-            );
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('update', {
+                recordId: '1234',
+                recordType: 'Test__c',
+                state: 'SUCCESS',
+            });
         });
 
         it('logs update event when updateRecord is called but returns error', async () => {
@@ -785,13 +754,10 @@ describe('crud logging', () => {
             try {
                 await networkAdapter(buildResourceRequest(request));
             } catch (err) {
-                expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-                expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith(
-                    'update',
-                    {
-                        state: 'ERROR',
-                    }
-                );
+                expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
+                expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('update', {
+                    state: 'ERROR',
+                });
             }
         });
     });
@@ -811,14 +777,11 @@ describe('crud logging', () => {
             jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce(null);
             await networkAdapter(buildResourceRequest(request));
 
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith(
-                'delete',
-                {
-                    recordId: '1234',
-                    state: 'SUCCESS',
-                }
-            );
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('delete', {
+                recordId: '1234',
+                state: 'SUCCESS',
+            });
         });
 
         it('logs delete event when deleteRecord is called but returns error', async () => {
@@ -836,14 +799,11 @@ describe('crud logging', () => {
             try {
                 await networkAdapter(buildResourceRequest(request));
             } catch (err) {
-                expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(1);
-                expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledWith(
-                    'delete',
-                    {
-                        recordId: '1234',
-                        state: 'ERROR',
-                    }
-                );
+                expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(1);
+                expect(instrumentationSpies.logCrud).toHaveBeenCalledWith('delete', {
+                    recordId: '1234',
+                    state: 'ERROR',
+                });
             }
         });
     });

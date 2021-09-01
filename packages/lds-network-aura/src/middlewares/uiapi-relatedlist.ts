@@ -1,4 +1,6 @@
 import { ResourceRequest } from '@luvio/engine';
+import { RelatedListRecordCollectionRepresentation } from '@salesforce/lds-adapters-uiapi';
+import { RelatedListRecordCollectionBatchRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { UI_API_BASE_URI } from './uiapi-base';
 import {
     buildUiApiParams,
@@ -13,9 +15,7 @@ import {
     forceRecordTransactionsDisabled,
     RelatedListInstrumentationCallbacks,
 } from './event-logging';
-import { logCRUDLightningInteraction } from '@salesforce/lds-instrumentation';
-import { RelatedListRecordCollectionRepresentation } from '@salesforce/lds-adapters-uiapi';
-import { RelatedListRecordCollectionBatchRepresentation } from '@salesforce/lds-adapters-uiapi';
+import { instrumentation } from '../instrumentation';
 
 enum UiApiRecordController {
     GetRelatedListInfo = 'RelatedListUiController.getRelatedListInfoByApiName',
@@ -45,7 +45,7 @@ interface GetRelatedListRecordsCrudMetadata {
 if (forceRecordTransactionsDisabled === false) {
     crudInstrumentationCallbacks = {
         getRelatedListRecordsRejectFunction: (config: InstrumentationRejectConfig) => {
-            logCRUDLightningInteraction(CrudEventType.READS, {
+            instrumentation.logCrud(CrudEventType.READS, {
                 parentRecordId: config.params.parentRecordId,
                 relatedListId: config.params.relatedListId,
                 state: CrudEventState.ERROR,
@@ -57,7 +57,7 @@ if (forceRecordTransactionsDisabled === false) {
             );
         },
         getRelatedListRecordsBatchRejectFunction: (config: InstrumentationRejectConfig) => {
-            logCRUDLightningInteraction(CrudEventType.READS, {
+            instrumentation.logCrud(CrudEventType.READS, {
                 parentRecordId: config.params.parentRecordId,
                 relatedListIds: config.params.relatedListIds,
                 state: CrudEventState.ERROR,
@@ -302,7 +302,7 @@ function logGetRelatedListRecordsInteraction(
         ADS Implementation only looks at the first record returned to determine the apiName.
         See force/recordLibrary/recordMetricsPlugin.js _getRecordType method. 
      */
-    logCRUDLightningInteraction(CrudEventType.READS, {
+    instrumentation.logCrud(CrudEventType.READS, {
         parentRecordId: body.listReference.inContextOfRecordId,
         relatedListId: body.listReference.relatedListId,
         recordIds,

@@ -5,26 +5,27 @@ import { buildResourceRequest } from './test-utils';
 import tokenBucket from '../utils/tokenBucket';
 
 jest.mock('@salesforce/lds-instrumentation', () => {
-    const spies = {
-        incrementNetworkRateLimitExceededCount: jest.fn(),
-    };
-
     return {
-        incrementGetRecordNormalInvokeCount: () => {},
         registerLdsCacheStats: () => {},
-        incrementNetworkRateLimitExceededCount: spies.incrementNetworkRateLimitExceededCount,
-        __spies: spies,
     };
 });
 
-import { __spies as instrumentationSpies } from '@salesforce/lds-instrumentation';
-tokenBucket.take = jest.fn();
+import { instrumentation } from '../instrumentation';
 
+const instrumentationSpies = {
+    logCrud: jest.spyOn(instrumentation, 'logCrud'),
+    getRecordAggregateInvoke: jest.spyOn(instrumentation, 'getRecordAggregateInvoke'),
+    getRecordAggregateRetry: jest.spyOn(instrumentation, 'getRecordAggregateRetry'),
+    getRecordNormalInvoke: jest.spyOn(instrumentation, 'getRecordNormalInvoke'),
+    networkRateLimitExceeded: jest.spyOn(instrumentation, 'networkRateLimitExceeded'),
+};
+
+tokenBucket.take = jest.fn();
+beforeEach(() => {
+    instrumentationSpies.networkRateLimitExceeded.mockClear();
+    tokenBucket.take.mockClear();
+});
 describe('rate limiting event', () => {
-    beforeEach(() => {
-        instrumentationSpies.incrementNetworkRateLimitExceededCount.mockClear();
-        tokenBucket.take.mockClear();
-    });
     it('increments rate limit counter when the network calls exceeds bucket capacity', async () => {
         tokenBucket.take
             .mockReturnValueOnce(true)
@@ -47,8 +48,6 @@ describe('rate limiting event', () => {
         for (let i = 0; i < 3; i++) {
             networkAdapter(buildResourceRequest(request));
         }
-        expect(instrumentationSpies.incrementNetworkRateLimitExceededCount).toHaveBeenCalledTimes(
-            1
-        );
+        expect(instrumentationSpies.networkRateLimitExceeded).toHaveBeenCalledTimes(1);
     });
 });

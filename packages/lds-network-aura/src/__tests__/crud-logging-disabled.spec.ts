@@ -13,22 +13,22 @@ jest.mock('@salesforce/lds-environment-settings', () => {
 });
 
 jest.mock('@salesforce/lds-instrumentation', () => {
-    const spies = {
-        logCRUDLightningInteraction: jest.fn(),
-    };
-
     return {
-        incrementGetRecordNormalInvokeCount: () => {},
         registerLdsCacheStats: () => {},
-        logCRUDLightningInteraction: spies.logCRUDLightningInteraction,
-        __spies: spies,
     };
 });
 
-import { __spies as instrumentationSpies } from '@salesforce/lds-instrumentation';
+import { instrumentation } from '../instrumentation';
+
+const instrumentationSpies = {
+    logCrud: jest.spyOn(instrumentation, 'logCrud'),
+    getRecordAggregateInvoke: jest.spyOn(instrumentation, 'getRecordAggregateInvoke'),
+    getRecordAggregateRetry: jest.spyOn(instrumentation, 'getRecordAggregateRetry'),
+    getRecordNormalInvoke: jest.spyOn(instrumentation, 'getRecordNormalInvoke'),
+};
 
 beforeEach(() => {
-    instrumentationSpies.logCRUDLightningInteraction.mockClear();
+    instrumentationSpies.logCrud.mockClear();
 });
 
 describe('crud logging disabled by gate', () => {
@@ -58,7 +58,7 @@ describe('crud logging disabled by gate', () => {
         jest.spyOn(aura, 'executeGlobalController').mockResolvedValueOnce(response);
         await networkAdapter(buildResourceRequest(request));
 
-        expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(0);
+        expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(0);
     });
 
     it('does not log read event when getRecord is called but returns error', async () => {
@@ -78,7 +78,7 @@ describe('crud logging disabled by gate', () => {
         try {
             await networkAdapter(buildResourceRequest(request));
         } catch (err) {
-            expect(instrumentationSpies.logCRUDLightningInteraction).toHaveBeenCalledTimes(0);
+            expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(0);
         }
     });
 });

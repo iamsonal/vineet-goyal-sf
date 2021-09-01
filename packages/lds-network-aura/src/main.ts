@@ -1,10 +1,10 @@
 import { ResourceRequest } from '@luvio/engine';
-import { incrementNetworkRateLimitExceededCount } from '@salesforce/lds-instrumentation';
 import './middlewares';
 import { ControllerInvoker } from './middlewares/utils';
 import { default as appRouter } from './router';
 import { ArrayPrototypePush, JSONParse, JSONStringify, ObjectEntries } from './utils/language';
 import tokenBucket from './utils/tokenBucket';
+import { instrumentation } from './instrumentation';
 
 interface RequestHandlers {
     resolve: (response: any) => void;
@@ -141,7 +141,7 @@ export default function networkAdapterWithRateLimitTelemetry(
 ): Promise<any> {
     if (!tokenBucket.take(1)) {
         // We are hitting rate limiting, add some metrics
-        incrementNetworkRateLimitExceededCount();
+        instrumentation.networkRateLimitExceeded();
     }
     return networkAdapter(resourceRequest);
 }

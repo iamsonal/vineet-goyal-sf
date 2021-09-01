@@ -13,29 +13,28 @@ import { HttpStatusCode, ResourceRequest } from '@luvio/engine';
 import { UiApiParams } from '../middlewares/utils';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
 
+jest.mock('@salesforce/lds-instrumentation', () => {
+    return {
+        incrementAggregateUiConnectErrorCount: () => {},
+        registerLdsCacheStats: () => {},
+    };
+});
+
+import { instrumentation } from '../instrumentation';
+
+const instrumentationSpies = {
+    logCrud: jest.spyOn(instrumentation, 'logCrud'),
+    getRecordAggregateInvoke: jest.spyOn(instrumentation, 'getRecordAggregateInvoke'),
+    getRecordAggregateRetry: jest.spyOn(instrumentation, 'getRecordAggregateRetry'),
+    getRecordNormalInvoke: jest.spyOn(instrumentation, 'getRecordNormalInvoke'),
+};
+
 beforeEach(() => {
     if (jest.isMockFunction(aura.executeGlobalController)) {
         aura.executeGlobalController.mockReset();
     }
-    instrumentationSpies.logCRUDLightningInteraction.mockClear();
+    instrumentationSpies.logCrud.mockClear();
 });
-
-jest.mock('@salesforce/lds-instrumentation', () => {
-    const spies = {
-        logCRUDLightningInteraction: jest.fn(),
-    };
-
-    return {
-        incrementGetRecordNormalInvokeCount: () => {},
-        incrementAggregateUiConnectErrorCount: () => {},
-        registerLdsCacheStats: () => {},
-        logCRUDLightningInteraction: spies.logCRUDLightningInteraction,
-        __spies: spies,
-    };
-});
-
-import { __spies as instrumentationSpies } from '@salesforce/lds-instrumentation';
-
 describe('executeAggregateUi', () => {
     describe('buildGetRecordByFieldsCompositeRequest', () => {
         it('should build a CompositeRequest with a getRecord input', () => {

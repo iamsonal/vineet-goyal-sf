@@ -126,8 +126,6 @@ describe('imperative Apex call', () => {
         expect(contacts).toEqual(mockApex);
     });
 
-    xit('handles continuations, longRunning true');
-
     it('makes network request after cache TTLs out', async () => {
         const mockApex1 = getMock('apex-getContactList');
         const mockApex2 = mockApex1.slice(1);

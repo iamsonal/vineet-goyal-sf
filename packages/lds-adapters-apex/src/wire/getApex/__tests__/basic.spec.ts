@@ -12,6 +12,7 @@ import {
     keyBuilderFromResourceParams,
     ingestSuccess,
     onResourceResponseSuccess,
+    factory,
 } from '../index';
 import { ResourceRequestConfig } from '../../../generated/resources/getByApexMethodAndApexClass';
 import { CACHE_CONTROL } from '../../../util/shared';
@@ -85,6 +86,78 @@ describe('keyBuilderFromResourceParams', () => {
             xSFDCAllowContinuation: 'true',
         });
         expect(keyBuilderFromResourceParams(params)).toBe(expectedKey);
+    });
+    it('returns correct cache key if params created in different order, especially on nested objects of params', () => {
+        const expectedKey =
+            'TestController:getString:false:{"foo":{"bar":"baz","jane":"doe"},"name":"LWC"}';
+        const config = {
+            apexMethod: 'getString',
+            apexClass: 'TestController',
+            methodParams: { name: 'LWC', foo: { jane: 'doe', bar: 'baz' } },
+            xSFDCAllowContinuation: 'false',
+        };
+        const params = createResourceParams(config);
+
+        const params2 = createResourceParams({
+            ...config,
+            methodParams: { name: 'LWC', foo: { bar: 'baz', jane: 'doe' } },
+        });
+
+        expect(keyBuilderFromResourceParams(params)).toBe(expectedKey);
+        expect(keyBuilderFromResourceParams(params2)).toBe(keyBuilderFromResourceParams(params));
+    });
+});
+
+describe('isContinuation Header', () => {
+    it('handles continuations', () => {
+        const mockLuvio: any = {
+            storeIngest: jest.fn(),
+            storeLookup: jest.fn(),
+            dispatchResourceRequest: jest.fn().mockReturnValue(Promise.resolve({})),
+            withContext: (fn: any) => fn,
+            snapshotAvailable: jest.fn().mockReturnValue(false),
+            resolveSnapshot: (snapshot: any, refresh: any) => refresh.resolve(),
+        };
+
+        const invokerParams = {
+            method: 'getString',
+            classname: 'TestController',
+            isContinuation: true,
+            namespace: 'wkdw',
+        };
+
+        const config = {
+            apexMethod: 'getString',
+            apexClass: 'TestController',
+            xSFDCAllowContinuation: 'true',
+        };
+
+        const adapter = factory(mockLuvio, invokerParams);
+        adapter(config);
+        expect(mockLuvio.dispatchResourceRequest).toHaveBeenCalledTimes(1);
+
+        const expectedRequest = {
+            basePath: '/wkdw__TestController/getString',
+            baseUri: '/lwr/apex/v54.0',
+            body: null,
+            headers: {
+                'X-SFDC-Allow-Continuation': 'true',
+            },
+            method: 'get',
+            queryParams: {
+                methodParams: {
+                    apexClass: 'TestController',
+                    apexMethod: 'getString',
+                    xSFDCAllowContinuation: 'true',
+                },
+            },
+            urlParams: {
+                apexClass: 'wkdw__TestController',
+                apexMethod: 'getString',
+            },
+        };
+
+        expect(mockLuvio.dispatchResourceRequest).toHaveBeenCalledWith(expectedRequest, undefined);
     });
 });
 

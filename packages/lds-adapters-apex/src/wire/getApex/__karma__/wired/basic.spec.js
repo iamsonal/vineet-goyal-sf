@@ -170,8 +170,6 @@ describe('@wire Apex call', () => {
         expect(element.getWiredContacts()).toEqual(mockApex);
     });
 
-    xit('handles continuations, longRunning true');
-
     it('makes network request after cache TTLs out', async () => {
         const mockApex1 = getMock('apex-getContactList');
         const mockApex2 = mockApex1.slice(1);
@@ -185,9 +183,34 @@ describe('@wire Apex call', () => {
         expect(element.getWiredContacts()).toEqual(mockApex2);
     });
 
-    xit('handles successful response that contains error payload');
+    it('handles rejected promise from network (eg server 500s)', async () => {
+        const mockError = {
+            ok: false,
+            status: 500,
+            statusText: 'Internal Server Error',
+            body: [getMock('apex-getContactList-wiredError')],
+        };
+        mockApexNetwork(request, { reject: true, data: mockError }, mockHeaders);
 
-    xit('handles rejected promise from network (eg server 500s), does not cache the result');
+        const element = await setupElement({}, Wired);
+        expect(element.getWiredError()).toEqual(mockError);
+        expect(element.getWiredError()).toBeImmutable();
+    });
 
-    xit('cache hit if params created in different order, especially on nested objects of params');
+    it('rejects the promise but does not cache the result', async () => {
+        const mockError = {
+            ok: false,
+            status: 500,
+            statusText: 'Internal Server Error',
+            body: [getMock('apex-getContactList-wiredError')],
+        };
+        const reject = { reject: true, data: mockError };
+        mockApexNetwork(request, [reject, reject], mockHeaders);
+
+        await setupElement({}, Wired);
+
+        // does not cache the error and makes a network request
+        const element = await setupElement({}, Wired);
+        expect(element.getWiredError()).toEqual(mockError);
+    });
 });

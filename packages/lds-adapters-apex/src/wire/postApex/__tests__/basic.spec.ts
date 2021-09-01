@@ -14,7 +14,8 @@ import {
     onResourceResponseSuccess,
 } from '../index';
 import { ResourceRequestConfig } from '../../../generated/resources/postByApexMethodAndApexClass';
-import { CACHE_CONTROL } from '../../../util/shared';
+import * as utils from '../../../util/shared';
+import { invoker as factory } from '../../postApex';
 
 describe('ingestSuccess', () => {
     const mockLuvio: any = {
@@ -59,6 +60,58 @@ describe('ingestSuccess', () => {
             'Invalid resource response. Expected resource response to result in Fulfilled or Stale snapshot'
         );
         process.env.NODE_ENV = 'production';
+    });
+});
+
+describe('isContinuation Header', () => {
+    it('handles continuations', () => {
+        const mockLuvio: any = {
+            storeIngest: jest.fn(),
+            storeLookup: jest.fn(),
+            dispatchResourceRequest: jest.fn().mockReturnValue(Promise.resolve({})),
+            withContext: (fn: any) => fn,
+            snapshotAvailable: jest.fn().mockReturnValue(false),
+            resolveSnapshot: (snapshot: any, refresh: any) => refresh.resolve(),
+        };
+
+        jest.spyOn(utils, 'isCacheable').mockReturnValue(false);
+
+        const invokerParams = {
+            method: 'getString',
+            classname: 'TestController',
+            isContinuation: true,
+            namespace: 'wkdw',
+        };
+
+        const config = {
+            apexMethod: 'getString',
+            apexClass: 'TestController',
+            xSFDCAllowContinuation: 'true',
+        };
+
+        const adapter = factory(mockLuvio, invokerParams);
+        adapter(config);
+        expect(mockLuvio.dispatchResourceRequest).toHaveBeenCalledTimes(1);
+
+        const expectedRequest = {
+            baseUri: '/lwr/apex/v54.0',
+            basePath: '/wkdw__TestController/getString',
+            method: 'post',
+            body: {
+                apexMethod: 'getString',
+                apexClass: 'TestController',
+                xSFDCAllowContinuation: 'true',
+            },
+            urlParams: {
+                apexMethod: 'getString',
+                apexClass: 'wkdw__TestController',
+            },
+            queryParams: {},
+            headers: {
+                'X-SFDC-Allow-Continuation': 'true',
+            },
+        };
+        expect(mockLuvio.dispatchResourceRequest).toHaveBeenCalledWith(expectedRequest, undefined);
     });
 });
 
@@ -113,7 +166,7 @@ describe('onResourceResponseSuccess', () => {
             body: 'some string',
             ok: true,
             status: 200,
-            headers: { [CACHE_CONTROL]: 'private' },
+            headers: { [utils.CACHE_CONTROL]: 'private' },
         } as ResourceResponse<any>;
 
         const result = onResourceResponseSuccess(luvio, context, config, resourceParams, response);

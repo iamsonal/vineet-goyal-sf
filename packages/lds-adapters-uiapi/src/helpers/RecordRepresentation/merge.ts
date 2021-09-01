@@ -17,10 +17,7 @@ import {
 import { ObjectKeys } from '../../util/language';
 import { RecordConflictMap } from './resolveConflict';
 import { configuration } from '../../configuration';
-
-const INCOMING_WEAKETAG_0_KEY = 'incoming-weaketag-0';
-const EXISTING_WEAKETAG_0_KEY = 'existing-weaketag-0';
-const RECORD_API_NAME_CHANGE_EVENT = 'record-api-name-change-event';
+import { instrumentation } from '../../instrumentation';
 
 // This function sets fields that we are refreshing to pending
 // These values will go into the store
@@ -259,34 +256,19 @@ export default function merge(
     // }
     // Adding instrumentation to see how frequently this occurs
     if (existing.apiName !== incoming.apiName) {
-        const paramsBuilder = () => {
-            return {
-                [RECORD_API_NAME_CHANGE_EVENT]: true,
-                existingApiName: existing.apiName,
-                incomingApiName: incoming.apiName,
-            };
-        };
-        luvio.instrument(paramsBuilder);
+        instrumentation.recordApiNameChanged(incoming.apiName, existing.apiName);
     }
 
-    const incomingWeakEtag = incoming.weakEtag;
-    const existingWeakEtag = existing.weakEtag;
+    const incomingWeakEtagZero = incoming.weakEtag === 0;
+    const existingWeakEtagZero = existing.weakEtag === 0;
 
-    if (incomingWeakEtag === 0 || existingWeakEtag === 0) {
-        const paramsBuilder = () => {
-            return {
-                [INCOMING_WEAKETAG_0_KEY]: incomingWeakEtag === 0,
-                [EXISTING_WEAKETAG_0_KEY]: existingWeakEtag === 0,
-                apiName: incoming.apiName,
-            };
-        };
-
-        luvio.instrument(paramsBuilder);
+    if (incomingWeakEtagZero || existingWeakEtagZero) {
+        instrumentation.weakEtagZero(incomingWeakEtagZero, existingWeakEtagZero, incoming.apiName);
     }
 
     // TODO [W-6900085]: UIAPI returns weakEtag=0 when the record is >2 levels nested. For now
     // we treat the record as mergeable.
-    if (incomingWeakEtag !== 0 && existingWeakEtag !== 0 && incomingWeakEtag !== existingWeakEtag) {
+    if (!incomingWeakEtagZero && !existingWeakEtagZero && incoming.weakEtag !== existing.weakEtag) {
         return mergeRecordConflict(luvio, incoming, existing, recordConflictMap);
     }
 

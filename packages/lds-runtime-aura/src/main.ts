@@ -2,12 +2,8 @@ import { Environment, Luvio, Store } from '@luvio/engine';
 import ldsTrackedFieldsBehaviorGate from '@salesforce/gate/lds.useNewTrackedFieldBehavior';
 import { configuration as ldsAdaptersUiapiConfig } from '@salesforce/lds-adapters-uiapi';
 import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
-import {
-    updatePercentileHistogramMetric,
-    instrumentation,
-    setupInstrumentation,
-} from '@salesforce/lds-instrumentation';
-import { instrument as adaptersUiApiInstrument } from '@salesforce/lds-adapters-uiapi';
+import { instrumentation, setupInstrumentation } from '@salesforce/lds-instrumentation';
+import { instrumentUiApi } from './instrumentation';
 import networkAdapter from '@salesforce/lds-network-aura';
 import { setupMetadataWatcher } from './metadata';
 
@@ -32,11 +28,8 @@ export function initializeLDS() {
     });
 
     setupInstrumentation(luvio, store);
-    // new instrumentation approach
-    adaptersUiApiInstrument({
-        recordConflictsResolved: (serverRequestCount: number) =>
-            updatePercentileHistogramMetric('record-conflicts-resolved', serverRequestCount),
-    });
+
+    instrumentUiApi();
 
     setupMetadataWatcher(luvio);
 

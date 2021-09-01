@@ -14,6 +14,7 @@ import { getRecordByFields } from './GetRecordFields';
 import { getRecordLayoutType, GetRecordLayoutTypeConfig } from './GetRecordLayoutType';
 import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
 import { configuration } from '../../configuration';
+import { instrumentation } from '../../instrumentation';
 
 // Custom adapter config due to `unsupported` items
 const GET_RECORD_ADAPTER_CONFIG: AdapterValidationConfig = {
@@ -65,14 +66,6 @@ function coerceKeyParams(config: KeyParams): KeyParams {
     return coercedConfig;
 }
 
-const NOTIFY_CHANGE_NETWORK_KEY = 'notify-change-network';
-
-const notifyChangeNetworkRejectInstrumentParamBuilder = () => {
-    return {
-        [NOTIFY_CHANGE_NETWORK_KEY]: 'error',
-    };
-};
-
 export const notifyChangeFactory = (luvio: Luvio) => {
     return function getUiApiRecordsByRecordIdNotifyChange(configs: KeyParams[]): void {
         for (let i = 0, len = configs.length; i < len; i++) {
@@ -117,19 +110,15 @@ export const notifyChangeFactory = (luvio: Luvio) => {
                         body
                     );
                     luvio.storeBroadcast();
-                    const notifyChangeNetworkResolveInstrumentParamBuilder = () => {
-                        return {
-                            [NOTIFY_CHANGE_NETWORK_KEY]:
-                                existingWeakEtag !== (body as RecordRepresentation).weakEtag,
-                        };
-                    };
-                    luvio.instrument(notifyChangeNetworkResolveInstrumentParamBuilder);
+                    instrumentation.getRecordNotifyChangeNetworkResult(
+                        existingWeakEtag !== (body as RecordRepresentation).weakEtag
+                    );
                 },
                 (error: FetchResponse<unknown>) => {
                     const errorSnapshot = luvio.errorSnapshot(error);
                     luvio.storeIngestError(key, errorSnapshot, RecordRepresentationTTL);
                     luvio.storeBroadcast();
-                    luvio.instrument(notifyChangeNetworkRejectInstrumentParamBuilder);
+                    instrumentation.getRecordNotifyChangeNetworkResult(null, true);
                 }
             );
         }

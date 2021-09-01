@@ -173,12 +173,6 @@ export interface LightningInteractionSchema {
     attributes: unknown;
 }
 
-export interface CounterMetric {
-    kind: 'counter';
-    name: string;
-    value: number;
-}
-
 const NAMESPACE = 'lds';
 const STORE_STATS_MARK_NAME = 'store-stats';
 const RUNTIME_PERF_MARK_NAME = 'runtime-perf';
@@ -462,33 +456,18 @@ export class Instrumentation {
      */
 
     public instrumentNetwork(context: unknown): void {
-        if (this.isWeakETagEvent(context)) {
-            this.aggregateWeakETagEvents(context);
-        } else if (this.isRefreshAdapterEvent(context)) {
+        if (this.isRefreshAdapterEvent(context)) {
             this.aggregateRefreshAdapterEvents(context);
-        } else if (this.isRecordApiNameChangeEvent(context)) {
-            this.incrementRecordApiNameChangeCount(context);
         } else if (this.isRefreshApiEvent(context)) {
             this.handleRefreshApiCall(context);
         } else if (this.isAdapterUnfulfilledError(context)) {
             this.incrementAdapterRequestErrorCount(context);
         } else if (isLightningInteractionLog(context)) {
             log(null, context);
-        } else if (isCounterMetric(context)) {
-            counterMetric(context.name, context.value);
         } else {
             perfStart(NETWORK_TRANSACTION_NAME);
             perfEnd(NETWORK_TRANSACTION_NAME, context);
         }
-    }
-
-    /**
-     * Returns whether or not this is a recordApiNameChangeEvent.
-     * @param context The transaction context.
-     * @returns Whether or not this is a recordApiNameChangeEvent.
-     */
-    private isRecordApiNameChangeEvent(context: unknown): context is RecordApiNameChangeEvent {
-        return (context as any)[RECORD_API_NAME_CHANGE_EVENT] === true;
     }
 
     /**
@@ -519,23 +498,30 @@ export class Instrumentation {
     }
 
     /**
-     * Returns via duck-typing whether or not this is a weakETagZeroEvent.
-     * @param context The transaction context.
-     * @returns Whether or not this is a weakETagZeroEvent.
+     * Specific instrumentation for getRecordNotifyChange.
+     * temporary implementation to match existing aura call for now
+     *
+     * @param uniqueWeakEtags whether weakEtags match or not
+     * @param error if dispatchResourceRequest fails for any reason
      */
-    private isWeakETagEvent(context: unknown): context is WeakETagZeroEvent {
-        return (
-            typeof (context as any)[EXISTING_WEAKETAG_0_KEY] === 'boolean' &&
-            typeof (context as any)[INCOMING_WEAKETAG_0_KEY] === 'boolean'
-        );
+    public notifyChangeNetwork(uniqueWeakEtags: boolean | null, error?: boolean) {
+        perfStart(NETWORK_TRANSACTION_NAME);
+        if (error === true) {
+            perfEnd(NETWORK_TRANSACTION_NAME, { 'notify-change-network': 'error' });
+        } else {
+            perfEnd(NETWORK_TRANSACTION_NAME, { 'notify-change-network': uniqueWeakEtags });
+        }
     }
 
     /**
      * Parses and aggregates weakETagZero events to be sent in summarized log line.
      * @param context The transaction context.
      */
-    private aggregateWeakETagEvents(context: WeakETagZeroEvent): void {
-        const { apiName } = context;
+    public aggregateWeakETagEvents(
+        incomingWeakEtagZero: boolean,
+        existingWeakEtagZero: boolean,
+        apiName: string
+    ): void {
         const key = 'weaketag-0-' + apiName;
         if (this.weakEtagZeroEvents[key] === undefined) {
             this.weakEtagZeroEvents[key] = {
@@ -543,10 +529,10 @@ export class Instrumentation {
                 [INCOMING_WEAKETAG_0_KEY]: 0,
             };
         }
-        if (context[EXISTING_WEAKETAG_0_KEY] !== undefined) {
+        if (existingWeakEtagZero) {
             this.weakEtagZeroEvents[key][EXISTING_WEAKETAG_0_KEY] += 1;
         }
-        if (context[INCOMING_WEAKETAG_0_KEY] !== undefined) {
+        if (incomingWeakEtagZero) {
             this.weakEtagZeroEvents[key][INCOMING_WEAKETAG_0_KEY] += 1;
         }
     }
@@ -632,16 +618,22 @@ export class Instrumentation {
      *
      * @param context The transaction context.
      *
-     * Note: Short-lived metric candidate, remove at the end of 230
+     * Note: Short-lived metric candidate, remove at the end of 230...
      */
-    private incrementRecordApiNameChangeCount(context: RecordApiNameChangeEvent): void {
-        const { existingApiName: apiName } = context;
-        let apiNameChangeCounter = this.recordApiNameChangeCounters[apiName];
+    public incrementRecordApiNameChangeCount(
+        _incomingApiName: string,
+        existingApiName: string
+    ): void {
+        let apiNameChangeCounter = this.recordApiNameChangeCounters[existingApiName];
         if (apiNameChangeCounter === undefined) {
             apiNameChangeCounter = counter(
-                createMetricsKey(NAMESPACE, RECORD_API_NAME_CHANGE_COUNT_METRIC_NAME, apiName)
+                createMetricsKey(
+                    NAMESPACE,
+                    RECORD_API_NAME_CHANGE_COUNT_METRIC_NAME,
+                    existingApiName
+                )
             );
-            this.recordApiNameChangeCounters[apiName] = apiNameChangeCounter;
+            this.recordApiNameChangeCounters[existingApiName] = apiNameChangeCounter;
         }
         apiNameChangeCounter.increment(1);
     }
@@ -670,6 +662,7 @@ export class Instrumentation {
         totalAdapterErrorMetric.increment(1);
     }
 }
+
 /**
  * Any graphql get adapter specific instrumentation that we need to log
  * @param snapshot from either in-memory or built after a network hit
@@ -848,30 +841,22 @@ function log(schema: any, payload: LightningInteractionSchema): void {
     interaction(target, scope, context, eventSource, eventType, attributes);
 }
 
-/**
- * @param context the payload received from `luvio.instrument`
- * @returns whether or not the context is of type `CounterMetric`.
- */
-function isCounterMetric(context: unknown): context is CounterMetric {
-    return (context as CounterMetric).kind === 'counter';
-}
-
 const counterMetricTracker: Record<string, Counter> = ObjectCreate(null);
 /**
  * Calls instrumentation/service telemetry counter
  * @param name Name of the metric
- * @param value pos numbers increment, neg numbers decrement
+ * @param value number to increment by, if undefined increment by 1
  */
-function counterMetric(name: string, value: number) {
+export function incrementCounterMetric(name: string, value?: number) {
     let metric = counterMetricTracker[name];
     if (metric === undefined) {
         metric = counter(createMetricsKey(NAMESPACE, name));
         counterMetricTracker[name] = metric;
     }
-    if (value > 0) {
-        metric.increment(value);
+    if (value === undefined) {
+        metric.increment(1);
     } else {
-        metric.decrement(value * -1);
+        metric.increment(value);
     }
 }
 

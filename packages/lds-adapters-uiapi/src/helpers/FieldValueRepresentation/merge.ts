@@ -1,6 +1,7 @@
 import { FieldValueRepresentationNormalized } from '../../generated/types/FieldValueRepresentation';
 import { Luvio, IngestPath } from '@luvio/engine';
 import { RecordRepresentationNormalized } from '../../generated/types/RecordRepresentation';
+import { instrumentation } from '../../instrumentation';
 
 interface LightningInteractionSchema {
     kind: 'interaction';
@@ -46,15 +47,10 @@ export default function merge(
     ) {
         incoming.displayValue = existing.displayValue;
 
-        // Temporary instrumentation to capture distribution and frequency, W-8990630
-        // Flipped to counter metric due to W-9611107
-        luvio.instrument((): any => {
-            return {
-                kind: 'counter',
-                name: 'merge-null-dv-count',
-                value: 1,
-            };
-        });
+        instrumentation.nullDisplayValueConflict(
+            (path.parent!.data as RecordRepresentationNormalized).apiName,
+            path.propertyName
+        );
     }
 
     const { value } = incoming;

@@ -6,11 +6,8 @@ import {
 } from '@salesforce/lds-bindings';
 import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
 
-import {
-    incrementGetRecordNotifyChangeAllowCount,
-    incrementGetRecordNotifyChangeDropCount,
-    REFRESH_UIAPI_KEY,
-} from '@salesforce/lds-instrumentation';
+import { REFRESH_UIAPI_KEY } from '@salesforce/lds-instrumentation';
+import { instrumentation } from './instrumentation';
 
 import { throttle } from './sfdc-util/throttle';
 import {
@@ -93,8 +90,8 @@ withDefaultLuvio((luvio: Luvio) => {
         60000,
         createLDSAdapter(luvio, 'getRecordNotifyChange', GetRecordNotifyChange),
         {
-            allowFunction: incrementGetRecordNotifyChangeAllowCount,
-            dropFunction: incrementGetRecordNotifyChangeDropCount,
+            allowFunction: instrumentation.getRecordNotifyChangeAllowed,
+            dropFunction: instrumentation.getRecordNotifyChangeDropped,
         }
     );
 });

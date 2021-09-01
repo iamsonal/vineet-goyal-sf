@@ -7,6 +7,7 @@ import timekeeper from 'timekeeper';
 
 import {
     setupInstrumentation,
+    incrementCounterMetric,
     setupInstrumentationWithO11y,
     Instrumentation,
     LightningInteractionSchema,
@@ -16,7 +17,6 @@ import {
     REFRESH_UIAPI_KEY,
     SUPPORTED_KEY,
     UNSUPPORTED_KEY,
-    CounterMetric,
 } from '../main';
 import { REFRESH_ADAPTER_EVENT } from '@luvio/lwc-luvio';
 import { stableJSONStringify } from '../utils/utils';
@@ -151,30 +151,16 @@ describe('instrumentation', () => {
         });
     });
 
-    describe('counter metric', () => {
-        const counter: CounterMetric = {
-            kind: 'counter',
-            name: 'foo',
-            value: 1,
-        };
-
-        it('should increment `foo` counter by 1', () => {
-            counter.value = 1;
-            instrumentation.instrumentNetwork(counter);
+    describe('incrementCounterMetric', () => {
+        it('should increment `foo` counter by 1, when value not specified', () => {
+            incrementCounterMetric('foo');
             expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(1);
             expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledWith(1);
         });
         it('should increment `foo` counter by 100', () => {
-            counter.value = 100;
-            instrumentation.instrumentNetwork(counter);
+            incrementCounterMetric('foo', 100);
             expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledTimes(1);
             expect(instrumentationServiceSpies.counterIncrementSpy).toHaveBeenCalledWith(100);
-        });
-        it('should increment `foo` counter by -100', () => {
-            counter.value = -100;
-            instrumentation.instrumentNetwork(counter);
-            expect(instrumentationServiceSpies.counterDecrementSpy).toHaveBeenCalledTimes(1);
-            expect(instrumentationServiceSpies.counterDecrementSpy).toHaveBeenCalledWith(100);
         });
     });
 
@@ -474,19 +460,14 @@ describe('instrumentation', () => {
     });
 
     describe('weakETagZero', () => {
-        it('should aggregate weaketagzero events when instrumentNetwork is called', () => {
-            const context = {
-                'existing-weaketag-0': false,
-                'incoming-weaketag-0': true,
-                apiName: 'Account',
-            };
-            instrumentation.instrumentNetwork(context);
+        it('should aggregate weaketagzero events and execute in beforeunload', () => {
+            instrumentation.aggregateWeakETagEvents(true, false, 'Account');
             expect(instrumentationSpies.aggregateWeakETagEvents).toHaveBeenCalledTimes(1);
             expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(0);
             expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(0);
             expect((instrumentation as any).weakEtagZeroEvents).toEqual({
                 'weaketag-0-Account': {
-                    'existing-weaketag-0': 1,
+                    'existing-weaketag-0': 0,
                     'incoming-weaketag-0': 1,
                 },
             });
@@ -495,46 +476,12 @@ describe('instrumentation', () => {
             expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(1);
             expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(1);
         });
-
-        it('should immediately log when instrumentNetwork is called with any other event', () => {
-            const context = {
-                random: 'event',
-            };
-            instrumentation.instrumentNetwork(context);
-            expect(instrumentationSpies.aggregateWeakETagEvents).toHaveBeenCalledTimes(0);
-            expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(1);
-            expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(1);
-        });
     });
 
     describe('recordApiNameChange', () => {
-        it('should increment record apiName change counter when instrumentNetwork is called', () => {
-            const context = {
-                'record-api-name-change-event': true,
-                existingApiName: 'Account',
-                incomingApiName: 'NewAccount',
-            };
-            instrumentation.instrumentNetwork(context);
-            expect(instrumentationSpies.incrementRecordApiNameChangeEvents).toHaveBeenCalledTimes(
-                1
-            );
-            expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(0);
-            expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(0);
-            expect(
-                (instrumentation as any).recordApiNameChangeCounters[context.existingApiName]
-            ).toBeTruthy();
-        });
-
-        it('should immediately log when instrumentNetwork is called with any other event', () => {
-            const context = {
-                random: 'event',
-            };
-            instrumentation.instrumentNetwork(context);
-            expect(instrumentationSpies.incrementRecordApiNameChangeEvents).toHaveBeenCalledTimes(
-                0
-            );
-            expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(1);
-            expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(1);
+        it('should increment record apiName change counter', () => {
+            instrumentation.incrementRecordApiNameChangeCount('', 'foo');
+            expect((instrumentation as any).recordApiNameChangeCounters['foo']).toBeTruthy();
         });
     });
 

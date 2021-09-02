@@ -1,0 +1,36 @@
+{
+    "actions": {
+        "001R0000006je2oIAA": {
+            "actions": [
+                {
+                    "actionListContext": "Record",
+                    "actionTarget": null,
+                    "actionTargetType": null,
+                    "apiName": "WebsiteHighlightAction",
+                    "externalId": "00DR0000000LPuw:001R0000006je2oIAA::Record:Desktop:ProductivityAction:WebsiteHighlightAction",
+                    "iconUrl": "https://ap1pablitz062.my.stmpa.stm.salesforce.com/img/icon/t4v35/action/web_link_120.png",
+                    "id": "0JVR00000004096OAA",
+                    "isMassAction": "false",
+                    "label": "View Website",
+                    "primaryColor": "7A9AE6",
+                    "relatedListRecordId": null,
+                    "relatedSourceObject": null,
+                    "section": "Page",
+                    "sourceObject": "001R0000006je2oIAA",
+                    "subtype": null,
+                    "targetObject": "Account",
+                    "targetUrl": null,
+                    "type": "ProductivityAction"
+                }
+            ],
+            "links": [
+                "/services/data/v54.0/ui-api/actions/record/001R0000006je2oIAA/record-edit",
+                "/services/data/v54.0/ui-api/actions/record/001R0000006je2oIAA/related-list",
+                "/services/data/v54.0/ui-api/actions/record/001R0000006je2oIAA/related-list-record/${relatedRecordId}"
+            ],
+            "url": "/services/data/v54.0/ui-api/actions/record/001R0000006je2oIAA?formFactor=Large&retrievalMode=all&apiNames=WebsiteHighlightAction"
+        }
+    },
+    "eTag": "0e2f37e1593c757d2df4b553e09d71d3",
+    "url": "/services/data/v54.0/ui-api/actions/record/001R0000006je2oIAA?formFactor=Large&retrievalMode=all&apiNames=WebsiteHighlightAction"
+}

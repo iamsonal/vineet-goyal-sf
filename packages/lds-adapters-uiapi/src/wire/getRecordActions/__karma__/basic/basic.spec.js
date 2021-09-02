@@ -279,4 +279,25 @@ describe('refresh', () => {
         expect(element.pushCount()).toBe(2);
         expect(element.getWiredData()).toEqualActionsSnapshot(refreshMockData);
     });
+
+    it('refreshes with up-to-date data when server returns no actions', async () => {
+        const mockData = getMock('record-actions-website');
+        const updatedMockData = getMock('record-actions-noactions');
+        const recordIds = Object.keys(mockData.actions);
+        const config = {
+            recordIds,
+            apiNames: ['WebsiteHighlightAction'],
+            retrievalMode: 'All',
+        };
+
+        mockGetRecordActionsNetwork(config, [mockData, updatedMockData]);
+
+        const element = await setupElement(config, RecordActions);
+        expect(element.pushCount()).toBe(1);
+        expect(element.getWiredData()).toEqualActionsSnapshot(mockData);
+
+        await element.refresh();
+        expect(element.pushCount()).toBe(2);
+        expect(element.getWiredData()).toEqualActionsSnapshot(updatedMockData);
+    });
 });

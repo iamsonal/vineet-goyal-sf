@@ -5,21 +5,19 @@ import {
     refresh as refreshUiApi,
 } from '@salesforce/lds-bindings';
 import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
-
-import { REFRESH_UIAPI_KEY } from '@salesforce/lds-instrumentation';
-import { instrumentation } from './instrumentation';
-
 import { throttle } from './sfdc-util/throttle';
 import {
     GetRecordNotifyChange,
     updateLayoutUserStateAdapterFactory,
     updateRelatedListInfoAdapterFactory,
 } from './main';
+import { instrumentation } from './instrumentation';
 
 export { MRU } from './wire/getListUi';
 export * from './generated/artifacts/sfdc';
 
-export const refresh: typeof refreshUiApi = function <D>(data: D) {
+const REFRESH_UIAPI_KEY = 'refreshUiApi';
+export const refresh = function <D>(data: D) {
     return refreshUiApi(data, REFRESH_UIAPI_KEY);
 };
 

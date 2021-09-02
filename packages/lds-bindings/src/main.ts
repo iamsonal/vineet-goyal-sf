@@ -4,12 +4,13 @@ import {
     bindWireRefresh as luvioBindWireRefresh,
 } from '@luvio/lwc-luvio';
 import { WireAdapterConstructor } from '@lwc/engine-core';
-import {
-    instrumentation,
-    refreshApiEvent,
-    refreshApiNames,
-    AdapterMetadata,
-} from '@salesforce/lds-instrumentation';
+import { instrumentation } from './instrumentation';
+
+export interface AdapterMetadata {
+    apiFamily: string;
+    name: string;
+    ttl?: number;
+}
 
 export function createWireAdapterConstructor<C, D>(
     luvio: Luvio,
@@ -36,16 +37,16 @@ export function createInstrumentedAdapter<C, D>(
     );
 }
 
-export function createLDSAdapter<T>(luvio: Luvio, name: string, factory: (luvio: Luvio) => T): T {
+export function createLDSAdapter<T>(luvio: Luvio, _name: string, factory: (luvio: Luvio) => T): T {
     return factory(luvio);
 }
 
-export let refresh: (data: any, apiFamily: keyof refreshApiNames) => Promise<undefined> | undefined;
+export let refresh: (data: any, apiFamily: string) => Promise<undefined> | undefined;
 
 export function bindWireRefresh(luvio: Luvio) {
     const wireRefresh = luvioBindWireRefresh(luvio);
-    refresh = (data: any, apiFamily: keyof refreshApiNames) => {
-        luvio.instrument(refreshApiEvent(apiFamily));
+    refresh = (data: any, apiFamily: string) => {
+        instrumentation.refreshCalled(apiFamily);
         return wireRefresh(data);
     };
 }

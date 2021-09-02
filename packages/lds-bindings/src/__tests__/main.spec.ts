@@ -13,29 +13,20 @@ jest.mock('@luvio/lwc-luvio', () => {
     };
 });
 
-jest.mock('@salesforce/lds-instrumentation', () => {
-    const spies = {
-        instrumentAdapter: jest.fn(),
-    };
-    return {
-        instrumentation: {
-            instrumentAdapter: spies.instrumentAdapter,
-        },
-        refreshApiEvent: () => {},
-        __spies: spies,
-    };
-});
-
-import {
-    __spies as instrumentationSpies,
-    REFRESH_UIAPI_KEY,
-} from '@salesforce/lds-instrumentation';
 import {
     createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor,
     __spies as lwcLuvioSpies,
 } from '@luvio/lwc-luvio';
 
+import { instrumentation } from '../instrumentation';
+
+const instrumentationSpies = {
+    instrumentAdapter: jest.spyOn(instrumentation, 'instrumentAdapter'),
+    refreshCalled: jest.spyOn(instrumentation, 'refreshCalled'),
+};
+
 beforeEach(() => {
+    instrumentationSpies.refreshCalled.mockClear();
     instrumentationSpies.instrumentAdapter.mockClear();
     (lwcLdsCreateWireAdapterConstructor as any).mockClear();
 });
@@ -44,7 +35,7 @@ describe('createWireAdapterConstructor', () => {
     it('should invoke adapter factory', () => {
         const luvio = {} as Luvio;
         const mockAdapter = {};
-        const mockInstrumented = {};
+        const mockInstrumented: any = {};
         const mockWire = {};
         instrumentationSpies.instrumentAdapter.mockReturnValue(mockInstrumented);
         (lwcLdsCreateWireAdapterConstructor as any).mockReturnValue(mockWire);
@@ -90,7 +81,7 @@ describe('refresh', () => {
         const data = {};
         bindWireRefresh(luvio);
 
-        await refresh(data, REFRESH_UIAPI_KEY);
+        await refresh(data, 'refreshUiApi');
 
         expect(lwcLuvioSpies.bindWireRefreshSpy).toHaveBeenCalledWith(data);
     });

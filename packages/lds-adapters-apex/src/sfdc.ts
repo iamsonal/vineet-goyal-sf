@@ -1,5 +1,4 @@
 import { GetApexInvoker, GetApexWireAdapterFactory } from './main';
-import { REFRESH_APEX_KEY } from '@salesforce/lds-instrumentation';
 import {
     bindWireRefresh,
     createWireAdapterConstructor,
@@ -10,6 +9,7 @@ import { Luvio } from '@luvio/engine';
 import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
 
 // export for @salesforce/apex
+const REFRESH_APEX_KEY = 'refreshApex';
 export const refreshApex: typeof refresh = function <D>(data: D) {
     return refresh(data, REFRESH_APEX_KEY);
 };

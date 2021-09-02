@@ -21,7 +21,7 @@ import {
 } from './DraftQueue';
 import { NetworkAdapter, FetchResponse } from '@luvio/engine';
 import { ObjectKeys } from './utils/language';
-import { DurableStore, DurableStoreEntries, DurableStoreEntry } from '@luvio/environments';
+// TODO [W-9832358]: DraftStore should manage key creation
 import { buildDraftDurableStoreKey } from './utils/records';
 import { CustomActionExecutor, customActionHandler } from './actionHandlers/CustomActionHandler';
 import {
@@ -31,6 +31,7 @@ import {
     LDS_ACTION_METADATA_API_NAME,
 } from './actionHandlers/LDSActionHandler';
 import { ActionHandler } from './actionHandlers/ActionHandler';
+import { DraftStore } from './DraftStore';
 
 export const DRAFT_SEGMENT = 'DRAFT';
 export const DRAFT_ID_MAPPINGS_SEGMENT = 'DRAFT_ID_MAPPINGS';
@@ -118,7 +119,7 @@ export class DurableDraftQueue implements DraftQueue {
     private retryIntervalMilliseconds: number = 0;
     private minimumRetryInterval: number = 250;
     private maximumRetryInterval: number = 32000;
-    private durableStore: DurableStore;
+    private draftStore: DraftStore;
     private draftQueueChangedListeners: DraftQueueChangeListener[] = [];
     private state = DraftQueueState.Stopped;
     private userState = DraftQueueState.Stopped;
@@ -129,12 +130,12 @@ export class DurableDraftQueue implements DraftQueue {
     private handlers: { [id: string]: ActionHandler<unknown> } = {};
 
     constructor(
-        store: DurableStore,
+        draftStore: DraftStore,
         network: NetworkAdapter,
         updateQueueOnPostCompletion: QueuePostHandler,
         createDraftIdMapping: CreateDraftIdMappingHandler
     ) {
-        this.durableStore = store;
+        this.draftStore = draftStore;
 
         this.addHandler(
             LDS_ACTION_HANDLER_ID,
@@ -214,38 +215,35 @@ export class DurableDraftQueue implements DraftQueue {
     }
 
     getQueueActions(): Promise<DraftAction<unknown, unknown>[]> {
-        return this.durableStore
-            .getAllEntries<DraftAction<unknown, unknown>>(DRAFT_SEGMENT)
-            .then((durableEntries) => {
-                const queue: DraftAction<unknown, unknown>[] = [];
-                if (durableEntries === undefined) {
-                    return queue;
+        return this.draftStore.getAllDrafts().then((drafts) => {
+            const queue: DraftAction<unknown, unknown>[] = [];
+            if (drafts === undefined) {
+                return queue;
+            }
+
+            drafts.forEach((draft) => {
+                if (draft.id === this.uploadingActionId) {
+                    draft.status = DraftActionStatus.Uploading;
                 }
-                const keys = ObjectKeys(durableEntries);
-                for (let i = 0, len = keys.length; i < len; i++) {
-                    const entry = durableEntries[keys[i]];
-                    if (entry.data.id === this.uploadingActionId) {
-                        entry.data.status = DraftActionStatus.Uploading;
-                    }
-                    queue.push(entry.data);
-                }
-
-                const sortedQueue = queue.sort((a, b) => {
-                    const aTime = parseInt(a.id, 10);
-                    const bTime = parseInt(b.id, 10);
-
-                    // safety check
-                    if (isNaN(aTime)) {
-                        return 1;
-                    }
-                    if (isNaN(bTime)) {
-                        return -1;
-                    }
-
-                    return aTime - bTime;
-                });
-                return sortedQueue;
+                queue.push(draft);
             });
+
+            const sortedQueue = queue.sort((a, b) => {
+                const aTime = parseInt(a.id, 10);
+                const bTime = parseInt(b.id, 10);
+
+                // safety check
+                if (isNaN(aTime)) {
+                    return 1;
+                }
+                if (isNaN(bTime)) {
+                    return -1;
+                }
+
+                return aTime - bTime;
+            });
+            return sortedQueue;
+        });
     }
 
     enqueue<Response, Data>(
@@ -258,18 +256,12 @@ export class DurableDraftQueue implements DraftQueue {
             }
 
             const pendingAction = handler.buildPendingAction(action, queue);
-            const { tag, id } = pendingAction;
-            const durableStoreId = buildDraftDurableStoreKey(tag, id);
 
-            const entry: DurableStoreEntry<DraftAction<Response, Data>> = { data: pendingAction };
-            const entries: DurableStoreEntries<DraftAction<Response, Data>> = {
-                [durableStoreId]: entry,
-            };
             this.notifyChangedListeners({
                 type: DraftQueueEventType.ActionAdding,
                 action: pendingAction,
             });
-            return this.durableStore.setEntries(entries, DRAFT_SEGMENT).then(() => {
+            return this.draftStore.writeAction(pendingAction).then(() => {
                 this.notifyChangedListeners({
                     type: DraftQueueEventType.ActionAdded,
                     action: pendingAction,
@@ -322,7 +314,7 @@ export class DurableDraftQueue implements DraftQueue {
             .then((queue) =>
                 this.handlers[action.handler].storeOperationsForUploadedDraft(queue, action)
             )
-            .then((operations) => this.durableStore.batchOperations(operations))
+            .then((operations) => this.draftStore.batchOperations(operations))
             .then(() => {
                 this.retryIntervalMilliseconds = 0;
                 this.uploadingActionId = undefined;
@@ -408,8 +400,6 @@ export class DurableDraftQueue implements DraftQueue {
         error: FetchResponse<unknown>
     ): Promise<void> {
         return this.getQueueActions().then((queue) => {
-            const { id, tag } = action;
-            const durableEntryKey = buildDraftDurableStoreKey(tag, id);
             const localAction = queue.filter((qAction) => qAction.id === action.id)[0];
             let newMetadata = {};
             if (localAction !== undefined) {
@@ -422,13 +412,8 @@ export class DurableDraftQueue implements DraftQueue {
                 error,
                 metadata: newMetadata,
             };
-            const entry: DurableStoreEntry<DraftAction<unknown, unknown>> = {
-                data: errorAction,
-            };
-            const entries: DurableStoreEntries<DraftAction<unknown, unknown>> = {
-                [durableEntryKey]: entry,
-            };
-            return this.durableStore.setEntries(entries, DRAFT_SEGMENT).then(() => {
+
+            return this.draftStore.writeAction(errorAction).then(() => {
                 this.state = DraftQueueState.Error;
                 return this.notifyChangedListeners({
                     type: DraftQueueEventType.ActionFailed,
@@ -479,14 +464,12 @@ export class DurableDraftQueue implements DraftQueue {
                 action,
             })
                 .then(() => {
-                    return this.durableStore
-                        .evictEntries(allRelatedDraftKeysToDelete, DRAFT_SEGMENT)
-                        .then(() => {
-                            this.notifyChangedListeners({
-                                type: DraftQueueEventType.ActionDeleted,
-                                action,
-                            });
+                    return this.draftStore.deleteDrafts(allRelatedDraftKeysToDelete).then(() => {
+                        this.notifyChangedListeners({
+                            type: DraftQueueEventType.ActionDeleted,
+                            action,
                         });
+                    });
                 })
                 .then(() => {
                     if (
@@ -523,21 +506,11 @@ export class DurableDraftQueue implements DraftQueue {
                 // TODO [W-8873834]: Will add batching support to durable store
                 // we should use that here to remove and set both actions in one operation
                 return this.removeDraftAction(replacingAction.id).then(() => {
-                    const entry: DurableStoreEntry<PendingDraftAction<unknown, unknown>> = {
-                        data: actionToReplace as PendingDraftAction<unknown, unknown>,
-                    };
-                    const durableEntryKey = buildDraftDurableStoreKey(
-                        actionToReplace.tag,
-                        actionToReplace.id
-                    );
-                    const entries: DurableStoreEntries<PendingDraftAction<unknown, unknown>> = {
-                        [durableEntryKey]: entry,
-                    };
                     return this.notifyChangedListeners({
                         type: DraftQueueEventType.ActionUpdating,
                         action: original,
                     }).then(() => {
-                        return this.durableStore.setEntries(entries, DRAFT_SEGMENT).then(() => {
+                        return this.draftStore.writeAction(actionToReplace).then(() => {
                             return this.notifyChangedListeners({
                                 type: DraftQueueEventType.ActionUpdated,
                                 action: actionToReplace,
@@ -587,12 +560,8 @@ export class DurableDraftQueue implements DraftQueue {
                 action: action,
             }).then(() => {
                 action.metadata = this.sanitizeMetadata(action.metadata, metadata);
-                const durableStoreId = buildDraftDurableStoreKey(action.tag, action.id);
-                const entry: DurableStoreEntry<DraftAction<unknown, unknown>> = { data: action };
-                const entries: DurableStoreEntries<DraftAction<unknown, unknown>> = {
-                    [durableStoreId]: entry,
-                };
-                return this.durableStore.setEntries(entries, DRAFT_SEGMENT).then(() => {
+
+                return this.draftStore.writeAction(action).then(() => {
                     return this.notifyChangedListeners({
                         type: DraftQueueEventType.ActionUpdated,
                         action: action,

@@ -9,6 +9,7 @@ import {
     DurableDraftQueue,
     updateQueueOnPost,
     createIdDraftMapping,
+    DurableStoreDraftStore,
 } from '@salesforce/lds-drafts';
 import { NimbusDraftQueue } from './NimbusDraftQueue';
 
@@ -24,5 +25,10 @@ export function buildLdsDraftQueue(
         return new NimbusDraftQueue();
     }
 
-    return new DurableDraftQueue(durableStore, network, updateQueueOnPost, createIdDraftMapping);
+    return new DurableDraftQueue(
+        new DurableStoreDraftStore(durableStore),
+        network,
+        updateQueueOnPost,
+        createIdDraftMapping
+    );
 }

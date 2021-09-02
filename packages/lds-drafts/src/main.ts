@@ -23,6 +23,7 @@ export {
     DraftResolutionInput,
 } from './utils/records';
 export { DurableDraftQueue, DRAFT_SEGMENT } from './DurableDraftQueue';
+export { DraftStore, DurableStoreDraftStore } from './DraftStore';
 export {
     DraftManager,
     DraftManagerState,

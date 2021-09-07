@@ -8,6 +8,7 @@ export default class ListViewId extends LightningElement {
     @api optionalFields;
     @api pageSize;
     @api pageToken;
+    @api sortBy;
 
     @wire(getListUi, {
         objectApiName: '$objectApiName',
@@ -16,6 +17,7 @@ export default class ListViewId extends LightningElement {
         pageToken: '$pageToken',
         fields: '$fields',
         optionalFields: '$optionalFields',
+        sortBy: '$sortBy',
     })
     onGetList(result) {
         this.listView = result;

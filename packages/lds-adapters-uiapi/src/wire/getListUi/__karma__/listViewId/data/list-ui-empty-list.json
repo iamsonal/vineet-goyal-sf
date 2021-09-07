@@ -1,0 +1,64 @@
+{
+    "eTag": "c43c790d2eee5a367a7d7ed5fe700593",
+    "info": {
+        "cloneable": true,
+        "createable": true,
+        "deletable": true,
+        "displayColumns": [
+            {
+                "fieldApiName": "Name",
+                "label": "Foo Name",
+                "sortable": true
+            }
+        ],
+        "eTag": "6c6b833fba1b3f0fd9c31c2c8a1b363c",
+        "filterLogicString": null,
+        "filteredByInfo": [],
+        "label": "All",
+        "listReference": {
+            "id": "00B4P000008aouxUAA",
+            "listViewApiName": "All",
+            "objectApiName": "Foo__c",
+            "type": "listView"
+        },
+        "orderedByInfo": [
+            {
+                "fieldApiName": "Name",
+                "isAscending": true,
+                "label": "Foo Name"
+            }
+        ],
+        "updateable": true,
+        "userPreferences": {
+            "columnWidths": {
+                "Name": -1
+            },
+            "columnWrap": {
+                "Name": false
+            }
+        },
+        "visibility": "Public",
+        "visibilityEditable": true
+    },
+    "records": {
+        "count": 0,
+        "currentPageToken": "0",
+        "currentPageUrl": "/services/data/v52.0/ui-api/list-records/00B4P000008aouxUAA?pageSize=50&pageToken=0",
+        "fields": [],
+        "listInfoETag": "6c6b833fba1b3f0fd9c31c2c8a1b363c",
+        "listReference": {
+            "id": "00B4P000008aouxUAA",
+            "listViewApiName": "All",
+            "objectApiName": "Foo__c",
+            "type": "listView"
+        },
+        "nextPageToken": null,
+        "nextPageUrl": null,
+        "optionalFields": [],
+        "pageSize": 50,
+        "previousPageToken": null,
+        "previousPageUrl": null,
+        "records": [],
+        "sortBy": "Name,Id"
+    }
+}

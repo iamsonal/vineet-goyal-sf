@@ -522,7 +522,7 @@ function looksLikeGetMruListUiConfig(
     return untrustedIsObject(untrustedConfig) && (untrustedConfig as any).listViewApiName === MRU;
 }
 
-function validateGetListUiConfig(untrustedConfig: unknown): GetListUiConfig | null {
+export function validateGetListUiConfig(untrustedConfig: unknown): GetListUiConfig | null {
     return looksLikeGetListUiByApiNameConfig(untrustedConfig)
         ? getListUiByApiName_validateAdapterConfig(
               untrustedConfig,

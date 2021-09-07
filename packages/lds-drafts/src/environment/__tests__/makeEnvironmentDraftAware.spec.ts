@@ -1,5 +1,5 @@
 import { MockDurableStore } from '@luvio/adapter-test-library';
-import { DurableStoreOperationType } from '@luvio/environments';
+import { DefaultDurableSegment, DurableStoreOperationType } from '@luvio/environments';
 import { flushPromises } from '../../__tests__/test-utils';
 import { setupDraftEnvironment, STORE_KEY_DRAFT_RECORD, STORE_KEY_RECORD } from './test-utils';
 
@@ -52,6 +52,37 @@ describe('makeEnvironmentDraftAware', () => {
                 STORE_KEY_DRAFT_RECORD,
                 STORE_KEY_RECORD,
             ]);
+        });
+
+        it('draft record removed after mapping is configured', async () => {
+            const { durableStore, registerDraftKeyMapping } = await setupDraftEnvironment();
+            durableStore.evictEntries = jest.fn();
+
+            durableStore.getEntries = jest.fn().mockResolvedValue({
+                [STORE_KEY_RECORD]: {
+                    data: {
+                        draftKey: STORE_KEY_DRAFT_RECORD,
+                        canonicalKey: STORE_KEY_RECORD,
+                    },
+                },
+            });
+            const listeners = (durableStore as unknown as MockDurableStore).listeners;
+            for (const listener of listeners) {
+                listener([
+                    {
+                        ids: [STORE_KEY_RECORD],
+                        segment: 'DRAFT_ID_MAPPINGS',
+                        type: DurableStoreOperationType.SetEntries,
+                    },
+                ]);
+            }
+            await flushPromises();
+            expect(registerDraftKeyMapping).toBeCalledTimes(1);
+            expect(durableStore.evictEntries).toBeCalledTimes(1);
+            expect(durableStore.evictEntries).toBeCalledWith(
+                [STORE_KEY_DRAFT_RECORD],
+                DefaultDurableSegment
+            );
         });
     });
 });

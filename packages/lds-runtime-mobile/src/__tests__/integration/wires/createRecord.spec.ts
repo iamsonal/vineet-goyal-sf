@@ -1,5 +1,5 @@
 import { Luvio, Snapshot } from '@luvio/engine';
-import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
+import { RecordRepresentation, keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import {
     DraftManager,
     DraftQueue,
@@ -27,6 +27,7 @@ describe('mobile runtime integration tests', () => {
     let createRecord;
     let updateRecord;
     let getRecord;
+    let durableStore;
 
     beforeEach(async () => {
         ({
@@ -37,6 +38,7 @@ describe('mobile runtime integration tests', () => {
             createRecord,
             getRecord,
             updateRecord,
+            durableStore,
         } = await setup());
     });
 
@@ -321,6 +323,43 @@ describe('mobile runtime integration tests', () => {
             ).toEqual(parent.fields['City'].value);
 
             expect(spy).toBeCalledTimes(0);
+        });
+
+        it('draft removed from durable store after uploaded', async () => {
+            const orginalName = 'Justin';
+            // create a synthetic record
+            const snapshot = await createRecord({
+                apiName: API_NAME,
+                fields: { Name: orginalName },
+            });
+
+            const record = snapshot.data;
+            const draftRecordId = record.id;
+            const key = keyBuilderRecord({ recordId: draftRecordId });
+
+            expect(durableStore.kvp['DEFAULT'][key]).toBeDefined();
+
+            networkAdapter.setMockResponse({
+                status: 201,
+                headers: {},
+                body: JSONStringify(mockAccount),
+            });
+
+            // upload the draft and respond with a record with more fields and a new id
+            await draftQueue.processNextAction();
+            await flushPromises();
+
+            // draft removed from durable store
+            expect(durableStore.kvp['DEFAULT'][key]).toBeUndefined();
+
+            // draft still accessible using draft id
+            const snap = await getRecord({
+                recordId: draftRecordId,
+                fields: ['Account.Name', 'Account.Id'],
+            });
+            expect(snap.state).toBe('Fulfilled');
+            // id is now canonical
+            expect(snap.data.fields.Id.value).toBe(mockAccount.id);
         });
     });
 });

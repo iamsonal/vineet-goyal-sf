@@ -1,5 +1,10 @@
 import { Adapter, Environment, Store } from '@luvio/engine';
-import { DurableEnvironment, DurableStoreChange, DurableStoreEntry } from '@luvio/environments';
+import {
+    DefaultDurableSegment,
+    DurableEnvironment,
+    DurableStoreChange,
+    DurableStoreEntry,
+} from '@luvio/environments';
 import {
     DraftIdMappingEntry,
     DraftQueue,
@@ -106,6 +111,9 @@ export function makeEnvironmentDraftAware(
                         const entry = mappingEntries[key] as DurableStoreEntry<DraftIdMappingEntry>;
                         const { draftKey, canonicalKey } = entry.data;
                         registerDraftKeyMapping(draftKey, canonicalKey);
+
+                        // the mapping is setup, we can now delete the original draft
+                        durableStore.evictEntries([draftKey], DefaultDurableSegment);
                     }
                 });
         }

@@ -2,7 +2,7 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '52.0'
+version: '54.0'
 mediaType: application/json
 protocols:
   - https
@@ -77,6 +77,9 @@ types:
     queryParameters:
       addHomeMenuItem:
         type: boolean
+        required: false
+      effectiveAccountId:
+        type: string
         required: false
       includeImageUrl:
         type: boolean

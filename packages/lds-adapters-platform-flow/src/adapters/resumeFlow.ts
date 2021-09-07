@@ -37,9 +37,9 @@ export function buildNetworkSnapshot(
                 return response.body;
             },
             (response: any) => {
-                if (process.env.NODE_ENV !== 'production') {
-                    throw new Error(response.body.message || response.body);
-                }
+                // We want to throw these exceptions to be caught in the runtime layer
+                // eslint-disable-next-line @salesforce/lds/no-error-in-production
+                throw new Error(response.body.message || response.body.error || response.body);
             }
         );
 }

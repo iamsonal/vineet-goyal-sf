@@ -61,7 +61,27 @@ describe('startFlow', () => {
             fail('startFlow did not error out');
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
-            expect(e).toEqual(jasmine.objectContaining({ message: mockError.message }));
+            expect(e.message).toEqual(mockError.message);
+        }
+    });
+
+    it('errors out on disconnect', async () => {
+        const mockConfig = {
+            flowDevName: 'flow1',
+            flowVersionId: '123',
+        };
+        const mockError = {
+            error: 'Disconnected or canceled',
+        };
+        mockStartFlowNetworkErrorOnce(mockConfig, {
+            body: mockError,
+        });
+        try {
+            await startFlow(mockConfig);
+            fail('startFlow did not error out');
+        } catch (e) {
+            expect(e).toBeInstanceOf(Error);
+            expect(e.message).toEqual(mockError.error);
         }
     });
 

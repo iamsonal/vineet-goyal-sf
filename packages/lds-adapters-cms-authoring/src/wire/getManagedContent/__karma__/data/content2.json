@@ -2,7 +2,12 @@
     "contentBody": {
         "title": "Sample Managed Content Variant Title",
         "body": "&lt;html&gt;&lt;body&gt;test body&lt;/body&gt;&lt;/html&gt;",
-        "excerpt": "Test excerpt"
+        "excerpt": "Test excerpt",
+        "bannerImage": {
+            "src": "/file-asset/Expresso1",
+            "sprite": "Expresso1.jpeg",
+            "type": "image/jpeg"
+        }
     },
     "contentKey": "MCIR7L42KO6BEALHEB5AFFSU3GUY",
     "contentSpace": {

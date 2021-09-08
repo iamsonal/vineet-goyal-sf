@@ -2,7 +2,12 @@
     "contentBody": {
         "title": "Test authoring 2.0 - 1(update)",
         "body": "<html><body>test body 1</body></html>",
-        "excerpt": "test excerpt  1"
+        "excerpt": "test excerpt  1",
+        "bannerImage": {
+            "src": "/file-asset/Expresso1",
+            "sprite": "Expresso1.jpeg",
+            "type": "image/jpeg"
+        }
     },
     "contentKey": "MCP5UIGCCS3NHDVLFJFTC47QR5OM",
     "contentSpace": {

@@ -35,7 +35,7 @@
         "@salesforce/lds-default-luvio": "1.24.6"
     },
     "devDependencies": {
-        "@luvio/engine": "0.47.3",
+        "@luvio/engine": "0.47.5",
         "@salesforce/lds-karma": "1.24.6"
     }
 }

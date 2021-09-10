@@ -1,4 +1,4 @@
-import { DurableStoreEntry } from '@luvio/environments';
+import { DurableStore, DurableStoreEntry } from '@luvio/environments';
 
 /**
  * Plugin interface to execute code during Durable Store setEntities.
@@ -11,5 +11,10 @@ export interface DurableStoreSetEntryPlugin {
      * @param entry
      * @param segment segment of the Durable Store
      */
-    beforeSet<T>(key: string, entry: DurableStoreEntry<Extract<T, unknown>>, segment: string): void;
+    beforeSet<T>(
+        key: string,
+        entry: DurableStoreEntry<Extract<T, unknown>>,
+        segment: string,
+        store: DurableStore
+    ): Promise<void>;
 }

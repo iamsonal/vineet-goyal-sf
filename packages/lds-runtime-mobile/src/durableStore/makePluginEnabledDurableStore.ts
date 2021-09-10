@@ -22,7 +22,7 @@ export function makePluginEnabledDurableStore(
             const value = entries[key];
             for (let j = 0, len = registeredPlugins.length; j < len; j++) {
                 const plugin = registeredPlugins[j];
-                plugin.beforeSet(key, value, segment);
+                plugin.beforeSet(key, value, segment, durableStore);
             }
         }
 

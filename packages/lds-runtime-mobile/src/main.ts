@@ -22,7 +22,7 @@ import { makeNetworkAdapterChunkRecordFields } from './network/record-field-batc
 import { NimbusDurableStore } from './NimbusDurableStore';
 import { buildLdsDraftQueue } from './DraftQueueFactory';
 import { buildInternalAdapters } from './utils/adapters';
-import { objectInfoServiceFactory } from './utils/ObjectInfoService';
+import { ObjectInfoService } from './utils/ObjectInfoService';
 import { RecordMetadataOnSetPlugin } from './durableStore/plugins/RecordMetadataOnSetPlugin';
 import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledDurableStore';
 import { makeDurableStoreWithMergeStrategy } from './durableStore/makeDurableStoreWithMergeStrategy';
@@ -81,7 +81,7 @@ const { getObjectInfo, getRecord } = buildInternalAdapters(
     networkAdapter,
     internalAdapterDurableStore
 );
-const { ensureObjectInfoCached, apiNameForPrefix, prefixForApiName } = objectInfoServiceFactory(
+const { ensureObjectInfoCached, apiNameForPrefix, prefixForApiName } = new ObjectInfoService(
     getObjectInfo,
     internalAdapterDurableStore
 );

@@ -3,7 +3,7 @@ import { stripProperties } from '@luvio/adapter-test-library';
 import { UpdateRecordConfig } from '@salesforce/lds-adapters-uiapi';
 
 import { draftManager } from '../draftQueueImplementation';
-import { subscribeToAdapter, invokeAdapter, OnResponse, OnSnapshot } from '../executeAdapter';
+import { OnResponse, OnSnapshot } from '../executeAdapter';
 import { addMockNetworkResponse } from './mocks/mockNimbusNetwork';
 
 import objectInfo_Account from './mockData/objectInfo-Account.json';
@@ -12,7 +12,12 @@ import recordRep_Account_Edited from './mockData/RecordRepresentation-Account-Ed
 import userId from '../standalone-stubs/salesforce-user-id';
 
 describe('invokeAdapter', () => {
+    let invokeAdapter, subscribeToAdapter;
+
     beforeEach(() => {
+        jest.resetModules();
+        ({ invokeAdapter, subscribeToAdapter } = require('../executeAdapter'));
+
         timekeeper.reset();
         expect(draftManager).toBeDefined();
         draftManager.stopQueue();
@@ -40,6 +45,7 @@ describe('invokeAdapter', () => {
 
     it('throws on missing adapter', () => {
         const onSnapshot: OnSnapshot = jest.fn();
+        const { invokeAdapter } = require('../executeAdapter');
 
         const missingAdapterName = 'missingAdapter123';
 

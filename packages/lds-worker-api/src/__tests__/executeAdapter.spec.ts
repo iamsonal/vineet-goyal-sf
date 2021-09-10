@@ -2,12 +2,7 @@ import timekeeper from 'timekeeper';
 import { stripProperties } from '@luvio/adapter-test-library';
 import { UpdateRecordConfig } from '@salesforce/lds-adapters-uiapi/dist/types/src/generated/adapters/updateRecord';
 
-import {
-    executeAdapter,
-    executeMutatingAdapter,
-    invokeAdapter,
-    OnSnapshot,
-} from '../executeAdapter';
+import { executeAdapter, executeMutatingAdapter, OnSnapshot } from '../executeAdapter';
 import { draftManager } from '../draftQueueImplementation';
 import { addMockNetworkResponse } from './mocks/mockNimbusNetwork';
 
@@ -116,7 +111,12 @@ describe('executeAdapter', () => {
 // and moved to invokeAdapter.spec.ts and this entire file can be removed
 // when executeMutatingAdapter is removed.
 describe('executeMutatingAdapter', () => {
+    let invokeAdapter;
+
     beforeEach(() => {
+        jest.resetModules();
+        ({ invokeAdapter } = require('../executeAdapter'));
+
         expect(draftManager).toBeDefined();
         draftManager.stopQueue();
     });

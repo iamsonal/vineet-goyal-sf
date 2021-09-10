@@ -1,5 +1,5 @@
 import { Adapter, Snapshot } from '@luvio/engine';
-import { AdapterMetadata } from './instrumentation';
+import { AdapterMetadata } from './ldsAdapter';
 import { isErrorSnapshot } from './utils/snapshotType';
 import { isPromise } from './utils/utils';
 

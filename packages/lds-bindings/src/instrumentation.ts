@@ -1,10 +1,5 @@
 import { Adapter } from '@luvio/engine';
-
-export interface AdapterMetadata {
-    apiFamily: string;
-    name: string;
-    ttl?: number;
-}
+import { AdapterMetadata } from './ldsAdapter';
 
 /**
  * Instrumentation hooks exposed by this module.

@@ -1,8 +1,8 @@
 import { Adapter, AdapterFactory, Luvio } from '@luvio/engine';
 import { createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor } from '@luvio/lwc-luvio';
 import { WireAdapterConstructor } from '@lwc/engine-core';
-import { AdapterMetadata } from './instrumentation';
 import { createInstrumentedAdapter } from './instrumentedAdapter';
+import { AdapterMetadata } from './ldsAdapter';
 
 export function createWireAdapterConstructor<C, D>(
     luvio: Luvio,

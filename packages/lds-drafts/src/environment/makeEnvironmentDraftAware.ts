@@ -66,6 +66,8 @@ export function makeEnvironmentDraftAware(
             }
             const record = action.response.body as RecordRepresentation;
 
+            // TODO [W-9863485]: Move this to record ingest
+            env.storeDealloc(tag);
             ingestFunc(record);
             env.storeBroadcast(env.rebuildSnapshot, env.snapshotAvailable);
         }

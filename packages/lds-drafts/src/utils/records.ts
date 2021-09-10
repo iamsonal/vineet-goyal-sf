@@ -745,7 +745,7 @@ function mergeRecordConflict(
             // kick off a getRecord call which will pull all unionized fields with the same version
             getRecord({ recordId: incoming.id, optionalFields: unionizedFieldArray });
         }
-        return incoming;
+        return { ...incoming, links: { ...incoming.links, ...missingLinks(existing) } };
     }
 
     // existing newer, refresh with unioned fields
@@ -754,7 +754,26 @@ function mergeRecordConflict(
         getRecord({ recordId: incoming.id, optionalFields: unionizedFieldArray });
     }
 
-    return existing;
+    return { ...existing, links: { ...existing.links, ...missingLinks(incoming) } };
+}
+
+/**
+ * Returns only the missing links from the given DurableRecordRespresentation
+ */
+function missingLinks(recordRepresentation: DurableRecordRepresentation): {
+    [key: string]: StoreLink;
+} {
+    let links: { [key: string]: StoreLink } = {};
+
+    const linkNames = ObjectKeys(recordRepresentation.links);
+    for (let i = 0, len = linkNames.length; i < len; i++) {
+        const linkName = linkNames[i];
+        const link = recordRepresentation.links[linkName];
+        if (link.isMissing === true) {
+            links[linkName] = link;
+        }
+    }
+    return links;
 }
 
 /**
@@ -780,8 +799,12 @@ function isSuperset(setA: Record<string, true>, setB: Record<string, true>) {
  * @param record
  * @param fieldList
  */
-function extractFields(record: DurableRecordRepresentation, fieldList: Record<string, true>) {
+export function extractFields(
+    record: DurableRecordRepresentation,
+    fieldList: Record<string, true>
+) {
     const fieldNames = ObjectKeys(record.fields);
+    const linkNames = ObjectKeys(record.links);
     const apiName = record.apiName;
     for (let i = 0, len = fieldNames.length; i < len; i++) {
         const fieldName = fieldNames[i];
@@ -791,6 +814,14 @@ function extractFields(record: DurableRecordRepresentation, fieldList: Record<st
         } else {
             // include spanning Id field
             fieldList[`${apiName}.${fieldName}.Id`] = true;
+        }
+    }
+    // Add missing links to field list since they need to be refreshed
+    for (let i = 0, len = linkNames.length; i < len; i++) {
+        const linkName = linkNames[i];
+        const link = record.links[linkName];
+        if (link.isMissing === true) {
+            fieldList[`${apiName}.${linkName}`] = true;
         }
     }
 }

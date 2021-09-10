@@ -4,6 +4,7 @@ import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { DraftManager, DraftQueue, DraftActionOperationType } from '@salesforce/lds-drafts';
 import { JSONStringify } from '../../../utils/language';
 import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
+import { MockNimbusDurableStore } from '../../MockNimbusDurableStore';
 import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 import mockOpportunity from './data/record-Opportunity-fields-Opportunity.Account.Name,Opportunity.Account.Owner.Name,Opportunity.Owner.City.json';
@@ -43,6 +44,7 @@ describe('mobile runtime integration tests', () => {
     let luvio: Luvio;
     let draftQueue: DraftQueue;
     let draftManager: DraftManager;
+    let durableStore: MockNimbusDurableStore;
     let networkAdapter: MockNimbusNetworkAdapter;
     let createRecord;
     let getRecord;
@@ -53,6 +55,7 @@ describe('mobile runtime integration tests', () => {
             luvio,
             draftManager,
             draftQueue,
+            durableStore,
             networkAdapter,
             createRecord,
             updateRecord,
@@ -358,6 +361,54 @@ describe('mobile runtime integration tests', () => {
                 headers: {},
                 status: 400,
             });
+        });
+
+        it('properly merges missing fields', async () => {
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(mockAccount),
+            });
+
+            const getRecordConfig = {
+                recordId: RECORD_ID,
+                optionalFields: [`${API_NAME}.Id`, `${API_NAME}.Name`, `${API_NAME}.NoField`],
+            };
+
+            const snap = await getRecord(getRecordConfig);
+            expect(snap.state).toBe('Fulfilled');
+            await flushPromises();
+
+            let getLinks = JSON.parse(
+                durableStore.kvp['DEFAULT']['UiApi::RecordRepresentation:001xx000003Gn4WAAS']
+            ).data.links;
+            expect(getLinks.NoField).toBeDefined();
+
+            expect(durableStore).toBeDefined();
+            await updateRecord({ recordId: RECORD_ID, fields: { Name: 'Foo' } });
+
+            getLinks = JSON.parse(
+                durableStore.kvp['DEFAULT']['UiApi::RecordRepresentation:001xx000003Gn4WAAS']
+            ).data.links;
+            expect(getLinks.NoField).toBeDefined();
+
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify({
+                    ...mockAccount,
+                    weakEtag: mockAccount.weakEtag + 1,
+                    fields: { ...mockAccount.fields, Name: { value: 'Foo', displayValue: 'Foo' } },
+                }),
+            });
+            await draftQueue.processNextAction();
+            await flushPromises();
+            expect(durableStore).toBeDefined();
+
+            getLinks = JSON.parse(
+                durableStore.kvp['DEFAULT']['UiApi::RecordRepresentation:001xx000003Gn4WAAS']
+            ).data.links;
+            expect(getLinks.NoField).toBeDefined();
         });
     });
 });

@@ -7,6 +7,7 @@ import {
     ObjectInfoRepresentation,
     RecordRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
+import { extractFields } from '../records';
 import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
 import {
     AddQueueOperation,
@@ -992,7 +993,7 @@ describe('draft environment record utilities', () => {
                     recordTypeId: null,
                     recordTypeInfo: null,
                     systemModstamp: null,
-                    links: {},
+                    links: { existingLink: {} },
                 },
             };
             const incoming: DurableStoreEntry<DurableRecordRepresentation> = {
@@ -1017,7 +1018,7 @@ describe('draft environment record utilities', () => {
                     recordTypeId: null,
                     recordTypeInfo: null,
                     systemModstamp: null,
-                    links: {},
+                    links: { NoField: { isMissing: true } },
                 },
             };
 
@@ -1043,15 +1044,20 @@ describe('draft environment record utilities', () => {
                     recordTypeId: null,
                     recordTypeInfo: null,
                     systemModstamp: null,
-                    links: {},
+                    links: { NoField: { isMissing: true } },
                 },
             };
 
             const result = durableMerge(existing, incoming, [], undefined, '', refreshSpy);
             expect(result).toEqual(expected);
             expect(refreshSpy).toBeCalledTimes(1);
-            expect(refreshSpy.mock.calls[0][0]).toStrictEqual({
-                optionalFields: ['Account.Name', 'Account.Birthday', 'Account.IsMad'],
+            expect(refreshSpy.mock.calls[0][0]).toEqual({
+                optionalFields: [
+                    'Account.Name',
+                    'Account.Birthday',
+                    'Account.NoField',
+                    'Account.IsMad',
+                ],
                 recordId: 'foo',
             });
         });
@@ -2734,6 +2740,20 @@ describe('draft environment record utilities', () => {
             const idToTest = '11';
             const prefix = prefixForRecordId(idToTest);
             expect(prefix).toBe('');
+        });
+    });
+
+    describe('extractFields', () => {
+        it('extracts missing links into fields', async () => {
+            let record = buildDurableRecordRepresentation('123', {
+                Name: { value: 'oldName', displayValue: null },
+                LastModifiedById: { value: null, displayValue: null },
+                LastModifiedDate: { value: null, displayValue: null },
+            });
+            record.links = { NoField: { isMissing: true } };
+            let fieldList: Record<string, true> = {};
+            extractFields(record, fieldList);
+            expect(fieldList['Account.NoField']).toBeDefined();
         });
     });
 });

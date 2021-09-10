@@ -13,6 +13,7 @@ import {
     makeRecordDenormalizingDurableStore,
     RecordDenormalizingDurableStore,
 } from '../../durableStore/makeRecordDenormalizingDurableStore';
+import { DraftQueueChangeListener } from '../../main';
 import { DRAFT_RECORD_ID } from '../../__tests__/test-utils';
 import { makeEnvironmentDraftAware } from '../makeEnvironmentDraftAware';
 
@@ -20,6 +21,29 @@ import AccountObjectInfo from './mockData/object-Account.json';
 const AccountObjectInfoKey = keyBuilderObjectInfo({ apiName: AccountObjectInfo.apiName });
 
 export * from '../../__tests__/test-utils';
+
+export class MockDraftQueue implements DraftQueue {
+    listeners = new Set<DraftQueueChangeListener>();
+    enqueue = jest.fn().mockResolvedValue(undefined);
+    getActionsForTags = jest.fn();
+    processNextAction = jest.fn();
+    registerOnChangedListener(listener: DraftQueueChangeListener): () => Promise<void> {
+        this.listeners.add(listener);
+        return () => {
+            return Promise.resolve();
+        };
+    }
+    getQueueActions = jest.fn();
+    getQueueState = jest.fn();
+    startQueue = jest.fn();
+    stopQueue = jest.fn();
+    removeDraftAction = jest.fn();
+    replaceAction = jest.fn();
+    setMetadata = jest.fn();
+    addCustomHandler = jest.fn();
+    addHandler = jest.fn();
+    removeHandler = jest.fn();
+}
 
 export async function setupDraftEnvironment(
     setupOptions: {
@@ -35,22 +59,7 @@ export async function setupDraftEnvironment(
     const network = jest.fn().mockResolvedValue(mockNetworkResponse || {});
     let durableStore: DurableStore = new MockDurableStore();
 
-    const draftQueue: DraftQueue = {
-        enqueue: jest.fn().mockResolvedValue(undefined),
-        getActionsForTags: jest.fn(),
-        processNextAction: jest.fn(),
-        registerOnChangedListener: jest.fn(),
-        getQueueActions: jest.fn(),
-        getQueueState: jest.fn(),
-        startQueue: jest.fn(),
-        stopQueue: jest.fn(),
-        removeDraftAction: jest.fn(),
-        replaceAction: jest.fn(),
-        setMetadata: jest.fn(),
-        addCustomHandler: jest.fn(),
-        addHandler: jest.fn(),
-        removeHandler: jest.fn(),
-    };
+    let draftQueue = new MockDraftQueue();
 
     durableStore = makeDurableStoreDraftAware(
         durableStore,

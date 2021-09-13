@@ -1,5 +1,6 @@
+import timekeeper from 'timekeeper';
 import GetDataConnectorStatus from '../lwc/get-data-connector-status';
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import { getMock as globalGetMock, setupElement, updateElement } from 'test-util';
 import {
     mockGetDataConnectorStatusNetworkOnce,
     mockGetDataConnectorStatusNetworkErrorOnce,
@@ -14,7 +15,7 @@ function getMock(filename) {
 
 describe('basic', () => {
     it('gets data connector status', async () => {
-        const mock = getMock('data-connector-status');
+        const mock = getMock('data-connector-status-success');
         mockGetDataConnectorStatusNetworkOnce(config, mock);
 
         const el = await setupElement(config, GetDataConnectorStatus);
@@ -22,8 +23,8 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
-    it('does not fetch a second time', async () => {
-        const mock = getMock('data-connector-status');
+    it('does not fetch a second time before TTL', async () => {
+        const mock = getMock('data-connector-status-success');
         mockGetDataConnectorStatusNetworkOnce(config, mock);
 
         const el = await setupElement(config, GetDataConnectorStatus);
@@ -33,6 +34,24 @@ describe('basic', () => {
         const el2 = await setupElement(config, GetDataConnectorStatus);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredData()).toEqual(mock);
+    });
+
+    it('fetch a second time after TTL', async () => {
+        const mockSuccess = getMock('data-connector-status-success');
+        const mockError = getMock('data-connector-status-error');
+        mockGetDataConnectorStatusNetworkOnce(config, [mockSuccess, mockError]);
+
+        let el = await setupElement(config, GetDataConnectorStatus);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mockSuccess);
+
+        await updateElement(el, { connectorIdOrApiName: null });
+
+        timekeeper.travel(Date.now() + 1000 + 1);
+
+        await updateElement(el, config);
+        expect(el.pushCount()).toBe(2);
+        expect(el.getWiredData()).toEqual(mockError);
     });
 
     it('displays error when network request 404s', async () => {

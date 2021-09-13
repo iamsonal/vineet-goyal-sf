@@ -1,0 +1,5 @@
+{
+    "message": "Server error [SQL state: 28000]: password authentication failed for user \"masteruser2\"\nConnection was forcibly closed\n\n\nError in Job ID connector.4dvf7X1LDc_hmUcLEXUsKV:",
+    "status": "Failure",
+    "url": "/services/data/v53.0/wave/dataConnectors/0ItS70000004CVSKA2/status"
+}

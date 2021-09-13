@@ -79,11 +79,12 @@ export class ObjectInfoService {
         apiName: string,
         objectInfo: ObjectInfoRepresentation
     ): Promise<void> => {
-        if (objectInfo.keyPrefix === null) {
+        const { keyPrefix } = objectInfo;
+
+        if (keyPrefix === null) {
             return Promise.resolve();
         }
 
-        const { keyPrefix } = objectInfo;
         const entries: DurableStoreEntries<ObjectInfoIndex> = {
             [apiName]: {
                 data: {
@@ -98,15 +99,14 @@ export class ObjectInfoService {
     };
 
     isObjectInfoInDurableStore = (apiName: string): Promise<boolean> => {
-        if (this.objectInfoMemoryCache[apiName]) {
+        if (this.objectInfoMemoryCache[apiName] !== undefined) {
             return Promise.resolve(true);
         }
 
         return this.durableStore
             .getEntries<ObjectInfoIndex>([apiName], OBJECT_INFO_PREFIX_SEGMENT)
             .then((entries) => {
-                if (entries === undefined || entries === null || entries[apiName] === undefined) {
-                    delete this.objectInfoMemoryCache[apiName];
+                if (entries === undefined || entries[apiName] === undefined) {
                     return false;
                 }
 

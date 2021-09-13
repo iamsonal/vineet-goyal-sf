@@ -39,7 +39,7 @@ describe('ObjectInfoService', () => {
     });
 
     afterEach(() => {
-        jest.resetAllMocks();
+        jest.clearAllMocks();
         durableStore = undefined;
         getObjectInfoAdapter = undefined;
     });

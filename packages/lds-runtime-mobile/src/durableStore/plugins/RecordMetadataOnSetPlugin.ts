@@ -8,6 +8,7 @@ type EnsureCachedObjectInfoFunction = (
     entry?: ObjectInfoRepresentation
 ) => Promise<void>;
 
+// TODO [W-9883877]: Pull the key prefix from the uiapi module
 const KEY_PREFIX_OBJECT_INFO = 'UiApi::ObjectInfoRepresentation:';
 export class RecordMetadataOnSetPlugin implements DurableStoreSetEntryPlugin {
     private ensureObjectInfoCached: EnsureCachedObjectInfoFunction;
@@ -31,22 +32,30 @@ export class RecordMetadataOnSetPlugin implements DurableStoreSetEntryPlugin {
         segment: string
     ): Promise<void> {
         if (segment === DefaultDurableSegment) {
+            let apiName: string | null = null,
+                objectInfo: ObjectInfoRepresentation | undefined = undefined;
+
             if (isEntryDurableRecordRepresentation(entry, key)) {
-                const apiName = entry.data.apiName;
+                apiName = entry.data.apiName;
+            } else if (this.isEntryObjectInfoRepresentation(entry, key)) {
+                apiName = entry.data.apiName;
+                objectInfo = entry.data;
+            }
+
+            if (apiName !== null) {
                 if (this.alreadyFetchedApiName[apiName] === true) {
                     return Promise.resolve();
                 }
                 // debounce multiple identical requests per durable write operations
                 this.alreadyFetchedApiName[apiName] = true;
-                return this.ensureObjectInfoCached(apiName)
+
+                return this.ensureObjectInfoCached(apiName, objectInfo)
                     .catch(() => {
                         //TODO: log this W-9067768
                     })
                     .finally(() => {
-                        delete this.alreadyFetchedApiName[apiName];
+                        delete this.alreadyFetchedApiName[apiName as string];
                     });
-            } else if (this.isEntryObjectInfoRepresentation(entry, key)) {
-                return this.ensureObjectInfoCached(entry.data.apiName, entry.data);
             }
         }
 

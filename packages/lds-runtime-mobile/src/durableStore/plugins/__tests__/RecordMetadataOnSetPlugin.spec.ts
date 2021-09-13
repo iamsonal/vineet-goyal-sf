@@ -4,11 +4,11 @@ import { RecordMetadataOnSetPlugin } from '../../plugins/RecordMetadataOnSetPlug
 const mockEnsureObjectInfoCached = jest
     .fn()
     .mockName('mockEnsureObjectInfoCached')
-    .mockResolvedValue(() => {});
+    .mockResolvedValue(Promise.resolve());
 
 describe('RecordMetadataOnSetPlugin', () => {
     afterEach(() => {
-        jest.resetAllMocks();
+        jest.clearAllMocks();
     });
 
     describe('beforeSet', () => {
@@ -22,7 +22,7 @@ describe('RecordMetadataOnSetPlugin', () => {
             };
             await subject.beforeSet(key, entries[key], DefaultDurableSegment);
             expect(mockEnsureObjectInfoCached).toBeCalledTimes(1);
-            expect(mockEnsureObjectInfoCached).toBeCalledWith('mockApiName');
+            expect(mockEnsureObjectInfoCached).toBeCalledWith('mockApiName', undefined);
         });
 
         it('does not call to fetch object info if is not RecordRepresentation type', async () => {
@@ -74,7 +74,50 @@ describe('RecordMetadataOnSetPlugin', () => {
             };
 
             // Act
-            await subject.beforeSet(key, entries[key], 'DEFAULT');
+            await subject.beforeSet(key, entries[key], DefaultDurableSegment);
+
+            // Assert
+            expect(mockEnsureObjectInfoCached).toBeCalledTimes(1);
+            expect(mockEnsureObjectInfoCached).toBeCalledWith('mockApiName', entries[key].data);
+        });
+
+        it('debounces multiple identical requests when record is DurableRecordRepresentation', async () => {
+            // Arrange
+            const subject = new RecordMetadataOnSetPlugin(mockEnsureObjectInfoCached);
+            const key = 'UiApi::RecordRepresentation:001234';
+            const entries: DurableStoreEntries<unknown> = {
+                [key]: {
+                    data: { apiName: 'mockApiName' },
+                },
+            };
+
+            // Act
+            const request1 = subject.beforeSet(key, entries[key], DefaultDurableSegment);
+            const request2 = subject.beforeSet(key, entries[key], DefaultDurableSegment);
+            await Promise.all([request1, request2]);
+
+            // Assert
+            expect(mockEnsureObjectInfoCached).toBeCalledTimes(1);
+            expect(mockEnsureObjectInfoCached).toBeCalledWith('mockApiName', undefined);
+        });
+
+        it('debounces multiple identical requests when record is ObjectInfoRepresentation', async () => {
+            // Arrange
+            const subject = new RecordMetadataOnSetPlugin(mockEnsureObjectInfoCached);
+            const key = 'UiApi::ObjectInfoRepresentation:mockApiName';
+            const entries: DurableStoreEntries<any> = {
+                [key]: {
+                    data: {
+                        apiName: 'mockApiName',
+                        keyPrefix: '001',
+                    },
+                },
+            };
+
+            // Act
+            const request1 = subject.beforeSet(key, entries[key], DefaultDurableSegment);
+            const request2 = subject.beforeSet(key, entries[key], DefaultDurableSegment);
+            await Promise.all([request1, request2]);
 
             // Assert
             expect(mockEnsureObjectInfoCached).toBeCalledTimes(1);

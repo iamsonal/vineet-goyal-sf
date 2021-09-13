@@ -5,6 +5,7 @@ import {
     expireManagedContent,
 } from 'cms-authoring-test-util';
 import GetManagedContent from '../lwc/get-managed-content';
+import GetManagedContentWithContentkey from '../lwc/get-managed-content-with-contentkey';
 
 const MOCK_PREFIX = 'wire/getManagedContent/__karma__/data/';
 
@@ -12,6 +13,9 @@ const TEST_CONFIG = {
     contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM',
     version: '5OUxx0000004DMqGAM',
     language: 'en_US',
+};
+const TEST_CONFIG2 = {
+    contentKeyOrId: 'MCMOEXXY57SNBAJID2SYYWJO45LM',
 };
 const MOCK_ERROR = {
     ok: false,
@@ -39,6 +43,15 @@ describe('basic', () => {
         mockGetManagedContent(TEST_CONFIG, mock);
 
         const el = await setupElement(TEST_CONFIG, GetManagedContent);
+        expect(el.pushCount()).toBe(1);
+        expect(el.content).toEqual(mock);
+    });
+
+    it('get managed content for contentKeyOrId without language and version params', async () => {
+        const mock = getMock('content');
+        mockGetManagedContent(TEST_CONFIG2, mock);
+
+        const el = await setupElement(TEST_CONFIG2, GetManagedContentWithContentkey);
         expect(el.pushCount()).toBe(1);
         expect(el.content).toEqual(mock);
     });

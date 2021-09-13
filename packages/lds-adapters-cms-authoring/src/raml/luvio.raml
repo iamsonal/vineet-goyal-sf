@@ -22,8 +22,6 @@ types:
     (luvio.opaque): true
     (luvio.key):
       content_key: contentKey
-      version_id: managedContentVersionId
-      language: language
 
 /cms:
   /deployments:
@@ -200,8 +198,6 @@ types:
             name: getManagedContent
           (luvio.key):
             content_key: urlParams.contentKeyOrId
-            version_id: queryParams.version
-            language: queryParams.language
       /variants/{variantId}:
         get:
           (luvio.adapter):

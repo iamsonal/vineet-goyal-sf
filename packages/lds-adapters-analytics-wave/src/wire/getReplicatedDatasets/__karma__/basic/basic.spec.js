@@ -23,6 +23,16 @@ describe('basic', () => {
         expect(el.getWiredData()).toEqual(mock);
     });
 
+    it('gets replicated datasets with advancedProperties', async () => {
+        const mock = getMock('replicated-datasets-advanced-properties');
+        const config = {};
+        mockGetReplicatedDatasetsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetReplicatedDatasets);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
     it('gets replicated datasets with SFDC_REMOTE connector', async () => {
         const mock = getMock('replicated-datasets-sfdc-local-connector');
         const config = { connector: 'SFDC_LOCAL' };
@@ -56,6 +66,16 @@ describe('basic', () => {
     it('gets replicated datasets with search query param', async () => {
         const mock = getMock('replicated-datasets-opportunity-label');
         const config = { q: 'Oppor' };
+        mockGetReplicatedDatasetsNetworkOnce(config, mock);
+
+        const el = await setupElement(config, GetReplicatedDatasets);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+    });
+
+    it('gets replicated datasets with output objects', async () => {
+        const mock = getMock('replicated-datasets-output');
+        const config = {};
         mockGetReplicatedDatasetsNetworkOnce(config, mock);
 
         const el = await setupElement(config, GetReplicatedDatasets);

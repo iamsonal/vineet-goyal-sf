@@ -57,7 +57,8 @@
             "status": "cancelled",
             "supportedConnectionModes": ["full", "incremental", "periodicFull"],
             "type": "replicateddataset",
-            "url": "/services/data/v54.0/wave/replicatedDatasets/0Iuxx0000004CAfCAM"
+            "url": "/services/data/v53.0/wave/replicatedDatasets/0Iuxx0000004CAfCAM",
+            "uuid": "0Iuxx0000004CAfCAM"
         }
     ],
     "url": "/services/data/v54.0/wave/replicatedDatasets"

@@ -134,7 +134,7 @@ types:
         type: string
       value:
         description: The value of the advanced property
-        type: object
+        type: string # TODO: hand rolled
   AppLogRepresentation:
     description: Wave action representation.
     type: object
@@ -1284,6 +1284,7 @@ types:
       inputRows:
         description: The number of rows in the input of the sync out operation.
         type: integer
+        required: false # TODO Hand-rolled W-8253396
       isSyncOut:
         description: Whether this object represents a sync out connection or a recipe
           output connection.
@@ -1298,6 +1299,7 @@ types:
       outputRows:
         description: The number of rows in the output of the sync out operation.
         type: integer
+        required: false # TODO Hand-rolled W-8253396
   PermissionsRepresentation:
     description: Permissions of the user on an asset.
     type: object
@@ -1609,8 +1611,81 @@ types:
       Replicated Datasets are not intended to be visualized directly, but are used
       like a cache to speed up other workflows which refer to the same source object.
     discriminatorValue: replicatedDataset
-    type: BaseWaveAssetRepresentation
+    type: object # TODO Hand-rolled Override the luvio.key on ReplicatedDatasetRepresentation, original type: BaseWaveAssetRepresentation
     properties:
+      assetSharingUrl:
+        description: Sharing URL for the asset.
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
+      createdBy:
+        description: Represents asset creator.
+        type: WaveUserRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      createdDate:
+        description: Time the asset was created.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      description:
+        description: Short description of the asset.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      id:
+        description: The 18 character asset ID.
+        type: string
+      label:
+        description: The label of the asset.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      lastAccessedDate:
+        description: Last time the asset was accessed.
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
+      lastModifiedBy:
+        description: The user that last updated the asset.
+        type: WaveUserRepresentation | nil
+        required: false # TODO Hand-rolled W-8253396
+      lastModifiedDate:
+        description: Last time the asset was modified.
+        type: string | nil
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: The name of the asset.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      namespace:
+        description: The namespace of the Asset.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      permissions:
+        description: Represents permissions for the present user.
+        type: PermissionsRepresentation | nil
+        required: false # TODO Hand-rolled W-8253396
+      type:
+        description: The asset type.
+        type: string
+        enum:
+          - Component
+          - Dashboard
+          - DashboardSnapshot
+          - DataConnector
+          - DataPoolEntity
+          - DataPoolEntityVersion
+          - Dataflow
+          - DataflowJob
+          - DataflowJobNode
+          - Dataset
+          - DatasetShard
+          - DatasetVersion
+          - ExternalData
+          - Folder
+          - Lens
+          - Recipe
+          - ReplicatedDataset
+          - Story
+          - Workflow
+      url:
+        description: URL to get the definition of the asset.
+        type: string
       advancedProperties:
         description: The advanced properties associated with this dataset
         type: array
@@ -1630,9 +1705,11 @@ types:
       datasetId:
         description: Dataset ID that is associated with the source object being replicated
         type: string
+        required: false # TODO Hand-rolled W-8253396
       fieldCount:
         description: Indicates column count for the replicated dataset
         type: integer
+        required: false # TODO Hand-rolled W-8253396
       fieldsUrl:
         description: Url to get the fields associated with the replicated dataset
         type: string
@@ -1679,6 +1756,7 @@ types:
           - Stale
           - Success
           - Warnings
+        required: false # TODO Hand-rolled W-8253396
       supportedConnectionModes:
         description: List of supported Connection modes for this dataset
         type: array
@@ -1688,6 +1766,10 @@ types:
             - Full
             - Incremental
             - PeriodicFull
+        required: false # TODO Hand-rolled W-8253396
+      uuid:
+        description: The unique identifier of the object
+        type: string
   ReplicatedFieldRepresentation:
     description: Metadata/configururation for a single field of a Replicated Dataset.
     discriminatorValue: replicatedField
@@ -2378,6 +2460,7 @@ types:
       id:
         description: The 18 character user ID.
         type: string
+        required: false # TODO Hand-rolled W-8253396
       name:
         description: The name of the user.
         type: string

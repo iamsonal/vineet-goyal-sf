@@ -57,7 +57,8 @@
             "status": "cancelled",
             "supportedConnectionModes": ["full", "incremental", "periodicFull"],
             "type": "replicateddataset",
-            "url": "/services/data/v54.0/wave/replicatedDatasets/0Iuxx0000004CAeCAM"
+            "url": "/services/data/v53.0/wave/replicatedDatasets/0Iuxx0000004CAeCAM",
+            "uuid": "0Iuxx0000004CAeCAM"
         },
         {
             "advancedProperties": [],
@@ -115,7 +116,8 @@
             "status": "cancelled",
             "supportedConnectionModes": ["full", "incremental", "periodicFull"],
             "type": "replicateddataset",
-            "url": "/services/data/v54.0/wave/replicatedDatasets/0Iuxx0000004CAfCAM"
+            "url": "/services/data/v53.0/wave/replicatedDatasets/0Iuxx0000004CAfCAM",
+            "uuid": "0Iuxx0000004CAfCAM"
         }
     ],
     "url": "/services/data/v54.0/wave/replicatedDatasets"

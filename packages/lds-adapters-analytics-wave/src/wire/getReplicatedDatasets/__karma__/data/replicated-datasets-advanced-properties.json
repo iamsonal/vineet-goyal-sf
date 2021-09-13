@@ -1,0 +1,77 @@
+{
+    "replicatedDatasets": [
+        {
+            "advancedProperties": [
+                {
+                    "name": "StartDate",
+                    "value": "2018-01-01"
+                },
+                {
+                    "name": "ViewID",
+                    "value": "174299164"
+                },
+                {
+                    "name": "EndDate",
+                    "value": "today"
+                }
+            ],
+            "connectionMode": "full",
+            "connector": {
+                "connectionProperties": [],
+                "connectorHandler": "Legacy",
+                "connectorType": "GoogleAnalytics",
+                "createdBy": {
+                    "id": "005B0000001nRHDIA2",
+                    "name": "Eliott Mango",
+                    "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+                },
+                "createdDate": "2019-10-01T15:47:44.000Z",
+                "description": "Google Analytics",
+                "id": "0ItB0000000PBPxKAO",
+                "ingestionSchedule": {
+                    "assetId": "0ItB0000000PBPxKAO",
+                    "daysOfWeek": [],
+                    "frequency": "weekly",
+                    "notificationLevel": "warnings"
+                },
+                "label": "Google Analytics",
+                "lastModifiedBy": {
+                    "id": "005B0000002nQ4dIAE",
+                    "name": "Tim Bezold",
+                    "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+                },
+                "lastModifiedDate": "2019-10-09T22:18:43.000Z",
+                "name": "GoogleAnalytics",
+                "type": "dataconnector",
+                "url": "/services/data/v53.0/wave/dataConnectors/0ItB0000000PBPxKAO"
+            },
+            "createdBy": {
+                "id": "005B0000001nRHDIA2",
+                "name": "Eliott Mango",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "createdDate": "2019-10-01T15:51:49.000Z",
+            "datasetId": "0FbB0000000LS8SKAW",
+            "fieldCount": 3,
+            "fieldsUrl": "/services/data/v53.0/wave/replicatedDatasets/0IuB0000000L11oKAC/fields",
+            "filterApplied": false,
+            "id": "0IuB0000000L11oKAC",
+            "label": "Global_Access_Object",
+            "lastModifiedBy": {
+                "id": "005B0000002nQ4dIAE",
+                "name": "Tim Bezold",
+                "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+            },
+            "lastModifiedDate": "2019-10-09T22:19:41.000Z",
+            "name": "Global_Access_Object",
+            "replicationDataflowId": "02KB0000000WDEkMAO",
+            "sourceObjectName": "Global_Access_Object",
+            "status": "new",
+            "supportedConnectionModes": ["full"],
+            "type": "replicateddataset",
+            "url": "/services/data/v53.0/wave/replicatedDatasets/0IuB0000000L11oKAC",
+            "uuid": "0IuB0000000L11oKAC"
+        }
+    ],
+    "url": "/services/data/v53.0/wave/replicatedDatasets"
+}

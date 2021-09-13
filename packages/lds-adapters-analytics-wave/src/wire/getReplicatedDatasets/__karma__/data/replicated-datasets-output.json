@@ -1,0 +1,202 @@
+{
+    "replicatedDatasets": [
+        {
+            "advancedProperties": [],
+            "connectionMode": "full",
+            "connector": {
+                "connectionProperties": [],
+                "connectorType": "SnowflakeOutput",
+                "createdBy": {
+                    "id": "005RM0000020MmCYAU",
+                    "name": "Salesforce User",
+                    "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+                },
+                "createdDate": "2021-08-27T21:21:05.000Z",
+                "description": "SnowflakeOutputTest",
+                "id": "0ItRM00000004yo0AA",
+                "ingestionSchedule": {
+                    "assetId": "0ItRM00000004yo0AA",
+                    "frequency": "none"
+                },
+                "label": "SnowflakeOutputTest",
+                "lastModifiedBy": {
+                    "id": "005RM0000020MmCYAU",
+                    "name": "Salesforce User",
+                    "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+                },
+                "lastModifiedDate": "2021-08-27T21:21:05.000Z",
+                "name": "SnowflakeOutputTest",
+                "type": "dataconnector",
+                "url": "/services/data/v53.0/wave/dataConnectors/0ItRM00000004yo0AA"
+            },
+            "createdBy": {},
+            "fieldsUrl": "/services/data/v53.0/wave/replicatedDatasets/05vRM0000004GrdYAE/fields",
+            "filterApplied": false,
+            "id": "05vRM0000004GrdYAE",
+            "label": "1000rows",
+            "lastModifiedBy": {},
+            "name": "1000rows",
+            "outputSource": {
+                "isSyncOut": false,
+                "name": "test_output"
+            },
+            "sourceObjectName": "1000rows",
+            "status": "new",
+            "supportedConnectionModes": ["full"],
+            "type": "replicateddataset",
+            "url": "/services/data/v53.0/wave/replicatedDatasets/05vRM0000004GrdYAE",
+            "uuid": "0ItRM00000004yo0AA_05vRM0000004GrdYAE_1000rows"
+        },
+        {
+            "advancedProperties": [],
+            "connectionMode": "incremental",
+            "connector": {
+                "connectionProperties": [],
+                "connectorType": "SnowflakeOutput",
+                "createdBy": {
+                    "id": "005RM0000020MmCYAU",
+                    "name": "Salesforce User",
+                    "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+                },
+                "createdDate": "2021-08-27T21:21:05.000Z",
+                "description": "SnowflakeOutputTest",
+                "id": "0ItRM00000004yo0AA",
+                "ingestionSchedule": {
+                    "assetId": "0ItRM00000004yo0AA",
+                    "frequency": "none"
+                },
+                "label": "SnowflakeOutputTest",
+                "lastModifiedBy": {
+                    "id": "005RM0000020MmCYAU",
+                    "name": "Salesforce User",
+                    "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+                },
+                "lastModifiedDate": "2021-08-27T21:21:05.000Z",
+                "name": "SnowflakeOutputTest",
+                "type": "dataconnector",
+                "url": "/services/data/v53.0/wave/dataConnectors/0ItRM00000004yo0AA"
+            },
+            "createdBy": {},
+            "fieldCount": 40,
+            "fieldsUrl": "/services/data/v53.0/wave/replicatedDatasets/0ItRM00000004yo0AA/fields",
+            "filterApplied": false,
+            "id": "0ItRM00000004yo0AA",
+            "label": "AccountChangeEvent",
+            "lastModifiedBy": {},
+            "name": "AccountChangeEvent",
+            "outputSource": {
+                "inputRows": 0,
+                "isSyncOut": true,
+                "name": "SFDC_LOCAL",
+                "outputRows": 0
+            },
+            "sourceObjectName": "AccountChangeEvent",
+            "supportedConnectionModes": ["full", "incremental", "periodicFull"],
+            "type": "replicateddataset",
+            "url": "/services/data/v53.0/wave/replicatedDatasets/0ItRM00000004yo0AA",
+            "uuid": "0ItRM00000004yo0AA_AccountChangeEvent"
+        },
+        {
+            "advancedProperties": [],
+            "connectionMode": "incremental",
+            "connector": {
+                "connectionProperties": [],
+                "connectorType": "SnowflakeOutput",
+                "createdBy": {
+                    "id": "005RM0000020MmCYAU",
+                    "name": "Salesforce User",
+                    "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+                },
+                "createdDate": "2021-08-27T21:21:05.000Z",
+                "description": "SnowflakeOutputTest",
+                "id": "0ItRM00000004yo0AA",
+                "ingestionSchedule": {
+                    "assetId": "0ItRM00000004yo0AA",
+                    "frequency": "none"
+                },
+                "label": "SnowflakeOutputTest",
+                "lastModifiedBy": {
+                    "id": "005RM0000020MmCYAU",
+                    "name": "Salesforce User",
+                    "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+                },
+                "lastModifiedDate": "2021-08-27T21:21:05.000Z",
+                "name": "SnowflakeOutputTest",
+                "type": "dataconnector",
+                "url": "/services/data/v53.0/wave/dataConnectors/0ItRM00000004yo0AA"
+            },
+            "createdBy": {},
+            "fieldCount": 5,
+            "fieldsUrl": "/services/data/v53.0/wave/replicatedDatasets/0ItRM00000004yo0AA/fields",
+            "filterApplied": false,
+            "id": "0ItRM00000004yo0AA",
+            "label": "Opportunity",
+            "lastModifiedBy": {},
+            "lastRefreshedDate": "2021-06-15T01:11:04.000Z",
+            "name": "Opportunity",
+            "outputSource": {
+                "inputRows": 0,
+                "isSyncOut": true,
+                "name": "SFDC_LOCAL",
+                "outputRows": 0
+            },
+            "sourceObjectName": "Opportunity",
+            "supportedConnectionModes": ["full", "incremental", "periodicFull"],
+            "type": "replicateddataset",
+            "url": "/services/data/v53.0/wave/replicatedDatasets/0ItRM00000004yo0AA",
+            "uuid": "0ItRM00000004yo0AA_Opportunity"
+        },
+        {
+            "advancedProperties": [],
+            "connectionMode": "incremental",
+            "connector": {
+                "connectionProperties": [],
+                "connectorType": "SnowflakeOutput",
+                "createdBy": {
+                    "id": "005RM0000020MmCYAU",
+                    "name": "Salesforce User",
+                    "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+                },
+                "createdDate": "2021-08-27T21:21:05.000Z",
+                "description": "SnowflakeOutputTest",
+                "id": "0ItRM00000004yo0AA",
+                "ingestionSchedule": {
+                    "assetId": "0ItRM00000004yo0AA",
+                    "frequency": "none"
+                },
+                "label": "SnowflakeOutputTest",
+                "lastModifiedBy": {
+                    "id": "005RM0000020MmCYAU",
+                    "name": "Salesforce User",
+                    "profilePhotoUrl": "/img/userprofile/default_profile_45_v2.png"
+                },
+                "lastModifiedDate": "2021-08-27T21:21:05.000Z",
+                "name": "SnowflakeOutputTest",
+                "type": "dataconnector",
+                "url": "/services/data/v53.0/wave/dataConnectors/0ItRM00000004yo0AA"
+            },
+            "createdBy": {},
+            "fieldCount": 4,
+            "fieldsUrl": "/services/data/v53.0/wave/replicatedDatasets/0ItRM00000004yo0AA/fields",
+            "filterApplied": false,
+            "id": "0ItRM00000004yo0AA",
+            "label": "Account",
+            "lastModifiedBy": {},
+            "lastRefreshedDate": "2021-08-27T21:22:01.000Z",
+            "name": "Account",
+            "outputSource": {
+                "inputRows": 0,
+                "isSyncOut": true,
+                "name": "SFDC_LOCAL",
+                "outputRows": 0
+            },
+            "sourceObjectName": "Account",
+            "status": "failed",
+            "supportedConnectionModes": ["full", "incremental", "periodicFull"],
+            "type": "replicateddataset",
+            "url": "/services/data/v53.0/wave/replicatedDatasets/0ItRM00000004yo0AA",
+            "uuid": "0ItRM00000004yo0AA_Account"
+        }
+    ],
+    "url": "/services/data/v53.0/wave/replicatedDatasets"
+}

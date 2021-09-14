@@ -1,5 +1,6 @@
 import { Adapter, Snapshot } from '@luvio/engine';
 import { AdapterMetadata } from './ldsAdapter';
+import { ObjectDefineProperty } from './utils/lanugage';
 import { isErrorSnapshot } from './utils/snapshotType';
 import { isPromise } from './utils/utils';
 
@@ -80,7 +81,7 @@ export function createSingleInvocationAdapter<C, D>(
         });
     };
 
-    Object.defineProperty(singleInvocationAdapter, 'name', {
+    ObjectDefineProperty(singleInvocationAdapter, 'name', {
         value: name,
     });
 

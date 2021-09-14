@@ -60,8 +60,7 @@ const getDraftActionForRecordKeys = (keys: string[]) => {
 const { newRecordId, isGenerated } = recordIdGenerator(userId);
 
 // non-draft-aware base services
-// eslint-disable-next-line @salesforce/lds/no-invalid-todo
-// TODO: use default scheduler
+// TODO [W-9883150]: use default scheduler
 const storeOptions = {
     scheduler: () => {},
 };

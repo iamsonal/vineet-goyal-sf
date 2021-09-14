@@ -72,10 +72,12 @@ export const activity: Activity = {
 // Instrumentation
 export const mockInstrumentation = {
     startActivity,
-    error: jest.fn(),
+    error: () => {},
 };
 function startActivity(_name: string): Activity {
     return activity;
 }
 
-export const getInstrumentation = jest.fn().mockReturnValue(mockInstrumentation);
+export const getInstrumentation = () => {
+    return mockInstrumentation;
+};

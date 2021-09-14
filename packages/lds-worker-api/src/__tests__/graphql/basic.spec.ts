@@ -9,7 +9,7 @@ const query = `query { uiapi { query { Account(where:  { Name:  { like: "Account
 
 describe(`invokeAdapter("${gqlAdapterName}")`, () => {
     beforeEach(() => {
-        mockInstrumentation.error.mockReset();
+        mockInstrumentation.error = jest.fn();
     });
     it('takes in gql query string and calls the GQL adapter', (done) => {
         // setup mock response

@@ -1,0 +1,20 @@
+{
+    "name": "@salesforce/lds-network-adapter",
+    "version": "1.24.7",
+    "description": "LDS Network Adapter for Lightning Platform",
+    "private": true,
+    "license": "MIT",
+    "main": "dist/ldsNetwork.js",
+    "module": "dist/ldsNetwork.js",
+    "types": "dist/main.d.ts",
+    "scripts": {
+        "prepare": "yarn build",
+        "build": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist",
+        "test:unit": "jest",
+        "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
+    },
+    "devDependencies": {
+        "@luvio/engine": "0.47.5"
+    }
+}

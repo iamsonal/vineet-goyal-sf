@@ -6227,6 +6227,7 @@ describe('routes', () => {
                     id: '9Puxx0000004CSOCA2',
                     resourceUrl: '/services/data/v54.0/connect/cms/folders/9Puxx0000004CSOCA2',
                 },
+                isPublished: false,
                 language: 'en_US',
                 lastModifiedBy: {
                     id: '005xx000001X7fNAAS',
@@ -6287,6 +6288,7 @@ describe('routes', () => {
                     id: '9Puxx0000004CSOCA2',
                     resourceUrl: '/services/data/v54.0/connect/cms/folders/9Puxx0000004CSOCA2',
                 },
+                isPublished: false,
                 language: 'en_US',
                 lastModifiedBy: {
                     id: '005xx000001X7fNAAS',

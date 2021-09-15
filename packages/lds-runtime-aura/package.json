@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-runtime-aura",
-    "version": "1.24.7",
+    "version": "1.24.8",
     "description": "LDS engine for Aura runtime",
     "private": true,
     "license": "MIT",
@@ -20,12 +20,12 @@
         "release:corejar": "yarn build && ../core-build/scripts/core.js --name=lds-runtime-aura"
     },
     "devDependencies": {
-        "@salesforce/lds-adapters-uiapi": "1.24.7",
-        "@salesforce/lds-ads-bridge": "1.24.7",
-        "@salesforce/lds-aura-storage": "1.24.7",
-        "@salesforce/lds-bindings": "1.24.7",
-        "@salesforce/lds-instrumentation": "1.24.7",
-        "@salesforce/lds-network-aura": "1.24.7",
-        "@salesforce/lds-runtime-web": "1.24.7"
+        "@salesforce/lds-adapters-uiapi": "1.24.8",
+        "@salesforce/lds-ads-bridge": "1.24.8",
+        "@salesforce/lds-aura-storage": "1.24.8",
+        "@salesforce/lds-bindings": "1.24.8",
+        "@salesforce/lds-instrumentation": "1.24.8",
+        "@salesforce/lds-network-aura": "1.24.8",
+        "@salesforce/lds-runtime-web": "1.24.8"
     }
 }

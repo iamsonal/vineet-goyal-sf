@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-network-adapter",
-    "version": "1.24.7",
+    "version": "1.24.8",
     "description": "LDS Network Adapter for Lightning Platform",
     "private": true,
     "license": "MIT",

@@ -8,10 +8,10 @@ import timekeeper from 'timekeeper';
 import {
     setupInstrumentation,
     incrementCounterMetric,
+    log,
     setupInstrumentationWithO11y,
     Instrumentation,
     LightningInteractionSchema,
-    refreshApiEvent,
     NORMALIZED_APEX_ADAPTER_NAME,
     REFRESH_APEX_KEY,
     REFRESH_UIAPI_KEY,
@@ -73,7 +73,6 @@ const instrumentation = new Instrumentation();
 const instrumentationSpies = {
     aggregateWeakETagEvents: jest.spyOn(instrumentation, 'aggregateWeakETagEvents'),
     aggregateRefreshAdapterEvents: jest.spyOn(instrumentation, 'aggregateRefreshAdapterEvents'),
-    handleRefreshApiCall: jest.spyOn(instrumentation, 'handleRefreshApiCall'),
     incrementRecordApiNameChangeEvents: jest.spyOn(
         instrumentation,
         'incrementRecordApiNameChangeCount'
@@ -82,16 +81,13 @@ const instrumentationSpies = {
         instrumentation,
         'logAdapterCacheMissOutOfTtlDuration'
     ),
-    incrementAdapterRequestMetric: jest.spyOn(instrumentation, 'incrementAdapterRequestMetric'),
 };
 
 beforeEach(() => {
     instrumentationSpies.aggregateWeakETagEvents.mockClear();
     instrumentationSpies.aggregateRefreshAdapterEvents.mockClear();
-    instrumentationSpies.handleRefreshApiCall.mockClear();
     instrumentationSpies.incrementRecordApiNameChangeEvents.mockClear();
     instrumentationSpies.logAdapterCacheMissOutOfTtlDuration.mockClear();
-    instrumentationSpies.incrementAdapterRequestMetric.mockClear();
     instrumentationServiceSpies.perfEnd.mockClear();
     instrumentationServiceSpies.perfStart.mockClear();
     instrumentationServiceSpies.cacheStatsLogHitsSpy.mockClear();
@@ -133,7 +129,6 @@ const GET_RECORD_TTL = 30000;
 describe('instrumentation', () => {
     describe('log lines', () => {
         const interaction: LightningInteractionSchema = {
-            kind: 'interaction',
             target: 'merge',
             scope: 'lds-adapters-uiapi',
             context: {
@@ -145,8 +140,8 @@ describe('instrumentation', () => {
             attributes: null,
         };
 
-        it('should call the log function, which will call interaction', () => {
-            instrumentation.instrumentNetwork(interaction);
+        it('will call interaction from instrumentation/service', () => {
+            log(null, interaction);
             expect(instrumentationServiceSpies.interaction).toHaveBeenCalledTimes(1);
         });
     });
@@ -462,9 +457,6 @@ describe('instrumentation', () => {
     describe('weakETagZero', () => {
         it('should aggregate weaketagzero events and execute in beforeunload', () => {
             instrumentation.aggregateWeakETagEvents(true, false, 'Account');
-            expect(instrumentationSpies.aggregateWeakETagEvents).toHaveBeenCalledTimes(1);
-            expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(0);
-            expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(0);
             expect((instrumentation as any).weakEtagZeroEvents).toEqual({
                 'weaketag-0-Account': {
                     'existing-weaketag-0': 0,
@@ -497,27 +489,22 @@ describe('instrumentation', () => {
         };
 
         it('should increment refreshApex call count, and set lastRefreshApiCall', () => {
-            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_APEX_KEY)());
-            expect(instrumentationSpies.handleRefreshApiCall).toHaveBeenCalledTimes(1);
-            expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(0);
-            expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(0);
+            instrumentation.handleRefreshApiCall(REFRESH_APEX_KEY);
             expect((instrumentation as any).refreshApiCallEventStats[REFRESH_APEX_KEY]).toEqual(1);
             expect((instrumentation as any).lastRefreshApiCall).toEqual(REFRESH_APEX_KEY);
         });
 
         it('should increment refreshUiApi call count, and set lastRefreshApiCall', () => {
-            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_UIAPI_KEY)());
-            expect(instrumentationSpies.handleRefreshApiCall).toHaveBeenCalledTimes(1);
+            instrumentation.handleRefreshApiCall(REFRESH_UIAPI_KEY);
             expect((instrumentation as any).refreshApiCallEventStats[REFRESH_UIAPI_KEY]).toEqual(1);
             expect((instrumentation as any).lastRefreshApiCall).toEqual(REFRESH_UIAPI_KEY);
         });
 
         it('should increment supported and per adapter counts for apex adapter', () => {
-            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_APEX_KEY)());
-            instrumentation.instrumentNetwork(apexAdapterRefreshEvent);
+            instrumentation.handleRefreshApiCall(REFRESH_APEX_KEY);
+            // comes from lwc-luvio
+            instrumentation.instrumentLuvio(apexAdapterRefreshEvent);
             expect(instrumentationSpies.aggregateRefreshAdapterEvents).toHaveBeenCalledTimes(1);
-            expect(instrumentationServiceSpies.perfStart).toHaveBeenCalledTimes(0);
-            expect(instrumentationServiceSpies.perfEnd).toHaveBeenCalledTimes(0);
             expect(
                 (instrumentation as any).refreshAdapterEvents[NORMALIZED_APEX_ADAPTER_NAME]
             ).toEqual(1);
@@ -526,8 +513,9 @@ describe('instrumentation', () => {
         });
 
         it('should increment unsupported and per adapter counts for non-apex adapter', () => {
-            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_APEX_KEY)());
-            instrumentation.instrumentNetwork(uiApiAdapterRefreshEvent);
+            instrumentation.handleRefreshApiCall(REFRESH_APEX_KEY);
+            // comes from lwc-luvio
+            instrumentation.instrumentLuvio(uiApiAdapterRefreshEvent);
             expect(instrumentationSpies.aggregateRefreshAdapterEvents).toHaveBeenCalledTimes(1);
             expect((instrumentation as any).refreshAdapterEvents[GET_RECORD_ADAPTER_NAME]).toEqual(
                 1
@@ -537,20 +525,20 @@ describe('instrumentation', () => {
         });
 
         it('should increment unsupported and per adapter counts for non-apex adapter when refreshUiApi is called', () => {
-            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_UIAPI_KEY)());
-            instrumentation.instrumentNetwork(uiApiAdapterRefreshEvent);
-            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_UIAPI_KEY)());
-            instrumentation.instrumentNetwork(apexAdapterRefreshEvent);
+            instrumentation.handleRefreshApiCall(REFRESH_UIAPI_KEY);
+            instrumentation.instrumentLuvio(uiApiAdapterRefreshEvent);
+            instrumentation.handleRefreshApiCall(REFRESH_UIAPI_KEY);
+            instrumentation.instrumentLuvio(apexAdapterRefreshEvent);
             expect(instrumentationSpies.aggregateRefreshAdapterEvents).toHaveBeenCalledTimes(2);
             expect((instrumentation as any).refreshApiCallEventStats[SUPPORTED_KEY]).toEqual(0);
             expect((instrumentation as any).refreshApiCallEventStats[UNSUPPORTED_KEY]).toEqual(2);
         });
 
         it('should reset stat trackers after call to logRefreshStats', () => {
-            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_APEX_KEY)());
-            instrumentation.instrumentNetwork(apexAdapterRefreshEvent);
-            instrumentation.instrumentNetwork(refreshApiEvent(REFRESH_UIAPI_KEY)());
-            instrumentation.instrumentNetwork(uiApiAdapterRefreshEvent);
+            instrumentation.handleRefreshApiCall(REFRESH_APEX_KEY);
+            instrumentation.instrumentLuvio(apexAdapterRefreshEvent);
+            instrumentation.handleRefreshApiCall(REFRESH_UIAPI_KEY);
+            instrumentation.instrumentLuvio(uiApiAdapterRefreshEvent);
             expect(
                 (instrumentation as any).refreshAdapterEvents[NORMALIZED_APEX_ADAPTER_NAME]
             ).toEqual(1);
@@ -585,8 +573,6 @@ describe('instrumentation', () => {
             var now = Date.now();
             timekeeper.freeze(now);
             return instrumentedAdapter(getRecordConfig).then((_result) => {
-                expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
-
                 // Verify Metric Calls
                 const expectedMetricCalls = [
                     { owner: 'LIGHTNING.lds.service', name: 'request.UiApi.getRecord' },
@@ -634,8 +620,6 @@ describe('instrumentation', () => {
             timekeeper.freeze(now);
             instrumentedAdapter(getRecordConfig);
 
-            expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
-
             // Verify Metric Calls
             const expectedMetricCalls = [
                 { owner: 'LIGHTNING.lds.service', name: 'request.UiApi.getRecord' },
@@ -680,8 +664,6 @@ describe('instrumentation', () => {
             var now = Date.now();
             timekeeper.freeze(now);
             return instrumentedAdapter(getRecordConfig).then((_result) => {
-                expect(instrumentationSpies.incrementAdapterRequestMetric).toHaveBeenCalledTimes(1);
-
                 // Verify Metric Calls
                 const expectedMetricCalls = [
                     { owner: 'LIGHTNING.lds.service', name: 'request.UiApi.getRecord' },

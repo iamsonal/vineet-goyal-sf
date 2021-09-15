@@ -145,3 +145,6 @@ export default function networkAdapterWithRateLimitTelemetry(
     }
     return networkAdapter(resourceRequest);
 }
+
+// Expose module instrumentation
+export { instrument, AuraNetworkInstrumentation } from './instrumentation';

@@ -1,5 +1,6 @@
 import { Adapter } from '@luvio/engine';
 import { AdapterMetadata } from './ldsAdapter';
+import { refreshApiNames } from './bindWireRefresh';
 
 /**
  * Instrumentation hooks exposed by this module.
@@ -8,18 +9,21 @@ export interface LwcBindingsInstrumentation {
     /**
      * Called when an LWC calls `refresh`.
      */
-    refreshCalled?: (fromSource: string) => void;
+    refreshCalled?: (fromSource: keyof refreshApiNames) => void;
 
     /**
      * Called when creating wire adapters.
      */
-    instrumentAdapter<C, D>(adapter: Adapter<C, D>, metadata: AdapterMetadata): Adapter<C, D>;
+    instrumentAdapter?: <C, D>(adapter: Adapter<C, D>, metadata: AdapterMetadata) => Adapter<C, D>;
 }
 
 // For use by callers within this module to instrument interesting things.
 export let instrumentation = {
-    refreshCalled: (_fromSource: string) => {},
-    instrumentAdapter<C, D>(adapter: Adapter<C, D>, _metadata: AdapterMetadata): Adapter<C, D> {
+    refreshCalled: (_fromSource: keyof refreshApiNames) => {},
+    instrumentAdapter: <C, D>(
+        adapter: Adapter<C, D>,
+        _metadata: AdapterMetadata
+    ): Adapter<C, D> => {
         return adapter;
     },
 };

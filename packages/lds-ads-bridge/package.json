@@ -20,8 +20,6 @@
     },
     "devDependencies": {
         "@salesforce/lds-adapters-uiapi": "1.24.7",
-        "@salesforce/lds-instrumentation": "1.24.7",
-        "@salesforce/lds-runtime-aura": "1.24.7",
         "@salesforce/lds-uiapi-record-utils": "1.24.7"
     }
 }

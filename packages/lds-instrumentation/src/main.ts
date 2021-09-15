@@ -77,17 +77,6 @@ interface AdapterUnfulfilledErrorCounters {
     [apiName: string]: Counter;
 }
 
-const RECORD_API_NAME_CHANGE_EVENT = 'record-api-name-change-event';
-interface RecordApiNameChangeEvent {
-    [RECORD_API_NAME_CHANGE_EVENT]: boolean;
-    existingApiName: string;
-    incomingApiName: string;
-}
-// Event comes in from lwc-luvio package
-interface RefreshAdapterEvent {
-    [REFRESH_ADAPTER_EVENT]: boolean;
-    adapterName: string;
-}
 interface AdapterUnfulfilledError {
     [ADAPTER_UNFULFILLED_ERROR]: boolean;
     adapterName: string;
@@ -98,10 +87,15 @@ interface AdapterUnfulfilledError {
 export const APEX_ADAPTER_NAME = 'getApex';
 export const NORMALIZED_APEX_ADAPTER_NAME = `Apex.${APEX_ADAPTER_NAME}`;
 const GRAPHQL_ADAPTER_NAME = 'graphQL';
+
+// Event comes in from lwc-luvio package
+interface RefreshAdapterEvent {
+    [REFRESH_ADAPTER_EVENT]: boolean;
+    adapterName: string;
+}
 interface RefreshAdapterEvents {
     [adapterName: string]: number;
 }
-
 export const REFRESH_APEX_KEY = 'refreshApex';
 export const REFRESH_UIAPI_KEY = 'refreshUiApi';
 export const SUPPORTED_KEY = 'refreshSupported';
@@ -118,15 +112,11 @@ interface RefreshApiCallEventStats {
     [SUPPORTED_KEY]: number;
     [UNSUPPORTED_KEY]: number;
 }
-const REFRESH_API_CALL_EVENT = 'refresh-api-call-event';
-export type refreshApiNames = {
+
+type refreshApiNames = {
     refreshApex: string;
     refreshUiApi: string;
 };
-interface RefreshApiCallEvent {
-    [REFRESH_API_CALL_EVENT]: boolean;
-    apiName: keyof refreshApiNames;
-}
 
 interface LdsStatsReport {
     recordCount: number;
@@ -138,12 +128,6 @@ interface LdsStatsReport {
 const INCOMING_WEAKETAG_0_KEY = 'incoming-weaketag-0';
 const EXISTING_WEAKETAG_0_KEY = 'existing-weaketag-0';
 
-interface WeakETagZeroEvent {
-    apiName: string;
-    [EXISTING_WEAKETAG_0_KEY]: boolean;
-    [INCOMING_WEAKETAG_0_KEY]: boolean;
-}
-
 interface WeakEtagZeroEvents {
     [apiName: string]: {
         [EXISTING_WEAKETAG_0_KEY]: number;
@@ -151,20 +135,13 @@ interface WeakEtagZeroEvents {
     };
 }
 
-interface wireAdapterMetricConfigs {
-    [name: string]: {
-        wireConfigKeyFn: (config: any) => string;
-    };
-}
-
-export interface AdapterMetadata {
+interface AdapterMetadata {
     apiFamily: string;
     name: string;
     ttl?: number;
 }
 
 export interface LightningInteractionSchema {
-    kind: 'interaction';
     target: string;
     scope: string;
     context: unknown;
@@ -347,7 +324,12 @@ export class Instrumentation {
 
         const instrumentedAdapter = (config: C) => {
             const startTime = Date.now();
-            this.incrementAdapterRequestMetric(wireAdapterRequestMetric);
+
+            // increment adapter request metrics
+            wireAdapterRequestMetric.increment(1);
+            totalAdapterRequestSuccessMetric.increment(1);
+
+            // execute adapter logic
             const result = adapter(config);
             // In the case where the adapter returns a non-Pending Snapshot it is constructed out of the store
             // (cache hit) whereas a Promise<Snapshot> or Pending Snapshot indicates a network request (cache miss).
@@ -410,11 +392,6 @@ export class Instrumentation {
             : instrumentedAdapter;
     }
 
-    private incrementAdapterRequestMetric(wireRequestCounter: Counter) {
-        wireRequestCounter.increment(1);
-        totalAdapterRequestSuccessMetric.increment(1);
-    }
-
     /**
      * Logs when adapter requests come in. If we have subsequent cache misses on a given config, beyond its TTL then log the duration to metrics.
      * Backed by an LRU Cache implementation to prevent too many record entries from being stored in-memory.
@@ -449,24 +426,18 @@ export class Instrumentation {
     }
 
     /**
-     * Add a network transaction to the metrics service.
-     * Injected to LDS for network handling instrumentation.
+     * Injected to LDS for Luvio specific instrumentation.
      *
      * @param context The transaction context.
      */
-
-    public instrumentNetwork(context: unknown): void {
+    public instrumentLuvio(context: unknown): void {
         if (this.isRefreshAdapterEvent(context)) {
             this.aggregateRefreshAdapterEvents(context);
-        } else if (this.isRefreshApiEvent(context)) {
-            this.handleRefreshApiCall(context);
         } else if (this.isAdapterUnfulfilledError(context)) {
             this.incrementAdapterRequestErrorCount(context);
-        } else if (isLightningInteractionLog(context)) {
-            log(null, context);
         } else {
-            perfStart(NETWORK_TRANSACTION_NAME);
-            perfEnd(NETWORK_TRANSACTION_NAME, context);
+            // Unknown use of luvio.instrument
+            // should we log something here?
         }
     }
 
@@ -486,15 +457,6 @@ export class Instrumentation {
      */
     private isAdapterUnfulfilledError(context: unknown): context is AdapterUnfulfilledError {
         return (context as AdapterUnfulfilledError)[ADAPTER_UNFULFILLED_ERROR] === true;
-    }
-
-    /**
-     * Returns whether or not this is a RefreshApiCallEvent.
-     * @param context The transaction context.
-     * @returns Whether or not this is a RefreshApexEvent.
-     */
-    private isRefreshApiEvent(context: unknown): context is RefreshApiCallEvent {
-        return (context as RefreshApiCallEvent)[REFRESH_API_CALL_EVENT] === true;
     }
 
     /**
@@ -572,8 +534,7 @@ export class Instrumentation {
      * to be used in {@link aggregateRefreshCalls}
      * @param from The name of the refresh function called.
      */
-    private handleRefreshApiCall(context: RefreshApiCallEvent): void {
-        const { apiName } = context;
+    public handleRefreshApiCall(apiName: keyof refreshApiNames): void {
         this.refreshApiCallEventStats[apiName] += 1;
         // set function call to be used with aggregateRefreshCalls
         this.lastRefreshApiCall = apiName;
@@ -764,7 +725,22 @@ function createMetricsKey(owner: string, name: string, unit?: string): MetricsKe
     };
 }
 
-export function timerMetricAddDuration(timer: Timer, duration: number): void {
+const timerMetricTracker: Record<string, Timer> = ObjectCreate(null);
+/**
+ * Calls instrumentation/service telemetry timer
+ * @param name Name of the metric
+ * @param duration number to update backing percentile histogram, negative numbers ignored
+ */
+export function updateTimerMetric(name: string, duration: number): void {
+    let metric = timerMetricTracker[name];
+    if (metric === undefined) {
+        metric = timer(createMetricsKey(NAMESPACE, name));
+        timerMetricTracker[name] = metric;
+    }
+    timerMetricAddDuration(metric, duration);
+}
+
+export function timerMetricAddDuration(timer: Timer, duration: number) {
     // Guard against negative values since it causes error to be thrown by MetricsService
     if (duration >= 0) {
         timer.addDuration(duration);
@@ -823,20 +799,12 @@ function normalizeAdapterName(adapterName: string, apiFamily?: string): string {
 }
 
 /**
- * @param context the payload received from `luvio.instrument`
- * @returns whether or not the context is of type `LightningInteractionSchema`.
- */
-function isLightningInteractionLog(context: unknown): context is LightningInteractionSchema {
-    return (context as LightningInteractionSchema).kind === 'interaction';
-}
-
-/**
  * Calls instrumentation/service interaction API. Function name and parameters mapped to `o11y`
  * implementation for Log Lines.
  * @param schema Expected shape of the payload (Currently unused)
  * @param payload Content to be logged, shape matches schema
  */
-function log(schema: any, payload: LightningInteractionSchema): void {
+export function log(_schema: any, payload: LightningInteractionSchema): void {
     const { target, scope, context, eventSource, eventType, attributes } = payload;
     interaction(target, scope, context, eventSource, eventType, attributes);
 }
@@ -1013,22 +981,6 @@ export function incrementNetworkRateLimitExceededCount(): void {
  */
 export function logCRUDLightningInteraction(eventSource: string, attributes: object): void {
     interaction(eventSource, 'force_record', null, eventSource, 'crud', attributes);
-}
-
-// eslint-disable-next-line @salesforce/lds/no-invalid-todo
-// TODO: export these types from luvio/engine
-type Instrument = (params: unknown) => void;
-type InstrumentParamsBuilder = () => Parameters<Instrument>[0];
-/**
- * @returns The builder function for specified api call.
- */
-export function refreshApiEvent(apiName: keyof refreshApiNames): InstrumentParamsBuilder {
-    return () => {
-        return {
-            [REFRESH_API_CALL_EVENT]: true,
-            apiName,
-        };
-    };
 }
 
 /**

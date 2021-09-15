@@ -8,7 +8,7 @@ export function createLuvio() {
     const environment = new Environment(store, networkAdapter);
 
     const luvio = new Luvio(environment, {
-        instrument: instrumentation.instrumentNetwork.bind(instrumentation),
+        instrument: instrumentation.instrumentLuvio.bind(instrumentation),
     });
 
     setupInstrumentation(luvio, store);

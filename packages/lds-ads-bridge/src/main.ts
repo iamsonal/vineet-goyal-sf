@@ -35,3 +35,6 @@ export function withAdsBridge(callback: Callback) {
     }
     callbacks.push(callback);
 }
+
+// Expose module instrumentation
+export { instrument, AdsBridgeInstrumentation } from './instrumentation';

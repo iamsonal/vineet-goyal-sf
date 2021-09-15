@@ -14,11 +14,13 @@ const ldsEngine = {
 
     external: [
         '@luvio/engine',
+        '@salesforce/lds-adapters-uiapi',
+        '@salesforce/lds-ads-bridge',
         '@salesforce/lds-aura-storage',
+        '@salesforce/lds-bindings',
         '@salesforce/lds-default-luvio',
         '@salesforce/lds-instrumentation',
         '@salesforce/lds-network-aura',
-        '@salesforce/lds-adapters-uiapi',
         '@salesforce/gate/lds.useNewTrackedFieldBehavior',
     ],
 
@@ -29,11 +31,13 @@ const ldsEngine = {
         footer,
         paths: {
             '@luvio/engine': 'force/ldsEngine',
+            '@salesforce/lds-adapters-uiapi': 'force/ldsAdaptersUiapi',
+            '@salesforce/lds-ads-bridge': 'force/adsBridge',
             '@salesforce/lds-aura-storage': 'force/ldsStorage',
+            '@salesforce/lds-bindings': 'force/ldsBindings',
             '@salesforce/lds-default-luvio': 'force/ldsEngine',
             '@salesforce/lds-instrumentation': 'force/ldsInstrumentation',
             '@salesforce/lds-network-aura': 'force/ldsNetwork',
-            '@salesforce/lds-adapters-uiapi': 'force/ldsAdaptersUiapi',
         },
     },
     plugins: [

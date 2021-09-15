@@ -1,55 +1,51 @@
 import {
     updatePercentileHistogramMetric,
     incrementCounterMetric,
+    incrementGetRecordAggregateInvokeCount,
+    incrementGetRecordAggregateRetryCount,
+    incrementGetRecordNormalInvokeCount,
     incrementGetRecordNotifyChangeAllowCount,
     incrementGetRecordNotifyChangeDropCount,
-    instrumentation,
+    incrementNetworkRateLimitExceededCount,
+    instrumentation as ldsInstrumentation,
+    logCRUDLightningInteraction,
+    setAggregateUiChunkCountMetric,
+    updateTimerMetric,
 } from '@salesforce/lds-instrumentation';
-import {
-    instrument as adaptersUiApiInstrument,
-    LdsUiapiInstrumentation,
-} from '@salesforce/lds-adapters-uiapi';
+import { instrument as adaptersUiApiInstrument } from '@salesforce/lds-adapters-uiapi';
+import { instrument as networkAuraInstrument } from '@salesforce/lds-network-aura';
+import { instrument as lwcBindingsInstrument } from '@salesforce/lds-bindings';
+import { instrument as adsBridgeInstrument } from '@salesforce/lds-ads-bridge';
 
-/*
- * Concrete implementations are only exported for code coverage
+/**
+ * One call does it all
  */
-export function recordConflictsResolved(serverRequestCount: number) {
-    updatePercentileHistogramMetric('record-conflicts-resolved', serverRequestCount);
-}
-export function nullDisplayValueConflict(_entityName: string, _fieldName: string | number | null) {
-    incrementCounterMetric('merge-null-dv-count');
-}
-export function getRecordNotifyChangeAllowed() {
-    incrementGetRecordNotifyChangeAllowCount();
-}
-export function getRecordNotifyChangeDropped() {
-    incrementGetRecordNotifyChangeDropCount();
-}
-export function recordApiNameChanged(incomingApiName: string, existingApiName: string) {
-    instrumentation.incrementRecordApiNameChangeCount(incomingApiName, existingApiName);
-}
-export function weakEtagZero(
-    incomingWeakEtagZero: boolean,
-    existingWeakEtagZero: boolean,
-    apiName: string
-) {
-    instrumentation.aggregateWeakETagEvents(incomingWeakEtagZero, existingWeakEtagZero, apiName);
-}
-export function getRecordNotifyChangeNetworkResult(
-    uniqueWeakEtags: boolean | null,
-    error?: boolean
-) {
-    instrumentation.notifyChangeNetwork(uniqueWeakEtags, error);
-}
-export function instrumentUiApi() {
-    const uiApiInstrumentation: LdsUiapiInstrumentation = {
-        recordConflictsResolved,
-        nullDisplayValueConflict,
-        getRecordNotifyChangeAllowed,
-        getRecordNotifyChangeDropped,
-        recordApiNameChanged,
-        weakEtagZero,
-        getRecordNotifyChangeNetworkResult,
-    };
-    adaptersUiApiInstrument(uiApiInstrumentation);
+export function setInstrumentationHooks() {
+    adaptersUiApiInstrument({
+        recordConflictsResolved: (serverRequestCount: number) =>
+            updatePercentileHistogramMetric('record-conflicts-resolved', serverRequestCount),
+        nullDisplayValueConflict: () => incrementCounterMetric('merge-null-dv-count'),
+        getRecordNotifyChangeAllowed: incrementGetRecordNotifyChangeAllowCount,
+        getRecordNotifyChangeDropped: incrementGetRecordNotifyChangeDropCount,
+        recordApiNameChanged:
+            ldsInstrumentation.incrementRecordApiNameChangeCount.bind(ldsInstrumentation),
+        weakEtagZero: ldsInstrumentation.aggregateWeakETagEvents.bind(ldsInstrumentation),
+        getRecordNotifyChangeNetworkResult:
+            ldsInstrumentation.notifyChangeNetwork.bind(ldsInstrumentation),
+    });
+    networkAuraInstrument({
+        getRecordAggregateInvoke: incrementGetRecordAggregateInvokeCount,
+        getRecordAggregateRetry: incrementGetRecordAggregateRetryCount,
+        getRecordNormalInvoke: incrementGetRecordNormalInvokeCount,
+        aggregateUiChunkCount: setAggregateUiChunkCountMetric,
+        logCrud: logCRUDLightningInteraction,
+        networkRateLimitExceeded: incrementNetworkRateLimitExceededCount,
+    });
+    lwcBindingsInstrument({
+        refreshCalled: ldsInstrumentation.handleRefreshApiCall.bind(ldsInstrumentation),
+        instrumentAdapter: ldsInstrumentation.instrumentAdapter.bind(ldsInstrumentation),
+    });
+    adsBridgeInstrument({
+        timerMetricAddDuration: updateTimerMetric,
+    });
 }

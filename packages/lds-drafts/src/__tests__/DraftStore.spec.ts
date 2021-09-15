@@ -1,14 +1,17 @@
-import { DurableStoreDraftStore } from '../DraftStore';
+import { DurableDraftStore } from '../DraftStore';
 import { MockDurableStore } from '@luvio/adapter-test-library';
+import { DRAFT_SEGMENT } from '../main';
+import { flushPromises } from './test-utils';
+import { ObjectKeys } from '../utils/language';
 
 describe('DraftStore', () => {
     describe('DurableDraftStore', () => {
         describe('writeAction', () => {
             it('writes a durable store entry for a draft action', async () => {
                 const durableStore = new MockDurableStore();
-                const draftQueue = new DurableStoreDraftStore(durableStore);
+                const draftStore = new DurableDraftStore(durableStore);
 
-                await draftQueue.writeAction({
+                await draftStore.writeAction({
                     tag: 'tag-foo',
                     id: 'id-foo',
                     status: 'pending',
@@ -17,73 +20,185 @@ describe('DraftStore', () => {
                     { tag: 'tag-foo', id: 'id-foo', status: 'pending' }
                 );
             });
-        });
 
-        describe('getAllDrafts', () => {
-            it('reads all draft action entries from the store and extracts the actions', async () => {
+            it('read actions immediates after write action waits for sync', async () => {
                 const durableStore = new MockDurableStore();
-                const draftQueue = new DurableStoreDraftStore(durableStore);
-                await draftQueue.writeAction({
+                const draftStore = new DurableDraftStore(durableStore);
+                let dq = await draftStore.getAllDrafts();
+                expect(dq.length).toBe(0);
+
+                // do not await
+                draftStore.writeAction({
+                    tag: 'tag-foo',
+                    id: 'id-foo',
+                    status: 'pending',
+                } as any);
+
+                dq = await draftStore.getAllDrafts();
+                expect(dq.length).toBe(1);
+            });
+
+            it('concurrent writes wait for draft store to sync', async () => {
+                const durableStore = new MockDurableStore();
+                const draftStore = new DurableDraftStore(durableStore);
+                let dq = await draftStore.getAllDrafts();
+                expect(dq.length).toBe(0);
+
+                // do not await
+                draftStore.writeAction({
                     tag: 'tag-foo',
                     id: 'id-foo-1',
                     status: 'pending',
                 } as any);
-                await draftQueue.writeAction({
+
+                // do not await
+                draftStore.writeAction({
                     tag: 'tag-foo',
                     id: 'id-foo-2',
                     status: 'pending',
                 } as any);
 
-                const result = await draftQueue.getAllDrafts();
+                dq = await draftStore.getAllDrafts();
+                expect(dq.length).toBe(2);
+            });
+        });
+
+        describe('getAllDrafts', () => {
+            it('reads all draft action entries from the store and extracts the actions', async () => {
+                const durableStore = new MockDurableStore();
+                const draftStore = new DurableDraftStore(durableStore);
+                await draftStore.writeAction({
+                    tag: 'tag-foo',
+                    id: 'id-foo-1',
+                    status: 'pending',
+                } as any);
+                await draftStore.writeAction({
+                    tag: 'tag-foo',
+                    id: 'id-foo-2',
+                    status: 'pending',
+                } as any);
+
+                const result = await draftStore.getAllDrafts();
                 expect(result.length).toBe(2);
             });
             it('handles the empty case', async () => {
                 const durableStore = {
                     getAllEntries: jest.fn().mockResolvedValue({}),
                 } as any;
-                const draftQueue = new DurableStoreDraftStore(durableStore);
-                const result = await draftQueue.getAllDrafts();
+                const draftStore = new DurableDraftStore(durableStore);
+                const result = await draftStore.getAllDrafts();
                 expect(result.length).toBe(0);
             });
             it('handles the undefined case', async () => {
                 const durableStore = {
                     getAllEntries: jest.fn().mockResolvedValue(undefined),
                 } as any;
-                const draftQueue = new DurableStoreDraftStore(durableStore);
-                const result = await draftQueue.getAllDrafts();
+                const draftStore = new DurableDraftStore(durableStore);
+                const result = await draftStore.getAllDrafts();
                 expect(result.length).toBe(0);
+            });
+            it('concurrent reads only hit durable store once', async () => {
+                const durableStore = new MockDurableStore();
+                const draftStore = new DurableDraftStore(durableStore);
+                await draftStore.writeAction({
+                    tag: 'tag-foo',
+                    id: 'id-foo-1',
+                    status: 'pending',
+                } as any);
+
+                const durableSpy = jest.spyOn(durableStore, 'getAllEntries');
+                const actionsPromise1 = draftStore.getAllDrafts();
+                const actionsPromise2 = draftStore.getAllDrafts();
+                const results = await Promise.all([actionsPromise1, actionsPromise2]);
+                expect(results[0]).toEqual(results[1]);
+                expect(durableSpy).toBeCalledTimes(0);
             });
         });
 
         describe('deleteDrafts', () => {
             it('evicts entries from durable store', async () => {
                 const durableStore = new MockDurableStore();
-                const draftQueue = new DurableStoreDraftStore(durableStore);
-                await draftQueue.writeAction({
+                const spy = jest.spyOn(durableStore, 'evictEntries');
+                const draftStore = new DurableDraftStore(durableStore);
+                await draftStore.writeAction({
                     tag: 'tag-foo',
                     id: 'id-foo-1',
                     status: 'pending',
                 } as any);
-                await draftQueue.writeAction({
+                await draftStore.writeAction({
                     tag: 'tag-foo',
                     id: 'id-foo-2',
                     status: 'pending',
                 } as any);
 
-                const result = await draftQueue.getAllDrafts();
+                const result = await draftStore.getAllDrafts();
                 expect(result.length).toBe(2);
-                await draftQueue.deleteDrafts(['tag-foo__DraftAction__id-foo-1']);
-                const result2 = await draftQueue.getAllDrafts();
+                await draftStore.deleteDraft('id-foo-1');
+                const result2 = await draftStore.getAllDrafts();
                 expect(result2.length).toBe(1);
+                expect(spy).toBeCalledWith(['tag-foo__DraftAction__id-foo-1'], DRAFT_SEGMENT);
             });
 
-            it('it short circuits empty array', async () => {
+            it('read actions immediately after delete action waits for sync', async () => {
                 const durableStore = new MockDurableStore();
-                durableStore.evictEntries = jest.fn();
-                const draftQueue = new DurableStoreDraftStore(durableStore);
+                let draftStore = new DurableDraftStore(durableStore);
 
-                await draftQueue.deleteDrafts([]);
-                expect(durableStore.evictEntries).toBeCalledTimes(0);
+                await draftStore.writeAction({
+                    tag: 'tag-foo',
+                    id: 'id-foo',
+                    status: 'pending',
+                } as any);
+
+                await draftStore.writeAction({
+                    tag: 'tag-bar',
+                    id: 'id-bar',
+                    status: 'pending',
+                } as any);
+
+                let dq = await draftStore.getAllDrafts();
+                expect(dq.length).toBe(2);
+
+                // recreate draft store
+                draftStore = new DurableDraftStore(durableStore);
+
+                // do not await
+                draftStore.deleteDraft('id-bar');
+
+                dq = await draftStore.getAllDrafts();
+                expect(dq.length).toBe(1);
+            });
+        });
+
+        describe('draft queue revive', () => {
+            it('revives draft queue from durable store', async () => {
+                const durableStore = new MockDurableStore();
+                let draftStore = new DurableDraftStore(durableStore);
+
+                await draftStore.writeAction({
+                    tag: 'tag-foo',
+                    id: 'id-foo',
+                    status: 'pending',
+                } as any);
+
+                await draftStore.writeAction({
+                    tag: 'tag-bar',
+                    id: 'id-bar',
+                    status: 'pending',
+                } as any);
+
+                let dq = await draftStore.getAllDrafts();
+                expect(dq.length).toBe(2);
+
+                // recreate draft store
+                draftStore = new DurableDraftStore(durableStore);
+
+                // peek private queue
+                expect(ObjectKeys((draftStore as any).draftStore).length).toBe(0);
+
+                await flushPromises();
+
+                // peek private queue
+                expect(ObjectKeys((draftStore as any).draftStore).length).toBe(2);
             });
         });
     });

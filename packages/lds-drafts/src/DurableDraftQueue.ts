@@ -21,8 +21,6 @@ import {
 } from './DraftQueue';
 import { NetworkAdapter, FetchResponse } from '@luvio/engine';
 import { ObjectKeys } from './utils/language';
-// TODO [W-9832358]: DraftStore should manage key creation
-import { buildDraftDurableStoreKey } from './utils/records';
 import { CustomActionExecutor, customActionHandler } from './actionHandlers/CustomActionHandler';
 import {
     isLDSDraftAction,
@@ -35,40 +33,6 @@ import { DraftStore } from './DraftStore';
 
 export const DRAFT_SEGMENT = 'DRAFT';
 export const DRAFT_ID_MAPPINGS_SEGMENT = 'DRAFT_ID_MAPPINGS';
-
-/**
- * Returns an array of keys for DraftActions that should be deleted, since the draft-create that they
- * are related to is being deleted.
- */
-function getRelatedDraftKeysForDelete(
-    deletedAction: DraftAction<unknown, unknown>,
-    queue: DraftAction<unknown, unknown>[]
-): string[] {
-    const relatedKeysToDelete: string[] = [];
-    // only look to delete related drafts of deleted draft-creates
-    if (isLDSDraftAction(deletedAction)) {
-        if (deletedAction.data.method !== 'post') {
-            return relatedKeysToDelete;
-        }
-        const deletedActionTargetId = deletedAction.targetId;
-        const { length } = queue;
-
-        for (let i = 0; i < length; i++) {
-            const queueAction = queue[i];
-            const { tag, id, targetId } = queueAction;
-            // a related draft action needs to be set for deletion if its targetId is the same as the
-            // deleted action's targetId.  Also check that the queueAction is not the deletedAction itself.
-            const needsDelete = targetId === deletedActionTargetId && queueAction !== deletedAction;
-
-            if (needsDelete) {
-                const draftKey = buildDraftDurableStoreKey(tag, id);
-                relatedKeysToDelete.push(draftKey);
-            }
-        }
-    }
-
-    return relatedKeysToDelete;
-}
 
 /**
  * Generates a time-ordered, unique id to associate with a DraftAction. Ensures
@@ -453,18 +417,18 @@ export class DurableDraftQueue implements DraftQueue {
                 }
             }
 
-            let durableStoreKey = buildDraftDurableStoreKey(action.tag, action.id);
-            // array of draft action to delete, and all related actions
-            let allRelatedDraftKeysToDelete = getRelatedDraftKeysForDelete(action, queue).concat(
-                durableStoreKey
-            );
+            const shouldDeleteRelated = isLDSDraftAction(action) && action.data.method === 'post';
 
             return this.notifyChangedListeners({
                 type: DraftQueueEventType.ActionDeleting,
                 action,
             })
                 .then(() => {
-                    return this.draftStore.deleteDrafts(allRelatedDraftKeysToDelete).then(() => {
+                    const deleteAction = shouldDeleteRelated
+                        ? this.draftStore.deleteByTag(action.tag)
+                        : this.draftStore.deleteDraft(action.id);
+
+                    return deleteAction.then(() => {
                         this.notifyChangedListeners({
                             type: DraftQueueEventType.ActionDeleted,
                             action,

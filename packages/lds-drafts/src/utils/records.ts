@@ -504,6 +504,11 @@ export function buildDraftDurableStoreKey(recordKey: string, draftActionId: stri
     return `${recordKey}${DRAFT_ACTION_KEY_JUNCTION}${draftActionId}`;
 }
 
+// TODO [W-9901975]: this should go away once we decouple durable store interface from draft store
+export function extractIdFromDraftKey(key: string): string | undefined {
+    return key.split(DRAFT_ACTION_KEY_JUNCTION)[1];
+}
+
 export function extractRecordKeyFromDraftDurableStoreKey(key: string) {
     if (key === undefined) {
         return undefined;

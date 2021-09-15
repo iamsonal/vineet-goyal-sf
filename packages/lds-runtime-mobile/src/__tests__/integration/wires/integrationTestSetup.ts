@@ -10,7 +10,7 @@ import {
     getRelatedListRecordsAdapterFactory,
 } from '@salesforce/lds-adapters-uiapi';
 import { graphQLAdapterFactory } from '@salesforce/lds-adapters-graphql';
-import { DraftManager, DraftQueue } from '@salesforce/lds-drafts';
+import { DraftManager, DraftQueue, DurableDraftStore } from '@salesforce/lds-drafts';
 import { MockNimbusDurableStore, mockNimbusStoreGlobal } from '../../MockNimbusDurableStore';
 import { MockNimbusNetworkAdapter, mockNimbusNetworkGlobal } from '../../MockNimbusNetworkAdapter';
 import {
@@ -57,6 +57,11 @@ export async function setup() {
     draftQueue.stopQueue();
     draftManager = runtime.draftManager;
     await resetLuvioStore();
+
+    // reset draft store
+    (draftQueue as any).draftStore = new DurableDraftStore(
+        (draftQueue as any).draftStore.durableStore
+    );
 
     createRecord = createRecordAdapterFactory(luvio);
     getRecord = getRecordAdapterFactory(luvio);

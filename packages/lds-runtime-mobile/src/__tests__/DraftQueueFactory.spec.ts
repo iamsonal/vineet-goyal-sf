@@ -1,4 +1,4 @@
-import { DurableStore } from '@luvio/environments';
+import { MockDurableStore } from '@luvio/adapter-test-library';
 import { DurableDraftQueue } from '@salesforce/lds-drafts';
 
 import { buildLdsDraftQueue } from '../DraftQueueFactory';
@@ -10,7 +10,7 @@ describe('configureLdsDraftQueue', () => {
         // define the nimbus plugin
         mockNimbusDraftQueueGlobal();
 
-        const draftQueue = buildLdsDraftQueue(jest.fn(), jest.fn() as unknown as DurableStore);
+        const draftQueue = buildLdsDraftQueue(jest.fn(), new MockDurableStore());
 
         expect(draftQueue).toBeInstanceOf(NimbusDraftQueue);
     });
@@ -19,7 +19,7 @@ describe('configureLdsDraftQueue', () => {
         // ensure nimbus plugin not defined
         resetNimbusDraftQueueGlobal();
 
-        const draftQueue = buildLdsDraftQueue(jest.fn(), jest.fn() as unknown as DurableStore);
+        const draftQueue = buildLdsDraftQueue(jest.fn(), new MockDurableStore());
 
         expect(draftQueue).toBeInstanceOf(DurableDraftQueue);
     });

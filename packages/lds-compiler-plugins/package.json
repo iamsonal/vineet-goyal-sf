@@ -12,6 +12,6 @@
         "test:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand"
     },
     "devDependencies": {
-        "@luvio/compiler": "0.47.6"
+        "@luvio/compiler": "0.47.7"
     }
 }

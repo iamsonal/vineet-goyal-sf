@@ -58,4 +58,16 @@ export const customMatchers = {
             message: () => 'Actual Snapshot is not a StaleSnapshot.',
         };
     },
+    toHaveBeenCalledWithDataTuple: (
+        callback: Function,
+        expected: any,
+        privateProperties?: string[]
+    ): MatcherResult => {
+        const expectedWithoutPrivateProperties = stripProperties(expected, privateProperties || []);
+        expect(callback).toHaveBeenCalledWith({
+            data: expectedWithoutPrivateProperties,
+            error: undefined,
+        });
+        return { pass: true, message: () => 'Tuple data is correct' };
+    },
 };

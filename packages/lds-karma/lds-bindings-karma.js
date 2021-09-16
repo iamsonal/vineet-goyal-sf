@@ -2,6 +2,7 @@ import {
     createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor,
     bindWireRefresh as lwcLdsBindWireRefresh,
 } from '@luvio/lwc-luvio';
+import { createSingleInvocationAdapter as ldsBindingsCreateSingleInvocationAdapter } from '@salesforce/lds-bindings';
 
 export function createWireAdapterConstructor(luvio, factory, metadata) {
     const { apiFamily, name } = metadata;
@@ -17,4 +18,14 @@ export let refresh;
 
 export function bindWireRefresh(luvio) {
     refresh = lwcLdsBindWireRefresh(luvio);
+}
+
+// Doesn't create an instrumented adapter just a wrapper to call createLDSAdapter for testing
+export function createInstrumentedAdapter(luvio, factory, metadata) {
+    const { name } = metadata;
+    return createLDSAdapter(luvio, name, factory);
+}
+
+export function createSingleInvocationAdapter(adapter, metadata) {
+    return ldsBindingsCreateSingleInvocationAdapter(adapter, metadata);
 }

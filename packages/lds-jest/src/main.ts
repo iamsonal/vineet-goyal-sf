@@ -5,3 +5,4 @@ export {
     populateDurableStore,
 } from './offline';
 export { customMatchers } from './matchers';
+export { flushPromises } from './utils';

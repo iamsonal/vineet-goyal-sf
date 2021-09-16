@@ -12,6 +12,7 @@
     "dependencies": {
         "@luvio/engine": "0.47.7",
         "@luvio/lwc-luvio": "0.47.7",
+        "@salesforce/lds-bindings": "1.24.8",
         "@salesforce/lds-default-luvio": "1.24.8"
     }
 }

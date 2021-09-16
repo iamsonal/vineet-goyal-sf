@@ -15,4 +15,7 @@ module.exports = {
             lines: 25,
         },
     },
+    // sfdc bundle is generated and only imperative adapters are tested from this file
+    // this brings the coverage down from the required threshhold level
+    coveragePathIgnorePatterns: ['<rootDir>/sfdc'],
 };

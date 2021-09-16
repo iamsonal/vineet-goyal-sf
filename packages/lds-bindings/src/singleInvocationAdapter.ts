@@ -1,28 +1,30 @@
-import { Adapter, Snapshot } from '@luvio/engine';
+import { Adapter, AvailableSnapshot, FetchResponse } from '@luvio/engine';
 import { AdapterMetadata } from './ldsAdapter';
 import { ObjectDefineProperty } from './utils/lanugage';
 import { isErrorSnapshot } from './utils/snapshotType';
 import { isPromise } from './utils/utils';
 
-export interface Tuple {
-    data: unknown;
-    error: unknown;
+interface DataResponse<D> {
+    data: D;
+    error: undefined;
 }
 
-export interface Error {
-    code: number;
-    message: unknown;
+interface ErrorResponse {
+    data: undefined;
+    error: FetchResponse<unknown>;
 }
 
-export interface DataCallback {
-    (response: Tuple | Error): void;
+export type DataCallbackTuple<D> = DataResponse<D> | ErrorResponse;
+
+export interface DataCallback<D> {
+    (response: DataCallbackTuple<D>): void;
 }
 
-export interface SingleInvocationAdapter<C> {
-    (callback: DataCallback, config: C): void;
+export interface SingleInvocationAdapter<C, D> {
+    (callback: DataCallback<D>, config: C): void;
 }
 
-function snapshotToTuple<D>(snapshot: Snapshot<D>): Tuple {
+function snapshotToTuple<D>(snapshot: AvailableSnapshot<D>): DataCallbackTuple<D> {
     if (isErrorSnapshot(snapshot)) {
         return {
             data: undefined,
@@ -36,10 +38,16 @@ function snapshotToTuple<D>(snapshot: Snapshot<D>): Tuple {
     };
 }
 
-function createInvalidConfigError(adapterName: string): Error {
+function createInvalidConfigError(): ErrorResponse {
     return {
-        code: 199,
-        message: `Adapter: ${adapterName} called with invalid config`,
+        data: undefined,
+        error: {
+            ok: false,
+            status: 400,
+            statusText: 'INVALID_CONFIG',
+            body: undefined,
+            headers: {},
+        },
     };
 }
 
@@ -53,17 +61,17 @@ function createInvalidConfigError(adapterName: string): Error {
 export function createSingleInvocationAdapter<C, D>(
     adapter: Adapter<C, D>,
     metadata: AdapterMetadata
-): SingleInvocationAdapter<C> {
+): SingleInvocationAdapter<C, D> {
     const { name } = metadata;
 
-    const singleInvocationAdapter: SingleInvocationAdapter<C> = (
-        callback: DataCallback,
+    const singleInvocationAdapter: SingleInvocationAdapter<C, D> = (
+        callback: DataCallback<D>,
         config: C
     ) => {
-        const snapshotOrPromise = adapter(config);
+        const snapshotOrPromise = adapter(config) as AvailableSnapshot<D>;
 
         if (snapshotOrPromise === null) {
-            callback(createInvalidConfigError(name));
+            callback(createInvalidConfigError());
             return;
         }
 
@@ -72,9 +80,9 @@ export function createSingleInvocationAdapter<C, D>(
             return;
         }
 
-        snapshotOrPromise.then((_snapshot: Snapshot<D>) => {
+        snapshotOrPromise.then((_snapshot: AvailableSnapshot<D>) => {
             if (_snapshot === null) {
-                callback(createInvalidConfigError(name));
+                callback(createInvalidConfigError());
                 return;
             }
             callback(snapshotToTuple(_snapshot));

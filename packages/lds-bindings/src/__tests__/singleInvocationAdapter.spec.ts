@@ -12,8 +12,14 @@ describe('createSingleInvocationAdapter', () => {
             name: 'foo',
         };
         const customError = {
-            code: 199,
-            message: `Adapter: ${metadata.name} called with invalid config`,
+            data: undefined,
+            error: {
+                ok: false,
+                status: 400,
+                statusText: 'INVALID_CONFIG',
+                body: undefined,
+                headers: {},
+            },
         };
         const mockAdapter = jest.fn().mockReturnValue(null);
         const callback = jest.fn();

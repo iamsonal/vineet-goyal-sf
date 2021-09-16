@@ -29,6 +29,7 @@ export {
     DraftManagerState,
     DraftActionOperationType,
     DraftQueueItem,
+    DraftQueueItemMetadata,
 } from './DraftManager';
 export { ActionHandler } from './actionHandlers/ActionHandler';
 export { CustomActionExecutor } from './actionHandlers/CustomActionHandler';

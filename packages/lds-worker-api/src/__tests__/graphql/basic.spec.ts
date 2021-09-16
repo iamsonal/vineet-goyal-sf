@@ -1,7 +1,7 @@
 import { adapterName as gqlAdapterName } from '@salesforce/lds-adapters-graphql';
 import { executeAdapter, invokeAdapter, OnSnapshot } from '../../executeAdapter';
 import { addMockNetworkResponse } from '../mocks/mockNimbusNetwork';
-import { mockInstrumentation } from 'o11y/client';
+import { mockInstrumentation } from '../../standalone-stubs/o11y';
 
 import recordQuery_account1 from './mockData/RecordQuery-Account-fields-Name.json';
 
@@ -60,7 +60,7 @@ describe(`invokeAdapter("${gqlAdapterName}")`, () => {
 
 describe(`executeAdapter("${gqlAdapterName}")`, () => {
     beforeEach(() => {
-        mockInstrumentation.error.mockReset();
+        mockInstrumentation.error = jest.fn();
     });
 
     it('returns malformed query error in error callback', (done) => {

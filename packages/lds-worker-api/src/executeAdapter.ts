@@ -6,12 +6,19 @@ import { getInstrumentation } from 'o11y/client';
 import { JSONParse } from './language';
 import { isNotAFunctionError } from './error';
 import { adapterMap } from './lightningAdapterApi';
+import { DraftQueueItemMetadata } from '@salesforce/lds-drafts';
+import { draftManager } from './draftQueueImplementation';
+import {
+    createDraftNotCreatedErrorResponse,
+    createNonMutatingAdapterErrorResponse,
+    NativeFetchResponse,
+} from './NativeFetchResponse';
 
 const instr = getInstrumentation('lds-worker-api');
 
 type CallbackValue = {
     data: any | undefined;
-    error: FetchResponse<unknown> | undefined;
+    error: NativeFetchResponse<unknown> | undefined;
 };
 
 export type OnSnapshot = (value: CallbackValue) => void;
@@ -32,7 +39,7 @@ export function subscribeToAdapter(
     config: string,
     onSnapshot: OnSnapshot
 ): Unsubscribe {
-    const wireConstructor = (adapterMap as any)[adapterId];
+    const wireConstructor = adapterMap[adapterId];
 
     if (wireConstructor === undefined) {
         throw Error(`adapter ${adapterId} not recognized`);
@@ -72,7 +79,7 @@ export function subscribeToAdapter(
                 configObject.query = gqlParse(configObject.query);
             } catch (parseError) {
                 // call the callback with error
-                instr.error(parseError, 'gql-parse-error');
+                instr.error(parseError as Error, 'gql-parse-error');
                 onSnapshot({ data: undefined, error: parseError });
                 return () => {
                     if (wire !== undefined) {
@@ -93,6 +100,58 @@ export function subscribeToAdapter(
     };
 }
 
+export function invokeAdapterWithMetadata(
+    adapterId: string,
+    config: string,
+    metadata: DraftQueueItemMetadata,
+    onResponse: OnResponse
+) {
+    const wireConstructor = adapterMap[adapterId];
+    if (wireConstructor === undefined) {
+        throw Error(`adapter ${adapterId} not recognized`);
+    }
+
+    try {
+        new wireConstructor(() => {});
+        onResponse({
+            data: undefined,
+            error: createNonMutatingAdapterErrorResponse(),
+        });
+    } catch (constructorError) {
+        if (isNotAFunctionError(constructorError)) {
+            // We only want to call this adapter if it's a mutating adapter
+            invokeAdapter(adapterId, config, (responseValue) => {
+                const draftIds = draftIdsForResponseValue(responseValue);
+                if (
+                    responseValue.error === undefined &&
+                    draftIds !== undefined &&
+                    draftIds.length > 0
+                ) {
+                    const draftId = draftIds[draftIds.length - 1];
+                    draftManager.setMetadata(draftId, metadata).then(() => {
+                        onResponse(responseValue);
+                    });
+                } else {
+                    let response: CallbackValue = responseValue;
+                    response.error = createDraftNotCreatedErrorResponse();
+                    onResponse(response);
+                }
+            });
+        }
+    }
+}
+
+function draftIdsForResponseValue(response: CallbackValue): string[] | undefined {
+    if (
+        response.data !== undefined &&
+        response.data.drafts !== undefined &&
+        response.data.drafts.draftActionIds !== undefined
+    ) {
+        return response.data.drafts.draftActionIds;
+    }
+    return undefined;
+}
+
 /**
  * Executes the specified adapter with the given adapterId and config.  Will call
  * onResult callback once with data or error.
@@ -101,7 +160,7 @@ export function subscribeToAdapter(
  * fails to parse the given config string.
  */
 export function invokeAdapter(adapterId: string, config: string, onResponse: OnResponse) {
-    const adapter = (adapterMap as any)[adapterId];
+    const adapter = adapterMap[adapterId];
 
     if (adapter === undefined) {
         throw Error(`adapter ${adapterId} not recognized`);
@@ -118,7 +177,7 @@ export function invokeAdapter(adapterId: string, config: string, onResponse: OnR
                 configObject.query = gqlParse(configObject.query);
             } catch (parseError) {
                 // call the callback with error
-                instr.error(parseError, 'gql-parse-error');
+                instr.error(parseError as Error, 'gql-parse-error');
                 onResponse({ data: undefined, error: parseError });
                 return;
             }

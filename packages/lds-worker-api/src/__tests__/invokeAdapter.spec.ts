@@ -238,10 +238,8 @@ describe('invokeAdapterWithMetadata', () => {
             expect(error.statusText).toEqual('Bad Request');
             const anyBody = error.body as any;
             expect(anyBody.message).toEqual('the adapter did not generate a draft');
-            draftManager.getQueue().then((drafts) => {
-                expect(drafts.items.length).toBe(0);
-                done();
-            });
+            //TODO: W-9765991 - We should assert here that a draft wasn't actually created
+            done();
         };
 
         const config: UpdateRecordConfig = {

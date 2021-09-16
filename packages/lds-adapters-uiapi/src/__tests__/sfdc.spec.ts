@@ -82,6 +82,9 @@ describe('SFDC exports', () => {
             /** instrumentation object */
             'instrument',
             'LdsUiapiInstrumentation',
+
+            /** imperative adapters */
+            'imperativeAdapters',
         ].sort();
 
         it('should only export allowlisted items', () => {

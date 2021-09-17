@@ -1,7 +1,14 @@
 import { karmaNetworkAdapter } from 'lds-engine';
 import sinon from 'sinon';
-import { flushPromises, getMock as globalGetMock, mockNetworkOnce, setupElement } from 'test-util';
-import { URL_BASE } from 'uiapi-test-util';
+import {
+    flushPromises,
+    getMock as globalGetMock,
+    mockNetworkOnce,
+    mockNetworkSequence,
+    setupElement,
+    updateElement,
+} from 'test-util';
+import { URL_BASE, expireDefaultTTL } from 'uiapi-test-util';
 import {
     beforeEach as util_beforeEach,
     convertToFieldIds,
@@ -23,7 +30,12 @@ function mockNetworkMruListUi(config, mockData) {
         basePath: `${URL_BASE}/mru-list-ui/${objectApiName}`,
         queryParams,
     });
-    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
 }
 
 function mockNetworkMruListRecords(config, mockData) {
@@ -124,17 +136,56 @@ describe('getMruListUi', () => {
             expect(wiredData.data).toBeImmutable();
         });
 
-        xit('makes additional XHR after list-ui TTL expired', async () => {});
+        it('makes additional XHR after list-ui TTL expired', async () => {
+            const mockData = getMock('mru-list-ui-Opportunity');
 
-        xit('does not make second XHR for additional fields', async () => {});
-        xit('does not make second XHR for removed fields', async () => {});
+            const config = { objectApiName: mockData.info.listReference.objectApiName };
+            mockNetworkMruListUi(config, [mockData, mockData]);
+
+            await setupElement(config, MruListUi);
+
+            expireDefaultTTL();
+
+            const element = await setupElement(config, MruListUi);
+            expect(element.getWiredData()).toEqualListUi(mockData);
+        });
+
+        it('does not make second XHR for fields returned from first request', async () => {
+            const mockData = getMock('mru-list-ui-Opportunity-pageSize-3');
+            const config = {
+                objectApiName: mockData.info.listReference.objectApiName,
+                pageSize: mockData.records.pageSize,
+            };
+            mockNetworkMruListUi(config, mockData);
+
+            const element = await setupElement(config, MruListUi);
+            updateElement(MruListUi, { fields: 'Account.Name' });
+
+            const wiredData = element.getWiredData();
+            expect(wiredData).toEqualListUi(mockData);
+        });
+
+        it('does not make second XHR for removed fields', async () => {
+            const mockData = getMock(
+                'mru-list-ui-Opportunity-pageSize-1-fields-IsPrivate,NextStep'
+            );
+            const config = {
+                objectApiName: mockData.info.listReference.objectApiName,
+                pageSize: mockData.records.pageSize,
+                fields: mockData.records.fields,
+            };
+            mockNetworkMruListUi(config, mockData);
+
+            const element = await setupElement(config, MruListUi);
+            const fields = element.fields.slice(0, 1);
+            updateElement(MruListUi, { fields });
+
+            const wiredData = element.getWiredData();
+            expect(wiredData).toEqualListUi(mockData);
+        });
     });
 
     describe('sortBy', () => {
-        it('includes the sortBy parameter in XHR requests', () => {
-            // exercised in "handles paginated requests that specify sortBy"
-        });
-
         it('handles paginated requests that specify sortBy', async () => {
             let wiredData;
 
@@ -233,36 +284,118 @@ describe('getMruListUi', () => {
 
             expect(element.getWiredData()).toEqualListUi(mockData);
         });
-
-        xit('ignores all but the first sortBy field', () => {
-            /*
-
-            // sortBy additional field
-            mockData = getMock('list-ui-All-Opportunities-pageSize-3-sortBy--Account.Name,Amount');
-            config = {
-                listViewId: mockData.info.listReference.id,
-                pageSize: mockData.records.pageSize,
-                sortBy = mockData.records.sortBy,
-            };
-            mockNetworkListUi(config, mockData);
-
-            element.sortBy = ['-Account.Name,Amount']
-            await flushPromises();
-
-            expect(element.getWiredData()).toEqualListUi(mockData);
-            */
-        });
     });
 
-    xit('returns error when objectApiName do not exist', async () => {});
-    xit('does not make second XHR for objectApiName that does not exist', async () => {});
-    xit('returns error when pageSize is 0', async () => {});
-    xit('returns error when pageSize is above max', async () => {});
-    xit('returns error when pageToken is -1', async () => {});
-    xit('returns error when pageToken is above max', async () => {});
-    xit('returns error when requests non-existent fields', async () => {});
-    xit('returns error when objectApiName not set', async () => {});
-    xit('returns metadata and data when objectApiName is an empty list', async () => {});
+    describe('returns error when', function () {
+        it('returns error when objectApiName do not exist', async () => {
+            const mockError = {
+                ok: false,
+                status: 403,
+                statusText: 'FORBIDDEN',
+                body: [
+                    {
+                        errorCode: 'INSUFFICIENT_ACCESS',
+                        message:
+                            "You don't have access to this record. Ask your administrator for help or to request access.",
+                    },
+                ],
+            };
+
+            const config = { objectApiName: 'invalidObjectApiName' };
+            mockNetworkMruListUi(config, { reject: true, data: mockError });
+
+            const element = await setupElement(config, MruListUi);
+            expect(element.getWiredData().error).toEqual(mockError);
+            expect(element.getWiredData().error).toBeImmutable();
+        });
+
+        it('returns error when pageSize is -1', async () => {
+            const mockError = {
+                ok: false,
+                status: 400,
+                statusText: 'BAD_REQUEST',
+                body: [
+                    {
+                        errorCode: 'NUMBER_OUTSIDE_VALID_RANGE',
+                        message: 'pageSize parameter must be between 1 and 2000',
+                    },
+                ],
+            };
+
+            const config = { objectApiName: 'Account', pageSize: -1 };
+            mockNetworkMruListUi(config, { reject: true, data: mockError });
+            const element = await setupElement(config, MruListUi);
+            expect(element.getWiredData().error).toEqual(mockError);
+            expect(element.getWiredData().error).toBeImmutable();
+        });
+
+        it('returns error when pageSize is above max', async () => {
+            const mockError = {
+                ok: false,
+                status: 400,
+                statusText: 'BAD_REQUEST',
+                body: [
+                    {
+                        errorCode: 'NUMBER_OUTSIDE_VALID_RANGE',
+                        message: 'pageSize parameter must be between 1 and 2000',
+                    },
+                ],
+            };
+
+            const config = { objectApiName: 'Account', pageSize: 2100 };
+            mockNetworkMruListUi(config, { reject: true, data: mockError });
+            const element = await setupElement(config, MruListUi);
+            expect(element.getWiredData().error).toEqual(mockError);
+            expect(element.getWiredData().error).toBeImmutable();
+        });
+
+        it('returns error when pageToken is invalid', async () => {
+            const mockError = {
+                ok: false,
+                status: 400,
+                statusText: 'BAD_REQUEST',
+                body: [
+                    {
+                        errorCode: 'ILLEGAL_QUERY_PARAMETER_VALUE',
+                        message: 'For input string: invalid',
+                    },
+                ],
+            };
+
+            const config = { objectApiName: 'Account', pageSize: 1, pageToken: 'invalid' };
+            mockNetworkMruListUi(config, { reject: true, data: mockError });
+            const element = await setupElement(config, MruListUi);
+            expect(element.getWiredData().error).toEqual(mockError);
+            expect(element.getWiredData().error).toBeImmutable();
+        });
+
+        it('returns error when requests non-existent fields', async () => {
+            const mockData = getMock(
+                'mru-list-ui-Opportunity-pageSize-1-fields-IsPrivate,NextStep'
+            );
+
+            const mockError = {
+                ok: false,
+                status: 400,
+                statusText: 'BAD_REQUEST',
+                body: [
+                    {
+                        errorCode: 'INVALID_FIELD',
+                        message: "No such column 'BadField' on entity Opportunity",
+                    },
+                ],
+            };
+
+            const config = {
+                objectApiName: mockData.info.listReference.objectApiName,
+                fields: ['BadField'],
+            };
+            mockNetworkMruListUi(config, { reject: true, data: mockError });
+            const element = await setupElement(config, MruListUi);
+            expect(element.getWiredData().error).toEqual(mockError);
+            expect(element.getWiredData().error).toBeImmutable();
+        });
+    });
 
     describe('fields/optionalFields', () => {
         it('returns metadata and data for string list of fields', async () => {
@@ -332,11 +465,25 @@ describe('getMruListUi', () => {
         });
     });
 
-    xit('todo: something with multiple ascending or descending fields in same request', async () => {});
-    // @wire(getListUi, { listViewId: 'foo', fields: ['-Name'] }) when already requested with 'Name'
-    xit('makes new request when field param changed to descending', async () => {});
-    xit('makes new request when a fetched list-records has an etag that does not match the list-info', async () => {});
-    // FIXME: intentionally excluded "chunk size" related tests. Verify still correct move after wire implemented
+    it('returns error when multiple sortBy values are passed', async () => {
+        // even though sortBy is of type Array<string> it accept a single value
+        const mockError = {
+            ok: false,
+            status: 400,
+            statusText: 'BAD_REQUEST',
+            body: [
+                {
+                    errorCode: 'ILLEGAL_QUERY_PARAMETER_VALUE',
+                    message: 'Can only sortBy one value',
+                },
+            ],
+        };
+        const config = { objectApiName: 'Account', sortBy: ['Account.Name', 'Account.Rating'] };
+        mockNetworkMruListUi(config, { reject: true, data: mockError });
+        const element = await setupElement(config, MruListUi);
+        expect(element.getWiredData().error).toEqual(mockError);
+        expect(element.getWiredData().error).toBeImmutable();
+    });
 
     describe('special data', () => {
         it('handles nested entities that omit the 5 magic fields', async () => {

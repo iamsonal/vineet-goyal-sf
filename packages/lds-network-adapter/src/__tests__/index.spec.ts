@@ -20,8 +20,7 @@ function testControllerInput(request: Partial<ResourceRequest>, expectedResponse
 function testRejectFetchResponse(request: Partial<ResourceRequest>) {
     test('rejects an instance of FetchError the controller throws', async () => {
         const fn = jest.fn().mockRejectedValueOnce({
-            status: 400,
-            body: {
+            data: {
                 statusCode: 400,
                 message: 'Invalid request',
             },
@@ -31,7 +30,7 @@ function testRejectFetchResponse(request: Partial<ResourceRequest>) {
             await platformNetworkAdapter(fn)(buildResourceRequest(request));
             throw new Error('Test failure: No error thrown');
         } catch (e) {
-            expect(e).toEqual({
+            expect(e).toMatchObject({
                 status: 400,
                 body: {
                     statusCode: 400,
@@ -89,6 +88,33 @@ describe('routes', () => {
                 title: 'world',
             }
         );
+
+        it('handles when server returns a generic HTTP error', async () => {
+            const fn = jest.fn().mockRejectedValueOnce({
+                status: 123,
+                message: 'bad request',
+            });
+
+            const request = {
+                method: 'get',
+                baseUri: '/base-uri',
+                basePath: '/some-random/api',
+                urlParams: {
+                    api: 'api',
+                },
+            };
+            try {
+                await platformNetworkAdapter(fn)(buildResourceRequest(request));
+                throw new Error('Test failure: No error thrown');
+            } catch (e) {
+                expect(e).toMatchObject({
+                    status: 123,
+                    body: {
+                        error: 'bad request',
+                    },
+                });
+            }
+        });
     });
 
     describe('post /records', () => {

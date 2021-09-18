@@ -1,6 +1,7 @@
 import { ResourceRequest } from '@luvio/engine';
-import platformNetworkAdapter from '../main';
-import { UI_API_BASE_URI } from '../uiapi-base';
+import platformNetworkAdapter from '../../main';
+import { UI_API_BASE_URI } from '../../uiapi-base';
+import { dedupeRequest } from '../dedupe';
 
 function buildResourceRequest(resourceRequest: Partial<ResourceRequest>): ResourceRequest {
     return {
@@ -14,6 +15,29 @@ function buildResourceRequest(resourceRequest: Partial<ResourceRequest>): Resour
         fulfill: resourceRequest.fulfill || undefined,
     };
 }
+
+describe('dedupeRequest', () => {
+    it('should throw error if ResourceRequest is NOT a GET', () => {
+        const request: ResourceRequest = buildResourceRequest({
+            method: 'post',
+            baseUri: '',
+            basePath: '/records',
+            body: {
+                apiName: 'Test__c',
+                fields: [],
+            },
+        });
+
+        expect(() => {
+            dedupeRequest({
+                networkAdapter: jest.fn(),
+                resourceRequest: request,
+            });
+        }).toThrow(
+            'Invalid ResourceRequest that cannot be deduped. Only "get" Requests supported.'
+        );
+    });
+});
 
 describe('non-GET request', () => {
     it('does not dedupe non-GET requests', async () => {

@@ -70,13 +70,22 @@ export const activity: Activity = {
 };
 
 // Instrumentation
-export const mockInstrumentation = {
-    startActivity,
-    error: () => {},
-};
+type MetricsTags = Record<string, number | string | boolean>;
+
 function startActivity(_name: string): Activity {
     return activity;
 }
+
+export const mockInstrumentation = {
+    startActivity,
+    error: () => {},
+    trackValue: (
+        _operation: string,
+        _value: number,
+        _hasError?: boolean,
+        _tags?: MetricsTags
+    ) => {},
+};
 
 export const getInstrumentation = () => {
     return mockInstrumentation;

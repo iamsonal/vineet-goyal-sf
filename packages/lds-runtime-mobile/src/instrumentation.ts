@@ -19,17 +19,39 @@ export function setupInstrumentation(luvio: Luvio, _store: Store): void {
 
 // pass in class, obj, what have you, with the method you want to wrap to collect duration metrics
 // e.g. pass in Luvio with ['storeBroadcast', 'storeIngest', 'storeLookup']
-function instrumentMethods(obj: any, methods: string[]): void {
+export function instrumentMethods(obj: any, methods: string[]): void {
     for (let i = 0, len = methods.length; i < len; i++) {
         const method = methods[i];
         const originalMethod = obj[method];
 
         obj[method] = function (...args: any[]): any {
-            const act = instr.startActivity(method);
-            const res = originalMethod.call(this, ...args);
-            act.stop();
-
-            return res;
+            const startTime = Date.now();
+            try {
+                const res = originalMethod.call(this, ...args);
+                const executionTime = Date.now() - startTime;
+                // handle async resolved/rejected
+                if (isPromise(res)) {
+                    res.then(() => {
+                        instr.trackValue(method, Date.now() - startTime);
+                    }).catch((_error) => {
+                        instr.trackValue(method, Date.now() - startTime, true);
+                    });
+                } else {
+                    // handle synchronous success
+                    instr.trackValue(method, executionTime);
+                }
+                return res;
+            } catch (error) {
+                // handle synchronous throw
+                instr.trackValue(method, Date.now() - startTime, true);
+                // rethrow error
+                throw error;
+            }
         };
     }
+}
+
+function isPromise<D>(value: D | Promise<D> | null): value is Promise<D> {
+    // check for Thenable due to test frameworks using custom Promise impls
+    return value !== null && value !== undefined && typeof (value as any).then === 'function';
 }

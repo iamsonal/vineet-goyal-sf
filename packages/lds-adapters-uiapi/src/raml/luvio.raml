@@ -61,7 +61,13 @@ types:
     (luvio.key):
       listViewId: listInfoETag
       sortBy: sortBy
-    (luvio.paginated): records
+    (luvio.paginated):
+      items: records
+      token: currentPageToken
+      nextToken: nextPageToken
+      previousToken: previousPageToken
+      pageSize: pageSize
+      count: count
   ListViewSummaryCollectionRepresentation:
     (luvio.private):
       - eTag
@@ -69,7 +75,13 @@ types:
       objectApiName: objectApiName
       queryString: queryString
       recentListsOnly: recentListsOnly
-    (luvio.paginated): lists
+    (luvio.paginated):
+      items: lists
+      token: currentPageToken
+      nextToken: nextPageToken
+      previousToken: previousPageToken
+      pageSize: pageSize
+      count: count
   NavItemsRepresentation:
     examples:
       getNavItemsResponse1: !include ../mocks/types/NavItemsRepresentation/response1.json
@@ -89,7 +101,13 @@ types:
       sortBy: sortBy
       parentRecordId: listReference.inContextOfRecordId
       relatedListId: listReference.relatedListId
-    (luvio.paginated): records
+    (luvio.paginated):
+      items: records
+      token: currentPageToken
+      nextToken: nextPageToken
+      previousToken: previousPageToken
+      pageSize: pageSize
+      count: count
   RecordCollectionRepresentation:
     (luvio.ttl): 120000
   PhotoRecordAvatarRepresentation:

@@ -28,27 +28,7 @@ const CREATE_INSTRUMENTED_ADAPTER = 'createInstrumentedAdapter';
 const CREATE_SINGLE_INVOCATION_ADAPTER = 'createSingleInvocationAdapter';
 const IMPERATIVE_ADAPTERS_ACCESSOR = 'imperativeAdapters';
 
-// eslint-disable-next-line @salesforce/lds/no-invalid-todo
-// TODO: scan raml-artifacts folder and generate this map
-const RAML_ARTIFACTS = {
-    '/adapters/getRecords': [
-        'GetRecordsConfig',
-        'getRecords_ConfigPropertyNames',
-        'adapterFragment',
-        'createResourceParams',
-        'onResourceResponseSuccess',
-        'typeCheckConfig',
-    ],
-    '/resources/getUiApiRecordDefaultsTemplateCloneByRecordId': ['select'],
-    '/resources/getUiApiRecordsBatchByRecordIds': [
-        'selectChildResourceParams',
-        'ingestSuccessChildResourceParams',
-    ],
-    '/resources/getUiApiRecordsByRecordId': ['createResourceRequest'],
-    '/types/RecordRepresentation': ['keyBuilderFromType', 'ingest'],
-    '/types/RecordAvatarBulkMapRepresentation': ['ingest'],
-    '/types/QuickActionDefaultsRepresentation': ['dynamicIngest'],
-};
+const { RAML_ARTIFACTS } = require('./raml-artifacts');
 
 /**
  * @param {string} artifactsDir
@@ -306,28 +286,21 @@ module.exports = {
         const ramlArtifactsKeys = Object.keys(RAML_ARTIFACTS);
         for (let i = 0, len = ramlArtifactsKeys.length; i < len; i += 1) {
             const key = ramlArtifactsKeys[i];
-            const [, folder, file] = key.split('/');
             if (ramlId.endsWith(key)) {
                 const artifacts = RAML_ARTIFACTS[key];
-                const match = artifacts.find((item) => {
-                    if (typeof item === 'string') {
-                        return item === identifier;
-                    }
-                    return item.identifier === identifier;
+                const match = artifacts.find((artifact) => {
+                    return artifact.identifier === identifier;
                 });
-
                 if (match !== undefined) {
-                    if (typeof match === 'string') {
+                    if (match.targetIdentifier !== undefined) {
                         return {
-                            identifier,
-                            absolutePath: path.resolve(
-                                path.join('src', 'raml-artifacts', folder, file, `${identifier}.ts`)
-                            ),
+                            identifier: match.targetIdentifier,
+                            absolutePath: match.path,
                         };
                     }
                     return {
-                        identifier: match.targetIdentifier,
-                        absolutePath: match.path,
+                        identifier: match.identifier,
+                        absolutePath: path.resolve(match.path),
                     };
                 }
             }

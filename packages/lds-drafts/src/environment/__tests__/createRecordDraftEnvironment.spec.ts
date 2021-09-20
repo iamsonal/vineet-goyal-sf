@@ -283,6 +283,23 @@ describe('draft environment tests', () => {
             });
         });
 
+        it('fails to create record draft when keyPrefix is null', async () => {
+            // Arrange
+            const { draftEnvironment } = await setupDraftEnvironment({
+                prefixForApiName: () => Promise.resolve(null),
+            });
+            const request = createPostRequest();
+
+            // Act & Assert
+            await expect(draftEnvironment.dispatchResourceRequest(request)).rejects.toEqual({
+                status: 400,
+                body: {
+                    message: 'Cannot create draft for entity with null keyPrefix',
+                },
+                headers: {},
+            });
+        });
+
         it('fails to create record draft when object info is not accessible', async () => {
             const { draftEnvironment } = await setupDraftEnvironment({
                 skipPopulatingAccountObjectInfo: true,

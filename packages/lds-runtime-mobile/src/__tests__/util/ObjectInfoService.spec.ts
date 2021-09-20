@@ -73,7 +73,7 @@ describe('ObjectInfoService', () => {
     });
 
     describe('ensureObjectInfoCached', () => {
-        it('sets ObjectInfo seen in in-memory cache when ObjectInfo is fetched from Durable store', async () => {
+        it('saves ObjectInfo in the in-memory cache after ObjectInfo is fetched from Durable store', async () => {
             // Arrange
             const subject = new ObjectInfoService(getObjectInfoAdapter, durableStore);
             (durableStore.getEntries as jest.Mock).mockResolvedValueOnce({
@@ -93,6 +93,28 @@ describe('ObjectInfoService', () => {
             expect(getObjectInfoAdapter).toBeCalledTimes(0);
             expect(durableStore.getEntries).toBeCalledTimes(1);
             expect(durableStore.getEntries).toBeCalledWith(['Account'], OBJECT_INFO_PREFIX_SEGMENT);
+        });
+
+        it('saves ObjectInfo in the in-memory cache when keyPrefix is null', async () => {
+            // Arrange
+            const subject = new ObjectInfoService(getObjectInfoAdapter, durableStore);
+            const apiName = 'WorkOrderLineItemHistory';
+            (durableStore.getEntries as jest.Mock).mockResolvedValueOnce(undefined);
+            (getObjectInfoAdapter as jest.Mock).mockResolvedValueOnce({
+                data: {
+                    apiName,
+                    keyPrefix: null,
+                },
+            });
+
+            // Act
+            await subject.ensureObjectInfoCached(apiName);
+
+            // Assert
+            expect(durableStore.getEntries).toBeCalledTimes(1);
+            expect(getObjectInfoAdapter).toBeCalledTimes(1);
+            expect(durableStore.getEntries).toBeCalledWith([apiName], OBJECT_INFO_PREFIX_SEGMENT);
+            expect(subject.objectInfoMemoryCache[apiName]).toBe(null);
         });
 
         it('calls getObjectInfo when ObjectInfo is not available in Durable store', async () => {
@@ -207,7 +229,7 @@ describe('ObjectInfoService', () => {
             );
         });
 
-        it('should not call durable store set when keyPrefix is null', async () => {
+        it('should call durable store set when keyPrefix is null', async () => {
             // Arrange
             const subject = new ObjectInfoService(getObjectInfoAdapter, durableStore);
             const apiName = 'mockApiName';
@@ -220,7 +242,15 @@ describe('ObjectInfoService', () => {
             await subject.createObjectInfoMapping(apiName, objectInfo as ObjectInfoRepresentation);
 
             // Assert
-            expect(durableStore.setEntries).toBeCalledTimes(0);
+            expect(durableStore.setEntries).toBeCalledTimes(1);
+            expect(durableStore.setEntries).toBeCalledWith(
+                {
+                    [apiName]: {
+                        data: objectInfo,
+                    },
+                },
+                'OBJECT_INFO_PREFIX_SEGMENT'
+            );
         });
 
         it('should write to durable store when keyPrefix is empty', async () => {

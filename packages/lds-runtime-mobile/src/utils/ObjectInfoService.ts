@@ -9,7 +9,8 @@ import { ObjectCreate } from '../utils/language';
 export const OBJECT_INFO_PREFIX_SEGMENT = 'OBJECT_INFO_PREFIX_SEGMENT';
 export interface ObjectInfoIndex {
     apiName: string;
-    keyPrefix: string;
+    // keyPrefix will be null for `WorkOrderLineItemHistory` or `ServiceAppointmentHistory`
+    keyPrefix: string | null;
 }
 
 function missingObjectInfoError(info: { apiName?: string; prefix?: string }) {
@@ -23,7 +24,7 @@ type ObjectInfoConfig = Parameters<ObjectInfoAdapterReturn>[0];
 export class ObjectInfoService {
     private getObjectInfoAdapter: Adapter<ObjectInfoConfig, ObjectInfoRepresentation>;
     private durableStore: DurableStore;
-    objectInfoMemoryCache: { [apiName: string]: string };
+    objectInfoMemoryCache: { [apiName: string]: string | null };
 
     constructor(
         getObjectInfoAdapter: Adapter<ObjectInfoConfig, ObjectInfoRepresentation>,
@@ -36,15 +37,15 @@ export class ObjectInfoService {
         this.objectInfoMemoryCache = ObjectCreate(null);
     }
 
-    apiNameForPrefix = (prefix: string) => {
-        return this.findInfo({ prefix });
+    apiNameForPrefix = (prefix: string): Promise<string> => {
+        return this.findInfo({ prefix }) as Promise<string>;
     };
 
-    prefixForApiName = (apiName: string) => {
+    prefixForApiName = (apiName: string): Promise<string | null> => {
         return this.findInfo({ apiName });
     };
 
-    findInfo = (info: { apiName?: string; prefix?: string }) => {
+    findInfo = (info: { apiName?: string; prefix?: string }): Promise<string | null> => {
         return this.durableStore
             .getAllEntries<ObjectInfoIndex>(OBJECT_INFO_PREFIX_SEGMENT)
             .then((entries) => {
@@ -80,10 +81,6 @@ export class ObjectInfoService {
         objectInfo: ObjectInfoRepresentation
     ): Promise<void> => {
         const { keyPrefix } = objectInfo;
-
-        if (keyPrefix === null) {
-            return Promise.resolve();
-        }
 
         const entries: DurableStoreEntries<ObjectInfoIndex> = {
             [apiName]: {

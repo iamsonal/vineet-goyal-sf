@@ -41,7 +41,7 @@ export interface DraftEnvironmentOptions {
     generateId: (apiName: string) => string;
     isDraftId: (id: string) => boolean;
     apiNameForPrefix: (prefix: string) => Promise<string>;
-    prefixForApiName: (apiName: string) => Promise<string>;
+    prefixForApiName: (apiName: string) => Promise<string | null>;
     userId: string;
     registerDraftKeyMapping: (draftKey: string, canonicalKey: string) => void;
     getObjectInfo: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>;

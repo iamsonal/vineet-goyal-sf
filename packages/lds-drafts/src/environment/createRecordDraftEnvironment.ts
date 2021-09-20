@@ -97,6 +97,14 @@ export function createRecordDraftEnvironment(
         return assertReferenceIdsAreCached(apiName, resolvedResourceRequest.body.fields).then(
             () => {
                 return prefixForApiName(apiName).then((prefix) => {
+                    if (prefix === null) {
+                        return Promise.reject(
+                            createBadRequestResponse({
+                                message: 'Cannot create draft for entity with null keyPrefix',
+                            })
+                        );
+                    }
+
                     return enqueueRequest(prefix, resolvedResourceRequest);
                 });
             }

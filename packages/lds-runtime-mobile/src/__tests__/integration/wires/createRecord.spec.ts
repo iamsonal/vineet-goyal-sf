@@ -1,5 +1,10 @@
 import { Luvio, Snapshot } from '@luvio/engine';
-import { RecordRepresentation, keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
+import {
+    RecordRepresentation,
+    keyBuilderRecord,
+    ObjectInfoRepresentation,
+    keyBuilderObjectInfo,
+} from '@salesforce/lds-adapters-uiapi';
 import {
     DraftManager,
     DraftQueue,
@@ -9,11 +14,18 @@ import {
 import { DraftRecordRepresentation } from '@salesforce/lds-drafts/dist/utils/records';
 import { JSONStringify } from '../../../utils/language';
 import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
+import mockOpportunityObjectInfo from './data/object-Opportunity.json';
 import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 import mockOppy from './data/record-Opportunity-fields-Opportunity.Account.Name,Opportunity.Account.Owner.Name,Opportunity.Owner.City.json';
 import { populateL2WithUser, setup } from './integrationTestSetup';
 import timekeeper from 'timekeeper';
+import {
+    DefaultDurableSegment,
+    DurableStoreEntry,
+    DurableStoreOperationType,
+} from '@luvio/environments';
+import { ObjectInfoIndex, OBJECT_INFO_PREFIX_SEGMENT } from '../../../utils/ObjectInfoService';
 
 const RECORD_ID = mockAccount.id;
 const API_NAME = 'Account';
@@ -69,6 +81,57 @@ describe('mobile runtime integration tests', () => {
             const record = snapshot.data as unknown as DraftRecordRepresentation;
             expect(networkSpy).toHaveBeenCalledTimes(0);
             expect(record.drafts.created).toBe(true);
+        });
+
+        it('should throw while creating a draft record of an entity with objectinfo keyPrefix as null', async () => {
+            // Arrange
+            const apiName = 'NullKeyPrefix';
+            const mockDurableStoreEntry: DurableStoreEntry<ObjectInfoIndex> = {
+                data: { apiName, keyPrefix: null },
+            };
+            const mockObjectInfo: DurableStoreEntry<ObjectInfoRepresentation> = {
+                data: {
+                    ...mockOpportunityObjectInfo,
+                    // Set the keyprefix to null
+                    keyPrefix: null,
+                    apiName,
+                },
+            };
+            const entryObjectInfoKey = keyBuilderObjectInfo({
+                apiName,
+            });
+
+            await durableStore.batchOperations(
+                [
+                    {
+                        type: DurableStoreOperationType.SetEntries,
+                        ids: ['NullKeyPrefix'],
+                        segment: OBJECT_INFO_PREFIX_SEGMENT,
+                        entries: {
+                            ['NullKeyPrefix']: JSON.stringify(mockDurableStoreEntry),
+                        },
+                    },
+                    {
+                        type: DurableStoreOperationType.SetEntries,
+                        segment: DefaultDurableSegment,
+                        ids: [entryObjectInfoKey],
+                        entries: {
+                            [entryObjectInfoKey]: JSON.stringify(mockObjectInfo),
+                        },
+                    },
+                ],
+                ''
+            );
+            await flushPromises();
+
+            // Act & Assert
+            await expect(createRecord({ apiName, fields: { Name: 'Justin' } })).rejects.toEqual({
+                body: {
+                    message: 'Cannot create draft for entity with null keyPrefix',
+                },
+                headers: {},
+                status: 400,
+            });
         });
 
         it('created record gets persisted', async () => {

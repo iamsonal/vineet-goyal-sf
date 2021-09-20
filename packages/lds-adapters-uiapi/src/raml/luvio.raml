@@ -172,6 +172,8 @@ types:
       - layoutType
       - mode
   RecordRepresentation:
+    examples:
+      mockAccountResponse: !include ../mocks/types/RecordRepresentation/validAccountResponse1.json
     (luvio.private):
       - eTag
       - weakEtag
@@ -566,9 +568,21 @@ types:
             statusCode: statusCode
             body: result
     '/{recordId}':
+      uriParameters:
+        recordId:
+          examples:
+            mockAccountResponse: 001xx000003Gn4WAAS
       get:
         (luvio.adapter):
           name: getRecord
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                    "recordId": "001xx000003Gn4WAAS",
+                    "fields": ["Account.Id", "Account.Name"]
+                  }
+                mockPayloadId: mockAccountResponse
           coercedParams:
             recordId: SalesforceRecordId18
             layoutTypes: SortedStringArray

@@ -62,6 +62,16 @@ const RAML_ARTIFACTS = {
                 'typeCheckConfig.ts'
             ),
         },
+        {
+            identifier: 'validateAdapterConfig',
+            path: path.join(
+                'src',
+                'raml-artifacts',
+                'adapters',
+                'getRecords',
+                'validateAdapterConfig.ts'
+            ),
+        },
     ],
     '/adapters/getRecord': [
         {

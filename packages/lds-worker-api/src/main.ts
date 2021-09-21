@@ -1,6 +1,8 @@
 import {
     subscribeToAdapter,
     invokeAdapter,
+    invokeAdapterWithMetadata,
+    invokeAdapterWithDraftToReplace,
     executeAdapter,
     executeMutatingAdapter,
 } from './executeAdapter';
@@ -10,6 +12,8 @@ import { draftQueue, draftManager } from './draftQueueImplementation';
 export {
     subscribeToAdapter,
     invokeAdapter,
+    invokeAdapterWithMetadata,
+    invokeAdapterWithDraftToReplace,
     executeAdapter,
     executeMutatingAdapter,
     nimbusDraftQueue,

@@ -1,6 +1,9 @@
 import { FetchResponse, HttpStatusCode, Headers } from '@luvio/engine';
 
 export const NATIVE_ERROR_CODE = 'NATIVE_ERROR';
+export const NON_MUTATING_ADAPTER_MESSAGE = 'adapterId must be a mutating adapter';
+export const NO_DRAFT_CREATED_MESSAGE = 'the adapter did not generate a draft';
+export const DRAFT_DOESNT_EXIST_MESSAGE = 'the specified draft does not exist';
 
 export class NativeFetchResponse<T> implements FetchResponse<T> {
     status: HttpStatusCode;
@@ -36,18 +39,7 @@ export class NativeFetchResponse<T> implements FetchResponse<T> {
     }
 }
 
-export function createNonMutatingAdapterErrorResponse(
-    message: string = 'adapterId must be a mutating adapter'
-) {
-    return new NativeFetchResponse(HttpStatusCode.BadRequest, {
-        errorCode: NATIVE_ERROR_CODE,
-        message: message,
-    });
-}
-
-export function createDraftNotCreatedErrorResponse(
-    message: string = 'the adapter did not generate a draft'
-) {
+export function createNativeErrorResponse(message: string) {
     return new NativeFetchResponse(HttpStatusCode.BadRequest, {
         errorCode: NATIVE_ERROR_CODE,
         message: message,

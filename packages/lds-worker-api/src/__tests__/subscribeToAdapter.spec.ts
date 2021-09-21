@@ -2,6 +2,7 @@ import { stripProperties } from '@luvio/adapter-test-library';
 import { subscribeToAdapter, OnSnapshot } from '../executeAdapter';
 import { addMockNetworkResponse } from './mocks/mockNimbusNetwork';
 import objectInfo_Account from './mockData/objectInfo-Account.json';
+import { objectInfoAccountPath } from './urlPaths';
 
 describe('subscribeToAdapter', () => {
     it('to not throw on expected adapters', () => {
@@ -42,7 +43,7 @@ describe('subscribeToAdapter', () => {
 
     it('calls getObjectInfo wire adapter', (done) => {
         // setup mock response
-        addMockNetworkResponse('GET', '/services/data/v54.0/ui-api/object-info/Account', {
+        addMockNetworkResponse('GET', objectInfoAccountPath(), {
             headers: {},
             status: 200,
             body: JSON.stringify(objectInfo_Account),
@@ -67,7 +68,7 @@ describe('subscribeToAdapter', () => {
 
     it('calls error callback on non-2xx response', (done) => {
         // setup mock response
-        addMockNetworkResponse('GET', '/services/data/v54.0/ui-api/object-info/Account', {
+        addMockNetworkResponse('GET', objectInfoAccountPath(), {
             headers: {},
             status: 400,
             body: JSON.stringify({}),

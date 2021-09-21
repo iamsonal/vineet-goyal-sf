@@ -9,8 +9,10 @@ import { adapterMap } from './lightningAdapterApi';
 import { DraftQueueItemMetadata } from '@salesforce/lds-drafts';
 import { draftManager } from './draftQueueImplementation';
 import {
-    createDraftNotCreatedErrorResponse,
-    createNonMutatingAdapterErrorResponse,
+    createNativeErrorResponse,
+    NON_MUTATING_ADAPTER_MESSAGE,
+    NO_DRAFT_CREATED_MESSAGE,
+    DRAFT_DOESNT_EXIST_MESSAGE,
     NativeFetchResponse,
 } from './NativeFetchResponse';
 
@@ -80,7 +82,7 @@ export function subscribeToAdapter(
             } catch (parseError) {
                 // call the callback with error
                 instr.error(parseError as Error, 'gql-parse-error');
-                onSnapshot({ data: undefined, error: parseError });
+                onSnapshot({ data: undefined, error: parseError as NativeFetchResponse<unknown> });
                 return () => {
                     if (wire !== undefined) {
                         wire.disconnect();
@@ -100,6 +102,75 @@ export function subscribeToAdapter(
     };
 }
 
+/**
+ * Executes the specified adapter with the given adapterId and config. Then
+ * it replaces the draft with the given id with the draft generated
+ * by the mutating adapter.  Will call onResult callback once with data or error.
+ *
+ * This function throws an error if the given adapterId cannot be found, or if the
+ * adapterId is not a mutating adapter, or if a draft isn't created, or if it
+ * fails to parse the given config string.
+ */
+export function invokeAdapterWithDraftToReplace(
+    adapterId: string,
+    config: string,
+    draftIdToReplace: string,
+    onResponse: OnResponse
+) {
+    draftManager.getQueue().then((draftInfo) => {
+        const draftIds = draftInfo.items.map((draft) => draft.id);
+        if (draftIds.includes(draftIdToReplace) === false) {
+            onResponse({
+                data: undefined,
+                error: createNativeErrorResponse(DRAFT_DOESNT_EXIST_MESSAGE),
+            });
+            return;
+        }
+        const wireConstructor = adapterMap[adapterId];
+        if (wireConstructor === undefined) {
+            throw Error(`adapter ${adapterId} not recognized`);
+        }
+
+        try {
+            new wireConstructor(() => {});
+            onResponse({
+                data: undefined,
+                error: createNativeErrorResponse(NON_MUTATING_ADAPTER_MESSAGE),
+            });
+        } catch (constructorError) {
+            if (isNotAFunctionError(constructorError)) {
+                // We only want to call this adapter if it's a mutating adapter
+                invokeAdapter(adapterId, config, (responseValue) => {
+                    const draftIds = draftIdsForResponseValue(responseValue);
+                    if (
+                        responseValue.error === undefined &&
+                        draftIds !== undefined &&
+                        draftIds.length > 0
+                    ) {
+                        const draftId = draftIds[draftIds.length - 1];
+                        draftManager.replaceAction(draftIdToReplace, draftId).then(() => {
+                            onResponse(responseValue);
+                        });
+                    } else {
+                        let response: CallbackValue = responseValue;
+                        response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
+                        onResponse(response);
+                    }
+                });
+            }
+        }
+    });
+}
+
+/**
+ * Executes the specified adapter with the given adapterId and config. Then
+ * it sets the given metadata on the draft created by the mutating adapter.  Will call
+ * onResult callback once with data or error.
+ *
+ * This function throws an error if the given adapterId cannot be found, or if the
+ * adapterId is not a mutating adapter, or if a draft isn't created, or if it
+ * fails to parse the given config string.
+ */
 export function invokeAdapterWithMetadata(
     adapterId: string,
     config: string,
@@ -115,7 +186,7 @@ export function invokeAdapterWithMetadata(
         new wireConstructor(() => {});
         onResponse({
             data: undefined,
-            error: createNonMutatingAdapterErrorResponse(),
+            error: createNativeErrorResponse(NON_MUTATING_ADAPTER_MESSAGE),
         });
     } catch (constructorError) {
         if (isNotAFunctionError(constructorError)) {
@@ -133,7 +204,7 @@ export function invokeAdapterWithMetadata(
                     });
                 } else {
                     let response: CallbackValue = responseValue;
-                    response.error = createDraftNotCreatedErrorResponse();
+                    response.error = createNativeErrorResponse(NO_DRAFT_CREATED_MESSAGE);
                     onResponse(response);
                 }
             });
@@ -178,7 +249,7 @@ export function invokeAdapter(adapterId: string, config: string, onResponse: OnR
             } catch (parseError) {
                 // call the callback with error
                 instr.error(parseError as Error, 'gql-parse-error');
-                onResponse({ data: undefined, error: parseError });
+                onResponse({ data: undefined, error: parseError as NativeFetchResponse<unknown> });
                 return;
             }
             break;

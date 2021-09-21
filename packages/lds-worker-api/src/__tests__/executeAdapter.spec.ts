@@ -9,6 +9,7 @@ import { addMockNetworkResponse } from './mocks/mockNimbusNetwork';
 import objectInfo_Account from './mockData/objectInfo-Account.json';
 import recordRep_Account from './mockData/RecordRepresentation-Account.json';
 import recordRep_Account_Edited from './mockData/RecordRepresentation-Account-Edited.json';
+import { objectInfoAccountPath } from './urlPaths';
 
 // W-9173084 - executeAdapter is deprecated. All of these tests have been duplicated
 // and moved to subscribeToAdapter.spec.ts and this entire file can be removed
@@ -52,7 +53,7 @@ describe('executeAdapter', () => {
 
     it('calls getObjectInfo wire adapter', (done) => {
         // setup mock response
-        addMockNetworkResponse('GET', '/services/data/v54.0/ui-api/object-info/Account', {
+        addMockNetworkResponse('GET', objectInfoAccountPath(), {
             headers: {},
             status: 200,
             body: JSON.stringify(objectInfo_Account),
@@ -77,7 +78,7 @@ describe('executeAdapter', () => {
 
     it('calls error callback on non-2xx response', (done) => {
         // setup mock response
-        addMockNetworkResponse('GET', '/services/data/v54.0/ui-api/object-info/Account', {
+        addMockNetworkResponse('GET', objectInfoAccountPath(), {
             headers: {},
             status: 400,
             body: JSON.stringify({}),
@@ -142,7 +143,7 @@ describe('executeMutatingAdapter', () => {
                 body: JSON.stringify(recordRep_Account),
             }
         );
-        addMockNetworkResponse('GET', '/services/data/v54.0/ui-api/object-info/Account', {
+        addMockNetworkResponse('GET', objectInfoAccountPath(), {
             headers: {},
             status: 200,
             body: JSON.stringify(objectInfo_Account),

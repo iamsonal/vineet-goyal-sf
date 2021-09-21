@@ -18,4 +18,26 @@ describe('validation', () => {
             'adapter getPicklistValues configuration must specify fieldApiName, recordTypeId'
         );
     });
+
+    ['fieldApiName', 'recordTypeId'].forEach((param) => {
+        it(`should return null if required param '${param}' is undefined`, () => {
+            const config: any = {
+                recordTypeId: 'xxx',
+                fieldApiName: 'Account.Type',
+            };
+
+            config[param] = undefined;
+            expect(getPicklistValues({} as any)(config)).toBeNull();
+        });
+
+        it(`should return null if required param '${param}' is null`, () => {
+            const config: any = {
+                recordTypeId: 'xxx',
+                fieldApiName: 'Account.Type',
+            };
+
+            config[param] = null;
+            expect(getPicklistValues({} as any)(config)).toBeNull();
+        });
+    });
 });

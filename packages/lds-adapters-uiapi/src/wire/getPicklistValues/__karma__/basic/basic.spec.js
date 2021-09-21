@@ -129,37 +129,7 @@ describe('picklist values', () => {
         expect(wireA.getWiredData()).toEqualSnapshotWithoutEtags(secondMock);
     });
 
-    it('bad fieldApiName emits error', async () => {
-        const mock = getMock('picklist-Account-bad-fieldApiName');
-
-        const config = {
-            fieldApiName: 'Account.TypeFoo',
-            recordTypeId: MASTER_RECORD_TYPE_ID,
-        };
-
-        mockGetPicklistValuesNetwork(config, { reject: true, data: { body: mock } });
-
-        const elm = await setupElement(config, GetPicklistValues);
-
-        expect(elm.getWiredError()).toContainErrorBody(mock);
-    });
-
-    it('bad objectApiName emits error', async () => {
-        const mock = getMock('picklist-Account-bad-objectApiName');
-
-        const config = {
-            fieldApiName: 'AccountFoo.Type',
-            recordTypeId: MASTER_RECORD_TYPE_ID,
-        };
-
-        mockGetPicklistValuesNetwork(config, { reject: true, data: { body: mock } });
-
-        const elm = await setupElement(config, GetPicklistValues);
-
-        expect(elm.getWiredError()).toContainErrorBody(mock);
-    });
-
-    it('verifies a 404 request because of a bad field api name results in observable emitting a 404 error', async () => {
+    it('verifies a 404 request because of a bad fieldApiName results in observable emitting a 404 error', async () => {
         const mock = getMock('picklist-Account-bad-fieldApiName');
         const mockError = {
             ok: false,
@@ -178,7 +148,7 @@ describe('picklist values', () => {
         expect(elm.getWiredError()).toBeImmutable();
     });
 
-    it('verifies a 404 request because of a bad object api name results in observable emitting a 404 error', async () => {
+    it('verifies a 404 request because of a bad objectApiName results in observable emitting a 404 error', async () => {
         const mock = getMock('picklist-Account-bad-objectApiName');
         const mockError = {
             ok: false,

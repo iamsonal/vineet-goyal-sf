@@ -194,13 +194,6 @@ describe('picklist values by record type', () => {
         expect(elm.getWiredError()).toContainErrorBody(mock);
     });
 
-    xit(
-        'verifies a 404 request because of an invalid fieldApiName results in the observable emitting an error'
-    );
-    xit(
-        'verifies a 404 request because of an invalid objectApiName results in the observable emitting an error'
-    );
-
     describe('refresh', () => {
         it('should refresh picklist values by record type', async () => {
             const mock = getMock('picklist-Account-MasterRecordTypeId');

@@ -536,7 +536,8 @@ describe('with listViewId', () => {
     });
 
     xit('makes new request when a fetched list-records has an etag that does not match the list-info', async () => {
-        // it seems there might be a bug hence keeping the test disabled
+        // there is a bug hence keeping the test disabled
+        // TODO: [W-9923716]: enable as a part of W-9923716
 
         const mockDataListUi = getMock('list-ui-All-Opportunities-pageSize-3');
         const config = {

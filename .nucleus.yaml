@@ -3,9 +3,6 @@ core-deploy:
   enabled: true
   use-core-packager: false
 steps:
-  # this project runs yarn build after yarn install so skip explicit build step
-  node-build: &node-build
-    skip: true
   node-pre-release-tests:
     run:
       command: yarn test:unit:coverage

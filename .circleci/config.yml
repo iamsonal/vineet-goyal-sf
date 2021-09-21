@@ -5,7 +5,7 @@ env_default: &env_default
   working_directory: ~/lds-lp
   docker:
     - image: circleci/node:14-browsers
-  resource_class: large
+  resource_class: xlarge
 
 env_perf: &env_perf
   <<: *env_default
@@ -43,6 +43,11 @@ install: &install
     name: Install dependencies
     command: yarn install --frozen-lockfile
 
+build: &build
+  run:
+    name: Build
+    command: yarn build:ci
+
 # Checks
 run_format: &run_format
   run:
@@ -61,17 +66,17 @@ run_unit_tests: &run_unit_tests
     # Jest should run sequentially instead of parallel on the CI to avoid running out of memory and
     # reduce run duration.
     # https://jestjs.io/docs/en/troubleshooting#tests-are-extremely-slow-on-docker-and-or-continuous-integration-ci-server
-    command: yarn test:unit:coverage --runInBand --ci
+    command: yarn test:unit:coverage:ci
 
 run_integration_tests: &run_integration_tests
   run:
     name: Run integration tests
-    command: yarn test:integration
+    command: yarn test:integration:ci
 
 run_integration_tests_compat: &run_integration_tests_compat
   run:
     name: Run integration tests (compat)
-    command: yarn test:integration:compat
+    command: yarn test:integration:compat:ci
 
 # Sauce Labs
 setup_sauce_env_variables: &setup_sauce_env_variables
@@ -84,15 +89,15 @@ start_sauce_connect: &start_sauce_connect
     name: Install and start sauce connect
     background: true
     command: |
-      curl https://saucelabs.com/downloads/sc-4.6.2-linux.tar.gz -o saucelabs.tar.gz
+      curl https://saucelabs.com/downloads/sc-4.7.0-linux.tar.gz -o saucelabs.tar.gz
       tar -xzf saucelabs.tar.gz
       cd sc-*
-      bin/sc -u ${SAUCE_USERNAME} -k ${SAUCE_KEY} -i ${SAUCE_TUNNEL_ID} --tunnel-domains tunnelhost -P 4445
+      bin/sc -u ${SAUCE_USERNAME} -k ${SAUCE_KEY} -i ${SAUCE_TUNNEL_ID} --tunnel-domains tunnelhost -P ${CIRCLE_BUILD_NUM}
 
 wait_for_sauce_connect: &wait_for_sauce_connect
   run:
     name: Wait for sauce connect to be up
-    command: wget --retry-connrefused --no-check-certificate -T 60 localhost:4445
+    command: wget --retry-connrefused --no-check-certificate -T 60 localhost:${CIRCLE_BUILD_NUM}
 
 stop_sauce_connect: &stop_sauce_connect
   run:
@@ -146,7 +151,7 @@ test_memory: &test_memory
 
 version: 2
 jobs:
-  build_and_test:
+  build:
     <<: *env_default
     steps:
       - checkout
@@ -155,12 +160,22 @@ jobs:
       - *install
       - *save_yarn_cache
 
+      - *build
+
       - *save_workspace
 
       - *run_linting
       - *run_format
 
+  test_unit:
+    <<: *env_default
+    parallelism: 4
+    steps:
+      - *load_workspace
+
       - *run_unit_tests
+
+      - *save_workspace
 
   test_integration:
     <<: *env_default
@@ -172,6 +187,18 @@ jobs:
       - *wait_for_sauce_connect
 
       - *run_integration_tests
+
+      - *stop_sauce_connect
+
+  test_integration_compat:
+    <<: *env_default
+    steps:
+      - *load_workspace
+
+      - *setup_sauce_env_variables
+      - *start_sauce_connect
+      - *wait_for_sauce_connect
+
       - *run_integration_tests_compat
 
       - *stop_sauce_connect
@@ -196,10 +223,16 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - build_and_test
+      - build
       - test_integration:
           requires:
-            - build_and_test
+            - build
+      - test_integration_compat:
+          requires:
+            - build
+      - test_unit:
+          requires:
+            - build
 #      - perf_and_compare:
 #          requires:
-#            - build_and_test
+#            - build

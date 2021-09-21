@@ -109,4 +109,34 @@ describe('navigateFlow', () => {
             response: null,
         });
     });
+
+    describe('navigates a flow when isVisible on a field is not supplied or null', () => {
+        const mockConfig = {
+            flowDevName: 'flow1',
+            request: {
+                action: 'NEXT',
+                serializedState: 'ABC',
+                fields: [
+                    {
+                        field: 'checkbox_group',
+                    },
+                ],
+            },
+        };
+
+        it('navigates a flow when isVisible on a field is not supplied', async () => {
+            const mockResponse = getMock(MOCK_PREFIX + 'response_1');
+            mockNavigateFlowNetworkOnce(mockConfig, mockResponse);
+            const data = await navigateFlow(mockConfig);
+            expect(data).toEqualSnapshotWithoutEtags(mockResponse);
+        });
+
+        it('navigates a flow when isVisible on a field is null', async () => {
+            mockConfig.request.fields[0].isVisible = null;
+            const mockResponse = getMock(MOCK_PREFIX + 'response_1');
+            mockNavigateFlowNetworkOnce(mockConfig, mockResponse);
+            const data = await navigateFlow(mockConfig);
+            expect(data).toEqualSnapshotWithoutEtags(mockResponse);
+        });
+    });
 });

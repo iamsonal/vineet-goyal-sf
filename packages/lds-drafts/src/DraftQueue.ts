@@ -228,18 +228,18 @@ export interface AddQueueOperation {
 
 export interface DeleteQueueOperation {
     type: QueueOperationType.Delete;
-    key: string;
+    id: string;
 }
 
 export interface UpdateQueueOperation {
     type: QueueOperationType.Update;
-    key: string;
+    id: string;
     action: DraftAction<unknown, unknown>;
 }
 
 export interface DraftIdMappingEntry {
-    draftKey: string;
-    canonicalKey: string;
+    draftId: string;
+    canonicalId: string;
 }
 
 export type QueueOperation = UpdateQueueOperation | AddQueueOperation | DeleteQueueOperation;

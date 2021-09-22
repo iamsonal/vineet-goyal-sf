@@ -1,8 +1,10 @@
-import { DurableDraftStore } from '../DraftStore';
+import { DurableDraftStore } from '../DurableDraftStore';
 import { MockDurableStore } from '@luvio/adapter-test-library';
 import { DRAFT_SEGMENT } from '../main';
 import { flushPromises } from './test-utils';
 import { ObjectKeys } from '../utils/language';
+import { QueueOperationType } from '../DraftQueue';
+import { DurableStoreOperationType } from '@luvio/environments';
 
 describe('DraftStore', () => {
     describe('DurableDraftStore', () => {
@@ -166,6 +168,80 @@ describe('DraftStore', () => {
 
                 dq = await draftStore.getAllDrafts();
                 expect(dq.length).toBe(1);
+            });
+        });
+
+        describe('completeAction', () => {
+            it('queue operations get converted to durable store operations', async () => {
+                const durableStore = new MockDurableStore();
+
+                let draftStore = new DurableDraftStore(durableStore);
+
+                const actionId = 'id-foo';
+
+                const action = {
+                    tag: 'tag-foo',
+                    id: actionId,
+                    status: 'pending',
+                } as any;
+
+                await draftStore.writeAction(action);
+
+                // observe batch
+                durableStore.batchOperations = jest.fn().mockResolvedValue({});
+
+                await draftStore.completeAction(
+                    [{ type: QueueOperationType.Delete, id: actionId }],
+                    undefined
+                );
+
+                expect(durableStore.batchOperations).toBeCalledWith([
+                    {
+                        ids: ['tag-foo__DraftAction__id-foo'],
+                        type: DurableStoreOperationType.EvictEntries,
+                        segment: DRAFT_SEGMENT,
+                    },
+                ]);
+            });
+
+            it('mapping gets persisted to the durable store', async () => {
+                const durableStore = new MockDurableStore();
+
+                let draftStore = new DurableDraftStore(durableStore);
+
+                const actionId = 'id-foo';
+                const canonical = 'id-bar';
+
+                const action = {
+                    tag: 'tag-foo',
+                    id: actionId,
+                    status: 'pending',
+                } as any;
+
+                await draftStore.writeAction(action);
+
+                // observe batch
+                durableStore.batchOperations = jest.fn().mockResolvedValue({});
+
+                await draftStore.completeAction([], {
+                    draftId: actionId,
+                    canonicalId: canonical,
+                });
+
+                expect(durableStore.batchOperations).toBeCalledWith([
+                    {
+                        type: 'setEntries',
+                        segment: 'DRAFT_ID_MAPPINGS',
+                        entries: {
+                            'DraftIdMapping::id-foo::id-bar': {
+                                data: {
+                                    canonicalId: 'id-bar',
+                                    draftId: 'id-foo',
+                                },
+                            },
+                        },
+                    },
+                ]);
             });
         });
 

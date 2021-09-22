@@ -40,8 +40,10 @@ const recordIngestFunc = (record: RecordRepresentation) => {
     }
 };
 
-const registerDraftMapping = (draftKey: string, canonicalKey: string) => {
+const registerDraftIdMapping = (draftId: string, canonicalId: string) => {
     if (luvio !== undefined) {
+        const draftKey = keyBuilderRecord({ recordId: draftId });
+        const canonicalKey = keyBuilderRecord({ recordId: canonicalId });
         luvio.storeRedirect(draftKey, canonicalKey);
         luvio.storeBroadcast();
     }
@@ -124,7 +126,7 @@ const draftEnv = makeEnvironmentDraftAware(durableEnv, {
     getRecord,
     getObjectInfo,
     userId,
-    registerDraftKeyMapping: registerDraftMapping,
+    registerDraftIdMapping,
 });
 
 baseDurableStore.registerMergeStrategy(

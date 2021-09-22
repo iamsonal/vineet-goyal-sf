@@ -24,12 +24,7 @@ import {
     extractRecordIdFromStoreKey,
     isStoreKeyRecordId,
 } from '@salesforce/lds-uiapi-record-utils';
-import {
-    DraftActionMap,
-    DraftIdMappingEntry,
-    QueueOperation,
-    QueueOperationType,
-} from '../DraftQueue';
+import { DraftActionMap, QueueOperation, QueueOperationType } from '../DraftQueue';
 import { isLDSDraftAction } from '../actionHandlers/LDSActionHandler';
 import {
     DefaultDurableSegment,
@@ -504,11 +499,6 @@ export function buildDraftDurableStoreKey(recordKey: string, draftActionId: stri
     return `${recordKey}${DRAFT_ACTION_KEY_JUNCTION}${draftActionId}`;
 }
 
-// TODO [W-9901975]: this should go away once we decouple durable store interface from draft store
-export function extractIdFromDraftKey(key: string): string | undefined {
-    return key.split(DRAFT_ACTION_KEY_JUNCTION)[1];
-}
-
 export function extractRecordKeyFromDraftDurableStoreKey(key: string) {
     if (key === undefined) {
         return undefined;
@@ -558,7 +548,6 @@ export function updateQueueOnPost(
                 basePath.search(draftId) >= 0 || stringifiedBody.search(draftId) >= 0;
 
             if (needsReplace) {
-                const queueActionKey = buildDraftDurableStoreKey(queueActionTag, queueActionId);
                 const updatedBasePath = basePath.replace(draftId, canonicalRecordId);
                 const updatedBody = stringifiedBody.replace(draftId, canonicalRecordId);
 
@@ -579,7 +568,7 @@ export function updateQueueOnPost(
                     // item needs to be replaced with a new item at the new record key
                     queueOperations.push({
                         type: QueueOperationType.Delete,
-                        key: queueActionKey,
+                        id: queueActionId,
                     });
                     queueOperations.push({
                         type: QueueOperationType.Add,
@@ -597,7 +586,7 @@ export function updateQueueOnPost(
                     // item needs to be updated
                     queueOperations.push({
                         type: QueueOperationType.Update,
-                        key: queueActionKey,
+                        id: queueActionId,
                         action: updatedAction,
                     });
                 }
@@ -606,30 +595,6 @@ export function updateQueueOnPost(
     }
 
     return queueOperations;
-}
-
-/**
- * Extracts the draft id from the action and the canonical id from the response containing a RecordRepresentation
- * and returns a mapping entry
- * @param action the completed action containing the request and response
- */
-export function createIdDraftMapping(
-    action: CompletedDraftAction<unknown, unknown>
-): DraftIdMappingEntry {
-    const { response } = action as CompletedDraftAction<RecordRepresentation, unknown>;
-    const draftKey = action.tag;
-    const { id } = response.body;
-    if (id === undefined) {
-        throw Error('Could not find record id in the response');
-    }
-    const canonicalKey = keyBuilderRecord({ recordId: id });
-
-    const entry: DraftIdMappingEntry = {
-        draftKey,
-        canonicalKey,
-    };
-
-    return entry;
 }
 
 /**

@@ -42,13 +42,14 @@ import {
     CustomActionResult,
     CustomActionResultType,
 } from '../actionHandlers/CustomActionHandler';
-import { DurableDraftStore } from '../DraftStore';
+import { DurableDraftStore } from '../DurableDraftStore';
 
 const MockHandler: ActionHandler<string> = {
     buildPendingAction: jest.fn(),
     handle: jest.fn(),
     replaceAction: jest.fn(),
-    storeOperationsForUploadedDraft: jest.fn(),
+    queueOperationsForCompletedDraft: jest.fn(),
+    getRedirectMapping: jest.fn(),
 };
 
 const DEFAULT_PATCH_REQUEST: ResourceRequest = {
@@ -82,7 +83,6 @@ const UPDATE_REQUEST: ResourceRequest = {
 const DEFAULT_TAG = 'UiApi::RecordRepresentation:Res1D505SS6iztdRYA';
 
 const mockQueuePostHandler = jest.fn().mockResolvedValue([]);
-const mockDraftIdHandler = jest.fn().mockRejectedValue({ canonicalKey: 'foo', draftKey: 'bar' });
 
 describe('DurableDraftQueue', () => {
     it('creates unique ids', () => {
@@ -104,12 +104,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
 
             const state = draftQueue.getQueueState();
             expect(state).toEqual(DraftQueueState.Stopped);
@@ -119,12 +114,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             expect(draftQueue.getQueueState()).toEqual(DraftQueueState.Stopped);
             await draftQueue.startQueue();
             expect(draftQueue.getQueueState()).toEqual(DraftQueueState.Started);
@@ -134,12 +124,7 @@ describe('DurableDraftQueue', () => {
             const network = jest.fn().mockResolvedValue({});
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             draftQueue.startQueue();
             let changedCount = 0;
             const listener = (event: DraftQueueEvent): Promise<void> => {
@@ -167,12 +152,7 @@ describe('DurableDraftQueue', () => {
             const network = jest.fn().mockResolvedValue({});
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const listener = (event: DraftQueueEvent): Promise<void> => {
                 if (event.type === DraftQueueEventType.ActionCompleted) {
                     done();
@@ -221,12 +201,7 @@ describe('DurableDraftQueue', () => {
             setNetworkConnectivity(network, ConnectivityState.Offline);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const anyDraftQueue = draftQueue as any;
             anyDraftQueue.retryIntervalMilliseconds = 1;
             draftQueue.startQueue();
@@ -283,12 +258,7 @@ describe('DurableDraftQueue', () => {
             setNetworkConnectivity(network, ConnectivityState.Offline);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const anyDraftQueue = draftQueue as any;
             anyDraftQueue.retryIntervalMilliseconds = 10000000;
             await draftQueue.startQueue();
@@ -304,12 +274,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([successPayload]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const anyDraftQueue = draftQueue as any;
             await draftQueue.startQueue();
             anyDraftQueue.retryIntervalMilliseconds = 10000;
@@ -340,12 +305,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
         });
 
         it('it adds a handler', async () => {
@@ -371,12 +331,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
         });
 
         it('removes handler if it exists', async () => {
@@ -401,12 +356,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
         });
 
         it('adds custom handler to handlers', async () => {
@@ -475,12 +425,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             await expect(
                 draftQueue.enqueue({
                     data: {},
@@ -500,12 +445,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftId = 'fooId';
 
             const action = await draftQueue.enqueue({
@@ -523,12 +463,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftId = 'fooId';
 
             await draftQueue.enqueue({
@@ -553,12 +488,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftId = 'fooId';
 
             await draftQueue.enqueue({
@@ -616,12 +546,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
 
             await draftQueue.enqueue({
                 data: createPatchRequest(),
@@ -638,12 +563,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
 
             await draftQueue.enqueue({
                 data: createPatchRequest(),
@@ -677,12 +597,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const request = createPatchRequest();
             const tag = getRecordKeyFromRecordRequest(request);
             const targetId = getRecordIdFromRecordRequest(request);
@@ -708,12 +623,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             setNetworkConnectivity(network, ConnectivityState.Offline);
 
             await draftQueue.enqueue({
@@ -736,12 +646,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             setNetworkConnectivity(network, ConnectivityState.Offline);
 
             await draftQueue.enqueue({
@@ -771,12 +676,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
 
             const request = {
                 method: 'patch',
@@ -805,12 +705,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
 
             const request = {
                 method: 'patch',
@@ -851,12 +746,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
 
             const result = await draftQueue.processNextAction();
             expect(result).toEqual(ProcessActionResult.NO_ACTION_TO_PROCESS);
@@ -873,12 +763,7 @@ describe('DurableDraftQueue', () => {
             const draftStore = new DurableDraftStore(durableStore);
             const batchOperationsSpy = jest.spyOn(durableStore, 'batchOperations');
 
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             await draftQueue.enqueue({
                 data: DEFAULT_PATCH_REQUEST,
                 tag: DEFAULT_TAG,
@@ -902,6 +787,41 @@ describe('DurableDraftQueue', () => {
             expect(segment).toEqual(DRAFT_SEGMENT);
         });
 
+        it('successful action calls draft store when completed and passes queue operations and mapping', async () => {
+            const createArgs: MockPayload['networkArgs'] = {
+                method: 'post',
+                basePath: '/blah',
+            };
+            const successPayload: MockPayload = buildSuccessMockPayload(createArgs, {
+                id: 'bar',
+            });
+            const network = buildMockNetworkAdapter([successPayload]);
+            const durableStore = new MockDurableStore();
+            const draftStore = new DurableDraftStore(durableStore);
+            draftStore.completeAction = jest.fn();
+
+            const mockQueueOperations: QueueOperation[] = [];
+
+            const draftQueue = new DurableDraftQueue(
+                draftStore,
+                network,
+                jest.fn().mockReturnValue(mockQueueOperations)
+            );
+            const enqueued = await draftQueue.enqueue({
+                data: DEFAULT_POST_REQUEST,
+                tag: DEFAULT_TAG,
+                targetId: 'foo',
+                targetApiName: 'Account',
+                handler: LDS_ACTION_HANDLER_ID,
+            });
+            const result = await draftQueue.processNextAction();
+            expect(result).toEqual(ProcessActionResult.ACTION_SUCCEEDED);
+            expect(draftStore.completeAction).toBeCalledWith(
+                [{ type: 'delete', id: enqueued.id }],
+                { draftId: 'foo', canonicalId: 'bar' }
+            );
+        });
+
         it('returns ACTION_ALREADY_PROCESSING if network request is in flight', async () => {
             expect.assertions(3);
             let draftQueue: DurableDraftQueue;
@@ -915,12 +835,7 @@ describe('DurableDraftQueue', () => {
 
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            draftQueue = new DurableDraftQueue(
-                draftStore,
-                mockNetwork,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            draftQueue = new DurableDraftQueue(draftStore, mockNetwork, mockQueuePostHandler);
             await draftQueue.enqueue({
                 data: DEFAULT_PATCH_REQUEST,
                 tag: DEFAULT_TAG,
@@ -954,12 +869,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([errorPayload]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
 
             await draftQueue.enqueue({
                 data: request,
@@ -1007,12 +917,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([errorPayload]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
 
             await draftQueue.enqueue({
                 data: request,
@@ -1038,12 +943,7 @@ describe('DurableDraftQueue', () => {
             setNetworkConnectivity(network, ConnectivityState.Offline);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
 
             const action1 = await draftQueue.enqueue({
                 data: DEFAULT_PATCH_REQUEST,
@@ -1085,12 +985,7 @@ describe('DurableDraftQueue', () => {
             const network = jest.fn().mockResolvedValue({});
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
 
             const firstRequest = { ...DEFAULT_PATCH_REQUEST, basePath: '/z' };
             const secondRequest = { ...DEFAULT_PATCH_REQUEST, basePath: '/a' };
@@ -1142,14 +1037,13 @@ describe('DurableDraftQueue', () => {
                         id: 'buz',
                         tag: 'baz',
                     } as any,
-                    key: 'baz__DraftAction__buz',
+                    id: 'buz',
                 });
 
                 const draftQueue = new DurableDraftQueue(
                     draftStore,
                     network,
-                    jest.fn().mockReturnValue(mockQueueOperations),
-                    jest.fn().mockReturnValue({ canonicalKey: 'foo', draftKey: 'bar' })
+                    jest.fn().mockReturnValue(mockQueueOperations)
                 );
                 await draftQueue.enqueue({
                     data: DEFAULT_POST_REQUEST,
@@ -1179,7 +1073,9 @@ describe('DurableDraftQueue', () => {
                     method: 'post',
                     basePath: '/blah',
                 };
-                const successPayload: MockPayload = buildSuccessMockPayload(createArgs, {});
+                const successPayload: MockPayload = buildSuccessMockPayload(createArgs, {
+                    id: 'bar',
+                });
                 const network = buildMockNetworkAdapter([successPayload]);
                 const durableStore = new MockDurableStore();
                 const draftStore = new DurableDraftStore(durableStore);
@@ -1189,20 +1085,19 @@ describe('DurableDraftQueue', () => {
                 const draftQueue = new DurableDraftQueue(
                     draftStore,
                     network,
-                    jest.fn().mockReturnValue(mockQueueOperations),
-                    jest.fn().mockReturnValue({ canonicalKey: 'foo', draftKey: 'bar' })
+                    jest.fn().mockReturnValue(mockQueueOperations)
                 );
                 await draftQueue.enqueue({
                     data: DEFAULT_POST_REQUEST,
                     tag: DEFAULT_TAG,
-                    targetId: 'fooId',
+                    targetId: 'foo',
                     targetApiName: 'Account',
                     handler: LDS_ACTION_HANDLER_ID,
                 });
                 const result = await draftQueue.processNextAction();
                 expect(result).toEqual(ProcessActionResult.ACTION_SUCCEEDED);
                 expect(
-                    durableStore.segments[DRAFT_ID_MAPPINGS_SEGMENT]['DraftIdMapping::bar::foo']
+                    durableStore.segments[DRAFT_ID_MAPPINGS_SEGMENT]['DraftIdMapping::foo::bar']
                 ).toBeDefined();
             });
 
@@ -1221,12 +1116,7 @@ describe('DurableDraftQueue', () => {
                     foundStatus = draftEntry.data.status;
                     return Promise.resolve(undefined);
                 });
-                const draftQueue = new DurableDraftQueue(
-                    draftStore,
-                    network,
-                    mockQueuePostHandler,
-                    mockDraftIdHandler
-                );
+                const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
                 await draftQueue.enqueue({
                     data: DEFAULT_PATCH_REQUEST,
                     tag: draftId,
@@ -1244,12 +1134,7 @@ describe('DurableDraftQueue', () => {
                 const durableStore = new MockDurableStore();
                 const draftStore = new DurableDraftStore(durableStore);
                 const network = jest.fn();
-                const draftQueue = new DurableDraftQueue(
-                    draftStore,
-                    network,
-                    mockQueuePostHandler,
-                    mockDraftIdHandler
-                );
+                const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
                 network.mockImplementation(async () => {
                     const actions = await draftQueue.getQueueActions();
                     action = actions[0];
@@ -1274,12 +1159,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const listener = jest.fn();
             draftQueue.registerOnChangedListener(listener);
             const draftId = 'fooId';
@@ -1299,12 +1179,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftAction = await draftQueue.enqueue({
                 data: DEFAULT_PATCH_REQUEST,
                 tag: DEFAULT_TAG,
@@ -1333,12 +1208,7 @@ describe('DurableDraftQueue', () => {
             const network = jest.fn().mockResolvedValue({});
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const listener = jest.fn();
             draftQueue.registerOnChangedListener(listener);
             const firstRequest = { ...DEFAULT_PATCH_REQUEST, basePath: '/z' };
@@ -1368,12 +1238,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             draftQueue.registerOnChangedListener(completedSpy);
             const firstRequest = { ...DEFAULT_PATCH_REQUEST, basePath: '/z' };
             await draftQueue.enqueue({
@@ -1416,8 +1281,7 @@ describe('DurableDraftQueue', () => {
             const draftQueue = new DurableDraftQueue(
                 draftStore,
                 buildMockNetworkAdapter([]),
-                mockQueuePostHandler,
-                mockDraftIdHandler
+                mockQueuePostHandler
             );
 
             // reset the durable store's draft segment before each test
@@ -1612,12 +1476,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([success]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftTag = 'UiAPI::RecordRepresentation::fooId';
             const actionOne = await draftQueue.enqueue({
                 data: UPDATE_REQUEST,
@@ -1647,12 +1506,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([success]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftTag = 'UiAPI::RecordRepresentation::fooId';
             const actionOne = await draftQueue.enqueue({
                 data: UPDATE_REQUEST,
@@ -1706,12 +1560,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftTag = 'UiAPI::RecordRepresentation::fooId';
             const actionOne = await draftQueue.enqueue({
                 data: UPDATE_REQUEST,
@@ -1736,12 +1585,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftTag = 'UiAPI::RecordRepresentation::fooId';
             const actionOne = await draftQueue.enqueue({
                 data: UPDATE_REQUEST,
@@ -1758,12 +1602,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftTag = 'UiAPI::RecordRepresentation::fooId';
             const draftTagTwo = 'UiAPI::RecordRepresentation::barId';
             const actionOne = await draftQueue.enqueue({
@@ -1817,12 +1656,7 @@ describe('DurableDraftQueue', () => {
             await draftStore.writeAction(inProgressAction);
             await draftStore.writeAction(pendingAction);
 
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             // uploadingActionId is private, but we need to set it to
             // mock the uploading action
             (draftQueue as any).uploadingActionId = firstId;
@@ -1865,12 +1699,7 @@ describe('DurableDraftQueue', () => {
             await draftStore.writeAction(pendingAction);
             await draftStore.writeAction(nonPendingAction);
 
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(2);
             let result = draftQueue.replaceAction(actions[0].id, actions[1].id);
@@ -1911,12 +1740,7 @@ describe('DurableDraftQueue', () => {
             await draftStore.writeAction(inProgressAction);
             await draftStore.writeAction(pendingAction);
 
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             let actions = await draftQueue.getQueueActions();
             expect(actions.length).toBe(2);
             const actionToReplace = actions[0] as DraftAction<unknown, ResourceRequest>;
@@ -1939,12 +1763,7 @@ describe('DurableDraftQueue', () => {
             ]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             let processNextSpy = jest.fn(() => {
                 return Promise.resolve(ProcessActionResult.ACTION_SUCCEEDED);
             });
@@ -1984,12 +1803,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             let stateCallCount = 0;
             draftQueue.getQueueState = jest.fn(() => {
                 // Mock the queue being started for just one call
@@ -2045,12 +1859,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([success]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             let secondReplace: Promise<DraftAction<unknown, unknown>>;
             let evictSpy = jest.fn(() => {
                 secondReplace = draftQueue.replaceAction('foo', 'bar');
@@ -2086,12 +1895,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([success]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
 
             const errorAction: ErrorDraftAction<unknown, unknown> = {
                 id: '123456',
@@ -2135,12 +1939,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftId = 'fooId';
             let action = (await draftQueue.enqueue({
                 data: DEFAULT_PATCH_REQUEST,
@@ -2172,12 +1971,7 @@ describe('DurableDraftQueue', () => {
             });
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftId = 'fooId';
             let action = (await draftQueue.enqueue({
                 data: request,
@@ -2201,12 +1995,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftId = 'fooId';
             let action = await draftQueue.enqueue({
                 data: DEFAULT_PATCH_REQUEST,
@@ -2227,12 +2016,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftId = 'fooId';
             const newMetadata = { foo: 'bar', anotherItem: 'anotherValue' };
             const result = draftQueue.setMetadata(draftId, newMetadata);
@@ -2243,12 +2027,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftId = 'fooId';
             const newMetadata = { foo: 'bar', anotherItem: 'anotherValue' };
             let updatingCalled = false;
@@ -2287,12 +2066,7 @@ describe('DurableDraftQueue', () => {
             const network = buildMockNetworkAdapter([]);
             const durableStore = new MockDurableStore();
             const draftStore = new DurableDraftStore(durableStore);
-            const draftQueue = new DurableDraftQueue(
-                draftStore,
-                network,
-                mockQueuePostHandler,
-                mockDraftIdHandler
-            );
+            const draftQueue = new DurableDraftQueue(draftStore, network, mockQueuePostHandler);
             const draftId = 'fooId';
             const newMetadata = {
                 foo: 'bar',

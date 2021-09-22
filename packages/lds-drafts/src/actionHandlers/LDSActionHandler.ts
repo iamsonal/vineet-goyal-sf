@@ -1,30 +1,18 @@
 import { FetchResponse, NetworkAdapter, ResourceRequest } from '@luvio/engine';
-import {
-    DurableStoreEntries,
-    DurableStoreOperation,
-    DurableStoreOperationType,
-} from '@luvio/environments';
+import { RecordRepresentation } from 'packages/lds-adapters-uiapi/dist/types/src/main';
 import {
     LDSAction,
     CompletedDraftAction,
     DraftAction,
     DraftActionStatus,
-    DraftIdMappingEntry,
     ErrorDraftAction,
     PendingDraftAction,
     ProcessActionResult,
     QueueOperation,
     QueueOperationType,
+    DraftIdMappingEntry,
 } from '../DraftQueue';
-import {
-    CreateDraftIdMappingHandler,
-    DRAFT_ID_MAPPINGS_SEGMENT,
-    DRAFT_SEGMENT,
-    generateUniqueDraftActionId,
-    QueuePostHandler,
-} from '../DurableDraftQueue';
-import { ObjectKeys } from '../utils/language';
-import { buildDraftDurableStoreKey } from '../utils/records';
+import { generateUniqueDraftActionId, QueuePostHandler } from '../DurableDraftQueue';
 import { ActionHandler } from './ActionHandler';
 
 export const LDS_ACTION_HANDLER_ID = 'LDS_ACTION_HANDLER';
@@ -45,17 +33,9 @@ export function createLDSAction(
     };
 }
 
-// retain draft id mappings for 30 days
-const MAPPING_TTL = 30 * 24 * 60 * 60 * 1000;
-
-function createDraftMappingEntryKey(draftKey: string, canonicalKey: string) {
-    return `DraftIdMapping::${draftKey}::${canonicalKey}`;
-}
-
 export function ldsActionHandler(
     networkAdapter: NetworkAdapter,
     updateQueueOnPostCompletion: QueuePostHandler,
-    createDraftIdMapping: CreateDraftIdMappingHandler,
     actionCompleted: (action: CompletedDraftAction<unknown, ResourceRequest>) => Promise<void>,
     actionErrored: (action: DraftAction<unknown, ResourceRequest>, retry: boolean) => Promise<void>
 ): ActionHandler<ResourceRequest> {
@@ -124,48 +104,39 @@ export function ldsActionHandler(
      * @param action the action that just completed
      * @param queue the current queue DraftActions
      */
-    const storeOperationsForUploadedDraft = <Response>(
+    const queueOperationsForCompletedDraft = <Response>(
         queue: DraftAction<unknown, unknown>[],
         action: CompletedDraftAction<Response, ResourceRequest>
-    ): DurableStoreOperation<DraftIdMappingEntry | DraftAction<Response, ResourceRequest>>[] => {
-        const { tag, id } = action;
-        const storeOperations: DurableStoreOperation<
-            DraftIdMappingEntry | DraftAction<Response, ResourceRequest>
-        >[] = [];
+    ): QueueOperation[] => {
+        const queueOperations: QueueOperation[] = [];
 
         if (action.data.method === 'post') {
-            const queueOperations = updateQueueOnPostCompletion(action, queue);
-            storeOperations.push(
-                ...mapQueueOperationsToDurableStoreOperations<Response>(queueOperations)
-            );
-
-            const mapping = createDraftIdMapping(action);
-            const { draftKey, canonicalKey } = mapping;
-            const expiration = Date.now() + MAPPING_TTL;
-            const entryKey = createDraftMappingEntryKey(draftKey, canonicalKey);
-            const mappingEntries = {
-                [entryKey]: {
-                    data: mapping,
-                    expiration: { fresh: expiration, stale: expiration },
-                },
-            };
-
-            storeOperations.push({
-                entries: mappingEntries,
-                type: DurableStoreOperationType.SetEntries,
-                segment: DRAFT_ID_MAPPINGS_SEGMENT,
+            updateQueueOnPostCompletion(action, queue).forEach((operation) => {
+                queueOperations.push(operation);
             });
         }
 
-        //delete the action from the store
-        const durableEntryKey = buildDraftDurableStoreKey(tag, id);
-        storeOperations.push({
-            ids: [durableEntryKey],
-            type: DurableStoreOperationType.EvictEntries,
-            segment: DRAFT_SEGMENT,
+        // delete completed action
+        queueOperations.push({
+            type: QueueOperationType.Delete,
+            id: action.id,
         });
 
-        return storeOperations;
+        return queueOperations;
+    };
+
+    const getRedirectMapping = (
+        action: CompletedDraftAction<unknown, unknown>
+    ): DraftIdMappingEntry | undefined => {
+        const ldsAction = action as CompletedDraftAction<RecordRepresentation, ResourceRequest>;
+
+        if (ldsAction.data.method === 'post') {
+            const { response } = ldsAction;
+            const draftId = action.targetId;
+            const canonicalId = response.body.id;
+            return { draftId, canonicalId };
+        }
+        return undefined;
     };
 
     const replaceAction = <Response>(
@@ -224,54 +195,10 @@ export function ldsActionHandler(
     return {
         handle,
         buildPendingAction,
-        storeOperationsForUploadedDraft,
+        queueOperationsForCompletedDraft,
+        getRedirectMapping,
         replaceAction,
     };
-}
-
-/**
- * Maps an array of QueueOperations to DurableStoreOperations
- * @param queueOperations list of queue operations to map
- */
-function mapQueueOperationsToDurableStoreOperations<Response>(
-    queueOperations: QueueOperation[]
-): DurableStoreOperation<DraftAction<Response, ResourceRequest>>[] {
-    const setEntries: DurableStoreEntries<DraftAction<Response, ResourceRequest>> = {};
-    const evictEntries: string[] = [];
-    for (let i = 0, len = queueOperations.length; i < len; i++) {
-        const operation = queueOperations[i];
-        if (operation.type === QueueOperationType.Delete) {
-            evictEntries.push(operation.key);
-        } else {
-            let key = '';
-            if (operation.type === QueueOperationType.Add) {
-                key = buildDraftDurableStoreKey(operation.action.tag, operation.action.id);
-            } else {
-                key = operation.key;
-            }
-            setEntries[key] = { data: operation.action as DraftAction<Response, ResourceRequest> };
-        }
-    }
-
-    const storeOperations: DurableStoreOperation<DraftAction<Response, ResourceRequest>>[] = [];
-
-    if (ObjectKeys(setEntries).length > 0) {
-        storeOperations.push({
-            entries: setEntries,
-            type: DurableStoreOperationType.SetEntries,
-            segment: DRAFT_SEGMENT,
-        });
-    }
-
-    if (evictEntries.length > 0) {
-        storeOperations.push({
-            ids: evictEntries,
-            type: DurableStoreOperationType.EvictEntries,
-            segment: DRAFT_SEGMENT,
-        });
-    }
-
-    return storeOperations;
 }
 
 function isErrorFetchResponse<T>(error: unknown): error is FetchResponse<T> {

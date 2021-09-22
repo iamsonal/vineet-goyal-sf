@@ -1,4 +1,3 @@
-import { DurableStoreOperation } from '@luvio/environments';
 import {
     Action,
     CompletedDraftAction,
@@ -6,6 +5,7 @@ import {
     DraftIdMappingEntry,
     PendingDraftAction,
     ProcessActionResult,
+    QueueOperation,
 } from '../DraftQueue';
 
 export interface ReplacingActions<Response, Data> {
@@ -36,14 +36,22 @@ export interface ActionHandler<Data> {
     ): PendingDraftAction<Response, Data>;
 
     /**
-     * Operation to happen after the action has been completed
+     * Queue Operation to happen after the action has been completed
      * @param queue
      * @param action
      */
-    storeOperationsForUploadedDraft<Response>(
+    queueOperationsForCompletedDraft<Response>(
         queue: DraftAction<unknown, unknown>[],
         action: CompletedDraftAction<Response, Data>
-    ): DurableStoreOperation<DraftIdMappingEntry | DraftAction<Response, Data>>[];
+    ): QueueOperation[];
+
+    /**
+     * Returns a key redirect if necessary
+     * @param action
+     */
+    getRedirectMapping(
+        action: CompletedDraftAction<unknown, unknown>
+    ): DraftIdMappingEntry | undefined;
 
     /**
      * Replace an item in the queue with another to take its place (if supported by handler)

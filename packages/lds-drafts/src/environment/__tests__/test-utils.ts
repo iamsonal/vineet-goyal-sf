@@ -76,7 +76,7 @@ export async function setupDraftEnvironment(
     const adapters = {
         getRecord: jest.fn().mockImplementation(realGetRecord),
     };
-    const registerDraftKeyMapping = jest.fn();
+    const registerDraftIdMapping = jest.fn();
     const defaultApiNameForPrefix = (prefix: string) => {
         return Promise.resolve(prefix === '001' ? 'Account' : undefined);
     };
@@ -104,7 +104,7 @@ export async function setupDraftEnvironment(
         prefixForApiName: setupOptions.prefixForApiName || defaultPrefixForApiName,
         apiNameForPrefix: setupOptions.apiNameForPrefix || defaultApiNameForPrefix,
         userId: 'testUserId',
-        registerDraftKeyMapping: registerDraftKeyMapping,
+        registerDraftIdMapping,
         getObjectInfo: getObjectInfo,
     });
 
@@ -120,7 +120,7 @@ export async function setupDraftEnvironment(
         baseEnvironment,
         draftEnvironment,
         adapters,
-        registerDraftKeyMapping,
+        registerDraftIdMapping,
     };
 }
 

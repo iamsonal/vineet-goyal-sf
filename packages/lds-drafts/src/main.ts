@@ -15,7 +15,6 @@ export {
 } from './DraftQueue';
 export {
     updateQueueOnPost,
-    createIdDraftMapping,
     durableMerge,
     DurableRecordEntry,
     isEntryDurableRecordRepresentation,
@@ -23,7 +22,8 @@ export {
     DraftResolutionInput,
 } from './utils/records';
 export { DurableDraftQueue, DRAFT_SEGMENT } from './DurableDraftQueue';
-export { DraftStore, DurableDraftStore } from './DraftStore';
+export { DurableDraftStore } from './DurableDraftStore';
+export { DraftStore } from './DraftStore';
 export {
     DraftManager,
     DraftManagerState,

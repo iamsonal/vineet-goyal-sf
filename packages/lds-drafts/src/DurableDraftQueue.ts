@@ -13,7 +13,6 @@ import {
     DraftQueueEventType,
     UploadingDraftAction,
     QueueOperation,
-    DraftIdMappingEntry,
     DraftActionMetadata,
     Action,
     isDraftError,
@@ -72,13 +71,6 @@ export type QueuePostHandler = (
     queue: DraftAction<unknown, unknown>[]
 ) => QueueOperation[];
 
-/**
- * Extracts a mapping of a draft key to a canonical key given a completed draft action
- */
-export type CreateDraftIdMappingHandler = (
-    completedPost: CompletedDraftAction<unknown, unknown>
-) => DraftIdMappingEntry;
-
 export class DurableDraftQueue implements DraftQueue {
     private retryIntervalMilliseconds: number = 0;
     private minimumRetryInterval: number = 250;
@@ -96,8 +88,7 @@ export class DurableDraftQueue implements DraftQueue {
     constructor(
         draftStore: DraftStore,
         network: NetworkAdapter,
-        updateQueueOnPostCompletion: QueuePostHandler,
-        createDraftIdMapping: CreateDraftIdMappingHandler
+        updateQueueOnPostCompletion: QueuePostHandler
     ) {
         this.draftStore = draftStore;
 
@@ -106,7 +97,6 @@ export class DurableDraftQueue implements DraftQueue {
             ldsActionHandler(
                 network,
                 updateQueueOnPostCompletion,
-                createDraftIdMapping,
                 this.actionCompleted.bind(this),
                 this.actionFailed.bind(this)
             )
@@ -275,10 +265,12 @@ export class DurableDraftQueue implements DraftQueue {
             action,
         })
             .then(() => this.getQueueActions())
-            .then((queue) =>
-                this.handlers[action.handler].storeOperationsForUploadedDraft(queue, action)
-            )
-            .then((operations) => this.draftStore.batchOperations(operations))
+            .then((queue) => {
+                const handler = this.handlers[action.handler];
+                const queueOperations = handler.queueOperationsForCompletedDraft(queue, action);
+                const mapping = handler.getRedirectMapping(action);
+                return this.draftStore.completeAction(queueOperations, mapping);
+            })
             .then(() => {
                 this.retryIntervalMilliseconds = 0;
                 this.uploadingActionId = undefined;

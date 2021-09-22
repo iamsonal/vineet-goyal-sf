@@ -161,13 +161,11 @@ describe('CustomActionHandler', () => {
     describe('storeOperationsForUploadedDraft', () => {
         it('returns operation', async () => {
             const handler = setupHandler();
-            const subject = handler.storeOperationsForUploadedDraft<unknown>([], {
+            const subject = handler.queueOperationsForCompletedDraft<unknown>([], {
                 ...DEFAULT_CUSTOM_ACTION,
                 status: DraftActionStatus.Completed,
             } as CompletedDraftAction<unknown, CustomActionData>);
-            expect(subject).toStrictEqual([
-                { ids: ['1234__DraftAction__1234'], segment: 'DRAFT', type: 'evictEntries' },
-            ]);
+            expect(subject).toStrictEqual([{ id: DEFAULT_CUSTOM_ACTION.id, type: 'delete' }]);
         });
     });
     describe('replaceAction', () => {

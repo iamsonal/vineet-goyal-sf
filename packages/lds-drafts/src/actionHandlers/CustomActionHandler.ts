@@ -1,4 +1,3 @@
-import { DurableStoreOperation, DurableStoreOperationType } from '@luvio/environments';
 import { createOkResponse } from '../DraftFetchResponse';
 import {
     CompletedDraftAction,
@@ -8,10 +7,10 @@ import {
     ProcessActionResult,
     Action,
     PendingDraftAction,
-    DraftIdMappingEntry,
+    QueueOperation,
+    QueueOperationType,
 } from '../DraftQueue';
-import { DRAFT_SEGMENT, generateUniqueDraftActionId } from '../DurableDraftQueue';
-import { buildDraftDurableStoreKey } from '../utils/records';
+import { generateUniqueDraftActionId } from '../DurableDraftQueue';
 import { ActionHandler } from './ActionHandler';
 
 export enum CustomActionResultType {
@@ -118,24 +117,19 @@ export function customActionHandler(
         } as PendingDraftAction<Response, CustomActionData>;
     };
 
-    const storeOperationsForUploadedDraft = <Response>(
+    const queueOperationsForCompletedDraft = <Response>(
         _queue: DraftAction<unknown, unknown>[],
         action: CompletedDraftAction<Response, CustomActionData>
-    ): DurableStoreOperation<DraftIdMappingEntry | DraftAction<Response, CustomActionData>>[] => {
-        const { tag, id } = action;
-        const storeOperations: DurableStoreOperation<
-            DraftIdMappingEntry | DraftAction<Response, CustomActionData>
-        >[] = [];
+    ): QueueOperation[] => {
+        const { id } = action;
+        const queueOperations: QueueOperation[] = [];
 
-        //delete the action from the store
-        const durableEntryKey = buildDraftDurableStoreKey(tag, id);
-        storeOperations.push({
-            ids: [durableEntryKey],
-            type: DurableStoreOperationType.EvictEntries,
-            segment: DRAFT_SEGMENT,
+        queueOperations.push({
+            type: QueueOperationType.Delete,
+            id: id,
         });
 
-        return storeOperations;
+        return queueOperations;
     };
 
     const replaceAction = <Response>(
@@ -150,10 +144,15 @@ export function customActionHandler(
         );
     };
 
+    const getRedirectMapping = (_action: CompletedDraftAction<unknown, unknown>) => {
+        return undefined;
+    };
+
     return {
         handle,
         buildPendingAction,
-        storeOperationsForUploadedDraft,
+        queueOperationsForCompletedDraft,
         replaceAction,
+        getRedirectMapping,
     };
 }

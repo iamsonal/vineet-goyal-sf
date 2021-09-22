@@ -29,6 +29,7 @@ import { RecordDenormalizingDurableStore } from '../durableStore/makeRecordDenor
 import { DRAFT_ID_MAPPINGS_SEGMENT } from '../DurableDraftQueue';
 import { ObjectKeys } from '../utils/language';
 import { isLDSDraftAction } from '../actionHandlers/LDSActionHandler';
+import { getRecordKeyForId } from '../utils/records';
 
 type AllDraftEnvironmentOptions = DraftEnvironmentOptions & UpdateRecordDraftEnvironmentOptions;
 
@@ -43,7 +44,7 @@ export interface DraftEnvironmentOptions {
     apiNameForPrefix: (prefix: string) => Promise<string>;
     prefixForApiName: (apiName: string) => Promise<string | null>;
     userId: string;
-    registerDraftKeyMapping: (draftKey: string, canonicalKey: string) => void;
+    registerDraftIdMapping: (draftId: string, canonicalId: string) => void;
     getObjectInfo: Adapter<GetObjectInfoConfig, ObjectInfoRepresentation>;
 }
 
@@ -51,7 +52,7 @@ export function makeEnvironmentDraftAware(
     env: DurableEnvironment,
     options: AllDraftEnvironmentOptions
 ): Environment {
-    const { draftQueue, ingestFunc, durableStore, registerDraftKeyMapping } = options;
+    const { draftQueue, ingestFunc, durableStore, registerDraftIdMapping } = options;
 
     function onDraftActionCompleting(event: DraftQueueCompleteEvent) {
         const { action } = event;
@@ -111,11 +112,13 @@ export function makeEnvironmentDraftAware(
                     for (let i = 0, len = keys.length; i < len; i++) {
                         const key = keys[i];
                         const entry = mappingEntries[key] as DurableStoreEntry<DraftIdMappingEntry>;
-                        const { draftKey, canonicalKey } = entry.data;
-                        registerDraftKeyMapping(draftKey, canonicalKey);
+                        const { draftId, canonicalId } = entry.data;
+                        registerDraftIdMapping(draftId, canonicalId);
+
+                        const draftKey = getRecordKeyForId(draftId);
 
                         // the mapping is setup, we can now delete the original draft
-                        durableStore.evictEntries([draftKey], DefaultDurableSegment);
+                        return durableStore.evictEntries([draftKey], DefaultDurableSegment);
                     }
                 });
         }

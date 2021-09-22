@@ -4,7 +4,7 @@ import { HttpStatusCode } from '@luvio/engine';
 import { DraftQueueEventType } from '../../DraftQueue';
 import { DraftActionStatus } from '../../main';
 import { LDS_ACTION_HANDLER_ID } from '../../actionHandlers/LDSActionHandler';
-import { flushPromises } from '../../__tests__/test-utils';
+import { DRAFT_RECORD_ID, flushPromises, RECORD_ID } from '../../__tests__/test-utils';
 import {
     MockDraftQueue,
     setupDraftEnvironment,
@@ -74,12 +74,12 @@ describe('makeEnvironmentDraftAware', () => {
 
     describe('registerOnChangeListener', () => {
         it('redirect entries added to the durable store invokes the injected mapping function', async () => {
-            const { durableStore, registerDraftKeyMapping } = await setupDraftEnvironment();
+            const { durableStore, registerDraftIdMapping } = await setupDraftEnvironment();
             durableStore.getEntries = jest.fn().mockResolvedValue({
                 [STORE_KEY_RECORD]: {
                     data: {
-                        draftKey: STORE_KEY_DRAFT_RECORD,
-                        canonicalKey: STORE_KEY_RECORD,
+                        draftId: DRAFT_RECORD_ID,
+                        canonicalId: RECORD_ID,
                     },
                 },
             });
@@ -94,22 +94,19 @@ describe('makeEnvironmentDraftAware', () => {
                 ]);
             }
             await flushPromises();
-            expect(registerDraftKeyMapping).toBeCalledTimes(1);
-            expect(registerDraftKeyMapping.mock.calls[0]).toEqual([
-                STORE_KEY_DRAFT_RECORD,
-                STORE_KEY_RECORD,
-            ]);
+            expect(registerDraftIdMapping).toBeCalledTimes(1);
+            expect(registerDraftIdMapping).toBeCalledWith(DRAFT_RECORD_ID, RECORD_ID);
         });
 
         it('draft record removed after mapping is configured', async () => {
-            const { durableStore, registerDraftKeyMapping } = await setupDraftEnvironment();
+            const { durableStore, registerDraftIdMapping } = await setupDraftEnvironment();
             durableStore.evictEntries = jest.fn();
 
             durableStore.getEntries = jest.fn().mockResolvedValue({
                 [STORE_KEY_RECORD]: {
                     data: {
-                        draftKey: STORE_KEY_DRAFT_RECORD,
-                        canonicalKey: STORE_KEY_RECORD,
+                        draftId: DRAFT_RECORD_ID,
+                        canonicalId: RECORD_ID,
                     },
                 },
             });
@@ -124,7 +121,7 @@ describe('makeEnvironmentDraftAware', () => {
                 ]);
             }
             await flushPromises();
-            expect(registerDraftKeyMapping).toBeCalledTimes(1);
+            expect(registerDraftIdMapping).toBeCalledTimes(1);
             expect(durableStore.evictEntries).toBeCalledTimes(1);
             expect(durableStore.evictEntries).toBeCalledWith(
                 [STORE_KEY_DRAFT_RECORD],

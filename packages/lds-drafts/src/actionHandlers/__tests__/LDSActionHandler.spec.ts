@@ -60,13 +60,7 @@ describe('LDSActionHandler', () => {
                 retry: boolean
             ) => Promise<void> = jest.fn()
         ) {
-            return ldsActionHandler(
-                buildMockNetworkAdapter(payload),
-                jest.fn(),
-                jest.fn(),
-                success,
-                failure
-            );
+            return ldsActionHandler(buildMockNetworkAdapter(payload), jest.fn(), success, failure);
         }
         it('handles success and success function called', async () => {
             const draftAction: PendingDraftAction<unknown, ResourceRequest> = {
@@ -167,7 +161,6 @@ describe('LDSActionHandler', () => {
         beforeEach(() => {
             handler = ldsActionHandler(
                 buildMockNetworkAdapter([]),
-                jest.fn(),
                 jest.fn(),
                 jest.fn(),
                 jest.fn()
@@ -290,54 +283,12 @@ describe('LDSActionHandler', () => {
                 id: 'buz',
                 tag: 'baz',
             } as any,
-            key: 'baz__DraftAction__buz',
+            id: 'baz__DraftAction__buz',
         };
 
         const deleteQueueOperation: QueueOperation = {
             type: QueueOperationType.Delete,
-            key: 'one__DraftAction__1',
-        };
-
-        const evictOperation = {
-            ids: ['myTag__DraftAction__100'],
-            segment: 'DRAFT',
-            type: 'evictEntries',
-        };
-
-        const evictOperation2 = {
-            ids: ['one__DraftAction__1'],
-            segment: 'DRAFT',
-            type: 'evictEntries',
-        };
-
-        const setOperation = {
-            entries: {
-                bar__DraftAction__foo: {
-                    data: { id: 'foo', tag: 'bar' },
-                },
-                baz__DraftAction__buz: {
-                    data: { id: 'buz', tag: 'baz' },
-                },
-            },
-            segment: 'DRAFT',
-            type: 'setEntries',
-        };
-
-        const draftIdMappingOperation = {
-            entries: {
-                ['DraftIdMapping::draft_1::canonical_1']: {
-                    data: {
-                        canonicalKey: 'canonical_1',
-                        draftKey: 'draft_1',
-                    },
-                    expiration: {
-                        fresh: expect.any(Number),
-                        stale: expect.any(Number),
-                    },
-                },
-            },
-            segment: 'DRAFT_ID_MAPPINGS',
-            type: 'setEntries',
+            id: 'one__DraftAction__1',
         };
 
         const createAction = { id: '100', tag: 'myTag', data: { method: 'post' } };
@@ -349,49 +300,66 @@ describe('LDSActionHandler', () => {
                 networkAdapter,
                 jest.fn().mockReturnValue(operations),
                 jest.fn().mockReturnValue({ canonicalKey: 'canonical_1', draftKey: 'draft_1' }),
-                jest.fn(),
                 jest.fn()
             );
         }
 
-        it('produces mapping IDs and evict for create action', async () => {
-            const storeOperations = setupHandler().storeOperationsForUploadedDraft(
+        it('produces delete operation for create action', async () => {
+            const storeOperations = setupHandler().queueOperationsForCompletedDraft(
                 [],
                 createAction as any
             );
 
-            expect(storeOperations).toEqual([draftIdMappingOperation, evictOperation]);
+            expect(storeOperations).toEqual([
+                {
+                    type: 'delete',
+                    id: createAction.id,
+                },
+            ]);
         });
 
-        it('does not produce mapping IDs for update action', async () => {
-            const storeOperations = setupHandler().storeOperationsForUploadedDraft(
+        it('produces delete for update action', async () => {
+            const storeOperations = setupHandler().queueOperationsForCompletedDraft(
                 [],
                 updateAction as any
             );
 
-            expect(storeOperations).toEqual([evictOperation]);
+            expect(storeOperations).toEqual([
+                {
+                    type: 'delete',
+                    id: updateAction.id,
+                },
+            ]);
         });
 
         it('does not include QueueOperations for an update', async () => {
             const storeOperations = setupHandler([
                 addQueueOperation,
-            ]).storeOperationsForUploadedDraft([], updateAction as any);
+            ]).queueOperationsForCompletedDraft([], updateAction as any);
 
-            expect(storeOperations).toEqual([evictOperation]);
+            expect(storeOperations).toEqual([
+                {
+                    type: 'delete',
+                    id: updateAction.id,
+                },
+            ]);
         });
 
         it('does include QueueOperations for a create', async () => {
-            const storeOperations = setupHandler([
+            const queueOperations = setupHandler([
                 addQueueOperation,
                 updateQueueOperation,
                 deleteQueueOperation,
-            ]).storeOperationsForUploadedDraft([], createAction as any);
+            ]).queueOperationsForCompletedDraft([], createAction as any);
 
-            expect(storeOperations).toEqual([
-                setOperation,
-                evictOperation2,
-                draftIdMappingOperation,
-                evictOperation,
+            expect(queueOperations).toEqual([
+                addQueueOperation,
+                updateQueueOperation,
+                deleteQueueOperation,
+                {
+                    type: 'delete',
+                    id: createAction.id,
+                },
             ]);
         });
     });
@@ -402,7 +370,6 @@ describe('LDSActionHandler', () => {
         beforeEach(() => {
             handler = ldsActionHandler(
                 buildMockNetworkAdapter([]),
-                jest.fn(),
                 jest.fn(),
                 jest.fn(),
                 jest.fn()

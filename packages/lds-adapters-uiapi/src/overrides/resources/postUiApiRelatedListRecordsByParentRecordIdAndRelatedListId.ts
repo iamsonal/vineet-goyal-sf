@@ -6,7 +6,7 @@ import {
     keyBuilder,
     ingestError,
     createResourceRequest,
-} from './../../generated/resources/getUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
+} from '../../generated/resources/postUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
 import {
     Luvio,
     SnapshotRefresh,
@@ -44,7 +44,7 @@ export const select: typeof generatedSelect = (
     _luvio: Luvio,
     params: ResourceRequestConfig
 ): Fragment => {
-    const { queryParams, urlParams } = params;
+    const { body, urlParams } = params;
     const { relatedListId, parentRecordId } = urlParams;
     let {
         fields = [],
@@ -52,7 +52,7 @@ export const select: typeof generatedSelect = (
         sortBy = [],
         pageToken,
         pageSize = DEFAULT_PAGE_SIZE,
-    } = queryParams;
+    } = body;
 
     return {
         kind: 'Fragment',
@@ -185,16 +185,16 @@ export const ingestSuccess: typeof generatedIngestSuccess = (
                     ', '
                 )} missing immediately after get-related-list-records request.
                 Requested fields: ${
-                    resourceRequestConfig.queryParams.fields === null ||
-                    resourceRequestConfig.queryParams.fields === undefined
+                    resourceRequestConfig.body.fields === null ||
+                    resourceRequestConfig.body.fields === undefined
                         ? undefined
-                        : resourceRequestConfig.queryParams.fields.join()
+                        : resourceRequestConfig.body.fields.join()
                 }
                 Requested optionalFields: ${
-                    resourceRequestConfig.queryParams.optionalFields === null ||
-                    resourceRequestConfig.queryParams.optionalFields === undefined
+                    resourceRequestConfig.body.optionalFields === null ||
+                    resourceRequestConfig.body.optionalFields === undefined
                         ? undefined
-                        : resourceRequestConfig.queryParams.optionalFields.join()
+                        : resourceRequestConfig.body.optionalFields.join()
                 }
                 ${returnedFieldsDebug}`
             );

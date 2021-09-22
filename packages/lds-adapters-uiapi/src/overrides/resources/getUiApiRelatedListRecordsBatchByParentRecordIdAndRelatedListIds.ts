@@ -19,7 +19,7 @@ import {
     select as singleWireSelect,
     ingestSuccess as sinlgeWireIngestSuccess,
     ingestError as singleWireIngestError,
-} from './getUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
+} from './postUiApiRelatedListRecordsByParentRecordIdAndRelatedListId';
 
 // Generated Types
 import { RelatedListRecordCollectionBatchRepresentation } from '../../generated/types/RelatedListRecordCollectionBatchRepresentation';
@@ -71,7 +71,7 @@ export const createChildResourceParams: typeof generatedCreateChildResourceParam
                 parentRecordId: resourceParams.urlParams.parentRecordId,
                 relatedListId: relatedListId,
             },
-            queryParams: {
+            body: {
                 fields: fields,
                 optionalFields: optionalFields,
                 sortBy: sortBy,

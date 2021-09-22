@@ -840,11 +840,12 @@ types:
         (luvio.adapter):
           name: updateRelatedListInfo
   '/related-list-records/{parentRecordId}/{relatedListId}':
-    get:
+    post:
+      (luvio.method): get
       (luvio.adapter):
         name: getRelatedListRecords
       (luvio.key):
-        sortBy: queryParams.sortBy || []
+        sortBy: body.sortBy || []
         parentRecordId: urlParams.parentRecordId
         relatedListId: urlParams.relatedListId
   '/related-list-records/batch/{parentRecordId}/{relatedListIds}':

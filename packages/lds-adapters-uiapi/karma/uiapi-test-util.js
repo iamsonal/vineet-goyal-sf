@@ -452,6 +452,23 @@ function mockGetRelatedListRecordsNetwork(config, mockData) {
     }
 }
 
+function mockGetRelatedListRecordsNetworkPost(config, mockData) {
+    const { uriParams, body } = config;
+    const { parentRecordId, relatedListId } = uriParams;
+
+    const paramMatch = sinon.match({
+        basePath: `${URL_BASE}/related-list-records/${parentRecordId}/${relatedListId}`,
+        method: 'post',
+        body,
+    });
+
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
 function mockGetRelatedListRecordsBatchNetwork(config, mockData) {
     const { parentRecordId, relatedListIds } = config;
     const queryParams = { ...config };
@@ -984,6 +1001,7 @@ export {
     mockGetRelatedListsActionsNetwork,
     mockGetRelatedListRecordNetwork,
     mockGetRelatedListRecordsNetwork,
+    mockGetRelatedListRecordsNetworkPost,
     mockGetRelatedListRecordsBatchNetwork,
     mockUpdateRecordNetwork,
     mockUpdateLayoutUserStateNetwork,

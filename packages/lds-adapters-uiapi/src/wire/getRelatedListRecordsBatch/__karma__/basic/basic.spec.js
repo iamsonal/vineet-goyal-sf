@@ -7,7 +7,7 @@ import {
     expireRecords,
     expireRelatedListRecordCollection,
     mockGetRelatedListRecordsBatchNetwork,
-    mockGetRelatedListRecordsNetwork,
+    mockGetRelatedListRecordsNetworkPost,
     convertRelatedListsBatchParamsToResourceParams,
     extractRelatedListsBatchParamsFromMockData,
 } from '../../../../../karma/uiapi-test-util';
@@ -23,13 +23,17 @@ async function createSingleComponentsFromBatchData(mockData) {
     // Setup all our results to be retrieved from the single version of the wire.
     for (const relatedListRecordCollection of individualResults) {
         const singleResourceConfig = {
-            parentRecordId: relatedListRecordCollection.listReference.inContextOfRecordId,
-            relatedListId: relatedListRecordCollection.listReference.relatedListId,
-            fields: relatedListRecordCollection.fields,
-            optionalFields: relatedListRecordCollection.optionalFields,
-            pageSize: relatedListRecordCollection.pageSize,
-            pageToken: '0',
-            sortBy: relatedListRecordCollection.sortBy,
+            uriParams: {
+                parentRecordId: relatedListRecordCollection.listReference.inContextOfRecordId,
+                relatedListId: relatedListRecordCollection.listReference.relatedListId,
+            },
+            body: {
+                fields: relatedListRecordCollection.fields,
+                optionalFields: relatedListRecordCollection.optionalFields,
+                pageSize: relatedListRecordCollection.pageSize,
+                pageToken: '0',
+                sortBy: relatedListRecordCollection.sortBy,
+            },
         };
         const props = {
             parentRecordId: relatedListRecordCollection.listReference.inContextOfRecordId,
@@ -40,7 +44,7 @@ async function createSingleComponentsFromBatchData(mockData) {
             pageToken: '0',
             sortBy: relatedListRecordCollection.sortBy,
         };
-        mockGetRelatedListRecordsNetwork(singleResourceConfig, relatedListRecordCollection);
+        mockGetRelatedListRecordsNetworkPost(singleResourceConfig, relatedListRecordCollection);
         await setupElement(props, RelatedListRecordsSingle);
     }
 }

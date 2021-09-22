@@ -2920,6 +2920,43 @@ types:
       listReference:
         description: An object representing the identity of the list.
         type: RelatedListReferenceRepresentation
+  RelatedListRecordsInputRepresentation:
+    description: Query (using POST) for records in a related list.
+    type: object
+    # TODO - W-9732597:There is not support for marking these type of properties as optional in the UIAPI annotations
+    properties:
+      fields:
+        description: Additional fields queried for the records returned.  If the field
+          is not available to the user, an error occurs.
+        type: array
+        required: false #TODO: handrolled
+        items:
+          type: string
+      optionalFields:
+        description: Additional fields queried for the records returned.  If the field
+          is not available to the user, no error occurs and the field isn’t included
+          in the records.
+        type: array
+        required: false #TODO: handrolled
+        items:
+          type: string
+      pageSize:
+        description: The number of list records viewed at one time.  The default value
+          is 50. Value can be 1–2000.
+        type: integer
+        required: false #TODO: handrolled
+      pageToken:
+        description: A token from a previous query that indicates the record where
+          this query should begin.
+        type: string
+        required: false #TODO: handrolled
+      sortBy:
+        description: The API name of the field the list view is sorted by.  If the
+          name is preceded with -, the sort order is descending.
+        type: array
+        items:
+          type: string
+        required: false #TODO: handrolled
   RelatedListReferenceRepresentation:
     description: RelatedListReferenceRepresentation
     type: object
@@ -5839,39 +5876,18 @@ types:
             type: string
             (oas-collectionFormat): csv
     /{parentRecordId}/{relatedListId}:
-      get:
-        description: Returns record data to populate a related list.
+      post:
+        description: This post method returns record data to populate a related list.
         responses:
           '200':
             description: Success
             body:
               application/json:
                 type: RelatedListRecordCollectionRepresentation
-        queryParameters:
-          fields:
-            type: array
-            required: false
-            items:
-              type: string
-              (oas-collectionFormat): csv
-          optionalFields:
-            type: array
-            required: false
-            items:
-              type: string
-              (oas-collectionFormat): csv
-          pageSize:
-            type: integer
-            required: false
-          pageToken:
-            type: string
-            required: false
-          sortBy:
-            type: array
-            required: false
-            items:
-              type: string
-              (oas-collectionFormat): csv
+        body:
+          application/json:
+            type: RelatedListRecordsInputRepresentation
+            (oas-body-name): listRecordsQuery
       uriParameters:
         parentRecordId:
           type: string

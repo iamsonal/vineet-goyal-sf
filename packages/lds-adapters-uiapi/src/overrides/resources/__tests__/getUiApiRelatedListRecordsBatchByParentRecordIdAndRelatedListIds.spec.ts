@@ -33,14 +33,14 @@ describe('createChildResourceParams', () => {
                     parentRecordId: 'aParentRecordId',
                     relatedListId: 'relatedList1',
                 },
-                queryParams: {},
+                body: {},
             },
             {
                 urlParams: {
                     parentRecordId: 'aParentRecordId',
                     relatedListId: 'relatedList2',
                 },
-                queryParams: {},
+                body: {},
             },
         ]);
     });
@@ -52,7 +52,7 @@ describe('createChildResourceParams', () => {
                     parentRecordId: 'aParentRecordId',
                     relatedListId: 'relatedList1__r',
                 },
-                queryParams: {
+                body: {
                     fields: ['Opportunity.Name', 'Opportunity.Id'],
                     optionalFields: ['Opportunity.AccountName'],
                     pageSize: 10,
@@ -64,7 +64,7 @@ describe('createChildResourceParams', () => {
                     parentRecordId: 'aParentRecordId',
                     relatedListId: 'relatedList2',
                 },
-                queryParams: {
+                body: {
                     fields: ['Account.Name', 'Account.Revenue'],
                     optionalFields: ['Account.Id'],
                     pageSize: 10,
@@ -76,7 +76,7 @@ describe('createChildResourceParams', () => {
                     parentRecordId: 'aParentRecordId',
                     relatedListId: 'relatedList1',
                 },
-                queryParams: {
+                body: {
                     fields: ['Account.Name'],
                     optionalFields: ['Account.Id'],
                     pageSize: 15,

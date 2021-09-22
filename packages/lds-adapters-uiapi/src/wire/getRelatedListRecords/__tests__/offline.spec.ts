@@ -9,7 +9,7 @@ import {
 import response from './data/list-ui-All-Related-Lists.json';
 
 const requestArgs: MockPayload['networkArgs'] = {
-    method: 'get',
+    method: 'post',
     basePath: `/ui-api/related-list-records/${response.listReference.inContextOfRecordId}/${response.listReference.relatedListId}`,
 };
 

@@ -16,6 +16,7 @@ import {
     getRecordInput,
     getTrackedFields,
     isSuperset,
+    isSupportedEntity,
     extractTrackedFields,
     extractTrackedFieldsToTrie,
     convertTrieToFields,
@@ -816,6 +817,24 @@ describe('isSuperset', () => {
         const superset = ['c', 'a'];
         const subset = ['a', 'b', 'c'];
         expect(isSuperset(superset, subset)).toBe(false);
+    });
+});
+
+describe('isSupportedEntity', () => {
+    it('should return true for UIAPI Supported Entity', () => {
+        expect(isSupportedEntity('Account')).toBe(true);
+    });
+
+    it('should return false for Unsupported Entity', () => {
+        expect(isSupportedEntity('Foo')).toBe(false);
+    });
+
+    it('should return true for Custom API', () => {
+        expect(isSupportedEntity('Foo__c')).toBe(true);
+    });
+
+    it('should return true for DMO API', () => {
+        expect(isSupportedEntity('Foo__dlm')).toBe(true);
     });
 });
 

@@ -655,5 +655,72 @@ describe('merge', () => {
 
             expect(mergedFields).toEqual(expectedMergedFields);
         });
+        it('should merge incoming record when weakEtag is 0', () => {
+            const apiName = 'Account__dlm';
+            const expectedMergedFields = {
+                apiName,
+                childRelationships: {},
+                eTag: '233f17c01db43cdfe6fe618c6c8cfd51',
+                fields: {
+                    CreatedDate: {
+                        __ref: 'UiApi::RecordRepresentation:001T1000001nFt5IAE__fields__CreatedDate',
+                    },
+
+                    Name: {
+                        __ref: 'UiApi::RecordRepresentation:001T1000001nFt5IAE__fields__Name',
+                    },
+                    Owner: {
+                        __ref: 'UiApi::RecordRepresentation:001T1000001nFt5IAE__fields__Owner',
+                    },
+                    OwnerId: {
+                        __ref: 'UiApi::RecordRepresentation:001T1000001nFt5IAE__fields__OwnerId',
+                    },
+                },
+                id: '001T1000001nFt5IAE',
+                lastModifiedById: '005T1000000HkSeIAK',
+                lastModifiedDate: '2021-08-30T00:00:00.000Z',
+                recordTypeId: '012000000000000AAA',
+                recordTypeInfo: null,
+                systemModstamp: '2019-08-30T00:38:02.000Z',
+                weakEtag: 0,
+            };
+
+            let incoming = createRecordData(0);
+            incoming.apiName = apiName;
+            incoming.lastModifiedDate = '2021-08-30T00:00:00.000Z';
+            let existing = createRecordData(0);
+            existing.apiName = apiName;
+            existing = JSON.parse(JSON.stringify(existing));
+            incoming = JSON.parse(JSON.stringify(incoming));
+
+            const store = new Store();
+            const luvio = new Luvio(new Environment(store, jest.fn()));
+
+            const key = keyBuilder({ recordId: existing.id });
+            const path = {
+                fullPath: key,
+                parent: null,
+            };
+
+            ingest(existing, path, luvio, store, 0);
+
+            const existingRecord = store.records[key];
+
+            const incomingNormalized = normalize(incoming, existingRecord, path, luvio, store, 0);
+            const conflictMap = {
+                conflicts: {},
+                serverRequestCount: 0,
+            };
+
+            const mergedFields = merge(
+                existingRecord,
+                incomingNormalized,
+                luvio,
+                path,
+                conflictMap
+            );
+
+            expect(mergedFields).toEqual(expectedMergedFields);
+        });
     });
 });

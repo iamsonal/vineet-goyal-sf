@@ -39,6 +39,7 @@ import {
 type FieldValueRepresentationValue = FieldValueRepresentation['value'];
 
 const CUSTOM_API_NAME_SUFFIX = '__c';
+const DMO_API_NAME_SUFFIX = '__dlm';
 const CUSTOM_EXTERNAL_OBJECT_FIELD_SUFFIX = '__x';
 
 export interface FieldValueRepresentationLinkState {
@@ -783,7 +784,8 @@ function _markMissingPath(
 export function isSupportedEntity(objectApiName: string): boolean {
     return (
         UIAPI_SUPPORTED_ENTITY_API_NAMES[objectApiName] === true ||
-        StringPrototypeEndsWith.call(objectApiName, CUSTOM_API_NAME_SUFFIX)
+        StringPrototypeEndsWith.call(objectApiName, CUSTOM_API_NAME_SUFFIX) ||
+        StringPrototypeEndsWith.call(objectApiName, DMO_API_NAME_SUFFIX)
     );
 }
 

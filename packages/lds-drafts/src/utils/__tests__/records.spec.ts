@@ -157,6 +157,7 @@ describe('draft environment record utilities', () => {
                     draftActionIds: [actionId],
                     edited: false,
                     serverValues: {},
+                    latestDraftActionId: 'foo',
                 },
                 eTag: '',
                 lastModifiedById: CURRENT_USER_ID,
@@ -390,6 +391,7 @@ describe('draft environment record utilities', () => {
                     deleted: true,
                     serverValues: {},
                     draftActionIds: ['123'],
+                    latestDraftActionId: '123',
                 },
             });
         });
@@ -431,6 +433,7 @@ describe('draft environment record utilities', () => {
                         },
                     },
                     draftActionIds: [editAction.id],
+                    latestDraftActionId: editAction.id,
                 },
                 lastModifiedById: CURRENT_USER_ID,
                 lastModifiedDate: expectedLastModifiedDate,
@@ -472,6 +475,7 @@ describe('draft environment record utilities', () => {
                         },
                     },
                     draftActionIds: [editAction.id],
+                    latestDraftActionId: editAction.id,
                 },
             };
 
@@ -495,6 +499,25 @@ describe('draft environment record utilities', () => {
                 CURRENT_USER_ID
             );
             expect(result.drafts.draftActionIds.length).toBe(3);
+        });
+
+        it('the last created draft id shows up on latestDraftId', () => {
+            const record = buildDurableRecordRepresentation('123', {
+                Name: { value: 'oldName', displayValue: null },
+            });
+            const result = replayDraftsOnRecord(
+                record,
+                [
+                    createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newName'),
+                    createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newerName'),
+                    createEditDraftAction('123', 'UiApi::RecordRepresentation:123', 'newestName'),
+                ],
+                undefined,
+                CURRENT_USER_ID
+            );
+            expect(result.drafts.latestDraftActionId).toBe(
+                result.drafts.draftActionIds[result.drafts.draftActionIds.length - 1]
+            );
         });
 
         it('synthesizes record for draft create', () => {
@@ -883,6 +906,7 @@ describe('draft environment record utilities', () => {
                             },
                         },
                         draftActionIds: [draftId],
+                        latestDraftActionId: draftId,
                     },
                     lastModifiedById: null,
                     lastModifiedDate: null,
@@ -955,6 +979,7 @@ describe('draft environment record utilities', () => {
                             },
                         },
                         draftActionIds: [draftId],
+                        latestDraftActionId: draftId,
                     },
                     lastModifiedById: '',
                     lastModifiedDate: draftTimestampString,
@@ -1173,6 +1198,7 @@ describe('draft environment record utilities', () => {
                             },
                         },
                         draftActionIds: [draftId],
+                        latestDraftActionId: draftId,
                     },
                     lastModifiedById: '',
                     lastModifiedDate: draftTimestampString,
@@ -1244,6 +1270,7 @@ describe('draft environment record utilities', () => {
                             },
                         },
                         draftActionIds: [draftId],
+                        latestDraftActionId: draftId,
                     },
                     lastModifiedById: '',
                     lastModifiedDate: draftTimestampString,
@@ -1302,6 +1329,7 @@ describe('draft environment record utilities', () => {
                             },
                         },
                         draftActionIds: [draftId],
+                        latestDraftActionId: draftId,
                     },
                     lastModifiedById: '',
                     lastModifiedDate: draftTimestampString,
@@ -1373,6 +1401,7 @@ describe('draft environment record utilities', () => {
                             },
                         },
                         draftActionIds: [draftId],
+                        latestDraftActionId: draftId,
                     },
                     lastModifiedById: '',
                     lastModifiedDate: draftTimestampString,
@@ -1437,6 +1466,7 @@ describe('draft environment record utilities', () => {
                             },
                         },
                         draftActionIds: [draftId],
+                        latestDraftActionId: draftId,
                     },
                     lastModifiedById: '',
                     lastModifiedDate: draftTimestampString,
@@ -1504,6 +1534,7 @@ describe('draft environment record utilities', () => {
                             },
                         },
                         draftActionIds: [draftId],
+                        latestDraftActionId: draftId,
                     },
                     lastModifiedById: '',
                     lastModifiedDate: draftTimestampString,
@@ -1734,6 +1765,7 @@ describe('draft environment record utilities', () => {
                             },
                         },
                         draftActionIds: ['some-old-draft'],
+                        latestDraftActionId: 'some-old-draft',
                     },
                     lastModifiedById: '',
                     lastModifiedDate: draftTimestampString,
@@ -1773,6 +1805,7 @@ describe('draft environment record utilities', () => {
                             },
                         },
                         draftActionIds: [draftId],
+                        latestDraftActionId: draftId,
                     },
                     lastModifiedById: null,
                     lastModifiedDate: null,
@@ -1819,6 +1852,7 @@ describe('draft environment record utilities', () => {
                             },
                         },
                         draftActionIds: [draftId],
+                        latestDraftActionId: draftId,
                     },
                     lastModifiedById: '',
                     lastModifiedDate: draftTimestampString,
@@ -1880,6 +1914,7 @@ describe('draft environment record utilities', () => {
                             },
                         },
                         draftActionIds: [draftId],
+                        latestDraftActionId: draftId,
                     },
                     lastModifiedById: '',
                     lastModifiedDate: draftTimestampString,
@@ -1945,6 +1980,7 @@ describe('draft environment record utilities', () => {
                         deleted: false,
                         serverValues: {},
                         draftActionIds: [draftId],
+                        latestDraftActionId: draftId,
                     },
                     lastModifiedById: '',
                     lastModifiedDate: draftTimestampString,
@@ -2013,6 +2049,7 @@ describe('draft environment record utilities', () => {
                         deleted: false,
                         serverValues: {},
                         draftActionIds: [createDraft.id],
+                        latestDraftActionId: createDraft.id,
                     },
                     lastModifiedById: '',
                     lastModifiedDate: DEFAULT_DRAFT_TIMESTAMP_FORMATTED,
@@ -2051,6 +2088,7 @@ describe('draft environment record utilities', () => {
                         deleted: false,
                         serverValues: {},
                         draftActionIds: [createDraft.id, updateDraft.id],
+                        latestDraftActionId: updateDraft.id,
                     },
                     lastModifiedById: null,
                     lastModifiedDate: DEFAULT_DRAFT_TIMESTAMP_FORMATTED,
@@ -2093,6 +2131,7 @@ describe('draft environment record utilities', () => {
                         deleted: false,
                         serverValues: {},
                         draftActionIds: [createDraft.id, updateDraft.id],
+                        latestDraftActionId: updateDraft.id,
                     },
                     lastModifiedById: '',
                     lastModifiedDate: DEFAULT_DRAFT_TIMESTAMP_FORMATTED,
@@ -2160,6 +2199,7 @@ describe('draft environment record utilities', () => {
                         },
                     },
                     draftActionIds: ['foo'],
+                    latestDraftActionId: 'foo',
                 },
                 lastModifiedById: null,
                 lastModifiedDate: null,
@@ -2202,6 +2242,7 @@ describe('draft environment record utilities', () => {
                         },
                     },
                     draftActionIds: ['foo'],
+                    latestDraftActionId: 'foo',
                 },
                 lastModifiedById: null,
                 lastModifiedDate: null,
@@ -2278,6 +2319,7 @@ describe('draft environment record utilities', () => {
                         },
                     },
                     draftActionIds: ['foo'],
+                    latestDraftActionId: 'foo',
                 },
                 lastModifiedById: null,
                 lastModifiedDate: null,
@@ -2319,6 +2361,7 @@ describe('draft environment record utilities', () => {
                     deleted: true,
                     serverValues: {},
                     draftActionIds: ['foo'],
+                    latestDraftActionId: 'foo',
                 },
                 lastModifiedById: null,
                 lastModifiedDate: null,

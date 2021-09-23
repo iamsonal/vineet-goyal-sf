@@ -86,6 +86,8 @@ describe('invokeAdapter', () => {
         const newNameFieldValue = recordRep_Account_Edited.fields.Name.value;
         // for now optimistic responses populate "displayValue" by calling value.toString()
         const optimisticNameField = { value: newNameFieldValue, displayValue: newNameFieldValue };
+        // draft action IDs are current timestamp plus a double digit index
+        const draftId = `${testUpdatedDate.valueOf()}00`;
         const optimisticDraftResponse = {
             ...recordRep_Account_Edited,
             lastModifiedById: userId,
@@ -104,8 +106,8 @@ describe('invokeAdapter', () => {
                         value: 'Acme',
                     },
                 },
-                // draft action IDs are current timestamp plus a double digit index
-                draftActionIds: [`${testUpdatedDate.valueOf()}00`],
+                draftActionIds: [draftId],
+                latestDraftActionId: draftId,
             },
         };
 
@@ -204,6 +206,8 @@ describe('invokeAdapter', () => {
         const testUpdatedDate = new Date();
         timekeeper.freeze(testUpdatedDate);
 
+        // draft action IDs are current timestamp plus a double digit index
+        const draftId = `${testUpdatedDate.valueOf()}00`;
         const optimisticDraftResponse = {
             ...recordRep_Account,
             drafts: {
@@ -211,8 +215,8 @@ describe('invokeAdapter', () => {
                 edited: false,
                 deleted: true,
                 serverValues: {},
-                // draft action IDs are current timestamp plus a double digit index
-                draftActionIds: [`${testUpdatedDate.valueOf()}00`],
+                draftActionIds: [draftId],
+                latestDraftActionId: draftId,
             },
         };
 
@@ -348,6 +352,8 @@ describe('invokeAdapter', () => {
         const newNameFieldValue = recordRep_Account_Edited.fields.Name.value;
         // for now optimistic responses populate "displayValue" by calling value.toString()
         const optimisticNameField = { value: newNameFieldValue, displayValue: newNameFieldValue };
+        // draft action IDs are current timestamp plus a double digit index
+        const draftId = `${testUpdatedDate.valueOf()}00`;
         const optimisticDraftResponse = {
             ...recordRep_Account_Edited,
             lastModifiedById: userId,
@@ -366,8 +372,8 @@ describe('invokeAdapter', () => {
                         value: 'Acme',
                     },
                 },
-                // draft action IDs are current timestamp plus a double digit index
-                draftActionIds: [`${testUpdatedDate.valueOf()}00`],
+                draftActionIds: [draftId],
+                latestDraftActionId: draftId,
             },
         };
 

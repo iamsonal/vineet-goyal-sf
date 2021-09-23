@@ -134,6 +134,7 @@ export interface DraftRepresentation {
     deleted: boolean;
     serverValues: { [fieldName: string]: ScalarFieldRepresentationValue };
     draftActionIds: string[];
+    latestDraftActionId: string;
 }
 
 export interface DraftRecordRepresentationNormalized extends RecordRepresentationNormalized {
@@ -248,6 +249,7 @@ export function buildSyntheticRecordRepresentation(
             deleted: false,
             serverValues: {},
             draftActionIds: [actionId],
+            latestDraftActionId: actionId,
         },
         links,
     };
@@ -443,9 +445,11 @@ export function replayDraftsOnRecord(
             deleted: false,
             serverValues: {},
             draftActionIds: [draft.id],
+            latestDraftActionId: draft.id,
         };
     } else {
         record.drafts.draftActionIds = [...record.drafts.draftActionIds, draft.id];
+        record.drafts.latestDraftActionId = draft.id;
     }
 
     if (method === 'delete') {

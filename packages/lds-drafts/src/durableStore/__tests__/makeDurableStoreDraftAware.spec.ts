@@ -74,6 +74,7 @@ describe('makeDurableStoreDraftAware', () => {
                     deleted: false,
                     serverValues: {},
                     draftActionIds: [createAction.id],
+                    latestDraftActionId: createAction.id,
                 };
 
                 const { durableStore, setEntriesSpy } = await setup(
@@ -153,6 +154,7 @@ describe('makeDurableStoreDraftAware', () => {
                     deleted: false,
                     serverValues: {},
                     draftActionIds: [createAction.id],
+                    latestDraftActionId: createAction.id,
                 };
                 const customAction: DraftAction<unknown, CustomActionData> = {
                     data: {
@@ -227,6 +229,7 @@ describe('makeDurableStoreDraftAware', () => {
                     .data as DurableRecordRepresentation;
 
                 expect(storedRecord.drafts.edited).toBe(true);
+                expect(storedRecord.drafts.latestDraftActionId).toBe(editAction.id);
                 expect(storedRecord.fields.Name.value).toEqual(DEFAULT_NAME_FIELD_VALUE);
                 expect(storedRecord.fields.Name.displayValue).toEqual(DEFAULT_NAME_FIELD_VALUE);
                 expect(storedRecord.drafts.serverValues.Name).toEqual(NAME_VALUE);
@@ -311,6 +314,7 @@ describe('makeDurableStoreDraftAware', () => {
                     deleted: false,
                     serverValues: {},
                     draftActionIds: [createAction.id, updateAction.id],
+                    latestDraftActionId: updateAction.id,
                 };
 
                 const { durableStore, setEntriesSpy } = await setup(
@@ -339,6 +343,7 @@ describe('makeDurableStoreDraftAware', () => {
 
                 expect(storedRecord.drafts.created).toBe(true);
                 expect(storedRecord.drafts.edited).toBe(true);
+                expect(storedRecord.drafts.latestDraftActionId).toBe(updateAction.id);
                 expect(storedRecord.fields.Name.value).toEqual(updatedName);
             });
         });
@@ -410,6 +415,7 @@ describe('makeDurableStoreDraftAware', () => {
                 deleted: false,
                 serverValues: {},
                 draftActionIds: [createAction.id],
+                latestDraftActionId: createAction.id,
             };
 
             const { durableStore, batchEntriesSpy, setEntriesSpy } = await setup(
@@ -439,6 +445,7 @@ describe('makeDurableStoreDraftAware', () => {
                 .data as DurableRecordRepresentation;
 
             expect(storedRecord.drafts.created).toBe(true);
+            expect(storedRecord.drafts.latestDraftActionId).toBe(createAction.id);
             expect(storedRecord.fields.Name.value).toEqual(DEFAULT_NAME_FIELD_VALUE);
             expect(storedRecord.fields.Name.displayValue).toEqual(DEFAULT_NAME_FIELD_VALUE);
         });

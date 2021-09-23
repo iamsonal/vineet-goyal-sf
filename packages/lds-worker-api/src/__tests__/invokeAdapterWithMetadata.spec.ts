@@ -69,6 +69,8 @@ describe('invokeAdapterWithMetadata', () => {
         const newNameFieldValue = recordRep_Account_Edited.fields.Name.value;
         // for now optimistic responses populate "displayValue" by calling value.toString()
         const optimisticNameField = { value: newNameFieldValue, displayValue: newNameFieldValue };
+        // draft action IDs are current timestamp plus a double digit index
+        const draftId = `${testUpdatedDate.valueOf()}00`;
         const optimisticDraftResponse = {
             ...recordRep_Account_Edited,
             lastModifiedById: userId,
@@ -87,8 +89,8 @@ describe('invokeAdapterWithMetadata', () => {
                         value: 'Acme',
                     },
                 },
-                // draft action IDs are current timestamp plus a double digit index
-                draftActionIds: [`${testUpdatedDate.valueOf()}00`],
+                draftActionIds: [draftId],
+                latestDraftActionId: draftId,
             },
         };
 

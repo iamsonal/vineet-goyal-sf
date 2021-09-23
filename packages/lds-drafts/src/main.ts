@@ -12,6 +12,7 @@ export {
     DraftQueueChangeListener,
     Action,
     DraftActionMetadata,
+    DraftIdMappingEntry,
 } from './DraftQueue';
 export {
     updateQueueOnPost,
@@ -21,7 +22,7 @@ export {
     getDraftResolutionInfoForRecordSet,
     DraftResolutionInput,
 } from './utils/records';
-export { DurableDraftQueue, DRAFT_SEGMENT } from './DurableDraftQueue';
+export { DurableDraftQueue, DRAFT_SEGMENT, DRAFT_ID_MAPPINGS_SEGMENT } from './DurableDraftQueue';
 export { DurableDraftStore } from './DurableDraftStore';
 export { DraftStore } from './DraftStore';
 export {

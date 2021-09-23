@@ -58,10 +58,10 @@ export async function setup() {
     draftManager = runtime.draftManager;
     await resetLuvioStore();
 
+    const luvioDurableStore = (draftQueue as any).draftStore.durableStore;
+
     // reset draft store
-    (draftQueue as any).draftStore = new DurableDraftStore(
-        (draftQueue as any).draftStore.durableStore
-    );
+    (draftQueue as any).draftStore = new DurableDraftStore(luvioDurableStore);
 
     createRecord = createRecordAdapterFactory(luvio);
     getRecord = getRecordAdapterFactory(luvio);
@@ -77,6 +77,7 @@ export async function setup() {
     return {
         luvio,
         durableStore,
+        luvioDurableStore,
         draftQueue,
         draftManager,
         networkAdapter,

@@ -18,7 +18,7 @@ import mockOpportunityObjectInfo from './data/object-Opportunity.json';
 import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 import mockOppy from './data/record-Opportunity-fields-Opportunity.Account.Name,Opportunity.Account.Owner.Name,Opportunity.Owner.City.json';
-import { populateL2WithUser, setup } from './integrationTestSetup';
+import { populateL2WithUser, setup, resetLuvioStore } from './integrationTestSetup';
 import timekeeper from 'timekeeper';
 import {
     DefaultDurableSegment,
@@ -26,6 +26,7 @@ import {
     DurableStoreOperationType,
 } from '@luvio/environments';
 import { ObjectInfoIndex, OBJECT_INFO_PREFIX_SEGMENT } from '../../../utils/ObjectInfoService';
+import { restoreDraftKeyMapping } from '../../../utils/restoreDraftKeyMapping';
 
 const RECORD_ID = mockAccount.id;
 const API_NAME = 'Account';
@@ -40,6 +41,7 @@ describe('mobile runtime integration tests', () => {
     let updateRecord;
     let getRecord;
     let durableStore;
+    let luvioDurableStore;
 
     beforeEach(async () => {
         ({
@@ -51,6 +53,7 @@ describe('mobile runtime integration tests', () => {
             getRecord,
             updateRecord,
             durableStore,
+            luvioDurableStore,
         } = await setup());
     });
 
@@ -165,11 +168,11 @@ describe('mobile runtime integration tests', () => {
         });
 
         it('created record is still observable after draft is uploaded', async () => {
-            const orginalName = 'Justin';
+            const originalName = 'Justin';
             // create a synthetic record
             const snapshot = await createRecord({
                 apiName: API_NAME,
-                fields: { Name: orginalName },
+                fields: { Name: originalName },
             });
             const record = snapshot.data;
             const recordId = record.id;
@@ -204,12 +207,12 @@ describe('mobile runtime integration tests', () => {
         });
 
         it('created record has future drafts still applied after draft is uploaded', async () => {
-            const orginalName = mockAccount.fields.Name.value;
+            const originalName = mockAccount.fields.Name.value;
             const updatedName = 'Jason';
             // create a synthetic record
             const snapshot = await createRecord({
                 apiName: API_NAME,
-                fields: { Name: orginalName },
+                fields: { Name: originalName },
             });
             const record = snapshot.data;
             const recordId = record.id;
@@ -365,7 +368,7 @@ describe('mobile runtime integration tests', () => {
             const oppy = (
                 await createRecord({
                     apiName: 'Account',
-                    fields: { Name: 'My Accout', ParentId: parent.id },
+                    fields: { Name: 'My Account', ParentId: parent.id },
                 })
             ).data as RecordRepresentation;
 
@@ -389,11 +392,11 @@ describe('mobile runtime integration tests', () => {
         });
 
         it('draft removed from durable store after uploaded', async () => {
-            const orginalName = 'Justin';
+            const originalName = 'Justin';
             // create a synthetic record
             const snapshot = await createRecord({
                 apiName: API_NAME,
-                fields: { Name: orginalName },
+                fields: { Name: originalName },
             });
 
             const record = snapshot.data;
@@ -423,6 +426,52 @@ describe('mobile runtime integration tests', () => {
             expect(snap.state).toBe('Fulfilled');
             // id is now canonical
             expect(snap.data.fields.Id.value).toBe(mockAccount.id);
+        });
+
+        it('should restore the redirect mapping in Luvio after a store reset', async () => {
+            // ---- Arrange ----
+
+            // create a synthetic record
+            const snapshot = await createRecord({
+                apiName: API_NAME,
+                fields: { Name: 'Id' },
+            });
+
+            const record = snapshot.data;
+            const draftKeyId = record.id;
+            const canonicalKeyId = mockAccount.id;
+            const key = keyBuilderRecord({ recordId: draftKeyId });
+
+            expect(durableStore.kvp['DEFAULT'][key]).toBeDefined();
+
+            networkAdapter.setMockResponse({
+                status: 201,
+                headers: {},
+                body: JSONStringify(mockAccount),
+            });
+
+            // upload the draft and respond with a record with more fields and a new id
+            await draftQueue.processNextAction();
+            await flushPromises();
+
+            // draft removed from durable store
+            expect(durableStore.kvp['DEFAULT'][key]).toBeUndefined();
+
+            // ---- Act ----
+
+            // Reset Luvio
+            await resetLuvioStore();
+            await restoreDraftKeyMapping(luvio, luvioDurableStore);
+
+            // ---- Assert ----
+
+            // Provide the draft id and check if we get back the record with Canonical id
+            const snap = await getRecord({
+                recordId: draftKeyId,
+                fields: ['Account.Name', 'Account.Id'],
+            });
+
+            expect(snap.data.fields.Id.value).toBe(canonicalKeyId);
         });
     });
 });

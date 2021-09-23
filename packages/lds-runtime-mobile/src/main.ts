@@ -22,6 +22,7 @@ import { makeNetworkAdapterChunkRecordFields } from './network/record-field-batc
 import { NimbusDurableStore } from './NimbusDurableStore';
 import { buildLdsDraftQueue } from './DraftQueueFactory';
 import { buildInternalAdapters } from './utils/adapters';
+import { restoreDraftKeyMapping } from './utils/restoreDraftKeyMapping';
 import { ObjectInfoService } from './utils/ObjectInfoService';
 import { RecordMetadataOnSetPlugin } from './durableStore/plugins/RecordMetadataOnSetPlugin';
 import { makePluginEnabledDurableStore } from './durableStore/makePluginEnabledDurableStore';
@@ -134,6 +135,11 @@ baseDurableStore.registerMergeStrategy(
 );
 
 luvio = new Luvio(draftEnv);
+
+// Draft mapping entries exists only in the Durable store.
+// Populate Luvio L1 cache with the entries from the Durable store.
+// TODO [W-9941688]: A race condition is possible that an adapter may be invoked prior to the completion of restoring the mapping
+restoreDraftKeyMapping(luvio, recordDenormingStore);
 
 // Currently instruments store runtime perf
 setupInstrumentation(luvio, store);

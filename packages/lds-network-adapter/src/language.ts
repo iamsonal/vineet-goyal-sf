@@ -1,10 +1,13 @@
 const { parse, stringify } = JSON;
-const { push } = Array.prototype;
-const { entries } = Object;
+const { join, push, unshift } = Array.prototype;
+const { entries, keys } = Object;
 
 export {
+    entries as ObjectEntries,
+    keys as ObjectKeys,
     parse as JSONParse,
     stringify as JSONStringify,
+    join as ArrayPrototypeJoin,
     push as ArrayPrototypePush,
-    entries as ObjectEntries,
+    unshift as ArrayPrototypeUnshift,
 };

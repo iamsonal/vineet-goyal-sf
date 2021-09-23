@@ -8,7 +8,11 @@ import {
     StoreLink,
     Headers,
 } from '@luvio/engine';
-import { stableJSONStringify, untrustedIsObject } from '../generated/adapters/adapter-utils';
+import {
+    stableJSONStringify,
+    untrustedIsObject,
+    keyPrefix,
+} from '../generated/adapters/adapter-utils';
 import { createLink, deepFreeze } from '../generated/types/type-utils';
 import { JSONStringify, ObjectKeys, ObjectValues } from './language';
 
@@ -66,7 +70,15 @@ export const apexResponseIngest: ResourceIngest = (
         luvio.storePublish(key, incomingRecord);
     }
 
+    // TODO [W-9805041]: Remove storeSetExpiration instances
     luvio.storeSetExpiration(key, timestamp + APEX_TTL);
+    const storeMetaData = {
+        expirationTimestamp: timestamp + APEX_TTL,
+        namespace: keyPrefix,
+        representationName: '',
+        ingestionTimestamp: timestamp,
+    };
+    luvio.publishStoreMetadata(key, storeMetaData);
 
     return createLink(key);
 };

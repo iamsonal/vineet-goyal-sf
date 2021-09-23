@@ -39,6 +39,7 @@ describe('apexResponseIngest', () => {
     const mockLds: any = {
         storePublish: jest.fn(),
         storeSetExpiration: jest.fn(),
+        publishStoreMetadata: jest.fn(),
     };
 
     const mockStore: any = {
@@ -63,6 +64,15 @@ describe('apexResponseIngest', () => {
 
     it('calls storeSetExpiration with key and Apex TTL (5min) plus the provided timeout', () => {
         expect(mockLds.storeSetExpiration).toHaveBeenCalledWith(MOCK_KEY, APEX_TTL + timestamp);
+    });
+
+    it('calls storePublishMetadata with key and Apex TTL (5min) plus the provided timeout', () => {
+        expect(mockLds.publishStoreMetadata).toHaveBeenCalledWith(MOCK_KEY, {
+            expirationTimestamp: timestamp + APEX_TTL,
+            namespace: 'Apex::',
+            representationName: '',
+            ingestionTimestamp: timestamp,
+        });
     });
 
     it('calls createLink on the key', () => {

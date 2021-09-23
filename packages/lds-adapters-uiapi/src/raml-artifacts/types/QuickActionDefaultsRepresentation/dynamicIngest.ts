@@ -1,4 +1,5 @@
 import { IngestPath, Luvio, Store, StoreLink } from '@luvio/engine';
+import { keyPrefix } from '../../..//generated/adapters/adapter-utils';
 import {
     validate,
     DynamicIngestParams,
@@ -8,6 +9,8 @@ import {
     dynamicNormalize,
     dynamicIngest as generatedDynamicIngest,
     equals,
+    TTL,
+    RepresentationType,
 } from '../../../generated/types/QuickActionDefaultsRepresentation';
 import { createLink } from '../../../generated/types/type-utils';
 
@@ -71,7 +74,15 @@ export const dynamicIngest: typeof generatedDynamicIngest = (ingestParams: Dynam
             luvio.storePublish(key, incomingRecord);
         }
 
-        luvio.storeSetExpiration(key, timestamp + 900000);
+        // TODO [W-9805041]: Remove storeSetExpiration instances
+        luvio.storeSetExpiration(key, timestamp + TTL);
+        const storeMetaData = {
+            expirationTimestamp: timestamp + TTL,
+            namespace: keyPrefix,
+            representationName: RepresentationType,
+            ingestionTimestamp: timestamp,
+        };
+        luvio.publishStoreMetadata(key, storeMetaData);
 
         return createLink(key);
     };

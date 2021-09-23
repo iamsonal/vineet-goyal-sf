@@ -26,6 +26,7 @@ describe('Record Ingest Utils', () => {
         const mockLds: any = {
             storePublish: jest.fn(),
             storeSetExpiration: jest.fn(),
+            publishStoreMetadata: jest.fn(),
         };
 
         const mockStore: any = {
@@ -94,6 +95,15 @@ describe('Record Ingest Utils', () => {
 
         it('calls storeSetExpiration with key and TTL (30000) plus the provided timeout', () => {
             expect(mockLds.storeSetExpiration).toHaveBeenCalledWith(MOCK_KEY, 42345);
+        });
+
+        it('calls storePublishMetadata with key and TTL (30000) plus the provided timeout', () => {
+            expect(mockLds.publishStoreMetadata).toHaveBeenCalledWith(MOCK_KEY, {
+                expirationTimestamp: 42345,
+                namespace: 'UiApi::',
+                representationName: 'RecordRepresentation',
+                ingestionTimestamp: 12345,
+            });
         });
 
         it('calls createLink on the key', () => {

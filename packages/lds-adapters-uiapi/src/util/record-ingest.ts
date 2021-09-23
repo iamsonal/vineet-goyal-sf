@@ -4,10 +4,13 @@ import {
     validate,
     equals,
     dynamicNormalize as dynamicNormalize_RecordRepresentation,
+    TTL,
+    RepresentationType,
 } from '../generated/types/RecordRepresentation';
 import { ingest as ingest_RecordCollectionRepresentation } from '../generated/types/RecordCollectionRepresentation';
 import { keyBuilderFromType } from '../raml-artifacts/types/RecordRepresentation/keyBuilderFromType';
 import { createLink } from '../generated/types/type-utils';
+import { keyPrefix } from '../generated/adapters/adapter-utils';
 import { RecordFieldTrie, BLANK_RECORD_FIELDS_TRIE } from './records';
 import merge from '../helpers/RecordRepresentation/merge';
 import { RecordConflictMap } from '../helpers/RecordRepresentation/resolveConflict';
@@ -129,7 +132,15 @@ export const createRecordIngest = (
             luvio.storePublish(key, incomingRecord);
         }
 
-        luvio.storeSetExpiration(key, timestamp + 30000);
+        // TODO [W-9805041]: Remove storeSetExpiration instances
+        luvio.storeSetExpiration(key, timestamp + TTL);
+        const storeMetaData = {
+            expirationTimestamp: timestamp + TTL,
+            namespace: keyPrefix,
+            representationName: RepresentationType,
+            ingestionTimestamp: timestamp,
+        };
+        luvio.publishStoreMetadata(key, storeMetaData);
         return createLink(key);
     };
 };

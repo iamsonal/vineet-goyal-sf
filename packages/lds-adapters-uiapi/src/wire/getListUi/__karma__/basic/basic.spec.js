@@ -135,7 +135,6 @@ describe('special data', () => {
         mockNetworkListUi(config, mockData);
 
         const element = await setupElement(config, Basic);
-
         expect(element.getWiredData()).toEqualListUi(mockData);
     });
 });

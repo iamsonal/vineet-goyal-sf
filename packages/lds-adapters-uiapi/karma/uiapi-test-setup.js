@@ -97,6 +97,18 @@ const matchers = {
             },
         };
     },
+
+    toEqualListSnapshotWithoutPrivateProps: () => {
+        return {
+            compare: function (actual, expected) {
+                var stripped = clone(expected);
+                stripProperties(stripped, ['currentPageUrl', 'nextPageUrl', 'previousPageUrl']);
+
+                expect(actual).toEqualSnapshotWithoutEtags(stripped);
+                return { pass: true };
+            },
+        };
+    },
 };
 
 beforeAll(() => {

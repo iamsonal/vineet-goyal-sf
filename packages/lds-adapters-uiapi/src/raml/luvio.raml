@@ -55,6 +55,10 @@ types:
     (luvio.key):
       id: id
   ListRecordCollectionRepresentation:
+    (luvio.private):
+      - currentPageUrl
+      - previousPageUrl
+      - nextPageUrl
     # TODO: This is a complete complete hack, UISDK needs to add the list view id on the list record
     # collection. Using the list info etag for now as a work around for now to get the identity of
     # the list.
@@ -71,6 +75,9 @@ types:
   ListViewSummaryCollectionRepresentation:
     (luvio.private):
       - eTag
+      - currentPageUrl
+      - previousPageUrl
+      - nextPageUrl
     (luvio.key):
       objectApiName: objectApiName
       queryString: queryString
@@ -97,6 +104,10 @@ types:
       developerName: developerName
   RelatedListRecordCollectionRepresentation:
     (luvio.ttl): 30000
+    (luvio.private):
+      - currentPageUrl
+      - previousPageUrl
+      - nextPageUrl
     (luvio.key):
       sortBy: sortBy
       parentRecordId: listReference.inContextOfRecordId

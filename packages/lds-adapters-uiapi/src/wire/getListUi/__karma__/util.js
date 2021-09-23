@@ -1,4 +1,4 @@
-import { stripEtags } from 'test-util';
+import { stripProperties } from 'test-util';
 
 /**
  * Recurses through a record structure, deleting fields for which the predicate
@@ -125,13 +125,18 @@ export function beforeEach() {
                         f.startsWith(objectApiName) ? f.substring(objectApiName.length + 1) : f
                     );
                     let patched = pruneFields(
-                        stripEtags(expected),
+                        stripProperties(expected, [
+                            'currentPageUrl',
+                            'nextPageUrl',
+                            'previousPageUrl',
+                            'eTag',
+                            'weakEtag',
+                        ]),
                         fieldPredicate(expected.info, extraFields)
                     );
                     if (typeof patched.records.sortBy === 'string') {
                         patched.records.sortBy = patched.records.sortBy.split(',');
                     }
-
                     expect(actual.data).toEqual(patched);
 
                     return { pass: true };

@@ -67,29 +67,6 @@ function variablesCustomReader(
     reader.readScalar(selection.name, variables, data);
 }
 
-function urlCustomReader(
-    key: string,
-    selection: CustomSelection<any>,
-    record: any,
-    data: any,
-    variables: any,
-    reader: Reader<any>
-): void {
-    let urlProp = selection.name;
-    let tokenProp = `${urlProp.substring(0, urlProp.indexOf('Url'))}Token`;
-
-    if (variables[tokenProp]) {
-        // currentPageUrl should never be empty so use that as the template
-        variables[urlProp] = record.currentPageUrl
-            .replace(/pageToken=[^&]+/, `pageToken=${variables[tokenProp]}`)
-            .replace(/pageSize=\d+/, `pageSize=${variables.__pageSize}`);
-    } else if (variables[tokenProp] === null) {
-        variables[urlProp] = null;
-    }
-
-    reader.readScalar(selection.name, variables, data);
-}
-
 /**
  * Constructs a PathSelection[] to have Reader correctly populate paginated data
  * and metadata in a Snapshot. The metadata is assumed to follow the standard
@@ -135,28 +112,13 @@ export function pathSelectionsFor(config: {
         },
         {
             kind: 'Custom',
-            name: 'currentPageUrl',
-            reader: urlCustomReader,
-        },
-        {
-            kind: 'Custom',
             name: 'nextPageToken',
             reader: variablesCustomReader,
         },
         {
             kind: 'Custom',
-            name: 'nextPageUrl',
-            reader: urlCustomReader,
-        },
-        {
-            kind: 'Custom',
             name: 'previousPageToken',
             reader: variablesCustomReader,
-        },
-        {
-            kind: 'Custom',
-            name: 'previousPageUrl',
-            reader: urlCustomReader,
         },
     ];
 }

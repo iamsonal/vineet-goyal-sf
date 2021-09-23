@@ -1,0 +1,21 @@
+{
+    "name": "@salesforce/lds-graphql-eval",
+    "version": "1.24.8",
+    "description": "Offline GraphQL eval",
+    "license": "MIT",
+    "main": "dist/umd/es2018/graphql-eval.js",
+    "module": "dist/es/es2018/graphql-eval.js",
+    "types": "dist/types/src/main.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "prepare": "yarn build",
+        "build": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist",
+        "test:unit": "jest"
+    },
+    "devDependencies": {
+        "@salesforce/lds-graphql-parser": "1.24.8"
+    }
+}

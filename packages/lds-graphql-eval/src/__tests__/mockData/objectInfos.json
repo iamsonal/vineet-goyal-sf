@@ -1,0 +1,98 @@
+{
+    "User": {
+        "childRelationships": {},
+
+        "fields": {
+            "Id": { "dataType": "String", "fieldType": "Scalar", "apiName": "Id" },
+            "Email": { "dataType": "String", "fieldType": "Scalar", "apiName": "Email" },
+            "CreatedById": {
+                "fieldType": "Reference",
+                "apiName": "CreatedById",
+                "referenceToaApiName": "User",
+                "relationshipName": "CreatedBy"
+            }
+        }
+    },
+
+    "TimeSheet": {
+        "childRelationships": {
+            "TimeSheetEntries": {
+                "childObjectApiName": "TimeSheetEntry",
+                "fieldName": "TimeSheetId",
+                "relationshipName": "TimeSheetEntries"
+            },
+            "ProcessInstances": {
+                "childObjectApiName": "ProcessInstance",
+                "fieldName": "TargetId",
+                "relationshipName": "ProcessInstances"
+            }
+        },
+
+        "fields": {
+            "OwnerId": {
+                "fieldType": "Reference",
+                "apiName": "OwnerId",
+                "relationshipName": "Owner",
+                "referenceToaApiName": "User"
+            },
+            "CreatedById": {
+                "fieldType": "Reference",
+                "apiName": "CreatedById",
+                "relationshipName": "CreatedBy",
+                "referenceToaApiName": "User"
+            },
+
+            "Id": { "fieldType": "Scalar", "dataType": "String", "apiName": "Id" },
+            "TimeSheetNumber": {
+                "fieldType": "Scalar",
+                "dataType": "String",
+                "apiName": "TimeSheetNumber"
+            },
+            "CreatedDate": {
+                "fieldType": "Scalar",
+                "dataType": "DateTime",
+                "apiName": "CreatedDate"
+            },
+            "EndDate": { "fieldType": "Scalar", "dataType": "Date", "apiName": "EndDate" },
+            "IsDeleted": { "fieldType": "Scalar", "dataType": "Boolean", "apiName": "IsDeleted" },
+            "TotalDurationInHours": {
+                "fieldType": "Scalar",
+                "dataType": "Double",
+                "apiName": "TotalDurationInHours"
+            },
+            "TotalDurationInMinutes": {
+                "fieldType": "Scalar",
+                "dataType": "Int",
+                "apiName": "TotalDurationInMinutes"
+            }
+        }
+    },
+
+    "TimeSheetEntry": {
+        "childRelationships": {},
+
+        "fields": {
+            "Id": { "dataType": "String", "fieldType": "Scalar", "apiName": "Id" },
+            "TimeSheetId": {
+                "fieldType": "Reference",
+                "apiName": "TimeSheetId",
+                "referenceToaApiName": "TimeSheet",
+                "relationshipName": "TimeSheet"
+            },
+            "WorkOrderId": {
+                "fieldType": "Reference",
+                "apiName": "WorkOrderId",
+                "referenceToaApiName": "WorkOrder",
+                "relationshipName": "WorkOrder"
+            }
+        }
+    },
+
+    "ProcessInstance": {
+        "childRelationships": {},
+
+        "fields": {
+            "Id": { "dataType": "Boolean", "fieldType": "Scalar", "apiName": "Id" }
+        }
+    }
+}

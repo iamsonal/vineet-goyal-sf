@@ -1789,5 +1789,95 @@ describe('sfs gql queries', () => {
             const snapshot = await graphQLImperative(graphqlConfig);
             expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
         });
+
+        it('should resolve query for first 2000 items', async () => {
+            const ast = parseQuery(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            FieldServiceOrgSettings(first: 2000) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const expectedQuery = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            FieldServiceOrgSettings(first: 2000) {
+                                edges {
+                                    node {
+                                        Id
+                                        ...defaultRecordFields
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                fragment defaultRecordFields on Record {
+                    __typename
+                    ApiName
+                    WeakEtag
+                    Id
+                    DisplayValue
+                    SystemModstamp {
+                        value
+                    }
+                    LastModifiedById {
+                        value
+                    }
+                    LastModifiedDate {
+                        value
+                    }
+                    RecordTypeId(fallback: true) {
+                        value
+                    }
+                }
+            `;
+
+            const mock = getMock('RecordQuery-FieldServiceOrgSettings-first-2000-id');
+            const expectedData = {
+                data: {
+                    uiapi: {
+                        query: {
+                            FieldServiceOrgSettings: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Id: '0UJx00000000001GAA',
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            };
+
+            mockGraphqlNetwork(
+                {
+                    query: expectedQuery,
+                    variables: {},
+                },
+                mock
+            );
+
+            const graphqlConfig = {
+                query: ast,
+                variables: {},
+            };
+
+            const snapshot = await graphQLImperative(graphqlConfig);
+            expect(snapshot.data).toEqualSnapshotWithoutEtags(expectedData);
+        });
     });
 });

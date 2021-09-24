@@ -61,10 +61,39 @@ export class JsNimbusDurableStore implements DurableStore {
         });
     }
 
+    getEntriesInSegmentWithCallback(
+        ids: string[],
+        segment: string,
+        onResult: (result: DurableStoreFetchResult) => void,
+        onError: (message: String) => void
+    ): Promise<void> {
+        return this.getEntriesInSegment(ids, segment)
+            .then((result) => {
+                onResult(result);
+            })
+            .catch((error) => {
+                onError(error);
+            });
+    }
+
     getAllEntriesInSegment(segment: string): Promise<DurableStoreFetchResult> {
         return this.backingStore.getAllKeys(segment).then((keys) => {
             return this.getEntriesInSegment(keys, segment);
         });
+    }
+
+    getAllEntriesInSegmentWithCallback(
+        segment: string,
+        onResult: (result: DurableStoreFetchResult) => void,
+        onError: (message: String) => void
+    ): Promise<void> {
+        return this.getAllEntriesInSegment(segment)
+            .then((result) => {
+                onResult(result);
+            })
+            .catch((error) => {
+                onError(error);
+            });
     }
 
     /**

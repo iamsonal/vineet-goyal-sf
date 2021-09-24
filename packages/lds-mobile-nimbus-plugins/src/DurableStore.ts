@@ -37,6 +37,21 @@ export interface DurableStore {
     getEntriesInSegment(ids: string[], segment: string): Promise<DurableStoreFetchResult>;
 
     /**
+     * Looks up a set of entries based on their id from a segment.
+     * Result is delivered through call back instead of in the returned promise like {@link getEntriesInSegment}
+     * @param ids a list of ids to lookup in the store
+     * @param segment The durable store segment to query
+     * @param onResult callback to deliver result
+     * @param onError callback to deliver error
+     */
+    getEntriesInSegmentWithCallback(
+        ids: string[],
+        segment: string,
+        onResult: (result: DurableStoreFetchResult) => void,
+        onError: (message: String) => void
+    ): Promise<void>;
+
+    /**
      * Retrieves all entries in the given segment
      *
      * If the given segment does not exist, then `isMissingEntries`
@@ -45,6 +60,19 @@ export interface DurableStore {
      * @param segment The durable store segment to query
      */
     getAllEntriesInSegment(segment: string): Promise<DurableStoreFetchResult>;
+
+    /**
+     * Retrieves all entries in the given segment.
+     * Result is delivered through call back instead of in the returned promise like {@link getAllEntriesInSegment}
+     * @param segment The durable store segment to query
+     * @param onResult callback to deliver result
+     * @param onError callback to deliver error
+     */
+    getAllEntriesInSegmentWithCallback(
+        segment: string,
+        onResult: (result: DurableStoreFetchResult) => void,
+        onError: (message: String) => void
+    ): Promise<void>;
 
     /**
      * @deprecated Use batchOperations instead

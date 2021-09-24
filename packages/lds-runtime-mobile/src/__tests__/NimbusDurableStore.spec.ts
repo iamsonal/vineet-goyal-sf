@@ -10,19 +10,20 @@ import { DurableStoreChange } from '@mobileplatform/nimbus-plugin-lds';
 import { flushPromises } from './testUtils';
 
 const testSegment = 'testSegment';
-describe('nimbus durable store tests', () => {
+describe('Nimbus durable store tests', () => {
+    const recordId = 'foo';
+    const recordData = { data: { bar: true } };
+
     afterEach(() => {
         resetNimbusStoreGlobal();
     });
 
-    describe('plugin signature backward compatibility', () => {
-        it('should use the old setEntries if new doesnt exist', async () => {
+    describe('Plugin signature backward compatibility', () => {
+        it('should use the old setEntries if new does not exist', async () => {
             const setEntriesSpy = jest.fn().mockResolvedValue(undefined);
             const mock = { setEntriesInSegment: setEntriesSpy };
             mockNimbusStoreGlobal(mock as any as MockNimbusDurableStore);
             const durableStore = new NimbusDurableStore();
-            const recordId = 'foo';
-            const recordData = { data: { bar: true } };
             const setData = {
                 [recordId]: recordData,
             };
@@ -30,6 +31,77 @@ describe('nimbus durable store tests', () => {
             expect(setEntriesSpy).toBeCalledTimes(1);
             expect(setEntriesSpy.mock.calls[0][0]).toBeDefined();
             expect(setEntriesSpy.mock.calls[0][1]).toEqual(testSegment);
+        });
+
+        it('should call getEntriesInSegment if getEntriesInSegmentWithCallback does not exist', async () => {
+            const getEntriesInSegmentSpy = jest.fn().mockResolvedValue({
+                entries: { foo: JSONStringify(recordData) },
+            });
+            const mock = { getEntriesInSegment: getEntriesInSegmentSpy };
+            mockNimbusStoreGlobal(mock as any as MockNimbusDurableStore);
+            const durableStore = new NimbusDurableStore();
+            const result = await durableStore.getEntries([recordId], DefaultDurableSegment);
+            expect(getEntriesInSegmentSpy).toBeCalledTimes(1);
+            expect(result[recordId]).toEqual(recordData);
+        });
+
+        it('should call getAllEntriesInSegment if getAllEntriesInSegmentWithCallback does not exist', async () => {
+            const getAllEntriesInSegmentSpy = jest.fn().mockResolvedValue({
+                entries: { foo: JSONStringify(recordData) },
+            });
+            const mock = { getAllEntriesInSegment: getAllEntriesInSegmentSpy };
+            mockNimbusStoreGlobal(mock as any as MockNimbusDurableStore);
+            const durableStore = new NimbusDurableStore();
+            const result = await durableStore.getAllEntries(DefaultDurableSegment);
+            expect(getAllEntriesInSegmentSpy).toBeCalledTimes(1);
+            expect(result[recordId]).toEqual(recordData);
+        });
+
+        it('should call getEntriesInSegmentWithCallback if both getEntriesInSegment and getEntriesInSegmentWithCallback exist', async () => {
+            const resultEntries = {
+                entries: { foo: JSONStringify(recordData) },
+            };
+            const getEntriesInSegmentSpy = jest.fn().mockResolvedValue(resultEntries);
+            const getEntriesInSegmentWithCallbackSpy = jest
+                .fn()
+                .mockImplementation((ids, segment, onResult) => {
+                    onResult(resultEntries);
+                });
+
+            const mock = {
+                getEntriesInSegment: getEntriesInSegmentSpy,
+                getEntriesInSegmentWithCallback: getEntriesInSegmentWithCallbackSpy,
+            };
+            mockNimbusStoreGlobal(mock as any as MockNimbusDurableStore);
+            const durableStore = new NimbusDurableStore();
+            const result = await durableStore.getEntries([recordId], DefaultDurableSegment);
+            expect(getEntriesInSegmentSpy).toBeCalledTimes(0);
+            expect(getEntriesInSegmentWithCallbackSpy).toBeCalledTimes(1);
+            expect(result[recordId]).toEqual(recordData);
+        });
+
+        it('should call getAllEntriesInSegmentWithCallback if both getAllEntriesInSegment and getAllEntriesInSegmentWithCallback exist', async () => {
+            const resultEntries = {
+                entries: { foo: JSONStringify(recordData) },
+            };
+            const getAllEntriesInSegmentSpy = jest.fn().mockResolvedValue(resultEntries);
+            const getAllEntriesInSegmentWithCallbackSpy = jest
+                .fn()
+                .mockImplementation((segment, onResult) => {
+                    onResult(resultEntries);
+                    Promise.resolve(undefined);
+                });
+
+            const mock = {
+                getAllEntriesInSegment: getAllEntriesInSegmentSpy,
+                getAllEntriesInSegmentWithCallback: getAllEntriesInSegmentWithCallbackSpy,
+            };
+            mockNimbusStoreGlobal(mock as any as MockNimbusDurableStore);
+            const durableStore = new NimbusDurableStore();
+            const result = await durableStore.getAllEntries(DefaultDurableSegment);
+            expect(getAllEntriesInSegmentSpy).toBeCalledTimes(0);
+            expect(getAllEntriesInSegmentWithCallbackSpy).toBeCalledTimes(1);
+            expect(result[recordId]).toEqual(recordData);
         });
 
         it('should use the old evictEntries if new doesnt exist', async () => {
@@ -44,7 +116,7 @@ describe('nimbus durable store tests', () => {
         });
     });
 
-    describe('getEntries', () => {
+    describe('GetEntries', () => {
         it('should return empty object if missing entries', async () => {
             const nimbusStore = new MockNimbusDurableStore();
             mockNimbusStoreGlobal(nimbusStore);
@@ -53,8 +125,6 @@ describe('nimbus durable store tests', () => {
             expect(result).toEqual({});
         });
         it('should parse serialized entries', async () => {
-            const recordId = 'foo';
-            const recordData = { data: { bar: true } };
             const nimbusStore = new MockNimbusDurableStore();
             nimbusStore.kvp = {
                 [DefaultDurableSegment]: {
@@ -86,13 +156,11 @@ describe('nimbus durable store tests', () => {
         });
     });
 
-    describe('batchOperations', () => {
+    describe('BatchOperations', () => {
         it('should stringify entries', async () => {
             const nimbusStore = new MockNimbusDurableStore();
             const batchSpy = jest.fn().mockResolvedValue(undefined);
             nimbusStore.batchOperations = batchSpy;
-            const recordId = 'foo';
-            const recordData = { data: { bar: true } };
             mockNimbusStoreGlobal(nimbusStore);
 
             const durableStore = new NimbusDurableStore();
@@ -118,8 +186,6 @@ describe('nimbus durable store tests', () => {
             nimbusStore.batchOperations = undefined;
             nimbusStore.setEntriesInSegmentWithSender = setEntriesSpy;
 
-            const recordId = 'foo';
-            const recordData = { data: { bar: true } };
             mockNimbusStoreGlobal(nimbusStore);
 
             const durableStore = new NimbusDurableStore();
@@ -152,8 +218,6 @@ describe('nimbus durable store tests', () => {
             const nimbusStore = new MockNimbusDurableStore();
             const batchSpy = jest.fn().mockResolvedValue(undefined);
             nimbusStore.batchOperations = batchSpy;
-            const recordId = 'foo';
-            const recordData = { data: { bar: true } };
             mockNimbusStoreGlobal(nimbusStore);
 
             const durableStore = new NimbusDurableStore();
@@ -190,7 +254,7 @@ describe('nimbus durable store tests', () => {
         });
     });
 
-    describe('registerOnChangedListener', () => {
+    describe('RegisterOnChangedListener', () => {
         it('should call back on change listener', async () => {
             const durableStore = new NimbusDurableStore();
             const changedIds = ['1', '2', '3'];
@@ -253,7 +317,7 @@ describe('nimbus durable store tests', () => {
         });
     });
 
-    describe('change listener', () => {
+    describe('Change listener', () => {
         it('should send external when not sent by self', async () => {
             expect.assertions(3);
             const durableStore = new NimbusDurableStore();

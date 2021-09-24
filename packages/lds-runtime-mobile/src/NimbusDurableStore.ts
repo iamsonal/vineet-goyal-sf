@@ -15,6 +15,7 @@ import {
     DurableStoreChange as NimbusDurableStoreChange,
     DurableStoreOperation as NimbusOperation,
     DurableStoreOperationType as NimbusOperationType,
+    DurableStoreFetchResult,
 } from '@mobileplatform/nimbus-plugin-lds';
 
 import { ObjectKeys, ObjectCreate, JSONStringify, JSONParse } from './utils/language';
@@ -111,6 +112,18 @@ export class NimbusDurableStore implements DurableStore {
         return random.toString();
     }
 
+    private convertToEntryList<T>(result: DurableStoreFetchResult): DurableStoreEntries<T> {
+        const { entries } = result;
+        const returnEntries: DurableStoreEntries<T> = ObjectCreate(null);
+        const keys = ObjectKeys(entries);
+        for (let i = 0, len = keys.length; i < len; i++) {
+            const key = keys[i];
+            // values are stored on native side as JSON strings
+            returnEntries[key] = JSONParse(entries[key]) as DurableStoreEntry<T>;
+        }
+        return returnEntries;
+    }
+
     getEntries<T>(
         entryIds: string[],
         segment: string
@@ -120,42 +133,57 @@ export class NimbusDurableStore implements DurableStore {
         }
 
         tasker.add();
+        // call getEntriesInSegmentWithCallback if available
+        if (__nimbus.plugins.LdsDurableStore.getEntriesInSegmentWithCallback !== undefined) {
+            return new Promise<DurableStoreEntries<T>>((resolve, reject) => {
+                __nimbus.plugins.LdsDurableStore.getEntriesInSegmentWithCallback(
+                    entryIds,
+                    segment,
+                    (result) => {
+                        resolve(this.convertToEntryList(result));
+                    },
+                    (error) => {
+                        reject(error);
+                    }
+                );
+            }).finally(() => tasker.done());
+        }
+
+        // TODO [W-9930552]: Remove this once getEntriesInSegment is no longer supported
         return __nimbus.plugins.LdsDurableStore.getEntriesInSegment(entryIds, segment)
             .then((result) => {
-                const { entries } = result;
-
-                const returnEntries: DurableStoreEntries<T> = ObjectCreate(null);
-                const keys = ObjectKeys(entries);
-                for (let i = 0, len = keys.length; i < len; i++) {
-                    const key = keys[i];
-                    // values are stored on native side as JSON strings
-                    returnEntries[key] = JSONParse(entries[key]) as DurableStoreEntry<T>;
-                }
-                return returnEntries;
+                return this.convertToEntryList(result) as DurableStoreEntries<T>;
             })
             .finally(() => tasker.done());
     }
 
     getAllEntries<T>(segment: string): Promise<DurableStoreEntries<T> | undefined> {
         tasker.add();
+
+        // call getAllEntriesInSegmentWithCallback if available
+        if (__nimbus.plugins.LdsDurableStore.getAllEntriesInSegmentWithCallback !== undefined) {
+            return new Promise<DurableStoreEntries<T>>((resolve, reject) => {
+                __nimbus.plugins.LdsDurableStore.getAllEntriesInSegmentWithCallback(
+                    segment,
+                    (result) => {
+                        resolve(this.convertToEntryList(result));
+                    },
+                    (error) => {
+                        reject(error);
+                    }
+                );
+            }).finally(() => tasker.done());
+        }
+
+        // TODO [W-9930552]: Remove this getAllEntriesInSegment is no longer supported
         return __nimbus.plugins.LdsDurableStore.getAllEntriesInSegment(segment)
             .then((result) => {
-                const { isMissingEntries, entries } = result;
-
                 // if the segment isn't found then isMissingEntries will be set and
                 // we should return undefined.
-                if (isMissingEntries) {
+                if (result.isMissingEntries) {
                     return undefined;
                 }
-
-                const returnEntries: DurableStoreEntries<T> = ObjectCreate(null);
-                const keys = ObjectKeys(entries);
-                for (let i = 0, len = keys.length; i < len; i++) {
-                    const key = keys[i];
-                    // values are stored on native side as JSON strings
-                    returnEntries[key] = JSONParse(entries[key]) as DurableStoreEntry<T>;
-                }
-                return returnEntries;
+                return this.convertToEntryList(result) as DurableStoreEntries<T>;
             })
             .finally(() => tasker.done());
     }

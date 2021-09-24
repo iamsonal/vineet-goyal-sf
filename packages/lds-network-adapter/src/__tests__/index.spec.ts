@@ -1,4 +1,5 @@
-import { ResourceRequest } from '@luvio/engine';
+import { HttpStatusCode, ResourceRequest } from '@luvio/engine';
+import { buildGetRecordByFieldsCompositeRequest } from '../dispatch/execute-aggregate-ui';
 import platformNetworkAdapter from '../main';
 import { UI_API_BASE_URI } from '../uiapi-base';
 import { buildResourceRequest } from './test-utils';
@@ -244,6 +245,63 @@ describe('routes', () => {
             });
         });
 
+        describe('with a large amount of fields', () => {
+            it('should call aggregate-ui correctly', async () => {
+                let generatedFields = generateMockedRecordFields(
+                    2000,
+                    'ExtremelyLongTestFieldName'
+                );
+                let responseBody = {
+                    compositeResponse: [
+                        {
+                            body: {},
+                            httpStatusCode: HttpStatusCode.Ok,
+                        },
+                    ],
+                };
+                let resourceRequest: ResourceRequest = {
+                    body: null,
+                    method: 'get',
+                    baseUri: UI_API_BASE_URI,
+                    basePath: `/records/1234`,
+                    headers: null,
+                    urlParams: {
+                        recordId: '1234',
+                    },
+                    queryParams: {
+                        fields: generatedFields,
+                    },
+                };
+
+                const compositeRequest = buildGetRecordByFieldsCompositeRequest(resourceRequest, {
+                    fieldsArray: generatedFields,
+                    optionalFieldsArray: [],
+                    fieldsLength: generatedFields.join(',').length,
+                    optionalFieldsLength: 0,
+                });
+
+                const aggregateUiParams = {
+                    input: {
+                        compositeRequest,
+                    },
+                };
+
+                const aggregateUiResourceRequest: ResourceRequest = {
+                    baseUri: UI_API_BASE_URI,
+                    basePath: '/aggregate-ui',
+                    method: 'post',
+                    urlParams: {},
+                    body: aggregateUiParams,
+                    queryParams: {},
+                    headers: {},
+                };
+
+                const fn = jest.fn().mockResolvedValueOnce({ body: responseBody });
+                await platformNetworkAdapter(fn)(resourceRequest);
+                expect(fn).toHaveBeenCalledWith(aggregateUiResourceRequest);
+            });
+        });
+
         describe('with layout', () => {
             testControllerInput({
                 method: 'get',
@@ -415,3 +473,18 @@ describe('routes', () => {
         );
     });
 });
+
+function generateMockedRecordFields(
+    numberOfFields: number,
+    customFieldName?: string
+): Array<string> {
+    const fields: Array<string> = new Array();
+    const fieldName =
+        customFieldName !== undefined ? customFieldName.replace(/\s+/g, '') : 'CustomField';
+
+    for (let i = 0; i < numberOfFields; i++) {
+        fields.push(`${fieldName}${i}__c`);
+    }
+
+    return fields;
+}

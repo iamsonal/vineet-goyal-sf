@@ -210,14 +210,16 @@ function getConfigOptionalFields(resourceRequest: ResourceRequest): string[] {
     return [];
 }
 
+export interface GetRecordCompositeRequestParams {
+    fieldsArray: Array<string>;
+    optionalFieldsArray: Array<string>;
+    fieldsLength: number;
+    optionalFieldsLength: number;
+}
+
 export function buildGetRecordByFieldsCompositeRequest(
     resourceRequest: ResourceRequest,
-    recordsCompositeRequest: {
-        fieldsArray: Array<string>;
-        optionalFieldsArray: Array<string>;
-        fieldsLength: number;
-        optionalFieldsLength: number;
-    }
+    recordsCompositeRequest: GetRecordCompositeRequestParams
 ): CompositeRequest[] {
     const { fieldsArray, optionalFieldsArray, fieldsLength, optionalFieldsLength } =
         recordsCompositeRequest;

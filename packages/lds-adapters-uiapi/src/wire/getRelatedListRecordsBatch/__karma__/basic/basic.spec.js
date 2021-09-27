@@ -1,8 +1,4 @@
 import { getMock as globalGetMock, setupElement } from 'test-util';
-
-import RelatedListRecordsBatch from '../lwc/related-list-records-batch-basic';
-import RelatedListRecordsSingle from '../../../getRelatedListRecords/__karma__/lwc/related-list-basic';
-// import RelatedListRecords from '../../getRelatedListRecords/lwc/related-list-basic';
 import {
     expireRecords,
     expireRelatedListRecordCollection,
@@ -10,7 +6,11 @@ import {
     mockGetRelatedListRecordsNetworkPost,
     convertRelatedListsBatchParamsToResourceParams,
     extractRelatedListsBatchParamsFromMockData,
-} from '../../../../../karma/uiapi-test-util';
+} from 'uiapi-test-util';
+
+import RelatedListRecordsBatch from '../lwc/related-list-records-batch-basic';
+import RelatedListRecordsSingle from '../../../getRelatedListRecords/__karma__/lwc/related-list-basic';
+// import RelatedListRecords from '../../getRelatedListRecords/lwc/related-list-basic';
 
 const MOCK_PREFIX = 'wire/getRelatedListRecordsBatch/__karma__/basic/data/';
 
@@ -87,7 +87,6 @@ describe('batching', () => {
         // second component should have the cached data without hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
-        expect(element.getWiredData()).toBeImmutable();
     });
 
     it('returns updated result when cached data is expired', async () => {
@@ -107,7 +106,6 @@ describe('batching', () => {
         // second component should have the updated data by hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
-        expect(element.getWiredData()).toBeImmutable();
     });
 
     it('returns updated result when cached data is expired with no record linking', async () => {
@@ -126,7 +124,6 @@ describe('batching', () => {
         // second component should have the updated data by hitting network
         const element = await setupElement(params, RelatedListRecordsBatch);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
-        expect(element.getWiredData()).toBeImmutable();
     });
 
     // should provide a cache hit for existing single data
@@ -142,7 +139,6 @@ describe('batching', () => {
         // // second component should have the cached data without hitting network
         const element = await setupElement(batchComponentParams, RelatedListRecordsBatch);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
-        expect(element.getWiredData()).toBeImmutable();
     });
 
     // 1 single wire calls
@@ -161,7 +157,6 @@ describe('batching', () => {
         mockGetRelatedListRecordsBatchNetwork(batchResourceConfig, mockData);
         const element = await setupElement(batchComponentParams, RelatedListRecordsBatch);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
-        expect(element.getWiredData()).toBeImmutable();
     });
 });
 
@@ -190,12 +185,10 @@ describe('error cases', () => {
         // Get data into the cache
         const errorElement = await setupElement(params, RelatedListRecordsBatch);
         expect(errorElement.getWiredData()).toEqualSnapshotWithoutEtags(mockErrorData);
-        expect(errorElement.getWiredData()).toBeImmutable();
 
         // Network is mocked only once, should still retrieve data here.
         const element = await setupElement(params, RelatedListRecordsBatch);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockFullData);
-        expect(element.getWiredData()).toBeImmutable();
     });
 
     it('should retrieve actual data after error response cache expired', async () => {
@@ -208,7 +201,6 @@ describe('error cases', () => {
         // Get error data into the cache
         const errorElement = await setupElement(params, RelatedListRecordsBatch);
         expect(errorElement.getWiredData()).toEqualSnapshotWithoutEtags(mockError);
-        expect(errorElement.getWiredData()).toBeImmutable();
 
         // Cache bust
         expireRecords();
@@ -216,7 +208,6 @@ describe('error cases', () => {
         // Should get the real data now
         const element = await setupElement(params, RelatedListRecordsBatch);
         expect(element.getWiredData()).toEqualSnapshotWithoutEtags(mockData);
-        expect(element.getWiredData()).toBeImmutable();
     });
 
     describe('gack cases', () => {

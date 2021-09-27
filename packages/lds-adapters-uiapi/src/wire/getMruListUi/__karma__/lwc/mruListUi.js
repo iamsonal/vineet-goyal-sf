@@ -30,6 +30,11 @@ export default class MruListUi extends LightningElement {
     }
 
     @api
+    getWiredError() {
+        return this.listUi.error;
+    }
+
+    @api
     pushCount() {
         return this.wirePushCount;
     }

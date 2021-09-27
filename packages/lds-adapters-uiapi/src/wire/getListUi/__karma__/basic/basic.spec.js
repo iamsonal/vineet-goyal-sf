@@ -1,6 +1,5 @@
 import {
     getMock as globalGetMock,
-    mockNetworkErrorOnce,
     mockNetworkOnce,
     mockNetworkSequence,
     setupElement,
@@ -10,7 +9,7 @@ import { karmaNetworkAdapter } from 'lds-engine';
 import sinon from 'sinon';
 import { beforeEach as util_beforeEach } from '../util';
 
-import Basic from '../lwc/basic';
+import ListUi from '../lwc/basic';
 import RecordWire from './../../../getRecord/__karma__/lwc/record-fields';
 
 const MOCK_PREFIX = 'wire/getListUi/__karma__/basic/data/';
@@ -20,9 +19,7 @@ function getMock(filename) {
 }
 
 function mockNetworkListUi(config, mockData) {
-    const listViewId = config.listViewId;
-    const queryParams = { ...config };
-    delete queryParams.listViewId;
+    const { listViewId, ...queryParams } = config;
 
     const paramMatch = sinon.match({
         basePath: `${URL_BASE}/list-ui/${listViewId}`,
@@ -36,31 +33,6 @@ beforeEach(() => {
 });
 
 describe('basic', () => {
-    it('displays error when network request 404s', async () => {
-        // actual listViewId value doesn't really matter here since we mock fetch to 404
-        const listViewId = '00BRM0000029bDc2AI';
-        const response404 = {
-            ok: false,
-            status: 404,
-            statusText: 'NOT_FOUND',
-            body: [
-                {
-                    errorCode: 'NOT_FOUND',
-                    message: 'The requested resource does not exist',
-                },
-            ],
-        };
-        const matchParams = sinon.match({
-            basePath: `${URL_BASE}/list-ui/${listViewId}`,
-        });
-        mockNetworkErrorOnce(karmaNetworkAdapter, matchParams, response404);
-
-        const element = await setupElement({ listViewId }, Basic);
-
-        const wiredData = element.getWiredData();
-        expect(wiredData.error).toBeTruthy();
-    });
-
     it('should not emit new snapshot when selected list data has not changed', async () => {
         const mockListUi = getMock('list-ui-All-Opportunities');
         const listViewUiConfig = {
@@ -82,7 +54,7 @@ describe('basic', () => {
                 ...listViewUiConfig,
                 pageSize: mockListUi.records.records.length,
             },
-            Basic
+            ListUi
         );
 
         expireRecords();
@@ -91,6 +63,152 @@ describe('basic', () => {
         // It should not have pushed a new value to list ui element because Opportunity.Owner.City
         // is not referenced there
         expect(element.pushCount()).toBe(1);
+    });
+});
+
+describe('errors', () => {
+    it('emit error snapshot when network responses 404s', async () => {
+        const mockError = {
+            ok: false,
+            status: 404,
+            statusText: 'NOT_FOUND',
+            body: [
+                {
+                    errorCode: 'NOT_FOUND',
+                    message: 'The requested resource does not exist',
+                },
+            ],
+        };
+
+        // actual listViewId value doesn't really matter here since we mock fetch to 404
+        const config = { listViewId: '00BRM0000029bDc2AI' };
+        mockNetworkListUi(config, { reject: true, data: mockError });
+
+        const element = await setupElement(config, ListUi);
+        expect(element.getWiredError()).toEqualImmutable(mockError);
+    });
+
+    it('listViewId does not exist', async () => {
+        const mockError = {
+            ok: false,
+            status: 403,
+            statusText: 'FORBIDDEN',
+            body: [
+                {
+                    errorCode: 'INSUFFICIENT_ACCESS',
+                    message:
+                        "You don't have access to this record. Ask your administrator for help or to request access.",
+                },
+            ],
+        };
+
+        const config = { listViewId: 'invalidListViewId' };
+
+        mockNetworkListUi(config, { reject: true, data: mockError });
+
+        const element = await setupElement(config, ListUi);
+        expect(element.getWiredError()).toEqualImmutable(mockError);
+    });
+
+    it('pageSize is -1', async () => {
+        const mockError = {
+            ok: false,
+            status: 400,
+            statusText: 'BAD_REQUEST',
+            body: [
+                {
+                    errorCode: 'NUMBER_OUTSIDE_VALID_RANGE',
+                    message: 'pageSize parameter must be between 1 and 2000',
+                },
+            ],
+        };
+
+        const config = { listViewId: '00BRM00000ZZZZZZZZ', pageSize: -1 };
+        mockNetworkListUi(config, { reject: true, data: mockError });
+        const element = await setupElement(config, ListUi);
+        expect(element.getWiredError()).toEqualImmutable(mockError);
+    });
+
+    it('pageSize is above max', async () => {
+        const mockError = {
+            ok: false,
+            status: 400,
+            statusText: 'BAD_REQUEST',
+            body: [
+                {
+                    errorCode: 'NUMBER_OUTSIDE_VALID_RANGE',
+                    message: 'pageSize parameter must be between 1 and 2000',
+                },
+            ],
+        };
+
+        const config = { listViewId: '00BRM00000ZZZZZZZZ', pageSize: 2100 };
+        mockNetworkListUi(config, { reject: true, data: mockError });
+        const element = await setupElement(config, ListUi);
+        expect(element.getWiredError()).toEqualImmutable(mockError);
+    });
+
+    it('pageToken is invalid', async () => {
+        const mockError = {
+            ok: false,
+            status: 400,
+            statusText: 'BAD_REQUEST',
+            body: [
+                {
+                    errorCode: 'ILLEGAL_QUERY_PARAMETER_VALUE',
+                    message: 'For input string: invalid',
+                },
+            ],
+        };
+
+        // actual listViewId value doesn't really matter here since we mock fetch to 404
+        const config = { listViewId: '00BRM0000029bDc2AI', pageSize: 1, pageToken: 'invalid' };
+        mockNetworkListUi(config, { reject: true, data: mockError });
+
+        const element = await setupElement(config, ListUi);
+        expect(element.getWiredError()).toEqualImmutable(mockError);
+    });
+
+    it('requests non-existent fields', async () => {
+        const mockError = {
+            ok: false,
+            status: 400,
+            statusText: 'BAD_REQUEST',
+            body: [
+                {
+                    errorCode: 'INVALID_FIELD',
+                    message: "No such column 'BadField' on entity Opportunity",
+                },
+            ],
+        };
+
+        // actual listViewId value doesn't really matter here since we mock fetch to 404
+        const config = { listViewId: '00BRM0000029bDc2AI', fields: ['BadField'] };
+        mockNetworkListUi(config, { reject: true, data: mockError });
+
+        const element = await setupElement(config, ListUi);
+        expect(element.getWiredError()).toEqualImmutable(mockError);
+    });
+
+    it('returns error when multiple sortBy values are passed', async () => {
+        // even though sortBy is of type Array<string> it accept a single value
+
+        const mockError = {
+            ok: false,
+            status: 400,
+            statusText: 'BAD_REQUEST',
+            body: [
+                {
+                    errorCode: 'ILLEGAL_QUERY_PARAMETER_VALUE',
+                    message: 'Can only sortBy one value',
+                },
+            ],
+        };
+        const config = { listViewId: '00BRM0000029bDc2AI', sortBy: ['Account.Name'] };
+        mockNetworkListUi(config, { reject: true, data: mockError });
+
+        const element = await setupElement(config, ListUi);
+        expect(element.getWiredError()).toEqualImmutable(mockError);
     });
 });
 
@@ -115,7 +233,7 @@ describe('refresh', () => {
             [mock, refreshed]
         );
 
-        const element = await setupElement(config, Basic);
+        const element = await setupElement(config, ListUi);
 
         expect(element.pushCount()).toBe(1);
 
@@ -134,7 +252,7 @@ describe('special data', () => {
         };
         mockNetworkListUi(config, mockData);
 
-        const element = await setupElement(config, Basic);
+        const element = await setupElement(config, ListUi);
         expect(element.getWiredData()).toEqualListUi(mockData);
     });
 });

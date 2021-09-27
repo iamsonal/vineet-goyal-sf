@@ -22,9 +22,7 @@ function getMock(filename) {
 }
 
 function mockNetworkMruListUi(config, mockData) {
-    const objectApiName = config.objectApiName;
-    const queryParams = { ...config };
-    delete queryParams.objectApiName;
+    const { objectApiName, ...queryParams } = config;
 
     const paramMatch = sinon.match({
         basePath: `${URL_BASE}/mru-list-ui/${objectApiName}`,
@@ -55,16 +53,18 @@ beforeEach(() => {
 });
 
 describe('getMruListUi', () => {
-    it('returns metadata and records when only objectApiName provided', async () => {
-        const mockData = getMock('mru-list-ui-Opportunity');
-        const config = { objectApiName: mockData.info.listReference.objectApiName };
-        mockNetworkMruListUi(config, mockData);
+    describe('basic', () => {
+        it('returns metadata and records when only objectApiName provided', async () => {
+            const mockData = getMock('mru-list-ui-Opportunity');
+            const config = { objectApiName: mockData.info.listReference.objectApiName };
+            mockNetworkMruListUi(config, mockData);
 
-        const element = await setupElement(config, MruListUi);
+            const element = await setupElement(config, MruListUi);
 
-        const wiredData = element.getWiredData();
-        expect(wiredData).toEqualListUi(mockData);
-        expect(wiredData.data).toBeImmutable();
+            const wiredData = element.getWiredData();
+            expect(wiredData).toEqualListUi(mockData);
+            expect(wiredData.data).toBeImmutable();
+        });
     });
 
     describe('caching', () => {
@@ -286,7 +286,7 @@ describe('getMruListUi', () => {
         });
     });
 
-    describe('returns error when', function () {
+    describe('errors', function () {
         it('returns error when objectApiName do not exist', async () => {
             const mockError = {
                 ok: false,
@@ -305,8 +305,7 @@ describe('getMruListUi', () => {
             mockNetworkMruListUi(config, { reject: true, data: mockError });
 
             const element = await setupElement(config, MruListUi);
-            expect(element.getWiredData().error).toEqual(mockError);
-            expect(element.getWiredData().error).toBeImmutable();
+            expect(element.getWiredError()).toEqualImmutable(mockError);
         });
 
         it('returns error when pageSize is -1', async () => {
@@ -325,8 +324,7 @@ describe('getMruListUi', () => {
             const config = { objectApiName: 'Account', pageSize: -1 };
             mockNetworkMruListUi(config, { reject: true, data: mockError });
             const element = await setupElement(config, MruListUi);
-            expect(element.getWiredData().error).toEqual(mockError);
-            expect(element.getWiredData().error).toBeImmutable();
+            expect(element.getWiredError()).toEqualImmutable(mockError);
         });
 
         it('returns error when pageSize is above max', async () => {
@@ -345,8 +343,7 @@ describe('getMruListUi', () => {
             const config = { objectApiName: 'Account', pageSize: 2100 };
             mockNetworkMruListUi(config, { reject: true, data: mockError });
             const element = await setupElement(config, MruListUi);
-            expect(element.getWiredData().error).toEqual(mockError);
-            expect(element.getWiredData().error).toBeImmutable();
+            expect(element.getWiredError()).toEqualImmutable(mockError);
         });
 
         it('returns error when pageToken is invalid', async () => {
@@ -365,8 +362,7 @@ describe('getMruListUi', () => {
             const config = { objectApiName: 'Account', pageSize: 1, pageToken: 'invalid' };
             mockNetworkMruListUi(config, { reject: true, data: mockError });
             const element = await setupElement(config, MruListUi);
-            expect(element.getWiredData().error).toEqual(mockError);
-            expect(element.getWiredData().error).toBeImmutable();
+            expect(element.getWiredError()).toEqualImmutable(mockError);
         });
 
         it('returns error when requests non-existent fields', async () => {
@@ -392,8 +388,26 @@ describe('getMruListUi', () => {
             };
             mockNetworkMruListUi(config, { reject: true, data: mockError });
             const element = await setupElement(config, MruListUi);
-            expect(element.getWiredData().error).toEqual(mockError);
-            expect(element.getWiredData().error).toBeImmutable();
+            expect(element.getWiredError()).toEqualImmutable(mockError);
+        });
+
+        it('returns error when multiple sortBy values are passed', async () => {
+            // even though sortBy is of type Array<string> it accept a single value
+            const mockError = {
+                ok: false,
+                status: 400,
+                statusText: 'BAD_REQUEST',
+                body: [
+                    {
+                        errorCode: 'ILLEGAL_QUERY_PARAMETER_VALUE',
+                        message: 'Can only sortBy one value',
+                    },
+                ],
+            };
+            const config = { objectApiName: 'Account', sortBy: ['Account.Name', 'Account.Rating'] };
+            mockNetworkMruListUi(config, { reject: true, data: mockError });
+            const element = await setupElement(config, MruListUi);
+            expect(element.getWiredError()).toEqualImmutable(mockError);
         });
     });
 
@@ -463,26 +477,6 @@ describe('getMruListUi', () => {
 
             expect(element.getWiredData()).toEqualListUi(mockData);
         });
-    });
-
-    it('returns error when multiple sortBy values are passed', async () => {
-        // even though sortBy is of type Array<string> it accept a single value
-        const mockError = {
-            ok: false,
-            status: 400,
-            statusText: 'BAD_REQUEST',
-            body: [
-                {
-                    errorCode: 'ILLEGAL_QUERY_PARAMETER_VALUE',
-                    message: 'Can only sortBy one value',
-                },
-            ],
-        };
-        const config = { objectApiName: 'Account', sortBy: ['Account.Name', 'Account.Rating'] };
-        mockNetworkMruListUi(config, { reject: true, data: mockError });
-        const element = await setupElement(config, MruListUi);
-        expect(element.getWiredData().error).toEqual(mockError);
-        expect(element.getWiredData().error).toBeImmutable();
     });
 
     describe('special data', () => {

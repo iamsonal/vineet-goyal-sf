@@ -24,7 +24,12 @@ export default class ListViewId extends LightningElement {
 
     @api
     getWiredData() {
-        return this.listViewSummaryCollection;
+        return this.listViewSummaryCollection.data;
+    }
+
+    @api
+    getWiredError() {
+        return this.listViewSummaryCollection.error;
     }
 
     @api

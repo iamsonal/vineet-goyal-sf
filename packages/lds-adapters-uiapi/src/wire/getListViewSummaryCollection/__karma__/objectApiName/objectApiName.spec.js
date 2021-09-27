@@ -2,9 +2,7 @@ import ObjectApiName from '../lwc/objectApiName';
 import {
     mockNetworkOnce,
     mockNetworkSequence,
-    flushPromises,
     setupElement,
-    assertNetworkCallCount,
     updateElement,
     getMock as globalGetMock,
 } from 'test-util';
@@ -36,7 +34,7 @@ function mockNetworkListUi(config, mockData) {
     }
 }
 
-describe('with objectApiName', () => {
+describe('basic', () => {
     it('returns metadata and records when only objectApiName provided', async () => {
         const mockData = getMock('list-ui-Opportunity');
         const config = {
@@ -45,26 +43,7 @@ describe('with objectApiName', () => {
         mockNetworkListUi(config, mockData);
 
         const element = await setupElement(config, ObjectApiName);
-
-        const wiredData = element.getWiredData();
-
-        expect(wiredData.error).toBeUndefined();
-        expect(wiredData.data).toEqualListSnapshotWithoutPrivateProps(mockData);
-    });
-
-    it('does not make additional XHR for same objectApiName request', async () => {
-        const mockData = getMock('list-ui-Opportunity');
-        const config = {
-            objectApiName: mockData.objectApiName,
-        };
-        mockNetworkListUi(config, mockData);
-
-        const element1 = await setupElement(config, ObjectApiName);
-        const element2 = await setupElement(config, ObjectApiName);
-
-        expect(element1.getWiredData().data).toEqualListSnapshotWithoutPrivateProps(
-            element2.getWiredData().data
-        );
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     it('requesting a smaller pageSize makes an XHR request', async () => {
@@ -80,14 +59,12 @@ describe('with objectApiName', () => {
         mockNetworkListUi(config, mockDataPageSize6);
 
         const element = await setupElement(config, ObjectApiName);
-        let wiredData = element.getWiredData();
-        expect(wiredData.data).toEqualListSnapshotWithoutPrivateProps(mockDataPageSize6);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockDataPageSize6);
 
         mockNetworkListUi({ objectApiName, pageSize: 3, pageToken: '0' }, mockDataPageSize3);
         await updateElement(element, { pageSize: 3 });
 
-        wiredData = element.getWiredData();
-        expect(wiredData.data).toEqualListSnapshotWithoutPrivateProps(mockDataPageSize3);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockDataPageSize3);
     });
 
     it('makes additional XHR for same objectApiName and larger pageSize', async () => {
@@ -102,9 +79,7 @@ describe('with objectApiName', () => {
         mockNetworkListUi(config1, mockData1);
 
         const element = await setupElement(config1, ObjectApiName);
-
-        let wiredData = element.getWiredData();
-        expect(wiredData.data.count).toBe(3);
+        expect(element.getWiredData().count).toBe(3);
 
         const mockData2 = getMock('list-ui-Opportunity-pageToken-3-pageSize-3');
         const config2 = {
@@ -114,30 +89,11 @@ describe('with objectApiName', () => {
         };
         mockNetworkListUi(config2, mockData2);
 
-        element.pageSize = 6;
-        await flushPromises();
-
-        wiredData = element.getWiredData();
-        expect(wiredData.data.count).toBe(6);
+        await updateElement(element, { pageSize: 6 });
 
         // verify the adapter constructed the same response that the server would have
         const mockData3 = getMock('list-ui-Opportunity-pageSize-6');
-        expect(wiredData.data).toEqualListSnapshotWithoutPrivateProps(mockData3);
-    });
-
-    it('makes a network request after ListViewSummaryCollectionRepresentation is TTL expired', async () => {
-        const mockData = getMock('list-ui-Opportunity');
-        const config = { objectApiName: mockData.objectApiName };
-
-        mockNetworkListUi(config, [mockData, mockData]);
-        const el = await setupElement(config, ObjectApiName);
-        expect(el.getWiredData().data).toEqualListSnapshotWithoutPrivateProps(mockData);
-
-        expireDefaultTTL();
-
-        const el2 = await setupElement(config, ObjectApiName);
-        expect(el2.getWiredData().data).toEqualListSnapshotWithoutPrivateProps(mockData);
-        assertNetworkCallCount();
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData3);
     });
 
     it('makes additional XHR when q parameter changes', async () => {
@@ -150,9 +106,7 @@ describe('with objectApiName', () => {
         mockNetworkListUi(config, mockData);
 
         const element = await setupElement(config, ObjectApiName);
-
-        let wiredData = element.getWiredData();
-        expect(wiredData.data).toEqualListSnapshotWithoutPrivateProps(mockData);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
 
         // fetch with no q
         mockData = getMock('list-ui-Opportunity');
@@ -162,11 +116,8 @@ describe('with objectApiName', () => {
         };
         mockNetworkListUi(config, mockData);
 
-        element.q = config.q; // undefined
-        await flushPromises();
-
-        wiredData = element.getWiredData();
-        expect(wiredData.data).toEqualListSnapshotWithoutPrivateProps(mockData);
+        await updateElement(element, { q: config.q }); // undefined
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
 
         // fetch with q=month
         mockData = getMock('list-ui-Opportunity-q-month');
@@ -176,11 +127,8 @@ describe('with objectApiName', () => {
         };
         mockNetworkListUi(config, mockData);
 
-        element.q = config.q;
-        await flushPromises();
-
-        wiredData = element.getWiredData();
-        expect(wiredData.data).toEqualListSnapshotWithoutPrivateProps(mockData);
+        await updateElement(element, { q: config.q });
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
     });
 
     it('makes additional XHR when recentListsOnly parameter changes', async () => {
@@ -192,9 +140,7 @@ describe('with objectApiName', () => {
         mockNetworkListUi(config, mockData1);
 
         const element = await setupElement(config, ObjectApiName);
-
-        let wiredData = element.getWiredData();
-        expect(wiredData.data).toEqualListSnapshotWithoutPrivateProps(mockData1);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData1);
 
         // fetch with recentListsOnly=true
         const mockData2 = getMock('list-ui-Opportunity-recentListsOnly-true');
@@ -204,18 +150,12 @@ describe('with objectApiName', () => {
         };
         mockNetworkListUi(config, mockData2);
 
-        element.recentListsOnly = config.recentListsOnly;
-        await flushPromises();
-
-        wiredData = element.getWiredData();
-        expect(wiredData.data).toEqualListSnapshotWithoutPrivateProps(mockData2);
+        await updateElement(element, { recentListsOnly: config.recentListsOnly });
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData2);
 
         // recentListsOnly=false uses cached data
-        element.recentListsOnly = false;
-        await flushPromises();
-
-        wiredData = element.getWiredData();
-        expect(wiredData.data).toEqualListSnapshotWithoutPrivateProps(mockData1);
+        await updateElement(element, { recentListsOnly: false });
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData1);
     });
 
     it('uses pageToken to page through records', async () => {
@@ -228,18 +168,52 @@ describe('with objectApiName', () => {
         mockNetworkListUi(config, mockDataPageSize3);
 
         const element = await setupElement(config, ObjectApiName);
-        let wiredData = element.getWiredData();
-        expect(wiredData.data).toEqualListSnapshotWithoutPrivateProps(mockDataPageSize3);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockDataPageSize3);
 
         // mimicking the behavior of click the next button to load next records
         mockNetworkListUi({ ...config, pageToken: '3' }, mockDataPageToken3PageSize3);
         await updateElement(element, { pageToken: '3' });
 
-        wiredData = element.getWiredData();
-        expect(wiredData.data).toEqualListSnapshotWithoutPrivateProps(mockDataPageToken3PageSize3);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(
+            mockDataPageToken3PageSize3
+        );
         expect(element.pushCount()).toBe(2);
     });
+});
 
+describe('caching', () => {
+    it('does not make additional XHR for same objectApiName request', async () => {
+        const mockData = getMock('list-ui-Opportunity');
+        const config = {
+            objectApiName: mockData.objectApiName,
+        };
+        mockNetworkListUi(config, mockData);
+
+        const element1 = await setupElement(config, ObjectApiName);
+        expect(element1.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
+
+        const element2 = await setupElement(config, ObjectApiName);
+        expect(element2.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
+
+        expect(element1.pushCount()).toEqual(1);
+    });
+
+    it('makes a network request after ListViewSummaryCollectionRepresentation is TTL expired', async () => {
+        const mockData = getMock('list-ui-Opportunity');
+        const config = { objectApiName: mockData.objectApiName };
+
+        mockNetworkListUi(config, [mockData, mockData]);
+        const element = await setupElement(config, ObjectApiName);
+        expect(element.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
+
+        expireDefaultTTL();
+
+        const element2 = await setupElement(config, ObjectApiName);
+        expect(element2.getWiredData()).toEqualListSnapshotWithoutPrivateProps(mockData);
+    });
+});
+
+describe('errors', () => {
     it('returns error when objectApiName do not exist', async () => {
         const mockError = {
             ok: false,
@@ -259,8 +233,7 @@ describe('with objectApiName', () => {
 
         mockNetworkListUi(config, { reject: true, data: mockError });
         const element = await setupElement(config, ObjectApiName);
-        expect(element.getWiredData().error).toEqual(mockError);
-        expect(element.getWiredData().error).toBeImmutable();
+        expect(element.getWiredError()).toEqualImmutable(mockError);
     });
 
     it('returns error when pageSize is -1', async () => {
@@ -280,9 +253,7 @@ describe('with objectApiName', () => {
 
         mockNetworkListUi(config, { reject: true, data: mockError });
         const element = await setupElement(config, ObjectApiName);
-        const wiredError = element.getWiredData().error;
-        expect(wiredError).toEqual(mockError);
-        expect(wiredError).toBeImmutable();
+        expect(element.getWiredError()).toEqualImmutable(mockError);
     });
 
     it('returns error when pageSize is above max', async () => {
@@ -302,9 +273,7 @@ describe('with objectApiName', () => {
 
         mockNetworkListUi(config, { reject: true, data: mockError });
         const element = await setupElement(config, ObjectApiName);
-        const wiredError = element.getWiredData().error;
-        expect(wiredError).toEqual(mockError);
-        expect(wiredError).toBeImmutable();
+        expect(element.getWiredError()).toEqualImmutable(mockError);
     });
 
     it('returns error when pageToken is invalid', async () => {
@@ -324,8 +293,6 @@ describe('with objectApiName', () => {
 
         mockNetworkListUi(config, { reject: true, data: mockError });
         const element = await setupElement(config, ObjectApiName);
-        const wiredError = element.getWiredData().error;
-        expect(wiredError).toEqual(mockError);
-        expect(wiredError).toBeImmutable();
+        expect(element.getWiredError()).toEqualImmutable(mockError);
     });
 });

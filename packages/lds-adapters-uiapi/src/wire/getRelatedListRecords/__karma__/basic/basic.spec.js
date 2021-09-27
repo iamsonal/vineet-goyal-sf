@@ -4,7 +4,7 @@ import {
     expireRelatedListRecordCollection,
     mockDeleteRecordNetwork,
     mockGetRelatedListRecordsNetworkPost,
-} from '../../../../../karma/uiapi-test-util';
+} from 'uiapi-test-util';
 
 import RelatedListBasic from '../lwc/related-list-basic';
 

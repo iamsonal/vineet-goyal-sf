@@ -48,6 +48,17 @@ beforeEach(() => {
             };
         },
 
+        toEqualImmutable: () => {
+            return {
+                compare: (actual, expected) => {
+                    expect(actual).toEqual(expected);
+                    expect(actual).toBeImmutable();
+
+                    return { pass: true };
+                },
+            };
+        },
+
         /**
          * expect the actual value contains expected error content on body property
          */

@@ -73,7 +73,7 @@ beforeEach(() => {
     util_beforeEach();
 });
 
-describe('with objectApiName and listViewApiName', () => {
+describe('basic', () => {
     it('returns metadata and records when objectApiName and listViewApiName provided', async () => {
         const mockData = getMock('list-ui-Account-AllAccounts');
         const config = {
@@ -86,25 +86,9 @@ describe('with objectApiName and listViewApiName', () => {
 
         expect(element.getWiredData()).toEqualListUi(mockData);
     });
+});
 
-    it('does not make additional XHR for same objectApiName and listViewApiName request', async () => {
-        const mockData = getMock('list-ui-Account-AllAccounts-pageSize-3');
-        const config = {
-            objectApiName: mockData.info.listReference.objectApiName,
-            listViewApiName: mockData.info.listReference.listViewApiName,
-            pageSize: 3,
-        };
-        mockNetworkListUi(config, mockData);
-
-        // each LWC component will trigger a separate wire call
-        const element1 = await setupElement(config, ObjectAndListViewApiName);
-        const element2 = await setupElement(config, ObjectAndListViewApiName);
-
-        expect(element1.getWiredData().data).toEqualSnapshotWithoutEtags(
-            element2.getWiredData().data
-        );
-    });
-
+describe('caching', () => {
     it('reuses cached records when possible and uses list-records to retrieve missing records', async () => {
         let wiredData;
 
@@ -156,19 +140,20 @@ describe('with objectApiName and listViewApiName', () => {
         expect(element.getWiredData()).toEqualListUi(expected);
     });
 
-    it('makes additional XHR after list-ui TTL expired', async () => {
-        const mockData = getMock('list-ui-Account-AllAccounts');
+    it('does not make second XHR for removed fields', async () => {
+        const mockData = getMock('list-ui-Account-AllAccounts-pageSize-1-fields-Rating,Website');
         const config = {
             objectApiName: mockData.info.listReference.objectApiName,
             listViewApiName: mockData.info.listReference.listViewApiName,
+            pageSize: mockData.records.pageSize,
+            fields: mockData.records.fields,
         };
-
-        mockNetworkListUi(config, [mockData, mockData]);
-        await setupElement(config, ObjectAndListViewApiName);
-        // speed up time to reach list-ui TTL(default TTL) and force additional server request
-        expireDefaultTTL();
+        mockNetworkListUi(config, mockData);
 
         const element = await setupElement(config, ObjectAndListViewApiName);
+        const fields = element.fields.slice(0, 1);
+        updateElement(element, { fields });
+
         expect(element.getWiredData()).toEqualListUi(mockData);
     });
 
@@ -194,6 +179,40 @@ describe('with objectApiName and listViewApiName', () => {
         expect(elementApiName.getWiredData()).toEqualListUi(mockData);
     });
 
+    it('does not make additional XHR for same objectApiName and listViewApiName request', async () => {
+        const mockData = getMock('list-ui-Account-AllAccounts-pageSize-3');
+        const config = {
+            objectApiName: mockData.info.listReference.objectApiName,
+            listViewApiName: mockData.info.listReference.listViewApiName,
+            pageSize: 3,
+        };
+        mockNetworkListUi(config, mockData);
+
+        // each LWC component will trigger a separate wire call
+        const element1 = await setupElement(config, ObjectAndListViewApiName);
+        const element2 = await setupElement(config, ObjectAndListViewApiName);
+
+        expect(element1.getWiredData().data).toEqualSnapshotWithoutEtags(
+            element2.getWiredData().data
+        );
+    });
+
+    it('makes additional XHR after list-ui TTL expired', async () => {
+        const mockData = getMock('list-ui-Account-AllAccounts');
+        const config = {
+            objectApiName: mockData.info.listReference.objectApiName,
+            listViewApiName: mockData.info.listReference.listViewApiName,
+        };
+
+        mockNetworkListUi(config, [mockData, mockData]);
+        await setupElement(config, ObjectAndListViewApiName);
+        // speed up time to reach list-ui TTL(default TTL) and force additional server request
+        expireDefaultTTL();
+
+        const element = await setupElement(config, ObjectAndListViewApiName);
+        expect(element.getWiredData()).toEqualListUi(mockData);
+    });
+
     it('does not make second XHR for fields returned from first request', async () => {
         const mockData = getMock('list-ui-Account-AllAccounts-pageSize-3');
         const config = {
@@ -207,8 +226,10 @@ describe('with objectApiName and listViewApiName', () => {
         updateElement(element, { fields: 'Account.Name' });
         expect(element.getWiredData()).toEqualListUi(mockData);
     });
+});
 
-    it('does not make second XHR for removed fields', async () => {
+describe('fields/optionalFields', () => {
+    it('returns metadata and data for string list of fields', async () => {
         const mockData = getMock('list-ui-Account-AllAccounts-pageSize-1-fields-Rating,Website');
         const config = {
             objectApiName: mockData.info.listReference.objectApiName,
@@ -219,103 +240,60 @@ describe('with objectApiName and listViewApiName', () => {
         mockNetworkListUi(config, mockData);
 
         const element = await setupElement(config, ObjectAndListViewApiName);
-        const fields = element.fields.slice(0, 1);
-        updateElement(element, { fields });
 
         expect(element.getWiredData()).toEqualListUi(mockData);
     });
 
-    describe('fields/optionalFields', () => {
-        it('returns metadata and data for string list of fields', async () => {
-            const mockData = getMock(
-                'list-ui-Account-AllAccounts-pageSize-1-fields-Rating,Website'
-            );
-            const config = {
-                objectApiName: mockData.info.listReference.objectApiName,
-                listViewApiName: mockData.info.listReference.listViewApiName,
-                pageSize: mockData.records.pageSize,
-                fields: mockData.records.fields,
-            };
-            mockNetworkListUi(config, mockData);
+    it('returns metadata and data for fields as schema', async () => {
+        const mockData = getMock(
+            'list-ui-Account-AllAccounts-pageSize-1-fields-Account.Rating,Account.Website'
+        );
+        let config = {
+            objectApiName: mockData.info.listReference.objectApiName,
+            listViewApiName: mockData.info.listReference.listViewApiName,
+            pageSize: mockData.records.pageSize,
+            fields: mockData.records.fields,
+        };
+        mockNetworkListUi(config, mockData);
 
-            const element = await setupElement(config, ObjectAndListViewApiName);
+        config = convertToFieldIds(config);
+        const element = await setupElement(config, ObjectAndListViewApiName);
 
-            expect(element.getWiredData()).toEqualListUi(mockData);
-        });
-
-        it('returns metadata and data for fields as schema', async () => {
-            const mockData = getMock(
-                'list-ui-Account-AllAccounts-pageSize-1-fields-Account.Rating,Account.Website'
-            );
-            let config = {
-                objectApiName: mockData.info.listReference.objectApiName,
-                listViewApiName: mockData.info.listReference.listViewApiName,
-                pageSize: mockData.records.pageSize,
-                fields: mockData.records.fields,
-            };
-            mockNetworkListUi(config, mockData);
-
-            config = convertToFieldIds(config);
-            const element = await setupElement(config, ObjectAndListViewApiName);
-
-            expect(element.getWiredData()).toEqualListUi(mockData);
-        });
-
-        it('returns metadata and data for string list of optionalFields', async () => {
-            const mockData = getMock(
-                'list-ui-Account-AllAccounts-pageSize-1-optionalFields-Rating,Website'
-            );
-            const config = {
-                objectApiName: mockData.info.listReference.objectApiName,
-                listViewApiName: mockData.info.listReference.listViewApiName,
-                pageSize: mockData.records.pageSize,
-                optionalFields: mockData.records.optionalFields,
-            };
-            mockNetworkListUi(config, mockData);
-
-            const element = await setupElement(config, ObjectAndListViewApiName);
-
-            expect(element.getWiredData()).toEqualListUi(mockData);
-        });
-
-        it('returns metadata and data for optionalFields as schema', async () => {
-            const mockData = getMock(
-                'list-ui-Account-AllAccounts-pageSize-1-optionalFields-Account.Rating,Account.Website'
-            );
-            let config = {
-                objectApiName: mockData.info.listReference.objectApiName,
-                listViewApiName: mockData.info.listReference.listViewApiName,
-                pageSize: mockData.records.pageSize,
-                optionalFields: mockData.records.optionalFields,
-            };
-            mockNetworkListUi(config, mockData);
-
-            config = convertToFieldIds(config);
-            const element = await setupElement(config, ObjectAndListViewApiName);
-
-            expect(element.getWiredData()).toEqualListUi(mockData);
-        });
+        expect(element.getWiredData()).toEqualListUi(mockData);
     });
 
-    it('returns error when multiple sortBy values are passed', async () => {
-        // even though sortBy is of type Array<string> it accept a single value
-
-        const mockError = {
-            ok: false,
-            status: 400,
-            statusText: 'BAD_REQUEST',
-            body: [
-                {
-                    errorCode: 'ILLEGAL_QUERY_PARAMETER_VALUE',
-                    message: 'Can only sortBy one value',
-                },
-            ],
+    it('returns metadata and data for string list of optionalFields', async () => {
+        const mockData = getMock(
+            'list-ui-Account-AllAccounts-pageSize-1-optionalFields-Rating,Website'
+        );
+        const config = {
+            objectApiName: mockData.info.listReference.objectApiName,
+            listViewApiName: mockData.info.listReference.listViewApiName,
+            pageSize: mockData.records.pageSize,
+            optionalFields: mockData.records.optionalFields,
         };
-        const config = { objectApiName: 'Account', listViewApiName: 'AllAccounts' };
+        mockNetworkListUi(config, mockData);
 
-        mockNetworkListUi(config, { reject: true, data: mockError });
         const element = await setupElement(config, ObjectAndListViewApiName);
-        expect(element.getWiredData().error).toEqual(mockError);
-        expect(element.getWiredData().error).toBeImmutable();
+
+        expect(element.getWiredData()).toEqualListUi(mockData);
+    });
+
+    it('returns metadata and data for optionalFields as schema', async () => {
+        const mockData = getMock(
+            'list-ui-Account-AllAccounts-pageSize-1-optionalFields-Account.Rating,Account.Website'
+        );
+        let config = {
+            objectApiName: mockData.info.listReference.objectApiName,
+            listViewApiName: mockData.info.listReference.listViewApiName,
+            pageSize: mockData.records.pageSize,
+            optionalFields: mockData.records.optionalFields,
+        };
+        mockNetworkListUi(config, mockData);
+
+        config = convertToFieldIds(config);
+        const element = await setupElement(config, ObjectAndListViewApiName);
+
+        expect(element.getWiredData()).toEqualListUi(mockData);
     });
 });

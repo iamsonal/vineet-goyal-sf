@@ -70,16 +70,41 @@ beforeEach(() => {
 });
 
 describe('with listViewId', () => {
-    it('returns metadata and records when only listViewId is provided', async () => {
-        const mockData = getMock('list-ui-All-Opportunities');
-        const config = {
-            listViewId: mockData.info.listReference.id,
-        };
-        mockNetworkListUi(config, mockData);
+    describe('basic', () => {
+        it('returns metadata and records when only listViewId is provided', async () => {
+            const mockData = getMock('list-ui-All-Opportunities');
+            const config = {
+                listViewId: mockData.info.listReference.id,
+            };
+            mockNetworkListUi(config, mockData);
 
-        const element = await setupElement(config, ListViewId);
+            const element = await setupElement(config, ListViewId);
 
-        expect(element.getWiredData()).toEqualListUi(mockData);
+            expect(element.getWiredData()).toEqualListUi(mockData);
+        });
+
+        it('emits list-ui data when the returned list is empty', async () => {
+            const mockData = getMock('list-ui-empty-list');
+
+            const config = { listViewId: mockData.info.listReference.id };
+
+            mockNetworkListUi(config, mockData);
+            const element = await setupElement(config, ListViewId);
+            expect(element.getWiredData()).toEqualListUi(mockData);
+        });
+
+        it('does not make second XHR when the returned list is empty', async () => {
+            const mockData = getMock('list-ui-empty-list');
+
+            const config = { listViewId: mockData.info.listReference.id };
+
+            mockNetworkListUi(config, mockData);
+            const element1 = await setupElement(config, ListViewId);
+            expect(element1.getWiredData()).toEqualListUi(mockData);
+
+            const element2 = await setupElement(config, ListViewId);
+            expect(element2.getWiredData()).toEqualListUi(mockData);
+        });
     });
 
     describe('caching', () => {
@@ -227,6 +252,40 @@ describe('with listViewId', () => {
             const wiredData = element.getWiredData();
             expect(wiredData).toEqualListUi(mockData);
         });
+
+        xit('makes new request when a fetched list-records has an etag that does not match the list-info', async () => {
+            // there is a bug hence keeping the test disabled
+            // TODO: [W-9923716]: enable as a part of W-9923716
+
+            const mockDataListUi = getMock('list-ui-All-Opportunities-pageSize-3');
+            const config = {
+                listViewId: mockDataListUi.info.listReference.id,
+                pageSize: mockDataListUi.records.pageSize,
+            };
+            mockNetworkListUi(config, mockDataListUi);
+            await setupElement(config, ListViewId);
+
+            const mockDataListRecords = getMock(
+                'list-records-All-Opportunities-pageToken-3-pageSize-3'
+            );
+
+            const config2 = {
+                listViewId: mockDataListUi.info.listReference.id,
+                pageSize: mockDataListRecords.pageSize,
+                pageToken: mockDataListUi.records.nextPageToken,
+            };
+
+            mockDataListRecords.listInfoETag = 'updatedetag';
+
+            mockNetworkListRecords(config2, mockDataListRecords);
+
+            const updatedListUi = clone(mockDataListUi);
+            updatedListUi.info.eTag = 'updatedetag';
+            updatedListUi.records.listInfoETag = 'updatedetag';
+            mockNetworkListUi(config2, updatedListUi);
+
+            await setupElement(config2, ListViewId);
+        });
     });
 
     describe('sortBy', () => {
@@ -331,142 +390,6 @@ describe('with listViewId', () => {
         });
     });
 
-    it('emits list-ui data when the returned list is empty', async () => {
-        const mockData = getMock('list-ui-empty-list');
-
-        const config = { listViewId: mockData.info.listReference.id };
-
-        mockNetworkListUi(config, mockData);
-        const element = await setupElement(config, ListViewId);
-        expect(element.getWiredData()).toEqualListUi(mockData);
-    });
-
-    it('does not make second XHR when the returned list is empty', async () => {
-        const mockData = getMock('list-ui-empty-list');
-
-        const config = { listViewId: mockData.info.listReference.id };
-
-        mockNetworkListUi(config, mockData);
-        const element1 = await setupElement(config, ListViewId);
-        expect(element1.getWiredData()).toEqualListUi(mockData);
-
-        const element2 = await setupElement(config, ListViewId);
-        expect(element2.getWiredData()).toEqualListUi(mockData);
-    });
-
-    describe('returns error when', function () {
-        it('listViewId does not exist', async () => {
-            const mockError = {
-                ok: false,
-                status: 403,
-                statusText: 'FORBIDDEN',
-                body: [
-                    {
-                        errorCode: 'INSUFFICIENT_ACCESS',
-                        message:
-                            "You don't have access to this record. Ask your administrator for help or to request access.",
-                    },
-                ],
-            };
-
-            const config = { listViewId: 'invalidListViewId' };
-
-            mockNetworkListUi(config, { reject: true, data: mockError });
-
-            const element = await setupElement(config, ListViewId);
-            expect(element.getWiredData().error).toEqual(mockError);
-            expect(element.getWiredData().error).toBeImmutable();
-        });
-
-        it('pageSize is -1', async () => {
-            const mockError = {
-                ok: false,
-                status: 400,
-                statusText: 'BAD_REQUEST',
-                body: [
-                    {
-                        errorCode: 'NUMBER_OUTSIDE_VALID_RANGE',
-                        message: 'pageSize parameter must be between 1 and 2000',
-                    },
-                ],
-            };
-
-            const config = { listViewId: '00BRM00000ZZZZZZZZ', pageSize: -1 };
-            mockNetworkListUi(config, { reject: true, data: mockError });
-            const element = await setupElement(config, ListViewId);
-            const wiredError = element.getWiredData().error;
-            expect(wiredError).toEqual(mockError);
-            expect(wiredError).toBeImmutable();
-        });
-
-        it('pageSize is above max', async () => {
-            const mockError = {
-                ok: false,
-                status: 400,
-                statusText: 'BAD_REQUEST',
-                body: [
-                    {
-                        errorCode: 'NUMBER_OUTSIDE_VALID_RANGE',
-                        message: 'pageSize parameter must be between 1 and 2000',
-                    },
-                ],
-            };
-
-            const config = { listViewId: '00BRM00000ZZZZZZZZ', pageSize: 2100 };
-            mockNetworkListUi(config, { reject: true, data: mockError });
-            const element = await setupElement(config, ListViewId);
-            const wiredError = element.getWiredData().error;
-            expect(wiredError).toEqual(mockError);
-            expect(wiredError).toBeImmutable();
-        });
-
-        it('pageToken is invalid', async () => {
-            const mockError = {
-                ok: false,
-                status: 400,
-                statusText: 'BAD_REQUEST',
-                body: [
-                    {
-                        errorCode: 'ILLEGAL_QUERY_PARAMETER_VALUE',
-                        message: 'For input string: invalid',
-                    },
-                ],
-            };
-
-            const config = { listViewId: '00BRM00000ZZZZZZZZ', pageSize: 1, pageToken: 'invalid' };
-            mockNetworkListUi(config, { reject: true, data: mockError });
-            const element = await setupElement(config, ListViewId);
-            const wiredError = element.getWiredData().error;
-            expect(wiredError).toEqual(mockError);
-            expect(wiredError).toBeImmutable();
-        });
-
-        it('requests non-existent fields', async () => {
-            const mockData = getMock(
-                'list-ui-All-Opportunities-pageSize-1-fields-IsPrivate,NextStep'
-            );
-
-            const mockError = {
-                ok: false,
-                status: 400,
-                statusText: 'BAD_REQUEST',
-                body: [
-                    {
-                        errorCode: 'INVALID_FIELD',
-                        message: "No such column 'BadField' on entity Opportunity",
-                    },
-                ],
-            };
-
-            const config = { listViewId: mockData.info.listReference.id, fields: ['BadField'] };
-            mockNetworkListUi(config, { reject: true, data: mockError });
-            const element = await setupElement(config, ListViewId);
-            const wiredError = element.getWiredData().error;
-            expect(wiredError).toEqual(mockError);
-            expect(wiredError).toBeImmutable();
-        });
-    });
-
     describe('fields/optionalFields', () => {
         it('returns metadata and data for string list of fields', async () => {
             const mockData = getMock(
@@ -533,39 +456,5 @@ describe('with listViewId', () => {
 
             expect(element.getWiredData()).toEqualListUi(mockData);
         });
-    });
-
-    xit('makes new request when a fetched list-records has an etag that does not match the list-info', async () => {
-        // there is a bug hence keeping the test disabled
-        // TODO: [W-9923716]: enable as a part of W-9923716
-
-        const mockDataListUi = getMock('list-ui-All-Opportunities-pageSize-3');
-        const config = {
-            listViewId: mockDataListUi.info.listReference.id,
-            pageSize: mockDataListUi.records.pageSize,
-        };
-        mockNetworkListUi(config, mockDataListUi);
-        await setupElement(config, ListViewId);
-
-        const mockDataListRecords = getMock(
-            'list-records-All-Opportunities-pageToken-3-pageSize-3'
-        );
-
-        const config2 = {
-            listViewId: mockDataListUi.info.listReference.id,
-            pageSize: mockDataListRecords.pageSize,
-            pageToken: mockDataListUi.records.nextPageToken,
-        };
-
-        mockDataListRecords.listInfoETag = 'updatedetag';
-
-        mockNetworkListRecords(config2, mockDataListRecords);
-
-        const updatedListUi = clone(mockDataListUi);
-        updatedListUi.info.eTag = 'updatedetag';
-        updatedListUi.records.listInfoETag = 'updatedetag';
-        mockNetworkListUi(config2, updatedListUi);
-
-        await setupElement(config2, ListViewId);
     });
 });

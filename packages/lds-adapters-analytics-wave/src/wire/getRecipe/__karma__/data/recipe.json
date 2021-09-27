@@ -18,6 +18,10 @@
     "lastModifiedDate": "2021-02-05T21:41:58.000Z",
     "name": "Append",
     "publishingTarget": "Dataset",
+    "scheduleAttributes": {
+        "assetId": "05vRM00000003rZYAQ",
+        "frequency": "none"
+    },
     "type": "recipe",
     "url": "/services/data/v54.0/wave/recipes/05vRM00000003rZYAQ",
     "validationDetails": []

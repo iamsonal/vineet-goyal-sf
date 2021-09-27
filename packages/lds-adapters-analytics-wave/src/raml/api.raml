@@ -142,6 +142,10 @@ types:
       message:
         description: message
         type: string
+  AssetReferenceInputRepresentation:
+    description: Simple, reference input representation for wave assets.
+    type: BaseAssetReferenceInputRepresentation
+    properties: {}
   AssetReferenceRepresentation:
     description: Asset reference representation.
     discriminatorValue: asset # TODO Hand rolled
@@ -162,6 +166,23 @@ types:
         required: false # TODO Hand-rolled W-8253396
       name:
         description: The name of the asset.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+  BaseAssetReferenceInputRepresentation:
+    description: Base class for Asset reference input representation
+    discriminator: name # TODO Hand rolled
+    type: object
+    properties:
+      id:
+        description: ID of the asset
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: Developer name of the asset
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      namespace:
+        description: The namespace that qualifies the asset name
         type: string
         required: false # TODO Hand-rolled W-8253396
   BaseAssetReferenceRepresentation:
@@ -1127,6 +1148,11 @@ types:
     description: A schedule triggered by an event, e.g., the completion of a data sync job
     discriminatorValue: eventdriven
     type: ScheduleRepresentation
+    properties:
+      triggerRule:
+        description: The event based trigger rule that will cause assetId to run
+        type: string
+        required: false # TODO Hand-rolled W-8253396
   FeaturedAssetsRepresentation:
     description: Featured assets representation.
     type: object
@@ -1161,6 +1187,16 @@ types:
         description: Hour at which schedule stops queueing.
         type: integer
         required: false # TODO Hand-rolled W-8253396
+  LicenseAttributesInputRepresentation:
+    description: Input representation for analytics license attributes.
+    type: object
+    properties:
+      type:
+        description: Analytics license type associated with the asset.
+        type: string
+        enum:
+          - EinsteinAnalytics
+          - Sonic
   LicenseAttributesRepresentation:
     description: The analytics license type and other properties
     type: object
@@ -1341,6 +1377,26 @@ types:
       url:
         description: URL to get the collection.
         type: string
+  RecipeConversionDetailInputRepresentation:
+    description: The conversion detail that will be kept
+    type: object
+    properties:
+      conversionDetailId:
+        description: conversion detail id
+        type: integer
+      message:
+        description: conversion detail message
+        type: string
+      nodeName:
+        description: conversion detail node name
+        type: string
+      severity:
+        description: conversion detail severity
+        type: string
+        enum:
+          - UserInfo
+          - Warning
+        required: false # TODO Hand-rolled W-8253396
   RecipeConversionDetailRepresentation:
     description: recipe conversion details during upconversion
     type: object
@@ -1357,6 +1413,28 @@ types:
         enum:
           - UserInfo
           - Warning
+  RecipeDefinitionInputRepresentation:
+    description: Input representation of 3.0 Recipe Definition format.
+    type: object
+    properties:
+      name:
+        description: Recipe Name
+        type: string
+      nodes:
+        description: Recipe nodes
+        type: object
+        properties:
+          //:
+            type: RecipeNodeInputRepresentation
+      ui:
+        description: Recipe ui metadata
+        type: object
+        properties: # TODO Hand-rolled W-8252808
+          //:
+            type: any
+      version:
+        description: Recipe version
+        type: string
   RecipeDefinitionRepresentation:
     description: Representation of 3.0 Recipe Definition
     type: object
@@ -1380,6 +1458,132 @@ types:
       version:
         description: Recipe version
         type: string
+  RecipeInputRepresentation:
+    description: Input representation of a Data Prep recipe.
+    type: object
+    properties:
+      conversionDetails:
+        description: The list of conversion detail ids that will be kept
+        type: array
+        items:
+          type: RecipeConversionDetailInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      dataflowDefinition:
+        description: The recipe's dataflow definition.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      executionEngine:
+        description: The recipe's execution engine. Spark or Dataflow.
+        type: string
+        enum:
+          - V1
+          - V2
+        required: false # TODO Hand-rolled W-8253396
+      fileContent:
+        description: The recipe's file content, base64 encoded. Consider using multipart
+          form data instead.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      folder:
+        description: The recipe's publish folder.
+        type: AssetReferenceInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      format:
+        description: Recipe format type (2.0 or 3.0)
+        type: string
+        enum:
+          - R2
+          - R3
+        required: false # TODO Hand-rolled W-8253396
+      label:
+        description: A short label for the recipe.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      licenseAttributes:
+        description: An optional representation to tag the license attributes of the
+          recipe being saved.
+        type: LicenseAttributesInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: The name of the recipe.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      publishingTarget:
+        description: Target system or format to publish the recipe to. Dataset, DataPool,
+          or IoT
+        type: string
+        enum:
+          - DataPool
+          - Dataset
+          - IoT
+        required: false # TODO Hand-rolled W-8253396
+      recipeDefinition:
+        description: Recipe definition for 3.0 format
+        type: RecipeDefinitionInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      rowLevelSecurityPredicate:
+        description: The recipe's target dataset's security predicate.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      schedule:
+        description: The recipe's schedule dataflow run.
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      sourceDataflow:
+        description: The source dataflow asset which will be converted to the recipe
+          3.0
+        type: AssetReferenceInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+  RecipeInputWrapperRepresentation: # TODO Hand-rolled W-8334626
+    description: Wrapper for recipe input representation
+    type: object
+    properties:
+      recipeObject:
+        type: RecipeInputRepresentation
+        description: Recipe input representation
+  RecipeNodeInputRepresentation:
+    description: Represents a single step used in building a dashboard.
+    type: object
+    properties:
+      action:
+        description: Node action.
+        type: string
+        enum:
+          - Aggregate
+          - Append
+          - Append_V2
+          - Bucket
+          - Clustering
+          - ComputeRelative
+          - DateFormatConversion
+          - DetectSentiment
+          - DiscoveryPredict
+          - Export
+          - Extract
+          - Filter
+          - Flatten
+          - Formula
+          - Join
+          - Load
+          - OutputExternal
+          - PredictMissingValues
+          - Recommendation
+          - Save
+          - Schema
+          - Split
+          - SqlFilter
+          - TimeSeries
+          - TypeCast
+          - Update
+      schema:
+        description: Schema changes for the node
+        type: SchemaParametersInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
+      sources:
+        description: Source node ids.
+        type: array
+        items:
+          type: string
   RecipeNodeRepresentation:
     description: Representation of Recipe Node
     discriminator: action
@@ -1484,6 +1688,9 @@ types:
         description: The schedule cron expression current dataflow.
         type: string
         required: false # TODO Hand-rolled W-8253396
+      scheduleAttributes:
+        description: The schedule of the recipe
+        type: ScheduleRepresentation
       scheduleType:
         description: The schedule type of the recipe
         type: string
@@ -1983,6 +2190,22 @@ types:
         description: Hour and timezone in which this schedule is run.
         required: false # TODO Hand-rolled W-8253396
         type: TimeRepresentation
+  SchemaFormatSymbolsInputRepresentation:
+    description: Format for symbols
+    type: object
+    properties:
+      currencySymbol:
+        description: Currency symbol format
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      decimalSymbol:
+        description: Decimal symbol format
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      groupingSymbol:
+        description: Grouping symbol format
+        type: string
+        required: false # TODO Hand-rolled W-8253396
   SchemaFieldFormatSymbolsRepresentation:
     description: Representation of Schema Node Fieldformat symbols
     type: object
@@ -2015,6 +2238,37 @@ types:
         description: New property values
         type: SchemaFieldTypePropertiesRepresentation
         required: false # TODO Hand-rolled W-8253396
+  SchemaFieldPropertiesInputRepresentation:
+    description: Common Field Properties
+    type: object
+    properties:
+      label:
+        description: Field label
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: Field name
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      typeProperties:
+        description: Field type properties
+        type: SchemaTypePropertiesCastInputRepresentation # TODO Hand-rolled W-8988482
+  SchemaFieldParametersInputRepresentation:
+    description: Schema node field
+    type: object
+    properties:
+      errorValue:
+        description: Value to output on error
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      name:
+        description: Schema field name
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      newProperties:
+        description: Field Properties
+        type: SchemaFieldPropertiesInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
   SchemaFieldRepresentation:
     description: Representation of Schema Node Field
     type: object
@@ -2030,6 +2284,39 @@ types:
       newProperties:
         description: New property values
         type: SchemaFieldNewPropertiesRepresentation
+        required: false # TODO Hand-rolled W-8253396
+  SchemaTypePropertiesCastInputRepresentation:
+    description: Cast for types
+    type: object
+    properties:
+      format:
+        description: DateTime Format
+        type: string
+        required: false # TODO Hand-rolled W-8253396
+      length:
+        description: Total length of text
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      precision:
+        description: Length of arbitrary precision value
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      scale:
+        description: Number of digits to right of decimal point
+        type: integer
+        required: false # TODO Hand-rolled W-8253396
+      symbols:
+        description: Number Format
+        type: SchemaFormatSymbolsInputRepresentation
+        required: false # TODO Hand-rolled W-8253396
+      type:
+        description: DataType to Convert to
+        type: string
+        enum:
+          - DateOnly
+          - DateTime
+          - Number
+          - Text
         required: false # TODO Hand-rolled W-8253396
   SchemaFieldTypePropertiesRepresentation:
     description: Representation of Schema Node Field type
@@ -2064,6 +2351,19 @@ types:
           - Number
           - Text
         required: false # TODO Hand-rolled W-8253396
+  SchemaParametersInputRepresentation:
+    description: Schema Node in Recipes
+    type: object
+    properties:
+      fields:
+        description: Schema Fields
+        type: array
+        items:
+          type: SchemaFieldParametersInputRepresentation # TODO Hand-rolled W-8988482
+      slice:
+        description: Schema slice definition
+        type: SchemaSliceInputRepresentation # TODO Hand-rolled W-8988482
+        required: false # TODO Hand-rolled W-8253396
   SchemaParametersRepresentation:
     description: Representation of Schema Node
     type: object
@@ -2076,6 +2376,26 @@ types:
       slice:
         description: Which fields to keep or drop
         type: SchemaSliceRepresentation
+        required: false # TODO Hand-rolled W-8253396
+  SchemaSliceInputRepresentation:
+    description: Slice definition
+    type: object
+    properties:
+      fields:
+        description: Fields for SELECT or DROP
+        type: array
+        items:
+          type: string
+      ignoreMissingFields:
+        description: Ignore missing fields
+        type: boolean
+        required: false # TODO Hand-rolled W-8253396
+      mode:
+        description: Slice mode SELECT or DROP
+        type: string
+        enum:
+          - Drop
+          - Select
         required: false # TODO Hand-rolled W-8253396
   SchemaSliceRepresentation:
     description: Representation of Schema Node Slice
@@ -3668,6 +3988,25 @@ types:
       responses:
         '200':
           description: Success
+    patch:
+      description: Update a recipe by ID.
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: RecipeRepresentation
+      queryParameters:
+        enableEditorValidation:
+          type: boolean
+          required: false
+        validationContext:
+          type: string
+          required: false
+      body:
+        application/json:
+          type: RecipeInputWrapperRepresentation # TODO Hand-rolled W-8334626. Original type: RecipeInputRepresentation
+          (oas-body-name): recipeObject
     uriParameters:
       id:
         type: string

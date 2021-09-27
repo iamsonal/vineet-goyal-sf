@@ -20,6 +20,11 @@
     "lastModifiedDate": "2020-11-16T19:55:36.000Z",
     "name": "Test_Local_Opp",
     "publishingTarget": "Dataset",
+    "scheduleAttributes": {
+        "assetId": "05vRM0000000324YAB",
+        "frequency": "eventdriven",
+        "triggerRule": "$ALL_SALESFORCE_OBJECTS AND recipe:05vxx0000004EkKAAU"
+    },
     "scheduleType": "eventdriven",
     "targetDataflowId": "02KRM0000002UY32AN",
     "type": "recipe",

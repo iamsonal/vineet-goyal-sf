@@ -724,6 +724,13 @@ const analytics: ApiFamily = {
             controller: 'WaveController.getRecipe',
         },
     },
+    updateRecipe: {
+        method: 'patch',
+        predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && RECIPE_PATH.test(path),
+        transport: {
+            controller: 'WaveController.updateRecipe',
+        },
+    },
     getRecipes: {
         method: 'get',
         predicate: (path: string) => path.startsWith(WAVE_BASE_URI) && RECIPES_PATH.test(path),

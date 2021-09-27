@@ -24,6 +24,10 @@
             "licenseAttributes": { "type": "Sonic" },
             "name": "r3y_basic_sonic",
             "publishingTarget": "Dataset",
+            "scheduleAttributes": {
+                "assetId": "05vRM00000003O3YAI",
+                "frequency": "none"
+            },
             "targetDataflowId": "02KRM0000002X9s2AE",
             "type": "recipe",
             "url": "/services/data/v54.0/wave/recipes/05vRM00000003O3YAI?format=R3",

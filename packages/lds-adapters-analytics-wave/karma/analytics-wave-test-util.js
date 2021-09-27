@@ -727,6 +727,34 @@ function deleteRecipeMatcher(config) {
     });
 }
 
+function mockUpdateRecipeNetworkOnce(config, mockData) {
+    const paramMatch = updateRecipeMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockUpdateRecipeNetworkErrorOnce(config, mockData) {
+    const paramMatch = updateRecipeMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function updateRecipeMatcher(config) {
+    const { id, recipeObject, enableEditorValidation, validationContext } = config;
+
+    return sinon.match({
+        body: {
+            recipeObject,
+        },
+        headers: {},
+        method: 'patch',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/recipes/${id}`,
+        queryParams: {
+            enableEditorValidation,
+            validationContext,
+        },
+    });
+}
+
 // Replicated Datasets
 function mockGetReplicatedDatasetsNetworkOnce(config, mockData) {
     const paramMatch = getReplicatedDatasetsMatcher(config);
@@ -1093,6 +1121,8 @@ export {
     mockGetRecipeNetworkErrorOnce,
     mockDeleteRecipeNetworkOnce,
     mockDeleteRecipeNetworkErrorOnce,
+    mockUpdateRecipeNetworkOnce,
+    mockUpdateRecipeNetworkErrorOnce,
     mockGetReplicatedDatasetNetworkOnce,
     mockGetReplicatedDatasetNetworkErrorOnce,
     mockUpdateReplicatedDatasetNetworkOnce,

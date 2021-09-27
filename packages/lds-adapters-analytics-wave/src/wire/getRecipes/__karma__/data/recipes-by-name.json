@@ -23,6 +23,10 @@
             "lastModifiedDate": "2020-12-02T21:05:15.000Z",
             "name": "r3y_EA_1",
             "publishingTarget": "Dataset",
+            "scheduleAttributes": {
+                "assetId": "05vRM00000003QnYAI",
+                "frequency": "none"
+            },
             "targetDataflowId": "02KRM0000002YXg2AM",
             "type": "recipe",
             "url": "/services/data/v54.0/wave/recipes/05vRM00000003QnYAI?format=R3",
@@ -50,6 +54,10 @@
             "lastModifiedDate": "2020-11-27T16:52:34.000Z",
             "name": "r3y_basic_sonic",
             "publishingTarget": "Dataset",
+            "scheduleAttributes": {
+                "assetId": "05vRM00000003O3YAI",
+                "frequency": "none"
+            },
             "targetDataflowId": "02KRM0000002X9s2AE",
             "type": "recipe",
             "url": "/services/data/v54.0/wave/recipes/05vRM00000003O3YAI?format=R3",

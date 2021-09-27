@@ -2,11 +2,11 @@ import { setupElement } from 'test-util';
 import RelatedListCount from '../lwc/related-list-count';
 
 describe('validation', () => {
-    ['parentRecordId', 'relatedListName'].forEach((param) => {
+    ['parentRecordId', 'relatedListId'].forEach((param) => {
         it(`should not make an HTTP request if required param '${param}' is undefined`, async () => {
             const config = {
                 parentRecordId: '00BT1000000NUvCMAW',
-                relatedListName: 'someName',
+                relatedListId: 'someName',
             };
             config[param] = undefined;
 
@@ -18,7 +18,7 @@ describe('validation', () => {
     it(`should not make an HTTP request if relatedList name is null`, async () => {
         const config = {
             parentRecordId: '00BT1000000NUvCMAW',
-            relatedListName: null,
+            relatedListId: null,
         };
 
         const elm = await setupElement(config, RelatedListCount);

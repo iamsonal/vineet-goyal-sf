@@ -5658,7 +5658,7 @@ types:
           items:
             type: string
             (oas-collectionFormat): csv
-    /{parentRecordId}/{relatedListName}:
+    /{parentRecordId}/{relatedListId}:
       get:
         description: Retrieve record counts.
         responses:
@@ -5675,7 +5675,7 @@ types:
         parentRecordId:
           type: string
           required: true
-        relatedListName:
+        relatedListId:
           type: string
           required: true
   /related-list-info:

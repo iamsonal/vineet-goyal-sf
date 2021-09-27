@@ -13,30 +13,30 @@ function getMock(filename) {
 
 function mockNetwork(config, mockData) {
     const parentRecordId = config.parentRecordId;
-    const relatedListName = config.relatedListName;
+    const relatedListId = config.relatedListId;
     const queryParams = { ...config };
     delete queryParams.parentRecordId;
-    delete queryParams.relatedListName;
+    delete queryParams.relatedListId;
 
     const paramMatch = sinon.match({
-        basePath: `${URL_BASE}/related-list-count/${parentRecordId}/${relatedListName}`,
+        basePath: `${URL_BASE}/related-list-count/${parentRecordId}/${relatedListId}`,
         queryParams,
     });
     mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
 describe('basic', () => {
-    it('gets data with valid parentRecordId and relatedListName', async () => {
+    it('gets data with valid parentRecordId and relatedListId', async () => {
         const mockData = getMock('related-list-count-Custom');
         const resourceConfig = {
             parentRecordId: mockData.listReference.inContextOfRecordId,
-            relatedListName: mockData.listReference.relatedListId,
+            relatedListId: mockData.listReference.relatedListId,
         };
         mockNetwork(resourceConfig, mockData);
 
         const props = {
             parentRecordId: mockData.listReference.inContextOfRecordId,
-            relatedListName: mockData.listReference.relatedListId,
+            relatedListId: mockData.listReference.relatedListId,
         };
         const element = await setupElement(props, RelatedListCount);
 

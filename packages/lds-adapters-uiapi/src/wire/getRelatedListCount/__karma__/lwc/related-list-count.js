@@ -9,12 +9,12 @@ import { getRelatedListCount } from 'lds-adapters-uiapi';
 
 export default class RelatedListCount extends LightningElement {
     @api parentRecordId;
-    @api relatedListName;
+    @api relatedListId;
     wirePushCount = -1;
 
     @wire(getRelatedListCount, {
         parentRecordId: '$parentRecordId',
-        relatedListName: '$relatedListName',
+        relatedListId: '$relatedListId',
     })
     ongetRelatedListCount(result) {
         this.getRelatedListCount = result;

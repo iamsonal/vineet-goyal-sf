@@ -218,7 +218,7 @@ types:
       - eTag
     (luvio.key):
       parentRecordId: listReference.inContextOfRecordId
-      relatedListName: listReference.relatedListId
+      relatedListId: listReference.relatedListId
   PicklistValuesRepresentation:
     (luvio.ttl): 300000
     (luvio.integrity):
@@ -799,23 +799,23 @@ types:
           coercedParams:
             relatedListNames: SalesforceFieldIdArray
         (luvio.composite):
-          resource: /ui-api/related-list-count/{parentRecordId}/{relatedListName}
+          resource: /ui-api/related-list-count/{parentRecordId}/{relatedListId}
           uriParameters:
             parentRecordId: parentRecordId
-            relatedListName: relatedListNames
+            relatedListId: relatedListNames
           queryParameters:
             maxCount: maxCount
           envelope:
             path: results
             statusCode: statusCode
             body: result
-    '/{parentRecordId}/{relatedListName}':
+    '/{parentRecordId}/{relatedListId}':
       get:
         (luvio.adapter):
           name: getRelatedListCount
         (luvio.key):
           parentRecordId: urlParams.parentRecordId
-          relatedListName: urlParams.relatedListName
+          relatedListId: urlParams.relatedListId
   '/related-list-info':
     '/{parentObjectApiName}':
       get:

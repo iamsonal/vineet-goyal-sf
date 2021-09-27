@@ -1,9 +1,15 @@
 import { NetworkAdapter, ResourceRequest } from '@luvio/engine';
 import { dedupeRequest } from './dispatch/dedupe';
 import { getDisaptcher, SalesforceResourceRequest } from './dispatch/main';
+import tokenBucket from './token-bucket';
 
 export default function platformNetworkAdapter(baseNetworkAdapter: NetworkAdapter): NetworkAdapter {
     return (resourceRequest: ResourceRequest) => {
+        if (!tokenBucket.take(1)) {
+            // We are hitting rate limiting, add some metrics
+            //TODO: Add Metrics call
+        }
+
         const salesforceRequest: SalesforceResourceRequest = {
             networkAdapter: baseNetworkAdapter,
             resourceRequest,

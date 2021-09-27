@@ -1,4 +1,7 @@
-export const RECORD_ID_PREFIX = 'UiApi::RecordRepresentation:';
+export const API_NAMESPACE = 'UiApi';
+export const RECORD_REPRESENTATION_NAME = 'RecordRepresentation';
+export const RECORD_ID_PREFIX = `${API_NAMESPACE}::${RECORD_REPRESENTATION_NAME}:`;
+
 const RECORD_ID_REGEXP = new RegExp(`^${RECORD_ID_PREFIX}([a-zA-Z0-9])+$`);
 const RECORD_FIELD_REGEXP = new RegExp(
     `^${RECORD_ID_PREFIX}([a-zA-Z0-9]+)+__fields__([a-zA-Z0-9]+)+$`

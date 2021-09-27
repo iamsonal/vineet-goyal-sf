@@ -8,6 +8,7 @@ import {
 } from './executeAdapter';
 import { nimbusDraftQueue } from './nimbusDraftQueue';
 import { draftQueue, draftManager } from './draftQueueImplementation';
+import { setUiApiRecordTTL, setMetadataTTL } from './ttl';
 
 export {
     subscribeToAdapter,
@@ -19,4 +20,6 @@ export {
     nimbusDraftQueue,
     draftQueue,
     draftManager,
+    setUiApiRecordTTL,
+    setMetadataTTL,
 };

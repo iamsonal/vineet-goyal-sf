@@ -13,7 +13,6 @@ import {
     ResourceRequestConfig,
 } from '../../generated/resources/getUiApiRecordsByRecordId';
 import { createResourceRequest } from '../../raml-artifacts/resources/getUiApiRecordsByRecordId/createResourceRequest';
-import { TTL as RecordRepresentationTTL } from '../../generated/types/RecordRepresentation';
 import {
     keyBuilder as recordRepresentationKeyBuilder,
     RecordRepresentation,
@@ -27,6 +26,7 @@ import { buildSelectionFromFields } from '../../selectors/record';
 import { difference } from '../../validation/utils';
 import { createFieldsIngestSuccess as getRecordsResourceIngest } from '../../generated/fields/resources/getUiApiRecordsByRecordId';
 import { configuration } from '../../configuration';
+import { RECORD_REPRESENTATION_ERROR_STORE_METADATA_PARAMS } from './index';
 
 // used by getUiApiRecordsBatchByRecordIds#selectChildResourceParams
 export function buildRecordSelector(
@@ -140,7 +140,7 @@ export function ingestError(
     err: FetchResponse<unknown>
 ) {
     const errorSnapshot = luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
-    luvio.storeIngestError(key, errorSnapshot, RecordRepresentationTTL);
+    luvio.storeIngestError(key, errorSnapshot, RECORD_REPRESENTATION_ERROR_STORE_METADATA_PARAMS);
     return errorSnapshot;
 }
 

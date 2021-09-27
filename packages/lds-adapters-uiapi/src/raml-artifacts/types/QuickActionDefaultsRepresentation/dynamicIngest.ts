@@ -14,6 +14,12 @@ import {
 } from '../../../generated/types/QuickActionDefaultsRepresentation';
 import { createLink } from '../../../generated/types/type-utils';
 
+const QUICK_ACTION_DEFAULTS_STORE_METADATA_PARAMS = {
+    ttl: TTL,
+    namespace: keyPrefix,
+    representationName: RepresentationType,
+};
+
 function merge(
     existing: QuickActionDefaultsRepresentationNormalized | undefined,
     incoming: QuickActionDefaultsRepresentationNormalized
@@ -76,13 +82,7 @@ export const dynamicIngest: typeof generatedDynamicIngest = (ingestParams: Dynam
 
         // TODO [W-9805041]: Remove storeSetExpiration instances
         luvio.storeSetExpiration(key, timestamp + TTL);
-        const storeMetaData = {
-            expirationTimestamp: timestamp + TTL,
-            namespace: keyPrefix,
-            representationName: RepresentationType,
-            ingestionTimestamp: timestamp,
-        };
-        luvio.publishStoreMetadata(key, storeMetaData);
+        luvio.publishStoreMetadata(key, QUICK_ACTION_DEFAULTS_STORE_METADATA_PARAMS);
 
         return createLink(key);
     };

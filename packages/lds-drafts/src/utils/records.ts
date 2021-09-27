@@ -664,7 +664,7 @@ export function durableMerge(
 
     const mergedWithDrafts = replayDraftsOnRecord(merged, drafts, objectInfo, userId);
 
-    return { data: mergedWithDrafts, expiration: incoming.expiration };
+    return { data: mergedWithDrafts, metadata: incoming.metadata };
 }
 
 function merge(

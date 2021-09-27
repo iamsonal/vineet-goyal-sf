@@ -115,7 +115,7 @@ function resolveDrafts(
                     const recordKey = keys[i];
                     const entry = entries[recordKey];
 
-                    const { data: record, expiration } = entry;
+                    const { data: record, metadata } = entry;
 
                     // cannot apply drafts to an error
                     if (isStoreRecordError(record)) {
@@ -131,7 +131,7 @@ function resolveDrafts(
                             // baseRecord doesn't exist and there's no drafts to apply
                             continue;
                         }
-                        updatedRecords[recordKey] = { data: baseRecord, expiration };
+                        updatedRecords[recordKey] = { data: baseRecord, metadata };
                     } else {
                         const replayDrafts = [...drafts];
 
@@ -141,7 +141,7 @@ function resolveDrafts(
                             objectInfo,
                             userId
                         );
-                        updatedRecords[recordKey] = { data: resolvedRecord, expiration };
+                        updatedRecords[recordKey] = { data: resolvedRecord, metadata };
                     }
                 }
 

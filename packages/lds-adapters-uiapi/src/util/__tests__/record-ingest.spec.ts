@@ -49,7 +49,6 @@ describe('Record Ingest Utils', () => {
         jest.spyOn(RecordRepresentation, 'validate').mockReturnValueOnce(null);
         const mockNormalize = jest.fn().mockReturnValueOnce(mockNormalizedRecord);
         jest.spyOn(RecordRepresentation, 'dynamicNormalize').mockReturnValue(mockNormalize);
-
         const fields = convertFieldsToTrie(['ENTITY.FIELD', 'ENTITY.SUB.FIELD'], false);
         const optionalFields = convertFieldsToTrie(
             ['ENTITY.SUB.SUB.FIELD', 'ENTITY.SUB.SUB.SUB.FIELD'],
@@ -99,10 +98,9 @@ describe('Record Ingest Utils', () => {
 
         it('calls storePublishMetadata with key and TTL (30000) plus the provided timeout', () => {
             expect(mockLds.publishStoreMetadata).toHaveBeenCalledWith(MOCK_KEY, {
-                expirationTimestamp: 42345,
+                ttl: RecordRepresentation.TTL,
                 namespace: 'UiApi::',
-                representationName: 'RecordRepresentation',
-                ingestionTimestamp: 12345,
+                representationName: RecordRepresentation.RepresentationType,
             });
         });
 

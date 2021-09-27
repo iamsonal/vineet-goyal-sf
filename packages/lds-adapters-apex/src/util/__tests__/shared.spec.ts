@@ -68,10 +68,9 @@ describe('apexResponseIngest', () => {
 
     it('calls storePublishMetadata with key and Apex TTL (5min) plus the provided timeout', () => {
         expect(mockLds.publishStoreMetadata).toHaveBeenCalledWith(MOCK_KEY, {
-            expirationTimestamp: timestamp + APEX_TTL,
+            ttl: APEX_TTL,
             namespace: 'Apex::',
             representationName: '',
-            ingestionTimestamp: timestamp,
         });
     });
 

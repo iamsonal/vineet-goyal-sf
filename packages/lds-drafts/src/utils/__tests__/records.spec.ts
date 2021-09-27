@@ -1670,7 +1670,13 @@ describe('draft environment record utilities', () => {
                     systemModstamp: null,
                     links: {},
                 },
-                expiration: { stale: 1, fresh: 1 },
+                metadata: {
+                    representationName: 'test',
+                    namespace: 'test::',
+                    staleTimestamp: 1,
+                    expirationTimestamp: 1,
+                    ingestionTimestamp: 0,
+                },
             };
             const incoming: DurableStoreEntry<DurableRecordRepresentation> = {
                 data: {
@@ -1696,7 +1702,13 @@ describe('draft environment record utilities', () => {
                     systemModstamp: null,
                     links: {},
                 },
-                expiration: { stale: 2, fresh: 2 },
+                metadata: {
+                    representationName: 'test',
+                    namespace: 'test::',
+                    staleTimestamp: 2,
+                    expirationTimestamp: 2,
+                    ingestionTimestamp: 0,
+                },
             };
 
             const expected: DurableStoreEntry<DurableRecordRepresentation> = {
@@ -1723,7 +1735,13 @@ describe('draft environment record utilities', () => {
                     systemModstamp: null,
                     links: {},
                 },
-                expiration: { stale: 2, fresh: 2 },
+                metadata: {
+                    representationName: 'test',
+                    namespace: 'test::',
+                    staleTimestamp: 2,
+                    expirationTimestamp: 2,
+                    ingestionTimestamp: 0,
+                },
             };
 
             const result = durableMerge(existing, incoming, [], undefined, '', refreshSpy);

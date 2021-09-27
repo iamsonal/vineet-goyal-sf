@@ -64,6 +64,12 @@ const GET_RECORDUI_ADAPTER_CONFIG: AdapterValidationConfig = {
     },
 };
 
+const RECORD_UI_ERROR_STORE_METADATA_PARAMS = {
+    ttl: RecordUiRepresentationTTL,
+    representationName: '', // emptry string for unknown representation
+    namespace: keyPrefix,
+};
+
 function buildCachedSelectorKey(key: string): string {
     return `${key}__selector`;
 }
@@ -337,7 +343,7 @@ function onResourceResponseError(
     err: FetchResponse<unknown>
 ) {
     const errorSnapshot = luvio.errorSnapshot(err, buildSnapshotRefresh(luvio, config));
-    luvio.storeIngestError(key, errorSnapshot, RecordUiRepresentationTTL);
+    luvio.storeIngestError(key, errorSnapshot, RECORD_UI_ERROR_STORE_METADATA_PARAMS);
     luvio.storeBroadcast();
 
     const { status } = err;

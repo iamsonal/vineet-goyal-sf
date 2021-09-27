@@ -97,16 +97,16 @@ export class RecordMergeStrategy implements MergeStrategy {
                 }
             } else if (isGqlCacheKey(key)) {
                 // GQL root keys are spread merged
-                const { data: existingData, expiration: existingExpiration } = existingEntry;
-                const { data: incomingData, expiration: incomingExpiration } = incomingEntry;
+                const { data: existingData, metadata: existingMetadata } = existingEntry;
+                const { data: incomingData, metadata: incomingMetadata } = incomingEntry;
 
                 const data = ObjectAssign({}, existingData, incomingData);
 
-                let expiration: DurableStoreEntry['expiration'] | undefined;
-                if (existingExpiration !== undefined || incomingExpiration !== undefined) {
-                    expiration = ObjectAssign({}, existingExpiration, incomingExpiration);
+                let metadata: DurableStoreEntry['metadata'] | undefined;
+                if (existingMetadata !== undefined || incomingMetadata !== undefined) {
+                    metadata = ObjectAssign({}, existingMetadata, incomingMetadata);
                 }
-                merged[key] = { data, expiration };
+                merged[key] = { data, metadata };
             }
         }
 

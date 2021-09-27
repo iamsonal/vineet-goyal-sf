@@ -18,8 +18,8 @@
         "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-runtime-mobile"
     },
     "dependencies": {
-        "@luvio/engine": "0.48.3",
-        "@luvio/environments": "0.48.3"
+        "@luvio/engine": "0.49.0",
+        "@luvio/environments": "0.49.0"
     },
     "devDependencies": {
         "@mobileplatform/nimbus-plugin-lds": "1.26.0",

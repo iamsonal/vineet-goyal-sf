@@ -44,6 +44,12 @@ export const SHARED_ADAPTER_CONTEXT_ID = 'apex__shared';
  */
 export const APEX_TTL = 5 * 60 * 1000;
 
+const APEX_STORE_METADATA_PARAMS = {
+    ttl: APEX_TTL,
+    namespace: keyPrefix,
+    representationName: '',
+};
+
 export function apexResponseEquals(existing: any, incoming: any): boolean {
     return JSONStringify(incoming) === JSONStringify(existing);
 }
@@ -72,13 +78,7 @@ export const apexResponseIngest: ResourceIngest = (
 
     // TODO [W-9805041]: Remove storeSetExpiration instances
     luvio.storeSetExpiration(key, timestamp + APEX_TTL);
-    const storeMetaData = {
-        expirationTimestamp: timestamp + APEX_TTL,
-        namespace: keyPrefix,
-        representationName: '',
-        ingestionTimestamp: timestamp,
-    };
-    luvio.publishStoreMetadata(key, storeMetaData);
+    luvio.publishStoreMetadata(key, APEX_STORE_METADATA_PARAMS);
 
     return createLink(key);
 };

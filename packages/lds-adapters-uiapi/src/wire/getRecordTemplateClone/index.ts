@@ -20,7 +20,7 @@ import { createResourceRequest } from '../../generated/resources/getUiApiRecordD
 import { select } from '../../raml-artifacts/resources/getUiApiRecordDefaultsTemplateCloneByRecordId/select';
 import {
     RecordDefaultsTemplateCloneRepresentation,
-    TTL,
+    TTL as RecordTemplateCloneTTL,
 } from '../../generated/types/RecordDefaultsTemplateCloneRepresentation';
 import { ObjectInfoRepresentation } from '../../generated/types/ObjectInfoRepresentation';
 import { keyBuilder as templateRecordKeyBuilder } from '../../generated/types/RecordTemplateCloneRepresentation';
@@ -29,7 +29,7 @@ import {
     convertFieldsToTrie,
     getTrackedFields,
 } from '../../util/records';
-import { snapshotRefreshOptions } from '../../generated/adapters/adapter-utils';
+import { keyPrefix, snapshotRefreshOptions } from '../../generated/adapters/adapter-utils';
 import {
     keyBuilder as templateKeyBuilder,
     keyBuilderFromType as templateKeyBuilderFromType,
@@ -38,6 +38,11 @@ import { createFieldsIngestSuccess as resourceCreateFieldsIngest } from '../../g
 import { configuration } from '../../configuration';
 
 const DEFAULT_RECORD_TYPE_ID_KEY = 'defaultRecordTypeId';
+const RECORD_TEMPLATE_CLONE_ERROR_STORE_METADATA_PARAMS = {
+    ttl: RecordTemplateCloneTTL,
+    representationName: '', // empty string for unknown representation
+    namespace: keyPrefix,
+};
 
 function saveDefaultRecordTypeId(context: AdapterContext, objectInfo: ObjectInfoRepresentation) {
     context.set(DEFAULT_RECORD_TYPE_ID_KEY, objectInfo.defaultRecordTypeId);
@@ -153,7 +158,11 @@ const buildNetworkSnapshot: (
                     resolve: () =>
                         buildNetworkSnapshot(luvio, context, config, snapshotRefreshOptions),
                 });
-                luvio.storeIngestError(key, errorSnapshot, TTL);
+                luvio.storeIngestError(
+                    key,
+                    errorSnapshot,
+                    RECORD_TEMPLATE_CLONE_ERROR_STORE_METADATA_PARAMS
+                );
                 return errorSnapshot;
             }
         );

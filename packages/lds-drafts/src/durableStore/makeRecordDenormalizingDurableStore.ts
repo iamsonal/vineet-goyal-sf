@@ -65,7 +65,7 @@ function normalizeRecordFields(
     }
     returnEntries[key] = {
         data: ObjectAssign(record, { fields: normalizedFields }) as RecordRepresentationNormalized,
-        expiration: entry.expiration,
+        metadata: entry.metadata,
     };
     return returnEntries;
 }
@@ -214,7 +214,7 @@ export function makeRecordDenormalizingDurableStore(
         const putEntries = ObjectCreate(null);
         const keys = ObjectKeys(entries);
         const putRecords: { [key: string]: boolean } = {};
-        const { records: storeRecords, recordExpirations: storeExpirations } = store;
+        const { records: storeRecords, metadata: storeMetadata } = store;
 
         for (let i = 0, len = keys.length; i < len; i++) {
             const key = keys[i];
@@ -243,9 +243,9 @@ export function makeRecordDenormalizingDurableStore(
                     continue;
                 }
 
-                let expiration = entry && entry.expiration;
-                if (entry === undefined) {
-                    expiration = storeExpirations[recordKey];
+                let metadata = entry && entry.metadata;
+                if (metadata === undefined) {
+                    metadata = storeMetadata[recordKey];
                 }
 
                 const denormalizedRecord = buildDurableRecordRepresentation(
@@ -255,7 +255,7 @@ export function makeRecordDenormalizingDurableStore(
                 );
                 putEntries[recordKey] = {
                     data: denormalizedRecord,
-                    expiration,
+                    metadata,
                 };
             } else {
                 putEntries[key] = value;

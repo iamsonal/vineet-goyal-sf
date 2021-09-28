@@ -38,7 +38,6 @@ describe('apexResponseIngest', () => {
 
     const mockLds: any = {
         storePublish: jest.fn(),
-        storeSetExpiration: jest.fn(),
         publishStoreMetadata: jest.fn(),
     };
 
@@ -60,10 +59,6 @@ describe('apexResponseIngest', () => {
 
     it('calls storePublish with the incoming payload when it does not equal the existing payload', () => {
         expect(mockLds.storePublish).toHaveBeenCalledWith(MOCK_KEY, mockData);
-    });
-
-    it('calls storeSetExpiration with key and Apex TTL (5min) plus the provided timeout', () => {
-        expect(mockLds.storeSetExpiration).toHaveBeenCalledWith(MOCK_KEY, APEX_TTL + timestamp);
     });
 
     it('calls storePublishMetadata with key and Apex TTL (5min) plus the provided timeout', () => {

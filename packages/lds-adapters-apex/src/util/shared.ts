@@ -58,8 +58,7 @@ export const apexResponseIngest: ResourceIngest = (
     input: any,
     path: IngestPath,
     luvio: Luvio,
-    store: Store,
-    timestamp: number
+    store: Store
 ): StoreLink => {
     // skip validation and normalization, since input type is any
     const key = path.fullPath;
@@ -76,8 +75,6 @@ export const apexResponseIngest: ResourceIngest = (
         luvio.storePublish(key, incomingRecord);
     }
 
-    // TODO [W-9805041]: Remove storeSetExpiration instances
-    luvio.storeSetExpiration(key, timestamp + APEX_TTL);
     luvio.publishStoreMetadata(key, APEX_STORE_METADATA_PARAMS);
 
     return createLink(key);

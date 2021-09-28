@@ -80,8 +80,6 @@ export const dynamicIngest: typeof generatedDynamicIngest = (ingestParams: Dynam
             luvio.storePublish(key, incomingRecord);
         }
 
-        // TODO [W-9805041]: Remove storeSetExpiration instances
-        luvio.storeSetExpiration(key, timestamp + TTL);
         luvio.publishStoreMetadata(key, QUICK_ACTION_DEFAULTS_STORE_METADATA_PARAMS);
 
         return createLink(key);

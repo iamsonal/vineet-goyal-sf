@@ -25,7 +25,6 @@ describe('Record Ingest Utils', () => {
 
         const mockLds: any = {
             storePublish: jest.fn(),
-            storeSetExpiration: jest.fn(),
             publishStoreMetadata: jest.fn(),
         };
 
@@ -90,10 +89,6 @@ describe('Record Ingest Utils', () => {
 
         it('calls storePublish with the merged record when it does not equal the existing record', () => {
             expect(mockLds.storePublish).toHaveBeenCalledWith(MOCK_KEY, mockMergedRecord);
-        });
-
-        it('calls storeSetExpiration with key and TTL (30000) plus the provided timeout', () => {
-            expect(mockLds.storeSetExpiration).toHaveBeenCalledWith(MOCK_KEY, 42345);
         });
 
         it('calls storePublishMetadata with key and TTL (30000) plus the provided timeout', () => {

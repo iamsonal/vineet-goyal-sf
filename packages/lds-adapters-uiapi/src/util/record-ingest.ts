@@ -132,8 +132,6 @@ export const createRecordIngest = (
             luvio.storePublish(key, incomingRecord);
         }
 
-        // TODO [W-9805041]: Remove storeSetExpiration instances
-        luvio.storeSetExpiration(key, timestamp + TTL);
         luvio.publishStoreMetadata(key, {
             ttl: TTL,
             representationName: RepresentationType,

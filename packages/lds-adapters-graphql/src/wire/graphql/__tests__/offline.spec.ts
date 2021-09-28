@@ -424,8 +424,8 @@ describe('graphQL adapter offline', () => {
             // populate it
             await adapter(config);
 
-            const expiration = store.recordExpirations[recordKey].fresh;
-            timekeeper.travel(expiration + 10);
+            const expirationTimestamp = store.metadata[recordKey].expirationTimestamp;
+            timekeeper.travel(expirationTimestamp + 10);
             const result = await adapter(config);
 
             expect(result.state).toBe('Stale');

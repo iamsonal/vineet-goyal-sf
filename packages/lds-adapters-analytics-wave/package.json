@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-analytics-wave",
-    "version": "1.26.1",
+    "version": "1.26.2",
     "description": "The Einstein Analytics family of APIs",
     "license": "MIT",
     "main": "dist/umd/es2018/analytics-wave.js",
@@ -33,14 +33,14 @@
         "release:core": "../../scripts/release/core.js --adapter=lds-adapters-analytics-wave"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.26.1"
+        "@salesforce/lds-bindings": "1.26.2"
     },
     "devDependencies": {
         "@luvio/cli": "0.49.0",
         "@luvio/compiler": "0.49.0",
         "@luvio/engine": "0.49.0",
         "@luvio/lwc-luvio": "0.49.0",
-        "@salesforce/lds-karma": "1.26.1"
+        "@salesforce/lds-karma": "1.26.2"
     },
     "volta": {
         "extends": "../../package.json"

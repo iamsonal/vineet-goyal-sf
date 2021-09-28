@@ -1,0 +1,75 @@
+{
+    "cloneable": true,
+    "createable": true,
+    "deletable": true,
+    "displayColumns": [
+        {
+            "fieldApiName": "Name",
+            "label": "Account Name",
+            "sortable": true
+        },
+        {
+            "fieldApiName": "Site",
+            "label": "Account Site",
+            "sortable": true
+        },
+        {
+            "fieldApiName": "BillingState",
+            "label": "Billing State/Province",
+            "sortable": true
+        },
+        {
+            "fieldApiName": "Phone",
+            "label": "Phone",
+            "sortable": true
+        },
+        {
+            "fieldApiName": "Type",
+            "label": "Type",
+            "sortable": true
+        },
+        {
+            "fieldApiName": "Owner.Alias",
+            "label": "Account Owner Alias",
+            "sortable": true
+        }
+    ],
+    "eTag": "be0001cdba2e29ba64a1ef5ce083aa23",
+    "filterLogicString": null,
+    "filteredByInfo": [],
+    "label": "All Accounts",
+    "listReference": {
+        "id": "00BT1000000tiA9MAI",
+        "listViewApiName": "AllAccounts",
+        "objectApiName": "Account",
+        "type": "listView"
+    },
+    "orderedByInfo": [
+        {
+            "fieldApiName": "Name",
+            "isAscending": true,
+            "label": "Account Name"
+        }
+    ],
+    "updateable": true,
+    "userPreferences": {
+        "columnWidths": {
+            "Site": -1,
+            "Type": -1,
+            "Owner.Alias": -1,
+            "Phone": -1,
+            "BillingState": -1,
+            "Name": -1
+        },
+        "columnWrap": {
+            "Site": false,
+            "Type": false,
+            "Owner.Alias": false,
+            "Phone": false,
+            "BillingState": false,
+            "Name": false
+        }
+    },
+    "visibility": "Public",
+    "visibilityEditable": true
+}

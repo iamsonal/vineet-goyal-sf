@@ -1,0 +1,226 @@
+{
+    "eTag": "7d514d61546edb2a7b8fed4c17e54f2f",
+    "info": {
+        "cloneable": false,
+        "createable": true,
+        "deletable": false,
+        "displayColumns": [
+            {
+                "fieldApiName": "Name",
+                "label": "Opportunity Name",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Account.Name",
+                "label": "Account Name",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Account.Site",
+                "label": "Account Site",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "StageName",
+                "label": "Stage",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "CloseDate",
+                "label": "Close Date",
+                "sortable": true
+            },
+            {
+                "fieldApiName": "Owner.Alias",
+                "label": "Opportunity Owner Alias",
+                "sortable": true
+            }
+        ],
+        "eTag": "3a4cd780e0080eaa337a241e3d748b99",
+        "filterLogicString": null,
+        "filteredByInfo": [],
+        "label": "Recently Viewed",
+        "listReference": {
+            "id": null,
+            "listViewApiName": null,
+            "objectApiName": "Opportunity",
+            "type": "mru"
+        },
+        "orderedByInfo": [],
+        "updateable": false,
+        "userPreferences": {
+            "columnWidths": {
+                "Owner.Alias": -1,
+                "StageName": -1,
+                "Account.Name": -1,
+                "CloseDate": -1,
+                "Account.Site": -1,
+                "Name": -1
+            },
+            "columnWrap": {
+                "Owner.Alias": false,
+                "StageName": false,
+                "Account.Name": false,
+                "CloseDate": false,
+                "Account.Site": false,
+                "Name": false
+            }
+        },
+        "visibility": "Public",
+        "visibilityEditable": false
+    },
+    "records": {
+        "count": 1,
+        "currentPageToken": "0",
+        "currentPageUrl": "/services/data/v54.0/ui-api/mru-list-records/Opportunity?pageSize=1&pageToken=0",
+        "fields": [],
+        "listInfoETag": "3a4cd780e0080eaa337a241e3d748b99",
+        "listReference": {
+            "id": null,
+            "listViewApiName": null,
+            "objectApiName": "Opportunity",
+            "type": "mru"
+        },
+        "nextPageToken": "1",
+        "nextPageUrl": "/services/data/v54.0/ui-api/mru-list-records/Opportunity?pageSize=1&pageToken=1",
+        "optionalFields": [],
+        "pageSize": 1,
+        "previousPageToken": null,
+        "previousPageUrl": null,
+        "records": [
+            {
+                "apiName": "Opportunity",
+                "childRelationships": {},
+                "eTag": "1cd191886105b4014ee34055996531d6",
+                "fields": {
+                    "Account": {
+                        "displayValue": "Grand Hotels &amp; Resorts Ltd",
+                        "value": {
+                            "apiName": "Account",
+                            "childRelationships": {},
+                            "eTag": "54375e301f54db22ef96d66493bb643b",
+                            "fields": {
+                                "CreatedDate": {
+                                    "displayValue": "4/6/2021, 4:46 PM",
+                                    "value": "2021-04-06T23:46:16.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "001T1000002GaXFIA0"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000Huh7IAC"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "4/6/2021, 4:46 PM",
+                                    "value": "2021-04-06T23:46:16.000Z"
+                                },
+                                "Name": {
+                                    "displayValue": null,
+                                    "value": "Grand Hotels &amp; Resorts Ltd"
+                                },
+                                "Site": {
+                                    "displayValue": null,
+                                    "value": null
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "4/6/2021, 4:46 PM",
+                                    "value": "2021-04-06T23:46:16.000Z"
+                                }
+                            },
+                            "id": "001T1000002GaXFIA0",
+                            "lastModifiedById": "005T1000000Huh7IAC",
+                            "lastModifiedDate": "2021-04-06T23:46:16.000Z",
+                            "recordTypeId": "012000000000000AAA",
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2021-04-06T23:46:16.000Z",
+                            "weakEtag": 1617752776000
+                        }
+                    },
+                    "CloseDate": {
+                        "displayValue": "3/18/2019",
+                        "value": "2019-03-18"
+                    },
+                    "CreatedDate": {
+                        "displayValue": "4/6/2021, 4:46 PM",
+                        "value": "2021-04-06T23:46:16.000Z"
+                    },
+                    "Id": {
+                        "displayValue": null,
+                        "value": "006T10000023ZEZIA2"
+                    },
+                    "LastModifiedById": {
+                        "displayValue": null,
+                        "value": "005T1000000Huh7IAC"
+                    },
+                    "LastModifiedDate": {
+                        "displayValue": "4/6/2021, 4:46 PM",
+                        "value": "2021-04-06T23:46:16.000Z"
+                    },
+                    "Name": {
+                        "displayValue": null,
+                        "value": "Grand Hotels Guest Portable Generators"
+                    },
+                    "Owner": {
+                        "displayValue": "User User",
+                        "value": {
+                            "apiName": "User",
+                            "childRelationships": {},
+                            "eTag": "2edf33d43d5a5311b2bac8522f69d52c",
+                            "fields": {
+                                "Alias": {
+                                    "displayValue": null,
+                                    "value": "UUser"
+                                },
+                                "CreatedDate": {
+                                    "displayValue": "4/6/2021, 4:46 PM",
+                                    "value": "2021-04-06T23:46:16.000Z"
+                                },
+                                "Id": {
+                                    "displayValue": null,
+                                    "value": "005T1000000Huh7IAC"
+                                },
+                                "LastModifiedById": {
+                                    "displayValue": null,
+                                    "value": "005T1000000Huh7IAC"
+                                },
+                                "LastModifiedDate": {
+                                    "displayValue": "4/6/2021, 4:46 PM",
+                                    "value": "2021-04-06T23:46:16.000Z"
+                                },
+                                "SystemModstamp": {
+                                    "displayValue": "4/6/2021, 5:22 PM",
+                                    "value": "2021-04-07T00:22:41.000Z"
+                                }
+                            },
+                            "id": "005T1000000Huh7IAC",
+                            "lastModifiedById": "005T1000000Huh7IAC",
+                            "lastModifiedDate": "2021-04-06T23:46:16.000Z",
+                            "recordTypeId": null,
+                            "recordTypeInfo": null,
+                            "systemModstamp": "2021-04-07T00:22:41.000Z",
+                            "weakEtag": 1617754961000
+                        }
+                    },
+                    "StageName": {
+                        "displayValue": "Value Proposition",
+                        "value": "Value Proposition"
+                    },
+                    "SystemModstamp": {
+                        "displayValue": "4/6/2021, 4:46 PM",
+                        "value": "2021-04-06T23:46:16.000Z"
+                    }
+                },
+                "id": "006T10000023ZEZIA2",
+                "lastModifiedById": "005T1000000Huh7IAC",
+                "lastModifiedDate": "2021-04-06T23:46:16.000Z",
+                "recordTypeId": "012000000000000AAA",
+                "recordTypeInfo": null,
+                "systemModstamp": "2021-04-06T23:46:16.000Z",
+                "weakEtag": 1617752776000
+            }
+        ],
+        "sortBy": null
+    }
+}

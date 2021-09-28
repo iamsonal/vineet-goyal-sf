@@ -9,16 +9,29 @@ uses:
 
 types:
   ActionRepresentation:
+    examples:
+      mockGetGlobalActionsResponse: !include ../mocks/types/ActionRepresentation/global-actions.json
+      mockGetObjectCreateActionsResponse: !include ../mocks/types/ActionRepresentation/object-create-actions.json
+      mockGetRecordActionsResponse: !include ../mocks/types/ActionRepresentation/record-actions.json
+      mockGetRecordEditActionsResponse: !include ../mocks/types/ActionRepresentation/record-edit-actions.json
+      mockGetRelatedListActions: !include ../mocks/types/ActionRepresentation/related-list-actions.json
+      mockGetRelatedListRecordActionsResponse: !include ../mocks/types/ActionRepresentation/related-list-record-actions.json
     (luvio.ttl): 300000
     (luvio.private):
       - eTag
       - url
+  ActionBatchRepresentation:
+    examples:
+      mockGetRelatedListsActions: !include ../mocks/types/ActionBatchRepresentation/related-lists-actions.json
   AppRepresentation:
     (luvio.private):
       - eTag
   AppsRepresentation:
     (luvio.private):
       - eTag
+  BatchRepresentation:
+    examples:
+      mockGetRecordsResponse: !include ../mocks/types/BatchRepresentation/records-multiple-record-Accounts.json
   EntityActionRepresentation:
     (luvio.key):
       url: url
@@ -36,12 +49,16 @@ types:
       relatedSourceObject: relatedSourceObject # Used in Related List, Related List Record Actions
       relatedListRecordId: relatedListRecordId # Used in Related List Record Actions
   QuickActionDefaultsRepresentation:
+    examples:
+      mockGetQuickActionDefaultsResponse: !include ../mocks/types/QuickActionDefaultsRepresentation/quick_action_defaults_fields.json
     (luvio.ttl): 900000
     (luvio.key):
       actionApiName: actionApiName
     (luvio.private):
       - eTag
   ListInfoRepresentation:
+    examples:
+      mockListInfoAllAccounts: !include ../mocks/types/ListInfoRepresentation/list-info-AllAccounts.json
     (luvio.key):
       listViewApiName: listReference.listViewApiName
       objectApiName: listReference.objectApiName
@@ -73,6 +90,8 @@ types:
       pageSize: pageSize
       count: count
   ListViewSummaryCollectionRepresentation:
+    examples:
+      mockResponseOpportunity: !include ../mocks/types/ListViewSummaryCollectionRepresentation/list-ui-Opportunity.json
     (luvio.private):
       - eTag
       - currentPageUrl
@@ -103,6 +122,8 @@ types:
     (luvio.key):
       developerName: developerName
   RelatedListRecordCollectionRepresentation:
+    examples:
+      mockGetRelatedListRecordsResponse: !include ../mocks/types/RelatedListRecordCollectionRepresentation/related-list-records-Custom.json
     (luvio.ttl): 30000
     (luvio.private):
       - currentPageUrl
@@ -119,8 +140,13 @@ types:
       previousToken: previousPageToken
       pageSize: pageSize
       count: count
+  RelatedListRecordCollectionBatchRepresentation:
+    examples:
+      mockGetRelatedListRecordsBatchResponse: !include ../mocks/types/RelatedListRecordCollectionBatchRepresentation/related-list-records-standard-defaults-Custom.json
   RecordCollectionRepresentation:
     (luvio.ttl): 120000
+    examples:
+      mockGetLookupRecords: !include ../mocks/types/RecordCollectionRepresentation/lookup-records-Case-ContactId-Contact.json
   PhotoRecordAvatarRepresentation:
     (luvio.private):
       - eTag
@@ -128,6 +154,8 @@ types:
     (luvio.private):
       - eTag
   ListUiRepresentation:
+    examples:
+      mockGetMruListUiResponse: !include ../mocks/types/ListUiRepresentation/mru-list-ui-Lead-pageSize-1.json
     (luvio.private):
       - eTag
     (luvio.key):
@@ -136,6 +164,8 @@ types:
       type: info.listReference.type
       sortBy: records.sortBy
   RelatedListSummaryInfoCollectionRepresentation:
+    examples:
+      mockGetRelatedListsInfoResponse: !include ../mocks/types/RelatedListSummaryInfoCollectionRepresentation/related-lists-info-Custom.json
     (luvio.key):
       parentObjectApiName: parentObjectApiName
       recordTypeId: parentRecordTypeId
@@ -145,6 +175,8 @@ types:
     (luvio.private):
       - eTag
   ObjectInfoRepresentation:
+    examples:
+      mockGetObjectInfoReponse: !include ../mocks/types/ObjectInfoRepresentation/object-Account.json
     (luvio.ttl): 900000
     (luvio.key):
       apiName: apiName
@@ -158,6 +190,8 @@ types:
   AbstractRecordAvatarBatchRepresentation:
     (luvio.ttl): 300000
   RecordLayoutRepresentation:
+    examples:
+      mockLayoutOpportunityFull: !include ../mocks/types/RecordLayoutRepresentation/layout-Opportunity-Full.json
     (luvio.integrity):
       - eTag
     (luvio.ttl): 900000
@@ -170,6 +204,8 @@ types:
     (luvio.private):
       - eTag
   RecordLayoutUserStateRepresentation:
+    examples:
+      mockUserStateOpportunityFullView: !include ../mocks/types/RecordLayoutUserStateRepresentation/layoutUserState-Opportunity-Full-View.json
     (luvio.opaque): true
     (luvio.ttl): 900000
     (luvio.key):
@@ -194,15 +230,21 @@ types:
   RecordAvatarRepresentation:
     (luvio.ttl): 300000
   RecordAvatarBulkMapRepresentation:
+    examples:
+      mockGetRecordAvatarsResponse: !include ../mocks/types/RecordAvatarBulkMapRepresentation/avatar-001xx0000000003AAA-001xx0000000004AAA-001xx0000000005AAA.json
     (luvio.ttl): 300000
   AbstractRecordAvatarRepresentation:
     (luvio.key):
       recordId: recordId
   RecordUiRepresentation:
+    examples:
+      mockGetRecordUiResponse: !include ../mocks/types/RecordUiRepresentation/multiple-record-Account-layouttypes-Full-modes-View.json
     (luvio.private):
       - eTag
     (luvio.ttl): 900000
   RelatedListInfoRepresentation:
+    examples:
+      mockGetRelatedListInfoResponse: !include ../mocks/types/RelatedListInfoRepresentation/related-list-info-Custom.json
     (luvio.key):
       parentObjectApiName: listReference.parentObjectApiName
       recordTypeId: listReference.recordTypeId
@@ -213,13 +255,23 @@ types:
       - eTag
     (luvio.private):
       - eTag
+  RelatedListInfoBatchRepresentation:
+    examples:
+      mockGetRelatedListInfoBatchResponse: !include ../mocks/types/RelatedListInfoBatchRepresentation/related-list-info-batch-Custom-Both.json
   RelatedListRecordCountRepresentation:
+    examples:
+      mockGetRelatedListCountResponse: !include ../mocks/types/RelatedListRecordCountRepresentation/related-list-count-Custom.json
     (luvio.private):
       - eTag
     (luvio.key):
       parentRecordId: listReference.inContextOfRecordId
       relatedListId: listReference.relatedListId
+  BatchRelatedListCountRepresentation:
+    examples:
+      mockGetRelatedListsCountResponse: !include ../mocks/types/BatchRelatedListCountRepresentation/related-lists-count-Cases-Contacts.json
   PicklistValuesRepresentation:
+    examples:
+      mockGetPicklistValuesResponse: !include ../mocks/types/PicklistValuesRepresentation/picklist-Account-MasterRecordTypeId-fieldApiName-Type.json
     (luvio.ttl): 300000
     (luvio.integrity):
       - eTag
@@ -228,11 +280,15 @@ types:
     (luvio.private):
       - eTag
   PicklistValuesCollectionRepresentation:
+    examples:
+      mockGetPicklistValuesByRecordTypeResponse: !include ../mocks/types/PicklistValuesCollectionRepresentation/picklist-Account-MasterRecordTypeId.json
     (luvio.ttl): 300000
     (luvio.private):
       - eTag
   RecordDefaultsRepresentation:
     (luvio.ttl): 900000
+    examples:
+      mockGetRecordCreateDefaultsResponse: !include ../mocks/types/RecordDefaultsRepresentation/record-defaults-create-Account.json
   RecordDefaultsTemplateCreateRepresentation:
     (luvio.ttl): 900000
     (luvio.key):
@@ -241,6 +297,7 @@ types:
     examples:
       CreateTemplateResponseWithEmptyFields: !include ../mocks/types/CreateTemplateRepresentation/record-template-create-Account.json
       CreateTemplateResponseWithSingleField: !include ../mocks/types/CreateTemplateRepresentation/record-template-create-Account-optionalFields-Name.json
+      mockGetRecordTemplateCreateResponse: !include ../mocks/types/RecordDefaultsTemplateCreateRepresentation/record-template-create-Custom_Object__c.json
   RecordTemplateCreateRepresentation:
     (luvio.ttl): 30000
     (luvio.key):
@@ -254,6 +311,7 @@ types:
     examples:
       CloneTemplateResponseWithSourceField: !include ../mocks/types/CloneTemplateRepresentation/record-template-clone-Account.json
       CloneTemplateResponseWithMultipleFields: !include ../mocks/types/CloneTemplateRepresentation/record-template-clone-Account-optionalFields-Name.json
+      mockGetRecordTemplateCloneResponse: !include ../mocks/types/RecordDefaultsTemplateCloneRepresentation/record-template-clone-Custom_Object__c.json
   RecordTemplateCloneRepresentation:
     (luvio.ttl): 1000
     (luvio.key):
@@ -287,6 +345,9 @@ types:
     (luvio.coerceFunction): ../primitives/LayoutModeArray/coerce
   SalesforceFormFactor:
     (luvio.coerceFunction): ../primitives/FormFactor/coerce
+  SimplifiedBatchRepresentation:
+    examples:
+      mockGetObjectInfosResponse: !include ../mocks/types/SimplifiedBatchRepresentation/object-Opportunity-Account.json
   DuplicatesRepresentation:
     (luvio.ttl): 30000
     (luvio.opaque): true
@@ -337,6 +398,10 @@ types:
             formFactor: SalesforceFormFactor
             sections: SortedStringArray
     '/object/{objectApiName}/record-create':
+      uriParameters:
+        objectApiName:
+          examples:
+            mockGetObjectCreateActionsResponse: Account
       get:
         (luvio.adapter):
           name: getObjectCreateActions
@@ -345,9 +410,18 @@ types:
             objectApiName: SalesforceObjectId
             formFactor: SalesforceFormFactor
             sections: SortedStringArray
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                    "objectApiName": "Account"
+                  }
+                mockPayloadId: mockGetObjectCreateActionsResponse
     '/record-defaults/{actionApiName}':
       uriParameters:
-        actionApiName: SalesforceObjectId
+        actionApiName:
+          examples:
+            mockGetQuickActionDefaultsResponse: 'Create_Custom_Object_2'
       get:
         queryParameters:
           optionalFields: SalesforceFieldIdArray
@@ -356,6 +430,15 @@ types:
           coercedParams:
             actionApiName: SalesforceObjectId
             optionalFields: SalesforceFieldIdArray
+          # TODO: W-9927417 uncomment when getQuickActionDefaults supports offline
+          # tests:
+          #   expectedResponses:
+          #     - configInput: |
+          #         {
+          #           "actionApiName": "Create_Custom_Object_2",
+          #           "optionalFields": ["Custom_Object_2__c.Make__c", "Custom_Object_2__c.Model__c"]
+          #         }
+          #       mockPayloadId: mockGetQuickActionDefaultsResponse
         (luvio.key):
           actionApiName: urlParams.actionApiName
     '/global':
@@ -366,7 +449,17 @@ types:
             apiNames: SortedStringArrayAllowEmpty
             formFactor: SalesforceFormFactor
             sections: SortedStringArray
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                  }
+                mockPayloadId: mockGetGlobalActionsResponse
     '/record/{recordIds}':
+      uriParameters:
+        recordIds:
+          examples:
+            mockGetRecordActionsResponse: ['001xx000003GYvcAAG']
       get:
         (luvio.adapter):
           name: getRecordActions
@@ -375,10 +468,22 @@ types:
             recordIds: SalesforceRecordId18Array
             formFactor: SalesforceFormFactor
             sections: SortedStringArray
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                    "recordIds": ["001xx000003GYvcAAG"],
+                    "sections": ["PAGE"]
+                  }
+                mockPayloadId: mockGetRecordActionsResponse
           oneOfParams:
             - sections
             - apiNames
       /record-edit:
+        uriParameters:
+          recordIds:
+            examples:
+              mockGetRecordEditActionsResponse: ['001T1000002GaXCIA0']
         get:
           (luvio.adapter):
             name: getRecordEditActions
@@ -387,7 +492,21 @@ types:
               recordIds: SalesforceRecordId18Array
               formFactor: SalesforceFormFactor
               sections: SortedStringArray
+            tests:
+              expectedResponses:
+                - configInput: |
+                    {
+                      "recordIds": ["001T1000002GaXCIA0"]
+                    }
+                  mockPayloadId: mockGetRecordEditActionsResponse
       /related-list/batch/{relatedListIds}:
+        uriParameters:
+          relatedListIds:
+            examples:
+              mockGetRelatedListsActions: ['Opportunities__r']
+          recordIds:
+            examples:
+              mockGetRelatedListsActions: ['a02RM0000001KfqYAE']
         get:
           (luvio.adapter):
             name: getRelatedListsActions
@@ -396,6 +515,14 @@ types:
               relatedListIds: SortedStringArray
               formFactor: SalesforceFormFactor
               sections: SortedStringArray
+            # tests:
+            #   expectedResponses:
+            #     - configInput: |
+            #         {
+            #           "relatedListIds": ["Opportunities__r"],
+            #           "recordIds": ["a02RM0000001KfqYAE"]
+            #         }
+            #       mockPayloadId: mockGetRelatedListsActions
           (luvio.composite):
             resource: /ui-api/actions/record/{recordIds}/related-list/{relatedListId}
             uriParameters:
@@ -410,6 +537,13 @@ types:
               statusCode: statusCode
               body: result
       /related-list/{relatedListId}:
+        uriParameters:
+          relatedListId:
+            examples:
+              mockGetRelatedListActions: Opportunities__r
+          recordIds:
+            examples:
+              mockGetRelatedListActions: ['a02RM0000001KfqYAE']
         get:
           (luvio.adapter):
             name: getRelatedListActions
@@ -417,7 +551,22 @@ types:
               recordIds: SalesforceRecordId18Array
               formFactor: SalesforceFormFactor
               sections: SortedStringArray
+            tests:
+              expectedResponses:
+                - configInput: |
+                    {
+                      "relatedListId": "Opportunities__r",
+                      "recordIds": ["a02RM0000001KfqYAE"]
+                    }
+                  mockPayloadId: mockGetRelatedListActions
       '/related-list-record/{relatedListRecordIds}':
+        uriParameters:
+          relatedListRecordIds:
+            examples:
+              mockGetRelatedListRecordActionsResponse: ['006T10000023ZEJIA2']
+          recordIds:
+            examples:
+              mockGetRelatedListRecordActionsResponse: ['001T1000002GaXCIA0']
         get:
           (luvio.adapter):
             name: getRelatedListRecordActions
@@ -427,6 +576,14 @@ types:
               actionTypes: SortedStringArray
               formFactor: SalesforceFormFactor
               sections: SortedStringArray
+            tests:
+              expectedResponses:
+                - configInput: |
+                    {
+                      "recordIds": ["001T1000002GaXCIA0"],
+                      "relatedListRecordIds": ["006T10000023ZEJIA2"]
+                    }
+                  mockPayloadId: mockGetRelatedListRecordActionsResponse
   /apps:
     get:
       (luvio.adapter):
@@ -436,6 +593,10 @@ types:
         (luvio.adapter):
           name: getSelectedApp
   /layout/{objectApiName}:
+    uriParameters:
+      objectApiName:
+        examples:
+          mockLayoutOpportunityFull: 'Opportunity'
     get:
       (luvio.adapter):
         name: getLayout
@@ -444,7 +605,21 @@ types:
           layoutType: SalesforceLayoutType
           mode: SalesforceLayoutMode
           recordTypeId: SalesforceRecordId18
+        tests:
+          expectedResponses:
+            - configInput: |
+                {
+                  "objectApiName": "Opportunity",
+                  "layoutType": "Full",
+                  "mode": "View",
+                  "recordTypeId": "012000000000000AAA"
+                }
+              mockPayloadId: mockLayoutOpportunityFull
   /layout/{objectApiName}/user-state:
+    uriParameters:
+      objectApiName:
+        examples:
+          mockUserStateOpportunityFullView: 'Opportunity'
     get:
       (luvio.adapter):
         name: getLayoutUserState
@@ -453,6 +628,16 @@ types:
           layoutType: SalesforceLayoutType
           mode: SalesforceLayoutMode
           recordTypeId: SalesforceRecordId18
+        tests:
+          expectedResponses:
+            - configInput: |
+                {
+                  "objectApiName": "Opportunity",
+                  "layoutType": "Full",
+                  "mode": "View",
+                  "recordTypeId": "012000000000000AAA"
+                }
+              mockPayloadId: mockUserStateOpportunityFullView
     patch:
       (luvio.adapter):
         name: updateLayoutUserState
@@ -462,9 +647,24 @@ types:
         (luvio.key):
           listViewId: urlParams.listViewId
     '/{objectApiName}/{listViewApiName}':
+      uriParameters:
+        objectApiName:
+          examples:
+            mockListInfoAllAccounts: Account
+        listViewApiName:
+          examples:
+            mockListInfoAllAccounts: AllAccounts
       get:
         (luvio.adapter):
           name: getListInfoByName
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                    "objectApiName": "Account",
+                    "listViewApiName": "AllAccounts"
+                  }
+                mockPayloadId: mockListInfoAllAccounts
         (luvio.key):
           objectApiName: urlParams.objectApiName
           listViewApiName: urlParams.listViewApiName
@@ -477,9 +677,20 @@ types:
           sortBy: queryParams.sortBy || null
   /list-ui:
     '/{objectApiName}':
+      uriParameters:
+        objectApiName:
+          examples:
+            mockResponseOpportunity: Opportunity
       get:
         (luvio.adapter):
           name: getListViewSummaryCollection
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                    "objectApiName": "Opportunity"
+                  }
+                mockPayloadId: mockResponseOpportunity
           coercedParams:
             objectApiName: SalesforceObjectId
         (luvio.key):
@@ -512,9 +723,35 @@ types:
             optionalFields: SalesforceFieldIdArray
             sortBy: SalesforceFieldIdArray
   '/lookups/{objectApiName}/{fieldApiName}/{targetApiName}':
+    uriParameters:
+      objectApiName:
+        examples:
+          mockGetLookupRecords: Case
+      fieldApiName:
+        examples:
+          mockGetLookupRecords: ContactId
+      targetApiName:
+        examples:
+          mockGetLookupRecords: Contact
     get:
       (luvio.adapter):
         name: getLookupRecords
+        # TODO: W-9927420 uncomment when getLookupRecords supports offline
+        # tests:
+        #   expectedResponses:
+        #     - configInput: |
+        #         {
+        #           "fieldApiName": "Case.ContactId",
+        #           "targetApiName": "Contact",
+        #           "requestParams": {
+        #             "q": "jak",
+        #             "pageSize": 10,
+        #             "searchType": "TypeAhead",
+        #             "page": 1,
+        #             "sourceRecordId": ""
+        #           }
+        #         }
+        #       mockPayloadId: mockGetLookupRecords
         coercedParams:
           fieldApiName: SalesforceFieldId
           targetApiName: SalesforceObjectId
@@ -549,12 +786,24 @@ types:
               }
   /record-avatars:
     '/batch/{recordIds}':
+      uriParameters:
+        recordIds:
+          examples:
+            mockGetRecordAvatarsResponse:
+              ['001xx0000000003AAA', '001xx0000000004AAA', '001xx0000000005AAA']
       get:
         (luvio.adapter):
           name: getRecordAvatars
           coercedParams:
             recordIds: SalesforceRecordId18Array
             formFactor: SalesforceFormFactor
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                    "recordIds": ["001xx0000000003AAA", "001xx0000000004AAA", "001xx0000000005AAA"]
+                  }
+                mockPayloadId: mockGetRecordAvatarsResponse
     '/{recordId}/association':
       post:
         (luvio.adapter):
@@ -564,9 +813,25 @@ types:
       (luvio.adapter):
         name: createRecord
     '/batch/{recordIds}':
+      uriParameters:
+        recordIds:
+          examples:
+            mockGetRecordsResponse: ['001T1000002GaXCIA0', '001T1000002GaXBIA0']
       get:
         (luvio.adapter):
           name: getRecords
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                    "records": [
+                      {
+                        "recordIds": ["001T1000002GaXCIA0", "001T1000002GaXBIA0"],
+                        "fields": ["Account.Id", "Account.Name"]
+                      }
+                    ]
+                  }
+                mockPayloadId: mockGetRecordsResponse
         (luvio.composite):
           resource: /ui-api/records/{recordId}
           uriParameters:
@@ -619,6 +884,10 @@ types:
         (luvio.key):
           recordId: urlParams.recordId
   '/record-ui/{recordIds}':
+    uriParameters:
+      recordIds:
+        examples:
+          mockGetRecordUiResponse: ['001T1000002GaXBIA0', '001T1000002GaXCIA0']
     get:
       (luvio.adapter):
         name: getRecordUi
@@ -627,13 +896,33 @@ types:
           layoutTypes: SortedStringArray
           modes: SortedStringArray
           optionalFields: SalesforceFieldIdArray
+        tests:
+          expectedResponses:
+            - configInput: |
+                {
+                  "recordIds": ["001T1000002GaXBIA0", "001T1000002GaXCIA0"],
+                  "layoutTypes": ["Full"],
+                  "modes": ["View"]
+                }
+              mockPayloadId: mockGetRecordUiResponse
   /object-info:
     '/batch/{objectApiNames}':
+      uriParameters:
+        objectApiNames:
+          examples:
+            mockGetObjectInfosResponse: ['Opportunity', 'Account']
       get:
         (luvio.adapter):
           name: getObjectInfos
           coercedParams:
             objectApiNames: SalesforceObjectIdArray
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                    "objectApiNames": ["Opportunity", "Account"]
+                  }
+                mockPayloadId: mockGetObjectInfosResponse
         (luvio.composite):
           resource: /ui-api/object-info/{objectApiName}
           uriParameters:
@@ -643,31 +932,87 @@ types:
             statusCode: statusCode
             body: result
     '/{objectApiName}':
+      uriParameters:
+        objectApiName:
+          examples:
+            mockGetObjectInfoReponse: Account
       get:
         (luvio.adapter):
           name: getObjectInfo
           coercedParams:
             objectApiName: SalesforceObjectId
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                    "objectApiName": "Account"
+                  }
+                mockPayloadId: mockGetObjectInfoReponse
         (luvio.key):
           apiName: urlParams.objectApiName
       '/picklist-values/{recordTypeId}':
+        uriParameters:
+          recordTypeId:
+            examples:
+              mockGetPicklistValuesByRecordTypeResponse: 012000000000000AAA
+          objectApiName:
+            examples:
+              mockGetPicklistValuesByRecordTypeResponse: Account
         get:
           (luvio.adapter):
             name: getPicklistValuesByRecordType
             coercedParams:
               objectApiName: SalesforceObjectId
               recordTypeId: SalesforceRecordId18
+            tests:
+              expectedResponses:
+                - configInput: |
+                    {
+                      "recordTypeId": "012000000000000AAA",
+                      "objectApiName": "Account"
+                    }
+                  mockPayloadId: mockGetPicklistValuesByRecordTypeResponse
       '/picklist-values/{recordTypeId}/{fieldApiName}':
+        uriParameters:
+          recordTypeId:
+            examples:
+              mockGetPicklistValuesResponse: 012000000000000AAA
+          fieldApiName:
+            examples:
+              mockGetPicklistValuesResponse: Type
+          objectApiName:
+            examples:
+              mockGetPicklistValuesResponse: Account
         get:
           (luvio.adapter):
             name: getPicklistValues
             coercedParams:
               recordTypeId: SalesforceRecordId18
               fieldApiName: SalesforceFieldId
+            tests:
+              expectedResponses:
+                - configInput: |
+                    {
+                      "recordTypeId": "012000000000000AAA",
+                      "fieldApiName": "Account.Type"
+                    }
+                  mockPayloadId: mockGetPicklistValuesResponse
   '/mru-list-ui/{objectApiName}':
+    uriParameters:
+      objectApiName:
+        examples:
+          mockGetMruListUiResponse: Opportunity
     get:
       (luvio.adapter):
         name: getMruListUi
+        tests:
+          expectedResponses:
+            - configInput: |
+                {
+                  "objectApiName": "Opportunity",
+                  "pageSize": 1
+                }
+              mockPayloadId: mockGetMruListUiResponse
         coercedParams:
           objectApiName: SalesforceObjectId
           fields: SalesforceFieldIdArray
@@ -680,6 +1025,10 @@ types:
         sortBy: queryParams.sortBy || null
   '/record-defaults':
     '/create/{objectApiName}':
+      uriParameters:
+        objectApiName:
+          examples:
+            mockGetRecordCreateDefaultsResponse: Account
       get:
         (luvio.adapter):
           name: getRecordCreateDefaults
@@ -688,6 +1037,13 @@ types:
             optionalFields: SalesforceFieldIdArray
             recordTypeId: SalesforceRecordId18
             formFactor: SalesforceFormFactor
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                    "objectApiName": "Account"
+                  }
+                mockPayloadId: mockGetRecordCreateDefaultsResponse
     '/template':
       '/create/{objectApiName}':
         uriParameters:
@@ -695,11 +1051,13 @@ types:
             examples:
               CreateTemplateResponseWithEmptyFields: 'Account'
               CreateTemplateResponseWithSingleField: 'Account'
+              mockGetRecordTemplateCreateResponse: Custom_Object__c
         get:
           queryParameters:
             recordTypeId:
               examples:
                 CreateTemplateResponseWithEmptyFields: '012RM00000025SOYAY'
+                mockGetRecordTemplateCreateResponse: 012000000000000AAA
             optionalFields:
               examples:
                 CreateTemplateResponseWithSingleField: |
@@ -737,6 +1095,13 @@ types:
                   {
                     "objectApiName": null
                   }
+              expectedResponses:
+                - configInput: |
+                    {
+                      "objectApiName": "Custom_Object__c",
+                      "recordTypeId": "012000000000000AAA"
+                    }
+                  mockPayloadId: mockGetRecordTemplateCreateResponse
           (luvio.key):
             objectApiName: urlParams.objectApiName
             recordTypeId: queryParams.recordTypeId || null
@@ -746,6 +1111,7 @@ types:
             examples:
               CloneTemplateResponseWithSourceField: '001RM000004PkciYAC'
               CloneTemplateResponseWithMultipleFields: '001RM000004PkciYAC'
+              mockGetRecordTemplateCloneResponse: a00xx000000bqPtAAI
         get:
           queryParameters:
             recordTypeId:
@@ -788,16 +1154,39 @@ types:
                   {
                     "recordId": null
                   }
+              # TODO: W-9927425 uncomment when getRecordTemplateClone supports offline
+              # expectedResponses:
+              #   - configInput: |
+              #       {
+              #         "recordId": "a00xx000000bqPtAAI"
+              #       }
+              #     mockPayloadId: mockGetRecordTemplateCloneResponse
           (luvio.key):
             cloneSourceId: urlParams.recordId
             recordTypeId: queryParams.recordTypeId || null
   '/related-list-count':
     '/batch/{parentRecordId}/{relatedListNames}':
+      uriParameters:
+        parentRecordId:
+          examples:
+            mockGetRelatedListsCountResponse: 001D2000002vEU2IAM
+        relatedListNames:
+          examples:
+            mockGetRelatedListsCountResponse: ['Cases', 'Contacts']
       get:
         (luvio.adapter):
           name: getRelatedListsCount
           coercedParams:
             relatedListNames: SalesforceFieldIdArray
+          # TODO: W-9927426 uncomment when getRelatedListsCount supports offline
+          # tests:
+          #   expectedResponses:
+          #     - configInput: |
+          #         {
+          #           "parentRecordId": "001D2000002vEU2IAM",
+          #           "relatedListNames": ["Cases", "Contacts"]
+          #         }
+          #       mockPayloadId: mockGetRelatedListsCountResponse
         (luvio.composite):
           resource: /ui-api/related-list-count/{parentRecordId}/{relatedListId}
           uriParameters:
@@ -810,24 +1199,66 @@ types:
             statusCode: statusCode
             body: result
     '/{parentRecordId}/{relatedListId}':
+      uriParameters:
+        parentRecordId:
+          examples:
+            mockGetRelatedListCountResponse: a00RM0000004aVwYAI
+        relatedListId:
+          examples:
+            mockGetRelatedListCountResponse: CwcCustom01s__r
       get:
         (luvio.adapter):
           name: getRelatedListCount
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                    "parentRecordId": "a00RM0000004aVwYAI",
+                    "relatedListId": "CwcCustom01s__r"
+                  }
+                mockPayloadId: mockGetRelatedListCountResponse
         (luvio.key):
           parentRecordId: urlParams.parentRecordId
           relatedListId: urlParams.relatedListId
   '/related-list-info':
     '/{parentObjectApiName}':
+      uriParameters:
+        parentObjectApiName:
+          examples:
+            mockGetRelatedListsInfoResponse: CwcCustom00__c
       get:
         (luvio.adapter):
           name: getRelatedListsInfo
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                    "recordTypeId": "012000000000000AAA",
+                    "parentObjectApiName": "CwcCustom00__c"
+                  }
+                mockPayloadId: mockGetRelatedListsInfoResponse
         (luvio.key):
           parentObjectApiName: urlParams.parentObjectApiName
           recordTypeId: queryParams.recordTypeId || null
     '/batch/{parentObjectApiName}/{relatedListNames}':
+      uriParameters:
+        parentObjectApiName:
+          examples:
+            mockGetRelatedListInfoBatchResponse: CwcCustom00__c
+        relatedListNames:
+          examples:
+            mockGetRelatedListInfoBatchResponse: ['CwcCustom01s__r', 'CwcCustom02s__r']
       get:
         (luvio.adapter):
           name: getRelatedListInfoBatch
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                    "parentObjectApiName": "CwcCustom00__c",
+                    "relatedListNames": ["CwcCustom01s__r", "CwcCustom02s__r"]
+                  }
+                mockPayloadId: mockGetRelatedListInfoBatchResponse
         (luvio.composite):
           resource: /ui-api/related-list-info/{parentObjectApiName}/{relatedListId}
           uriParameters:
@@ -840,9 +1271,24 @@ types:
             statusCode: statusCode
             body: result
     '/{parentObjectApiName}/{relatedListId}':
+      uriParameters:
+        parentObjectApiName:
+          examples:
+            mockGetRelatedListInfoResponse: CwcCustom00__c
+        relatedListId:
+          examples:
+            mockGetRelatedListInfoResponse: CwcCustom01s__r
       get:
         (luvio.adapter):
           name: getRelatedListInfo
+          tests:
+            expectedResponses:
+              - configInput: |
+                  {
+                    "parentObjectApiName": "CwcCustom00__c",
+                    "relatedListId": "CwcCustom01s__r"
+                  }
+                mockPayloadId: mockGetRelatedListInfoResponse
         (luvio.key):
           parentObjectApiName: urlParams.parentObjectApiName
           relatedListId: urlParams.relatedListId
@@ -851,18 +1297,63 @@ types:
         (luvio.adapter):
           name: updateRelatedListInfo
   '/related-list-records/{parentRecordId}/{relatedListId}':
+    uriParameters:
+      parentRecordId:
+        examples:
+          mockGetRelatedListRecordsResponse: a00RM0000004aVwYAI
+      relatedListId:
+        examples:
+          mockGetRelatedListRecordsResponse: CwcCustom01s__r
     post:
+      body:
+        application/json:
+          examples:
+            mockGetRelatedListRecordsResponse: |
+              {
+              }
       (luvio.method): get
       (luvio.adapter):
         name: getRelatedListRecords
+        tests:
+          expectedResponses:
+            - configInput: |
+                {
+                  "parentRecordId": "a00RM0000004aVwYAI",
+                  "relatedListId": "CwcCustom01s__r",
+                  "fields": ["CwcCustom01__c.Id", "CwcCustom01__c.Name"]
+                }
+              mockPayloadId: mockGetRelatedListRecordsResponse
       (luvio.key):
         sortBy: body.sortBy || []
         parentRecordId: urlParams.parentRecordId
         relatedListId: urlParams.relatedListId
   '/related-list-records/batch/{parentRecordId}/{relatedListIds}':
+    uriParameters:
+      parentRecordId:
+        examples:
+          mockGetRelatedListRecordsBatchResponse: a00RM0000004aVwYAI
+      relatedListIds:
+        examples:
+          mockGetRelatedListRecordsBatchResponse: ['CwcCustom02s__r', 'CwcCustom01s__r']
     get:
       (luvio.adapter):
         name: getRelatedListRecordsBatch
+        # TODO: W-9927409 uncomment when getRelatedListRecordsBatch supports offline
+        # tests:
+        #   expectedResponses:
+        #     - configInput: |
+        #         {
+        #           "parentRecordId": "a00RM0000004aVwYAI",
+        #           "relatedLists": [
+        #             {
+        #               "relatedListId": "CwcCustom02s__r"
+        #             },
+        #             {
+        #               "relatedListId": "CwcCustom01s__r"
+        #             }
+        #           ]
+        #         }
+        #       mockPayloadId: mockGetRelatedListRecordsBatchResponse
       (luvio.composite):
         resource: /ui-api/related-list-records/{parentRecordId}/{relatedListId}
         envelope:

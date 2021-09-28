@@ -1,0 +1,79 @@
+{
+    "results": [
+        {
+            "result": {
+                "actions": {
+                    "a02RM0000001KfqYAE": {
+                        "actions": [
+                            {
+                                "actionListContext": "RelatedList",
+                                "actionTarget": null,
+                                "actionTargetType": "Invoke",
+                                "apiName": "New",
+                                "externalId": "00DRM000000EcVh:a02RM0000001KfqYAE::RelatedList:Desktop:StandardButton:New",
+                                "iconUrl": "https://na44.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_opportunity_120.png",
+                                "id": "0JVRM00000025094AA",
+                                "isMassAction": "false",
+                                "label": "New",
+                                "primaryColor": "FCB95B",
+                                "relatedListRecordId": null,
+                                "relatedSourceObject": "Opportunities__r",
+                                "section": "Page",
+                                "sourceObject": "a02RM0000001KfqYAE",
+                                "subtype": null,
+                                "targetObject": "Opportunity",
+                                "targetUrl": null,
+                                "type": "StandardButton"
+                            },
+                            {
+                                "actionListContext": "RelatedList",
+                                "actionTarget": null,
+                                "actionTargetType": "Invoke",
+                                "apiName": "testMassA",
+                                "externalId": "00DRM000000EcVh:a02RM0000001KfqYAE::RelatedList:Desktop:CustomButton:testMassA",
+                                "iconUrl": "https://c360service2.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_custom19_120.png",
+                                "id": "0JVRM00000025104AA",
+                                "isMassAction": "true",
+                                "label": "testMassA",
+                                "primaryColor": null,
+                                "relatedListRecordId": null,
+                                "relatedSourceObject": "Opportunities__r",
+                                "section": "Page",
+                                "sourceObject": "a02RM0000001KfqYAE",
+                                "subtype": "L",
+                                "targetObject": null,
+                                "targetUrl": "http://www.google.com",
+                                "type": "CustomButton"
+                            },
+                            {
+                                "actionListContext": "RelatedList",
+                                "actionTarget": null,
+                                "actionTargetType": "Invoke",
+                                "apiName": "testMassB",
+                                "externalId": "00DRM000000EcVh:a02RM0000001KfqYAE::RelatedList:Desktop:CustomButton:testMassB",
+                                "iconUrl": "https://c360service2.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_custom19_120.png",
+                                "id": "0JVRM00000025114AA",
+                                "isMassAction": "true",
+                                "label": "testMassB",
+                                "primaryColor": null,
+                                "relatedListRecordId": null,
+                                "relatedSourceObject": "Opportunities__r",
+                                "section": "Page",
+                                "sourceObject": "a02RM0000001KfqYAE",
+                                "subtype": "L",
+                                "targetObject": null,
+                                "targetUrl": "http://www.google.com",
+                                "type": "CustomButton"
+                            }
+                        ],
+                        "links": [],
+                        "url": "/services/data/v48.0/ui-api/actions/record/a02RM0000001KfqYAE/related-list/Opportunities__r"
+                    }
+                },
+                "eTag": "95f25071cbbd956b304ce5c328a3b7fb",
+                "url": "/services/data/v50.0/ui-api/actions/record/a02RM0000001KfqYAE/related-list/Opportunities__r"
+            },
+            "statusCode": 200
+        }
+    ]
+}

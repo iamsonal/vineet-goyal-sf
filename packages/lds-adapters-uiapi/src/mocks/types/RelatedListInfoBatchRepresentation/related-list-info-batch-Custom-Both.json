@@ -1,0 +1,114 @@
+{
+    "results": [
+        {
+            "result": {
+                "cloneable": false,
+                "createable": false,
+                "deletable": false,
+                "displayColumns": [
+                    {
+                        "fieldApiName": "Name",
+                        "label": "CwcCustom01 Name",
+                        "lookupId": "Id",
+                        "sortable": true
+                    },
+                    {
+                        "fieldApiName": "Decimal__c",
+                        "label": "Decimal",
+                        "lookupId": null,
+                        "sortable": true
+                    },
+                    {
+                        "fieldApiName": "Account__r.Name",
+                        "label": "Account",
+                        "lookupId": "Account__c",
+                        "sortable": true
+                    }
+                ],
+                "eTag": "5c9cc7b44ca93af419baf437572334a1",
+                "fieldApiName": "CwcCustom00__c",
+                "filterLogicString": "",
+                "filteredByInfo": [],
+                "label": "CwcCustom01s",
+                "listReference": {
+                    "id": null,
+                    "inContextOfRecordId": null,
+                    "listViewApiName": null,
+                    "objectApiName": null,
+                    "parentObjectApiName": "CwcCustom00__c",
+                    "recordTypeId": null,
+                    "relatedListId": "CwcCustom01s__r",
+                    "type": "relatedList"
+                },
+                "objectApiNames": ["CwcCustom01__c", "Account"],
+                "orderedByInfo": [
+                    {
+                        "fieldApiName": "Decimal__c",
+                        "isAscending": false,
+                        "label": "Decimal"
+                    }
+                ],
+                "updateable": false,
+                "userPreferences": {
+                    "columnWidths": {
+                        "Decimal__c": -1,
+                        "Account__r.Name": -1,
+                        "Name": -1
+                    },
+                    "columnWrap": {
+                        "Decimal__c": false,
+                        "Account__r.Name": false,
+                        "Name": false
+                    }
+                },
+                "visibility": "Public",
+                "visibilityEditable": false
+            },
+            "statusCode": 200
+        },
+        {
+            "result": {
+                "cloneable": false,
+                "createable": false,
+                "deletable": false,
+                "displayColumns": [
+                    {
+                        "fieldApiName": "Name",
+                        "label": "CwcCustom02 Name",
+                        "lookupId": "Id",
+                        "sortable": true
+                    }
+                ],
+                "eTag": "4b93510cd0cd5dc407942eb02e6ee248",
+                "fieldApiName": "CwcCustom00__c",
+                "filterLogicString": "",
+                "filteredByInfo": [],
+                "label": "CwcCustom02s",
+                "listReference": {
+                    "id": null,
+                    "inContextOfRecordId": null,
+                    "listViewApiName": null,
+                    "objectApiName": null,
+                    "parentObjectApiName": "CwcCustom00__c",
+                    "recordTypeId": null,
+                    "relatedListId": "CwcCustom02s__r",
+                    "type": "relatedList"
+                },
+                "objectApiNames": ["CwcCustom02__c"],
+                "orderedByInfo": [],
+                "updateable": false,
+                "userPreferences": {
+                    "columnWidths": {
+                        "Name": -1
+                    },
+                    "columnWrap": {
+                        "Name": false
+                    }
+                },
+                "visibility": "Public",
+                "visibilityEditable": false
+            },
+            "statusCode": 200
+        }
+    ]
+}

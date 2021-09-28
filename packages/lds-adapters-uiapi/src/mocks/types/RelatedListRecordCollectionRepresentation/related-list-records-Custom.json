@@ -1,0 +1,202 @@
+{
+    "count": 8,
+    "currentPageToken": "0",
+    "currentPageUrl": "/services/data/v50.0/ui-api/related-list-records/a00RM0000004aVwYAI/CwcCustom01s__r?fields=Id%2CName&pageSize=50&pageToken=0",
+    "fields": ["CwcCustom01__c.Id", "CwcCustom01__c.Name"],
+    "listInfoETag": null,
+    "listReference": {
+        "id": null,
+        "inContextOfRecordId": "a00RM0000004aVwYAI",
+        "listViewApiName": null,
+        "objectApiName": null,
+        "parentObjectApiName": "CwcCustom00__c",
+        "recordTypeId": null,
+        "relatedListId": "CwcCustom01s__r",
+        "type": "relatedList"
+    },
+    "nextPageToken": null,
+    "nextPageUrl": null,
+    "optionalFields": [],
+    "pageSize": 50,
+    "previousPageToken": null,
+    "previousPageUrl": null,
+    "records": [
+        {
+            "apiName": "CwcCustom01__c",
+            "childRelationships": {},
+            "eTag": "f0e9903e940b08f15a065eb9f56807ea",
+            "fields": {
+                "Id": {
+                    "displayValue": null,
+                    "value": "a01RM000000vPOBYA2"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "TestIt"
+                }
+            },
+            "id": "a01RM000000vPOBYA2",
+            "lastModifiedById": "005RM000001a3zXYAQ",
+            "lastModifiedDate": "2020-02-27T21:08:42.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2020-02-27T21:08:42.000Z",
+            "weakEtag": 1582837722000
+        },
+        {
+            "apiName": "CwcCustom01__c",
+            "childRelationships": {},
+            "eTag": "c11a70abc4a30aa38b186c8fab749601",
+            "fields": {
+                "Id": {
+                    "displayValue": null,
+                    "value": "a01RM000000qecDYAQ"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "c01.00"
+                }
+            },
+            "id": "a01RM000000qecDYAQ",
+            "lastModifiedById": "005RM000001a3zXYAQ",
+            "lastModifiedDate": "2019-10-08T15:45:38.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-10-08T15:45:42.000Z",
+            "weakEtag": 1570549542000
+        },
+        {
+            "apiName": "CwcCustom01__c",
+            "childRelationships": {},
+            "eTag": "0a3147b5fdb07d5d1738a6f3a114e7e7",
+            "fields": {
+                "Id": {
+                    "displayValue": null,
+                    "value": "a01RM000000v7ThYAI"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "c01.01"
+                }
+            },
+            "id": "a01RM000000v7ThYAI",
+            "lastModifiedById": "005RM000001a3zXYAQ",
+            "lastModifiedDate": "2019-10-07T15:29:38.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-10-07T15:29:40.000Z",
+            "weakEtag": 1570462180000
+        },
+        {
+            "apiName": "CwcCustom01__c",
+            "childRelationships": {},
+            "eTag": "9b86a58c439cc325b1de5c5ae6d768cb",
+            "fields": {
+                "Id": {
+                    "displayValue": null,
+                    "value": "a01RM000000v7TmYAI"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "c01.02"
+                }
+            },
+            "id": "a01RM000000v7TmYAI",
+            "lastModifiedById": "005RM000001a3zXYAQ",
+            "lastModifiedDate": "2019-10-07T15:29:52.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-10-07T15:29:52.000Z",
+            "weakEtag": 1570462192000
+        },
+        {
+            "apiName": "CwcCustom01__c",
+            "childRelationships": {},
+            "eTag": "baf1fce1c81932501eb0290bb4ae0844",
+            "fields": {
+                "Id": {
+                    "displayValue": null,
+                    "value": "a01RM000000v7TrYAI"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "c01.03"
+                }
+            },
+            "id": "a01RM000000v7TrYAI",
+            "lastModifiedById": "005RM000001a3zXYAQ",
+            "lastModifiedDate": "2020-04-27T14:16:46.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2020-04-27T14:17:48.000Z",
+            "weakEtag": 1587997068000
+        },
+        {
+            "apiName": "CwcCustom01__c",
+            "childRelationships": {},
+            "eTag": "3df4d8ce261276eaebae7e6fbeea1761",
+            "fields": {
+                "Id": {
+                    "displayValue": null,
+                    "value": "a01RM000000v7TsYAI"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "c01.04"
+                }
+            },
+            "id": "a01RM000000v7TsYAI",
+            "lastModifiedById": "005RM000001a3zXYAQ",
+            "lastModifiedDate": "2019-10-07T15:30:10.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-10-07T15:30:10.000Z",
+            "weakEtag": 1570462210000
+        },
+        {
+            "apiName": "CwcCustom01__c",
+            "childRelationships": {},
+            "eTag": "080a33d7b069c883a8c69921560fedfc",
+            "fields": {
+                "Id": {
+                    "displayValue": null,
+                    "value": "a01RM000000v7TwYAI"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "c01.05"
+                }
+            },
+            "id": "a01RM000000v7TwYAI",
+            "lastModifiedById": "005RM000001a3zXYAQ",
+            "lastModifiedDate": "2019-10-07T15:30:15.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-10-07T15:30:15.000Z",
+            "weakEtag": 1570462215000
+        },
+        {
+            "apiName": "CwcCustom01__c",
+            "childRelationships": {},
+            "eTag": "1e2b5d6f3709ae182d3cca8440472f97",
+            "fields": {
+                "Id": {
+                    "displayValue": null,
+                    "value": "a01RM000000v7U1YAI"
+                },
+                "Name": {
+                    "displayValue": null,
+                    "value": "c01.06"
+                }
+            },
+            "id": "a01RM000000v7U1YAI",
+            "lastModifiedById": "005RM000001a3zXYAQ",
+            "lastModifiedDate": "2019-10-07T15:30:20.000Z",
+            "recordTypeId": "012000000000000AAA",
+            "recordTypeInfo": null,
+            "systemModstamp": "2019-10-07T15:30:20.000Z",
+            "weakEtag": 1570462220000
+        }
+    ],
+    "sortBy": []
+}

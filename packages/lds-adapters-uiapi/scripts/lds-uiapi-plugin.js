@@ -13,6 +13,8 @@ const fieldsPlugin = require('./plugin/fields-support');
 
 const SFDC_PRIVATE_ADAPTERS = require('./sfdc-private-adapters');
 
+const { RAML_ARTIFACTS } = require('./raml-artifacts');
+
 const ADAPTERS_NOT_DEFINED_IN_OVERLAY = [
     {
         apiFamily: 'UiApi',
@@ -27,8 +29,6 @@ const CREATE_LDS_ADAPTER = 'createLDSAdapter';
 const CREATE_INSTRUMENTED_ADAPTER = 'createInstrumentedAdapter';
 const CREATE_SINGLE_INVOCATION_ADAPTER = 'createSingleInvocationAdapter';
 const IMPERATIVE_ADAPTERS_ACCESSOR = 'imperativeAdapters';
-
-const { RAML_ARTIFACTS } = require('./raml-artifacts');
 
 /**
  * @param {string} artifactsDir

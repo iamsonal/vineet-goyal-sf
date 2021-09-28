@@ -1,0 +1,72 @@
+{
+    "actions": {
+        "001T1000002GaXCIA0": {
+            "actions": [
+                {
+                    "actionListContext": "RecordEdit",
+                    "actionTarget": null,
+                    "actionTargetType": "Invoke",
+                    "apiName": "SaveEdit",
+                    "externalId": "00DT10000000mmb:001T1000002GaXCIA0::RecordEdit:Desktop:StandardButton:SaveEdit",
+                    "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_custom19_120.png",
+                    "id": "0JVT10000000020OAA",
+                    "isMassAction": "false",
+                    "label": "Save",
+                    "primaryColor": null,
+                    "relatedListRecordId": null,
+                    "relatedSourceObject": null,
+                    "section": "Page",
+                    "sourceObject": "001T1000002GaXCIA0",
+                    "subtype": "LightningWebComponent_Action",
+                    "targetObject": "Account",
+                    "targetUrl": null,
+                    "type": "StandardButton"
+                },
+                {
+                    "actionListContext": "RecordEdit",
+                    "actionTarget": null,
+                    "actionTargetType": "Invoke",
+                    "apiName": "SaveAndNew",
+                    "externalId": "00DT10000000mmb:001T1000002GaXCIA0::RecordEdit:Desktop:StandardButton:SaveAndNew",
+                    "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_custom19_120.png",
+                    "id": "0JVT10000000021OAA",
+                    "isMassAction": "false",
+                    "label": "Save &amp; New",
+                    "primaryColor": null,
+                    "relatedListRecordId": null,
+                    "relatedSourceObject": null,
+                    "section": "Page",
+                    "sourceObject": "001T1000002GaXCIA0",
+                    "subtype": "LightningWebComponent_Action",
+                    "targetObject": "Account",
+                    "targetUrl": null,
+                    "type": "StandardButton"
+                },
+                {
+                    "actionListContext": "RecordEdit",
+                    "actionTarget": null,
+                    "actionTargetType": "Invoke",
+                    "apiName": "CancelEdit",
+                    "externalId": "00DT10000000mmb:001T1000002GaXCIA0::RecordEdit:Desktop:StandardButton:CancelEdit",
+                    "iconUrl": "https://goldengate-module-3868-dev-ed.cs2.my.stmfa.stm.salesforce.com/img/icon/t4v35/action/new_custom19_120.png",
+                    "id": "0JVT10000000022OAA",
+                    "isMassAction": "false",
+                    "label": "Cancel",
+                    "primaryColor": null,
+                    "relatedListRecordId": null,
+                    "relatedSourceObject": null,
+                    "section": "Page",
+                    "sourceObject": "001T1000002GaXCIA0",
+                    "subtype": "LightningWebComponent_Action",
+                    "targetObject": "Account",
+                    "targetUrl": null,
+                    "type": "StandardButton"
+                }
+            ],
+            "links": [],
+            "url": "/services/data/v54.0/ui-api/actions/record/001T1000002GaXCIA0/record-edit"
+        }
+    },
+    "eTag": "398b3f4de66e57a6a644a39cc65190d1",
+    "url": "/services/data/v54.0/ui-api/actions/record/001T1000002GaXCIA0/record-edit"
+}

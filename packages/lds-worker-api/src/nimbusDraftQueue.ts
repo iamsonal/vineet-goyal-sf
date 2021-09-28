@@ -3,8 +3,11 @@
 
 import { DraftQueue as NimbusDraftQueue } from '@mobileplatform/nimbus-plugin-lds';
 
-import { JSONParse, JSONStringify, ObjectCreate } from './language';
+import { IsArray, JSONParse, JSONStringify, ObjectCreate } from './language';
 import { draftQueue } from './draftQueueImplementation';
+
+// A allowlist of methods that we allow to be proxied from another LDS instance
+const allowList: string[] = ['enqueue', 'getActionsForTags', 'getQueueActions'];
 
 /**
  * Implements the DraftQueue interface from nimbus-plugin-lds by passing requests
@@ -45,6 +48,66 @@ export const nimbusDraftQueue: NimbusDraftQueue = {
             })
             .catch((error) => {
                 onError(JSONStringify(error));
+            });
+    },
+
+    callProxyMethod(
+        methodName: string,
+        serializedArgsArray: string,
+        resultCallback: (serializedResult: string) => void,
+        errorCallback: (serializedError: string) => void
+    ): void {
+        const method = (draftQueue as any)[methodName] as Function;
+
+        if (method === undefined) {
+            return errorCallback(
+                JSONStringify({
+                    message: 'Method does not exist on the draft queue',
+                })
+            );
+        }
+
+        if (allowList.includes(methodName) === false) {
+            return errorCallback(
+                JSONStringify({
+                    message: `Method ${methodName} is not available for proxy invocation`,
+                })
+            );
+        }
+
+        const parsedArgs = JSONParse(serializedArgsArray);
+
+        // TODO [W-9933226]: we should validate the argument list based on which method is being called
+        if (IsArray(parsedArgs) === false) {
+            return errorCallback(
+                JSONStringify({
+                    message: 'expected array argument list',
+                })
+            );
+        }
+
+        let methodResult = undefined;
+
+        try {
+            if (parsedArgs === undefined) {
+                methodResult = method.call(draftQueue);
+            } else {
+                methodResult = method.call(draftQueue, ...parsedArgs);
+            }
+        } catch (err) {
+            return errorCallback(JSONStringify(err));
+        }
+
+        if (methodResult.then === undefined) {
+            return resultCallback(JSONStringify(methodResult));
+        }
+
+        methodResult
+            .then((result: any) => {
+                resultCallback(JSONStringify(result));
+            })
+            .catch((err: any) => {
+                errorCallback(JSONStringify(err));
             });
     },
 };

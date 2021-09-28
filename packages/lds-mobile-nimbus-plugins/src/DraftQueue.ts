@@ -41,4 +41,18 @@ export interface DraftQueue {
         resultCallback: (serializedActions: string) => void,
         onError: (serializedError: string) => void
     ): void;
+
+    /**
+     * A generic proxy method to invoke various methods on the draft queue
+     * @param methodName The name of the proxy method to invoke
+     * @param serializedArgsArray A serialized array of arguments
+     * @param resultCallback Success callback containing serialized result
+     * @param errorCallback Error callback containing serialized error
+     */
+    callProxyMethod(
+        methodName: string,
+        serializedArgsArray: string,
+        resultCallback: (serializedResult: string) => void,
+        errorCallback: (serializedError: string) => void
+    ): void;
 }

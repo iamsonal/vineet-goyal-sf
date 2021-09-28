@@ -1,5 +1,6 @@
 const { create } = Object;
 const { stringify, parse } = JSON;
+const { isArray } = Array;
 
 export {
     // Object
@@ -7,4 +8,5 @@ export {
     // JSON
     stringify as JSONStringify,
     parse as JSONParse,
+    isArray as IsArray,
 };

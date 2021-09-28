@@ -218,4 +218,33 @@ describe('NimbusDraftQueue', () => {
             'Cannot call setMetadata from the NimbusDraftQueue'
         );
     });
+
+    describe('getQueueActions', () => {
+        it('deserializes queue', async () => {
+            const nimbusMock = mockNimbusDraftQueueGlobal();
+            const queue = [draftAction];
+            nimbusMock.callProxyMethod = jest
+                .fn()
+                .mockImplementation((_name, _args, onSuccess, _onError) => {
+                    onSuccess(JSONStringify(queue));
+                });
+            const nimbusQueue = new NimbusDraftQueue();
+            const queueResult = await nimbusQueue.getQueueActions();
+            expect(queueResult).toEqual(queue);
+        });
+
+        it('deserializes error', async () => {
+            const nimbusMock = mockNimbusDraftQueueGlobal();
+            const error = {
+                message: 'bad luck',
+            };
+            nimbusMock.callProxyMethod = jest
+                .fn()
+                .mockImplementation((_name, _args, _onSuccess, onError) => {
+                    onError(JSONStringify(error));
+                });
+            const nimbusQueue = new NimbusDraftQueue();
+            await expect(nimbusQueue.getQueueActions()).rejects.toEqual(error);
+        });
+    });
 });

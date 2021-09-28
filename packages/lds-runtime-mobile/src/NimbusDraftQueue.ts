@@ -27,6 +27,7 @@ export class NimbusDraftQueue implements DraftQueue {
         const { tag, targetId } = action;
         const serializedAction = JSONStringify(action);
         // TODO [W-9400488]: remove tag and targetId parameters when interface is updated
+        // TODO [W-9936701]: remove enqueue and getActionsForTags fallbacks once we feel native change with `callProxyMethod` has propagated
         return new Promise((resolve, reject) => {
             __nimbus.plugins.LdsDraftQueue.enqueue(
                 serializedAction,
@@ -45,6 +46,7 @@ export class NimbusDraftQueue implements DraftQueue {
 
     getActionsForTags(tags: { [tag: string]: true }): Promise<DraftActionMap> {
         const keys = ObjectKeys(tags);
+        // TODO [W-9936701]: remove enqueue and getActionsForTags fallbacks once we feel native change with `callProxyMethod` has propagated
         return new Promise((resolve, reject) => {
             __nimbus.plugins.LdsDraftQueue.getActionsForTags(
                 keys,
@@ -70,7 +72,22 @@ export class NimbusDraftQueue implements DraftQueue {
     }
 
     getQueueActions(): Promise<DraftAction<unknown, unknown>[]> {
-        return Promise.reject('Cannot call getQueueActions from the NimbusDraftQueue');
+        const callProxyMethod = __nimbus.plugins.LdsDraftQueue.callProxyMethod;
+        if (callProxyMethod === undefined) {
+            return Promise.reject('callProxyMethod not defined on the nimbus plugin');
+        }
+        return new Promise((resolve, reject) => {
+            callProxyMethod(
+                'getQueueActions',
+                JSONStringify([]),
+                (serializedQueue) => {
+                    resolve(JSONParse(serializedQueue));
+                },
+                (serializedError) => {
+                    reject(JSONParse(serializedError));
+                }
+            );
+        });
     }
 
     getQueueState(): DraftQueueState {

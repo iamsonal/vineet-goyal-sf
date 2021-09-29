@@ -70,7 +70,7 @@ describe('basic', () => {
         setDefaultLuvio({ luvio });
         const { getRecord: getRecordImperative } = imperativeAdapters;
 
-        getRecordImperative(callback, config);
+        getRecordImperative.invoke(config, {}, callback);
         await flushPromises();
 
         expect(callback).toHaveBeenCalledWithDataTuple(singleRecordWithIdName, privateProperties);
@@ -89,9 +89,9 @@ describe('basic', () => {
         setDefaultLuvio({ luvio });
         const { getRecord: getRecordImperative } = imperativeAdapters;
 
-        getRecordImperative(callback, config);
+        getRecordImperative.invoke(config, {}, callback);
         await flushPromises();
-        getRecordImperative(callback, config);
+        getRecordImperative.invoke(config, {}, callback);
 
         expect(callback).toHaveBeenCalledWithDataTuple(singleRecordWithIdName, privateProperties);
         expect(callback).toBeCalledTimes(2);
@@ -109,7 +109,7 @@ describe('basic', () => {
         setDefaultLuvio({ luvio });
         const { getRecord: getRecordImperative } = imperativeAdapters;
 
-        getRecordImperative(callback, config);
+        getRecordImperative.invoke(config, {}, callback);
         await flushPromises();
 
         expect(callback).toHaveBeenCalledWith({ data: undefined, error: mockError });
@@ -139,7 +139,7 @@ describe('basic', () => {
                     },
                 };
 
-                getRecordImperative(callback, config);
+                getRecordImperative.invoke(config, {}, callback);
 
                 expect(callback).toHaveBeenCalledWith(customError);
                 expect(callback).toBeCalledTimes(1);

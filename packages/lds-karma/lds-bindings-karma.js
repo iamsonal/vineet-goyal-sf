@@ -2,7 +2,7 @@ import {
     createWireAdapterConstructor as lwcLdsCreateWireAdapterConstructor,
     bindWireRefresh as lwcLdsBindWireRefresh,
 } from '@luvio/lwc-luvio';
-import { createSingleInvocationAdapter as ldsBindingsCreateSingleInvocationAdapter } from '@salesforce/lds-bindings';
+import { createImperativeAdapter as ldsBindingsCreateImperativeAdapter } from '@salesforce/lds-bindings';
 
 export function createWireAdapterConstructor(luvio, factory, metadata) {
     const { apiFamily, name } = metadata;
@@ -26,6 +26,6 @@ export function createInstrumentedAdapter(luvio, factory, metadata) {
     return createLDSAdapter(luvio, name, factory);
 }
 
-export function createSingleInvocationAdapter(adapter, metadata) {
-    return ldsBindingsCreateSingleInvocationAdapter(adapter, metadata);
+export function createImperativeAdapter(luvio, adapter, metadata) {
+    return ldsBindingsCreateImperativeAdapter(luvio, adapter, metadata);
 }

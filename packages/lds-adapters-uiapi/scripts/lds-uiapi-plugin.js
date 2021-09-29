@@ -27,7 +27,7 @@ const ADAPTERS_NOT_DEFINED_IN_OVERLAY = [
 const CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER = 'createWireAdapterConstructor';
 const CREATE_LDS_ADAPTER = 'createLDSAdapter';
 const CREATE_INSTRUMENTED_ADAPTER = 'createInstrumentedAdapter';
-const CREATE_SINGLE_INVOCATION_ADAPTER = 'createSingleInvocationAdapter';
+const CREATE_IMPERATIVE_ADAPTER = 'createImperativeAdapter';
 const IMPERATIVE_ADAPTERS_ACCESSOR = 'imperativeAdapters';
 
 /**
@@ -53,7 +53,7 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
                     ? `{ apiFamily: '${apiFamily}', name: '${adapterNameIdentifier}', ttl: ${ttl} }`
                     : `{ apiFamily: '${apiFamily}', name: '${adapterNameIdentifier}' }`;
             bind = `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(luvio, ${factoryIdentifier}, ${adapterMetadataIdentifier})`;
-            imperative = `${name}: ${CREATE_SINGLE_INVOCATION_ADAPTER}(${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier}), ${adapterMetadataIdentifier})`;
+            imperative = `${name}: ${CREATE_IMPERATIVE_ADAPTER}(luvio, ${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier}), ${adapterMetadataIdentifier})`;
         } else {
             bind = `${name}: ${CREATE_LDS_ADAPTER}(luvio, ${adapterNameIdentifier}, ${factoryIdentifier})`;
         }
@@ -82,7 +82,7 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
                     ? `{ apiFamily: '${apiFamily}', name: '${name}', ttl: ${ttl} }`
                     : `{ apiFamily: '${apiFamily}', name: '${name}' }`;
             bind = `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(luvio, ${factoryIdentifier}, ${adapterMetadataIdentifier})`;
-            imperative = `${name}: ${CREATE_SINGLE_INVOCATION_ADAPTER}(${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier}), ${adapterMetadataIdentifier})`;
+            imperative = `${name}: ${CREATE_IMPERATIVE_ADAPTER}(luvio, ${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier}), ${adapterMetadataIdentifier})`;
         } else if (method === 'post' || method === 'patch') {
             bind = `${name}: unwrapSnapshotData(${factoryIdentifier})`;
         } else {
@@ -104,7 +104,7 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
 
     const code = dedent`
         import { Luvio, Snapshot } from '@luvio/engine';
-        import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}, ${CREATE_LDS_ADAPTER}, ${CREATE_INSTRUMENTED_ADAPTER}, ${CREATE_SINGLE_INVOCATION_ADAPTER} } from '@salesforce/lds-bindings';
+        import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}, ${CREATE_LDS_ADAPTER}, ${CREATE_INSTRUMENTED_ADAPTER}, ${CREATE_IMPERATIVE_ADAPTER} } from '@salesforce/lds-bindings';
         import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
 
         ${adapterNames.map((name) => adapterCode[name].import).join('\n')}

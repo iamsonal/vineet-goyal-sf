@@ -10,7 +10,7 @@ import {
 } from '@luvio/engine';
 import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
 import { astToString } from './util/ast-to-string';
-import { deepFreeze, keyPrefix, untrustedIsObject } from './util/adapter';
+import { deepFreeze, keyPrefix, representationName, untrustedIsObject } from './util/adapter';
 import {
     GraphQL,
     createIngest,
@@ -20,11 +20,11 @@ import {
 } from './type/Document';
 import { GraphQLVariables, isGraphQLVariables } from './type/Variable';
 
-export { apiFamilyName } from './util/adapter';
+export { apiFamilyName, representationName } from './util/adapter';
 
 export const adapterName = 'graphQL';
 
-const GRAPHQL_ROOT_KEY = `${keyPrefix}graphql`;
+const GRAPHQL_ROOT_KEY = `${keyPrefix}${representationName}`;
 
 interface GraphQLConfig {
     query: LuvioDocumentNode;
@@ -61,7 +61,7 @@ function onResourceResponseSuccess(
     const { body } = response;
     if (body.errors.length > 0) {
         return luvio.storeLookup({
-            recordId: 'graphql',
+            recordId: representationName,
             node: {
                 kind: 'Fragment',
                 synthetic: true,

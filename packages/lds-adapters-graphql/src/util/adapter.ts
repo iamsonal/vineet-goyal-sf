@@ -88,4 +88,5 @@ export function stableJSONStringify(node: any): string {
 }
 
 export const apiFamilyName = 'GraphQL';
+export const representationName = 'graphql';
 export const keyPrefix = `${apiFamilyName}::`;

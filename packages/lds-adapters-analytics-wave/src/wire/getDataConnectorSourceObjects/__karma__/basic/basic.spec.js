@@ -1,6 +1,7 @@
+import timekeeper from 'timekeeper';
 import GetDataConnectorSourceObjects from '../lwc/get-data-connector-source-objects';
 import GetDataConnectorSourceObject from '../../../getDataConnectorSourceObject/__karma__/lwc/get-data-connector-source-object';
-import { getMock as globalGetMock, setupElement } from 'test-util';
+import { getMock as globalGetMock, setupElement, updateElement } from 'test-util';
 import {
     mockGetDataConnectorSourceObjectsNetworkOnce,
     mockGetDataConnectorSourceObjectsNetworkErrorOnce,
@@ -50,6 +51,22 @@ describe('basic', () => {
         const el2 = await setupElement(config, GetDataConnectorSourceObjects);
         expect(el2.pushCount()).toBe(1);
         expect(el2.getWiredData()).toEqual(mock);
+    });
+
+    it('fetch a second time after TTL expires', async () => {
+        const mock = getMock('data-connector-source-objects');
+        const config = { connectorIdOrApiName };
+        mockGetDataConnectorSourceObjectsNetworkOnce(config, [mock, mock]);
+
+        const el = await setupElement(config, GetDataConnectorSourceObjects);
+        expect(el.pushCount()).toBe(1);
+        expect(el.getWiredData()).toEqual(mock);
+
+        timekeeper.travel(Date.now() + 5000 + 1);
+
+        await updateElement(el, config);
+        expect(el.pushCount()).toBe(2);
+        expect(el.getWiredData()).toEqual(mock);
     });
 
     it('does not fetch on individual source object if the collection has already been retrieved', async () => {

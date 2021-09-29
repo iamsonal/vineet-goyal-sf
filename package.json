@@ -34,9 +34,10 @@
         "release:adapters:corejar:ci": "lerna-parallelism run --scope @salesforce/* release:corejar",
         "release:corejar": "yarn release:adapters:corejar && lerna run release:core-package",
         "release:corejar:ci": "yarn release:adapters:corejar:ci && lerna-paralleism run release:core-package",
-        "release:adapters": "lerna run --scope @salesforce/* release:core -- auto-checkout",
+        "release:adapters": "lerna run --scope @salesforce/* release:core",
+        "release:adapters:local": "lerna run --scope @salesforce/* release:core -- --auto-checkout --skip-clean",
         "release": "yarn release:adapters && ./scripts/release/core.js",
-        "release:local": "./scripts/release/core.js --skip-git-check --auto-checkout && yarn release:adapters:local",
+        "release:local": "./scripts/release/core.js --skip-git-check --auto-checkout --skip-clean && yarn release:adapters:local",
         "release:local:skipbuild": "./scripts/release/core.js --skip-git-check --auto-checkout --skip-build && yarn release:adapters:local",
         "link:luvio": "yarn link @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio && lerna exec -- yarn link @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio",
         "unlink:luvio": "yarn unlink @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio; lerna exec --no-bail -- yarn unlink @luvio/engine @luvio/environments @luvio/compiler @luvio/adapter-test-library @luvio/lwc-luvio"

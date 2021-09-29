@@ -1,6 +1,6 @@
 {
     "folderId": "9PuRM00000003B60AI",
-    "parentFolderId": "9PuRM00000003B10AI",
+    "parentFolderId": null,
     "folderItems": [
         {
             "contentKey": "MC75KUN4KNFVEZFC557IJGYEKZ4I",
@@ -69,6 +69,32 @@
             "publishedDate": "",
             "status": "draft",
             "title": "Content 4 - Image"
+        },
+        {
+            "contentKey": "MC2CE4GAEE4VGABC54RWEDINJZSA",
+            "contentType": {
+                "fullyQualifiedName": "news"
+            },
+            "createdBy": "005xx000001X7gzAAC",
+            "createdDate": "2021-09-28T23:49:55.000Z",
+            "isFolder": false,
+            "lastModifiedBy": "005xx000001X7gzAAC",
+            "lastModifiedDate": "2021-09-28T23:49:55.000Z",
+            "managedContentOrFolderId": "20Yxx0000011QzuEAE",
+            "managedContentVariantId": "9Psxx0000004C92CAE",
+            "status": "draft",
+            "title": "Content 5 - News",
+            "hasChildFolders": false
+        },
+        {
+            "createdBy": "005xx000001X7gzAAC",
+            "createdDate": "2021-09-16T00:13:34.000Z",
+            "isFolder": true,
+            "lastModifiedBy": "005xx000001X7gzAAC",
+            "lastModifiedDate": "2021-09-28T23:50:54.000Z",
+            "managedContentOrFolderId": "9Puxx0000004CDsCAM",
+            "title": "Folder Level 1",
+            "hasChildFolders": false
         }
     ]
 }

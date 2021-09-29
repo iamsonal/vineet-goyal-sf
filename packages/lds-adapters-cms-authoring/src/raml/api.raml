@@ -1214,7 +1214,7 @@ types:
           type: ManagedContentSpaceFolderItemRepresentation
       parentFolderId:
         description: The id of the parent folder
-        type: string
+        type: string | nil # TODO hand rolled --> see: W-9965762
   ManagedContentSpaceFolderItemRepresentation:
     description: Representation of a folder item inside a ManagedContentSpaceFolder
     type: object
@@ -1222,10 +1222,12 @@ types:
       contentKey:
         description: The ContentKey of the ManagedContent
         type: string
+        required: false # TODO hand rolled --> see: W-9965762
       contentType:
         description: Developer Name or FQN for the ManagedContentType if the folder
           item is ManagedContent
         type: ManagedContentTypeSummaryRepresentation
+        required: false # TODO hand rolled --> see: W-9965762
       createdBy:
         description: The User ID for the user which created the ManagedContent or
           ManagedContentSpaceFolder
@@ -1237,6 +1239,7 @@ types:
       hasChildFolders:
         description: Boolean flag to indicate whether this folder has child folders
         type: boolean
+        required: false # TODO hand rolled --> see: W-9965762
       isFolder:
         description: Boolean flag to indicate whether this folder item is a folder
         type: boolean
@@ -1254,12 +1257,15 @@ types:
       managedContentVariantId:
         description: Latest Managed Content Variant Id of the folder item is ManagedContent
         type: string
+        required: false # TODO hand rolled --> see: W-9965762
       publishedDate:
         description: Date when the ManagedContent was last published
         type: string
+        required: false # TODO hand rolled --> see: W-9965762
       status:
         description: Status of the Managed Content
         type: string
+        required: false # TODO hand rolled --> see: W-9965762
       title:
         description: Title of the ManagedContent/ManagedContentSpaceFolder
         type: string

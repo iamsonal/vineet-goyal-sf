@@ -5965,7 +5965,7 @@ describe('routes', () => {
                 basePath: `/cms/folders/9PuRM00000003B60AI/items`,
             },
             [
-                'ManagedContentController.getManagedContentByFolderId',
+                'ManagedContentController.getManagedContentSpaceFolderItems',
                 {},
                 { background: false, hotspot: true, longRunning: false },
             ]

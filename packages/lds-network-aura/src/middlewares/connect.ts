@@ -292,7 +292,7 @@ const connect: ApiFamily = {
         predicate: (path: string) =>
             path.startsWith(CMS_BASE_URI) && GET_MANAGED_CONTENT_FOLDER_ITEMS_PATH.test(path),
         transport: {
-            controller: 'ManagedContentController.getManagedContentByFolderId',
+            controller: 'ManagedContentController.getManagedContentSpaceFolderItems',
         },
     },
     getContentType: {

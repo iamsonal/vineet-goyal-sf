@@ -2023,12 +2023,12 @@ describe('routes', () => {
                     basePath: `/related-list-count/1234/1111`,
                     urlParams: {
                         parentRecordId: '1234',
-                        relatedListName: '1111',
+                        relatedListId: '1111',
                     },
                 },
                 [
                     'RelatedListUiController.getRelatedListRecordCount',
-                    { parentRecordId: '1234', relatedListName: '1111' },
+                    { parentRecordId: '1234', relatedListId: '1111' },
                     undefined,
                 ]
             );
@@ -2038,7 +2038,7 @@ describe('routes', () => {
                 basePath: `/related-list-count/1234/1111`,
                 urlParams: {
                     parentRecordId: '1234',
-                    relatedListName: '1111',
+                    relatedListId: '1111',
                 },
             });
 
@@ -2049,7 +2049,7 @@ describe('routes', () => {
                     basePath: `/related-list-count/1234/1111`,
                     urlParams: {
                         parentRecordId: '1234',
-                        relatedListName: '1111',
+                        relatedListId: '1111',
                     },
                 },
                 null

@@ -199,7 +199,7 @@ function getRelatedListCount(resourceRequest: ResourceRequest): Promise<any> {
     const params = buildUiApiParams(
         {
             parentRecordId: urlParams.parentRecordId,
-            relatedListName: urlParams.relatedListName,
+            relatedListId: urlParams.relatedListId,
         },
         resourceRequest
     );

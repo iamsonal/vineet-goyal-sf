@@ -147,6 +147,11 @@ const GET_MANAGED_CONTENT_VARIANT_PATH = new RegExp(
     'i'
 );
 
+const GET_MANAGED_CONTENT_FOLDER_ITEMS_PATH = new RegExp(
+    `${CMS_BASE_URI}/folders/([A-Z0-9]){15,18}/items$`,
+    'i'
+);
+
 const GET_MANAGED_CONTENT_PATH = new RegExp(`${CMS_BASE_URI}/contents/([A-Z0-9_]){1,80}$`, 'i');
 
 const REPLACE_MANAGED_CONTENT_VARIANT_PATH = GET_MANAGED_CONTENT_VARIANT_PATH;
@@ -280,6 +285,14 @@ const connect: ApiFamily = {
             path.startsWith(CMS_BASE_URI) && GET_MANAGED_CONTENT_VARIANT_PATH.test(path),
         transport: {
             controller: 'ManagedContentController.getManagedContentVariant',
+        },
+    },
+    getManagedContentByFolderId: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CMS_BASE_URI) && GET_MANAGED_CONTENT_FOLDER_ITEMS_PATH.test(path),
+        transport: {
+            controller: 'ManagedContentController.getManagedContentByFolderId',
         },
     },
     getContentType: {

@@ -1222,6 +1222,10 @@ types:
       contentKey:
         description: The ContentKey of the ManagedContent
         type: string
+      contentType:
+        description: Developer Name or FQN for the ManagedContentType if the folder
+          item is ManagedContent
+        type: ManagedContentTypeSummaryRepresentation
       createdBy:
         description: The User ID for the user which created the ManagedContent or
           ManagedContentSpaceFolder
@@ -1233,26 +1237,22 @@ types:
       hasChildFolders:
         description: Boolean flag to indicate whether this folder has child folders
         type: boolean
-      id:
-        description: The id of the folder item - ManagedContent or ManagedContentSpaceFolder
-        type: string
       isFolder:
         description: Boolean flag to indicate whether this folder item is a folder
         type: boolean
       lastModifiedBy:
-        description: The User ID for the user which last modified the ManagedContent
+        description: The User ID for the user which last modified the ManagedContentVariant
           or ManagedContentSpaceFolder
         type: string
       lastModifiedDate:
-        description: The date when the ManagedContent or ManagedContentSpaceFolder
+        description: The date when the ManagedContentVariant or ManagedContentSpaceFolder
           was last modified
         type: string
-      managedContentType:
-        description: Developer Name for the ManagedContentType if the folder item
-          is ManagedContent
+      managedContentOrFolderId:
+        description: The id of the folder item - ManagedContent or ManagedContentSpaceFolder
         type: string
-      managedContentVersionId:
-        description: Latest Managed Content Version Id of the folder item is ManagedContent
+      managedContentVariantId:
+        description: Latest Managed Content Variant Id of the folder item is ManagedContent
         type: string
       publishedDate:
         description: Date when the ManagedContent was last published
@@ -2960,15 +2960,15 @@ types:
               application/json:
                 type: ManagedContentSpaceFolderItemCollectionRepresentation
         queryParameters:
+          contentType:
+            type: string
+            required: false
           filter:
             type: string
             required: false
             enum:
               - Content
               - Folders
-          managedContentType:
-            type: string
-            required: false
           page:
             type: integer
             required: false

@@ -8,6 +8,7 @@ const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/connect`;
 const MANAGED_CONTENT_TTL = 100;
 const MANAGED_CONTENT_VARIANT_TTL = 3600000;
+const GET_MANAGED_CONTENT_BY_FOLDER_ID_TTL = 3600000;
 
 function mockCreateDeployment(config, mockData) {
     const paramMatch = getCreateDeploymentsMatcher(config);
@@ -29,6 +30,15 @@ function mockGetManagedContent(config, mockData) {
 
 function mockGetManagedContentVariant(config, mockData) {
     const paramMatch = getManagedContentVariantMatcher(config);
+    if (Array.isArray(mockData)) {
+        mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
+    } else {
+        mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+    }
+}
+
+function mockGetManagedContentByFolderId(config, mockData) {
+    const paramMatch = getManagedContentByFolderIdMatcher(config);
     if (Array.isArray(mockData)) {
         mockNetworkSequence(karmaNetworkAdapter, paramMatch, mockData);
     } else {
@@ -86,6 +96,18 @@ function getManagedContentVariantMatcher(config) {
     });
 }
 
+function getManagedContentByFolderIdMatcher(config) {
+    let { folderId } = config;
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'get',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/cms/folders/${folderId}/items`,
+        queryParams: {},
+    });
+}
+
 function mockCreateDeploymentsErrorOnce(config, mockData) {
     const paramMatch = getCreateDeploymentsMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
@@ -98,6 +120,11 @@ function mockGetManagedContentErrorOnce(config, mockData) {
 
 function mockGetManagedContentVariantErrorOnce(config, mockData) {
     const paramMatch = getManagedContentVariantMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+function mockGetManagedContentByFolderIdErrorOnce(config, mockData) {
+    const paramMatch = getManagedContentByFolderIdMatcher(config);
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
@@ -115,6 +142,13 @@ function expireManagedContent() {
  */
 function expireManagedContentVariant() {
     timekeeper.travel(Date.now() + MANAGED_CONTENT_VARIANT_TTL + 1);
+}
+
+/**
+ * Force a cache expiration for managed content fetch by ID call, by fast-forwarding time past the TTL
+ */
+function expireGetManagedContentByFolderId() {
+    timekeeper.travel(Date.now() + GET_MANAGED_CONTENT_BY_FOLDER_ID_TTL + 1);
 }
 
 function getCreateManagedContentsMatcher(config) {
@@ -197,6 +231,9 @@ export {
     mockGetManagedContentVariant,
     mockGetManagedContentVariantErrorOnce,
     expireManagedContentVariant,
+    mockGetManagedContentByFolderId,
+    mockGetManagedContentByFolderIdErrorOnce,
+    expireGetManagedContentByFolderId,
     clearManagedContentVariantCache,
     getCreateManagedContentsMatcher,
     mockCreateManagedContent,

@@ -5958,6 +5958,33 @@ describe('routes', () => {
         );
     });
 
+    describe('get /connect/cms/folders/{folderId}/items', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/folders/9PuRM00000003B60AI/items`,
+            },
+            [
+                'ManagedContentController.getManagedContentByFolderId',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/cms/folders/9PuRM00000003B60AI/items`,
+        });
+
+        testResolveResponse(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/cms/folders/9PuRM00000003B60AI/items`,
+            },
+            {}
+        );
+    });
+
     describe('put /connect/cms/contents/variants/{variantId}', () => {
         testControllerInput(
             {

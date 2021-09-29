@@ -22,6 +22,11 @@ types:
     (luvio.opaque): true
     (luvio.key):
       content_key: contentKey
+  ManagedContentSpaceFolderItemCollectionRepresentation:
+    (luvio.ttl): 3600000
+    (luvio.opaque): true
+    (luvio.key):
+      id: folderId
 
 /cms:
   /deployments:
@@ -247,3 +252,10 @@ types:
                         "urlName":"testurl"
                     }
                   }
+
+    /folders/{folderId}/items:
+      get:
+        (luvio.adapter):
+          name: getManagedContentByFolderId
+        (luvio.key):
+          id: urlParams.folderId

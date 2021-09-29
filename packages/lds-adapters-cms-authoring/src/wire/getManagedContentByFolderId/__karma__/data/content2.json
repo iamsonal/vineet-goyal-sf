@@ -1,0 +1,74 @@
+{
+    "folderId": "9PuRM00000003B60AZ",
+    "parentFolderId": "9PuRM00000003B10AI",
+    "folderItems": [
+        {
+            "contentKey": "MC75KUN4KNFVEZFC557IJGYEKZ4I",
+            "contentType": {
+                "fullyQualifiedName": "cms_document"
+            },
+            "createdBy": "005RM0000020Dy1YAE",
+            "createdDate": "2021-09-17T20:41:15.000Z",
+            "hasChildFolders": false,
+            "isFolder": false,
+            "lastModifiedBy": "005RM0000020Dy1YAE",
+            "lastModifiedDate": "2021-09-17T20:41:15.000Z",
+            "managedContentOrFolderId": "20YRM0000000BD42AM",
+            "managedContentVariantId": "9PsRM000000001t0AA",
+            "publishedDate": "",
+            "status": "draft",
+            "title": "Content 1 - Document"
+        },
+        {
+            "contentKey": "MC7PQGOJQBOVGIPJXZG3FRHGJ7B4",
+            "contentType": {
+                "fullyQualifiedName": "news"
+            },
+            "createdBy": "005RM0000020Dy1YAE",
+            "createdDate": "2021-09-17T20:40:57.000Z",
+            "hasChildFolders": false,
+            "isFolder": false,
+            "lastModifiedBy": "005RM0000020Dy1YAE",
+            "lastModifiedDate": "2021-09-17T20:40:57.000Z",
+            "managedContentOrFolderId": "20YRM0000000BCz2AM",
+            "managedContentVariantId": "9PsRM000000001o0AA",
+            "publishedDate": "",
+            "status": "draft",
+            "title": "Content 2 - News"
+        },
+        {
+            "contentKey": "MCPMTMBO2QVBHXHM6Q26A65ZPEI4",
+            "contentType": {
+                "fullyQualifiedName": "cms_image"
+            },
+            "createdBy": "005RM0000020Dy1YAE",
+            "createdDate": "2021-09-17T20:40:32.000Z",
+            "hasChildFolders": false,
+            "isFolder": false,
+            "lastModifiedBy": "005RM0000020Dy1YAE",
+            "lastModifiedDate": "2021-09-17T20:40:32.000Z",
+            "managedContentOrFolderId": "20YRM0000000BCu2AM",
+            "managedContentVariantId": "9PsRM000000001j0AA",
+            "publishedDate": "",
+            "status": "draft",
+            "title": "Content 3 - Image"
+        },
+        {
+            "contentKey": "MCYXINZEI4EJAVTCHNQBURO7BTBI",
+            "contentType": {
+                "fullyQualifiedName": "cms_image"
+            },
+            "createdBy": "005RM0000020Dy1YAE",
+            "createdDate": "2021-09-17T20:40:10.000Z",
+            "hasChildFolders": false,
+            "isFolder": false,
+            "lastModifiedBy": "005RM0000020Dy1YAE",
+            "lastModifiedDate": "2021-09-17T20:40:10.000Z",
+            "managedContentOrFolderId": "20YRM0000000BCp2AM",
+            "managedContentVariantId": "9PsRM000000001e0AA",
+            "publishedDate": "",
+            "status": "draft",
+            "title": "Content 4 - Image"
+        }
+    ]
+}

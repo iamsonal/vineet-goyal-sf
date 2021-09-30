@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-adapters-industries-rule-builder",
-    "version": "1.26.2",
+    "version": "1.27.0",
     "description": "This is part of industries interactions and have files for rule builders",
     "license": "MIT",
     "main": "dist/umd/es2018/industries-rule-builder.js",
@@ -30,13 +30,13 @@
         "test:unit": "jest"
     },
     "dependencies": {
-        "@salesforce/lds-bindings": "1.26.2"
+        "@salesforce/lds-bindings": "1.27.0"
     },
     "devDependencies": {
         "@luvio/cli": "0.50.0",
         "@luvio/compiler": "0.50.0",
         "@luvio/engine": "0.50.0",
         "@luvio/lwc-luvio": "0.50.0",
-        "@salesforce/lds-karma": "1.26.2"
+        "@salesforce/lds-karma": "1.27.0"
     }
 }

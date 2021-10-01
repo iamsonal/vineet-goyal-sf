@@ -127,7 +127,7 @@ function getRelatedListsInfo(resourceRequest: ResourceRequest): Promise<any> {
 function getRelatedListRecords(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { parentRecordId, relatedListId },
-        queryParams: { fields, optionalFields, pageSize, pageToken, sortBy },
+        body: { fields, optionalFields, pageSize, pageToken, sortBy },
     } = resourceRequest;
 
     const params = buildUiApiParams(
@@ -152,7 +152,7 @@ function getRelatedListRecords(resourceRequest: ResourceRequest): Promise<any> {
             : {};
 
     return dispatchAction(
-        UiApiRecordController.GetRelatedListRecords,
+        UiApiRecordController.GetRelatedListRecords, // TODO [W-9974649]: Call the PostRelatedListRecords controller instead
         params,
         undefined,
         instrumentationCallbacks
@@ -260,7 +260,7 @@ appRouter.get(
         /related-list-info\/[a-zA-Z_\d]+\/[a-zA-Z_\d]+/.test(path) === false,
     getRelatedListsInfo
 );
-appRouter.get(
+appRouter.post(
     (path: string) =>
         path.startsWith(UIAPI_RELATED_LIST_RECORDS_PATH) &&
         path.startsWith(UIAPI_RELATED_LIST_RECORDS_BATCH_PATH) === false,

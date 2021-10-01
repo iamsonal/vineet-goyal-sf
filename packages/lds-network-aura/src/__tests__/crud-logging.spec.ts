@@ -155,14 +155,14 @@ describe('crud logging', () => {
 
         it('logs read event when getRelatedListRecords is called', async () => {
             const request = {
-                method: 'get',
+                method: 'post',
                 baseUri: UI_API_BASE_URI,
                 basePath: `/related-list-records/001RM000004km7aYAA/Account?pageSize=10`,
                 urlParams: {
                     parentRecordId: '001RM000004km7aYAA',
                     relatedListId: 'Contacts',
                 },
-                queryParams: {
+                body: {
                     fields: ['Contact.Id', 'Contact.Name'],
                     optionalFields: ['Contact.Email', 'Contact.LastName'],
                     pageSize: 50,
@@ -273,14 +273,14 @@ describe('crud logging', () => {
 
         it('does not log read event when getRelatedListRecords is called but no records are returned', async () => {
             const request = {
-                method: 'get',
+                method: 'post',
                 baseUri: UI_API_BASE_URI,
                 basePath: `/related-list-records/001RM000004km7aYAA/Account?pageSize=10`,
                 urlParams: {
                     parentRecordId: '001RM000004km7aYAA',
                     relatedListId: 'Contacts',
                 },
-                queryParams: {
+                body: {
                     fields: ['Contact.Id', 'Contact.Name'],
                     optionalFields: ['Contact.Email', 'Contact.LastName'],
                     pageSize: 50,
@@ -323,14 +323,14 @@ describe('crud logging', () => {
 
         it('logs read event when getRelatedListRecords is called but returns error', async () => {
             const request = {
-                method: 'get',
+                method: 'post',
                 baseUri: UI_API_BASE_URI,
                 basePath: `/related-list-records/001RM000004km7aYAA/Account?pageSize=10`,
                 urlParams: {
                     parentRecordId: '001RM000004km7aYAA',
                     relatedListId: 'Contacts',
                 },
-                queryParams: {
+                body: {
                     fields: ['Contact.Id, Contact.Name'],
                     optionalFields: ['Contact.Email, Contact.LastName'],
                     pageSize: 50,

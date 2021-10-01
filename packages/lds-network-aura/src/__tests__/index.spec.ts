@@ -2917,14 +2917,14 @@ describe('routes', () => {
     describe('get /related-list-records/{parentRecordId}/{relatedListId}', () => {
         testControllerInput(
             {
-                method: 'get',
+                method: 'post',
                 baseUri: UI_API_BASE_URI,
                 basePath: `/related-list-records/{parentRecordId}/{relatedListId}`,
                 urlParams: {
                     parentRecordId: '012T00000004MUHIA2',
                     relatedListId: 'Contact__r',
                 },
-                queryParams: {
+                body: {
                     fields: ['Id'],
                     optionalFields: ['Name'],
                     pageSize: 50,
@@ -2948,7 +2948,7 @@ describe('routes', () => {
         );
 
         testRejectFetchResponse({
-            method: 'get',
+            method: 'post',
             baseUri: UI_API_BASE_URI,
             basePath: `/related-list-records/{parentRecordId}/{relatedListId}`,
             urlParams: {

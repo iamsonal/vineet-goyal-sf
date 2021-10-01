@@ -38,7 +38,7 @@ import { RecordDenormalizingDurableStore } from '../durableStore/makeRecordDenor
 type ScalarFieldType = boolean | number | string | null;
 type DraftFields = { [key: string]: ScalarFieldType };
 
-interface ScalarFieldRepresentationValue {
+export interface ScalarFieldRepresentationValue {
     displayValue: string | null;
     value: ScalarFieldType;
 }
@@ -105,7 +105,7 @@ function formatDisplayValue(value: boolean | number | string | null) {
 }
 
 // creates a link node
-function createLink(key: string) {
+export function createLink(key: string) {
     return { __ref: key };
 }
 

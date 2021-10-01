@@ -1,14 +1,10 @@
-import { Adapter, AdapterFactory, Luvio } from '@luvio/engine';
+import { Adapter } from '@luvio/engine';
 import { instrumentation } from './instrumentation';
-import { AdapterMetadata, createLDSAdapter } from './ldsAdapter';
+import { AdapterMetadata } from './ldsAdapter';
 
 export function createInstrumentedAdapter<C, D>(
-    luvio: Luvio,
-    factory: AdapterFactory<C, D>,
+    adapter: Adapter<C, D>,
     metadata: AdapterMetadata
 ): Adapter<C, D> {
-    return instrumentation.instrumentAdapter(
-        createLDSAdapter(luvio, metadata.name, factory),
-        metadata
-    );
+    return instrumentation.instrumentAdapter(adapter, metadata);
 }

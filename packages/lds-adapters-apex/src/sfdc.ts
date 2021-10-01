@@ -1,7 +1,9 @@
 import { GetApexInvoker, GetApexWireAdapterFactory } from './main';
 import {
+    AdapterMetadata,
     bindWireRefresh,
     createWireAdapterConstructor,
+    createInstrumentedAdapter,
     createLDSAdapter,
     refresh,
 } from '@salesforce/lds-bindings';
@@ -36,6 +38,11 @@ export const getApexInvoker = function (
     }
 
     const adapterName = `getApex_${namespace}_${classname}_${method}_${isContinuation}`;
+    const adapterMetadata: AdapterMetadata = {
+        apiFamily: 'Apex',
+        name: adapterName,
+    };
+
     const invokeApexImperative: any = createLDSAdapter(luvio, adapterName, (luvio) =>
         GetApexInvoker(luvio, {
             namespace,
@@ -46,9 +53,13 @@ export const getApexInvoker = function (
     );
     invokeApexImperative.adapter = createWireAdapterConstructor(
         luvio,
-        (luvio) =>
-            GetApexWireAdapterFactory(luvio, { namespace, classname, method, isContinuation }),
-        { apiFamily: 'Apex', name: adapterName }
+        createInstrumentedAdapter(
+            createLDSAdapter(luvio, adapterName, (luvio) =>
+                GetApexWireAdapterFactory(luvio, { namespace, classname, method, isContinuation })
+            ),
+            adapterMetadata
+        ),
+        adapterMetadata
     );
     return invokeApexImperative;
 };

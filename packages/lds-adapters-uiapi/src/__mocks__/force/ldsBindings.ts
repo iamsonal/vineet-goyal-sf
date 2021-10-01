@@ -9,8 +9,8 @@ export function createWireAdapterConstructor() {
     return jest.fn();
 }
 
-export function createInstrumentedAdapter(luvio: Luvio, factory: any, metadata: any) {
-    return createLDSAdapter(luvio, metadata.name, factory);
+export function createInstrumentedAdapter(_luvio: Luvio, adapter: any, _metadata: any) {
+    return adapter;
 }
 
 export function createImperativeAdapter(luvio: any, adapter: any, metadata: any) {

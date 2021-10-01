@@ -1,5 +1,11 @@
-import { Luvio } from '@luvio/engine';
-import { createWireAdapterConstructor, createLDSAdapter, bindWireRefresh, refresh } from '../main';
+import { Adapter, Luvio } from '@luvio/engine';
+import {
+    createWireAdapterConstructor,
+    createLDSAdapter,
+    createInstrumentedAdapter,
+    bindWireRefresh,
+    refresh,
+} from '../main';
 
 jest.mock('@luvio/lwc-luvio', () => {
     const spies = {
@@ -34,29 +40,34 @@ beforeEach(() => {
 describe('createWireAdapterConstructor', () => {
     it('should invoke adapter factory', () => {
         const luvio = {} as Luvio;
-        const mockAdapter = {};
-        const mockInstrumented: any = {};
+        const adapter = jest.fn();
         const mockWire = {};
-        instrumentationSpies.instrumentAdapter.mockReturnValue(mockInstrumented);
         (lwcLdsCreateWireAdapterConstructor as any).mockReturnValue(mockWire);
-        const factory = jest.fn().mockReturnValue(mockAdapter);
 
-        const value = createWireAdapterConstructor(luvio, factory, {
+        const value = createWireAdapterConstructor(luvio, adapter, {
             apiFamily: 'bar',
             name: 'foo',
         });
 
-        expect(factory).toHaveBeenCalledWith(luvio);
-        expect(instrumentationSpies.instrumentAdapter).toHaveBeenCalledWith(mockAdapter, {
-            apiFamily: 'bar',
-            name: 'foo',
-        });
-        expect(lwcLdsCreateWireAdapterConstructor).toHaveBeenCalledWith(
-            mockInstrumented,
-            'bar.foo',
-            luvio
-        );
+        expect(lwcLdsCreateWireAdapterConstructor).toHaveBeenCalledWith(adapter, 'bar.foo', luvio);
         expect(value).toBe(mockWire);
+    });
+});
+
+describe('createInstrumentedAdapter', () => {
+    it('should return an instrumented adapter', () => {
+        const mockAdapter = {} as Adapter<unknown, unknown>;
+        const metadata = {
+            apiFamily: 'bar',
+            name: 'foo',
+        };
+        const mockInstrumented: any = {};
+        instrumentationSpies.instrumentAdapter.mockReturnValue(mockInstrumented);
+
+        const value = createInstrumentedAdapter(mockAdapter, metadata);
+
+        expect(instrumentationSpies.instrumentAdapter).toHaveBeenCalledWith(mockAdapter, metadata);
+        expect(value).toBe(mockInstrumented);
     });
 });
 

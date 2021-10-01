@@ -46,7 +46,7 @@
     "bundlesize": [
         {
             "path": "./sfdc/index.js",
-            "maxSize": "76 kB",
+            "maxSize": "85 kB",
             "compression": "brotli"
         }
     ]

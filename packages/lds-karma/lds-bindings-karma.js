@@ -4,9 +4,8 @@ import {
 } from '@luvio/lwc-luvio';
 import { createImperativeAdapter as ldsBindingsCreateImperativeAdapter } from '@salesforce/lds-bindings';
 
-export function createWireAdapterConstructor(luvio, factory, metadata) {
+export function createWireAdapterConstructor(luvio, adapter, metadata) {
     const { apiFamily, name } = metadata;
-    const adapter = createLDSAdapter(luvio, name, factory);
     return lwcLdsCreateWireAdapterConstructor(adapter, `${apiFamily}.${name}`, luvio);
 }
 
@@ -20,10 +19,11 @@ export function bindWireRefresh(luvio) {
     refresh = lwcLdsBindWireRefresh(luvio);
 }
 
-// Doesn't create an instrumented adapter just a wrapper to call createLDSAdapter for testing
-export function createInstrumentedAdapter(luvio, factory, metadata) {
-    const { name } = metadata;
-    return createLDSAdapter(luvio, name, factory);
+// Doesn't create an instrumented adapter
+// We don't test our instrumentation in karma tests for adapters
+// This just returns the ldsAdapter it receives
+export function createInstrumentedAdapter(adapter, _metadata) {
+    return adapter;
 }
 
 export function createImperativeAdapter(luvio, adapter, metadata) {

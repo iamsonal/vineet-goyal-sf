@@ -13,11 +13,13 @@ type AdapterInfo = {
 };
 
 type ProcessedAdapter = {
+    metadata?: unknown;
     bind: string;
     import: string;
 };
 
 const CREATE_WIRE_ADAPTER_CONSTRUCTOR = 'createWireAdapterConstructor';
+const CREATE_INSTRUMENTED_ADAPTER = 'createInstrumentedAdapter';
 const CREATE_LDS_ADAPTER = 'createLDSAdapter';
 const LDS_BINDINGS = '@salesforce/lds-bindings';
 
@@ -34,19 +36,41 @@ function generateNpmModule(outputDir: string, adapters: AdapterInfo[]) {
     fs.writeFileSync(path.join(outputDir, 'main.ts'), source);
 }
 
+function generateBinding(
+    method: string,
+    adapterName: string,
+    adapterNameIdentifier: string,
+    factoryIdentifier: string,
+    adapterMetadataIdentifier: string
+): string {
+    switch (method) {
+        case 'get':
+            return `${adapterName}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}(luvio, ${CREATE_INSTRUMENTED_ADAPTER}(${CREATE_LDS_ADAPTER}(luvio, '${adapterNameIdentifier}', ${factoryIdentifier}), ${adapterMetadataIdentifier}), ${adapterMetadataIdentifier}),`;
+        case 'delete':
+            return `${adapterName}: ${CREATE_LDS_ADAPTER}(luvio, ${adapterNameIdentifier}, ${factoryIdentifier}),`;
+        default:
+            return `${adapterName}: unwrapSnapshotData(${factoryIdentifier}),`;
+    }
+}
+
 function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
     const adapterCode = adapters.reduce((_adapterCode, adapter) => {
         const { apiFamily, name, method, ttl } = adapter;
         const factoryIdentifier = `${name}AdapterFactory`;
         const adapterNameIdentifier = `${name}__adapterName`;
+        const adapterMetadataIdentifier = `${name}Metadata`;
+
+        const bind = generateBinding(
+            method,
+            name,
+            adapterNameIdentifier,
+            factoryIdentifier,
+            adapterMetadataIdentifier
+        );
 
         _adapterCode[name] = {
-            bind:
-                method === 'get'
-                    ? `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}(luvio, ${factoryIdentifier}, {apiFamily: '${apiFamily}', name: ${adapterNameIdentifier}, ttl: ${ttl}}),`
-                    : method === 'delete'
-                    ? `${name}: ${CREATE_LDS_ADAPTER}(luvio, ${adapterNameIdentifier}, ${factoryIdentifier}),`
-                    : `${name}: unwrapSnapshotData(${factoryIdentifier}),`,
+            metadata: `const ${adapterMetadataIdentifier} = { apiFamily: '${apiFamily}', name: '${name}', ttl: ${ttl}};`,
+            bind,
             import: `import { ${factoryIdentifier}, adapterName as ${adapterNameIdentifier} } from '../adapters/${name}';`,
         };
 
@@ -67,11 +91,16 @@ function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
 
     const source = dedent`
         import { AdapterFactory, Luvio, Snapshot } from '@luvio/engine';
-        import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}, ${CREATE_LDS_ADAPTER} } from '${LDS_BINDINGS}';
+        import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}, ${CREATE_INSTRUMENTED_ADAPTER}, ${CREATE_LDS_ADAPTER} } from '${LDS_BINDINGS}';
         import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
         ${adapterNames.map((name) => adapterCode[name].import).join('\n')}
 
         ${adapterNames.map((name) => 'let ' + name + ': any;').join('\n    ')}
+
+        ${adapterNames
+            .filter((name) => adapterCode[name].metadata !== undefined)
+            .map((name) => `${adapterCode[name].metadata}`)
+            .join('\n    ')}
 
         function bindExportsTo(luvio: Luvio): { [key: string]: any } {
             function unwrapSnapshotData<Config,DataType>(factory: AdapterFactory<Config,DataType>) {

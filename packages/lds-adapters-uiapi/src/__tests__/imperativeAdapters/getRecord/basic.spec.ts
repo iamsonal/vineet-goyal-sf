@@ -8,7 +8,7 @@ import {
 import { Environment, Luvio, Store, NetworkAdapter } from '@luvio/engine';
 import { setDefaultLuvio } from '@salesforce/lds-default-luvio';
 import { customMatchers, flushPromises } from '@salesforce/lds-jest';
-import { imperativeAdapters } from '../../../../sfdc';
+import { getRecord_imperative } from '../../../../sfdc';
 import singleRecordWithIdName from './mockData/record-Account-fields-Account.Id,Account.Name.json';
 
 const recordId_Account = singleRecordWithIdName.id;
@@ -68,9 +68,8 @@ describe('basic', () => {
         const network = buildMockNetworkAdapter([recordPayload_Account]);
         const { luvio } = buildLds(network);
         setDefaultLuvio({ luvio });
-        const { getRecord: getRecordImperative } = imperativeAdapters;
 
-        getRecordImperative.invoke(config, {}, callback);
+        getRecord_imperative.invoke(config, {}, callback);
         await flushPromises();
 
         expect(callback).toHaveBeenCalledWithDataTuple(singleRecordWithIdName, privateProperties);
@@ -87,11 +86,10 @@ describe('basic', () => {
         const network = buildMockNetworkAdapter([recordPayload_Account]);
         const { luvio } = buildLds(network);
         setDefaultLuvio({ luvio });
-        const { getRecord: getRecordImperative } = imperativeAdapters;
 
-        getRecordImperative.invoke(config, {}, callback);
+        getRecord_imperative.invoke(config, {}, callback);
         await flushPromises();
-        getRecordImperative.invoke(config, {}, callback);
+        getRecord_imperative.invoke(config, {}, callback);
 
         expect(callback).toHaveBeenCalledWithDataTuple(singleRecordWithIdName, privateProperties);
         expect(callback).toBeCalledTimes(2);
@@ -107,9 +105,8 @@ describe('basic', () => {
         };
         const { luvio } = buildLds(network);
         setDefaultLuvio({ luvio });
-        const { getRecord: getRecordImperative } = imperativeAdapters;
 
-        getRecordImperative.invoke(config, {}, callback);
+        getRecord_imperative.invoke(config, {}, callback);
         await flushPromises();
 
         expect(callback).toHaveBeenCalledWith({ data: undefined, error: mockError });
@@ -127,7 +124,6 @@ describe('basic', () => {
                 const callback = jest.fn();
                 const { luvio } = buildLds();
                 setDefaultLuvio({ luvio });
-                const { getRecord: getRecordImperative } = imperativeAdapters;
                 const customError = {
                     data: undefined,
                     error: {
@@ -139,7 +135,7 @@ describe('basic', () => {
                     },
                 };
 
-                getRecordImperative.invoke(config, {}, callback);
+                getRecord_imperative.invoke(config, {}, callback);
 
                 expect(callback).toHaveBeenCalledWith(customError);
                 expect(callback).toBeCalledTimes(1);

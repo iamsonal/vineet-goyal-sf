@@ -49,5 +49,38 @@ describe('mobile runtime integration tests', () => {
             expect(networkAdapter.sentRequests.length).toEqual(1);
             expect(durableChangeListener).toBeCalledTimes(1);
         });
+
+        it('emits a value on a 404 response', async () => {
+            const relatedListRecordsConfig = {
+                parentRecordId: mockGetRelatedListRecords.listReference.inContextOfRecordId,
+                relatedListId: mockGetRelatedListRecords.listReference.relatedListId,
+                fields: mockGetRelatedListRecords.fields,
+            };
+
+            const errorResponseBody = {
+                hasErrors: true,
+                results: [
+                    {
+                        result: [
+                            {
+                                errorCode: 'NOT_FOUND',
+                                message: 'Resource not found.',
+                            },
+                        ],
+                        statusCode: 404,
+                    },
+                ],
+            };
+
+            networkAdapter.setMockResponse({
+                status: 404,
+                headers: {},
+                body: JSONStringify(errorResponseBody),
+            });
+
+            const snapshot = await getRelatedListRecords(relatedListRecordsConfig);
+
+            expect(snapshot.state).toBe('Error');
+        });
     });
 });

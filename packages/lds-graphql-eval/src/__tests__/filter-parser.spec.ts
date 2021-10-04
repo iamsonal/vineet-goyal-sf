@@ -6,15 +6,23 @@ import {
 } from '@salesforce/lds-graphql-parser';
 import { recordFilter } from '../filter-parser';
 import { ObjectInfoMap } from '../info-types';
-import { JsonExtract, PredicateContainer } from '../Predicate';
+import {
+    ComparisonOperator,
+    CompoundOperator,
+    JsonExtract,
+    PredicateContainer,
+    PredicateType,
+    ValueType,
+} from '../Predicate';
 import { comparison, combinePredicates, stringLiteral } from '../util';
 import infoJson from './mockData/objectInfos.json';
 import { unwrappedError, unwrappedValue } from '../Result';
 
 const infoMap = infoJson as ObjectInfoMap;
+const { eq, ne, gt, gte, like, lt, lte, nin } = ComparisonOperator;
 
 function jsonExtract(object: string, path: string): JsonExtract {
-    return { type: 'JsonExtract', jsonAlias: object, path };
+    return { type: ValueType.Extract, jsonAlias: object, path };
 }
 
 function where(fields: { [name: string]: LuvioValueNode }): LuvioArgumentNode {
@@ -55,10 +63,11 @@ function doubleNode(value: string): LuvioValueNode {
     return { kind: 'FloatValue', value };
 }
 
-const selfIdCompare = comparison(jsonExtract('TimeSheet', 'Id'), 'eq', stringLiteral('Adrian'));
+const selfIdCompare = comparison(jsonExtract('TimeSheet', 'data.id'), eq, stringLiteral('Adrian'));
+
 const selfTimeSheetCompare = comparison(
-    jsonExtract('TimeSheet', 'TimeSheetNumber'),
-    'eq',
+    jsonExtract('TimeSheet', 'data.fields.TimeSheetNumber.value'),
+    eq,
     stringLiteral('Adrian')
 );
 
@@ -105,28 +114,28 @@ describe('filter-parser', () => {
                 combinePredicates(
                     [
                         comparison(
-                            jsonExtract('TimeSheet', 'TimeSheetNumber'),
-                            'eq',
+                            jsonExtract('TimeSheet', 'data.fields.TimeSheetNumber.value'),
+                            eq,
                             stringLiteral('Adrian')
                         ),
                         comparison(
-                            jsonExtract('TimeSheet.CreatedBy', 'Email'),
-                            'eq',
+                            jsonExtract('TimeSheet.CreatedBy', 'data.fields.Email.value'),
+                            eq,
                             stringLiteral('Adrian')
                         ),
                     ],
-                    'and'
+                    CompoundOperator.and
                 )
             );
             expect(value.joinPredicates).toEqual([
                 comparison(
-                    jsonExtract('TimeSheet', 'CreatedById'),
-                    'eq',
-                    jsonExtract('TimeSheet.CreatedBy', 'id')
+                    jsonExtract('TimeSheet', 'data.fields.CreatedById.value'),
+                    eq,
+                    jsonExtract('TimeSheet.CreatedBy', 'data.id')
                 ),
                 comparison(
-                    jsonExtract('TimeSheet.CreatedBy', 'apiName'),
-                    'eq',
+                    jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
+                    eq,
                     stringLiteral('User')
                 ),
             ]);
@@ -158,28 +167,28 @@ describe('filter-parser', () => {
                 combinePredicates(
                     [
                         comparison(
-                            jsonExtract('TimeSheet', 'TimeSheetNumber'),
-                            'eq',
+                            jsonExtract('TimeSheet', 'data.fields.TimeSheetNumber.value'),
+                            eq,
                             stringLiteral('Adrian')
                         ),
                         comparison(
-                            jsonExtract('TimeSheet.CreatedBy', 'Email'),
-                            'eq',
+                            jsonExtract('TimeSheet.CreatedBy', 'data.fields.Email.value'),
+                            eq,
                             stringLiteral('Adrian')
                         ),
                     ],
-                    'or'
+                    CompoundOperator.or
                 )
             );
             expect(value.joinPredicates).toEqual([
                 comparison(
-                    jsonExtract('TimeSheet', 'CreatedById'),
-                    'eq',
-                    jsonExtract('TimeSheet.CreatedBy', 'id')
+                    jsonExtract('TimeSheet', 'data.fields.CreatedById.value'),
+                    eq,
+                    jsonExtract('TimeSheet.CreatedBy', 'data.id')
                 ),
                 comparison(
-                    jsonExtract('TimeSheet.CreatedBy', 'apiName'),
-                    'eq',
+                    jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
+                    eq,
                     stringLiteral('User')
                 ),
             ]);
@@ -231,7 +240,7 @@ describe('filter-parser', () => {
             expect(unwrappedValue(filter).joinNames).toEqual([]);
             expect(unwrappedValue(filter).joinPredicates).toEqual([]);
             expect(unwrappedValue(filter).predicate).toEqual(
-                combinePredicates([selfIdCompare, selfTimeSheetCompare], 'and')
+                combinePredicates([selfIdCompare, selfTimeSheetCompare], CompoundOperator.and)
             );
         });
 
@@ -239,7 +248,7 @@ describe('filter-parser', () => {
             let filter = recordFilter(
                 where({
                     CreatedBy: objNode({
-                        Email: objNode({ eq: stringNode('Adrian') }),
+                        CreatedById: objNode({ eq: stringNode('239292') }),
                     }),
                 }),
                 'TimeSheet',
@@ -252,21 +261,21 @@ describe('filter-parser', () => {
             expect(value.joinNames).toEqual(['TimeSheet.CreatedBy']);
             expect(value.joinPredicates).toEqual([
                 comparison(
-                    jsonExtract('TimeSheet', 'CreatedById'),
-                    'eq',
-                    jsonExtract('TimeSheet.CreatedBy', 'id')
+                    jsonExtract('TimeSheet', 'data.fields.CreatedById.value'),
+                    eq,
+                    jsonExtract('TimeSheet.CreatedBy', 'data.id')
                 ),
                 comparison(
-                    jsonExtract('TimeSheet.CreatedBy', 'apiName'),
-                    'eq',
+                    jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
+                    eq,
                     stringLiteral('User')
                 ),
             ]);
             expect(value.predicate).toEqual(
                 comparison(
-                    jsonExtract('TimeSheet.CreatedBy', 'Email'),
-                    'eq',
-                    stringLiteral('Adrian')
+                    jsonExtract('TimeSheet.CreatedBy', 'data.fields.CreatedById.value'),
+                    eq,
+                    stringLiteral('239292')
                 )
             );
         });
@@ -314,13 +323,13 @@ describe('filter-parser', () => {
             expect(value.joinNames).toEqual(['TimeSheet.CreatedBy']);
             expect(value.joinPredicates).toEqual([
                 comparison(
-                    jsonExtract('TimeSheet', 'CreatedById'),
-                    'eq',
-                    jsonExtract('TimeSheet.CreatedBy', 'id')
+                    jsonExtract('TimeSheet', 'data.fields.CreatedById.value'),
+                    eq,
+                    jsonExtract('TimeSheet.CreatedBy', 'data.id')
                 ),
                 comparison(
-                    jsonExtract('TimeSheet.CreatedBy', 'apiName'),
-                    'eq',
+                    jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
+                    eq,
                     stringLiteral('User')
                 ),
             ]);
@@ -328,17 +337,17 @@ describe('filter-parser', () => {
                 combinePredicates(
                     [
                         comparison(
-                            jsonExtract('TimeSheet.CreatedBy', 'Email'),
-                            'eq',
+                            jsonExtract('TimeSheet.CreatedBy', 'data.fields.Email.value'),
+                            eq,
                             stringLiteral('x')
                         ),
                         comparison(
-                            jsonExtract('TimeSheet.CreatedBy', 'Email'),
-                            'like',
+                            jsonExtract('TimeSheet.CreatedBy', 'data.fields.Email.value'),
+                            like,
                             stringLiteral('y')
                         ),
                     ],
-                    'and'
+                    CompoundOperator.and
                 )
             );
         });
@@ -367,13 +376,13 @@ describe('filter-parser', () => {
             expect(value.joinNames).toEqual(['TimeSheet.CreatedBy']);
             expect(value.joinPredicates).toEqual([
                 comparison(
-                    jsonExtract('TimeSheet', 'CreatedById'),
-                    'eq',
-                    jsonExtract('TimeSheet.CreatedBy', 'id')
+                    jsonExtract('TimeSheet', 'data.fields.CreatedById.value'),
+                    eq,
+                    jsonExtract('TimeSheet.CreatedBy', 'data.id')
                 ),
                 comparison(
-                    jsonExtract('TimeSheet.CreatedBy', 'apiName'),
-                    'eq',
+                    jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
+                    eq,
                     stringLiteral('User')
                 ),
             ]);
@@ -381,27 +390,27 @@ describe('filter-parser', () => {
                 combinePredicates(
                     [
                         comparison(
-                            jsonExtract('TimeSheet.CreatedBy', 'Email'),
-                            'eq',
+                            jsonExtract('TimeSheet.CreatedBy', 'data.fields.Email.value'),
+                            eq,
                             stringLiteral('a')
                         ),
                         comparison(
-                            jsonExtract('TimeSheet.CreatedBy', 'Email'),
-                            'like',
+                            jsonExtract('TimeSheet.CreatedBy', 'data.fields.Email.value'),
+                            like,
                             stringLiteral('b')
                         ),
                         comparison(
-                            jsonExtract('TimeSheet.CreatedBy', 'Id'),
-                            'eq',
+                            jsonExtract('TimeSheet.CreatedBy', 'data.id'),
+                            eq,
                             stringLiteral('c')
                         ),
                         comparison(
-                            jsonExtract('TimeSheet.CreatedBy', 'Id'),
-                            'like',
+                            jsonExtract('TimeSheet.CreatedBy', 'data.id'),
+                            like,
                             stringLiteral('d')
                         ),
                     ],
-                    'and'
+                    CompoundOperator.and
                 )
             );
         });
@@ -433,7 +442,7 @@ describe('filter-parser', () => {
             expect(value.joinNames).toEqual([]);
             expect(value.joinPredicates).toEqual([]);
             expect(value.predicate).toEqual(
-                comparison(jsonExtract('TimeSheet', 'Id'), 'eq', stringLiteral('c'))
+                comparison(jsonExtract('TimeSheet', 'data.id'), eq, stringLiteral('c'))
             );
         });
 
@@ -459,30 +468,30 @@ describe('filter-parser', () => {
             ]);
             expect(value.joinPredicates).toEqual([
                 comparison(
-                    jsonExtract('TimeSheet.CreatedBy', 'CreatedById'),
-                    'eq',
-                    jsonExtract('TimeSheet.CreatedBy.CreatedBy', 'id')
+                    jsonExtract('TimeSheet.CreatedBy', 'data.fields.CreatedById.value'),
+                    eq,
+                    jsonExtract('TimeSheet.CreatedBy.CreatedBy', 'data.id')
                 ),
                 comparison(
-                    jsonExtract('TimeSheet.CreatedBy.CreatedBy', 'apiName'),
-                    'eq',
+                    jsonExtract('TimeSheet.CreatedBy.CreatedBy', 'data.apiName'),
+                    eq,
                     stringLiteral('User')
                 ),
                 comparison(
-                    jsonExtract('TimeSheet', 'CreatedById'),
-                    'eq',
-                    jsonExtract('TimeSheet.CreatedBy', 'id')
+                    jsonExtract('TimeSheet', 'data.fields.CreatedById.value'),
+                    eq,
+                    jsonExtract('TimeSheet.CreatedBy', 'data.id')
                 ),
                 comparison(
-                    jsonExtract('TimeSheet.CreatedBy', 'apiName'),
-                    'eq',
+                    jsonExtract('TimeSheet.CreatedBy', 'data.apiName'),
+                    eq,
                     stringLiteral('User')
                 ),
             ]);
             expect(value.predicate).toEqual(
                 comparison(
-                    jsonExtract('TimeSheet.CreatedBy.CreatedBy', 'Email'),
-                    'eq',
+                    jsonExtract('TimeSheet.CreatedBy.CreatedBy', 'data.fields.Email.value'),
+                    eq,
                     stringLiteral('Adrian')
                 )
             );
@@ -493,7 +502,7 @@ describe('filter-parser', () => {
                 field: string,
                 value: LuvioValueNode,
                 expected: PredicateContainer,
-                operator: string = 'eq'
+                operator: string = eq
             ) {
                 let filter = recordFilter(
                     {
@@ -528,11 +537,11 @@ describe('filter-parser', () => {
                         left: {
                             jsonAlias: 'TimeSheet',
                             path,
-                            type: 'JsonExtract',
+                            type: ValueType.Extract,
                         },
                         operator: op,
                         right: value,
-                        type: 'comparison',
+                        type: PredicateType.comparison,
                     },
                 };
             };
@@ -542,14 +551,14 @@ describe('filter-parser', () => {
                     testOperatorResult(
                         'TotalDurationInHours',
                         doubleNode('33.5'),
-                        expectedValue(op, 'TotalDurationInHours', {
+                        expectedValue(op, 'data.fields.TotalDurationInHours.value', {
                             type: 'DoubleLiteral',
                             value: 33.5,
                         }),
                         op
                     );
 
-                ['eq', 'ne', 'lt', 'gt', 'lte', 'gte'].forEach(testWithOperator);
+                [eq, ne, lt, gt, lte, gte].forEach(testWithOperator);
             });
 
             it('returns predicate when int field is paired with an supported operators', () => {
@@ -557,14 +566,14 @@ describe('filter-parser', () => {
                     testOperatorResult(
                         'TotalDurationInMinutes',
                         intNode('33.6'),
-                        expectedValue(op, 'TotalDurationInMinutes', {
+                        expectedValue(op, 'data.fields.TotalDurationInMinutes.value', {
                             type: 'IntLiteral',
                             value: 33,
                         }),
                         op
                     );
 
-                ['eq', 'ne', 'lt', 'gt', 'lte', 'gte'].forEach(testWithOperator);
+                [eq, ne, lt, gt, lte, gte].forEach(testWithOperator);
             });
 
             it('returns predicate when string field is paired with an supported operators', () => {
@@ -572,14 +581,14 @@ describe('filter-parser', () => {
                     testOperatorResult(
                         'TimeSheetNumber',
                         stringNode('33'),
-                        expectedValue(op, 'TimeSheetNumber', {
-                            type: 'StringLiteral',
+                        expectedValue(op, 'data.fields.TimeSheetNumber.value', {
+                            type: ValueType.StringLiteral,
                             value: '33',
                         }),
                         op
                     );
 
-                ['eq', 'ne', 'lt', 'gt', 'lte', 'gte', 'like'].forEach(testWithOperator);
+                [eq, ne, lt, gt, lte, gte, like].forEach(testWithOperator);
             });
 
             it('returns predicate when boolean field is paired with an supported operators', () => {
@@ -587,11 +596,14 @@ describe('filter-parser', () => {
                     testOperatorResult(
                         'IsDeleted',
                         booleanNode(false),
-                        expectedValue(op, 'IsDeleted', { type: 'BooleanLiteral', value: false }),
+                        expectedValue(op, 'data.fields.IsDeleted.value', {
+                            type: 'BooleanLiteral',
+                            value: false,
+                        }),
                         op
                     );
 
-                ['eq', 'ne'].forEach(testWithOperator);
+                [eq, ne].forEach(testWithOperator);
             });
 
             it('returns predicate when double field is paired with IN, NIN operators', () => {
@@ -599,14 +611,14 @@ describe('filter-parser', () => {
                     testOperatorResult(
                         'TotalDurationInHours',
                         listNode([doubleNode('33.5'), doubleNode('34.6')]),
-                        expectedValue(op, 'TotalDurationInHours', {
+                        expectedValue(op, 'data.fields.TotalDurationInHours.value', {
                             type: 'NumberArray',
                             value: [33.5, 34.6],
                         }),
                         op
                     );
 
-                ['in', 'nin'].forEach(testWithOperator);
+                [ComparisonOperator.in, nin].forEach(testWithOperator);
             });
 
             it('returns predicate when int field is paired with IN, NIN operators', () => {
@@ -614,14 +626,14 @@ describe('filter-parser', () => {
                     testOperatorResult(
                         'TotalDurationInMinutes',
                         listNode([intNode('33'), intNode('34')]),
-                        expectedValue(op, 'TotalDurationInMinutes', {
+                        expectedValue(op, 'data.fields.TotalDurationInMinutes.value', {
                             type: 'NumberArray',
                             value: [33, 34],
                         }),
                         op
                     );
 
-                ['in', 'nin'].forEach(testWithOperator);
+                [ComparisonOperator.in, nin].forEach(testWithOperator);
             });
 
             it('returns predicate when string field is paired with IN, NIN operators', () => {
@@ -629,14 +641,14 @@ describe('filter-parser', () => {
                     testOperatorResult(
                         'TimeSheetNumber',
                         listNode([stringNode('33'), stringNode('34')]),
-                        expectedValue(op, 'TimeSheetNumber', {
+                        expectedValue(op, 'data.fields.TimeSheetNumber.value', {
                             type: 'StringArray',
                             value: ['33', '34'],
                         }),
                         op
                     );
 
-                ['in', 'nin'].forEach(testWithOperator);
+                [ComparisonOperator.in, nin].forEach(testWithOperator);
             });
         });
 
@@ -645,7 +657,7 @@ describe('filter-parser', () => {
                 field: string,
                 value: LuvioValueNode,
                 expectedError: string,
-                operator: string = 'eq'
+                operator: ComparisonOperator = eq
             ) {
                 let filter = recordFilter(
                     {
@@ -681,13 +693,13 @@ describe('filter-parser', () => {
                     'TotalDurationInHours',
                     listNode([booleanNode(false)]),
                     expected,
-                    'in'
+                    ComparisonOperator.in
                 );
                 expectedFieldError(
                     'TotalDurationInHours',
                     listNode([booleanNode(false)]),
                     expected,
-                    'nin'
+                    nin
                 );
             });
 
@@ -699,13 +711,13 @@ describe('filter-parser', () => {
                     'TimeSheetNumber',
                     listNode([booleanNode(false)]),
                     expected,
-                    'in'
+                    ComparisonOperator.in
                 );
                 expectedFieldError(
                     'TimeSheetNumber',
                     listNode([booleanNode(false)]),
                     expected,
-                    'nin'
+                    nin
                 );
             });
 
@@ -717,32 +729,47 @@ describe('filter-parser', () => {
                     'TotalDurationInMinutes',
                     listNode([booleanNode(false)]),
                     expected,
-                    'in'
+                    ComparisonOperator.in
                 );
                 expectedFieldError(
                     'TotalDurationInMinutes',
                     listNode([booleanNode(false)]),
                     expected,
-                    'nin'
+                    nin
                 );
             });
 
             it('returns an error when double field IN is not paired with ListValueNode', () => {
                 const expected = 'Comparison value must be a double array.';
 
-                expectedFieldError('TotalDurationInHours', booleanNode(false), expected, 'in');
+                expectedFieldError(
+                    'TotalDurationInHours',
+                    booleanNode(false),
+                    expected,
+                    ComparisonOperator.in
+                );
             });
 
             it('returns an error when string field IN is not paired with ListValueNode', () => {
                 const expected = 'Comparison value must be a string array.';
 
-                expectedFieldError('TimeSheetNumber', booleanNode(false), expected, 'in');
+                expectedFieldError(
+                    'TimeSheetNumber',
+                    booleanNode(false),
+                    expected,
+                    ComparisonOperator.in
+                );
             });
 
             it('returns an error when int field IN is not paired with ListValueNode', () => {
                 const expected = 'Comparison value must be an int array.';
 
-                expectedFieldError('TotalDurationInMinutes', booleanNode(false), expected, 'in');
+                expectedFieldError(
+                    'TotalDurationInMinutes',
+                    booleanNode(false),
+                    expected,
+                    ComparisonOperator.in
+                );
             });
 
             it('returns an error when string field is compared to other types', () => {
@@ -787,7 +814,7 @@ describe('filter-parser', () => {
                 const testWithOperator = (op) =>
                     expectedFieldError('IsDeleted', booleanNode(false), expected(op), op);
 
-                ['in', 'nin', 'lt', 'gt', 'lte', 'gte', 'like'].forEach(testWithOperator);
+                [ComparisonOperator.in, nin, lt, gt, lte, gte, like].forEach(testWithOperator);
             });
 
             it('returns an error when string field is paired with an unsupported operator', () => {
@@ -804,7 +831,7 @@ describe('filter-parser', () => {
                 const testWithOperator = (op) =>
                     expectedFieldError('TotalDurationInMinutes', intNode('33'), expected(op), op);
 
-                ['like'].forEach(testWithOperator);
+                [like].forEach(testWithOperator);
             });
 
             it('returns an error when double field is paired with an unsupported operator', () => {
@@ -813,7 +840,7 @@ describe('filter-parser', () => {
                 const testWithOperator = (op) =>
                     expectedFieldError('TotalDurationInHours', doubleNode('33'), expected(op), op);
 
-                ['like'].forEach(testWithOperator);
+                [like].forEach(testWithOperator);
             });
 
             it('returns an error for unknown field definitions', () => {

@@ -6,9 +6,10 @@ import {
     StringValueNode,
 } from '@salesforce/lds-graphql-parser';
 import { BooleanValueNode, FloatValueNode, IntValueNode, ListValueNode } from 'graphql/language';
-import { DataType, ObjectInfo, ReferenceFieldInfo } from './info-types';
+import { DataType, ObjectInfo, ReferenceFieldInfo, ReferenceToInfo } from './info-types';
 import {
     BooleanLiteral,
+    ComparisonOperator,
     ComparisonPredicate,
     CompoundOperator,
     DoubleLiteral,
@@ -18,6 +19,7 @@ import {
     PredicateContainer,
     StringArray,
     StringLiteral,
+    ValueType,
 } from './Predicate';
 import {
     errors,
@@ -40,6 +42,7 @@ import {
 import {
     combinePredicates,
     comparison,
+    extractPath,
     getFieldInfo,
     isEmptyPredicate,
     referencePredicate,
@@ -52,7 +55,7 @@ function fieldsToFilters(
     joinAlias: string,
     apiName: string,
     input: { [name: string]: ObjectInfo },
-    compoundOperator: CompoundOperator = 'and'
+    compoundOperator: CompoundOperator = CompoundOperator.and
 ): PredicateResult {
     const results = fieldValues
         .map((value): PredicateResult[] => {
@@ -141,17 +144,25 @@ function spanningFilter(
     alias: string,
     input: { [name: string]: ObjectInfo }
 ): PredicateResult {
-    const { apiName: fieldName, referenceToaApiName: apiName, relationshipName } = fieldInfo;
+    const { apiName: fieldName, referenceToInfos, relationshipName } = fieldInfo;
 
-    const joinAlias = `${alias}.${relationshipName}`;
-    const joinPredicate = referencePredicate(alias, joinAlias, fieldName);
+    const referenceInfo: ReferenceToInfo | undefined = referenceToInfos[0];
+    const jsonAlias = `${alias}.${relationshipName}`;
+    const joinPredicate = referencePredicate(alias, jsonAlias, fieldName);
 
-    const extract: JsonExtract = { type: 'JsonExtract', jsonAlias: joinAlias, path: 'apiName' };
-    const typePredicate = comparison(extract, 'eq', stringLiteral(apiName));
-    return fieldsToFilters([fieldNode], joinAlias, apiName, input).map((container) => {
+    if (referenceInfo === undefined) {
+        return failure([`No reference info found for ${fieldName}`]);
+    }
+
+    const { apiName } = referenceInfo;
+    const path = extractPath('ApiName');
+    const extract: JsonExtract = { type: ValueType.Extract, jsonAlias, path };
+    const typePredicate = comparison(extract, ComparisonOperator.eq, stringLiteral(apiName));
+
+    return fieldsToFilters([fieldNode], jsonAlias, apiName, input).map((container) => {
         const { predicate, joinNames: names, joinPredicates: predicates } = container;
         const joinPredicates = predicates.concat(joinPredicate, typePredicate);
-        const joinNames = names.concat(joinAlias);
+        const joinNames = names.concat(jsonAlias);
 
         return { predicate, joinNames, joinPredicates };
     });
@@ -171,7 +182,7 @@ function fieldFilter(
         return failure([`Field ${fieldName} for type ${apiName} not found.`]);
     }
 
-    if (fieldInfo.fieldType === 'Reference') {
+    if (fieldInfo.dataType === 'Reference' && fieldInfo.relationshipName === fieldName) {
         return spanningFilter(fieldInfo, fieldNode, alias, input);
     }
 
@@ -186,24 +197,30 @@ function fieldFilter(
     const comparisons = operators.value.map(
         (op: ScalarOperators | SetOperators): ComparisonPredicate =>
             comparison(
-                { type: 'JsonExtract', jsonAlias: alias, path: fieldName },
+                { type: ValueType.Extract, jsonAlias: alias, path: extractPath(fieldName) },
                 op.operator,
                 op.value
             )
     );
 
     const container = {
-        predicate: combinePredicates(comparisons, 'and'),
+        predicate: combinePredicates(comparisons, CompoundOperator.and),
         joinNames: [],
         joinPredicates: [],
     };
     return success(container);
 }
 
-type ScalarOperatorType = 'eq' | 'ne' | 'lt' | 'gt' | 'lte' | 'gte';
-type SetOperatorType = 'in' | 'nin';
-type StringOperatorType = ScalarOperatorType | 'like';
-type BooleanOperatorType = 'eq' | 'ne';
+type ScalarOperatorType =
+    | ComparisonOperator.eq
+    | ComparisonOperator.ne
+    | ComparisonOperator.lt
+    | ComparisonOperator.gt
+    | ComparisonOperator.lte
+    | ComparisonOperator.gte;
+type SetOperatorType = ComparisonOperator.in | ComparisonOperator.nin;
+type StringOperatorType = ScalarOperatorType | ComparisonOperator.like;
+type BooleanOperatorType = ComparisonOperator.eq | ComparisonOperator.ne;
 
 interface Operator<Operator, ValueType, OperatorType> {
     operator: Operator;
@@ -211,16 +228,26 @@ interface Operator<Operator, ValueType, OperatorType> {
     type: OperatorType;
 }
 
-type StringOperator = Operator<ScalarOperatorType | 'like', StringLiteral, 'StringOperator'>;
+type StringOperator = Operator<
+    ScalarOperatorType | ComparisonOperator.like,
+    StringLiteral,
+    'StringOperator'
+>;
 type IntOperator = Operator<ScalarOperatorType, IntLiteral, 'IntOperator'>;
 type DoubleOperator = Operator<ScalarOperatorType, DoubleLiteral, 'DoubleOperator'>;
 type BooleanOperator = Operator<ScalarOperatorType, BooleanLiteral, 'BooleanOperator'>;
+type DateOperator = Operator<ScalarOperatorType, StringLiteral, 'DateOperator'>;
 
 type StringSetOperator = Operator<SetOperatorType, StringArray, 'StringSetOperator'>;
 type IntSetOperator = Operator<SetOperatorType, NumberArray, 'IntSetOperator'>;
 type DoubleSetOperator = Operator<SetOperatorType, NumberArray, 'DoubleSetOperator'>;
 
-type ScalarOperators = StringOperator | IntOperator | DoubleOperator | BooleanOperator;
+type ScalarOperators =
+    | StringOperator
+    | IntOperator
+    | DoubleOperator
+    | BooleanOperator
+    | DateOperator;
 type SetOperators = StringSetOperator | IntSetOperator | DoubleSetOperator;
 
 function fieldOperators(
@@ -242,21 +269,28 @@ function fieldOperators(
 }
 
 function isSetOperatorType(value: string): value is SetOperatorType {
-    let values: SetOperatorType[] = ['in', 'nin'];
+    let values: SetOperatorType[] = [ComparisonOperator.in, ComparisonOperator.nin];
     return values.includes(value as SetOperatorType);
 }
 
 function isScalarOperatorType(value: string): value is ScalarOperatorType {
-    let values: ScalarOperatorType[] = ['eq', 'ne', 'lt', 'gt', 'lte', 'gte'];
+    let values: ScalarOperatorType[] = [
+        ComparisonOperator.eq,
+        ComparisonOperator.ne,
+        ComparisonOperator.lt,
+        ComparisonOperator.gt,
+        ComparisonOperator.lte,
+        ComparisonOperator.gte,
+    ];
     return values.includes(value as ScalarOperatorType);
 }
 
 function isBooleanOperatorType(value: string): value is BooleanOperatorType {
-    return value === 'eq' || value === 'ne';
+    return value === ComparisonOperator.eq || value === ComparisonOperator.ne;
 }
 
 function isStringOperatorType(value: string): value is StringOperatorType {
-    return isScalarOperatorType(value) || value === 'like';
+    return isScalarOperatorType(value) || value === ComparisonOperator.like;
 }
 
 function listNodeToTypeArray<T extends { kind: ExtractKind<T>; value: U }, U>(
@@ -280,13 +314,13 @@ function operatorWithValue(
     value: LuvioValueNode,
     schemaType: DataType
 ): Result<ScalarOperators | SetOperators, PredicateError> {
-    if (schemaType === 'String') {
+    if (schemaType === 'String' || schemaType === 'Reference') {
         if (isStringOperatorType(operator)) {
             return is<StringValueNode>(value, 'StringValue')
                 ? success({
                       type: 'StringOperator',
                       operator,
-                      value: { type: 'StringLiteral', value: value.value },
+                      value: { type: ValueType.StringLiteral, value: value.value },
                   })
                 : failure<ScalarOperators, PredicateError>(`Comparison value must be a string.`);
         }
@@ -298,7 +332,7 @@ function operatorWithValue(
                           return {
                               operator,
                               type: 'StringSetOperator',
-                              value: { type: 'StringArray', value },
+                              value: { type: ValueType.StringArray, value },
                           };
                       }
                   )
@@ -314,7 +348,7 @@ function operatorWithValue(
                 ? success({
                       type: 'IntOperator',
                       operator,
-                      value: { type: 'IntLiteral', value: parseInt(value.value) },
+                      value: { type: ValueType.IntLiteral, value: parseInt(value.value) },
                   })
                 : failure<ScalarOperators, PredicateError>(`Comparison value must be an int.`);
         }
@@ -325,7 +359,10 @@ function operatorWithValue(
                       return {
                           operator,
                           type: 'IntSetOperator',
-                          value: { type: 'NumberArray', value: strings.map((s) => parseInt(s)) },
+                          value: {
+                              type: ValueType.NumberArray,
+                              value: strings.map((s) => parseInt(s)),
+                          },
                       };
                   })
                 : failure<IntSetOperator, PredicateError>(`Comparison value must be an int array.`);
@@ -338,7 +375,7 @@ function operatorWithValue(
                 ? success({
                       type: 'DoubleOperator',
                       operator,
-                      value: { type: 'DoubleLiteral', value: parseFloat(value.value) },
+                      value: { type: ValueType.DoubleLiteral, value: parseFloat(value.value) },
                   })
                 : failure<ScalarOperators, PredicateError>(`Comparison value must be a double.`);
         }
@@ -350,7 +387,10 @@ function operatorWithValue(
                           return {
                               operator,
                               type: 'DoubleSetOperator',
-                              value: { type: 'NumberArray', value: strings.map(parseFloat) },
+                              value: {
+                                  type: ValueType.NumberArray,
+                                  value: strings.map(parseFloat),
+                              },
                           };
                       }
                   )
@@ -366,7 +406,7 @@ function operatorWithValue(
                 ? success({
                       type: 'BooleanOperator',
                       operator,
-                      value: { type: 'BooleanLiteral', value: value.value },
+                      value: { type: ValueType.BooleanLiteral, value: value.value },
                   })
                 : failure<ScalarOperators, PredicateError>(`Comparison value must be a boolean.`);
         }

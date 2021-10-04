@@ -4,11 +4,17 @@ import {
     combinePredicates,
     comparison,
     stringLiteral,
+    extractPath,
 } from '../util';
 import infoJson from './mockData/objectInfos.json';
 
 import { FieldInfo, ObjectInfoMap, RelationshipInfo } from '../info-types';
-import { CompoundPredicate } from '../Predicate';
+import {
+    ComparisonOperator,
+    CompoundOperator,
+    CompoundPredicate,
+    PredicateType,
+} from '../Predicate';
 
 const objectInfoMap = infoJson as ObjectInfoMap;
 describe('utils', () => {
@@ -16,7 +22,6 @@ describe('utils', () => {
         it('returns scalar field with matching fieldName', () => {
             const actual = getFieldInfo('TimeSheet', 'TimeSheetNumber', objectInfoMap);
             const expected: FieldInfo = {
-                fieldType: 'Scalar',
                 dataType: 'String',
                 apiName: 'TimeSheetNumber',
             };
@@ -26,10 +31,10 @@ describe('utils', () => {
         it('returns reference field with relationshipName', () => {
             const actual = getFieldInfo('TimeSheet', 'Owner', objectInfoMap);
             const expected: FieldInfo = {
-                fieldType: 'Reference',
                 apiName: 'OwnerId',
+                dataType: 'Reference',
                 relationshipName: 'Owner',
-                referenceToaApiName: 'User',
+                referenceToInfos: [{ apiName: 'User' }],
             };
             expect(actual).toEqual(expected);
         });
@@ -69,28 +74,48 @@ describe('utils', () => {
 
     describe('combinePredicates', () => {
         it('flattens compound predicates that match the given operator', () => {
-            const predicate1 = comparison(stringLiteral('1'), 'ne', stringLiteral('one'));
-            const predicate2 = comparison(stringLiteral('2'), 'ne', stringLiteral('dos'));
-            const predicate3 = comparison(stringLiteral('3'), 'ne', stringLiteral('tre'));
-            const predicate4 = comparison(stringLiteral('4'), 'ne', stringLiteral('quatro'));
-            const predicate5 = comparison(stringLiteral('5'), 'ne', stringLiteral('cinque'));
+            const predicate1 = comparison(
+                stringLiteral('1'),
+                ComparisonOperator.ne,
+                stringLiteral('one')
+            );
+            const predicate2 = comparison(
+                stringLiteral('2'),
+                ComparisonOperator.ne,
+                stringLiteral('dos')
+            );
+            const predicate3 = comparison(
+                stringLiteral('3'),
+                ComparisonOperator.ne,
+                stringLiteral('tre')
+            );
+            const predicate4 = comparison(
+                stringLiteral('4'),
+                ComparisonOperator.ne,
+                stringLiteral('quatro')
+            );
+            const predicate5 = comparison(
+                stringLiteral('5'),
+                ComparisonOperator.ne,
+                stringLiteral('cinque')
+            );
 
             const and: CompoundPredicate = {
-                type: 'compound',
-                operator: 'and',
+                type: PredicateType.compound,
+                operator: CompoundOperator.and,
                 children: [predicate2, predicate3],
             };
 
             const and2: CompoundPredicate = {
-                type: 'compound',
-                operator: 'and',
+                type: PredicateType.compound,
+                operator: CompoundOperator.and,
                 children: [predicate4, predicate5],
             };
 
-            const actual = combinePredicates([and, and2, predicate1], 'and');
+            const actual = combinePredicates([and, and2, predicate1], CompoundOperator.and);
             const expected: CompoundPredicate = {
-                type: 'compound',
-                operator: 'and',
+                type: PredicateType.compound,
+                operator: CompoundOperator.and,
                 children: [predicate1, predicate2, predicate3, predicate4, predicate5],
             };
 
@@ -98,26 +123,38 @@ describe('utils', () => {
         });
 
         it('does not flatten compound predicates that do not match the given operator', () => {
-            const predicate1 = comparison(stringLiteral('1'), 'ne', stringLiteral('one'));
-            const predicate2 = comparison(stringLiteral('2'), 'ne', stringLiteral('dos'));
-            const predicate3 = comparison(stringLiteral('3'), 'ne', stringLiteral('tre'));
+            const predicate1 = comparison(
+                stringLiteral('1'),
+                ComparisonOperator.ne,
+                stringLiteral('one')
+            );
+            const predicate2 = comparison(
+                stringLiteral('2'),
+                ComparisonOperator.ne,
+                stringLiteral('dos')
+            );
+            const predicate3 = comparison(
+                stringLiteral('3'),
+                ComparisonOperator.ne,
+                stringLiteral('tre')
+            );
 
             const or: CompoundPredicate = {
-                type: 'compound',
-                operator: 'or',
+                type: PredicateType.compound,
+                operator: CompoundOperator.or,
                 children: [predicate2, predicate3],
             };
 
             const or2: CompoundPredicate = {
-                type: 'compound',
-                operator: 'or',
+                type: PredicateType.compound,
+                operator: CompoundOperator.or,
                 children: [predicate2, predicate3],
             };
 
-            const actual = combinePredicates([or, or2, predicate1], 'and');
+            const actual = combinePredicates([or, or2, predicate1], CompoundOperator.and);
             const expected: CompoundPredicate = {
-                type: 'compound',
-                operator: 'and',
+                type: PredicateType.compound,
+                operator: CompoundOperator.and,
                 children: [predicate1, or, or2],
             };
 
@@ -125,14 +162,29 @@ describe('utils', () => {
         });
 
         it('includes comparison operators in resulting compound predicate', () => {
-            const predicate1 = comparison(stringLiteral('1'), 'ne', stringLiteral('one'));
-            const predicate2 = comparison(stringLiteral('2'), 'ne', stringLiteral('dos'));
-            const predicate3 = comparison(stringLiteral('3'), 'ne', stringLiteral('tre'));
+            const predicate1 = comparison(
+                stringLiteral('1'),
+                ComparisonOperator.ne,
+                stringLiteral('one')
+            );
+            const predicate2 = comparison(
+                stringLiteral('2'),
+                ComparisonOperator.ne,
+                stringLiteral('dos')
+            );
+            const predicate3 = comparison(
+                stringLiteral('3'),
+                ComparisonOperator.ne,
+                stringLiteral('tre')
+            );
 
-            const actual = combinePredicates([predicate1, predicate2, predicate3], 'and');
+            const actual = combinePredicates(
+                [predicate1, predicate2, predicate3],
+                CompoundOperator.and
+            );
             const expected: CompoundPredicate = {
-                type: 'compound',
-                operator: 'and',
+                type: PredicateType.compound,
+                operator: CompoundOperator.and,
                 children: [predicate1, predicate2, predicate3],
             };
 
@@ -140,12 +192,38 @@ describe('utils', () => {
         });
 
         it('returns a single comparison predicate if it is the only value included', () => {
-            const predicate = comparison(stringLiteral('Adrian'), 'ne', stringLiteral('Adrian'));
+            const predicate = comparison(
+                stringLiteral('Adrian'),
+                ComparisonOperator.ne,
+                stringLiteral('Adrian')
+            );
 
-            const andActual = combinePredicates([predicate], 'and');
-            const orActual = combinePredicates([predicate], 'or');
+            const andActual = combinePredicates([predicate], CompoundOperator.and);
+            const orActual = combinePredicates([predicate], CompoundOperator.or);
             expect(andActual).toEqual(predicate);
             expect(orActual).toEqual(predicate);
+        });
+    });
+
+    describe('extractPath', () => {
+        it('returns correct path for Id', () => {
+            const actual = extractPath('Id');
+            expect(actual).toEqual('data.id');
+        });
+
+        it('returns correct path for apiName', () => {
+            const actual = extractPath('ApiName');
+            expect(actual).toEqual('data.apiName');
+        });
+
+        it('returns correct path for field with subfield', () => {
+            const actual = extractPath('TimeSheetNumber', 'displayValue');
+            expect(actual).toEqual('data.fields.TimeSheetNumber.displayValue');
+        });
+
+        it('returns correct path for field with default subfield', () => {
+            const actual = extractPath('TimeSheetNumber');
+            expect(actual).toEqual('data.fields.TimeSheetNumber.value');
         });
     });
 });

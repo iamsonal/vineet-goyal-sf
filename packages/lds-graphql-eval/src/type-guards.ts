@@ -9,6 +9,7 @@ import {
     LuvioSelectionScalarFieldNode,
     LuvioValueNode,
 } from '@salesforce/lds-graphql-parser/dist/ast';
+import { DataType, FieldInfo } from './info-types';
 import { ComparisonOperator, CompoundOperator } from './Predicate';
 
 export function isListValueNode(node: LuvioValueNode): node is LuvioListValueNode {
@@ -53,7 +54,7 @@ export function is<T extends { kind: ExtractKind<T> }>(
 }
 
 export function isComparisonOperator(value: string): value is ComparisonOperator {
-    let values: ComparisonOperator[] = ['eq', 'like'];
+    let values: ComparisonOperator[] = [ComparisonOperator.eq, ComparisonOperator.like];
     return values.includes(value as ComparisonOperator);
 }
 
@@ -62,6 +63,20 @@ export function isDefined<T>(item: T | undefined): item is T {
 }
 
 export function isCompoundOperator(value: string): value is CompoundOperator {
-    let values: CompoundOperator[] = ['and', 'or'];
+    let values: CompoundOperator[] = [CompoundOperator.and, CompoundOperator.or];
     return values.includes(value as CompoundOperator);
+}
+
+export function isIdField(fieldInfo: FieldInfo): boolean {
+    return fieldInfo.apiName === 'Id' && fieldInfo.dataType === 'String';
+}
+
+export function isScalarDataType(type: DataType): boolean {
+    return (
+        type === 'Boolean' ||
+        type === 'String' ||
+        type === 'Double' ||
+        type === 'DateTime' ||
+        type === 'Int'
+    );
 }

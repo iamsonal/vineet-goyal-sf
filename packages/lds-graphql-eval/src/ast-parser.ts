@@ -7,7 +7,7 @@ import {
 } from '@salesforce/lds-graphql-parser/dist/ast';
 
 import { recordFilter } from './filter-parser';
-import { RelationshipInfo, ReferenceFieldInfo, ObjectInfoMap } from './info-types';
+import { RelationshipInfo, ReferenceFieldInfo, ObjectInfoMap, ReferenceToInfo } from './info-types';
 
 import {
     RecordQuery,
@@ -18,6 +18,11 @@ import {
     ChildField,
     JsonExtract,
     Predicate,
+    FieldType,
+    PredicateType,
+    CompoundOperator,
+    ComparisonOperator,
+    ValueType,
 } from './Predicate';
 import {
     errors,
@@ -36,11 +41,14 @@ import {
     isScalarFieldNode,
     isObjectFieldSelection,
     isDefined,
+    isScalarDataType,
+    isIdField,
 } from './type-guards';
 
 import {
     combinePredicates,
     comparison,
+    extractPath,
     getFieldInfo as getFieldInfo,
     getRelationshipInfo,
     referencePredicate,
@@ -49,13 +57,17 @@ import {
 
 import { flatMap, flatten } from './util/flatten';
 
+const REFERENCE_NAME_KEY = 'Reference';
+const API_NAME_KEY = 'ApiName';
+
+const { Extract, StringLiteral } = ValueType;
 interface ParserInput {
     objectInfoMap: ObjectInfoMap;
     userId: string;
 }
 
 function isSpanningField(value: QueryField): value is SpanningField {
-    return value.type === 'SpanningField';
+    return value.type === FieldType.Spanning;
 }
 
 function luvioSelections(node: { luvioSelections?: LuvioSelectionNode[] }): LuvioSelectionNode[] {
@@ -82,7 +94,7 @@ interface SpanningQuery {
 }
 
 interface SpanningField {
-    type: 'SpanningField';
+    type: FieldType.Spanning;
     path: string;
     spanning: SpanningQuery;
 }
@@ -92,16 +104,17 @@ type QueryField = ChildField | ScalarField | SpanningField;
 function spanningField(
     node: LuvioSelectionObjectFieldNode,
     fieldInfo: ReferenceFieldInfo,
+    names: string[],
     parentAlias: string,
     input: ParserInput
 ): Result<SpanningField, PredicateError[]> {
-    const parentQuery = spanningRecordQuery(node, fieldInfo, parentAlias, input);
+    const parentQuery = spanningRecordQuery(node, fieldInfo, names, parentAlias, input);
     if (parentQuery.isSuccess === false) {
         return failure(parentQuery.error);
     }
 
     const field: SpanningField = {
-        type: 'SpanningField',
+        type: FieldType.Spanning,
         path: '',
         spanning: parentQuery.value,
     };
@@ -109,20 +122,33 @@ function spanningField(
     return success(field);
 }
 
+function idField(jsonAlias: string, names: string[]): ScalarField {
+    const outputPath = names.concat('Id').join('.');
+
+    const extract: JsonExtract = {
+        type: Extract,
+        jsonAlias,
+        path: extractPath('Id'),
+    };
+    return { type: FieldType.Scalar, extract, path: outputPath };
+}
+
 function scalarField(
     node: LuvioSelectionObjectFieldNode,
     names: string[],
     jsonAlias: string
 ): ScalarField[] {
-    const fieldNames = names.concat(node.name);
+    const outputNames = names.concat(node.name);
 
     return [node]
         .reduce(flatMap(luvioSelections), [])
         .filter(isScalarFieldNode)
         .map((field) => {
-            const path = fieldNames.concat(field.name).join('.');
-            const extract: JsonExtract = { type: 'JsonExtract', jsonAlias, path };
-            return { type: 'ScalarField', extract, path };
+            const outputPath = outputNames.concat(field.name).join('.');
+            const path = extractPath(node.name, field.name);
+
+            const extract: JsonExtract = { type: Extract, jsonAlias, path };
+            return { type: FieldType.Scalar, extract, path: outputPath };
         });
 }
 
@@ -146,20 +172,27 @@ function selectionToQueryField(
 
     if (fieldInfo !== undefined) {
         //This is a spanning field
-        if (fieldInfo.fieldType === 'Reference') {
-            if (!isObjectFieldSelection(node)) {
+        if (fieldInfo.dataType === REFERENCE_NAME_KEY) {
+            if (!isObjectFieldSelection(node) && !isCustomFieldNode(node)) {
                 return failure([`Node type ${node.kind} is not a valid reference field type.`]);
             }
 
+            const selection: LuvioSelectionNode = { ...node, kind: 'ObjectFieldSelection' };
             if (fieldInfo.relationshipName === node.name) {
-                return spanningField(node, fieldInfo, parentAlias, input).map((f) => [f]);
-            } else {
-                return success(scalarField(node, names, parentAlias));
+                return spanningField(selection, fieldInfo, names, parentAlias, input).map((f) => [
+                    f,
+                ]);
             }
+
+            return success(scalarField(selection, names, parentAlias));
+        }
+
+        if (isIdField(fieldInfo)) {
+            return success([idField(parentAlias, names)]);
         }
 
         //Scalar field
-        if (fieldInfo.fieldType === 'Scalar') {
+        if (isScalarDataType(fieldInfo.dataType)) {
             if (!isObjectFieldSelection(node)) {
                 return failure([`Node type ${node.kind} is not a valid scalar field type.`]);
             }
@@ -169,7 +202,7 @@ function selectionToQueryField(
     }
 
     if (relationshipInfo === undefined) {
-        return failure([`Field ${node.name} for type ${parentApiName} not found.`]);
+        return failure([`Relationship ${node.name} for type ${parentApiName} not found.`]);
     }
 
     //Field is a connection to a child record type
@@ -181,7 +214,7 @@ function selectionToQueryField(
     const edgePath = fieldPath.concat('edges');
 
     return childRecordQuery(node, relationshipInfo, parentAlias, input).map((query) => {
-        return [{ type: 'ChildRecordField', path: edgePath.join('.'), connection: query }];
+        return [{ type: FieldType.Child, path: edgePath.join('.'), connection: query }];
     });
 }
 
@@ -216,8 +249,12 @@ function queryContainer<T extends RecordQuery>(
         return failure(inputFields.error);
     }
 
-    const extract: JsonExtract = { type: 'JsonExtract', jsonAlias, path: 'apiName' };
-    const typePredicate = comparison(extract, 'eq', stringLiteral(apiName));
+    const extract: JsonExtract = {
+        type: Extract,
+        jsonAlias,
+        path: extractPath(API_NAME_KEY),
+    };
+    const typePredicate = comparison(extract, ComparisonOperator.eq, stringLiteral(apiName));
     const spanningFields = inputFields.value.filter(isSpanningField);
     const predicates: ComparisonPredicate[] = spanningFields
         .map((field) => field.spanning.predicates)
@@ -238,14 +275,22 @@ function queryContainer<T extends RecordQuery>(
 function spanningRecordQuery(
     selection: LuvioSelectionObjectFieldNode,
     fieldInfo: ReferenceFieldInfo,
+    names: string[],
     parentAlias: string,
     input: ParserInput
 ): Result<SpanningQuery, PredicateError[]> {
-    const { apiName: fieldName, referenceToaApiName: apiName, relationshipName } = fieldInfo;
+    const { apiName: fieldName, referenceToInfos: referenceInfos, relationshipName } = fieldInfo;
     const alias = `${parentAlias}.${relationshipName}`;
     const selections = selection.luvioSelections || [];
+    const outPathNames = names.concat(relationshipName);
 
-    const internalFields = recordFields(selections, [], apiName, alias, input);
+    const referenceToInfo: ReferenceToInfo | undefined = referenceInfos[0];
+    if (referenceToInfo === undefined) {
+        return failure([`No reference info found for ${fieldName}`]);
+    }
+
+    const { apiName } = referenceToInfo;
+    const internalFields = recordFields(selections, outPathNames, apiName, alias, input);
     const joinPredicate = referencePredicate(parentAlias, alias, fieldName);
 
     return queryContainer(internalFields, alias, apiName, [joinPredicate]).map((result) => {
@@ -296,15 +341,15 @@ function scopeFilter(
         }
 
         return success({
-            type: 'comparison',
+            type: PredicateType.comparison,
             left: {
-                type: 'JsonExtract',
+                type: Extract,
                 jsonAlias,
-                path: fieldInfo.apiName,
+                path: extractPath(fieldInfo.apiName),
             },
-            operator: 'eq',
+            operator: ComparisonOperator.eq,
             right: {
-                type: 'StringLiteral',
+                type: StringLiteral,
                 value: input.userId,
             },
         });
@@ -360,7 +405,13 @@ function recordQuery(
         .filter(named('node'))[0];
 
     //look for scalar fields, parent fields or children
-    const internalFields = recordFields(node.luvioSelections || [], [], apiName, alias, input);
+    const internalFields = recordFields(
+        node.luvioSelections || [],
+        ['node'],
+        apiName,
+        alias,
+        input
+    );
     return queryContainer(internalFields, alias, apiName, predicates).map((result) => {
         const { fields } = result;
         //combine the joins and remove duplicates
@@ -368,7 +419,7 @@ function recordQuery(
 
         const predicate = combinePredicates(
             [...additionalPredicates, ...result.predicates].filter(isDefined),
-            'and'
+            CompoundOperator.and
         );
         const type = 'connection';
 
@@ -382,6 +433,10 @@ function rootRecordQuery(
 ): Result<RecordQuery, PredicateError[]> {
     const alias = selection.name;
     const apiName = selection.name;
+
+    if (input.objectInfoMap[alias] === undefined) {
+        return failure([`Unknown record type "${alias}"`]);
+    }
 
     return recordQuery(selection, alias, apiName, [], input);
 }

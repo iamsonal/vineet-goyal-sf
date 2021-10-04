@@ -3,12 +3,16 @@
         "childRelationships": {},
 
         "fields": {
-            "Id": { "dataType": "String", "fieldType": "Scalar", "apiName": "Id" },
-            "Email": { "dataType": "String", "fieldType": "Scalar", "apiName": "Email" },
+            "Id": { "dataType": "String", "apiName": "Id" },
+            "Email": { "dataType": "String", "apiName": "Email" },
             "CreatedById": {
-                "fieldType": "Reference",
                 "apiName": "CreatedById",
-                "referenceToaApiName": "User",
+                "dataType": "Reference",
+                "referenceToInfos": [
+                    {
+                        "apiName": "User"
+                    }
+                ],
                 "relationshipName": "CreatedBy"
             }
         }
@@ -30,38 +34,42 @@
 
         "fields": {
             "OwnerId": {
-                "fieldType": "Reference",
                 "apiName": "OwnerId",
+                "dataType": "Reference",
                 "relationshipName": "Owner",
-                "referenceToaApiName": "User"
+                "referenceToInfos": [
+                    {
+                        "apiName": "User"
+                    }
+                ]
             },
             "CreatedById": {
-                "fieldType": "Reference",
                 "apiName": "CreatedById",
+                "dataType": "Reference",
                 "relationshipName": "CreatedBy",
-                "referenceToaApiName": "User"
+                "referenceToInfos": [
+                    {
+                        "apiName": "User"
+                    }
+                ]
             },
 
-            "Id": { "fieldType": "Scalar", "dataType": "String", "apiName": "Id" },
+            "Id": { "dataType": "String", "apiName": "Id" },
             "TimeSheetNumber": {
-                "fieldType": "Scalar",
                 "dataType": "String",
                 "apiName": "TimeSheetNumber"
             },
             "CreatedDate": {
-                "fieldType": "Scalar",
                 "dataType": "DateTime",
                 "apiName": "CreatedDate"
             },
-            "EndDate": { "fieldType": "Scalar", "dataType": "Date", "apiName": "EndDate" },
-            "IsDeleted": { "fieldType": "Scalar", "dataType": "Boolean", "apiName": "IsDeleted" },
+            "EndDate": { "dataType": "Date", "apiName": "EndDate" },
+            "IsDeleted": { "dataType": "Boolean", "apiName": "IsDeleted" },
             "TotalDurationInHours": {
-                "fieldType": "Scalar",
                 "dataType": "Double",
                 "apiName": "TotalDurationInHours"
             },
             "TotalDurationInMinutes": {
-                "fieldType": "Scalar",
                 "dataType": "Int",
                 "apiName": "TotalDurationInMinutes"
             }
@@ -72,17 +80,27 @@
         "childRelationships": {},
 
         "fields": {
-            "Id": { "dataType": "String", "fieldType": "Scalar", "apiName": "Id" },
+            "Id": { "dataType": "String", "apiName": "Id" },
             "TimeSheetId": {
-                "fieldType": "Reference",
                 "apiName": "TimeSheetId",
-                "referenceToaApiName": "TimeSheet",
+                "dataType": "Reference",
+
+                "referenceToInfos": [
+                    {
+                        "apiName": "TimeSheet"
+                    }
+                ],
                 "relationshipName": "TimeSheet"
             },
             "WorkOrderId": {
-                "fieldType": "Reference",
                 "apiName": "WorkOrderId",
-                "referenceToaApiName": "WorkOrder",
+                "dataType": "Reference",
+
+                "referenceToInfos": [
+                    {
+                        "apiName": "WorkOrder"
+                    }
+                ],
                 "relationshipName": "WorkOrder"
             }
         }
@@ -92,7 +110,7 @@
         "childRelationships": {},
 
         "fields": {
-            "Id": { "dataType": "Boolean", "fieldType": "Scalar", "apiName": "Id" }
+            "Id": { "dataType": "Boolean", "apiName": "Id" }
         }
     }
 }

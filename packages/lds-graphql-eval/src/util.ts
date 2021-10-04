@@ -10,7 +10,9 @@ import {
     isComparisonPredicate,
     isCompoundPredicate,
     Predicate,
+    PredicateType,
     StringLiteral,
+    ValueType,
 } from './Predicate';
 
 import { flatten } from './util/flatten';
@@ -29,7 +31,7 @@ export function getFieldInfo(
     return Object.values(objInfo.fields).filter(
         (field) =>
             field.apiName === fieldName ||
-            (field.fieldType === 'Reference' && field.relationshipName === fieldName)
+            (field.dataType === 'Reference' && field.relationshipName === fieldName)
     )[0];
 }
 
@@ -44,19 +46,19 @@ export function getRelationshipInfo(
 }
 
 export function stringLiteral(value: string): StringLiteral {
-    return { type: 'StringLiteral', value };
+    return { type: ValueType.StringLiteral, value };
 }
 
 export function intLiteral(value: number): IntLiteral {
-    return { type: 'IntLiteral', value };
+    return { type: ValueType.IntLiteral, value };
 }
 
 export function doubleLiteral(value: number): DoubleLiteral {
-    return { type: 'DoubleLiteral', value };
+    return { type: ValueType.DoubleLiteral, value };
 }
 
 export function booleanLiteral(value: Boolean): BooleanLiteral {
-    return { type: 'BooleanLiteral', value };
+    return { type: ValueType.BooleanLiteral, value };
 }
 
 export function comparison(
@@ -64,7 +66,7 @@ export function comparison(
     operator: ComparisonOperator,
     right: Expression
 ): ComparisonPredicate {
-    return { type: 'comparison', left, right, operator };
+    return { type: PredicateType.comparison, left, right, operator };
 }
 
 function compoundOrSelf(children: Predicate[], operator: CompoundOperator): Predicate {
@@ -72,7 +74,7 @@ function compoundOrSelf(children: Predicate[], operator: CompoundOperator): Pred
         return children[0];
     }
 
-    return { type: 'compound', operator, children };
+    return { type: PredicateType.compound, operator, children };
 }
 
 export function isEmptyPredicate(predicate: Predicate): Boolean {
@@ -110,9 +112,26 @@ export function referencePredicate(
     toAlias: string,
     referenceKey: string
 ): ComparisonPredicate {
-    return comparison({ type: 'JsonExtract', jsonAlias: fromAlias, path: referenceKey }, 'eq', {
-        type: 'JsonExtract',
-        jsonAlias: toAlias,
-        path: 'id',
-    });
+    return comparison(
+        { type: ValueType.Extract, jsonAlias: fromAlias, path: extractPath(referenceKey) },
+        ComparisonOperator.eq,
+        {
+            type: ValueType.Extract,
+            jsonAlias: toAlias,
+            path: extractPath('Id'),
+        }
+    );
+}
+
+export function extractPath(fieldName: string, subfield: string | undefined = undefined): string {
+    switch (fieldName) {
+        case 'Id':
+            return 'data.id';
+        case 'ApiName':
+            return 'data.apiName';
+        default: {
+            const sub = subfield !== undefined ? subfield : 'value';
+            return `data.fields.${fieldName}.${sub}`;
+        }
+    }
 }

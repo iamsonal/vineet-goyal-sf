@@ -1,28 +1,23 @@
-export type DataType =
-    | 'Boolean'
-    | 'String'
-    | 'Double'
-    | 'Int'
-    | 'Id'
-    | 'Time'
-    | 'Date'
-    | 'DateTime';
+export type DataType = 'Boolean' | 'String' | 'Double' | 'Date' | 'DateTime' | 'Int' | 'Reference';
 
 export type FieldInfo = ScalarFieldInfo | ReferenceFieldInfo;
 
 interface BaseFieldInfo {
-    fieldType: string;
+    dataType: string;
     apiName: string;
 }
 
 export interface ScalarFieldInfo extends BaseFieldInfo {
-    fieldType: 'Scalar';
-    dataType: DataType;
+    dataType: 'Boolean' | 'String' | 'Double' | 'DateTime' | 'Int';
+}
+
+export interface ReferenceToInfo {
+    apiName: string;
 }
 
 export interface ReferenceFieldInfo extends BaseFieldInfo {
-    fieldType: 'Reference';
-    referenceToaApiName: string;
+    dataType: 'Reference';
+    referenceToInfos: ReferenceToInfo[];
     relationshipName: string;
 }
 

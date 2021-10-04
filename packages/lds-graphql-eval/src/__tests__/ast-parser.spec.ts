@@ -3,13 +3,21 @@ import * as parser from '@salesforce/lds-graphql-parser';
 import infoJson from './mockData/objectInfos.json';
 import { unwrappedError, unwrappedValue } from '../Result';
 import { ObjectInfoMap } from '../info-types';
-import { RootQuery } from '../Predicate';
+import {
+    FieldType,
+    ComparisonOperator,
+    PredicateType,
+    RootQuery,
+    CompoundOperator,
+    ValueType,
+} from '../Predicate';
 
 const objectInfoMap = infoJson as ObjectInfoMap;
+const Extract = ValueType.Extract;
 
 describe('ast-parser', () => {
     describe('MINE scope', () => {
-        it('mine scope results in correct predicate', () => {
+        it('results in correct predicate', () => {
             const source = /* GraphQL */ `
                 query {
                     uiapi {
@@ -40,42 +48,42 @@ describe('ast-parser', () => {
 
                         fields: [
                             {
-                                type: 'ScalarField',
-                                path: 'TimeSheetNumber.value',
+                                type: FieldType.Scalar,
+                                path: 'node.TimeSheetNumber.value',
                                 extract: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet',
-                                    path: 'TimeSheetNumber.value',
+                                    path: 'data.fields.TimeSheetNumber.value',
                                 },
                             },
                         ],
                         predicate: {
-                            type: 'compound',
-                            operator: 'and',
+                            type: PredicateType.compound,
+                            operator: CompoundOperator.and,
                             children: [
                                 {
-                                    type: 'comparison',
+                                    type: PredicateType.comparison,
                                     left: {
-                                        type: 'JsonExtract',
+                                        type: Extract,
                                         jsonAlias: 'TimeSheet',
-                                        path: 'OwnerId',
+                                        path: 'data.fields.OwnerId.value',
                                     },
-                                    operator: 'eq',
+                                    operator: ComparisonOperator.eq,
                                     right: {
-                                        type: 'StringLiteral',
+                                        type: ValueType.StringLiteral,
                                         value: 'MyId',
                                     },
                                 },
                                 {
-                                    type: 'comparison',
-                                    operator: 'eq',
+                                    type: PredicateType.comparison,
+                                    operator: ComparisonOperator.eq,
                                     left: {
-                                        type: 'JsonExtract',
+                                        type: Extract,
                                         jsonAlias: 'TimeSheet',
-                                        path: 'apiName',
+                                        path: 'data.apiName',
                                     },
                                     right: {
-                                        type: 'StringLiteral',
+                                        type: ValueType.StringLiteral,
                                         value: 'TimeSheet',
                                     },
                                 },
@@ -89,7 +97,7 @@ describe('ast-parser', () => {
             expect(unwrappedValue(result)).toEqual(expected);
         });
 
-        it('mine scope results in an error if Record type does not have an OwnerId field', () => {
+        it('results in an error if Record type does not have an OwnerId field', () => {
             const source = /* GraphQL */ `
                 query {
                     uiapi {
@@ -163,6 +171,67 @@ describe('ast-parser', () => {
         });
     });
 
+    describe('Id tests', () => {
+        it('uses id field for edge values', () => {
+            const source = /* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            TimeSheet @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `;
+
+            const expected: RootQuery = {
+                type: 'root',
+                connections: [
+                    {
+                        alias: 'TimeSheet',
+                        apiName: 'TimeSheet',
+                        type: 'connection',
+                        first: undefined,
+                        joinNames: [],
+
+                        fields: [
+                            {
+                                type: FieldType.Scalar,
+                                path: 'node.Id',
+                                extract: {
+                                    type: Extract,
+                                    jsonAlias: 'TimeSheet',
+                                    path: 'data.id',
+                                },
+                            },
+                        ],
+                        predicate: {
+                            type: PredicateType.comparison,
+                            operator: ComparisonOperator.eq,
+                            left: {
+                                type: Extract,
+                                jsonAlias: 'TimeSheet',
+                                path: 'data.apiName',
+                            },
+                            right: {
+                                type: ValueType.StringLiteral,
+                                value: 'TimeSheet',
+                            },
+                        },
+                    },
+                ],
+            };
+
+            const result = transform(parser.default(source), { userId: 'MyId', objectInfoMap });
+            expect(unwrappedValue(result)).toEqual(expected);
+        });
+    });
+
     it('transforms GraphQL operation into a custom AST', () => {
         const source = /* GraphQL */ `
             query {
@@ -195,34 +264,34 @@ describe('ast-parser', () => {
 
                     fields: [
                         {
-                            type: 'ScalarField',
-                            path: 'TimeSheetNumber.value',
+                            type: FieldType.Scalar,
+                            path: 'node.TimeSheetNumber.value',
                             extract: {
-                                type: 'JsonExtract',
+                                type: Extract,
                                 jsonAlias: 'TimeSheet',
-                                path: 'TimeSheetNumber.value',
+                                path: 'data.fields.TimeSheetNumber.value',
                             },
                         },
                         {
-                            type: 'ScalarField',
-                            path: 'TimeSheetNumber.displayValue',
+                            type: FieldType.Scalar,
+                            path: 'node.TimeSheetNumber.displayValue',
                             extract: {
-                                type: 'JsonExtract',
+                                type: Extract,
                                 jsonAlias: 'TimeSheet',
-                                path: 'TimeSheetNumber.displayValue',
+                                path: 'data.fields.TimeSheetNumber.displayValue',
                             },
                         },
                     ],
                     predicate: {
-                        type: 'comparison',
-                        operator: 'eq',
+                        type: PredicateType.comparison,
+                        operator: ComparisonOperator.eq,
                         left: {
-                            type: 'JsonExtract',
+                            type: Extract,
                             jsonAlias: 'TimeSheet',
-                            path: 'apiName',
+                            path: 'data.apiName',
                         },
                         right: {
-                            type: 'StringLiteral',
+                            type: ValueType.StringLiteral,
                             value: 'TimeSheet',
                         },
                     },
@@ -275,61 +344,61 @@ describe('ast-parser', () => {
 
                     fields: [
                         {
-                            type: 'ScalarField',
-                            path: 'TimeSheetNumber.value',
+                            type: FieldType.Scalar,
+                            path: 'node.TimeSheetNumber.value',
                             extract: {
-                                type: 'JsonExtract',
+                                type: Extract,
                                 jsonAlias: 'TimeSheet',
-                                path: 'TimeSheetNumber.value',
+                                path: 'data.fields.TimeSheetNumber.value',
                             },
                         },
                         {
-                            type: 'ScalarField',
-                            path: 'TimeSheetNumber.displayValue',
+                            type: FieldType.Scalar,
+                            path: 'node.TimeSheetNumber.displayValue',
                             extract: {
-                                type: 'JsonExtract',
+                                type: Extract,
                                 jsonAlias: 'TimeSheet',
-                                path: 'TimeSheetNumber.displayValue',
+                                path: 'data.fields.TimeSheetNumber.displayValue',
                             },
                         },
                         {
-                            type: 'ScalarField',
-                            path: 'OwnerId.value',
+                            type: FieldType.Scalar,
+                            path: 'node.OwnerId.value',
                             extract: {
-                                type: 'JsonExtract',
+                                type: Extract,
                                 jsonAlias: 'TimeSheet',
-                                path: 'OwnerId.value',
+                                path: 'data.fields.OwnerId.value',
                             },
                         },
                         {
-                            type: 'ScalarField',
-                            path: 'OwnerId.displayValue',
+                            type: FieldType.Scalar,
+                            path: 'node.OwnerId.displayValue',
                             extract: {
-                                type: 'JsonExtract',
+                                type: Extract,
                                 jsonAlias: 'TimeSheet',
-                                path: 'OwnerId.displayValue',
+                                path: 'data.fields.OwnerId.displayValue',
                             },
                         },
                         {
-                            type: 'ScalarField',
-                            path: 'IsDeleted.value',
+                            type: FieldType.Scalar,
+                            path: 'node.IsDeleted.value',
                             extract: {
-                                type: 'JsonExtract',
+                                type: Extract,
                                 jsonAlias: 'TimeSheet',
-                                path: 'IsDeleted.value',
+                                path: 'data.fields.IsDeleted.value',
                             },
                         },
                     ],
                     predicate: {
-                        type: 'comparison',
-                        operator: 'eq',
+                        type: PredicateType.comparison,
+                        operator: ComparisonOperator.eq,
                         left: {
-                            type: 'JsonExtract',
+                            type: Extract,
                             jsonAlias: 'TimeSheet',
-                            path: 'apiName',
+                            path: 'data.apiName',
                         },
                         right: {
-                            type: 'StringLiteral',
+                            type: ValueType.StringLiteral,
                             value: 'TimeSheet',
                         },
                     },
@@ -375,65 +444,65 @@ describe('ast-parser', () => {
 
                     fields: [
                         {
-                            type: 'ScalarField',
-                            path: 'Email.value',
+                            type: FieldType.Scalar,
+                            path: 'node.CreatedBy.Email.value',
                             extract: {
-                                type: 'JsonExtract',
+                                type: Extract,
                                 jsonAlias: 'TimeSheet.CreatedBy',
-                                path: 'Email.value',
+                                path: 'data.fields.Email.value',
                             },
                         },
                         {
-                            type: 'ScalarField',
-                            path: 'Email.displayValue',
+                            type: FieldType.Scalar,
+                            path: 'node.CreatedBy.Email.displayValue',
                             extract: {
-                                type: 'JsonExtract',
+                                type: Extract,
                                 jsonAlias: 'TimeSheet.CreatedBy',
-                                path: 'Email.displayValue',
+                                path: 'data.fields.Email.displayValue',
                             },
                         },
                     ],
                     predicate: {
-                        type: 'compound',
-                        operator: 'and',
+                        type: PredicateType.compound,
+                        operator: CompoundOperator.and,
                         children: [
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet.CreatedBy',
-                                    path: 'apiName',
+                                    path: 'data.apiName',
                                 },
                                 right: {
-                                    type: 'StringLiteral',
+                                    type: ValueType.StringLiteral,
                                     value: 'User',
                                 },
                             },
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet',
-                                    path: 'CreatedById',
+                                    path: 'data.fields.CreatedById.value',
                                 },
                                 right: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet.CreatedBy',
-                                    path: 'id',
+                                    path: 'data.id',
                                 },
                             },
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet',
-                                    path: 'apiName',
+                                    path: 'data.apiName',
                                 },
                                 right: {
-                                    type: 'StringLiteral',
+                                    type: ValueType.StringLiteral,
                                     value: 'TimeSheet',
                                 },
                             },
@@ -494,65 +563,65 @@ describe('ast-parser', () => {
 
                     fields: [
                         {
-                            type: 'ScalarField',
-                            path: 'Email.value',
+                            type: FieldType.Scalar,
+                            path: 'node.CreatedBy.Email.value',
                             extract: {
-                                type: 'JsonExtract',
+                                type: Extract,
                                 jsonAlias: 'TimeSheet.CreatedBy',
-                                path: 'Email.value',
+                                path: 'data.fields.Email.value',
                             },
                         },
                         {
-                            type: 'ScalarField',
-                            path: 'Email.displayValue',
+                            type: FieldType.Scalar,
+                            path: 'node.CreatedBy.Email.displayValue',
                             extract: {
-                                type: 'JsonExtract',
+                                type: Extract,
                                 jsonAlias: 'TimeSheet.CreatedBy',
-                                path: 'Email.displayValue',
+                                path: 'data.fields.Email.displayValue',
                             },
                         },
                     ],
                     predicate: {
-                        type: 'compound',
-                        operator: 'and',
+                        type: PredicateType.compound,
+                        operator: CompoundOperator.and,
                         children: [
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet.CreatedBy',
-                                    path: 'apiName',
+                                    path: 'data.apiName',
                                 },
                                 right: {
-                                    type: 'StringLiteral',
+                                    type: ValueType.StringLiteral,
                                     value: 'User',
                                 },
                             },
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet',
-                                    path: 'CreatedById',
+                                    path: 'data.fields.CreatedById.value',
                                 },
                                 right: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet.CreatedBy',
-                                    path: 'id',
+                                    path: 'data.id',
                                 },
                             },
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet',
-                                    path: 'apiName',
+                                    path: 'data.apiName',
                                 },
                                 right: {
-                                    type: 'StringLiteral',
+                                    type: ValueType.StringLiteral,
                                     value: 'TimeSheet',
                                 },
                             },
@@ -568,65 +637,65 @@ describe('ast-parser', () => {
 
                     fields: [
                         {
-                            type: 'ScalarField',
-                            path: 'Email.value',
+                            type: FieldType.Scalar,
+                            path: 'node.CreatedBy.Email.value',
                             extract: {
-                                type: 'JsonExtract',
+                                type: Extract,
                                 jsonAlias: 'User.CreatedBy',
-                                path: 'Email.value',
+                                path: 'data.fields.Email.value',
                             },
                         },
                         {
-                            type: 'ScalarField',
-                            path: 'Email.displayValue',
+                            type: FieldType.Scalar,
+                            path: 'node.CreatedBy.Email.displayValue',
                             extract: {
-                                type: 'JsonExtract',
+                                type: Extract,
                                 jsonAlias: 'User.CreatedBy',
-                                path: 'Email.displayValue',
+                                path: 'data.fields.Email.displayValue',
                             },
                         },
                     ],
                     predicate: {
-                        type: 'compound',
-                        operator: 'and',
+                        type: PredicateType.compound,
+                        operator: CompoundOperator.and,
                         children: [
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'User.CreatedBy',
-                                    path: 'apiName',
+                                    path: 'data.apiName',
                                 },
                                 right: {
-                                    type: 'StringLiteral',
+                                    type: ValueType.StringLiteral,
                                     value: 'User',
                                 },
                             },
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'User',
-                                    path: 'CreatedById',
+                                    path: 'data.fields.CreatedById.value',
                                 },
                                 right: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'User.CreatedBy',
-                                    path: 'id',
+                                    path: 'data.id',
                                 },
                             },
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'User',
-                                    path: 'apiName',
+                                    path: 'data.apiName',
                                 },
                                 right: {
-                                    type: 'StringLiteral',
+                                    type: ValueType.StringLiteral,
                                     value: 'User',
                                 },
                             },
@@ -651,9 +720,7 @@ describe('ast-parser', () => {
                                     TimeSheetEntries @connection {
                                         edges {
                                             node @resource(type: "Record") {
-                                                Id {
-                                                    value
-                                                }
+                                                Id
                                             }
                                         }
                                     }
@@ -676,8 +743,8 @@ describe('ast-parser', () => {
                     joinNames: [],
                     fields: [
                         {
-                            type: 'ChildRecordField',
-                            path: 'TimeSheetEntries.edges',
+                            type: FieldType.Child,
+                            path: 'node.TimeSheetEntries.edges',
                             connection: {
                                 alias: 'TimeSheet.TimeSheetEntries',
                                 apiName: 'TimeSheetEntry',
@@ -686,43 +753,43 @@ describe('ast-parser', () => {
                                 joinNames: [],
                                 fields: [
                                     {
-                                        type: 'ScalarField',
-                                        path: 'Id.value',
+                                        type: FieldType.Scalar,
+                                        path: 'node.Id',
                                         extract: {
-                                            type: 'JsonExtract',
+                                            type: Extract,
                                             jsonAlias: 'TimeSheet.TimeSheetEntries',
-                                            path: 'Id.value',
+                                            path: 'data.id',
                                         },
                                     },
                                 ],
                                 predicate: {
-                                    type: 'compound',
-                                    operator: 'and',
+                                    type: PredicateType.compound,
+                                    operator: CompoundOperator.and,
                                     children: [
                                         {
-                                            type: 'comparison',
-                                            operator: 'eq',
+                                            type: PredicateType.comparison,
+                                            operator: ComparisonOperator.eq,
                                             left: {
                                                 jsonAlias: 'TimeSheet.TimeSheetEntries',
-                                                path: 'apiName',
-                                                type: 'JsonExtract',
+                                                path: 'data.apiName',
+                                                type: Extract,
                                             },
                                             right: {
-                                                type: 'StringLiteral',
+                                                type: ValueType.StringLiteral,
                                                 value: 'TimeSheetEntry',
                                             },
                                         },
                                         {
-                                            type: 'comparison',
-                                            operator: 'eq',
+                                            type: PredicateType.comparison,
+                                            operator: ComparisonOperator.eq,
                                             left: {
-                                                type: 'JsonExtract',
-                                                path: 'TimeSheetId',
+                                                type: Extract,
+                                                path: 'data.fields.TimeSheetId.value',
                                                 jsonAlias: 'TimeSheet.TimeSheetEntries',
                                             },
                                             right: {
-                                                type: 'JsonExtract',
-                                                path: 'id',
+                                                type: Extract,
+                                                path: 'data.id',
                                                 jsonAlias: 'TimeSheet',
                                             },
                                         },
@@ -732,15 +799,15 @@ describe('ast-parser', () => {
                         },
                     ],
                     predicate: {
-                        type: 'comparison',
-                        operator: 'eq',
+                        type: PredicateType.comparison,
+                        operator: ComparisonOperator.eq,
                         left: {
                             jsonAlias: 'TimeSheet',
-                            path: 'apiName',
-                            type: 'JsonExtract',
+                            path: 'data.apiName',
+                            type: Extract,
                         },
                         right: {
-                            type: 'StringLiteral',
+                            type: ValueType.StringLiteral,
                             value: 'TimeSheet',
                         },
                     },
@@ -784,97 +851,97 @@ describe('ast-parser', () => {
 
                     fields: [
                         {
-                            type: 'ScalarField',
-                            path: 'TimeSheetNumber.value',
+                            type: FieldType.Scalar,
+                            path: 'node.TimeSheetNumber.value',
                             extract: {
-                                type: 'JsonExtract',
+                                type: Extract,
                                 jsonAlias: 'TimeSheet',
-                                path: 'TimeSheetNumber.value',
+                                path: 'data.fields.TimeSheetNumber.value',
                             },
                         },
                     ],
                     predicate: {
-                        type: 'compound',
-                        operator: 'and',
+                        type: PredicateType.compound,
+                        operator: CompoundOperator.and,
                         children: [
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet.CreatedBy.CreatedBy',
-                                    path: 'Email',
+                                    path: 'data.fields.Email.value',
                                 },
                                 right: {
-                                    type: 'StringLiteral',
+                                    type: ValueType.StringLiteral,
                                     value: 'xyz',
                                 },
                             },
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet.CreatedBy',
-                                    path: 'CreatedById',
+                                    path: 'data.fields.CreatedById.value',
                                 },
                                 right: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet.CreatedBy.CreatedBy',
-                                    path: 'id',
+                                    path: 'data.id',
                                 },
                             },
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet.CreatedBy.CreatedBy',
-                                    path: 'apiName',
+                                    path: 'data.apiName',
                                 },
                                 right: {
-                                    type: 'StringLiteral',
+                                    type: ValueType.StringLiteral,
                                     value: 'User',
                                 },
                             },
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet',
-                                    path: 'CreatedById',
+                                    path: 'data.fields.CreatedById.value',
                                 },
                                 right: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet.CreatedBy',
-                                    path: 'id',
+                                    path: 'data.id',
                                 },
                             },
 
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet.CreatedBy',
-                                    path: 'apiName',
+                                    path: 'data.apiName',
                                 },
                                 right: {
-                                    type: 'StringLiteral',
+                                    type: ValueType.StringLiteral,
                                     value: 'User',
                                 },
                             },
                             {
-                                type: 'comparison',
-                                operator: 'eq',
+                                type: PredicateType.comparison,
+                                operator: ComparisonOperator.eq,
                                 left: {
-                                    type: 'JsonExtract',
+                                    type: Extract,
                                     jsonAlias: 'TimeSheet',
-                                    path: 'apiName',
+                                    path: 'data.apiName',
                                 },
                                 right: {
-                                    type: 'StringLiteral',
+                                    type: ValueType.StringLiteral,
                                     value: 'TimeSheet',
                                 },
                             },

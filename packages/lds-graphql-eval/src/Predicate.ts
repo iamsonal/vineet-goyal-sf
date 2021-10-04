@@ -1,16 +1,51 @@
-export type PredicateType = 'compound' | 'comparison';
-export type ComparisonOperator = 'eq' | 'ne' | 'like' | 'lt' | 'gt' | 'lte' | 'gte' | 'in' | 'nin';
-export type CompoundOperator = 'and' | 'or';
+export enum PredicateType {
+    compound = 'compound',
+    comparison = 'comparison',
+}
+
+export enum CompoundOperator {
+    and = 'and',
+    or = 'or',
+}
+
+export enum ComparisonOperator {
+    eq = 'eq',
+    ne = 'ne',
+    like = 'like',
+    lt = 'lt',
+    gt = 'gt',
+    lte = 'lte',
+    gte = 'gte',
+    in = 'in',
+    nin = 'nin',
+}
+
+export enum FieldType {
+    Child = 'ChildField',
+    Scalar = 'ScalarField',
+    Spanning = 'SpanningField',
+}
+
+export enum ValueType {
+    Extract = 'JsonExtract',
+    BooleanLiteral = 'BooleanLiteral',
+    DoubleLiteral = 'DoubleLiteral',
+    IntLiteral = 'IntLiteral',
+    Identifier = 'Identifier',
+    StringLiteral = 'StringLiteral',
+    StringArray = 'StringArray',
+    NumberArray = 'NumberArray',
+}
 
 export interface ComparisonPredicate {
-    type: 'comparison';
+    type: PredicateType.comparison;
     operator: ComparisonOperator;
     left: Expression;
     right: Expression;
 }
 
 export interface CompoundPredicate {
-    type: 'compound';
+    type: PredicateType.compound;
     operator: CompoundOperator;
     children: Predicate[];
 }
@@ -22,13 +57,13 @@ export interface PredicateContainer {
 }
 
 export interface JsonExtract {
-    type: 'JsonExtract';
+    type: ValueType.Extract;
     jsonAlias: string;
     path: string;
 }
 
 export interface Identifier {
-    type: 'identifier';
+    type: ValueType.Identifier;
     value: string;
 }
 
@@ -41,43 +76,43 @@ export type LiteralValue =
     | NumberArray;
 
 export interface StringLiteral {
-    type: 'StringLiteral';
+    type: ValueType.StringLiteral;
     value: string;
 }
 
 export interface StringArray {
-    type: 'StringArray';
+    type: ValueType.StringArray;
     value: string[];
 }
 
 export interface NumberArray {
-    type: 'NumberArray';
+    type: ValueType.NumberArray;
     value: number[];
 }
 
 export interface IntLiteral {
-    type: 'IntLiteral';
+    type: ValueType.IntLiteral;
     value: number;
 }
 
 export interface DoubleLiteral {
-    type: 'DoubleLiteral';
+    type: ValueType.DoubleLiteral;
     value: number;
 }
 
 export interface BooleanLiteral {
-    type: 'BooleanLiteral';
+    type: ValueType.BooleanLiteral;
     value: Boolean;
 }
 
 export interface ScalarField {
-    type: 'ScalarField';
+    type: FieldType.Scalar;
     path: string;
     extract: JsonExtract;
 }
 
 export interface ChildField {
-    type: 'ChildRecordField';
+    type: FieldType.Child;
     path: string;
     connection: RecordQuery;
 }
@@ -102,9 +137,9 @@ export type Expression = Identifier | LiteralValue | JsonExtract;
 export type Predicate = CompoundPredicate | ComparisonPredicate;
 
 export function isCompoundPredicate(predicate: Predicate): predicate is CompoundPredicate {
-    return predicate.type === 'compound';
+    return predicate.type === PredicateType.compound;
 }
 
 export function isComparisonPredicate(predicate: Predicate): predicate is ComparisonPredicate {
-    return predicate.type === 'comparison';
+    return predicate.type === PredicateType.comparison;
 }

@@ -13,6 +13,7 @@
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",
         "clean": "rm -rf dist",
+        "parse": "rollup -c ./scripts/rollup.config.js && node  ./scripts/build/cli.mjs",
         "test:unit": "jest"
     },
     "devDependencies": {

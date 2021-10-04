@@ -5,7 +5,9 @@ import { JSONStringify } from '../../../utils/language';
 import { setup } from './integrationTestSetup';
 
 import mockData_Account_fields_Name from './data/gql/RecordQuery-Account-fields-Name.json';
+import mockData_Account_fields_Name_Phone from './data/gql/RecordQuery-Account-fields-Name-Phone.json';
 import mockData_Opportunity_fields_Name from './data/gql/RecordQuery-Opportunity-fields-Name.json';
+import { flushPromises } from '../../testUtils';
 
 describe('mobile runtime integration tests', () => {
     let networkAdapter: MockNimbusNetworkAdapter;
@@ -190,6 +192,143 @@ describe('mobile runtime integration tests', () => {
                     errors: [],
                 });
             });
+        });
+    });
+
+    describe('L2 cache hit', () => {
+        // this test populates the cache with Name field in first request, Phone field
+        // from second request, and then the third request for both should be cache
+        // hit since each field was individually already put in the cache
+        it('when adapter called with a composite of already cached fields', async () => {
+            const ast1 = parseAndVisit(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const config1 = {
+                query: ast1,
+                variables: {},
+            };
+
+            // Set the mock response
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(mockData_Account_fields_Name),
+            });
+
+            // populate DS by making adapter call
+            await graphQL(config1);
+
+            const ast2 = parseAndVisit(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Phone {
+                                            value
+                                            displayValue
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const config2 = {
+                query: ast2,
+                variables: {},
+            };
+
+            // Set the mock response
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(mockData_Account_fields_Name_Phone),
+            });
+
+            await graphQL(config2);
+
+            // now use similar query, but request subset of field properties (just "value")
+            const ast3 = parseAndVisit(/* GraphQL */ `
+                query {
+                    uiapi {
+                        query {
+                            Account(where: { Name: { like: "Account1" } }) @connection {
+                                edges {
+                                    node @resource(type: "Record") {
+                                        Name {
+                                            value
+                                            displayValue
+                                        }
+                                        Phone {
+                                            value
+                                            displayValue
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `);
+
+            const config3 = {
+                query: ast3,
+                variables: {},
+            };
+
+            const result = await graphQL(config3);
+            expect(result.state).toBe('Fulfilled');
+            expect(result.data).toEqual({
+                data: {
+                    uiapi: {
+                        query: {
+                            Account: {
+                                edges: [
+                                    {
+                                        node: {
+                                            Name: {
+                                                value: 'Account1',
+                                                displayValue: null,
+                                            },
+                                            Phone: {
+                                                value: '1234567890',
+                                                displayValue: null,
+                                            },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                errors: [],
+            });
+
+            // 3rd request should have been from DS so only 2 total network requests
+            expect(networkAdapter.sentRequests.length).toBe(2);
+
+            // ensure no outstanding promises throw errors
+            await flushPromises();
         });
     });
 });

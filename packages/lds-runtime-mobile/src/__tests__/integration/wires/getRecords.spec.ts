@@ -53,7 +53,8 @@ describe('mobile runtime integration tests', () => {
             expect(result.state).toBe('Fulfilled');
             expect(result.data.results[0].result.id).toBe(id1);
             expect(durableStore).toBeDefined();
-            (luvio as any).environment.store.reset();
+
+            await resetLuvioStore();
 
             timekeeper.travel(Date.now() + RECORD_TTL + 1);
 
@@ -196,7 +197,7 @@ describe('mobile runtime integration tests', () => {
             const originalResult = await getRecords(config)!;
             expect(originalResult.state).toBe('Fulfilled');
 
-            resetLuvioStore();
+            await resetLuvioStore();
 
             const durableResult = await getRecords(config)!;
             expect(durableResult.state).toBe('Fulfilled');
@@ -282,6 +283,8 @@ describe('mobile runtime integration tests', () => {
             luvio.storeSubscribe(snapshot, subscriptionSpy);
 
             timekeeper.travel(Date.now() + 30000 + 1);
+
+            await flushPromises();
 
             // Set the mock response for a refresh
             networkAdapter.setMockResponse({

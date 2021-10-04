@@ -4,12 +4,11 @@ import { RecordRepresentation } from '@salesforce/lds-adapters-uiapi';
 import { DraftManager, DraftQueue, DraftActionOperationType } from '@salesforce/lds-drafts';
 import { JSONStringify } from '../../../utils/language';
 import { MockNimbusNetworkAdapter } from '../../MockNimbusNetworkAdapter';
-import { MockNimbusDurableStore } from '../../MockNimbusDurableStore';
 import { flushPromises } from '../../testUtils';
 import mockAccount from './data/record-Account-fields-Account.Id,Account.Name.json';
 import mockOpportunity from './data/record-Opportunity-fields-Opportunity.Account.Name,Opportunity.Account.Owner.Name,Opportunity.Owner.City.json';
 import { RECORD_TTL } from '@salesforce/lds-adapters-uiapi/karma/dist/uiapi-constants';
-import { populateL2WithUser, setup } from './integrationTestSetup';
+import { populateL2WithUser, resetLuvioStore, setup } from './integrationTestSetup';
 
 const RECORD_ID = mockAccount.id;
 const API_NAME = 'Account';
@@ -44,7 +43,6 @@ describe('mobile runtime integration tests', () => {
     let luvio: Luvio;
     let draftQueue: DraftQueue;
     let draftManager: DraftManager;
-    let durableStore: MockNimbusDurableStore;
     let networkAdapter: MockNimbusNetworkAdapter;
     let createRecord;
     let getRecord;
@@ -55,7 +53,6 @@ describe('mobile runtime integration tests', () => {
             luvio,
             draftManager,
             draftQueue,
-            durableStore,
             networkAdapter,
             createRecord,
             updateRecord,
@@ -131,6 +128,33 @@ describe('mobile runtime integration tests', () => {
             });
         });
 
+        it('serverValues are assigned to updateRecord response', async () => {
+            const originalNameValue = 'Justin';
+            const draftOneNameValue = 'Jason';
+
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(
+                    createTestRecord(RECORD_ID, originalNameValue, originalNameValue, 1)
+                ),
+            });
+
+            let snapshot = await getRecord({ recordId: RECORD_ID, fields: ['Account.Name'] });
+            expect(snapshot.state).toBe('Fulfilled');
+
+            const getRecordCallbackSpy = jest.fn();
+            luvio.storeSubscribe(snapshot, getRecordCallbackSpy);
+
+            snapshot = await updateRecord({
+                recordId: RECORD_ID,
+                fields: { Name: draftOneNameValue },
+            });
+
+            expect(snapshot.state).toBe('Fulfilled');
+            expect(snapshot.data.drafts.serverValues['Name'].value).toBe(originalNameValue);
+        });
+
         it('serverValues get updated on network response', async () => {
             const originalNameValue = 'Justin';
             const draftOneNameValue = 'Jason';
@@ -167,6 +191,8 @@ describe('mobile runtime integration tests', () => {
              * Created story W-9099112 to address this in the future
              */
             expect(getRecordCallbackSpy).toBeCalledTimes(3);
+
+            await flushPromises();
 
             expect(getRecordCallbackSpy.mock.calls[0][0].data.fields.Name.value).toBe(
                 draftOneNameValue
@@ -326,7 +352,7 @@ describe('mobile runtime integration tests', () => {
             // subscribe to getRecord snapshot
             luvio.storeSubscribe(getRecordSnapshot, callbackSpy);
 
-            // update the synthetic record
+            // update the reference field
             await updateRecord({ recordId: opportunityId, fields: { OwnerId: updatedOwnerId } });
 
             await flushPromises();
@@ -334,6 +360,62 @@ describe('mobile runtime integration tests', () => {
             // TODO [W-9463628]: extra emit, should be 1
             expect(callbackSpy).toBeCalledTimes(2);
             const updatedOppy = callbackSpy.mock.calls[1][0].data as RecordRepresentation;
+            expect(updatedOppy.fields['OwnerId'].value).toBe(updatedOwnerId);
+            const updatedSpanning = updatedOppy.fields['Owner'].value as RecordRepresentation;
+            expect(updatedSpanning.id).toBe(updatedOwnerId);
+            expect(updatedSpanning.fields['City'].value).toBe('Montreal');
+        });
+
+        it('still applies the reference field update when fetching new data', async () => {
+            const newOwner = await populateL2WithUser();
+
+            const opportunityId = mockOpportunity.id;
+            const updatedOwnerId = newOwner.id;
+
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(mockOpportunity),
+            });
+
+            let getRecordSnapshot = (await getRecord({
+                recordId: opportunityId,
+                fields: ['Opportunity.OwnerId', 'Opportunity.Owner.Id', 'Opportunity.Owner.City'],
+            })) as Snapshot<RecordRepresentation>;
+            expect(getRecordSnapshot.state).toBe('Fulfilled');
+
+            // TODO [W-9463628]: this flush can be removed when we solve the extra durable writes due to this bug
+            await flushPromises();
+
+            // update the reference fied
+            await updateRecord({ recordId: opportunityId, fields: { OwnerId: updatedOwnerId } });
+
+            await flushPromises();
+
+            const oppyWithExtraField = {
+                ...mockOpportunity,
+                fields: { ...mockOpportunity.fields, Amount: { value: '1', displayValue: '1' } },
+            };
+
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(oppyWithExtraField),
+            });
+
+            // get with extra field not in cache (Amount)
+            getRecordSnapshot = (await getRecord({
+                recordId: opportunityId,
+                fields: [
+                    'Opportunity.OwnerId',
+                    'Opportunity.Owner.Id',
+                    'Opportunity.Owner.City',
+                    'Opportunity.Amount',
+                ],
+            })) as Snapshot<RecordRepresentation>;
+
+            expect(getRecordSnapshot.state).toBe('Fulfilled');
+            const updatedOppy = getRecordSnapshot.data;
             expect(updatedOppy.fields['OwnerId'].value).toBe(updatedOwnerId);
             const updatedSpanning = updatedOppy.fields['Owner'].value as RecordRepresentation;
             expect(updatedSpanning.id).toBe(updatedOwnerId);
@@ -377,38 +459,82 @@ describe('mobile runtime integration tests', () => {
 
             const snap = await getRecord(getRecordConfig);
             expect(snap.state).toBe('Fulfilled');
-            await flushPromises();
 
-            let getLinks = JSON.parse(
-                durableStore.kvp['DEFAULT']['UiApi::RecordRepresentation:001xx000003Gn4WAAS']
-            ).data.links;
-            expect(getLinks.NoField).toBeDefined();
-
-            expect(durableStore).toBeDefined();
             await updateRecord({ recordId: RECORD_ID, fields: { Name: 'Foo' } });
 
-            getLinks = JSON.parse(
-                durableStore.kvp['DEFAULT']['UiApi::RecordRepresentation:001xx000003Gn4WAAS']
-            ).data.links;
-            expect(getLinks.NoField).toBeDefined();
+            // need to mock two responses because NoField is now going to be in conflict and kick off another refresh
+            // once it comes back with the field still missing it should get marked as missing
+            networkAdapter.setMockResponses([
+                {
+                    status: 200,
+                    headers: {},
+                    body: JSONStringify({
+                        ...mockAccount,
+                        weakEtag: mockAccount.weakEtag + 1,
+                        fields: {
+                            ...mockAccount.fields,
+                            Name: { value: 'Foo', displayValue: 'Foo' },
+                        },
+                    }),
+                },
+                {
+                    status: 200,
+                    headers: {},
+                    body: JSONStringify({
+                        ...mockAccount,
+                        weakEtag: mockAccount.weakEtag + 1,
+                        fields: {
+                            ...mockAccount.fields,
+                            Name: { value: 'Foo', displayValue: 'Foo' },
+                        },
+                    }),
+                },
+            ]);
+
+            await draftQueue.processNextAction();
+            await flushPromises();
+
+            const snapAgain = await getRecord(getRecordConfig);
+            expect(snapAgain.state).toBe('Fulfilled');
+        });
+
+        it('record still has drafts applied after fetching more fields', async () => {
+            const draftOneNameValue = 'Jason';
+            networkAdapter.setMockResponse({
+                status: 200,
+                headers: {},
+                body: JSONStringify(mockAccount),
+            });
+
+            let snapshot = await getRecord({ recordId: RECORD_ID, fields: ['Account.Name'] });
+            expect(snapshot.state).toBe('Fulfilled');
+
+            // create a draft edit
+            await updateRecord({
+                recordId: RECORD_ID,
+                fields: { Name: draftOneNameValue },
+            });
+
+            // this shouldn't matter anymore
+            await resetLuvioStore();
+
+            const accountWithExtraField = {
+                ...mockAccount,
+                fields: { ...mockAccount.fields, IsOpen: { value: true, displayValue: null } },
+            };
 
             networkAdapter.setMockResponse({
                 status: 200,
                 headers: {},
-                body: JSONStringify({
-                    ...mockAccount,
-                    weakEtag: mockAccount.weakEtag + 1,
-                    fields: { ...mockAccount.fields, Name: { value: 'Foo', displayValue: 'Foo' } },
-                }),
+                body: JSONStringify(accountWithExtraField),
             });
-            await draftQueue.processNextAction();
-            await flushPromises();
-            expect(durableStore).toBeDefined();
 
-            getLinks = JSON.parse(
-                durableStore.kvp['DEFAULT']['UiApi::RecordRepresentation:001xx000003Gn4WAAS']
-            ).data.links;
-            expect(getLinks.NoField).toBeDefined();
+            snapshot = await getRecord({
+                recordId: RECORD_ID,
+                fields: ['Account.Name', 'Account.IsOpen'],
+            });
+            expect(snapshot.state).toBe('Fulfilled');
+            expect(snapshot.data.fields.Name.value).toBe(draftOneNameValue);
         });
     });
 });

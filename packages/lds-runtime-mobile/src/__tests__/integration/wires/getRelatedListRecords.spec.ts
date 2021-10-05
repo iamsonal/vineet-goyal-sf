@@ -5,6 +5,8 @@ import mockGetRelatedListRecords from './data/list-ui-All-Related-Lists.json';
 import { MockNimbusDurableStore } from '../../MockNimbusDurableStore';
 import { flushPromises } from '../../testUtils';
 
+import mockData_Service_Appointments__r from './data/related-list-records/related-list-records-Service_Appointments__r.json';
+
 describe('mobile runtime integration tests', () => {
     let networkAdapter: MockNimbusNetworkAdapter;
     let getRelatedListRecords;
@@ -81,6 +83,100 @@ describe('mobile runtime integration tests', () => {
             const snapshot = await getRelatedListRecords(relatedListRecordsConfig);
 
             expect(snapshot.state).toBe('Error');
+        });
+
+        describe('SFS scenarios', () => {
+            it('returns success - many optional fields', async () => {
+                networkAdapter.setMockResponse({
+                    status: 200,
+                    headers: {},
+                    body: JSONStringify(mockData_Service_Appointments__r),
+                });
+
+                const config = {
+                    relatedListId: 'Service_Appointments__r',
+                    parentRecordId: '0Hwx000000110HSCAY',
+                    optionalFields: [
+                        'ServiceAppointment.Id',
+                        'ServiceAppointment.OwnerId',
+                        'ServiceAppointment.IsDeleted',
+                        'ServiceAppointment.AppointmentNumber',
+                        'ServiceAppointment.CreatedDate',
+                        'ServiceAppointment.CreatedById',
+                        'ServiceAppointment.LastModifiedDate',
+                        'ServiceAppointment.LastModifiedById',
+                        'ServiceAppointment.SystemModstamp',
+                        'ServiceAppointment.MayEdit',
+                        'ServiceAppointment.IsLocked',
+                        'ServiceAppointment.LastViewedDate',
+                        'ServiceAppointment.LastReferencedDate',
+                        'ServiceAppointment.ParentRecordId',
+                        'ServiceAppointment.ParentRecordType',
+                        'ServiceAppointment.AccountId',
+                        'ServiceAppointment.ContactId',
+                        'ServiceAppointment.Street',
+                        'ServiceAppointment.City',
+                        'ServiceAppointment.State',
+                        'ServiceAppointment.PostalCode',
+                        'ServiceAppointment.Country',
+                        'ServiceAppointment.Latitude',
+                        'ServiceAppointment.Longitude',
+                        'ServiceAppointment.GeocodeAccuracy',
+                        'ServiceAppointment.Description',
+                        'ServiceAppointment.EarliestStartTime',
+                        'ServiceAppointment.DueDate',
+                        'ServiceAppointment.Duration',
+                        'ServiceAppointment.ArrivalWindowStartTime',
+                        'ServiceAppointment.ArrivalWindowEndTime',
+                        'ServiceAppointment.Status',
+                        'ServiceAppointment.SchedStartTime',
+                        'ServiceAppointment.SchedEndTime',
+                        'ServiceAppointment.ActualStartTime',
+                        'ServiceAppointment.ActualEndTime',
+                        'ServiceAppointment.ActualDuration',
+                        'ServiceAppointment.DurationType',
+                        'ServiceAppointment.DurationInMinutes',
+                        'ServiceAppointment.ServiceTerritoryId',
+                        'ServiceAppointment.Subject',
+                        'ServiceAppointment.ParentRecordStatusCategory',
+                        'ServiceAppointment.SACount__c',
+                        'ServiceAppointment.Incomplete_Status_Count__c',
+                        'ServiceAppointment.FSL__Appointment_Grade__c',
+                        'ServiceAppointment.FSL__Auto_Schedule__c',
+                        'ServiceAppointment.FSL__Emergency__c',
+                        'ServiceAppointment.FSL__GanttColor__c',
+                        'ServiceAppointment.FSL__GanttLabel__c',
+                        'ServiceAppointment.FSL__InJeopardyReason__c',
+                        'ServiceAppointment.FSL__InJeopardy__c',
+                        'ServiceAppointment.FSL__InternalSLRGeolocation__Latitude__s',
+                        'ServiceAppointment.FSL__InternalSLRGeolocation__Longitude__s',
+                        'ServiceAppointment.FSL__IsFillInCandidate__c',
+                        'ServiceAppointment.FSL__IsMultiDay__c',
+                        'ServiceAppointment.FSL__MDS_Calculated_length__c',
+                        'ServiceAppointment.FSL__MDT_Operational_Time__c',
+                        'ServiceAppointment.FSL__Pinned__c',
+                        'ServiceAppointment.FSL__Prevent_Geocoding_For_Chatter_Actions__c',
+                        'ServiceAppointment.FSL__Related_Service__c',
+                        'ServiceAppointment.FSL__Same_Day__c',
+                        'ServiceAppointment.FSL__Same_Resource__c',
+                        'ServiceAppointment.FSL__Schedule_Mode__c',
+                        'ServiceAppointment.FSL__Schedule_over_lower_priority_appointment__c',
+                        'ServiceAppointment.FSL__Time_Dependency__c',
+                        'ServiceAppointment.FSL__UpdatedByOptimization__c',
+                        'ServiceAppointment.FSL__Virtual_Service_For_Chatter_Action__c',
+                        'ServiceAppointment.ResourceAbsenceId__c',
+                        'ServiceAppointment.ServiceResourceId__c',
+                        'ServiceAppointment.ProductId__c',
+                        'ServiceAppointment.TimeSheetId__c',
+                        'ServiceAppointment.TimeSheetEntryId__c',
+                    ],
+                };
+
+                const snapshot = await getRelatedListRecords(config);
+
+                expect(snapshot.state).toBe('Fulfilled');
+                expect(snapshot.data).toEqual(mockData_Service_Appointments__r);
+            });
         });
     });
 });

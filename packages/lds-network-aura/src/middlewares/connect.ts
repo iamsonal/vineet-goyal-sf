@@ -9,6 +9,7 @@ import {
     SCALECENTER_BASE_URI,
     INTERACTION_BASE_URI,
     BILLING_BASE_URI,
+    EXPLAINABILITY_BASE_URI,
     SITES_BASE_URI,
 } from './connect-base';
 
@@ -199,6 +200,8 @@ const POST_BATCH_PAYMENTS_SCHEDULERS_PATH = new RegExp(
     `${BILLING_BASE_URI}/batch/payments/schedulers`,
     'i'
 );
+
+const EXPLAINABILITY_ACTION_LOG_PATH = new RegExp(`${EXPLAINABILITY_BASE_URI}/action-logs$`, 'i');
 
 const DECISION_MATRIX_COLUMNS_PATH = new RegExp(
     `${CONNECT_BASE_URI}/omnistudio/decision-matrices/([A-Z0-9]){1,18}/columns`,
@@ -471,6 +474,22 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && SIMULATION_EVALUATION_SERVICE_PATH.test(path),
         transport: {
             controller: 'InteractionCalculationProceduresController.getSimulationInputVariables',
+        },
+    },
+    getExplainabilityActionLogs: {
+        method: 'get',
+        predicate: (path) =>
+            path.startsWith(EXPLAINABILITY_BASE_URI) && EXPLAINABILITY_ACTION_LOG_PATH.test(path),
+        transport: {
+            controller: 'ExplainabilityServiceController.getExplainabilityActionLogs',
+        },
+    },
+    postExplainabilityActionLog: {
+        method: 'post',
+        predicate: (path) =>
+            path.startsWith(EXPLAINABILITY_BASE_URI) && EXPLAINABILITY_ACTION_LOG_PATH.test(path),
+        transport: {
+            controller: 'ExplainabilityServiceController.postExplainabilityActionLog',
         },
     },
 };

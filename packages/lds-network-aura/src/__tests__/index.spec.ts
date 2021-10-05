@@ -13,6 +13,7 @@ import {
     CMS_BASE_URI,
     BILLING_BASE_URI,
     SCALECENTER_BASE_URI,
+    EXPLAINABILITY_BASE_URI,
     SITES_BASE_URI,
 } from '../middlewares/connect-base';
 import { UI_API_BASE_URI } from '../middlewares/uiapi-base';
@@ -2704,6 +2705,95 @@ describe('routes', () => {
                 basePath: `/omnistudio/decision-matrices`,
             },
             {}
+        );
+    });
+
+    describe('get /action-logs', () => {
+        testControllerInput(
+            {
+                method: 'get',
+                baseUri: EXPLAINABILITY_BASE_URI,
+                basePath: `/action-logs`,
+                queryParams: {
+                    actionContextCode: '012T00000004MUHIA2',
+                    applicationType: 'PSC-LPI',
+                    applicationSubType: 'ExpressionSet',
+                    processType: 'PaymentFlow',
+                },
+            },
+            [
+                'ExplainabilityServiceController.getExplainabilityActionLogs',
+                {
+                    actionContextCode: '012T00000004MUHIA2',
+                    applicationType: 'PSC-LPI',
+                    applicationSubType: 'ExpressionSet',
+                    processType: 'PaymentFlow',
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: EXPLAINABILITY_BASE_URI,
+                basePath: `/action-logs`,
+            },
+            {}
+        );
+    });
+
+    describe('post /action-logs', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: EXPLAINABILITY_BASE_URI,
+                basePath: `/action-logs`,
+                body: {
+                    explainabilityActionLogDefinitionx: {
+                        actionContextCode: '012T00000004MUHIA2',
+                        actionLog:
+                            '{"FinancialAssistanceEligibility":{"input":{"perAccident":"300","perPerson":"100"},"output":{"calculationResults":[{"totalPrice":"45100"}],"aggregationResults":{}}}}',
+                        actionLogDate: '2021-10-04T10:54:56.787Z',
+                        name: 'ExpressionSet01',
+                        specificationName: 'ExpressionSet01',
+                    },
+                },
+            },
+            [
+                'ExplainabilityServiceController.postExplainabilityActionLog',
+                {
+                    explainabilityActionLogDefinitionx: {
+                        actionContextCode: '012T00000004MUHIA2',
+                        actionLog:
+                            '{"FinancialAssistanceEligibility":{"input":{"perAccident":"300","perPerson":"100"},"output":{"calculationResults":[{"totalPrice":"45100"}],"aggregationResults":{}}}}',
+                        actionLogDate: '2021-10-04T10:54:56.787Z',
+                        name: 'ExpressionSet01',
+                        specificationName: 'ExpressionSet01',
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                actionContextCode: '012T00000004MUHIA2',
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: EXPLAINABILITY_BASE_URI,
+            basePath: `/action-logs`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: EXPLAINABILITY_BASE_URI,
+                basePath: `/action-logs`,
+            },
+            {
+                actionContextCode: '012T00000004MUHIA2',
+            }
         );
     });
 

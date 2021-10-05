@@ -1,0 +1,27 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'explainability'
+(luvio.ttl): 360000
+
+types:
+  ExplainabilityActionLogsRepresentation:
+    (luvio.opaque): true
+    (luvio.ttl): 10000
+  ExplainabilityActionLogCreateRepresentation:
+    (luvio.opaque): true
+    (luvio.ttl): 10000
+    (luvio.key):
+      id: uniqueIdentifier
+
+/connect:
+  /explainability-service/action-logs:
+    get:
+      (luvio.adapter):
+        name: getExplainabilityActionLogs
+    post:
+      (luvio.adapter):
+        name: postExplainabilityActionLog

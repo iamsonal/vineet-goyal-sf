@@ -1,0 +1,23 @@
+{
+    "queryMore": "lastId:1234",
+    "actionLogs": [
+        {
+            "actionContextCode": "012T00000004MUHIA2",
+            "actionLog": "{\"FinancialAssistanceEligibility\":{\"input\":{\"perAccident\":\"300\",\"perPerson\":\"100\"},\"output\":{\"calculationResults\":[{\"totalPrice\":\"45100\"}],\"aggregationResults\":{}}}}",
+            "applicationLogDate": "2021-10-04T10:54:56.787Z",
+            "applicationSubtype": "ExpressionSet",
+            "applicationType": "PSC-LPI",
+            "name": "ExpressionSet01",
+            "processType": "PaymentFlow"
+        },
+        {
+            "actionContextCode": "012T00000004MUHIA2",
+            "actionLog": "{\"FinancialAssistanceEligibility\":{\"input\":{\"perAccident\":\"300\",\"perPerson\":\"100\"},\"output\":{\"calculationResults\":[{\"totalPrice\":\"45100\"}],\"aggregationResults\":{}}}}",
+            "applicationLogDate": "2021-11-04T10:54:56.787Z",
+            "applicationSubtype": "ExpressionSet",
+            "applicationType": "PSC-LPI",
+            "name": "ExpressionSet02",
+            "processType": "PaymentFlow"
+        }
+    ]
+}

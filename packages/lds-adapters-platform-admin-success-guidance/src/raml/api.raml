@@ -2,7 +2,7 @@
 securedBy:
   - OAuth2
 title: Salesforce Connect API
-version: '53.0'
+version: '54.0'
 mediaType: application/json
 protocols:
   - https
@@ -225,7 +225,7 @@ types:
         properties:
           //:
             type: object
-  # TODO Hand Rolled 'QuestionnaireData'
+  # TODO W-8253396: Hand Rolled 'QuestionnaireData'
   QuestionnaireData:
     description: A Wrapper around the LightningAssistantQuestionnaireInputRepresentation
     type: object
@@ -451,7 +451,7 @@ types:
         properties:
           //:
             type: object
-  # TODO Hand Rolled 'assistantData'
+  # TODO: W-8253396 Hand Rolled 'assistantData'
   AssistantData:
     description: The LightningAssistantUpdateInputRepresentation wrapper
     type: object
@@ -485,109 +485,126 @@ types:
       promptId:
         description: The prompt id for the walkthrough action
         type: string
-/guidance/assistant/{assistantGroup}:
-  get:
-    description: Get Guidance Center Assistant
-    responses:
-      '200':
-        description: Success
-        body:
-          application/json:
-            type: LightningAssistantRepresentation
-    queryParameters:
-      scenarioId:
-        type: string
-  patch:
-    description: Save the Guidance Center Assistant
-    responses:
-      '200':
-        description: Success
-        body:
-          application/json:
-            type: LightningAssistantRepresentation
-    queryParameters:
-      scenarioId:
-        type: string
-    body:
-      application/json:
-        # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
-        type: AssistantData
-        # TODO: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
-        (oas-body-name): assistantData
-  uriParameters:
-    assistantGroup:
-      type: string
-      required: true
-  /questionnaire/{questionnaireId}:
+/guidance/assistant:
+  /{assistantGroup}:
     get:
-      description: Get the Guidance Center Questionnaire and progress
+      description: Get Guidance Center Assistant
       responses:
         '200':
           description: Success
           body:
             application/json:
-              type: LightningAssistantQuestionnaireRepresentation
-    patch:
-      description: Save the Guidance Center Questionnaire answers and progress
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: LightningAssistantQuestionnaireRepresentation
-      body:
-        application/json:
-          # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
-          type: QuestionnaireData
-          # TODO: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
-          (oas-body-name): questionnaireData
-    uriParameters:
-      assistantGroup:
-        type: string
-        required: true
-      questionnaireId:
-        type: string
-        required: true
-  /questionnaires:
-    get:
-      description: Get Guidance Center Active Questionnaires
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: LightningAssistantQuestionnaireListRepresentation
+              type: LightningAssistantRepresentation
       queryParameters:
         scenarioId:
           type: string
+    patch:
+      description: Save the Guidance Center Assistant
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: LightningAssistantRepresentation
+      queryParameters:
+        scenarioId:
+          type: string
+      body:
+        application/json:
+          # TODO W-8253396: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
+          type: AssistantData
+          # TODO W-8253396: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
+          (oas-body-name): assistantData
     uriParameters:
       assistantGroup:
         type: string
         required: true
-  /scenarios:
-    get:
-      description: Get Guidance Center Active Scenarios
-      responses:
-        '200':
-          description: Success
-          body:
-            application/json:
-              type: LightningAssistantScenarioListRepresentation
+    /questionnaire/{questionnaireId}:
+      get:
+        description: Get the Guidance Center Questionnaire and progress
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: LightningAssistantQuestionnaireRepresentation
+      patch:
+        description: Save the Guidance Center Questionnaire answers and progress
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: LightningAssistantQuestionnaireRepresentation
+        body:
+          application/json:
+            # TODO W-8253396: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
+            type: QuestionnaireData
+            # TODO W-8253396: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
+            (oas-body-name): questionnaireData
+      uriParameters:
+        assistantGroup:
+          type: string
+          required: true
+        questionnaireId:
+          type: string
+          required: true
+    /questionnaires:
+      get:
+        description: Get Guidance Center Active Questionnaires
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: LightningAssistantQuestionnaireListRepresentation
+        queryParameters:
+          scenarioId:
+            type: string
+      uriParameters:
+        assistantGroup:
+          type: string
+          required: true
+    /scenarios:
+      get:
+        description: Get Guidance Center Active Scenarios
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: LightningAssistantScenarioListRepresentation
+      patch:
+        description: Save the Guidance Center Scenarios
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: LightningAssistantScenarioListRepresentation
+        body:
+          application/json:
+            # TODO W-8253396: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
+            type: ScenarioData
+            # TODO W-8253396: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
+            (oas-body-name): scenarioData
+      uriParameters:
+        assistantGroup:
+          type: string
+          required: true
+  /{assistantTarget}/step/{stepId}:
     patch:
-      description: Save the Guidance Center Scenarios
+      description: Save Lightning Assistant Step Resource
       responses:
         '200':
           description: Success
           body:
             application/json:
-              type: LightningAssistantScenarioListRepresentation
-      body:
-        application/json:
-          # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
-          type: ScenarioData
-          # TODO: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
-          (oas-body-name): scenarioData
+              type: LightningAssistantStepRepresentation
     uriParameters:
-      assistantGroup:
+      assistantTarget:
+        type: string
+        required: true
+      stepId:
         type: string
         required: true

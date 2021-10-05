@@ -4424,6 +4424,32 @@ describe('routes', () => {
         );
     });
 
+    describe('patch /assistant/{id}/step/{id}', () => {
+        testControllerInput(
+            {
+                method: 'patch',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE/step/1234567890ABCDE`,
+                body: {},
+            },
+            [
+                'LightningExperienceAssistantPlatformController.evaluateStep',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'patch',
+                baseUri: GUIDANCE_BASE_URI,
+                basePath: `/assistant/1234567890ABCDE/step/1234567890ABCDE`,
+                body: {},
+            },
+            {}
+        );
+    });
+
     describe('get /wave/dataconnectors/{connectorIdOrApiName}', () => {
         testControllerInput(
             {

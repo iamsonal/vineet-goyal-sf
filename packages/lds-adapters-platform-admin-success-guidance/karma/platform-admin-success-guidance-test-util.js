@@ -83,6 +83,16 @@ export function mockUpdateScenariosNetworkErrorOnce(config, mockData) {
     mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
 }
 
+export function mockEvaluateStepNetworkOnce(config, mockData) {
+    const paramMatch = getEvaluateStepMatcher(config);
+    mockNetworkOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
+export function mockEvaluateStepNetworkErrorOnce(config, mockData) {
+    const paramMatch = getEvaluateStepMatcher(config);
+    mockNetworkErrorOnce(karmaNetworkAdapter, paramMatch, mockData);
+}
+
 function getQuestionnaireMatcher(config) {
     let { assistantGroup, questionnaireId } = config;
 
@@ -176,6 +186,19 @@ function getUpdateScenariosMatcher(config) {
         method: 'patch',
         baseUri: BASE_URI,
         basePath: `${URL_BASE}/assistant/${assistantGroup}/scenarios`,
+        queryParams: {},
+    });
+}
+
+function getEvaluateStepMatcher(config) {
+    let { assistantTarget, stepId } = config;
+
+    return sinon.match({
+        body: null,
+        headers: {},
+        method: 'patch',
+        baseUri: BASE_URI,
+        basePath: `${URL_BASE}/assistant/${assistantTarget}/step/${stepId}`,
         queryParams: {},
     });
 }

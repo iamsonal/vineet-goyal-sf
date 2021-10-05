@@ -58,6 +58,11 @@ const GET_GUIDANCE_SCENARIOS_PATH = new RegExp(
     'i'
 );
 
+const GET_GUIDANCE_STEP_PATH = new RegExp(
+    `${GUIDANCE_BASE_URI}/assistant/([A-Z0-9_]){1,64}/step/([A-Z0-9_]){2,32}$`,
+    'i'
+);
+
 const ANALYTICS_LIMITS_PATH = new RegExp(`${WAVE_BASE_URI}/limits$`, 'i');
 
 const DATA_CONNECTORS_PATH = new RegExp(`${WAVE_BASE_URI}/dataconnectors$`, 'i');
@@ -595,6 +600,15 @@ const guidance: ApiFamily = {
             path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_SCENARIOS_PATH.test(path),
         transport: {
             controller: 'LightningExperienceAssistantPlatformController.saveScenarios',
+        },
+    },
+
+    evaluateStep: {
+        method: 'patch',
+        predicate: (path: string) =>
+            path.startsWith(GUIDANCE_BASE_URI) && GET_GUIDANCE_STEP_PATH.test(path),
+        transport: {
+            controller: 'LightningExperienceAssistantPlatformController.evaluateStep',
         },
     },
 };

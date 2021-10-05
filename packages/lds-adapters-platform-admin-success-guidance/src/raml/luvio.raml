@@ -26,6 +26,10 @@ types:
     (luvio.key):
       assistant_group_id: assistantGroup
 
+  LightningAssistantStepRepresentation:
+    (luvio.key):
+      step_id: id
+
 /guidance/assistant/{assistantGroup}:
   get:
     (luvio.adapter):
@@ -61,3 +65,7 @@ types:
     patch:
       (luvio.adapter):
         name: updateScenarios
+/guidance/assistant/{assistantTarget}/step/{stepId}:
+  patch:
+    (luvio.adapter):
+      name: evaluateStep

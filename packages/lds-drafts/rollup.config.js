@@ -7,6 +7,7 @@ export default {
     output: {
         file: 'dist/ldsDrafts.js',
         format: 'esm',
+        sourcemap: 'inline',
     },
 
     plugins: [

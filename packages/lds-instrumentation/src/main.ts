@@ -55,6 +55,8 @@ import {
     GET_GRAPHQL_RESPONSE_MIXED,
     STORE_TRIM_TASK_COUNT,
     STORE_TRIM_TASK_DURATION,
+    STORE_SET_TTL_OVERRIDE_DURATION,
+    STORE_SET_DEFAULT_TTL_OVERRIDE_DURATION,
 } from './metric-keys';
 
 import {
@@ -897,6 +899,11 @@ export function setupInstrumentation(luvio: Luvio, store: Store): void {
         { methodName: 'storeBroadcast', metricKey: STORE_BROADCAST_DURATION },
         { methodName: 'storeIngest', metricKey: STORE_INGEST_DURATION },
         { methodName: 'storeLookup', metricKey: STORE_LOOKUP_DURATION },
+        { methodName: 'storeSetTTLOverride', metricKey: STORE_SET_TTL_OVERRIDE_DURATION },
+        {
+            methodName: 'storeSetDefaultTTLOverride',
+            metricKey: STORE_SET_DEFAULT_TTL_OVERRIDE_DURATION,
+        },
     ]);
 
     setStoreScheduler(store);

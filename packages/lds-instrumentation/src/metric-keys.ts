@@ -202,6 +202,26 @@ export const STORE_LOOKUP_DURATION: MetricsKey = {
 };
 
 /**
+ * W-9805009
+ * Timer to measure performance for LDS.storeSetTTLOverride() method.
+ */
+export const STORE_SET_TTL_OVERRIDE_DURATION: MetricsKey = {
+    get() {
+        return { owner: METRIC_KEY_OWNER, name: 'store-set-ttl-override-duration' };
+    },
+};
+
+/**
+ * W-9805009
+ * Timer to measure performance for LDS.storeSetDefaultTTLOverride() method.
+ */
+export const STORE_SET_DEFAULT_TTL_OVERRIDE_DURATION: MetricsKey = {
+    get() {
+        return { owner: METRIC_KEY_OWNER, name: 'store-set-default-ttl-override-duration' };
+    },
+};
+
+/**
  * W-6981216
  * Counter for number of records in LDS store. Is updated by periodicLogger invocations.
  * Note: This is also being recorded in AILTN logging.

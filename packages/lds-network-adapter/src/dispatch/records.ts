@@ -10,6 +10,7 @@ import {
 import { Dispatcher, defaultDispatcher, SalesforceResourceRequest } from './main';
 
 const UIAPI_RECORDS_PATH = `${UI_API_BASE_URI}/records`;
+const UIAPI_RECORDS_BATCH_PATH = `${UI_API_BASE_URI}/records/batch/`;
 
 const QUERY_TOO_COMPLICATED_ERROR_CODE = 'QUERY_TOO_COMPLICATED';
 
@@ -30,6 +31,7 @@ function fetchResponseIsQueryTooComplicated(error: FetchResponse<any>) {
  * Takes a ResourceRequest, builds the aggregateUi payload, and dispatches via aggregateUi action
  */
 function buildAndDispatchGetRecordAggregateUi(
+    recordId: string,
     req: SalesforceResourceRequest,
     params: GetRecordCompositeRequestParams
 ): Promise<any> {
@@ -52,13 +54,26 @@ function buildAndDispatchGetRecordAggregateUi(
         headers: {},
     };
 
-    return dispatchSplitRecordAggregateUiAction(networkAdapter, aggregateUiResourceRequest);
+    return dispatchSplitRecordAggregateUiAction(
+        recordId,
+        networkAdapter,
+        aggregateUiResourceRequest
+    );
 }
 
 const getRecordDispatcher: Dispatcher = (req: SalesforceResourceRequest) => {
     const { resourceRequest, networkAdapter } = req;
-    const { queryParams } = resourceRequest;
+    const { queryParams, urlParams } = resourceRequest;
     const { fields, optionalFields } = queryParams;
+
+    if (process.env.NODE_ENV !== 'production') {
+        if (typeof urlParams.recordId !== 'string') {
+            throw new Error(
+                `Invalid recordId: expected string, recieved "${typeof urlParams.recordId}"`
+            );
+        }
+    }
+    const recordId = urlParams.recordId as string;
 
     const fieldsArray: string[] =
         fields !== undefined && ArrayIsArray(fields) ? (fields as string[]) : [];
@@ -79,6 +94,7 @@ const getRecordDispatcher: Dispatcher = (req: SalesforceResourceRequest) => {
 
     if (useAggregateUi) {
         return buildAndDispatchGetRecordAggregateUi(
+            recordId,
             {
                 networkAdapter,
                 resourceRequest,
@@ -96,6 +112,7 @@ const getRecordDispatcher: Dispatcher = (req: SalesforceResourceRequest) => {
         if (fetchResponseIsQueryTooComplicated(err)) {
             // Retry with aggregateUi to see if we can avoid Query Too Complicated
             return buildAndDispatchGetRecordAggregateUi(
+                recordId,
                 {
                     networkAdapter,
                     resourceRequest,
@@ -118,7 +135,11 @@ export function matchRecordsHandlers(
     resourceRequest: ResourceRequest
 ): Dispatcher | null {
     const method = resourceRequest.method.toLowerCase();
-    if (method === 'get' && path.startsWith(UIAPI_RECORDS_PATH)) {
+    if (
+        method === 'get' &&
+        path.startsWith(UIAPI_RECORDS_PATH) &&
+        path.startsWith(UIAPI_RECORDS_BATCH_PATH) === false
+    ) {
         return getRecordDispatcher;
     }
 

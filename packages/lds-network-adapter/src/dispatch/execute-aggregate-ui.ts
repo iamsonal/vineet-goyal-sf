@@ -6,6 +6,7 @@ import {
     ArrayPrototypeUnshift,
     ObjectKeys,
 } from '../language';
+import { instrumentation } from '../instrumentation';
 
 const LDS_RECORDS_AGGREGATE_UI = 'LDS_Records_AggregateUi';
 
@@ -111,6 +112,7 @@ export function mergeRecordFields(
  *  would otherwise cause a query length exception.
  */
 export function dispatchSplitRecordAggregateUiAction(
+    recordId: string,
     networkAdapter: NetworkAdapter,
     resourceRequest: ResourceRequest
 ): Promise<FetchResponse<unknown>> {
@@ -135,6 +137,7 @@ export function dispatchSplitRecordAggregateUiAction(
             const merged = body.compositeResponse.reduce(
                 (seed: null | RecordRepresentation, response) => {
                     if (response.httpStatusCode !== HttpStatusCode.Ok) {
+                        instrumentation.getRecordAggregateReject(() => recordId);
                         throw createErrorResponse(HttpStatusCode.ServerError, {
                             error: response.message,
                         });
@@ -149,9 +152,16 @@ export function dispatchSplitRecordAggregateUiAction(
                 null
             ) as RecordRepresentation;
 
+            instrumentation.getRecordAggregateResolve(() => {
+                return {
+                    recordId,
+                    apiName: merged.apiName,
+                };
+            });
             return createOkResponse(merged);
         },
         (err) => {
+            instrumentation.getRecordAggregateReject(() => recordId);
             // Handle ConnectedInJava exception shapes
             if (err.data !== undefined && err.data.statusCode !== undefined) {
                 const { data } = err;

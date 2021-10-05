@@ -73,7 +73,11 @@ describe('non-GET request', () => {
 
 describe('identical GET request', () => {
     it('dedupes inflight GET requests', async () => {
-        const request = buildResourceRequest({ method: 'get', basePath: '/records/1234' });
+        const request = buildResourceRequest({
+            method: 'get',
+            urlParams: { recordId: '1234' },
+            basePath: '/records/1234',
+        });
         const fn = jest.fn().mockImplementation(() => {
             return new Promise((resolve) => {
                 setTimeout(() => resolve({ body: {} }));
@@ -92,7 +96,11 @@ describe('identical GET request', () => {
     });
 
     it('does not clone the response for first request', async () => {
-        const request = buildResourceRequest({ method: 'get', basePath: '/records/1234' });
+        const request = buildResourceRequest({
+            method: 'get',
+            urlParams: { recordId: '1234' },
+            basePath: '/records/1234',
+        });
         const mockResponse = { body: {} };
         const fn = jest.fn().mockImplementation(() => {
             return new Promise((resolve) => {
@@ -110,7 +118,11 @@ describe('identical GET request', () => {
     });
 
     it('does not clone for non-deduped request', async () => {
-        const request = buildResourceRequest({ method: 'get', basePath: '/records/1234' });
+        const request = buildResourceRequest({
+            method: 'get',
+            urlParams: { recordId: '1234' },
+            basePath: '/records/1234',
+        });
         const fn = jest.fn().mockImplementation(() => {
             return new Promise((resolve) => {
                 setTimeout(() => resolve({ body: {} }));
@@ -127,7 +139,11 @@ describe('identical GET request', () => {
     });
 
     it('does not propagate mutation to deduped request', async () => {
-        const request = buildResourceRequest({ method: 'get', basePath: '/records/1234' });
+        const request = buildResourceRequest({
+            method: 'get',
+            urlParams: { recordId: '1234' },
+            basePath: '/records/1234',
+        });
         const ret = { body: { foo: 'bar' } };
         const fn = jest.fn().mockImplementation(() => {
             return new Promise((resolve) => {
@@ -159,7 +175,11 @@ describe('identical GET request per fulfill', () => {
             });
         });
         const networkAdapter = platformNetworkAdapter(fn);
-        const request1 = buildResourceRequest({ method: 'get', basePath: '/records/1234' });
+        const request1 = buildResourceRequest({
+            method: 'get',
+            urlParams: { recordId: '1234' },
+            basePath: '/records/1234',
+        });
         const request2 = buildResourceRequest({
             method: 'get',
             basePath: '/records/5678',
@@ -184,6 +204,9 @@ describe('identical GET request per fulfill', () => {
         const request1 = buildResourceRequest({
             method: 'get',
             basePath: '/records/1234',
+            urlParams: {
+                recordId: '1234',
+            },
             fulfill: () => {
                 return true;
             },
@@ -191,6 +214,9 @@ describe('identical GET request per fulfill', () => {
         const request2 = buildResourceRequest({
             method: 'get',
             basePath: '/records/5678',
+            urlParams: {
+                recordId: '5678',
+            },
             fulfill: () => {
                 return false;
             },

@@ -248,7 +248,7 @@ describe('executeAggregateUi', () => {
                 .fn()
                 .mockResolvedValueOnce({ body: aggregateResponse });
 
-            return dispatchSplitRecordAggregateUiAction(successfulResponseMock, {
+            return dispatchSplitRecordAggregateUiAction('recordid', successfulResponseMock, {
                 baseUri: UI_API_BASE_URI,
                 basePath: `${UI_API_BASE_URI}/aggregate-ui`,
                 urlParams: {},
@@ -299,7 +299,7 @@ describe('executeAggregateUi', () => {
                 .mockResolvedValueOnce({ body: aggregateResponse });
             const networkAdapter = salesforceNetworkAdapter(unsuccessfulResponseMock);
 
-            return dispatchSplitRecordAggregateUiAction(networkAdapter, {
+            return dispatchSplitRecordAggregateUiAction('recordid', networkAdapter, {
                 baseUri: UI_API_BASE_URI,
                 basePath: `${UI_API_BASE_URI}/aggregate-ui`,
                 urlParams: {},
@@ -323,7 +323,7 @@ describe('executeAggregateUi', () => {
 
             const serverErrorResponseMock = jest.fn().mockRejectedValueOnce(expectedServerResponse);
 
-            return dispatchSplitRecordAggregateUiAction(serverErrorResponseMock, {
+            return dispatchSplitRecordAggregateUiAction('recordid', serverErrorResponseMock, {
                 baseUri: UI_API_BASE_URI,
                 basePath: `${UI_API_BASE_URI}/aggregate-ui`,
                 urlParams: {},
@@ -344,7 +344,7 @@ describe('executeAggregateUi', () => {
 
             const serverErrorResponseMock = jest.fn().mockRejectedValueOnce(expectedServerResponse);
 
-            return dispatchSplitRecordAggregateUiAction(serverErrorResponseMock, {
+            return dispatchSplitRecordAggregateUiAction('recordid', serverErrorResponseMock, {
                 baseUri: UI_API_BASE_URI,
                 basePath: `${UI_API_BASE_URI}/aggregate-ui`,
                 urlParams: {},
@@ -362,7 +362,7 @@ describe('executeAggregateUi', () => {
         it('should throw an exception with empty response body', () => {
             const emptyBodyResponseMock = jest.fn().mockResolvedValueOnce({ body: {} });
 
-            return dispatchSplitRecordAggregateUiAction(emptyBodyResponseMock, {
+            return dispatchSplitRecordAggregateUiAction('recordid', emptyBodyResponseMock, {
                 baseUri: UI_API_BASE_URI,
                 basePath: `${UI_API_BASE_URI}/aggregate-ui`,
                 urlParams: {},

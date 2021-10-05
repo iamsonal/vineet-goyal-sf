@@ -153,7 +153,7 @@ describe('crud logging', () => {
             }
         });
 
-        it('logs read event when getRelatedListRecords is called', async () => {
+        it('logs read event when postRelatedListRecords is called', async () => {
             const request = {
                 method: 'post',
                 baseUri: UI_API_BASE_URI,
@@ -271,7 +271,7 @@ describe('crud logging', () => {
             });
         });
 
-        it('does not log read event when getRelatedListRecords is called but no records are returned', async () => {
+        it('does not log read event when postRelatedListRecords is called but no records are returned', async () => {
             const request = {
                 method: 'post',
                 baseUri: UI_API_BASE_URI,
@@ -321,7 +321,7 @@ describe('crud logging', () => {
             expect(instrumentationSpies.logCrud).toHaveBeenCalledTimes(0);
         });
 
-        it('logs read event when getRelatedListRecords is called but returns error', async () => {
+        it('logs read event when postRelatedListRecords is called but returns error', async () => {
             const request = {
                 method: 'post',
                 baseUri: UI_API_BASE_URI,

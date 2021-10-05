@@ -3004,7 +3004,7 @@ describe('routes', () => {
         );
     });
 
-    describe('get /related-list-records/{parentRecordId}/{relatedListId}', () => {
+    describe('post /related-list-records/{parentRecordId}/{relatedListId}', () => {
         testControllerInput(
             {
                 method: 'post',
@@ -3023,15 +3023,17 @@ describe('routes', () => {
                 },
             },
             [
-                'RelatedListUiController.getRelatedListRecords',
+                'RelatedListUiController.postRelatedListRecords',
                 {
                     parentRecordId: '012T00000004MUHIA2',
                     relatedListId: 'Contact__r',
-                    fields: ['Id'],
-                    optionalFields: ['Name'],
-                    pageSize: 50,
-                    pageToken: 0,
-                    sortBy: ['Id'],
+                    listRecordsQuery: {
+                        fields: ['Id'],
+                        optionalFields: ['Name'],
+                        pageSize: 50,
+                        pageToken: 0,
+                        sortBy: ['Id'],
+                    },
                 },
                 undefined,
             ]

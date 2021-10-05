@@ -21,7 +21,7 @@ enum UiApiRecordController {
     GetRelatedListInfo = 'RelatedListUiController.getRelatedListInfoByApiName',
     UpdateRelatedListInfo = 'RelatedListUiController.updateRelatedListInfoByApiName',
     GetRelatedListsInfo = 'RelatedListUiController.getRelatedListInfoCollection',
-    GetRelatedListRecords = 'RelatedListUiController.getRelatedListRecords',
+    PostRelatedListRecords = 'RelatedListUiController.postRelatedListRecords',
     GetRelatedListCount = 'RelatedListUiController.getRelatedListRecordCount',
     GetRelatedListCounts = 'RelatedListUiController.getRelatedListsRecordCount',
     GetRelatedListInfoBatch = 'RelatedListUiController.getRelatedListInfoBatch',
@@ -124,21 +124,17 @@ function getRelatedListsInfo(resourceRequest: ResourceRequest): Promise<any> {
     return dispatchAction(UiApiRecordController.GetRelatedListsInfo, params);
 }
 
-function getRelatedListRecords(resourceRequest: ResourceRequest): Promise<any> {
+function postRelatedListRecords(resourceRequest: ResourceRequest): Promise<any> {
     const {
         urlParams: { parentRecordId, relatedListId },
-        body: { fields, optionalFields, pageSize, pageToken, sortBy },
+        body,
     } = resourceRequest;
 
     const params = buildUiApiParams(
         {
             parentRecordId: parentRecordId,
             relatedListId: relatedListId,
-            fields,
-            optionalFields,
-            pageSize,
-            pageToken,
-            sortBy,
+            listRecordsQuery: body,
         },
         resourceRequest
     );
@@ -152,7 +148,7 @@ function getRelatedListRecords(resourceRequest: ResourceRequest): Promise<any> {
             : {};
 
     return dispatchAction(
-        UiApiRecordController.GetRelatedListRecords, // TODO [W-9974649]: Call the PostRelatedListRecords controller instead
+        UiApiRecordController.PostRelatedListRecords,
         params,
         undefined,
         instrumentationCallbacks
@@ -264,7 +260,7 @@ appRouter.post(
     (path: string) =>
         path.startsWith(UIAPI_RELATED_LIST_RECORDS_PATH) &&
         path.startsWith(UIAPI_RELATED_LIST_RECORDS_BATCH_PATH) === false,
-    getRelatedListRecords
+    postRelatedListRecords
 );
 appRouter.get(
     (path: string) => path.startsWith(UIAPI_RELATED_LIST_RECORDS_BATCH_PATH),

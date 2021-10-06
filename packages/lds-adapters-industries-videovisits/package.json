@@ -1,0 +1,39 @@
+{
+    "name": "@salesforce/lds-adapters-industries-videovisits",
+    "version": "1.27.1",
+    "description": "API family to support booking virtual care appointments in HealthCloud",
+    "license": "MIT",
+    "main": "dist/umd/es2018/industries-videovisits.js",
+    "module": "dist/es/es2018/industries-videovisits.js",
+    "types": "dist/types/src/generated/artifacts/main.d.ts",
+    "files": [
+        "dist",
+        "sfdc",
+        "src/raml/*"
+    ],
+    "contributors": [
+        "vandanarao@salesforce.com"
+    ],
+    "scripts": {
+        "build": "yarn build:raml && yarn build:services && yarn build:karma",
+        "build:karma": "rollup --config rollup.config.karma.js",
+        "build:raml": "luvio generate src/raml/luvio.raml src/generated -p '../lds-compiler-plugins'",
+        "build:services": "rollup --config rollup.config.js",
+        "clean": "rm -rf dist sfdc src/generated karma/dist",
+        "release:core": "../../scripts/release/core.js --adapter=lds-adapters-industries-videovisits",
+        "release:corejar": "yarn build && packages/core-build/scripts/core.js --adapter=lds-adapters-industries-videovisits",
+        "start": "karma start",
+        "test": "karma start --single-run",
+        "test:compat": "karma start --single-run --compat"
+    },
+    "dependencies": {
+        "@salesforce/lds-bindings": "1.27.1"
+    },
+    "devDependencies": {
+        "@luvio/cli": "^0.50.0",
+        "@luvio/compiler": "^0.50.0",
+        "@luvio/engine": "^0.50.0",
+        "@luvio/lwc-luvio": "^0.50.0",
+        "@salesforce/lds-karma": "1.27.1"
+    }
+}

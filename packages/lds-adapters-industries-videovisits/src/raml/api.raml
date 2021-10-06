@@ -1,0 +1,117 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '54.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v54.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  ChimeAttendeeResultRepresentation:
+    description: Output representation of Chime Attendee
+    type: object
+    properties:
+      attendeeId:
+        description: Chime AttendeeId
+        type: string
+      joinToken:
+        description: Chime Attendee join token
+        type: string
+  ChimeMediaPlacementResultRepresentation:
+    description: Output representation of Chime Media Placement Result
+    type: object
+    properties:
+      audioFallbackUrl:
+        description: ChimeMediaPlacement AudioFallbackUrl
+        type: string
+      audioHostUrl:
+        description: ChimeMediaPlacement AudioHostUrl
+        type: string
+      eventIngestionUrl:
+        description: ChimeMediaPlacement EventIngestionUrl
+        type: string
+      screenDataUrl:
+        description: ChimeMediaPlacement ScreenDataUrl
+        type: string
+      screenSharingUrl:
+        description: ChimeMediaPlacement ScreenSharingUrl
+        type: string
+      screenViewingUrl:
+        description: ChimeMediaPlacement ScreenViewingUrl
+        type: string
+      signalingUrl:
+        description: ChimeMediaPlacement SignalingUrl
+        type: string
+      turnControlUrl:
+        description: ChimeMediaPlacement TurnControlUrl
+        type: string
+  ChimeMeetingResultRepresentation:
+    description: Output representation of Chime Meeting
+    type: object
+    properties:
+      mediaPlacement:
+        description: MediaPlacementUrls of chime meeting
+        type: ChimeMediaPlacementResultRepresentation
+      meetingId:
+        description: Chime MeetingId
+        type: string
+  JoinChimeMeetingInputRepresentation:
+    description: Input representation for JoinChimeMeeting
+    type: object
+    properties:
+      externalMeetingId:
+        description: Set External Meeting Id for Video Visit
+        type: string
+      region:
+        description: Set Region for Video Visit
+        type: string
+  JoinChimeMeetingResultRepresentation:
+    description: Output representation of JoinChimeMeeting Result
+    type: object
+    properties:
+      attendee:
+        description: JoinMeeting API attendee information
+        type: ChimeAttendeeResultRepresentation
+      errorMessage:
+        description: JoinMeeting error messages
+        type: string
+      isSuccess:
+        description: JoinMeeting success flag
+        type: boolean
+      meeting:
+        description: JoinMeeting API meeting information
+        type: ChimeMeetingResultRepresentation
+/connect:
+  /health:
+    /video-visits/chime-meeting:
+      post:
+        description: JoinMeeting API Resource
+        responses:
+          '200':
+            description: Success
+            body:
+              application/json:
+                type: JoinChimeMeetingResultRepresentation
+        body:
+          application/json:
+            type: JoinChimeMeetingInputRepresentation
+            # TODO [W-9807143]: Hand Rolled Change that removed 'required: false' since the 'required' property is not allowed in RAML 1.0
+            (oas-body-name): JoinChimeMeetingInput

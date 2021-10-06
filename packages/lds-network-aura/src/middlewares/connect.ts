@@ -270,6 +270,11 @@ const MARKETING_INTEGRATION_SAVE_FORM_PATH = new RegExp(
     'i'
 );
 
+const JOIN_CHIME_MEETING_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/health/video-visits/chime-meeting`,
+    'i'
+);
+
 const connect: ApiFamily = {
     getCommunityNavigationMenu: {
         method: 'get',
@@ -965,6 +970,17 @@ const marketingIntegration = {
     },
 };
 
+const videovisits: ApiFamily = {
+    chimeMeeting: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && JOIN_CHIME_MEETING_PATH.test(path),
+        transport: {
+            controller: 'VideoVisitController.chimeMeeting',
+        },
+    },
+};
+
 registerApiFamilyRoutes(connect);
 registerApiFamilyRoutes(commerce);
 registerApiFamilyRoutes(guidance);
@@ -973,3 +989,4 @@ registerApiFamilyRoutes(scalecenter);
 registerApiFamilyRoutes(flow);
 registerApiFamilyRoutes(billing);
 registerApiFamilyRoutes(marketingIntegration);
+registerApiFamilyRoutes(videovisits);

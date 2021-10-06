@@ -1,0 +1,18 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'videovisits'
+types:
+  JoinChimeMeetingResultRepresentation:
+    (luvio.key):
+      attendeeId: attendee.attendeeId
+      meetingId: meeting.meetingId
+    (luvio.ttl): 30000
+
+/connect/health/video-visits/chime-meeting:
+  post:
+    (luvio.adapter):
+      name: chimeMeeting

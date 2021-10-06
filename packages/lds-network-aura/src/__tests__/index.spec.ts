@@ -6894,6 +6894,52 @@ describe('routes', () => {
         );
     });
 
+    describe('post /connect/health/video-visits/chime-meeting', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/video-visits/chime-meeting`,
+                body: {
+                    JoinChimeMeetingInput: {
+                        externalMeetingId: '1234',
+                        region: 'us-west-2',
+                    },
+                },
+            },
+            [
+                'VideoVisitController.chimeMeeting',
+                {
+                    JoinChimeMeetingInput: {
+                        externalMeetingId: '1234',
+                        region: 'us-west-2',
+                    },
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ],
+            {
+                isSuccess: true,
+            }
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/health/video-visits/chime-meeting`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/health/video-visits/chime-meeting`,
+            },
+            {
+                isSuccess: true,
+            }
+        );
+    });
+
     // [IMPORTANT] this test has to be the last one in the suite to verify all registered routes have corresponding tests
     it.each(Object.keys(testedRoutes).map((key) => key.split(':')))(
         '%s %s route tested',

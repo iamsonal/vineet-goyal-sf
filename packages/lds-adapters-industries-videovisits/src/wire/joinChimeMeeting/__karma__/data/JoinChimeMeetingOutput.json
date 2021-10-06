@@ -1,0 +1,21 @@
+{
+    "meeting": {
+        "meetingId": "",
+        "mediaPlacement": {
+            "audioFallbackUrl": "",
+            "audioHostUrl": "",
+            "eventIngestionUrl": "",
+            "screenDataUrl": "",
+            "screenSharingUrl": "",
+            "screenViewingUrl": "",
+            "signalingUrl": "",
+            "turnControlUrl": ""
+        }
+    },
+    "attendee": {
+        "attendeeId": "",
+        "joinToken": ""
+    },
+    "errorMessage": "",
+    "isSuccess": true
+}

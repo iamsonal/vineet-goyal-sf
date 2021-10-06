@@ -16,7 +16,7 @@ import { GqlRecord } from './record';
 import { render as renderArguments } from '../type/Argument';
 import { GraphQLVariables } from '../type/Variable';
 import { render as renderField } from '../type/Field';
-import { keyPrefix } from '../util/adapter';
+import { namespace } from '../util/adapter';
 import { LuvioFieldNode } from '@salesforce/lds-graphql-parser';
 import { readScalarFieldSelection } from '../type/ScalarField';
 import { createIngest as genericCreateIngest, publishIfChanged } from '../util/ingest';
@@ -35,10 +35,10 @@ export const CUSTOM_FIELD_NODE_TYPE = 'Connection';
 export function keyBuilder(ast: LuvioSelectionCustomFieldNode, variables: GraphQLVariables) {
     const { arguments: args, name } = ast;
     if (args === undefined) {
-        return `${keyPrefix}${CUSTOM_FIELD_NODE_TYPE}:${name}()`;
+        return `${namespace}::${CUSTOM_FIELD_NODE_TYPE}:${name}()`;
     }
     const serialized = renderArguments(args, variables);
-    return `${keyPrefix}${CUSTOM_FIELD_NODE_TYPE}:${name}(${serialized})`;
+    return `${namespace}::${CUSTOM_FIELD_NODE_TYPE}:${name}(${serialized})`;
 }
 
 function selectEdges(

@@ -6,7 +6,7 @@ import {
 import { Environment, Luvio, Store } from '@luvio/engine';
 import parseAndVisit from '@salesforce/lds-graphql-parser';
 import { graphQLAdapterFactory } from '../../../main';
-import { apiFamilyName, representationName } from '../../../util/adapter';
+import { namespace, representationName } from '../../../util/adapter';
 
 import mockData_Account_fields_Name from './data/RecordQuery-Account-fields-Name.json';
 
@@ -90,7 +90,7 @@ describe('graphQL adapter', () => {
             const cacheKeys = Object.keys(store.records);
 
             // verify the root key is there and is composed properly
-            expect(cacheKeys).toContain(`${apiFamilyName}::${representationName}`);
+            expect(cacheKeys).toContain(`${namespace}::${representationName}`);
         });
     });
 });

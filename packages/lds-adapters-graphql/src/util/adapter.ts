@@ -87,6 +87,5 @@ export function stableJSONStringify(node: any): string {
     return '{' + out + '}';
 }
 
-export const apiFamilyName = 'GraphQL';
+export const namespace = 'GraphQL';
 export const representationName = 'graphql';
-export const keyPrefix = `${apiFamilyName}::`;

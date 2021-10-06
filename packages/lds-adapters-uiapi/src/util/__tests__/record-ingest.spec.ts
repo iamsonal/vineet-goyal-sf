@@ -94,7 +94,7 @@ describe('Record Ingest Utils', () => {
         it('calls storePublishMetadata with key and TTL (30000) plus the provided timeout', () => {
             expect(mockLds.publishStoreMetadata).toHaveBeenCalledWith(MOCK_KEY, {
                 ttl: RecordRepresentation.TTL,
-                namespace: 'UiApi::',
+                namespace: 'UiApi',
                 representationName: RecordRepresentation.RepresentationType,
             });
         });

@@ -8,7 +8,7 @@ import {
 } from '@salesforce/lds-bindings';
 import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
 import { adapterName, graphQLAdapterFactory } from './main';
-import { apiFamilyName } from './util/adapter';
+import { namespace } from './util/adapter';
 
 let graphQL: any;
 let graphQL_imperative: any;
@@ -16,12 +16,12 @@ let graphQL_imperative: any;
 let graphQLImperative: any;
 
 const adapterMetadata: AdapterMetadata = {
-    apiFamily: apiFamilyName,
+    apiFamily: namespace,
     name: adapterName,
 };
 
 withDefaultLuvio((luvio: Luvio) => {
-    const ldsAdapter = createLDSAdapter(luvio, apiFamilyName, graphQLAdapterFactory);
+    const ldsAdapter = createLDSAdapter(luvio, namespace, graphQLAdapterFactory);
 
     graphQL = createWireAdapterConstructor(
         luvio,

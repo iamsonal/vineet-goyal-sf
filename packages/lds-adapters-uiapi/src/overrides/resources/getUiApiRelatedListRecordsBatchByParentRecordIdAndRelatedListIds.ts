@@ -181,6 +181,7 @@ export function select(luvio: Luvio, resourceParams: ResourceRequestConfig): Fra
 export function keyBuilder(params: ResourceRequestConfig): string {
     return (
         keyPrefix +
+        '::' +
         'RelatedListRecordCollectionBatchRepresentation(' +
         'fields:' +
         params.queryParams.fields +

@@ -14,7 +14,7 @@ import {
     ObjectInfoRepresentation,
     RecordRepresentation,
 } from '@salesforce/lds-adapters-uiapi';
-import { apiFamilyName as graphQLApiFamilyName } from '@salesforce/lds-adapters-graphql';
+import { namespace as graphQLNamespace } from '@salesforce/lds-adapters-graphql';
 import { Adapter, ResourceRequest } from '@luvio/engine';
 import { MergeStrategy } from './makeDurableStoreWithMergeStrategy';
 import { isStoreKeyRecordId } from '@salesforce/lds-uiapi-record-utils';
@@ -22,7 +22,7 @@ import { isStoreKeyRecordId } from '@salesforce/lds-uiapi-record-utils';
 type GetDraftActionsForRecords = (keys: string[]) => Promise<DraftActionMap>;
 
 function isGqlCacheKey(key: string) {
-    return key.startsWith(`${graphQLApiFamilyName}::`);
+    return key.startsWith(`${graphQLNamespace}::`);
 }
 
 export class RecordMergeStrategy implements MergeStrategy {

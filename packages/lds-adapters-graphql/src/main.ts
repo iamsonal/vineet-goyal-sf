@@ -10,7 +10,7 @@ import {
 } from '@luvio/engine';
 import { LuvioDocumentNode } from '@salesforce/lds-graphql-parser';
 import { astToString } from './util/ast-to-string';
-import { deepFreeze, keyPrefix, representationName, untrustedIsObject } from './util/adapter';
+import { deepFreeze, namespace, representationName, untrustedIsObject } from './util/adapter';
 import {
     GraphQL,
     createIngest,
@@ -20,11 +20,11 @@ import {
 } from './type/Document';
 import { GraphQLVariables, isGraphQLVariables } from './type/Variable';
 
-export { apiFamilyName, representationName } from './util/adapter';
+export { namespace, representationName } from './util/adapter';
 
 export const adapterName = 'graphQL';
 
-const GRAPHQL_ROOT_KEY = `${keyPrefix}${representationName}`;
+const GRAPHQL_ROOT_KEY = `${namespace}::${representationName}`;
 
 interface GraphQLConfig {
     query: LuvioDocumentNode;

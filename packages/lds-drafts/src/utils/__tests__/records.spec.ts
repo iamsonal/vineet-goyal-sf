@@ -1672,7 +1672,7 @@ describe('draft environment record utilities', () => {
                 },
                 metadata: {
                     representationName: 'test',
-                    namespace: 'test::',
+                    namespace: 'test',
                     staleTimestamp: 1,
                     expirationTimestamp: 1,
                     ingestionTimestamp: 0,
@@ -1704,7 +1704,7 @@ describe('draft environment record utilities', () => {
                 },
                 metadata: {
                     representationName: 'test',
-                    namespace: 'test::',
+                    namespace: 'test',
                     staleTimestamp: 2,
                     expirationTimestamp: 2,
                     ingestionTimestamp: 0,
@@ -1737,7 +1737,7 @@ describe('draft environment record utilities', () => {
                 },
                 metadata: {
                     representationName: 'test',
-                    namespace: 'test::',
+                    namespace: 'test',
                     staleTimestamp: 2,
                     expirationTimestamp: 2,
                     ingestionTimestamp: 0,

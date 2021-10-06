@@ -4,7 +4,7 @@ extends: ./api.raml
 uses:
   luvio: luvio://annotations.raml
 
-(luvio.keyPrefix): 'BillingBatch::'
+(luvio.keyPrefix): 'BillingBatch'
 
 types:
   PaymentsBatchSchedulerOutputRepresentation:
@@ -20,7 +20,7 @@ types:
       tests:
         validConfigs:
           - |
-            { "PaymentsBatchSchedulerInput": 
+            { "PaymentsBatchSchedulerInput":
               {
                 "schedulerName": "Batch Scheduler",
                 "startDate": "2021-05-11T05:01:06.000Z",
@@ -30,7 +30,7 @@ types:
                 "recursEveryMonthOnDay": "28",
                 "criteriaExpression": "1 AND 2",
                 "status" : "Active",
-                "filterCriteria": 
+                "filterCriteria":
                   [
                     {
                         "objectName": "PaymentSchedule",
@@ -47,10 +47,10 @@ types:
                         "criteriaSequence": 2
                     }
                   ]
-                }  
+                }
               }
           - |
-            { "PaymentsBatchSchedulerInput": 
+            { "PaymentsBatchSchedulerInput":
               {
                 "schedulerName": "Batch Scheduler",
                 "startDate": "2021-05-11T05:01:06.000Z",
@@ -60,7 +60,7 @@ types:
                 "criteriaExpression": "1 AND 2",
                 "status": "Active",
                 "filterCriteria": []
-              }  
+              }
             }
         invalidConfigs:
           - |
@@ -79,8 +79,8 @@ types:
               "filterCriteria": []
             }
           - |
-            { "PaymentsBatchSchedulerInput": 
+            { "PaymentsBatchSchedulerInput":
               {
                 "schedulerName": "Batch Scheduler"
-              }  
+              }
             }

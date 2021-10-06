@@ -4,7 +4,7 @@ extends: ./api.raml
 uses:
   luvio: luvio://annotations.raml
 
-(luvio.keyPrefix): 'CMSAuthoring::'
+(luvio.keyPrefix): 'CMSAuthoring'
 
 types:
   ManagedContentDeploymentRepresentation:
@@ -36,15 +36,15 @@ types:
         tests:
           validConfigs:
             - |
-              { "DeploymentInput": 
+              { "DeploymentInput":
                 {
                   "contentSpaceId": "0Zux0000000KykTCAS",
-                  "channelIds": 
+                  "channelIds":
                     [
                       "0apx0000000GmanAAC"
                     ],
                   "description": "Test Description",
-                  "contentIds": 
+                  "contentIds":
                     [
                       "0apx0000000GmanAAC"
                     ],
@@ -53,14 +53,14 @@ types:
                 }
               }
             - |
-              { "DeploymentInput": 
+              { "DeploymentInput":
                 {
                   "contentSpaceId": "0Zux0000000KykTCAS",
-                  "channelIds": 
+                  "channelIds":
                     [
                     ],
                   "description": "Test Description",
-                  "contentIds": 
+                  "contentIds":
                     [
                     ],
                   "executeStagedDeployments": false,
@@ -68,24 +68,24 @@ types:
                 }
               }
             - |
-              { "DeploymentInput": 
+              { "DeploymentInput":
                 {
                   "contentSpaceId": "0Zux0000000KykTCAS"
                 }
               }
           invalidConfigs:
             - |
-              { 
+              {
                 "contentSpaceId": "0Zux0000000KykTCAS"
               }
             - |
               { "contentSpaceId": "0Zux0000000KykTCAS",
-                "channelIds": 
+                "channelIds":
                   [
                     "0apx0000000GmanAAC"
                   ],
                 "description": "Test Description",
-                "contentIds": 
+                "contentIds":
                   [
                     "0apx0000000GmanAAC"
                   ],
@@ -93,14 +93,14 @@ types:
                 "scheduledDate": "2021-03-23T17:14:00.000Z"
               }
             - |
-              { "DeploymentInput": 
+              { "DeploymentInput":
                 {
-                  "channelIds": 
+                  "channelIds":
                     [
                       "0apx0000000GmanAAC"
                     ],
                   "description": "Test Description",
-                  "contentIds": 
+                  "contentIds":
                     [
                       "0apx0000000GmanAAC"
                     ],
@@ -122,7 +122,7 @@ types:
                       "contentSpaceOrFolderId":"0Zuxx00000001DpCAI",
                       "contentType":"news",
                       "title":"hello authoring 2.0",
-                      "urlName":"testurl",   
+                      "urlName":"testurl",
                       "contentBody":{
                         "title": "hello authoring 2.0",
                         "body":"test body",
@@ -136,7 +136,7 @@ types:
                       "contentSpaceOrFolderId":"0Zuxx00000001DpCAI",
                       "contentType":"news",
                       "title":"hello authoring 2.0",
-                      "urlName":"testurl",   
+                      "urlName":"testurl",
                       "contentBody":{
                         "title": "hello authoring 2.0",
                         "body":"test body",
@@ -154,7 +154,7 @@ types:
                   "ManagedContentInputParam": {
                       "contentType":"news",
                       "title":"hello authoring 2.0",
-                      "urlName":"testurl",   
+                      "urlName":"testurl",
                       "contentBody":{
                         "title": "hello authoring 2.0",
                         "body":"test body",
@@ -167,7 +167,7 @@ types:
                   "ManagedContentInputParam": {
                       "contentSpaceOrFolderId":"0Zuxx00000001DpCAI",
                       "title":"hello authoring 2.0",
-                      "urlName":"testurl",   
+                      "urlName":"testurl",
                       "contentBody":{
                         "title": "hello authoring 2.0",
                         "body":"test body",
@@ -180,7 +180,7 @@ types:
                   "ManagedContentInputParam": {
                       "contentSpaceOrFolderId":"0Zuxx00000001DpCAI",
                       "contentType":"news",
-                      "urlName":"testurl",   
+                      "urlName":"testurl",
                       "contentBody":{
                         "title": "hello authoring 2.0",
                         "body":"test body",
@@ -219,7 +219,7 @@ types:
                     "variantId": "9Psxx0000004DwKCAU",
                     "ManagedContentVariantInputParam": {
                         "title":"hello authoring 2.0",
-                        "urlName":"testurl",   
+                        "urlName":"testurl",
                         "contentBody":{
                           "title": "hello authoring 2.0",
                           "body":"test body",
@@ -232,7 +232,7 @@ types:
                   {
                     "ManagedContentVariantInputParam": {
                           "title":"hello authoring 2.0",
-                          "urlName":"testurl",   
+                          "urlName":"testurl",
                           "contentBody":{
                             "title": "hello authoring 2.0",
                             "body":"test body",
@@ -241,7 +241,7 @@ types:
                     }
                   }
                 - |
-                  { 
+                  {
                     "variantId": "9Psxx0000004DwKCAU"
                   }
                 - |

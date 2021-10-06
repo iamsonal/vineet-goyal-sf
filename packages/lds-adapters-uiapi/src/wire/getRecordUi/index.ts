@@ -134,7 +134,7 @@ function keyBuilder(
     const joinedOptionalFields = optionalFields.sort().join(',');
     const joinedLayoutTypes = layoutTypes.sort().join(',');
     const joinedModes = modes.sort().join(',');
-    return `${keyPrefix}RecordUiRepresentation:${joinedRecordIds}:${joinedLayoutTypes}:${joinedModes}:${joinedOptionalFields}`;
+    return `${keyPrefix}::RecordUiRepresentation:${joinedRecordIds}:${joinedLayoutTypes}:${joinedModes}:${joinedOptionalFields}`;
 }
 
 function buildSnapshotRefresh(

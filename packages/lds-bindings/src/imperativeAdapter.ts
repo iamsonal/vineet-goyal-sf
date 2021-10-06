@@ -93,10 +93,10 @@ export function createImperativeAdapter<C, D>(
 
     const imperativeAdapterInvoke: ImperativeAdapterInvokeType<C, D> = (
         config: C,
-        context: AdapterRequestContext,
+        requestContext: AdapterRequestContext,
         callback: DataCallback<D>
     ) => {
-        const snapshotOrPromise = adapter(config) as
+        const snapshotOrPromise = adapter(config, requestContext) as
             | CallbackSnapshot<D>
             | Promise<CallbackSnapshot<D>>
             | null;
@@ -128,13 +128,13 @@ export function createImperativeAdapter<C, D>(
     // Returns an unsubscribe function to the consumer
     const imperativeAdapterSubscribe: ImperativeAdapterSubscribeType<C, D> = (
         config: C,
-        context: AdapterRequestContext,
+        requestContext: AdapterRequestContext,
         callback: DataCallback<D>
     ) => {
         let subscriberCallback: DataCallback<D> | null = callback;
         let unsub: Unsubscribe | undefined;
 
-        const snapshotOrPromise = adapter(config) as
+        const snapshotOrPromise = adapter(config, requestContext) as
             | CallbackSnapshot<D>
             | Promise<CallbackSnapshot<D>>
             | null;

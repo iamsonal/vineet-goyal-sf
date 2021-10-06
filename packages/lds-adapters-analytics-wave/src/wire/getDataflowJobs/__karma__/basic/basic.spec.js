@@ -8,6 +8,7 @@ import {
 } from 'analytics-wave-test-util';
 
 const MOCK_PREFIX = 'wire/getDataflowJobs/__karma__/data/';
+const TTL = 300;
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
@@ -46,7 +47,7 @@ describe('basic', () => {
         const el = await setupElement(config, GetDataflowJobs);
         expect(el.getWiredData()).toEqual(mockEmptyData);
 
-        timekeeper.travel(Date.now() + 5000 + 1);
+        timekeeper.travel(Date.now() + TTL + 1);
 
         const el2 = await setupElement(config, GetDataflowJobs);
         expect(el2.getWiredData()).toEqual(mockData);
@@ -64,7 +65,7 @@ describe('basic', () => {
         const el = await setupElement(config, GetDataflowJobs);
         expect(el.getWiredData()).toEqual(mockData);
 
-        timekeeper.travel(Date.now() + 5000 + 1);
+        timekeeper.travel(Date.now() + TTL + 1);
 
         const el2 = await setupElement(config, GetDataflowJobs);
         expect(el2.getWiredData()).toEqual(mockEmptyData);

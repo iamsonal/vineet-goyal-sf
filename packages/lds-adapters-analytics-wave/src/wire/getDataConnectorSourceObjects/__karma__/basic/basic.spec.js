@@ -9,6 +9,7 @@ import {
 
 const MOCK_PREFIX = 'wire/getDataConnectorSourceObjects/__karma__/data/';
 const connectorIdOrApiName = '0Itxx0000004C92CAE';
+const TTL = 300;
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
@@ -62,7 +63,7 @@ describe('basic', () => {
         expect(el.pushCount()).toBe(1);
         expect(el.getWiredData()).toEqual(mock);
 
-        timekeeper.travel(Date.now() + 5000 + 1);
+        timekeeper.travel(Date.now() + TTL + 1);
 
         await updateElement(el, config);
         expect(el.pushCount()).toBe(2);

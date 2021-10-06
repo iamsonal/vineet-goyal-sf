@@ -1,12 +1,13 @@
+import timekeeper from 'timekeeper';
 import GetDataConnectorSourceFields from '../lwc/get-data-connector-source-fields';
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     mockGetDataConnectorSourceFieldsNetworkOnce,
     mockGetDataConnectorSourceFieldsNetworkErrorOnce,
-    expireAsset,
 } from 'analytics-wave-test-util';
 
 const MOCK_PREFIX = 'wire/getDataConnectorSourceFields/__karma__/data/';
+const TTL = 300;
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
@@ -156,7 +157,7 @@ describe('caching', () => {
         await setupElement(config, GetDataConnectorSourceFields);
 
         // expire cache
-        expireAsset();
+        timekeeper.travel(Date.now() + TTL + 1);
 
         // second component should retrieve from network with updated data
         const element = await setupElement(config, GetDataConnectorSourceFields);

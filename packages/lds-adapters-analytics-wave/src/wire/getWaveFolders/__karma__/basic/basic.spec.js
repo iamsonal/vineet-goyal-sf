@@ -1,12 +1,13 @@
+import timekeeper from 'timekeeper';
 import GetWaveFolders from '../lwc/get-wave-folders';
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     mockGetWaveFoldersNetworkOnce,
     mockGetWaveFoldersNetworkErrorOnce,
-    expireAsset,
 } from 'analytics-wave-test-util';
 
 const MOCK_PREFIX = 'wire/getWaveFolders/__karma__/data/';
+const TTL = 300;
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
@@ -173,7 +174,7 @@ describe('caching', () => {
         await setupElement(config, GetWaveFolders);
 
         // expire cache
-        expireAsset();
+        timekeeper.travel(Date.now() + TTL + 1);
 
         // second component should retrieve from network with updated data
         const element = await setupElement(config, GetWaveFolders);

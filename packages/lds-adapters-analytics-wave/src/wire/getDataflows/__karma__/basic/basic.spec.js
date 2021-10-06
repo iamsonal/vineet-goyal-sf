@@ -8,7 +8,7 @@ import {
 } from 'analytics-wave-test-util';
 
 const MOCK_PREFIX = 'wire/getDataflows/__karma__/data/';
-const GET_DATAFLOWS_TTL = 5000;
+const TTl = 300;
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
@@ -36,7 +36,7 @@ describe('basic', () => {
         const el = await setupElement(config, GetDataflows);
         expect(el.getWiredData()).toEqual(mockEmptyData);
 
-        timekeeper.travel(Date.now() + GET_DATAFLOWS_TTL + 1);
+        timekeeper.travel(Date.now() + TTl + 1);
 
         const el2 = await setupElement(config, GetDataflows);
         expect(el2.getWiredData()).toEqual(mockData);
@@ -53,7 +53,7 @@ describe('basic', () => {
         const el = await setupElement(config, GetDataflows);
         expect(el.getWiredData()).toEqual(mockData);
 
-        timekeeper.travel(Date.now() + GET_DATAFLOWS_TTL + 1);
+        timekeeper.travel(Date.now() + TTl + 1);
 
         const el2 = await setupElement(config, GetDataflows);
         expect(el2.getWiredData()).toEqual(mockEmptyData);

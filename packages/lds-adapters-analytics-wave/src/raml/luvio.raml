@@ -22,7 +22,7 @@ types:
     (luvio.key):
       id: uuid
   ReplicatedFieldCollectionRepresentation:
-    (luvio.ttl): 5000
+    (luvio.ttl): 300
     (luvio.key):
       id: replicatedDataset.id
   RestoreDatasetVersionRepresentation:
@@ -36,16 +36,34 @@ types:
       connectorIdOrApiName: dataConnector.id # Only support id for now
       SourceObjectName: name
   SourceFieldCollectionRepresentation:
-    (luvio.ttl): 5000
+    (luvio.ttl): 300
     (luvio.key):
       connectorIdOrApiName: dataConnector.id # Only support id for now
       SourceObjectName: sourceObjectName
   DataflowJobCollectionRepresentation:
-    (luvio.ttl): 5000
+    (luvio.ttl): 300
   DataflowCollectionRepresentation:
-    (luvio.ttl): 5000
+    (luvio.ttl): 300
   DataConnectorStatusRepresentation:
-    (luvio.ttl): 1000
+    (luvio.ttl): 300
+  DataConnectorCollectionRepresentation:
+    (luvio.ttl): 300
+  DataConnectorTypeCollectionRepresentation:
+    (luvio.ttl): 300
+  DataflowJobNodeCollectionRepresentation:
+    (luvio.ttl): 300
+  DatasetCollectionRepresentation:
+    (luvio.ttl): 300
+  RecipeCollectionRepresentation:
+    (luvio.ttl): 300
+  ReplicatedDatasetCollectionRepresentation:
+    (luvio.ttl): 300
+  SourceObjectCollectionRepresentation:
+    (luvio.ttl): 300
+  WaveAnalyticsLimitCollectionRepresentation:
+    (luvio.ttl): 300
+  WaveFolderCollectionRepresentation:
+    (luvio.ttl): 300
 
 /wave:
   /asset/{assetId}/schedule:

@@ -1,12 +1,13 @@
+import timekeeper from 'timekeeper';
 import GetRecipes from '../lwc/get-recipes';
 import { getMock as globalGetMock, setupElement } from 'test-util';
 import {
     mockGetRecipesNetworkOnce,
     mockGetRecipesNetworkErrorOnce,
-    expireAsset,
 } from 'analytics-wave-test-util';
 
 const MOCK_PREFIX = 'wire/getRecipes/__karma__/data/';
+const TTL = 300;
 
 function getMock(filename) {
     return globalGetMock(MOCK_PREFIX + filename);
@@ -144,7 +145,7 @@ describe('caching', () => {
         await setupElement(config, GetRecipes);
 
         // expire cache
-        expireAsset();
+        timekeeper.travel(Date.now() + TTL + 1);
 
         // second component should retrieve from network with updated data
         const element = await setupElement(config, GetRecipes);

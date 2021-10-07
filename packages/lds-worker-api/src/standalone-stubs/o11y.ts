@@ -61,12 +61,15 @@ interface Schema {
 
 interface Activity {
     stop(userSchemaOrText?: Schema | string, userData?: SchematizedData): void;
+    error(error: Error, userSchemaOrText?: Schema | string, userData?: SchematizedData): void;
 }
 
 function stop(_userSchemaOrText?: Schema | string, _userData?: SchematizedData) {}
+function error(_error: Error, _userSchemaOrText?: Schema | string, _userData?: SchematizedData) {}
 
 export const activity: Activity = {
     stop,
+    error,
 };
 
 // Instrumentation
@@ -82,6 +85,12 @@ export const mockInstrumentation = {
     trackValue: (
         _operation: string,
         _value: number,
+        _hasError?: boolean,
+        _tags?: MetricsTags
+    ) => {},
+    incrementCounter: (
+        _operation: string,
+        _increment?: number,
         _hasError?: boolean,
         _tags?: MetricsTags
     ) => {},

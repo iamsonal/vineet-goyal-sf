@@ -1,5 +1,6 @@
 import { Luvio, Store, Adapter, Snapshot } from '@luvio/engine';
 import { getInstrumentation } from 'o11y/client';
+import { instrument as instrumentLwcBindings } from '@salesforce/lds-bindings';
 import { isPromise, stableJSONStringify } from './utils/utils';
 import { LRUCache } from './utils/lru-cache';
 
@@ -30,6 +31,9 @@ const observabilityInstrumentation = getInstrumentation(OBSERVABILITY_NAMESPACE)
 export function setupInstrumentation(luvio: Luvio, _store: Store): void {
     instrumentMethods(luvio, ['storeBroadcast', 'storeIngest', 'storeLookup']);
 
+    instrumentLwcBindings({
+        instrumentAdapter: instrumentAdapter,
+    });
     // TODO [W-9782972]: part of internal instrumentation work
     //setStoreScheduler(store);
 }

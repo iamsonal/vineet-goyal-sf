@@ -19,7 +19,8 @@
     },
     "dependencies": {
         "@luvio/engine": "0.52.0",
-        "@luvio/environments": "0.52.0"
+        "@luvio/environments": "0.52.0",
+        "@salesforce/lds-bindings": "1.28.0"
     },
     "devDependencies": {
         "@mobileplatform/nimbus-plugin-lds": "1.28.0",

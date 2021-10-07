@@ -152,6 +152,7 @@ describe('executeMutatingAdapter', () => {
         const testUpdatedDate = new Date();
         timekeeper.freeze(testUpdatedDate);
 
+        const draftId = `${testUpdatedDate.valueOf()}00`;
         const optimisticDraftResponse = {
             ...recordRep_Account,
             drafts: {
@@ -160,7 +161,8 @@ describe('executeMutatingAdapter', () => {
                 deleted: true,
                 serverValues: {},
                 // draft action IDs are current timestamp plus a double digit index
-                draftActionIds: [`${testUpdatedDate.valueOf()}00`],
+                draftActionIds: [draftId],
+                latestDraftActionId: draftId,
             },
         };
 

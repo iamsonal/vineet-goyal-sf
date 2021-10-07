@@ -114,6 +114,38 @@ describe('Nimbus durable store tests', () => {
             expect(evictEntriesSpy.mock.calls[0][0]).toEqual(['1']);
             expect(evictEntriesSpy.mock.calls[0][1]).toEqual(testSegment);
         });
+
+        it('should handle errors if getEntriesInSegmentWithCallback fails in the synchronous code path', async () => {
+            let expectedError = new Error('it failed');
+            const getEntriesInSegmentWithCallback = jest.fn().mockImplementation(() => {
+                return Promise.reject(expectedError);
+            });
+
+            const mock = {
+                getEntriesInSegmentWithCallback,
+            };
+            mockNimbusStoreGlobal(mock as any as MockNimbusDurableStore);
+            const durableStore = new NimbusDurableStore();
+            await expect(
+                durableStore.getEntries([recordId], DefaultDurableSegment)
+            ).rejects.toEqual(expectedError);
+        });
+
+        it('should handle errors if getAllEntriesInSegmentWithCallback fails in the synchronous code path', async () => {
+            let expectedError = new Error('it failed');
+            const getAllEntriesInSegmentWithCallback = jest.fn().mockImplementation(() => {
+                return Promise.reject(expectedError);
+            });
+
+            const mock = {
+                getAllEntriesInSegmentWithCallback,
+            };
+            mockNimbusStoreGlobal(mock as any as MockNimbusDurableStore);
+            const durableStore = new NimbusDurableStore();
+            await expect(durableStore.getAllEntries(DefaultDurableSegment)).rejects.toEqual(
+                expectedError
+            );
+        });
     });
 
     describe('GetEntries', () => {

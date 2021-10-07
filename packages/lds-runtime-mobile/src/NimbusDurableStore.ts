@@ -145,7 +145,7 @@ export class NimbusDurableStore implements DurableStore {
                     (error) => {
                         reject(error);
                     }
-                );
+                ).catch((error) => reject(error));
             }).finally(() => tasker.done());
         }
 
@@ -171,7 +171,7 @@ export class NimbusDurableStore implements DurableStore {
                     (error) => {
                         reject(error);
                     }
-                );
+                ).catch((error) => reject(error));
             }).finally(() => tasker.done());
         }
 

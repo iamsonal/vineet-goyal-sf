@@ -5,13 +5,17 @@ let tokenBucket;
 
 describe('token bucket', () => {
     beforeEach(() => {
-        timekeeper.reset();
+        timekeeper.freeze(Date.now());
         tokenBucket = new TokenBucket(RATE_LIMIT_CONFIG);
+    });
+
+    afterEach(() => {
+        timekeeper.reset();
     });
 
     it('returns true when have tokens and false when the bucket is empty', () => {
         for (let i = 0; i < RATE_LIMIT_CONFIG.bucketCapacity; i++) {
-            tokenBucket.take(1);
+            expect(tokenBucket.take(1)).toBe(true);
         }
         expect(tokenBucket.take(1)).toBe(false);
     });

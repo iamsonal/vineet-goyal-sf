@@ -1,0 +1,80 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '54.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v54.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  MicrobatchingIngestionInputRepresentation:
+    description: Microbatching Ingestion Input Representation
+    type: object
+    properties:
+      groupBy:
+        description: GroupBy
+        type: string
+      keyPrefix:
+        description: KeyPrefix
+        type: string
+      processType:
+        description: ProcessType
+        type: string
+      requestBody:
+        description: RequestBody
+        type: object
+        properties:
+          //:
+            type: object
+  MicrobatchingIngestionOutputRepresentation:
+    description: Representation for microbatching buffering response
+    type: object
+    properties:
+      recordUUID:
+        description: UUID of the ingested record
+        type: string
+  MicrobatchingIngestionRequestBodyInputRepresentation:
+    description: Encapsulates request body payload
+    type: object
+    properties:
+      requestBody:
+        description: RequestBody
+        type: object
+        properties:
+          //:
+            type: object
+/connect/communities/{communityId}/microbatching:
+  post:
+    description: Microbatching record ingestion.
+    responses:
+      '200':
+        description: Success
+        body:
+          application/json:
+            type: MicrobatchingIngestionOutputRepresentation
+    body:
+      application/json:
+        type: MicrobatchingIngestionInputRepresentation
+        (oas-body-name): requestIngestionInput
+  uriParameters:
+    communityId:
+      type: string
+      required: true

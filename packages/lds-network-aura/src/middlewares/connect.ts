@@ -13,6 +13,10 @@ import {
     SITES_BASE_URI,
 } from './connect-base';
 
+const COMMUNITIES_MICROBATCHING_PATH = new RegExp(
+    `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/microbatching`
+);
+
 const COMMUNITIES_NAVIGATION_MENU_PATH = new RegExp(
     `${CONNECT_BASE_URI}/communities/([A-Z0-9]){15,18}/navigation-menu`,
     'i'
@@ -276,6 +280,15 @@ const JOIN_CHIME_MEETING_PATH = new RegExp(
 );
 
 const connect: ApiFamily = {
+    ingestRecord: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && COMMUNITIES_MICROBATCHING_PATH.test(path),
+        transport: {
+            controller: 'CommunitiesController.ingestRecord',
+        },
+    },
+
     getCommunityNavigationMenu: {
         method: 'get',
         predicate: (path: string) =>

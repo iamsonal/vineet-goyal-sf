@@ -6940,6 +6940,36 @@ describe('routes', () => {
         );
     });
 
+    describe('post /connect/communities/{communityId}/microbatching', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/communities/1234567890ABCDE/microbatching`,
+            },
+            [
+                'CommunitiesController.ingestRecord',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testRejectFetchResponse({
+            method: 'post',
+            baseUri: CONNECT_BASE_URI,
+            basePath: `/communities/1234567890ABCDE/microbatching`,
+        });
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/communities/1234567890ABCDE/microbatching`,
+            },
+            {}
+        );
+    });
+
     // [IMPORTANT] this test has to be the last one in the suite to verify all registered routes have corresponding tests
     it.each(Object.keys(testedRoutes).map((key) => key.split(':')))(
         '%s %s route tested',

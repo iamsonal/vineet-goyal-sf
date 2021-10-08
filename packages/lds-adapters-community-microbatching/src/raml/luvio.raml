@@ -1,0 +1,18 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'microbatching'
+
+types:
+  MicrobatchingIngestionOutputRepresentation:
+    (luvio.ttl): 100
+    (luvio.key):
+      recordUUID: recordUUID
+
+/connect/communities/{communityId}/microbatching:
+  post:
+    (luvio.adapter):
+      name: ingestRecord

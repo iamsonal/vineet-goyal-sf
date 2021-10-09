@@ -92,7 +92,7 @@ describe('AST to string', () => {
             ],
         };
 
-        const expectedQuery = `query { uiapi { query { Account(where: { Name: { like: "Account1" } }) { edges { node { Name { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+        const expectedQuery = `query { __typename uiapi { __typename query { __typename Account(where: { Name: { like: "Account1" } }) { __typename edges { __typename node { Name { __typename value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
 
         const actual = astToString(ast);
         expect(actual).toEqual(expectedQuery);
@@ -217,7 +217,7 @@ describe('AST to string', () => {
             };
 
             const result = serializeOperationDefinition(operationNode, { fragments: {} });
-            expect(result).toEqual('query operationName {  }');
+            expect(result).toEqual('query operationName { __typename  }');
         });
     });
 
@@ -306,7 +306,7 @@ describe('AST to string', () => {
             ],
         };
 
-        const expectedQuery = `query { uiapi { query { Account(where: { Name: { like: "Account1" } }) { edges { node { id, WeakEtag, Name { value, displayValue,  } } } } } } }`;
+        const expectedQuery = `query { __typename uiapi { __typename query { __typename Account(where: { Name: { like: "Account1" } }) { __typename edges { __typename node { __typename id, WeakEtag, Name { __typename value, displayValue,  } } } } } } }`;
 
         const actual = astToString(ast);
         expect(actual).toEqual(expectedQuery);
@@ -335,7 +335,7 @@ describe('AST to string', () => {
         const parsed = parse(query);
         const string = astToString(parsed);
         expect(string).toEqual(
-            'query { uiapi { query { Opportunity { edges { Partners { edges { node { Id,  } } } } } } } }'
+            'query { __typename uiapi { __typename query { __typename Opportunity { __typename edges { __typename Partners { __typename edges { __typename node { __typename Id,  } } } } } } } }'
         );
     });
 
@@ -398,7 +398,7 @@ describe('AST to string', () => {
             };
             const actual = serializeCustomFieldRecord(recordSelection, state);
 
-            const expectedQuery = `node { Name { value, displayValue,  } ...defaultRecordFields }`;
+            const expectedQuery = `node { Name { __typename value, displayValue,  } ...defaultRecordFields }`;
             const expectedState = {
                 fragments: {
                     defaultRecordFields:
@@ -660,7 +660,7 @@ describe('AST to string', () => {
             ],
         };
 
-        const expectedQuery = `query { MyApi: uiapi { query { MyAccount: Account(where: { Name: { like: "Account1" } }) { edges { MyNode: node { MyName: Name { MyValue: value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+        const expectedQuery = `query { __typename MyApi: uiapi { __typename query { __typename MyAccount: Account(where: { Name: { like: "Account1" } }) { __typename edges { __typename MyNode: node { MyName: Name { __typename MyValue: value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
 
         const actual = astToString(ast);
         expect(actual).toEqual(expectedQuery);
@@ -803,7 +803,7 @@ describe('AST to string', () => {
             ],
         };
 
-        const expectedQuery = `query  ($accountName: String = "Account2", $Id: [ID] = ["001RM000004uuhtYAA", "001RM000004uuhsYAA"]){ MyApi: uiapi { query { MyAccount: Account(where: { Name: { like: $accountName }, Id: { in: $Id } }) { edges { MyNode: node { MyName: Name { MyValue: value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+        const expectedQuery = `query  ($accountName: String = "Account2", $Id: [ID] = ["001RM000004uuhtYAA", "001RM000004uuhsYAA"]){ __typename MyApi: uiapi { __typename query { __typename MyAccount: Account(where: { Name: { like: $accountName }, Id: { in: $Id } }) { __typename edges { __typename MyNode: node { MyName: Name { __typename MyValue: value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
 
         const actual = astToString(ast);
         expect(actual).toEqual(expectedQuery);
@@ -885,7 +885,7 @@ describe('AST to string', () => {
                 ],
             };
 
-            const expectedQuery = `query { uiapi { query { Account(where: { Name: { like: "Account1" } }) { edges { node { Name { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+            const expectedQuery = `query { __typename uiapi { __typename query { __typename Account(where: { Name: { like: "Account1" } }) { __typename edges { __typename node { Name { __typename value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
             const actual = astToString(ast);
 
             expect(actual).toEqual(expectedQuery);
@@ -980,7 +980,7 @@ describe('AST to string', () => {
                 ],
             };
 
-            const expectedQuery = `query { uiapi { query { Account(where: { Name: { like: "Account1" } }) { edges { node { Name { value, displayValue,  }Phone { value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
+            const expectedQuery = `query { __typename uiapi { __typename query { __typename Account(where: { Name: { like: "Account1" } }) { __typename edges { __typename node { Name { __typename value, displayValue,  }Phone { __typename value, displayValue,  } ...defaultRecordFields } } } } } } fragment defaultRecordFields on Record { __typename, ApiName, WeakEtag, Id, DisplayValue, SystemModstamp { value } LastModifiedById { value } LastModifiedDate { value } RecordTypeId(fallback: true) { value } }`;
             const actual = astToString(ast);
 
             expect(actual).toEqual(expectedQuery);

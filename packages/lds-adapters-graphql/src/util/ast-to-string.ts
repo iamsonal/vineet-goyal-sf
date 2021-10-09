@@ -30,6 +30,7 @@ import { getLuvioFieldNodeSelection } from '../type/Selection';
 import { ObjectKeys } from './language';
 
 const KIND_OBJECT_FIELD_SELECTION = 'ObjectFieldSelection';
+const TYPENAME_FIELD = '__typename';
 
 export function serializeValueNode(valueDefinition: LuvioValueNode) {
     const { kind } = valueDefinition;
@@ -215,7 +216,7 @@ function serializeObjectFieldNodeUnderRecord(node: LuvioSelectionObjectFieldNode
 
     result = appendRecordDefaultFieldValues(result, fields);
     const args = nodeArgs === undefined ? '' : `(${serializeArguments(nodeArgs)})`;
-    return `${serializeFieldNodeName(node)}${args} { ${result} }`;
+    return `${serializeFieldNodeName(node)}${args} { ${TYPENAME_FIELD} ${result} }`;
 }
 
 function isLuvioFieldNodeObjectFieldNode(
@@ -269,7 +270,7 @@ function serializeScalarFieldNode(def: LuvioSelectionScalarFieldNode) {
 function serializeObjectFieldNode(def: LuvioSelectionObjectFieldNode, state: SerializeState) {
     const { luvioSelections, arguments: defArgs } = def;
     const args = defArgs === undefined ? '' : `(${serializeArguments(defArgs)})`;
-    return `${serializeFieldNodeName(def)}${args} { ${serializeSelections(
+    return `${serializeFieldNodeName(def)}${args} { ${TYPENAME_FIELD} ${serializeSelections(
         luvioSelections,
         state
     )} }`;
@@ -280,7 +281,7 @@ function serializeCustomFieldConnection(def: LuvioSelectionCustomFieldNode, stat
     const argsString =
         args === undefined || args.length === 0 ? '' : `(${serializeArguments(args)})`;
 
-    return `${serializeFieldNodeName(def)}${argsString} { ${serializeSelections(
+    return `${serializeFieldNodeName(def)}${argsString} { ${TYPENAME_FIELD} ${serializeSelections(
         luvioSelections,
         state
     )} }`;
@@ -354,7 +355,7 @@ export function serializeOperationDefinition(
     const nameStr = name === undefined ? ' ' : ` ${name} `;
     return `${operation}${nameStr}${serializeVariableDefinitions(
         variableDefinitions
-    )}{ ${serializeSelections(luvioSelections, state)} }`;
+    )}{ ${TYPENAME_FIELD} ${serializeSelections(luvioSelections, state)} }`;
 }
 
 interface SerializeState {

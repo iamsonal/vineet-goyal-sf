@@ -47,12 +47,18 @@ describe('graphql', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -147,13 +153,19 @@ describe('graphql', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Account1" } }) {
                                 __typename
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -250,12 +262,18 @@ describe('graphql', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -352,12 +370,18 @@ describe('graphql', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -491,12 +515,18 @@ describe('graphql', () => {
 
             const expectedQueryOne = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -530,12 +560,18 @@ describe('graphql', () => {
 
             const expectedQueryTwo = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Phone {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -687,12 +723,18 @@ describe('graphql', () => {
 
             const expectedQueryOne = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -726,12 +768,18 @@ describe('graphql', () => {
 
             const expectedQueryTwo = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Phone {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -980,12 +1028,18 @@ describe('graphql', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     ApiOne: uiapi {
+                        __typename
                         query {
+                            __typename
                             AccountOne: Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         NameOne: Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -1117,12 +1171,18 @@ describe('graphql', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     ApiOne: uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -1133,11 +1193,16 @@ describe('graphql', () => {
                         }
                     }
                     ApiTwo: uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Phone {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -1325,12 +1390,18 @@ describe('graphql', () => {
 
             const expectedQueryOne = /* GraphQL */ `
                 query {
+                    __typename
                     ApiOne: uiapi {
+                        __typename
                         query {
+                            __typename
                             AccountOne: Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         NameOne: Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -1364,12 +1435,18 @@ describe('graphql', () => {
 
             const expectedQueryTwo = /* GraphQL */ `
                 query {
+                    __typename
                     ApiTwo: uiapi {
+                        __typename
                         query {
+                            __typename
                             AccountTwo: Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         PhoneTwo: Phone {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -1534,12 +1611,18 @@ describe('graphql', () => {
 
             const expectedQueryOne = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -1573,13 +1656,19 @@ describe('graphql', () => {
 
             const expectedQueryTwo = /* GraphQL */ `
                 {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Owner {
                                             Name {
+                                                __typename
                                                 value
                                                 displayValue
                                             }
@@ -1720,12 +1809,18 @@ describe('graphql', () => {
 
                 const expectedQuery = /* GraphQL */ `
                     query {
+                        __typename
                         uiapi {
+                            __typename
                             query {
+                                __typename
                                 Account(where: { Name: { like: "Account1" } }) {
+                                    __typename
                                     edges {
+                                        __typename
                                         node {
                                             Name {
+                                                __typename
                                                 value
                                                 displayValue
                                             }
@@ -1845,12 +1940,18 @@ describe('graphql', () => {
 
                 const expectedQuery = /* GraphQL */ `
                     query {
+                        __typename
                         uiapi {
+                            __typename
                             query {
+                                __typename
                                 Account(where: { Name: { like: "Account1" } }) {
+                                    __typename
                                     edges {
+                                        __typename
                                         node {
                                             Name {
+                                                __typename
                                                 value
                                                 displayValue
                                             }
@@ -1969,12 +2070,18 @@ describe('graphql', () => {
 
                 const expectedQuery = /* GraphQL */ `
                     query {
+                        __typename
                         uiapi {
+                            __typename
                             query {
+                                __typename
                                 Opportunity(where: { Name: { eq: "Opp1" } }) {
+                                    __typename
                                     edges {
+                                        __typename
                                         node {
                                             Name {
+                                                __typename
                                                 value
                                                 displayValue
                                             }
@@ -2093,12 +2200,18 @@ describe('graphql', () => {
 
                 const expectedQuery = /* GraphQL */ `
                     query {
+                        __typename
                         uiapi {
+                            __typename
                             query {
+                                __typename
                                 Opportunity(where: { Name: { eq: "Opp1" } }) {
+                                    __typename
                                     edges {
+                                        __typename
                                         node {
                                             Name {
+                                                __typename
                                                 value
                                                 displayValue
                                             }
@@ -2233,13 +2346,19 @@ describe('graphql', () => {
 
             const expectedQuery = /* GraphQL */ `
                 {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Add One More Account" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Parent {
                                             Name {
+                                                __typename
                                                 value
                                                 displayValue
                                             }
@@ -2315,7 +2434,7 @@ describe('graphql', () => {
     describe('Errors', () => {
         it('should emit error responses to the user', async () => {
             const mock = getMock('ErrorQuery-invalid-field');
-            const query = /* GraphQL */ `
+            const invalidQuery = parseQuery(/* GraphQL */ `
                 {
                     uiapi {
                         query {
@@ -2323,12 +2442,23 @@ describe('graphql', () => {
                         }
                     }
                 }
+            `);
+            const expectedQuery = /* GraphQL */ `
+                {
+                    __typename
+                    uiapi {
+                        __typename
+                        query {
+                            __typename
+                            asd
+                        }
+                    }
+                }
             `;
-            const invalidQuery = parseQuery(query);
 
             mockGraphqlNetwork(
                 {
-                    query: query,
+                    query: expectedQuery,
                     variables: {},
                 },
                 mock
@@ -2343,6 +2473,7 @@ describe('graphql', () => {
             expect(snapshot.data).toEqualSnapshotWithoutEtags(mock);
         });
     });
+
     describe('Child Relationships', () => {
         it('should load child relationship correctly', async () => {
             const mock = getMock('RecordQuery-Opportunity-child-relationship-partners');
@@ -2374,17 +2505,25 @@ describe('graphql', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Opportunity(where: { Name: { like: "Opp1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         Partners {
+                                            __typename
                                             edges {
+                                                __typename
                                                 node {
                                                     ApiName
                                                     ...defaultRecordFields
@@ -2498,12 +2637,18 @@ describe('graphql', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query ($accountName: String = "Account2", $Id: [ID]) {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: $accountName }, Id: { in: $Id } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -2608,17 +2753,23 @@ describe('graphql', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(
                                 where: {
                                     Name: { like: "Account1" }
                                     Id: { in: ["001RM000004uuhtYAA", "001RM000004uuhsYAA"] }
                                 }
                             ) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -2763,12 +2914,18 @@ describe('graphql', () => {
 
             const expectedQueryOne = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -2802,12 +2959,18 @@ describe('graphql', () => {
 
             const expectedQueryTwo = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             Account(where: { Name: { like: "Account1" } }) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Phone {
+                                            __typename
                                             value
                                             displayValue
                                         }

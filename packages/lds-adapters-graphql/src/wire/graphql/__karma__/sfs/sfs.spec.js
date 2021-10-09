@@ -151,8 +151,11 @@ describe('sfs gql queries', () => {
 
         const expectedQuery = /* GraphQL */ `
             query serviceAppointmentsAssignedToMe {
+                __typename
                 uiapi {
+                    __typename
                     query {
+                        __typename
                         ServiceAppointment(
                             orderBy: {
                                 AppointmentNumber: { order: ASC, nulls: FIRST }
@@ -164,114 +167,142 @@ describe('sfs gql queries', () => {
                                 and: { SchedEndTime: { lte: { range: { next_n_months: 4 } } } }
                             }
                         ) {
+                            __typename
                             edges {
+                                __typename
                                 node {
                                     Id
                                     ParentRecordId {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     ParentRecordStatusCategory {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Street {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     City {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     State {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Country {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     PostalCode {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     ParentRecordId {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Latitude {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Longitude {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Contact {
                                         Id
                                         Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         Title {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         PhotoUrl {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         Title {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         Phone {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         Email {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         MobilePhone {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         ...defaultRecordFields
                                     }
                                     AppointmentNumber {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Subject {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Description {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Status {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     SchedStartTime {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     SchedEndTime {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     CreatedDate {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     LastModifiedDate {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     SystemModstamp {
+                                        __typename
                                         value
                                         displayValue
                                     }
@@ -550,8 +581,11 @@ describe('sfs gql queries', () => {
 
         const expectedQuery = /* GraphQL */ `
             query serviceAppointmentsAssignedToMe {
+                __typename
                 uiapi {
+                    __typename
                     query {
+                        __typename
                         ServiceAppointment(
                             orderBy: {
                                 AppointmentNumber: { order: ASC, nulls: FIRST }
@@ -563,114 +597,142 @@ describe('sfs gql queries', () => {
                                 and: { SchedEndTime: { lte: { range: { next_n_months: 4 } } } }
                             }
                         ) {
+                            __typename
                             edges {
+                                __typename
                                 node {
                                     Id
                                     ParentRecordId {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     ParentRecordStatusCategory {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Street {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     City {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     State {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Country {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     PostalCode {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     ParentRecordId {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Latitude {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Longitude {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Contact {
                                         Id
                                         Name {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         Title {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         PhotoUrl {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         Title {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         Phone {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         Email {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         MobilePhone {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         ...defaultRecordFields
                                     }
                                     AppointmentNumber {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Subject {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Description {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     Status {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     SchedStartTime {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     SchedEndTime {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     CreatedDate {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     LastModifiedDate {
+                                        __typename
                                         value
                                         displayValue
                                     }
                                     SystemModstamp {
+                                        __typename
                                         value
                                         displayValue
                                     }
@@ -848,24 +910,32 @@ describe('sfs gql queries', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             ResourceAbsence(
                                 where: { ResourceId: { eq: "0HnRM0000000FaJ0AU" } }
                                 orderBy: { Start: { order: DESC } }
                                 first: 10
                             ) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Start {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         End {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         ResourceId {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -975,24 +1045,32 @@ describe('sfs gql queries', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             ResourceAbsence(
                                 where: { ResourceId: { eq: "0HnRM0000000FaJ0AU" } }
                                 orderBy: { Start: { order: DESC } }
                                 first: 10
                             ) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Start {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         End {
+                                            __typename
                                             value
                                             displayValue
                                         }
                                         ResourceId {
+                                            __typename
                                             value
                                             displayValue
                                         }
@@ -1103,8 +1181,11 @@ describe('sfs gql queries', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             ServiceTerritoryLocation(
                                 orderBy: { LastModifiedDate: { order: DESC } }
                                 first: 10
@@ -1116,7 +1197,9 @@ describe('sfs gql queries', () => {
                                     and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
                                 }
                             ) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Id
                                         ...defaultRecordFields
@@ -1243,8 +1326,11 @@ describe('sfs gql queries', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             ServiceTerritoryLocation(
                                 orderBy: { LastModifiedDate: { order: DESC } }
                                 first: 10
@@ -1256,7 +1342,9 @@ describe('sfs gql queries', () => {
                                     and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
                                 }
                             ) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Id
                                         ...defaultRecordFields
@@ -1362,8 +1450,11 @@ describe('sfs gql queries', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             ServiceTerritoryLocation(
                                 orderBy: { LastModifiedDate: { order: DESC } }
                                 first: 10
@@ -1375,7 +1466,9 @@ describe('sfs gql queries', () => {
                                     and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
                                 }
                             ) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Id
                                         ...defaultRecordFields
@@ -1472,8 +1565,11 @@ describe('sfs gql queries', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             ServiceTerritoryLocation(
                                 orderBy: { LastModifiedDate: { order: DESC } }
                                 first: 10
@@ -1485,7 +1581,9 @@ describe('sfs gql queries', () => {
                                     and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
                                 }
                             ) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Id
                                         ...defaultRecordFields
@@ -1611,8 +1709,11 @@ describe('sfs gql queries', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             ServiceTerritoryLocation(
                                 orderBy: { LastModifiedDate: { order: DESC } }
                                 first: 10
@@ -1624,7 +1725,9 @@ describe('sfs gql queries', () => {
                                     and: { ServiceTerritoryId: { in: ["0HhRM0000000GLM0A2"] } }
                                 }
                             ) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Id
                                         ...defaultRecordFields
@@ -1719,10 +1822,15 @@ describe('sfs gql queries', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             FieldServiceOrgSettings {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Id
                                         ...defaultRecordFields
@@ -1809,10 +1917,15 @@ describe('sfs gql queries', () => {
 
             const expectedQuery = /* GraphQL */ `
                 query {
+                    __typename
                     uiapi {
+                        __typename
                         query {
+                            __typename
                             FieldServiceOrgSettings(first: 2000) {
+                                __typename
                                 edges {
+                                    __typename
                                     node {
                                         Id
                                         ...defaultRecordFields

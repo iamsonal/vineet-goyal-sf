@@ -33,6 +33,8 @@ const INGEST_KEY = '';
 
 const MASTER_RECORD_TYPE_ID = '012000000000000AAA';
 
+const DMO_API_NAME_SUFFIX = '__dlm';
+
 type Unsubscribe = () => void;
 
 interface AdsRecord {
@@ -238,6 +240,15 @@ function fixRecordTypes(luvio: Luvio, record: RecordRepresentation): void {
     }
 }
 
+/**
+ * Returns whether or not a the record is a DMO entity.
+ * @param record - The record.
+ * @returns True if DMO, false otherwise.
+ */
+export function isDMOEntity(record: RecordRepresentation): boolean {
+    return record.apiName.endsWith(DMO_API_NAME_SUFFIX);
+}
+
 export default class AdsBridge {
     private isRecordEmitLocked: boolean = false;
     private watchUnsubscribe: Unsubscribe | undefined;
@@ -405,6 +416,11 @@ export default class AdsBridge {
 
             const record = getShallowRecord(luvio, storeRecordId);
             if (record === null) {
+                continue;
+            }
+
+            // W-9978523
+            if (isDMOEntity(record) === true) {
                 continue;
             }
 

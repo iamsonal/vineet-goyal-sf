@@ -16,6 +16,7 @@
         "build": "rollup --config rollup.config.js",
         "clean": "rm -rf dist",
         "test:unit": "jest",
+        "test:unit:debug": "node --inspect-brk ../../node_modules/.bin/jest --runInBand",
         "release:corejar": "yarn build && ../core-build/scripts/core.js --name=lds-ads-bridge"
     },
     "devDependencies": {

@@ -3,6 +3,7 @@ import { keyBuilderRecord, ingestRecord } from '@salesforce/lds-adapters-uiapi';
 import { expect } from '@jest/globals';
 
 import AdsBridge from '../ads-bridge';
+import { isDMOEntity } from '../ads-bridge';
 import { addObjectInfo, addRecord, createObjectInfo, createRecord } from './test-utils';
 import { instrumentation } from '../instrumentation';
 
@@ -1313,6 +1314,51 @@ describe('AdsBridge', () => {
 
             expect(fn).not.toHaveBeenCalled();
             expect(timerMetricAddDurationSpy).toHaveBeenCalledTimes(0);
+        });
+
+        it('does not emit when a DMO record is ingested', () => {
+            const { bridge, luvio } = createBridge();
+
+            const fn = jest.fn();
+            bridge.receiveFromLdsCallback = fn;
+
+            addRecord(
+                luvio,
+                createRecord({
+                    id: '123456',
+                    apiName: 'Account__dlm',
+                    fields: {
+                        Id: { displayValue: null, value: '123456' },
+                    },
+                })
+            );
+
+            expect(fn).toHaveBeenCalledTimes(0);
+            expect(timerMetricAddDurationSpy).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('isDMOEntity', () => {
+        it('should return true for DMO record', () => {
+            const record = createRecord({
+                id: '123456',
+                apiName: 'Account__dlm',
+                fields: {
+                    Id: { displayValue: null, value: '123456' },
+                },
+            });
+            expect(isDMOEntity(record)).toBe(true);
+        });
+
+        it('should return false for non-DMO record', () => {
+            const record = createRecord({
+                id: '123456',
+                apiName: 'Account',
+                fields: {
+                    Id: { displayValue: null, value: '123456' },
+                },
+            });
+            expect(isDMOEntity(record)).toBe(false);
         });
     });
 });

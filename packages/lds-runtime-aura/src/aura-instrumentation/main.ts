@@ -1,4 +1,4 @@
-import { Luvio, Store, Adapter, Snapshot, UnfulfilledSnapshot } from '@luvio/engine';
+import { Luvio, Store, Adapter, UnfulfilledSnapshot } from '@luvio/engine';
 import { REFRESH_ADAPTER_EVENT, ADAPTER_UNFULFILLED_ERROR } from '@luvio/lwc-luvio';
 import {
     CacheStatsLogger,
@@ -6,58 +6,15 @@ import {
     counter,
     interaction,
     mark as instrumentationServiceMark,
-    markEnd,
-    markStart,
     MetricsKey,
-    MetricsServiceMark,
-    MetricsServicePlugin,
     percentileHistogram,
     perfStart,
     perfEnd,
     registerCacheStats,
     registerPeriodicLogger,
-    registerPlugin,
-    time,
-    timer,
-    Timer,
     PercentileHistogram,
 } from 'instrumentation/service';
-
-import { getInstrumentation } from 'o11y/client';
-
-import {
-    ADAPTER_CACHE_HIT_COUNT_METRIC_NAME,
-    ADAPTER_CACHE_HIT_DURATION_METRIC_NAME,
-    ADAPTER_CACHE_MISS_COUNT_METRIC_NAME,
-    ADAPTER_CACHE_MISS_DURATION_METRIC_NAME,
-    ADAPTER_CACHE_MISS_OUT_OF_TTL_COUNT_METRIC_NAME,
-    ADAPTER_CACHE_MISS_OUT_OF_TTL_DURATION_METRIC_NAME,
-    AGGREGATE_CONNECT_ERROR_COUNT,
-    AGGREGATE_UI_CHUNK_COUNT,
-    CACHE_HIT_COUNT,
-    CACHE_MISS_COUNT,
-    GET_APEX_CACHE_HIT_COUNT,
-    GET_APEX_CACHE_HIT_DURATION,
-    GET_APEX_CACHE_MISS_COUNT,
-    GET_APEX_CACHE_MISS_DURATION,
-    GET_RECORD_AGGREGATE_INVOKE_COUNT,
-    GET_RECORD_AGGREGATE_RETRY_COUNT,
-    GET_RECORD_NORMAL_INVOKE_COUNT,
-    GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT,
-    GET_RECORD_NOTIFY_CHANGE_DROP_COUNT,
-    NETWORK_RATE_LIMIT_EXCEEDED_COUNT,
-    STORE_BROADCAST_DURATION,
-    STORE_INGEST_DURATION,
-    STORE_LOOKUP_DURATION,
-    STORE_SIZE_COUNT,
-    STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT,
-    STORE_WATCH_SUBSCRIPTIONS_COUNT,
-    GET_GRAPHQL_RESPONSE_MIXED,
-    STORE_TRIM_TASK_COUNT,
-    STORE_TRIM_TASK_DURATION,
-    STORE_SET_TTL_OVERRIDE_DURATION,
-    STORE_SET_DEFAULT_TTL_OVERRIDE_DURATION,
-} from './metric-keys';
+import { LRUCache } from '@salesforce/lds-instrumentation';
 
 import {
     OBSERVABILITY_NAMESPACE,
@@ -69,12 +26,7 @@ import {
 } from './utils/observability';
 
 import { ObjectKeys, ObjectCreate } from './utils/language';
-import { LRUCache } from './utils/lru-cache';
-export { LRUCache } from './utils/lru-cache';
 import { isPromise, stableJSONStringify } from './utils/utils';
-interface RecordApiNameChangeCounters {
-    [apiName: string]: Counter;
-}
 
 interface AdapterUnfulfilledErrorCounters {
     [apiName: string]: Counter;
@@ -89,7 +41,6 @@ interface AdapterUnfulfilledError {
 
 export const APEX_ADAPTER_NAME = 'getApex';
 export const NORMALIZED_APEX_ADAPTER_NAME = `Apex.${APEX_ADAPTER_NAME}`;
-const GRAPHQL_ADAPTER_NAME = 'graphQL';
 
 // Event comes in from lwc-luvio package
 interface RefreshAdapterEvent {
@@ -121,13 +72,6 @@ type refreshApiNames = {
     refreshUiApi: string;
 };
 
-interface LdsStatsReport {
-    recordCount: number;
-    subscriptionCount: number;
-    snapshotSubscriptionCount: number;
-    watchSubscriptionCount: number;
-}
-
 const INCOMING_WEAKETAG_0_KEY = 'incoming-weaketag-0';
 const EXISTING_WEAKETAG_0_KEY = 'existing-weaketag-0';
 
@@ -154,50 +98,22 @@ export interface LightningInteractionSchema {
 }
 
 const NAMESPACE = 'lds';
-const STORE_STATS_MARK_NAME = 'store-stats';
-const RUNTIME_PERF_MARK_NAME = 'runtime-perf';
 const NETWORK_TRANSACTION_NAME = 'lds-network';
 
 const CACHE_STATS_OUT_OF_TTL_MISS_POSTFIX = 'out-of-ttl-miss';
-const RECORD_API_NAME_CHANGE_COUNT_METRIC_NAME = 'record-api-name-change-count';
 
-const STORE_TRIM_TASK_NAME = 'store-trim-task';
-const STORE_TRIMMED_COUNT = 'store-trimmed-count';
-
-const aggregateUiConnectErrorCountMetric = counter(AGGREGATE_CONNECT_ERROR_COUNT);
-const aggregateUiChunkCountMetric = percentileHistogram(AGGREGATE_UI_CHUNK_COUNT);
-const cacheHitMetric = counter(CACHE_HIT_COUNT);
-const cacheMissMetric = counter(CACHE_MISS_COUNT);
-const getRecordAggregateInvokeMetric = counter(GET_RECORD_AGGREGATE_INVOKE_COUNT);
-const getRecordAggregateRetryMetric = counter(GET_RECORD_AGGREGATE_RETRY_COUNT);
-const getRecordNormalInvokeMetric = counter(GET_RECORD_NORMAL_INVOKE_COUNT);
-const getRecordNotifyChangeAllowMetric = counter(GET_RECORD_NOTIFY_CHANGE_ALLOW_COUNT);
-const getRecordNotifyChangeDropMetric = counter(GET_RECORD_NOTIFY_CHANGE_DROP_COUNT);
-const networkRateLimitExceededCountMetric = counter(NETWORK_RATE_LIMIT_EXCEEDED_COUNT);
-const storeSizeMetric = percentileHistogram(STORE_SIZE_COUNT);
-const storeWatchSubscriptionsMetric = percentileHistogram(STORE_WATCH_SUBSCRIPTIONS_COUNT);
-const storeSnapshotSubscriptionsMetric = percentileHistogram(STORE_SNAPSHOT_SUBSCRIPTIONS_COUNT);
 // Aggregate Cache Stats and Metrics for all getApex invocations
 const getApexCacheStats = registerLdsCacheStats(NORMALIZED_APEX_ADAPTER_NAME);
 const getApexTtlCacheStats = registerLdsCacheStats(
     NORMALIZED_APEX_ADAPTER_NAME + ':' + CACHE_STATS_OUT_OF_TTL_MISS_POSTFIX
 );
+
+// Observability (READS)
 const getApexRequestCountMetric = counter(GET_APEX_REQUEST_COUNT);
-const getApexCacheHitCountMetric = counter(GET_APEX_CACHE_HIT_COUNT);
-const getApexCacheHitDurationMetric = timer(GET_APEX_CACHE_HIT_DURATION);
-const getApexCacheMissCountMetric = counter(GET_APEX_CACHE_MISS_COUNT);
-const getApexCacheMissDurationMetric = timer(GET_APEX_CACHE_MISS_DURATION);
 const totalAdapterRequestSuccessMetric = counter(TOTAL_ADAPTER_REQUEST_SUCCESS_COUNT);
 const totalAdapterErrorMetric = counter(TOTAL_ADAPTER_ERROR_COUNT);
-const getGraphqlResponseMixedMetric = counter(GET_GRAPHQL_RESPONSE_MIXED);
-
-const storeTrimTaskMetric = counter(STORE_TRIM_TASK_COUNT);
-const storeTrimTaskTimer = timer(STORE_TRIM_TASK_DURATION);
-
-const instr = getInstrumentation(NAMESPACE);
 
 export class Instrumentation {
-    private recordApiNameChangeCounters: RecordApiNameChangeCounters = {};
     private adapterUnfulfilledErrorCounters: AdapterUnfulfilledErrorCounters = {};
     private refreshAdapterEvents: RefreshAdapterEvents = {};
     private refreshApiCallEventStats: RefreshApiCallEventStats = {
@@ -257,78 +173,8 @@ export class Instrumentation {
                   )
               );
 
-        /**
-         * W-6981216
-         * Dynamically generated metric. Simple counter for cache hits by adapter name.
-         */
-        const cacheHitCountByAdapterMetric = isGetApexAdapter
-            ? getApexCacheHitCountMetric
-            : counter(
-                  createMetricsKey(NAMESPACE, ADAPTER_CACHE_HIT_COUNT_METRIC_NAME, adapterName)
-              );
-
-        /**
-         * W-7404607
-         * Dynamically generated metric. Timer for cache hits by adapter name.
-         */
-        const cacheHitDurationByAdapterMetric = isGetApexAdapter
-            ? getApexCacheHitDurationMetric
-            : timer(
-                  createMetricsKey(NAMESPACE, ADAPTER_CACHE_HIT_DURATION_METRIC_NAME, adapterName)
-              );
-
-        /**
-         * W-6981216
-         * Dynamically generated metric. Simple counter for cache misses by adapter name.
-         */
-        const cacheMissCountByAdapterMetric = isGetApexAdapter
-            ? getApexCacheMissCountMetric
-            : counter(
-                  createMetricsKey(NAMESPACE, ADAPTER_CACHE_MISS_COUNT_METRIC_NAME, adapterName)
-              );
-
-        /**
-         * W-7404607
-         * Dynamically generated metric. Timer for cache hits by adapter name.
-         */
-        const cacheMissDurationByAdapterMetric = isGetApexAdapter
-            ? getApexCacheMissDurationMetric
-            : timer(
-                  createMetricsKey(NAMESPACE, ADAPTER_CACHE_MISS_DURATION_METRIC_NAME, adapterName)
-              );
-
-        /**
-         * W-7376275
-         * Dynamically generated metric. Measures the amount of time it takes for LDS to get another cache miss on
-         * a request we've made in the past.
-         * Request Record 1 -> Record 2 -> Back to Record 1 outside of TTL is an example of when this metric will fire.
-         */
-        const cacheMissOutOfTtlDurationByAdapterMetric: Timer | undefined =
-            ttl !== undefined
-                ? timer(
-                      createMetricsKey(
-                          NAMESPACE,
-                          ADAPTER_CACHE_MISS_OUT_OF_TTL_DURATION_METRIC_NAME,
-                          adapterName
-                      )
-                  )
-                : undefined;
-
-        const cacheMissOutOfTtlCountByAdapterMetric: Counter | undefined =
-            ttl !== undefined
-                ? counter(
-                      createMetricsKey(
-                          NAMESPACE,
-                          ADAPTER_CACHE_MISS_OUT_OF_TTL_COUNT_METRIC_NAME,
-                          adapterName
-                      )
-                  )
-                : undefined;
-
         const instrumentedAdapter = (config: C) => {
-            const startTime = Date.now();
-
-            // increment adapter request metrics
+            // increment overall and adapter request metrics
             wireAdapterRequestMetric.increment(1);
             totalAdapterRequestSuccessMetric.increment(1);
 
@@ -352,26 +198,12 @@ export class Instrumentation {
 
             // if result === null then config is insufficient/invalid so do not log
             if (isPromise(result)) {
-                result.then((_snapshot: Snapshot<D>) => {
-                    timerMetricAddDuration(
-                        cacheMissDurationByAdapterMetric,
-                        Date.now() - startTime
-                    );
-                });
                 stats.logMisses();
-                cacheMissMetric.increment(1);
-                cacheMissCountByAdapterMetric.increment(1);
 
-                if (
-                    cacheMissOutOfTtlDurationByAdapterMetric !== undefined &&
-                    cacheMissOutOfTtlCountByAdapterMetric !== undefined &&
-                    ttl !== undefined
-                ) {
+                if (ttl !== undefined) {
                     this.logAdapterCacheMissOutOfTtlDuration(
                         adapterName,
                         config,
-                        cacheMissOutOfTtlDurationByAdapterMetric,
-                        cacheMissOutOfTtlCountByAdapterMetric,
                         ttlMissStats,
                         Date.now(),
                         ttl
@@ -379,9 +211,6 @@ export class Instrumentation {
                 }
             } else if (result !== null) {
                 stats.logHits();
-                cacheHitMetric.increment(1);
-                cacheHitCountByAdapterMetric.increment(1);
-                timerMetricAddDuration(cacheHitDurationByAdapterMetric, Date.now() - startTime);
             }
 
             return result;
@@ -390,9 +219,7 @@ export class Instrumentation {
         Object.defineProperty(instrumentedAdapter, 'name', {
             value: name + '__instrumented',
         });
-        return isGraphqlAdapter(name) === true
-            ? instrumentGraphqlAdapter(instrumentedAdapter)
-            : instrumentedAdapter;
+        return instrumentedAdapter;
     }
 
     /**
@@ -400,8 +227,6 @@ export class Instrumentation {
      * Backed by an LRU Cache implementation to prevent too many record entries from being stored in-memory.
      * @param name The wire adapter name.
      * @param config The config passed into wire adapter.
-     * @param durationMetric The argus timer metric for tracking cache miss durations.
-     * @param counterMetric The argus counter metric for tracking cache misses out of TTL.
      * @param ttlMissStats CacheStatsLogger to log misses out of TTL.
      * @param currentCacheMissTimestamp Timestamp for when the request was made.
      * @param ttl TTL for the wire adapter.
@@ -409,8 +234,6 @@ export class Instrumentation {
     private logAdapterCacheMissOutOfTtlDuration(
         name: string,
         config: unknown,
-        durationMetric: Timer,
-        counterMetric: Counter,
         ttlMissStats: CacheStatsLogger,
         currentCacheMissTimestamp: number,
         ttl: number
@@ -421,8 +244,6 @@ export class Instrumentation {
         if (existingCacheMissTimestamp !== undefined) {
             const duration = currentCacheMissTimestamp - existingCacheMissTimestamp;
             if (duration > ttl) {
-                durationMetric.addDuration(duration);
-                counterMetric.increment(1);
                 ttlMissStats.logMisses();
             }
         }
@@ -576,33 +397,6 @@ export class Instrumentation {
     }
 
     /**
-     * W-7801618
-     * Counter for occurrences where the incoming record to be merged has a different apiName.
-     * Dynamically generated metric, stored in an {@link RecordApiNameChangeCounters} object.
-     *
-     * @param context The transaction context.
-     *
-     * Note: Short-lived metric candidate, remove at the end of 230...
-     */
-    public incrementRecordApiNameChangeCount(
-        _incomingApiName: string,
-        existingApiName: string
-    ): void {
-        let apiNameChangeCounter = this.recordApiNameChangeCounters[existingApiName];
-        if (apiNameChangeCounter === undefined) {
-            apiNameChangeCounter = counter(
-                createMetricsKey(
-                    NAMESPACE,
-                    RECORD_API_NAME_CHANGE_COUNT_METRIC_NAME,
-                    existingApiName
-                )
-            );
-            this.recordApiNameChangeCounters[existingApiName] = apiNameChangeCounter;
-        }
-        apiNameChangeCounter.increment(1);
-    }
-
-    /**
      * W-8620679
      * Increment the counter for an UnfulfilledSnapshotError coming from luvio
      *
@@ -627,95 +421,6 @@ export class Instrumentation {
     }
 }
 
-/**
- * Any graphql get adapter specific instrumentation that we need to log
- * @param snapshot from either in-memory or built after a network hit
- */
-function logGraphqlMetrics(snapshot: Snapshot<any>) {
-    // We have both data and error in the returned response
-    const { data: snapshotData } = snapshot;
-    if (
-        snapshotData &&
-        snapshotData.data &&
-        ObjectKeys(snapshotData.data).length > 0 &&
-        snapshotData.errors.length > 0
-    ) {
-        getGraphqlResponseMixedMetric.increment(1);
-    }
-}
-
-/**
- * Aura Metrics Service plugin in charge of aggregating all the LDS performance marks before they
- * get sent to the server. All the marks are summed by operation type and the aggregated result
- * is then stored an a new mark.
- */
-const markAggregatorPlugin: MetricsServicePlugin = {
-    name: NAMESPACE,
-    enabled: true,
-    initialize() {
-        /* noop */
-    },
-    postProcess(marks: MetricsServiceMark[]): MetricsServiceMark[] {
-        const postProcessedMarks: MetricsServiceMark[] = [];
-
-        let shouldLogAggregated = false;
-        const startTs: Record<string, number> = {};
-        const aggregated: Record<string, number> = {};
-
-        for (let i = 0, len = marks.length; i < len; i++) {
-            const mark = marks[i];
-            const { name, phase, ts } = mark;
-
-            if (phase === 'start') {
-                startTs[name] = ts;
-            } else if (phase === 'end') {
-                if (aggregated[name] === undefined) {
-                    aggregated[name] = 0;
-                }
-
-                shouldLogAggregated = true;
-                aggregated[name] += ts - startTs[name];
-            } else {
-                postProcessedMarks.push(mark);
-            }
-        }
-
-        if (shouldLogAggregated) {
-            postProcessedMarks.push({
-                ns: NAMESPACE,
-                name: RUNTIME_PERF_MARK_NAME,
-                phase: 'stamp',
-                ts: time(),
-                context: aggregated,
-            });
-        }
-
-        return postProcessedMarks;
-    },
-};
-
-function instrumentMethod(
-    obj: any,
-    methods: { methodName: string; metricKey: MetricsKey }[]
-): void {
-    for (let i = 0, len = methods.length; i < len; i++) {
-        const method = methods[i];
-        const methodName = method.methodName;
-        const originalMethod = obj[methodName];
-        const methodTimer = timer(method.metricKey);
-
-        obj[methodName] = function (...args: any[]): any {
-            markStart(NAMESPACE, methodName);
-            const startTime = Date.now();
-            const res = originalMethod.call(this, ...args);
-            timerMetricAddDuration(methodTimer, Date.now() - startTime);
-            markEnd(NAMESPACE, methodName);
-
-            return res;
-        };
-    }
-}
-
 function createMetricsKey(owner: string, name: string, unit?: string): MetricsKey {
     let metricName = name;
     if (unit) {
@@ -728,58 +433,12 @@ function createMetricsKey(owner: string, name: string, unit?: string): MetricsKe
     };
 }
 
-const timerMetricTracker: Record<string, Timer> = ObjectCreate(null);
-/**
- * Calls instrumentation/service telemetry timer
- * @param name Name of the metric
- * @param duration number to update backing percentile histogram, negative numbers ignored
- */
-export function updateTimerMetric(name: string, duration: number): void {
-    let metric = timerMetricTracker[name];
-    if (metric === undefined) {
-        metric = timer(createMetricsKey(NAMESPACE, name));
-        timerMetricTracker[name] = metric;
-    }
-    timerMetricAddDuration(metric, duration);
-}
-
-export function timerMetricAddDuration(timer: Timer, duration: number) {
-    // Guard against negative values since it causes error to be thrown by MetricsService
-    if (duration >= 0) {
-        timer.addDuration(duration);
-    }
-}
-
-function getStoreStats(store: Store): LdsStatsReport {
-    const { records, snapshotSubscriptions, watchSubscriptions } = store;
-
-    const recordCount = ObjectKeys(records).length;
-    const snapshotSubscriptionCount = ObjectKeys(snapshotSubscriptions).length;
-    const watchSubscriptionCount = ObjectKeys(watchSubscriptions).length;
-    const subscriptionCount = snapshotSubscriptionCount + watchSubscriptionCount;
-
-    return {
-        recordCount,
-        subscriptionCount,
-        snapshotSubscriptionCount,
-        watchSubscriptionCount,
-    };
-}
-
 /**
  * Returns whether adapter is an Apex one or not.
  * @param adapterName The name of the adapter.
  */
 function isApexAdapter(adapterName: string): boolean {
     return adapterName.indexOf(APEX_ADAPTER_NAME) > -1;
-}
-
-/**
- * Returns boolean whether adapter is a graphQL one or not.
- * @param adapterName The name of the adapter.
- */
-function isGraphqlAdapter(adapterName: string): boolean {
-    return adapterName === GRAPHQL_ADAPTER_NAME;
 }
 
 /**
@@ -846,25 +505,6 @@ export function updatePercentileHistogramMetric(name: string, value: number) {
     metric.update(value);
 }
 
-function instrumentStoreTrimTask(callback: () => number) {
-    return () => {
-        storeTrimTaskMetric.increment(1);
-        perfStart(STORE_TRIM_TASK_NAME);
-        const startTime = Date.now();
-        const res = callback();
-        timerMetricAddDuration(storeTrimTaskTimer, Date.now() - startTime);
-        perfEnd(STORE_TRIM_TASK_NAME, { [STORE_TRIMMED_COUNT]: res });
-        return res;
-    };
-}
-
-function setStoreScheduler(store: Store) {
-    const originalScheduler = store.scheduler;
-    store.scheduler = (callback) => {
-        originalScheduler(instrumentStoreTrimTask(callback));
-    };
-}
-
 /**
  * Add a mark to the metrics service.
  *
@@ -890,95 +530,8 @@ export function registerLdsCacheStats(name: string): CacheStatsLogger {
  * @param luvio The Luvio instance to instrument.
  * @param store The Store to instrument.
  */
-export function setupInstrumentation(luvio: Luvio, store: Store): void {
-    registerPlugin({
-        name: NAMESPACE,
-        plugin: markAggregatorPlugin,
-    });
-
-    instrumentMethod(luvio, [
-        { methodName: 'storeBroadcast', metricKey: STORE_BROADCAST_DURATION },
-        { methodName: 'storeIngest', metricKey: STORE_INGEST_DURATION },
-        { methodName: 'storeLookup', metricKey: STORE_LOOKUP_DURATION },
-        { methodName: 'storeSetTTLOverride', metricKey: STORE_SET_TTL_OVERRIDE_DURATION },
-        {
-            methodName: 'storeSetDefaultTTLOverride',
-            metricKey: STORE_SET_DEFAULT_TTL_OVERRIDE_DURATION,
-        },
-    ]);
-
-    setStoreScheduler(store);
-
-    registerPeriodicLogger(NAMESPACE, () => {
-        const storeStats = getStoreStats(store);
-        instrumentationServiceMark(NAMESPACE, STORE_STATS_MARK_NAME, storeStats);
-        storeSizeMetric.update(storeStats.recordCount);
-        storeSnapshotSubscriptionsMetric.update(storeStats.snapshotSubscriptionCount);
-        storeWatchSubscriptionsMetric.update(storeStats.watchSubscriptionCount);
-    });
-}
-
-/**
- * Initialize the instrumentation and instrument the LDS instance and the Store.
- *
- * @param luvio The Luvio instance to instrument.
- * @param store The Store to instrument.
- */
-export function setupInstrumentationWithO11y(luvio: Luvio, _store: Store): void {
-    instrumentMethodWithO11y(luvio, ['storeBroadcast', 'storeIngest', 'storeLookup']);
-
-    // TODO [W-9782972]: part of internal instrumentation work
-    //setStoreScheduler(store);
-}
-
-// pass in class, obj, what have you, with the method you want to wrap to collect duration metrics
-// e.g. pass in Luvio with ['storeBroadcast', 'storeIngest', 'storeLookup']
-// Uses ${Activity} from o11y
-export function instrumentMethodWithO11y(obj: any, methods: string[]): void {
-    for (let i = 0, len = methods.length; i < len; i++) {
-        const method = methods[i];
-        const originalMethod = obj[method];
-
-        obj[method] = function (...args: any[]): any {
-            const act = instr.startActivity(method);
-            const res = originalMethod.call(this, ...args);
-            act.stop();
-
-            return res;
-        };
-    }
-}
-
-export function setAggregateUiChunkCountMetric(chunkCount: number): void {
-    aggregateUiChunkCountMetric.update(chunkCount);
-}
-
-export function incrementGetRecordNormalInvokeCount(): void {
-    getRecordNormalInvokeMetric.increment(1);
-}
-
-export function incrementGetRecordAggregateInvokeCount(): void {
-    getRecordAggregateInvokeMetric.increment(1);
-}
-
-export function incrementAggregateUiConnectErrorCount(): void {
-    aggregateUiConnectErrorCountMetric.increment(1);
-}
-
-export function incrementGetRecordAggregateRetryCount(): void {
-    getRecordAggregateRetryMetric.increment(1);
-}
-
-export function incrementGetRecordNotifyChangeAllowCount(): void {
-    getRecordNotifyChangeAllowMetric.increment(1);
-}
-
-export function incrementGetRecordNotifyChangeDropCount(): void {
-    getRecordNotifyChangeDropMetric.increment(1);
-}
-
-export function incrementNetworkRateLimitExceededCount(): void {
-    networkRateLimitExceededCountMetric.increment(1);
+export function setupInstrumentation(_luvio: Luvio, _store: Store): void {
+    // set instrumentation hooks for runtime
 }
 
 /**
@@ -989,29 +542,6 @@ export function incrementNetworkRateLimitExceededCount(): void {
  */
 export function logCRUDLightningInteraction(eventSource: string, attributes: object): void {
     interaction(eventSource, 'force_record', null, eventSource, 'crud', attributes);
-}
-
-/**
- * @param instrumentedAdapter
- * @returns instrumentedGraphqlAdapter, which logs additional metrics for get graphQL adapter
- */
-export function instrumentGraphqlAdapter<C, D>(instrumentedAdapter: Adapter<C, D>): Adapter<C, D> {
-    const instrumentedGraphqlAdapter = (config: C) => {
-        const result = instrumentedAdapter(config);
-
-        if (result === null) {
-            return result;
-        }
-        if (isPromise(result)) {
-            result.then((_snapshot: Snapshot<D>) => {
-                logGraphqlMetrics(_snapshot);
-            });
-        } else {
-            logGraphqlMetrics(result);
-        }
-        return result;
-    };
-    return instrumentedGraphqlAdapter;
 }
 
 export const instrumentation = new Instrumentation();

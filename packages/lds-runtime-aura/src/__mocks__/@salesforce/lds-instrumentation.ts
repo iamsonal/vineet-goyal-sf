@@ -8,3 +8,6 @@ export const instrumentation = {
 };
 export function mark() {}
 export function setupInstrumentation() {}
+export function LRUCache() {
+    return new Map();
+}

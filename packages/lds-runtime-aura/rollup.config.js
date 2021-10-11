@@ -22,6 +22,7 @@ const ldsEngine = {
         '@salesforce/lds-instrumentation',
         '@salesforce/lds-network-aura',
         '@salesforce/gate/lds.useNewTrackedFieldBehavior',
+        'instrumentation/service',
     ],
 
     output: {

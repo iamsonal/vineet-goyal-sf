@@ -1,0 +1,53 @@
+{
+    "conditions": [
+        {
+            "name": "C1qq",
+            "filterCondition": "1",
+            "filterExpression": "",
+            "criteria": [
+                {
+                    "sourceFieldName": "TransactionJournal.Product.Description",
+                    "operator": "Equals",
+                    "sequence": 1,
+                    "value": "j",
+                    "valueType": "FixedValue"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "A1",
+            "actionType": "CreditPoints",
+            "flowDefinition": "",
+            "decisionTable": "",
+            "decisionTableDatasetLink": "",
+            "actionParameters": [
+                {
+                    "name": "ProgramCurrencyName",
+                    "value": "Points"
+                },
+                {
+                    "name": "MemberCurrencyPoints",
+                    "value": "12"
+                },
+                {
+                    "name": "ProcessPoints",
+                    "value": "22"
+                }
+            ]
+        }
+    ],
+    "stepMappings": [
+        {
+            "associatedStep": "C1qq",
+            "parentStep": "",
+            "sequence": 1
+        },
+        {
+            "associatedStep": "A1",
+            "parentStep": "C1qq",
+            "sequence": 1
+        }
+    ]
+}

@@ -1,0 +1,29 @@
+#%RAML 1.0 Overlay
+extends: ./api.raml
+
+uses:
+  luvio: luvio://annotations.raml
+
+(luvio.keyPrefix): 'loyalty-engine'
+(luvio.ttl): 360000
+
+types:
+  ProcessRuleDetailRepresentation:
+    (luvio.opaque): true
+    (luvio.ttl): 10000
+  ProcessRuleInputRepresentation:
+    (luvio.opaque): true
+    (luvio.ttl): 10000
+  ProcessRuleStatusRepresentation:
+    (luvio.ttl): 10000
+    (luvio.key):
+      id: ruleId
+
+/connect:
+  /loyalty/programs/{programName}/processes/{processName}/rule/{ruleName}:
+    get:
+      (luvio.adapter):
+        name: getProgramProcessRule
+    post:
+      (luvio.adapter):
+        name: upsertProgramProcessRule

@@ -1,0 +1,469 @@
+#%RAML 1.0
+securedBy:
+  - OAuth2
+title: Salesforce Connect API
+version: '54.0'
+mediaType: application/json
+protocols:
+  - https
+baseUri: /services/data/v54.0
+securitySchemes:
+  OAuth2:
+    type: OAuth 2.0
+    settings:
+      authorizationUri: https://example.com/oauth/authorize
+      accessTokenUri: ''
+      authorizationGrants:
+        - implicit
+annotationTypes:
+  oas-readOnly:
+    type: boolean
+    allowedTargets: TypeDeclaration
+  oas-collectionFormat:
+    type: string
+  oas-body-name:
+    type: string
+    allowedTargets: TypeDeclaration
+types:
+  LoyaltyEngineBatchOutputRepresentation:
+    description: Wrapper for the Payload map
+    type: object
+    properties:
+      errorCode:
+        description: Represents the Error Code if Transaction failed for any reason.
+        type: integer
+      errorMessage:
+        description: Represents the Error Message if Transaction failed for any reason.
+        type: string
+      eventId:
+        description: Represents the EventId.
+        type: string
+      successStatus:
+        description: Returns TRUE or FALSE depending on Transaction is successful
+          or some error encountered
+        type: boolean
+  LoyaltyEngineInputMapRepresentation:
+    description: Details of new Transaction Journal records that must be created.
+    type: object
+    properties:
+      processInput:
+        description: Details of new Transaction Journal records that must be created.
+        type: object
+        properties:
+          //:
+            type: object
+  LoyaltyEngineInputRepresentation:
+    description: Loyalty Engine Input Representation
+    type: object
+    properties:
+      transactionJournals:
+        description: Details of new Transaction Journal records that must be created.
+        type: array
+        items:
+          type: object
+          properties:
+            //:
+              type: object
+  LoyaltyEngineRealtimeOutputRepresentation:
+    description: Wrapper for the Payload map
+    type: object
+    properties:
+      message:
+        description: Represents the Error Message. Message stating the reason for
+          error, if any.
+        type: string
+      processResult:
+        description: List of the records created and updated.
+        type: object
+        properties:
+          //:
+            type: object
+      status:
+        description: Returns TRUE or FALSE. Indicates whether the request succeeded
+          (true) or failed (false).
+        type: boolean
+  ProcessRuleActionInputRepresentation:
+    description: Loyalty Engine Rule Action Input Representation
+    type: object
+    properties:
+      actionParameters:
+        description: rule action parameters
+        type: array
+        items:
+          type: object
+      actionType:
+        description: rule action type
+        type: string
+        enum:
+          - CreditPoints
+          - DebitPoints
+          - DecisionTable
+          - Flow
+          - IssueVoucher
+          - UpdateCumulativePromotionProgress
+      decisionTable:
+        description: rule action's associated decision table
+        type: string
+      decisionTableDatasetLink:
+        description: rule action's associated decision table dataset link
+        type: string
+      flowDefinition:
+        description: rule action's associated flow definition
+        type: string
+      name:
+        description: rule condition name
+        type: string
+  ProcessRuleActionParameterInputRepresentation:
+    description: Loyalty Engine Rule Action Parameter Input Representation
+    type: object
+    properties:
+      name:
+        description: action parameter name
+        type: string
+      value:
+        description: action parameter value
+        type: string
+  ProcessRuleActionParameterRepresentation:
+    description: Loyalty Engine Rule Action Parameter Representation
+    type: object
+    properties:
+      name:
+        description: rule action parameter name
+        type: string
+      value:
+        description: rule action parameter value
+        type: string
+  ProcessRuleActionRepresentation:
+    description: Loyalty Engine Rule Action Representation
+    type: object
+    properties:
+      actionParameters:
+        description: rule action parameters
+        type: array
+        items:
+          type: ProcessRuleActionParameterRepresentation
+      actionType:
+        description: rule action type
+        type: string
+        enum:
+          - CreditPoints
+          - DebitPoints
+          - DecisionTable
+          - Flow
+          - IssueVoucher
+          - UpdateCumulativePromotionProgress
+      decisionTable:
+        description: rule action's associated decision table
+        type: string
+      decisionTableDatasetLink:
+        description: rule action's associated decision table dataset link
+        type: string
+      flowDefinition:
+        description: rule action's associated flow definition
+        type: string
+      name:
+        description: rule action name
+        type: string
+  ProcessRuleConditionFilterCriteriaInputRepresentation:
+    description: Loyalty Engine Rule Condition Filter Criteria Input Representation
+    type: object
+    properties:
+      operator:
+        description: rule condition filter criteria operator
+        type: string
+        enum:
+          - Between
+          - Contains
+          - DoesNotContain
+          - EndsWith
+          - Equals
+          - GreaterThan
+          - GreaterThanOrEquals
+          - IsNotNull
+          - IsNull
+          - LessThan
+          - LessThanOrEquals
+          - NotEquals
+          - StartsWith
+      sequence:
+        description: rule condition filter criteria sequence
+        type: integer
+      sourceFieldName:
+        description: rule condition filter criteria source field name
+        type: string
+      value:
+        description: rule condition filter criteria value
+        type: string
+      valueType:
+        description: rule condition filter criteria value type
+        type: string
+        enum:
+          - FixedValue
+          - Formula
+          - Lookup
+          - Parameter
+  ProcessRuleConditionFilterCriteriaRepresentation:
+    description: Loyalty Engine Rule Condition Filter Criteria Representation
+    type: object
+    properties:
+      operator:
+        description: rule condition filter criteria operator
+        type: string
+        enum:
+          - Between
+          - Contains
+          - DoesNotContain
+          - EndsWith
+          - Equals
+          - GreaterThan
+          - GreaterThanOrEquals
+          - IsNotNull
+          - IsNull
+          - LessThan
+          - LessThanOrEquals
+          - NotEquals
+          - StartsWith
+      sequence:
+        description: rule condition filter criteria sequence
+        type: integer
+      sourceFieldName:
+        description: rule condition filter criteria source field name
+        type: string
+      value:
+        description: rule condition filter criteria value
+        type: string
+      valueType:
+        description: rule condition filter criteria value type
+        type: string
+        enum:
+          - FixedValue
+          - Formula
+          - Lookup
+          - Parameter
+  ProcessRuleConditionInputRepresentation:
+    description: Loyalty Engine Rule Condition Input Representation
+    type: object
+    properties:
+      criteria:
+        description: rule condition filter criteria
+        type: array
+        items:
+          type: object
+      filterCondition:
+        description: rule condition filter condition
+        type: string
+      filterExpression:
+        description: rule condition filter expression
+        type: string
+      name:
+        description: rule condition name
+        type: string
+  ProcessRuleConditionRepresentation:
+    description: Loyalty Engine Rule Condition Representation
+    type: object
+    properties:
+      criteria:
+        description: rule condition filter criteria
+        type: array
+        items:
+          type: ProcessRuleConditionFilterCriteriaRepresentation
+      filterCondition:
+        description: rule condition's filter condition
+        type: string
+      filterExpression:
+        description: rule condition's filter expression
+        type: string
+      name:
+        description: rule condition name
+        type: string
+  ProcessRuleDetailRepresentation:
+    description: Loyalty Engine Rule GET Response Representation
+    type: object
+    properties:
+      actions:
+        description: rule actions
+        type: array
+        items:
+          type: ProcessRuleActionRepresentation
+      conditions:
+        description: rule conditions
+        type: array
+        items:
+          type: ProcessRuleConditionRepresentation
+      stepMappings:
+        description: rule step mappings
+        type: array
+        items:
+          type: ProcessRuleStepMappingRepresentation
+  ProcessRuleErrorRepresentation:
+    description: Loyalty Engine Rule POST Response Representation
+    type: object
+    properties:
+      error:
+        description: error message
+        type: string
+      resource:
+        description: rule resource type
+        type: string
+        enum:
+          - ProcessRuleAction
+          - ProcessRuleActionParameter
+          - ProcessRuleCondition
+          - ProcessRuleConditionFilterCriteria
+          - ProcessRuleStep
+          - ProcessRuleStepMapping
+      stepName:
+        description: associated step name
+        type: string
+  ProcessRuleInputRepresentation:
+    description: Loyalty Engine Rule Input Representation
+    type: object
+    properties:
+      actions:
+        description: rule actions
+        type: array
+        items:
+          type: object
+      conditions:
+        description: rule conditions
+        type: array
+        items:
+          type: object
+      stepMappings:
+        description: rule step mappings
+        type: array
+        items:
+          type: object
+  # TODO Hand Rolled 'ProgramProcessRule' W-9311618 and W-9311623
+  ProgramProcessRule:
+    description: A Wrapper around the ProcessRuleInputRepresentation
+    type: object
+    properties:
+      programProcessRule:
+        description: The Oas Body Name for RowsInput
+        type: ProcessRuleInputRepresentation
+  ProcessRuleStatusRepresentation:
+    description: Loyalty Engine Rule POST Response Representation
+    type: object
+    properties:
+      errors:
+        description: validation errors if found
+        type: array
+        items:
+          type: ProcessRuleErrorRepresentation
+      message:
+        description: general success/error message
+        type: string
+      ruleId:
+        description: program process rule id
+        type: string
+      status:
+        description: request response status
+        type: string
+        enum:
+          - Failed
+          - Success
+  ProcessRuleStepMappingInputRepresentation:
+    description: Loyalty Engine Rule Step Mapping Input Representation
+    type: object
+    properties:
+      associatedStep:
+        description: associate step name
+        type: string
+      parentStep:
+        description: parent step name
+        type: string
+      sequence:
+        description: step sequence number
+        type: integer
+  ProcessRuleStepMappingRepresentation:
+    description: Loyalty Engine Rule Step Mapping Representation
+    type: object
+    properties:
+      associatedStep:
+        description: associated step name
+        type: string
+      parentStep:
+        description: parent step name
+        type: string
+      sequence:
+        description: step sequence number
+        type: integer
+/connect:
+  /batch/loyalty/programs/{programName}:
+    post:
+      description: Http post method that executes the process for the given program
+        and the process
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: LoyaltyEngineBatchOutputRepresentation
+      body:
+        application/json:
+          type: LoyaltyEngineInputRepresentation
+          # TODO Hand-rolled W-8334626
+          # TODO: Hand-rolled due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          #required: false
+          (oas-body-name): loyaltyProcessInput
+    uriParameters:
+      programName:
+        type: string
+        required: true
+  /loyalty/programs/{programName}/processes/{processName}/rule/{ruleName}:
+    get:
+      description: http get method for Loyalty Engine Rule for given process and program
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ProcessRuleDetailRepresentation
+    post:
+      description: http post method that upsert Loyalty Engine Rule for given process
+        and program
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: ProcessRuleStatusRepresentation
+      body:
+        application/json:
+          # TODO: Hand rolled 'type' to provide a wrapper that uses the oas-body-name
+          type: ProgramProcessRule
+          # TODO: Hand-rolled W-8334626 due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          #required: false
+          (oas-body-name): programProcessRule
+    uriParameters:
+      processName:
+        type: string
+        required: true
+      programName:
+        type: string
+        required: true
+      ruleName:
+        type: string
+        required: true
+  /realtime/loyalty/programs/{programName}:
+    post:
+      description: Http post method that executes the process for the given program
+        and the process
+      responses:
+        '200':
+          description: Success
+          body:
+            application/json:
+              type: LoyaltyEngineRealtimeOutputRepresentation
+      body:
+        application/json:
+          # TODO Hand-rolled W-8334626
+          type: LoyaltyEngineInputRepresentation
+          # TODO: Hand-rolled due to issue #22 in Generated RAML Gaps (https://salesforce.quip.com/NxVhAkxL6RTW#dGQACAxyxIv)
+          # required: false
+          (oas-body-name): loyaltyProcessInput
+    uriParameters:
+      programName:
+        type: string
+        required: true

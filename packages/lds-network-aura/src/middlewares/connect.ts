@@ -279,6 +279,11 @@ const JOIN_CHIME_MEETING_PATH = new RegExp(
     'i'
 );
 
+const LOYALTY_PROGRAM_PROCESS_RULE = new RegExp(
+    `${CONNECT_BASE_URI}/loyalty/programs/([A-Z0-9_]){1,80}/processes/([A-Z0-9_]){1,80}/rule/([A-Z0-9_]){1,80}$`,
+    'i'
+);
+
 const connect: ApiFamily = {
     ingestRecord: {
         method: 'post',
@@ -497,6 +502,22 @@ const connect: ApiFamily = {
             path.startsWith(CONNECT_BASE_URI) && SIMULATION_EVALUATION_SERVICE_PATH.test(path),
         transport: {
             controller: 'InteractionCalculationProceduresController.getSimulationInputVariables',
+        },
+    },
+    getProgramProcessRule: {
+        method: 'get',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && LOYALTY_PROGRAM_PROCESS_RULE.test(path),
+        transport: {
+            controller: 'LoyaltyEngineConnectController.getProgramProcessRule',
+        },
+    },
+    upsertProgramProcessRule: {
+        method: 'post',
+        predicate: (path: string) =>
+            path.startsWith(CONNECT_BASE_URI) && LOYALTY_PROGRAM_PROCESS_RULE.test(path),
+        transport: {
+            controller: 'LoyaltyEngineConnectController.upsertProgramProcessRule',
         },
     },
     getExplainabilityActionLogs: {

@@ -2797,6 +2797,100 @@ describe('routes', () => {
         );
     });
 
+    describe('get /loyalty/programs/{programName}/processes/{processName}/rule/{ruleName}', () => {
+        testControllerInput(
+            {
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/loyalty/programs/Prog1/processes/Process1/rule/Rule1`,
+            },
+            [
+                'LoyaltyEngineConnectController.getProgramProcessRule',
+                {},
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'get',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/loyalty/programs/Prog1/processes/Process1/rule/Rule1`,
+            },
+            {}
+        );
+    });
+
+    describe('post /loyalty/programs/{programName}/processes/{processName}/rule/{ruleName}', () => {
+        testControllerInput(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/loyalty/programs/Prog1/processes/Process1/rule/Rule1`,
+                body: {
+                    conditions: [
+                        {
+                            name: 'C1',
+                            filterCondition: '1',
+                            criteria: [
+                                {
+                                    sourceFieldName: 'TransactionJournal.Product.Description',
+                                    operator: 'Equals',
+                                    sequence: 1,
+                                    value: 'j',
+                                    valueType: 'FixedValue',
+                                },
+                            ],
+                        },
+                    ],
+                    stepMappings: [
+                        {
+                            associatedStep: 'C1',
+                            parentStep: null,
+                            sequence: 1,
+                        },
+                    ],
+                },
+            },
+            [
+                'LoyaltyEngineConnectController.upsertProgramProcessRule',
+                {
+                    conditions: [
+                        {
+                            name: 'C1',
+                            filterCondition: '1',
+                            criteria: [
+                                {
+                                    sourceFieldName: 'TransactionJournal.Product.Description',
+                                    operator: 'Equals',
+                                    sequence: 1,
+                                    value: 'j',
+                                    valueType: 'FixedValue',
+                                },
+                            ],
+                        },
+                    ],
+                    stepMappings: [
+                        {
+                            associatedStep: 'C1',
+                            parentStep: null,
+                            sequence: 1,
+                        },
+                    ],
+                },
+                { background: false, hotspot: true, longRunning: false },
+            ]
+        );
+
+        testResolveResponse(
+            {
+                method: 'post',
+                baseUri: CONNECT_BASE_URI,
+                basePath: `/loyalty/programs/Prog1/processes/Process1/rule/Rule1`,
+            },
+            {}
+        );
+    });
+
     describe('get /related-list-info', () => {
         describe('/{parentObjectApiName}/{relatedListId}', () => {
             testControllerInput(

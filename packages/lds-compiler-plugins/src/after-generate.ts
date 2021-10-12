@@ -14,6 +14,8 @@ type AdapterInfo = {
 
 type ProcessedAdapter = {
     metadata?: unknown;
+    ldsAdapter?: unknown;
+    imperativeGetBind?: unknown;
     bind: string;
     import: string;
 };
@@ -21,6 +23,7 @@ type ProcessedAdapter = {
 const CREATE_WIRE_ADAPTER_CONSTRUCTOR = 'createWireAdapterConstructor';
 const CREATE_INSTRUMENTED_ADAPTER = 'createInstrumentedAdapter';
 const CREATE_LDS_ADAPTER = 'createLDSAdapter';
+const CREATE_IMPERATIVE_ADAPTER = 'createImperativeAdapter';
 const LDS_BINDINGS = '@salesforce/lds-bindings';
 
 function generateNpmModule(outputDir: string, adapters: AdapterInfo[]) {
@@ -36,41 +39,38 @@ function generateNpmModule(outputDir: string, adapters: AdapterInfo[]) {
     fs.writeFileSync(path.join(outputDir, 'main.ts'), source);
 }
 
-function generateBinding(
-    method: string,
-    adapterName: string,
-    adapterNameIdentifier: string,
-    factoryIdentifier: string,
-    adapterMetadataIdentifier: string
-): string {
-    switch (method) {
-        case 'get':
-            return `${adapterName}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}(luvio, ${CREATE_INSTRUMENTED_ADAPTER}(${CREATE_LDS_ADAPTER}(luvio, '${adapterNameIdentifier}', ${factoryIdentifier}), ${adapterMetadataIdentifier}), ${adapterMetadataIdentifier}),`;
-        case 'delete':
-            return `${adapterName}: ${CREATE_LDS_ADAPTER}(luvio, ${adapterNameIdentifier}, ${factoryIdentifier}),`;
-        default:
-            return `${adapterName}: unwrapSnapshotData(${factoryIdentifier}),`;
-    }
-}
-
 function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
     const adapterCode = adapters.reduce((_adapterCode, adapter) => {
         const { apiFamily, name, method, ttl } = adapter;
         const factoryIdentifier = `${name}AdapterFactory`;
         const adapterNameIdentifier = `${name}__adapterName`;
         const adapterMetadataIdentifier = `${name}Metadata`;
+        const ldsAdapterIdentifier = `${name}_ldsAdapter`;
+        const imperativeAdapterNameIdentifier = `${name}_imperative`;
+        let bind;
+        let imperativeGetBind;
+        let ldsAdapter;
 
-        const bind = generateBinding(
-            method,
-            name,
-            adapterNameIdentifier,
-            factoryIdentifier,
-            adapterMetadataIdentifier
-        );
+        const metadata =
+            ttl === undefined
+                ? `{ apiFamily: '${apiFamily}', name: '${name}' }`
+                : `{ apiFamily: '${apiFamily}', name: '${name}', ttl: ${ttl} }`;
+
+        if (method === 'get') {
+            ldsAdapter = `const ${ldsAdapterIdentifier} = ${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier})`;
+            bind = `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}(luvio, ${CREATE_INSTRUMENTED_ADAPTER}(${ldsAdapterIdentifier}, ${adapterMetadataIdentifier}), ${adapterMetadataIdentifier})`;
+            imperativeGetBind = `${imperativeAdapterNameIdentifier}: ${CREATE_IMPERATIVE_ADAPTER}(luvio, ${ldsAdapterIdentifier}, ${adapterMetadataIdentifier})`;
+        } else if (method === 'delete') {
+            bind = `${name}: ${CREATE_LDS_ADAPTER}(luvio, ${adapterNameIdentifier}, ${factoryIdentifier})`;
+        } else {
+            bind = `${name}: unwrapSnapshotData(${factoryIdentifier})`;
+        }
 
         _adapterCode[name] = {
-            metadata: `const ${adapterMetadataIdentifier} = { apiFamily: '${apiFamily}', name: '${name}', ttl: ${ttl}};`,
+            metadata: `const ${adapterMetadataIdentifier} = ${metadata};`,
             bind,
+            ldsAdapter,
+            imperativeGetBind,
             import: `import { ${factoryIdentifier}, adapterName as ${adapterNameIdentifier} } from '../adapters/${name}';`,
         };
 
@@ -79,7 +79,7 @@ function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
             const notifyChangeFactoryIdentifier = `${name}__notifyChangeFactory`;
 
             _adapterCode[notifyChangeNameIdentifier] = {
-                bind: `${notifyChangeNameIdentifier}: ${CREATE_LDS_ADAPTER}(luvio, '${notifyChangeNameIdentifier}', ${notifyChangeFactoryIdentifier}),`,
+                bind: `${notifyChangeNameIdentifier}: ${CREATE_LDS_ADAPTER}(luvio, '${notifyChangeNameIdentifier}', ${notifyChangeFactoryIdentifier})`,
                 import: `import { notifyChangeFactory as ${notifyChangeFactoryIdentifier} } from '../adapters/${name}';`,
             };
         }
@@ -88,38 +88,57 @@ function generateCoreAdapterModule(outputDir: string, adapters: AdapterInfo[]) {
     }, {} as { [key: string]: ProcessedAdapter });
 
     const adapterNames = Object.keys(adapterCode).sort();
+    const imperativeGetAdapterNames = adapterNames
+        .filter((name) => adapterCode[name].imperativeGetBind !== undefined)
+        .map((name) => `${name}_imperative`);
 
     const source = dedent`
         import { AdapterFactory, Luvio, Snapshot } from '@luvio/engine';
-        import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}, ${CREATE_INSTRUMENTED_ADAPTER}, ${CREATE_LDS_ADAPTER} } from '${LDS_BINDINGS}';
+        import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR}, ${CREATE_INSTRUMENTED_ADAPTER}, ${CREATE_LDS_ADAPTER}, ${CREATE_IMPERATIVE_ADAPTER} } from '${LDS_BINDINGS}';
         import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
         ${adapterNames.map((name) => adapterCode[name].import).join('\n')}
 
         ${adapterNames.map((name) => 'let ' + name + ': any;').join('\n    ')}
 
+        // Imperative GET Adapters
+        ${imperativeGetAdapterNames.map((name) => `let ${name}`).join('\n    ')}
+
+        // Adapter Metadata
         ${adapterNames
             .filter((name) => adapterCode[name].metadata !== undefined)
             .map((name) => `${adapterCode[name].metadata}`)
             .join('\n    ')}
 
         function bindExportsTo(luvio: Luvio): { [key: string]: any } {
+            // LDS Adapters
+            ${adapterNames
+                .filter((name) => adapterCode[name].ldsAdapter !== undefined)
+                .map((name) => adapterCode[name].ldsAdapter)
+                .join(';\n            ')};
+
             function unwrapSnapshotData<Config,DataType>(factory: AdapterFactory<Config,DataType>) {
                 const adapter = factory(luvio);
                 return (config: Config) => (adapter(config) as Promise<Snapshot<DataType>>).then(snapshot => snapshot.data);
             }
 
             return {
-                ${adapterNames.map((name) => adapterCode[name].bind).join('\n')}
+                ${adapterNames.map((name) => adapterCode[name].bind).join(',\n                ')},
+                // Imperative GET Adapters
+                ${adapterNames
+                    .filter((name) => adapterCode[name].imperativeGetBind !== undefined)
+                    .map((name) => adapterCode[name].imperativeGetBind)
+                    .join(',\n                ')}
             };
         }
 
         withDefaultLuvio((luvio: Luvio) => {
             ({
-                ${adapterNames.join(',\n        ')}
+                ${adapterNames.join(',\n        ')},
+                ${imperativeGetAdapterNames.join(',\n                ')}
             } = bindExportsTo(luvio));
         });
 
-        export { ${adapterNames.join(', ')} };
+        export { ${adapterNames.join(', ')}, ${imperativeGetAdapterNames.join(', ')} };
     `;
 
     fs.writeFileSync(path.join(outputDir, 'sfdc.ts'), source);

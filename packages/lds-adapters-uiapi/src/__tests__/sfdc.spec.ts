@@ -119,6 +119,15 @@ describe('SFDC exports', () => {
             'getRelatedListsActions_imperative',
             'getRelatedListsCount_imperative',
             'getRelatedListsInfo_imperative',
+
+            // cache policies
+            'CachePolicy',
+            'CachePolicyCacheAndNetwork',
+            'CachePolicyCacheThenNetwork',
+            'CachePolicyNoCache',
+            'CachePolicyOnlyIfCached',
+            'CachePolicyStaleWhileRevalidate',
+            'CachePolicyValidAt',
         ].sort();
 
         it('should only export allowlisted items', () => {

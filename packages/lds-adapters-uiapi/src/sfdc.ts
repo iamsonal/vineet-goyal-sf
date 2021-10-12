@@ -117,3 +117,14 @@ export {
 
 // Expose module configuration and instrumentation
 export { configuration, instrument, LdsUiapiInstrumentation } from './main';
+
+// Expose cache policies
+export {
+    CachePolicy,
+    CachePolicyCacheAndNetwork,
+    CachePolicyCacheThenNetwork,
+    CachePolicyNoCache,
+    CachePolicyOnlyIfCached,
+    CachePolicyStaleWhileRevalidate,
+    CachePolicyValidAt,
+} from './main';

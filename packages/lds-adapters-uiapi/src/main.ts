@@ -69,3 +69,14 @@ export { configuration } from './configuration';
 
 // Expose module instrumentation
 export { instrument, LdsUiapiInstrumentation } from './instrumentation';
+
+// Expose cache policies
+export {
+    CachePolicy,
+    CachePolicyCacheAndNetwork,
+    CachePolicyCacheThenNetwork,
+    CachePolicyNoCache,
+    CachePolicyOnlyIfCached,
+    CachePolicyStaleWhileRevalidate,
+    CachePolicyValidAt,
+} from '@luvio/engine';

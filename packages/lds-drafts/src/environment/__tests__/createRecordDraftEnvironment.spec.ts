@@ -348,5 +348,23 @@ describe('draft environment tests', () => {
                 headers: {},
             });
         });
+
+        it('created record never expires', async () => {
+            const { draftEnvironment } = await setupDraftEnvironment({ isDraftId: () => true });
+
+            draftEnvironment.publishStoreMetadata(STORE_KEY_DRAFT_RECORD, {
+                expirationTimestamp: 1,
+                staleTimestamp: 1,
+                namespace: 'UiApi',
+                representationName: 'RecordRepresentation',
+                ingestionTimestamp: 1,
+            });
+            expect(
+                draftEnvironment.store.metadata[STORE_KEY_DRAFT_RECORD].expirationTimestamp
+            ).toBe(Number.MAX_SAFE_INTEGER);
+            expect(draftEnvironment.store.metadata[STORE_KEY_DRAFT_RECORD].staleTimestamp).toBe(
+                Number.MAX_SAFE_INTEGER
+            );
+        });
     });
 });

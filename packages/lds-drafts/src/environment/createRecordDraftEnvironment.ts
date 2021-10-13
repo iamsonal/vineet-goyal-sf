@@ -1,4 +1,4 @@
-import { Environment, ResourceRequest } from '@luvio/engine';
+import { Environment, ResourceRequest, StoreMetadata } from '@luvio/engine';
 import { DurableEnvironment } from '@luvio/environments';
 import { keyBuilderRecord } from '@salesforce/lds-adapters-uiapi';
 import { extractRecordIdFromStoreKey } from '@salesforce/lds-uiapi-record-utils';
@@ -111,6 +111,21 @@ export function createRecordDraftEnvironment(
         );
     };
 
+    const publishStoreMetadata: typeof env['publishStoreMetadata'] = function (
+        recordKey: string,
+        storeMetadata: StoreMetadata
+    ) {
+        const recordId = extractRecordIdFromStoreKey(recordKey);
+        if (recordId === undefined || isDraftId(recordId) === false) {
+            return env.publishStoreMetadata(recordKey, storeMetadata);
+        }
+        return env.publishStoreMetadata(recordKey, {
+            ...storeMetadata,
+            expirationTimestamp: Number.MAX_SAFE_INTEGER,
+            staleTimestamp: Number.MAX_SAFE_INTEGER,
+        });
+    };
+
     function assertReferenceIdsAreCached(apiName: string, fields: Record<string, any>) {
         return ensureReferencedIdsAreCached(durableStore, apiName, fields, getObjectInfo).catch(
             (err: Error) => {
@@ -146,5 +161,6 @@ export function createRecordDraftEnvironment(
 
     return ObjectCreate(env, {
         dispatchResourceRequest: { value: dispatchResourceRequest },
+        publishStoreMetadata: { value: publishStoreMetadata },
     });
 }

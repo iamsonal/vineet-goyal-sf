@@ -12,6 +12,7 @@
         "prepare": "yarn build",
         "build": "rollup --config rollup.config.js",
         "test:unit": "jest",
+        "test:size": "bundlesize",
         "clean": "rm -rf dist",
         "release:core": "yarn build && ../core-build/scripts/core.js --name=lds-runtime-mobile"
     },
@@ -27,5 +28,12 @@
         "@salesforce/lds-graphql-parser": "1.28.0",
         "@salesforce/lds-runtime-mobile": "1.28.0",
         "nimbus-types": "^2.0.0-alpha1"
-    }
+    },
+    "bundlesize": [
+        {
+            "path": "./dist/sfdc/es/ldsWorkerApi.js",
+            "maxSize": "25 kB",
+            "compression": "brotli"
+        }
+    ]
 }

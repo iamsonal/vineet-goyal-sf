@@ -1,6 +1,6 @@
 import { Luvio } from '@luvio/engine';
 import { API_NAMESPACE, RECORD_REPRESENTATION_NAME } from '@salesforce/lds-uiapi-record-utils';
-import { withDefaultLuvio } from '@salesforce/lds-runtime-mobile';
+import { withDefaultLuvio } from 'native/ldsEngineMobile';
 
 let luvio: Luvio | undefined = undefined;
 

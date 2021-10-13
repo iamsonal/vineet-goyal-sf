@@ -4,7 +4,6 @@ import { beforeEach as util_beforeEach, convertToFieldIds } from '../util';
 import {
     mockNetworkOnce,
     mockNetworkSequence,
-    clone,
     flushPromises,
     setupElement,
     updateElement,
@@ -253,10 +252,7 @@ describe('with listViewId', () => {
             expect(wiredData).toEqualListUi(mockData);
         });
 
-        xit('makes new request when a fetched list-records has an etag that does not match the list-info', async () => {
-            // there is a bug hence keeping the test disabled
-            // TODO: [W-9923716]: enable as a part of W-9923716
-
+        it('makes new request when a fetched list-records has an etag that does not match the list-info', async () => {
             const mockDataListUi = getMock('list-ui-All-Opportunities-pageSize-3');
             const config = {
                 listViewId: mockDataListUi.info.listReference.id,
@@ -279,12 +275,17 @@ describe('with listViewId', () => {
 
             mockNetworkListRecords(config2, mockDataListRecords);
 
-            const updatedListUi = clone(mockDataListUi);
+            const updatedListUi = getMock(
+                'list-ui-All-Opportunities-pageToken-3-pageSize-3-sortBy-Account.Name'
+            );
             updatedListUi.info.eTag = 'updatedetag';
             updatedListUi.records.listInfoETag = 'updatedetag';
+            // TODO [W-9923716]: previousPageToken is returned as null in mistake.
+            updatedListUi.records.previousPageToken = null;
             mockNetworkListUi(config2, updatedListUi);
 
-            await setupElement(config2, ListViewId);
+            const element = await setupElement(config2, ListViewId);
+            expect(element.getWiredData()).toEqualListUi(updatedListUi);
         });
     });
 

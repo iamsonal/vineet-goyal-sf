@@ -13,6 +13,7 @@ import {
     makeEnvironmentDraftAware,
     DraftManager,
 } from '@salesforce/lds-drafts';
+import salesforceNetworkAdapter from '@salesforce/lds-network-adapter';
 
 import userId from '@salesforce/user/Id';
 import { recordIdGenerator } from './RecordIdGenerator';
@@ -68,7 +69,9 @@ const storeOptions = {
     scheduler: () => {},
 };
 const store = new Store(storeOptions);
-const networkAdapter = makeNetworkAdapterChunkRecordFields(NimbusNetworkAdapter);
+const networkAdapter = salesforceNetworkAdapter(
+    makeNetworkAdapterChunkRecordFields(NimbusNetworkAdapter)
+);
 
 const baseDurableStore = makeDurableStoreWithMergeStrategy(new NimbusDurableStore());
 

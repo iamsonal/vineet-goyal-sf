@@ -8,7 +8,7 @@ const BASE_URI = `/services/data/${API_VERSION}`;
 const URL_BASE = `/connect`;
 const MANAGED_CONTENT_TTL = 100;
 const MANAGED_CONTENT_VARIANT_TTL = 3600000;
-const GET_MANAGED_CONTENT_BY_FOLDER_ID_TTL = 3600000;
+const GET_MANAGED_CONTENT_BY_FOLDER_ID_TTL = 100;
 
 function mockCreateDeployment(config, mockData) {
     const paramMatch = getCreateDeploymentsMatcher(config);

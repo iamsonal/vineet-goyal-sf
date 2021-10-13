@@ -21,6 +21,7 @@
             "steps": [
                 {
                     "id": "subheading_test",
+                    "isManaged": false,
                     "labels": {
                         "title": "Learn about Our Rollout Recommendations"
                     },
@@ -38,6 +39,7 @@
                         "url": "http://help.salesforce.com"
                     },
                     "id": "learn_about_salesforce",
+                    "isManaged": false,
                     "labels": {
                         "title": "Explore Salesforce Setup"
                     },

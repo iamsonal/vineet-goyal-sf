@@ -28,6 +28,7 @@
                         "url": "http://help.salesforce.com"
                     },
                     "id": "learn_about_salesforce",
+                    "isManaged": false,
                     "labels": {
                         "title": "Explore Salesforce Setup",
                         "meta": "",
@@ -68,6 +69,7 @@
                         }
                     },
                     "id": "trigger_lms_pub_step",
+                    "isManaged": false,
                     "labels": {
                         "title": "Show Utility Bar Functions",
                         "meta": "5:00 mins",

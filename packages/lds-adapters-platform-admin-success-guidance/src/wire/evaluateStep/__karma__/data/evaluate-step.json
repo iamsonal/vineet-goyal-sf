@@ -8,6 +8,7 @@
         }
     },
     "id": "trigger_lms_pub",
+    "isManaged": true,
     "labels": {
         "title": "Show Utility Bar Actions",
         "meta": "5:00 mins",

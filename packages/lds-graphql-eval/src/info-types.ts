@@ -8,7 +8,7 @@ interface BaseFieldInfo {
 }
 
 export interface ScalarFieldInfo extends BaseFieldInfo {
-    dataType: 'Boolean' | 'String' | 'Double' | 'DateTime' | 'Int';
+    dataType: 'Boolean' | 'String' | 'Double' | 'Date' | 'DateTime' | 'Int';
 }
 
 export interface ReferenceToInfo {

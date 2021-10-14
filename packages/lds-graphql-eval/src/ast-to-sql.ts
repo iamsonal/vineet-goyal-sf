@@ -10,12 +10,17 @@ import {
     RecordQueryField,
     FieldType,
     ValueType,
+    DateEnumType,
+    CompoundOperator,
+    isComparisonPredicate,
+    NullComparisonPredicate,
+    NullComparisonOperator,
 } from './Predicate';
 
 export interface SqlMappingInput {
-    soupColumn: string;
+    jsonColumn: string;
     keyColumn: string;
-    soupTable: string;
+    jsonTable: string;
 }
 
 const recordPrefix = '$.data.uiapi.query';
@@ -58,13 +63,13 @@ function recordQueryToSql(recordQuery: RecordQuery, mappingInput: SqlMappingInpu
 
     return (
         `SELECT json_group_array(json_set('{}', ${fieldsSql} )) ` +
-        `FROM (SELECT ${columns} FROM (select * from ${mappingInput.soupTable} ` +
+        `FROM (SELECT ${columns} FROM (select * from ${mappingInput.jsonTable} ` +
         `where ${mappingInput.keyColumn} like 'UiApi%3A%3ARecordRepresentation%') as '${name}' ${joinString} ${predicateString} ${limitString})`
     );
 }
 
 function columnsSql(names: string[], mappingInput: SqlMappingInput) {
-    return names.map((name) => `'${name}'.${mappingInput.soupColumn} as '${name}.JSON'`).join(', ');
+    return names.map((name) => `'${name}'.${mappingInput.jsonColumn} as '${name}.JSON'`).join(', ');
 }
 
 function joinNamesToSql(names: string[], mappingInput: SqlMappingInput): string {
@@ -72,7 +77,7 @@ function joinNamesToSql(names: string[], mappingInput: SqlMappingInput): string 
 }
 
 function joinToSql(name: string, mappingInput: SqlMappingInput) {
-    return `join ${mappingInput.soupTable} as '${name}'`;
+    return `join ${mappingInput.jsonTable} as '${name}'`;
 }
 
 function predicateToSql(predicate: Predicate): string {
@@ -80,12 +85,16 @@ function predicateToSql(predicate: Predicate): string {
         return compoundPredicateToSql(predicate);
     }
 
-    return comparisonPredicateToSql(predicate);
+    if (isComparisonPredicate(predicate)) {
+        return comparisonPredicateToSql(predicate);
+    }
+
+    return nullComparisonPredicateToSql(predicate);
 }
 
 function compoundPredicateToSql(predicate: CompoundPredicate): string {
-    const operatorString = ` ${predicate.operator} `;
-    const compoundStatement = predicate.children.map(predicateToSql).join(operatorString);
+    const operatorString = compoundOperatorToSql(predicate.operator);
+    const compoundStatement = predicate.children.map(predicateToSql).join(` ${operatorString} `);
 
     return `( ${compoundStatement} )`;
 }
@@ -98,6 +107,13 @@ function comparisonPredicateToSql(predicate: ComparisonPredicate): string {
     return `${left} ${operator} ${right}`;
 }
 
+function nullComparisonPredicateToSql(predicate: NullComparisonPredicate): string {
+    const operator = predicate.operator === NullComparisonOperator.is ? 'IS' : 'IS NOT';
+    const left = expressionToSql(predicate.left);
+
+    return `${left} ${operator} NULL`;
+}
+
 function expressionToSql(expression: Expression): string {
     switch (expression.type) {
         case ValueType.Extract:
@@ -108,12 +124,54 @@ function expressionToSql(expression: Expression): string {
             return String(expression.value);
         case ValueType.Identifier:
             return expression.value;
+        case ValueType.StringArray:
+            return `(${expression.value.map((e) => `'${e}'`).join(', ')})`;
+        case ValueType.NumberArray:
+            return `(${expression.value.map((e) => e).join(', ')})`;
+        case ValueType.NullValue:
+            return 'null';
+
+        case ValueType.DateEnum:
+            return dateEnumToSql(expression.value);
+        case ValueType.DateTimeEnum:
+            return dateTimeEnumToSql(expression.value);
+
+        case ValueType.DateTimeArray:
+            return `(${expression.value.map((e) => expressionToSql(e)).join(', ')})`;
+        case ValueType.DateArray:
+            return `(${expression.value.map((e) => expressionToSql(e)).join(', ')})`;
+
+        case ValueType.DateValue:
+        case ValueType.DateTimeValue:
         case ValueType.StringLiteral:
             return `'${expression.value}'`;
-        case ValueType.StringArray:
-            return `[${expression.value.map((e) => `'${e}'`).join(', ')}]`;
-        case ValueType.NumberArray:
-            return `[${expression.value.map((e) => e).join(', ')}]`;
+    }
+}
+
+function dateTimeEnumToSql(dateEnum: DateEnumType): string {
+    switch (dateEnum) {
+        case DateEnumType.today:
+            return `datetime('now')`;
+        case DateEnumType.tomorrow:
+            return `datetime('now', '+1 day')`;
+    }
+}
+
+function dateEnumToSql(dateEnum: DateEnumType): string {
+    switch (dateEnum) {
+        case DateEnumType.today:
+            return `date('now')`;
+        case DateEnumType.tomorrow:
+            return `date('now', '+1 day')`;
+    }
+}
+
+function compoundOperatorToSql(operator: CompoundOperator): string {
+    switch (operator) {
+        case CompoundOperator.and:
+            return 'AND';
+        case CompoundOperator.or:
+            return 'OR';
     }
 }
 

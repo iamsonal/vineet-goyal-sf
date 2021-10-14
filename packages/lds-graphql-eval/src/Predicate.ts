@@ -1,11 +1,17 @@
 export enum PredicateType {
     compound = 'compound',
     comparison = 'comparison',
+    nullComparison = 'nullComparison',
 }
 
 export enum CompoundOperator {
     and = 'and',
     or = 'or',
+}
+
+export enum NullComparisonOperator {
+    is = 'is',
+    isNot = 'isNot',
 }
 
 export enum ComparisonOperator {
@@ -18,6 +24,11 @@ export enum ComparisonOperator {
     gte = 'gte',
     in = 'in',
     nin = 'nin',
+}
+
+export enum DateEnumType {
+    today,
+    tomorrow,
 }
 
 export enum FieldType {
@@ -35,13 +46,63 @@ export enum ValueType {
     StringLiteral = 'StringLiteral',
     StringArray = 'StringArray',
     NumberArray = 'NumberArray',
+    DateEnum = 'DateEnum',
+    DateValue = 'DateValue',
+    DateArray = 'DateArray',
+    DateTimeEnum = 'DateTimeEnum',
+    DateTimeValue = 'DateTimeValue',
+    DateTimeArray = 'DateTimeArray',
+    NullValue = 'NullValue',
 }
+
+export type LiteralValue =
+    | StringLiteral
+    | DoubleLiteral
+    | IntLiteral
+    | BooleanLiteral
+    | StringArray
+    | NumberArray
+    | DateInput
+    | DateTimeInput
+    | DateArray
+    | DateTimeArray
+    | NullValue;
+
+interface Value<Type, ValueType> {
+    type: Type;
+    value: ValueType;
+}
+
+export interface NullValue {
+    type: ValueType.NullValue;
+}
+
+export type StringLiteral = Value<ValueType.StringLiteral, string>;
+export type IntLiteral = Value<ValueType.IntLiteral, number>;
+export type DoubleLiteral = Value<ValueType.DoubleLiteral, number>;
+export type BooleanLiteral = Value<ValueType.BooleanLiteral, Boolean>;
+export type NumberArray = Value<ValueType.NumberArray, number[]>;
+export type StringArray = Value<ValueType.StringArray, string[]>;
+export type DateEnum = Value<ValueType.DateEnum, DateEnumType>;
+export type DateValue = Value<ValueType.DateValue, string>;
+export type DateTimeEnum = Value<ValueType.DateTimeEnum, DateEnumType>;
+export type DateTimeValue = Value<ValueType.DateTimeValue, string>;
+export type DateInput = DateValue | DateEnum | NullValue;
+export type DateTimeInput = DateTimeValue | DateTimeEnum | NullValue;
+export type DateArray = Value<ValueType.DateArray, DateInput[]>;
+export type DateTimeArray = Value<ValueType.DateTimeArray, DateTimeInput[]>;
 
 export interface ComparisonPredicate {
     type: PredicateType.comparison;
     operator: ComparisonOperator;
     left: Expression;
     right: Expression;
+}
+
+export interface NullComparisonPredicate {
+    type: PredicateType.nullComparison;
+    operator: NullComparisonOperator;
+    left: Expression;
 }
 
 export interface CompoundPredicate {
@@ -66,45 +127,6 @@ export interface Identifier {
     type: ValueType.Identifier;
     value: string;
 }
-
-export type LiteralValue =
-    | StringLiteral
-    | DoubleLiteral
-    | IntLiteral
-    | BooleanLiteral
-    | StringArray
-    | NumberArray;
-
-export interface StringLiteral {
-    type: ValueType.StringLiteral;
-    value: string;
-}
-
-export interface StringArray {
-    type: ValueType.StringArray;
-    value: string[];
-}
-
-export interface NumberArray {
-    type: ValueType.NumberArray;
-    value: number[];
-}
-
-export interface IntLiteral {
-    type: ValueType.IntLiteral;
-    value: number;
-}
-
-export interface DoubleLiteral {
-    type: ValueType.DoubleLiteral;
-    value: number;
-}
-
-export interface BooleanLiteral {
-    type: ValueType.BooleanLiteral;
-    value: Boolean;
-}
-
 export interface ScalarField {
     type: FieldType.Scalar;
     path: string;
@@ -134,7 +156,7 @@ export interface RecordQuery {
 
 export type RecordQueryField = ChildField | ScalarField;
 export type Expression = Identifier | LiteralValue | JsonExtract;
-export type Predicate = CompoundPredicate | ComparisonPredicate;
+export type Predicate = CompoundPredicate | ComparisonPredicate | NullComparisonPredicate;
 
 export function isCompoundPredicate(predicate: Predicate): predicate is CompoundPredicate {
     return predicate.type === PredicateType.compound;
@@ -142,4 +164,10 @@ export function isCompoundPredicate(predicate: Predicate): predicate is Compound
 
 export function isComparisonPredicate(predicate: Predicate): predicate is ComparisonPredicate {
     return predicate.type === PredicateType.comparison;
+}
+
+export function isNullComparisonPredicate(
+    predicate: Predicate
+): predicate is NullComparisonPredicate {
+    return predicate.type === PredicateType.nullComparison;
 }

@@ -9,6 +9,7 @@ import {
     IntLiteral,
     isComparisonPredicate,
     isCompoundPredicate,
+    isNullComparisonPredicate,
     Predicate,
     PredicateType,
     StringLiteral,
@@ -100,7 +101,9 @@ export function combinePredicates(predicates: Predicate[], operator: CompoundOpe
         .map((pred) => pred.children)
         .reduce(flatten, []);
 
-    const compares = predicates.filter(isComparisonPredicate);
+    const compares = predicates.filter(
+        (pred) => isComparisonPredicate(pred) || isNullComparisonPredicate(pred)
+    );
 
     const children = [...compares, ...flattened, ...otherCompoundPredicates];
 

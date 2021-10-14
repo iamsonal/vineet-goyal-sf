@@ -457,7 +457,7 @@ function rootQuery(
 }
 
 //find top level record queries
-function findRecordSelections(document: LuvioDocumentNode): LuvioSelectionCustomFieldNode[] {
+export function findRecordSelections(document: LuvioDocumentNode): LuvioSelectionCustomFieldNode[] {
     return document.definitions
         .filter(isOperationDefinition)
         .reduce(flatMap(luvioSelections), [])

@@ -17,7 +17,6 @@ const { RAML_ARTIFACTS } = require('./raml-artifacts');
 
 const ADAPTERS_NOT_DEFINED_IN_OVERLAY = [
     {
-        apiFamily: 'UiApi',
         name: 'getListUi',
         method: 'get',
         ttl: 900000,
@@ -28,6 +27,7 @@ const CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER = 'createWireAdapterConstructor
 const CREATE_LDS_ADAPTER = 'createLDSAdapter';
 const CREATE_INSTRUMENTED_ADAPTER = 'createInstrumentedAdapter';
 const CREATE_IMPERATIVE_ADAPTER = 'createImperativeAdapter';
+const API_FAMILY_IDENTIFIER = 'apiFamily';
 
 /**
  * @param {string} artifactsDir
@@ -38,7 +38,7 @@ const CREATE_IMPERATIVE_ADAPTER = 'createImperativeAdapter';
 function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperativeAdapterInfos) {
     const adapterCode = {};
 
-    generatedAdapterInfos.forEach(({ apiFamily, name, method, ttl }) => {
+    generatedAdapterInfos.forEach(({ name, method, ttl }) => {
         const factoryIdentifier = `${name}AdapterFactory`;
         const adapterNameIdentifier = `${name}__adapterName`;
         const adapterMetadataIdentifier = `${name}Metadata`;
@@ -50,10 +50,13 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
         let ldsAdapter;
 
         if (method === 'get') {
-            metadata =
-                ttl !== undefined
-                    ? `{ apiFamily: '${apiFamily}', name: '${adapterNameIdentifier}', ttl: ${ttl} }`
-                    : `{ apiFamily: '${apiFamily}', name: '${adapterNameIdentifier}' }`;
+            const metadataInfo = [
+                `${API_FAMILY_IDENTIFIER}`,
+                `name: ${adapterNameIdentifier}`,
+                ttl !== undefined && `ttl: ${ttl}`,
+            ].filter(Boolean);
+            metadata = `const ${adapterMetadataIdentifier} = { ${metadataInfo.join(', ')} };`;
+
             ldsAdapter = `const ${ldsAdapterIdentifier} = ${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier})`;
             bind = `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(luvio, ${CREATE_INSTRUMENTED_ADAPTER}(${ldsAdapterIdentifier}, ${adapterMetadataIdentifier}), ${adapterMetadataIdentifier})`;
             imperativeGetBind = `${imperativeAdapterNameIdentifier}: ${CREATE_IMPERATIVE_ADAPTER}(luvio, ${ldsAdapterIdentifier}, ${adapterMetadataIdentifier})`;
@@ -65,15 +68,12 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
             ldsAdapter,
             bind,
             imperativeGetBind,
-            metadata:
-                metadata === undefined
-                    ? undefined
-                    : `const ${adapterMetadataIdentifier} = ${metadata}`,
+            metadata,
             import: `import { ${factoryIdentifier}, adapterName as ${adapterNameIdentifier} } from '../adapters/${name}';`,
         };
     });
 
-    imperativeAdapterInfos.forEach(({ apiFamily, name, method, ttl }) => {
+    imperativeAdapterInfos.forEach(({ name, method, ttl }) => {
         const factoryIdentifier = `${name}AdapterFactory`;
         const adapterMetadataIdentifier = `${name}Metadata`;
         const ldsAdapterIdentifier = `${name}_ldsAdapter`;
@@ -84,10 +84,13 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
         let ldsAdapter;
 
         if (method === 'get') {
-            metadata =
-                ttl !== undefined
-                    ? `{ apiFamily: '${apiFamily}', name: '${name}', ttl: ${ttl} }`
-                    : `{ apiFamily: '${apiFamily}', name: '${name}' }`;
+            const metadataInfo = [
+                `${API_FAMILY_IDENTIFIER}`,
+                `name: '${name}'`,
+                ttl !== undefined && `ttl: ${ttl}`,
+            ].filter(Boolean);
+            metadata = `const ${adapterMetadataIdentifier} = { ${metadataInfo.join(', ')} };`;
+
             ldsAdapter = `const ${ldsAdapterIdentifier} = ${CREATE_LDS_ADAPTER}(luvio, '${name}', ${factoryIdentifier})`;
             bind = `${name}: ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}(luvio, ${CREATE_INSTRUMENTED_ADAPTER}(${ldsAdapterIdentifier}, ${adapterMetadataIdentifier}), ${adapterMetadataIdentifier})`;
             imperativeGetBind = `${imperativeAdapterNameIdentifier}: ${CREATE_IMPERATIVE_ADAPTER}(luvio, ${ldsAdapterIdentifier}, ${adapterMetadataIdentifier})`;
@@ -101,10 +104,7 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
             ldsAdapter,
             bind,
             imperativeGetBind,
-            metadata:
-                metadata === undefined
-                    ? undefined
-                    : `const ${adapterMetadataIdentifier} = ${metadata}`,
+            metadata,
             import: `import { factory as ${factoryIdentifier} } from '../../wire/${name}';`,
         };
     });
@@ -118,6 +118,8 @@ function generateWireBindingsExport(artifactsDir, generatedAdapterInfos, imperat
         import { Luvio, Snapshot } from '@luvio/engine';
         import { ${CREATE_WIRE_ADAPTER_CONSTRUCTOR_IDENTIFIER}, ${CREATE_LDS_ADAPTER}, ${CREATE_INSTRUMENTED_ADAPTER}, ${CREATE_IMPERATIVE_ADAPTER} } from '@salesforce/lds-bindings';
         import { withDefaultLuvio } from '@salesforce/lds-default-luvio';
+
+        import { keyPrefix as ${API_FAMILY_IDENTIFIER} } from '../adapters/adapter-utils';
 
         ${adapterNames.map((name) => adapterCode[name].import).join('\n')}
 
@@ -219,17 +221,6 @@ function generateAdapterInfoExport(artifactsDir, generatedAdapterInfos, imperati
     );
 }
 
-/**
- * Utilizes the keyPrefix string to supply the API family for the adapters.
- * Stripping any non-word characters to be used by our instrumentation.
- * For example, `UiApi::` => `UiApi`.
- *
- * @param keyPrefix string used to supply the namespace of the adapters
- */
-function buildApiFamilyFromKeyPrefix(keyPrefix) {
-    return keyPrefix.replace(/\W+/, '');
-}
-
 module.exports = {
     validate: (modelInfo) => {
         fieldsPlugin.validate(modelInfo, (artifactSuffix, path, identifier, targetIdentifier) => {
@@ -251,12 +242,10 @@ module.exports = {
      * @returns {void}
      */
     afterGenerate: (compilerConfig, modelInfo, createGenerationContext) => {
-        const apiFamily = buildApiFamilyFromKeyPrefix(modelInfo.keyPrefix);
         const adapters = modelInfo.resources
             .filter((resource) => resource.adapter !== undefined)
             .map((resource) => {
                 const adapterInfo = {
-                    apiFamily,
                     name: resource.adapter.name,
                     // using (luvio.method) annotation if defined
                     method: resource.alternativeMethod || resource.method,

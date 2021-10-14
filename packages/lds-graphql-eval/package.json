@@ -1,6 +1,6 @@
 {
     "name": "@salesforce/lds-graphql-eval",
-    "version": "1.28.0",
+    "version": "1.29.0",
     "description": "Offline GraphQL eval",
     "license": "MIT",
     "main": "dist/umd/es2018/graphql-eval.js",
@@ -17,6 +17,6 @@
         "test:unit": "jest"
     },
     "devDependencies": {
-        "@salesforce/lds-graphql-parser": "1.28.0"
+        "@salesforce/lds-graphql-parser": "1.29.0"
     }
 }
